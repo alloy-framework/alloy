@@ -1,0 +1,19 @@
+{
+  "name": "babel-preset-alloy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.cjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "babel-plugin-jsx-dom-expressions": "file:vendor/babel-plugin-jsx-dom-expressions-0.37.21.tgz"
+  },
+  "bundledDependencies": [
+    "babel-plugin-jsx-dom-expressions"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}

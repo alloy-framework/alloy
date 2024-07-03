@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "es2022",
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "sourceMap": true,
+    "jsx": "preserve"
+  }
+}

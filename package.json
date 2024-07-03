@@ -1,0 +1,11 @@
+{
+  "name": "alloy",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "pnpm": {
+    "overrides": {
+      "esbuild": "0.23"
+    }
+  }
+}

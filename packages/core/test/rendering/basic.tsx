@@ -75,11 +75,13 @@ it.skip("works with fancy data types", () => {
   }
 
   function ImportStatements(props: ImportStatementsProps) {
-    return memo(() =>
-      mapJoin(props.records, (path, types) => (
+    return memo(() => {
+      let val = mapJoin(props.records, (path, types) => (
         <ImportStatement path={path} types={types} />
-      ))
-    );
+      ));
+      console.log(JSON.stringify(val));
+      return val;
+    });
   }
 
   interface ImportStatementProps {
@@ -101,13 +103,18 @@ it.skip("works with fancy data types", () => {
   addImport("./foo.js", "hi");
   printTree(tree);
   // import { hi } from "./foo.js";
-
-  addImport("./foo.js", "bye");
-  printTree(tree);
-  // import { hi, bye } from "./foo.js";
+  console.log("!!!");
 
   addImport("node:assert", "strictEqual");
   console.log(printTree(tree));
   // import { hi, bye } from "./foo.js";
   // import { strictEqual } from "node:assert";
+});
+
+it("keeps spaces between expressions", () => {
+  const str = "str"
+  function getStr() { return "getStr" }
+  expect(<>
+    a {str} {str} {getStr()} {getStr()} c
+  </>).toRenderTo("a str str getStr getStr c");
 });

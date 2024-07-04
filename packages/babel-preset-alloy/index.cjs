@@ -2,7 +2,7 @@ const jsxTransform = require('babel-plugin-jsx-dom-expressions');
 module.exports = function (context, options = {}) {
   const defaultOptions = {
     moduleName: "@alloy/core/jsx-runtime",
-    generate: "dom",
+    generate: "universal",
     wrapConditionals: true,
     preserveWhitespace: true,
   };

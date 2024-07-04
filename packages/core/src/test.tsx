@@ -1,6 +1,30 @@
 import { render, type RenderTree } from "./render.js";
 import { ref, reactive } from "@vue/reactivity";
 
+function Foo(props: any) {
+  return <>
+    a
+    {props.children}
+    b
+  </>
+}
+
+const arg1 = <>
+  a, b, c
+</>
+
+function g() { return "hi" }
+
+console.log(printTree(<>
+  base
+    <Foo arg1={arg1}>
+      child
+      {g()}
+      child2
+    </Foo>
+</>))
+
+/*
 function Bar({children}: any) {
   return <>
     {blah.propName}: str
@@ -23,7 +47,7 @@ function Foo() {
 
 const tree = render(  <Foo />);
 printTree(tree);
-
+*/
 
 /*
 customName.value = "bye";

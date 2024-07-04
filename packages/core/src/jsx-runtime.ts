@@ -102,6 +102,6 @@ export function isComponent(item: unknown): item is Component {
 
 export function createComponent(C: Component, props: Props): Component {
   const creator = () => /* */ C(props);
-  creator.component = true as const;
+  creator.component = C as any;
   return creator;
 }

@@ -1,15 +1,20 @@
 import { expect } from "vitest";
-import { d, dedent, renderToString } from "./render.utils.js";
+import { d, dedent, printTree, renderToString } from "./render.utils.js";
 import { Children } from "../src/jsx-runtime.js";
+import { render } from "../src/render.js";
 
 expect.extend({
   toRenderTo(received: Children, expectedRaw: string) {
     const { isNot } = this;
-    const actual = renderToString(received);
+    const tree = render(received);
+    const actual = printTree(tree);
     const expected = dedent(expectedRaw);
     return {
       pass: actual === expected,
-      message: () => `Render is${isNot ? " not" : ""} incorrect`,
+      message: () => {
+        console.log(JSON.stringify(tree));
+        return `Render is${isNot ? " not" : ""} incorrect`;
+      },
       actual,
       expected,
     };

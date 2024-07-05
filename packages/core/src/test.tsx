@@ -15,14 +15,12 @@ const arg1 = <>
 
 function g() { return "hi" }
 
-console.log(printTree(<>
-  base
-    <Foo arg1={arg1}>
-      child
-      {g()}
-      child2
-    </Foo>
-</>))
+console.log(printTree(
+<Indent>
+  <Foo />
+  <Foo />
+</Indent>
+))
 
 /*
 function Bar({children}: any) {

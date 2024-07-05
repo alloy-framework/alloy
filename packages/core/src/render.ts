@@ -16,37 +16,137 @@ import {
   untrack,
 } from "./jsx-runtime.js";
 
-/*
-# Examples
-
-## Notation
-
-### Component Tree
-
-The component tree is constructed as the result of transforming JSX with
-`babel-preset-alloy`. Elements in the component tree are 
-
-<>hi<>
-["hi"]
-hi
-
-const b = "hi";
-<>a {b} c<>
-
-*/
-
 export type RenderTree = (string | RenderTree)[];
 
 /**
- * The component tree (represented by Children) contains three distinct types of
- * things:
+ * The component tree is constructed as the result of transforming JSX with
+ * `babel-preset-alloy`. Elements in the component tree (represented by
+ * Children) are three distinct types of things:
  *
- * 1. Raw strings, which are either literal JSX or substitutions
+ * 1. Primitive data types, which are either literal JSX or substitutions
  * 2. Components, which are created via `createComponent`
- * 3. Memos, which are created via `memo()`
+ * 3. Memos, which are created via `memo`, and represent substitutions like
+ *    property accesses and function calls that might be reactive.
  *
+ * This tree is then compiled into a render tree, which is a normalized form of
+ * the component tree. The tree is constructed by traversing the component tree,
+ * invoking components, wrapping memos, doing whitespace normalization, and
+ * other activities. There are four types of nodes in the render tree.
  *
+ * 1. Strings, which are either literal JSX or substitutions. Other primitive
+ *    types are either converted to the empty string or stringified as
+ *    appropriate.
+ * 2. Components, which are possibly wrapped if they are indented.
+ * 3. Memos, which are wrapped in a reactive effect which updates its render
+ *    tree nodes when its value changes.
+ * 4. Arrays of these things.
  *
+ * The render tree is whitespace normalized and indentation preserving. A key
+ * observation about the component tree is that all the lines you want in the
+ * output correspond to a literal line break somewhere within a JSX component's
+ * children. Which means that when we find a line break in a component's
+ * children, the indent level for the resulting line is determined by that
+ * component's current indent level. The current indent level is provided via
+ * context.
+ *
+ * So the high level process for rendering while normalizing whitespace is as
+ * follows:
+ *
+ * 1. For an array of elements in the render tree (which may be a component or
+ *    array of elements):
+ *    1. Normalize all primitive values other than strings to strings.
+ *    2. Use the first text node to determine the literal indent level of the
+ *       children. Remove all preceding whitespace - any indent of the first
+ *       line is provided in the text nodes preceding the reference to this
+ *       component. If the first element is not a literal string, then no
+ *       literal indent is applied, and all indentation within the component
+ *       becomes significant.
+ *    3. For each child of the component, create processed children:
+ *       1. If it is a string, reindent it by splitting on lines and replacing
+ *          the detected literal whitespace with the current indent level,
+ *          skipping the first line. If the string ends with a larger literal
+ *          indent than the detected literal indent, then a subsequent child
+ *          will be indented.
+ *       2. If it's a component, if the next child should be indented, create an
+ *          Indent component and wrap the component's children in it.
+ *       3. If it's a function, if the next child should be indented, wrap it in
+ *          an indent component. Any elements processed as a result of executing
+ *          the memo are treated as first elements in a child array are with
+ *          respect to establishing literal indent level and whitespace trimming
+ *          behavior.
+ *    4. For each processed child:
+ *      1. Create the render tree!
+ *
+ * Let's look at a few examples of each of these phases:
+ *
+ * ## Explicit indentation
+ *
+ * ### Input
+ * ```
+ * <Indent>
+ *   <Foo />
+ *   <Foo />
+ * </Indent>
+ * ```
+ *
+ * ### Compiled tree
+ * ```
+ * [
+ *   createComponent(Indent, {
+ *     get children() {
+ *       return [
+ *         "\n  ",
+ *         createComponent(Foo, {}),
+ *         "\n  ",
+ *         createComponent(Foo, {}),
+ *         "\n"
+ *       ]
+ *     }
+ *   })
+ * ]
+ * ```
+ *
+ * ### Render tree
+ * ```
+ * [              // node for Indent
+ *   [            // node for Context Provider
+ *     "  ",      // indent from the children of Indent
+ *     [          // component for Foo
+ *       "Foo"    // result of calling Foo
+ *     ],
+ *     "\n  ",    // indent and line break from the children of Ident
+ *     [ "Foo" ]  // second foo component
+ *   ]
+ * ]
+ * ```
+ * ### Rendered text
+ * ```
+ *   FooFoo
+ * ```
+ *
+ * ## Implicit indentation
+ *
+ * ### Input
+ * ```
+ * <>
+ *   base
+ *     <Foo /> <Foo />
+ * </>
+ * ```
+ *
+ * ### Render tree
+ * ```
+ * [                  // node for top-level fragment
+ *   "base\n  ",      // contents of fragment, including trailing indent
+ *   [                // node for implicitly created Indent component
+ *     [              // node for its context provider [ "Foo" ],   // contents of Foo "\n"
+ * ]
+ * ```
+ * ## Rendered text
+ * ```
+ * base
+ *   Foo Foo
+ * ```
  */
 
 export function render(rootElement: Children) {

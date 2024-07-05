@@ -60,7 +60,7 @@ describe("Indent component", () => {
     `)
   });
 
-  it.only("doesn't indent components on the same line with explicit indent", () => {
+  it("doesn't indent components on the same line with explicit indent", () => {
     function Foo() { return "Foo" }
   
     expect(<Indent>
@@ -389,7 +389,35 @@ describe("array handling", () => {
         c
         d
     `);
-  })
+  });
+
+  it("handles arrays of components with children", () => {
+    function Foo(props: any) {
+      return <>
+        hi
+        {props.children}
+          {props.children}
+      </>
+    }
+
+    const arr = [
+      <Foo>
+        a
+        b
+      </Foo>,
+      "\n",
+      <Foo>
+        c
+        d
+      </Foo>
+    ]
+
+    expect(<>
+      base
+      {arr}
+        {arr}
+    </>).toRenderTo("")
+  });
 })
 
 it("doesn't indent things on the same line simple", () => {

@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import { d, dedent, printTree, renderToString } from "./render.utils.js";
+import { d, dedent, printTree, renderToString } from "./render.util.js";
 import { Children } from "../src/jsx-runtime.js";
 import { render } from "../src/render.js";
 

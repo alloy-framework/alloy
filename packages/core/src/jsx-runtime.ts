@@ -85,23 +85,32 @@ function cleanup(fn: Disposable) {
   }
 }
 
-export type Child = string | boolean | number | (() => Child | Children);
-export type Children = Child[];
+export type Child =
+  | string
+  | boolean
+  | number
+  | (() => Child | Children)
+  | Child[];
+export type Children = Child | Child[];
 export type Props = Record<string, unknown>;
 
 export interface ComponentDefinition<TProps = Props> {
   (props: TProps): Child | Children;
 }
 export interface Component<TProps = Props> {
-  component: true;
   (props: TProps): Child | Children;
 }
-export function isComponent(item: unknown): item is Component {
+export interface ComponentCreator<TProps = Props> {
+  component: Component;
+  (): Child | Children;
+}
+
+export function isComponentCreator(item: unknown): item is ComponentCreator {
   return typeof item === "function" && (item as any).component;
 }
 
-export function createComponent(C: Component, props: Props): Component {
+export function createComponent(C: Component, props: Props): ComponentCreator {
   const creator = () => /* */ C(props);
-  creator.component = C as any;
+  creator.component = C;
   return creator;
 }

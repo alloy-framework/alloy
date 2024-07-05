@@ -4,6 +4,19 @@ import "../extend-expect.util.js";
 import { Indent } from "../../src/components/indent.jsx";
 
 describe("Indent component", () => {
+  it("indents explicitly indented content on a single line", () => {
+    expect(<>
+      one<Indent>hi</Indent>
+    </>).toRenderTo("onehi")
+  });
+
+  it("indents explicitly indented content on a subsequent line", () => {
+    expect(<>
+      one
+      <Indent>hi</Indent>
+    </>).toRenderTo("one\n  hi")
+  })
+
   it("indents explicitly indented content", () => {
     expect(
       <>
@@ -48,25 +61,56 @@ describe("Indent component", () => {
     `);
   });
 
-  it("indents memo substitutions with line breaks properly", () => {
-    function getStr() { return "a\nb" };
-    expect(<>
-      base
-        {getStr()}
-    </>).toRenderTo(`
-      base
-        a
-        b
-    `)
-  });
 
   it("doesn't indent components on the same line with explicit indent", () => {
     function Foo() { return "Foo" }
   
-    expect(<Indent>
-      <Foo /><Foo />
-    </Indent>).toRenderTo(`
-      FooFoo
+    expect(<>
+      base
+      <Indent>
+        <Foo /><Foo />
+      </Indent>
+    </>).toRenderTo(`
+      base
+        FooFoo
+    `)
+  });
+
+  it("works with nested indents", () => {
+    expect(<>
+      base
+      <Indent>
+        1
+        2
+        <Indent>
+          3
+          4
+          <Indent>
+            5
+            6
+          </Indent>
+          7
+          8
+        </Indent>
+        9
+        10
+      </Indent>
+      11
+      12
+    </>).toRenderTo(`
+      base
+        1
+        2
+          3
+          4
+            5
+            6
+          7
+          8
+        9
+        10
+      11
+      12
     `)
   });
 })
@@ -92,7 +136,19 @@ describe("implicit indenting", () => {
         bye
     `)
   });
-  
+
+  it("indents memo substitutions with line breaks properly", () => {
+    function getStr() { return "a\nb" };
+    expect(<>
+      base
+        {getStr()}
+    </>).toRenderTo(`
+      base
+        a
+        b
+    `)
+  });
+
   it("indents multiple implicitly indented components", () => {
     function Foo() {
       return <>
@@ -416,7 +472,29 @@ describe("array handling", () => {
       base
       {arr}
         {arr}
-    </>).toRenderTo("")
+    </>).toRenderTo(`
+      base
+      hi
+      a
+      b
+        a
+        b
+      hi
+      c
+      d
+        c
+        d
+        hi
+        a
+        b
+          a
+          b
+        hi
+        c
+        d
+          c
+          d
+    `)
   });
 })
 

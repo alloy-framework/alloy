@@ -16,10 +16,27 @@ const arg1 = <>
 function g() { return "hi" }
 
 console.log(printTree(
-<Indent>
-  <Foo />
-  <Foo />
-</Indent>
+    <>
+      base
+      <Indent>
+        1
+        2
+        <Indent>
+          3
+          4
+          <Indent>
+            5
+            6
+          </Indent>
+          7
+          8
+        </Indent>
+        9
+        10
+      </Indent>
+      11
+      12
+    </>
 ))
 
 /*

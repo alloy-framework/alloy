@@ -1,14 +1,9 @@
-import {
-  Indent,
-  IndentContext,
-  IndentState,
-  NoLeadingIndent,
-  shouldIndentComponent,
-} from "./components/indent.js";
-import { useContext } from "./context.js";
+import { Indent, IndentContext, IndentState } from "./components/Indent.js";
 import {
   Child,
   Children,
+  Component,
+  Context,
   createComponent,
   effect,
   getContext,
@@ -147,40 +142,125 @@ import {
  *   Foo Foo
  * ```
  */
-export type RenderTree = (string | RenderTree)[];
+
+//
+export interface OutputDirectory {
+  kind: "directory";
+  path: string;
+  contents: (OutputDirectory | OutputFile)[];
+}
+
+export interface OutputFile {
+  kind: "file";
+  contents: string;
+  path: string;
+  filetype: string;
+}
+
+const nodesToContext = new WeakMap<RenderTextTree, Context>();
+
+export function getContextForRenderNode(node: RenderTextTree) {
+  return nodesToContext.get(node);
+}
+export type RenderStructure = {};
+
+export type RenderTextTree = (string | RenderTextTree)[];
 
 function traceRender(phase: string, message: string) {
-  return;
+  return false;
   console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
 
 export function render(children: Children) {
-  const rootElem: RenderTree = [];
+  const tree = renderTree(children);
+
+  // collect source files and nodes and such.
+  const rootDirectory: OutputDirectory = {
+    kind: "directory",
+    path: "./",
+    contents: [],
+  };
+
+  collectSourceFiles(rootDirectory, tree);
+  return rootDirectory;
+}
+
+export function renderTree(children: Children) {
+  const rootElem: RenderTextTree = [];
   const state: RenderState = {
     indent: "",
     literalIndent: "",
     newLine: true,
     literalIndentIncrease: false,
+    lastWasString: false,
   };
   root(() => {
     renderWorker(rootElem, children, state);
-  });
+  }, "render worker");
+
   return rootElem;
 }
 
+function collectSourceFiles(
+  currentDirectory: OutputDirectory,
+  root: RenderTextTree
+) {
+  if (!Array.isArray(root)) {
+    return;
+  }
+  const context = getContextForRenderNode(root);
+
+  if (!context) {
+    return recurse(currentDirectory);
+  }
+
+  if (context.meta?.directory) {
+    const directory: OutputDirectory = {
+      kind: "directory",
+      path: context.meta?.directory.path,
+      contents: [],
+    };
+
+    currentDirectory.contents.push(directory);
+    recurse(directory);
+  } else if (context.meta?.sourceFile) {
+    const sourceFile: OutputFile = {
+      kind: "file",
+      path: context.meta?.sourceFile.path,
+      filetype: context.meta?.sourceFile.filetype,
+      contents: (root as any).flat(Infinity).join(""),
+    };
+
+    currentDirectory.contents.push(sourceFile);
+  } else {
+    recurse(currentDirectory);
+  }
+
+  function recurse(cwd: OutputDirectory) {
+    for (const child of root) {
+      collectSourceFiles(cwd, child as RenderTextTree);
+    }
+  }
+}
 interface RenderState {
   indent: string;
   literalIndent: string;
   newLine: boolean;
   literalIndentIncrease: boolean;
+  lastWasString: boolean;
 }
 
 function renderWorker(
-  node: RenderTree,
+  node: RenderTextTree,
   children: Children,
   state: RenderState
 ) {
   traceRender("render", dumpChildren(children) + " " + JSON.stringify(state));
+
+  if (Array.isArray(node)) {
+    nodesToContext.set(node, getContext()!);
+  }
+
   const oldIndent = state.indent;
   const oldLiteralIndent = state.literalIndent;
   const contextIndent = getIdentFromContext();
@@ -221,7 +301,11 @@ function renderWorker(
   state.literalIndent = oldLiteralIndent;
 }
 
-function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
+function appendChild(
+  node: RenderTextTree,
+  rawChild: Child,
+  state: RenderState
+) {
   traceRender(
     "appendChild",
     printChild(rawChild) + " " + JSON.stringify(state)
@@ -229,7 +313,24 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
-    const reindented = reindent(child, state);
+    let reindented = reindent(child, state);
+
+    if (state.lastWasString) {
+      // When the last element was a literal string, this is a string
+      // substitution, so we consider the leading and trailing whitespace
+      // insignificant because it's likely that this is substituting something
+      // rendered that has a bunch of needless whitespace. This aligns the
+      // behavior of literal string substitutions with memos-for-strings and
+      // components which return strings.
+      // We may need some way to mark a string in such a way that it is
+      // just dumped into the tree without any processing.
+      /*
+      reindented = reindented
+        .replace(leadingWhitespaceRe, "")
+        .replace(trailingWhitespaceRe, "");
+      */
+    }
+
     traceRender("appendChild:string", JSON.stringify(reindented));
 
     const trailingIndent = getTrailingLiteralIndent(child);
@@ -249,8 +350,15 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
       state.literalIndentIncrease = false;
     }
 
+    if (state.lastWasString) {
+      state.lastWasString = false;
+    } else {
+      state.lastWasString = true;
+    }
+
     node.push(reindented);
   } else if (isComponentCreator(child)) {
+    state.lastWasString = false;
     let wrappedChild;
 
     if (state.literalIndentIncrease) {
@@ -262,7 +370,7 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
     }
     root(() => {
       traceRender("appendChild:component", printChild(child));
-      const componentRoot: RenderTree = [];
+      const componentRoot: RenderTextTree = [];
       renderWorker(
         componentRoot,
         untrack(() => wrappedChild()),
@@ -270,8 +378,10 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
       );
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
-    });
+    }, child.component.name);
+    state.lastWasString = false;
   } else if (typeof child === "function") {
+    state.lastWasString = false;
     let wrappedChild;
 
     if (state.literalIndentIncrease) {
@@ -286,14 +396,16 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
     const index = node.length;
     // todo: handle indent
     effect((prev: any) => {
-      const newNodes: RenderTree = [];
+      const newNodes: RenderTextTree = [];
       // don't need to process this because memos return normalized
       renderWorker(newNodes, wrappedChild(), state);
       node.splice(index, prev ? prev.length : 0, ...newNodes);
       return newNodes;
     });
     traceRender("appendChild:memo-done", "");
+    state.lastWasString = false;
   } else {
+    state.lastWasString = false;
     let wrappedChild;
 
     if (state.literalIndentIncrease) {
@@ -307,6 +419,7 @@ function appendChild(node: RenderTree, rawChild: Child, state: RenderState) {
     traceRender("appendChild:array", dumpChildren(child));
     renderWorker(node, wrappedChild, state);
     traceRender("appendChild:array-done", dumpChildren(child));
+    state.lastWasString = false;
   }
 }
 
@@ -364,7 +477,7 @@ function getTrailingLiteralIndent(str: string) {
 }
 
 function lastIsLiterallyIndented(
-  tree: RenderTree,
+  tree: RenderTextTree,
   currentLiteralIndent: string
 ): boolean {
   if (tree.length === 0) {
@@ -393,11 +506,16 @@ function lastIsLiterallyIndented(
 type NormalizedChild = string | (() => Child | Children) | NormalizedChild[];
 
 function wrapInIndent(children: Children) {
-  return createComponent(Indent, {
+  return wrap(children, Indent, {});
+}
+
+function wrap<T>(children: Children, Component: Component<T>, props: T) {
+  return createComponent(Component, {
+    ...props,
     get children() {
       return children;
     },
-  });
+  } as any);
 }
 
 function normalizeChild(child: Child): NormalizedChild {

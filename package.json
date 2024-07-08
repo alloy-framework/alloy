@@ -3,6 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "build": "pnpm -r --workspace-concurrency=Infinity build"
+  },
   "pnpm": {
     "overrides": {
       "esbuild": "0.23"

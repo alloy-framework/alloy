@@ -6,6 +6,6 @@
     "declarationDir": "./types",
     "outDir": "dist",
   },
-  "include": [ "src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx", "testing/**/*.ts"],
+  "include": [ "src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

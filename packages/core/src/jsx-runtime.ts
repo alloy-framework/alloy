@@ -1,3 +1,5 @@
+// Much of the implementations in this file are inspired by vuerx-js
+// See: https://github.com/ryansolid/vuerx-jsx.
 import {
   pauseTracking,
   resetTracking,
@@ -13,7 +15,12 @@ interface Disposable {
 export interface Context {
   disposables: Disposable[];
   owner: Context | null;
+
+  // context providers
   context?: Record<symbol, unknown>;
+
+  // store random info about the node
+  meta?: Record<string, any>;
 }
 
 let globalContext: Context | null = null;
@@ -21,12 +28,13 @@ export function getContext() {
   return globalContext;
 }
 
-export function root<T>(fn: (d: Disposable) => T): T {
+export function root<T>(fn: (d: Disposable) => T, src?: string): T {
   globalContext = {
+    src,
     disposables: [],
     owner: globalContext,
     context: {},
-  };
+  } as any;
   const ret = untrack(() =>
     fn(() => {
       for (const d of globalContext!.disposables) {
@@ -34,7 +42,8 @@ export function root<T>(fn: (d: Disposable) => T): T {
       }
     })
   );
-  globalContext = globalContext.owner;
+  globalContext = globalContext!.owner;
+
   return ret;
 }
 
@@ -47,6 +56,7 @@ export function untrack<T>(fn: () => T): T {
 
 export function memo<T>(fn: () => T, equal?: boolean): () => T {
   const o = shallowRef(untrack(fn));
+  const startContext = getContext();
   effect((prev) => {
     const res = fn();
     (!equal || prev !== res) && (o.value = res);
@@ -56,11 +66,13 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
 }
 
 export function effect<T>(fn: (prev?: T) => T, current?: T) {
+  const owner = globalContext;
   const context = {
+    src: "effect",
     context: {},
     disposables: [] as (() => void)[],
     owner: globalContext,
-  };
+  } as any;
 
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;
@@ -71,9 +83,10 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
 
   const c = vueEffect(() => {
     cleanupFn(false);
+    const oldContext = globalContext;
     globalContext = context;
     current = fn(current);
-    globalContext = globalContext.owner;
+    globalContext = oldContext;
   });
 
   cleanup(() => cleanupFn(true));
@@ -89,6 +102,8 @@ export type Child =
   | string
   | boolean
   | number
+  | undefined
+  | null
   | (() => Child | Children)
   | Child[];
 export type Children = Child | Child[];
@@ -101,15 +116,20 @@ export interface Component<TProps = Props> {
   (props: TProps): Child | Children;
 }
 export interface ComponentCreator<TProps = Props> {
-  component: Component;
+  component: Component<TProps>;
   (): Child | Children;
 }
 
+// These can be removed with a smarter transform that encodes the information we
+// need in the compiled JSX output.
 export function isComponentCreator(item: unknown): item is ComponentCreator {
   return typeof item === "function" && (item as any).component;
 }
 
-export function createComponent(C: Component, props: Props): ComponentCreator {
+export function createComponent<TProps = Props>(
+  C: Component<TProps>,
+  props: TProps
+): ComponentCreator<TProps> {
   const creator = () => /* */ C(props);
   creator.component = C;
   return creator;

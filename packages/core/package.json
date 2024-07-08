@@ -1,18 +1,34 @@
 {
-  "name": "@alloy/core",
+  "name": "@alloyjs/core",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/src/index.js",
+  "types": "./types/src/index.d.ts",
   "exports": {
-    "./jsx-runtime": "./dist/src/jsx-runtime.js"
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js",
+      "types": "./types/src/index.d.ts"
+    },
+    "./jsx-runtime": {
+      "import": "./dist/src/jsx-runtime.js",
+      "require": "./dist/src/jsx-runtime.js",
+      "types": "./types/src/jsx-runtime.d.ts"
+    },
+    "./testing": {
+      "import": "./dist/testing/index.js",
+      "require": "./dist/testing/index.js",
+      "types": "./types/testing/index.d.ts"
+    }
   },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
-    "build-test": "babel test -d dist/test --extensions '.ts,.tsx'",
-    "build": "npm run build-src && npm run build-test",
+    "build-testing": "babel testing -d dist/testing --extensions '.ts,.tsx'",
+    "build": "tsc -p . && npm run build-src && npm run build-testing",
     "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
-    "watch-test": "babel test -d dist/test --extensions '.ts,.tsx' --watch",
-    "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-test\""
+    "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
+    "watch-tsc": "tsc -p . --watch",
+    "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\""
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

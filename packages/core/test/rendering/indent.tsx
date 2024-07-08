@@ -1,7 +1,7 @@
 // prettier-ignore
 import { it, expect, describe } from "vitest";
-import "../extend-expect.util.js";
-import { Indent } from "../../src/components/indent.jsx";
+import "../../testing/extend-expect.js";
+import { Indent } from "../../src/components/Indent.jsx";
 
 describe("Indent component", () => {
   it("indents explicitly indented content on a single line", () => {
@@ -520,3 +520,70 @@ it("doesn't indent things on the same line simple", () => {
   `)
 });
 
+describe("Children rendering", () => {
+  it("handles children via props.children", () => {
+    function Foo(props: any) {
+      return <>
+        a
+        {props.children}
+        d
+      </>
+    }
+
+    expect(<>
+      base
+      <Foo>
+        b
+        c
+      </Foo>
+    </>).toRenderTo(`
+      base
+      a
+      b
+      c
+      d
+    `);
+  });
+
+  it("handles children via destructured children", () => {
+    function Foo({children}: any) {
+      return <>
+        a
+        {children}
+        d
+      </>
+    }
+
+    expect(<>
+      base
+      <Foo>
+        b
+        c
+      </Foo>
+    </>).toRenderTo(`
+      base
+      a
+      b
+      c
+      d
+    `);
+  });
+
+  it("handles children via returning children", () => {
+    function Foo({children}: any) {
+      return children
+    }
+
+    expect(<>
+      base
+      <Foo>
+        b
+        c
+      </Foo>
+    </>).toRenderTo(`
+      base
+      b
+      c
+    `);
+  });
+});

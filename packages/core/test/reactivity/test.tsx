@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
-import { render } from "../../src/render.js";
+import { renderTree } from "../../src/render.js";
 import { computed, reactive, ref } from '@vue/reactivity';
-import { d, printTree } from '../render.util.js';
+import { d, printTree } from '../../testing/render.js';
 import { memo } from '../../src/jsx-runtime.js';
 import { mapJoin } from '../../src/utils.js';
 
@@ -15,7 +15,7 @@ it("splices in new nodes", () => {
     return <>{mapped.value} done</>;
   }
 
-  const tree = render(<Foo />);
+  const tree = renderTree(<Foo />);
   expect(printTree(tree)).toEqual("mapped one done");
   r.value = [...r.value, "two"];
 
@@ -56,7 +56,7 @@ it("works with a complex case", () => {
       `import { ${[...props.types.values()].join(", ")} } from "${props.path}";`;
   }
 
-  const tree = render(<ImportStatements records={importRecords} />);
+  const tree = renderTree(<ImportStatements records={importRecords} />);
   // the tree is empty.
 
   expect(printTree(tree)).toEqual("");

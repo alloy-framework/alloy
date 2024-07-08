@@ -1,12 +1,12 @@
 import { Children } from "../src/jsx-runtime.js";
-import { RenderTree, render } from "../src/render.js";
+import { RenderTextTree, renderTree } from "../src/render.js";
 
-export function printTree(tree: RenderTree) {
+export function printTree(tree: RenderTextTree) {
   return (tree as any).flat(Infinity).join("");
 }
 
 export function renderToString(element: Children) {
-  return printTree(render(element));
+  return printTree(renderTree(element));
 }
 
 export function d(strings: TemplateStringsArray, ...values: any[]): string {

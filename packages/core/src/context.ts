@@ -35,19 +35,20 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
 export function createContext<T = unknown>(
   defaultValue?: T
 ): ComponentContext<T> {
-  const id = Symbol();
+  const id = Symbol("context");
   return {
     id,
     default: defaultValue,
     Provider(props: ContextProviderProps<T>) {
       const context = getContext();
+
       let rendered = shallowRef();
       effect(() => {
         context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);
       });
 
-      return () => rendered.value;
+      return () => props.children;
     },
   };
 }

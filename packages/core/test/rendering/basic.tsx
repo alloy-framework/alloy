@@ -1,6 +1,6 @@
 import { it, expect, describe } from "vitest";
 import { Children } from "../../src/jsx-runtime.js";
-import "../extend-expect.util.js";
+import "../../testing/extend-expect.js";
 
 describe("string nodes", () => {
   it("renders string nodes", () => {

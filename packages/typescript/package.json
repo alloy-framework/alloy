@@ -16,7 +16,8 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@alloyjs/core": "workspace:*"
+    "@alloyjs/core": "workspace:*",
+    "pathe": "^1.1.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.7",

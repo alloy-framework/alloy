@@ -1,57 +1,80 @@
-import { createContext } from "./context.js";
+import { createContext, useContext } from "./context.js";
 import { computed, ref, Ref } from "@vue/reactivity";
 
-export interface OutputDeclaration {
+export type Metadata = object;
+export interface OutputSymbol<
+  TScopeMeta extends Metadata = Metadata,
+  TSymbolMeta extends Metadata = Metadata
+> {
   name: string;
-  scope: OutputScope;
+  scope: OutputScope<TScopeMeta, TSymbolMeta>;
   refkey: unknown;
+  meta: TSymbolMeta;
 }
 
-export interface OutputScope {
+export interface OutputScope<
+  TScopeMeta extends Metadata = Metadata,
+  TSymbolMeta extends Metadata = Metadata
+> {
   kind: string;
   name: string;
-  bindings: Map<string, OutputDeclaration>;
-  bindingsByKey: Map<unknown, OutputDeclaration>;
-  children: Map<string, OutputScope>;
-  parent: OutputScope | undefined;
+  bindings: Map<string, OutputSymbol<TScopeMeta, TSymbolMeta>>;
+  bindingsByKey: Map<unknown, OutputSymbol<TScopeMeta, TSymbolMeta>>;
+  children: Map<string, OutputScope<TScopeMeta, TSymbolMeta>>;
+  parent: OutputScope<TScopeMeta, TSymbolMeta> | undefined;
   binder: Binder;
-  meta: any;
+  meta: TScopeMeta;
 }
 
 export const BinderContext = createContext<Binder>();
 
-export interface Binder {
+export function useBinder() {
+  return useContext(BinderContext)!;
+}
+
+export interface Binder<
+  TScopeMeta extends Metadata = {},
+  TSymbolMeta extends Metadata = {}
+> {
   createScope(
     kind: string,
     name: string,
-    parent: OutputScope | undefined
-  ): OutputScope;
-  createDeclaration(
+    parent: OutputScope<TScopeMeta, TSymbolMeta> | undefined
+  ): TScopeMeta;
+  createSymbol(
     name: string,
-    scope: OutputScope,
-    refkey?: unknown
-  ): OutputDeclaration;
+    scope: OutputScope<TScopeMeta, TSymbolMeta>,
+    refkey?: unknown,
+    meta?: TSymbolMeta
+  ): OutputSymbol<TScopeMeta, TSymbolMeta>;
+
   resolveDeclarationByKey(
-    currentScope: OutputScope,
+    currentScope: OutputScope<TScopeMeta, TSymbolMeta>,
     refkey: unknown
-  ): Ref<ResolutionResult | undefined>;
+  ): Ref<ResolutionResult<TScopeMeta, TSymbolMeta> | undefined>;
 }
 
-export interface ResolutionResult {
-  targetDeclaration: OutputDeclaration;
-  pathUp: OutputScope[];
-  pathDown: OutputScope[];
-  commonScope: OutputScope | undefined;
+export interface ResolutionResult<
+  TScopeMeta extends Metadata = Metadata,
+  TSymbolMeta extends Metadata = Metadata
+> {
+  targetDeclaration: OutputSymbol<TScopeMeta, TSymbolMeta>;
+  pathUp: OutputScope<TScopeMeta, TSymbolMeta>[];
+  pathDown: OutputScope<TScopeMeta, TSymbolMeta>[];
+  commonScope: OutputScope<TScopeMeta, TSymbolMeta> | undefined;
 }
 
-export function createOutputBinder(): Binder {
+export function createOutputBinder<
+  TScopeMeta extends Metadata = {},
+  TSymbolMeta extends Metadata = {}
+>(): Binder {
   const binder: Binder = {
     createScope,
-    createDeclaration,
+    createSymbol,
     resolveDeclarationByKey,
   };
 
-  const globalScope: OutputScope = {
+  const globalScope: OutputScope<TScopeMeta, TSymbolMeta> = {
     kind: "global",
     name: "<global>",
     bindings: new Map(),
@@ -59,13 +82,16 @@ export function createOutputBinder(): Binder {
     children: new Map(),
     parent: undefined,
     binder,
-    meta: {},
+    meta: {} as TScopeMeta,
   };
 
-  const knownDeclarations = new Map<unknown, OutputDeclaration>();
+  const knownDeclarations = new Map<
+    unknown,
+    OutputSymbol<TScopeMeta, TSymbolMeta>
+  >();
   const waitingDeclarations = new Map<
     unknown,
-    Ref<OutputDeclaration | undefined>
+    Ref<OutputSymbol<TScopeMeta, TSymbolMeta> | undefined>
   >();
 
   return binder;
@@ -73,10 +99,10 @@ export function createOutputBinder(): Binder {
   function createScope(
     kind: string,
     name: string,
-    parent: OutputScope | undefined,
-    meta?: unknown
-  ): OutputScope {
-    const scope: OutputScope = {
+    parent: OutputScope<TScopeMeta, TSymbolMeta> | undefined,
+    meta?: TScopeMeta
+  ): OutputScope<TScopeMeta, TSymbolMeta> {
+    const scope: OutputScope<TScopeMeta, TSymbolMeta> = {
       kind,
       name,
       bindings: new Map(),
@@ -84,7 +110,7 @@ export function createOutputBinder(): Binder {
       children: new Map(),
       parent,
       binder,
-      meta,
+      meta: meta ?? ({} as TScopeMeta),
     };
 
     if (parent) {
@@ -96,15 +122,17 @@ export function createOutputBinder(): Binder {
     return scope;
   }
 
-  function createDeclaration(
+  function createSymbol(
     name: string,
-    scope: OutputScope,
-    refkey: unknown
-  ): OutputDeclaration {
-    const declaration: OutputDeclaration = {
+    scope: OutputScope<TScopeMeta, TSymbolMeta>,
+    refkey?: unknown,
+    meta?: TSymbolMeta
+  ): OutputSymbol<TScopeMeta, TSymbolMeta> {
+    const declaration: OutputSymbol<TScopeMeta, TSymbolMeta> = {
       name,
       scope,
       refkey,
+      meta: meta ?? ({} as TSymbolMeta),
     };
 
     const targetScope = scope ? scope : globalScope;
@@ -118,14 +146,15 @@ export function createOutputBinder(): Binder {
   }
 
   function resolveDeclarationByKey(
-    currentScope: OutputScope,
+    currentScope: OutputScope<TScopeMeta, TSymbolMeta>,
     key: unknown
-  ): Ref<ResolutionResult | undefined> {
+  ): Ref<ResolutionResult<TScopeMeta, TSymbolMeta> | undefined> {
     const targetDeclaration = knownDeclarations.get(key);
-    let declSignal: Ref<OutputDeclaration | undefined>;
+    let declSignal: Ref<OutputSymbol<TScopeMeta, TSymbolMeta> | undefined>;
 
     if (targetDeclaration) {
-      declSignal = ref(targetDeclaration);
+      // this any cast hides a ridiculous error, fix it probably
+      declSignal = ref(targetDeclaration) as any;
     } else {
       if (waitingDeclarations.has(key)) {
         declSignal = waitingDeclarations.get(key)!;
@@ -144,8 +173,8 @@ export function createOutputBinder(): Binder {
     });
 
     function buildResult(
-      targetDeclaration: OutputDeclaration
-    ): ResolutionResult {
+      targetDeclaration: OutputSymbol<TScopeMeta, TSymbolMeta>
+    ): ResolutionResult<TScopeMeta, TSymbolMeta> {
       const targetScope = targetDeclaration.scope;
       const targetChain = scopeChain(targetScope);
       const currentChain = scopeChain(currentScope);
@@ -166,7 +195,7 @@ export function createOutputBinder(): Binder {
     }
   }
 
-  function scopeChain(scope: OutputScope | undefined) {
+  function scopeChain(scope: OutputScope<TScopeMeta, TSymbolMeta> | undefined) {
     const chain = [];
     while (scope) {
       chain.unshift(scope);

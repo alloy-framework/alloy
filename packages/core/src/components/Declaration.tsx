@@ -1,18 +1,17 @@
-import { OutputDeclaration, BinderContext } from "../binder.js";
+import { OutputSymbol, BinderContext } from "../binder.js";
 import { createContext, useContext } from "../context.js";
 import { Children } from "../jsx-runtime.js";
 import { ScopeContext } from "./Scope.js";
 
-const DeclarationContext = createContext<OutputDeclaration>();
+const DeclarationContext = createContext<OutputSymbol>();
 
 export interface DeclarationProps {
-  name: string;
+  name?: string;
   refkey?: unknown;
+  symbol?: OutputSymbol;
   children?: Children;
 }
 export function Declaration(props: DeclarationProps) {
-  const refkey = props.refkey ? props.refkey : props.name;
-
   const currentDeclaration = useContext(DeclarationContext);
   if (currentDeclaration) {
     throw new Error("Cannot nest declarations");
@@ -26,7 +25,15 @@ export function Declaration(props: DeclarationProps) {
   if (!scope) {
     throw new Error("Need scope to create declaration");
   }
-  const declaration = binder.createDeclaration(props.name, scope, refkey);
+  
+  let declaration;
+  if (props.symbol) {
+    declaration = props.symbol
+  } else {
+    const refkey = props.refkey ? props.refkey : props.name;
+    declaration = binder.createSymbol(props.name!, scope, refkey);
+  }
+  
   return <DeclarationContext.Provider value={declaration}>
     {props.children}
   </DeclarationContext.Provider>

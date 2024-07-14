@@ -1,6 +1,16 @@
 import { Children } from "@alloyjs/core/jsx-runtime";
-import { Declaration, childrenArray, findKeyedChild, findUnkeyedChildren, keyedChild, mapJoin } from "@alloyjs/core";
-
+import {
+  BinderContext,
+  Declaration,
+  childrenArray,
+  findKeyedChild,
+  findUnkeyedChildren,
+  keyedChild,
+  mapJoin,
+  useBinder,
+  useContext,
+  useScope,
+} from "@alloyjs/core";
 
 export interface FunctionDeclarationProps {
   refkey?: unknown;
@@ -8,29 +18,36 @@ export interface FunctionDeclarationProps {
   parameters?: Record<string, string>;
   returnType?: string;
   children?: Children;
+  export?: boolean;
+  default?: boolean;
 }
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
+  const binder = useBinder();
+  const scope = useScope();
+  const sym = binder.createSymbol(props.name, scope, props.refkey ?? props.name, {
+    export: props.export,
+    default: props.default,
+  });
   const children = childrenArray(() => props.children);
   const parametersChild = findKeyedChild(children, "params");
   const bodyChild = findKeyedChild(children, "body");
   const filteredChildren = findUnkeyedChildren(children);
+  const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
 
-  console.log(filteredChildren);
-  const sReturnType = props.returnType ? (
-    <>
-      : { props.returnType }
-    </>
-  ) : undefined;
+  const sParams =
+    parametersChild ??
+    (<FunctionDeclaration.Parameters parameters={props.parameters} />)()
+      .children;
 
-  const sParams = parametersChild ??
-    (<FunctionDeclaration.Parameters parameters={props.parameters} />)().children
-
-  let sBody = bodyChild ?? (<FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>)().children
+  let sBody =
+    bodyChild ??
+    (<FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>)()
+      .children;
 
   return (
-    <Declaration name={props.name} refkey={props.refkey}>
-      export function {props.name}({sParams}){sReturnType} {"{"}
+    <Declaration symbol={sym}>
+      {props.export ? "export " : ""}{props.default ? "default " : ""}function {props.name}({sParams}){sReturnType} {"{"}
         {sBody}
       {"}"}
     </Declaration>
@@ -39,10 +56,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
 export interface FunctionParametersProps {
   parameters?: Record<string, string>;
-  children?: Children
+  children?: Children;
 }
 
-FunctionDeclaration.Parameters = function Parameters(props: FunctionParametersProps) {
+FunctionDeclaration.Parameters = function Parameters(
+  props: FunctionParametersProps
+) {
   let value;
 
   if (props.children) {
@@ -51,12 +70,10 @@ FunctionDeclaration.Parameters = function Parameters(props: FunctionParametersPr
     value = mapJoin(
       new Map(Object.entries(props.parameters)),
       (key, value) => {
-        console.log({key, value});
-        return [key, ": ", value]
+        return [key, ": ", value];
       },
-      { joiner: ","}
+      { joiner: "," }
     );
-    console.log({ value });
   } else {
     value = undefined;
   }
@@ -64,12 +81,10 @@ FunctionDeclaration.Parameters = function Parameters(props: FunctionParametersPr
   return keyedChild("params", value);
 };
 
-
 export interface FunctionBodyProps {
   children?: Children;
 }
 
 FunctionDeclaration.Body = function Body(props: FunctionBodyProps) {
-  console.log("Props children", props.children);
   return keyedChild("body", props.children);
 };

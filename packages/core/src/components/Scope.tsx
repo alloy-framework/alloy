@@ -11,13 +11,13 @@ export interface ScopeProps {
 
 export const ScopeContext = createContext<OutputScope>();
 
-function getScope() {
+export function useScope() {
   return useContext(ScopeContext)!;
 }
 
 export function Scope(props: ScopeProps) {
   const kind = props.kind ?? "file";
-  const parentScope = getScope();
+  const parentScope = useScope();
   const binder = useContext(BinderContext)!;
   const newScope = binder.createScope(kind, props.name, parentScope);
   return <ScopeContext.Provider value={newScope as any}>

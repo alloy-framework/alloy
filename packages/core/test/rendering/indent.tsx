@@ -586,4 +586,8 @@ describe("Children rendering", () => {
       c
     `);
   });
+
+  it("can place children on a single line", () => {
+    
+  })
 });

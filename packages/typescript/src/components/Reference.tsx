@@ -1,4 +1,10 @@
-import { ResolutionResult, ScopeContext, useContext } from "@alloyjs/core";
+import {
+  ResolutionResult,
+  ScopeContext,
+  SourceDirectoryContext,
+  useContext,
+  useScope,
+} from "@alloyjs/core";
 import { SourceFileContext } from "./SourceFile.js";
 import { effect, memo } from "@alloyjs/core/jsx-runtime";
 
@@ -7,12 +13,8 @@ export interface ReferenceProps {
 }
 
 export function Reference({ refkey }: ReferenceProps) {
-  console.log("REFERENCE");
   const sourceFile = useContext(SourceFileContext);
-  const scope = useContext(ScopeContext);
-  if (!scope) {
-    throw new Error("Need scope context to form references");
-  }
+  const scope = useScope();
   const binder = scope.binder;
 
   const result = binder.resolveDeclarationByKey(scope, refkey);
@@ -25,17 +27,17 @@ export function Reference({ refkey }: ReferenceProps) {
       }
 
       return handleResolution(result.value);
-    })
+    });
   }
-
 
   function handleResolution(result: ResolutionResult) {
     const { targetDeclaration, pathDown } = result;
     if (pathDown.length > 0 && pathDown[0].kind === "module") {
-      sourceFile!.addImport(pathDown[0].name, targetDeclaration.name);
+      // todo: it may be faster to pull this out of pathUp
+      const currentPath = useContext(SourceDirectoryContext)!.path;
+      return sourceFile!.addImport(targetDeclaration, currentPath);
     }
-    
+
     return targetDeclaration.name;
   }
 }
-

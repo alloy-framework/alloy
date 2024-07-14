@@ -37,7 +37,8 @@
     "@babel/core": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@vue/reactivity": "^3.4.30",
-    "babel-preset-alloy": "workspace:*"
+    "babel-preset-alloy": "workspace:*",
+    "pathe": "^1.1.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.7",

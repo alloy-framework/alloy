@@ -12,10 +12,11 @@ import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 
 it("works with default imports", () => {
+  let obj = {};
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test" />
+        <ts.FunctionDeclaration export default name="asdf" refkey="test" />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -71,7 +72,9 @@ it("works with default and named imports and name conflicts", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
+        <ts.FunctionDeclaration export default name="test1">
+          console.log("foo");
+        </ts.FunctionDeclaration>
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
 

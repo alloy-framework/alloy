@@ -76,3 +76,18 @@ export function isKeyedChild(child: Child) {
     typeof child === "object" && child !== null && child.hasOwnProperty("key")
   );
 }
+
+export function code(
+  template: TemplateStringsArray,
+  ...substitutions: Child[]
+) {
+  let element = [];
+
+  element.push(template[0]);
+  for (let i = 0; i < substitutions.length; i++) {
+    element.push(substitutions[i]);
+    element.push(template[i + 1]);
+  }
+
+  return element;
+}

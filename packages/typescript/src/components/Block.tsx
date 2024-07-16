@@ -1,4 +1,4 @@
-import { Children } from "@alloyjs/core"
+import { Children } from "@alloy-js/core"
 
 export interface BlockProps {
   children?: Children

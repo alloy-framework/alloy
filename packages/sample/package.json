@@ -1,5 +1,5 @@
 {
-  "name": "@alloyjs/sample",
+  "name": "@alloy-js/sample",
   "private": "true",
   "version": "1.0.0",
   "description": "",
@@ -16,8 +16,8 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@alloyjs/core": "workspace:*",
-    "@alloyjs/typescript": "workspace:*"
+    "@alloy-js/core": "workspace:*",
+    "@alloy-js/typescript": "workspace:*"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.7",

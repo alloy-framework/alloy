@@ -8,9 +8,9 @@ import {
   mapJoin,
   reactive,
   useContext,
-} from "@alloyjs/core";
+} from "@alloy-js/core";
 
-import { Children, effect, memo } from "@alloyjs/core/jsx-runtime";
+import { Children, effect, memo } from "@alloy-js/core/jsx-runtime";
 import {
   ImportRecords,
   ImportStatement,

@@ -4,9 +4,9 @@ import {
   SourceDirectoryContext,
   useContext,
   useScope,
-} from "@alloyjs/core";
+} from "@alloy-js/core";
 import { SourceFileContext } from "./SourceFile.js";
-import { effect, memo } from "@alloyjs/core/jsx-runtime";
+import { effect, memo } from "@alloy-js/core/jsx-runtime";
 
 export interface ReferenceProps {
   refkey?: unknown;

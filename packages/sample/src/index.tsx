@@ -1,5 +1,5 @@
-import * as ay from "@alloyjs/core";
-import * as ts from "@alloyjs/typescript";
+import * as ay from "@alloy-js/core";
+import * as ts from "@alloy-js/typescript";
 
 const res = ay.render(
   <ay.Output>

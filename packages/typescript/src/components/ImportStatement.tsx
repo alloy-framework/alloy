@@ -1,4 +1,4 @@
-import { computed, mapJoin, memo } from "@alloyjs/core";
+import { computed, mapJoin, memo } from "@alloy-js/core";
 
 export interface ImportSymbol {
   bindingName: string;

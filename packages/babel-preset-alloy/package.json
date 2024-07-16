@@ -7,11 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "babel-plugin-jsx-dom-expressions": "file:vendor/babel-plugin-jsx-dom-expressions-0.37.21.tgz"
+    "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:*"
   },
-  "bundledDependencies": [
-    "babel-plugin-jsx-dom-expressions"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",

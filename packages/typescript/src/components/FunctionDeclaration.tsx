@@ -1,4 +1,4 @@
-import { Children } from "@alloyjs/core/jsx-runtime";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import {
   BinderContext,
   Declaration,
@@ -10,7 +10,7 @@ import {
   useBinder,
   useContext,
   useScope,
-} from "@alloyjs/core";
+} from "@alloy-js/core";
 
 export interface FunctionDeclarationProps {
   refkey?: unknown;

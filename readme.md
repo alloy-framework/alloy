@@ -9,8 +9,8 @@ dependencies, applying naming conventions, formatting, and generating syntax for
 a number of languages.
 
 ```tsx
-import * as ay from "@alloyjs/core";
-import * as ts from "@alloyjs/typescript";
+import * as ay from "@alloy-js/core";
+import * as ts from "@alloy-js/typescript";
 
 const res = ay.render(
   <ay.Output>
@@ -19,9 +19,7 @@ const res = ay.render(
     </ay.SourceFile>
 
     <ts.SourceFile path="test1.ts">
-      <ay.Declaration name="foo">
-        const foo = 1;
-      </ay.Declaration>
+      <ay.Declaration name="foo">const foo = 1;</ay.Declaration>
     </ts.SourceFile>
 
     <ts.SourceFile path="test2.ts">
@@ -36,12 +34,13 @@ console.log(res[2].contents);
 // const v = foo;
 ```
 
-This project is in pre-beta. Expect everything to change. Feedback is especially appreciated.
+This project is in pre-beta. Expect everything to change. Feedback is especially
+appreciated.
 
 ### Dependencies
 
-* pnpm
-* node 20+
+- pnpm
+- node 20+
 
 ### Building
 
@@ -54,4 +53,5 @@ Clone the repo, then:
 
 ### Experimenting
 
-The sample package under `packages/sample` is set up, feel free to add interesting things there or play around.
+The sample package under `packages/sample` is set up, feel free to add
+interesting things there or play around.

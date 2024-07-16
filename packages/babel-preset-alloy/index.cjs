@@ -1,4 +1,4 @@
-const jsxTransform = require('babel-plugin-jsx-dom-expressions');
+const jsxTransform = require('@alloy-js/babel-plugin-jsx-dom-expressions');
 module.exports = function (context, options = {}) {
   const defaultOptions = {
     moduleName: "@alloy-js/core/jsx-runtime",

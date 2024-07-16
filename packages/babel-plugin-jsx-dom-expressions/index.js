@@ -2,7 +2,6 @@
 
 var SyntaxJSX = require('@babel/plugin-syntax-jsx');
 var t = require('@babel/types');
-var constants = require('dom-expressions/src/constants');
 var helperModuleImports = require('@babel/helper-module-imports');
 var htmlEntities = require('html-entities');
 
@@ -24,6 +23,206 @@ function _interopNamespaceDefault(e) {
 }
 
 var t__namespace = /*#__PURE__*/_interopNamespaceDefault(t);
+
+const booleans = [
+  "allowfullscreen",
+  "async",
+  "autofocus",
+  "autoplay",
+  "checked",
+  "controls",
+  "default",
+  "disabled",
+  "formnovalidate",
+  "hidden",
+  "indeterminate",
+  "inert",
+  "ismap",
+  "loop",
+  "multiple",
+  "muted",
+  "nomodule",
+  "novalidate",
+  "open",
+  "playsinline",
+  "readonly",
+  "required",
+  "reversed",
+  "seamless",
+  "selected"
+];
+
+const BooleanAttributes = /*#__PURE__*/ new Set(booleans);
+
+const Properties = /*#__PURE__*/ new Set([
+  "className",
+  "value",
+  "readOnly",
+  "formNoValidate",
+  "isMap",
+  "noModule",
+  "playsInline",
+  ...booleans
+]);
+
+const ChildProperties = /*#__PURE__*/ new Set([
+  "innerHTML",
+  "textContent",
+  "innerText",
+  "children"
+]);
+
+// React Compat
+const Aliases = /*#__PURE__*/ Object.assign(Object.create(null), {
+  className: "class",
+  htmlFor: "for"
+});
+
+const PropAliases = /*#__PURE__*/ Object.assign(Object.create(null), {
+  class: "className",
+  formnovalidate: {
+    $: "formNoValidate",
+    BUTTON: 1,
+    INPUT: 1
+  },
+  ismap: {
+    $: "isMap",
+    IMG: 1
+  },
+  nomodule: {
+    $: "noModule",
+    SCRIPT: 1
+  },
+  playsinline: {
+    $: "playsInline",
+    VIDEO: 1
+  },
+  readonly: {
+    $: "readOnly",
+    INPUT: 1,
+    TEXTAREA: 1
+  }
+});
+
+function getPropAlias(prop, tagName) {
+  const a = PropAliases[prop];
+  return typeof a === "object" ? (a[tagName] ? a["$"] : undefined) : a;
+}
+
+// list of Element events that will be delegated
+const DelegatedEvents = /*#__PURE__*/ new Set([
+  "beforeinput",
+  "click",
+  "dblclick",
+  "contextmenu",
+  "focusin",
+  "focusout",
+  "input",
+  "keydown",
+  "keyup",
+  "mousedown",
+  "mousemove",
+  "mouseout",
+  "mouseover",
+  "mouseup",
+  "pointerdown",
+  "pointermove",
+  "pointerout",
+  "pointerover",
+  "pointerup",
+  "touchend",
+  "touchmove",
+  "touchstart"
+]);
+
+const SVGElements = /*#__PURE__*/ new Set([
+  // "a",
+  "altGlyph",
+  "altGlyphDef",
+  "altGlyphItem",
+  "animate",
+  "animateColor",
+  "animateMotion",
+  "animateTransform",
+  "circle",
+  "clipPath",
+  "color-profile",
+  "cursor",
+  "defs",
+  "desc",
+  "ellipse",
+  "feBlend",
+  "feColorMatrix",
+  "feComponentTransfer",
+  "feComposite",
+  "feConvolveMatrix",
+  "feDiffuseLighting",
+  "feDisplacementMap",
+  "feDistantLight",
+  "feDropShadow",
+  "feFlood",
+  "feFuncA",
+  "feFuncB",
+  "feFuncG",
+  "feFuncR",
+  "feGaussianBlur",
+  "feImage",
+  "feMerge",
+  "feMergeNode",
+  "feMorphology",
+  "feOffset",
+  "fePointLight",
+  "feSpecularLighting",
+  "feSpotLight",
+  "feTile",
+  "feTurbulence",
+  "filter",
+  "font",
+  "font-face",
+  "font-face-format",
+  "font-face-name",
+  "font-face-src",
+  "font-face-uri",
+  "foreignObject",
+  "g",
+  "glyph",
+  "glyphRef",
+  "hkern",
+  "image",
+  "line",
+  "linearGradient",
+  "marker",
+  "mask",
+  "metadata",
+  "missing-glyph",
+  "mpath",
+  "path",
+  "pattern",
+  "polygon",
+  "polyline",
+  "radialGradient",
+  "rect",
+  // "script",
+  "set",
+  "stop",
+  // "style",
+  "svg",
+  "switch",
+  "symbol",
+  "text",
+  "textPath",
+  // "title",
+  "tref",
+  "tspan",
+  "use",
+  "view",
+  "vkern"
+]);
+
+const SVGNamespace = {
+  xlink: "http://www.w3.org/1999/xlink",
+  xml: "http://www.w3.org/XML/1998/namespace"
+};
 
 var VoidElements = [
   'area',
@@ -584,7 +783,7 @@ const alwaysClose = [
 function transformElement$3(path, info) {
   let tagName = getTagName(path.node),
     config = getConfig(path),
-    wrapSVG = info.topLevel && tagName != "svg" && constants.SVGElements.has(tagName),
+    wrapSVG = info.topLevel && tagName != "svg" && SVGElements.has(tagName),
     voidTag = VoidElements.indexOf(tagName) > -1,
     isCustomElement = tagName.indexOf("-") > -1,
     results = {
@@ -741,9 +940,9 @@ function setAttr$2(path, elem, name, value, { isSVG, dynamic, prevId, isCE, tagN
     return t__namespace.assignmentExpression("=", t__namespace.memberExpression(elem, t__namespace.identifier("data")), value);
   }
 
-  const isChildProp = constants.ChildProperties.has(name);
-  const isProp = constants.Properties.has(name);
-  const alias = constants.getPropAlias(name, tagName.toUpperCase());
+  const isChildProp = ChildProperties.has(name);
+  const isProp = Properties.has(name);
+  const alias = getPropAlias(name, tagName.toUpperCase());
   if (namespace !== "attr" && (isChildProp || (!isSVG && isProp) || isCE || namespace === "prop")) {
     if (isCE && !isChildProp && !isProp && namespace !== "prop") name = toPropertyName(name);
     if (config.hydratable && namespace !== "prop") {
@@ -757,9 +956,9 @@ function setAttr$2(path, elem, name, value, { isSVG, dynamic, prevId, isCE, tagN
   }
 
   let isNameSpaced = name.indexOf(":") > -1;
-  name = constants.Aliases[name] || name;
+  name = Aliases[name] || name;
   !isSVG && (name = name.toLowerCase());
-  const ns = isNameSpaced && constants.SVGNamespace[name.split(":")[0]];
+  const ns = isNameSpaced && SVGNamespace[name.split(":")[0]];
   if (ns) {
     return t__namespace.callExpression(
       registerImportMethod(path, "setAttributeNS", getRendererConfig(path, "dom").moduleName),
@@ -794,7 +993,7 @@ function transformAttributes$2(path, results) {
     spreadExpr,
     attributes = path.get("openingElement").get("attributes");
   const tagName = getTagName(path.node),
-    isSVG = constants.SVGElements.has(tagName),
+    isSVG = SVGElements.has(tagName),
     isCE = tagName.includes("-"),
     hasChildren = path.node.children.length > 0,
     config = getConfig(path);
@@ -961,7 +1160,7 @@ function transformAttributes$2(path, results) {
           evaluated !== undefined &&
           ((type = typeof evaluated) === "string" || type === "number")
         ) {
-          if (type === "number" && (constants.Properties.has(key) || key.startsWith("prop:"))) {
+          if (type === "number" && (Properties.has(key) || key.startsWith("prop:"))) {
             value = t__namespace.jsxExpressionContainer(t__namespace.numericLiteral(evaluated));
           } else value = t__namespace.stringLiteral(String(evaluated));
         }
@@ -1081,7 +1280,7 @@ function transformAttributes$2(path, results) {
             );
           } else if (
             config.delegateEvents &&
-            (constants.DelegatedEvents.has(ev) || config.delegatedEvents.indexOf(ev) !== -1)
+            (DelegatedEvents.has(ev) || config.delegatedEvents.indexOf(ev) !== -1)
           ) {
             // can only hydrate delegated events
             hasHydratableEvent = true;
@@ -1235,8 +1434,8 @@ function transformAttributes$2(path, results) {
           return;
         }
         if (t__namespace.isJSXExpressionContainer(value)) value = value.expression;
-        key = constants.Aliases[key] || key;
-        if (value && constants.ChildProperties.has(key)) {
+        key = Aliases[key] || key;
+        if (value && ChildProperties.has(key)) {
           results.exprs.push(
             t__namespace.expressionStatement(setAttr$2(attribute, elem, key, value, { isSVG, isCE, tagName }))
           );
@@ -1604,7 +1803,7 @@ function processSpreads$1(path, attributes, { elem, isSVG, hasChildren, wrapCond
             t__namespace.stringLiteral(key),
             isContainer
               ? node.value.expression
-              : node.value || (constants.Properties.has(key) ? t__namespace.booleanLiteral(true) : t__namespace.stringLiteral(""))
+              : node.value || (Properties.has(key) ? t__namespace.booleanLiteral(true) : t__namespace.stringLiteral(""))
           )
         );
       }
@@ -1979,7 +2178,7 @@ function transformElement$2(path, info) {
 }
 
 function toAttribute(key, isSVG) {
-  key = constants.Aliases[key] || key;
+  key = Aliases[key] || key;
   !isSVG && (key = key.toLowerCase());
   return key;
 }
@@ -2161,7 +2360,7 @@ function normalizeAttributes(path) {
 
 function transformAttributes$1(path, results, info) {
   const tagName = getTagName(path.node),
-    isSVG = constants.SVGElements.has(tagName),
+    isSVG = SVGElements.has(tagName),
     hasChildren = path.node.children.length > 0,
     attributes = normalizeAttributes(path);
   let children;
@@ -2176,7 +2375,7 @@ function transformAttributes$1(path, results, info) {
       reservedNameSpace =
         t__namespace.isJSXNamespacedName(node.name) && reservedNameSpaces.has(node.name.namespace.name);
     if (
-      ((t__namespace.isJSXNamespacedName(node.name) && reservedNameSpace) || constants.ChildProperties.has(key)) &&
+      ((t__namespace.isJSXNamespacedName(node.name) && reservedNameSpace) || ChildProperties.has(key)) &&
       !t__namespace.isJSXExpressionContainer(value)
     ) {
       node.value = value = t__namespace.jsxExpressionContainer(value || t__namespace.jsxEmptyExpression());
@@ -2185,7 +2384,7 @@ function transformAttributes$1(path, results, info) {
     if (
       t__namespace.isJSXExpressionContainer(value) &&
       (reservedNameSpace ||
-        constants.ChildProperties.has(key) ||
+        ChildProperties.has(key) ||
         !(t__namespace.isStringLiteral(value.expression) || t__namespace.isNumericLiteral(value.expression) || t__namespace.isBooleanLiteral(value.expression)))
     ) {
       if (
@@ -2195,7 +2394,7 @@ function transformAttributes$1(path, results, info) {
         key.startsWith("on")
       )
         return;
-      else if (constants.ChildProperties.has(key)) {
+      else if (ChildProperties.has(key)) {
         if (info.hydratable && key === "textContent" && value && value.expression) {
           value.expression = t__namespace.logicalExpression("||", value.expression, t__namespace.stringLiteral(" "));
         }
@@ -2203,7 +2402,7 @@ function transformAttributes$1(path, results, info) {
         children = value;
       } else {
         let doEscape = true;
-        if (constants.BooleanAttributes.has(key)) {
+        if (BooleanAttributes.has(key)) {
           results.template.push("");
           const fn = t__namespace.callExpression(registerImportMethod(attribute, "ssrAttribute"), [
             t__namespace.stringLiteral(key),
@@ -2273,7 +2472,7 @@ function transformAttributes$1(path, results, info) {
       if (key === "$ServerOnly") return;
       if (t__namespace.isJSXExpressionContainer(value)) value = value.expression;
       key = toAttribute(key, isSVG);
-      const isBoolean = constants.BooleanAttributes.has(key);
+      const isBoolean = BooleanAttributes.has(key);
       if (isBoolean && value && value.value !== "" && !value.value) return;
       appendToTemplate(results.template, ` ${key}`);
       if (!value) return;

@@ -7,7 +7,7 @@ import {
   SVGNamespace,
   DelegatedEvents,
   SVGElements
-} from "dom-expressions/src/constants";
+} from "../constants.js";
 import VoidElements from "../VoidElements";
 import {
   getTagName,

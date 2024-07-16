@@ -7,13 +7,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: pnpm install

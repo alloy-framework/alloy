@@ -1,9 +1,10 @@
 import { expect, it } from 'vitest'
 import { renderTree } from "../../src/render.js";
-import { computed, reactive, ref } from '@vue/reactivity';
+import { computed, reactive, ref, shallowRef } from '@vue/reactivity';
 import { d, printTree } from '../../testing/render.js';
-import { memo } from '../../src/jsx-runtime.js';
+import { Children, createComponent, effect, memo, untrack } from '../../src/jsx-runtime.js';
 import { mapJoin } from '../../src/utils.js';
+import { Indent } from '../../src/index.js';
 
 it("splices in new nodes", () => {
   const r = ref(["one"]);
@@ -73,4 +74,12 @@ it("works with a complex case", () => {
     import { hi, bye } from "./foo.js";
     import { strictEqual } from "node:assert";
   `)
-})
+});
+
+it("works with memos of memos", () => {
+  const test = ref(1);
+  const tree = renderTree(memo(() => memo(() => test.value)));
+  expect(printTree(tree)).toEqual("1");
+  test.value = 2;
+  expect(printTree(tree)).toEqual("2");
+});

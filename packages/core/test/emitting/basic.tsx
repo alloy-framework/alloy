@@ -1,10 +1,9 @@
 import { it } from "vitest"
 import { render } from "../../src/render.js"
-import { SourceFile } from "../../src/components/SourceFile.jsx"
-import { Indent } from "../../src/components/Indent.jsx";
-import { Declaration } from "../../src/components/Declaration.jsx";
-import { Output } from "../../src/components/Output.jsx";
-import { Scope } from "../../src/components/Scope.jsx";
+import { SourceFile } from "../../src/components/SourceFile.js"
+import { Declaration } from "../../src/components/Declaration.js";
+import { Output } from "../../src/components/Output.js";
+import { Scope } from "../../src/components/Scope.js";
 
 it("works", () => {
   const contents = render(

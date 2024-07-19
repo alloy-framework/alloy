@@ -1,7 +1,10 @@
 import { createContext, useContext } from "./context.js";
 import { computed, ref, Ref } from "@vue/reactivity";
+import { RefKey } from "./refkey.js";
+import { useScope } from "./components/Scope.js";
 
 export type Metadata = object;
+
 export interface OutputSymbol<
   TScopeMeta extends Metadata = Metadata,
   TSymbolMeta extends Metadata = Metadata
@@ -204,4 +207,18 @@ export function createOutputBinder<
 
     return chain;
   }
+}
+
+/**
+ * Resolve a refkey in the current scope. Returns a Ref for the resolution result.
+ * The value of the ref will be undefined if the identifier hasn't been resolved yet.
+ */
+export function resolve<
+  TScopeMeta extends Metadata,
+  TSymbolMeta extends Metadata
+>(refkey: RefKey): Ref<ResolutionResult<TScopeMeta, TSymbolMeta>> {
+  const scope = useScope();
+  const binder = scope.binder;
+
+  return binder.resolveDeclarationByKey(scope, refkey) as any;
 }

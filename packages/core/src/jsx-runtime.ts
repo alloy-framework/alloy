@@ -56,7 +56,6 @@ export function untrack<T>(fn: () => T): T {
 
 export function memo<T>(fn: () => T, equal?: boolean): () => T {
   const o = shallowRef(untrack(fn));
-  const startContext = getContext();
   effect((prev) => {
     const res = fn();
     (!equal || prev !== res) && (o.value = res);

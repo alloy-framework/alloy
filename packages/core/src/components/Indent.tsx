@@ -19,10 +19,10 @@ export interface IndentState {
   noLeading?: boolean;
 }
 
-export function Indent({ indent, children }: IndentProps) {
+export function Indent(props: IndentProps) {
   const previousIndent = useContext(IndentContext) ?? {
     level: 0,
-    indent: indent ?? "  ",
+    indent: props.indent ?? "  ",
     indentString: ""
   };
 
@@ -30,11 +30,11 @@ export function Indent({ indent, children }: IndentProps) {
 
   const currentIndent = {
     level,
-    indent: indent ?? previousIndent.indent,
-    indentString: (indent ?? previousIndent.indent).repeat(level),
+    indent: props.indent ?? previousIndent.indent,
+    indentString: (props.indent ?? previousIndent.indent).repeat(level),
   };
 
-  return <IndentContext.Provider value={currentIndent}>{children}</IndentContext.Provider>;
+  return <IndentContext.Provider value={currentIndent}>{props.children}</IndentContext.Provider>;
 }
 
 interface NoLeadingIndentProps {
@@ -53,14 +53,4 @@ export function NoLeadingIndent(props: NoLeadingIndentProps) {
     noLeading: true
   }
   return <IndentContext.Provider value={currentIndent}>{props.children}</IndentContext.Provider>
-}
-
-export function shouldIndentComponent() {
-  let current = getContext()?.owner;
-  if ((current as any)?.context![IndentContext.id]?.noLeading) {
-    throw new Error("Shoul dindent uhoh");
-    return false;
-  }
-
-  return true;
 }

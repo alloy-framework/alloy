@@ -392,13 +392,17 @@ function appendChild(
       wrappedChild = child;
     }
 
-    traceRender("appendChild:memo", "");
+    traceRender("appendChild:memo", wrappedChild.toString());
     const index = node.length;
     // todo: handle indent
     effect((prev: any) => {
+      traceRender("memoEffect:run", "");
+      let res = wrappedChild();
+      while (typeof res === "function" && !isComponentCreator(res)) {
+        res = res();
+      }
       const newNodes: RenderTextTree = [];
-      // don't need to process this because memos return normalized
-      renderWorker(newNodes, wrappedChild(), state);
+      renderWorker(newNodes, res, state);
       node.splice(index, prev ? prev.length : 0, ...newNodes);
       return newNodes;
     });

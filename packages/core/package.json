@@ -3,22 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/src/index.js",
-  "types": "./types/src/index.d.ts",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/src/index.js",
       "require": "./dist/src/index.js",
-      "types": "./types/src/index.d.ts"
+      "types": "./dist/src/index.d.ts"
     },
     "./jsx-runtime": {
       "import": "./dist/src/jsx-runtime.js",
       "require": "./dist/src/jsx-runtime.js",
-      "types": "./types/src/jsx-runtime.d.ts"
+      "types": "./dist/src/jsx-runtime.d.ts"
     },
     "./testing": {
       "import": "./dist/testing/index.js",
       "require": "./dist/testing/index.js",
-      "types": "./types/testing/index.d.ts"
+      "types": "./dist/testing/index.d.ts"
     }
   },
   "scripts": {

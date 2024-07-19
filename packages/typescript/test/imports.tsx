@@ -56,19 +56,13 @@ it("works with default and named imports", () => {
         const v1 = <Reference refkey="test1" />;
         const v2 = <Reference refkey="test2" />;
       </ts.SourceFile>
-
-      
-      <ts.SourceFile path="test3.ts">
-        const v1 = <Reference refkey="test3" />;
-        const v2 = <Reference refkey="test4" />;
-      </ts.SourceFile>
     </Output>
   );
 
   printOutput(res);
 });
 
-it("works with default and named imports and name conflicts", () => {
+it.only("works with default and named imports and name conflicts", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">

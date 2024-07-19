@@ -1,37 +1,29 @@
 import {
+  RefKey,
   ResolutionResult,
+  resolve,
   ScopeContext,
   SourceDirectoryContext,
   useContext,
   useScope,
 } from "@alloy-js/core";
 import { SourceFileContext } from "./SourceFile.js";
-import { effect, memo } from "@alloy-js/core/jsx-runtime";
+import { memo } from "@alloy-js/core/jsx-runtime";
 
 export interface ReferenceProps {
-  refkey?: unknown;
+  refkey: RefKey | string;
 }
 
 export function Reference({ refkey }: ReferenceProps) {
   const sourceFile = useContext(SourceFileContext);
-  const scope = useScope();
-  const binder = scope.binder;
+  const result = resolve(refkey as RefKey);
 
-  const result = binder.resolveDeclarationByKey(scope, refkey);
-  if (result.value !== undefined) {
-    return handleResolution(result.value);
-  } else {
-    return memo(() => {
-      if (result.value === undefined) {
-        return;
-      }
+  return memo(() => {
+    if (result.value === undefined) {
+      return;
+    }
 
-      return handleResolution(result.value);
-    });
-  }
-
-  function handleResolution(result: ResolutionResult) {
-    const { targetDeclaration, pathDown } = result;
+    const { targetDeclaration, pathDown } = result.value;
     if (pathDown.length > 0 && pathDown[0].kind === "module") {
       // todo: it may be faster to pull this out of pathUp
       const currentPath = useContext(SourceDirectoryContext)!.path;
@@ -39,5 +31,5 @@ export function Reference({ refkey }: ReferenceProps) {
     }
 
     return targetDeclaration.name;
-  }
+  });
 }

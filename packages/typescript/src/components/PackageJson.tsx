@@ -1,5 +1,5 @@
 import { memo, reactive, SourceFile } from "@alloy-js/core";
-import { usePackage } from "./PackageDirectory.jsx";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface PackageJsonFileProps {
   name: string;

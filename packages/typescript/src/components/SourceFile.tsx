@@ -17,7 +17,7 @@ import {
   ImportStatements,
 } from "./ImportStatement.js";
 import { relative, join, normalize } from "pathe";
-import { usePackage } from "./PackageDirectory.jsx";
+import { usePackage } from "./PackageDirectory.js";
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol, currentPath: string): string;
 }

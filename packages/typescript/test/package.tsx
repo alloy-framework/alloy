@@ -10,7 +10,7 @@ import {
 } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { d } from "@alloy-js/core/testing";
-import { PackageDirectory } from "../src/components/PackageDirectory.jsx";
+import { PackageDirectory } from "../src/components/PackageDirectory.js";
 
 it("exports source files", () => {
 

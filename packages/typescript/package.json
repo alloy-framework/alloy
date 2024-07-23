@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@alloy-js/core": "workspace:*",
+    "change-case": "^5.4.4",
     "pathe": "^1.1.2"
   },
   "devDependencies": {

@@ -3,106 +3,51 @@ import { expect, it } from "vitest";
 import {
   render,
   Output,
-  SourceFile,
-  Declaration,
   OutputDirectory,
+  refkey,
+  SourceDirectory,
+  SourceFile,
 } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
-import { Reference } from "../src/components/Reference.js";
-import { Block } from "../src/components/Block.jsx";
+import { d } from "@alloy-js/core/testing";
 
-it("works with default imports", () => {
+it("exports everything from source files within it", () => {
   const res = render(
     <Output>
-      <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test" />
-      </ts.SourceFile>
+      <ts.SourceFile path="test1.ts" />
+      <ts.SourceFile path="test2.ts" />
+      <SourceDirectory path="components">
+        <ts.SourceFile path="c1.ts" />
+        <ts.SourceFile path="c2.ts" />
+        <ts.BarrelFile />
+      </SourceDirectory>
+      <ts.BarrelFile />
+    </Output>
+  );
+  expect((res.contents[2].contents[2] as any).contents).toBe(d`
+    export * from "./c1.js";
+    export * from "./c2.js";
+  `);
 
-      <ts.SourceFile path="test2.ts">
-        const v = <Reference refkey="test" />;
-      </ts.SourceFile>
+  expect(res.contents[3].contents).toBe(d`
+    export * from "./test1.js";
+    export * from "./test2.js";
+    export * from "./components/index.js";
+  `);
+});
+
+it("ignores non-TS files", () => {
+  const res = render(
+    <Output>
+      <SourceFile path="test.txt" filetype="text" />
+      <ts.SourceFile path="test1.ts" />
+      <ts.SourceFile path="test2.ts" />
+      <ts.BarrelFile />
     </Output>
   );
 
-  printOutput(res);
+  expect(res.contents[3].contents).toBe(d`
+    export * from "./test1.js";
+    export * from "./test2.js";
+  `);
 });
-
-it("works with named imports", () => {
-  const res = render(
-    <Output>
-      <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export name="test" />
-      </ts.SourceFile>
-
-      <ts.SourceFile path="test2.ts">
-        const v = <Reference refkey="test" />;
-      </ts.SourceFile>
-    </Output>
-  );
-
-  printOutput(res);
-});
-
-it("works with default and named imports", () => {
-  const res = render(
-    <Output>
-      <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
-        <ts.FunctionDeclaration export name="test2" />
-      </ts.SourceFile>
-
-      <ts.SourceFile path="test2.ts">
-        const v1 = <Reference refkey="test1" />;
-        const v2 = <Reference refkey="test2" />;
-      </ts.SourceFile>
-
-      
-      <ts.SourceFile path="test3.ts">
-        const v1 = <Reference refkey="test3" />;
-        const v2 = <Reference refkey="test4" />;
-      </ts.SourceFile>
-    </Output>
-  );
-
-  printOutput(res);
-});
-
-it("works with default and named imports and name conflicts", () => {
-  const res = render(
-    <Output>
-      <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
-        <ts.FunctionDeclaration export name="test2" />
-      </ts.SourceFile>
-
-      <ts.SourceFile path="test2.ts">
-        <ts.FunctionDeclaration export default name="test1" refkey="test3" />
-        <ts.FunctionDeclaration export name="test2" refkey="test4" />
-      </ts.SourceFile>
-
-      <ts.SourceFile path="test3.ts">
-        const v1 = <Reference refkey="test1" />;
-        const v2 = <Reference refkey="test2" />;
-        const v3 = <Reference refkey="test3" />;
-        const v4 = <Reference refkey="test4" />;
-      </ts.SourceFile>
-    </Output>
-  );
-
-  printOutput(res);
-});
-
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1);
-    } else {
-      console.log(
-        `\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`
-      );
-      console.log(item.contents.trimStart());
-    }
-  }
-}

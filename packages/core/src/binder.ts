@@ -1,6 +1,6 @@
 import { createContext, useContext } from "./context.js";
-import { computed, ref, Ref } from "@vue/reactivity";
-import { RefKey } from "./refkey.js";
+import { computed, isProxy, ref, Ref, shallowRef } from "@vue/reactivity";
+import { Refkey } from "./refkey.js";
 import { useScope } from "./components/Scope.js";
 
 export type Metadata = object;
@@ -47,13 +47,13 @@ export interface Binder<
   createSymbol(
     name: string,
     scope: OutputScope<TScopeMeta, TSymbolMeta>,
-    refkey?: unknown,
+    refkey?: Refkey,
     meta?: TSymbolMeta
   ): OutputSymbol<TScopeMeta, TSymbolMeta>;
 
   resolveDeclarationByKey(
     currentScope: OutputScope<TScopeMeta, TSymbolMeta>,
-    refkey: unknown
+    refkey: Refkey
   ): Ref<ResolutionResult<TScopeMeta, TSymbolMeta> | undefined>;
 }
 
@@ -157,12 +157,12 @@ export function createOutputBinder<
 
     if (targetDeclaration) {
       // this any cast hides a ridiculous error, fix it probably
-      declSignal = ref(targetDeclaration) as any;
+      declSignal = shallowRef(targetDeclaration) as any;
     } else {
       if (waitingDeclarations.has(key)) {
         declSignal = waitingDeclarations.get(key)!;
       } else {
-        declSignal = ref();
+        declSignal = shallowRef();
         waitingDeclarations.set(key, declSignal);
       }
     }
@@ -216,7 +216,7 @@ export function createOutputBinder<
 export function resolve<
   TScopeMeta extends Metadata,
   TSymbolMeta extends Metadata
->(refkey: RefKey): Ref<ResolutionResult<TScopeMeta, TSymbolMeta>> {
+>(refkey: Refkey): Ref<ResolutionResult<TScopeMeta, TSymbolMeta>> {
   const scope = useScope();
   const binder = scope.binder;
 

@@ -1,34 +1,25 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import {
-  BinderContext,
-  Declaration,
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
   keyedChild,
   mapJoin,
-  useBinder,
-  useContext,
-  useScope,
 } from "@alloy-js/core";
+import {
+  Declaration,
+  DeclarationProps,
+} from "./Declaration.js";
+import { useTSNamePolicy } from "../name-policy.js";
 
-export interface FunctionDeclarationProps {
-  refkey?: unknown;
-  name: string;
+export interface FunctionDeclarationProps extends DeclarationProps {
   parameters?: Record<string, string>;
   returnType?: string;
   children?: Children;
-  export?: boolean;
-  default?: boolean;
 }
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
-  const binder = useBinder();
-  const scope = useScope();
-  const sym = binder.createSymbol(props.name, scope, props.refkey ?? props.name, {
-    export: props.export,
-    default: props.default,
-  });
+  const namePolicy = useTSNamePolicy();
   const children = childrenArray(() => props.children);
   const parametersChild = findKeyedChild(children, "params");
   const bodyChild = findKeyedChild(children, "body");
@@ -44,10 +35,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     bodyChild ??
     (<FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>)()
       .children;
+  
+  const name = namePolicy.getName(props.name, "function");
 
   return (
-    <Declaration symbol={sym}>
-      {props.export ? "export " : ""}{props.default ? "default " : ""}function {props.name}({sParams}){sReturnType} {"{"}
+    <Declaration {...props} name={name}>
+      function {name}({sParams}){sReturnType} {"{"}
         {sBody}
       {"}"}
     </Declaration>
@@ -62,6 +55,8 @@ export interface FunctionParametersProps {
 FunctionDeclaration.Parameters = function Parameters(
   props: FunctionParametersProps
 ) {
+  const namePolicy = useTSNamePolicy();
+
   let value;
 
   if (props.children) {
@@ -70,7 +65,7 @@ FunctionDeclaration.Parameters = function Parameters(
     value = mapJoin(
       new Map(Object.entries(props.parameters)),
       (key, value) => {
-        return [key, ": ", value];
+        return [namePolicy.getName(key, "parameter"), ": ", value];
       },
       { joiner: "," }
     );

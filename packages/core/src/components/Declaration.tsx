@@ -1,14 +1,15 @@
 import { OutputSymbol, BinderContext } from "../binder.js";
 import { createContext, useContext } from "../context.js";
 import { Children } from "../jsx-runtime.js";
+import { Refkey, refkey } from "../refkey.js";
 import { ScopeContext } from "./Scope.js";
 
 const DeclarationContext = createContext<OutputSymbol>();
 
 export interface DeclarationProps {
   name?: string;
-  refkey?: unknown;
-  symbol?: OutputSymbol;
+  refkey?: Refkey;
+  symbol?: OutputSymbol<any, any>;
   children?: Children;
 }
 export function Declaration(props: DeclarationProps) {
@@ -30,8 +31,8 @@ export function Declaration(props: DeclarationProps) {
   if (props.symbol) {
     declaration = props.symbol
   } else {
-    const refkey = props.refkey ? props.refkey : props.name;
-    declaration = binder.createSymbol(props.name!, scope, refkey);
+    const rk = props.refkey ? props.refkey : refkey(props.name);
+    declaration = binder.createSymbol(props.name!, scope, rk);
   }
   
   return <DeclarationContext.Provider value={declaration}>

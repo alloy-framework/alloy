@@ -17,6 +17,7 @@ import {
   ImportStatements,
 } from "./ImportStatement.js";
 import { relative, join, normalize } from "pathe";
+import { usePackage } from "./PackageDirectory.jsx";
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol, currentPath: string): string;
 }
@@ -26,28 +27,32 @@ export const SourceFileContext = createContext<SourceFileContext>();
 export interface SourceFileProps {
   path: string;
   children?: Children;
+  export?: boolean | string;
 }
 
 export function SourceFile(props: SourceFileProps) {
   const importRecords: ImportRecords = reactive(new Map());
-  
+  const importedSymbols = new Map<OutputSymbol, string>();
+  const localImportNames = new Set<string>();
+
   // todo: this is probably recreating this set a lot, could be more optimal.
-  const localImportNames = computed(() => {
-    let names: Set<string> = new Set();
+  effect(() => {
     for (const record of importRecords.values()) {
       if (record.default) {
-        names.add(record.default.localName);
+        localImportNames.add(record.default.localName);
       }
 
       for (const named of record.named) {
-        names.add(named.localName);
+        localImportNames.add(named.localName);
       }
     }
-
-    return names;
   });
 
   function addImport(targetSymbol: OutputSymbol, currentPath: string): string {
+    if (importedSymbols.has(targetSymbol)) {
+      return importedSymbols.get(targetSymbol)!;
+    }
+
     // todo: don't allow importing non-exported symbols
     let targetPath = relative(currentPath, targetSymbol.scope.name);
     if (targetPath[0] !== ".") {
@@ -60,10 +65,10 @@ export function SourceFile(props: SourceFileProps) {
 
     const record = importRecords.get(targetPath)!;
     let localName: string;
-    if (localImportNames.value.has(targetSymbol.name)) {
+    if (localImportNames.has(targetSymbol.name)) {
       let suffix = 1;
       let baseName = targetSymbol.name;
-      while (localImportNames.value.has(baseName + "_" + suffix)) {
+      while (localImportNames.has(baseName + "_" + suffix)) {
         suffix++;
       }
       localName = baseName + "_" + suffix;
@@ -79,6 +84,8 @@ export function SourceFile(props: SourceFileProps) {
       record.named.add({ bindingName: targetSymbol.name, localName: localName });
     }
 
+    importedSymbols.set(targetSymbol, localName);
+
     return localName;
   }
 
@@ -87,6 +94,17 @@ export function SourceFile(props: SourceFileProps) {
   };
 
   const currentDir = useContext(SourceDirectoryContext)!.path;
+  const path = join(currentDir, props.path);
+
+  if (props.export) {
+    const pkg = usePackage();
+    if (typeof props.export === "boolean") {
+      pkg.addExport(path, path);
+    } else {
+      pkg.addExport(props.export, path);
+    }
+    
+  }
 
   return (
     <CoreSourceFile path={props.path} filetype="typescript">
@@ -95,9 +113,8 @@ export function SourceFile(props: SourceFileProps) {
           <ImportStatements records={importRecords} />
           {"\n"}
         </>
-      ) : undefined}
-      <SourceFileContext.Provider value={sfContext}>
-        <Scope name={join(currentDir, props.path)} kind="module">
+      ) : undefined}<SourceFileContext.Provider value={sfContext}>
+        <Scope name={path} kind="module">
           {props.children}
         </Scope>
       </SourceFileContext.Provider>

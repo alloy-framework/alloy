@@ -4,11 +4,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm -r --workspace-concurrency=Infinity build"
+    "build": "pnpm -r --workspace-concurrency=Infinity build",
+    "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\""
   },
   "pnpm": {
     "overrides": {
       "esbuild": "0.23"
     }
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

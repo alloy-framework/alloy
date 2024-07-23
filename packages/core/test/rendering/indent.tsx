@@ -1,7 +1,7 @@
 // prettier-ignore
 import { it, expect, describe } from "vitest";
 import "../../testing/extend-expect.js";
-import { Indent } from "../../src/components/Indent.jsx";
+import { Indent } from "../../src/components/Indent.js";
 
 describe("Indent component", () => {
   it("indents explicitly indented content on a single line", () => {

@@ -171,18 +171,70 @@ function traceRender(phase: string, message: string) {
   console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
 
-export function render(children: Children) {
+export function render(children: Children): OutputDirectory {
   const tree = renderTree(children);
+  let rootDirectory: OutputDirectory | undefined = undefined;
+  collectSourceFiles(undefined, tree);
 
-  // collect source files and nodes and such.
-  const rootDirectory: OutputDirectory = {
-    kind: "directory",
-    path: "./",
-    contents: [],
-  };
+  if (!rootDirectory) {
+    throw new Error(
+      "No root directory found. Make sure you are using the Output component."
+    );
+  }
 
-  collectSourceFiles(rootDirectory, tree);
   return rootDirectory;
+
+  function collectSourceFiles(
+    currentDirectory: OutputDirectory | undefined,
+    root: RenderTextTree
+  ) {
+    if (!Array.isArray(root)) {
+      return;
+    }
+    const context = getContextForRenderNode(root);
+
+    if (!context) {
+      return recurse(currentDirectory);
+    }
+
+    if (context.meta?.directory) {
+      const directory: OutputDirectory = {
+        kind: "directory",
+        path: context.meta?.directory.path,
+        contents: [],
+      };
+
+      if (currentDirectory) {
+        currentDirectory.contents.push(directory);
+      } else {
+        rootDirectory = directory;
+      }
+      recurse(directory);
+    } else if (context.meta?.sourceFile) {
+      if (!currentDirectory) {
+        // This shouldn't happen if you're using the Output component.
+        throw new Error(
+          "Source file doesn't have parent directory. Make sure you have used the Output component."
+        );
+      }
+      const sourceFile: OutputFile = {
+        kind: "file",
+        path: context.meta?.sourceFile.path,
+        filetype: context.meta?.sourceFile.filetype,
+        contents: (root as any).flat(Infinity).join(""),
+      };
+
+      currentDirectory.contents.push(sourceFile);
+    } else {
+      recurse(currentDirectory);
+    }
+
+    function recurse(cwd: OutputDirectory | undefined) {
+      for (const child of root) {
+        collectSourceFiles(cwd, child as RenderTextTree);
+      }
+    }
+  }
 }
 
 export function renderTree(children: Children) {
@@ -201,47 +253,6 @@ export function renderTree(children: Children) {
   return rootElem;
 }
 
-function collectSourceFiles(
-  currentDirectory: OutputDirectory,
-  root: RenderTextTree
-) {
-  if (!Array.isArray(root)) {
-    return;
-  }
-  const context = getContextForRenderNode(root);
-
-  if (!context) {
-    return recurse(currentDirectory);
-  }
-
-  if (context.meta?.directory) {
-    const directory: OutputDirectory = {
-      kind: "directory",
-      path: context.meta?.directory.path,
-      contents: [],
-    };
-
-    currentDirectory.contents.push(directory);
-    recurse(directory);
-  } else if (context.meta?.sourceFile) {
-    const sourceFile: OutputFile = {
-      kind: "file",
-      path: context.meta?.sourceFile.path,
-      filetype: context.meta?.sourceFile.filetype,
-      contents: (root as any).flat(Infinity).join(""),
-    };
-
-    currentDirectory.contents.push(sourceFile);
-  } else {
-    recurse(currentDirectory);
-  }
-
-  function recurse(cwd: OutputDirectory) {
-    for (const child of root) {
-      collectSourceFiles(cwd, child as RenderTextTree);
-    }
-  }
-}
 interface RenderState {
   indent: string;
   literalIndent: string;
@@ -381,6 +392,9 @@ function appendChild(
     }, child.component.name);
     state.lastWasString = false;
   } else if (typeof child === "function") {
+    if ((child as any).__WTF__) {
+      debugger;
+    }
     state.lastWasString = false;
     let wrappedChild;
 
@@ -396,6 +410,9 @@ function appendChild(
     const index = node.length;
     // todo: handle indent
     effect((prev: any) => {
+      if ((child as any).__WTF__) {
+        debugger;
+      }
       traceRender("memoEffect:run", "");
       let res = wrappedChild();
       while (typeof res === "function" && !isComponentCreator(res)) {
@@ -403,7 +420,8 @@ function appendChild(
       }
       const newNodes: RenderTextTree = [];
       renderWorker(newNodes, res, state);
-      node.splice(index, prev ? prev.length : 0, ...newNodes);
+      //node.splice(index, prev ? prev.length : 0, ...newNodes);
+      node[index] = newNodes;
       return newNodes;
     });
     traceRender("appendChild:memo-done", "");

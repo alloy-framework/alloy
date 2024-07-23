@@ -13,16 +13,16 @@ function getObjectKey(value: WeakKey) {
 }
 
 declare const RefkeySym: unique symbol;
-export type RefKey = string & { [RefkeySym]: true };
+export type Refkey = string & { [RefkeySym]: true };
 
-function getKey(value: unknown): RefKey {
+function getKey(value: unknown): Refkey {
   if (typeof value === "object" && value !== null) {
-    return getObjectKey(value) as RefKey;
+    return getObjectKey(value) as Refkey;
   } else {
-    return `s${String(value)}` as RefKey;
+    return `s${String(value)}` as Refkey;
   }
 }
 
-export function refkey(...args: unknown[]) {
-  return args.map((v) => getKey(v)).join("\u2063");
+export function refkey(...args: unknown[]): Refkey {
+  return args.map((v) => getKey(v)).join("\u2063") as Refkey;
 }

@@ -14,7 +14,7 @@ const res = ay.render(
     </ts.SourceFile>
 
     <ts.SourceFile path="test2.ts">
-      const v = <ts.Reference refkey="foo" />;
+      const v = <ts.Reference refkey={ay.refkey("foo")} />;
     </ts.SourceFile>
   </ay.Output>
 );

@@ -10,6 +10,8 @@ export type TypeScriptElements =
   | "object-member-getter"
   | "class-member-data"
   | "class-member-getter"
+  | "interface"
+  | "interface-member"
   | "type";
 
 export function createTSNamePolicy(): NamePolicy<TypeScriptElements> {
@@ -17,6 +19,7 @@ export function createTSNamePolicy(): NamePolicy<TypeScriptElements> {
     switch (element) {
       case "class":
       case "type":
+      case "interface":
         return pascalCase(name);
       default:
         return camelCase(name);

@@ -2,8 +2,10 @@
   "name": "@alloy-js/typescript",
   "version": "1.0.0",
   "description": "",
-  "exports": "./dist/src/index.js",
-  "types": "types/src/index.d.ts",
+  "exports": {
+    "import": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts"
+  },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
     "build-tsc": "tsc -p .",

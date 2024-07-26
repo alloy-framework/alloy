@@ -1,9 +1,8 @@
-import { render, Output, mapJoin, reactive, renderTree, effect, memo, ref, refkey, OutputDirectory } from "@alloy-js/core";
+import { render, Output, refkey} from "@alloy-js/core";
 import { expect, it } from "vitest";
 import "@alloy-js/core/testing";
-
 import * as ts from "../src/index.js";
-import { d, renderToString } from "@alloy-js/core/testing";
+import { assertFileContents } from "./utils.jsx";
 
 it("works", () => {
   expect(<Output>
@@ -17,7 +16,7 @@ it("works", () => {
 it("works end-to-end", () => {
   const TestType = refkey("TestType");
 
-  const tree = render(
+  const res = render(
     <Output>
       <ts.SourceFile path="types.ts">
         <ts.TypeDeclaration name="TestType" refkey={TestType}>
@@ -32,22 +31,14 @@ it("works end-to-end", () => {
     </Output>
   );
 
-  printOutput(tree);
+  assertFileContents(res, {
+    "types.ts": `
+      type TestType = "hello" | "goodbye";
+    `,
+    "test.ts": `
+      import { TestType } from "./types.js";
+
+      export let hi: TestType = "hello";
+    `
+  });
 });
-
-
-
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1);
-    } else {
-      console.log(
-        `\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`
-      );
-      console.log(item.contents.trimStart());
-    }
-  }
-}

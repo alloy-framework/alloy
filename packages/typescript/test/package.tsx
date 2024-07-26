@@ -11,6 +11,7 @@ import {
 import * as ts from "../src/components/index.js";
 import { d } from "@alloy-js/core/testing";
 import { PackageDirectory } from "../src/components/PackageDirectory.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("exports source files", () => {
 
@@ -39,22 +40,35 @@ it("exports source files", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "greeting.ts": `
+      function getGreeting() {
+        return "Hello world!";
+      }
+    `,
+    "printing.ts": `
+      import { getGreeting } from "./greeting.js";
+
+      const greeting = getGreeting();
+      export function printGreeting() {
+        console.log(greeting);
+      }
+    `,
+    "index.ts": `
+      export * from "./greeting.js";
+      export * from "./printing.js";
+    `,
+    "package.json": `
+      {
+          "name": "greeting-js",
+          "version": "1.0.0",
+          "type": "module",
+          "dependencies": {},
+          "exports": {
+              "./printing.js": "../printing.js",
+              ".": "../index.js"
+          }
+      }
+    `
+  });
 });
-
-
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1);
-    } else {
-      console.log(
-        `\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`
-      );
-      console.log(item.contents.trimStart());
-    }
-  }
-}
-

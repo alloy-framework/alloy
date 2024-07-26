@@ -3,6 +3,7 @@ import { expect, it } from "vitest";
 import { render, Output, SourceFile, Declaration, OutputDirectory, refkey } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("works with back references", () => {
   const res = render(
@@ -19,7 +20,16 @@ it("works with back references", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      const foo = 1;
+    `,
+    "test2.ts": `
+      import { foo } from "./test1.js";
+
+      const v = foo;
+    `
+  });
 });
 
 it("works with forward references", () => {
@@ -36,18 +46,14 @@ it("works with forward references", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      const foo = 1;
+    `,
+    "test2.ts": `
+      import { foo } from "./test1.js";
+      
+      const v = foo;
+    `
+  });
 });
-
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1)
-    } else {
-      console.log(`\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`);
-      console.log(item.contents.trimStart());
-    }
-  }
-}

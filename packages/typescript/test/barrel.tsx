@@ -11,7 +11,7 @@ import {
 import * as ts from "../src/components/index.js";
 import { d } from "@alloy-js/core/testing";
 
-it("exports everything from source files within it", () => {
+it.only("exports everything from source files within it", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts" />

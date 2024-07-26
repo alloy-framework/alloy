@@ -1,4 +1,5 @@
 import { refkey, Refkey, useBinder, useScope, Declaration as CoreDeclaration, Children } from "@alloy-js/core";
+import { TSOutputScope, TSOutputSymbol } from "../symbols.js";
 
 export interface DeclarationProps {
   name: string;
@@ -17,14 +18,21 @@ export function Declaration(props: DeclarationProps) {
 
 export function createTsSymbol(props: DeclarationProps) {
   const binder = useBinder();
-  const scope = useScope();
-  return binder.createSymbol(
+  const scope = useScope() as TSOutputScope;
+
+  const sym = binder.createSymbol<TSOutputSymbol>(
     props.name,
     scope,
     props.refkey ?? refkey(props.name),
     {
-      export: props.export,
-      default: props.default,
+      export: !!props.export,
+      default: !!props.default,
     }
   );
+
+  if (props.export && scope.kind === "module") {
+    scope.exportedSymbols.set(sym.refkey, sym);
+  }
+
+  return sym;
 }

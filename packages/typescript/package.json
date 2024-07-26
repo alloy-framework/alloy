@@ -2,7 +2,7 @@
   "name": "@alloy-js/typescript",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/index.js",
+  "exports": "./dist/src/index.js",
   "types": "types/src/index.d.ts",
   "scripts": {
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",

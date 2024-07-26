@@ -3,11 +3,11 @@ import { createContext, useContext } from "../context.js";
 import { Children } from "../jsx-runtime.js";
 
 export interface ScopeProps {
-  kind?: string;
-  name: string;
-  children?: Children;
-}
-
+    kind?: string;
+    name?: string;
+    value?: OutputScope;
+    children?: Children;
+  }
 
 export const ScopeContext = createContext<OutputScope>();
 
@@ -16,11 +16,19 @@ export function useScope() {
 }
 
 export function Scope(props: ScopeProps) {
-  const kind = props.kind ?? "file";
-  const parentScope = useScope();
-  const binder = useContext(BinderContext)!;
-  const newScope = binder.createScope(kind, props.name, parentScope);
-  return <ScopeContext.Provider value={newScope as any}>
-    {props.children}
-  </ScopeContext.Provider>
+  let scope: OutputScope;
+  if (props.value) {
+    scope = props.value;
+  } else {
+    const kind = props.kind ?? "file";
+    const parentScope = useScope();
+    const binder = useContext(BinderContext)!;
+    scope = binder.createScope(kind, props.name!, parentScope);
+  }
+
+  return (
+    <ScopeContext.Provider value={scope}>
+      {props.children}
+    </ScopeContext.Provider>
+  );
 }

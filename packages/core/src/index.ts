@@ -7,4 +7,13 @@ export * from "./refkey.js";
 export * from "./jsx-runtime.js";
 export * from "./name-policy.js";
 
-export { reactive, ref, computed, isProxy, toRaw } from "@vue/reactivity";
+export {
+  reactive,
+  shallowReactive,
+  ref,
+  type Ref,
+  shallowRef,
+  computed,
+  isProxy,
+  toRaw,
+} from "@vue/reactivity";

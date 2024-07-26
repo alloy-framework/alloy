@@ -1,4 +1,4 @@
-import { Children, createContext, reactive, Scope, SourceDirectory, useBinder, useContext, useScope } from "@alloy-js/core";
+import { Children, createContext, reactive, Ref, Scope, shallowRef, SourceDirectory, SourceDirectoryContext, useBinder, useContext, useScope } from "@alloy-js/core";
 import {
   ExportConditions,
   ExportPath,
@@ -9,10 +9,12 @@ import {
 import { modulePath } from "../utils.js";
 import { join } from "pathe";
 import { TSModuleScope, TSPackageScope } from "../symbols.js";
+import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {
   dependencies?: Record<string, string>;
   exports?: PackageExports | ExportPath;
+  tsConfig?: { outDir?: string };
   children?: Children;
 }
 
@@ -32,10 +34,20 @@ export interface PackageContext {
   addRawExport(publicPath: string, exportPath: string | ExportConditions): void;
   addDependency(pkg: TSPackageScope): void;
   addRawDependency(packageName: string, version: string): void;
+  addModule(module: TSModuleScope): void;
+
+  /**
+   * A ref for a function that maps a ts file to a JS file.
+   */
+  outFileMapper: Ref<(path: string) => string>;
 }
 
 export function PackageDirectory(props: PackageDirectoryProps) {
-  const packageContext = createPackageContext(props.name, props.version);
+  const packageContext = createPackageContext(
+    props.name,
+    props.version,
+    props.path
+  );
 
   if (props.exports) {
     if (typeof props.exports === "string") {
@@ -57,19 +69,26 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     <PackageContext.Provider value={packageContext}>
       <Scope value={packageContext.scope}>
         <PackageJsonFile {...props} />
+        <TSConfigJson {... props.tsConfig} />
         {props.children}
       </Scope>
     </PackageContext.Provider>
   </SourceDirectory>
 }
 
-function createPackageContext(name: string, version: string): PackageContext {
+function createPackageContext(name: string, version: string, path: string): PackageContext {
+  const parentDir = useContext(SourceDirectoryContext);
+  // todo: this can probably just use context.
+  const fullPath = parentDir ? join(parentDir.path, path) : path;
+  
   const scope = useBinder().createScope<TSPackageScope>("package", name, useScope(), {
     exportedSymbols: reactive(new Map()),
     dependencies: reactive(new Set()),
     rawDependencies: reactive(new Map()),
     rawExports: reactive({}),
-    version
+    modules: reactive(new Set()),
+    version,
+    path: fullPath
   });
 
   return {
@@ -85,6 +104,10 @@ function createPackageContext(name: string, version: string): PackageContext {
     },
     addRawExport(localPath, exportPath) {
       scope.rawExports[localPath] = exportPath;
-    }
+    },
+    addModule(module) {
+      scope.modules.add(module);
+    },
+    outFileMapper: shallowRef((path: string) => modulePath(path))
   }
 }

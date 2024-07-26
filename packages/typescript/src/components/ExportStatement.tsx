@@ -1,6 +1,6 @@
 import { dirname, relative } from "pathe";
 import { TSModuleScope, TSOutputSymbol } from "../symbols.js";
-import { useSourceFile } from "./SourceFile.jsx";
+import { useSourceFile } from "./SourceFile.js";
 import { modulePath } from "../utils.js";
 
 export interface ExportStatementProps {

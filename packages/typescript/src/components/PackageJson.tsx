@@ -37,7 +37,10 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
           (dependency) => [dependency.name, dependency.version]
         )
       ]),
-      devDependencies: props.devDependencies,
+      devDependencies: {
+        ... props.devDependencies,
+        "typescript": "^5.5.2"
+      },
       scripts: props.scripts,
       exports: undefined as any
     }
@@ -46,14 +49,14 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
     for (const [publicPath, module] of pkg.scope.exportedSymbols) {
       exportsEntries.push([
         publicPath,
-        modulePath(relative(pkg.scope.name, module.name))
+        modulePath(pkg.outFileMapper.value(module.name))
       ]);
     }
 
     pkgJson.exports = exportsEntries.length === 0 ? undefined :
                       Object.fromEntries(exportsEntries);
 
-    return JSON.stringify(pkgJson, null, 4);
+    return JSON.stringify(pkgJson, null, 2);
   });
 
   return <SourceFile path="package.json" filetype="json">

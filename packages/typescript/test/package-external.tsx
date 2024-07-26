@@ -37,27 +37,27 @@ it("imports external packages", () => {
 
   expect(consumerPkgJson.contents).toEqual(d`
     {
-        "name": "consumer",
-        "version": "1.0.0",
-        "type": "module",
-        "dependencies": {
-            "greeting-lib": "1.0.0"
-        },
-        "exports": {
-            ".": "./ref.js"
-        }
+      "name": "consumer",
+      "version": "1.0.0",
+      "type": "module",
+      "dependencies": {
+        "greeting-lib": "1.0.0"
+      },
+      "exports": {
+        ".": "./dist/ref.js"
+      }
     }
   `);
 
   expect(greetingPkgJson.contents).toEqual(d`
     {
-        "name": "greeting-lib",
-        "version": "1.0.0",
-        "type": "module",
-        "dependencies": {},
-        "exports": {
-            ".": "./index.js"
-        }
+      "name": "greeting-lib",
+      "version": "1.0.0",
+      "type": "module",
+      "dependencies": {},
+      "exports": {
+        ".": "./dist/index.js"
+      }
     }
   `);
 

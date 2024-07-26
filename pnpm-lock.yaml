@@ -84,7 +84,7 @@ importers:
         version: 5.5.2
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0
+        version: 1.6.0(@types/node@20.14.12)
 
   packages/sample:
     dependencies:
@@ -107,6 +107,9 @@ importers:
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
         version: 11.1.6(rollup@4.18.1)(tslib@2.6.3)(typescript@5.5.2)
+      '@types/node':
+        specifier: ^20.14.12
+        version: 20.14.12
       babel-preset-alloy:
         specifier: workspace:*
         version: link:../babel-preset-alloy
@@ -118,7 +121,7 @@ importers:
         version: 5.5.2
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0
+        version: 1.6.0(@types/node@20.14.12)
 
   packages/typescript:
     dependencies:
@@ -155,7 +158,7 @@ importers:
         version: 5.5.2
       vitest:
         specifier: ^1.6.0
-        version: 1.6.0
+        version: 1.6.0(@types/node@20.14.12)
 
 packages:
 
@@ -625,6 +628,9 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  '@types/node@20.14.12':
+    resolution: {integrity: sha512-r7wNXakLeSsGT0H1AU863vS2wa5wBOK4bWMjZz2wj+8nBx+m5PeIn0k8AloSLpRuiwdRQZwarZqHE4FNArPuJQ==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -1196,6 +1202,9 @@ packages:
   ufo@1.5.3:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
 
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   update-browserslist-db@1.0.16:
     resolution: {integrity: sha512-KVbTxlBYlckhF5wgfyZXTWnMn7MMZjMu9XG8bPlliUOP9ThaF4QnhP8qrjrH7DRzHfSk0oQv1wToW+iA5GajEQ==}
     hasBin: true
@@ -1732,6 +1741,10 @@ snapshots:
   '@sinclair/typebox@0.27.8': {}
 
   '@types/estree@1.0.5': {}
+
+  '@types/node@20.14.12':
+    dependencies:
+      undici-types: 5.26.5
 
   '@types/resolve@1.20.2': {}
 
@@ -2296,6 +2309,8 @@ snapshots:
 
   ufo@1.5.3: {}
 
+  undici-types@5.26.5: {}
+
   update-browserslist-db@1.0.16(browserslist@4.23.1):
     dependencies:
       browserslist: 4.23.1
@@ -2304,13 +2319,13 @@ snapshots:
 
   validate-html-nesting@1.2.2: {}
 
-  vite-node@1.6.0:
+  vite-node@1.6.0(@types/node@20.14.12):
     dependencies:
       cac: 6.7.14
       debug: 4.3.5
       pathe: 1.1.2
       picocolors: 1.0.1
-      vite: 5.3.2
+      vite: 5.3.2(@types/node@20.14.12)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -2321,15 +2336,16 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.3.2:
+  vite@5.3.2(@types/node@20.14.12):
     dependencies:
       esbuild: 0.23.0
       postcss: 8.4.39
       rollup: 4.18.1
     optionalDependencies:
+      '@types/node': 20.14.12
       fsevents: 2.3.3
 
-  vitest@1.6.0:
+  vitest@1.6.0(@types/node@20.14.12):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -2348,9 +2364,11 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.8.0
       tinypool: 0.8.4
-      vite: 5.3.2
-      vite-node: 1.6.0
+      vite: 5.3.2(@types/node@20.14.12)
+      vite-node: 1.6.0(@types/node@20.14.12)
       why-is-node-running: 2.2.2
+    optionalDependencies:
+      '@types/node': 20.14.12
     transitivePeerDependencies:
       - less
       - lightningcss

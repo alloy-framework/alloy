@@ -1,16 +1,12 @@
 import {
   Refkey,
-  ResolutionResult,
   resolve,
-  ScopeContext,
-  SourceDirectoryContext,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 import { SourceFileContext } from "./SourceFile.js";
 import { memo, untrack } from "@alloy-js/core/jsx-runtime";
-import { TSOutputScope, TSOutputSymbol, TSPackageScope } from "../symbols.js";
-import { usePackage } from "./PackageDirectory.jsx";
+import { TSOutputScope, TSOutputSymbol } from "../symbols.js";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface ReferenceProps {
   refkey: Refkey;

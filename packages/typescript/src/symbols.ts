@@ -1,4 +1,4 @@
-import { OutputScope, OutputSymbol, Refkey } from "@alloy-js/core";
+import { OutputScope, OutputSymbol, Ref, Refkey } from "@alloy-js/core";
 import { ExportPath, PackageExports } from "./components/PackageJson.jsx";
 
 export interface TSOutputSymbol extends OutputSymbol {
@@ -28,6 +28,11 @@ export interface TSPackageScope extends OutputScope {
   exportedSymbols: Map<string, TSModuleScope>;
 
   /**
+   * The path of the root directory of the package.
+   */
+  path: string;
+
+  /**
    * The scopes for the packages this package depends on.
    */
   dependencies: Set<TSPackageScope>;
@@ -45,6 +50,12 @@ export interface TSPackageScope extends OutputScope {
    * `SourceFile` to add an export.
    */
   rawExports: PackageExports;
+
+  /**
+   * All of the modules contained within the package. These modules may or may not
+   * be exported.
+   */
+  modules: Set<TSModuleScope>;
 }
 
 export interface TSModuleScope extends OutputScope {

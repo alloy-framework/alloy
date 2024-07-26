@@ -19,7 +19,7 @@ import {
   ImportStatements,
 } from "./ImportStatement.js";
 import { relative, join, normalize } from "pathe";
-import { usePackage } from "./PackageDirectory.js";
+import { PackageContext, usePackage } from "./PackageDirectory.js";
 import { TSModuleScope, TSOutputSymbol, TSPackageScope } from "../symbols.js";
 import { modulePath } from "../utils.js";
 import { getSourceDirectoryData } from "../source-directory-data.js";
@@ -109,6 +109,10 @@ export function SourceFile(props: SourceFileProps) {
     exportedSymbols: reactive(new Map())
   })
   sdData.modules.add(scope);
+  const pkg = useContext(PackageContext);
+  if (pkg) {
+    pkg.addModule(scope);
+  }
   
   const sfContext: SourceFileContext = {
     scope,

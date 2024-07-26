@@ -1,5 +1,7 @@
 import { memo, reactive, SourceFile } from "@alloy-js/core";
 import { usePackage } from "./PackageDirectory.js";
+import { modulePath } from "../utils.js";
+import { relative } from "pathe";
 
 export interface PackageJsonFileProps {
   name: string;
@@ -29,13 +31,24 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       name: props.name,
       version: props.version,
       type: props.type ?? "module",
-      dependencies: Object.fromEntries(pkg.dependencies.entries()),
+      dependencies: Object.fromEntries([
+        ... pkg.scope.rawDependencies.entries(),
+        ... Array.from(pkg.scope.dependencies).map(
+          (dependency) => [dependency.name, dependency.version]
+        )
+      ]),
       devDependencies: props.devDependencies,
       scripts: props.scripts,
       exports: undefined as any
     }
 
-    const exportsEntries = Array.from(pkg.exports.entries());
+    const exportsEntries: [string, ExportPath][] = [];
+    for (const [publicPath, module] of pkg.scope.exportedSymbols) {
+      exportsEntries.push([
+        publicPath,
+        modulePath(relative(pkg.scope.name, module.name))
+      ]);
+    }
 
     pkgJson.exports = exportsEntries.length === 0 ? undefined :
                       Object.fromEntries(exportsEntries);

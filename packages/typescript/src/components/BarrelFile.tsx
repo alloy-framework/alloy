@@ -1,6 +1,9 @@
-import { mapJoin, memo, SourceDirectoryContext, useContext } from "@alloy-js/core";
+import { mapJoin, memo, SourceDirectoryContext, SourceFileContext, useContext } from "@alloy-js/core";
 import { SourceFile } from "./SourceFile.js";
 import { basename, join } from "pathe";
+import { getSourceDirectoryData } from "../source-directory-data.js";
+import { ExportStatement } from "./ExportStatement.jsx";
+import { TSModuleScope } from "../symbols.js";
 export interface BarrelFileProps {
   path?: string;
   export?: boolean | string;
@@ -9,35 +12,35 @@ export interface BarrelFileProps {
 export function BarrelFile(props: BarrelFileProps) {
   const path = props.path ?? "index.ts";
   const directory = useContext(SourceDirectoryContext)!;
+  const sdData = getSourceDirectoryData(directory);
+  
+  const exports = memo(() => {
+    const subdirs =
+      directory.contents.filter(c => !(c as any).filetype) as SourceDirectoryContext[];
 
-  const imports = memo(() => {
-    // todo: this filter is possibly incorrect if another file happens to have the same suffix
-    // probably better to do this calculation on the barrel file's full path
-    const otherFiles = directory.contents
-      .filter(
-        (c) =>
-          !c.path.endsWith(path) &&
-          ((c as any).filetype === undefined || (c as any).filetype === "typescript")
-      )
-      .map((c) => {
-        const relativePath = basename(c.path).replace(/\.ts$/, ".js");
-        if (c.hasOwnProperty("filetype")) {
-          return makeRelative(relativePath);
-        } else {
-          return makeRelative(join(relativePath, "index.js"));
-        }
-      });
+    const nestedBarrels: TSModuleScope[] = [];
+    for (const subdir of subdirs) {
+      const nestedSdData = getSourceDirectoryData(subdir);
+      const nestedBarrel = Array.from(nestedSdData.modules)
+        .find(m => basename(m.name) === "index.ts");
+      if (nestedBarrel) {
+        nestedBarrels.push(nestedBarrel);
+      }
+    }
 
-    return mapJoin(otherFiles, (file) => 
-      <>export * from "{file}";</>
-    , { joiner: "\n"});
+    const sourceFiles = Array.from(sdData.modules)
+      .filter(m => basename(m.name) !== "index.ts")
+
+    const allModules = [
+      ... sourceFiles,
+      ... nestedBarrels
+    ]
+    return mapJoin(allModules, (module) => {
+      return <ExportStatement star from={module} />
+    });
   });
 
   return <SourceFile path={path} export={props.export}>
-    {imports}
+    {exports}
   </SourceFile>
-}
-
-function makeRelative(path: string) {
-  return path[0] === "." ? path : "./" + path;
 }

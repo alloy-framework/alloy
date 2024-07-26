@@ -7,7 +7,9 @@ import {
   createContext,
   mapJoin,
   reactive,
+  useBinder,
   useContext,
+  useScope,
 } from "@alloy-js/core";
 
 import { Children, effect, memo } from "@alloy-js/core/jsx-runtime";
@@ -18,12 +20,18 @@ import {
 } from "./ImportStatement.js";
 import { relative, join, normalize } from "pathe";
 import { usePackage } from "./PackageDirectory.js";
+import { TSModuleScope, TSOutputSymbol, TSPackageScope } from "../symbols.js";
+import { modulePath } from "../utils.js";
+import { getSourceDirectoryData } from "../source-directory-data.js";
 export interface SourceFileContext {
-  addImport(symbol: OutputSymbol, currentPath: string): string;
+  scope: TSModuleScope;
+  addImport(symbol: TSOutputSymbol, pkg?: TSPackageScope, publicPath?: string): string;
 }
 
 export const SourceFileContext = createContext<SourceFileContext>();
-
+export function useSourceFile() {
+  return useContext(SourceFileContext)!;
+}
 export interface SourceFileProps {
   path: string;
   children?: Children;
@@ -48,17 +56,21 @@ export function SourceFile(props: SourceFileProps) {
     }
   });
 
-  function addImport(targetSymbol: OutputSymbol, currentPath: string): string {
+  function addImport(targetSymbol: TSOutputSymbol, pkg?: TSPackageScope, publicPath?: string): string {
     if (importedSymbols.has(targetSymbol)) {
       return importedSymbols.get(targetSymbol)!;
     }
 
-    // todo: don't allow importing non-exported symbols
-    let targetPath = relative(currentPath, targetSymbol.scope.name);
-    if (targetPath[0] !== ".") {
-      targetPath = "./" + targetPath;
+    let targetPath: string;
+
+    if (pkg) {
+      targetPath = pkg.name + publicPath!.slice(1)
+    } else {
+      const currentPath = useContext(SourceDirectoryContext)!.path;
+      // todo: don't allow importing non-exported symbols
+      targetPath = modulePath(relative(currentPath, targetSymbol.scope.name));
     }
-    
+      
     if (!importRecords.has(targetPath)) {
       importRecords.set(targetPath, { named: new Set() });
     }
@@ -75,7 +87,7 @@ export function SourceFile(props: SourceFileProps) {
     } else {
       localName = targetSymbol.name;
     }
-    if ((targetSymbol.meta as any).default) {
+    if (targetSymbol.default) {
       record.default = {
         bindingName: targetSymbol.name,
         localName: localName,
@@ -88,22 +100,28 @@ export function SourceFile(props: SourceFileProps) {
 
     return localName;
   }
-
+  
+  const directoryContext = useContext(SourceDirectoryContext)!;
+  const sdData = getSourceDirectoryData(directoryContext);
+  const currentDir = directoryContext.path;
+  const path: string = join(currentDir, props.path);
+  const scope = useBinder().createScope<TSModuleScope>("module", path, useScope(), {
+    exportedSymbols: reactive(new Map())
+  })
+  sdData.modules.add(scope);
+  
   const sfContext: SourceFileContext = {
+    scope,
     addImport,
   };
-
-  const currentDir = useContext(SourceDirectoryContext)!.path;
-  const path = join(currentDir, props.path);
 
   if (props.export) {
     const pkg = usePackage();
     if (typeof props.export === "boolean") {
-      pkg.addExport(path, path);
+      pkg.addExport(path, scope);
     } else {
-      pkg.addExport(props.export, path);
+      pkg.addExport(props.export, scope);
     }
-    
   }
 
   return (
@@ -114,7 +132,7 @@ export function SourceFile(props: SourceFileProps) {
           {"\n"}
         </>
       ) : undefined}<SourceFileContext.Provider value={sfContext}>
-        <Scope name={path} kind="module">
+        <Scope value={scope}>
           {props.children}
         </Scope>
       </SourceFileContext.Provider>

@@ -9,7 +9,7 @@ const DeclarationContext = createContext<OutputSymbol>();
 export interface DeclarationProps {
   name?: string;
   refkey?: Refkey;
-  symbol?: OutputSymbol<any, any>;
+  symbol?: OutputSymbol;
   children?: Children;
 }
 export function Declaration(props: DeclarationProps) {

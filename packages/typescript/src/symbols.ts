@@ -56,6 +56,11 @@ export interface TSPackageScope extends OutputScope {
    * be exported.
    */
   modules: Set<TSModuleScope>;
+
+  /**
+   * Whether this is a built-in package provided by the platform.
+   */
+  builtin?: boolean;
 }
 
 export interface TSModuleScope extends OutputScope {

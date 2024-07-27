@@ -4,7 +4,6 @@ import {
   render,
   Output,
   refkey,
-  SourceDirectory
 } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { PackageDirectory } from "../src/components/PackageDirectory.js";
@@ -59,6 +58,9 @@ it("exports source files", () => {
         "version": "1.0.0",
         "type": "module",
         "dependencies": {},
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
         "exports": {
           "./printing.js": "./dist/printing.js",
           ".": "./dist/index.js"

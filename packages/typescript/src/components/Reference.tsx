@@ -30,7 +30,9 @@ export function Reference({ refkey }: ReferenceProps) {
       if (sourcePackage.kind !== "package") {
         throw new Error("Expected source to be package.");
       }
-      pkg.addDependency(sourcePackage)
+      if (!sourcePackage.builtin) {
+        pkg.addDependency(sourcePackage);
+      }
       // find public dependency
       for (const [publicPath, module] of sourcePackage.exportedSymbols) {
         if (module.exportedSymbols.has(targetDeclaration.refkey)) {

@@ -1,7 +1,7 @@
 import { render, Output, refkey, OutputDirectory } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { findFile } from "./utils.jsx";
+import { findFile } from "./utils.js";
 import { d } from "@alloy-js/core/testing";
 
 it("imports external packages", () => {
@@ -43,6 +43,9 @@ it("imports external packages", () => {
       "dependencies": {
         "greeting-lib": "1.0.0"
       },
+      "devDependencies": {
+        "typescript": "^5.5.2"
+      },
       "exports": {
         ".": "./dist/ref.js"
       }
@@ -55,6 +58,9 @@ it("imports external packages", () => {
       "version": "1.0.0",
       "type": "module",
       "dependencies": {},
+      "devDependencies": {
+        "typescript": "^5.5.2"
+      },
       "exports": {
         ".": "./dist/index.js"
       }

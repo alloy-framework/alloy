@@ -2,7 +2,7 @@ import { render, Output, refkey} from "@alloy-js/core";
 import { expect, it } from "vitest";
 import "@alloy-js/core/testing";
 import * as ts from "../src/index.js";
-import { assertFileContents } from "./utils.jsx";
+import { assertFileContents } from "./utils.js";
 
 it("works", () => {
   expect(<Output>

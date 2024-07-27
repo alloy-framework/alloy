@@ -243,3 +243,18 @@ export function resolve<
 
   return binder.resolveDeclarationByKey(scope, refkey) as any;
 }
+
+const createSymbolsSymbol: unique symbol = Symbol();
+export function getSymbolCreator(
+  creator: SymbolCreator
+): SymbolCreator[typeof createSymbolsSymbol] {
+  return creator[createSymbolsSymbol];
+}
+
+export function getSymbolCreatorSymbol(): typeof createSymbolsSymbol {
+  return createSymbolsSymbol;
+}
+
+export interface SymbolCreator {
+  [createSymbolsSymbol](binder: Binder): void;
+}

@@ -1,4 +1,4 @@
-import { Children, createContext, reactive, Ref, Scope, shallowRef, SourceDirectory, SourceDirectoryContext, useBinder, useContext, useScope } from "@alloy-js/core";
+import { Binder, Children, createContext, OutputScope, reactive, Ref, Scope, shallowRef, SourceDirectory, SourceDirectoryContext, useBinder, useContext, useScope } from "@alloy-js/core";
 import {
   ExportConditions,
   ExportPath,
@@ -76,20 +76,32 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   </SourceDirectory>
 }
 
-function createPackageContext(name: string, version: string, path: string): PackageContext {
-  const parentDir = useContext(SourceDirectoryContext);
-  // todo: this can probably just use context.
-  const fullPath = parentDir ? join(parentDir.path, path) : path;
-  
-  const scope = useBinder().createScope<TSPackageScope>("package", name, useScope(), {
+export function createTSPackageScope(
+  binder: Binder,
+  parentScope: OutputScope | undefined,
+  name: string,
+  version: string,
+  path: string,
+  builtin: boolean = false
+) {
+  return binder.createScope<TSPackageScope>("package", name, parentScope, {
     exportedSymbols: reactive(new Map()),
     dependencies: reactive(new Set()),
     rawDependencies: reactive(new Map()),
     rawExports: reactive({}),
     modules: reactive(new Set()),
     version,
-    path: fullPath
+    path: path,
+    builtin,
   });
+}
+
+function createPackageContext(name: string, version: string, path: string): PackageContext {
+  const parentDir = useContext(SourceDirectoryContext);
+  // todo: this can probably just use context.
+  const fullPath = parentDir ? join(parentDir.path, path) : path;
+  
+  const scope = createTSPackageScope(useBinder(), useScope(), name, version, fullPath);
 
   return {
     scope,

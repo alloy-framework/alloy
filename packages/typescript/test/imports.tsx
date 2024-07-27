@@ -8,7 +8,7 @@ import {
 } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { assertFileContents } from "./utils.jsx";
+import { assertFileContents } from "./utils.js";
 
 it("works with default imports", () => {
   const res = render(

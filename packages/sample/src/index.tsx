@@ -1,17 +1,19 @@
 import * as ay from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
-import { dirname, join } from "node:path";
-import { writeFile } from "fs/promises";
-import { mkdir } from "node:fs/promises";
+import { writeOutput } from "./write-output.js";
+ 
+const fs = ts.node.fs;
+const readFile = fs["./promises"].readFile;
 
 const res = ay.render(
-  <ay.Output>
+  <ay.Output externals={[ts.node.fs]}>
     <ts.PackageDirectory name="test-package" version="1.0.0" path=".">
       <ay.SourceFile path="readme.md" filetype="markdown">
         This is a sample output project.
       </ay.SourceFile>
 
       <ts.SourceFile export="." path="test1.ts">
+        await <ts.Reference refkey={readFile} />("./package.json");
         <ts.Declaration export name="foo">
           const foo = 1;
         </ts.Declaration>
@@ -25,16 +27,3 @@ const res = ay.render(
 );
 
 writeOutput(res, "./sample-output");
-
-async function writeOutput(dir: ay.OutputDirectory, rootDir: string) {
-  for (const item of dir.contents) {
-    if (item.kind === "file") {
-      const targetLocation = join(rootDir, item.path);
-      console.log("Writing file to " + targetLocation);
-      await mkdir(dirname(targetLocation), { recursive: true });
-      await writeFile(targetLocation, item.contents);
-    } else {
-      await writeOutput(item, rootDir);
-    }
-  }
-}

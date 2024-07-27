@@ -30,7 +30,7 @@ export const path = createPackage({
 });
 
 export const fs = createPackage({
-  name: "node:path",
+  name: "node:fs",
   version: "22.5.1",
   builtin: true,
   descriptor: {

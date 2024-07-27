@@ -6,7 +6,7 @@ import {
   getSymbolCreatorSymbol,
   refkey,
 } from "@alloy-js/core";
-import { createTSPackageScope } from "./components/PackageDirectory.jsx";
+import { createTSPackageScope } from "./components/PackageDirectory.js";
 import { TSModuleScope, TSOutputSymbol } from "./symbols.js";
 
 export interface PackageDescriptor {

@@ -1,10 +1,11 @@
-import { BinderContext, createOutputBinder } from "../binder.js";
+import { BinderContext, createOutputBinder, getSymbolCreator, SymbolCreator } from "../binder.js";
 import { Children } from "../jsx-runtime.js";
 import { NamePolicy, NamePolicyContext } from "../name-policy.js";
 import { SourceDirectory, SourceDirectoryContext } from "./SourceDirectory.js";
 
 export interface OutputProps {
-  children?: Children
+  children?: Children;
+  externals?: SymbolCreator[];
   namePolicy?: NamePolicy<string>;
 }
 
@@ -14,6 +15,11 @@ export function Output(props: OutputProps) {
     {props.children}
   </SourceDirectory>
 
+  if (props.externals) {
+    for (const global of props.externals) {
+      getSymbolCreator(global)(binder);
+    }
+  }
   
   return <BinderContext.Provider value={binder}>
     {

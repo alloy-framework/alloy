@@ -3,6 +3,8 @@ import { expect, it } from "vitest";
 import { render, Output, SourceFile, Declaration, OutputDirectory, refkey } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
+import { findFile } from "./utils.js";
+import { d } from "@alloy-js/core/testing";
 
 
 it("works", () => {
@@ -20,6 +22,9 @@ it("works", () => {
         This is a sample output project.
       </SourceFile>
 
+      <ts.SourceFile path="index.ts">
+        console.log("Hello world!");
+      </ts.SourceFile>
       
       <ts.SourceFile path="test2.ts">
         console.log(<Reference refkey={greetKey} />("world"));
@@ -47,19 +52,29 @@ it("works", () => {
     </Output>
   );
 
-  printOutput(res);
-})
+  expect(findFile(res, "readme.md").contents).toEqual(d`
+    This is a sample output project.
+  `);
 
+  expect(findFile(res, "index.ts").contents).toEqual(d`
+    console.log("Hello world!");
+  `);
 
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1)
-    } else {
-      console.log(`\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`);
-      console.log(item.contents.trimStart());
+  expect(findFile(res, "test1.ts").contents).toEqual(d`
+    function sayHello(str: string) {
+      return "Hello " + str;
     }
-  }
-}
+
+    function sayGoodbye(str: string) {
+      return "Goodbye " + str;
+    }
+  `)
+
+
+  expect(findFile(res, "test2.ts").contents).toEqual(d`
+    import { sayHello, sayGoodbye } from "./test1.js";
+
+    console.log(sayHello("world"));
+    console.log(sayGoodbye("world"));
+  `)
+});

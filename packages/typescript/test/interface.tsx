@@ -1,11 +1,11 @@
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { render, Output, SourceFile, Declaration, OutputDirectory, Children, refkey, NamePolicyContext } from "@alloy-js/core";
+import { refkey, NamePolicyContext } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { d } from "@alloy-js/core/testing";
 import { toSourceText } from "./utils.js";
-import { createTSNamePolicy, useTSNamePolicy } from "../src/name-policy.js";
+import { createTSNamePolicy } from "../src/name-policy.js";
 
 it("declares interfaces", () => {
   const res = toSourceText(<ts.InterfaceDeclaration name="Foo" />);

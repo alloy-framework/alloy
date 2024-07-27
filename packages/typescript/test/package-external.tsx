@@ -1,7 +1,7 @@
 import { render, Output, refkey, OutputDirectory } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { findFile } from "./utils.jsx";
+import { findFile } from "./utils.js";
 import { d } from "@alloy-js/core/testing";
 
 it("imports external packages", () => {
@@ -37,27 +37,33 @@ it("imports external packages", () => {
 
   expect(consumerPkgJson.contents).toEqual(d`
     {
-        "name": "consumer",
-        "version": "1.0.0",
-        "type": "module",
-        "dependencies": {
-            "greeting-lib": "1.0.0"
-        },
-        "exports": {
-            ".": "./ref.js"
-        }
+      "name": "consumer",
+      "version": "1.0.0",
+      "type": "module",
+      "dependencies": {
+        "greeting-lib": "1.0.0"
+      },
+      "devDependencies": {
+        "typescript": "^5.5.2"
+      },
+      "exports": {
+        ".": "./dist/ref.js"
+      }
     }
   `);
 
   expect(greetingPkgJson.contents).toEqual(d`
     {
-        "name": "greeting-lib",
-        "version": "1.0.0",
-        "type": "module",
-        "dependencies": {},
-        "exports": {
-            ".": "./index.js"
-        }
+      "name": "greeting-lib",
+      "version": "1.0.0",
+      "type": "module",
+      "dependencies": {},
+      "devDependencies": {
+        "typescript": "^5.5.2"
+      },
+      "exports": {
+        ".": "./dist/index.js"
+      }
     }
   `);
 

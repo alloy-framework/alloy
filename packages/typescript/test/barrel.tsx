@@ -3,8 +3,6 @@ import { expect, it } from "vitest";
 import {
   render,
   Output,
-  OutputDirectory,
-  refkey,
   SourceDirectory,
   SourceFile,
 } from "@alloy-js/core";

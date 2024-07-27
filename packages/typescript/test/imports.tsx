@@ -3,17 +3,14 @@ import { expect, it } from "vitest";
 import {
   render,
   Output,
-  SourceFile,
-  Declaration,
-  OutputDirectory,
   SourceDirectory,
   refkey,
 } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
+import { assertFileContents } from "./utils.js";
 
 it("works with default imports", () => {
-  let obj = {};
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
@@ -26,7 +23,18 @@ it("works with default imports", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      export default function asdf() {
+        
+      }
+    `,
+    "test2.ts": `
+      import asdf from "./test1.js";
+
+      const v = asdf;
+    `
+  });
 });
 
 it("works with named imports", () => {
@@ -42,7 +50,18 @@ it("works with named imports", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      export function test() {
+        
+      }
+    `,
+    "test2.ts": `
+      import { test } from "./test1.js";
+
+      const v = test;
+    `
+  });
 });
 
 it("works with default and named imports", () => {
@@ -60,16 +79,29 @@ it("works with default and named imports", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      export default function test1() {
+        
+      }
+      export function test2() {
+        
+      }
+    `,
+    "test2.ts": `
+      import test1, { test2 } from "./test1.js";
+
+      const v1 = test1;
+      const v2 = test2;
+    `
+  });
 });
 
 it("works with default and named imports and name conflicts", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1">
-          console.log("foo");
-        </ts.FunctionDeclaration>
+        <ts.FunctionDeclaration export default name="test1" />
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
 
@@ -88,7 +120,34 @@ it("works with default and named imports and name conflicts", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "test1.ts": `
+      export default function test1() {
+        
+      }
+      export function test2() {
+        
+      }
+    `,
+    "test2.ts": `
+      export default function test1() {
+        
+      }
+      export function test2() {
+        
+      }
+    `,
+    "test3.ts": `
+      import test1, { test2 } from "./test1.js";
+      import test1_1, { test2 as test2_1 } from "./test2.js";
+
+      const v1 = test1;
+      const v1_1 = test2;
+      const v2 = test1_1;
+      const v3 = test1_1;
+      const v4 = test2_1;
+    `
+  });
 });
 
 it("works with imports from different directories", () => {
@@ -108,22 +167,22 @@ it("works with imports from different directories", () => {
     </Output>
   );
 
-  printOutput(res);
+  assertFileContents(res, {
+    "src/test1.ts": `
+      import { test2 } from "../test2.js";
+
+      export function test() {
+        
+      }
+      const v = test2
+    `,
+    "test2.ts": `
+      import { test } from "./src/test1.js";
+
+      const v = test;
+      export function test2() {
+        
+      }
+    `
+  });
 });
-
-
-
-function printOutput(dir: OutputDirectory, level = 1) {
-  console.log(`${"#".repeat(level)} Directory ${dir.path}`);
-
-  for (const item of dir.contents) {
-    if (item.kind === "directory") {
-      printOutput(item, level + 1);
-    } else {
-      console.log(
-        `\n${"#".repeat(level + 1)} ${item.path} (${item.filetype})\n`
-      );
-      console.log(item.contents.trimStart());
-    }
-  }
-}

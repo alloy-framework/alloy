@@ -27,6 +27,7 @@ export function getSourceDirectoryData(sdContext: SourceDirectoryContext) {
   const sdData: SourceDirectoryData = {
     modules: reactive(new Set()),
   };
+
   sourceDirectoryData.set(sdContext, sdData);
 
   return sdData;

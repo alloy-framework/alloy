@@ -1,16 +1,12 @@
 import {
   Refkey,
-  ResolutionResult,
   resolve,
-  ScopeContext,
-  SourceDirectoryContext,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 import { SourceFileContext } from "./SourceFile.js";
 import { memo, untrack } from "@alloy-js/core/jsx-runtime";
-import { TSOutputScope, TSOutputSymbol, TSPackageScope } from "../symbols.js";
-import { usePackage } from "./PackageDirectory.jsx";
+import { TSOutputScope, TSOutputSymbol } from "../symbols.js";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface ReferenceProps {
   refkey: Refkey;
@@ -34,7 +30,9 @@ export function Reference({ refkey }: ReferenceProps) {
       if (sourcePackage.kind !== "package") {
         throw new Error("Expected source to be package.");
       }
-      pkg.addDependency(sourcePackage)
+      if (!sourcePackage.builtin) {
+        pkg.addDependency(sourcePackage);
+      }
       // find public dependency
       for (const [publicPath, module] of sourcePackage.exportedSymbols) {
         if (module.exportedSymbols.has(targetDeclaration.refkey)) {

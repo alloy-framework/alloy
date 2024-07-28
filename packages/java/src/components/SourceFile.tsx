@@ -52,8 +52,7 @@ export function SourceFile(props: SourceFileProps) {
           <ImportStatements imports={importRecords} />
           {"\n"}
         </>
-      ) : undefined}
-      <SourceFileContext.Provider value={sfContext}>
+      ) : undefined}<SourceFileContext.Provider value={sfContext}>
         <Scope name={props.path} kind="source-file">
           {props.children}
         </Scope>

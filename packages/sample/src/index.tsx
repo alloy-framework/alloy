@@ -15,9 +15,8 @@ const res = ay.render(
 
       <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
         <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
-          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}></java.Method>
+          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"} parameters={{'int': 'x', 'String': 'name'}}></java.Method>
           <java.Method accessModifier={"private"} methodName={"javaTestMethodTwo"} isStatic={false} returnType={"void"}></java.Method>
-          <java.Method accessModifier={"public"} methodName={"javaTestMethodThree"} isStatic={true} returnType={"void"}></java.Method>
         </java.ClassDeclaration>
       </ay.SourceFile>
 

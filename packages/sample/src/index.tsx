@@ -1,5 +1,6 @@
 import * as ay from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
+import * as java from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
  
 const fs = ts.node.fs;
@@ -10,6 +11,10 @@ const res = ay.render(
     <ts.PackageDirectory name="test-package" version="1.0.0" path=".">
       <ay.SourceFile path="readme.md" filetype="markdown">
         This is a sample output project.
+      </ay.SourceFile>
+
+      <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
+        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}></java.ClassDeclaration>
       </ay.SourceFile>
 
       <ts.SourceFile export="." path="test1.ts">

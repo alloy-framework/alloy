@@ -6,8 +6,9 @@ export interface ClassConstructorProps {
 }
 
 export function ClassConstructor ({accessModifier, className}: ClassConstructorProps) {
-    return code`
-                ${accessModifier} ${className}() {
-                  }      
+    return code` 
+        ${accessModifier} ${className}() {
+          }      
     `;
 }
+

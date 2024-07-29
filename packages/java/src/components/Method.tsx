@@ -9,7 +9,7 @@ export interface MethodProps {
 
 export function Method({accessModifier, methodName, isStatic, returnType}: MethodProps) {
     return code`
-                ${accessModifier} ${isStatic ? 'static' : ''} ${returnType} ${methodName}() {
-                  }
-    `
+        ${accessModifier}${isStatic ? ' static' : ''} ${returnType} ${methodName}() {
+          }
+    `;
 }

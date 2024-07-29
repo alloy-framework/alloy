@@ -7,11 +7,11 @@ export interface ClassDeclarationProps {
     children?: Children;
 }
 
-export function ClassDeclaration({accessModifier, className, children}: ClassDeclarationProps ) {
+export function ClassDeclaration(props: ClassDeclarationProps) {
     return code`
-                ${accessModifier} class ${className} {
-                    ${(<ClassConstructor accessModifier={accessModifier} className={className} />)}
-                    ${children}
-                }
-    `
+        ${props.accessModifier} class ${props.className} {   
+            ${(<ClassConstructor accessModifier={props.accessModifier} className={props.className} />)}
+            ${props.children}
+        }          
+    `;
 }

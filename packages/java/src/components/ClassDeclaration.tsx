@@ -14,4 +14,5 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
             ${props.children}
         }          
     `;
+    //todo: Fix indentation when there are multiple children.
 }

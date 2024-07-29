@@ -16,9 +16,12 @@ export function Method({accessModifier, methodName, isStatic, returnType, parame
     `;
 }
 
+// Maybe unnecessary, trying to base this component on the FunctionDeclaration component in the typescript package.
 export interface ParameterProps {
     parameters?: Record<string, string>
 }
+
+// Maps each record to a string and joins them with ', '
 Method.Parameters = function Parameters(props: ParameterProps) {
     const { parameters = {} } = props;
     return Object.entries(parameters)

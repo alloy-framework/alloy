@@ -15,9 +15,9 @@ const res = ay.render(
 
       <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
         <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
+          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}>
+          </java.Method>
         </java.ClassDeclaration>
-        <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}>
-        </java.Method>
       </ay.SourceFile>
 
       <ts.SourceFile export="." path="test1.ts">

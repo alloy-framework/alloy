@@ -14,11 +14,14 @@ const res = ay.render(
       </ay.SourceFile>
 
       <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
-        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}></java.ClassDeclaration>
+        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
+        </java.ClassDeclaration>
+        <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}>
+        </java.Method>
       </ay.SourceFile>
 
       <ts.SourceFile export="." path="test1.ts">
-        await <ts.Reference refkey={readFile} />("./package.json");
+        await <ts.Reference refkey={readFile}/>("./package.json");
         <ts.Declaration export name="foo">
           const foo = 1;
         </ts.Declaration>

@@ -15,8 +15,18 @@ const res = ay.render(
 
       <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
         <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
-          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"} parameters={{'int': 'x', 'String': 'name'}}></java.Method>
-          <java.Method accessModifier={"private"} methodName={"javaTestMethodTwo"} isStatic={false} returnType={"void"}></java.Method>
+          <java.Variable type={"int"} name={"testVar"} accessModifier={"private"}></java.Variable>
+          <java.ClassConstructor accessModifier={"public"}/>
+          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}
+                       parameters={{'int': 'x', 'String': 'name'}}></java.Method>
+          <java.Method accessModifier={"private"} methodName={"javaTestMethodTwo"} isStatic={false}
+                       returnType={"void"}></java.Method>
+        </java.ClassDeclaration>
+      </ay.SourceFile>
+
+      <ay.SourceFile path={"JavaTestFile2.java"} filetype={"java"}>
+        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
+          <java.ClassConstructor accessModifier={"private"}/>
         </java.ClassDeclaration>
       </ay.SourceFile>
 
@@ -28,8 +38,13 @@ const res = ay.render(
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
-        const v = <ts.Reference refkey={ay.refkey("foo")} />;
+        const v = <ts.Reference refkey={ay.refkey("foo")}/>;
       </ts.SourceFile>
+
+      <ts.SourceFile path="test3.ts">
+        <ts.VarDeclaration name={"testVar"} const={true} value={2}></ts.VarDeclaration>
+      </ts.SourceFile>
+
     </ts.PackageDirectory>
   </ay.Output>
 );

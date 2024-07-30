@@ -32,7 +32,7 @@ export function SourceFile(props: SourceFileProps) {
     }
 
     importRecords.push({
-      package: symbol.package,
+      package: symbol.package ?? '',
       name: symbol.name,
       wildcard: false // TODO
     });

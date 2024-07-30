@@ -1,7 +1,7 @@
 import * as ay from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
-import { createJavaNamePolicy } from "@alloy-js/java";
+import { createJavaNamePolicy, AccessModifier } from "@alloy-js/java";
 import { code } from "@alloy-js/core";
 
 const res = ay.render(
@@ -9,10 +9,23 @@ const res = ay.render(
     <jv.ProjectDirectory groupId='me.example' artifactId='test' version='1.0.0'>
       <jv.PackageDirectory package="me.example.code">
         <jv.SourceFile path="Main.java">
+          <jv.Declaration name="Main" accessModifier={AccessModifier.PUBLIC}>
+            {code`
+            public class Main {
+              public static void main(String[] args) {
+                System.out.println("Hello, World!");
+              }
+            }
+          `}
+          </jv.Declaration>
+
+        </jv.SourceFile>
+        <jv.SourceFile path="TestMain.java">
           {code`
             public class Main {
               public static void main(String[] args) {
                 System.out.println("Hello, World!");
+                ${<jv.Reference refkey={ay.refkey('Main')} />} main = new Main();
               }
             }
           `}
@@ -23,7 +36,7 @@ const res = ay.render(
 );
 
 // printOutput(res);
-writeOutput(res, "./sample-output");
+writeOutput(res, "./sample-output", true);
 
 function printOutput(dir: ay.OutputDirectory, level = 1) {
   console.log(`${"#".repeat(level)} Directory ${dir.path}`);

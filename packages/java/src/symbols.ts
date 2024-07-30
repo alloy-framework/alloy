@@ -12,8 +12,10 @@ export interface JavaOutputSymbol extends OutputSymbol {
   /**
    * Fully qualified package name
    */
-  package: string;
+  package?: string;
 }
+
+export type JavaOutputScope = JavaProjectScope | JavaPackageScope;
 
 /**
  * Represents the java project itself (maven, gradle, etc)

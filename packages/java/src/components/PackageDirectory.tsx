@@ -10,8 +10,12 @@ import { JavaPackageScope, JavaProjectScope } from "../symbols.js";
 
 export interface PackageDirectoryContext {
   scope: JavaPackageScope;
-  path: string; // Full package path, e.g src/main/java/me/example/code
-  name: string; // Full package name qualifier, e.g me.example.code
+  // Full package path, e.g src/main/java/me/example/code
+  path: string;
+  // Name of package, usually name of this directory
+  name: string;
+  // Full qualified name of package, e.g me.example.code
+  qualifiedName: string;
 }
 
 export const PackageDirectoryContext = createContext<PackageDirectoryContext>();
@@ -31,7 +35,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageNames = props.package.split('.');
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName = parentPackage ? parentPackage.name + '.' + props.package : props.package;
+  const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + '.' + packageName : packageName;
 
   const scope = useBinder().createScope<JavaPackageScope>("package", fullyQualifiedPackageName, useScope());
 
@@ -39,7 +43,8 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageContext: PackageDirectoryContext = {
     scope,
     path: packagePath,
-    name: packageName
+    name: packageName,
+    qualifiedName: fullyQualifiedPackageName,
   }
 
   function ChildComponent() {

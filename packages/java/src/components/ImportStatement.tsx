@@ -11,11 +11,13 @@ export interface ImportStatementsProps {
 }
 
 export function ImportStatements(props: ImportStatementsProps) {
-  return memo(() => {
-    mapJoin(props.imports, (importProp) => () => <ImportStatement {...importProp} />)
-  })
+  return memo(() =>
+    mapJoin(props.imports, (importProp) => () => (
+      <ImportStatement {...importProp} />
+    ))
+  )
 }
 
 export function ImportStatement(props: ImportSymbol) {
-  return () => `import ${props.package}.${props.wildcard ? "*" : props.name}`;
+  return () => `import ${props.package}.${props.wildcard ? "*" : props.name};`;
 }

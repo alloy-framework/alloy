@@ -1,9 +1,9 @@
 import { dirname, join } from "node:path";
-import { mkdir, rmdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, rmdir, writeFile } from "node:fs/promises";
 import * as ay from "@alloy-js/core";
 
 export async function writeOutput(dir: ay.OutputDirectory, rootDir: string, clean: boolean = false) {
-  if (clean) await rmdir(rootDir, { recursive: true });
+  if (clean) await rm(rootDir, { recursive: true });
 
   for (const item of dir.contents) {
     if (item.kind === "file") {

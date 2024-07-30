@@ -21,3 +21,7 @@ export interface JavaOutputSymbol extends OutputSymbol {
 export interface JavaProjectScope extends OutputScope {
   kind: 'project';
 }
+
+export interface JavaPackageScope extends OutputScope {
+  kind: 'package';
+}

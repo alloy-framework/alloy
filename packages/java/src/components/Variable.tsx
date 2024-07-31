@@ -6,13 +6,13 @@ export interface VariableProps {
     value?: string;
     isFinal?: boolean;
     isStatic?: boolean;
-    accessModifier?: 'public' | 'protected' | 'private'; // Access modifier (optional)
+    accessModifier?: 'public' | 'protected' | 'private';
 }
 
 export function Variable(props: VariableProps) {
     const { type, name, value, isFinal, isStatic, accessModifier } = props;
 
-    // Construct the declaration string
+    // todo:Might be good to have a separate component to handle this logic
     const declarationParts = [
         accessModifier,
         isStatic ? 'static' : undefined,

@@ -64,7 +64,8 @@ export function ObjectProperty(props: ObjectPropertyProps) {
   let value;
   if (props.value) {
     value = props.value;
-  } else if (props.jsValue) {
+  } else if (props.hasOwnProperty("jsValue")) {
+    // need the hasOwnProperty check because the value might be falsy.
     value = <ValueExpression jsValue={props.jsValue} />
   } else if (props.children) {
     value = props.children;

@@ -1,24 +1,20 @@
-import {children, Children, code, createContext} from "@alloy-js/core";
+import {children, Children, code, createContext, NamePolicy} from "@alloy-js/core";
 import {ClassConstructor} from "./ClassConstructor.js";
 import {AccessModifier} from "../access-modifier.js";
+import {Declaration, DeclarationProps} from "./Declaration.js";
+import {useJavaNamePolicy} from "../name-policy.js";
 
-export interface ClassDeclarationProps {
-    accessModifier: AccessModifier;
-    className: string;
+export interface ClassDeclarationProps extends DeclarationProps{
     children?: Children;
 }
 
-export const ClassDeclarationContext = createContext<ClassDeclarationProps | undefined>(undefined);
-
 export function ClassDeclaration(props: ClassDeclarationProps) {
+    const name = useJavaNamePolicy().getName(props.name, "class");
     return (
-        <ClassDeclarationContext.Provider value={props}>
-            {code`
-                ${props.accessModifier} class ${props.className} {
-                    ${props.children}
-                }
-            `}
-        </ClassDeclarationContext.Provider>
+        <Declaration {... props} name={name}>
+            {props.accessModifier} class {name} {"{"}
+              {props.children}
+            {"}"}
+        </Declaration>
     );
-    //todo: Fix indentation when there are multiple children.
 }

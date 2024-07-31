@@ -1,23 +1,26 @@
 import * as ay from "@alloy-js/core";
+import {code} from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
-import { writeOutput } from "./write-output.js";
-import { createJavaNamePolicy, AccessModifier } from "@alloy-js/java";
-import { code } from "@alloy-js/core";
+import {AccessModifier, createJavaNamePolicy} from "@alloy-js/java";
+import {writeOutput} from "./write-output.js";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()}>
     <jv.ProjectDirectory groupId='me.example' artifactId='test' version='1.0.0'>
       <jv.PackageDirectory package="me.example.code">
         <jv.SourceFile path="Main.java">
-          <jv.Declaration name="Main" accessModifier={AccessModifier.PUBLIC}>
-            {code`
-            public class Main {
-              public static void main(String[] args) {
+          <jv.ClassDeclaration name="Main" accessModifier={AccessModifier.PUBLIC}>
+            <jv.Variable name={"x"} type={"int"}></jv.Variable>
+            <jv.Method accessModifier={AccessModifier.PUBLIC} isStatic={true} returnType={"void"} methodName={"main"}
+                       parameters={{"String[]" : "args"}}>
+                {code`
                 System.out.println("Hello, World!");
-              }
-            }
-          `}
-          </jv.Declaration>
+                `}
+                {code`
+                System.out.println("Hello, World Again!");
+                `}
+            </jv.Method>
+          </jv.ClassDeclaration>
 
         </jv.SourceFile>
         <jv.SourceFile path="TestMain.java">

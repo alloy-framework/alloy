@@ -1,9 +1,9 @@
 import * as ay from "@alloy-js/core";
-import { SourceDirectory } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import * as java from "@alloy-js/java";
-import { writeOutput } from "./write-output.js";
- 
+import {AccessModifier} from "@alloy-js/java";
+import {writeOutput} from "./write-output.js";
+
 const fs = ts.node.fs;
 const readFile = fs["./promises"].readFile;
 
@@ -15,19 +15,20 @@ const res = ay.render(
       </ay.SourceFile>
 
       <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
-        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
+        <java.ClassDeclaration accessModifier={AccessModifier.PUBLIC} name={"JavaTestClass"}>
           <java.Variable type={"int"} name={"testVar"} accessModifier={"private"}></java.Variable>
-          <java.ClassConstructor accessModifier={"public"}/>
-          <java.Method accessModifier={"public"} methodName={"javaTestMethod"} isStatic={true} returnType={"void"}
+          <java.ClassConstructor accessModifier={AccessModifier.PUBLIC} className={"JavaTestClass"}/>
+          <java.Method accessModifier={AccessModifier.PUBLIC} methodName={"javaTestMethod"} isStatic={true}
+                       returnType={"void"}
                        parameters={{'int': 'x', 'String': 'name'}}></java.Method>
-          <java.Method accessModifier={"private"} methodName={"javaTestMethodTwo"} isStatic={false}
+          <java.Method accessModifier={AccessModifier.PRIVATE} methodName={"javaTestMethodTwo"} isStatic={false}
                        returnType={"void"}></java.Method>
         </java.ClassDeclaration>
       </ay.SourceFile>
 
       <ay.SourceFile path={"JavaTestFile2.java"} filetype={"java"}>
-        <java.ClassDeclaration className={"JavaTestClass"} accessModifier={"public"}>
-          <java.ClassConstructor accessModifier={"private"}/>
+        <java.ClassDeclaration accessModifier={AccessModifier.PUBLIC} name={"JavaTestClass2"}>
+          <java.ClassConstructor accessModifier={AccessModifier.PRIVATE} className={"JavaTestClass2"}/>
         </java.ClassDeclaration>
       </ay.SourceFile>
 

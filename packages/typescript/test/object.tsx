@@ -103,3 +103,23 @@ it("renders complex objects", () => {
     }
   `)
 });
+
+it("renders falsy values", () => {
+  const jsValue = {
+    a: 0,
+    b: "",
+    c: false,
+    d: null,
+    e: undefined
+  }
+
+  expect(<ts.ObjectExpression jsValue={jsValue} />).toRenderTo(`
+    {
+      a: 0,
+      b: "",
+      c: false,
+      d: null,
+      e: undefined
+    }
+  `)
+});

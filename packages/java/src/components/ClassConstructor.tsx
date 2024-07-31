@@ -1,7 +1,8 @@
 import {code, useContext} from "@alloy-js/core";
 import {ClassDeclarationContext} from "./ClassDeclaration.js";
+import {AccessModifier} from "../access-modifier.js";
 export interface ClassConstructorProps {
-    accessModifier: string;
+    accessModifier: AccessModifier;
 }
 
 export function ClassConstructor (props: ClassConstructorProps) {

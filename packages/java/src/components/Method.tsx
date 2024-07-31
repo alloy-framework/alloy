@@ -1,7 +1,8 @@
 import {code} from "@alloy-js/core";
+import {AccessModifier} from "../access-modifier.js";
 
 export interface MethodProps {
-    accessModifier: string;
+    accessModifier: AccessModifier;
     methodName: string;
     isStatic: boolean;
     returnType: string;

@@ -44,7 +44,7 @@ export function mapJoin<T, U, V>(
 }
 
 /**
- * Returns a memo which is a flattened list of all the provided children.
+ * Returns a memo which is a list of all the provided children.
  * If you want this as an array, see childrenArray.
  */
 export function children(fn: () => Children) {
@@ -52,9 +52,7 @@ export function children(fn: () => Children) {
 
   function collectChildren(children: Children): Children {
     if (Array.isArray(children)) {
-      return (children.map(collectChildren) as any).flat(Infinity);
-    } else if (typeof children === "function") {
-      return collectChildren(children());
+      return children.map(collectChildren);
     } else {
       return children;
     }

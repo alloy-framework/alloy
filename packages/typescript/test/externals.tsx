@@ -55,7 +55,7 @@ it("can import builtins", () => {
     `,
     "index.ts": `
       import { nice } from "testLib/subpath";
-      import { readFile } from "node:path/promises";
+      import { readFile } from "node:fs/promises";
 
       nice;
       await readFile();

@@ -6,6 +6,6 @@
   "references": [
     { "path": "packages/core" },
     { "path": "packages/typescript" },
-    { "path": "packages/java" },
+    { "path": "packages/java" }
   ]
 }

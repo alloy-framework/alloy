@@ -14,9 +14,9 @@ const res = ay.render(
 
       <ts.SourceFile export="." path="test1.ts">
         await <ts.Reference refkey={readFile} />("./package.json");
-        <ts.Declaration export name="foo">
+        <ts.VarDeclaration export name="foo">
           const foo = 1;
-        </ts.Declaration>
+        </ts.VarDeclaration>
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">

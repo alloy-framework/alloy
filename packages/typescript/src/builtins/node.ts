@@ -179,3 +179,41 @@ export const fs = createPackage({
     },
   },
 });
+
+export const utils = createPackage({
+  name: "node:fs",
+  version: "22.5.1",
+  builtin: true,
+  descriptor: {
+    ".": {
+      default: "util",
+      named: [
+        "callbackify",
+        "debuglog",
+        "debug",
+        "deprecate",
+        "format",
+        "formatWithOptions",
+        "getSystemErrorName",
+        "getSystemErrorMap",
+        "inherits",
+        "inspect",
+        "isDeepStrictEqual",
+        "MIMEType",
+        "MIMEParams",
+        "parseArgs",
+        "parseEnv",
+        "promisify",
+        "stripVTControlCharacters",
+        "styleText",
+        "TextDecoder",
+        "TextEncoder",
+        "toUSVString",
+        "transferableAbortController",
+        "transferableAbortSignal",
+        "aborted",
+        "types",
+      ],
+    },
+  },
+});

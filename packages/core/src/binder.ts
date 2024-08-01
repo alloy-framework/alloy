@@ -1,12 +1,21 @@
 import { createContext, useContext } from "./context.js";
-import { computed, isProxy, ref, Ref, shallowRef } from "@vue/reactivity";
+import {
+  computed,
+  isProxy,
+  reactive,
+  ref,
+  Ref,
+  shallowRef,
+} from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
 import { useScope } from "./components/Scope.js";
 import { T } from "vitest/dist/reporters-yx5ZTtEV.js";
+import { memo } from "./jsx-runtime.js";
 
 export type Metadata = object;
 
 export interface OutputSymbol {
+  originalName: string;
   name: string;
   scope: OutputScope;
   refkey: Refkey;
@@ -15,11 +24,11 @@ export interface OutputSymbol {
 export interface OutputScope {
   kind: string;
   name: string;
-  bindings: Map<string, OutputSymbol>;
-  bindingsByKey: Map<unknown, OutputSymbol>;
-  children: Map<string, OutputScope>;
+  symbols: Set<OutputSymbol>;
+  children: Set<OutputScope>;
   parent: OutputScope | undefined;
   binder: Binder;
+  getSymbolNames(): Set<string>;
 }
 
 export const BinderContext = createContext<Binder>();
@@ -32,23 +41,34 @@ type HasAdditionalProps<T, U> = Omit<T, keyof U> extends Record<string, never>
   ? false
   : true;
 
+/**
+ * The binder tracks all output scopes and symbols. Scopes are nested containers
+ * for symbols.
+ *
+ * Symbol information is reactive because in certain situations this data may
+ * change. For example, when a symbol becomes conflicted with another symbol,
+ * one of the symbol names may change. Ensure that you interact with binder
+ * values in a reactive context (i.e. within JSX/code template, or within
+ * memo/computed/etc).
+ *
+ * The binder interacts with node context by pulling the current scope out of the
+ *
+ */
 export interface Binder {
   createScope<T extends OutputScope>(
-    kind: T["kind"],
-    name: string,
-    parent: OutputScope | undefined,
-    ...args: HasAdditionalProps<T, OutputScope> extends true
-      ? [additionalProps: Omit<T, keyof OutputScope>]
-      : []
+    args: {
+      kind: T["kind"];
+      name: string;
+      parent?: OutputScope | undefined;
+    } & Omit<T, keyof OutputScope>
   ): T;
 
   createSymbol<T extends OutputSymbol>(
-    name: string,
-    scope: OutputScope,
-    refkey?: unknown,
-    ...args: HasAdditionalProps<T, OutputSymbol> extends true
-      ? [additionalProps: Omit<T, keyof OutputSymbol>]
-      : []
+    args: {
+      name: string;
+      scope?: OutputScope;
+      refkey?: unknown;
+    } & Omit<T, keyof OutputSymbol>
   ): T;
 
   resolveDeclarationByKey<
@@ -58,6 +78,8 @@ export interface Binder {
     currentScope: OutputScope,
     key: unknown
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
+
+  globalScope: OutputScope;
 }
 
 export interface ResolutionResult<
@@ -84,22 +106,33 @@ export interface ResolutionResult<
   commonScope: TScope | undefined;
 }
 
-export function createOutputBinder(): Binder {
+export interface NameConflictResolver {
+  (name: string, symbols: OutputSymbol[]): void;
+}
+
+export interface BinderOptions {
+  nameConflictResolver?: NameConflictResolver;
+}
+
+export function createOutputBinder(options: BinderOptions = {}): Binder {
   const binder: Binder = {
     createScope,
     createSymbol,
     resolveDeclarationByKey,
+    globalScope: undefined as any,
   };
 
-  const globalScope: OutputScope = {
+  const globalSymbols = reactive(new Set<OutputSymbol>());
+
+  binder.globalScope = reactive({
     kind: "global",
     name: "<global>",
-    bindings: new Map(),
-    bindingsByKey: new Map(),
-    children: new Map(),
+    symbols: new Set(),
+    children: new Set(),
     parent: undefined,
     binder,
-  };
+    getSymbolNames: symbolNames(globalSymbols),
+  });
 
   const knownDeclarations = new Map<unknown, OutputSymbol>();
   const waitingDeclarations = new Map<unknown, Ref<OutputSymbol | undefined>>();
@@ -107,57 +140,58 @@ export function createOutputBinder(): Binder {
   return binder;
 
   function createScope<T extends OutputScope>(
-    kind: string,
-    name: string,
-    parent: OutputScope | undefined,
-    ...args: HasAdditionalProps<T, OutputScope> extends true
-      ? [additionalProps: Omit<T, keyof OutputScope>]
-      : []
+    args: {
+      kind: string;
+      name: string;
+      parent?: OutputScope;
+    } & Omit<T, keyof OutputScope>
   ): T {
-    const scope = {
-      kind,
-      name,
-      bindings: new Map(),
-      bindingsByKey: new Map(),
-      children: new Map(),
-      parent: parent ?? globalScope,
+    const { kind, name, parent, ...rest } = args;
+
+    const parentScope = parent ?? useScope() ?? binder.globalScope;
+    const symbols = reactive(new Set<OutputSymbol>());
+    const scope: T = reactive({
+      kind: kind,
+      name: name,
+      symbols,
+      children: new Set(),
+      parent: parentScope,
       binder,
-      ...args[0],
-    } as T;
+      ...rest,
+      getSymbolNames: symbolNames(symbols),
+    }) as T;
 
-    if (parent) {
-      parent.children.set(name, scope);
-    } else {
-      globalScope.children.set(name, scope);
-    }
+    parentScope.children.add(scope);
 
-    return scope;
+    return scope as T;
   }
 
   function createSymbol<T extends OutputSymbol>(
-    name: string,
-    scope: OutputScope,
-    refkey?: unknown,
-    ...args: HasAdditionalProps<T, OutputSymbol> extends true
-      ? [additionalProps: Omit<T, keyof OutputSymbol>]
-      : []
+    args: {
+      name: string;
+      scope?: OutputScope;
+      refkey?: unknown;
+    } & Omit<T, keyof OutputSymbol>
   ): T {
-    const declaration = {
-      name,
-      scope,
-      refkey,
-      ...args[0],
-    } as T;
+    const { name, scope, refkey, ...rest } = args;
 
-    const targetScope = scope ? scope : globalScope;
-    targetScope.bindings.set(name, declaration);
-    targetScope.bindingsByKey.set(refkey, declaration);
-    knownDeclarations.set(refkey, declaration);
+    const parentScope = scope ?? useScope() ?? binder.globalScope;
+    const symbol = reactive({
+      originalName: name,
+      name: name,
+      scope: parentScope,
+      refkey,
+      ...rest,
+    }) as T;
+    parentScope.symbols.add(symbol);
+    deconflict(symbol);
+
+    knownDeclarations.set(refkey, symbol);
     if (waitingDeclarations.has(refkey)) {
       const signal = waitingDeclarations.get(refkey)!;
-      signal.value = declaration;
+      signal.value = symbol;
     }
-    return declaration;
+    return symbol;
   }
 
   function resolveDeclarationByKey<
@@ -228,6 +262,26 @@ export function createOutputBinder(): Binder {
 
     return chain;
   }
+
+  function deconflict(symbol: OutputSymbol) {
+    const scope = symbol.scope;
+    const existingNames = [...scope.symbols].filter(
+      (sym) => sym.originalName === symbol.name
+    );
+
+    if (existingNames.length < 2) {
+      return;
+    }
+
+    if (options.nameConflictResolver) {
+      options.nameConflictResolver(symbol.name, existingNames);
+    } else {
+      // default disambiguation is first-wins
+      for (let i = 1; i < existingNames.length; i++) {
+        existingNames[i].name = existingNames[i].originalName + "_" + (i + 1);
+      }
+    }
+  }
 }
 
 /**
@@ -257,4 +311,15 @@ export function getSymbolCreatorSymbol(): typeof createSymbolsSymbol {
 
 export interface SymbolCreator {
   [createSymbolsSymbol](binder: Binder): void;
+}
+
+function symbolNames(symbols: Set<OutputSymbol>): () => Set<string> {
+  return memo(() => {
+    const names = new Set<string>();
+    for (const sym of symbols.values()) {
+      names.add(sym.name);
+    }
+
+    return names;
+  });
 }

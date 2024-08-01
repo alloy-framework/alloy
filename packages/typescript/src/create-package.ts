@@ -6,8 +6,14 @@ import {
   getSymbolCreatorSymbol,
   refkey,
 } from "@alloy-js/core";
-import { createTSPackageScope } from "./components/PackageDirectory.js";
-import { TSModuleScope, TSOutputSymbol } from "./symbols.js";
+
+import {
+  createTSModuleScope,
+  createTSPackageScope,
+  createTsSymbol,
+  TSModuleScope,
+  TSOutputSymbol,
+} from "./symbols.js";
 
 export interface PackageDescriptor {
   [path: string]: ModuleSymbolsDescriptor;
@@ -33,42 +39,32 @@ function createSymbols(
   );
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = binder.createScope<TSModuleScope>(
-      "module",
-      path,
-      pkgScope,
-      {
-        exportedSymbols: reactive(new Map()),
-      }
-    );
+    const moduleScope = createTSModuleScope(binder, pkgScope, path);
 
     pkgScope.exportedSymbols.set(path, moduleScope);
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = binder.createSymbol<TSOutputSymbol>(
-        symbols.default,
-        moduleScope,
-        key,
-        {
-          export: true,
-          default: true,
-        }
-      );
+      const sym = createTsSymbol({
+        name: symbols.default,
+        scope: moduleScope,
+        refkey: key,
+        export: true,
+        default: true,
+      });
+
       moduleScope.exportedSymbols.set(key, sym);
     }
 
     for (const exportedName of symbols.named ?? []) {
       const key = keys[exportedName];
-      const sym = binder.createSymbol<TSOutputSymbol>(
-        exportedName,
-        moduleScope,
-        key,
-        {
-          export: true,
-          default: false,
-        }
-      );
+      const sym = createTsSymbol({
+        name: exportedName,
+        scope: moduleScope,
+        refkey: key,
+        export: true,
+        default: false,
+      });
       moduleScope.exportedSymbols.set(key, sym);
     }
   }

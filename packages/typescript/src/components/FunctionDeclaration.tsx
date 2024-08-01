@@ -11,15 +11,15 @@ import {
   DeclarationProps,
 } from "./Declaration.js";
 import { useTSNamePolicy } from "../name-policy.js";
+import { Name } from "./Name.jsx";
 
-export interface FunctionDeclarationProps extends DeclarationProps {
+export interface FunctionDeclarationProps extends Omit<DeclarationProps, "kind"> {
   parameters?: Record<string, string>;
   returnType?: string;
   children?: Children;
 }
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
-  const namePolicy = useTSNamePolicy();
   const children = childrenArray(() => props.children);
   const parametersChild = findKeyedChild(children, "params");
   const bodyChild = findKeyedChild(children, "body");
@@ -35,12 +35,10 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     bodyChild ??
     (<FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>)()
       .children;
-  
-  const name = namePolicy.getName(props.name, "function");
 
   return (
-    <Declaration {...props} name={name}>
-      function {name}({sParams}){sReturnType} {"{"}
+    <Declaration {...props} kind="function">
+      function <Name />({sParams}){sReturnType} {"{"}
         {sBody}
       {"}"}
     </Declaration>

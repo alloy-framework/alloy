@@ -1,9 +1,32 @@
-import { OutputScope, OutputSymbol, Ref, Refkey } from "@alloy-js/core";
-import { ExportPath, PackageExports } from "./components/PackageJson.jsx";
+import {
+  Binder,
+  memo,
+  OutputScope,
+  OutputSymbol,
+  reactive,
+  Ref,
+  refkey,
+  Refkey,
+  resolve,
+  SourceDirectoryContext,
+  untrack,
+  useContext,
+  useScope,
+} from "@alloy-js/core";
+import { ExportConditions, PackageExports } from "./components/PackageJson.js";
+import { usePackage } from "./components/PackageDirectory.js";
+import { SourceFileContext } from "./components/SourceFile.js";
+import { modulePath } from "./utils.js";
 
+export enum TSSymbolFlags {
+  None = 0,
+  LocalImportSymbol = 1,
+}
 export interface TSOutputSymbol extends OutputSymbol {
+  scope: TSOutputScope;
   export: boolean;
   default: boolean;
+  flags: TSSymbolFlags;
 }
 
 export type TSOutputScope =
@@ -61,11 +84,30 @@ export interface TSPackageScope extends OutputScope {
    * Whether this is a built-in package provided by the platform.
    */
   builtin?: boolean;
+
+  addExport(publicPath: string, localModule: TSModuleScope): void;
+  addRawExport(publicPath: string, exportPath: string | ExportConditions): void;
+  addDependency(pkg: TSPackageScope): void;
+  addRawDependency(packageName: string, version: string): void;
+  addModule(module: TSModuleScope): void;
+  findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null;
 }
+
+export interface ImportedSymbol {
+  local: TSOutputSymbol;
+  target: TSOutputSymbol;
+}
+export type ImportRecords = Map<TSModuleScope, Set<ImportedSymbol>>;
 
 export interface TSModuleScope extends OutputScope {
   kind: "module";
   exportedSymbols: Map<Refkey, TSOutputSymbol>;
+  /**
+   * A mapping of foreign symbols to module-local symbols
+   */
+  importedSymbols: Map<TSOutputSymbol, TSOutputSymbol>;
+  importedModules: ImportRecords;
+  addImport(symbol: TSOutputSymbol, module: TSModuleScope): TSOutputSymbol;
 }
 
 export interface TSGlobalScope extends OutputScope {
@@ -74,4 +116,179 @@ export interface TSGlobalScope extends OutputScope {
 
 export interface TSOtherScope extends OutputScope {
   kind: never;
+}
+
+export function ref(refkey: Refkey) {
+  const sourceFile = useContext(SourceFileContext);
+  const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
+    refkey as Refkey
+  );
+
+  return memo(() => {
+    if (resolveResult.value === undefined) {
+      return "<Unresolved Symbol>";
+    }
+
+    const { targetDeclaration, pathDown, commonScope } = resolveResult.value;
+
+    if (commonScope!.kind === "global" && pathDown[0].kind === "package") {
+      // need package import
+      const pkg = usePackage()!;
+      const sourcePackage = pathDown[0];
+      if (sourcePackage.kind !== "package") {
+        throw new Error("Expected source to be package.");
+      }
+      if (!sourcePackage.builtin) {
+        pkg.scope.addDependency(sourcePackage);
+      }
+      // find public dependency
+      for (const [publicPath, module] of sourcePackage.exportedSymbols) {
+        if (module.exportedSymbols.has(targetDeclaration.refkey)) {
+          return untrack(() =>
+            sourceFile!.scope.addImport(targetDeclaration, module)
+          ).name;
+        }
+      }
+
+      throw new Error(
+        "The symbol " +
+          targetDeclaration.name +
+          " is not exported from package " +
+          pkg.scope.name
+      );
+    } else if (pathDown.length > 0 && pathDown[0].kind === "module") {
+      return untrack(() =>
+        sourceFile!.scope.addImport(
+          targetDeclaration,
+          pathDown[0] as TSModuleScope
+        )
+      ).name;
+    }
+
+    return targetDeclaration.name;
+  });
+}
+
+export function createTSPackageScope(
+  binder: Binder,
+  parent: OutputScope | undefined,
+  name: string,
+  version: string,
+  path: string,
+  builtin: boolean = false
+) {
+  return binder.createScope<TSPackageScope>({
+    kind: "package",
+    name,
+    parent,
+    exportedSymbols: new Map(),
+    dependencies: new Set(),
+    rawDependencies: new Map(),
+    rawExports: {},
+    modules: new Set(),
+    version,
+    path: path,
+    builtin,
+    addDependency(pkg) {
+      this.dependencies.add(pkg);
+    },
+    addExport(publicPath, module) {
+      this.exportedSymbols.set(modulePath(publicPath), module);
+    },
+    addRawDependency(packageName, version) {
+      this.rawDependencies.set(packageName, version);
+    },
+    addRawExport(localPath, exportPath) {
+      this.rawExports[localPath] = exportPath;
+    },
+    addModule(module) {
+      this.modules.add(module);
+    },
+    findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null {
+      for (const [publicPath, module] of this.exportedSymbols) {
+        if (module.exportedSymbols.has(refkey)) {
+          return [publicPath, module];
+        }
+      }
+
+      return null;
+    },
+  });
+}
+
+export function createTSModuleScope(
+  binder: Binder,
+  parent: OutputScope,
+  path: string
+): TSModuleScope {
+  return binder.createScope<TSModuleScope>({
+    kind: "module",
+    name: path,
+    parent,
+    exportedSymbols: new Map(),
+    importedSymbols: new Map(),
+    importedModules: new Map(),
+    addImport(targetSymbol, targetModule) {
+      if (this.importedSymbols.has(targetSymbol)) {
+        return this.importedSymbols.get(targetSymbol)!;
+      }
+
+      if (targetModule.kind !== "module") {
+        throw new Error("Cannot import symbol that isn't in module scope");
+      }
+
+      if (!this.importedModules.has(targetModule)) {
+        this.importedModules.set(targetModule, new Set());
+      }
+
+      const localSymbol = createTsSymbol({
+        binder,
+        name: targetSymbol.name,
+        refkey: refkey({}),
+        flags: TSSymbolFlags.LocalImportSymbol,
+      });
+
+      this.importedSymbols.set(targetSymbol, localSymbol);
+      this.importedModules.get(targetModule)!.add({
+        local: localSymbol,
+        target: targetSymbol,
+      });
+
+      return localSymbol;
+    },
+  });
+}
+
+interface createTsSymbolOptions {
+  name: string;
+  refkey: Refkey;
+  binder?: Binder;
+  scope?: TSOutputScope;
+  export?: boolean;
+  default?: boolean;
+  flags?: TSSymbolFlags;
+}
+
+export function createTsSymbol(options: createTsSymbolOptions) {
+  const scope = options.scope ?? (useScope() as TSOutputScope);
+  if (scope.kind !== "module") {
+    throw new Error("Can't create declaration symbols in non-module scope");
+  }
+
+  const binder = scope.binder;
+
+  const sym = binder.createSymbol<TSOutputSymbol>({
+    name: options.name,
+    scope,
+    refkey: options.refkey,
+    export: !!options.export,
+    default: !!options.default,
+    flags: options.flags ?? TSSymbolFlags.None,
+  });
+
+  if (options.export && scope.kind === "module") {
+    scope.exportedSymbols.set(sym.refkey, sym);
+  }
+
+  return sym;
 }

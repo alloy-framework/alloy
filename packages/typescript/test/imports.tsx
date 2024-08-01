@@ -9,6 +9,7 @@ import {
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { assertFileContents } from "./utils.js";
+import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
 
 it("works with default imports", () => {
   const res = render(
@@ -99,7 +100,7 @@ it("works with default and named imports", () => {
 
 it("works with default and named imports and name conflicts", () => {
   const res = render(
-    <Output>
+    <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration export default name="test1" />
         <ts.FunctionDeclaration export name="test2" />
@@ -138,14 +139,14 @@ it("works with default and named imports and name conflicts", () => {
       }
     `,
     "test3.ts": `
-      import test1, { test2 } from "./test1.js";
-      import test1_1, { test2 as test2_1 } from "./test2.js";
+      import test1_1, { test2 as test2_1 } from "./test1.js";
+      import test1_2, { test2 as test2_2 } from "./test2.js";
 
-      const v1 = test1;
-      const v1_1 = test2;
-      const v2 = test1_1;
-      const v3 = test1_1;
-      const v4 = test2_1;
+      const v1 = test1_1;
+      const v1_1 = test2_1;
+      const v2 = test1_2;
+      const v3 = test1_2;
+      const v4 = test2_2;
     `
   });
 });
@@ -184,5 +185,34 @@ it("works with imports from different directories", () => {
         
       }
     `
+  });
+});
+
+it("handles conflicts with local declarations", () => {
+  const res = render(
+    <Output nameConflictResolver={tsNameConflictResolver}>
+      <SourceDirectory path="src">
+        <ts.SourceFile path="test1.ts">
+          <ts.FunctionDeclaration export name="test" />
+          const v = <Reference refkey={refkey("test2")} />
+        </ts.SourceFile>
+      </SourceDirectory>
+
+      <ts.SourceFile path="test2.ts">
+        const v = <Reference refkey={refkey("test")} />;
+        <ts.FunctionDeclaration name="test" />
+      </ts.SourceFile>
+    </Output>
+  );
+
+  assertFileContents(res, {
+    "test2.ts": `
+      import { test as test_1 } from "./src/test1.js";
+
+      const v = test_1;
+      function test() {
+        
+      }
+    `,
   });
 });

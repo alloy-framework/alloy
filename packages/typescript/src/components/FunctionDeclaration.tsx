@@ -11,7 +11,7 @@ import {
   DeclarationProps,
 } from "./Declaration.js";
 import { useTSNamePolicy } from "../name-policy.js";
-import { Name } from "./Name.jsx";
+import { Name } from "./Name.js";
 
 export interface FunctionDeclarationProps extends Omit<DeclarationProps, "kind"> {
   parameters?: Record<string, string>;

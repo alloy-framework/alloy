@@ -1,6 +1,6 @@
 import { Children } from "@alloy-js/core";
 import { Declaration, DeclarationProps } from "./Declaration.js";
-import { Name } from "./Name.jsx";
+import { Name } from "./Name.js";
 
 export interface TypeDeclarationProps extends Omit<DeclarationProps, "kind"> {}
 

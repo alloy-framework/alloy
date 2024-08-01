@@ -180,8 +180,8 @@ export const fs = createPackage({
   },
 });
 
-export const utils = createPackage({
-  name: "node:fs",
+export const util = createPackage({
+  name: "node:util",
   version: "22.5.1",
   builtin: true,
   descriptor: {

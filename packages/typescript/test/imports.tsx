@@ -200,7 +200,7 @@ it("handles conflicts with local declarations", () => {
 
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("test")} />;
-        <ts.FunctionDeclaration name="test" />
+        <ts.FunctionDeclaration export name="test" />
       </ts.SourceFile>
     </Output>
   );
@@ -210,7 +210,7 @@ it("handles conflicts with local declarations", () => {
       import { test as test_1 } from "./src/test1.js";
 
       const v = test_1;
-      function test() {
+      export function test() {
         
       }
     `,

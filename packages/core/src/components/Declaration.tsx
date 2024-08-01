@@ -13,11 +13,6 @@ export interface DeclarationProps {
   children?: Children;
 }
 export function Declaration(props: DeclarationProps) {
-  const currentDeclaration = useContext(DeclarationContext);
-  if (currentDeclaration) {
-    throw new Error("Cannot nest declarations");
-  }
-
   const binder = useContext(BinderContext)
   if (!binder) {
     throw new Error("Need binder context to create declarations");

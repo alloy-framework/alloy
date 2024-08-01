@@ -19,11 +19,17 @@ export function ImportStatements(props: ImportStatementsProps) {
     return mapJoin(props.records, (module, importedSymbols) => {
       let targetPath: string;
 
-      if (pkg && pkg.scope !== module.parent) {
+      if (
+        (pkg && pkg.scope !== module.parent) ||
+        (!pkg && module.parent!.kind !== "global")
+      ) {
         // importing from another package, so let's calculate the import.
         const targetPackage = module.parent as TSPackageScope;
         let foundPath: string | false = false;
-        for (const [publicPath, exportedModule] of targetPackage.exportedSymbols) {
+        for (const [
+          publicPath,
+          exportedModule,
+        ] of targetPackage.exportedSymbols) {
           // a module could be exported from multiple paths, so here
           // would be the place to handle that.
 
@@ -45,9 +51,9 @@ export function ImportStatements(props: ImportStatementsProps) {
         targetPath = modulePath(relative(currentDir, module.name));
       }
 
-      return <ImportStatement path={targetPath} symbols={importedSymbols} />
-    })
-});
+      return <ImportStatement path={targetPath} symbols={importedSymbols} />;
+    });
+  });
 }
 
 export interface ImportStatementProps {

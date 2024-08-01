@@ -62,3 +62,38 @@ it("can import builtins", () => {
     `
   });
 });
+
+it("can import builtins without a package", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        default: "defaultExport",
+        named: ["foo", "bar"],
+      },
+      "./subpath": {
+        named: ["nice", "cool"],
+      },
+    },
+  });
+
+  const res = render(
+    <Output externals={[testLib, fs]}>
+      <SourceFile path="index.ts">
+        <Reference refkey={testLib["./subpath"].nice} />;
+        await <Reference refkey={fs["./promises"].readFile} />();
+      </SourceFile>
+    </Output>
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      import { nice } from "testLib/subpath";
+      import { readFile } from "node:fs/promises";
+
+      nice;
+      await readFile();
+    `
+  });
+});

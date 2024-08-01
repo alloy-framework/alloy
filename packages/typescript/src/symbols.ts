@@ -133,12 +133,10 @@ export function ref(refkey: Refkey) {
 
     if (commonScope!.kind === "global" && pathDown[0].kind === "package") {
       // need package import
-      const pkg = usePackage()!;
+      const pkg = usePackage();
       const sourcePackage = pathDown[0];
-      if (sourcePackage.kind !== "package") {
-        throw new Error("Expected source to be package.");
-      }
-      if (!sourcePackage.builtin) {
+
+      if (pkg && !sourcePackage.builtin) {
         pkg.scope.addDependency(sourcePackage);
       }
       // find public dependency
@@ -151,10 +149,7 @@ export function ref(refkey: Refkey) {
       }
 
       throw new Error(
-        "The symbol " +
-          targetDeclaration.name +
-          " is not exported from package " +
-          pkg.scope.name
+        "The symbol " + targetDeclaration.name + " is not exported from package"
       );
     } else if (pathDown.length > 0 && pathDown[0].kind === "module") {
       return untrack(() =>

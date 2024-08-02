@@ -8,6 +8,7 @@ import {
   SourceFile,
   Reference,
   createPackage,
+  FunctionDeclaration,
 } from "../src/index.js";
 import { fs } from "../src/builtins/node.js";
 import { assertFileContents, findFile } from "./utils.js";
@@ -59,6 +60,84 @@ it("can import builtins", () => {
 
       nice;
       await readFile();
+    `
+  });
+});
+
+it("can import builtins without a package", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        default: "defaultExport",
+        named: ["foo", "bar"],
+      },
+      "./subpath": {
+        named: ["nice", "cool"],
+      },
+    },
+  });
+
+  const res = render(
+    <Output externals={[testLib, fs]}>
+      <SourceFile path="index.ts">
+        <Reference refkey={testLib["./subpath"].nice} />;
+        await <Reference refkey={fs["./promises"].readFile} />();
+      </SourceFile>
+    </Output>
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      import { nice } from "testLib/subpath";
+      import { readFile } from "node:fs/promises";
+
+      nice;
+      await readFile();
+    `
+  });
+});
+
+it("can import builtins without a package", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        default: "defaultExport",
+        named: ["foo", "bar"],
+      },
+      "./subpath": {
+        named: ["nice", "cool"],
+      },
+    },
+  });
+
+  const res = render(
+    <Output externals={[testLib, fs]}>
+      <SourceFile path="index.ts">
+        <FunctionDeclaration name="foo">
+          <FunctionDeclaration name="bar">
+            <Reference refkey={testLib["./subpath"].nice} />;
+            await <Reference refkey={fs["./promises"].readFile} />();
+          </FunctionDeclaration>
+        </FunctionDeclaration>
+      </SourceFile>
+    </Output>
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      import { nice } from "testLib/subpath";
+      import { readFile } from "node:fs/promises";
+
+      function foo() {
+        function bar() {
+          nice;
+          await readFile();
+        }
+      }
     `
   });
 });

@@ -26,6 +26,9 @@ export function ValueExpression(props: ValueExpressionProps) {
       } else {
         return <ObjectExpression jsValue={jsValue as Record<string, unknown>} />
       }
+    } else if (typeof jsValue === "function") {
+      // functions are inserted as-is.
+      return jsValue;
     }
   })
 }

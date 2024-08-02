@@ -392,9 +392,6 @@ function appendChild(
     }, child.component.name);
     state.lastWasString = false;
   } else if (typeof child === "function") {
-    if ((child as any).__WTF__) {
-      debugger;
-    }
     state.lastWasString = false;
     let wrappedChild;
 
@@ -419,7 +416,7 @@ function appendChild(
         res = res();
       }
       const newNodes: RenderTextTree = [];
-      renderWorker(newNodes, res, state);
+      renderWorker(newNodes, res, { ...state });
       //node.splice(index, prev ? prev.length : 0, ...newNodes);
       node[index] = newNodes;
       return newNodes;

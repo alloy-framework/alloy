@@ -123,3 +123,24 @@ it("renders falsy values", () => {
     }
   `)
 });
+
+it("allows embedding things with functions", () => {
+  function Foo() {
+    return <>
+      a
+      b
+    </>
+  }
+  const jsValue = {
+    a: () => "hello",
+    b: () => <Foo />
+  }
+
+  expect(<ts.ObjectExpression jsValue={jsValue} />).toRenderTo(`
+    {
+      a: hello,
+      b: a
+      b
+    }
+  `)
+});

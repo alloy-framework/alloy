@@ -21,9 +21,8 @@ export function Scope(props: ScopeProps) {
     scope = props.value;
   } else {
     const kind = props.kind ?? "file";
-    const parentScope = useScope();
     const binder = useContext(BinderContext)!;
-    scope = binder.createScope(kind, props.name!, parentScope);
+    scope = binder.createScope({ kind, name: props.name! });
   }
 
   return (

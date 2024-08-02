@@ -1,4 +1,4 @@
-import { reactive } from "@vue/reactivity";
+import { reactive, shallowReactive } from "@vue/reactivity";
 import { createContext, useContext } from "../context.js";
 import { Children, getContext } from "../jsx-runtime.js";
 import { join } from "pathe";
@@ -32,7 +32,7 @@ export function SourceDirectory({ path, children }: SourceDirectoryProps) {
 }
 
 function createSourceDirectoryContext(path: string = "./", parentDir?: SourceDirectoryContext): SourceDirectoryContext {
-  const contents = reactive([] as any);
+  const contents = shallowReactive([] as any);
   const context: SourceDirectoryContext = {
     path,
     contents,

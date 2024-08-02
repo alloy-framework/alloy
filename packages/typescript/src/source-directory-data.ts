@@ -1,9 +1,4 @@
-import {
-  reactive,
-  SourceDirectoryContext,
-  isProxy,
-  toRaw,
-} from "@alloy-js/core";
+import { isProxy, reactive, SourceDirectoryContext } from "@alloy-js/core";
 import { TSModuleScope } from "./symbols.js";
 
 export interface SourceDirectoryData {
@@ -16,10 +11,9 @@ const sourceDirectoryData = new WeakMap<
 >();
 
 export function getSourceDirectoryData(sdContext: SourceDirectoryContext) {
-  // sometimes a module is stored in a reactive context, but we depend on
-  // identity so either we need to make all source directory contexts reactive,
-  // or call toRaw here.
-  sdContext = toRaw(sdContext);
+  if (isProxy(sdContext)) {
+    debugger;
+  }
   if (sourceDirectoryData.has(sdContext)) {
     return sourceDirectoryData.get(sdContext)!;
   }

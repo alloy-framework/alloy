@@ -44,7 +44,9 @@ export function createContext<T = unknown>(
 
       let rendered = shallowRef();
       effect(() => {
-        context!.context![id] = props.value;
+        if (context && context.context) {
+          context.context[id] = props.value;
+        }
         rendered.value = untrack(() => props.children);
       });
 

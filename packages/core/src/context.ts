@@ -21,12 +21,12 @@ export interface ContextProviderProps<T = unknown> {
 export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
-  while (current) {
-    const currentContextValue = current.context![context.id];
+  while (current !== null) {
+    const currentContextValue = current?.context?.[context.id];
     if (currentContextValue) {
       return currentContextValue as T;
     }
-    current = current.owner;
+    current = current?.owner;
   }
 
   return context.default;

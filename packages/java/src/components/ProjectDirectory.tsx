@@ -26,6 +26,7 @@ export interface ProjectDirectoryProps {
   artifactId: string; // Also name of project
   version: string;
   javaVersion?: number;
+  buildSystem?: 'maven' | 'gradle'; // TODO: Actually respect this option, for now only maven
   children?: Children;
 }
 
@@ -33,7 +34,7 @@ export interface ProjectDirectoryProps {
  * Represents a java project directory. Use if you want to generate a Java project
  * with a build tool included (maven, gradle etc).
  */
-export function ProjectDirectory(props: ProjectDirectoryProps) {
+export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...props }: ProjectDirectoryProps) {
   const dependencies = reactive(new Map<string, JavaDependency>());
   const scope = useBinder().createScope<JavaProjectScope>({ kind: "project", name: props.artifactId, parent: useScope(), dependencies});
 
@@ -75,8 +76,8 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
             <version>${props.version}</version>
     
             <properties>
-              <maven.compiler.source>${props.javaVersion ?? 8}</maven.compiler.source>
-              <maven.compiler.target>${props.javaVersion ?? 8}</maven.compiler.target>
+              <maven.compiler.source>${javaVersion}</maven.compiler.source>
+              <maven.compiler.target>${javaVersion}</maven.compiler.target>
               <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             </properties>
             ${dependencies.size > 0 ? code`

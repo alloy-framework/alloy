@@ -29,7 +29,7 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
     current = current?.owner;
   }
 
-  return context.default;
+  return context?.default;
 }
 
 export function createContext<T = unknown>(

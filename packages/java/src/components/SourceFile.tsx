@@ -2,6 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { createContext, OutputSymbol, reactive, Scope, SourceFile as CoreSourceFile } from "@alloy-js/core";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
 import { JavaOutputSymbol } from "../symbols.js";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;
@@ -20,6 +21,12 @@ export interface SourceFileProps {
  * Handles top level package declaration, as well as importing other sources
  */
 export function SourceFile(props: SourceFileProps) {
+  const packageCtx = usePackage();
+
+  if (!packageCtx) {
+    throw new Error('SourceFile must be declared inside a package')
+  }
+
   // Collection of import symbols
   const importRecords: ImportSymbol[] = reactive([]);
   // Map a symbol to import name, keep track of already imported symbols
@@ -31,11 +38,14 @@ export function SourceFile(props: SourceFileProps) {
       return importedSymbols.get(symbol)!;
     }
 
-    importRecords.push({
-      package: symbol.package ?? '',
-      name: symbol.name,
-      wildcard: false // TODO
-    });
+    // Only need to import if not in same package
+    if (symbol.package !== packageCtx?.qualifiedName) {
+      importRecords.push({
+        package: symbol.package ?? '',
+        name: symbol.name,
+        wildcard: false // TODO
+      });
+    }
     importedSymbols.set(symbol, symbol.name);
 
     return symbol.name;
@@ -47,6 +57,8 @@ export function SourceFile(props: SourceFileProps) {
 
   return (
     <CoreSourceFile path={props.path} filetype="java">
+      package {packageCtx.qualifiedName};
+
       {importRecords.length > 0 ? (
         <>
           <ImportStatements imports={importRecords} />

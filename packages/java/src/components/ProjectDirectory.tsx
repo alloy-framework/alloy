@@ -36,7 +36,7 @@ export interface ProjectDirectoryProps {
  * TODO: Manage external deps and import through pom.xml
  */
 export function ProjectDirectory(props: ProjectDirectoryProps) {
-  const scope = useBinder().createScope<JavaProjectScope>("project", props.artifactId, useScope());
+  const scope = useBinder().createScope<JavaProjectScope>({ kind: "project", name: props.artifactId, parent: useScope()});
 
   function addDependency(groupId: string, artifactId: string, version: string) {
     // TODO: Add deps to be imported from pom.xml or gradle file

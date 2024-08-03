@@ -1,8 +1,7 @@
 import {useJavaNamePolicy} from "../name-policy.js";
-import {Declaration, DeclarationProps} from "./Declaration.js";
+import {DeclarationProps} from "./Declaration.js";
 import {Reference} from "./Reference.js";
 import {code, refkey} from "@alloy-js/core";
-import {ClassConstructor} from "./ClassConstructor.js";
 
 
 interface ObjectDeclarationProps extends DeclarationProps{
@@ -23,6 +22,7 @@ export interface ObjectDeclarationParameterProps {
     parameters?: { value: any, type: 'string' | 'number' }[];
 }
 
+//format the parameters passed to the class constructor based on type.
 ObjectDeclaration.Parameters = function Parameters(props: ObjectDeclarationParameterProps) {
     const { parameters = [] } = props;
 

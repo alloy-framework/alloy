@@ -3,6 +3,8 @@ export * from "./ClassDeclaration.js";
 export * from "./Method.js";
 export * from "./Variable.js";
 export * from "./Interface.js";
+export * from "./ObjectDeclaration.js";
+export * from "./Enum.js";
 
 
 export * from './ImportStatement.js';

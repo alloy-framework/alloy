@@ -38,8 +38,8 @@ export function SourceFile(props: SourceFileProps) {
       return importedSymbols.get(symbol)!;
     }
 
-    // Only need to import if not in same package
-    if (symbol.package !== packageCtx?.qualifiedName) {
+    // Only need to import if not in same package, or comes from java.lang
+    if (symbol.package !== packageCtx?.qualifiedName || symbol.package?.startsWith('java.lang')) {
       importRecords.push({
         package: symbol.package ?? '',
         name: symbol.name,

@@ -3442,6 +3442,10 @@ function transformFragmentChildren(path, children, results, config) {
 }
 
 function transformJSX(path) {
+  if (path.node.alloyCreated) {
+    return;
+  }
+
   const config = getConfig(path);
   const replace = transformThis(path);
   const result = transformNode(

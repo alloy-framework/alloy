@@ -32,7 +32,6 @@ export function transformJSX(path) {
   );
 
   const template = getCreateTemplate(config, path, result);
-
   path.replaceWith(replace(template(path, result, false)));
 }
 

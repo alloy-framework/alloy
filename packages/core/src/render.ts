@@ -11,7 +11,8 @@ import {
   memo,
   root,
   untrack,
-} from "./jsx-runtime.js";
+} from "@alloy-js/core/jsx-runtime";
+import { useContext } from "./context.js";
 
 /**
  * The component tree is constructed as the result of transforming JSX with
@@ -167,7 +168,7 @@ export type RenderStructure = {};
 export type RenderTextTree = (string | RenderTextTree)[];
 
 function traceRender(phase: string, message: string) {
-  return false;
+  //return false;
   console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
 
@@ -240,11 +241,7 @@ export function render(children: Children): OutputDirectory {
 export function renderTree(children: Children) {
   const rootElem: RenderTextTree = [];
   const state: RenderState = {
-    indent: "",
-    literalIndent: "",
-    newLine: true,
-    literalIndentIncrease: false,
-    lastWasString: false,
+    newline: false,
   };
   root(() => {
     renderWorker(rootElem, children, state);
@@ -254,11 +251,7 @@ export function renderTree(children: Children) {
 }
 
 interface RenderState {
-  indent: string;
-  literalIndent: string;
-  newLine: boolean;
-  literalIndentIncrease: boolean;
-  lastWasString: boolean;
+  newline: boolean;
 }
 
 function renderWorker(
@@ -266,276 +259,87 @@ function renderWorker(
   children: Children,
   state: RenderState
 ) {
-  traceRender("render", dumpChildren(children) + " " + JSON.stringify(state));
+  traceRender("render", dumpChildren(children));
 
   if (Array.isArray(node)) {
     nodesToContext.set(node, getContext()!);
   }
 
-  const oldIndent = state.indent;
-  const oldLiteralIndent = state.literalIndent;
-  const contextIndent = getIdentFromContext();
-  state.indent = contextIndent?.indentString ?? state.indent;
-
-  state.literalIndent = getLiteralIndent(children);
-  // remove trailing line break from last string
-  if (contextIndent && state.newLine) {
-    // Special case: when we have an indent component at the start of the line,
-    // the literal indent won't be sufficient because we don't want the user to
-    // have to both increase the literal indent and use the indent component.
-    // So, we need to prepend the current indent. However, when the user is
-    // using implicit indentation (i.e. they've increased the literal indent
-    // level and we've wrapped a subsequent element or memo in an indent
-    // component) we don't need to add this indent. This is handled via setting
-    // newLine to false when we have a literal indent.
-    node.push(contextIndent.indent);
-  }
-
+  const indent = useContext(IndentContext)!;
   if (Array.isArray(children)) {
-    if (children.length > 0) {
-      children[0] = removeLeadingWhitespace(children[0]);
-      children[children.length - 1] = removeTrailingWhitespace(
-        children[children.length - 1]
-      );
-    }
     for (const child of children) {
-      appendChild(node, child, state);
+      appendChild(node, child, indent, state);
     }
   } else {
-    children = removeLeadingWhitespace(children);
-    children = removeTrailingWhitespace(children);
-    appendChild(node, children, state);
+    appendChild(node, children, indent, state);
   }
-
-  // restore state
-  state.indent = oldIndent;
-  state.literalIndent = oldLiteralIndent;
 }
 
 function appendChild(
   node: RenderTextTree,
   rawChild: Child,
+  indentState: IndentState,
   state: RenderState
 ) {
-  traceRender(
-    "appendChild",
-    printChild(rawChild) + " " + JSON.stringify(state)
-  );
+  traceRender("appendChild", printChild(rawChild));
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
-    let reindented = reindent(child, state);
-
-    if (state.lastWasString) {
-      // When the last element was a literal string, this is a string
-      // substitution, so we consider the leading and trailing whitespace
-      // insignificant because it's likely that this is substituting something
-      // rendered that has a bunch of needless whitespace. This aligns the
-      // behavior of literal string substitutions with memos-for-strings and
-      // components which return strings.
-      // We may need some way to mark a string in such a way that it is
-      // just dumped into the tree without any processing.
-      /*
-      reindented = reindented
-        .replace(leadingWhitespaceRe, "")
-        .replace(trailingWhitespaceRe, "");
-      */
+    console.log("Pushing string");
+    if (child.match(/\n\s*$/)) {
+      console.log("Set newline to true");
+      state.newline = true;
+    } else {
+      console.log("Set newline to false");
+      state.newline = false;
     }
-
+    let reindented = reindent(child, indentState.indentString);
     traceRender("appendChild:string", JSON.stringify(reindented));
-
-    const trailingIndent = getTrailingLiteralIndent(child);
-
-    if (trailingIndent !== null || reindented === "") {
-      state.newLine = true;
-    } else {
-      state.newLine = false;
-    }
-
-    if (
-      trailingIndent !== null &&
-      trailingIndent.length > state.literalIndent.length
-    ) {
-      state.literalIndentIncrease = true;
-    } else {
-      state.literalIndentIncrease = false;
-    }
-
-    if (state.lastWasString) {
-      state.lastWasString = false;
-    } else {
-      state.lastWasString = true;
-    }
-
     node.push(reindented);
   } else if (isComponentCreator(child)) {
-    state.lastWasString = false;
-    let wrappedChild;
-
-    if (state.literalIndentIncrease) {
-      state.literalIndentIncrease = false;
-      state.newLine = false;
-      wrappedChild = wrapInIndent(child);
-    } else {
-      wrappedChild = child;
-    }
     root(() => {
       traceRender("appendChild:component", printChild(child));
+      if (child.component === Indent && state.newline) {
+        console.log("Newline is true, appending spaces");
+        node.push(indentState.indent);
+      }
       const componentRoot: RenderTextTree = [];
       renderWorker(
         componentRoot,
-        untrack(() => wrappedChild()),
+        untrack(() => child()),
         state
       );
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
     }, child.component.name);
-    state.lastWasString = false;
   } else if (typeof child === "function") {
-    state.lastWasString = false;
-    let wrappedChild;
-
-    if (state.literalIndentIncrease) {
-      state.literalIndentIncrease = false;
-      state.newLine = false;
-      wrappedChild = wrapInIndent(child);
-    } else {
-      wrappedChild = child;
-    }
-
-    traceRender("appendChild:memo", wrappedChild.toString());
+    traceRender("appendChild:memo", child.toString());
     const index = node.length;
-    // todo: handle indent
     effect((prev: any) => {
-      if ((child as any).__WTF__) {
-        debugger;
-      }
       traceRender("memoEffect:run", "");
-      let res = wrappedChild();
+      let res = child();
       while (typeof res === "function" && !isComponentCreator(res)) {
         res = res();
       }
       const newNodes: RenderTextTree = [];
-      renderWorker(newNodes, res, { ...state });
+      renderWorker(newNodes, res, state);
       //node.splice(index, prev ? prev.length : 0, ...newNodes);
       node[index] = newNodes;
       return newNodes;
     });
     traceRender("appendChild:memo-done", "");
-    state.lastWasString = false;
   } else {
-    state.lastWasString = false;
-    let wrappedChild;
-
-    if (state.literalIndentIncrease) {
-      state.literalIndentIncrease = false;
-      state.newLine = false;
-      wrappedChild = wrapInIndent(child);
-    } else {
-      wrappedChild = child;
-    }
-
     traceRender("appendChild:array", dumpChildren(child));
-    renderWorker(node, wrappedChild, state);
+    renderWorker(node, child, state);
     traceRender("appendChild:array-done", dumpChildren(child));
-    state.lastWasString = false;
   }
 }
 
-const leadingWhitespaceRe = /^\s*\n(\s*)/;
-const trailingWhitespaceRe = /\s*\n(\s*)$/;
-
-function reindent(str: string, state: RenderState) {
+function reindent(str: string, indent: string) {
   const lines = str.split("\n");
-  const replaceRe = new RegExp("^" + state.literalIndent);
-
-  for (let i = 1; i < lines.length; i++) {
-    lines[i] = lines[i].replace(replaceRe, state.indent);
-  }
-
-  return lines.join("\n");
+  return [lines[0], ...lines.slice(1).map((line) => indent + line)].join("\n");
 }
-
-function getLiteralIndent(children: Children) {
-  const child = Array.isArray(children) ? children[0] : children;
-  if (typeof child !== "string") {
-    return "";
-  }
-
-  const match = child.match(leadingWhitespaceRe);
-  if (!match) {
-    return "";
-  } else {
-    return match[1];
-  }
-}
-
-function removeLeadingWhitespace(child: Child) {
-  if (typeof child !== "string") {
-    return child;
-  }
-
-  return child.replace(leadingWhitespaceRe, "");
-}
-
-function removeTrailingWhitespace(child: Child) {
-  if (typeof child !== "string") {
-    return child;
-  }
-
-  return child.replace(trailingWhitespaceRe, "");
-}
-
-function getTrailingLiteralIndent(str: string) {
-  const match = str.match(trailingWhitespaceRe);
-  if (!match) {
-    return null;
-  }
-
-  return match[1];
-}
-
-function lastIsLiterallyIndented(
-  tree: RenderTextTree,
-  currentLiteralIndent: string
-): boolean {
-  if (tree.length === 0) {
-    return false;
-  }
-
-  const last = tree[tree.length - 1];
-
-  if (typeof last !== "string") {
-    return false;
-  }
-
-  const trailingIndent = getTrailingLiteralIndent(last);
-
-  if (!trailingIndent) {
-    return false;
-  }
-
-  if (trailingIndent.length > 0) {
-    return true;
-  }
-
-  return false;
-}
-
 type NormalizedChild = string | (() => Child | Children) | NormalizedChild[];
-
-function wrapInIndent(children: Children) {
-  return wrap(children, Indent, {});
-}
-
-function wrap<T>(children: Children, Component: Component<T>, props: T) {
-  return createComponent(Component, {
-    ...props,
-    get children() {
-      return children;
-    },
-  } as any);
-}
 
 function normalizeChild(child: Child): NormalizedChild {
   if (Array.isArray(child)) {

@@ -1,5 +1,4 @@
 import { it, expect, describe } from "vitest";
-import { Children } from "../../src/jsx-runtime.js";
 import "../../testing/extend-expect.js";
 import { code } from "../../src/utils.js";
 

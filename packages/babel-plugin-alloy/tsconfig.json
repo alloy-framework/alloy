@@ -1,13 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "declaration": true,
     "outDir": "dist",
+    "emitDeclarationOnly": false,
   },
-  "references": [
-    { "path": "../core" }
-  ],
   "include": [ "src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

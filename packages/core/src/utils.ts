@@ -1,5 +1,5 @@
 import {} from "@vue/reactivity";
-import { Child, Children, memo } from "./jsx-runtime.js";
+import { Child, Children, memo } from "@alloy-js/core/jsx-runtime";
 export interface MapJoinOptions {
   joiner?: string;
 }

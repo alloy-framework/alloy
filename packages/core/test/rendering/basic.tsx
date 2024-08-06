@@ -1,7 +1,6 @@
 import { it, expect, describe } from "vitest";
-import { Children } from "../../src/jsx-runtime.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import "../../testing/extend-expect.js";
-
 describe("string nodes", () => {
   it("renders string nodes", () => {
     expect(<>

@@ -8,6 +8,10 @@ import {
   stop,
 } from "@vue/reactivity";
 
+if ((globalThis as any).ALLOY) {
+  throw "FIAL";
+}
+(globalThis as any).ALLOY = true;
 interface Disposable {
   (): void;
 }

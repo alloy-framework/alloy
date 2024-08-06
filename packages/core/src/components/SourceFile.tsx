@@ -1,5 +1,5 @@
 import { createContext, useContext } from "../context.js";
-import { Children, getContext} from "../jsx-runtime.js";
+import { Children, getContext} from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { SourceDirectoryContext } from "./SourceDirectory.js";
 

@@ -10,11 +10,11 @@ export interface MethodProps {
     children?: Children;
 }
 
-export function Method({accessModifier, methodName, isStatic, returnType, parameters, children}: MethodProps) {
-    const params = <Method.Parameters parameters = {parameters}></Method.Parameters>;
+export function Method(props: MethodProps) {
+    const params = <Method.Parameters parameters = {props.parameters}></Method.Parameters>;
     return code`
-        ${accessModifier}${isStatic ? ' static' : ''} ${returnType} ${methodName}(${params}) {
-          ${children}
+        ${props.accessModifier}${props.isStatic ? ' static' : ''} ${props.returnType} ${props.methodName}(${params}) {
+          ${props.children}
         }
     `;
 }

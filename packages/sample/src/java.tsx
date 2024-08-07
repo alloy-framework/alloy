@@ -6,30 +6,29 @@ import { code } from "@alloy-js/core";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()}>
-    <jv.ProjectDirectory groupId='me.example' artifactId='test' version='1.0.0'>
+    <jv.ProjectDirectory groupId="me.example" artifactId="test" version="1.0.0">
       <jv.PackageDirectory package="me.example.code">
         <jv.SourceFile path="Main.java">
-          <jv.Declaration name="Main" accessModifier={AccessModifier.PUBLIC}>
-            {code`
-            public class Main {
-              public static void main(String[] args) {
-                System.out.println("Hello, World!");
-              }
-            }
-          `}
-          </jv.Declaration>
-
-        </jv.SourceFile>
-        <jv.SourceFile path="TestMain.java">
           {code`
             public class Main {
               public static void main(String[] args) {
                 System.out.println("Hello, World!");
-                ${<jv.Reference refkey={ay.refkey('Main')} />} main = new Main();
+                ${<jv.Reference refkey={ay.refkey("Model")} />} myModel = new ${<jv.Reference refkey={ay.refkey("Model")} />}();
               }
             }
           `}
         </jv.SourceFile>
+        <jv.Declaration name="Model" accessModifier={AccessModifier.PUBLIC}>
+          <jv.SourceFile path="Model.java">
+            {code`
+              public class Model {
+                
+                public String myName = "Test";
+                
+              }
+            `}
+          </jv.SourceFile>
+        </jv.Declaration>
       </jv.PackageDirectory>
     </jv.ProjectDirectory>
   </ay.Output>

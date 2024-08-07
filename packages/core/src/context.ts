@@ -21,15 +21,15 @@ export interface ContextProviderProps<T = unknown> {
 export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
-  while (current) {
-    const currentContextValue = current.context![context.id];
+  while (current !== null) {
+    const currentContextValue = current?.context?.[context.id];
     if (currentContextValue) {
       return currentContextValue as T;
     }
-    current = current.owner;
+    current = current?.owner;
   }
 
-  return context.default;
+  return context?.default;
 }
 
 export function createContext<T = unknown>(
@@ -44,7 +44,9 @@ export function createContext<T = unknown>(
 
       let rendered = shallowRef();
       effect(() => {
-        context!.context![id] = props.value;
+        if (context && context.context) {
+          context.context[id] = props.value;
+        }
         rendered.value = untrack(() => props.children);
       });
 

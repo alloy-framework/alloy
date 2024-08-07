@@ -1,6 +1,6 @@
 import * as ay from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
-import {AccessModifier, createJavaNamePolicy} from "@alloy-js/java";
+import {AccessModifier, createJavaNamePolicy, Interface} from "@alloy-js/java";
 import {writeOutput} from "./write-output.js";
 import {code} from "@alloy-js/core";
 
@@ -10,16 +10,18 @@ const res = ay.render(
 
       <jv.PackageDirectory package="me.example.code">
         <jv.SourceFile path="Main.java">
-          <jv.ClassDeclaration name="Main" accessModifier={AccessModifier.PUBLIC}>
+          <jv.ClassDeclaration name="Main" accessModifier={AccessModifier.PUBLIC} implementsInterface={"IPerson"}>
             <jv.Method accessModifier={AccessModifier.PUBLIC} isStatic={true} returnType={"void"} methodName={"main"}
                        parameters={{"String[]": "args"}}>
-              <jv.ObjectDeclaration name={"Person"} variableName={"person"} constructorArgs={[{value: 'Tom', type: 'string'},
-                {value: 27, type: 'number'}]}/>
+              <jv.ObjectDeclaration name={"Person"} variableName={"person"} constructorArgs={["Tom", 27]}/>
               {code`
                 person.displayInfo();
               `}
             </jv.Method>
           </jv.ClassDeclaration>
+        </jv.SourceFile>
+        <jv.SourceFile path={"IPerson.java"}>
+          <Interface isPackagePrivate={false} name={"IPerson"}></Interface>
         </jv.SourceFile>
       </jv.PackageDirectory>
 

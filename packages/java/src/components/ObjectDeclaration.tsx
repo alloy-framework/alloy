@@ -23,7 +23,7 @@ export function ObjectDeclaration(props: ObjectDeclarationProps) {
 }
 
 export interface ObjectDeclarationParameterProps {
-    parameters?: { value: any, type: 'string' | 'number' }[];
+    parameters?: any[];
 }
 
 //format the parameters passed to the class constructor based on type.

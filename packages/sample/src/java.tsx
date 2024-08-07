@@ -1,11 +1,23 @@
 import * as ay from "@alloy-js/core";
-import { code } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
-import { AccessModifier, createJavaNamePolicy } from "@alloy-js/java";
+import { AccessModifier, createJavaNamePolicy, createLibrary } from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
 
+const testPackage = createLibrary({
+  groupId: "me.example",
+  artifactId: "test",
+  version: "1.0.0",
+  descriptor: {
+    'spring.annotations': [
+      'TestAnnotation',
+      'Tester',
+    ]
+  }
+})
+
 const res = ay.render(
-  <ay.Output namePolicy={createJavaNamePolicy()}>
+  <ay.Output namePolicy={createJavaNamePolicy()} externals={[testPackage]}>
     <jv.ProjectDirectory groupId="me.example" artifactId="test" version="1.0.0">
       <jv.PackageDirectory package="me.example.code">
         <jv.SourceFile path="Main.java">
@@ -43,6 +55,7 @@ const res = ay.render(
               public class Model {
                 
                 public String myName = "Test";
+                public ${<jv.Reference refkey={testPackage['TestAnnotation']} />} myVar = "Test";
                 
               }
             `}

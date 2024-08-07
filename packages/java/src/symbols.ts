@@ -2,7 +2,7 @@
  * Specific java symbols used for dep management
  */
 
-import { memo, OutputScope, OutputSymbol, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
+import { Binder, memo, OutputScope, OutputSymbol, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
 import { SourceFileContext } from "./components/index.js";
 
 /**
@@ -24,7 +24,7 @@ export interface JavaDependency {
   artifactId: string;
   version?: string;
 
-  scope?: 'compile' | 'test' | 'runtime' | 'provided';
+  scope?: "compile" | "test" | "runtime" | "provided";
 }
 
 export type JavaOutputScope = JavaProjectScope | JavaPackageScope;
@@ -33,17 +33,19 @@ export type JavaOutputScope = JavaProjectScope | JavaPackageScope;
  * Represents the java project itself (maven, gradle, etc)
  */
 export interface JavaProjectScope extends OutputScope {
-  kind: 'project';
+  kind: "project";
 
   /**
    * The dependencies of this project
    * Map qualified package name to dependency
    */
   dependencies: Map<string, JavaDependency>;
+
+  addDependency(dependency: JavaDependency): string;
 }
 
 export interface JavaPackageScope extends OutputScope {
-  kind: 'package';
+  kind: "package";
 }
 
 /**
@@ -57,11 +59,41 @@ export function ref(refkey: Refkey) {
 
   return memo(() => {
     if (result.value === undefined) {
-      return;
+      return "<Unresolved Symbol>";
     }
 
     const { targetDeclaration, pathDown, pathUp, commonScope } = result.value;
 
     return untrack(() => sourceFile!.addImport(targetDeclaration));
-  })
+  });
+}
+
+export function createJavaProjectScope(
+  binder: Binder,
+  parent: OutputScope | undefined,
+  name: string,
+): JavaProjectScope {
+  return binder.createScope<JavaProjectScope>({
+    kind: "project", name, parent, dependencies: new Map(),
+    addDependency(dependency: JavaDependency): string {
+      const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
+
+      if (this.dependencies.has(depKey)) {
+        return depKey;
+      }
+
+      this.dependencies.set(depKey, dependency);
+      return depKey;
+    }
+  });
+}
+
+export function createJavaPackageScope(
+  binder: Binder,
+  parent: OutputScope | undefined,
+  name: string,
+): JavaPackageScope {
+  return binder.createScope<JavaPackageScope>({
+    kind: "package", name, parent,
+  });
 }

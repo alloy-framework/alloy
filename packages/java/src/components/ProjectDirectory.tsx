@@ -9,11 +9,10 @@ import {
   reactive,
   createContext, useContext
 } from "@alloy-js/core";
-import { JavaDependency, JavaProjectScope } from "../symbols.js";
+import { createJavaProjectScope, JavaDependency, JavaProjectScope } from "../symbols.js";
 
 export interface ProjectContext {
   scope: JavaProjectScope;
-  addDependency(dependency: JavaDependency): string;
 }
 
 export const ProjectContext = createContext<ProjectContext>();
@@ -35,23 +34,10 @@ export interface ProjectDirectoryProps {
  * with a build tool included (maven, gradle etc).
  */
 export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...props }: ProjectDirectoryProps) {
-  const dependencies = reactive(new Map<string, JavaDependency>());
-  const scope = useBinder().createScope<JavaProjectScope>({ kind: "project", name: props.artifactId, parent: useScope(), dependencies});
-
-  function addDependency(dependency: JavaDependency) {
-    const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
-
-    if (dependencies.has(depKey)) {
-      return depKey;
-    }
-
-    dependencies.set(depKey, dependency);
-    return depKey;
-  }
+  const scope = createJavaProjectScope(useBinder(), useScope(), props.groupId);
 
   const projectContext: ProjectContext = {
     scope,
-    addDependency
   };
 
   return (
@@ -80,10 +66,10 @@ export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...pr
               <maven.compiler.target>${javaVersion}</maven.compiler.target>
               <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             </properties>
-            ${dependencies.size > 0 ? code`
+            ${scope.dependencies.size > 0 ? code`
               ${'\n'}
               <dependencies>
-                ${Array.from(dependencies.values()).map(dep => code`
+                ${Array.from(scope.dependencies.values()).map(dep => code`
                   <dependency>
                     <groupId>${dep.groupId}</groupId>
                     <artifactId>${dep.artifactId}</artifactId>

@@ -6,7 +6,7 @@ import {
   SourceFileContext, useBinder,
   useContext, useScope
 } from "@alloy-js/core";
-import { JavaPackageScope, JavaProjectScope } from "../symbols.js";
+import { createJavaPackageScope, JavaPackageScope, JavaProjectScope } from "../symbols.js";
 
 export interface PackageDirectoryContext {
   scope: JavaPackageScope;
@@ -37,7 +37,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
 
   const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + '.' + packageName : packageName;
 
-  const scope = useBinder().createScope<JavaPackageScope>({ kind: "package", name: fullyQualifiedPackageName, parent: useScope()});
+  const scope = createJavaPackageScope(useBinder(), useScope(), fullyQualifiedPackageName);
 
   const packagePath = sourceDirectory?.path + '/' + packageName;
   const packageContext: PackageDirectoryContext = {

@@ -22,7 +22,7 @@ export interface JavaOutputSymbol extends OutputSymbol {
 export interface JavaDependency {
   groupId: string;
   artifactId: string;
-  version: string;
+  version?: string;
 
   scope?: 'compile' | 'test' | 'runtime' | 'provided';
 }

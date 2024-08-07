@@ -5,8 +5,7 @@ export * from "./Variable.js";
 export * from "./Interface.js";
 export * from "./ObjectDeclaration.js";
 export * from "./Enum.js";
-
-
+export * from './Annotation.js';
 export * from './ImportStatement.js';
 export * from './SourceFile.js';
 export * from './ProjectDirectory.js';

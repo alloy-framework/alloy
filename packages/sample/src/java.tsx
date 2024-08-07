@@ -21,6 +21,11 @@ const res = ay.render(
         <jv.Declaration name="Model" accessModifier={AccessModifier.PUBLIC}>
           <jv.SourceFile path="Model.java">
             {code`
+              ${<jv.Annotation name="Data" arguments={
+                new Map([
+                  ["staticConstructor", "\"test\""]
+                ])
+            } />}
               public class Model {
                 
                 public String myName = "Test";

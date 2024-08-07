@@ -87,8 +87,8 @@ export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...pr
                   <dependency>
                     <groupId>${dep.groupId}</groupId>
                     <artifactId>${dep.artifactId}</artifactId>
-                    <version>${dep.version}</version>
-                    <scope>${dep.scope ?? 'provided'}</scope>
+                    ${dep.version !== undefined ? `<version>${dep.version}</version>` : undefined}
+                    <scope>${dep.scope ?? "provided"}</scope>
                   </dependency>
                 `)}
               </dependencies>

@@ -3,6 +3,7 @@ import { createContext, OutputSymbol, reactive, Scope, SourceFile as CoreSourceF
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
 import { JavaOutputSymbol } from "../symbols.js";
 import { usePackage } from "./PackageDirectory.js";
+import { useProject } from "./ProjectDirectory.js";
 
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;

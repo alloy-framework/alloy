@@ -9,11 +9,11 @@ import {
   reactive,
   createContext, useContext
 } from "@alloy-js/core";
-import { JavaProjectScope } from "../symbols.js";
+import { JavaDependency, JavaProjectScope } from "../symbols.js";
 
 export interface ProjectContext {
   scope: JavaProjectScope;
-  addDependency(groupId: string, artifactId: string, version: string): void; // TODO
+  addDependency(dependency: JavaDependency): string;
 }
 
 export const ProjectContext = createContext<ProjectContext>();
@@ -25,21 +25,28 @@ export interface ProjectDirectoryProps {
   groupId: string;
   artifactId: string; // Also name of project
   version: string;
+  javaVersion?: number;
+  buildSystem?: 'maven' | 'gradle'; // TODO: Actually respect this option, for now only maven
   children?: Children;
 }
 
 /**
  * Represents a java project directory. Use if you want to generate a Java project
  * with a build tool included (maven, gradle etc).
- *
- * TODO: What java version are we basing off?
- * TODO: Manage external deps and import through pom.xml
  */
-export function ProjectDirectory(props: ProjectDirectoryProps) {
-  const scope = useBinder().createScope<JavaProjectScope>("project", props.artifactId, useScope());
+export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...props }: ProjectDirectoryProps) {
+  const dependencies = reactive(new Map<string, JavaDependency>());
+  const scope = useBinder().createScope<JavaProjectScope>({ kind: "project", name: props.artifactId, parent: useScope(), dependencies});
 
-  function addDependency(groupId: string, artifactId: string, version: string) {
-    // TODO: Add deps to be imported from pom.xml or gradle file
+  function addDependency(dependency: JavaDependency) {
+    const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
+
+    if (dependencies.has(depKey)) {
+      return depKey;
+    }
+
+    dependencies.set(depKey, dependency);
+    return depKey;
   }
 
   const projectContext: ProjectContext = {
@@ -69,11 +76,24 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
             <version>${props.version}</version>
     
             <properties>
-              <maven.compiler.source>17</maven.compiler.source>
-              <maven.compiler.target>17</maven.compiler.target>
+              <maven.compiler.source>${javaVersion}</maven.compiler.source>
+              <maven.compiler.target>${javaVersion}</maven.compiler.target>
               <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             </properties>
-    
+            ${dependencies.size > 0 ? code`
+              ${'\n'}
+              <dependencies>
+                ${Array.from(dependencies.values()).map(dep => code`
+                  <dependency>
+                    <groupId>${dep.groupId}</groupId>
+                    <artifactId>${dep.artifactId}</artifactId>
+                    <version>${dep.version}</version>
+                    <scope>${dep.scope ?? 'provided'}</scope>
+                  </dependency>
+                `)}
+              </dependencies>
+            ` : undefined}
+   
           </project>
         `}
       </SourceFile>

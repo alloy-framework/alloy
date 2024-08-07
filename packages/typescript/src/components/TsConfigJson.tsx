@@ -8,6 +8,9 @@ export interface TSConfigJsonProps {
 
 export function TSConfigJson(props: TSConfigJsonProps) {
   const pkg = usePackage();
+  if (!pkg) {
+    throw new Error("TSConfigJson component needs to be inside a PackageDirectory");
+  }
   const outDir = props.outDir ?? "dist";
   const includeDirs = memo(() => {
     const rootDirs = new Set<string>();

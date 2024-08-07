@@ -37,7 +37,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
 
   const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + '.' + packageName : packageName;
 
-  const scope = useBinder().createScope<JavaPackageScope>("package", fullyQualifiedPackageName, useScope());
+  const scope = useBinder().createScope<JavaPackageScope>({ kind: "package", name: fullyQualifiedPackageName, parent: useScope()});
 
   const packagePath = sourceDirectory?.path + '/' + packageName;
   const packageContext: PackageDirectoryContext = {

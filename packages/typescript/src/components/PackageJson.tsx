@@ -25,6 +25,9 @@ export interface PackageExports {
 
 export function PackageJsonFile(props: PackageJsonFileProps) {
   const pkg = usePackage();
+  if (!pkg) {
+    throw new Error("Package json component needs to be inside a PackageDirectory");
+  }
 
   const jsonContent = memo(() => {
     const pkgJson = {

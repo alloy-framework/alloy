@@ -1,9 +1,8 @@
 import * as ay from "@alloy-js/core";
+import { SourceDirectory } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
-import * as java from "@alloy-js/java";
-import {AccessModifier} from "@alloy-js/java";
-import {writeOutput} from "./write-output.js";
-
+import { writeOutput } from "./write-output.js";
+ 
 const fs = ts.node.fs;
 const readFile = fs["./promises"].readFile;
 
@@ -14,39 +13,16 @@ const res = ay.render(
         This is a sample output project.
       </ay.SourceFile>
 
-      <ay.SourceFile path={"JavaTestFile.java"} filetype={"java"}>
-        <java.ClassDeclaration accessModifier={AccessModifier.PUBLIC} name={"JavaTestClass"}>
-          <java.Variable type={"int"} name={"testVar"} accessModifier={AccessModifier.PRIVATE}></java.Variable>
-          <java.ClassConstructor accessModifier={AccessModifier.PUBLIC} className={"JavaTestClass"}/>
-          <java.Method accessModifier={AccessModifier.PUBLIC} methodName={"javaTestMethod"} isStatic={true}
-                       returnType={"void"}
-                       parameters={{'int': 'x', 'String': 'name'}}></java.Method>
-          <java.Method accessModifier={AccessModifier.PRIVATE} methodName={"javaTestMethodTwo"} isStatic={false}
-                       returnType={"void"}></java.Method>
-        </java.ClassDeclaration>
-      </ay.SourceFile>
-
-      <ay.SourceFile path={"JavaTestFile2.java"} filetype={"java"}>
-        <java.ClassDeclaration accessModifier={AccessModifier.PUBLIC} name={"JavaTestClass2"}>
-          <java.ClassConstructor accessModifier={AccessModifier.PRIVATE} className={"JavaTestClass2"}/>
-        </java.ClassDeclaration>
-      </ay.SourceFile>
-
       <ts.SourceFile export="." path="test1.ts">
-        await <ts.Reference refkey={readFile}/>("./package.json");
-        <ts.Declaration export name="foo">
+        await <ts.Reference refkey={readFile} />("./package.json");
+        <ts.VarDeclaration export name="foo">
           const foo = 1;
-        </ts.Declaration>
+        </ts.VarDeclaration>
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
-        const v = <ts.Reference refkey={ay.refkey("foo")}/>;
+        const v = <ts.Reference refkey={ay.refkey("foo")} />;
       </ts.SourceFile>
-
-      <ts.SourceFile path="test3.ts">
-        <ts.VarDeclaration name={"testVar"} const={true} value={2}></ts.VarDeclaration>
-      </ts.SourceFile>
-
     </ts.PackageDirectory>
   </ay.Output>
 );

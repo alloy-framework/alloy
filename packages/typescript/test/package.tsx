@@ -14,21 +14,23 @@ it("exports source files", () => {
   const res = render(
     <Output>
       <PackageDirectory name="greeting-js" path="." version="1.0.0">
+        
         <ts.SourceFile path="greeting.ts">
           <ts.FunctionDeclaration name="getGreeting">
             return "Hello world!";
           </ts.FunctionDeclaration>
         </ts.SourceFile>
-        <ts.SourceFile export path="printing.ts">
-        <ts.VarDeclaration name="greeting">
-          <ts.Reference refkey={refkey("getGreeting")} />()
-        </ts.VarDeclaration>
-        <ts.FunctionDeclaration export name="printGreeting">
-          console.log(greeting);
-        </ts.FunctionDeclaration>
-      </ts.SourceFile>
 
-      <ts.BarrelFile export="." />
+        <ts.SourceFile export path="printing.ts">
+          <ts.VarDeclaration name="greeting">
+            <ts.Reference refkey={refkey("getGreeting")} />()
+          </ts.VarDeclaration>
+          <ts.FunctionDeclaration export name="printGreeting">
+            console.log(greeting);
+          </ts.FunctionDeclaration>
+        </ts.SourceFile>
+
+        <ts.BarrelFile export="." />
         
       </PackageDirectory>
     </Output>

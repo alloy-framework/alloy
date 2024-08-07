@@ -1,27 +1,28 @@
+import { Indent as _$Indent } from "@alloy-js/core:Indent";
 function simple() {
-  return <Hi>hello!<Indent>
-indented!</Indent></Hi>;
+  return <Hi>hello!<_$Indent>
+indented!</_$Indent></Hi>;
 }
 function indentedComponent() {
-  return <Hi>hello!<Indent>
-<Bye>content</Bye></Indent></Hi>;
+  return <Hi>hello!<_$Indent>
+<Bye>content</Bye></_$Indent></Hi>;
 }
 function multipleIndent() {
-  return <Hi>hello!<Indent>
-indented!</Indent>
-another<Indent>
-indented?</Indent></Hi>;
+  return <Hi>hello!<_$Indent>
+indented!</_$Indent>
+another<_$Indent>
+indented?</_$Indent></Hi>;
 }
 function multipleIndentComponent() {
-  return <Hi>hello!<Indent>
+  return <Hi>hello!<_$Indent>
 <Foo />
-<Foo /></Indent></Hi>;
+<Foo /></_$Indent></Hi>;
 }
 function multipleIndentComponentAndText() {
-  return <Hi>hello!<Indent>
+  return <Hi>hello!<_$Indent>
 a
 <Foo />
 b
 <Foo />
-c</Indent></Hi>;
+c</_$Indent></Hi>;
 }

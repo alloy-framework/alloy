@@ -23,7 +23,6 @@ export interface IndentState {
 }
 
 export function Indent(props: IndentProps) {
-  console.log("Indent component!");
   const previousIndent = useContext(IndentContext) ?? {
     level: 0,
     indent: props.indent ?? "  ",

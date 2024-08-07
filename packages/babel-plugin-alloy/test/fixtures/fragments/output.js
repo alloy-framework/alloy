@@ -1,13 +1,14 @@
+import { Indent as _$Indent } from "@alloy-js/core:Indent";
 function multipleIndentComponent() {
-  return <>hello!<Indent>
+  return <>hello!<_$Indent>
 <Foo />
-<Foo /></Indent></>;
+<Foo /></_$Indent></>;
 }
 function multipleIndentComponentAndText() {
-  return <>hello!<Indent>
+  return <>hello!<_$Indent>
 a
 <Foo />
 b
 <Foo />
-c</Indent></>;
+c</_$Indent></>;
 }

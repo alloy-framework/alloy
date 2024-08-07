@@ -40,12 +40,10 @@ export function createContext<T = unknown>(
     id,
     default: defaultValue,
     Provider(props: ContextProviderProps<T>) {
-      console.log("WTF?");
       const context = getContext();
 
       let rendered = shallowRef();
       effect(() => {
-        console.log("Setting context on node", props.value);
         context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);
       });

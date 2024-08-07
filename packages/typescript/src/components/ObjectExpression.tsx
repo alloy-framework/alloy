@@ -27,7 +27,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
       if (elements.length > 0) {
         elements.push(",");
       }
-      elements.push("\n", props.children);
+      elements.push(props.children);
     }
 
     return elements;

@@ -168,7 +168,7 @@ export type RenderStructure = {};
 export type RenderTextTree = (string | RenderTextTree)[];
 
 function traceRender(phase: string, message: string) {
-  //return false;
+  return false;
   console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
 
@@ -285,12 +285,9 @@ function appendChild(
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
-    console.log("Pushing string");
     if (child.match(/\n\s*$/)) {
-      console.log("Set newline to true");
       state.newline = true;
     } else {
-      console.log("Set newline to false");
       state.newline = false;
     }
     let reindented = reindent(child, indentState.indentString);
@@ -300,7 +297,6 @@ function appendChild(
     root(() => {
       traceRender("appendChild:component", printChild(child));
       if (child.component === Indent && state.newline) {
-        console.log("Newline is true, appending spaces");
         node.push(indentState.indent);
       }
       const componentRoot: RenderTextTree = [];

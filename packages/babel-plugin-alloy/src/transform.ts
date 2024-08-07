@@ -81,7 +81,7 @@ function transformElement(
 
   children.forEach((child) => child.remove());
   newChildren.forEach((newChild) => {
-    const newItem = path.pushContainer("children", newChild)[0];
+    path.pushContainer("children", newChild)[0];
   });
 
   path.get("children").forEach((child) => {
@@ -133,6 +133,7 @@ function registerIndent(path: NodePath, opts: Options) {
         nameHint: `$Indent`,
       }
     );
+    imports.set(`${moduleName}:Indent`, id);
     return t.jsxIdentifier(id.name);
   } else {
     let id = imports.get(`${moduleName}:Indent`);

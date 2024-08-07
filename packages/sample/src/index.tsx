@@ -6,13 +6,12 @@ const fs = ts.node.fs;
 const readFile = fs["./promises"].readFile;
 
 
-let frag = <ay.Output>
-  <ay.SourceFile filetype="text" path="foo.txt">
-    <>
-      one
-      <ay.Indent>hi</ay.Indent>
-    </>
-  </ay.SourceFile>
-</ay.Output>;
+let frag = <>
+  a
+    {"sub"}
+    b
+    c
+  d
+</>
 
 console.log(ay.render(frag));

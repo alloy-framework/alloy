@@ -10,9 +10,9 @@ export function Interface(props: InterfaceProps) {
     const name = useJavaNamePolicy().getName(props.name, "interface");
     return (
         <Declaration {...props} name={name}>
-            {props.isPackagePrivate ? "" : " public"} interface {name} {"{"}
-            {props.children}
-        {"{"}
+            {props.isPackagePrivate ? "" : "public"} interface {name} {"{"}
+              {props.children}
+            {"{"}
         </Declaration>
     )
 }

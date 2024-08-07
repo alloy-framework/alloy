@@ -1,10 +1,11 @@
 import {Children, code} from "@alloy-js/core";
 import {AccessModifier} from "../access-modifier.js";
+import {MethodModifier} from "../modifiers/index.js";
 
 export interface MethodProps {
     accessModifier: AccessModifier;
     methodName: string;
-    isStatic: boolean;
+    methodModifiers?: MethodModifier[];
     returnType: string;
     parameters?: Record<string, string>;
     children?: Children;
@@ -13,7 +14,7 @@ export interface MethodProps {
 export function Method(props: MethodProps) {
     const params = <Method.Parameters parameters = {props.parameters}></Method.Parameters>;
     return code`
-        ${props.accessModifier}${props.isStatic ? ' static' : ''} ${props.returnType} ${props.methodName}(${params}) {
+        ${props.accessModifier} ${props.methodModifiers ? props.methodModifiers.join(" ") : ""} ${props.returnType} ${props.methodName}(${params}) {
           ${props.children}
         }
     `;

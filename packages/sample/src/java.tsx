@@ -1,8 +1,8 @@
 import * as ay from "@alloy-js/core";
-import * as jv from "@alloy-js/java";
-import { writeOutput } from "./write-output.js";
-import { createJavaNamePolicy, AccessModifier } from "@alloy-js/java";
 import { code } from "@alloy-js/core";
+import * as jv from "@alloy-js/java";
+import { AccessModifier, createJavaNamePolicy } from "@alloy-js/java";
+import { writeOutput } from "./write-output.js";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()}>
@@ -13,18 +13,32 @@ const res = ay.render(
             public class Main {
               public static void main(String[] args) {
                 System.out.println("Hello, World!");
-                ${<jv.Reference refkey={ay.refkey("Model")} />} myModel = new ${<jv.Reference refkey={ay.refkey("Model")} />}();
+                ${<jv.Reference refkey={ay.refkey("Model")} />} myModel = new ${<jv.Reference
+            refkey={ay.refkey("Model")} />}();
               }
             }
           `}
         </jv.SourceFile>
+        <jv.PackageDirectory package="annotations">
+          <jv.Declaration name="Data" accessModifier={AccessModifier.PUBLIC}>
+            <jv.SourceFile path="Data.java">
+              {code`
+              public class Data {
+                
+                public String myName = "Test";
+                
+              }
+            `}
+            </jv.SourceFile>
+          </jv.Declaration>
+        </jv.PackageDirectory>
         <jv.Declaration name="Model" accessModifier={AccessModifier.PUBLIC}>
           <jv.SourceFile path="Model.java">
             {code`
               ${<jv.Annotation name="Data" arguments={
-                new Map([
-                  ["staticConstructor", "\"test\""]
-                ])
+              new Map([
+                ["staticConstructor", "\"test\""]
+              ])
             } />}
               public class Model {
                 

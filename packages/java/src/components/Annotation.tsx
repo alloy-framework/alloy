@@ -1,3 +1,6 @@
+import { code, refkey } from "@alloy-js/core";
+import { Reference } from "./Reference.js";
+
 export interface AnnotationProps {
   name: string;
   value?: string; // If one argument, provide this
@@ -9,7 +12,8 @@ export interface AnnotationProps {
  * For instance, use this if you want to annotate a method with '@Override'.
  */
 export function Annotation(props: AnnotationProps) {
+  const nameRef = <Reference refkey={refkey(props.name)} />
   const args = props.value ? `(${props.value})` :  props.arguments ? `(${Array.from(props.arguments).map(([k, v]) => `${k} = ${v}`).join(', ')})` : '';
 
-  return `@${props.name}${args}`
+  return code`@${nameRef}${args}`
 }

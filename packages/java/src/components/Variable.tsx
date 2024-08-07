@@ -1,22 +1,21 @@
 import {code} from "@alloy-js/core";
 import {AccessModifier} from "../access-modifier.js";
+import {FieldModifier} from "../modifiers/index.js";
 
 export interface VariableProps {
     type: string;
     name: string;
     value?: string;
-    isFinal?: boolean;
-    isStatic?: boolean;
+    fieldModifiers?: FieldModifier[];
     accessModifier?: AccessModifier;
 }
 
 export function Variable(props: VariableProps) {
-    const { type, name, value, isFinal, isStatic, accessModifier } = props;
-
+    const { type, name, value, accessModifier } = props;
+    const fieldModifiers = props.fieldModifiers?.join(" ");
     const declarationParts = [
         accessModifier,
-        isStatic ? 'static' : undefined,
-        isFinal ? 'final' : undefined,
+        fieldModifiers,
         type,
         name,
         value !== undefined ? `= ${value}` : undefined

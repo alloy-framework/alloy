@@ -1,7 +1,7 @@
 import * as ay from "@alloy-js/core";
 import {code} from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
-import {AccessModifier, ClassModifier, createJavaNamePolicy, Interface} from "@alloy-js/java";
+import {AccessModifier, ClassModifier, createJavaNamePolicy, FieldModifier, Interface} from "@alloy-js/java";
 import {writeOutput} from "./write-output.js";
 
 const res = ay.render(
@@ -28,7 +28,7 @@ const res = ay.render(
       <jv.PackageDirectory package={"me.example.code.models"}>
         <jv.SourceFile path={"Person.java"}>
           <jv.ClassDeclaration name={"Person"} accessModifier={AccessModifier.PUBLIC}>
-            <jv.Variable name={"name"} type={"String"} accessModifier={AccessModifier.PRIVATE}></jv.Variable>
+            <jv.Variable name={"name"} type={"String"} fieldModifiers={[FieldModifier.STATIC]} accessModifier={AccessModifier.PRIVATE}></jv.Variable>
             <jv.Variable name={"age"} type={"int"} accessModifier={AccessModifier.PRIVATE}></jv.Variable>
             <jv.ClassConstructor accessModifier={AccessModifier.PUBLIC} className={"Person"}
                                  parameters={{"String" : "name", "int" : "age"}}>

@@ -10,7 +10,7 @@ import {code, refkey} from "@alloy-js/core";
  */
 interface ObjectDeclarationProps extends DeclarationProps{
     variableName: string;
-    constructorArgs?: { value: any, type: 'string' | 'number' }[];
+    constructorArgs?: any[];
 }
 
 export function ObjectDeclaration(props: ObjectDeclarationProps) {
@@ -30,13 +30,11 @@ export interface ObjectDeclarationParameterProps {
 ObjectDeclaration.Parameters = function Parameters(props: ObjectDeclarationParameterProps) {
     const { parameters = [] } = props;
 
-    const formatParameter = (param: { value: any, type: 'string' | 'number' }) => {
-        if (param.type === 'string') {
-            return `"${param.value}"`;
-        } else if (param.type === 'number') {
-            return param.value;
+    const formatParameter = (param: any) => {
+        if (typeof param === 'string') {
+            return `"${param}"`;
         }
-        return param.value;
+        return param;
     };
 
     return parameters.map(param => formatParameter(param)).join(', ');

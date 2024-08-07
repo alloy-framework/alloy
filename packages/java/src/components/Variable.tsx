@@ -1,4 +1,5 @@
 import {code} from "@alloy-js/core";
+import {AccessModifier} from "../access-modifier.js";
 
 export interface VariableProps {
     type: string;
@@ -6,13 +7,12 @@ export interface VariableProps {
     value?: string;
     isFinal?: boolean;
     isStatic?: boolean;
-    accessModifier?: 'public' | 'protected' | 'private';
+    accessModifier?: AccessModifier;
 }
 
 export function Variable(props: VariableProps) {
     const { type, name, value, isFinal, isStatic, accessModifier } = props;
 
-    // todo:Might be good to have a separate component to handle this logic
     const declarationParts = [
         accessModifier,
         isStatic ? 'static' : undefined,

@@ -25,6 +25,11 @@
       "import": "./dist/testing/index.js",
       "require": "./dist/testing/index.js",
       "types": "./dist/testing/index.d.ts"
+    },
+    "./stc": {
+      "import": "./dist/src/components/stc/index.js",
+      "require": "./dist/src/components/stc/index.js",
+      "types": "./dist/src/components/stc/index.d.ts"
     }
   },
   "scripts": {

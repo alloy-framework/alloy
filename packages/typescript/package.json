@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "exports": {
+    ".": {
     "import": "./dist/src/index.js",
     "types": "./dist/src/index.d.ts"
+    },
+    "./stc": {
+      "import": "./dist/src/components/stc/index.js",
+      "types": "./dist/src/components/stc/index.d.ts"
+    }
   },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",

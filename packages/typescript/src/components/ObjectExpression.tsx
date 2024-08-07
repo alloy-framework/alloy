@@ -43,7 +43,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
   });
 }
 
-interface ObjectPropertyProps {
+export interface ObjectPropertyProps {
   name?: string;
   nameExpression?: Children;
   value?: Children;

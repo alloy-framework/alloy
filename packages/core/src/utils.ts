@@ -1,5 +1,12 @@
 import {} from "@vue/reactivity";
-import { Child, Children, memo } from "@alloy-js/core/jsx-runtime";
+import {
+  Child,
+  Children,
+  ComponentCreator,
+  ComponentDefinition,
+  memo,
+} from "@alloy-js/core/jsx-runtime";
+import { code } from "./code.js";
 export interface MapJoinOptions {
   joiner?: string;
 }
@@ -93,4 +100,38 @@ export function isKeyedChild(child: Child) {
   return (
     typeof child === "object" && child !== null && child.hasOwnProperty("key")
   );
+}
+
+export function stc<T extends {}>(Component: ComponentDefinition<T>) {
+  return (
+    ...args: unknown extends T
+      ? []
+      : {} extends Omit<T, "children">
+      ? [props?: T]
+      : [props: T]
+  ) => {
+    const fn: ComponentCreator<T> & {
+      children(
+        template: TemplateStringsArray,
+        ...substitutions: Children[]
+      ): ComponentCreator<T>;
+    } = () => Component(args[0]!);
+    fn.component = Component;
+
+    fn.children = (
+      template: TemplateStringsArray,
+      ...substitutions: Children[]
+    ): ComponentCreator<T> => {
+      const propsWithChildren = {
+        ...(args[0] ?? {}),
+        children: code(template, ...substitutions),
+      };
+
+      const fn = () => Component(propsWithChildren as any);
+      fn.component = Component;
+      return fn;
+    };
+
+    return fn;
+  };
 }

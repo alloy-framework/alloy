@@ -1,15 +1,18 @@
 import {Children, code} from "@alloy-js/core";
+import {Declaration, DeclarationProps} from "./Declaration.js";
+import {useJavaNamePolicy} from "../name-policy.js";
 
-export interface InterfaceProps {
+export interface InterfaceProps extends DeclarationProps{
     isPackagePrivate: boolean;
-    interfaceName: string;
-    children?: Children;
 }
 
 export function Interface(props: InterfaceProps) {
-    return code`
-        ${props.isPackagePrivate ? "" : " public"} interface ${props.interfaceName} {
-            ${props.children}
-        }
-    `
+    const name = useJavaNamePolicy().getName(props.name, "interface");
+    return (
+        <Declaration {...props} name={name}>
+            {props.isPackagePrivate ? "" : " public"} interface {name} {"{"}
+            {props.children}
+        {"{"}
+        </Declaration>
+    )
 }

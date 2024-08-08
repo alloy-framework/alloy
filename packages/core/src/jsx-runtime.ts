@@ -6,6 +6,7 @@ import {
   shallowRef,
   effect as vueEffect,
   stop,
+  Ref,
 } from "@vue/reactivity";
 
 if ((globalThis as any).ALLOY) {
@@ -108,7 +109,8 @@ export type Child =
   | undefined
   | null
   | (() => Child | Children)
-  | Child[];
+  | Child[]
+  | Ref;
 export type Children = Child | Child[];
 export type Props = Record<string, unknown>;
 

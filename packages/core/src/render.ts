@@ -13,6 +13,7 @@ import {
   untrack,
 } from "@alloy-js/core/jsx-runtime";
 import { useContext } from "./context.js";
+import { isRef } from "@vue/reactivity";
 
 /**
  * The component tree is constructed as the result of transforming JSX with
@@ -348,6 +349,8 @@ function normalizeChild(child: Child): NormalizedChild {
     typeof child === "boolean"
   ) {
     return "";
+  } else if (isRef(child)) {
+    return () => child.value as () => Child;
   } else {
     return String(child);
   }

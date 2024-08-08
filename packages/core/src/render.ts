@@ -14,6 +14,8 @@ import {
 } from "@alloy-js/core/jsx-runtime";
 import { useContext } from "./context.js";
 import { isRef } from "@vue/reactivity";
+import { isRefkey } from "./refkey.js";
+import { SourceFileContext } from "./components/SourceFile.js";
 
 /**
  * The component tree is constructed as the result of transforming JSX with
@@ -351,6 +353,15 @@ function normalizeChild(child: Child): NormalizedChild {
     return "";
   } else if (isRef(child)) {
     return () => child.value as () => Child;
+  } else if (isRefkey(child)) {
+    return () => {
+      const sfContext = useContext(SourceFileContext);
+      if (!sfContext || !sfContext.reference) {
+        throw new Error("Can only emit references inside of source files");
+      }
+
+      return sfContext.reference({ refkey: child });
+    };
   } else {
     return String(child);
   }

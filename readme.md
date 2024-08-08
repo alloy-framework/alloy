@@ -2,15 +2,17 @@
 
 Alloy is a framework for code generation that borrows concepts from JavaScript
 front-end frameworks like React and Solid to provide highly ergonomic and
-productive source code generation. Use JSX syntax to define source files and the
-language elements within them. Alloy helps handle a lot of the hard bits like
-building source text from strings, linking declarations and importing necessary
-dependencies, applying naming conventions, formatting, and generating syntax for
-a number of languages.
+productive source code generation. Use JSX syntax or string templates to define
+source files and the language elements within them. Alloy helps handle a lot of
+the hard bits like building source text from strings, linking declarations and
+importing necessary dependencies, applying naming conventions, formatting, and
+generating syntax for a number of languages.
 
 ```tsx
 import * as ay from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
+
+const helloWorldRef = ay.refkey();
 
 const res = ay.render(
   <ay.Output>
@@ -19,11 +21,14 @@ const res = ay.render(
     </ay.SourceFile>
 
     <ts.SourceFile path="test1.ts">
-      <ay.Declaration name="foo">const foo = 1;</ay.Declaration>
+      <ts.VarDeclaration export name="foo" refkey={helloWorldRef}>
+        "Hello world"
+      </ts.VarDeclaration>
     </ts.SourceFile>
 
     <ts.SourceFile path="test2.ts">
-      const v = <ts.Reference refkey="foo" />;
+      <ts.VarDeclaration name="v">{helloWorldRef}</ts.VarDeclaration>
+      console.log(v);
     </ts.SourceFile>
   </ay.Output>
 );

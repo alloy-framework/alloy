@@ -21,7 +21,7 @@ const result = ay.render(<ay.Output>
 
   <ts.PackageDirectory name="consumer" path="consumer" version="1.0.0">
     <ts.SourceFile export="." path="ref.ts">
-      <ts.Reference refkey={ay.refkey("getGreeting")} />();
+      {ay.refkey("getGreeting")}();
     </ts.SourceFile>
   </ts.PackageDirectory>
 </ay.Output>);

@@ -42,7 +42,7 @@ console.log(res[2].contents);
 ```
 
 This project is in pre-beta. Expect everything to change. Feedback is especially
-appreciated.
+appreciated. The docs are not great but are being worked on.
 
 ### Dependencies
 
@@ -69,6 +69,79 @@ Clone the repo, then:
 * TypeScript: @alloy-js/typescript
 
 More are coming soon.
+
+## Main APIs
+
+* `@alloy-js/core`
+  * Components:
+    * `Declaration`: Create a declaration. May either pass `symbol` with the
+      symbol of the declaration, or else can pass `name` and `refkey` and a
+      generic symbol is created. Provides `DeclarationContext`.
+    * `Indent`: Indents its contents one level. Provides `IndentContext`.
+    * `Output`: The top-level Alloy component. Pass `namePolicy` to provide the
+      name policy for all your declared names. Pass `externals` to provide
+      external symbols. Provides `NamePolicyContext` and `BinderContext`.
+    * `Scope`: Create a scope which symbols can be declared in. May either pass
+      `value` to provide the scope object, or else pass `name` and `type` and a
+      scope will be created. Provides `ScopeContext`.
+    * `SourceDirectory`: A directory in your output. Pass `path` to set the
+      relative path of the directory. Provides `SourceDirectoryContext`.
+    * `SourceFile`: A file in your output. Pass `path` to set the relative path
+      of the file. Pass `filetype` to set the file type to any string. Provides
+      `SourceFileContext`.
+  * APIs:
+    * `code`: A template literal tag for output source text.
+    * `createContext`: Create a context object.
+    * `createNamePolicy`: Create a name policy. Provide to the `namePolicy` prop of `Output`.
+    * `useContext`: Get the value of the provided context object.
+    * `useBinder`: Get the current binder.
+    * `useScope`: Get the current scope.
+    * `useNamePolicy`: Get the current name policy.
+    * `stc(component: ComponentDefinition)`: Wrap a functional component for use
+      in string templates.
+    * Reactive utilities: `ref`, `shallowRef`, `reactive`, `shallowReactive`,
+      `memo`, `computed`, `effect`, `untrack`.
+* `@alloy-js/core/stc`: String template components for all the core components.
+* `@alloy-js/typescript`
+  * APIs:
+    * `createPackage(descriptor)`: Create symbols for an external package, such
+      as a dependency from npm. Pass the result to the `externals` prop of the
+      `Output` component.
+    * `node`: Symbol definitions for node built-ins. Pass any you use to the
+      `externals` prop of the `Output` component.
+  * Components
+    * Structure
+      * `BarrelFile`: Create a file which exports all the files contained within
+        the current directory.
+      * `PackageDirectory`: A directory for a package. Generates a `package.json`
+        and `tsconfig.json` that are updated depending on the package contents.
+      * `SourceFile`: A TypeScript module source file. Pass `export` to export the
+        source file from the current package (sets package.json exports). The
+        source file will import anything referenced within it.
+    * Declarations
+      * `Declaration`: Declares a symbol in the current scope. Pass `export` or
+        `default` to control how this symbol is exported from the module.
+        `children` are the syntax for the declaration. All declaration forms take
+        these props.
+      * `FunctionDeclaration`: Declares a function. Pass `parameters` or
+        `returnType` to set those. `children` is the function body.
+      * `InterfaceDeclaration`: Declares an interface. Define members by putting
+        `InterfaceMember` in the children.
+      * `TypeDeclaration`: A TypeScript type declaration. `children` is the
+        initializer of the declaration.
+      * `VarDeclaration`: Declares a const, let, or var. `children` is the
+        initializer.
+    * Expressions
+      * `ArrayExpression`: A JavaScript array literal. Pass `jsValue` to populate
+        it with data.
+      * `ObjectExpression`: A JavaScript object literal. Pass `jsValue` to
+        populate it with data, or pass `children` with `ObjectProperty`s.
+      * `Reference`: Create a reference to a declaration. Pass the `refkey` of the
+        declaration.
+      * `ValueExpression`: A JavaScript value. Pass `jsValue` to populate it with
+        data. Handles any JSON value.
+* `@alloy-js/typescript/stc`: String template components for all the TypeScript
+  components. 
 
 ## Basic Concepts
 

@@ -93,6 +93,8 @@ More are coming soon.
     * `code`: A template literal tag for output source text.
     * `createContext`: Create a context object.
     * `createNamePolicy`: Create a name policy. Provide to the `namePolicy` prop of `Output`.
+    * `render`: Renders a component, fragment, or string template into a list of
+      directories, files, and source text.
     * `useContext`: Get the value of the provided context object.
     * `useBinder`: Get the current binder.
     * `useScope`: Get the current scope.

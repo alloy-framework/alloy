@@ -23,7 +23,7 @@ it("exports source files", () => {
 
         <ts.SourceFile export path="printing.ts">
           <ts.VarDeclaration name="greeting">
-            <ts.Reference refkey={refkey("getGreeting")} />()
+            {refkey("getGreeting")}()
           </ts.VarDeclaration>
           <ts.FunctionDeclaration export name="printGreeting">
             console.log(greeting);

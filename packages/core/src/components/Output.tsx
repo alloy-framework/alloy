@@ -1,5 +1,5 @@
 import { BinderContext, createOutputBinder, getSymbolCreator, NameConflictResolver, SymbolCreator } from "../binder.js";
-import { Children } from "../jsx-runtime.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamePolicy, NamePolicyContext } from "../name-policy.js";
 import { SourceDirectory, SourceDirectoryContext } from "./SourceDirectory.js";
 

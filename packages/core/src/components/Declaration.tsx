@@ -1,6 +1,6 @@
 import { OutputSymbol, BinderContext } from "../binder.js";
 import { createContext, useContext } from "../context.js";
-import { Children } from "../jsx-runtime.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { Refkey, refkey } from "../refkey.js";
 import { ScopeContext } from "./Scope.js";
 

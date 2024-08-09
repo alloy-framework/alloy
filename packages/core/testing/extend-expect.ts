@@ -1,7 +1,6 @@
 import { expect } from "vitest";
 import { d, dedent, printTree, renderToString } from "./render.js";
-import { Children } from "../src/jsx-runtime.js";
-import { renderTree } from "../src/render.js";
+import { renderTree, Children } from "@alloy-js/core";
 
 expect.extend({
   toRenderTo(received: Children, expectedRaw: string) {

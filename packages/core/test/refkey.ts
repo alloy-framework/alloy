@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { refkey } from "../src/refkey.js";
+import { renderTree } from "#core";
 
 it("is stable when called with same values", () => {
   const obj = {};
@@ -23,4 +24,10 @@ it("composes multiple keys", () => {
   const key2 = refkey(obj1, obj2, "hi");
 
   expect(key1).toBe(key2);
+});
+
+it("can be called with no args and returns a fresh key", () => {
+  const key1 = refkey();
+  const key2 = refkey();
+  expect(key1).not.toBe(key2);
 });

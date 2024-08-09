@@ -6,8 +6,14 @@ import {
   shallowRef,
   effect as vueEffect,
   stop,
+  Ref,
 } from "@vue/reactivity";
+import { Refkey } from "./refkey.js";
 
+if ((globalThis as any).ALLOY) {
+  throw "FIAL";
+}
+(globalThis as any).ALLOY = true;
 interface Disposable {
   (): void;
 }
@@ -104,7 +110,10 @@ export type Child =
   | undefined
   | null
   | (() => Child | Children)
-  | Child[];
+  | Child[]
+  | Ref
+  | Refkey;
+
 export type Children = Child | Child[];
 export type Props = Record<string, unknown>;
 

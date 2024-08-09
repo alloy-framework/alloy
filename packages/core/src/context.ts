@@ -5,7 +5,7 @@ import {
   getContext,
   effect,
   untrack,
-} from "./jsx-runtime.js";
+} from "@alloy-js/core/jsx-runtime";
 
 export interface ComponentContext<T> {
   id: symbol;

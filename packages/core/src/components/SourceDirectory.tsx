@@ -1,6 +1,6 @@
 import { reactive, shallowReactive } from "@vue/reactivity";
 import { createContext, useContext } from "../context.js";
-import { Children, getContext } from "../jsx-runtime.js";
+import { Children, getContext } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { SourceFileContext } from "./SourceFile.js";
 

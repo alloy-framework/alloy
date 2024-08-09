@@ -1,5 +1,12 @@
 import {} from "@vue/reactivity";
-import { Child, Children, memo } from "./jsx-runtime.js";
+import {
+  Child,
+  Children,
+  ComponentCreator,
+  ComponentDefinition,
+  memo,
+} from "@alloy-js/core/jsx-runtime";
+import { code } from "./code.js";
 export interface MapJoinOptions {
   joiner?: string;
 }
@@ -95,17 +102,36 @@ export function isKeyedChild(child: Child) {
   );
 }
 
-export function code(
-  template: TemplateStringsArray,
-  ...substitutions: Child[]
-) {
-  let element = [];
+export function stc<T extends {}>(Component: ComponentDefinition<T>) {
+  return (
+    ...args: unknown extends T
+      ? []
+      : {} extends Omit<T, "children">
+      ? [props?: T]
+      : [props: T]
+  ) => {
+    const fn: ComponentCreator<T> & {
+      children(
+        template: TemplateStringsArray,
+        ...substitutions: Children[]
+      ): ComponentCreator<T>;
+    } = () => Component(args[0]!);
+    fn.component = Component;
 
-  element.push(template[0]);
-  for (let i = 0; i < substitutions.length; i++) {
-    element.push(substitutions[i]);
-    element.push(template[i + 1]);
-  }
+    fn.children = (
+      template: TemplateStringsArray,
+      ...substitutions: Children[]
+    ): ComponentCreator<T> => {
+      const propsWithChildren = {
+        ...(args[0] ?? {}),
+        children: code(template, ...substitutions),
+      };
 
-  return element;
+      const fn = () => Component(propsWithChildren as any);
+      fn.component = Component;
+      return fn;
+    };
+
+    return fn;
+  };
 }

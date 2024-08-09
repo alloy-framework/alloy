@@ -8,6 +8,7 @@ import {
   stop,
   Ref,
 } from "@vue/reactivity";
+import { Refkey } from "./refkey.js";
 
 if ((globalThis as any).ALLOY) {
   throw "FIAL";
@@ -110,7 +111,9 @@ export type Child =
   | null
   | (() => Child | Children)
   | Child[]
-  | Ref;
+  | Ref
+  | Refkey;
+
 export type Children = Child | Child[];
 export type Props = Record<string, unknown>;
 

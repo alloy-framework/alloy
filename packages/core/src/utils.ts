@@ -78,8 +78,10 @@ export function childrenArray(fn: () => Children) {
 }
 
 // todo: could probably add this to the element types...
+const KeyedChildSym: unique symbol = Symbol();
+
 export function keyedChild(key: string, children: Children) {
-  return { key, children };
+  return { [KeyedChildSym]: true, key, children };
 }
 
 export function findKeyedChild(children: Child[], key: string) {
@@ -98,7 +100,9 @@ export function findUnkeyedChildren(children: Child[]) {
 
 export function isKeyedChild(child: Child) {
   return (
-    typeof child === "object" && child !== null && child.hasOwnProperty("key")
+    typeof child === "object" &&
+    child !== null &&
+    child.hasOwnProperty(KeyedChildSym)
   );
 }
 

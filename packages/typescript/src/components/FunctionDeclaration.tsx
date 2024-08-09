@@ -14,7 +14,7 @@ import { useTSNamePolicy } from "../name-policy.js";
 import { Name } from "./Name.js";
 
 export interface FunctionDeclarationProps extends Omit<DeclarationProps, "kind"> {
-  parameters?: Record<string, string>;
+  parameters?: Record<string, Children>;
   returnType?: string;
   children?: Children;
 }
@@ -46,7 +46,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 }
 
 export interface FunctionParametersProps {
-  parameters?: Record<string, string>;
+  parameters?: Record<string, Children>;
   children?: Children;
 }
 

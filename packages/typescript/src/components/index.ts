@@ -13,3 +13,6 @@ export * from "./TypeDeclaration.js";
 export * from "./ValueExpression.js";
 export * from "./VarDeclaration.js";
 export * from "./Interface.js";
+export * from "./ExportStatement.js";
+export * from "./Name.js";
+export * from "./TsConfigJson.js";

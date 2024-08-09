@@ -1,10 +1,8 @@
 import { expect, it } from 'vitest'
-import { renderTree } from "../../src/render.js";
 import { computed, reactive, ref, shallowRef } from '@vue/reactivity';
 import { d, printTree } from '../../testing/render.js';
-import { Children, createComponent, effect, memo, untrack } from '../../src/jsx-runtime.js';
+import { memo, renderTree } from '@alloy-js/core';
 import { mapJoin } from '../../src/utils.js';
-import { Indent } from '../../src/index.js';
 
 it("splices in new nodes", () => {
   const r = ref(["one"]);

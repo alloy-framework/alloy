@@ -1,6 +1,6 @@
 import { it, expect, describe } from "vitest";
 import "../testing/extend-expect.js";
-import { createNamePolicy, useNamePolicy, Output } from "../src/index.js";
+import { createNamePolicy, useNamePolicy, Output } from "@alloy-js/core";
 
 
 it("is applied by output", () => {

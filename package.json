@@ -13,6 +13,9 @@
     }
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@babel/preset-typescript": "^7.24.7",
+    "babel-preset-alloy": "workspace:~",
+    "concurrently": "^8.2.2",
+    "vitest": "^1.6.0"
   }
 }

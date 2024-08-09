@@ -1,8 +1,14 @@
 import { it, expect, describe } from "vitest";
-import { Children } from "../../src/jsx-runtime.js";
 import "../../testing/extend-expect.js";
-import { getContextForRenderNode, render, RenderTextTree, renderTree } from "../../src/render.js";
-import { computed, Output, SourceDirectoryContext, SourceFile, useContext } from "../../src/index.js";
+import {
+  computed,
+  Output,
+  SourceDirectoryContext,
+  SourceFile,
+  useContext,
+  render,
+  renderTree,
+} from "@alloy-js/core";
 
 it("tracks its content", () => {
   let context

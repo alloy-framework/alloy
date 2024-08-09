@@ -1,7 +1,6 @@
 import { it, expect, describe } from "vitest";
-import { Children } from "../../src/jsx-runtime.js";
 import "../../testing/extend-expect.js";
-import { code } from "../../src/utils.js";
+import { code } from "@alloy-js/core";
 
 it("renders simple strings", () => {
   expect(code`foo`).toRenderTo("foo");
@@ -10,7 +9,7 @@ it("renders simple strings", () => {
 
 it("renders removes indents", () => {
   expect(code`
-    foo  
+    foo
   `).toRenderTo("foo");
 });
 

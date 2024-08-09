@@ -1,6 +1,9 @@
 import { createContext, useContext } from "../context.js";
-import { Children, getContext } from "../jsx-runtime.js";
-
+import { Children, getContext } from "@alloy-js/core/jsx-runtime";
+if ((globalThis as any).alloyIndent) {
+  throw "FAIL";
+}
+(globalThis as any).alloyIndent = true;
 export const IndentContext = createContext<IndentState>({
   level: 0,
   indent: "  ",
@@ -35,22 +38,4 @@ export function Indent(props: IndentProps) {
   };
 
   return <IndentContext.Provider value={currentIndent}>{props.children}</IndentContext.Provider>;
-}
-
-interface NoLeadingIndentProps {
-  children?: Children
-}
-
-export function NoLeadingIndent(props: NoLeadingIndentProps) {
-  const previousIndent: IndentState = useContext(IndentContext) ?? {
-    level: 0,
-    indent: "  ",
-    indentString: ""
-  }
-
-  const currentIndent: IndentState = {
-    ... previousIndent,
-    noLeading: true
-  }
-  return <IndentContext.Provider value={currentIndent}>{props.children}</IndentContext.Provider>
 }

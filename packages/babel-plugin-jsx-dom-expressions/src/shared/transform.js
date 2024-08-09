@@ -19,6 +19,9 @@ import transformComponent from "./component";
 import transformFragmentChildren from "./fragment";
 
 export function transformJSX(path) {
+  if (path.node.alloyCreated) {
+    return;
+  }
   const config = getConfig(path);
   const replace = transformThis(path);
   const result = transformNode(
@@ -32,7 +35,6 @@ export function transformJSX(path) {
   );
 
   const template = getCreateTemplate(config, path, result);
-
   path.replaceWith(replace(template(path, result, false)));
 }
 

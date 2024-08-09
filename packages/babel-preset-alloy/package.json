@@ -2,11 +2,12 @@
   "name": "babel-preset-alloy",
   "version": "1.0.0",
   "description": "",
-  "main": "index.cjs",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@alloy-js/babel-plugin-alloy": "workspace:*",
     "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:*"
   },
   "keywords": [],

@@ -1,30 +1,18 @@
-import {code} from "@alloy-js/core";
-import {AccessModifier} from "../access-modifier.js";
-import {FieldModifier} from "../modifiers/index.js";
+import { Child, Children, code } from "@alloy-js/core";
+import { AccessModifier } from "../access-modifier.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { useJavaNamePolicy } from "../name-policy.js";
 
-export interface VariableProps {
-    type: string;
-    name: string;
-    value?: string;
-    fieldModifiers?: FieldModifier[];
-    accessModifier?: AccessModifier;
+export interface VariableProps extends ObjectModifiers {
+  accessModifier?: AccessModifier;
+  type: Child;
+  name: string;
+  value?: Children;
 }
 
 export function Variable(props: VariableProps) {
-    const { type, name, value, accessModifier } = props;
-    const fieldModifiers = props.fieldModifiers?.join(" ");
-    const declarationParts = [
-        accessModifier,
-        fieldModifiers,
-        type,
-        name,
-        value !== undefined ? `= ${value}` : undefined
-    ];
+  const name = useJavaNamePolicy().getName(props.name, "variable");
+  const modifiers = collectModifiers(props);
 
-    // Filter out undefined parts and join with spaces
-    const declaration = declarationParts.filter(part => part).join(' ');
-
-    return code`
-        ${declaration};
-    `;
+  return code`${modifiers}${props.type} ${name}${props.value ? ` = ${props.value}` : ""};`;
 }

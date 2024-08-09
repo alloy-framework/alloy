@@ -3,7 +3,7 @@ import { createContext, OutputSymbol, reactive, Scope, SourceFile as CoreSourceF
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
 import { JavaOutputSymbol } from "../symbols.js";
 import { usePackage } from "./PackageDirectory.js";
-import { useProject } from "./ProjectDirectory.js";
+import { Reference } from "./Reference.js";
 
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;
@@ -25,7 +25,7 @@ export function SourceFile(props: SourceFileProps) {
   const packageCtx = usePackage();
 
   if (!packageCtx) {
-    throw new Error('SourceFile must be declared inside a package')
+    throw new Error("SourceFile must be declared inside a package");
   }
 
   // Collection of import symbols
@@ -40,9 +40,9 @@ export function SourceFile(props: SourceFileProps) {
     }
 
     // Only need to import if not in same package, or comes from java.lang
-    if (symbol.package !== packageCtx?.qualifiedName || symbol.package?.startsWith('java.lang')) {
+    if (symbol.package !== packageCtx?.qualifiedName || symbol.package?.startsWith("java.lang")) {
       importRecords.push({
-        package: symbol.package ?? '',
+        package: symbol.package ?? "",
         name: symbol.name,
         wildcard: false // TODO
       });
@@ -57,7 +57,7 @@ export function SourceFile(props: SourceFileProps) {
   };
 
   return (
-    <CoreSourceFile path={props.path} filetype="java">
+    <CoreSourceFile path={props.path} filetype="java" reference={Reference}>
       package {packageCtx.qualifiedName};
 
       {importRecords.length > 0 ? (
@@ -66,10 +66,10 @@ export function SourceFile(props: SourceFileProps) {
           {"\n"}
         </>
       ) : undefined}<SourceFileContext.Provider value={sfContext}>
-        <Scope name={props.path} kind="source-file">
-          {props.children}
-        </Scope>
-      </SourceFileContext.Provider>
+      <Scope name={props.path} kind="source-file">
+        {props.children}
+      </Scope>
+    </SourceFileContext.Provider>
     </CoreSourceFile>
   );
 }

@@ -1,12 +1,14 @@
 import {
   Children,
-  createContext, Scope,
+  createContext,
+  Scope,
   SourceDirectory,
   SourceDirectoryContext,
-  SourceFileContext, useBinder,
-  useContext, useScope
+  useBinder,
+  useContext,
+  useScope
 } from "@alloy-js/core";
-import { createJavaPackageScope, JavaPackageScope, JavaProjectScope } from "../symbols.js";
+import { createJavaPackageScope, JavaPackageScope } from "../symbols.js";
 
 export interface PackageDirectoryContext {
   scope: JavaPackageScope;
@@ -19,41 +21,42 @@ export interface PackageDirectoryContext {
 }
 
 export const PackageDirectoryContext = createContext<PackageDirectoryContext>();
+
 export function usePackage() {
   return useContext(PackageDirectoryContext);
 }
 
 export interface PackageDirectoryProps {
   package: string; // Package name, if includes '.', will declare sub directories for you
-  children?: Children
+  children?: Children;
 }
 
 export function PackageDirectory(props: PackageDirectoryProps) {
   const sourceDirectory = useContext(SourceDirectoryContext);
   const parentPackage = usePackage();
 
-  const packageNames = props.package.split('.');
+  const packageNames = props.package.split(".");
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + '.' + packageName : packageName;
+  const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + "." + packageName : packageName;
 
   const scope = createJavaPackageScope(useBinder(), useScope(), fullyQualifiedPackageName);
 
-  const packagePath = sourceDirectory?.path + '/' + packageName;
+  const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {
     scope,
     path: packagePath,
     name: packageName,
-    qualifiedName: fullyQualifiedPackageName,
-  }
+    qualifiedName: fullyQualifiedPackageName
+  };
 
   function ChildComponent() {
     if (packageNames.length > 1) {
       return (
-        <PackageDirectory package={packageNames.slice(1, packageNames.length).join('.')}>
+        <PackageDirectory package={packageNames.slice(1, packageNames.length).join(".")}>
           {props.children}
         </PackageDirectory>
-      )
+      );
     } else {
       return props.children;
     }
@@ -67,5 +70,5 @@ export function PackageDirectory(props: PackageDirectoryProps) {
         </SourceDirectory>
       </Scope>
     </PackageDirectoryContext.Provider>
-  )
+  );
 }

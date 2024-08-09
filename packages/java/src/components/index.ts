@@ -1,5 +1,5 @@
-export * from "./ClassConstructor.js";
-export * from "./ClassDeclaration.js";
+export * from "./Constructor.js";
+export * from "./Class.js";
 export * from "./Method.js";
 export * from "./Variable.js";
 export * from "./Interface.js";
@@ -12,3 +12,7 @@ export * from './ProjectDirectory.js';
 export * from './PackageDirectory.js'
 export * from './Declaration.js';
 export * from './Reference.js';
+export * from './Parameters.js';
+export * from './Name.js';
+export * from './Value.js';
+export * from './Block.js';

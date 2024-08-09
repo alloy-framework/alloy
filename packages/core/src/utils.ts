@@ -78,7 +78,7 @@ export function childrenArray(fn: () => Children) {
 }
 
 // todo: could probably add this to the element types...
-const KeyedChildSym: unique symbol = Symbol();
+const KeyedChildSym: symbol = Symbol();
 
 export function keyedChild(key: string, children: Children) {
   return { [KeyedChildSym]: true, key, children };

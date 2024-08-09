@@ -17,7 +17,7 @@ export function Interface(props: InterfaceProps) {
   const modifiers = collectModifiers(props);
   return (
     <Declaration {...props} name={name}>
-        {props.accessModifier}{modifiers} class <Name />{implementsExpression} {"{"}
+        {props.accessModifier}{modifiers}interface <Name />{implementsExpression} {"{"}
         <Scope name={name} kind='interface'>
             {props.children}
         </Scope>

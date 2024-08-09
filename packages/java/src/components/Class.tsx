@@ -13,13 +13,13 @@ export interface ClassProps extends DeclarationProps, ObjectModifiers {
 
 export function Class(props: ClassProps) {
   const name = useJavaNamePolicy().getName(props.name, "class");
-  const extendExpression = props.extends ? ` extends ${props.extends}` : "";
+  const extendExpression = props.extends ? code` extends ${props.extends}` : "";
   const collectedInterfaces = Array.isArray(props.implements) ? props.implements.join(", ") : props.implements;
-  const implementsExpression = props.implements ? ` implements ${collectedInterfaces}` : "";
+  const implementsExpression = props.implements ? code` implements ${collectedInterfaces}` : "";
   const modifiers = collectModifiers(props);
   return (
     <Declaration {...props} name={name}>
-      {props.accessModifier}{modifiers} class <Name />{extendExpression}{implementsExpression} {"{"}
+      {props.accessModifier}{modifiers}class <Name />{extendExpression}{implementsExpression} {"{"}
         <Scope name={name} kind='class'>
           {props.children}
         </Scope>

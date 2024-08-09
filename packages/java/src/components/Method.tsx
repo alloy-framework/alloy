@@ -16,9 +16,12 @@ export function Method(props: MethodProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
   const name = useJavaNamePolicy().getName(props.name, "method");
   const modifiers = collectModifiers(props);
+  const sBody = props.children !== undefined ? code`
+    ${" "}{
+      ${props.children}
+    }
+  ` : ';';
   return code`
-        ${props.accessModifier}${modifiers} ${props.return ?? "void"} ${name}(${params}) {
-          ${props.children}
-        }
+        ${props.accessModifier}${modifiers}${props.return ?? "void"} ${name}(${params})${sBody}
     `;
 }

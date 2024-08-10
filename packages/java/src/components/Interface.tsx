@@ -1,9 +1,10 @@
-import { Children, Scope } from "@alloy-js/core";
+import { Children, code, Scope } from "@alloy-js/core";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { AccessModifier } from "../access-modifier.js";
 import { Name } from "./Name.js";
+import { collectArguments } from "../arguments.js";
 
 export interface InterfaceProps extends DeclarationProps, ObjectModifiers {
   accessModifier?: AccessModifier;
@@ -12,16 +13,16 @@ export interface InterfaceProps extends DeclarationProps, ObjectModifiers {
 
 export function Interface(props: InterfaceProps) {
   const name = useJavaNamePolicy().getName(props.name, "interface");
-  const collectedInterfaces = Array.isArray(props.extends) ? props.extends.join(", ") : props.extends;
-  const implementsExpression = props.extends ? ` extends ${collectedInterfaces}` : "";
+  const collectedInterfaces = collectArguments(props.extends);
+  const implementsExpression = props.extends ? code` extends ${collectedInterfaces}` : "";
   const modifiers = collectModifiers(props);
   return (
     <Declaration {...props} name={name}>
-        {props.accessModifier}{modifiers}interface <Name />{implementsExpression} {"{"}
+      {props.accessModifier}{modifiers}interface <Name />{implementsExpression} {"{"}
         <Scope name={name} kind='interface'>
-            {props.children}
+          {props.children}
         </Scope>
-        {"}"}
+      {"}"}
     </Declaration>
   );
 }

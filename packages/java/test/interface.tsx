@@ -1,0 +1,53 @@
+import * as jv from "../src/components/index.js";
+import { expect, it } from "vitest";
+import { assertFileContents, testRender, toSourceText } from "./utils.js";
+import { refkey } from "@alloy-js/core";
+import { AccessModifier } from "../src/index.js";
+import { d } from "@alloy-js/core/testing";
+
+it("works", () => {
+  const res = toSourceText((
+    <jv.Interface accessModifier={AccessModifier.PUBLIC} name="TestInterface">
+    </jv.Interface>
+  ))
+
+  expect(res).toBe(d`
+    package me.test.code;
+
+    public interface TestInterface {
+      
+    }
+  `);
+});
+
+it("extends other interfaces", () => {
+  const res = testRender(
+    <>
+      <jv.SourceFile path="InterfaceOne.java">
+        <jv.Interface name="InterfaceOne" />
+      </jv.SourceFile>
+      <jv.SourceFile path="InterfaceTwo.java">
+        <jv.Interface name="InterfaceTwo" />
+      </jv.SourceFile>
+      <jv.PackageDirectory package="import">
+        <jv.SourceFile path="TestInterface.java">
+          <jv.Interface accessModifier={AccessModifier.PUBLIC} name="TestInterface" extends={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          </jv.Interface>
+        </jv.SourceFile>
+      </jv.PackageDirectory>
+    </>
+  )
+
+  assertFileContents(res, {
+    "TestInterface.java": `
+      package me.test.code.import;
+
+      import me.test.code.InterfaceOne;
+      import me.test.code.InterfaceTwo;
+
+      public interface TestInterface extends InterfaceOne, InterfaceTwo {
+        
+      }
+    `,
+  })
+});

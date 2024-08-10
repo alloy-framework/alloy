@@ -1,6 +1,7 @@
-import { code, Refkey, refkey } from "@alloy-js/core";
+import { code, mapJoin, Refkey, refkey } from "@alloy-js/core";
 import { Reference } from "./Reference.js";
 import { Child, Children } from "@alloy-js/core/jsx-runtime";
+import { collectNamedArguments } from "../arguments.js";
 
 export interface AnnotationProps {
   type: Child;
@@ -13,6 +14,7 @@ export interface AnnotationProps {
  * For instance, use this if you want to annotate a method with '@Override'.
  */
 export function Annotation(props: AnnotationProps) {
-  const args = props.value ? `(${props.value})` : props.arguments ? `(${Object.entries(props.arguments).map(([k, v]) => `${k} = ${v}`).join(', ')})` : '';
-  return code`@${props.type}${args}`
+  const args = props.value ? props.value : props.arguments ? collectNamedArguments(props.arguments) : '';
+  const supplyingArgs = props.arguments || props.value ? code`(${args})` : '';
+  return code`@${props.type}${supplyingArgs}`
 }

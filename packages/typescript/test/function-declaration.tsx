@@ -38,3 +38,16 @@ it("can be a default export", () => {
       }
     `);
 });
+
+it("supports parameters by element", () => {
+  const decl = <FunctionDeclaration name="foo">
+    return a + b;
+    <FunctionDeclaration.Parameters>a, b</FunctionDeclaration.Parameters>
+  </FunctionDeclaration>;
+
+  expect(toSourceText(decl)).toBe(d`
+    function foo(a, b) {
+
+    }  
+  `)
+});

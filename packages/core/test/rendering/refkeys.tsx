@@ -27,7 +27,7 @@ it("is rendered properly in the tree with code", () => {
   }
 
   expect(
-    SourceFile({filetype: "typescript", path: "foo.ts", reference: Reference}).children`
+    SourceFile({filetype: "typescript", path: "foo.ts", reference: Reference}).code`
       ${key} 
     `
   ).toRenderTo("Reference");

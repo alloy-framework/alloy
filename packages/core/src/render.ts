@@ -303,11 +303,7 @@ function appendChild(
         node.push(indentState.indent);
       }
       const componentRoot: RenderTextTree = [];
-      renderWorker(
-        componentRoot,
-        untrack(() => child()),
-        state
-      );
+      renderWorker(componentRoot, untrack(child), state);
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
     }, child.component.name);
@@ -364,14 +360,6 @@ function normalizeChild(child: Child): NormalizedChild {
     };
   } else {
     return String(child);
-  }
-}
-
-function getIdentFromContext() {
-  const context = getContext();
-  const current = context?.context?.[IndentContext.id] as IndentState;
-  if (current) {
-    return current;
   }
 }
 

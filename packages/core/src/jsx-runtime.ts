@@ -11,7 +11,9 @@ import {
 import { Refkey } from "./refkey.js";
 
 if ((globalThis as any).ALLOY) {
-  throw "FIAL";
+  throw new Error(
+    "Multiple versions of the JSX Runtime have been loaded. This will likely cause undesirable behavior."
+  );
 }
 (globalThis as any).ALLOY = true;
 interface Disposable {

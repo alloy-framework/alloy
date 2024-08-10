@@ -12,7 +12,7 @@ it("is applied by output", () => {
 
   expect(code`
     ${FooStc({x: "hi"})}
-    ${IndentStc().children`
+    ${IndentStc().code`
       child!
     `} 
   `).toRenderTo(`

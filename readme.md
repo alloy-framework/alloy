@@ -41,6 +41,42 @@ console.log(res[2].contents);
 // const v = foo;
 ```
 
+Or, if you prefer, you can use string templates:
+
+```tsx
+import { refkey, render, code } from "@alloy-js/core";
+import * as ay from "@alloy-js/core/stc";
+import * as ts from "@alloy-js/typescript/stc";
+
+const helloWorldRef = refkey();
+
+const res = render(
+  ay.Output().children(
+    ay.SourceFile({ path: "readme.md", filetype: "markdown" }).code`
+      This is a sample output project.
+    `,
+
+    ts.SourceFile({ path: "test1.ts" }).children(
+      ts.VarDeclaration({ export: true, name: "foo", refkey: helloWorldRef }).code`
+        "Hello world"
+      `
+    ),
+
+    ts.SourceFile({ path: "test2.ts" }).code`
+      ${ts.VarDeclaration({ name: "v" }).children(helloWorldRef)}
+      
+      console.log(v);
+    `
+  )
+);
+
+console.log(res[2].contents);
+// import { foo } from "./test2.ts";
+//
+// const v = foo;
+```
+
+
 This project is in pre-beta. Expect everything to change. Feedback is especially
 appreciated. The docs are not great but are being worked on.
 

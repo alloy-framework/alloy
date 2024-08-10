@@ -4,6 +4,7 @@ import {
   Children,
   ComponentCreator,
   ComponentDefinition,
+  isComponentCreator,
   memo,
 } from "@alloy-js/core/jsx-runtime";
 import { code } from "./code.js";
@@ -59,7 +60,12 @@ export function children(fn: () => Children) {
 
   function collectChildren(children: Children): Children {
     if (Array.isArray(children)) {
-      return children.map(collectChildren);
+      return children.map(collectChildren).flat();
+    } else if (
+      typeof children === "function" &&
+      !isComponentCreator(children)
+    ) {
+      return collectChildren(children());
     } else {
       return children;
     }
@@ -115,20 +121,32 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
       : [props: T]
   ) => {
     const fn: ComponentCreator<T> & {
-      children(
+      code(
         template: TemplateStringsArray,
         ...substitutions: Children[]
       ): ComponentCreator<T>;
+      children(...children: Children[]): ComponentCreator<T>;
     } = () => Component(args[0]!);
     fn.component = Component;
 
-    fn.children = (
+    fn.code = (
       template: TemplateStringsArray,
       ...substitutions: Children[]
     ): ComponentCreator<T> => {
       const propsWithChildren = {
         ...(args[0] ?? {}),
         children: code(template, ...substitutions),
+      };
+
+      const fn = () => Component(propsWithChildren as any);
+      fn.component = Component;
+      return fn;
+    };
+
+    fn.children = (...children: Children[]): ComponentCreator<T> => {
+      const propsWithChildren = {
+        ...(args[0] ?? {}),
+        children,
       };
 
       const fn = () => Component(propsWithChildren as any);

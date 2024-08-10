@@ -1,23 +1,10 @@
 import * as ay from "@alloy-js/core";
-import { code } from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
 import { AccessModifier, createJavaNamePolicy, createLibrary } from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
 
-const testPackage = createLibrary({
-  groupId: "java.util",
-  artifactId: "collections",
-  version: "1.0.0",
-  descriptor: {
-    "java.util.collections": [
-      "List",
-      "ArrayList"
-    ]
-  }
-});
-
 const res = ay.render(
-  <ay.Output namePolicy={createJavaNamePolicy()} externals={[testPackage]}>
+  <ay.Output namePolicy={createJavaNamePolicy()}>
     <jv.ProjectDirectory groupId="me.example" artifactId="test" version="1.0.0">
       <jv.PackageDirectory package="me.example.code">
         <jv.PackageDirectory package="enums">
@@ -46,6 +33,8 @@ const res = ay.render(
         <jv.SourceFile path="Cat.java">
           <jv.Class accessModifier={AccessModifier.PUBLIC} name="Cat" extends={ay.refkey("Animal")}>
 
+            <jv.Constructor accessModifier={AccessModifier.PUBLIC} />
+
             <jv.Annotation type="Override" />
             <jv.Method accessModifier={AccessModifier.PUBLIC} name="makeSound" return="String">
               return "Meow";
@@ -60,6 +49,8 @@ const res = ay.render(
 
         <jv.SourceFile path="Dog.java">
           <jv.Class accessModifier={AccessModifier.PUBLIC} name="Dog" extends={ay.refkey("Animal")}>
+
+            <jv.Constructor accessModifier={AccessModifier.PUBLIC} />
 
             <jv.Annotation type="Override" />
             <jv.Method accessModifier={AccessModifier.PUBLIC} name="makeSound" return="String">

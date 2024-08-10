@@ -1,34 +1,27 @@
-import {Children, code} from "@alloy-js/core";
-import {AccessModifier} from "../access-modifier.js";
-import {MethodModifier} from "../modifiers/index.js";
+import { Children, code } from "@alloy-js/core";
+import { AccessModifier } from "../access-modifier.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { Parameters } from "./Parameters.js";
+import { useJavaNamePolicy } from "../name-policy.js";
 
-export interface MethodProps {
-    accessModifier: AccessModifier;
-    methodName: string;
-    methodModifiers?: MethodModifier[];
-    returnType: string;
-    parameters?: Record<string, string>;
-    children?: Children;
+export interface MethodProps extends ObjectModifiers {
+  accessModifier?: AccessModifier;
+  name: string;
+  return?: Children;
+  parameters?: Record<string, Children>;
+  children?: Children;
 }
 
 export function Method(props: MethodProps) {
-    const params = <Method.Parameters parameters = {props.parameters}></Method.Parameters>;
-    return code`
-        ${props.accessModifier} ${props.methodModifiers ? props.methodModifiers.join(" ") : ""} ${props.returnType} ${props.methodName}(${params}) {
-          ${props.children}
-        }
+  const params = <Parameters parameters={props.parameters}></Parameters>;
+  const name = useJavaNamePolicy().getName(props.name, "method");
+  const modifiers = collectModifiers(props);
+  const sBody = props.children !== undefined ? code`
+    ${" "}{
+      ${props.children}
+    }
+  ` : ";";
+  return code`
+        ${props.accessModifier}${modifiers}${props.return ?? "void"} ${name}(${params})${sBody}
     `;
 }
-
-// Maybe unnecessary, trying to base this component on the FunctionDeclaration component in the typescript package.
-export interface ParameterProps {
-    parameters?: Record<string, string>;
-}
-
-// Maps each record to a string and joins them with ', '
-Method.Parameters = function Parameters(props: ParameterProps) {
-    const { parameters = {} } = props;
-    return Object.entries(parameters)
-        .map(([type, name]) => `${type} ${name}`)
-        .join(', ');
-};

@@ -6,7 +6,6 @@ import { AccessModifier } from "../access-modifier.js";
 export interface DeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main
   name: string;
-  accessModifier?: AccessModifier;
   refkey?: Refkey;
   children?: Children;
 }

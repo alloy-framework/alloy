@@ -1,41 +1,22 @@
-import {useJavaNamePolicy} from "../name-policy.js";
-import {DeclarationProps} from "./Declaration.js";
-import {Reference} from "./Reference.js";
-import {code, refkey} from "@alloy-js/core";
+import { DeclarationProps } from "./Declaration.js";
+import { Children, code } from "@alloy-js/core";
+import { collectArguments } from "../arguments.js";
+import { Variable } from "./Variable.js";
+import { AccessModifier } from "../access-modifier.js";
+import { ObjectModifiers } from "../object-modifiers.js";
+
+interface ObjectDeclarationProps extends DeclarationProps, ObjectModifiers {
+  accessModifier?: AccessModifier;
+  type: Children;
+  arguments?: Children;
+}
 
 /**
- * I have seperated object and variable components. I thought this might be a good idea as I think this
- * component will require more complex logic. Perhaps it should have a different name? I'm not sure if
- * declaration is the correct word to describe it.
+ * Shorthand to instantiate a new object.
+ * Declares it with 'new' and passes arguments to the constructor of the object, if any
  */
-interface ObjectDeclarationProps extends DeclarationProps{
-    variableName: string;
-    constructorArgs?: any[];
-}
-
 export function ObjectDeclaration(props: ObjectDeclarationProps) {
-    const name = useJavaNamePolicy().getName(props.name, "class");
-    const ref = <Reference refkey={refkey(name)} />;
-    const params = <ObjectDeclaration.Parameters parameters = {props.constructorArgs}/>;
-    return code`
-        ${ref} ${props.variableName} = new ${name}(${params});
-    `;
+  const args = props.arguments ? collectArguments(props.arguments) : "";
+  const value = code`new ${props.type}(${args})`;
+  return <Variable {...props} value={value} />;
 }
-
-export interface ObjectDeclarationParameterProps {
-    parameters?: any[];
-}
-
-//format the parameters passed to the class constructor based on type.
-ObjectDeclaration.Parameters = function Parameters(props: ObjectDeclarationParameterProps) {
-    const { parameters = [] } = props;
-
-    const formatParameter = (param: any) => {
-        if (typeof param === 'string') {
-            return `"${param}"`;
-        }
-        return param;
-    };
-
-    return parameters.map(param => formatParameter(param)).join(', ');
-};

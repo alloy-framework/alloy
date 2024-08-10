@@ -1,22 +1,22 @@
 import {
   Children,
+  code,
+  createContext,
+  Scope,
   SourceDirectory,
   SourceFile,
-  code,
-  Scope,
   useBinder,
-  useScope,
-  reactive,
-  createContext, useContext
+  useContext,
+  useScope
 } from "@alloy-js/core";
-import { JavaDependency, JavaProjectScope } from "../symbols.js";
+import { createJavaProjectScope, JavaProjectScope } from "../symbols.js";
 
 export interface ProjectContext {
   scope: JavaProjectScope;
-  addDependency(dependency: JavaDependency): string;
 }
 
 export const ProjectContext = createContext<ProjectContext>();
+
 export function useProject() {
   return useContext(ProjectContext)!;
 }
@@ -26,7 +26,7 @@ export interface ProjectDirectoryProps {
   artifactId: string; // Also name of project
   version: string;
   javaVersion?: number;
-  buildSystem?: 'maven' | 'gradle'; // TODO: Actually respect this option, for now only maven
+  buildSystem?: "maven" | "gradle"; // TODO: Actually respect this option, for now only maven
   children?: Children;
 }
 
@@ -34,36 +34,23 @@ export interface ProjectDirectoryProps {
  * Represents a java project directory. Use if you want to generate a Java project
  * with a build tool included (maven, gradle etc).
  */
-export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...props }: ProjectDirectoryProps) {
-  const dependencies = reactive(new Map<string, JavaDependency>());
-  const scope = useBinder().createScope<JavaProjectScope>({ kind: "project", name: props.artifactId, parent: useScope(), dependencies});
-
-  function addDependency(dependency: JavaDependency) {
-    const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
-
-    if (dependencies.has(depKey)) {
-      return depKey;
-    }
-
-    dependencies.set(depKey, dependency);
-    return depKey;
-  }
+export function ProjectDirectory({ javaVersion = 8, buildSystem = "maven", ...props }: ProjectDirectoryProps) {
+  const scope = createJavaProjectScope(useBinder(), useScope(), props.groupId);
 
   const projectContext: ProjectContext = {
-    scope,
-    addDependency
+    scope
   };
 
   return (
     <>
-      <SourceDirectory path='src/main/java'>
+      <SourceDirectory path="src/main/java">
         <ProjectContext.Provider value={projectContext}>
           <Scope value={scope}>
             {props.children}
           </Scope>
         </ProjectContext.Provider>
       </SourceDirectory>
-      <SourceFile path='pom.xml' filetype='xml'>
+      <SourceFile path="pom.xml" filetype="xml">
         {code`
           <?xml version="1.0" encoding="UTF-8"?>
           <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -80,15 +67,15 @@ export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...pr
               <maven.compiler.target>${javaVersion}</maven.compiler.target>
               <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             </properties>
-            ${dependencies.size > 0 ? code`
-              ${'\n'}
+            ${scope.dependencies.size > 0 ? code`
+              ${"\n"}
               <dependencies>
-                ${Array.from(dependencies.values()).map(dep => code`
+                ${Array.from(scope.dependencies.values()).map(dep => code`
                   <dependency>
                     <groupId>${dep.groupId}</groupId>
                     <artifactId>${dep.artifactId}</artifactId>
-                    <version>${dep.version}</version>
-                    <scope>${dep.scope ?? 'provided'}</scope>
+                    ${dep.version !== undefined ? `<version>${dep.version}</version>` : undefined}
+                    <scope>${dep.scope ?? "provided"}</scope>
                   </dependency>
                 `)}
               </dependencies>
@@ -98,5 +85,5 @@ export function ProjectDirectory({ javaVersion = 8, buildSystem = 'maven', ...pr
         `}
       </SourceFile>
     </>
-  )
+  );
 }

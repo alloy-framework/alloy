@@ -1,6 +1,6 @@
 export enum AccessModifier {
-  PUBLIC = "public",
-  PRIVATE = "private",
+  PUBLIC = "public ",
+  PRIVATE = "private ",
   PACKAGE_PRIVATE = "",
-  PROTECTED = "protected"
+  PROTECTED = "protected "
 }

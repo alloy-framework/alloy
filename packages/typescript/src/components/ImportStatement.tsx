@@ -39,7 +39,6 @@ export function ImportStatements(props: ImportStatementsProps) {
         }
 
         if (!foundPath) {
-          debugger;
           throw new Error("Module not exported from package");
         }
 

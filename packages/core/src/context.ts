@@ -48,7 +48,7 @@ export function createContext<T = unknown>(
         rendered.value = untrack(() => props.children);
       });
 
-      return () => props.children;
+      return rendered.value;
     },
   };
 }

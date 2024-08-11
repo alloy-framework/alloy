@@ -45,9 +45,26 @@ it("supports parameters by element", () => {
     <FunctionDeclaration.Parameters>a, b</FunctionDeclaration.Parameters>
   </FunctionDeclaration>;
 
+  // there is an extra line break here because the return statement ends in a
+  // line break, which is not significant but we don't know that at transform
+  // time. Ideally the renderer would take care of this - I think it's the same
+  // problem as handling removal of linebreaks when the only contents of a line
+  // are something undefined, e.g. how
+  // 
+  // <>a
+  // {undefined}
+  // b</>
+  // 
+  // should render to
+  //
+  // a
+  // b
+  //
+  // so in principle this can be fixed later.
   expect(toSourceText(decl)).toBe(d`
     function foo(a, b) {
+      return a + b;
 
-    }  
+    }
   `)
 });

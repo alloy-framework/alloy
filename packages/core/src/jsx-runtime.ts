@@ -124,10 +124,12 @@ export interface ComponentDefinition<TProps = Props> {
 }
 export interface Component<TProps = Props> {
   (props: TProps): Child | Children;
+  tag?: Symbol;
 }
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
   (): Child | Children;
+  tag?: Symbol;
 }
 
 // These can be removed with a smarter transform that encodes the information we
@@ -142,7 +144,18 @@ export function createComponent<TProps = Props>(
 ): ComponentCreator<TProps> {
   const creator = () => /* */ C(props);
   creator.component = C;
+  if (C.tag) {
+    creator.tag = C.tag;
+  }
   return creator;
+}
+
+export function taggedComponent<TProps = Props>(
+  tag: Symbol,
+  component: Component<TProps>
+): Component<TProps> {
+  component.tag = tag;
+  return component;
 }
 
 export function mergeProps<T, U>(source: T, source1: U): T & U;

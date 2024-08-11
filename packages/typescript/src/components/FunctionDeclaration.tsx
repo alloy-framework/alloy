@@ -3,8 +3,8 @@ import {
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
-  keyedChild,
   mapJoin,
+  taggedComponent
 } from "@alloy-js/core";
 import {
   Declaration,
@@ -19,22 +19,23 @@ export interface FunctionDeclarationProps extends Omit<DeclarationProps, "kind">
   children?: Children;
 }
 
+export const functionParametersTag = Symbol();
+export const functionBodyTag = Symbol();
+
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const children = childrenArray(() => props.children);
-  const parametersChild = findKeyedChild(children, "params");
-  const bodyChild = findKeyedChild(children, "body");
+  const parametersChild = findKeyedChild(children, functionParametersTag);
+  const bodyChild = findKeyedChild(children, functionBodyTag);
   const filteredChildren = findUnkeyedChildren(children);
   const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
 
   const sParams =
     parametersChild ??
-    (<FunctionDeclaration.Parameters parameters={props.parameters} />)()
-      .children;
+    <FunctionDeclaration.Parameters parameters={props.parameters} />;
 
   let sBody =
     bodyChild ??
-    (<FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>)()
-      .children;
+    <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>
 
   return (
     <Declaration {...props} kind="function">
@@ -50,34 +51,40 @@ export interface FunctionParametersProps {
   children?: Children;
 }
 
-FunctionDeclaration.Parameters = function Parameters(
-  props: FunctionParametersProps
-) {
-  const namePolicy = useTSNamePolicy();
+FunctionDeclaration.Parameters = taggedComponent(
+  functionParametersTag,
+  function Parameters(
+    props: FunctionParametersProps
+  ) {
+    const namePolicy = useTSNamePolicy();
 
-  let value;
+    let value;
 
-  if (props.children) {
-    value = props.children;
-  } else if (props.parameters) {
-    value = mapJoin(
-      new Map(Object.entries(props.parameters)),
-      (key, value) => {
-        return [namePolicy.getName(key, "parameter"), ": ", value];
-      },
-      { joiner: "," }
-    );
-  } else {
-    value = undefined;
+    if (props.children) {
+      value = props.children;
+    } else if (props.parameters) {
+      value = mapJoin(
+        new Map(Object.entries(props.parameters)),
+        (key, value) => {
+          return [namePolicy.getName(key, "parameter"), ": ", value];
+        },
+        { joiner: "," }
+      );
+    } else {
+      value = undefined;
+    }
+
+    return value;
   }
-
-  return keyedChild("params", value);
-};
+);
 
 export interface FunctionBodyProps {
   children?: Children;
 }
 
-FunctionDeclaration.Body = function Body(props: FunctionBodyProps) {
-  return keyedChild("body", props.children);
-};
+FunctionDeclaration.Body = taggedComponent(
+  functionBodyTag,
+  function Body(props: FunctionBodyProps) {
+    return props.children;
+  }
+);

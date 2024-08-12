@@ -17,18 +17,18 @@ export interface SourceDirectoryProps {
   children?: Children[];
 }
 
-export function SourceDirectory({ path, children }: SourceDirectoryProps) {
+export function SourceDirectory(props: SourceDirectoryProps) {
   const parentDir = useContext(SourceDirectoryContext);
   // todo: this can probably just use context.
-  const sdPath = parentDir ? join(parentDir.path, path) : path;
+  const sdPath = parentDir ? join(parentDir.path, props.path) : props.path;
   const nodeContext = getContext()!;
-  const context = createSourceDirectoryContext(path, parentDir);
+  const context = createSourceDirectoryContext(props.path, parentDir);
 
   nodeContext.meta ??= {}
   nodeContext.meta.directory = {
     path: sdPath
   };
-  return <SourceDirectoryContext.Provider value={context}>{children}</SourceDirectoryContext.Provider>;
+  return <SourceDirectoryContext.Provider value={context}>{props.children}</SourceDirectoryContext.Provider>;
 }
 
 function createSourceDirectoryContext(path: string = "./", parentDir?: SourceDirectoryContext): SourceDirectoryContext {

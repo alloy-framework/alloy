@@ -4,45 +4,46 @@ import * as ts from "@alloy-js/typescript/stc";
 import { writeOutput } from "./write-output.js";
 
 const result = render(
-  ay.Output({
-    children: [
-      ts.PackageDirectory({
+  ay.Output().children(
+    ts
+      .PackageDirectory({
         name: "greeting-lib",
         path: "greeting-lib",
         version: "1.0.0",
-        children: [
-          ts.SourceFile({
+      })
+      .children(
+        ts
+          .SourceFile({
             path: "greetings.ts",
-            children: [
-              ts.FunctionDeclaration({ name: "getGreeting" }).children`
-                return "Hello world!"
-              `,
-            ],
-          }),
-          ts.SourceFile({
+          })
+          .children(
+            ts.FunctionDeclaration({ name: "getGreeting" }).code`
+              return "Hello world!"
+            `
+          ),
+        ts
+          .SourceFile({
             path: "logGreeting.ts",
-            children: [
-              ts.FunctionDeclaration({ name: "getGreeting" }).children`
-                console.log("Hello world!");
-              `,
-            ],
-          }),
-          ts.BarrelFile({ export: "." }),
-        ],
-      }),
-      ts.PackageDirectory({
+          })
+          .children(
+            ts.FunctionDeclaration({ name: "getGreeting" }).code`
+              console.log("Hello world!");
+            `
+          ),
+        ts.BarrelFile({ export: "." })
+      ),
+    ts
+      .PackageDirectory({
         name: "consumer",
         path: "consumer",
         version: "1.0.0",
-        children: [
-          ts.SourceFile({ export: ".", path: "ref.ts" }).children`
-            ${ts.Reference({ refkey: refkey("getGreeting") })}();
-          `,
-        ],
-      }),
-    ],
-  })
+      })
+      .children(
+        ts.SourceFile({ export: ".", path: "ref.ts" }).code`
+          ${ts.Reference({ refkey: refkey("getGreeting") })}();
+        `
+      )
+  )
 );
-
 
 writeOutput(result, "sample-output");

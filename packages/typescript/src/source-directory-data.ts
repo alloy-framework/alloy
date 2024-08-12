@@ -11,9 +11,6 @@ const sourceDirectoryData = new WeakMap<
 >();
 
 export function getSourceDirectoryData(sdContext: SourceDirectoryContext) {
-  if (isProxy(sdContext)) {
-    debugger;
-  }
   if (sourceDirectoryData.has(sdContext)) {
     return sourceDirectoryData.get(sdContext)!;
   }

@@ -7,7 +7,7 @@ import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
   const res = toSourceText((
-    <jv.Interface accessModifier={AccessModifier.PUBLIC} name="TestInterface">
+    <jv.Interface accessModifier='public' name="TestInterface">
     </jv.Interface>
   ))
 
@@ -31,7 +31,7 @@ it("extends other interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestInterface.java">
-          <jv.Interface accessModifier={AccessModifier.PUBLIC} name="TestInterface" extends={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Interface accessModifier='public' name="TestInterface" extends={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Interface>
         </jv.SourceFile>
       </jv.PackageDirectory>

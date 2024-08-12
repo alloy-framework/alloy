@@ -10,7 +10,7 @@ it("declares basic empty function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier={AccessModifier.PUBLIC} name="testMethod">
+          ${<jv.Method accessModifier='public' name="testMethod">
             System.out.println("Test");
           </jv.Method>}
         }
@@ -34,7 +34,7 @@ it("declares bodyless function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier={AccessModifier.PUBLIC} name="testMethod" />}
+          ${<jv.Method accessModifier='public' name="testMethod" />}
         }
       `}
     </jv.Declaration>
@@ -54,7 +54,7 @@ it("declares return type", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier={AccessModifier.PUBLIC} name="testMethod" return='String'>
+          ${<jv.Method accessModifier='public' name="testMethod" return='String'>
             System.out.println("Test");
             return "Test";
           </jv.Method>}
@@ -91,7 +91,7 @@ it("declares parameters", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Method accessModifier={AccessModifier.PUBLIC} name="testMethod" parameters={{
+                ${<jv.Method accessModifier='public' name="testMethod" parameters={{
                   myModel: refkey("Model"),
                   name: "String"
                   }}>

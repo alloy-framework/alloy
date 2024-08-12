@@ -7,7 +7,7 @@ import { code, refkey } from "@alloy-js/core";
 
 it('works', () => {
   const res = toSourceText((
-    <jv.Class accessModifier={AccessModifier.PUBLIC} abstract final name='TestClass'>
+    <jv.Class accessModifier='public' abstract final name='TestClass'>
     </jv.Class>
   ))
 
@@ -24,12 +24,12 @@ it('extends class', () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TestSuperclass.java">
-        <jv.Class accessModifier={AccessModifier.PUBLIC} name='TestSuperclass'>
+        <jv.Class accessModifier='public' name='TestSuperclass'>
         </jv.Class>
       </jv.SourceFile>
       <jv.PackageDirectory package='import'>
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class accessModifier={AccessModifier.PUBLIC} name='TestSubclass' extends={refkey("TestSuperclass")}>
+          <jv.Class accessModifier='public' name='TestSubclass' extends={refkey("TestSuperclass")}>
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -70,7 +70,7 @@ it('implements interfaces', () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class accessModifier={AccessModifier.PUBLIC} name="TestSubclass" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Class accessModifier='public' name="TestSubclass" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>

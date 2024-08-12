@@ -1,8 +1,7 @@
 import { Children, code, Scope } from "@alloy-js/core";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
-import { AccessModifier } from "../access-modifier.js";
+import { AccessModifier, collectAccessModifier, collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Name } from "./Name.js";
 import { collectArguments } from "../arguments.js";
 
@@ -18,7 +17,7 @@ export function Interface(props: InterfaceProps) {
   const modifiers = collectModifiers(props);
   return (
     <Declaration {...props} name={name}>
-      {props.accessModifier}{modifiers}interface <Name />{implementsExpression} {"{"}
+      {collectAccessModifier(props.accessModifier)}{modifiers}interface <Name />{implementsExpression} {"{"}
         <Scope name={name} kind='interface'>
           {props.children}
         </Scope>

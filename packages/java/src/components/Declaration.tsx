@@ -1,7 +1,6 @@
 import { Children, Declaration as CoreDeclaration, Refkey, refkey, useBinder, useScope } from "@alloy-js/core";
 import { JavaOutputScope, JavaOutputSymbol } from "../symbols.js";
 import { usePackage } from "./PackageDirectory.js";
-import { AccessModifier } from "../access-modifier.js";
 
 export interface DeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main

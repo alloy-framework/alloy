@@ -1,8 +1,8 @@
 import { code, Refkey } from "@alloy-js/core";
-import { AccessModifier } from "../access-modifier.js";
 import { Child, Children } from "@alloy-js/core/jsx-runtime";
 import { Parameters } from "./Parameters.js";
 import { Name } from "./Name.js";
+import { AccessModifier, collectAccessModifier } from "../object-modifiers.js";
 
 export interface ConstructorProps {
   accessModifier?: AccessModifier;
@@ -18,7 +18,7 @@ export interface ConstructorProps {
 export function Constructor(props: ConstructorProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
   return code`
-        ${props.accessModifier}${props.name ?? <Name />}(${params}) {
+        ${collectAccessModifier(props.accessModifier)}${props.name ?? <Name />}(${params}) {
           ${props.children}
         }
     `;

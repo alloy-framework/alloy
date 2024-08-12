@@ -9,7 +9,7 @@ const res = ay.render(
       <jv.PackageDirectory package="me.example.code">
         <jv.PackageDirectory package="enums">
           <jv.SourceFile path="AnimalType.java">
-            <jv.Enum accessModifier={AccessModifier.PUBLIC} name="AnimalType">
+            <jv.Enum accessModifier='public' name="AnimalType">
 
               <jv.EnumMember name="DOG" />,
               <jv.EnumMember name="Cat" />;
@@ -19,11 +19,11 @@ const res = ay.render(
         </jv.PackageDirectory>
         <jv.PackageDirectory package="types">
           <jv.SourceFile path="Animal.java">
-            <jv.Class accessModifier={AccessModifier.PUBLIC} abstract name="Animal">
+            <jv.Class accessModifier='public' abstract name="Animal">
 
-              <jv.Method accessModifier={AccessModifier.PUBLIC} abstract name="makeSound" return="String" />
+              <jv.Method accessModifier='public' abstract name="makeSound" return="String" />
 
-              <jv.Method accessModifier={AccessModifier.PUBLIC} abstract name="type" return={ay.refkey("AnimalType")} />
+              <jv.Method accessModifier='public' abstract name="type" return={ay.refkey("AnimalType")} />
 
             </jv.Class>
           </jv.SourceFile>
@@ -31,16 +31,16 @@ const res = ay.render(
 
 
         <jv.SourceFile path="Cat.java">
-          <jv.Class accessModifier={AccessModifier.PUBLIC} name="Cat" extends={ay.refkey("Animal")}>
+          <jv.Class accessModifier='public' name="Cat" extends={ay.refkey("Animal")}>
 
-            <jv.Constructor accessModifier={AccessModifier.PUBLIC} />
+            <jv.Constructor accessModifier='public' />
 
             <jv.Annotation type="Override" />
-            <jv.Method accessModifier={AccessModifier.PUBLIC} name="makeSound" return="String">
+            <jv.Method accessModifier='public' name="makeSound" return="String">
               return "Meow";
             </jv.Method>
 
-            <jv.Method accessModifier={AccessModifier.PUBLIC} name="type" return={ay.refkey("AnimalType")}>
+            <jv.Method accessModifier='public' name="type" return={ay.refkey("AnimalType")}>
               return {ay.refkey("AnimalType")}.CAT;
             </jv.Method>
 
@@ -48,16 +48,16 @@ const res = ay.render(
         </jv.SourceFile>
 
         <jv.SourceFile path="Dog.java">
-          <jv.Class accessModifier={AccessModifier.PUBLIC} name="Dog" extends={ay.refkey("Animal")}>
+          <jv.Class accessModifier='public' name="Dog" extends={ay.refkey("Animal")}>
 
-            <jv.Constructor accessModifier={AccessModifier.PUBLIC} />
+            <jv.Constructor accessModifier='public' />
 
             <jv.Annotation type="Override" />
-            <jv.Method accessModifier={AccessModifier.PUBLIC} name="makeSound" return="String">
+            <jv.Method accessModifier='public' name="makeSound" return="String">
               return "Woof";
             </jv.Method>
 
-            <jv.Method accessModifier={AccessModifier.PUBLIC} name="type" return={ay.refkey("AnimalType")}>
+            <jv.Method accessModifier='public' name="type" return={ay.refkey("AnimalType")}>
               return {ay.refkey("AnimalType")}.DOG;
             </jv.Method>
 

@@ -10,6 +10,18 @@ export interface ObjectModifiers {
   volatile?: boolean;
 }
 
+export type AccessModifier = "public" | "protected" | "private" | "package-private";
+export const accessModifierLookup: Record<AccessModifier, string> = {
+  public: "public ",
+  protected: "protected ",
+  private: "private ",
+  "package-private": ""
+}
+
+export function collectAccessModifier(accessModifier?: AccessModifier) {
+  return accessModifier ? accessModifierLookup[accessModifier] : "";
+}
+
 export function collectModifiers<T extends ObjectModifiers>(props: T) {
   const modifiers = [];
   if (props.abstract) modifiers.push("abstract");

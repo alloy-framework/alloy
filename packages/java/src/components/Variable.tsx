@@ -1,6 +1,5 @@
 import { Child, Children, code } from "@alloy-js/core";
-import { AccessModifier } from "../access-modifier.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { AccessModifier, collectAccessModifier, collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 
 export interface VariableProps extends ObjectModifiers {
@@ -14,5 +13,5 @@ export function Variable(props: VariableProps) {
   const name = useJavaNamePolicy().getName(props.name, "variable");
   const modifiers = collectModifiers(props);
 
-  return code`${props.accessModifier}${modifiers}${props.type} ${name}${props.value ? code` = ${props.value}` : ""};`;
+  return code`${collectAccessModifier(props.accessModifier)}${modifiers}${props.type} ${name}${props.value ? code` = ${props.value}` : ""};`;
 }

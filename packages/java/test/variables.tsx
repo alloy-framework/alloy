@@ -10,7 +10,7 @@ it("works", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Variable accessModifier={AccessModifier.PUBLIC} static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
+          ${<jv.Variable accessModifier='public' static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
         }
       `}
     </jv.Declaration>
@@ -42,7 +42,7 @@ it("works with external type", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Variable accessModifier={AccessModifier.PUBLIC} static type={refkey("Model")} name='myModel' />}
+                ${<jv.Variable accessModifier='public' static type={refkey("Model")} name='myModel' />}
               }
             `}
           </Declaration>
@@ -80,7 +80,7 @@ it("declares new object", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.ObjectDeclaration accessModifier={AccessModifier.PUBLIC} static type={refkey("Model")} name='myModel' arguments={<jv.Value value="initValue" />} />}
+                ${<jv.ObjectDeclaration accessModifier='public' static type={refkey("Model")} name='myModel' arguments={<jv.Value value="initValue" />} />}
               }
             `}
           </Declaration>

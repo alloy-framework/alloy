@@ -7,7 +7,7 @@ import { code, refkey } from "@alloy-js/core";
 
 it("works", () => {
   const res = toSourceText((
-    <jv.Enum accessModifier={AccessModifier.PUBLIC} name="TestEnum">
+    <jv.Enum accessModifier='public' name="TestEnum">
     </jv.Enum>
   ))
 
@@ -41,7 +41,7 @@ it("implements interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestEnum.java">
-          <jv.Enum accessModifier={AccessModifier.PUBLIC} name="TestEnum" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Enum accessModifier='public' name="TestEnum" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Enum>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -64,7 +64,7 @@ it("implements interfaces", () => {
 
 it("declares members", () => {
   const res = toSourceText((
-    <jv.Enum accessModifier={AccessModifier.PUBLIC} name="TestEnum">
+    <jv.Enum accessModifier='public' name="TestEnum">
       <jv.EnumMember name="ONE" />,
       <jv.EnumMember name="TWO" />;
     </jv.Enum>
@@ -82,7 +82,7 @@ it("declares members", () => {
 
 it("declares members with arguments", () => {
   const res = toSourceText((
-    <jv.Enum accessModifier={AccessModifier.PUBLIC} name="TestEnum">
+    <jv.Enum accessModifier='public' name="TestEnum">
       <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />,
       <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />;
 

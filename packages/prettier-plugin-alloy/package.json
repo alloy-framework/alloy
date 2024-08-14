@@ -15,7 +15,7 @@
   ],
   "repository": "https://github.com/alloy-framework/alloy.git",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "watch": "tsc -p ./tsconfig.build.json --watch",

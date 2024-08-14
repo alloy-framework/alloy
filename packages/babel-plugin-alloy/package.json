@@ -4,7 +4,8 @@
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest -w"
   },
   "keywords": [],
   "author": "Brian Terlson <brian.terlson@microsoft.com>",

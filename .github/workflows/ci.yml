@@ -1,4 +1,4 @@
-name: Publish Any Commit
+name: CI
 on: [push, pull_request]
 
 jobs:
@@ -15,6 +15,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Test
+        run: pnpm test
+
       - run: pnpx pkg-pr-new publish './packages/*'
 
   format:
@@ -26,7 +29,7 @@ jobs:
       - run: pnpm install
         name: Install dependencies
 
-      - run: pnpm run build
+      - run: pnpm --filter="@alloy-js/prettier-plugin-alloy..." run  build
         name: Build
 
       - run: pnpm run format:check

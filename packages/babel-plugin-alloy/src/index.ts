@@ -40,7 +40,7 @@ class JSXPreservingGenerator extends CodeGenerator {
   generate(): GeneratorResult {
     const printer = new (JSXPreservingPrinter as any)(
       (this as any)._format,
-      (this as any)._map
+      (this as any)._map,
     );
 
     return printer.generate((this as any)._ast);

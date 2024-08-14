@@ -37,12 +37,12 @@ export const parsers = {
 
 export const languages = [
   {
-    name: "Alloy-TS",
+    name: "alloy-ts",
     extensions: [".alloy.tsx"],
     parsers: ["alloy-ts"],
   },
   {
-    name: "Alloy-JS",
+    name: "alloy-js",
     extensions: [".alloy.jsx"],
     parsers: ["alloy-js"],
   },

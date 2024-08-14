@@ -13,7 +13,7 @@
       "import": "./dist/src/jsx-runtime.js"
     },
     "./testing": {
-      "development": "./src/testing/index.ts",
+      "development": "./testing/index.ts",
       "import": "./dist/testing/index.js"
     },
     "./stc": {

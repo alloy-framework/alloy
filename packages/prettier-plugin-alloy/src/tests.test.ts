@@ -47,7 +47,7 @@ export const Foo = (props: any) => {
 });
 
 describe("keeps new lines ", () => {
-  it(".alloy.tsx", async () => {
+  it("typescript files", async () => {
     await expectFormat({
       parser: "alloy-ts",
       input: `
@@ -70,7 +70,7 @@ export const Foo = (props: any) => {
     });
   });
 
-  it(".alloy.jsx", async () => {
+  it("javascript files", async () => {
     await expectFormat({
       parser: "alloy-js",
       input: `

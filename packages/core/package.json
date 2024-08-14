@@ -36,6 +36,8 @@
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
     "build-testing": "babel testing -d dist/testing --extensions '.ts,.tsx'",
     "build": "tsc -p . && npm run build-src && npm run build-testing",
+    "test": "vitest run",
+    "test:watch": "vitest -w",
     "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
     "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
     "watch-tsc": "tsc -p . --watch",

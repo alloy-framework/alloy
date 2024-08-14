@@ -1,7 +1,7 @@
 // this code is split into a tokenizer and a parser of sorts because I feel like
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
-import { Child, Indent } from "#core";
+import { Child, Indent } from "@alloy-js/core";
 
 interface IndentLevelData {
   kind: "indent";

@@ -1,9 +1,6 @@
 import { createContext, useContext } from "../context.js";
 import { Children, getContext } from "@alloy-js/core/jsx-runtime";
-if ((globalThis as any).alloyIndent) {
-  throw "FAIL";
-}
-(globalThis as any).alloyIndent = true;
+
 export const IndentContext = createContext<IndentState>({
   level: 0,
   indent: "  ",

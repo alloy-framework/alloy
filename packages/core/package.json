@@ -4,12 +4,6 @@
   "description": "",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
-  "imports": {
-    "#core": {
-      "node": "./dist/src/index.js",
-      "default": "./dist/src/index.js"
-    }
-  },
   "exports": {
     ".": {
       "import": "./dist/src/index.js",
@@ -36,6 +30,7 @@
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
     "build-testing": "babel testing -d dist/testing --extensions '.ts,.tsx'",
     "build": "tsc -p . && npm run build-src && npm run build-testing",
+    "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
     "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",

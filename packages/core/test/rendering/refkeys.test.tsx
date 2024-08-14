@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import "../../testing/extend-expect.js";
-import { refkey, Refkey } from "#core";
+import { refkey, Refkey } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/core/stc";
 
 it("is rendered properly in the tree", () => {

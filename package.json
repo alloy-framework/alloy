@@ -7,6 +7,7 @@
   "scripts": {
     "build": "pnpm -r --workspace-concurrency=Infinity build",
     "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\"",
+    "clean": "pnpm -r run clean && rimraf **/.temp/",
     "test": "vitest run",
     "format": "pnpm run prettier-exec --write",
     "format:check": "pnpm run prettier-exec --check",
@@ -22,6 +23,7 @@
     "babel-preset-alloy": "workspace:~",
     "concurrently": "^8.2.2",
     "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
     "vitest": "^2.0.5"
   }
 }

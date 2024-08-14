@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc -p .",
     "test": "vitest run",
-    "test:watch": "vitest -w"
+    "test:watch": "vitest -w",
+    "clean": "rimraf dist/ .temp/"
   },
   "keywords": [],
   "author": "Brian Terlson <brian.terlson@microsoft.com>",

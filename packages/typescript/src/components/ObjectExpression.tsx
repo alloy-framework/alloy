@@ -1,9 +1,20 @@
-import { Children, code, computed, effect, Indent, mapJoin, memo } from "@alloy-js/core";
+import {
+  Children,
+  code,
+  computed,
+  effect,
+  Indent,
+  mapJoin,
+  memo,
+} from "@alloy-js/core";
 import { ValueExpression } from "./ValueExpression.js";
 
 export interface ObjectExpressionProps {
   children?: Children;
-  jsValue?: [string, unknown][] | Map<string, unknown> | Record<string, unknown>
+  jsValue?:
+    | [string, unknown][]
+    | Map<string, unknown>
+    | Record<string, unknown>;
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
@@ -13,16 +24,20 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     if (Array.isArray(jsValue)) {
       properties = jsValue;
     } else if (jsValue instanceof Map) {
-      properties = [... jsValue.entries()];
+      properties = [...jsValue.entries()];
     } else if (jsValue !== undefined) {
-      properties = Object.entries(jsValue)
+      properties = Object.entries(jsValue);
     } else {
       properties = [];
     }
-    let elements = mapJoin(properties, ([name, value]) => {
-      return <ObjectProperty name={name} jsValue={value} />;
-    }, { joiner: ",\n"});
-    
+    let elements = mapJoin(
+      properties,
+      ([name, value]) => {
+        return <ObjectProperty name={name} jsValue={value} />;
+      },
+      { joiner: ",\n" },
+    );
+
     if (props.children) {
       if (elements.length > 0) {
         elements.push(",");
@@ -32,7 +47,6 @@ export function ObjectExpression(props: ObjectExpressionProps) {
 
     return elements;
   });
-
 
   return memo(() => {
     if (elements.value.length === 0) {
@@ -55,8 +69,8 @@ export function ObjectProperty(props: ObjectPropertyProps) {
   let name;
   if (props.name) {
     name = props.name;
-  } else if(props.nameExpression) {
-    name = <>[{props.nameExpression}]</>
+  } else if (props.nameExpression) {
+    name = <>[{props.nameExpression}]</>;
   } else {
     throw new Error("ObjectProperty either a name or a nameExpression.");
   }
@@ -66,9 +80,9 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.value;
   } else if (props.hasOwnProperty("jsValue")) {
     // need the hasOwnProperty check because the value might be falsy.
-    value = <ValueExpression jsValue={props.jsValue} />
+    value = <ValueExpression jsValue={props.jsValue} />;
   } else if (props.children) {
     value = props.children;
   }
-  return <>{name}: {value}</>
+  return <>{name}: {value}</>;
 }

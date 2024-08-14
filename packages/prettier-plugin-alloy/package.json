@@ -1,0 +1,34 @@
+{
+  "name": "@alloy-js/prettier-plugin-alloy",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Prettier plugin for Alloy JSX/TSX files that disable formatting for JSX elements",
+  "homepage": "https://github.com/alloy-framework/alloy",
+  "license": "MIT",
+  "author": "Microsoft",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": "https://github.com/alloy-framework/alloy.git",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "watch": "tsc -p ./tsconfig.build.json --watch",
+    "build": "tsc -p ./tsconfig.build.json",
+    "clean": "rimraf dist/ .temp/",
+    "test": "vitest run",
+    "test:watch": "vitest -w"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.2",
+    "vitest": "^2.0.5"
+  },
+  "bugs": "https://github.com/timotheeguerin/chronus/issues"
+}

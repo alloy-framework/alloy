@@ -37,19 +37,19 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.24.7",
-    "@babel/preset-typescript": "^7.24.7",
-    "@vue/reactivity": "^3.4.30",
-    "babel-preset-alloy": "workspace:*",
-    "pathe": "^1.1.2"
+    "@babel/core": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@vue/reactivity": "catalog:",
+    "babel-preset-alloy": "catalog:",
+    "pathe": "catalog:"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.7",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "concurrently": "^8.2.2",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "@babel/cli": "catalog:",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "overrides": {
     "esbuild": "0.23"

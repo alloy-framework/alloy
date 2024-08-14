@@ -24,11 +24,10 @@
     "test": "vitest run",
     "test:watch": "vitest -w"
   },
-  "dependencies": {},
   "devDependencies": {
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.2",
-    "vitest": "^2.0.5"
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "bugs": "https://github.com/timotheeguerin/chronus/issues"
 }

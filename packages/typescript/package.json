@@ -4,8 +4,8 @@
   "description": "",
   "exports": {
     ".": {
-    "import": "./dist/src/index.js",
-    "types": "./dist/src/index.d.ts"
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
     },
     "./stc": {
       "import": "./dist/src/components/stc/index.js",
@@ -36,8 +36,8 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "babel-preset-alloy": "workspace:*",
     "concurrently": "^8.2.2",
-    "typescript": "^5.5.2",
-    "vitest": "^1.6.0"
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "overrides": {
     "esbuild": "0.23"

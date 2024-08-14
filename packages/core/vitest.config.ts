@@ -15,7 +15,7 @@ export default defineConfig({
   resolve: {
     mainFields: ["module"],
     alias: {
-      "#core": resolve(__dirname, "./src/index.ts"),
+      // "#core": resolve(__dirname, "./src/index.ts"),
       "@alloy-js/core/jsx-runtime": resolve(__dirname, "./src/jsx-runtime.ts"),
       "@alloy-js/core/stc": resolve(__dirname, "./src/components/stc/index.ts"),
       "@alloy-js/core": resolve(__dirname, "./src/index.ts"),
@@ -27,10 +27,7 @@ export default defineConfig({
       sourceMaps: "both",
       babelHelpers: "bundled",
       extensions: [".ts", ".tsx"],
-      presets: [
-        "@babel/preset-typescript",
-        ["babel-preset-alloy", { alloyModuleName: "#core" }],
-      ],
+      presets: ["@babel/preset-typescript", ["babel-preset-alloy", {}]],
     }),
   ],
 });

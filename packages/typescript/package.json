@@ -4,12 +4,12 @@
   "description": "",
   "exports": {
     ".": {
-      "import": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts"
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
     },
     "./stc": {
-      "import": "./dist/src/components/stc/index.js",
-      "types": "./dist/src/components/stc/index.d.ts"
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
     }
   },
   "scripts": {

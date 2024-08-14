@@ -7,13 +7,6 @@ export default defineConfig({
     jsx: "preserve",
     sourcemap: "both",
   },
-  resolve: {
-    alias: {
-      "@alloy-js/core/jsx-runtime": resolve(__dirname, "./src/jsx-runtime.ts"),
-      "@alloy-js/core/stc": resolve(__dirname, "./src/components/stc/index.ts"),
-      "@alloy-js/core": resolve(__dirname, "./src/index.ts"),
-    },
-  },
   plugins: [
     babel({
       inputSourceMap: true as any,

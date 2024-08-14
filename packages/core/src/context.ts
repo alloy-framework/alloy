@@ -33,7 +33,7 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
 }
 
 export function createContext<T = unknown>(
-  defaultValue?: T
+  defaultValue?: T,
 ): ComponentContext<T> {
   const id = Symbol("context");
   return {

@@ -8,7 +8,7 @@ export default defineConfig({
   },
   esbuild: {
     jsx: "preserve",
-    sourcemap: "both"
+    sourcemap: "both",
   },
   plugins: [
     babel({

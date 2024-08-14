@@ -4,11 +4,11 @@ import { babel } from "@rollup/plugin-babel";
 export default defineConfig({
   test: {
     include: ["test/**/*.ts", "test/**/*.tsx"],
-    exclude: ["test/**/*.util.ts", "test/**/*.d.ts"]
+    exclude: ["test/**/*.util.ts", "test/**/*.d.ts"],
   },
   esbuild: {
     jsx: "preserve",
-    sourcemap: "both"
+    sourcemap: "both",
   },
   plugins: [
     babel({

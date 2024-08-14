@@ -140,8 +140,7 @@ export function ref(refkey: Refkey) {
       for (const [publicPath, module] of sourcePackage.exportedSymbols) {
         if (module.exportedSymbols.has(targetDeclaration.refkey)) {
           return untrack(() =>
-            sourceFile!.scope.addImport(targetDeclaration, module),
-          ).name;
+            sourceFile!.scope.addImport(targetDeclaration, module)).name;
         }
       }
 
@@ -155,8 +154,7 @@ export function ref(refkey: Refkey) {
         sourceFile!.scope.addImport(
           targetDeclaration,
           pathDown[0] as TSModuleScope,
-        ),
-      ).name;
+        )).name;
     }
 
     return targetDeclaration.name;

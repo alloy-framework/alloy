@@ -1,6 +1,6 @@
 import { memo } from "@alloy-js/core";
-import { ObjectExpression } from "./ObjectExpression.js";
 import { ArrayExpression } from "./ArrayExpression.js";
+import { ObjectExpression } from "./ObjectExpression.js";
 
 export interface ValueExpressionProps {
   jsValue?: unknown;

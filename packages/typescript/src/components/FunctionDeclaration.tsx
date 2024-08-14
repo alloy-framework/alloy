@@ -1,4 +1,3 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import {
   childrenArray,
   findKeyedChild,
@@ -6,8 +5,9 @@ import {
   mapJoin,
   taggedComponent,
 } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface FunctionDeclarationProps

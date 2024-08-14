@@ -2,14 +2,13 @@ import {
   mapJoin,
   memo,
   SourceDirectoryContext,
-  SourceFileContext,
   useContext,
 } from "@alloy-js/core";
-import { SourceFile } from "./SourceFile.js";
-import { basename, join } from "pathe";
+import { basename } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
-import { ExportStatement } from "./ExportStatement.js";
 import { TSModuleScope } from "../symbols.js";
+import { ExportStatement } from "./ExportStatement.js";
+import { SourceFile } from "./SourceFile.js";
 export interface BarrelFileProps {
   path?: string;
   export?: boolean | string;

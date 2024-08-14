@@ -1,18 +1,9 @@
-import {
-  render,
-  Output,
-  mapJoin,
-  reactive,
-  renderTree,
-  effect,
-  memo,
-  ref,
-} from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { mapJoin, reactive, renderTree } from "@alloy-js/core";
 import "@alloy-js/core/testing";
+import { expect, it } from "vitest";
 
-import * as ts from "../src/index.js";
 import { d, renderToString } from "@alloy-js/core/testing";
+import * as ts from "../src/index.js";
 
 it("renders an object", () => {
   expect(<ts.ObjectExpression />).toRenderTo("{}");

@@ -1,6 +1,6 @@
 import { Children, code } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useTSNamePolicy } from "../name-policy.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface InterfaceDeclarationProps

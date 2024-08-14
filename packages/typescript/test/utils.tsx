@@ -1,13 +1,13 @@
 import {
   Children,
-  render,
   Output,
   OutputDirectory,
   OutputFile,
+  render,
 } from "@alloy-js/core";
-import * as ts from "../src/index.js";
-import { expect } from "vitest";
 import { dedent } from "@alloy-js/core/testing";
+import { expect } from "vitest";
+import * as ts from "../src/index.js";
 
 export function toSourceText(c: Children): string {
   const res = render(

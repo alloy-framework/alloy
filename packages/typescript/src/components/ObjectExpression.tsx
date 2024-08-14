@@ -1,12 +1,4 @@
-import {
-  Children,
-  code,
-  computed,
-  effect,
-  Indent,
-  mapJoin,
-  memo,
-} from "@alloy-js/core";
+import { Children, computed, Indent, mapJoin, memo } from "@alloy-js/core";
 import { ValueExpression } from "./ValueExpression.js";
 
 export interface ObjectExpressionProps {

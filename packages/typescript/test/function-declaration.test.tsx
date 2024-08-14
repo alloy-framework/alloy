@@ -1,7 +1,7 @@
-import { expect, it } from "vitest";
-import { ArrayExpression, FunctionDeclaration } from "../src/index.js";
-import { toSourceText } from "./utils.js";
 import { d } from "@alloy-js/core/testing";
+import { expect, it } from "vitest";
+import { FunctionDeclaration } from "../src/index.js";
+import { toSourceText } from "./utils.js";
 
 it("works", () => {
   expect(toSourceText(<FunctionDeclaration name="foo" />)).toBe(d`

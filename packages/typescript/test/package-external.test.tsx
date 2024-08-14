@@ -1,8 +1,8 @@
-import { render, Output, refkey, OutputDirectory } from "@alloy-js/core";
+import { Output, refkey, render } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
 import { findFile } from "./utils.js";
-import { d } from "@alloy-js/core/testing";
 
 it("imports external packages", () => {
   const res = render(

@@ -1,13 +1,11 @@
 import {
+  Children,
+  Declaration as CoreDeclaration,
   refkey,
   Refkey,
-  useBinder,
-  useScope,
-  Declaration as CoreDeclaration,
-  Children,
 } from "@alloy-js/core";
-import { createTsSymbol, TSOutputScope, TSOutputSymbol } from "../symbols.js";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
+import { createTsSymbol } from "../symbols.js";
 
 export interface DeclarationProps {
   name: string;

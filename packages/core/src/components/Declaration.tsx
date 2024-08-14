@@ -1,6 +1,6 @@
-import { OutputSymbol, BinderContext } from "../binder.js";
-import { createContext, useContext } from "../context.js";
 import { Children } from "@alloy-js/core/jsx-runtime";
+import { BinderContext, OutputSymbol } from "../binder.js";
+import { createContext, useContext } from "../context.js";
 import { Refkey, refkey } from "../refkey.js";
 
 export const DeclarationContext = createContext<OutputSymbol>();

@@ -1,4 +1,11 @@
-import type { AstPath, Options, Printer, SupportLanguage } from "prettier";
+import type {
+  AstPath,
+  Parser,
+  ParserOptions,
+  Plugin,
+  Printer,
+  SupportLanguage,
+} from "prettier";
 import { parsers as babelParsers } from "prettier/plugins/babel";
 // @ts-expect-error - This is not exposed by prettier https://github.com/prettier/prettier/issues/4424
 import { printers as estreePrinters } from "prettier/plugins/estree";
@@ -19,20 +26,73 @@ const printers = {
   },
 } satisfies Record<string, Printer>;
 
-const preprocess = (text: string, options: Options) => {
+const preprocess = (
+  parserName: string,
+  text: string,
+  options: ParserOptions,
+) => {
+  const pluginsFromOptions = options.plugins ?? [];
+  const pluginsWithRelevantParsers = findPluginsByParserName(
+    parserName,
+    pluginsFromOptions,
+  );
+
+  const pluginsWithPreprocessor = pluginsWithRelevantParsers.filter(
+    (plugin) => !!plugin.parsers?.[parserName]?.preprocess,
+  );
+
+  let processedText = text;
+
+  pluginsWithPreprocessor.forEach((pluginWithPreprocessor) => {
+    const nextText = pluginWithPreprocessor.parsers?.[parserName]?.preprocess?.(
+      processedText,
+      {
+        ...options,
+        plugins: pluginsFromOptions.filter(
+          (plugin) => (plugin as Plugin).parsers !== parsers,
+        ),
+      },
+    );
+    if (nextText !== undefined) {
+      processedText = nextText;
+    }
+  });
+
   options.printer = printers.estree;
-  return text;
+  return processedText;
 };
 
+function wrap<K extends string>(parsers: Record<K, Parser>, parserName: K) {
+  const parser = parsers[parserName];
+  return {
+    ...parser,
+    preprocess: (code: string, options: ParserOptions) =>
+      preprocess(
+        parserName,
+        parser.preprocess ? parser.preprocess(code, options) : code,
+        options,
+      ),
+  };
+}
+
+function findPluginsByParserName(
+  parserName: string,
+  plugins: (Plugin | string)[],
+): Plugin[] {
+  return plugins.filter((plugin): plugin is Plugin => {
+    return (
+      typeof plugin === "object" &&
+      plugin.parsers !== parsers &&
+      !!plugin.parsers?.[parserName]
+    );
+  });
+}
+
 export const parsers = {
-  "alloy-ts": {
-    ...tsParsers.typescript,
-    preprocess,
-  },
-  "alloy-js": {
-    ...babelParsers.babel,
-    preprocess,
-  },
+  typescript: wrap(tsParsers, "typescript"),
+
+  "alloy-ts": wrap(tsParsers, "typescript"),
+  "alloy-js": wrap(babelParsers, "babel"),
 };
 
 export const languages = [

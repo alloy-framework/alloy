@@ -29,7 +29,7 @@ export function mapJoin<T, U, V>(
   cb: (key: T, value?: U) => V,
   options: MapJoinOptions = defaultMapJoinOptions,
 ): (V | string)[] {
-  let mapped: (V | string)[] = [];
+  const mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
       mapped.push(cb(item));
@@ -82,7 +82,7 @@ export function childrenArray(fn: () => Children) {
   }
 }
 
-export function findKeyedChild(children: Child[], tag: Symbol) {
+export function findKeyedChild(children: Child[], tag: symbol) {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;

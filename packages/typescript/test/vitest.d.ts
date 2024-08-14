@@ -1,7 +1,7 @@
 import "vitest";
 
 interface CustomMatchers<R = unknown> {
-  toBeFoo: () => R;
+  toRenderTo: (str: string) => R;
 }
 
 declare module "vitest" {

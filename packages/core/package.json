@@ -3,30 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "development": "./src/index.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts"
+      "import": "./dist/src/index.js"
     },
     "./jsx-runtime": {
       "development": "./src/jsx-runtime.ts",
-      "import": "./dist/src/jsx-runtime.js",
-      "require": "./dist/src/jsx-runtime.js",
-      "types": "./dist/src/jsx-runtime.d.ts"
+      "import": "./dist/src/jsx-runtime.js"
     },
     "./testing": {
-      "import": "./dist/testing/index.js",
-      "require": "./dist/testing/index.js",
-      "types": "./dist/testing/index.d.ts"
+      "development": "./src/testing/index.ts",
+      "import": "./dist/testing/index.js"
     },
     "./stc": {
       "development": "./src/components/stc/index.ts",
-      "import": "./dist/src/components/stc/index.js",
-      "require": "./dist/src/components/stc/index.js",
-      "types": "./dist/src/components/stc/index.d.ts"
+      "import": "./dist/src/components/stc/index.js"
     }
   },
   "scripts": {

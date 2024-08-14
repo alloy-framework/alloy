@@ -1,6 +1,5 @@
 import { expect, it } from "vitest";
 import { refkey } from "../src/refkey.js";
-import { renderTree } from "@alloy-js/core";
 
 it("is stable when called with same values", () => {
   const obj = {};

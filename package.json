@@ -11,7 +11,7 @@
     "test": "vitest run",
     "format": "pnpm run prettier-exec --write",
     "format:check": "pnpm run prettier-exec --check",
-    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,jsx,json,yml,yaml}",
+    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,json,yml,yaml}",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -27,6 +27,7 @@
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",
     "prettier": "catalog:",
+    "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"

@@ -1,6 +1,7 @@
 experimentalTernaries: true
 plugins:
   - ./packages/prettier-plugin-alloy/dist/index.js
+  - ./node_modules/prettier-plugin-organize-imports/index.js
 overrides:
   - files: "**/*.tsx"
     options:

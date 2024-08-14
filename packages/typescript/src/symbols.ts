@@ -3,18 +3,15 @@ import {
   memo,
   OutputScope,
   OutputSymbol,
-  reactive,
-  Ref,
   refkey,
   Refkey,
   resolve,
-  SourceDirectoryContext,
   untrack,
   useContext,
   useScope,
 } from "@alloy-js/core";
-import { ExportConditions, PackageExports } from "./components/PackageJson.js";
 import { usePackage } from "./components/PackageDirectory.js";
+import { ExportConditions, PackageExports } from "./components/PackageJson.js";
 import { SourceFileContext } from "./components/SourceFile.js";
 import { modulePath } from "./utils.js";
 

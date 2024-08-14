@@ -1,4 +1,3 @@
-import {} from "@vue/reactivity";
 import {
   Child,
   Children,
@@ -7,6 +6,7 @@ import {
   isComponentCreator,
   memo,
 } from "@alloy-js/core/jsx-runtime";
+import {} from "@vue/reactivity";
 import { code } from "./code.js";
 export interface MapJoinOptions {
   joiner?: string;

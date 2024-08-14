@@ -1,6 +1,6 @@
-import { dirname, join } from "node:path";
-import { mkdir, writeFile } from "node:fs/promises";
 import * as ay from "@alloy-js/core";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 export async function writeOutput(dir: ay.OutputDirectory, rootDir: string) {
   for (const item of dir.contents) {

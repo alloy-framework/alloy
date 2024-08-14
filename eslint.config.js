@@ -15,10 +15,7 @@ export default tsEslint.config(
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: [
-            "eng/prepare-release-branch.js",
-            "packages/*/cmd/cli.mjs",
-          ],
+          allowDefaultProject: [],
           defaultProject: "./tsconfig.json",
         },
         tsconfigRootDir: dirname(fileURLToPath(import.meta.url)),

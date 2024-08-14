@@ -1,15 +1,8 @@
-import { createContext, useContext } from "./context.js";
-import {
-  computed,
-  isProxy,
-  reactive,
-  ref,
-  Ref,
-  shallowRef,
-} from "@vue/reactivity";
-import { Refkey } from "./refkey.js";
-import { useScope } from "./components/Scope.js";
 import { memo } from "@alloy-js/core/jsx-runtime";
+import { computed, reactive, Ref, shallowRef } from "@vue/reactivity";
+import { useScope } from "./components/Scope.js";
+import { createContext, useContext } from "./context.js";
+import { Refkey } from "./refkey.js";
 
 export type Metadata = object;
 

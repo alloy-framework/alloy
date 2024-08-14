@@ -1,14 +1,8 @@
-import type {
-  AstPath,
-  Options,
-  Plugin,
-  Printer,
-  SupportLanguage,
-} from "prettier";
+import type { AstPath, Options, Printer, SupportLanguage } from "prettier";
 // @ts-expect-error - This is not exposed by prettier https://github.com/prettier/prettier/issues/4424
+import { parsers as babelParsers } from "prettier/plugins/babel";
 import { printers as estreePrinters } from "prettier/plugins/estree";
 import { parsers as tsParsers } from "prettier/plugins/typescript";
-import { parsers as babelParsers } from "prettier/plugins/babel";
 
 const printers = {
   estree: {

@@ -18,7 +18,9 @@ it("handles a multiple elements", () => {
     return c;
   }
 
-  function Bar() { return "Bar"}
+  function Bar() {
+    return "Bar";
+  }
 
   const res = renderTree(<Foo>
     <Bar />

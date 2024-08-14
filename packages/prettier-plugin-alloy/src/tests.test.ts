@@ -1,5 +1,5 @@
-import { describe, expect, expectTypeOf, it } from "vitest";
 import prettier, { type Plugin } from "prettier";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import * as plugin from "./index.js";
 
 function format(code: string, parser: string) {

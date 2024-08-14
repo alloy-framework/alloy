@@ -1,4 +1,4 @@
-import { isProxy, reactive, SourceDirectoryContext } from "@alloy-js/core";
+import { reactive, SourceDirectoryContext } from "@alloy-js/core";
 import { TSModuleScope } from "./symbols.js";
 
 export interface SourceDirectoryData {

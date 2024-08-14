@@ -3,25 +3,26 @@ import {
   memo,
   OutputScope,
   OutputSymbol,
-  reactive,
-  Ref,
   refkey,
   Refkey,
   resolve,
-  SourceDirectoryContext,
   untrack,
   useContext,
   useScope,
 } from "@alloy-js/core";
-import { ExportConditions, PackageExports } from "./components/PackageJson.js";
 import { usePackage } from "./components/PackageDirectory.js";
+import { ExportConditions, PackageExports } from "./components/PackageJson.js";
 import { SourceFileContext } from "./components/SourceFile.js";
 import { modulePath } from "./utils.js";
 
+// prettier-ignore
 export enum TSSymbolFlags {
-  None = 0,
-  LocalImportSymbol = 1,
+  None              = 0,
+  LocalImportSymbol = 1 << 0,
+  TypeSymbol        = 1 << 1,
+  ParameterSymbol   = 1 << 2,
 }
+
 export interface TSOutputSymbol extends OutputSymbol {
   scope: TSOutputScope;
   export: boolean;
@@ -33,6 +34,7 @@ export type TSOutputScope =
   | TSGlobalScope
   | TSPackageScope
   | TSModuleScope
+  | TSFunctionScope
   | TSOtherScope;
 
 export interface TSPackageScope extends OutputScope {
@@ -114,6 +116,10 @@ export interface TSGlobalScope extends OutputScope {
   kind: "global";
 }
 
+export interface TSFunctionScope extends OutputScope {
+  kind: "function";
+}
+
 export interface TSOtherScope extends OutputScope {
   kind: never;
 }
@@ -129,12 +135,20 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
 
-    const { targetDeclaration, pathDown, commonScope } = resolveResult.value;
+    const { targetDeclaration, pathDown } = resolveResult.value;
 
-    if (commonScope!.kind === "global" && pathDown[0].kind === "package") {
+    validateSymbolReachable(pathDown);
+
+    // Where the target declaration is relative to the referencing scope.
+    // * package: target symbol is in a different package
+    // * module: target symbol is in a different module
+    // * local: target symbol is within the current module
+    const targetLocation = pathDown[0]?.kind ?? "local";
+
+    if (targetLocation === "package") {
       // need package import
       const pkg = usePackage();
-      const sourcePackage = pathDown[0];
+      const sourcePackage = pathDown[0] as TSPackageScope;
 
       if (pkg && !sourcePackage.builtin) {
         pkg.scope.addDependency(sourcePackage);
@@ -153,7 +167,7 @@ export function ref(refkey: Refkey) {
           targetDeclaration.name +
           " is not exported from package",
       );
-    } else if (pathDown.length > 0 && pathDown[0].kind === "module") {
+    } else if (targetLocation === "module") {
       return untrack(() =>
         sourceFile!.scope.addImport(
           targetDeclaration,
@@ -161,11 +175,21 @@ export function ref(refkey: Refkey) {
         ),
       ).name;
     }
+    debugger;
 
     return targetDeclaration.name;
   });
 }
 
+function validateSymbolReachable(path: TSOutputScope[]) {
+  for (const scope of path) {
+    if (scope.kind === "function") {
+      throw new Error(
+        "Cannot reference a symbol inside a function from outside a function",
+      );
+    }
+  }
+}
 export function createTSPackageScope(
   binder: Binder,
   parent: OutputScope | undefined,
@@ -266,10 +290,15 @@ interface createTsSymbolOptions {
   flags?: TSSymbolFlags;
 }
 
+export function useTSScope() {
+  return useScope() as TSOutputScope;
+}
+
 export function createTsSymbol(options: createTsSymbolOptions) {
   const scope = options.scope ?? (useScope() as TSOutputScope);
-  if (scope.kind !== "module") {
-    throw new Error("Can't create declaration symbols in non-module scope");
+
+  if (scope.kind !== "module" && (options.export || options.default)) {
+    throw new Error("Can't export symbol from non-module scope");
   }
 
   const binder = scope.binder;

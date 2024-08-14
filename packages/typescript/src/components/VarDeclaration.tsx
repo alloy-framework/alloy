@@ -1,9 +1,10 @@
 import { Children } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useTSNamePolicy } from "../name-policy.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
-export interface VarDeclarationProps extends Omit<DeclarationProps, "kind"> {
+export interface VarDeclarationProps
+  extends Omit<DeclarationProps, "nameKind"> {
   const?: boolean;
   let?: boolean;
   var?: boolean;
@@ -18,7 +19,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
     : "const";
   const type = props.type ? <>: {props.type}</> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
-  return <Declaration {... props} name={name} kind="variable">
+  return <Declaration {... props} name={name} nameKind="variable">
     {keyword} <Name />{type} = {props.value ?? props.children};
   </Declaration>;
 }

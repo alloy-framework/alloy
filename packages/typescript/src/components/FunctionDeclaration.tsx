@@ -1,18 +1,34 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import {
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
   mapJoin,
+  Refkey,
+  refkey,
+  Scope,
   taggedComponent,
 } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
+import { createTsSymbol, TSSymbolFlags, useTSScope } from "../symbols.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
+export interface ParameterDescriptor {
+  value: Children;
+  refkey: Refkey;
+}
+
+function isParameterDescriptor(
+  value: Children | ParameterDescriptor,
+): value is ParameterDescriptor {
+  return (
+    typeof value === "object" && value !== null && Object.hasOwn(value, "value")
+  );
+}
 export interface FunctionDeclarationProps
-  extends Omit<DeclarationProps, "kind"> {
-  parameters?: Record<string, Children>;
+  extends Omit<DeclarationProps, "nameKind"> {
+  parameters?: Record<string, Children | ParameterDescriptor>;
   returnType?: string;
   children?: Children;
 }
@@ -33,15 +49,17 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   let sBody =
     bodyChild ?? <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>;
 
-  return <Declaration {...props} kind="function">
-      function <Name />({sParams}){sReturnType} {"{"}
-        {sBody}
-      {"}"}
+  return <Declaration {...props} nameKind="function">
+      function <Name /><Scope name={props.name} kind="function">
+        ({sParams}){sReturnType} {"{"}
+          {sBody}
+        {"}"}
+      </Scope>
     </Declaration>;
 }
 
 export interface FunctionParametersProps {
-  parameters?: Record<string, Children>;
+  parameters?: Record<string, Children | ParameterDescriptor>;
   children?: Children;
 }
 
@@ -55,10 +73,29 @@ FunctionDeclaration.Parameters = taggedComponent(
     if (props.children) {
       value = props.children;
     } else if (props.parameters) {
+      const scope = useTSScope();
+      if (scope.kind !== "function") {
+        throw new Error(
+          "Can't declare function parameter in non-function scope",
+        );
+      }
+
       value = mapJoin(
         new Map(Object.entries(props.parameters)),
         (key, value) => {
-          return [namePolicy.getName(key, "parameter"), ": ", value];
+          const descriptor: ParameterDescriptor = isParameterDescriptor(value) ?
+            value
+          : {
+              refkey: refkey(),
+              value,
+            };
+          const sym = createTsSymbol({
+            name: key,
+            refkey: descriptor.refkey,
+            flags: TSSymbolFlags.ParameterSymbol,
+          });
+
+          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.value}</>;
         },
         { joiner: "," },
       );

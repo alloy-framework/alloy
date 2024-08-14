@@ -1,6 +1,6 @@
 import { Children, code } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useTSNamePolicy } from "../name-policy.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface InterfaceDeclarationProps
@@ -11,7 +11,7 @@ export interface InterfaceDeclarationProps
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
 
-  return <Declaration {...props} kind="interface">
+  return <Declaration {...props} nameKind="interface">
     interface <Name />{extendsPart} <InterfaceExpression>
       {props.children}
     </InterfaceExpression>

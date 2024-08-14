@@ -9,7 +9,9 @@ export interface TSConfigJsonProps {
 export function TSConfigJson(props: TSConfigJsonProps) {
   const pkg = usePackage();
   if (!pkg) {
-    throw new Error("TSConfigJson component needs to be inside a PackageDirectory");
+    throw new Error(
+      "TSConfigJson component needs to be inside a PackageDirectory",
+    );
   }
   const outDir = props.outDir ?? "dist";
   const includeDirs = memo(() => {
@@ -29,11 +31,12 @@ export function TSConfigJson(props: TSConfigJsonProps) {
   effect(() => {
     const dirs = includeDirs();
     if (dirs.length === 1) {
-      pkg.outFileMapper.value = (path: string) => join(outDir, relative(dirs[0], path))
+      pkg.outFileMapper.value = (path: string) =>
+        join(outDir, relative(dirs[0], path));
     } else {
-      pkg.outFileMapper.value = (path: string) => join(outDir, path)
+      pkg.outFileMapper.value = (path: string) => join(outDir, path);
     }
-  })
+  });
 
   const jsonContent = memo(() => {
     const jsonContent = {
@@ -43,12 +46,12 @@ export function TSConfigJson(props: TSConfigJsonProps) {
         strict: true,
         verbatimModuleSyntax: true,
         declaration: true,
-        sourceMap: true, 
+        sourceMap: true,
         declarationMap: true,
-        outDir: "dist"
+        outDir: "dist",
       },
-      include: includeDirs().map(d => `${d}/**/*.ts`),
-      exclude: ["node_modules", "dist"]
+      include: includeDirs().map((d) => `${d}/**/*.ts`),
+      exclude: ["node_modules", "dist"],
     };
 
     return JSON.stringify(jsonContent, null, 2);
@@ -56,5 +59,5 @@ export function TSConfigJson(props: TSConfigJsonProps) {
 
   return <SourceFile path="tsconfig.json" filetype="json">
     {jsonContent}
-  </SourceFile>
+  </SourceFile>;
 }

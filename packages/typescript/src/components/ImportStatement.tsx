@@ -1,9 +1,21 @@
-import { computed, mapJoin, memo, SourceDirectoryContext, useContext, useScope } from "@alloy-js/core";
-import { ImportedSymbol, ImportRecords, TSModuleScope, TSOutputSymbol, TSPackageScope } from "../symbols.js";
+import {
+  computed,
+  mapJoin,
+  memo,
+  SourceDirectoryContext,
+  useContext,
+  useScope,
+} from "@alloy-js/core";
+import {
+  ImportedSymbol,
+  ImportRecords,
+  TSModuleScope,
+  TSOutputSymbol,
+  TSPackageScope,
+} from "../symbols.js";
 import { usePackage } from "./PackageDirectory.js";
 import { relative } from "pathe";
 import { modulePath } from "../utils.js";
-
 
 export interface ImportStatementsProps {
   records: ImportRecords;
@@ -69,13 +81,15 @@ export function ImportStatement(props: ImportStatementProps) {
       if (sym.target.default) {
         defaultImportSymbol = sym;
       } else {
-        namedImportSymbols.push(sym)
+        namedImportSymbols.push(sym);
       }
     }
 
     const parts: any[] = ["import "];
     if (defaultImportSymbol) {
-      parts.push(<ImportBinding default importedSymbol={defaultImportSymbol} />);
+      parts.push(
+        <ImportBinding default importedSymbol={defaultImportSymbol} />,
+      );
       if (namedImportSymbols.length > 0) {
         parts.push(", ");
       }
@@ -86,11 +100,11 @@ export function ImportStatement(props: ImportStatementProps) {
       parts.push(
         mapJoin(
           namedImportSymbols,
-          nis => <ImportBinding importedSymbol={nis} />,
-          {joiner: ", "}
-        )
+          (nis) => <ImportBinding importedSymbol={nis} />,
+          { joiner: ", " },
+        ),
       );
-      parts.push(" }")
+      parts.push(" }");
     }
     parts.push(` from "${props.path}";`);
 
@@ -114,7 +128,7 @@ function ImportBinding(props: ImportBindingProps) {
     } else {
       return `${targetName} as ${localName}`;
     }
-  })
+  });
 
   return text;
 }

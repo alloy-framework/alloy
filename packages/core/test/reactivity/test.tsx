@@ -1,8 +1,8 @@
-import { expect, it } from 'vitest'
-import { computed, reactive, ref, shallowRef } from '@vue/reactivity';
-import { d, printTree } from '../../testing/render.js';
-import { memo, renderTree } from '@alloy-js/core';
-import { mapJoin } from '../../src/utils.js';
+import { expect, it } from "vitest";
+import { computed, reactive, ref, shallowRef } from "@vue/reactivity";
+import { d, printTree } from "../../testing/render.js";
+import { memo, renderTree } from "@alloy-js/core";
+import { mapJoin } from "../../src/utils.js";
 
 it("splices in new nodes", () => {
   const r = ref(["one"]);
@@ -38,10 +38,10 @@ it("works with a complex case", () => {
 
   function ImportStatements(props: ImportStatementsProps) {
     return memo(() =>
-      mapJoin(props.records, (path, types) => (
-        <ImportStatement path={path} types={types} />
-      ))
-    );
+      mapJoin(props.records, (
+        path,
+        types,
+      ) => <ImportStatement path={path} types={types} />));
   }
 
   interface ImportStatementProps {
@@ -62,16 +62,16 @@ it("works with a complex case", () => {
 
   addImport("./foo.js", "hi");
   printTree(tree);
-  expect(printTree(tree)).toEqual("import { hi } from \"./foo.js\";");
-      
-  addImport("./foo.js", "bye");    
-  expect(printTree(tree)).toEqual("import { hi, bye } from \"./foo.js\";");
-      
+  expect(printTree(tree)).toEqual('import { hi } from "./foo.js";');
+
+  addImport("./foo.js", "bye");
+  expect(printTree(tree)).toEqual('import { hi, bye } from "./foo.js";');
+
   addImport("node:assert", "strictEqual");
   expect(printTree(tree)).toEqual(d`
     import { hi, bye } from "./foo.js";
     import { strictEqual } from "node:assert";
-  `)
+  `);
 });
 
 it("works with memos of memos", () => {

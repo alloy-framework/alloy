@@ -11,7 +11,7 @@ describe("string nodes", () => {
       a
       b
         c
-    `)
+    `);
   });
 
   it("renders string nodes with substitutions", () => {
@@ -22,25 +22,25 @@ describe("string nodes", () => {
     </>).toRenderTo(`
       a hi
       hi
-    `)
+    `);
   });
 });
 
 describe("component nodes", () => {
   function Str() {
-    return "Str"
+    return "Str";
   }
 
   function Arr() {
-    return ["Item 1", "\n" + "Item 2"]
+    return ["Item 1", "\n" + "Item 2"];
   }
 
   function Nested() {
-    return <Str />
+    return <Str />;
   }
 
   it("renders basic component", () => {
-    expect(<Str />).toRenderTo("Str")
+    expect(<Str />).toRenderTo("Str");
   });
 
   it("renders array components", () => {
@@ -67,15 +67,19 @@ describe("component nodes", () => {
     Item 2 Item 1
     Item 2
     `);
-  })
+  });
 });
 
 describe("memo nodes", () => {
-  function getStr() { return "Str" };
+  function getStr() {
+    return "Str";
+  }
   function Foo() {
     return "Foo";
   }
-  function getFoo() { return <Foo /> }
+  function getFoo() {
+    return <Foo />;
+  }
   function getArr() {
     return [<Foo />, "\n", <Foo />];
   }
@@ -97,7 +101,7 @@ describe("memo nodes", () => {
       {getArr()}
     </>).toRenderTo("Foo\nFoo");
   });
-})
+});
 
 describe("array nodes", () => {
   it("renders basic arrays", () => {
@@ -110,12 +114,10 @@ it("renders text fragments", () => {
     return "bye";
   }
 
-  expect(
-    <>
+  expect(<>
       hi
       <Foo />
-    </>
-  ).toRenderTo(`
+    </>).toRenderTo(`
     hi
     bye
   `);
@@ -141,12 +143,14 @@ it("renders booleans appropriately", () => {
   expect(<Foo />).toRenderTo("");
 });
 
-
-
 it("keeps spaces between expressions", () => {
-  const str = "str"
-  function getStr() { return "getStr" }
+  const str = "str";
+  function getStr() {
+    return "getStr";
+  }
   expect(<>
     a {str} {str} {getStr()} {getStr()} c
-  </>).toRenderTo("a str str getStr getStr c");
+  </>).toRenderTo(
+    "a str str getStr getStr c",
+  );
 });

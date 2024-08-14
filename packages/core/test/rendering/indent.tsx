@@ -7,15 +7,15 @@ describe("Indent component", () => {
   it("indents explicitly indented content on a single line", () => {
     expect(<>
       one<Indent>hi</Indent>
-    </>).toRenderTo("onehi")
+    </>).toRenderTo("onehi");
   });
 
   it("indents explicitly indented content on a subsequent line", () => {
     expect(<>
       one
       <Indent>hi</Indent>
-    </>).toRenderTo("one\n  hi")
-  })
+    </>).toRenderTo("one\n  hi");
+  });
 
   it("indents explicitly indented content", () => {
     expect(
@@ -25,20 +25,21 @@ describe("Indent component", () => {
           hi
           bye
         </Indent>
-      </>
+      </>,
     ).toRenderTo(`
       one
         hi
         bye
-    `)
+    `);
   });
 
   it("indents memos", () => {
     function getValue() {
       return "hi";
     }
-  
-    expect(<>
+
+    expect(
+      <>
       base
       <Indent>
         {getValue()}
@@ -51,7 +52,8 @@ describe("Indent component", () => {
         bye
         {getValue()}
       </Indent>
-    </>).toRenderTo(`
+    </>,
+    ).toRenderTo(`
       base
         hi
         hi
@@ -61,23 +63,27 @@ describe("Indent component", () => {
     `);
   });
 
-
   it("doesn't indent components on the same line with explicit indent", () => {
-    function Foo() { return "Foo" }
-  
-    expect(<>
+    function Foo() {
+      return "Foo";
+    }
+
+    expect(
+      <>
       base
       <Indent>
         <Foo /><Foo />
       </Indent>
-    </>).toRenderTo(`
+    </>,
+    ).toRenderTo(`
       base
         FooFoo
-    `)
+    `);
   });
 
   it("works with nested indents", () => {
-    expect(<>
+    expect(
+      <>
       base
       <Indent>
         1
@@ -97,7 +103,8 @@ describe("Indent component", () => {
       </Indent>
       11
       12
-    </>).toRenderTo(`
+    </>,
+    ).toRenderTo(`
       base
         1
         2
@@ -111,12 +118,11 @@ describe("Indent component", () => {
         10
       11
       12
-    `)
+    `);
   });
-})
+});
 
 describe("implicit indenting", () => {
-
   it("indents implicitly indented components", () => {
     function Foo() {
       return <>
@@ -124,21 +130,21 @@ describe("implicit indenting", () => {
         bye
       </>;
     }
-  
-    expect(
-      <>
+
+    expect(<>
         one
           <Foo />
-      </>
-    ).toRenderTo(`
+      </>).toRenderTo(`
       one
         hi
         bye
-    `)
+    `);
   });
 
   it("indents memo substitutions with line breaks properly", () => {
-    function getStr() { return "a\nb" };
+    function getStr() {
+      return "a\nb";
+    }
     expect(<>
       base
         {getStr()}
@@ -146,7 +152,7 @@ describe("implicit indenting", () => {
       base
         a
         b
-    `)
+    `);
   });
 
   it("indents multiple implicitly indented components", () => {
@@ -156,7 +162,7 @@ describe("implicit indenting", () => {
         bye
       </>;
     }
-  
+
     expect(
       <>
         one
@@ -166,7 +172,7 @@ describe("implicit indenting", () => {
         two
           <Foo />
           <Foo />
-      </>
+      </>,
     ).toRenderTo(`
       one
         hi
@@ -179,18 +185,20 @@ describe("implicit indenting", () => {
         bye
         hi
         bye
-    `)
+    `);
   });
-  
-  
+
   it("implictly indents memos", () => {
     function Foo() {
       return "Foo";
     }
     const hi = "const hi";
-    function getHi() { return "getHi" };
-  
-    expect(<>
+    function getHi() {
+      return "getHi";
+    }
+
+    expect(
+      <>
       base
         {getHi()}
       base {hi}
@@ -199,7 +207,8 @@ describe("implicit indenting", () => {
         {getHi()}
       base <Foo />
         {getHi()}
-    </>).toRenderTo(`
+    </>,
+    ).toRenderTo(`
       base
         getHi
       base const hi
@@ -208,23 +217,26 @@ describe("implicit indenting", () => {
         getHi
       base Foo
         getHi
-    `)
+    `);
   });
-  
+
   it("implictly indents consts", () => {
     function Foo() {
       return "Foo";
     }
     const hi = "const hi";
-    function getHi() { return "getHi" };
-  
-    function ArrComponent() {
-      return [<Foo />, <Foo />]
+    function getHi() {
+      return "getHi";
     }
-  
+
+    function ArrComponent() {
+      return [<Foo />, <Foo />];
+    }
+
     const arr = [<Foo />, <Foo />];
-  
-    expect(<>
+
+    expect(
+      <>
       base
         {hi}
       base {hi}
@@ -237,7 +249,8 @@ describe("implicit indenting", () => {
         {hi}
       base {arr}
         {hi}
-    </>).toRenderTo(`
+    </>,
+    ).toRenderTo(`
       base
         const hi
       base const hi
@@ -250,26 +263,29 @@ describe("implicit indenting", () => {
         const hi
       base FooFoo
         const hi
-    `)
+    `);
   });
-  
+
   it("indents children", () => {
     function Foo(props: any) {
       return <>
         a
         {props.children}
         b
-      </>
+      </>;
     }
-  
-    function getChild() { return "hi" };
-    expect(<>
+
+    function getChild() {
+      return "hi";
+    }
+    expect(
+      <>
       base
         <Foo>
           child
           {getChild()}
         </Foo>
-      </>
+      </>,
     ).toRenderTo(`
     base
       a
@@ -278,24 +294,27 @@ describe("implicit indenting", () => {
       b
     `);
   });
-  
+
   it("implicity indents within children", () => {
     function Foo(props: any) {
       return <>
         a
         {props.children}
         b
-      </>
+      </>;
     }
-  
-    function getChild() { return "hi" };
-    expect(<>
+
+    function getChild() {
+      return "hi";
+    }
+    expect(
+      <>
       base
         <Foo>
           child
             {getChild()}
         </Foo>
-      </>
+      </>,
     ).toRenderTo(`
       base
         a
@@ -303,35 +322,34 @@ describe("implicit indenting", () => {
           hi
         b
     `);
-  })
-  
-  
+  });
+
   it("doesn't indent things on the same line", () => {
-    const str = "str"
-    function getStr() { return "getstr" }
+    const str = "str";
+    function getStr() {
+      return "getstr";
+    }
     function Foo() {
       return "Foo";
     }
-    const array = [<>{str} {getStr()}</>]
-    expect(<>
+    const array = [<>{str} {getStr()}</>];
+    expect(
+      <>
       base
       {str} {getStr()}
       item <Foo /> <Foo />
         {str} {getStr()}
         item <Foo /> <Foo />
-      </>
+      </>,
     ).toRenderTo(`
       base
       str getstr
       item Foo Foo
         str getstr
         item Foo Foo
-    `)
-  })
-  
-
-})
-
+    `);
+  });
+});
 
 describe("array handling", () => {
   it("handles a simple array", () => {
@@ -362,7 +380,9 @@ describe("array handling", () => {
 
   it("handles indented simple array with linebreaks", () => {
     const val = "hi";
-    function getHi() { return "getHi" }
+    function getHi() {
+      return "getHi";
+    }
     const arr = [<>{val}</>, "\n", <>{getHi()}</>];
     expect(<>
       a
@@ -378,9 +398,11 @@ describe("array handling", () => {
 
   it("handles indented component array", () => {
     const val = "hi";
-    function getHi() { return "getHi" }
+    function getHi() {
+      return "getHi";
+    }
     function Foo() {
-      return "Foo"
+      return "Foo";
     }
     const arr = [<Foo />, <Foo />];
     expect(<>
@@ -396,9 +418,11 @@ describe("array handling", () => {
 
   it("handles indented component array with linebreaks", () => {
     const val = "hi";
-    function getHi() { return "getHi" }
+    function getHi() {
+      return "getHi";
+    }
     function Foo() {
-      return "Foo"
+      return "Foo";
     }
     const arr = [<Foo />, "\n", <Foo />];
     expect(<>
@@ -418,23 +442,18 @@ describe("array handling", () => {
       return <>
         a
         b
-      </>
+      </>;
     }
-  
+
     function Bar() {
       return <>
         c
         d
-      </>
+      </>;
     }
-  
-  
-    const foos = [
-      <Foo />,
-      "\n",
-      <Bar />
-    ]
-  
+
+    const foos = [<Foo />, "\n", <Bar />];
+
     expect(<>
       base
         {foos}
@@ -453,7 +472,7 @@ describe("array handling", () => {
         hi
         {props.children}
           {props.children}
-      </>
+      </>;
     }
 
     const arr = [
@@ -465,8 +484,8 @@ describe("array handling", () => {
       <Foo>
         c
         d
-      </Foo>
-    ]
+      </Foo>,
+    ];
 
     expect(<>
       base
@@ -494,30 +513,34 @@ describe("array handling", () => {
         d
           c
           d
-    `)
+    `);
   });
-})
+});
 
 it("doesn't indent things on the same line simple", () => {
-  const str = "str"
-  function getStr() { return "getstr" }
+  const str = "str";
+  function getStr() {
+    return "getstr";
+  }
   function Foo() {
     return "Foo";
   }
-  const array = [<>{getStr()} {getStr()}</>]
-  expect(<>
+  const array = [<>{getStr()} {getStr()}</>];
+  expect(
+    <>
     base
     <Indent>
       {str} {getStr()}
       {array}
       <Foo /> {str} {getStr()}
     </Indent>
-  </>).toRenderTo(`
+  </>,
+  ).toRenderTo(`
       base
         str getstr
         getstr getstr
         Foo str getstr
-  `)
+  `);
 });
 
 describe("Children rendering", () => {
@@ -527,7 +550,7 @@ describe("Children rendering", () => {
         a
         {props.children}
         d
-      </>
+      </>;
     }
 
     expect(<>
@@ -536,7 +559,8 @@ describe("Children rendering", () => {
         b
         c
       </Foo>
-    </>).toRenderTo(`
+    </>)
+      .toRenderTo(`
       base
       a
       b
@@ -546,12 +570,12 @@ describe("Children rendering", () => {
   });
 
   it("handles children via destructured children", () => {
-    function Foo({children}: any) {
+    function Foo({ children }: any) {
       return <>
         a
         {children}
         d
-      </>
+      </>;
     }
 
     expect(<>
@@ -560,7 +584,8 @@ describe("Children rendering", () => {
         b
         c
       </Foo>
-    </>).toRenderTo(`
+    </>)
+      .toRenderTo(`
       base
       a
       b
@@ -570,8 +595,8 @@ describe("Children rendering", () => {
   });
 
   it("handles children via returning children", () => {
-    function Foo({children}: any) {
-      return children
+    function Foo({ children }: any) {
+      return children;
     }
 
     expect(<>
@@ -580,14 +605,13 @@ describe("Children rendering", () => {
         b
         c
       </Foo>
-    </>).toRenderTo(`
+    </>)
+      .toRenderTo(`
       base
       b
       c
     `);
   });
 
-  it("can place children on a single line", () => {
-    
-  })
+  it("can place children on a single line", () => {});
 });

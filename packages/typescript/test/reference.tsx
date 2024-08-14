@@ -1,6 +1,13 @@
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { render, Output, SourceFile, Declaration, OutputDirectory, refkey } from "@alloy-js/core";
+import {
+  render,
+  Output,
+  SourceFile,
+  Declaration,
+  OutputDirectory,
+  refkey,
+} from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { assertFileContents } from "./utils.js";
@@ -17,7 +24,7 @@ it("works with back references", () => {
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("foo")} />;
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -28,7 +35,7 @@ it("works with back references", () => {
       import { foo } from "./test1.js";
 
       const v = foo;
-    `
+    `,
   });
 });
 
@@ -43,7 +50,7 @@ it("works with forward references", () => {
           const foo = 1;
         </Declaration>
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -54,6 +61,6 @@ it("works with forward references", () => {
       import { foo } from "./test1.js";
       
       const v = foo;
-    `
+    `,
   });
 });

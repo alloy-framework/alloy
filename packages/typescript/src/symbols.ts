@@ -121,7 +121,7 @@ export interface TSOtherScope extends OutputScope {
 export function ref(refkey: Refkey) {
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
-    refkey as Refkey
+    refkey as Refkey,
   );
 
   return memo(() => {
@@ -143,20 +143,22 @@ export function ref(refkey: Refkey) {
       for (const [publicPath, module] of sourcePackage.exportedSymbols) {
         if (module.exportedSymbols.has(targetDeclaration.refkey)) {
           return untrack(() =>
-            sourceFile!.scope.addImport(targetDeclaration, module)
+            sourceFile!.scope.addImport(targetDeclaration, module),
           ).name;
         }
       }
 
       throw new Error(
-        "The symbol " + targetDeclaration.name + " is not exported from package"
+        "The symbol " +
+          targetDeclaration.name +
+          " is not exported from package",
       );
     } else if (pathDown.length > 0 && pathDown[0].kind === "module") {
       return untrack(() =>
         sourceFile!.scope.addImport(
           targetDeclaration,
-          pathDown[0] as TSModuleScope
-        )
+          pathDown[0] as TSModuleScope,
+        ),
       ).name;
     }
 
@@ -170,7 +172,7 @@ export function createTSPackageScope(
   name: string,
   version: string,
   path: string,
-  builtin: boolean = false
+  builtin: boolean = false,
 ) {
   return binder.createScope<TSPackageScope>({
     kind: "package",
@@ -214,7 +216,7 @@ export function createTSPackageScope(
 export function createTSModuleScope(
   binder: Binder,
   parent: OutputScope,
-  path: string
+  path: string,
 ): TSModuleScope {
   return binder.createScope<TSModuleScope>({
     kind: "module",

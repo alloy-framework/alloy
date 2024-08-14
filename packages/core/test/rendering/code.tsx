@@ -6,7 +6,6 @@ it("renders simple strings", () => {
   expect(code`foo`).toRenderTo("foo");
 });
 
-
 it("renders removes indents", () => {
   expect(code`
     foo
@@ -20,21 +19,21 @@ it("renders allows substitutions of elements", () => {
   expect(code`
     foo ${<Foo />} bar
   `).toRenderTo("foo hi bar");
-})
+});
 
 it("renders has auto-indentation", () => {
   function Foo() {
     return code`
       hi
       bye
-    `
+    `;
   }
 
   const template = code`
     if (x === 1) {
       ${<Foo />}
     }
-  `
+  `;
 
   expect(template).toRenderTo(`
     if (x === 1) {
@@ -42,4 +41,4 @@ it("renders has auto-indentation", () => {
       bye
     }
   `);
-})
+});

@@ -7,5 +7,5 @@ export interface TypeDeclarationProps extends Omit<DeclarationProps, "kind"> {}
 export function TypeDeclaration(props: TypeDeclarationProps) {
   return <Declaration {...props} kind="type">
     type <Name /> = {props.children};
-  </Declaration>
+  </Declaration>;
 }

@@ -27,7 +27,7 @@ export interface ModuleSymbolsDescriptor {
 function createSymbols(
   binder: Binder,
   props: CreatePackageProps<PackageDescriptor>,
-  refkeys: Record<string, any>
+  refkeys: Record<string, any>,
 ) {
   const pkgScope = createTSPackageScope(
     binder,
@@ -35,7 +35,7 @@ function createSymbols(
     props.name,
     props.version,
     `node_modules/${props.name}`,
-    props.builtin
+    props.builtin,
   );
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
@@ -72,14 +72,13 @@ function createSymbols(
 
 type PackageRefkeys<T extends PackageDescriptor> = {
   [K in keyof T as K extends "." ? never : K]: {
-    [N in T[K]["named"] extends readonly string[]
-      ? T[K]["named"][number]
-      : never]: Refkey;
+    [N in T[K]["named"] extends readonly string[] ? T[K]["named"][number]
+    : never]: Refkey;
   } & (T[K] extends { default: string } ? { default: Refkey } : {});
 } & (T["."] extends { default: string } ? { default: Refkey } : {}) &
-  (T["."] extends { named: readonly string[] }
-    ? { [N in T["."]["named"][number]]: Refkey }
-    : {});
+  (T["."] extends { named: readonly string[] } ?
+    { [N in T["."]["named"][number]]: Refkey }
+  : {});
 
 interface CreatePackageProps<T extends PackageDescriptor> {
   name: string;
@@ -88,7 +87,7 @@ interface CreatePackageProps<T extends PackageDescriptor> {
   builtin?: boolean;
 }
 export function createPackage<const T extends PackageDescriptor>(
-  props: CreatePackageProps<T>
+  props: CreatePackageProps<T>,
 ): PackageRefkeys<T> & SymbolCreator {
   const refkeys: any = {
     [getSymbolCreatorSymbol()](binder: Binder) {

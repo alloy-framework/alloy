@@ -1,4 +1,10 @@
-import { BinderContext, createOutputBinder, getSymbolCreator, NameConflictResolver, SymbolCreator } from "../binder.js";
+import {
+  BinderContext,
+  createOutputBinder,
+  getSymbolCreator,
+  NameConflictResolver,
+  SymbolCreator,
+} from "../binder.js";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamePolicy, NamePolicyContext } from "../name-policy.js";
 import { SourceDirectory, SourceDirectoryContext } from "./SourceDirectory.js";
@@ -29,18 +35,19 @@ export interface OutputProps {
 export function Output(props: OutputProps) {
   const basePath = props.basePath ?? "./";
   const binder = createOutputBinder({
-    nameConflictResolver: props.nameConflictResolver
+    nameConflictResolver: props.nameConflictResolver,
   });
-  const dir = <SourceDirectory path={basePath}>
+  const dir =
+    <SourceDirectory path={basePath}>
     {props.children}
-  </SourceDirectory>
+  </SourceDirectory>;
 
   if (props.externals) {
     for (const global of props.externals) {
       getSymbolCreator(global)(binder);
     }
   }
-  
+
   return <BinderContext.Provider value={binder}>
     {
       props.namePolicy ?
@@ -49,5 +56,5 @@ export function Output(props: OutputProps) {
         </NamePolicyContext.Provider> :
         dir
     }
-  </BinderContext.Provider>
+  </BinderContext.Provider>;
 }

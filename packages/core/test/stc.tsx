@@ -3,15 +3,14 @@ import "../testing/extend-expect.js";
 import { code, Indent, stc } from "@alloy-js/core";
 
 it("is applied by output", () => {
-
   function Foo() {
-    return "Foo component"
+    return "Foo component";
   }
   const FooStc = stc(Foo);
   const IndentStc = stc(Indent);
 
   expect(code`
-    ${FooStc({x: "hi"})}
+    ${FooStc({ x: "hi" })}
     ${IndentStc().code`
       child!
     `} 

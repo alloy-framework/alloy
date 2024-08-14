@@ -1,17 +1,23 @@
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { render, Output, SourceFile, Declaration, OutputDirectory, refkey } from "@alloy-js/core";
+import {
+  render,
+  Output,
+  SourceFile,
+  Declaration,
+  OutputDirectory,
+  refkey,
+} from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { findFile } from "./utils.js";
 import { d } from "@alloy-js/core/testing";
 
-
 it("works", () => {
   const fnSpec = {
     greeting: "Hello",
-    farewell: "Goodbye"
-  }
+    farewell: "Goodbye",
+  };
 
   const greetKey = refkey(fnSpec, "greet");
   const farewellKey = refkey(fnSpec, "farewell");
@@ -49,7 +55,7 @@ it("works", () => {
         </ts.FunctionDeclaration>
       </ts.SourceFile>
 
-    </Output>
+    </Output>,
   );
 
   expect(findFile(res, "readme.md").contents).toEqual(d`
@@ -68,13 +74,12 @@ it("works", () => {
     function sayGoodbye(str: string) {
       return "Goodbye " + str;
     }
-  `)
-
+  `);
 
   expect(findFile(res, "test2.ts").contents).toEqual(d`
     import { sayHello, sayGoodbye } from "./test1.js";
 
     console.log(sayHello("world"));
     console.log(sayGoodbye("world"));
-  `)
+  `);
 });

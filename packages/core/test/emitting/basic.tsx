@@ -1,6 +1,6 @@
-import { it } from "vitest"
-import { render } from "../../src/render.js"
-import { SourceFile } from "../../src/components/SourceFile.js"
+import { it } from "vitest";
+import { render } from "../../src/render.js";
+import { SourceFile } from "../../src/components/SourceFile.js";
 import { Declaration } from "../../src/components/Declaration.js";
 import { Output } from "../../src/components/Output.js";
 import { Scope } from "../../src/components/Scope.js";
@@ -23,8 +23,8 @@ it("works", () => {
           const v = 
         </Scope>
       </SourceFile>
-    </Output>
+    </Output>,
   );
 
   console.log(contents);
-})
+});

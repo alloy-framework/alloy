@@ -1,4 +1,11 @@
-import { refkey, Refkey, useBinder, useScope, Declaration as CoreDeclaration, Children } from "@alloy-js/core";
+import {
+  refkey,
+  Refkey,
+  useBinder,
+  useScope,
+  Declaration as CoreDeclaration,
+  Children,
+} from "@alloy-js/core";
 import { createTsSymbol, TSOutputScope, TSOutputSymbol } from "../symbols.js";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
 
@@ -21,7 +28,5 @@ export function Declaration(props: DeclarationProps) {
   });
   return <CoreDeclaration symbol={sym}>
     {props.export ? "export " : ""}{props.default ? "default " : ""}{props.children}
-  </CoreDeclaration>
+  </CoreDeclaration>;
 }
-
-

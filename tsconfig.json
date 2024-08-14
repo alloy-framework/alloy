@@ -1,8 +1,5 @@
 {
   "files": [],
-  "compilerOptions": {
-    "disableSourceOfProjectReferenceRedirect": true
-  },
   "references": [
     { "path": "packages/core" },
     { "path": "packages/typescript" },

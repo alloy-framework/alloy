@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r --workspace-concurrency=Infinity build",
-    "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\""
+    "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\"",
+    "format": "npm run -s prettier -- --write",
+    "format:check": "npm run -s prettier -- --check"
   },
   "pnpm": {
     "overrides": {

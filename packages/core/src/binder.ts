@@ -9,7 +9,6 @@ import {
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
 import { useScope } from "./components/Scope.js";
-import { T } from "vitest/dist/reporters-yx5ZTtEV.js";
 import { memo } from "@alloy-js/core/jsx-runtime";
 
 export type Metadata = object;

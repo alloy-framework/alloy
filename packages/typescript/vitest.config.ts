@@ -4,7 +4,7 @@ import { babel } from "@rollup/plugin-babel";
 export default defineConfig({
   test: {
     include: ["test/**/*.ts", "test/**/*.tsx"],
-    exclude: ["test/**/*.util.ts", "test/**/*.d.ts"]
+    exclude: ["test/**/*.util.ts", "test/**/utils.tsx", "test/**/*.d.ts"],
   },
   esbuild: {
     jsx: "preserve",
@@ -12,12 +12,11 @@ export default defineConfig({
   },
   plugins: [
     babel({
-      inputSourceMap: true,
+      inputSourceMap: true as any,
       sourceMaps: "both",
       babelHelpers: "bundled",
       extensions: [".ts", ".tsx"],
-      presets: ["@babel/preset-typescript",
-        ["babel-preset-alloy", { alloyModuleName: "#core"}]],
+      presets: ["@babel/preset-typescript", "babel-preset-alloy"],
     }),
   ],
 });

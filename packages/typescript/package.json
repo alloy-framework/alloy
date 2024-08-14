@@ -16,6 +16,7 @@
     "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
     "build-tsc": "tsc -p .",
     "build": "npm run build-src && npm run build-tsc",
+    "clean": "rimraf dist/ .temp/",
     "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
     "watch-tsc": "tsc -p . --watch",
     "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\"",

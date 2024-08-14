@@ -6,11 +6,13 @@
   "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
+      "development": "./src/index.ts",
       "import": "./dist/src/index.js",
       "require": "./dist/src/index.js",
       "types": "./dist/src/index.d.ts"
     },
     "./jsx-runtime": {
+      "development": "./src/jsx-runtime.ts",
       "import": "./dist/src/jsx-runtime.js",
       "require": "./dist/src/jsx-runtime.js",
       "types": "./dist/src/jsx-runtime.d.ts"
@@ -21,6 +23,7 @@
       "types": "./dist/testing/index.d.ts"
     },
     "./stc": {
+      "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js",
       "require": "./dist/src/components/stc/index.js",
       "types": "./dist/src/components/stc/index.d.ts"

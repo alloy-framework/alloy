@@ -4,6 +4,87 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@babel/cli':
+      specifier: ^7.24.7
+      version: 7.24.8
+    '@babel/core':
+      specifier: ^7.24.7
+      version: 7.25.2
+    '@babel/generator':
+      specifier: ^7.25.0
+      version: 7.25.0
+    '@babel/helper-module-imports':
+      specifier: 7.18.6
+      version: 7.18.6
+    '@babel/plugin-syntax-jsx':
+      specifier: ^7.18.6
+      version: 7.24.7
+    '@babel/preset-typescript':
+      specifier: ^7.24.7
+      version: 7.24.7
+    '@babel/types':
+      specifier: ^7.20.7
+      version: 7.25.2
+    '@rollup/plugin-babel':
+      specifier: ^6.0.4
+      version: 6.0.4
+    '@rollup/plugin-node-resolve':
+      specifier: ^15.2.3
+      version: 15.2.3
+    '@rollup/plugin-typescript':
+      specifier: ^11.1.6
+      version: 11.1.6
+    '@types/babel__core':
+      specifier: ^7.20.5
+      version: 7.20.5
+    '@types/babel__generator':
+      specifier: ^7.6.8
+      version: 7.6.8
+    '@types/babel__traverse':
+      specifier: ^7.20.6
+      version: 7.20.6
+    '@types/node':
+      specifier: ^20.14.12
+      version: 20.14.15
+    '@vue/reactivity':
+      specifier: ^3.4.30
+      version: 3.4.37
+    babel-plugin-tester:
+      specifier: ^11.0.4
+      version: 11.0.4
+    change-case:
+      specifier: ^5.4.4
+      version: 5.4.4
+    concurrently:
+      specifier: ^8.2.2
+      version: 8.2.2
+    html-entities:
+      specifier: 2.3.3
+      version: 2.3.3
+    pathe:
+      specifier: ^1.1.2
+      version: 1.1.2
+    prettier:
+      specifier: ^3.3.3
+      version: 3.3.3
+    rimraf:
+      specifier: ^6.0.1
+      version: 6.0.1
+    rollup:
+      specifier: ^4.18.1
+      version: 4.20.0
+    typescript:
+      specifier: ^5.5.4
+      version: 5.5.4
+    validate-html-nesting:
+      specifier: ^1.2.1
+      version: 1.2.2
+    vitest:
+      specifier: ^2.0.5
+      version: 2.0.5
+
 overrides:
   esbuild: '0.23'
 
@@ -12,219 +93,219 @@ importers:
   .:
     devDependencies:
       '@babel/preset-typescript':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       babel-preset-alloy:
         specifier: workspace:~
         version: link:packages/babel-preset-alloy
       concurrently:
-        specifier: ^8.2.2
+        specifier: 'catalog:'
         version: 8.2.2
       prettier:
-        specifier: ^3.3.3
+        specifier: 'catalog:'
         version: 3.3.3
       rimraf:
-        specifier: ^6.0.1
+        specifier: 'catalog:'
         version: 6.0.1
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
   packages/babel-plugin-alloy:
     dependencies:
       '@babel/core':
-        specifier: ^7.20.12
+        specifier: ^7.24.7
         version: 7.25.2
       '@babel/generator':
-        specifier: ^7.25.0
+        specifier: 'catalog:'
         version: 7.25.0
       '@babel/helper-module-imports':
-        specifier: 7.18.6
+        specifier: 'catalog:'
         version: 7.18.6
       '@babel/plugin-syntax-jsx':
-        specifier: ^7.18.6
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       '@babel/types':
-        specifier: ^7.20.7
+        specifier: 'catalog:'
         version: 7.25.2
     devDependencies:
       '@types/babel__core':
-        specifier: ^7.20.5
+        specifier: 'catalog:'
         version: 7.20.5
       '@types/babel__generator':
-        specifier: ^7.6.8
+        specifier: 'catalog:'
         version: 7.6.8
       '@types/babel__traverse':
-        specifier: ^7.20.6
+        specifier: 'catalog:'
         version: 7.20.6
       babel-plugin-tester:
-        specifier: ^11.0.4
+        specifier: 'catalog:'
         version: 11.0.4(@babel/core@7.25.2)
       typescript:
-        specifier: ^5.5.4
+        specifier: 'catalog:'
         version: 5.5.4
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
   packages/babel-plugin-jsx-dom-expressions:
     dependencies:
       '@babel/helper-module-imports':
-        specifier: 7.18.6
+        specifier: 'catalog:'
         version: 7.18.6
       '@babel/plugin-syntax-jsx':
-        specifier: ^7.18.6
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       '@babel/types':
-        specifier: ^7.20.7
+        specifier: 'catalog:'
         version: 7.25.2
       html-entities:
-        specifier: 2.3.3
+        specifier: 'catalog:'
         version: 2.3.3
       validate-html-nesting:
-        specifier: ^1.2.1
+        specifier: 'catalog:'
         version: 1.2.2
     devDependencies:
       '@babel/core':
-        specifier: ^7.20.12
+        specifier: 'catalog:'
         version: 7.25.2
       '@rollup/plugin-node-resolve':
-        specifier: ^15.2.3
+        specifier: 'catalog:'
         version: 15.2.3(rollup@4.20.0)
       rollup:
-        specifier: ^4.18.1
+        specifier: 'catalog:'
         version: 4.20.0
 
   packages/babel-preset-alloy:
     dependencies:
       '@alloy-js/babel-plugin-alloy':
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../babel-plugin-alloy
       '@alloy-js/babel-plugin-jsx-dom-expressions':
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../babel-plugin-jsx-dom-expressions
 
   packages/core:
     dependencies:
       '@babel/core':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.25.2
       '@babel/preset-typescript':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       '@vue/reactivity':
-        specifier: ^3.4.30
+        specifier: 'catalog:'
         version: 3.4.37
       babel-preset-alloy:
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../babel-preset-alloy
       pathe:
-        specifier: ^1.1.2
+        specifier: 'catalog:'
         version: 1.1.2
     devDependencies:
       '@babel/cli':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@rollup/plugin-babel':
-        specifier: ^6.0.4
+        specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
       '@rollup/plugin-typescript':
-        specifier: ^11.1.6
+        specifier: 'catalog:'
         version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
       concurrently:
-        specifier: ^8.2.2
+        specifier: 'catalog:'
         version: 8.2.2
       typescript:
-        specifier: ^5.5.4
+        specifier: 'catalog:'
         version: 5.5.4
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
   packages/prettier-plugin-alloy:
     devDependencies:
       prettier:
-        specifier: ^3.3.3
+        specifier: 'catalog:'
         version: 3.3.3
       typescript:
-        specifier: ^5.5.2
+        specifier: 'catalog:'
         version: 5.5.4
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
   packages/sample:
     dependencies:
       '@alloy-js/core':
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../core
       '@alloy-js/typescript':
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../typescript
     devDependencies:
       '@babel/cli':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@babel/preset-typescript':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       '@rollup/plugin-babel':
-        specifier: ^6.0.4
+        specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
       '@rollup/plugin-typescript':
-        specifier: ^11.1.6
+        specifier: 'catalog:'
         version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
       '@types/node':
-        specifier: ^20.14.12
+        specifier: 'catalog:'
         version: 20.14.15
       babel-preset-alloy:
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../babel-preset-alloy
       concurrently:
-        specifier: ^8.2.2
+        specifier: 'catalog:'
         version: 8.2.2
       typescript:
-        specifier: ^5.5.4
+        specifier: 'catalog:'
         version: 5.5.4
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@20.14.15)
 
   packages/typescript:
     dependencies:
       '@alloy-js/core':
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../core
       change-case:
-        specifier: ^5.4.4
+        specifier: 'catalog:'
         version: 5.4.4
       pathe:
-        specifier: ^1.1.2
+        specifier: 'catalog:'
         version: 1.1.2
     devDependencies:
       '@babel/cli':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@babel/preset-typescript':
-        specifier: ^7.24.7
+        specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
       '@rollup/plugin-babel':
-        specifier: ^6.0.4
+        specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
       '@rollup/plugin-typescript':
-        specifier: ^11.1.6
+        specifier: 'catalog:'
         version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
       babel-preset-alloy:
-        specifier: workspace:*
+        specifier: workspace:~
         version: link:../babel-preset-alloy
       concurrently:
-        specifier: ^8.2.2
+        specifier: 'catalog:'
         version: 8.2.2
       typescript:
-        specifier: ^5.5.4
+        specifier: 'catalog:'
         version: 5.5.4
       vitest:
-        specifier: ^2.0.5
+        specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
 packages:
@@ -1764,11 +1845,13 @@ snapshots:
   '@rollup/plugin-babel@6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)':
     dependencies:
       '@babel/core': 7.25.2
-      '@babel/helper-module-imports': 7.18.6
+      '@babel/helper-module-imports': 7.24.7
       '@rollup/pluginutils': 5.1.0(rollup@4.20.0)
     optionalDependencies:
       '@types/babel__core': 7.20.5
       rollup: 4.20.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@rollup/plugin-node-resolve@15.2.3(rollup@4.20.0)':
     dependencies:

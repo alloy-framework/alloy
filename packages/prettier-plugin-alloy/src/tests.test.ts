@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import prettier from "prettier";
+import { describe, expect, expectTypeOf, it } from "vitest";
+import prettier, { type Plugin } from "prettier";
 import * as plugin from "./index.js";
 
 function format(code: string, parser: string) {
@@ -21,6 +21,10 @@ async function expectFormat({
   const result = await format(input, parser);
   expect(result.trim()).toEqual(output.trim());
 }
+
+it("index exports match the Plugin type", () => {
+  expectTypeOf(plugin).toMatchTypeOf<Plugin>();
+});
 
 it("baseline", async () => {
   await expectFormat({

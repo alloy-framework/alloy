@@ -1,4 +1,4 @@
-import type { Assertion, AsymmetricMatchersContaining } from "vitest";
+import "vitest";
 
 interface CustomMatchers<R = unknown> {
   toRenderTo: (str: string) => R;

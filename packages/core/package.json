@@ -56,8 +56,8 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "concurrently": "^8.2.2",
-    "typescript": "^5.5.2",
-    "vitest": "^1.6.0"
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "overrides": {
     "esbuild": "0.23"

@@ -109,7 +109,7 @@ describe("symbols", () => {
 
     const decl =
       <>
-        <FunctionDeclaration name="foo" parameters={{sym: { value: "any", refkey: rk }}}>
+        <FunctionDeclaration name="foo" parameters={{sym: { type: "any", refkey: rk }}}>
           <FunctionDeclaration name="bar">
             {rk}
           </FunctionDeclaration>

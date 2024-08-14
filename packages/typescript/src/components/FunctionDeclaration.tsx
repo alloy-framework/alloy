@@ -15,7 +15,7 @@ import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface ParameterDescriptor {
-  value: Children;
+  type: Children;
   refkey: Refkey;
 }
 
@@ -87,7 +87,7 @@ FunctionDeclaration.Parameters = taggedComponent(
             value
           : {
               refkey: refkey(),
-              value,
+              type: value,
             };
           const sym = createTsSymbol({
             name: key,
@@ -95,7 +95,7 @@ FunctionDeclaration.Parameters = taggedComponent(
             flags: TSSymbolFlags.ParameterSymbol,
           });
 
-          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.value}</>;
+          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
         },
         { joiner: "," },
       );

@@ -64,7 +64,7 @@ it("supports parameters by element", () => {
   expect(toSourceText(decl)).toBe(d`
     function foo(a, b) {
       return a + b;
-
+  
     }
   `)
 });

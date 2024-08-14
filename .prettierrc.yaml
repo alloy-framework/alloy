@@ -1,0 +1,7 @@
+experimentalTernaries: true
+plugins: 
+  - ./packages/prettier-plugin-alloy/dist/index.js
+overrides: 
+  - files: "*.alloy.tsx"
+    options: 
+      parser: alloy-ts

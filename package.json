@@ -8,7 +8,7 @@
     "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\"",
     "format": "pnpm run prettier-exec --write",
     "format:check": "pnpm run prettier-exec --check",
-    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,jsx,mjs,json,yml,yaml}"
+    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,jsx,json,yml,yaml}"
   },
   "pnpm": {
     "overrides": {

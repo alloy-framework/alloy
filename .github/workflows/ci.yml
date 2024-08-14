@@ -1,4 +1,4 @@
-name: Publish Any Commit
+name: CI
 on: [push, pull_request]
 
 jobs:

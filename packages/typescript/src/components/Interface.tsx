@@ -4,7 +4,7 @@ import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface InterfaceDeclarationProps
-  extends Omit<DeclarationProps, "kind"> {
+  extends Omit<DeclarationProps, "nameKind"> {
   extends?: Children;
 }
 

@@ -1,7 +1,8 @@
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
-export interface TypeDeclarationProps extends Omit<DeclarationProps, "kind"> {}
+export interface TypeDeclarationProps
+  extends Omit<DeclarationProps, "nameKind"> {}
 
 export function TypeDeclaration(props: TypeDeclarationProps) {
   return <Declaration {...props} nameKind="type">

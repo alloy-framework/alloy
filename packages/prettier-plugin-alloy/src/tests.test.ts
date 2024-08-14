@@ -46,7 +46,7 @@ export const Foo = (props: any) => {
   });
 });
 
-describe("keeps new lines ", () => {
+describe("keeps new lines", () => {
   it("typescript files", async () => {
     await expectFormat({
       parser: "alloy-ts",
@@ -88,6 +88,29 @@ export const Foo = (props) => {
     
     <Text>Foo</Text>
   </File>;
+};
+`,
+    });
+  });
+
+  it("JSX fragment", async () => {
+    await expectFormat({
+      parser: "alloy-ts",
+      input: `
+export const 
+Foo = (props: any) => {
+  return <>
+    
+    <Text>Foo</Text>
+  </>;
+}
+    `,
+      output: `
+export const Foo = (props: any) => {
+  return <>
+    
+    <Text>Foo</Text>
+  </>;
 };
 `,
     });

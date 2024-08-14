@@ -6,7 +6,7 @@ import { SourceFile } from "@alloy-js/core/stc";
 it("is rendered properly in the tree", () => {
   const key = refkey("foo");
 
-  function Reference(props: { refkey: Refkey}) {
+  function Reference(props: { refkey: Refkey }) {
     expect(props.refkey).toEqual(key);
     return "Reference";
   }
@@ -14,21 +14,22 @@ it("is rendered properly in the tree", () => {
   expect(
     <SourceFile filetype="typescript" path="foo.ts" reference={Reference}>
       {key}
-    </SourceFile>
+    </SourceFile>,
   ).toRenderTo("Reference");
 });
 
 it("is rendered properly in the tree with code", () => {
   const key = refkey("foo");
 
-  function Reference(props: { refkey: Refkey}) {
+  function Reference(props: { refkey: Refkey }) {
     expect(props.refkey).toEqual(key);
     return "Reference";
   }
 
   expect(
-    SourceFile({filetype: "typescript", path: "foo.ts", reference: Reference}).code`
+    SourceFile({ filetype: "typescript", path: "foo.ts", reference: Reference })
+      .code`
       ${key} 
-    `
+    `,
   ).toRenderTo("Reference");
 });

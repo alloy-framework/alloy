@@ -1,7 +1,4 @@
-import {
-  Output,
-  render,
-} from "@alloy-js/core";
+import { Output, render } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import {
   PackageDirectory,
@@ -12,7 +9,6 @@ import {
 } from "../src/index.js";
 import { fs } from "../src/builtins/node.js";
 import { assertFileContents, findFile } from "./utils.js";
-
 
 it("can import builtins", () => {
   const testLib = createPackage({
@@ -37,7 +33,7 @@ it("can import builtins", () => {
           await <Reference refkey={fs["./promises"].readFile} />();
         </SourceFile>
       </PackageDirectory>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -60,7 +56,7 @@ it("can import builtins", () => {
 
       nice;
       await readFile();
-    `
+    `,
   });
 });
 
@@ -85,7 +81,7 @@ it("can import builtins without a package", () => {
         <Reference refkey={testLib["./subpath"].nice} />;
         await <Reference refkey={fs["./promises"].readFile} />();
       </SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -95,7 +91,7 @@ it("can import builtins without a package", () => {
 
       nice;
       await readFile();
-    `
+    `,
   });
 });
 
@@ -124,7 +120,7 @@ it("can import builtins without a package", () => {
           </FunctionDeclaration>
         </FunctionDeclaration>
       </SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -138,6 +134,6 @@ it("can import builtins without a package", () => {
           await readFile();
         }
       }
-    `
+    `,
   });
 });

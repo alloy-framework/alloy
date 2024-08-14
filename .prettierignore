@@ -1,3 +1,6 @@
 pnpm-lock.yaml
 packages/babel-plugin-alloy/test/fixtures/**/*
 packages/babel-plugin-jsx-dom-expressions/test/__*_fixtures__/**/*
+
+# Don't format this package for now to keep closer to original
+packages/babel-plugin-jsx-dom-expressions/**

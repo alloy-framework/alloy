@@ -36,9 +36,8 @@ export function useBinder() {
   return useContext(BinderContext)!;
 }
 
-type HasAdditionalProps<T, U> = Omit<T, keyof U> extends Record<string, never>
-  ? false
-  : true;
+type HasAdditionalProps<T, U> =
+  Omit<T, keyof U> extends Record<string, never> ? false : true;
 
 /**
  * The binder tracks all output scopes and symbols. Scopes are nested containers
@@ -59,7 +58,7 @@ export interface Binder {
       kind: T["kind"];
       name: string;
       parent?: OutputScope | undefined;
-    } & Omit<T, keyof OutputScope>
+    } & Omit<T, keyof OutputScope>,
   ): T;
 
   createSymbol<T extends OutputSymbol>(
@@ -67,15 +66,15 @@ export interface Binder {
       name: string;
       scope?: OutputScope;
       refkey?: unknown;
-    } & Omit<T, keyof OutputSymbol>
+    } & Omit<T, keyof OutputSymbol>,
   ): T;
 
   resolveDeclarationByKey<
     TScope extends OutputScope = OutputScope,
-    TSymbol extends OutputSymbol = OutputSymbol
+    TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: OutputScope,
-    key: unknown
+    key: unknown,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
   globalScope: OutputScope;
@@ -83,7 +82,7 @@ export interface Binder {
 
 export interface ResolutionResult<
   TScope extends OutputScope,
-  TSymbol extends OutputSymbol
+  TSymbol extends OutputSymbol,
 > {
   /**
    * The symbol for the resolved declaration.
@@ -143,7 +142,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       kind: string;
       name: string;
       parent?: OutputScope;
-    } & Omit<T, keyof OutputScope>
+    } & Omit<T, keyof OutputScope>,
   ): T {
     const { kind, name, parent, ...rest } = args;
 
@@ -170,7 +169,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       name: string;
       scope?: OutputScope;
       refkey?: unknown;
-    } & Omit<T, keyof OutputSymbol>
+    } & Omit<T, keyof OutputSymbol>,
   ): T {
     const { name, scope, refkey, ...rest } = args;
 
@@ -195,10 +194,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
   function resolveDeclarationByKey<
     TScope extends OutputScope = OutputScope,
-    TSymbol extends OutputSymbol = OutputSymbol
+    TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: OutputScope,
-    key: unknown
+    key: unknown,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined> {
     const targetDeclaration = knownDeclarations.get(key);
     let declSignal: Ref<TSymbol | undefined>;
@@ -225,7 +224,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
     function buildResult<
       TScope extends OutputScope = OutputScope,
-      TSymbol extends OutputSymbol = OutputSymbol
+      TSymbol extends OutputSymbol = OutputSymbol,
     >(targetDeclaration: TSymbol): ResolutionResult<TScope, TSymbol> {
       const targetScope = targetDeclaration.scope;
       const targetChain = scopeChain(targetScope);
@@ -265,7 +264,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   function deconflict(symbol: OutputSymbol) {
     const scope = symbol.scope;
     const existingNames = [...scope.symbols].filter(
-      (sym) => sym.originalName === symbol.name
+      (sym) => sym.originalName === symbol.name,
     );
 
     if (existingNames.length < 2) {
@@ -289,7 +288,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
  */
 export function resolve<
   TScope extends OutputScope,
-  TSymbol extends OutputSymbol
+  TSymbol extends OutputSymbol,
 >(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>> {
   const scope = useScope();
   const binder = scope.binder;
@@ -299,7 +298,7 @@ export function resolve<
 
 const createSymbolsSymbol: unique symbol = Symbol();
 export function getSymbolCreator(
-  creator: SymbolCreator
+  creator: SymbolCreator,
 ): SymbolCreator[typeof createSymbolsSymbol] {
   return creator[createSymbolsSymbol];
 }

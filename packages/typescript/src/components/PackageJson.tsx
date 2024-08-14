@@ -12,10 +12,9 @@ export interface PackageJsonFileProps {
   scripts?: Record<string, string>;
 }
 
-
 export interface ExportConditions {
   [condition: string]: string | ExportConditions;
-};
+}
 
 export type ExportPath = string | ExportConditions;
 
@@ -26,7 +25,9 @@ export interface PackageExports {
 export function PackageJsonFile(props: PackageJsonFileProps) {
   const pkg = usePackage();
   if (!pkg) {
-    throw new Error("Package json component needs to be inside a PackageDirectory");
+    throw new Error(
+      "Package json component needs to be inside a PackageDirectory",
+    );
   }
 
   const jsonContent = memo(() => {
@@ -35,34 +36,36 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       version: props.version,
       type: props.type ?? "module",
       dependencies: Object.fromEntries([
-        ... pkg.scope.rawDependencies.entries(),
-        ... Array.from(pkg.scope.dependencies).map(
-          (dependency) => [dependency.name, dependency.version]
-        )
+        ...pkg.scope.rawDependencies.entries(),
+        ...Array.from(pkg.scope.dependencies).map((dependency) => [
+          dependency.name,
+          dependency.version,
+        ]),
       ]),
       devDependencies: {
-        ... props.devDependencies,
-        "typescript": "^5.5.2"
+        ...props.devDependencies,
+        typescript: "^5.5.2",
       },
       scripts: props.scripts,
-      exports: undefined as any
-    }
+      exports: undefined as any,
+    };
 
     const exportsEntries: [string, ExportPath][] = [];
     for (const [publicPath, module] of pkg.scope.exportedSymbols) {
       exportsEntries.push([
         publicPath,
-        modulePath(pkg.outFileMapper.value(module.name))
+        modulePath(pkg.outFileMapper.value(module.name)),
       ]);
     }
 
-    pkgJson.exports = exportsEntries.length === 0 ? undefined :
-                      Object.fromEntries(exportsEntries);
+    pkgJson.exports = exportsEntries.length === 0 ?
+      undefined
+    : Object.fromEntries(exportsEntries);
 
     return JSON.stringify(pkgJson, null, 2);
   });
 
   return <SourceFile path="package.json" filetype="json">
     {jsonContent}
-  </SourceFile>
+  </SourceFile>;
 }

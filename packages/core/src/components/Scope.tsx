@@ -3,11 +3,11 @@ import { createContext, useContext } from "../context.js";
 import { Children } from "@alloy-js/core/jsx-runtime";
 
 export interface ScopeProps {
-    kind?: string;
-    name?: string;
-    value?: OutputScope;
-    children?: Children;
-  }
+  kind?: string;
+  name?: string;
+  value?: OutputScope;
+  children?: Children;
+}
 
 export const ScopeContext = createContext<OutputScope>();
 
@@ -25,9 +25,7 @@ export function Scope(props: ScopeProps) {
     scope = binder.createScope({ kind, name: props.name! });
   }
 
-  return (
-    <ScopeContext.Provider value={scope}>
+  return <ScopeContext.Provider value={scope}>
       {props.children}
-    </ScopeContext.Provider>
-  );
+    </ScopeContext.Provider>;
 }

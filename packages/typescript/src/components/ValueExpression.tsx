@@ -1,14 +1,12 @@
-import { memo } from "@alloy-js/core"
+import { memo } from "@alloy-js/core";
 import { ObjectExpression } from "./ObjectExpression.js";
 import { ArrayExpression } from "./ArrayExpression.js";
 
 export interface ValueExpressionProps {
-  jsValue?: unknown
+  jsValue?: unknown;
 }
 
 export function ValueExpression(props: ValueExpressionProps) {
-
-
   return memo(() => {
     const jsValue = props.jsValue;
 
@@ -22,13 +20,13 @@ export function ValueExpression(props: ValueExpressionProps) {
       if (jsValue === null) {
         return "null";
       } else if (Array.isArray(jsValue)) {
-        return <ArrayExpression jsValue={jsValue as unknown[]} />
+        return <ArrayExpression jsValue={jsValue as unknown[]} />;
       } else {
-        return <ObjectExpression jsValue={jsValue as Record<string, unknown>} />
+        return <ObjectExpression jsValue={jsValue as Record<string, unknown>} />;
       }
     } else if (typeof jsValue === "function") {
       // functions are inserted as-is.
       return jsValue;
     }
-  })
+  });
 }

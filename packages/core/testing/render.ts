@@ -13,7 +13,7 @@ export function d(strings: TemplateStringsArray, ...values: any[]): string {
   // Combine the strings and values
   let result = strings.reduce(
     (acc, str, i) => acc + str + (values[i] ?? ""),
-    ""
+    "",
   );
 
   return dedent(result);

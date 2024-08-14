@@ -11,7 +11,13 @@ export default function (context, options = {}) {
   };
 
   const plugins = [
-    [alloyTransform, { alloyModuleName: options.alloyModuleName ?? defaultOptions.alloyModuleName }],
+    [
+      alloyTransform,
+      {
+        alloyModuleName:
+          options.alloyModuleName ?? defaultOptions.alloyModuleName,
+      },
+    ],
     [jsxTransform, Object.assign(defaultOptions, options)],
   ];
 

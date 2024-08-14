@@ -6,8 +6,8 @@ describe("empty lines are preserved", () => {
     const frag = <>
       hi
 
-    </>
-  
+    </>;
+
     expect(<>
       { frag }
       hi
@@ -15,15 +15,17 @@ describe("empty lines are preserved", () => {
       hi
 
       hi
-    `)
+    `);
   });
-  
+
   it("memo for fragment", () => {
     const frag = <>
       hi
 
-    </>
-    function getTrue() { return true };
+    </>;
+    function getTrue() {
+      return true;
+    }
 
     expect(<>
       { getTrue() ? frag : undefined }
@@ -32,14 +34,14 @@ describe("empty lines are preserved", () => {
       hi
 
       hi
-    `)
+    `);
   });
-  
+
   it("after components", () => {
     function Foo() {
       return "hi";
     }
-  
+
     expect(<>
       <Foo />
 
@@ -48,9 +50,9 @@ describe("empty lines are preserved", () => {
       hi
 
       hi
-    `)
+    `);
   });
-})
+});
 
 // this would be a nice feature to have
 describe.skip("empty lines are removed when the only thing on the line is a falsy value", () => {
@@ -58,13 +60,13 @@ describe.skip("empty lines are removed when the only thing on the line is a fals
     expect(<>
       {false}
       hi
-    </>).toRenderTo("hi")
+    </>).toRenderTo("hi");
   });
 
   it("undefined", () => {
     expect(<>
       {undefined}
       hi
-    </>).toRenderTo("hi")
+    </>).toRenderTo("hi");
   });
-})
+});

@@ -28,12 +28,12 @@ it("imports external packages", () => {
           <ts.Reference refkey={refkey("getGreeting")} />();
         </ts.SourceFile>
       </ts.PackageDirectory>
-    </Output>
+    </Output>,
   );
 
   const consumerPkgJson = findFile(res, "consumer/package.json")!;
   const greetingPkgJson = findFile(res, "greeting-lib/package.json")!;
-  const refFile = findFile(res, "consumer/ref.ts")!
+  const refFile = findFile(res, "consumer/ref.ts")!;
 
   expect(consumerPkgJson.contents).toEqual(d`
     {
@@ -72,5 +72,4 @@ it("imports external packages", () => {
     
     getGreeting();
   `);
-
 });

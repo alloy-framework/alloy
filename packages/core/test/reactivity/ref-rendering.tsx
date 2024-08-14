@@ -1,7 +1,7 @@
-import { expect, it } from 'vitest'
-import { ref } from '@vue/reactivity';
-import { printTree } from '../../testing/render.js';
-import { code, renderTree, memo } from '@alloy-js/core';
+import { expect, it } from "vitest";
+import { ref } from "@vue/reactivity";
+import { printTree } from "../../testing/render.js";
+import { code, renderTree, memo } from "@alloy-js/core";
 
 it("handles refs in the tree", () => {
   const r = ref(42);

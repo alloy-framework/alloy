@@ -1,11 +1,6 @@
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import {
-  render,
-  Output,
-  SourceDirectory,
-  refkey,
-} from "@alloy-js/core";
+import { render, Output, SourceDirectory, refkey } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { assertFileContents } from "./utils.js";
@@ -21,7 +16,7 @@ it("works with default imports", () => {
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("test")} />;
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -34,7 +29,7 @@ it("works with default imports", () => {
       import asdf from "./test1.js";
 
       const v = asdf;
-    `
+    `,
   });
 });
 
@@ -48,7 +43,7 @@ it("works with named imports", () => {
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("test")} />;
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -61,7 +56,7 @@ it("works with named imports", () => {
       import { test } from "./test1.js";
 
       const v = test;
-    `
+    `,
   });
 });
 
@@ -77,7 +72,7 @@ it("works with default and named imports", () => {
         const v1 = <Reference refkey={refkey("test1")} />;
         const v2 = <Reference refkey={refkey("test2")} />;
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -94,7 +89,7 @@ it("works with default and named imports", () => {
 
       const v1 = test1;
       const v2 = test2;
-    `
+    `,
   });
 });
 
@@ -118,7 +113,7 @@ it("works with default and named imports and name conflicts", () => {
         const v3 = <Reference refkey={refkey("test3")}/>;
         const v4 = <Reference refkey={refkey("test4")} />;
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -147,7 +142,7 @@ it("works with default and named imports and name conflicts", () => {
       const v2 = test1_2;
       const v3 = test1_2;
       const v4 = test2_2;
-    `
+    `,
   });
 });
 
@@ -165,7 +160,7 @@ it("works with imports from different directories", () => {
         const v = <Reference refkey={refkey("test")} />;
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -184,7 +179,7 @@ it("works with imports from different directories", () => {
       export function test2() {
         
       }
-    `
+    `,
   });
 });
 
@@ -202,7 +197,7 @@ it("handles conflicts with local declarations", () => {
         const v = <Reference refkey={refkey("test")} />;
         <ts.FunctionDeclaration export name="test" />
       </ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {

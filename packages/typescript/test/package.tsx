@@ -1,16 +1,11 @@
 import "@alloy-js/core/testing";
 import { it } from "vitest";
-import {
-  render,
-  Output,
-  refkey,
-} from "@alloy-js/core";
+import { render, Output, refkey } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { PackageDirectory } from "../src/components/PackageDirectory.js";
 import { assertFileContents } from "./utils.js";
 
 it("exports source files", () => {
-
   const res = render(
     <Output>
       <PackageDirectory name="greeting-js" path="." version="1.0.0">
@@ -33,7 +28,7 @@ it("exports source files", () => {
         <ts.BarrelFile export="." />
         
       </PackageDirectory>
-    </Output>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -68,6 +63,6 @@ it("exports source files", () => {
           ".": "./dist/index.js"
         }
       }
-    `
+    `,
   });
 });

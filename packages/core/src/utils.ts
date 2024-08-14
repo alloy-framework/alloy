@@ -18,17 +18,17 @@ const defaultMapJoinOptions: MapJoinOptions = {
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
   cb: (key: T, value: U) => V,
-  options?: MapJoinOptions
+  options?: MapJoinOptions,
 ): (V | string)[];
 export function mapJoin<T, V>(
   src: T[],
   cb: (value: T) => V,
-  options?: MapJoinOptions
+  options?: MapJoinOptions,
 ): (V | string)[];
 export function mapJoin<T, U, V>(
   src: Map<T, U> | T[],
   cb: (key: T, value?: U) => V,
-  options: MapJoinOptions = defaultMapJoinOptions
+  options: MapJoinOptions = defaultMapJoinOptions,
 ): (V | string)[] {
   let mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
@@ -103,11 +103,9 @@ export function isKeyedChild(child: Child): child is ComponentCreator {
 
 export function stc<T extends {}>(Component: ComponentDefinition<T>) {
   return (
-    ...args: unknown extends T
-      ? []
-      : {} extends Omit<T, "children">
-      ? [props?: T]
-      : [props: T]
+    ...args: unknown extends T ? []
+    : {} extends Omit<T, "children"> ? [props?: T]
+    : [props: T]
   ) => {
     const fn: ComponentCreator<T> & {
       code(

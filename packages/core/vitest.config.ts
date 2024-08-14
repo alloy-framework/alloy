@@ -8,7 +8,6 @@ export default defineConfig({
     sourcemap: "both",
   },
   resolve: {
-    mainFields: ["module"],
     alias: {
       "@alloy-js/core/jsx-runtime": resolve(__dirname, "./src/jsx-runtime.ts"),
       "@alloy-js/core/stc": resolve(__dirname, "./src/components/stc/index.ts"),

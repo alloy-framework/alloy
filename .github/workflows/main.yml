@@ -8,12 +8,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          
+
       - name: Install dependencies
         run: pnpm install
 

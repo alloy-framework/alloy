@@ -1,10 +1,6 @@
 packages:
   - packages/*
 catalog:
-  "@alloy-js/babel-plugin-alloy": 1.0.0
-  "@alloy-js/babel-plugin-jsx-dom-expressions": 0.37.21
-  "@alloy-js/core": 1.0.0
-  "@alloy-js/typescript": 1.0.0
   "@babel/cli": ^7.24.7
   "@babel/core": ^7.24.7
   "@babel/generator": ^7.25.0
@@ -21,7 +17,6 @@ catalog:
   "@types/node": ^20.14.12
   "@vue/reactivity": ^3.4.30
   babel-plugin-tester: ^11.0.4
-  babel-preset-alloy: 1.0.0
   change-case: ^5.4.4
   concurrently: ^8.2.2
   html-entities: 2.3.3

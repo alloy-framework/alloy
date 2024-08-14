@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "catalog:",
-    "babel-preset-alloy": "catalog:",
+    "babel-preset-alloy": "workspace:~",
     "concurrently": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",

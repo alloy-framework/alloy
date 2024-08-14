@@ -40,7 +40,7 @@
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@vue/reactivity": "catalog:",
-    "babel-preset-alloy": "catalog:",
+    "babel-preset-alloy": "workspace:~",
     "pathe": "catalog:"
   },
   "devDependencies": {

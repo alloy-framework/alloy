@@ -26,7 +26,7 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@alloy-js/core": "catalog:",
+    "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",
     "pathe": "catalog:"
   },
@@ -35,7 +35,7 @@
     "@babel/preset-typescript": "catalog:",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
-    "babel-preset-alloy": "catalog:",
+    "babel-preset-alloy": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

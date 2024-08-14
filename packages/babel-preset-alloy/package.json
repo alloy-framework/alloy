@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@alloy-js/babel-plugin-alloy": "catalog:",
-    "@alloy-js/babel-plugin-jsx-dom-expressions": "catalog:"
+    "@alloy-js/babel-plugin-alloy": "workspace:~",
+    "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:~"
   },
   "keywords": [],
   "author": "",

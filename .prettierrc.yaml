@@ -2,6 +2,6 @@ experimentalTernaries: true
 plugins:
   - ./packages/prettier-plugin-alloy/dist/index.js
 overrides:
-  - files: "*.tsx"
+  - files: "**/*.tsx"
     options:
       parser: alloy-ts

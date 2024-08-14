@@ -8,10 +8,10 @@ const printers = {
   estree: {
     ...estreePrinters.estree,
     print: (path: AstPath<any>, options, print) => {
-      if (path.node.type === "JSXElement") {
+      if (path.node.type === "JSXElement" || path.node.type === "JSXFragment") {
         return options.originalText.slice(
           path.node.range[0],
-          path.node.range[1]
+          path.node.range[1],
         );
       }
       return estreePrinters.estree.print(path, options, print);

@@ -137,7 +137,7 @@ export function ref(refkey: Refkey) {
         pkg.scope.addDependency(sourcePackage);
       }
       // find public dependency
-      for (const [publicPath, module] of sourcePackage.exportedSymbols) {
+      for (const module of sourcePackage.exportedSymbols.values()) {
         if (module.exportedSymbols.has(targetDeclaration.refkey)) {
           return untrack(() =>
             sourceFile!.scope.addImport(targetDeclaration, module)).name;

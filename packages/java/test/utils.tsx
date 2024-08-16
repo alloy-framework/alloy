@@ -15,7 +15,7 @@ export function toSourceText(c: Children): string {
       <jv.PackageDirectory package='me.test.code'>
         <jv.SourceFile path="Test.java">{c}</jv.SourceFile>
       </jv.PackageDirectory>
-    </Output>
+    </Output>,
   );
 
   const file = findFile(res, "Test.java");
@@ -28,7 +28,7 @@ export function testRender(c: Children): OutputDirectory {
       <jv.PackageDirectory package='me.test.code'>
         {c}
       </jv.PackageDirectory>
-    </Output>
+    </Output>,
   );
 }
 
@@ -42,7 +42,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
 
   function findFileWorker(
     res: OutputDirectory,
-    path: string
+    path: string,
   ): OutputFile | null {
     for (const item of res.contents) {
       if (item.kind === "file") {
@@ -63,7 +63,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
 
 export function assertFileContents(
   res: OutputDirectory,
-  expectedFiles: Record<string, string>
+  expectedFiles: Record<string, string>,
 ) {
   for (const [path, contents] of Object.entries(expectedFiles)) {
     const file = findFile(res, path);

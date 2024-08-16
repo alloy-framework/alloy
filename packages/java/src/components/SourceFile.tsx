@@ -1,9 +1,15 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { createContext, OutputSymbol, reactive, Scope, SourceFile as CoreSourceFile } from "@alloy-js/core";
+import {
+  createContext,
+  OutputSymbol,
+  reactive,
+  Scope,
+  SourceFile as CoreSourceFile,
+} from "@alloy-js/core";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
-import { JavaOutputSymbol } from "../symbols.js";
 import { usePackage } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
+import { JavaOutputSymbol } from "../symbols/index.js";
 
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;
@@ -31,7 +37,7 @@ export function SourceFile(props: SourceFileProps) {
   // Collection of import symbols
   const importRecords: ImportSymbol[] = reactive([]);
   // Map a symbol to import name, keep track of already imported symbols
-  const importedSymbols = new Map<OutputSymbol, string>;
+  const importedSymbols = new Map<OutputSymbol, string>();
 
   // Add import to file if not already, returns name of imported symbol
   function addImport(symbol: JavaOutputSymbol): string {
@@ -40,11 +46,14 @@ export function SourceFile(props: SourceFileProps) {
     }
 
     // Only need to import if not in same package, or comes from java.lang
-    if (symbol.package !== packageCtx?.qualifiedName || symbol.package?.startsWith("java.lang")) {
+    if (
+      symbol.package !== packageCtx?.qualifiedName ||
+      symbol.package?.startsWith("java.lang")
+    ) {
       importRecords.push({
         package: symbol.package ?? "",
         name: symbol.name,
-        wildcard: false // TODO
+        wildcard: false, // TODO
       });
     }
     importedSymbols.set(symbol, symbol.name);
@@ -53,11 +62,10 @@ export function SourceFile(props: SourceFileProps) {
   }
 
   const sfContext: SourceFileContext = {
-    addImport
+    addImport,
   };
 
-  return (
-    <CoreSourceFile path={props.path} filetype="java" reference={Reference}>
+  return <CoreSourceFile path={props.path} filetype="java" reference={Reference}>
       package {packageCtx.qualifiedName};
 
       {importRecords.length > 0 ? (
@@ -70,6 +78,5 @@ export function SourceFile(props: SourceFileProps) {
         {props.children}
       </Scope>
     </SourceFileContext.Provider>
-    </CoreSourceFile>
-  );
+    </CoreSourceFile>;
 }

@@ -6,7 +6,8 @@ import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
-  const res = toSourceText(<>
+  const res = toSourceText(
+    <>
     <Declaration name="TestClass">
       {code`
         public class TestClass {
@@ -14,7 +15,8 @@ it("works", () => {
         }
       `}
     </Declaration>
-  </>)
+  </>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -28,7 +30,8 @@ it("works", () => {
 });
 
 it("takes name from class", () => {
-  const res = toSourceText(<>
+  const res = toSourceText(
+    <>
     <Declaration name="TestClass">
       {code`
         public class TestClass {
@@ -36,7 +39,8 @@ it("takes name from class", () => {
         }
       `}
     </Declaration>
-  </>)
+  </>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -74,8 +78,8 @@ it("declares parameters", () => {
           </Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestClass.java": d`
@@ -88,6 +92,6 @@ it("declares parameters", () => {
           
         }
       }
-    `
-  })
+    `,
+  });
 });

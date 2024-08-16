@@ -6,10 +6,10 @@ import { d } from "@alloy-js/core/testing";
 import { code, refkey } from "@alloy-js/core";
 
 it("works", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Enum accessModifier='public' name="TestEnum">
-    </jv.Enum>
-  ))
+    </jv.Enum>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -45,8 +45,8 @@ it("implements interfaces", () => {
           </jv.Enum>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestEnum.java": d`
@@ -59,16 +59,16 @@ it("implements interfaces", () => {
         
       }
     `,
-  })
+  });
 });
 
 it("declares members", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Enum accessModifier='public' name="TestEnum">
       <jv.EnumMember name="ONE" />,
       <jv.EnumMember name="TWO" />;
-    </jv.Enum>
-  ))
+    </jv.Enum>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -81,7 +81,7 @@ it("declares members", () => {
 });
 
 it("declares members with arguments", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Enum accessModifier='public' name="TestEnum">
       <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />,
       <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />;
@@ -90,8 +90,8 @@ it("declares members with arguments", () => {
         value: "String",
       }}>
       </jv.Constructor>
-    </jv.Enum>
-  ))
+    </jv.Enum>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;

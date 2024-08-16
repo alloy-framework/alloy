@@ -6,5 +6,5 @@ export function Name() {
     return "";
   }
 
-  return <>{declSymbol.name}</>
+  return <>{declSymbol.name}</>;
 }

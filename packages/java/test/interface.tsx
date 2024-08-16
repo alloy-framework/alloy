@@ -6,10 +6,10 @@ import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Interface accessModifier='public' name="TestInterface">
-    </jv.Interface>
-  ))
+    </jv.Interface>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -35,8 +35,8 @@ it("extends other interfaces", () => {
           </jv.Interface>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestInterface.java": `
@@ -49,5 +49,5 @@ it("extends other interfaces", () => {
         
       }
     `,
-  })
+  });
 });

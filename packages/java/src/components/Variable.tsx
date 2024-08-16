@@ -1,5 +1,10 @@
 import { Child, Children, code } from "@alloy-js/core";
-import { AccessModifier, collectAccessModifier, collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import {
+  AccessModifier,
+  collectAccessModifier,
+  collectModifiers,
+  ObjectModifiers,
+} from "../object-modifiers.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 
 export interface VariableProps extends ObjectModifiers {

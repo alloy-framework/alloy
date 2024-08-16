@@ -16,6 +16,6 @@ export function Parameters(props: ParametersProps) {
     (name, type) => {
       return [type, " ", name];
     },
-    { joiner: ", " }
+    { joiner: ", " },
   );
 }

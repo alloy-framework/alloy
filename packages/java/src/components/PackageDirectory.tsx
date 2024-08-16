@@ -6,9 +6,12 @@ import {
   SourceDirectoryContext,
   useBinder,
   useContext,
-  useScope
+  useScope,
 } from "@alloy-js/core";
-import { createJavaPackageScope, JavaPackageScope } from "../symbols.js";
+import {
+  createJavaPackageScope,
+  JavaPackageScope,
+} from "../symbols/java-package-scope.js";
 
 export interface PackageDirectoryContext {
   scope: JavaPackageScope;
@@ -38,16 +41,22 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageNames = props.package.split(".");
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName = parentPackage ? parentPackage.qualifiedName + "." + packageName : packageName;
+  const fullyQualifiedPackageName = parentPackage ?
+    parentPackage.qualifiedName + "." + packageName
+  : packageName;
 
-  const scope = createJavaPackageScope(useBinder(), useScope(), fullyQualifiedPackageName);
+  const scope = createJavaPackageScope(
+    useBinder(),
+    useScope(),
+    fullyQualifiedPackageName,
+  );
 
   const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {
     scope,
     path: packagePath,
     name: packageName,
-    qualifiedName: fullyQualifiedPackageName
+    qualifiedName: fullyQualifiedPackageName,
   };
 
   /**
@@ -55,23 +64,19 @@ export function PackageDirectory(props: PackageDirectoryProps) {
    */
   function ChildPackageDirectory() {
     if (packageNames.length > 1) {
-      return (
-        <PackageDirectory package={packageNames.slice(1, packageNames.length).join(".")}>
+      return <PackageDirectory package={packageNames.slice(1, packageNames.length).join(".")}>
           {props.children}
-        </PackageDirectory>
-      );
+        </PackageDirectory>;
     } else {
       return props.children;
     }
   }
 
-  return (
-    <PackageDirectoryContext.Provider value={packageContext}>
+  return <PackageDirectoryContext.Provider value={packageContext}>
       <Scope value={scope}>
         <SourceDirectory path={packagePath}>
           <ChildPackageDirectory />
         </SourceDirectory>
       </Scope>
-    </PackageDirectoryContext.Provider>
-  );
+    </PackageDirectoryContext.Provider>;
 }

@@ -12,10 +12,8 @@ export interface ImportStatementsProps {
 
 export function ImportStatements(props: ImportStatementsProps) {
   return memo(() =>
-    mapJoin(props.imports, (importProp) => () => (
-      <ImportStatement {...importProp} />
-    ))
-  )
+    mapJoin(props.imports, (importProp) =>
+      () => <ImportStatement {...importProp} />));
 }
 
 export function ImportStatement(props: ImportSymbol) {

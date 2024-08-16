@@ -5,11 +5,13 @@
   "exports": {
     ".": {
       "development": "./src/index.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "types": "./types/src/index.d.ts"
     },
     "./stc": {
       "development": "./src/components/stc/index.ts",
-      "import": "./dist/src/components/stc/index.js"
+      "import": "./dist/src/components/stc/index.js",
+      "types": "./types/src/components/stc/index.d.ts"
     }
   },
   "scripts": {

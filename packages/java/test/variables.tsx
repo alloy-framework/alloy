@@ -6,15 +6,15 @@ import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Declaration name="Test">
       {code`
         class Test {
           ${<jv.Variable accessModifier='public' static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
         }
       `}
-    </jv.Declaration>
-  ))
+    </jv.Declaration>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -23,7 +23,6 @@ it("works", () => {
       public static final String myVar = "Test";
     }
   `);
-
 });
 
 it("works with external type", () => {
@@ -48,8 +47,8 @@ it("works with external type", () => {
           </Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "Test.java": `
@@ -60,8 +59,8 @@ it("works with external type", () => {
       public class Test {
         public static Model myModel;
       }
-    `
-  })
+    `,
+  });
 });
 
 it("declares new object", () => {
@@ -86,8 +85,8 @@ it("declares new object", () => {
           </Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "Test.java": `
@@ -98,6 +97,6 @@ it("declares new object", () => {
       public class Test {
         public static Model myModel = new Model("initValue");
       }
-    `
-  })
+    `,
+  });
 });

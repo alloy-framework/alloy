@@ -5,20 +5,15 @@ import { findFile } from "./utils.js";
 import { Output, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 
-it('uses import from external library', () => {
+it("uses import from external library", () => {
   const testLib = createLibrary({
     groupId: "me.test",
     artifactId: "test-lib",
     version: "1.0.0",
     descriptor: {
-      'me.test.testlib': [
-        'TestClass',
-        'Tester'
-      ],
-      'me.test.testlib.models': [
-        'TestModel'
-      ]
-    }
+      "me.test.testlib": ["TestClass", "Tester"],
+      "me.test.testlib.models": ["TestModel"],
+    },
   });
 
   const res = render(
@@ -32,8 +27,8 @@ it('uses import from external library', () => {
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </Output>
-  )
+    </Output>,
+  );
 
   expect(findFile(res, "TestImport.java").contents).toBe(d`
     package me.test.code;
@@ -48,4 +43,4 @@ it('uses import from external library', () => {
       Tester myTester = new Tester();
     }
   `);
-})
+});

@@ -84,12 +84,12 @@ FunctionDeclaration.Parameters = taggedComponent(
       value = mapJoin(
         new Map(Object.entries(props.parameters)),
         (key, value) => {
-          const descriptor: ParameterDescriptor = isParameterDescriptor(value)
-            ? value
-            : {
-                refkey: refkey(),
-                type: value,
-              };
+          const descriptor: ParameterDescriptor = isParameterDescriptor(value) ?
+            value
+          : {
+              refkey: refkey(),
+              type: value,
+            };
           const sym = createTSSymbol({
             name: key,
             refkey: descriptor.refkey,

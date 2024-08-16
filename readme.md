@@ -27,10 +27,12 @@ const res = ay.render(
     </ts.SourceFile>
 
     <ts.SourceFile path="test2.ts">
-      <ts.VarDeclaration name="v">{helloWorldRef}</ts.VarDeclaration>
+      <ts.VarDeclaration name="v">
+        {helloWorldRef}
+      </ts.VarDeclaration>
       console.log(v);
     </ts.SourceFile>
-  </ay.Output>,
+  </ay.Output>
 );
 
 console.log(res[2].contents);
@@ -55,18 +57,17 @@ const res = render(
     `,
 
     ts.SourceFile({ path: "test1.ts" }).children(
-      ts.VarDeclaration({ export: true, name: "foo", refkey: helloWorldRef })
-        .code`
+      ts.VarDeclaration({ export: true, name: "foo", refkey: helloWorldRef }).code`
         "Hello world"
-      `,
+      `
     ),
 
     ts.SourceFile({ path: "test2.ts" }).code`
       ${ts.VarDeclaration({ name: "v" }).children(helloWorldRef)}
       
       console.log(v);
-    `,
-  ),
+    `
+  )
 );
 
 console.log(res[2].contents);
@@ -74,6 +75,7 @@ console.log(res[2].contents);
 //
 // const v = foo;
 ```
+
 
 This project is in pre-beta. Expect everything to change. Feedback is especially
 appreciated. The docs are not great but are being worked on.
@@ -100,84 +102,84 @@ Clone the repo, then:
 
 ### Supported Languages
 
-- TypeScript: @alloy-js/typescript
+* TypeScript: @alloy-js/typescript
 
 More are coming soon.
 
 ## Main APIs
 
-- `@alloy-js/core`
-  - Components:
-    - `Declaration`: Create a declaration. May either pass `symbol` with the
+* `@alloy-js/core`
+  * Components:
+    * `Declaration`: Create a declaration. May either pass `symbol` with the
       symbol of the declaration, or else can pass `name` and `refkey` and a
       generic symbol is created. Provides `DeclarationContext`.
-    - `Indent`: Indents its contents one level. Provides `IndentContext`.
-    - `Output`: The top-level Alloy component. Pass `namePolicy` to provide the
+    * `Indent`: Indents its contents one level. Provides `IndentContext`.
+    * `Output`: The top-level Alloy component. Pass `namePolicy` to provide the
       name policy for all your declared names. Pass `externals` to provide
       external symbols. Provides `NamePolicyContext` and `BinderContext`.
-    - `Scope`: Create a scope which symbols can be declared in. May either pass
+    * `Scope`: Create a scope which symbols can be declared in. May either pass
       `value` to provide the scope object, or else pass `name` and `type` and a
       scope will be created. Provides `ScopeContext`.
-    - `SourceDirectory`: A directory in your output. Pass `path` to set the
+    * `SourceDirectory`: A directory in your output. Pass `path` to set the
       relative path of the directory. Provides `SourceDirectoryContext`.
-    - `SourceFile`: A file in your output. Pass `path` to set the relative path
+    * `SourceFile`: A file in your output. Pass `path` to set the relative path
       of the file. Pass `filetype` to set the file type to any string. Provides
       `SourceFileContext`.
-  - APIs:
-    - `code`: A template literal tag for output source text.
-    - `createContext`: Create a context object.
-    - `createNamePolicy`: Create a name policy. Provide to the `namePolicy` prop of `Output`.
-    - `render`: Renders a component, fragment, or string template into a list of
+  * APIs:
+    * `code`: A template literal tag for output source text.
+    * `createContext`: Create a context object.
+    * `createNamePolicy`: Create a name policy. Provide to the `namePolicy` prop of `Output`.
+    * `render`: Renders a component, fragment, or string template into a list of
       directories, files, and source text.
-    - `useContext`: Get the value of the provided context object.
-    - `useBinder`: Get the current binder.
-    - `useScope`: Get the current scope.
-    - `useNamePolicy`: Get the current name policy.
-    - `stc(component: ComponentDefinition)`: Wrap a functional component for use
+    * `useContext`: Get the value of the provided context object.
+    * `useBinder`: Get the current binder.
+    * `useScope`: Get the current scope.
+    * `useNamePolicy`: Get the current name policy.
+    * `stc(component: ComponentDefinition)`: Wrap a functional component for use
       in string templates.
-    - Reactive utilities: `ref`, `shallowRef`, `reactive`, `shallowReactive`,
+    * Reactive utilities: `ref`, `shallowRef`, `reactive`, `shallowReactive`,
       `memo`, `computed`, `effect`, `untrack`.
-- `@alloy-js/core/stc`: String template components for all the core components.
-- `@alloy-js/typescript`
-  - APIs:
-    - `createPackage(descriptor)`: Create symbols for an external package, such
+* `@alloy-js/core/stc`: String template components for all the core components.
+* `@alloy-js/typescript`
+  * APIs:
+    * `createPackage(descriptor)`: Create symbols for an external package, such
       as a dependency from npm. Pass the result to the `externals` prop of the
       `Output` component.
-    - `node`: Symbol definitions for node built-ins. Pass any you use to the
+    * `node`: Symbol definitions for node built-ins. Pass any you use to the
       `externals` prop of the `Output` component.
-  - Components
-    - Structure
-      - `BarrelFile`: Create a file which exports all the files contained within
+  * Components
+    * Structure
+      * `BarrelFile`: Create a file which exports all the files contained within
         the current directory.
-      - `PackageDirectory`: A directory for a package. Generates a `package.json`
+      * `PackageDirectory`: A directory for a package. Generates a `package.json`
         and `tsconfig.json` that are updated depending on the package contents.
-      - `SourceFile`: A TypeScript module source file. Pass `export` to export the
+      * `SourceFile`: A TypeScript module source file. Pass `export` to export the
         source file from the current package (sets package.json exports). The
         source file will import anything referenced within it.
-    - Declarations
-      - `Declaration`: Declares a symbol in the current scope. Pass `export` or
+    * Declarations
+      * `Declaration`: Declares a symbol in the current scope. Pass `export` or
         `default` to control how this symbol is exported from the module.
         `children` are the syntax for the declaration. All declaration forms take
         these props.
-      - `FunctionDeclaration`: Declares a function. Pass `parameters` or
+      * `FunctionDeclaration`: Declares a function. Pass `parameters` or
         `returnType` to set those. `children` is the function body.
-      - `InterfaceDeclaration`: Declares an interface. Define members by putting
+      * `InterfaceDeclaration`: Declares an interface. Define members by putting
         `InterfaceMember` in the children.
-      - `TypeDeclaration`: A TypeScript type declaration. `children` is the
+      * `TypeDeclaration`: A TypeScript type declaration. `children` is the
         initializer of the declaration.
-      - `VarDeclaration`: Declares a const, let, or var. `children` is the
+      * `VarDeclaration`: Declares a const, let, or var. `children` is the
         initializer.
-    - Expressions
-      - `ArrayExpression`: A JavaScript array literal. Pass `jsValue` to populate
+    * Expressions
+      * `ArrayExpression`: A JavaScript array literal. Pass `jsValue` to populate
         it with data.
-      - `ObjectExpression`: A JavaScript object literal. Pass `jsValue` to
+      * `ObjectExpression`: A JavaScript object literal. Pass `jsValue` to
         populate it with data, or pass `children` with `ObjectProperty`s.
-      - `Reference`: Create a reference to a declaration. Pass the `refkey` of the
+      * `Reference`: Create a reference to a declaration. Pass the `refkey` of the
         declaration.
-      - `ValueExpression`: A JavaScript value. Pass `jsValue` to populate it with
+      * `ValueExpression`: A JavaScript value. Pass `jsValue` to populate it with
         data. Handles any JSON value.
-- `@alloy-js/typescript/stc`: String template components for all the TypeScript
-  components.
+* `@alloy-js/typescript/stc`: String template components for all the TypeScript
+  components. 
 
 ## Basic Concepts
 
@@ -223,13 +225,13 @@ interface SayHelloProps {
 function SayHello(props: SayHelloProps) {
   return code`
     Hello ${props.name}!
-  `;
+  `
 }
 
 const SayHelloStc = stc(SayHello);
 
 const text = SayHelloStc({ name: "Brian" });
-renderString(text); // "Hello Brian"
+renderString(text) // "Hello Brian"
 ```
 
 ### Context
@@ -242,15 +244,15 @@ retrieve that context via `useContext()`.
 
 ```tsx
 export interface NameContext {
-  name: string;
+  name: string
 }
 
 export const NameContext = createContext<NameContext>();
 
 function Person(props) {
-  return (
-    <NameContext.Provider value="Brian">{props.children}</NameContext.Provider>
-  );
+  return <NameContext.Provider value="Brian">
+    {props.children}
+  </NameContext.Provider>
 }
 
 // in some other component
@@ -265,7 +267,7 @@ Many of the built-in components provide context. For example, `Output` provides 
 
 ### Declarations and references
 
-When you create a declarations, you need to provide the declaration name, and optionally a refkey. Some declarations may have additional props to control things like whether its exported or private. The name you provide may look different in the output depending on your situation, for example a name policy may turn camelCase names into snake_case, or a conflict with another like-named declaration might disambiguate one or the other with a number.
+When you create a declarations, you need to provide the declaration name, and optionally a refkey. Some declarations may have additional props to control things like whether its exported or private. The name you provide may look different in the output depending on your situation, for example a name policy may turn camelCase names into snake_case, or a conflict with another like-named declaration might disambiguate one or the other with a number. 
 
 One of the more challenging bits of doing codegen is generating references to things you've declared. Alloy makes this painless with refkeys. A refkey is a unique identifier for a symbol you declare in your output code. When you reference a refkey, Alloy calculates the necessary reference syntax along with any imports, package dependencies, or other such things needed for the reference to work.
 
@@ -316,16 +318,14 @@ function ChildCounter() {
   const context: ChildCounterContext = {
     increment() {
       numChildren.value++;
-    },
-  };
+    }
+  }
 
-  return (
-    <ChildCounterContext.Provider value={context}>
-      Number of children: {numChildren}
-      <Child />
-      <Child />
-    </ChildCounterContext.Provider>
-  );
+  return <ChildCounterContext.Provider value={context}>
+    Number of children: {numChildren}
+    <Child />
+    <Child />
+  </ChildCounterContext.Provider>
 }
 
 function Child() {
@@ -340,7 +340,7 @@ renderString(<ChildCounter />);
 // child
 ```
 
-The two primary ways to compute values that depend on other reactive values are `memo` and `computed`. `memo` returns a function which when called gives the current value of the computation. Computations which depend on the memo are only updated when the memoized value changes. `computed` returns a `ref`, and the `ref` is updated whenever the computation is run. Generally, `memo` is preferred. Whichever you use, when embedded within JSX or within `code`-tagged string templates, the value will be unwrapped, so no need to call the memo or access `.value` on a `ref`.
+The two primary ways to compute values that depend on other reactive values are `memo` and `computed`. `memo` returns a function which when called gives the current value of the computation.  Computations which depend on the memo are only updated when the memoized value changes. `computed` returns a `ref`, and the `ref` is updated whenever the computation is run. Generally, `memo` is preferred. Whichever you use, when embedded within JSX or within `code`-tagged string templates, the value will be unwrapped, so no need to call the memo or access `.value` on a `ref`.
 
 ```ts
 function MemoExample() {
@@ -369,24 +369,27 @@ following rules:
 **Any leading and trailing line breaks are ignored**
 
 ```jsx
-renderString(<>x</>); // "x"
+renderString(<>
+x
+</>); // "x"
 ```
 
 **The first significant line sets the base indent**
 
 ```jsx
-renderString(<>x y</>); // "x\ny"
+renderString(<>
+  x
+  y
+</>); // "x\ny"
 ```
 
 **Lines which increase indent set indent level for any contents on that line**
 
 ```jsx
-renderString(
-  <>
-    base
+renderString(<>
+  base
     {"a\nb"}
-  </>,
-);
+</>);
 // base
 //   a
 //   b

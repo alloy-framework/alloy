@@ -37,9 +37,8 @@ function createSymbols(
 }
 
 type LibraryRefkeys<T extends LibraryDescriptor> = {
-  [S in T[keyof T] extends readonly string[]
-    ? T[keyof T][number]
-    : never]: Refkey;
+  [S in T[keyof T] extends readonly string[] ? T[keyof T][number]
+  : never]: Refkey;
 };
 
 interface CreateLibraryProps<T extends LibraryDescriptor> {

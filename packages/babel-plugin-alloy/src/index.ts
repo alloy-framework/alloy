@@ -57,10 +57,10 @@ export default () => {
       JSXFragment: transformJSX,
       ImportDeclaration(path: NodePath<t.ImportDeclaration>) {
         const source = path.node.source.value;
-        if (source.endsWith(".jsx")) {
-          path.node.source = t.stringLiteral(source.replace(".jsx", ".js"));
+        if (source.endsWith('.jsx')) {
+          path.node.source = t.stringLiteral(source.replace('.jsx', '.js'));
         }
-      },
+      }
     },
     generatorOverride(ast: any, opts: any) {
       const generator = new JSXPreservingGenerator(ast, opts);

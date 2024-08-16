@@ -4,11 +4,7 @@ import * as ay from "@alloy-js/core";
 import { exists } from "node:fs";
 import * as fs from "node:fs";
 
-export async function writeOutput(
-  dir: ay.OutputDirectory,
-  rootDir: string,
-  clean: boolean = false,
-) {
+export async function writeOutput(dir: ay.OutputDirectory, rootDir: string, clean: boolean = false) {
   if (clean && fs.existsSync(rootDir)) await rm(rootDir, { recursive: true });
 
   for (const item of dir.contents) {

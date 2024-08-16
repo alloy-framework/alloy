@@ -41,9 +41,9 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageNames = props.package.split(".");
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName = parentPackage
-    ? parentPackage.qualifiedName + "." + packageName
-    : packageName;
+  const fullyQualifiedPackageName = parentPackage ?
+    parentPackage.qualifiedName + "." + packageName
+  : packageName;
 
   const scope = createJavaPackageScope(
     useBinder(),

@@ -36,9 +36,8 @@ export function useBinder() {
   return useContext(BinderContext)!;
 }
 
-type HasAdditionalProps<T, U> = Omit<T, keyof U> extends Record<string, never>
-  ? false
-  : true;
+type HasAdditionalProps<T, U> =
+  Omit<T, keyof U> extends Record<string, never> ? false : true;
 
 /**
  * The binder tracks all output scopes and symbols. Scopes are nested containers

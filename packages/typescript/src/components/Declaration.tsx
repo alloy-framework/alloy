@@ -5,7 +5,7 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import { createTsSymbol, TSSymbolFlags } from "../symbols.js";
+import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
 
 export interface DeclarationProps {
   /**
@@ -30,7 +30,6 @@ export interface DeclarationProps {
   default?: boolean;
 
   children?: Children;
-
   /**
    * The name policy kind to apply to the declaration.
    */
@@ -51,7 +50,7 @@ export function Declaration(props: DeclarationProps) {
     flags &= TSSymbolFlags.TypeSymbol;
   }
 
-  const sym = createTsSymbol({
+  const sym = createTSSymbol({
     name: namePolicy.getName(props.name, props.nameKind),
     refkey: props.refkey ?? refkey(props.name),
     export: props.export,

@@ -13,7 +13,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { ImportStatements } from "./ImportStatement.js";
 import { join } from "pathe";
 import { PackageContext } from "./PackageDirectory.js";
-import { createTSModuleScope, TSModuleScope } from "../symbols.js";
+import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { Reference } from "./Reference.js";
 export interface SourceFileContext {

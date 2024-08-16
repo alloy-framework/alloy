@@ -10,10 +10,10 @@ import {
 import {
   createTSModuleScope,
   createTSPackageScope,
-  createTsSymbol,
+  createTSSymbol,
   TSModuleScope,
   TSOutputSymbol,
-} from "./symbols.js";
+} from "./symbols/index.js";
 
 export interface PackageDescriptor {
   [path: string]: ModuleSymbolsDescriptor;
@@ -45,7 +45,7 @@ function createSymbols(
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = createTsSymbol({
+      const sym = createTSSymbol({
         name: symbols.default,
         scope: moduleScope,
         refkey: key,
@@ -58,7 +58,7 @@ function createSymbols(
 
     for (const exportedName of symbols.named ?? []) {
       const key = keys[exportedName];
-      const sym = createTsSymbol({
+      const sym = createTSSymbol({
         name: exportedName,
         scope: moduleScope,
         refkey: key,

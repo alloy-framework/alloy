@@ -26,7 +26,7 @@ import {
   createTSPackageScope,
   TSModuleScope,
   TSPackageScope,
-} from "../symbols.js";
+} from "../symbols/index.js";
 import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {

@@ -9,7 +9,7 @@ import { SourceFile } from "./SourceFile.js";
 import { basename, join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { ExportStatement } from "./ExportStatement.js";
-import { TSModuleScope } from "../symbols.js";
+import { TSModuleScope } from "../symbols/index.js";
 export interface BarrelFileProps {
   path?: string;
   export?: boolean | string;

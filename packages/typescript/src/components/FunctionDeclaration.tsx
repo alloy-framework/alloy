@@ -10,7 +10,7 @@ import {
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTsSymbol, TSSymbolFlags, useTSScope } from "../symbols.js";
+import { createTSSymbol, TSSymbolFlags, useTSScope } from "../symbols/index.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
@@ -23,7 +23,7 @@ function isParameterDescriptor(
   value: Children | ParameterDescriptor,
 ): value is ParameterDescriptor {
   return (
-    typeof value === "object" && value !== null && Object.hasOwn(value, "value")
+    typeof value === "object" && value !== null && Object.hasOwn(value, "type")
   );
 }
 export interface FunctionDeclarationProps
@@ -66,6 +66,7 @@ export interface FunctionParametersProps {
 FunctionDeclaration.Parameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionParametersProps) {
+    debugger;
     const namePolicy = useTSNamePolicy();
 
     let value;
@@ -89,7 +90,7 @@ FunctionDeclaration.Parameters = taggedComponent(
               refkey: refkey(),
               type: value,
             };
-          const sym = createTsSymbol({
+          const sym = createTSSymbol({
             name: key,
             refkey: descriptor.refkey,
             flags: TSSymbolFlags.ParameterSymbol,

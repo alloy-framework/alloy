@@ -12,7 +12,7 @@ import {
   TSModuleScope,
   TSOutputSymbol,
   TSPackageScope,
-} from "../symbols.js";
+} from "../symbols/index.js";
 import { usePackage } from "./PackageDirectory.js";
 import { relative } from "pathe";
 import { modulePath } from "../utils.js";

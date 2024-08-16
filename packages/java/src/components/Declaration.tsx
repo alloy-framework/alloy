@@ -1,5 +1,9 @@
-import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
-import { createJavaSymbol } from "../symbols.js";
+import {
+  Children,
+  Declaration as CoreDeclaration,
+  Refkey,
+} from "@alloy-js/core";
+import { createJavaSymbol } from "../symbols/index.js";
 
 export interface DeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main

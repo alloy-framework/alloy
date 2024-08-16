@@ -4,19 +4,19 @@ export interface ValueProps {
   value?: unknown;
 }
 
-export function Value(props: ValueProps) {
+export function Value(props: ValueProps): any {
   return memo(() => {
     const value = props.value;
 
-    if (typeof value === 'undefined') {
+    if (typeof value === "undefined") {
       return "null";
-    } else if (typeof value === 'number' || typeof value === 'boolean') {
+    } else if (typeof value === "number" || typeof value === "boolean") {
       return String(value);
-    } else if (typeof value === 'string') {
+    } else if (typeof value === "string") {
       return `"${value}"`;
-    } else if (typeof value === 'function') {
+    } else if (typeof value === "function") {
       // functions are inserted as-is.
       return value;
     }
-  })
+  });
 }

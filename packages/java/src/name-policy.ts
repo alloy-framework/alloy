@@ -12,7 +12,6 @@ export type JavaElements =
   | "variable"
   | "method";
 
-
 export function createJavaNamePolicy(): NamePolicy<JavaElements> {
   return createNamePolicy((name, element) => {
     switch (element) {

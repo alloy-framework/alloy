@@ -7,7 +7,9 @@ import { Children, mapJoin } from "@alloy-js/core";
  * @param args Children to collect
  */
 export function collectArguments(args: Children): Children {
-  return Array.isArray(args) ? mapJoin(args, (val) => val, {joiner: ", "}) : args;
+  return Array.isArray(args)
+    ? mapJoin(args, (val) => val, { joiner: ", " })
+    : args;
 }
 
 /**
@@ -15,12 +17,14 @@ export function collectArguments(args: Children): Children {
  *
  * @param args Record of name to argument value
  */
-export function collectNamedArguments(args: Record<string, Children>): Children {
+export function collectNamedArguments(
+  args: Record<string, Children>,
+): Children {
   return mapJoin(
     new Map(Object.entries(args)),
     (key, value) => {
       return [key, " = ", value];
     },
-    { joiner: ", " }
+    { joiner: ", " },
   );
 }

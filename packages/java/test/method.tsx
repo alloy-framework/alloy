@@ -6,7 +6,7 @@ import { d } from "@alloy-js/core/testing";
 import { code, Declaration, refkey } from "@alloy-js/core";
 
 it("declares basic empty function", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Declaration name="Test">
       {code`
         class Test {
@@ -15,8 +15,8 @@ it("declares basic empty function", () => {
           </jv.Method>}
         }
       `}
-    </jv.Declaration>
-  ))
+    </jv.Declaration>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -30,15 +30,15 @@ it("declares basic empty function", () => {
 });
 
 it("declares bodyless function", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Declaration name="Test">
       {code`
         class Test {
           ${<jv.Method accessModifier='public' name="testMethod" />}
         }
       `}
-    </jv.Declaration>
-  ))
+    </jv.Declaration>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -50,7 +50,7 @@ it("declares bodyless function", () => {
 });
 
 it("declares return type", () => {
-  const res = toSourceText((
+  const res = toSourceText(
     <jv.Declaration name="Test">
       {code`
         class Test {
@@ -60,8 +60,8 @@ it("declares return type", () => {
           </jv.Method>}
         }
       `}
-    </jv.Declaration>
-  ))
+    </jv.Declaration>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -103,8 +103,8 @@ it("declares parameters", () => {
           </Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "Test.java": d`
@@ -118,6 +118,6 @@ it("declares parameters", () => {
           return "Test";
         }
       }
-    `
-  })
+    `,
+  });
 });

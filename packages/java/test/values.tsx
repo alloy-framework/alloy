@@ -3,7 +3,7 @@ import * as jv from "../src/components/index.js";
 import "@alloy-js/core/testing";
 
 it("renders string value", () => {
-  expect(<jv.Value value={"Test"} />).toRenderTo("\"Test\"");
+  expect(<jv.Value value={"Test"} />).toRenderTo('"Test"');
 });
 
 it("renders null/undefined object", () => {
@@ -22,7 +22,7 @@ it("renders other objects", () => {
   function Test() {
     return <>
       Test
-    </>
+    </>;
   }
 
   expect(<jv.Value value={Test} />).toRenderTo("Test");

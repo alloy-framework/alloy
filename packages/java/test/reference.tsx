@@ -24,8 +24,8 @@ it("imports reference to source file", () => {
           </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestReference.java": `
@@ -44,8 +44,8 @@ it("imports reference to source file", () => {
         TestReference myImportedVariable;
         public TestImport() {}
       }
-    `
-  })
+    `,
+  });
 });
 
 it("doesn't import if in same package", () => {
@@ -66,8 +66,8 @@ it("doesn't import if in same package", () => {
           {"}"}
         </jv.Declaration>
       </jv.SourceFile>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestReference.java": `
@@ -84,6 +84,6 @@ it("doesn't import if in same package", () => {
         TestReference myImportedVariable;
         public TestImport() {}
       }
-    `
-  })
+    `,
+  });
 });

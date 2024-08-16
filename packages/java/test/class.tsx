@@ -5,11 +5,11 @@ import { d } from "@alloy-js/core/testing";
 import { AccessModifier } from "../src/index.js";
 import { code, refkey } from "@alloy-js/core";
 
-it('works', () => {
-  const res = toSourceText((
+it("works", () => {
+  const res = toSourceText(
     <jv.Class accessModifier='public' abstract final name='TestClass'>
-    </jv.Class>
-  ))
+    </jv.Class>,
+  );
 
   expect(res).toBe(d`
     package me.test.code;
@@ -18,9 +18,9 @@ it('works', () => {
       
     }
   `);
-})
+});
 
-it('extends class', () => {
+it("extends class", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TestSuperclass.java">
@@ -33,8 +33,8 @@ it('extends class', () => {
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestSubclass.java": d`
@@ -46,10 +46,10 @@ it('extends class', () => {
         
       }
     `,
-  })
-})
+  });
+});
 
-it('implements interfaces', () => {
+it("implements interfaces", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="InterfaceOne.java">
@@ -74,8 +74,8 @@ it('implements interfaces', () => {
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
-    </>
-  )
+    </>,
+  );
 
   assertFileContents(res, {
     "TestSubclass.java": d`
@@ -88,5 +88,5 @@ it('implements interfaces', () => {
         
       }
     `,
-  })
-})
+  });
+});

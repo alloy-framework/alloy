@@ -7,9 +7,9 @@ import {
   SourceFile,
   useBinder,
   useContext,
-  useScope
+  useScope,
 } from "@alloy-js/core";
-import { createJavaProjectScope, JavaProjectScope } from "../symbols.js";
+import { createJavaProjectScope, JavaProjectScope } from "../symbols/index.js";
 
 export interface ProjectContext {
   scope: JavaProjectScope;
@@ -34,15 +34,18 @@ export interface ProjectDirectoryProps {
  * Represents a java project directory. Use if you want to generate a Java project
  * with a build tool included (maven, gradle etc).
  */
-export function ProjectDirectory({ javaVersion = 8, buildSystem = "maven", ...props }: ProjectDirectoryProps) {
+export function ProjectDirectory({
+  javaVersion = 8,
+  buildSystem = "maven",
+  ...props
+}: ProjectDirectoryProps) {
   const scope = createJavaProjectScope(useBinder(), useScope(), props.groupId);
 
   const projectContext: ProjectContext = {
-    scope
+    scope,
   };
 
-  return (
-    <>
+  return <>
       <SourceDirectory path="src/main/java">
         <ProjectContext.Provider value={projectContext}>
           <Scope value={scope}>
@@ -84,6 +87,5 @@ export function ProjectDirectory({ javaVersion = 8, buildSystem = "maven", ...pr
           </project>
         `}
       </SourceFile>
-    </>
-  );
+    </>;
 }

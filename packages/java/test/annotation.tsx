@@ -9,7 +9,7 @@ it("Annotates object", () => {
     ${<jv.Annotation type="Getter" />}
     class TestClass {
     }
-  `)
+  `);
 
   expect(res).toBe(d`
     package me.test.code;
@@ -17,15 +17,15 @@ it("Annotates object", () => {
     @Getter
     class TestClass {
     }
-  `)
+  `);
 });
 
-it('Takes single parameter', () => {
+it("Takes single parameter", () => {
   const res = toSourceText(code`
     ${<jv.Annotation type="Getter" value={{ value: <jv.Value value='Test' /> }} />}
     class TestClass {
     }
-  `)
+  `);
 
   expect(res).toBe(d`
     package me.test.code;
@@ -33,10 +33,10 @@ it('Takes single parameter', () => {
     @Getter("Test")
     class TestClass {
     }
-  `)
+  `);
 });
 
-it('Takes named parameters', () => {
+it("Takes named parameters", () => {
   const res = toSourceText(code`
     ${<jv.Annotation type="Getter" value={{
       value1: <jv.Value value='Tester' />,
@@ -44,7 +44,7 @@ it('Takes named parameters', () => {
   }} />}
     class TestClass {
     }
-  `)
+  `);
 
   expect(res).toBe(d`
     package me.test.code;
@@ -52,5 +52,5 @@ it('Takes named parameters', () => {
     @Getter(value1 = "Tester", value2 = "Tested")
     class TestClass {
     }
-  `)
+  `);
 });

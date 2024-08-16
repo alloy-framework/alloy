@@ -50,7 +50,10 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     qualifiedName: fullyQualifiedPackageName
   };
 
-  function ChildComponent() {
+  /**
+   * Recursively defines package directories if we pass name like 'one.two.three'
+   */
+  function ChildPackageDirectory() {
     if (packageNames.length > 1) {
       return (
         <PackageDirectory package={packageNames.slice(1, packageNames.length).join(".")}>
@@ -66,7 +69,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     <PackageDirectoryContext.Provider value={packageContext}>
       <Scope value={scope}>
         <SourceDirectory path={packagePath}>
-          <ChildComponent />
+          <ChildPackageDirectory />
         </SourceDirectory>
       </Scope>
     </PackageDirectoryContext.Provider>

@@ -22,7 +22,7 @@ it("Annotates object", () => {
 
 it('Takes single parameter', () => {
   const res = toSourceText(code`
-    ${<jv.Annotation type="Getter" value={<jv.Value value='Test' /> } />}
+    ${<jv.Annotation type="Getter" value={{ value: <jv.Value value='Test' /> }} />}
     class TestClass {
     }
   `)
@@ -38,7 +38,7 @@ it('Takes single parameter', () => {
 
 it('Takes named parameters', () => {
   const res = toSourceText(code`
-    ${<jv.Annotation type="Getter" arguments={{
+    ${<jv.Annotation type="Getter" value={{
       value1: <jv.Value value='Tester' />,
       value2: <jv.Value value='Tested' />
   }} />}

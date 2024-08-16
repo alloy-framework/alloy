@@ -13,7 +13,7 @@ export function toSourceText(c: Children): string {
   const res = render(
     <Output>
       <ts.SourceFile path="test.ts">{c}</ts.SourceFile>
-    </Output>
+    </Output>,
   );
 
   return res.contents[0].contents as string;
@@ -29,7 +29,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
 
   function findFileWorker(
     res: OutputDirectory,
-    path: string
+    path: string,
   ): OutputFile | null {
     for (const item of res.contents) {
       if (item.kind === "file") {
@@ -50,7 +50,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
 
 export function assertFileContents(
   res: OutputDirectory,
-  expectedFiles: Record<string, string>
+  expectedFiles: Record<string, string>,
 ) {
   for (const [path, contents] of Object.entries(expectedFiles)) {
     const file = findFile(res, path);

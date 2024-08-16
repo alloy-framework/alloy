@@ -2,8 +2,20 @@
  * Specific java symbols used for dep management
  */
 
-import { Binder, memo, OutputScope, OutputSymbol, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
-import { SourceFileContext } from "./components/index.js";
+import {
+  Binder,
+  memo,
+  OutputScope,
+  OutputSymbol,
+  refkey,
+  Refkey,
+  resolve,
+  untrack,
+  useBinder,
+  useContext,
+  useScope
+} from "@alloy-js/core";
+import { DeclarationProps, SourceFileContext, usePackage } from "./components/index.js";
 
 /**
  * Represents an 'exported' symbol from a .java file. Class, enum, interface etc.
@@ -96,4 +108,20 @@ export function createJavaPackageScope(
   return binder.createScope<JavaPackageScope>({
     kind: "package", name, parent,
   });
+}
+
+export function createJavaSymbol(props: DeclarationProps) {
+  const binder = useBinder();
+  const scope = useScope() as JavaOutputScope;
+
+  const parentPackage = usePackage();
+
+  const sym = binder.createSymbol<JavaOutputSymbol>({
+    name: props.name,
+    scope,
+    refkey: props.refkey ?? refkey(props.name),
+    package: parentPackage !== null ? parentPackage?.qualifiedName : ""
+  });
+
+  return sym;
 }

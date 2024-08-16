@@ -1,14 +1,14 @@
-import { TSOutputSymbol, TSSymbolFlags } from "./symbols.js";
+import { TSOutputSymbol, TSSymbolFlags } from "./symbols/index.js";
 
 export function tsNameConflictResolver(
   name: string,
-  symbols: TSOutputSymbol[]
+  symbols: TSOutputSymbol[],
 ) {
   const goodNamedSymbols = symbols.filter(
-    (s) => ~s.flags & TSSymbolFlags.LocalImportSymbol
+    (s) => ~s.flags & TSSymbolFlags.LocalImportSymbol,
   );
   const badNamedSymbols = symbols.filter(
-    (s) => s.flags & TSSymbolFlags.LocalImportSymbol
+    (s) => s.flags & TSSymbolFlags.LocalImportSymbol,
   );
   let nameCount = 1;
   if (goodNamedSymbols.length > 1) {

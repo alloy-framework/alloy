@@ -16,20 +16,20 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@alloy-js/core": "workspace:*",
-    "@alloy-js/typescript": "workspace:*",
-    "@alloy-js/java": "workspace:*"
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@alloy-js/java": "workspace:~"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.7",
-    "@babel/preset-typescript": "^7.24.7",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/node": "^20.14.12",
-    "babel-preset-alloy": "workspace:*",
-    "concurrently": "^8.2.2",
-    "typescript": "^5.5.2",
-    "vitest": "^1.6.0"
+    "@babel/cli": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/node": "catalog:",
+    "babel-preset-alloy": "workspace:~",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "overrides": {
     "esbuild": "0.23"

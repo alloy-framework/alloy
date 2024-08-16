@@ -1,0 +1,36 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - run: pnpx pkg-pr-new publish './packages/*'
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - run: pnpm install
+        name: Install dependencies
+
+      - run: pnpm --filter="@alloy-js/prettier-plugin-alloy..." run  build
+        name: Build
+
+      - run: pnpm run format:check
+        name: Check formatting

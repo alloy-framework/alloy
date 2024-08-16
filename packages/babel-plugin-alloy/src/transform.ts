@@ -15,7 +15,7 @@ export function transformJSX(
     | t.JSXSpreadChild
     | t.JSXText
   >,
-  state: { opts: Options }
+  state: { opts: Options },
 ) {
   const node = path.node;
   if (visited.has(node)) {
@@ -26,7 +26,7 @@ export function transformJSX(
   if (path.isJSXElement() || path.isJSXFragment()) {
     transformElement(
       path as NodePath<t.JSXElement | t.JSXFragment>,
-      state.opts
+      state.opts,
     );
   }
 
@@ -35,7 +35,7 @@ export function transformJSX(
 
 function transformElement(
   path: NodePath<t.JSXElement | t.JSXFragment>,
-  opts: Options
+  opts: Options,
 ) {
   const children = path.get("children");
   if (children.length === 0) {
@@ -94,7 +94,7 @@ function transformElement(
     currentIndent = t.jsxElement(
       t.jsxOpeningElement(id, []),
       t.jsxClosingElement(id),
-      []
+      [],
     );
     (currentIndent as any).alloyCreated = true;
     newChildren.push(currentIndent);
@@ -131,7 +131,7 @@ function registerIndent(path: NodePath, opts: Options) {
       moduleName,
       {
         nameHint: `$Indent`,
-      }
+      },
     );
     imports.set(`${moduleName}:Indent`, id);
     return t.jsxIdentifier(id.name);
@@ -174,7 +174,7 @@ interface OtherToken extends ChildTokenBase {
 }
 
 function* childTokens(
-  path: NodePath<t.JSXElement | t.JSXFragment>
+  path: NodePath<t.JSXElement | t.JSXFragment>,
 ): IterableIterator<ChildToken> {
   const children = path.get("children");
   let literalIndent: string | undefined = undefined;

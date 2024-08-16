@@ -182,7 +182,7 @@ export function render(children: Children): OutputDirectory {
 
   if (!rootDirectory) {
     throw new Error(
-      "No root directory found. Make sure you are using the Output component."
+      "No root directory found. Make sure you are using the Output component.",
     );
   }
 
@@ -190,7 +190,7 @@ export function render(children: Children): OutputDirectory {
 
   function collectSourceFiles(
     currentDirectory: OutputDirectory | undefined,
-    root: RenderTextTree
+    root: RenderTextTree,
   ) {
     if (!Array.isArray(root)) {
       return;
@@ -218,7 +218,7 @@ export function render(children: Children): OutputDirectory {
       if (!currentDirectory) {
         // This shouldn't happen if you're using the Output component.
         throw new Error(
-          "Source file doesn't have parent directory. Make sure you have used the Output component."
+          "Source file doesn't have parent directory. Make sure you have used the Output component.",
         );
       }
       const sourceFile: OutputFile = {
@@ -260,7 +260,7 @@ interface RenderState {
 function renderWorker(
   node: RenderTextTree,
   children: Children,
-  state: RenderState
+  state: RenderState,
 ) {
   traceRender("render", dumpChildren(children));
 
@@ -282,7 +282,7 @@ function appendChild(
   node: RenderTextTree,
   rawChild: Child,
   indentState: IndentState,
-  state: RenderState
+  state: RenderState,
 ) {
   traceRender("appendChild", printChild(rawChild));
   const child = normalizeChild(rawChild);

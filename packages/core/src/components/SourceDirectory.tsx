@@ -24,14 +24,17 @@ export function SourceDirectory(props: SourceDirectoryProps) {
   const nodeContext = getContext()!;
   const context = createSourceDirectoryContext(props.path, parentDir);
 
-  nodeContext.meta ??= {}
+  nodeContext.meta ??= {};
   nodeContext.meta.directory = {
-    path: sdPath
+    path: sdPath,
   };
   return <SourceDirectoryContext.Provider value={context}>{props.children}</SourceDirectoryContext.Provider>;
 }
 
-function createSourceDirectoryContext(path: string = "./", parentDir?: SourceDirectoryContext): SourceDirectoryContext {
+function createSourceDirectoryContext(
+  path: string = "./",
+  parentDir?: SourceDirectoryContext,
+): SourceDirectoryContext {
   const contents = shallowReactive([] as any);
   const context: SourceDirectoryContext = {
     path,
@@ -39,7 +42,7 @@ function createSourceDirectoryContext(path: string = "./", parentDir?: SourceDir
     addContent(content) {
       contents.push(content);
     },
-  }
+  };
   if (parentDir) {
     parentDir.addContent(context);
   }

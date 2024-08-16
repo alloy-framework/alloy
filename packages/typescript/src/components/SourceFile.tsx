@@ -13,10 +13,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { ImportStatements } from "./ImportStatement.js";
 import { join } from "pathe";
 import { PackageContext } from "./PackageDirectory.js";
-import {
-  createTSModuleScope,
-  TSModuleScope,
-} from "../symbols.js";
+import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { Reference } from "./Reference.js";
 export interface SourceFileContext {
@@ -59,8 +56,7 @@ export function SourceFile(props: SourceFileProps) {
     }
   }
 
-  return (
-    <CoreSourceFile path={props.path} filetype="typescript" reference={Reference}>
+  return <CoreSourceFile path={props.path} filetype="typescript" reference={Reference}>
       {scope.importedModules.size > 0 ? (
         <>
           <ImportStatements records={scope.importedModules} />
@@ -69,6 +65,5 @@ export function SourceFile(props: SourceFileProps) {
       ) : undefined}<SourceFileContext.Provider value={sfContext}>
         <Scope value={scope}>{props.children}</Scope>
       </SourceFileContext.Provider>
-    </CoreSourceFile>
-  );
+    </CoreSourceFile>;
 }

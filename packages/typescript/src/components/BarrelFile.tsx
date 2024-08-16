@@ -1,9 +1,15 @@
-import { mapJoin, memo, SourceDirectoryContext, SourceFileContext, useContext } from "@alloy-js/core";
+import {
+  mapJoin,
+  memo,
+  SourceDirectoryContext,
+  SourceFileContext,
+  useContext,
+} from "@alloy-js/core";
 import { SourceFile } from "./SourceFile.js";
 import { basename, join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { ExportStatement } from "./ExportStatement.js";
-import { TSModuleScope } from "../symbols.js";
+import { TSModuleScope } from "../symbols/index.js";
 export interface BarrelFileProps {
   path?: string;
   export?: boolean | string;
@@ -13,34 +19,34 @@ export function BarrelFile(props: BarrelFileProps) {
   const path = props.path ?? "index.ts";
   const directory = useContext(SourceDirectoryContext)!;
   const sdData = getSourceDirectoryData(directory);
-  
+
   const exports = memo(() => {
-    const subdirs =
-      directory.contents.filter(c => !(c as any).filetype) as SourceDirectoryContext[];
+    const subdirs = directory.contents.filter(
+      (c) => !(c as any).filetype,
+    ) as SourceDirectoryContext[];
 
     const nestedBarrels: TSModuleScope[] = [];
     for (const subdir of subdirs) {
       const nestedSdData = getSourceDirectoryData(subdir);
-      const nestedBarrel = Array.from(nestedSdData.modules)
-        .find(m => basename(m.name) === "index.ts");
+      const nestedBarrel = Array.from(nestedSdData.modules).find(
+        (m) => basename(m.name) === "index.ts",
+      );
       if (nestedBarrel) {
         nestedBarrels.push(nestedBarrel);
       }
     }
 
-    const sourceFiles = Array.from(sdData.modules)
-      .filter(m => basename(m.name) !== "index.ts")
+    const sourceFiles = Array.from(sdData.modules).filter(
+      (m) => basename(m.name) !== "index.ts",
+    );
 
-    const allModules = [
-      ... sourceFiles,
-      ... nestedBarrels
-    ]
+    const allModules = [...sourceFiles, ...nestedBarrels];
     return mapJoin(allModules, (module) => {
-      return <ExportStatement star from={module} />
+      return <ExportStatement star from={module} />;
     });
   });
 
   return <SourceFile path={path} export={props.export}>
     {exports}
-  </SourceFile>
+  </SourceFile>;
 }

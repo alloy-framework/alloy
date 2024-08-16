@@ -1,7 +1,7 @@
 // this code is split into a tokenizer and a parser of sorts because I feel like
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
-import { Child, Indent } from "#core";
+import { Child, Indent } from "@alloy-js/core";
 
 interface IndentLevelData {
   kind: "indent";
@@ -69,8 +69,9 @@ export function code(
 
   function popIndent(child?: ChildToken) {
     // indentation level decreased (can decrease by many)
-    const times = child
-      ? indentNodes.length - child.indentationLevel - 1
+    const times =
+      child ?
+        indentNodes.length - child.indentationLevel - 1
       : indentNodes.length - 1;
     for (let i = 0; i < times; i++) {
       flushLines();
@@ -107,7 +108,7 @@ interface OtherToken extends ChildTokenBase {
 
 function* childTokens(
   template: TemplateStringsArray,
-  substitutions: Child[]
+  substitutions: Child[],
 ): IterableIterator<ChildToken> {
   let newline = false;
   const indentStack: { level: number; literalIndent: string }[] = [
@@ -119,7 +120,7 @@ function* childTokens(
 
   yield* processLiteralString(
     template[0],
-    substitutions.length === 0 ? "only" : "first"
+    substitutions.length === 0 ? "only" : "first",
   );
   newline = false;
   for (let i = 0; i < substitutions.length; i++) {
@@ -132,14 +133,14 @@ function* childTokens(
     };
     yield* processLiteralString(
       template[i + 1],
-      i === substitutions.length - 1 ? "last" : undefined
+      i === substitutions.length - 1 ? "last" : undefined,
     );
     newline = false;
   }
 
   function processLiteralString(
     child: string,
-    pos?: "first" | "last" | "only"
+    pos?: "first" | "last" | "only",
   ) {
     const lines = child.split("\n");
     const lineTokens: LineToken[] = [];

@@ -1,5 +1,5 @@
 import { Refkey } from "@alloy-js/core";
-import { ref } from "../symbols.js";
+import { ref } from "../symbols/index.js";
 
 export interface ReferenceProps {
   refkey: Refkey;

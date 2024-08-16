@@ -1,13 +1,10 @@
 import { createContext, useContext } from "../context.js";
 import { Children, getContext } from "@alloy-js/core/jsx-runtime";
-if ((globalThis as any).alloyIndent) {
-  throw "FAIL";
-}
-(globalThis as any).alloyIndent = true;
+
 export const IndentContext = createContext<IndentState>({
   level: 0,
   indent: "  ",
-  indentString: ""
+  indentString: "",
 });
 
 export interface IndentProps {
@@ -26,7 +23,7 @@ export function Indent(props: IndentProps) {
   const previousIndent = useContext(IndentContext) ?? {
     level: 0,
     indent: props.indent ?? "  ",
-    indentString: ""
+    indentString: "",
   };
 
   const level = previousIndent.level + 1;

@@ -1,31 +1,53 @@
-import { BinderContext, createOutputBinder, getSymbolCreator, NameConflictResolver, SymbolCreator } from "../binder.js";
+import {
+  BinderContext,
+  createOutputBinder,
+  getSymbolCreator,
+  NameConflictResolver,
+  SymbolCreator,
+} from "../binder.js";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamePolicy, NamePolicyContext } from "../name-policy.js";
 import { SourceDirectory, SourceDirectoryContext } from "./SourceDirectory.js";
 
 export interface OutputProps {
   children?: Children;
+  /**
+   * External libraries whose symbols should be available for reference.
+   */
   externals?: SymbolCreator[];
+
+  /**
+   * Name policy to use for this output.
+   */
   namePolicy?: NamePolicy<string>;
-  // any[] is used here because otherwise passing a callback that expects subtypes
-  // of symbols won't work. Probably making it generic would help.
+
+  /**
+   * Policy for handling multiple symbols declared with the same name.
+   */
   nameConflictResolver?: (name: string, symbols: any[]) => void;
+
+  /**
+   * The base path for the output contents. Defaults to "."
+   */
+  basePath?: string;
 }
 
 export function Output(props: OutputProps) {
+  const basePath = props.basePath ?? "./";
   const binder = createOutputBinder({
-    nameConflictResolver: props.nameConflictResolver
+    nameConflictResolver: props.nameConflictResolver,
   });
-  const dir = <SourceDirectory path="./">
+  const dir =
+    <SourceDirectory path={basePath}>
     {props.children}
-  </SourceDirectory>
+  </SourceDirectory>;
 
   if (props.externals) {
     for (const global of props.externals) {
       getSymbolCreator(global)(binder);
     }
   }
-  
+
   return <BinderContext.Provider value={binder}>
     {
       props.namePolicy ?
@@ -34,5 +56,5 @@ export function Output(props: OutputProps) {
         </NamePolicyContext.Provider> :
         dir
     }
-  </BinderContext.Provider>
+  </BinderContext.Provider>;
 }

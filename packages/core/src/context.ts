@@ -21,19 +21,18 @@ export interface ContextProviderProps<T = unknown> {
 export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
-  while (current !== null) {
-    const currentContextValue = current?.context?.[context.id];
-    if (currentContextValue) {
-      return currentContextValue as T;
+  while (current) {
+    if (Object.hasOwn(current.context!, context.id)) {
+      return current.context![context.id] as T | undefined;
     }
-    current = current?.owner;
+    current = current.owner;
   }
 
-  return context?.default;
+  return context.default;
 }
 
 export function createContext<T = unknown>(
-  defaultValue?: T
+  defaultValue?: T,
 ): ComponentContext<T> {
   const id = Symbol("context");
   return {
@@ -44,9 +43,7 @@ export function createContext<T = unknown>(
 
       let rendered = shallowRef();
       effect(() => {
-        if (context && context.context) {
-          context.context[id] = props.value;
-        }
+        context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);
       });
 

@@ -1,11 +1,9 @@
 {
   "files": [],
-  "compilerOptions": {
-    "disableSourceOfProjectReferenceRedirect": true
-  },
   "references": [
     { "path": "packages/core" },
     { "path": "packages/typescript" },
+    { "path": "packages/prettier-plugin-alloy" }
     { "path": "packages/java" }
   ]
 }

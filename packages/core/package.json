@@ -3,41 +3,33 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
-  "imports": {
-    "#core": {
-      "node": "./dist/src/index.js",
-      "default": "./dist/src/index.js"
-    }
-  },
   "exports": {
     ".": {
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts"
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
     },
     "./jsx-runtime": {
-      "import": "./dist/src/jsx-runtime.js",
-      "require": "./dist/src/jsx-runtime.js",
-      "types": "./dist/src/jsx-runtime.d.ts"
+      "development": "./src/jsx-runtime.ts",
+      "import": "./dist/src/jsx-runtime.js"
     },
     "./testing": {
-      "import": "./dist/testing/index.js",
-      "require": "./dist/testing/index.js",
-      "types": "./dist/testing/index.d.ts"
+      "development": "./testing/index.ts",
+      "import": "./dist/testing/index.js"
     },
     "./stc": {
-      "import": "./dist/src/components/stc/index.js",
-      "require": "./dist/src/components/stc/index.js",
-      "types": "./dist/src/components/stc/index.d.ts"
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
     }
   },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",
     "build-testing": "babel testing -d dist/testing --extensions .ts,.tsx",
     "build": "tsc -p . && npm run build-src && npm run build-testing",
-    "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
-    "watch-testing": "babel testing -d dist/testing --extensions .ts,.tsx --watch",
+    "clean": "rimraf dist/ .temp/",
+    "test": "vitest run",
+    "test:watch": "vitest -w",
+    "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
+    "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
     "watch-tsc": "tsc -p . --watch",
     "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\""
   },
@@ -45,19 +37,19 @@
   "author": "brian.terlson@microsoft.com",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.24.7",
-    "@babel/preset-typescript": "^7.24.7",
-    "@vue/reactivity": "^3.4.30",
-    "babel-preset-alloy": "workspace:*",
-    "pathe": "^1.1.2"
+    "@babel/core": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@vue/reactivity": "catalog:",
+    "babel-preset-alloy": "workspace:~",
+    "pathe": "catalog:"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.7",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "concurrently": "^8.2.2",
-    "typescript": "^5.5.2",
-    "vitest": "^1.6.0"
+    "@babel/cli": "catalog:",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "overrides": {
     "esbuild": "0.23"

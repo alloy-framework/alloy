@@ -3,7 +3,8 @@ import { SourceDirectory } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import { writeOutput } from "./write-output.js";
 
-const result = ay.render(<ay.Output>
+const result = ay.render(
+  <ay.Output>
   <ts.PackageDirectory name="greeting-lib" path="greeting-lib" version="1.0.0">
     <ts.SourceFile path="greetings.ts">
       <ts.FunctionDeclaration name="getGreeting">
@@ -25,6 +26,7 @@ const result = ay.render(<ay.Output>
       {ay.refkey("getGreeting")}();
     </ts.SourceFile>
   </ts.PackageDirectory>
-</ay.Output>);
+</ay.Output>,
+);
 
 writeOutput(result, "./sample-output");

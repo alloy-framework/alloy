@@ -1,5 +1,5 @@
 import { dirname, relative } from "pathe";
-import { TSModuleScope, TSOutputSymbol } from "../symbols.js";
+import { TSModuleScope, TSOutputSymbol } from "../symbols/index.js";
 import { useSourceFile } from "./SourceFile.js";
 import { modulePath } from "../utils.js";
 
@@ -14,7 +14,7 @@ export function ExportStatement(props: ExportStatementProps) {
     for (const symbol of props.from!.symbols.values()) {
       module.scope.exportedSymbols.set(symbol.refkey, symbol as TSOutputSymbol);
     }
-    return <>export * from "{modulePath(relative(dirname(module.scope.name), props.from!.name))}";</>
+    return <>export * from "{modulePath(relative(dirname(module.scope.name), props.from!.name))}";</>;
   }
 
   return "";

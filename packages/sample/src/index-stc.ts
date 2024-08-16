@@ -19,7 +19,7 @@ const result = render(
           .children(
             ts.FunctionDeclaration({ name: "getGreeting" }).code`
               return "Hello world!"
-            `
+            `,
           ),
         ts
           .SourceFile({
@@ -28,9 +28,9 @@ const result = render(
           .children(
             ts.FunctionDeclaration({ name: "getGreeting" }).code`
               console.log("Hello world!");
-            `
+            `,
           ),
-        ts.BarrelFile({ export: "." })
+        ts.BarrelFile({ export: "." }),
       ),
     ts
       .PackageDirectory({
@@ -41,9 +41,9 @@ const result = render(
       .children(
         ts.SourceFile({ export: ".", path: "ref.ts" }).code`
           ${ts.Reference({ refkey: refkey("getGreeting") })}();
-        `
-      )
-  )
+        `,
+      ),
+  ),
 );
 
 writeOutput(result, "sample-output");

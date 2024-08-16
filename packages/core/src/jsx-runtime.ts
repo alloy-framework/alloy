@@ -12,7 +12,7 @@ import { Refkey } from "./refkey.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
-    "Multiple versions of the JSX Runtime have been loaded. This will likely cause undesirable behavior."
+    "Multiple versions of the JSX Runtime have been loaded. This will likely cause undesirable behavior.",
   );
 }
 (globalThis as any).ALLOY = true;
@@ -48,7 +48,7 @@ export function root<T>(fn: (d: Disposable) => T, src?: string): T {
       for (const d of globalContext!.disposables) {
         d();
       }
-    })
+    }),
   );
   globalContext = globalContext!.owner;
 
@@ -140,7 +140,7 @@ export function isComponentCreator(item: unknown): item is ComponentCreator {
 
 export function createComponent<TProps = Props>(
   C: Component<TProps>,
-  props: TProps
+  props: TProps,
 ): ComponentCreator<TProps> {
   const creator = () => /* */ C(props);
   creator.component = C;
@@ -152,7 +152,7 @@ export function createComponent<TProps = Props>(
 
 export function taggedComponent<TProps = Props>(
   tag: Symbol,
-  component: Component<TProps>
+  component: Component<TProps>,
 ): Component<TProps> {
   component.tag = tag;
   return component;
@@ -162,13 +162,13 @@ export function mergeProps<T, U>(source: T, source1: U): T & U;
 export function mergeProps<T, U, V>(
   source: T,
   source1: U,
-  source2: V
+  source2: V,
 ): T & U & V;
 export function mergeProps<T, U, V, W>(
   source: T,
   source1: U,
   source2: V,
-  source3: W
+  source3: W,
 ): T & U & V & W;
 export function mergeProps(...sources: any): any {
   const target = {};

@@ -15,7 +15,7 @@ export function useNamePolicy() {
 }
 
 export function createNamePolicy<T extends string>(
-  namer: (name: string, elements: T) => string
+  namer: (name: string, elements: T) => string,
 ): NamePolicy<T> {
   return {
     getName(name, element) {

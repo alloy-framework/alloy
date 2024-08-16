@@ -7,8 +7,8 @@ import { Children, mapJoin } from "@alloy-js/core";
  * @param args Children to collect
  */
 export function collectArguments(args: Children): Children {
-  return Array.isArray(args)
-    ? mapJoin(args, (val) => val, { joiner: ", " })
+  return Array.isArray(args) ?
+      mapJoin(args, (val) => val, { joiner: ", " })
     : args;
 }
 

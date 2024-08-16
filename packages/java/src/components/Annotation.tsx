@@ -12,9 +12,10 @@ export interface AnnotationProps {
  * For instance, use this if you want to annotate a method with '@Override'.
  */
 export function Annotation(props: AnnotationProps) {
-  const args = props.value
-    ? Object.keys(props.value).length === 1
-      ? Object.values(props.value)[0]
+  const args =
+    props.value ?
+      Object.keys(props.value).length === 1 ?
+        Object.values(props.value)[0]
       : collectNamedArguments(props.value as Record<string, Child>)
     : "";
   const supplyingArgs = props.value ? code`(${args})` : "";

@@ -18,9 +18,9 @@ export interface InterfaceProps extends DeclarationProps, ObjectModifiers {
 export function Interface(props: InterfaceProps) {
   const name = useJavaNamePolicy().getName(props.name, "interface");
   const collectedInterfaces = collectArguments(props.extends);
-  const implementsExpression = props.extends
-    ? code` extends ${collectedInterfaces}`
-    : "";
+  const implementsExpression = props.extends ?
+    code` extends ${collectedInterfaces}`
+  : "";
   const modifiers = collectModifiers(props);
   return <Declaration {...props} name={name}>
       {collectAccessModifier(props.accessModifier)}{modifiers}interface <Name />{implementsExpression} {"{"}

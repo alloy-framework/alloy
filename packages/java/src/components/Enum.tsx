@@ -18,9 +18,9 @@ export interface EnumProps extends DeclarationProps, ObjectModifiers {
 export function Enum(props: EnumProps) {
   const name = useJavaNamePolicy().getName(props.name, "enum");
   const collectedInterfaces = collectArguments(props.implements);
-  const implementsExpression = props.implements
-    ? code` implements ${collectedInterfaces}`
-    : "";
+  const implementsExpression = props.implements ?
+    code` implements ${collectedInterfaces}`
+  : "";
   const modifiers = collectModifiers(props);
   return <Declaration {...props} name={name}>
       {collectAccessModifier(props.accessModifier)}{modifiers}enum <Name />{implementsExpression} {"{"}

@@ -36,10 +36,7 @@ export interface AssignmentContext {
 export const AssignmentContext = createContext<AssignmentContext>();
 
 export function VarDeclaration(props: VarDeclarationProps) {
-  const keyword =
-    props.var ? "var"
-    : props.let ? "let"
-    : "const";
+  const keyword = props.var ? "var" : props.let ? "let" : "const";
   const type = props.type ? <>: {props.type}</> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
   const sym = createTSSymbol({

@@ -103,9 +103,11 @@ export function isKeyedChild(child: Child): child is ComponentCreator {
 
 export function stc<T extends {}>(Component: ComponentDefinition<T>) {
   return (
-    ...args: unknown extends T ? []
-    : {} extends Omit<T, "children"> ? [props?: T]
-    : [props: T]
+    ...args: unknown extends T
+      ? []
+      : {} extends Omit<T, "children">
+      ? [props?: T]
+      : [props: T]
   ) => {
     const fn: ComponentCreator<T> & {
       code(

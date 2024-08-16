@@ -130,11 +130,11 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.children;
   }
 
-  let assignmentContext: AssignmentContext | undefined = sym ?
-    {
-      target: sym,
-    }
-  : undefined;
+  let assignmentContext: AssignmentContext | undefined = sym
+    ? {
+        target: sym,
+      }
+    : undefined;
   return <>
     {sym ? sym.name : name}: <AssignmentContext.Provider value={assignmentContext}>
       {value}

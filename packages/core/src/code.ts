@@ -69,9 +69,8 @@ export function code(
 
   function popIndent(child?: ChildToken) {
     // indentation level decreased (can decrease by many)
-    const times =
-      child ?
-        indentNodes.length - child.indentationLevel - 1
+    const times = child
+      ? indentNodes.length - child.indentationLevel - 1
       : indentNodes.length - 1;
     for (let i = 0; i < times; i++) {
       flushLines();

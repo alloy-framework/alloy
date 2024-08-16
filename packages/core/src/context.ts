@@ -25,10 +25,10 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
     if (Object.hasOwn(current.context!, context.id)) {
       return current.context![context.id] as T | undefined;
     }
-    current = current?.owner;
+    current = current.owner;
   }
 
-  return context?.default;
+  return context.default;
 }
 
 export function createContext<T = unknown>(
@@ -43,9 +43,7 @@ export function createContext<T = unknown>(
 
       let rendered = shallowRef();
       effect(() => {
-        if (context && context.context) {
-          context.context[id] = props.value;
-        }
+        context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);
       });
 

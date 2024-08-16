@@ -12,10 +12,6 @@ export interface ClassProps extends DeclarationProps, ObjectModifiers {
 }
 
 export function Class(props: ClassProps) {
-  if (Array.isArray(props.extends) && props.extends.length > 1) {
-    throw new Error("A class can only extend a single object")
-  }
-
   const name = useJavaNamePolicy().getName(props.name, "class");
   const extendExpression = props.extends ? code` extends ${props.extends}` : "";
   const collectedInterfaces = collectArguments(props.implements)

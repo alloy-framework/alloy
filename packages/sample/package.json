@@ -17,8 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
-    "@alloy-js/typescript": "workspace:~"
-    "@alloy-js/java": "workspace:*"
+    "@alloy-js/typescript": "workspace:~",
+    "@alloy-js/java": "workspace:~"
   },
   "devDependencies": {
     "@babel/cli": "catalog:",

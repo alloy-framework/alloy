@@ -1,6 +1,5 @@
-import { Children, Declaration as CoreDeclaration, Refkey, refkey, useBinder, useScope } from "@alloy-js/core";
-import { JavaOutputScope, JavaOutputSymbol } from "../symbols.js";
-import { usePackage } from "./PackageDirectory.js";
+import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
+import { createJavaSymbol } from "../symbols.js";
 
 export interface DeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main
@@ -18,20 +17,4 @@ export function Declaration(props: DeclarationProps) {
   return <CoreDeclaration symbol={sym}>
     {props.children}
   </CoreDeclaration>;
-}
-
-export function createJavaSymbol(props: DeclarationProps) {
-  const binder = useBinder();
-  const scope = useScope() as JavaOutputScope;
-
-  const parentPackage = usePackage();
-
-  const sym = binder.createSymbol<JavaOutputSymbol>({
-    name: props.name,
-    scope,
-    refkey: props.refkey ?? refkey(props.name),
-    package: parentPackage !== null ? parentPackage?.qualifiedName : ""
-  });
-
-  return sym;
 }

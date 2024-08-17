@@ -2,7 +2,6 @@ import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { code, Declaration, Output, refkey } from "@alloy-js/core";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
-import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
@@ -10,7 +9,7 @@ it("works", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Variable accessModifier='public' static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
+          ${<jv.Variable public static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
         }
       `}
     </jv.Declaration>,
@@ -41,7 +40,7 @@ it("works with external type", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Variable accessModifier='public' static type={refkey("Model")} name='myModel' />}
+                ${<jv.Variable public static type={refkey("Model")} name='myModel' />}
               }
             `}
           </Declaration>
@@ -79,7 +78,7 @@ it("declares new object", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.ObjectDeclaration accessModifier='public' static type={refkey("Model")} name='myModel' arguments={<jv.Value value="initValue" />} />}
+                ${<jv.ObjectDeclaration public static type={refkey("Model")} name='myModel' arguments={<jv.Value value="initValue" />} />}
               }
             `}
           </Declaration>

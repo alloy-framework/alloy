@@ -1,11 +1,10 @@
 import { code, Refkey } from "@alloy-js/core";
-import { Child, Children } from "@alloy-js/core/jsx-runtime";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { Parameters } from "./Parameters.js";
 import { Name } from "./Name.js";
-import { AccessModifier, collectAccessModifier } from "../object-modifiers.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 
-export interface ConstructorProps {
-  accessModifier?: AccessModifier;
+export interface ConstructorProps extends ObjectModifiers {
   name?: string;
   parameters?: Record<string, Children>; // Map of parameter name to type
   children?: Children;
@@ -17,8 +16,9 @@ export interface ConstructorProps {
  */
 export function Constructor(props: ConstructorProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
+  const modifiers = collectModifiers(props);
   return code`
-        ${collectAccessModifier(props.accessModifier)}${props.name ?? <Name />}(${params}) {
+        ${modifiers}${props.name ?? <Name />}(${params}) {
           ${props.children}
         }
     `;

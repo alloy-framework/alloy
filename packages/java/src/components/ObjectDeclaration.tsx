@@ -2,12 +2,11 @@ import { DeclarationProps } from "./Declaration.js";
 import { Child, Children, code } from "@alloy-js/core";
 import { collectArguments } from "../arguments.js";
 import { Variable } from "./Variable.js";
-import { AccessModifier, ObjectModifiers } from "../object-modifiers.js";
+import { ObjectModifiers } from "../object-modifiers.js";
 
 export interface ObjectDeclarationProps
   extends DeclarationProps,
     ObjectModifiers {
-  accessModifier?: AccessModifier;
   type: Children;
   arguments?: Children;
 }

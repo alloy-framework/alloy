@@ -2,7 +2,6 @@ import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
 import { code, Declaration, refkey } from "@alloy-js/core";
-import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
@@ -11,7 +10,7 @@ it("works", () => {
     <Declaration name="TestClass">
       {code`
         public class TestClass {
-          ${<jv.Constructor accessModifier='public' name="TestClass" />}
+          ${<jv.Constructor public name="TestClass" />}
         }
       `}
     </Declaration>
@@ -35,7 +34,7 @@ it("takes name from class", () => {
     <Declaration name="TestClass">
       {code`
         public class TestClass {
-          ${<jv.Constructor accessModifier='public' />}
+          ${<jv.Constructor public />}
         }
       `}
     </Declaration>
@@ -69,7 +68,7 @@ it("declares parameters", () => {
           <Declaration name="TestClass">
             {code`
               public class TestClass {
-                ${<jv.Constructor accessModifier='public' parameters={{
+                ${<jv.Constructor public parameters={{
                   type: refkey("Model"),
                   age: "int"
                 }} />}

@@ -1,7 +1,6 @@
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
-import { AccessModifier } from "../src/index.js";
 import { d } from "@alloy-js/core/testing";
 import { code, Declaration, refkey } from "@alloy-js/core";
 
@@ -10,7 +9,7 @@ it("declares basic empty function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod">
+          ${<jv.Method public name="testMethod">
             System.out.println("Test");
           </jv.Method>}
         }
@@ -34,7 +33,7 @@ it("declares bodyless function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod" />}
+          ${<jv.Method public name="testMethod" />}
         }
       `}
     </jv.Declaration>,
@@ -54,7 +53,7 @@ it("declares return type", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod" return='String'>
+          ${<jv.Method public name="testMethod" return='String'>
             System.out.println("Test");
             return "Test";
           </jv.Method>}
@@ -91,7 +90,7 @@ it("declares parameters", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Method accessModifier='public' name="testMethod" parameters={{
+                ${<jv.Method public name="testMethod" parameters={{
                   myModel: refkey("Model"),
                   name: "String"
                   }}>

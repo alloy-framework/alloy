@@ -2,12 +2,11 @@ import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
 import { d } from "@alloy-js/core/testing";
-import { AccessModifier } from "../src/index.js";
 import { code, refkey } from "@alloy-js/core";
 
 it("works", () => {
   const res = toSourceText(
-    <jv.Class accessModifier='public' abstract final name='TestClass'>
+    <jv.Class public abstract final name='TestClass'>
     </jv.Class>,
   );
 
@@ -24,12 +23,12 @@ it("extends class", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TestSuperclass.java">
-        <jv.Class accessModifier='public' name='TestSuperclass'>
+        <jv.Class public name='TestSuperclass'>
         </jv.Class>
       </jv.SourceFile>
       <jv.PackageDirectory package='import'>
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class accessModifier='public' name='TestSubclass' extends={refkey("TestSuperclass")}>
+          <jv.Class public name='TestSubclass' extends={refkey("TestSuperclass")}>
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -70,7 +69,7 @@ it("implements interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class accessModifier='public' name="TestSubclass" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Class public name="TestSubclass" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>

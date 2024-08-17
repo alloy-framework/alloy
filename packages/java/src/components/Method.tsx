@@ -1,15 +1,9 @@
 import { Children, code } from "@alloy-js/core";
-import {
-  AccessModifier,
-  collectAccessModifier,
-  collectModifiers,
-  ObjectModifiers,
-} from "../object-modifiers.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Parameters } from "./Parameters.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 
 export interface MethodProps extends ObjectModifiers {
-  accessModifier?: AccessModifier;
   name: string;
   return?: Children;
   parameters?: Record<string, Children>;
@@ -28,6 +22,6 @@ export function Method(props: MethodProps) {
   `
   : ";";
   return code`
-        ${collectAccessModifier(props.accessModifier)}${modifiers}${props.return ?? "void"} ${name}(${params})${sBody}
+        ${modifiers}${props.return ?? "void"} ${name}(${params})${sBody}
     `;
 }

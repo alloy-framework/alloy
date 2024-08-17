@@ -1,7 +1,6 @@
 import { it } from "vitest";
 import { assertFileContents, testRender } from "./utils.js";
 import * as jv from "../src/components/index.js";
-import { AccessModifier } from "../src/index.js";
 import { refkey } from "@alloy-js/core";
 
 it("imports reference to source file", () => {

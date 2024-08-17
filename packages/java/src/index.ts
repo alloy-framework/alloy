@@ -5,3 +5,4 @@ export * from "./object-modifiers.js";
 export * from "./arguments.js";
 export * from "./builtins/index.js";
 export * from "./symbols/index.js";
+export * from "./generics.js";

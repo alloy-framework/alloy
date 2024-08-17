@@ -4,8 +4,12 @@ import { useJavaNamePolicy } from "../name-policy.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Name } from "./Name.js";
 import { collectArguments } from "../arguments.js";
+import { collectGenerics, GenericTypes } from "../generics.js";
 
-export interface InterfaceProps extends DeclarationProps, ObjectModifiers {
+export interface InterfaceProps
+  extends DeclarationProps,
+    ObjectModifiers,
+    GenericTypes {
   extends?: Children;
 }
 
@@ -16,8 +20,9 @@ export function Interface(props: InterfaceProps) {
     code` extends ${collectedInterfaces}`
   : "";
   const modifiers = collectModifiers(props);
+  const generics = props.generics ? collectGenerics(props.generics) : "";
   return <Declaration {...props} name={name}>
-      {modifiers}interface <Name />{implementsExpression} {"{"}
+      {modifiers}interface <Name />{generics}{implementsExpression} {"{"}
         <Scope name={name} kind='interface'>
           {props.children}
         </Scope>

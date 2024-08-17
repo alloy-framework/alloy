@@ -89,3 +89,45 @@ it("implements interfaces", () => {
     `,
   });
 });
+
+it("defines generics", () => {
+  const res = testRender(
+    <>
+      <jv.SourceFile path="TypeOne.java">
+        <jv.Declaration name='TypeOne'>
+          {code`
+            public interface TypeOne {
+            }
+          `}
+        </jv.Declaration>
+      </jv.SourceFile>
+      <jv.SourceFile path="TypeTwo.java">
+        <jv.Declaration name='TypeTwo'>
+          {code`
+            public interface TypeTwo {
+            }
+          `}
+        </jv.Declaration>
+      </jv.SourceFile>
+      <jv.PackageDirectory package="import">
+        <jv.SourceFile path="TestGenerics.java">
+          <jv.Class public name="TestGenerics" generics={{ T: refkey("TypeOne"), N: refkey("TypeTwo"), J: 'String', K: ''}}>
+          </jv.Class>
+        </jv.SourceFile>
+      </jv.PackageDirectory>
+    </>,
+  );
+
+  assertFileContents(res, {
+    "TestGenerics.java": d`
+      package me.test.code.import;
+
+      import me.test.code.TypeOne;
+      import me.test.code.TypeTwo;
+
+      public class TestGenerics<T extends TypeOne, N extends TypeTwo, J extends String, K> {
+        
+      }
+    `,
+  });
+});

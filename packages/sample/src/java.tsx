@@ -71,7 +71,7 @@ const res = ay.render(
 
             <jv.Method public static name="main" parameters={{ args: "String[]"}}>
               {code`
-                ${refkey(javaUtil['List'])}<${refkey("Animal")}> animals = new ${refkey(javaUtil['ArrayList'])}<>();
+                ${javaUtil.List}${<jv.Generics types={[refkey("Animal")]} />} animals = new ${javaUtil.ArrayList}${<jv.Generics />}();
                 
                 animals.add(new ${refkey("Cat")}());
               `}

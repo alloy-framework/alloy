@@ -16,3 +16,4 @@ export * from "./Parameters.js";
 export * from "./Name.js";
 export * from "./Value.js";
 export * from "./Block.js";
+export * from "./Generics.js";

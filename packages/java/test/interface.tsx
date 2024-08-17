@@ -1,7 +1,7 @@
 import * as jv from "../src/components/index.js";
 import { expect, it } from "vitest";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
-import { refkey } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 
 it("works", () => {
@@ -45,6 +45,38 @@ it("extends other interfaces", () => {
       import me.test.code.InterfaceTwo;
 
       public interface TestInterface extends InterfaceOne, InterfaceTwo {
+        
+      }
+    `,
+  });
+});
+
+it("defines generics", () => {
+  const res = testRender(
+    <>
+      <jv.SourceFile path="TypeOne.java">
+        <jv.Interface name="TypeOne" />
+      </jv.SourceFile>
+      <jv.SourceFile path="TypeTwo.java">
+        <jv.Interface name="TypeTwo" />
+      </jv.SourceFile>
+      <jv.PackageDirectory package="import">
+        <jv.SourceFile path="TestGenerics.java">
+          <jv.Interface public name="TestGenerics" generics={{ T: refkey("TypeOne"), N: refkey("TypeTwo"), J: 'String', K: ''}}>
+          </jv.Interface>
+        </jv.SourceFile>
+      </jv.PackageDirectory>
+    </>,
+  );
+
+  assertFileContents(res, {
+    "TestGenerics.java": d`
+      package me.test.code.import;
+
+      import me.test.code.TypeOne;
+      import me.test.code.TypeTwo;
+
+      public interface TestGenerics<T extends TypeOne, N extends TypeTwo, J extends String, K> {
         
       }
     `,

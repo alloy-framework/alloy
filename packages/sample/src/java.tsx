@@ -6,7 +6,12 @@ import { code, refkey } from "@alloy-js/core";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()} externals={[javaUtil]}>
-    <jv.ProjectDirectory groupId="me.example" artifactId="test" version="1.0.0">
+    <jv.ProjectDirectory name="test" mavenProjectConfig={{
+      groupId: "me.example",
+      artifactId: "test",
+      version: "1.0.0",
+      javaVersion: 8,
+    }}>
       <jv.PackageDirectory package="me.example.code">
         <jv.PackageDirectory package="enums">
           <jv.SourceFile path="AnimalType.java">

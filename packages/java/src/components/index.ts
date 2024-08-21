@@ -17,3 +17,4 @@ export * from "./Name.js";
 export * from "./Value.js";
 export * from "./Block.js";
 export * from "./Generics.js";
+export * from "./MavenProject.js";

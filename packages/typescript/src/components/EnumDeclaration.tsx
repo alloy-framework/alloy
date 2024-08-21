@@ -1,5 +1,4 @@
 import {
-  Children,
   refkey,
   Declaration as CoreDeclaration,
   useBinder,
@@ -7,7 +6,7 @@ import {
   mapJoin,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 import {
   createTSMemberScope,
@@ -18,10 +17,15 @@ import { EnumMember } from "./EnumMember.jsx";
 
 export interface EnumDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
-  type?: Children;
+  /**
+   * A JS object representing the enum member names and values.
+   */
   jsValue?: Record<string, string | number>;
 }
 
+/**
+ * A TypeScript enum declaration.
+ */
 export function EnumDeclaration(props: EnumDeclarationProps) {
   const name = useTSNamePolicy().getName(props.name, "enum");
   const binder = useBinder();

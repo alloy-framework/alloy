@@ -18,7 +18,7 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - run: pnpx pkg-pr-new publish './packages/*'
+      - run: pnpx pkg-pr-new publish './packages/*' --pnpm
 
   format:
     runs-on: ubuntu-latest

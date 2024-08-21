@@ -46,7 +46,8 @@ export function passGenerics(generics: (Child | Record<"?", Children>)[]) {
         if (key === "?") {
           // @ts-ignore
           const value = val[key];
-          return [key, " extends ", value];
+          const extendsExpression = value ? code` extends ${value}` : "";
+          return [key, extendsExpression];
         }
       }
       return val as Child;

@@ -30,6 +30,7 @@ it("passes types", () => {
               public TestGenerics() {
                 List${<jv.Generics types={[refkey("TypeOne")]} />} list = new ArrayList${<jv.Generics />}();
                 List${<jv.Generics types={[{'?': refkey("TypeTwo")}]} />} list2 = new ArrayList${<jv.Generics />}();
+                List${<jv.Generics types={[{'?': ''}]} />} list3 = new ArrayList${<jv.Generics />}();
               }
             `}
           </jv.Class>
@@ -49,6 +50,7 @@ it("passes types", () => {
         public TestGenerics() {
           List<TypeOne> list = new ArrayList<>();
           List<? extends TypeTwo> list2 = new ArrayList<>();
+          List<?> list3 = new ArrayList<>();
         }
       }
     `,

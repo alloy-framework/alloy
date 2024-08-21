@@ -17,8 +17,8 @@ const res = ay.render(
           <jv.SourceFile path="AnimalType.java">
             <jv.Enum public name="AnimalType">
 
-              <jv.EnumMember name="DOG" />,
-              <jv.EnumMember name="Cat" />;
+              <jv.EnumMember name="DOG" />
+              <jv.EnumMember name="Cat" />
 
             </jv.Enum>
           </jv.SourceFile>

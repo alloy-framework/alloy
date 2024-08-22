@@ -40,8 +40,10 @@ export function mapJoin<T, V>(
 export function mapJoin<T, U, V>(
   src: Map<T, U> | T[],
   cb: (key: T, value?: U) => V,
-  options: JoinOptions = defaultMapJoinOptions,
+  rawOptions: JoinOptions = {},
 ): (V | string)[] {
+  const options = { ...defaultMapJoinOptions, ...rawOptions };
+
   let mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
@@ -50,7 +52,7 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
-    if (src.length > 1 && options.ender) {
+    if (src.length > 0 && options.ender) {
       if (options.ender === true) {
         mapped.push(options.joiner!);
       } else {
@@ -65,7 +67,7 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
-    if (entries.length > 1 && options.ender) {
+    if (entries.length > 0 && options.ender) {
       if (options.ender === true) {
         mapped.push(options.joiner!);
       } else {

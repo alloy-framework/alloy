@@ -8,27 +8,39 @@ import {
   memo,
 } from "@alloy-js/core/jsx-runtime";
 import { code } from "./code.js";
-export interface MapJoinOptions {
+
+export interface JoinOptions {
+  /**
+   * The string to place between each element.
+   */
   joiner?: string;
+
+  /**
+   * When true, the joiner is placed at the end of the array. When a string,
+   * that string is placed at the end of the array. The ender is only emitted
+   * when the array has at least one element.
+   */
+  ender?: string | boolean;
 }
-const defaultMapJoinOptions: MapJoinOptions = {
+const defaultMapJoinOptions: JoinOptions = {
   joiner: "\n",
+  ender: false,
 };
 
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
   cb: (key: T, value: U) => V,
-  options?: MapJoinOptions,
+  options?: JoinOptions,
 ): (V | string)[];
 export function mapJoin<T, V>(
   src: T[],
   cb: (value: T) => V,
-  options?: MapJoinOptions,
+  options?: JoinOptions,
 ): (V | string)[];
 export function mapJoin<T, U, V>(
   src: Map<T, U> | T[],
   cb: (key: T, value?: U) => V,
-  options: MapJoinOptions = defaultMapJoinOptions,
+  options: JoinOptions = defaultMapJoinOptions,
 ): (V | string)[] {
   let mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
@@ -38,12 +50,26 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
+    if (src.length > 1 && options.ender) {
+      if (options.ender === true) {
+        mapped.push(options.joiner!);
+      } else {
+        mapped.push(options.ender);
+      }
+    }
   } else {
     const entries = [...src.entries()];
     for (const [index, [key, value]] of entries.entries()) {
       mapped.push(cb(key, value));
       if (index !== entries.length - 1) {
         mapped.push(options.joiner!);
+      }
+    }
+    if (entries.length > 1 && options.ender) {
+      if (options.ender === true) {
+        mapped.push(options.joiner!);
+      } else {
+        mapped.push(options.ender);
       }
     }
   }

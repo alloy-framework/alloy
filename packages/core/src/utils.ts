@@ -22,16 +22,37 @@ export interface JoinOptions {
    */
   ender?: string | boolean;
 }
-const defaultMapJoinOptions: JoinOptions = {
+const defaultJoinOptions: JoinOptions = {
   joiner: "\n",
   ender: false,
 };
 
+/**
+ * Map a Map to an array using a mapper and place a joiner between each element.
+ * Defaults to joining with a newline.
+ *
+ * @see {@link join} for joining without mapping.
+ * @param src Source map.
+ * @param cb Mapper function.
+ * @param options Join options.
+ * @returns The mapped and joined array.
+ */
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
   cb: (key: T, value: U) => V,
   options?: JoinOptions,
 ): (V | string)[];
+
+/**
+ * Map a array to another array using a mapper and place a joiner between each
+ * element. Defaults to joining with a newline.
+ *
+ * @see {@link join} for joining without mapping.
+ * @param src Source array.
+ * @param cb Mapper function.
+ * @param options Join options.
+ * @returns The mapped and joined array.
+ */
 export function mapJoin<T, V>(
   src: T[],
   cb: (value: T) => V,
@@ -42,7 +63,8 @@ export function mapJoin<T, U, V>(
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
 ): (V | string)[] {
-  const options = { ...defaultMapJoinOptions, ...rawOptions };
+  const options = { ...defaultJoinOptions, ...rawOptions };
+  const ender = options.ender === true ? options.joiner : options.ender;
 
   let mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
@@ -52,12 +74,8 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
-    if (src.length > 0 && options.ender) {
-      if (options.ender === true) {
-        mapped.push(options.joiner!);
-      } else {
-        mapped.push(options.ender);
-      }
+    if (src.length > 0 && ender) {
+      mapped.push(ender);
     }
   } else {
     const entries = [...src.entries()];
@@ -67,16 +85,43 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
-    if (entries.length > 0 && options.ender) {
-      if (options.ender === true) {
-        mapped.push(options.joiner!);
-      } else {
-        mapped.push(options.ender);
-      }
+    if (entries.length > 0 && ender) {
+      mapped.push(ender);
     }
   }
 
   return mapped;
+}
+
+/**
+ * Place a joiner between each element of an array. Defaults to joining with a
+ * newline.
+ *
+ * @see {@link mapJoin} for mapping before joining.
+ * @param src
+ * @param rawOptions
+ * @returns The joined array
+ */
+export function join<T>(
+  src: T[],
+  rawOptions: JoinOptions = {},
+): (T | string)[] {
+  const options = { ...defaultJoinOptions, ...rawOptions };
+  const joined = [];
+  const ender = options.ender === true ? options.joiner : options.ender;
+
+  for (const [index, item] of src.entries()) {
+    joined.push(item);
+    if (index !== src.length - 1) {
+      joined.push(options.joiner!);
+    }
+  }
+
+  if (src.length > 0 && ender) {
+    joined.push(ender);
+  }
+
+  return joined;
 }
 
 /**

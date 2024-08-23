@@ -40,6 +40,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   });
 
   sym.memberScope = createTSMemberScope(binder, scope, sym);
+
   const jsValueMembers = mapJoin(
     Object.entries(props.jsValue ?? {}),
     ([name, value]) => {

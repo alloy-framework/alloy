@@ -16,5 +16,5 @@ export * from "./Interface.js";
 export * from "./ExportStatement.js";
 export * from "./Name.js";
 export * from "./TsConfigJson.js";
-export * from "./EnumDeclaration.jsx";
-export * from "./EnumMember.jsx";
+export * from "./EnumDeclaration.js";
+export * from "./EnumMember.js";

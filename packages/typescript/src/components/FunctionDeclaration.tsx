@@ -28,6 +28,7 @@ function isParameterDescriptor(
 }
 export interface FunctionDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
+  async?: boolean;
   parameters?: Record<string, Children | ParameterDescriptor>;
   returnType?: string;
   children?: Children;
@@ -41,7 +42,8 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const parametersChild = findKeyedChild(children, functionParametersTag);
   const bodyChild = findKeyedChild(children, functionBodyTag);
   const filteredChildren = findUnkeyedChildren(children);
-  const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
+  const returnType = getReturnType(props.returnType, { async: props.async });
+  const sReturnType = returnType ? <>: {returnType}</> : undefined;
 
   const sParams =
     parametersChild ?? <FunctionDeclaration.Parameters parameters={props.parameters} />;
@@ -49,8 +51,10 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   let sBody =
     bodyChild ?? <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>;
 
+  const asyncKwd = props.async ? "async " : "";
+
   return <Declaration {...props} nameKind="function">
-      function <Name /><Scope name={props.name} kind="function">
+      {asyncKwd}function <Name /><Scope name={props.name} kind="function">
         ({sParams}){sReturnType} {"{"}
           {sBody}
         {"}"}
@@ -58,6 +62,16 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     </Declaration>;
 }
 
+function getReturnType(
+  returnType: string | undefined,
+  options: { async?: boolean } = { async: false }
+) {
+  if (!returnType) {
+    return options.async ? 'Promise<void>' : undefined;
+  }
+
+  return options.async ? `Promise<${returnType}>` : returnType;
+}
 export interface FunctionParametersProps {
   parameters?: Record<string, Children | ParameterDescriptor>;
   children?: Children;

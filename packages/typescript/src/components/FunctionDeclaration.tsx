@@ -66,11 +66,9 @@ function getReturnType(
   returnType: string | undefined,
   options: { async?: boolean } = { async: false },
 ) {
-  if (!returnType) {
-    return options.async ? "Promise<void>" : undefined;
+  if (returnType) {
+    return options.async ? `Promise<${returnType}>` : returnType;
   }
-
-  return options.async ? `Promise<${returnType}>` : returnType;
 }
 export interface FunctionParametersProps {
   parameters?: Record<string, Children | ParameterDescriptor>;

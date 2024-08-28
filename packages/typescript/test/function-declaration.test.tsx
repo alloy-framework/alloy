@@ -40,7 +40,7 @@ it("can be a default export", () => {
 
 it("can be an async function", () => {
   expect(toSourceText(<FunctionDeclaration async export name="foo" />)).toBe(d`
-    export async function foo(): Promise<void> {
+    export async function foo() {
       
     }
   `);

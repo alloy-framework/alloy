@@ -39,8 +39,7 @@ it("can be a default export", () => {
 });
 
 it("can be an async function", () => {
-  expect(toSourceText(<FunctionDeclaration async export name="foo" />))
-  .toBe(d`
+  expect(toSourceText(<FunctionDeclaration async export name="foo" />)).toBe(d`
     export async function foo(): Promise<void> {
       
     }
@@ -48,8 +47,11 @@ it("can be an async function", () => {
 });
 
 it("can be an async function with returnType", () => {
-  expect(toSourceText(<FunctionDeclaration async export name="foo" returnType="Foo"/>))
-  .toBe(d`
+  expect(
+    toSourceText(
+      <FunctionDeclaration async export name="foo" returnType="Foo"/>,
+    ),
+  ).toBe(d`
     export async function foo(): Promise<Foo> {
       
     }

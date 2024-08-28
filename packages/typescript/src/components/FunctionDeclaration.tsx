@@ -64,10 +64,10 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
 function getReturnType(
   returnType: string | undefined,
-  options: { async?: boolean } = { async: false }
+  options: { async?: boolean } = { async: false },
 ) {
   if (!returnType) {
-    return options.async ? 'Promise<void>' : undefined;
+    return options.async ? "Promise<void>" : undefined;
   }
 
   return options.async ? `Promise<${returnType}>` : returnType;

@@ -1,5 +1,6 @@
 import {
   childrenArray,
+  code,
   findKeyedChild,
   findUnkeyedChildren,
   mapJoin,
@@ -30,7 +31,7 @@ export interface FunctionDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
   async?: boolean;
   parameters?: Record<string, Children | ParameterDescriptor>;
-  returnType?: string;
+  returnType?: Children;
   children?: Children;
 }
 
@@ -63,11 +64,11 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 }
 
 function getReturnType(
-  returnType: string | undefined,
+  returnType: Children | undefined,
   options: { async?: boolean } = { async: false },
 ) {
   if (returnType) {
-    return options.async ? `Promise<${returnType}>` : returnType;
+    return options.async ? code`Promise<${returnType}>` : returnType;
   }
 }
 export interface FunctionParametersProps {

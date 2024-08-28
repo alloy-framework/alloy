@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { FunctionDeclaration, VarDeclaration } from "../src/index.js";
@@ -50,6 +50,21 @@ it("can be an async function with returnType", () => {
   expect(
     toSourceText(
       <FunctionDeclaration async export name="foo" returnType="Foo"/>,
+    ),
+  ).toBe(d`
+    export async function foo(): Promise<Foo> {
+      
+    }
+  `);
+});
+
+it("can be an async function with returnType element", () => {
+  function Foo(_props?: Props) {
+    return <>Foo</>;
+  }
+  expect(
+    toSourceText(
+      <FunctionDeclaration async export name="foo" returnType={<Foo />}/>,
     ),
   ).toBe(d`
     export async function foo(): Promise<Foo> {

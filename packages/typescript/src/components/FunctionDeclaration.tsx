@@ -66,7 +66,6 @@ export interface FunctionParametersProps {
 FunctionDeclaration.Parameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionParametersProps) {
-    debugger;
     const namePolicy = useTSNamePolicy();
 
     let value;

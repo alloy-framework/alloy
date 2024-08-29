@@ -1,9 +1,8 @@
+import { code, Declaration, refkey } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
-import { AccessModifier } from "../src/index.js";
-import { d } from "@alloy-js/core/testing";
-import { code, Declaration, refkey } from "@alloy-js/core";
 
 it("declares basic empty function", () => {
   const res = toSourceText(

@@ -10,8 +10,6 @@ import {
   createTSModuleScope,
   createTSPackageScope,
   createTSSymbol,
-  TSModuleScope,
-  TSOutputSymbol,
 } from "./symbols/index.js";
 
 export interface PackageDescriptor {

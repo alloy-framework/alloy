@@ -1,13 +1,8 @@
 import * as ay from "@alloy-js/core";
-import * as jv from "@alloy-js/java";
-import {
-  AccessModifier,
-  createJavaNamePolicy,
-  createLibrary,
-  javaUtil,
-} from "@alloy-js/java";
-import { writeOutput } from "./write-output.js";
 import { code, refkey } from "@alloy-js/core";
+import * as jv from "@alloy-js/java";
+import { createJavaNamePolicy, javaUtil } from "@alloy-js/java";
+import { writeOutput } from "./write-output.js";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()} externals={[javaUtil]}>

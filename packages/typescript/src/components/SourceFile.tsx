@@ -10,10 +10,8 @@ import {
 
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
-import { PackageContext } from "./PackageDirectory.js";
-import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { getSourceDirectoryData } from "../source-directory-data.js";
-import { createTSModuleScope, TSModuleScope } from "../symbols.js";
+import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { PackageContext } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";

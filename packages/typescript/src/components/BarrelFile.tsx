@@ -6,8 +6,8 @@ import {
 } from "@alloy-js/core";
 import { basename } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
-import { ExportStatement } from "./ExportStatement.js";
 import { TSModuleScope } from "../symbols/index.js";
+import { ExportStatement } from "./ExportStatement.js";
 export interface BarrelFileProps {
   path?: string;
   export?: boolean | string;

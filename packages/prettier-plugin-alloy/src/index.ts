@@ -89,8 +89,6 @@ function findPluginsByParserName(
 }
 
 export const parsers = {
-  typescript: wrap(tsParsers, "typescript"),
-
   "alloy-ts": wrap(tsParsers, "typescript"),
   "alloy-js": wrap(babelParsers, "babel"),
 };

@@ -41,7 +41,7 @@ export function createContext<T = unknown>(
     Provider(props: ContextProviderProps<T>) {
       const context = getContext();
 
-      let rendered = shallowRef();
+      const rendered = shallowRef();
       effect(() => {
         context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);

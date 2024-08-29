@@ -46,4 +46,4 @@ const result = render(
   ),
 );
 
-writeOutput(result, "sample-output");
+await writeOutput(result, "sample-output");

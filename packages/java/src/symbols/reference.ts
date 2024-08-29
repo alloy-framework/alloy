@@ -17,7 +17,7 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
 
-    const { targetDeclaration, pathDown, pathUp, commonScope } = result.value;
+    const { targetDeclaration } = result.value;
 
     return untrack(() => sourceFile!.addImport(targetDeclaration));
   });

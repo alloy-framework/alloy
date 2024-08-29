@@ -30,7 +30,7 @@ it("resolves symbol conflicts", () => {
     parent: binder.globalScope,
   });
 
-  const s1 = binder.createSymbol({
+  const _s1 = binder.createSymbol({
     name: "sym",
     scope,
     refkey: "foo",

@@ -83,4 +83,4 @@ const res = ay.render(
   </ay.Output>,
 );
 
-writeOutput(res, "./sample-output", true);
+await writeOutput(res, "./sample-output", true);

@@ -49,7 +49,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const sParams =
     parametersChild ?? <FunctionDeclaration.Parameters parameters={props.parameters} />;
 
-  let sBody =
+  const sBody =
     bodyChild ?? <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>;
 
   const asyncKwd = props.async ? "async " : "";

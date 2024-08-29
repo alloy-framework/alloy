@@ -38,7 +38,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
         }
         continue;
       } else {
-        let found = findFileWorker(item, path);
+        const found = findFileWorker(item, path);
         if (found) {
           return found;
         }

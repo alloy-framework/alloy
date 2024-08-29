@@ -1,9 +1,9 @@
+import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { render, Output, refkey } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
-import { d } from "@alloy-js/core/testing";
 
 it("applies to functions and variables", () => {
   const ref1 = refkey({});

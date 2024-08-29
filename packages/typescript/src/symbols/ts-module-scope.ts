@@ -1,7 +1,7 @@
-import { OutputScope, Refkey, Binder, refkey } from "@alloy-js/core";
+import { Binder, OutputScope, Refkey, refkey } from "@alloy-js/core";
 import {
-  TSOutputSymbol,
   createTSSymbol,
+  TSOutputSymbol,
   TSSymbolFlags,
 } from "./ts-output-symbol.js";
 

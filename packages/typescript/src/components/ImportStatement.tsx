@@ -1,21 +1,17 @@
 import {
-  computed,
   mapJoin,
   memo,
   SourceDirectoryContext,
   useContext,
-  useScope,
 } from "@alloy-js/core";
+import { relative } from "pathe";
 import {
   ImportedSymbol,
   ImportRecords,
-  TSModuleScope,
-  TSOutputSymbol,
   TSPackageScope,
 } from "../symbols/index.js";
-import { usePackage } from "./PackageDirectory.js";
-import { relative } from "pathe";
 import { modulePath } from "../utils.js";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface ImportStatementsProps {
   records: ImportRecords;

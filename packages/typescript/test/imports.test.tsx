@@ -1,10 +1,10 @@
+import { Output, SourceDirectory, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { expect, it } from "vitest";
-import { render, Output, SourceDirectory, refkey } from "@alloy-js/core";
+import { it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { assertFileContents } from "./utils.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
+import { assertFileContents } from "./utils.js";
 
 it("works with default imports", () => {
   const res = render(

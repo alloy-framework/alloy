@@ -1,8 +1,7 @@
-import { dirname, join } from "node:path";
-import { mkdir, rm, rmdir, writeFile } from "node:fs/promises";
 import * as ay from "@alloy-js/core";
-import { exists } from "node:fs";
 import * as fs from "node:fs";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 
 export async function writeOutput(
   dir: ay.OutputDirectory,

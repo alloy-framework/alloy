@@ -1,6 +1,6 @@
+import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import "@alloy-js/core/testing";
 
 it("renders string value", () => {
   expect(<jv.Value value={"Test"} />).toRenderTo('"Test"');

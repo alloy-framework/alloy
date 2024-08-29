@@ -1,14 +1,14 @@
-import { it, expect, describe } from "vitest";
-import "../../testing/extend-expect.js";
 import {
   computed,
   Output,
+  render,
+  renderTree,
   SourceDirectoryContext,
   SourceFile,
   useContext,
-  render,
-  renderTree,
 } from "@alloy-js/core";
+import { expect, it } from "vitest";
+import "../../testing/extend-expect.js";
 
 it("tracks its content", () => {
   let context;

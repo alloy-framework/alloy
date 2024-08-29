@@ -1,18 +1,15 @@
 import {
   Binder,
-  reactive,
-  Refkey,
-  SymbolCreator,
   getSymbolCreatorSymbol,
+  Refkey,
   refkey,
+  SymbolCreator,
 } from "@alloy-js/core";
 
 import {
   createTSModuleScope,
   createTSPackageScope,
   createTSSymbol,
-  TSModuleScope,
-  TSOutputSymbol,
 } from "./symbols/index.js";
 
 export interface PackageDescriptor {

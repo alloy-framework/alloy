@@ -1,24 +1,20 @@
 import {
   Children,
-  code,
   computed,
-  effect,
-  Indent,
   mapJoin,
   memo,
   Refkey,
-  refkey,
   Scope,
   useBinder,
   useContext,
 } from "@alloy-js/core";
-import { ValueExpression } from "./ValueExpression.js";
 import {
   createTSMemberScope,
   createTSSymbol,
   TSSymbolFlags,
   useTSScope,
 } from "../symbols/index.js";
+import { ValueExpression } from "./ValueExpression.js";
 import { AssignmentContext } from "./VarDeclaration.jsx";
 
 export interface ObjectExpressionProps {

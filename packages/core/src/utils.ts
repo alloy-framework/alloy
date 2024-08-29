@@ -1,4 +1,3 @@
-import {} from "@vue/reactivity";
 import {
   Child,
   Children,
@@ -156,7 +155,7 @@ export function childrenArray(fn: () => Children) {
   }
 }
 
-export function findKeyedChild(children: Child[], tag: Symbol) {
+export function findKeyedChild(children: Child[], tag: symbol) {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;

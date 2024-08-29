@@ -2,11 +2,11 @@
 // See: https://github.com/ryansolid/vuerx-jsx.
 import {
   pauseTracking,
+  Ref,
   resetTracking,
   shallowRef,
-  effect as vueEffect,
   stop,
-  Ref,
+  effect as vueEffect,
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
 

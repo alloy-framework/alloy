@@ -1,8 +1,8 @@
-import { code, Refkey } from "@alloy-js/core";
-import { Child, Children } from "@alloy-js/core/jsx-runtime";
-import { Parameters } from "./Parameters.js";
-import { Name } from "./Name.js";
+import { code } from "@alloy-js/core";
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { AccessModifier, collectAccessModifier } from "../object-modifiers.js";
+import { Name } from "./Name.js";
+import { Parameters } from "./Parameters.js";
 
 export interface ConstructorProps {
   accessModifier?: AccessModifier;

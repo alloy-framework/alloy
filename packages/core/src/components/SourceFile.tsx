@@ -1,12 +1,12 @@
-import { createContext, useContext } from "../context.js";
 import {
   Children,
   ComponentDefinition,
   getContext,
 } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
-import { SourceDirectoryContext } from "./SourceDirectory.js";
+import { createContext, useContext } from "../context.js";
 import { Refkey } from "../refkey.js";
+import { SourceDirectoryContext } from "./SourceDirectory.js";
 
 export interface SourceFileProps {
   path: string;

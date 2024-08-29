@@ -1,7 +1,6 @@
-import { NodePath, Scope } from "@babel/traverse";
-import * as t from "@babel/types";
-import generate from "@babel/generator";
 import helperModuleImports from "@babel/helper-module-imports";
+import { NodePath } from "@babel/traverse";
+import * as t from "@babel/types";
 interface Options {
   alloyModuleName: string | undefined;
 }

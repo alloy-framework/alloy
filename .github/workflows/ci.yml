@@ -34,3 +34,15 @@ jobs:
 
       - run: pnpm run format:check
         name: Check formatting
+
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/setup
+
+  #     - run: pnpm install
+  #       name: Install dependencies
+
+  #     - run: pnpm run lint
+  #       name: Lint

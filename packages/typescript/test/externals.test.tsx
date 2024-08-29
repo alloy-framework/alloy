@@ -1,14 +1,14 @@
 import { Output, render } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { it } from "vitest";
+import { fs } from "../src/builtins/node.js";
 import {
-  PackageDirectory,
-  SourceFile,
-  Reference,
   createPackage,
   FunctionDeclaration,
+  PackageDirectory,
+  Reference,
+  SourceFile,
 } from "../src/index.js";
-import { fs } from "../src/builtins/node.js";
-import { assertFileContents, findFile } from "./utils.js";
+import { assertFileContents } from "./utils.js";
 
 it("can import builtins", () => {
   const testLib = createPackage({

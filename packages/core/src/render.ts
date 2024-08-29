@@ -1,21 +1,18 @@
-import { Indent, IndentContext, IndentState } from "./components/Indent.js";
 import {
   Child,
   Children,
-  Component,
   Context,
-  createComponent,
   effect,
   getContext,
   isComponentCreator,
-  memo,
   root,
   untrack,
 } from "@alloy-js/core/jsx-runtime";
-import { useContext } from "./context.js";
 import { isRef } from "@vue/reactivity";
-import { isRefkey } from "./refkey.js";
+import { Indent, IndentContext, IndentState } from "./components/Indent.js";
 import { SourceFileContext } from "./components/SourceFile.js";
+import { useContext } from "./context.js";
+import { isRefkey } from "./refkey.js";
 
 /**
  * The component tree is constructed as the result of transforming JSX with

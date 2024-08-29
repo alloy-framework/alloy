@@ -1,11 +1,11 @@
 import { Children, Refkey } from "@alloy-js/core";
+import { useTSNamePolicy } from "../name-policy.js";
 import {
   createTSSymbol,
   TSOutputSymbol,
   TSSymbolFlags,
 } from "../symbols/ts-output-symbol.js";
 import { ValueExpression } from "./ValueExpression.jsx";
-import { useTSNamePolicy } from "../name-policy.js";
 
 export interface EnumMemberProps {
   /**

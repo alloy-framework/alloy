@@ -1,19 +1,19 @@
 import {
-  refkey,
   Declaration as CoreDeclaration,
-  useBinder,
   Scope,
   mapJoin,
+  refkey,
+  useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { DeclarationProps } from "./Declaration.js";
-import { Name } from "./Name.js";
 import {
   createTSMemberScope,
   createTSSymbol,
   useTSScope,
 } from "../symbols/index.js";
+import { DeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
+import { Name } from "./Name.js";
 
 export interface EnumDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {

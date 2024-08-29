@@ -4,6 +4,14 @@ import {
   SourceDirectoryContext,
   useContext,
 } from "@alloy-js/core";
+import {
+  ImportedSymbol,
+  ImportRecords,
+  TSModuleScope,
+  TSOutputSymbol,
+  TSPackageScope,
+} from "../symbols/index.js";
+import { usePackage } from "./PackageDirectory.js";
 import { relative } from "pathe";
 import { ImportedSymbol, ImportRecords, TSPackageScope } from "../symbols.js";
 import { modulePath } from "../utils.js";

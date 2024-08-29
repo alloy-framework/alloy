@@ -7,6 +7,11 @@ export * from "./name-policy.js";
 export * from "./refkey.js";
 export * from "./render.js";
 export * from "./utils.js";
+export * from "./components/index.js";
+export * from "./refkey.js";
+export * from "./jsx-runtime.js";
+export * from "./name-policy.js";
+export * from "./code.js";
 
 export {
   computed,

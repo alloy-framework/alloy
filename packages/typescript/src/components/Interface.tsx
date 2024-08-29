@@ -4,14 +4,14 @@ import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface InterfaceDeclarationProps
-  extends Omit<DeclarationProps, "kind"> {
+  extends Omit<DeclarationProps, "nameKind"> {
   extends?: Children;
 }
 
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
 
-  return <Declaration {...props} kind="interface">
+  return <Declaration {...props} nameKind="interface">
     interface <Name />{extendsPart} <InterfaceExpression>
       {props.children}
     </InterfaceExpression>
@@ -34,14 +34,18 @@ export interface InterfaceMemberProps {
   indexer?: Children;
   type?: Children;
   children?: Children;
+  optional?: boolean;
+  readonly?: boolean;
 }
 
 export function InterfaceMember(props: InterfaceMemberProps) {
   const namer = useTSNamePolicy();
   const type = props.type ?? props.children;
+  const optionality = props.optional ? "?" : "";
+  const readonly = props.readonly ? "readonly " : "";
   if (props.indexer) {
     return <>[{props.indexer}]: {type}</>;
   } else {
-    return <>{namer.getName(props.name!, "interface-member")}: {type}</>;
+    return <>{readonly}{namer.getName(props.name!, "interface-member")}{optionality}: {type}</>;
   }
 }

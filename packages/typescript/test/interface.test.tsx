@@ -57,6 +57,42 @@ it("can create members", () => {
   `);
 });
 
+it("can create optional members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember name="member" type="string" />;
+      <ts.InterfaceMember optional name="circular" type={<Reference refkey={refkey("Foo")} />} />;
+      <ts.InterfaceMember indexer="str: string" type="number" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      member: string;
+      circular?: Foo;
+      [str: string]: number;
+    }
+  `);
+});
+
+it("can create readonly members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember readonly name="member" type="string" />;
+      <ts.InterfaceMember name="circular" type={<Reference refkey={refkey("Foo")} />} />;
+      <ts.InterfaceMember indexer="str: string" type="number" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      readonly member: string;
+      circular: Foo;
+      [str: string]: number;
+    }
+  `);
+});
+
 it("has interface expressions", () => {
   const res = toSourceText(
     <ts.InterfaceExpression>

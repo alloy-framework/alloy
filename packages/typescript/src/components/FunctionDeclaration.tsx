@@ -1,19 +1,37 @@
 import {
   childrenArray,
+  code,
   findKeyedChild,
   findUnkeyedChildren,
   mapJoin,
+  Refkey,
+  refkey,
+  Scope,
   taggedComponent,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
+import { createTSSymbol, TSSymbolFlags, useTSScope } from "../symbols/index.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
+export interface ParameterDescriptor {
+  type: Children;
+  refkey: Refkey;
+}
+
+function isParameterDescriptor(
+  value: Children | ParameterDescriptor,
+): value is ParameterDescriptor {
+  return (
+    typeof value === "object" && value !== null && Object.hasOwn(value, "type")
+  );
+}
 export interface FunctionDeclarationProps
-  extends Omit<DeclarationProps, "kind"> {
-  parameters?: Record<string, Children>;
-  returnType?: string;
+  extends Omit<DeclarationProps, "nameKind"> {
+  async?: boolean;
+  parameters?: Record<string, Children | ParameterDescriptor>;
+  returnType?: Children;
   children?: Children;
 }
 
@@ -25,7 +43,8 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const parametersChild = findKeyedChild(children, functionParametersTag);
   const bodyChild = findKeyedChild(children, functionBodyTag);
   const filteredChildren = findUnkeyedChildren(children);
-  const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
+  const returnType = getReturnType(props.returnType, { async: props.async });
+  const sReturnType = returnType ? <>: {returnType}</> : undefined;
 
   const sParams =
     parametersChild ?? <FunctionDeclaration.Parameters parameters={props.parameters} />;
@@ -33,15 +52,27 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   let sBody =
     bodyChild ?? <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>;
 
-  return <Declaration {...props} kind="function">
-      function <Name />({sParams}){sReturnType} {"{"}
-        {sBody}
-      {"}"}
+  const asyncKwd = props.async ? "async " : "";
+
+  return <Declaration {...props} nameKind="function">
+      {asyncKwd}function <Name /><Scope name={props.name} kind="function">
+        ({sParams}){sReturnType} {"{"}
+          {sBody}
+        {"}"}
+      </Scope>
     </Declaration>;
 }
 
+function getReturnType(
+  returnType: Children | undefined,
+  options: { async?: boolean } = { async: false },
+) {
+  if (returnType) {
+    return options.async ? code`Promise<${returnType}>` : returnType;
+  }
+}
 export interface FunctionParametersProps {
-  parameters?: Record<string, Children>;
+  parameters?: Record<string, Children | ParameterDescriptor>;
   children?: Children;
 }
 
@@ -55,10 +86,29 @@ FunctionDeclaration.Parameters = taggedComponent(
     if (props.children) {
       value = props.children;
     } else if (props.parameters) {
+      const scope = useTSScope();
+      if (scope.kind !== "function") {
+        throw new Error(
+          "Can't declare function parameter in non-function scope",
+        );
+      }
+
       value = mapJoin(
         new Map(Object.entries(props.parameters)),
         (key, value) => {
-          return [namePolicy.getName(key, "parameter"), ": ", value];
+          const descriptor: ParameterDescriptor = isParameterDescriptor(value) ?
+            value
+          : {
+              refkey: refkey(),
+              type: value,
+            };
+          const sym = createTSSymbol({
+            name: key,
+            refkey: descriptor.refkey,
+            flags: TSSymbolFlags.ParameterSymbol,
+          });
+
+          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
         },
         { joiner: "," },
       );

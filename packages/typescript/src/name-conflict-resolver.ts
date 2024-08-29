@@ -1,4 +1,4 @@
-import { TSOutputSymbol, TSSymbolFlags } from "./symbols.js";
+import { TSOutputSymbol, TSSymbolFlags } from "./symbols/index.js";
 
 export function tsNameConflictResolver(
   name: string,

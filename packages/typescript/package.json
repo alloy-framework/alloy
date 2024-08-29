@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build-src": "babel src -d dist/src --extensions '.ts,.tsx'",
+    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
     "build-tsc": "tsc -p .",
     "build": "npm run build-src && npm run build-tsc",
     "clean": "rimraf dist/ .temp/",

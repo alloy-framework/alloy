@@ -1,0 +1,22 @@
+import { stc } from "@alloy-js/core";
+import * as base from "../index.js";
+
+export const Annotation = stc(base.Annotation);
+export const Block = stc(base.Block);
+export const Class = stc(base.Class);
+export const Constructor = stc(base.Constructor);
+export const Declaration = stc(base.Declaration);
+export const Enum = stc(base.Enum);
+export const EnumMember = stc(base.EnumMember);
+export const ImportStatement = stc(base.ImportStatement);
+export const Interface = stc(base.Interface);
+export const Method = stc(base.Method);
+export const Name = stc(base.Name);
+export const ObjectDeclaration = stc(base.ObjectDeclaration);
+export const PackageDirectory = stc(base.PackageDirectory);
+export const Parameters = stc(base.Parameters);
+export const ProjectDirectory = stc(base.ProjectDirectory);
+export const Reference = stc(base.Reference);
+export const SourceFile = stc(base.SourceFile);
+export const Value = stc(base.Value);
+export const Variable = stc(base.Variable);

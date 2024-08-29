@@ -12,7 +12,7 @@ export default defineConfig({
   },
   plugins: [
     babel({
-      inputSourceMap: true,
+      inputSourceMap: true as any,
       sourceMaps: "both",
       babelHelpers: "bundled",
       extensions: [".ts", ".tsx"],

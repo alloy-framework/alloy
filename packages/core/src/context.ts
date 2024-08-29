@@ -22,9 +22,8 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
   while (current) {
-    const currentContextValue = current.context![context.id];
-    if (currentContextValue) {
-      return currentContextValue as T;
+    if (Object.hasOwn(current.context!, context.id)) {
+      return current.context![context.id] as T | undefined;
     }
     current = current.owner;
   }

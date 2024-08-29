@@ -15,7 +15,7 @@ export default tsEslint.config(
       "packages/*/babel.config.cjs",
       "packages/babel-plugin-jsx-dom-expressions/**/*",
       "packages/babel-plugin-alloy/**/*",
-      "packages/babel-preset-alloy/**/*"
+      "packages/babel-preset-alloy/**/*",
     ],
   },
   eslint.configs.recommended,

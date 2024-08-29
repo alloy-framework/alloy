@@ -48,7 +48,8 @@ export function root<T>(fn: (d: Disposable) => T, src?: string): T {
       for (const d of globalContext!.disposables) {
         d();
       }
-    }));
+    }),
+  );
   globalContext = globalContext!.owner;
 
   return ret;

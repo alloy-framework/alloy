@@ -20,6 +20,7 @@ import {
   PackageJsonFileProps,
 } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
+
 export interface PackageDirectoryProps extends PackageJsonFileProps {
   dependencies?: Record<string, string>;
   exports?: PackageExports | ExportPath;

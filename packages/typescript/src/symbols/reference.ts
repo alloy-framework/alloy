@@ -48,7 +48,8 @@ export function ref(refkey: Refkey) {
       for (const [publicPath, module] of sourcePackage.exportedSymbols) {
         if (module.exportedSymbols.has(importSymbol.refkey)) {
           localSymbol = untrack(() =>
-            sourceFile!.scope.addImport(importSymbol, module));
+            sourceFile!.scope.addImport(importSymbol, module),
+          );
         }
       }
 
@@ -70,10 +71,8 @@ export function ref(refkey: Refkey) {
 
       const importSymbol = symbolPath[0];
       const localSymbol = untrack(() =>
-        sourceFile!.scope.addImport(
-          importSymbol,
-          pathDown[0] as TSModuleScope,
-        ));
+        sourceFile!.scope.addImport(importSymbol, pathDown[0] as TSModuleScope),
+      );
       symbolPath[0] = localSymbol;
 
       return buildMemberExpression(symbolPath);

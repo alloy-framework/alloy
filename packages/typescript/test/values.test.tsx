@@ -8,6 +8,7 @@ import {
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import * as ts from "../src/index.js";
 
 import { d, renderToString } from "@alloy-js/core/testing";
 import { assertFileContents } from "./utils.jsx";

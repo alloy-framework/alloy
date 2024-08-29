@@ -11,7 +11,7 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { join } from "pathe";
-import { createTSPackageScope, TSPackageScope } from "../symbols.js";
+import { createTSPackageScope, TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
 import {
   ExportPath,
@@ -20,7 +20,6 @@ import {
   PackageJsonFileProps,
 } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
-
 export interface PackageDirectoryProps extends PackageJsonFileProps {
   dependencies?: Record<string, string>;
   exports?: PackageExports | ExportPath;

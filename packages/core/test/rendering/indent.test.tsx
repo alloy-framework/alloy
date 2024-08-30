@@ -332,7 +332,6 @@ describe("implicit indenting", () => {
     function Foo() {
       return "Foo";
     }
-    const array = [<>{str} {getStr()}</>];
     expect(
       <>
       base
@@ -378,7 +377,7 @@ describe("array handling", () => {
     `);
   });
 
-  it("handles indented simple array with linebreaks", () => {
+  it("handles indented simple array with line breaks", () => {
     const val = "hi";
     function getHi() {
       return "getHi";
@@ -397,10 +396,6 @@ describe("array handling", () => {
   });
 
   it("handles indented component array", () => {
-    const val = "hi";
-    function getHi() {
-      return "getHi";
-    }
     function Foo() {
       return "Foo";
     }
@@ -416,11 +411,7 @@ describe("array handling", () => {
     `);
   });
 
-  it("handles indented component array with linebreaks", () => {
-    const val = "hi";
-    function getHi() {
-      return "getHi";
-    }
+  it("handles indented component array with line breaks", () => {
     function Foo() {
       return "Foo";
     }

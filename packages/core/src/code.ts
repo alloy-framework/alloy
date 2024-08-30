@@ -162,6 +162,7 @@ function* childTokens(
       }
     }
 
+    // eslint-disable-next-line prefer-const
     for (let [lineNum, line] of lines.entries()) {
       if (lineNum > 0) {
         newline = true;
@@ -207,9 +208,3 @@ function* childTokens(
     return indentStack.at(-1)!;
   }
 }
-
-code`
-  a
-b
-${""}
-c`;

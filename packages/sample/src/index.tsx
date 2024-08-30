@@ -33,4 +33,4 @@ const result = ay.render(
 </ay.Output>,
 );
 
-writeOutput(result, "./sample-output");
+await writeOutput(result, "./sample-output");

@@ -65,7 +65,7 @@ export function mapJoin<T, U, V>(
   const options = { ...defaultJoinOptions, ...rawOptions };
   const ender = options.ender === true ? options.joiner : options.ender;
 
-  let mapped: (V | string)[] = [];
+  const mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
       mapped.push(cb(item));

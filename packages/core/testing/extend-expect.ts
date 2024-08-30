@@ -11,7 +11,6 @@ expect.extend({
     return {
       pass: actual === expected,
       message: () => {
-        console.log(JSON.stringify(tree));
         return `Render is${isNot ? " not" : ""} incorrect`;
       },
       actual,

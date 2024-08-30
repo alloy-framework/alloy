@@ -11,7 +11,7 @@ export function renderToString(element: Children) {
 
 export function d(strings: TemplateStringsArray, ...values: any[]): string {
   // Combine the strings and values
-  let result = strings.reduce(
+  const result = strings.reduce(
     (acc, str, i) => acc + str + (values[i] ?? ""),
     "",
   );

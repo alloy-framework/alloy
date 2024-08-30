@@ -45,7 +45,7 @@ export function ref(refkey: Refkey) {
 
       let localSymbol;
       // find public dependency
-      for (const [publicPath, module] of sourcePackage.exportedSymbols) {
+      for (const module of sourcePackage.exportedSymbols.values()) {
         if (module.exportedSymbols.has(importSymbol.refkey)) {
           localSymbol = untrack(() =>
             sourceFile!.scope.addImport(importSymbol, module),

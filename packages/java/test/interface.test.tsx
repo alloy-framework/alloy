@@ -2,7 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender, toSourceText } from "./utils.js";
+import { assertFileContents, testRender, toSourceText } from "./utils.jsx";
 
 it("works", () => {
   const res = toSourceText(

@@ -15,7 +15,7 @@ it("tracks its content", () => {
   function Test() {
     context = useContext(SourceDirectoryContext);
   }
-  const tree = renderTree(
+  const _ = renderTree(
     <Output>
       <Test />
       <SourceFile path="hi.txt" filetype="text">hello!</SourceFile>

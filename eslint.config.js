@@ -7,7 +7,16 @@ import { fileURLToPath } from "url";
 
 export default tsEslint.config(
   {
-    ignores: ["**/dist/**/*", "**/.temp/**/*", "eslint.config.js"],
+    ignores: [
+      "**/dist/**/*",
+      "**/.temp/**/*",
+      "eslint.config.js",
+      "packages/*/vitest.config.ts",
+      "packages/*/babel.config.cjs",
+      "packages/babel-plugin-jsx-dom-expressions/**/*",
+      "packages/babel-plugin-alloy/**/*",
+      "packages/babel-preset-alloy/**/*",
+    ],
   },
   eslint.configs.recommended,
   ...tsEslint.configs.recommended,

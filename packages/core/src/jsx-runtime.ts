@@ -66,6 +66,7 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
   const o = shallowRef();
   effect((prev) => {
     const res = fn();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (!equal || prev !== res) && (o.value = res);
     return res;
   });
@@ -73,7 +74,6 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
 }
 
 export function effect<T>(fn: (prev?: T) => T, current?: T) {
-  const owner = globalContext;
   const context = {
     src: "effect",
     context: {},
@@ -85,6 +85,7 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     const d = context.disposables;
     context.disposables = [];
     for (let k = 0, len = d.length; k < len; k++) d[k]();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     final && stop(c);
   };
 
@@ -124,12 +125,12 @@ export interface ComponentDefinition<TProps = Props> {
 }
 export interface Component<TProps = Props> {
   (props: TProps): Child | Children;
-  tag?: Symbol;
+  tag?: symbol;
 }
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
   (): Child | Children;
-  tag?: Symbol;
+  tag?: symbol;
 }
 
 // These can be removed with a smarter transform that encodes the information we
@@ -151,7 +152,7 @@ export function createComponent<TProps = Props>(
 }
 
 export function taggedComponent<TProps = Props>(
-  tag: Symbol,
+  tag: symbol,
   component: Component<TProps>,
 ): Component<TProps> {
   component.tag = tag;
@@ -183,10 +184,9 @@ export function mergeProps(...sources: any): any {
           enumerable: true,
           get() {
             for (let i = sources.length - 1; i >= 0; i--) {
-              let v,
-                s = sources[i];
+              let s = sources[i];
               if (typeof s === "function") s = s();
-              v = (s || {})[key];
+              const v = (s || {})[key];
               if (v !== undefined) return v;
             }
           },

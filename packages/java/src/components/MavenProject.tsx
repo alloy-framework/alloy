@@ -1,5 +1,5 @@
-import { MavenProjectConfig } from "../symbols/index.js";
 import { code, Indent, SourceFile } from "@alloy-js/core";
+import { MavenProjectConfig } from "../symbols/index.js";
 import { useProject } from "./ProjectDirectory.js";
 
 export interface MavenProjectProps {

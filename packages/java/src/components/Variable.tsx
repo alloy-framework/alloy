@@ -1,6 +1,6 @@
 import { Child, Children, code } from "@alloy-js/core";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { useJavaNamePolicy } from "../name-policy.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 
 export interface VariableProps extends ObjectModifiers {
   type: Child;

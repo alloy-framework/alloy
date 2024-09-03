@@ -1,8 +1,8 @@
-import { expect, it } from "vitest";
-import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender, toSourceText } from "./utils.js";
 import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
+import { it } from "vitest";
+import * as jv from "../src/components/index.js";
+import { assertFileContents, testRender } from "./utils.js";
 
 it("passes types", () => {
   const res = testRender(

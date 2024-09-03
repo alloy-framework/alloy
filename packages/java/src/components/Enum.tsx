@@ -1,4 +1,3 @@
-import { Declaration, DeclarationProps } from "./Declaration.js";
 import {
   Children,
   code,
@@ -7,11 +6,12 @@ import {
   useBinder,
   useScope,
 } from "@alloy-js/core";
+import { collectArguments } from "../arguments.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
-import { Name } from "./Name.js";
-import { collectArguments } from "../arguments.js";
 import { createJavaEnumScope, JavaEnumScope } from "../symbols/index.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
+import { Name } from "./Name.js";
 
 export interface EnumProps extends DeclarationProps, ObjectModifiers {
   implements?: Children;

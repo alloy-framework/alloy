@@ -44,7 +44,7 @@ export function passGenerics(generics: (Child | Record<"?", Children>)[]) {
       if (typeof val === "object" && val) {
         const key = Object.keys(val)[0];
         if (key === "?") {
-          // @ts-ignore
+          // @ts-expect-error Key is ? in this case
           const value = val[key];
           const extendsExpression = value ? code` extends ${value}` : "";
           return [key, extendsExpression];

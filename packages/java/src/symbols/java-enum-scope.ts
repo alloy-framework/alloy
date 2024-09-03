@@ -1,4 +1,4 @@
-import { Binder, OutputScope, reactive } from "@alloy-js/core";
+import { Binder, OutputScope } from "@alloy-js/core";
 
 /**
  * Declare a scope for enum. Using a custom scope as there are extra rules

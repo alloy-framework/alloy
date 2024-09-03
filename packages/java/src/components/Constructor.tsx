@@ -1,8 +1,8 @@
-import { code, Refkey } from "@alloy-js/core";
+import { code } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { Parameters } from "./Parameters.js";
-import { Name } from "./Name.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { Name } from "./Name.js";
+import { Parameters } from "./Parameters.js";
 
 export interface ConstructorProps extends ObjectModifiers {
   name?: string;

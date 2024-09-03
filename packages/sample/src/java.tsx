@@ -1,7 +1,7 @@
 import * as ay from "@alloy-js/core";
 import { code, refkey } from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
-import { createJavaNamePolicy, createLibrary, javaUtil } from "@alloy-js/java";
+import { createJavaNamePolicy, javaUtil } from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
 
 const res = ay.render(

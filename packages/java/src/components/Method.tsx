@@ -1,8 +1,8 @@
 import { Children, code } from "@alloy-js/core";
+import { collectGenerics, GenericTypes } from "../generics.js";
+import { useJavaNamePolicy } from "../name-policy.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Parameters } from "./Parameters.js";
-import { useJavaNamePolicy } from "../name-policy.js";
-import { collectGenerics, GenericTypes } from "../generics.js";
 
 export interface MethodProps extends ObjectModifiers, GenericTypes {
   name: string;

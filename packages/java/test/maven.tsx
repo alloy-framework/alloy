@@ -1,10 +1,8 @@
-import { expect, it } from "vitest";
-import * as jv from "../src/components/index.js";
 import { Output, render } from "@alloy-js/core";
+import { it } from "vitest";
 import { ProjectDirectory } from "../src/components/index.js";
 import { MavenProjectConfig } from "../src/index.js";
-import { assertFileContents, findFile } from "./utils.js";
-import { d } from "@alloy-js/core/testing";
+import { assertFileContents } from "./utils.js";
 
 it("generates barebones pom.xml file", () => {
   const projectConfig: MavenProjectConfig = {

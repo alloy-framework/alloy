@@ -1,10 +1,8 @@
 import {
   Children,
-  code,
   createContext,
   Scope,
   SourceDirectory,
-  SourceFile,
   useBinder,
   useContext,
   useScope,
@@ -15,7 +13,7 @@ import {
   JavaProjectScope,
   MavenProjectConfig,
 } from "../symbols/index.js";
-import { MavenProject, PomFile } from "./MavenProject.js";
+import { MavenProject } from "./MavenProject.js";
 
 export interface ProjectContext {
   scope: JavaProjectScope;

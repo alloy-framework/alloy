@@ -1,8 +1,8 @@
-import { DeclarationProps } from "./Declaration.js";
-import { Child, Children, code } from "@alloy-js/core";
+import { Children, code } from "@alloy-js/core";
 import { collectArguments } from "../arguments.js";
 import { Variable } from "./Variable.js";
 import { ObjectModifiers } from "../object-modifiers.js";
+import { DeclarationProps } from "./Declaration.js";
 
 export interface ObjectDeclarationProps
   extends DeclarationProps,

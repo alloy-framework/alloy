@@ -1,5 +1,5 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { RenderTextTree, renderTree } from "@alloy-js/core";
+import { Children } from "@alloy-js/core/jsx-runtime";
 
 export function printTree(tree: RenderTextTree) {
   return (tree as any).flat(Infinity).join("");
@@ -11,7 +11,7 @@ export function renderToString(element: Children) {
 
 export function d(strings: TemplateStringsArray, ...values: any[]): string {
   // Combine the strings and values
-  let result = strings.reduce(
+  const result = strings.reduce(
     (acc, str, i) => acc + str + (values[i] ?? ""),
     "",
   );

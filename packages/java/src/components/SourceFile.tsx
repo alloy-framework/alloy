@@ -1,15 +1,15 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import {
+  SourceFile as CoreSourceFile,
   createContext,
   OutputSymbol,
   reactive,
   Scope,
-  SourceFile as CoreSourceFile,
 } from "@alloy-js/core";
+import { Children } from "@alloy-js/core/jsx-runtime";
+import { JavaOutputSymbol } from "../symbols/index.js";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
 import { usePackage } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
-import { JavaOutputSymbol } from "../symbols/index.js";
 
 export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;

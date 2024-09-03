@@ -1,8 +1,8 @@
-import { expect, it } from "vitest";
-import { findFile, toSourceText } from "./utils.js";
-import * as jv from "../src/components/index.js";
 import { code } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
+import { expect, it } from "vitest";
+import * as jv from "../src/components/index.js";
+import { toSourceText } from "./utils.js";
 
 it("Annotates object", () => {
   const res = toSourceText(code`

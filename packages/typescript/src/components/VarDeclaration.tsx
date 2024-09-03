@@ -1,17 +1,13 @@
 import {
   Children,
+  Declaration as CoreDeclaration,
   createContext,
   refkey,
-  Declaration as CoreDeclaration,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { createTSSymbol, TSOutputSymbol } from "../symbols/index.js";
+import { DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
-import {
-  createTSSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
 
 export interface VarDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {

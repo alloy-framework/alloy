@@ -1,10 +1,10 @@
 import { Children, code, Scope } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Name } from "./Name.js";
 import { collectArguments } from "../arguments.js";
 import { collectGenerics, GenericTypes } from "../generics.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 
 export interface InterfaceProps
   extends DeclarationProps,

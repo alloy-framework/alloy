@@ -1,24 +1,20 @@
 import {
   Children,
-  code,
   computed,
-  effect,
-  Indent,
   mapJoin,
   memo,
   Refkey,
-  refkey,
   Scope,
   useBinder,
   useContext,
 } from "@alloy-js/core";
-import { ValueExpression } from "./ValueExpression.js";
 import {
   createTSMemberScope,
   createTSSymbol,
   TSSymbolFlags,
   useTSScope,
 } from "../symbols/index.js";
+import { ValueExpression } from "./ValueExpression.js";
 import { AssignmentContext } from "./VarDeclaration.jsx";
 
 export interface ObjectExpressionProps {
@@ -51,7 +47,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     } else {
       properties = [];
     }
-    let elements = mapJoin(
+    const elements = mapJoin(
       properties,
       ([name, value]) => {
         return <ObjectProperty name={name} jsValue={value} />;
@@ -123,14 +119,14 @@ export function ObjectProperty(props: ObjectPropertyProps) {
   let value;
   if (props.value) {
     value = props.value;
-  } else if (props.hasOwnProperty("jsValue")) {
+  } else if (Object.prototype.hasOwnProperty.call(props, "jsValue")) {
     // need the hasOwnProperty check because the value might be falsy.
     value = <ValueExpression jsValue={props.jsValue} />;
   } else if (props.children) {
     value = props.children;
   }
 
-  let assignmentContext: AssignmentContext | undefined = sym ?
+  const assignmentContext: AssignmentContext | undefined = sym ?
     {
       target: sym,
     }

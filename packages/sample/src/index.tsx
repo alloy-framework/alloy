@@ -1,5 +1,4 @@
 import * as ay from "@alloy-js/core";
-import { SourceDirectory } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import { writeOutput } from "./write-output.js";
 
@@ -34,4 +33,4 @@ const result = ay.render(
 </ay.Output>,
 );
 
-writeOutput(result, "./sample-output");
+await writeOutput(result, "./sample-output");

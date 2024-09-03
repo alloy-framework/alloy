@@ -1,11 +1,11 @@
-import { Refkey, useContext, memo, untrack, resolve } from "@alloy-js/core";
+import { memo, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
 import { usePackage } from "../components/PackageDirectory.jsx";
+import { SourceFileContext } from "../components/SourceFile.jsx";
 import { TSOutputScope } from "./scopes.js";
+import { TSMemberScope } from "./ts-member-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 import { TSOutputSymbol } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
-import { SourceFileContext } from "../components/SourceFile.jsx";
-import { TSMemberScope } from "./ts-member-scope.js";
 
 export function ref(refkey: Refkey) {
   const sourceFile = useContext(SourceFileContext);
@@ -45,7 +45,7 @@ export function ref(refkey: Refkey) {
 
       let localSymbol;
       // find public dependency
-      for (const [publicPath, module] of sourcePackage.exportedSymbols) {
+      for (const module of sourcePackage.exportedSymbols.values()) {
         if (module.exportedSymbols.has(importSymbol.refkey)) {
           localSymbol = untrack(() =>
             sourceFile!.scope.addImport(importSymbol, module),

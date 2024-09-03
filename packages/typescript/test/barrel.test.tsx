@@ -1,8 +1,8 @@
+import { Output, render, SourceDirectory, SourceFile } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { expect, it } from "vitest";
-import { render, Output, SourceDirectory, SourceFile } from "@alloy-js/core";
-import * as ts from "../src/components/index.js";
 import { d } from "@alloy-js/core/testing";
+import { expect, it } from "vitest";
+import * as ts from "../src/components/index.js";
 
 it("exports everything from source files within it", () => {
   const res = render(

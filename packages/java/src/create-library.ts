@@ -25,11 +25,11 @@ function createSymbols(
   for (const [pkg, symbols] of Object.entries(props.descriptor)) {
     const packageScope = createJavaPackageScope(binder, projectScope, pkg);
 
-    for (const symb of symbols) {
-      const sym = binder.createSymbol<JavaOutputSymbol>({
-        name: symb,
+    for (const symB of symbols) {
+      const _sym = binder.createSymbol<JavaOutputSymbol>({
+        name: symB,
         scope: packageScope,
-        refkey: refkeys[symb],
+        refkey: refkeys[symB],
         package: packageScope.name,
       });
     }

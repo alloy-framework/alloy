@@ -1,9 +1,9 @@
+import { Output, render } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { createLibrary } from "../src/index.js";
 import { findFile } from "./utils.js";
-import { Output, render } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 
 it("uses import from external library", () => {
   const testLib = createLibrary({

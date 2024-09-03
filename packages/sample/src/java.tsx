@@ -1,8 +1,8 @@
 import * as ay from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import * as jv from "@alloy-js/java";
 import { createJavaNamePolicy, createLibrary, javaUtil } from "@alloy-js/java";
 import { writeOutput } from "./write-output.js";
-import { code, refkey } from "@alloy-js/core";
 
 const res = ay.render(
   <ay.Output namePolicy={createJavaNamePolicy()} externals={[javaUtil]}>
@@ -88,4 +88,4 @@ const res = ay.render(
   </ay.Output>,
 );
 
-writeOutput(res, "./sample-output", true);
+await writeOutput(res, "./sample-output", true);

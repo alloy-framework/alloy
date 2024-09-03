@@ -1,11 +1,11 @@
+import { NamePolicyContext, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { refkey, NamePolicyContext } from "@alloy-js/core";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { d } from "@alloy-js/core/testing";
-import { toSourceText } from "./utils.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
+import { toSourceText } from "./utils.js";
 
 it("declares interfaces", () => {
   const res = toSourceText(<ts.InterfaceDeclaration name="Foo" />);
@@ -51,6 +51,42 @@ it("can create members", () => {
   expect(res).toEqual(d`
     interface Foo {
       member: string;
+      circular: Foo;
+      [str: string]: number;
+    }
+  `);
+});
+
+it("can create optional members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember name="member" type="string" />;
+      <ts.InterfaceMember optional name="circular" type={<Reference refkey={refkey("Foo")} />} />;
+      <ts.InterfaceMember indexer="str: string" type="number" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      member: string;
+      circular?: Foo;
+      [str: string]: number;
+    }
+  `);
+});
+
+it("can create readonly members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember readonly name="member" type="string" />;
+      <ts.InterfaceMember name="circular" type={<Reference refkey={refkey("Foo")} />} />;
+      <ts.InterfaceMember indexer="str: string" type="number" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      readonly member: string;
       circular: Foo;
       [str: string]: number;
     }

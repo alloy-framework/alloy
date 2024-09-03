@@ -1,7 +1,7 @@
-import { it } from "vitest";
-import { assertFileContents, testRender } from "./utils.js";
-import * as jv from "../src/components/index.js";
 import { refkey } from "@alloy-js/core";
+import { it } from "vitest";
+import * as jv from "../src/components/index.js";
+import { assertFileContents, testRender } from "./utils.js";
 
 it("imports reference to source file", () => {
   const res = testRender(

@@ -1,6 +1,6 @@
-import { render, Output, refkey } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
+import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
 import { assertFileContents } from "./utils.js";
 

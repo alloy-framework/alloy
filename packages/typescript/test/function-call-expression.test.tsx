@@ -1,3 +1,4 @@
+import { Output, refkey, render } from "@alloy-js/core";
 import { it } from "vitest";
 import {
   FunctionCallExpression,
@@ -6,7 +7,6 @@ import {
   SourceFile,
   VarDeclaration,
 } from "../../typescript/src/index.js";
-import { Output, refkey, render } from "@alloy-js/core";
 import { assertFileContents } from "./utils.js";
 
 it("can declare and call a function with parameters", () => {

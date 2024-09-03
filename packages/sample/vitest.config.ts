@@ -1,5 +1,5 @@
-import { defineConfig } from "vitest/config";
 import { babel } from "@rollup/plugin-babel";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {

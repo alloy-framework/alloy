@@ -1,19 +1,16 @@
 import {
-  render,
   Output,
   mapJoin,
   reactive,
-  renderTree,
-  effect,
-  memo,
-  ref,
   refkey,
+  render,
+  renderTree,
 } from "@alloy-js/core";
-import { describe, expect, it } from "vitest";
 import "@alloy-js/core/testing";
+import { describe, expect, it } from "vitest";
 
-import * as ts from "../src/index.js";
 import { d, renderToString } from "@alloy-js/core/testing";
+import * as ts from "../src/index.js";
 import { assertFileContents } from "./utils.jsx";
 
 it("renders an object", () => {

@@ -1,6 +1,5 @@
-import { expect, it } from "vitest";
-import { refkey } from "../src/refkey.js";
 import { children, Children, renderTree } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import { d, printTree } from "../testing/render.js";
 
 it("handles a single element", () => {

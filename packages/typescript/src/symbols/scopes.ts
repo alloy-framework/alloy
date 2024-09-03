@@ -1,7 +1,7 @@
 import { OutputScope, useScope } from "@alloy-js/core";
+import { TSMemberScope } from "./ts-member-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 import { TSPackageScope } from "./ts-package-scope.js";
-import { TSMemberScope } from "./ts-member-scope.js";
 
 export type TSOutputScope =
   | TSGlobalScope

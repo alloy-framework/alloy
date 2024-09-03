@@ -6,12 +6,14 @@
   "packageManager": "pnpm@9.7.0",
   "scripts": {
     "build": "pnpm -r --workspace-concurrency=Infinity build",
-    "watch": "concurrently --kill-others \"tsc -b --watch\" \"pnpm run --parallel -r watch\"",
+    "watch": "tsc --build ./tsconfig.ws.json --watch",
     "clean": "pnpm -r run clean && rimraf **/.temp/",
     "test": "vitest run",
     "format": "pnpm run prettier-exec --write",
     "format:check": "pnpm run prettier-exec --check",
-    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,jsx,json,yml,yaml}"
+    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,json,yml,yaml}",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "pnpm": {
     "overrides": {
@@ -22,8 +24,12 @@
     "@babel/preset-typescript": "catalog:",
     "babel-preset-alloy": "workspace:~",
     "concurrently": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-vitest": "catalog:",
     "prettier": "catalog:",
+    "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

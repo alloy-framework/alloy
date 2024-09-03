@@ -1,11 +1,11 @@
-import { shallowRef } from "@vue/reactivity";
 import {
   Children,
   ComponentDefinition,
-  getContext,
   effect,
+  getContext,
   untrack,
 } from "@alloy-js/core/jsx-runtime";
+import { shallowRef } from "@vue/reactivity";
 
 export interface ComponentContext<T> {
   id: symbol;
@@ -41,7 +41,7 @@ export function createContext<T = unknown>(
     Provider(props: ContextProviderProps<T>) {
       const context = getContext();
 
-      let rendered = shallowRef();
+      const rendered = shallowRef();
       effect(() => {
         context!.context![id] = props.value;
         rendered.value = untrack(() => props.children);

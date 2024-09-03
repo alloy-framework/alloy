@@ -1,6 +1,6 @@
+import { Children, renderTree } from "@alloy-js/core";
 import { expect } from "vitest";
-import { d, dedent, printTree, renderToString } from "./render.js";
-import { renderTree, Children } from "@alloy-js/core";
+import { dedent, printTree } from "./render.js";
 
 expect.extend({
   toRenderTo(received: Children, expectedRaw: string) {
@@ -11,7 +11,6 @@ expect.extend({
     return {
       pass: actual === expected,
       message: () => {
-        console.log(JSON.stringify(tree));
         return `Render is${isNot ? " not" : ""} incorrect`;
       },
       actual,

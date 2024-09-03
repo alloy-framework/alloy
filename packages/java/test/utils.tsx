@@ -1,13 +1,13 @@
 import {
   Children,
-  render,
   Output,
   OutputDirectory,
   OutputFile,
+  render,
 } from "@alloy-js/core";
-import * as jv from "../src/index.js";
-import { expect } from "vitest";
 import { dedent } from "@alloy-js/core/testing";
+import { expect } from "vitest";
+import * as jv from "../src/index.js";
 
 export function toSourceText(c: Children): string {
   const res = render(
@@ -51,7 +51,7 @@ export function findFile(res: OutputDirectory, path: string): OutputFile {
         }
         continue;
       } else {
-        let found = findFileWorker(item, path);
+        const found = findFileWorker(item, path);
         if (found) {
           return found;
         }

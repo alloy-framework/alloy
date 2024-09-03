@@ -1,4 +1,4 @@
-import { ComponentContext, createContext, useContext } from "./context.js";
+import { createContext, useContext } from "./context.js";
 
 export interface NamePolicy<TElements extends string> {
   getName(originalName: string, element: TElements): string;

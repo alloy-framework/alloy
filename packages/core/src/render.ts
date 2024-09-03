@@ -1,21 +1,18 @@
-import { Indent, IndentContext, IndentState } from "./components/Indent.js";
 import {
   Child,
   Children,
-  Component,
   Context,
-  createComponent,
   effect,
   getContext,
   isComponentCreator,
-  memo,
   root,
   untrack,
 } from "@alloy-js/core/jsx-runtime";
-import { useContext } from "./context.js";
 import { isRef } from "@vue/reactivity";
-import { isRefkey } from "./refkey.js";
+import { Indent, IndentContext, IndentState } from "./components/Indent.js";
 import { SourceFileContext } from "./components/SourceFile.js";
+import { useContext } from "./context.js";
+import { isRefkey } from "./refkey.js";
 
 /**
  * The component tree is constructed as the result of transforming JSX with
@@ -172,7 +169,7 @@ export type RenderTextTree = (string | RenderTextTree)[];
 
 function traceRender(phase: string, message: string) {
   return false;
-  console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
+  // console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
 
 export function render(children: Children): OutputDirectory {
@@ -293,7 +290,7 @@ function appendChild(
     } else {
       state.newline = false;
     }
-    let reindented = reindent(child, indentState.indentString);
+    const reindented = reindent(child, indentState.indentString);
     traceRender("appendChild:string", JSON.stringify(reindented));
     node.push(reindented);
   } else if (isComponentCreator(child)) {

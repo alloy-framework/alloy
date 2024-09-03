@@ -34,14 +34,18 @@ export interface InterfaceMemberProps {
   indexer?: Children;
   type?: Children;
   children?: Children;
+  optional?: boolean;
+  readonly?: boolean;
 }
 
 export function InterfaceMember(props: InterfaceMemberProps) {
   const namer = useTSNamePolicy();
   const type = props.type ?? props.children;
+  const optionality = props.optional ? "?" : "";
+  const readonly = props.readonly ? "readonly " : "";
   if (props.indexer) {
     return <>[{props.indexer}]: {type}</>;
   } else {
-    return <>{namer.getName(props.name!, "interface-member")}: {type}</>;
+    return <>{readonly}{namer.getName(props.name!, "interface-member")}{optionality}: {type}</>;
   }
 }

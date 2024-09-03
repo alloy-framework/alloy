@@ -1,9 +1,8 @@
+import { code, Declaration, refkey } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { code, Declaration, Output, refkey } from "@alloy-js/core";
-import { assertFileContents, testRender, toSourceText } from "./utils.js";
-import { AccessModifier } from "../src/index.js";
-import { d } from "@alloy-js/core/testing";
+import { assertFileContents, testRender, toSourceText } from "./utils.jsx";
 
 it("works", () => {
   const res = toSourceText(

@@ -1,5 +1,5 @@
 import { Children, code, Scope } from "@alloy-js/core";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { collectArguments } from "../arguments.js";
 import { useJavaNamePolicy } from "../name-policy.js";
 import {
   AccessModifier,
@@ -7,8 +7,8 @@ import {
   collectModifiers,
   ObjectModifiers,
 } from "../object-modifiers.js";
+import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
-import { collectArguments } from "../arguments.js";
 
 export interface InterfaceProps extends DeclarationProps, ObjectModifiers {
   accessModifier?: AccessModifier;

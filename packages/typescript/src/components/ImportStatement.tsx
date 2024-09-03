@@ -1,21 +1,17 @@
 import {
-  computed,
   mapJoin,
   memo,
   SourceDirectoryContext,
   useContext,
-  useScope,
 } from "@alloy-js/core";
+import { relative } from "pathe";
 import {
   ImportedSymbol,
   ImportRecords,
-  TSModuleScope,
-  TSOutputSymbol,
   TSPackageScope,
 } from "../symbols/index.js";
-import { usePackage } from "./PackageDirectory.js";
-import { relative } from "pathe";
 import { modulePath } from "../utils.js";
+import { usePackage } from "./PackageDirectory.js";
 
 export interface ImportStatementsProps {
   records: ImportRecords;
@@ -27,6 +23,7 @@ export function ImportStatements(props: ImportStatementsProps) {
   return memo(() => {
     // todo: may be able to remove this (was just making sure to trigger
     // reactivity based on props.record).
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     props.records.size;
     return mapJoin(props.records, (module, importedSymbols) => {
       let targetPath: string;
@@ -75,7 +72,7 @@ export interface ImportStatementProps {
 export function ImportStatement(props: ImportStatementProps) {
   return memo(() => {
     let defaultImportSymbol: ImportedSymbol | undefined = undefined;
-    let namedImportSymbols: ImportedSymbol[] = [];
+    const namedImportSymbols: ImportedSymbol[] = [];
 
     for (const sym of props.symbols) {
       if (sym.target.default) {

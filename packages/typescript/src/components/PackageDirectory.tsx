@@ -1,9 +1,6 @@
 import {
-  Binder,
   Children,
   createContext,
-  OutputScope,
-  reactive,
   Ref,
   Scope,
   shallowRef,
@@ -13,20 +10,15 @@ import {
   useContext,
   useScope,
 } from "@alloy-js/core";
+import { join } from "pathe";
+import { createTSPackageScope, TSPackageScope } from "../symbols/index.js";
+import { modulePath } from "../utils.js";
 import {
-  ExportConditions,
   ExportPath,
   PackageExports,
   PackageJsonFile,
   PackageJsonFileProps,
 } from "./PackageJson.js";
-import { modulePath } from "../utils.js";
-import { join } from "pathe";
-import {
-  createTSPackageScope,
-  TSModuleScope,
-  TSPackageScope,
-} from "../symbols/index.js";
 import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {

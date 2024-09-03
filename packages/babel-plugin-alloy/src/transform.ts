@@ -1,7 +1,6 @@
-import { NodePath, Scope } from "@babel/traverse";
-import * as t from "@babel/types";
-import generate from "@babel/generator";
 import helperModuleImports from "@babel/helper-module-imports";
+import { NodePath } from "@babel/traverse";
+import * as t from "@babel/types";
 interface Options {
   alloyModuleName: string | undefined;
 }
@@ -125,7 +124,7 @@ function registerIndent(path: NodePath, opts: Options) {
   }
 
   if (!imports.has(`${moduleName}:Indent`)) {
-    let id: t.Identifier = helperModuleImports.addNamed(
+    const id: t.Identifier = helperModuleImports.addNamed(
       path,
       "Indent",
       moduleName,
@@ -136,7 +135,7 @@ function registerIndent(path: NodePath, opts: Options) {
     imports.set(`${moduleName}:Indent`, id);
     return t.jsxIdentifier(id.name);
   } else {
-    let id = imports.get(`${moduleName}:Indent`);
+    const id = imports.get(`${moduleName}:Indent`);
     // the cloning is required to play well with babel-preset-env which is
     // transpiling import as we add them and using the same identifier causes
     // problems with the multiple identifiers of the same thing

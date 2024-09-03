@@ -1,4 +1,3 @@
-import {} from "@vue/reactivity";
 import {
   Child,
   Children,
@@ -8,35 +7,74 @@ import {
   memo,
 } from "@alloy-js/core/jsx-runtime";
 import { code } from "./code.js";
-export interface MapJoinOptions {
+
+export interface JoinOptions {
+  /**
+   * The string to place between each element.
+   */
   joiner?: string;
+
+  /**
+   * When true, the joiner is placed at the end of the array. When a string,
+   * that string is placed at the end of the array. The ender is only emitted
+   * when the array has at least one element.
+   */
+  ender?: string | boolean;
 }
-const defaultMapJoinOptions: MapJoinOptions = {
+const defaultJoinOptions: JoinOptions = {
   joiner: "\n",
+  ender: false,
 };
 
+/**
+ * Map a Map to an array using a mapper and place a joiner between each element.
+ * Defaults to joining with a newline.
+ *
+ * @see {@link join} for joining without mapping.
+ * @param src Source map.
+ * @param cb Mapper function.
+ * @param options Join options.
+ * @returns The mapped and joined array.
+ */
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
   cb: (key: T, value: U) => V,
-  options?: MapJoinOptions,
+  options?: JoinOptions,
 ): (V | string)[];
+
+/**
+ * Map a array to another array using a mapper and place a joiner between each
+ * element. Defaults to joining with a newline.
+ *
+ * @see {@link join} for joining without mapping.
+ * @param src Source array.
+ * @param cb Mapper function.
+ * @param options Join options.
+ * @returns The mapped and joined array.
+ */
 export function mapJoin<T, V>(
   src: T[],
   cb: (value: T) => V,
-  options?: MapJoinOptions,
+  options?: JoinOptions,
 ): (V | string)[];
 export function mapJoin<T, U, V>(
   src: Map<T, U> | T[],
   cb: (key: T, value?: U) => V,
-  options: MapJoinOptions = defaultMapJoinOptions,
+  rawOptions: JoinOptions = {},
 ): (V | string)[] {
-  let mapped: (V | string)[] = [];
+  const options = { ...defaultJoinOptions, ...rawOptions };
+  const ender = options.ender === true ? options.joiner : options.ender;
+
+  const mapped: (V | string)[] = [];
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
       mapped.push(cb(item));
       if (index !== src.length - 1) {
         mapped.push(options.joiner!);
       }
+    }
+    if (src.length > 0 && ender) {
+      mapped.push(ender);
     }
   } else {
     const entries = [...src.entries()];
@@ -46,9 +84,43 @@ export function mapJoin<T, U, V>(
         mapped.push(options.joiner!);
       }
     }
+    if (entries.length > 0 && ender) {
+      mapped.push(ender);
+    }
   }
 
   return mapped;
+}
+
+/**
+ * Place a joiner between each element of an array. Defaults to joining with a
+ * newline.
+ *
+ * @see {@link mapJoin} for mapping before joining.
+ * @param src
+ * @param rawOptions
+ * @returns The joined array
+ */
+export function join<T>(
+  src: T[],
+  rawOptions: JoinOptions = {},
+): (T | string)[] {
+  const options = { ...defaultJoinOptions, ...rawOptions };
+  const joined = [];
+  const ender = options.ender === true ? options.joiner : options.ender;
+
+  for (const [index, item] of src.entries()) {
+    joined.push(item);
+    if (index !== src.length - 1) {
+      joined.push(options.joiner!);
+    }
+  }
+
+  if (src.length > 0 && ender) {
+    joined.push(ender);
+  }
+
+  return joined;
 }
 
 /**
@@ -83,7 +155,7 @@ export function childrenArray(fn: () => Children) {
   }
 }
 
-export function findKeyedChild(children: Child[], tag: Symbol) {
+export function findKeyedChild(children: Child[], tag: symbol) {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;

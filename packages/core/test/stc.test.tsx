@@ -1,6 +1,6 @@
-import { it, expect } from "vitest";
-import "../testing/extend-expect.js";
 import { code, Indent, stc } from "@alloy-js/core";
+import { expect, it } from "vitest";
+import "../testing/extend-expect.js";
 
 it("is applied by output", () => {
   function Foo() {

@@ -1,7 +1,7 @@
 import { memo, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
 import { SourceFileContext } from "../components/index.js";
-import { JavaOutputScope } from "./scopes.js";
 import { JavaOutputSymbol } from "./java-output-symbol.js";
+import { JavaOutputScope } from "./scopes.js";
 
 /**
  * Resolve reference to symbol reference, and handle dependency management
@@ -17,7 +17,7 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
 
-    const { targetDeclaration, pathDown, pathUp, commonScope } = result.value;
+    const { targetDeclaration } = result.value;
 
     return untrack(() => sourceFile!.addImport(targetDeclaration));
   });

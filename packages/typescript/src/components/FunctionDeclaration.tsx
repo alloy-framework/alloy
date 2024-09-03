@@ -1,5 +1,6 @@
 import {
   childrenArray,
+  code,
   findKeyedChild,
   findUnkeyedChildren,
   mapJoin,
@@ -28,8 +29,9 @@ function isParameterDescriptor(
 }
 export interface FunctionDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
+  async?: boolean;
   parameters?: Record<string, Children | ParameterDescriptor>;
-  returnType?: string;
+  returnType?: Children;
   children?: Children;
 }
 
@@ -41,16 +43,19 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const parametersChild = findKeyedChild(children, functionParametersTag);
   const bodyChild = findKeyedChild(children, functionBodyTag);
   const filteredChildren = findUnkeyedChildren(children);
-  const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
+  const returnType = getReturnType(props.returnType, { async: props.async });
+  const sReturnType = returnType ? <>: {returnType}</> : undefined;
 
   const sParams =
     parametersChild ?? <FunctionDeclaration.Parameters parameters={props.parameters} />;
 
-  let sBody =
+  const sBody =
     bodyChild ?? <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>;
 
+  const asyncKwd = props.async ? "async " : "";
+
   return <Declaration {...props} nameKind="function">
-      function <Name /><Scope name={props.name} kind="function">
+      {asyncKwd}function <Name /><Scope name={props.name} kind="function">
         ({sParams}){sReturnType} {"{"}
           {sBody}
         {"}"}
@@ -58,6 +63,14 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     </Declaration>;
 }
 
+function getReturnType(
+  returnType: Children | undefined,
+  options: { async?: boolean } = { async: false },
+) {
+  if (returnType) {
+    return options.async ? code`Promise<${returnType}>` : returnType;
+  }
+}
 export interface FunctionParametersProps {
   parameters?: Record<string, Children | ParameterDescriptor>;
   children?: Children;
@@ -66,7 +79,6 @@ export interface FunctionParametersProps {
 FunctionDeclaration.Parameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionParametersProps) {
-    debugger;
     const namePolicy = useTSNamePolicy();
 
     let value;

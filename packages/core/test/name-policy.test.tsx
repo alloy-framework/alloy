@@ -1,6 +1,6 @@
-import { it, expect, describe } from "vitest";
+import { createNamePolicy, Output, useNamePolicy } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import "../testing/extend-expect.js";
-import { createNamePolicy, useNamePolicy, Output } from "@alloy-js/core";
 
 it("is applied by output", () => {
   const policy = createNamePolicy((name) => {

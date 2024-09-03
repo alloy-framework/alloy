@@ -1,6 +1,6 @@
-import { it, expect, describe } from "vitest";
-import "../../testing/extend-expect.js";
 import { code } from "@alloy-js/core";
+import { expect, it } from "vitest";
+import "../../testing/extend-expect.js";
 
 it("renders simple strings", () => {
   expect(code`foo`).toRenderTo("foo");

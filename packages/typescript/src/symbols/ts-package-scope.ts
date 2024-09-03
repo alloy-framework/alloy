@@ -1,7 +1,7 @@
-import { OutputScope, Refkey, Binder } from "@alloy-js/core";
+import { Binder, OutputScope, Refkey } from "@alloy-js/core";
 import {
-  PackageExports,
   ExportConditions,
+  PackageExports,
 } from "../components/PackageJson.jsx";
 import { modulePath } from "../utils.js";
 import { TSModuleScope } from "./ts-module-scope.js";

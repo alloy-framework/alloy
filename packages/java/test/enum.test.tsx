@@ -62,8 +62,8 @@ it("implements interfaces", () => {
 it("declares members", () => {
   const res = toSourceText(
     <jv.Enum public name="TestEnum">
-      <jv.EnumMember name="ONE" />
-      <jv.EnumMember name="TWO" />
+      <jv.EnumMember name="ONE" />,
+      <jv.EnumMember name="TWO" />;
     </jv.Enum>,
   );
 
@@ -80,11 +80,11 @@ it("declares members", () => {
 it("declares members with arguments", () => {
   const res = toSourceText(
     <jv.Enum public name="TestEnum">
-      <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />
-      <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />
+      <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />,
+      <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />;
 
       <jv.Constructor parameters={{
-        value: "String",
+        value: "String"
       }}>
       </jv.Constructor>
     </jv.Enum>,

@@ -110,7 +110,7 @@ FunctionDeclaration.Parameters = taggedComponent(
 
           return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
         },
-        { joiner: "," },
+        { joiner: ", " },
       );
     } else {
       value = undefined;

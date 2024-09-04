@@ -21,11 +21,11 @@ it("can declare and call a function with parameters", () => {
                 console.log(message);
                 if(baz) console.log(baz)
             </FunctionDeclaration>
-            <FunctionCallExpression refkey={functionRefkey} args={[`"Hello!"`]} />
-            <FunctionCallExpression refkey={functionRefkey} />
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello {<>World</>}!"</>]} />
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hey there!"</>]} />
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello World"</>, <>12345</>]} />
+            <FunctionCallExpression refkey={functionRefkey} args={[`"Hello!"`]} />;
+            <FunctionCallExpression refkey={functionRefkey} />;
+            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello {<>World</>}!"</>]} />;
+            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hey there!"</>]} />;
+            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello World"</>, <>12345</>]} />;
           </SourceFile>
         </PackageDirectory>
       </Output>,

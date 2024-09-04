@@ -10,6 +10,6 @@ export function FunctionCallExpression(props: FunctionCallExpressionProps) {
     mapJoin(props.args, (arg) => arg, { joiner: ", " })
   : null;
   return <>
-        <Reference refkey={props.refkey} />({args});
+        <Reference refkey={props.refkey} />({args})
     </>;
 }

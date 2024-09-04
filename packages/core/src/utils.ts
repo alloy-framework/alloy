@@ -41,10 +41,9 @@ export function mapJoin<T, U, V>(
   cb: (key: T, value: U) => V,
   options?: JoinOptions,
 ): (V | string)[];
-
 /**
- * Map a array to another array using a mapper and place a joiner between each
- * element. Defaults to joining with a newline.
+ * Map a array or iterator to another array using a mapper and place a joiner
+ * between each element. Defaults to joining with a newline.
  *
  * @see {@link join} for joining without mapping.
  * @param src Source array.
@@ -53,12 +52,12 @@ export function mapJoin<T, U, V>(
  * @returns The mapped and joined array.
  */
 export function mapJoin<T, V>(
-  src: T[],
+  src: T[] | IterableIterator<T>,
   cb: (value: T) => V,
   options?: JoinOptions,
 ): (V | string)[];
 export function mapJoin<T, U, V>(
-  src: Map<T, U> | T[],
+  src: Map<T, U> | T[] | Iterable<T>,
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
 ): (V | string)[] {
@@ -66,6 +65,10 @@ export function mapJoin<T, U, V>(
   const ender = options.ender === true ? options.joiner : options.ender;
 
   const mapped: (V | string)[] = [];
+  if (typeof (src as any).next === "function") {
+    src = Array.from(src as Iterable<T>);
+  }
+
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
       mapped.push(cb(item));
@@ -77,7 +80,7 @@ export function mapJoin<T, U, V>(
       mapped.push(ender);
     }
   } else {
-    const entries = [...src.entries()];
+    const entries = [...(src as Map<T, U>).entries()];
     for (const [index, [key, value]] of entries.entries()) {
       mapped.push(cb(key, value));
       if (index !== entries.length - 1) {
@@ -93,8 +96,8 @@ export function mapJoin<T, U, V>(
 }
 
 /**
- * Place a joiner between each element of an array. Defaults to joining with a
- * newline.
+ * Place a joiner between each element of an array or iterator. Defaults to
+ * joining with a newline.
  *
  * @see {@link mapJoin} for mapping before joining.
  * @param src
@@ -102,12 +105,13 @@ export function mapJoin<T, U, V>(
  * @returns The joined array
  */
 export function join<T>(
-  src: T[],
+  src: T[] | Iterator<T>,
   rawOptions: JoinOptions = {},
 ): (T | string)[] {
   const options = { ...defaultJoinOptions, ...rawOptions };
   const joined = [];
   const ender = options.ender === true ? options.joiner : options.ender;
+  src = Array.from(src as Iterable<T>);
 
   for (const [index, item] of src.entries()) {
     joined.push(item);
@@ -215,4 +219,8 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
 
     return fn;
   };
+}
+
+function isIterable(obj: any): obj is Iterable<any> {
+  return obj != null && typeof obj[Symbol.iterator] === "function";
 }

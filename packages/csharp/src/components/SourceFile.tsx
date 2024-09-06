@@ -54,13 +54,12 @@ export function SourceFile(props: SourceFileProps) {
             <>
               <base.UsingDirective namespaces={using} />{"\n"}
             </>
-          ) : undefined}namespace {namespaceCtx.name}{props.children ? (
+          ) : undefined}namespace {namespaceCtx.name}{!props.children && " {}"}{props.children && 
             <>
               {"\n{"}
                 {props.children}
               {"}"}
             </>
-          ) : " {}"
           }
         </core.Scope>
       </SourceFileContext.Provider>

@@ -31,7 +31,7 @@ export function Enum(props: EnumProps) {
   );
 
   return <core.Declaration symbol={thisEnumSymbol}>
-      {csharp.getAccessModifier(props.accessModifier)}enum <base.Name />{props.children ? (
+      {csharp.getAccessModifier(props.accessModifier)}enum <base.Name />{!props.children && ";"}{props.children && 
         <>
           {"\n{"}
             <core.Scope value={thisEnumScope}>
@@ -39,7 +39,7 @@ export function Enum(props: EnumProps) {
             </core.Scope>
           {"}"}
         </>
-      ) : ";"}
+        }
     </core.Declaration>;
 }
 

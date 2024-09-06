@@ -9,8 +9,8 @@ export type CSharpElements =
   | "enum-member"
   | "function"
   | "interface"
-  | "member"
-  | "method"
+  | "class-member"
+  | "class-method"
   | "parameter";
 
 // creates the C# naming policy
@@ -21,7 +21,7 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
       case "enum":
       case "enum-member":
       case "interface":
-      case "method":
+      case "class-method":
         return changecase.pascalCase(name);
       case "constant":
         return changecase.constantCase(name);

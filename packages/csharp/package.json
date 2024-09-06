@@ -17,6 +17,8 @@
     "build-tsc": "tsc -p .",
     "build": "npm run build-src && npm run build-tsc",
     "clean": "rimraf dist/ .temp/",
+    "format": "pnpm run prettier-exec --write",
+    "prettier-exec": "prettier --config ../../.prettierrc.yaml **/*.{ts,js,tsx,json,yml,yaml}",
     "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
     "watch-tsc": "tsc -p . --watch",
     "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\"",

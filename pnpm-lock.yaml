@@ -246,6 +246,43 @@ importers:
         specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
+  packages/csharp:
+    dependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../core
+      change-case:
+        specifier: 'catalog:'
+        version: 5.4.4
+      pathe:
+        specifier: 'catalog:'
+        version: 1.1.2
+    devDependencies:
+      '@babel/cli':
+        specifier: 'catalog:'
+        version: 7.24.8(@babel/core@7.25.2)
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 7.24.7(@babel/core@7.25.2)
+      '@rollup/plugin-babel':
+        specifier: 'catalog:'
+        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
+      '@rollup/plugin-typescript':
+        specifier: 'catalog:'
+        version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
+      babel-preset-alloy:
+        specifier: workspace:~
+        version: link:../babel-preset-alloy
+      concurrently:
+        specifier: 'catalog:'
+        version: 8.2.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.5.4
+      vitest:
+        specifier: 'catalog:'
+        version: 2.0.5(@types/node@22.2.0)
+
   packages/java:
     dependencies:
       '@alloy-js/core':

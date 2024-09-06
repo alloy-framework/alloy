@@ -1,4 +1,15 @@
+/**
+ * Objects extend this interface to allow to take modifiers as boolean props.
+ * Then can declare components like so
+ * '<Class public final abstract />'
+ *
+ * Error will be thrown if try to specify multiple access modifiers
+ */
 export interface ObjectModifiers {
+  public?: boolean;
+  protected?: boolean;
+  private?: boolean;
+
   default?: boolean;
   static?: boolean;
   final?: boolean;
@@ -10,24 +21,19 @@ export interface ObjectModifiers {
   volatile?: boolean;
 }
 
-export type AccessModifier =
-  | "public"
-  | "protected"
-  | "private"
-  | "package-private";
-export const accessModifierLookup: Record<AccessModifier, string> = {
-  public: "public ",
-  protected: "protected ",
-  private: "private ",
-  "package-private": "",
-};
-
-export function collectAccessModifier(accessModifier?: AccessModifier) {
-  return accessModifier ? accessModifierLookup[accessModifier] : "";
-}
-
 export function collectModifiers<T extends ObjectModifiers>(props: T) {
   const modifiers = [];
+
+  // If more than one access modifier is specified, throw an error
+  if (
+    [props.public, props.protected, props.private].filter(Boolean).length > 1
+  ) {
+    throw new Error("Cannot specify multiple access modifiers");
+  }
+
+  if (props.public) modifiers.push("public");
+  if (props.protected) modifiers.push("protected");
+  if (props.private) modifiers.push("private");
   if (props.abstract) modifiers.push("abstract");
   if (props.static) modifiers.push("static");
   if (props.synchronized) modifiers.push("synchronized");

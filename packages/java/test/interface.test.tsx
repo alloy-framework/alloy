@@ -2,11 +2,11 @@ import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender, toSourceText } from "./utils.jsx";
+import { assertFileContents, testRender, toSourceText } from "./utils.js";
 
 it("works", () => {
   const res = toSourceText(
-    <jv.Interface accessModifier='public' name="TestInterface">
+    <jv.Interface public name="TestInterface">
     </jv.Interface>,
   );
 
@@ -30,7 +30,7 @@ it("extends other interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestInterface.java">
-          <jv.Interface accessModifier='public' name="TestInterface" extends={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Interface public name="TestInterface" extends={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Interface>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -45,6 +45,38 @@ it("extends other interfaces", () => {
       import me.test.code.InterfaceTwo;
 
       public interface TestInterface extends InterfaceOne, InterfaceTwo {
+        
+      }
+    `,
+  });
+});
+
+it("defines generics", () => {
+  const res = testRender(
+    <>
+      <jv.SourceFile path="TypeOne.java">
+        <jv.Interface name="TypeOne" />
+      </jv.SourceFile>
+      <jv.SourceFile path="TypeTwo.java">
+        <jv.Interface name="TypeTwo" />
+      </jv.SourceFile>
+      <jv.PackageDirectory package="import">
+        <jv.SourceFile path="TestGenerics.java">
+          <jv.Interface public name="TestGenerics" generics={{ T: refkey("TypeOne"), N: refkey("TypeTwo"), J: 'String', K: ''}}>
+          </jv.Interface>
+        </jv.SourceFile>
+      </jv.PackageDirectory>
+    </>,
+  );
+
+  assertFileContents(res, {
+    "TestGenerics.java": d`
+      package me.test.code.import;
+
+      import me.test.code.TypeOne;
+      import me.test.code.TypeTwo;
+
+      public interface TestGenerics<T extends TypeOne, N extends TypeTwo, J extends String, K> {
         
       }
     `,

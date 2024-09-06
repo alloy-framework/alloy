@@ -10,7 +10,7 @@ it("works", () => {
     <Declaration name="TestClass">
       {code`
         public class TestClass {
-          ${<jv.Constructor accessModifier='public' name="TestClass" />}
+          ${<jv.Constructor public name="TestClass" />}
         }
       `}
     </Declaration>
@@ -34,7 +34,7 @@ it("takes name from class", () => {
     <Declaration name="TestClass">
       {code`
         public class TestClass {
-          ${<jv.Constructor accessModifier='public' />}
+          ${<jv.Constructor public />}
         }
       `}
     </Declaration>
@@ -68,7 +68,7 @@ it("declares parameters", () => {
           <Declaration name="TestClass">
             {code`
               public class TestClass {
-                ${<jv.Constructor accessModifier='public' parameters={{
+                ${<jv.Constructor public parameters={{
                   type: refkey("Model"),
                   age: "int"
                 }} />}

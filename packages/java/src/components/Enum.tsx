@@ -1,17 +1,11 @@
 import { Children, code, Scope } from "@alloy-js/core";
 import { collectArguments } from "../arguments.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import {
-  AccessModifier,
-  collectAccessModifier,
-  collectModifiers,
-  ObjectModifiers,
-} from "../object-modifiers.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface EnumProps extends DeclarationProps, ObjectModifiers {
-  accessModifier?: AccessModifier;
   implements?: Children;
 }
 
@@ -22,9 +16,10 @@ export function Enum(props: EnumProps) {
     code` implements ${collectedInterfaces}`
   : "";
   const modifiers = collectModifiers(props);
+
   return <Declaration {...props} name={name}>
-      {collectAccessModifier(props.accessModifier)}{modifiers}enum <Name />{implementsExpression} {"{"}
-        <Scope name={name} kind="enum">
+      {modifiers}enum <Name />{implementsExpression} {"{"}
+        <Scope kind='enum'>
           {props.children}
         </Scope>
       {"}"}

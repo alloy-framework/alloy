@@ -2,13 +2,11 @@ import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender, toSourceText } from "./utils.jsx";
+import { assertFileContents, testRender, toSourceText } from "./utils.js";
 
 it("works", () => {
-  const res = toSourceText(
-    <jv.Enum accessModifier='public' name="TestEnum">
-    </jv.Enum>,
-  );
+  const res = toSourceText(<jv.Enum public name="TestEnum">
+    </jv.Enum>);
 
   expect(res).toBe(d`
     package me.test.code;
@@ -40,7 +38,7 @@ it("implements interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestEnum.java">
-          <jv.Enum accessModifier='public' name="TestEnum" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
+          <jv.Enum public name="TestEnum" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
           </jv.Enum>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -63,7 +61,7 @@ it("implements interfaces", () => {
 
 it("declares members", () => {
   const res = toSourceText(
-    <jv.Enum accessModifier='public' name="TestEnum">
+    <jv.Enum public name="TestEnum">
       <jv.EnumMember name="ONE" />,
       <jv.EnumMember name="TWO" />;
     </jv.Enum>,
@@ -81,12 +79,12 @@ it("declares members", () => {
 
 it("declares members with arguments", () => {
   const res = toSourceText(
-    <jv.Enum accessModifier='public' name="TestEnum">
+    <jv.Enum public name="TestEnum">
       <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />,
       <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />;
 
       <jv.Constructor parameters={{
-        value: "String",
+        value: "String"
       }}>
       </jv.Constructor>
     </jv.Enum>,

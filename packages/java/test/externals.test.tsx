@@ -20,7 +20,7 @@ it("uses import from external library", () => {
     <Output externals={[testLib]}>
       <jv.PackageDirectory package="me.test.code">
         <jv.SourceFile path='TestImport.java'>
-          <jv.Class accessModifier='public' name="TestImport">
+          <jv.Class public name="TestImport">
             <jv.ObjectDeclaration type={testLib["TestModel"]} name="myTestModel" />
             <jv.ObjectDeclaration type={testLib["TestClass"]} name="myTestClass" />
             <jv.ObjectDeclaration type={testLib["Tester"]} name="myTester" />

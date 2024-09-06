@@ -9,7 +9,7 @@ it("declares basic empty function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod">
+          ${<jv.Method public name="testMethod">
             System.out.println("Test");
           </jv.Method>}
         }
@@ -33,7 +33,7 @@ it("declares bodyless function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod" />}
+          ${<jv.Method public name="testMethod" />}
         }
       `}
     </jv.Declaration>,
@@ -53,7 +53,7 @@ it("declares return type", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method accessModifier='public' name="testMethod" return='String'>
+          ${<jv.Method public name="testMethod" return='String'>
             System.out.println("Test");
             return "Test";
           </jv.Method>}
@@ -90,12 +90,11 @@ it("declares parameters", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Method accessModifier='public' name="testMethod" parameters={{
+                ${<jv.Method public name="testMethod" parameters={{
                   myModel: refkey("Model"),
                   name: "String"
                   }}>
                     System.out.println("Test");
-                    return "Test";
                   </jv.Method>}
               }
             `}
@@ -114,7 +113,48 @@ it("declares parameters", () => {
       public class Test {
         public void testMethod(Model myModel, String name) {
           System.out.println("Test");
-          return "Test";
+        }
+      }
+    `,
+  });
+});
+
+it("defines generics", () => {
+  const res = testRender(
+    <>
+      <jv.SourceFile path="Model.java">
+        <jv.Declaration name='Model'>
+          {code`
+            public class Model {
+            }
+          `}
+        </jv.Declaration>
+      </jv.SourceFile>
+      <jv.PackageDirectory package='imports'>
+        <jv.SourceFile path="Test.java">
+          <Declaration name="Test">
+            {code`
+              public class Test {
+                ${<jv.Method public generics={{ T: refkey("Model"), N: 'String', K: ''}} name="testMethod">
+                  System.out.println("Test");
+                </jv.Method>}
+              }
+            `}
+          </Declaration>
+        </jv.SourceFile>
+      </jv.PackageDirectory>
+    </>,
+  );
+
+  assertFileContents(res, {
+    "Test.java": d`
+      package me.test.code.imports;
+      
+      import me.test.code.Model;
+
+      public class Test {
+        public <T extends Model, N extends String, K> void testMethod() {
+          System.out.println("Test");
         }
       }
     `,

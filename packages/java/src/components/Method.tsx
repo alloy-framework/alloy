@@ -1,15 +1,10 @@
 import { Children, code } from "@alloy-js/core";
+import { collectGenerics, GenericTypes } from "../generics.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import {
-  AccessModifier,
-  collectAccessModifier,
-  collectModifiers,
-  ObjectModifiers,
-} from "../object-modifiers.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Parameters } from "./Parameters.js";
 
-export interface MethodProps extends ObjectModifiers {
-  accessModifier?: AccessModifier;
+export interface MethodProps extends ObjectModifiers, GenericTypes {
   name: string;
   return?: Children;
   parameters?: Record<string, Children>;
@@ -20,6 +15,9 @@ export function Method(props: MethodProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
   const name = useJavaNamePolicy().getName(props.name, "method");
   const modifiers = collectModifiers(props);
+  const generics = props.generics ?
+    code`${collectGenerics(props.generics)}${" "}`
+  : "";
   const sBody = props.children !== undefined ?
     code`
     ${" "}{
@@ -28,6 +26,6 @@ export function Method(props: MethodProps) {
   `
   : ";";
   return code`
-        ${collectAccessModifier(props.accessModifier)}${modifiers}${props.return ?? "void"} ${name}(${params})${sBody}
+        ${modifiers}${generics}${props.return ?? "void"} ${name}(${params})${sBody}
     `;
 }

@@ -4,7 +4,7 @@ import * as base from "./index.js";
 // contains the info for the current source file
 interface SourceFileContext {
   // adds a namespace to the array of using statements
-  addUsing(namespace: string): void
+  addUsing(namespace: string): void;
 }
 
 const SourceFileContext = core.createContext<SourceFileContext>();
@@ -41,7 +41,7 @@ export function SourceFile(props: SourceFileProps) {
     if (!using.includes(namespace)) {
       using.push(namespace);
     }
-  };
+  }
 
   const sourceFileCtx: SourceFileContext = {
     addUsing,

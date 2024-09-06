@@ -11,7 +11,11 @@ export function Parameters(props: ParametersProps): Array<core.Child | string> {
   return core.mapJoin(
     new Map(Object.entries(props.parameters)),
     (name, type) => {
-      return [type, " ", csharp.useCSharpNamePolicy().getName(name, "parameter")];
+      return [
+        type,
+        " ",
+        csharp.useCSharpNamePolicy().getName(name, "parameter"),
+      ];
     },
     { joiner: ", " },
   );

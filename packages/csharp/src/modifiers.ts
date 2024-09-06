@@ -18,7 +18,7 @@ const accessModifierLookup: Record<AccessModifier, string> = {
   internal: "internal ",
   "protected-internal": "protected internal ",
   "private-protected": "private protected ",
-  "file": "file ",
+  file: "file ",
 };
 
 // returns the C# syntax for the specified access modifier.
@@ -36,7 +36,7 @@ const methodModifierLookup: Record<MethodModifier, string> = {
   sealed: "sealed ",
   static: "static ",
   virtual: "virtual ",
-}
+};
 
 // returns the C# syntax for the specified method modifier.
 // if no method modifier is specified, the empty string is returned.

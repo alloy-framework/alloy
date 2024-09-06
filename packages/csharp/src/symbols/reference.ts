@@ -1,6 +1,6 @@
 import * as core from "@alloy-js/core";
-import * as symbols from "./index.js";
 import * as base from "../components/index.js";
+import * as symbols from "./index.js";
 
 // when resolving references across source files, the last element
 // in pathDown will be the containing source file. we only need this
@@ -18,9 +18,10 @@ type ReferenceScope = symbols.CSharpOutputScope | SourceFileScope;
 // the result would be foo.bar.
 export function ref(refkey: core.Refkey): () => string {
   const targetNamespaceCtx = base.useNamespace();
-  const resolveResult = core.resolve<ReferenceScope, symbols.CSharpOutputSymbol>(
-    refkey as core.Refkey,
-  );
+  const resolveResult = core.resolve<
+    ReferenceScope,
+    symbols.CSharpOutputSymbol
+  >(refkey as core.Refkey);
 
   return core.memo(() => {
     if (resolveResult.value === undefined) {
@@ -39,7 +40,9 @@ export function ref(refkey: core.Refkey): () => string {
     //    two entries, namespace, source-file
     const { targetDeclaration, pathDown } = resolveResult.value;
 
-    const sourceNamespace = pathDown.find((v) => { return v.kind === 'namespace'; });
+    const sourceNamespace = pathDown.find((v) => {
+      return v.kind === "namespace";
+    });
     if (sourceNamespace && sourceNamespace.name !== targetNamespaceCtx!.name) {
       // the source symbol is in a different namespace that the target refkey.
       // add the applicable using statement to the target's source file.
@@ -49,7 +52,11 @@ export function ref(refkey: core.Refkey): () => string {
 
     // we only need to build the fully-qualified name for members
     // TODO: possibly a subset of members
-    const syms = (pathDown as ReferenceScope[]).filter((v) => { return v.kind === "member"}).map((s) => s.owner);
+    const syms = (pathDown as ReferenceScope[])
+      .filter((v) => {
+        return v.kind === "member";
+      })
+      .map((s) => s.owner);
     syms.push(targetDeclaration);
 
     return syms.map((sym) => sym.name).join(".");

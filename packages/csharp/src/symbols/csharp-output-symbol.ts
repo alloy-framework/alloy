@@ -1,6 +1,6 @@
 import * as core from "@alloy-js/core";
-import * as symbols from "./index.js";
 import * as base from "../components/index.js";
+import * as symbols from "./index.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
 export interface CSharpOutputSymbol extends core.OutputSymbol {

@@ -1,7 +1,7 @@
 import * as core from "@alloy-js/core";
-import * as base from "./index.js";
 import * as csharp from "../index.js";
 import * as symbols from "../symbols/index.js";
+import * as base from "./index.js";
 
 // properties for creating an enum
 export interface EnumProps extends Omit<base.DeclarationProps, "nameKind"> {
@@ -23,7 +23,12 @@ export function Enum(props: EnumProps) {
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const thisEnumScope = symbols.createCSharpMemberScope(scope.binder, scope, thisEnumSymbol, "enum");
+  const thisEnumScope = symbols.createCSharpMemberScope(
+    scope.binder,
+    scope,
+    thisEnumSymbol,
+    "enum",
+  );
 
   return <core.Declaration symbol={thisEnumSymbol}>
       {csharp.getAccessModifier(props.accessModifier)}enum <base.Name />{props.children ? (
@@ -47,7 +52,7 @@ export interface EnumMemberProps {
 // a member within a C# enum
 export function EnumMember(props: EnumMemberProps) {
   const scope = symbols.useCSharpScope();
-  if (scope.kind === "member" && scope.name !== 'enum') {
+  if (scope.kind === "member" && scope.name !== "enum") {
     throw new Error("can't define an enum member outside of an enum scope");
   }
   const name = csharp.useCSharpNamePolicy().getName(props.name, "enum-member");

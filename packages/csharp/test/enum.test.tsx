@@ -1,12 +1,12 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import * as utils from "./utils.js";
 import * as csharp from "../src/index.js";
+import * as utils from "./utils.js";
 
 it("declares enum with no members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier='public' name="TestEnum" />
+    <csharp.Enum accessModifier='public' name="TestEnum" />,
   );
 
   expect(res).toBe(coretest.d`

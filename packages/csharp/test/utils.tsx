@@ -26,7 +26,10 @@ export function testRender(c: core.Children): core.OutputDirectory {
   );
 }
 
-export function findFile(res: core.OutputDirectory, path: string): core.OutputFile {
+export function findFile(
+  res: core.OutputDirectory,
+  path: string,
+): core.OutputFile {
   const result = findFileWorker(res, path);
 
   if (!result) {

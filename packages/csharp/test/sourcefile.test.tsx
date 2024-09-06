@@ -36,9 +36,11 @@ it("defines multiple source files with unique content", () => {
 
 it("throws when declaring a source file outside a namespace", () => {
   const decl =
-  <core.Output>
+    <core.Output>
     <csharp.SourceFile path="Test.cs" />
   </core.Output>;
 
-  expect(() => core.render(decl)).toThrow("SourceFile must be declared inside a namespace");
+  expect(() => core.render(decl)).toThrow(
+    "SourceFile must be declared inside a namespace",
+  );
 });

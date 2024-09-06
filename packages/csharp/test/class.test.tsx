@@ -1,12 +1,12 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import * as utils from "./utils.js";
 import * as csharp from "../src/index.js";
+import * as utils from "./utils.js";
 
 it("declares class with no members", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass" />
+    <csharp.Class accessModifier='public' name="TestClass" />,
   );
 
   expect(res).toBe(coretest.d`
@@ -22,7 +22,7 @@ it("declares class with some members", () => {
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.ClassMember accessModifier="public" name="MemberOne" type="string" />
       <csharp.ClassMember accessModifier="private" name="MemberTwo" type="int" />
-    </csharp.Class>
+    </csharp.Class>,
   );
 
   expect(res).toBe(coretest.d`
@@ -42,7 +42,7 @@ it("declares class with some methods", () => {
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.ClassMethod accessModifier="public" name="MethodOne" />
       <csharp.ClassMethod accessModifier="private" methodModifier="virtual" name="MethodTwo" />
-    </csharp.Class>
+    </csharp.Class>,
   );
 
   expect(res).toBe(coretest.d`
@@ -59,13 +59,13 @@ it("declares class with some methods", () => {
 
 it("declares class with params and return type", () => {
   const params = {
-    "IntParam": "int",
-    "StringParam": "string",
+    IntParam: "int",
+    StringParam: "string",
   };
   const res = utils.toSourceText(
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns="string" />
-    </csharp.Class>
+    </csharp.Class>,
   );
 
   expect(res).toBe(coretest.d`
@@ -82,8 +82,8 @@ it("declares class with params and return type", () => {
 it("uses refkeys for members, params, and return type", () => {
   const inputTypeRefkey = core.refkey();
   const params = {
-    "IntParam": "int",
-    "BodyParam": inputTypeRefkey,
+    IntParam: "int",
+    BodyParam: inputTypeRefkey,
   };
 
   const res = core.render(
@@ -130,11 +130,13 @@ it("uses refkeys for members, params, and return type", () => {
 });
 
 it("declares class with invalid members", () => {
-  const decl = 
+  const decl =
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.EnumMember name="One" />,
       <csharp.EnumMember name="Two" />
     </csharp.Class>;
 
-  expect(() => utils.toSourceText(decl)).toThrow("can't define an enum member outside of an enum scope");
+  expect(() => utils.toSourceText(decl)).toThrow(
+    "can't define an enum member outside of an enum scope",
+  );
 });

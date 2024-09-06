@@ -7,7 +7,11 @@ export interface CSharpNamespaceScope extends core.OutputScope {
 }
 
 // creates a new namespace scope
-export function createCSharpNamespaceScope(binder: core.Binder, parent: core.OutputScope | undefined, name: string): CSharpNamespaceScope {
+export function createCSharpNamespaceScope(
+  binder: core.Binder,
+  parent: core.OutputScope | undefined,
+  name: string,
+): CSharpNamespaceScope {
   return binder.createScope<CSharpNamespaceScope>({
     kind: "namespace",
     name,
@@ -29,7 +33,12 @@ export interface CSharpMemberScope extends core.OutputScope {
 
 // creates a new member scope.
 // parent is the owning symbol.
-export function createCSharpMemberScope(binder: core.Binder, parent: core.OutputScope, owner: CSharpOutputSymbol, name: CSharpMemberScopeName): CSharpMemberScope {
+export function createCSharpMemberScope(
+  binder: core.Binder,
+  parent: core.OutputScope,
+  owner: CSharpOutputSymbol,
+  name: CSharpMemberScopeName,
+): CSharpMemberScope {
   return binder.createScope<CSharpMemberScope>({
     kind: "member",
     name: name,

@@ -37,7 +37,7 @@ it("uses multiple namespaces", () => {
 it("adds using statement across namespaces", () => {
   const inputTypeRefkey = core.refkey();
   const params = {
-    "BodyParam": inputTypeRefkey,
+    BodyParam: inputTypeRefkey,
   };
 
   const res = core.render(

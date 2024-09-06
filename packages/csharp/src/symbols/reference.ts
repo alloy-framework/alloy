@@ -46,7 +46,7 @@ export function ref(refkey: core.Refkey): () => string {
     if (sourceNamespace && sourceNamespace.name !== targetNamespaceCtx!.name) {
       // the source symbol is in a different namespace that the target refkey.
       // add the applicable using statement to the target's source file.
-      let targetSrc = base.useSourceFile();
+      const targetSrc = base.useSourceFile();
       targetSrc!.addUsing(sourceNamespace.name);
     }
 

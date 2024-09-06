@@ -7,4 +7,5 @@ export const ClassMethod = core.stc(base.ClassMethod);
 export const Enum = core.stc(base.Enum);
 export const EnumMember = core.stc(base.EnumMember);
 export const Parameters = core.stc(base.Parameters);
+export const ProjectDirectory = core.stc(base.ProjectDirectory);
 export const UsingDirective = core.stc(base.UsingDirective);

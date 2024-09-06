@@ -102,6 +102,8 @@ Clone the repo, then:
 
 ### Supported Languages
 
+* C#: @alloy-js/csharp
+* Java: @alloy-js/java
 * TypeScript: @alloy-js/typescript
 
 More are coming soon.

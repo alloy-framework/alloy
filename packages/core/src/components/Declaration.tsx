@@ -1,9 +1,9 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { BinderContext, OutputSymbol } from "../binder.js";
-import { createContext, useContext } from "../context.js";
+import { OutputSymbol } from "../binder.js";
+import { createContext, useContext, ComponentContext } from "../context.js";
 import { Refkey, refkey } from "../refkey.js";
-
-export const DeclarationContext = createContext<OutputSymbol>();
+import { BinderContext } from "../context/binder.js";
+import { DeclarationContext } from "../context/declaration.js";
 
 export interface DeclarationProps {
   name?: string;
@@ -11,6 +11,23 @@ export interface DeclarationProps {
   symbol?: OutputSymbol;
   children?: Children;
 }
+
+/**
+ * Declares a symbol in the current scope for this component's children.
+ *
+ * @remarks
+ *
+ * This component must be called in one of two ways: with a name and an optional refkey,
+ * or else passing in the symbol. When called with a name and refkey, a symbol will be
+ * created in the current scope with that name and refkey. If a refkey is not provided,
+ * `refkey(props.name)` is used.
+ *
+ * When called with a symbol, that symbol is merely exposed via {@link DeclarationContext }. It
+ * is assumed that the caller of this component has created the symbol with the `createSymbol` API
+ * on the {@link BinderContext }.
+ *
+ * @see {@link BinderContext}
+ */
 export function Declaration(props: DeclarationProps) {
   const binder = useContext(BinderContext);
   if (!binder) {

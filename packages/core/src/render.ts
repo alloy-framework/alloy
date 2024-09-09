@@ -9,9 +9,10 @@ import {
   untrack,
 } from "@alloy-js/core/jsx-runtime";
 import { isRef } from "@vue/reactivity";
-import { Indent, IndentContext, IndentState } from "./components/Indent.js";
-import { SourceFileContext } from "./components/SourceFile.js";
+import { Indent, IndentState } from "./components/Indent.js";
 import { useContext } from "./context.js";
+import { IndentContext } from "./context/indent.js";
+import { SourceFileContext } from "./context/source-file.js";
 import { isRefkey } from "./refkey.js";
 
 /**

@@ -1,0 +1,76 @@
+---
+title: Declaration
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Declares a symbol in the current scope for this component's children.
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { Declaration } from "@alloy-js/core" 
+
+<Declaration name="string" refkey={Refkey} symbol={OutputSymbol}>
+    {children}
+</Declaration>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { Declaration } from "@alloy-js/core/stc" 
+
+Declaration({ name: string, refkey: Refkey, symbol: OutputSymbol}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `Children`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `Refkey`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">symbol</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `OutputSymbol`
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>
+
+  ### Remarks
+
+This component must be called in one of two ways: with a name and an optional refkey, or else passing in the symbol. When called with a name and refkey, a symbol will be created in the current scope with that name and refkey. If a refkey is not provided, `refkey(props.name)` is used.
+
+When called with a symbol, that symbol is merely exposed via <a href="/reference/core/contexts/declaration/">Declaration context</a>. It is assumed that the caller of this component has created the symbol with the `createSymbol` API on the <a href="/reference/core/contexts/binder/">Binder context</a>.
+

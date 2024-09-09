@@ -101,22 +101,23 @@ export function mapJoin<T, U, V>(
  *
  * @see {@link mapJoin} for mapping before joining.
  * @param src
- * @param rawOptions
+ * @param options
  * @returns The joined array
  */
 export function join<T>(
   src: T[] | Iterator<T>,
-  rawOptions: JoinOptions = {},
+  options: JoinOptions = {},
 ): (T | string)[] {
-  const options = { ...defaultJoinOptions, ...rawOptions };
+  const mergedOptions = { ...defaultJoinOptions, ...options };
   const joined = [];
-  const ender = options.ender === true ? options.joiner : options.ender;
+  const ender =
+    mergedOptions.ender === true ? mergedOptions.joiner : mergedOptions.ender;
   src = Array.from(src as Iterable<T>);
 
   for (const [index, item] of src.entries()) {
     joined.push(item);
     if (index !== src.length - 1) {
-      joined.push(options.joiner!);
+      joined.push(mergedOptions.joiner!);
     }
   }
 
@@ -129,9 +130,9 @@ export function join<T>(
 
 /**
  * Returns a memo which is a list of all the provided children.
- * If you want this as an array, see childrenArray.
+ * If you want this as an array, see {@link childrenArray}.
  */
-export function children(fn: () => Children) {
+export function children(fn: () => Children): () => Children {
   return memo(() => collectChildren(fn()));
 
   function collectChildren(children: Children): Children {
@@ -148,7 +149,7 @@ export function children(fn: () => Children) {
   }
 }
 
-export function childrenArray(fn: () => Children) {
+export function childrenArray(fn: () => Children): Child[] {
   const c = children(fn)();
   if (Array.isArray(c)) {
     return c;

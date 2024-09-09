@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@babel/cli": "catalog:",
+    "@microsoft/api-extractor": "^7.47.7",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",

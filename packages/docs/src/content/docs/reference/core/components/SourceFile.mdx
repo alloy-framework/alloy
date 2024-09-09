@@ -1,0 +1,81 @@
+---
+title: SourceFile
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { SourceFile } from "@alloy-js/core" 
+
+<SourceFile 
+    filetype="string"
+    path="string"
+    reference={ComponentDefinition<{
+        refkey: Refkey;
+    }>}
+>
+    {children}
+</SourceFile>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { SourceFile } from "@alloy-js/core/stc" 
+
+SourceFile({ 
+    filetype: string,
+    path: string,
+    reference: ComponentDefinition<{
+        refkey: Refkey;
+    }>
+}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `Children[]`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">filetype</td>
+    <td style="white-space: nowrap">
+       `string`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">path</td>
+    <td style="white-space: nowrap">
+       `string`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">reference</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `ComponentDefinition<{
+              refkey: Refkey;
+          }>`
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

@@ -1,0 +1,26 @@
+{
+  "name": "",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.3",
+    "@astrojs/starlight": "^0.27.0",
+    "astro": "^4.15.3",
+    "astro-expressive-code": "^0.36.1",
+    "sharp": "^0.32.5",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.47.7",
+    "@microsoft/api-extractor-model": "^7.29.6",
+    "@microsoft/tsdoc": "^0.15.0",
+    "@alloy-js/core": "workspace:~"
+  }
+}

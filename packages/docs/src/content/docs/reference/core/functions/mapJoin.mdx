@@ -1,0 +1,137 @@
+---
+title: mapJoin
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+## Overload 1
+
+Map a Map to an array using a mapper and place a joiner between each element. Defaults to joining with a newline.
+
+<Code code={`import { mapJoin } from "@alloy-js/core";
+
+function mapJoin<T, U, V>(src: Map<T, U>, cb: (key: T, value: U) => V, options?: JoinOptions): (V | string)[];`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">src</td>
+    <td>
+    
+      `Map<T, U>`
+      
+      
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">cb</td>
+    <td>
+    
+      `(key: T, value: U) => V`
+      
+      
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">options</td>
+    <td>
+    
+      `JoinOptions`
+      
+      
+    </td>
+  </tr>
+</table>
+
+### Options
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">ender</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+  
+  When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">joiner</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string`
+  
+  The string to place between each element.
+  
+  
+  </td>
+  </tr>
+</table>
+
+## Overload 2
+
+Map a array or iterator to another array using a mapper and place a joiner between each element. Defaults to joining with a newline.
+
+<Code code={`import { mapJoin } from "@alloy-js/core";
+
+function mapJoin<T, V>(src: T[] | IterableIterator<T>, cb: (value: T) => V, options?: JoinOptions): (V | string)[];`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">src</td>
+    <td>
+    
+      `T[] | IterableIterator<T>`
+      
+      
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">cb</td>
+    <td>
+    
+      `(value: T) => V`
+      
+      
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">options</td>
+    <td>
+    
+      `JoinOptions`
+      
+      
+    </td>
+  </tr>
+</table>
+
+### Options
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">ender</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+  
+  When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">joiner</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string`
+  
+  The string to place between each element.
+  
+  
+  </td>
+  </tr>
+</table>

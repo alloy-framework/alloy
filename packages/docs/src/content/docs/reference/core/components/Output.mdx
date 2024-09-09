@@ -1,0 +1,89 @@
+---
+title: Output
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+This component is the root component for all your emitted output. Place your various <a href="/reference/core/components/sourcedirectory/">SourceDirectory</a> and <a href="/reference/core/components/sourcefile/">SourceFile</a> components inside `Output` to create directories and files in your output directory.
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { Output } from "@alloy-js/core" 
+
+<Output 
+    basePath="string"
+    externals={SymbolCreator[]}
+    nameConflictResolver={(name: string, symbols: any[]) => void}
+    namePolicy={NamePolicy<string>}
+>
+    {children}
+</Output>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { Output } from "@alloy-js/core/stc" 
+
+Output({ 
+    basePath: string,
+    externals: SymbolCreator[],
+    nameConflictResolver: (name: string, symbols: any[]) => void,
+    namePolicy: NamePolicy<string>
+}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">basePath</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string`
+  
+  The base path for the output contents. Defaults to "."
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `Children`
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">externals</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `SymbolCreator[]`
+  
+  External libraries whose symbols should be available for reference.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">nameConflictResolver</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `(name: string, symbols: any[]) => void`
+  
+  Policy for handling multiple symbols declared with the same name.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">namePolicy</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `NamePolicy<string>`
+  
+  Name policy to use for this output.
+  
+  
+  </td>
+  </tr>
+</table>

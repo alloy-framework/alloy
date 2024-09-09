@@ -1,0 +1,30 @@
+---
+title: Getting started
+description: How to get your alloy project set up.
+---
+import { Code, Steps, TabItem, Tabs } from '@astrojs/starlight/components';
+
+## Quick Start
+
+Clone the alloy project template, which is already configured for generating TypeScript code and writing tests in vitest.
+
+<Code code="git clone https://github.com/alloy-framework/alloy-project-template my-project
+cd my-project
+pnpm install
+pnpm build
+" frame="terminal" lang="sh" />
+
+## Install alloy
+
+You will need `@alloy-js/core` as well as the packages for any languages you will want to generate.
+
+<Tabs syncKey="package-manager">
+  <TabItem label="npm">
+    <Code code="npm install @alloy-js/core @alloy-js/typescript" frame="terminal" lang="sh" />
+  </TabItem>
+  <TabItem label="pnpm">
+    <Code code="pnpm install @alloy-js/core @alloy-js/typescript" frame="terminal" lang="sh" />
+  </TabItem>
+</Tabs>
+
+## Install babel transform

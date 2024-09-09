@@ -1,16 +1,8 @@
 import { Children, getContext } from "@alloy-js/core/jsx-runtime";
 import { shallowReactive } from "@vue/reactivity";
 import { join } from "pathe";
-import { createContext, useContext } from "../context.js";
-import { SourceFileContext } from "./SourceFile.js";
-
-export interface SourceDirectoryContext {
-  contents: (SourceDirectoryContext | SourceFileContext)[];
-  addContent(content: SourceDirectoryContext | SourceFileContext): void;
-  path: string;
-}
-
-export const SourceDirectoryContext = createContext<SourceDirectoryContext>();
+import { useContext } from "../context.js";
+import { SourceDirectoryContext } from "../context/source-directory.js";
 
 export interface SourceDirectoryProps {
   path: string;
@@ -37,7 +29,7 @@ function createSourceDirectoryContext(
 ): SourceDirectoryContext {
   const contents = shallowReactive([] as any);
   const context: SourceDirectoryContext = {
-    path,
+    path: parentDir ? join(parentDir.path, path) : path,
     contents,
     addContent(content) {
       contents.push(content);

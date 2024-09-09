@@ -1,0 +1,30 @@
+---
+title: children
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+
+Returns a memo which is a list of all the provided children. If you want this as an array, see <a href="/reference/core/functions/childrenarray/">childrenArray</a>.
+
+<Code code={`import { children } from "@alloy-js/core";
+
+function children(fn: () => Children): () => Children;`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">fn</td>
+    <td>
+    
+      `() => Children`
+      
+      
+    </td>
+  </tr>
+</table>
+

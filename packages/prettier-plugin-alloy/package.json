@@ -24,6 +24,7 @@
     "test": "vitest run",
     "test:watch": "vitest -w"
   },
+  "dependencies": {},
   "devDependencies": {
     "prettier": "catalog:",
     "typescript": "catalog:",

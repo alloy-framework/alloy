@@ -1,18 +1,14 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { BinderContext, OutputScope } from "../binder.js";
-import { createContext, useContext } from "../context.js";
+import { OutputScope } from "../binder.js";
+import { useContext } from "../context.js";
+import { BinderContext } from "../context/binder.js";
+import { ScopeContext } from "../context/scope.js";
 
 export interface ScopeProps {
   kind?: string;
   name?: string;
   value?: OutputScope;
   children?: Children;
-}
-
-export const ScopeContext = createContext<OutputScope>();
-
-export function useScope() {
-  return useContext(ScopeContext)!;
 }
 
 export function Scope(props: ScopeProps) {

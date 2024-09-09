@@ -3,12 +3,12 @@ import {
   Output,
   render,
   renderTree,
-  SourceDirectoryContext,
   SourceFile,
   useContext,
 } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import "../../testing/extend-expect.js";
+import { SourceDirectoryContext } from "../../src/context/source-directory.js";
 
 it("tracks its content", () => {
   let context;

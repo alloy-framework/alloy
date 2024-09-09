@@ -1,0 +1,63 @@
+---
+title: join
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+
+Place a joiner between each element of an array or iterator. Defaults to joining with a newline.
+
+<Code code={`import { join } from "@alloy-js/core";
+
+function join<T>(src: T[] | Iterator<T>, options?: JoinOptions): (T | string)[];`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">src</td>
+    <td>
+    
+      `T[] | Iterator<T>`
+      
+      
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">options</td>
+    <td>
+    
+      `JoinOptions`
+      
+      
+    </td>
+  </tr>
+</table>
+
+### Options
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">ender</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+  
+  When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">joiner</td>
+    <td style="white-space: nowrap">
+      <Badge text="optional" variant="note" size="small" /> `string`
+  
+  The string to place between each element.
+  
+  
+  </td>
+  </tr>
+</table>

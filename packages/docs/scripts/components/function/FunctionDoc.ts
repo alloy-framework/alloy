@@ -33,33 +33,3 @@ export function FunctionDoc(props: FunctionDocProps) {
     ),
   );
 }
-
-/*
-
-function writeFunctionDoc(fn: ApiFunction) {
-  const overloads = fn.getMergedSiblings() as ApiFunction[];
-  const sigs = overloads
-    .map(
-      (fn) => `
-      ${overloads.length > 1 ? "## Overload " + fn.overloadIndex : ""}
-
-      <Code code={\`${signatureHelp(fn)}\`} lang="ts" />
-      ${renderFunctionDocComment(fn)}
-      ${renderFunctionParameters(fn)}
-      ${renderFunctionOptions(fn)}
-      ${renderFunctionReturnType(fn)}
-    `,
-    )
-    .join("\n");
-
-  const doc = `---
-title: ${fn.displayName}
----
-import { Code } from '@astrojs/starlight/components';
-
-${sigs}
-`;
-  writeFileSync(mdPath("core", "functions", fn.displayName), doc);
-}
-
-*/

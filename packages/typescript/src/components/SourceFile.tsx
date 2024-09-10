@@ -1,4 +1,5 @@
 import {
+  ComponentContext,
   SourceFile as CoreSourceFile,
   createContext,
   Scope,
@@ -19,7 +20,9 @@ export interface SourceFileContext {
   scope: TSModuleScope;
 }
 
-export const SourceFileContext = createContext<SourceFileContext>();
+export const SourceFileContext: ComponentContext<SourceFileContext> =
+  createContext();
+
 export function useSourceFile() {
   return useContext(SourceFileContext)!;
 }

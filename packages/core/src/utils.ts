@@ -35,6 +35,7 @@ const defaultJoinOptions: JoinOptions = {
  * @param cb Mapper function.
  * @param options Join options.
  * @returns The mapped and joined array.
+ *
  */
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
@@ -192,7 +193,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
       children(...children: Children[]): ComponentCreator<T>;
     } = () => Component(args[0]!);
     fn.component = Component;
-
+    fn.props = args[0]!;
     fn.code = (
       template: TemplateStringsArray,
       ...substitutions: Children[]
@@ -204,6 +205,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
+      fn.props = args[0]!;
       return fn;
     };
 
@@ -215,6 +217,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
+      fn.props = args[0]!;
       return fn;
     };
 

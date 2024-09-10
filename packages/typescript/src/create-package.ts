@@ -67,7 +67,7 @@ function createSymbols(
   }
 }
 
-type PackageRefkeys<T extends PackageDescriptor> = {
+export type PackageRefkeys<T extends PackageDescriptor> = {
   [K in keyof T as K extends "." ? never : K]: {
     [N in T[K]["named"] extends readonly string[] ? T[K]["named"][number]
     : never]: Refkey;
@@ -77,7 +77,7 @@ type PackageRefkeys<T extends PackageDescriptor> = {
     { [N in T["."]["named"][number]]: Refkey }
   : {});
 
-interface CreatePackageProps<T extends PackageDescriptor> {
+export interface CreatePackageProps<T extends PackageDescriptor> {
   name: string;
   version: string;
   descriptor: T;

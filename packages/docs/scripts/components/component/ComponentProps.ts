@@ -10,6 +10,6 @@ export function ComponentProps(props: ComponentPropsProps) {
   return code`
     ### Props
 
-    ${InterfaceMembers({ iface: props.propType })}
+    ${InterfaceMembers({ iface: props.propType, flatten: true })}
   `;
 }

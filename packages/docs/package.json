@@ -18,9 +18,10 @@
     "typescript": "^5.5.4"
   },
   "devDependencies": {
+    "@alloy-js/core": "workspace:~",
     "@microsoft/api-extractor": "^7.47.7",
     "@microsoft/api-extractor-model": "^7.29.6",
     "@microsoft/tsdoc": "^0.15.0",
-    "@alloy-js/core": "workspace:~"
+    "redent": "^4.0.0"
   }
 }

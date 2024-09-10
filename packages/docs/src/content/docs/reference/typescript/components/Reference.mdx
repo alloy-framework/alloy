@@ -1,0 +1,37 @@
+---
+title: Reference
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { Reference } from "@alloy-js/core" 
+
+<Reference refkey={Refkey}>
+    {children}
+</Reference>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { Reference } from "@alloy-js/core/stc" 
+
+Reference({ refkey: Refkey}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td>
+       <code><a href="/reference/core/types/refkey/">Refkey</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

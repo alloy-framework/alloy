@@ -23,6 +23,6 @@ export function FunctionOptions(props: FunctionOptionsProps) {
   return code`
     ### Options
 
-    ${InterfaceMembers({ iface: optionsType as ApiInterface })}
+    ${InterfaceMembers({ iface: optionsType as ApiInterface, flatten: true })}
   `;
 }

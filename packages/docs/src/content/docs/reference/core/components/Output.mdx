@@ -38,8 +38,8 @@ Output({
 <table>
   <tr>
     <td style="text-align: right;font-weight: bold;">basePath</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
   
   The base path for the output contents. Defaults to "."
   
@@ -48,8 +48,8 @@ Output({
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">children</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `Children`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/children/">Children</a></code>
   
   
   
@@ -58,8 +58,8 @@ Output({
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">externals</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `SymbolCreator[]`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/symbolcreator/">SymbolCreator</a>[]</code>
   
   External libraries whose symbols should be available for reference.
   
@@ -68,8 +68,8 @@ Output({
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">nameConflictResolver</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `(name: string, symbols: any[]) => void`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>(name: string, symbols: any[]) => void</code>
   
   Policy for handling multiple symbols declared with the same name.
   
@@ -78,8 +78,8 @@ Output({
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">namePolicy</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `NamePolicy<string>`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/contexts/namepolicy/">NamePolicy context interface</a>&lt;string></code>
   
   Name policy to use for this output.
   
@@ -87,3 +87,9 @@ Output({
   </td>
   </tr>
 </table>
+
+### Contexts provided
+
+
+* <a href="/reference/core/contexts/namepolicy/">NamePolicy context</a>
+

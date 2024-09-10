@@ -1,0 +1,1 @@
+{"version":3,"file":"api-model.d.ts","sourceRoot":"","sources":["../../../scripts/contexts/api-model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAiB,KAAK,gBAAgB,EAAE,MAAM,gBAAgB,CAAC;AACtE,OAAO,EAAE,QAAQ,EAAE,MAAM,gCAAgC,CAAC;AAE1D,eAAO,MAAM,eAAe,EAAE,gBAAgB,CAAC,QAAQ,CAAmB,CAAC"}

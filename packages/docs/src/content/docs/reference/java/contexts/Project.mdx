@@ -1,0 +1,33 @@
+---
+title: Project context
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Code code={`const ProjectContext: ComponentContext<ProjectContext>`} lang="ts" />
+
+### Accessor
+
+<Code code={`import { useProject } from "@alloy-js/core";
+
+const myContext = useProject();`} lang="ts" />
+
+
+
+### Context interface
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">scope</td>
+    <td>
+       <code><a href="/reference/java/types/javaprojectscope/">JavaProjectScope</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>
+

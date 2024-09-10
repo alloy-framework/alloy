@@ -130,7 +130,63 @@ export interface Component<TProps = Props> {
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
   (): Child | Children;
+  props: Props;
   tag?: symbol;
+}
+
+// debugging utilities
+const renderStack: {
+  component: Component<any>;
+  props: Props;
+}[] = [];
+
+export const shouldDebug = !!process.env.ALLOY_DEBUG;
+
+export function pushStack(component: Component<any>, props: Props) {
+  if (!shouldDebug) return;
+  renderStack.push({ component, props });
+}
+
+export function popStack() {
+  if (!shouldDebug) return;
+  const item = renderStack.pop();
+}
+
+export function printRenderStack() {
+  if (!shouldDebug) return;
+
+  console.error("Error rendering:");
+  for (let i = renderStack.length - 1; i >= 0; i--) {
+    const { component, props } = renderStack[i];
+    console.error(`    at ${component.name}(${inspectProps(props)})`);
+  }
+}
+
+function inspectProps(props: Props) {
+  return JSON.stringify(
+    Object.fromEntries(
+      Object.entries(props).map(([key, value]) => {
+        let safeValue;
+        switch (typeof value) {
+          case "string":
+          case "number":
+          case "boolean":
+            safeValue = value;
+            break;
+          case "undefined":
+            safeValue = "undefined";
+            break;
+          case "object":
+            safeValue = value ? "{...}" : null;
+            break;
+          case "function":
+            safeValue = "function";
+            break;
+        }
+        return [key, safeValue];
+      }),
+    ),
+  );
 }
 
 // These can be removed with a smarter transform that encodes the information we
@@ -139,15 +195,17 @@ export function isComponentCreator(item: unknown): item is ComponentCreator {
   return typeof item === "function" && (item as any).component;
 }
 
-export function createComponent<TProps = Props>(
+export function createComponent<TProps extends Props = Props>(
   C: Component<TProps>,
   props: TProps,
 ): ComponentCreator<TProps> {
-  const creator = () => /* */ C(props);
+  const creator: ComponentCreator<TProps> = () => /* */ C(props);
+  creator.props = props;
   creator.component = C;
   if (C.tag) {
     creator.tag = C.tag;
   }
+
   return creator;
 }
 

@@ -1,0 +1,51 @@
+---
+title: SourceFile
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Represents a Java source file.
+
+Handles top level package declaration, as well as importing other sources
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { SourceFile } from "@alloy-js/core" 
+
+<SourceFile path="string">
+    {children}
+</SourceFile>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { SourceFile } from "@alloy-js/core/stc" 
+
+SourceFile({ path: string}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">path</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

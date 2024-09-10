@@ -267,6 +267,9 @@ importers:
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
+      '@microsoft/api-extractor':
+        specifier: ^7.47.7
+        version: 7.47.7(@types/node@22.2.0)
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
@@ -319,6 +322,9 @@ importers:
       '@microsoft/tsdoc':
         specifier: ^0.15.0
         version: 0.15.0
+      redent:
+        specifier: ^4.0.0
+        version: 4.0.0
 
   packages/java:
     dependencies:
@@ -338,6 +344,9 @@ importers:
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
+      '@microsoft/api-extractor':
+        specifier: ^7.47.7
+        version: 7.47.7(@types/node@22.2.0)
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
@@ -427,6 +436,9 @@ importers:
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
+      '@microsoft/api-extractor':
+        specifier: ^7.47.7
+        version: 7.47.7(@types/node@22.2.0)
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
@@ -2262,6 +2274,10 @@ packages:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
+  indent-string@5.0.0:
+    resolution: {integrity: sha512-m6FAo/spmsW2Ab2fU35JTYwtOKa2yAwXSwgjSv1TJzh4Mh7mC3lzAOVLBprb72XsTrgkEIsl7YrFNAiDiRhIGg==}
+    engines: {node: '>=12'}
+
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
     deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
@@ -2992,6 +3008,10 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  redent@4.0.0:
+    resolution: {integrity: sha512-tYkDkVVtYkSVhuQ4zBgfvciymHaeuel+zFKXShfDnFP5SyVEP7qo70Rf1jTOTCx3vGNAbnEi/xFkcfQVMIBWag==}
+    engines: {node: '>=12'}
+
   regenerator-runtime@0.14.1:
     resolution: {integrity: sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw==}
 
@@ -3263,6 +3283,10 @@ packages:
   strip-indent@3.0.0:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
+
+  strip-indent@4.0.0:
+    resolution: {integrity: sha512-mnVSV2l+Zv6BLpSD/8V87CW/y9EmmbYzGCIavsnsI6/nwn26DwffM/yztm30Z/I2DY9wdS3vXVCMnHDgZaVNoA==}
+    engines: {node: '>=12'}
 
   strip-json-comments@2.0.1:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
@@ -5994,6 +6018,8 @@ snapshots:
 
   imurmurhash@0.1.4: {}
 
+  indent-string@5.0.0: {}
+
   inflight@1.0.6:
     dependencies:
       once: 1.4.0
@@ -6968,6 +6994,11 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
+  redent@4.0.0:
+    dependencies:
+      indent-string: 5.0.0
+      strip-indent: 4.0.0
+
   regenerator-runtime@0.14.1: {}
 
   rehype-expressive-code@0.35.6:
@@ -7334,6 +7365,10 @@ snapshots:
   strip-final-newline@3.0.0: {}
 
   strip-indent@3.0.0:
+    dependencies:
+      min-indent: 1.0.1
+
+  strip-indent@4.0.0:
     dependencies:
       min-indent: 1.0.1
 

@@ -8,6 +8,15 @@ export interface InterfaceDeclarationProps
   extends?: Children;
 }
 
+/**
+ * Create a TypeScript interface declaration.
+ *
+ * @remarks
+ *
+ * This component will declare a symbol for this interface. The `export` and
+ * `default` boolean props determine whether and how this symbol is exported
+ * from the package.
+ */
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
 
@@ -38,6 +47,11 @@ export interface InterfaceMemberProps {
   readonly?: boolean;
 }
 
+/**
+ * Create a TypeScript interface declaration.
+ * @param props
+ * @returns
+ */
 export function InterfaceMember(props: InterfaceMemberProps) {
   const namer = useTSNamePolicy();
   const type = props.type ?? props.children;

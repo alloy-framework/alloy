@@ -1,0 +1,1 @@
+{"version":3,"file":"DocDeclaration.d.ts","sourceRoot":"","sources":["../../../scripts/components/DocDeclaration.ts"],"names":[],"mappings":"AAOA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,gCAAgC,CAAC;AAG9D,MAAM,WAAW,mBAAmB;IAClC,IAAI,EAAE,MAAM,CAAC;IACb,OAAO,EAAE,OAAO,CAAC;CAClB;AAED,wBAAgB,cAAc,CAAC,KAAK,EAAE,mBAAmB,OASxD"}

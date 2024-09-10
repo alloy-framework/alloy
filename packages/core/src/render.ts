@@ -5,6 +5,9 @@ import {
   effect,
   getContext,
   isComponentCreator,
+  popStack,
+  printRenderStack,
+  pushStack,
   root,
   untrack,
 } from "@alloy-js/core/jsx-runtime";
@@ -244,9 +247,14 @@ export function renderTree(children: Children) {
   const state: RenderState = {
     newline: false,
   };
-  root(() => {
-    renderWorker(rootElem, children, state);
-  }, "render worker");
+  try {
+    root(() => {
+      renderWorker(rootElem, children, state);
+    }, "render worker");
+  } catch (e) {
+    printRenderStack();
+    throw e;
+  }
 
   return rootElem;
 }
@@ -301,7 +309,9 @@ function appendChild(
         node.push(indentState.indent);
       }
       const componentRoot: RenderTextTree = [];
+      pushStack(child.component, child.props);
       renderWorker(componentRoot, untrack(child), state);
+      popStack();
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
     }, child.component.name);

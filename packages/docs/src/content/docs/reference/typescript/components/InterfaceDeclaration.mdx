@@ -1,0 +1,44 @@
+---
+title: InterfaceDeclaration
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Create a TypeScript interface declaration.
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { InterfaceDeclaration } from "@alloy-js/core" 
+
+<InterfaceDeclaration extends={Children}>
+    {children}
+</InterfaceDeclaration>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { InterfaceDeclaration } from "@alloy-js/core/stc" 
+
+InterfaceDeclaration({ extends: Children}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">extends</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>
+
+  ### Remarks
+
+This component will declare a symbol for this interface. The `export` and `default` boolean props determine whether and how this symbol is exported from the package.
+

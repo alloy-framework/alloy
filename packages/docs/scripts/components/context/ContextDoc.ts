@@ -1,4 +1,4 @@
-import type { ContextApi } from "../../build-json";
+import type { ContextApi } from "../../build-json.js";
 import {
   ContextAccessor,
   ContextInterface,
@@ -6,6 +6,8 @@ import {
   DocDeclaration,
   Frontmatter,
   MdxSourceFile,
+  Remarks,
+  SeeAlso,
   TsDoc,
 } from "../stc/index.js";
 
@@ -47,5 +49,14 @@ export function ContextDoc(props: ContextDocProps) {
     ContextAccessor({ context: props.context }),
     "\n\n",
     ContextInterface({ context: props.context }),
+    "\n\n",
+    Remarks({
+      type: props.context.contextVariable,
+    }),
+
+    SeeAlso({
+      type: props.context.contextVariable,
+      splitContexts: true,
+    }),
   );
 }

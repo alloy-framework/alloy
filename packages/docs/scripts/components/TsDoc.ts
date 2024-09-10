@@ -9,6 +9,8 @@ import { type ApiItem } from "@microsoft/api-extractor-model";
 import {
   DocBlock,
   DocCodeSpan,
+  DocDeclarationReference,
+  DocFencedCode,
   DocLinkTag,
   DocNode,
   DocNodeKind,
@@ -43,9 +45,6 @@ export function TsDoc(props: TsDocProps): Children {
     case DocNodeKind.Section:
       content = stc.TsDocSection({ node: props.node as DocSection });
       break;
-    case DocNodeKind.BlockTag:
-      // ignore?
-      break;
     case DocNodeKind.Block:
       content = stc.TsDocSection({
         node: (props.node as DocBlock).content,
@@ -54,8 +53,18 @@ export function TsDoc(props: TsDocProps): Children {
     case DocNodeKind.ParamBlock:
       // ignore?
       break;
+    case DocNodeKind.BlockTag:
+      // ignore?
+      break;
+    case DocNodeKind.FencedCode:
+      content = stc.Code({
+        code: (props.node as DocFencedCode).code,
+        language: (props.node as DocFencedCode).language,
+      });
+      break;
     default:
-      throw new Error("Unknown tsdoc node kind " + props.node.kind);
+      console.log("Unknown TSDoc kind " + props.node.kind);
+      break;
   }
 
   if (props.context) {
@@ -98,13 +107,12 @@ export interface TsDocLinkTagProps {
 }
 
 export function TsDocLinkTag(props: TsDocLinkTagProps) {
-  const apiModel = useContext(ApiModelContext)!;
   const docContext = useTsDoccontext();
   if (props.node.codeDestination) {
-    const apiItem = apiModel.resolveDeclarationReference(
-      props.node.codeDestination!,
+    const apiItem = resolveCodeDestination(
+      props.node.codeDestination,
       docContext,
-    ).resolvedApiItem;
+    );
 
     return stc.Reference({
       refkey: refkey(apiItem),
@@ -121,4 +129,13 @@ export interface TsDocCodeSpanProps {
 
 export function TsDocCodeSpan(props: TsDocCodeSpanProps) {
   return `\`${props.node.code}\``;
+}
+
+export function resolveCodeDestination(
+  decl: DocDeclarationReference,
+  context: ApiItem,
+) {
+  const apiModel = useContext(ApiModelContext)!;
+
+  return apiModel.resolveDeclarationReference(decl, context).resolvedApiItem;
 }

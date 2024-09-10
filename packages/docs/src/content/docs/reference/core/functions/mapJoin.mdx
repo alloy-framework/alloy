@@ -51,8 +51,8 @@ function mapJoin<T, U, V>(src: Map<T, U>, cb: (key: T, value: U) => V, options?:
 <table>
   <tr>
     <td style="text-align: right;font-weight: bold;">ender</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string | boolean</code>
   
   When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
   
@@ -61,8 +61,8 @@ function mapJoin<T, U, V>(src: Map<T, U>, cb: (key: T, value: U) => V, options?:
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">joiner</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
   
   The string to place between each element.
   
@@ -70,6 +70,25 @@ function mapJoin<T, U, V>(src: Map<T, U>, cb: (key: T, value: U) => V, options?:
   </td>
   </tr>
 </table>
+
+### Returns
+
+<code>(V | string)[]</code>
+
+The mapped and joined array.
+
+
+
+
+
+
+
+### See also
+
+
+* <a href="/reference/core/functions/join/">join</a> for joining without mapping.
+
+
 
 ## Overload 2
 
@@ -116,8 +135,8 @@ function mapJoin<T, V>(src: T[] | IterableIterator<T>, cb: (value: T) => V, opti
 <table>
   <tr>
     <td style="text-align: right;font-weight: bold;">ender</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string | boolean</code>
   
   When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
   
@@ -126,8 +145,8 @@ function mapJoin<T, V>(src: T[] | IterableIterator<T>, cb: (value: T) => V, opti
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">joiner</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
   
   The string to place between each element.
   
@@ -135,3 +154,21 @@ function mapJoin<T, V>(src: T[] | IterableIterator<T>, cb: (value: T) => V, opti
   </td>
   </tr>
 </table>
+
+### Returns
+
+<code>(V | string)[]</code>
+
+The mapped and joined array.
+
+
+
+
+
+
+
+### See also
+
+
+* <a href="/reference/core/functions/join/">join</a> for joining without mapping.
+

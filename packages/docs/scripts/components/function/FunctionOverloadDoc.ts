@@ -1,9 +1,13 @@
 import { code } from "@alloy-js/core";
 import type { ApiFunction } from "@microsoft/api-extractor-model";
 import {
+  Examples,
   FunctionOptions,
   FunctionParameters,
+  FunctionReturn,
   FunctionSignature,
+  Remarks,
+  SeeAlso,
   TsDoc,
 } from "../stc/index.js";
 
@@ -23,13 +27,19 @@ export function FunctionOverloadDoc(props: FunctionOverloadDocProps) {
     ${FunctionParameters({ fn: props.fn })}
 
     ${FunctionOptions({ fn: props.fn })}
+
+    ${FunctionReturn({ fn: props.fn })}
+    
+    ${Remarks({
+      type: props.fn,
+    })}
+
+    ${Examples({
+      type: props.fn,
+    })}
+
+    ${SeeAlso({
+      type: props.fn,
+    })}
   `;
 }
-
-/*
-    <Code code={\`${signatureHelp(fn)}\`} lang="ts" />
-    ${renderFunctionDocComment(fn)}
-    ${renderFunctionParameters(fn)}
-    ${renderFunctionOptions(fn)}
-    ${renderFunctionReturnType(fn)}
-    */

@@ -42,8 +42,8 @@ function join<T>(src: T[] | Iterator<T>, options?: JoinOptions): (T | string)[];
 <table>
   <tr>
     <td style="text-align: right;font-weight: bold;">ender</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string | boolean`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string | boolean</code>
   
   When true, the joiner is placed at the end of the array. When a string, that string is placed at the end of the array. The ender is only emitted when the array has at least one element.
   
@@ -52,8 +52,8 @@ function join<T>(src: T[] | Iterator<T>, options?: JoinOptions): (T | string)[];
   </tr>
   <tr>
     <td style="text-align: right;font-weight: bold;">joiner</td>
-    <td style="white-space: nowrap">
-      <Badge text="optional" variant="note" size="small" /> `string`
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
   
   The string to place between each element.
   
@@ -61,3 +61,21 @@ function join<T>(src: T[] | Iterator<T>, options?: JoinOptions): (T | string)[];
   </td>
   </tr>
 </table>
+
+### Returns
+
+<code>(T | string)[]</code>
+
+The joined array
+
+
+
+
+
+
+
+### See also
+
+
+* [unresolved link] for mapping before joining.
+

@@ -20,10 +20,10 @@ export function Reference(props: ReferenceProps) {
 
   const link = memo(() => {
     if (resolution.value === undefined) {
-      return "[unresolved link]";
+      return props.linkText ?? "[unresolved link]";
     } else {
       const targetSym = resolution.value.targetDeclaration;
-      return `<a href="/${relative(rootDir, targetSym.path).toLowerCase().replace(".mdx", "/")}">${props.linkText || targetSym.name}</a>`;
+      return `<a href="/${relative(rootDir, targetSym.path).toLowerCase().replace(".mdx", "/")}">${props.linkText ?? targetSym.name}</a>`;
     }
   });
 

@@ -31,3 +31,19 @@ function stc<T extends {}>(Component: ComponentDefinition<T>): (...args: unknown
   </tr>
 </table>
 
+
+
+### Returns
+
+<code>(...args: unknown extends T ? [] : &#123;&#125; extends Omit&lt;T, "children"> ? [props?: T] : [props: T]) => <a href="/reference/core/types/componentcreator/">ComponentCreator</a>&lt;T> &amp; &#123;
+    code(template: TemplateStringsArray, ...substitutions: <a href="/reference/core/types/children/">Children</a>[]): <a href="/reference/core/types/componentcreator/">ComponentCreator</a>&lt;T>;
+    children(...children: <a href="/reference/core/types/children/">Children</a>[]): <a href="/reference/core/types/componentcreator/">ComponentCreator</a>&lt;T>;
+&#125;</code>
+
+
+
+
+
+
+
+

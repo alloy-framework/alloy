@@ -1,4 +1,5 @@
 import type { ComponentApi } from "../../build-json.js";
+import { Examples } from "../Examples.js";
 import {
   ComponentProps,
   ComponentSignature,
@@ -6,6 +7,7 @@ import {
   Frontmatter,
   MdxSourceFile,
   Remarks,
+  SeeAlso,
   TsDoc,
 } from "../stc/index.js";
 
@@ -47,6 +49,15 @@ export function ComponentDoc(props: ComponentDocProps) {
 
     Remarks({
       type: props.component.componentFunction,
+    }),
+
+    Examples({
+      type: props.component.componentFunction,
+    }),
+
+    SeeAlso({
+      type: props.component.componentFunction,
+      splitContexts: true,
     }),
   );
 }

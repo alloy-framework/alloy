@@ -1,21 +1,25 @@
 import {
   Children,
+  ComponentContext,
   Declaration as CoreDeclaration,
   createContext,
   refkey,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/index.js";
-import { DeclarationProps } from "./Declaration.js";
+import { BaseDeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
-export interface VarDeclarationProps
-  extends Omit<DeclarationProps, "nameKind"> {
+export interface VarDeclarationProps extends BaseDeclarationProps {
   const?: boolean;
   let?: boolean;
   var?: boolean;
   value?: Children;
   type?: Children;
+}
+
+export interface AssignmentContext {
+  target: TSOutputSymbol;
 }
 
 /**
@@ -25,11 +29,8 @@ export interface VarDeclarationProps
  * not need symbol tracking should unset assignment context so expressions
  * contained within them don't inadvertantly expose symbols.
  */
-export interface AssignmentContext {
-  target: TSOutputSymbol;
-}
-
-export const AssignmentContext = createContext<AssignmentContext>();
+export const AssignmentContext: ComponentContext<AssignmentContext> =
+  createContext();
 
 export function VarDeclaration(props: VarDeclarationProps) {
   const keyword =

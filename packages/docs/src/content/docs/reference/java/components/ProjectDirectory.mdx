@@ -1,0 +1,77 @@
+---
+title: ProjectDirectory
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Represents a java project directory. Use if you want to generate a Java project with a build tool included (maven, gradle etc).
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { ProjectDirectory } from "@alloy-js/core" 
+
+<ProjectDirectory 
+    gradleProjectConfig={GradleProjectConfig}
+    mavenProjectConfig={MavenProjectConfig}
+    name="string"
+>
+    {children}
+</ProjectDirectory>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { ProjectDirectory } from "@alloy-js/core/stc" 
+
+ProjectDirectory({ 
+    gradleProjectConfig: GradleProjectConfig,
+    mavenProjectConfig: MavenProjectConfig,
+    name: string
+}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">gradleProjectConfig</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/java/types/gradleprojectconfig/">GradleProjectConfig</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">mavenProjectConfig</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/java/types/mavenprojectconfig/">MavenProjectConfig</a></code>
+  
+  Specify project configuration for either maven or gradle. If not specified, will create generic Java project
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

@@ -1,0 +1,1 @@
+{"version":3,"file":"Excerpt.d.ts","sourceRoot":"","sources":["../../../scripts/components/Excerpt.ts"],"names":[],"mappings":"AACA,OAAO,EACL,OAAO,EAEP,KAAK,OAAO,IAAI,SAAS,EAC1B,MAAM,gCAAgC,CAAC;AAGxC,MAAM,WAAW,YAAY;IAC3B,OAAO,EAAE,SAAS,CAAC;IACnB,OAAO,EAAE,OAAO,CAAC;CAClB;AAED,wBAAgB,OAAO,CAAC,KAAK,EAAE,YAAY,uEAqB1C"}

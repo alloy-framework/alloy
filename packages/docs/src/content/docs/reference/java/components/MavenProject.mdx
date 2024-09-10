@@ -1,0 +1,39 @@
+---
+title: MavenProject
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Represents a maven project. Use if you want to generate a Java project
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { MavenProject } from "@alloy-js/core" 
+
+<MavenProject projectConfig={MavenProjectConfig}>
+    {children}
+</MavenProject>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { MavenProject } from "@alloy-js/core/stc" 
+
+MavenProject({ projectConfig: MavenProjectConfig}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">projectConfig</td>
+    <td>
+       <code><a href="/reference/java/types/mavenprojectconfig/">MavenProjectConfig</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

@@ -1,5 +1,6 @@
 import {
   Children,
+  ComponentContext,
   createContext,
   Scope,
   SourceDirectory,
@@ -19,7 +20,7 @@ export interface ProjectContext {
   scope: JavaProjectScope;
 }
 
-export const ProjectContext = createContext<ProjectContext>();
+export const ProjectContext: ComponentContext<ProjectContext> = createContext();
 
 export function useProject() {
   return useContext(ProjectContext)!;

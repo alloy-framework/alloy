@@ -1,0 +1,43 @@
+---
+title: collectNamedArguments
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+
+Collect a set of named arguments. Will pass to object as named arguments.
+
+<Code code={`import { collectNamedArguments } from "@alloy-js/core";
+
+function collectNamedArguments(args: Record<string, Children>): Children;`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">args</td>
+    <td>
+    
+      `Record<string, Children>`
+      
+      
+    </td>
+  </tr>
+</table>
+
+
+
+### Returns
+
+<code><a href="/reference/core/types/children/">Children</a></code>
+
+
+
+
+
+
+
+

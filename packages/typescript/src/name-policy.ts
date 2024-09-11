@@ -17,15 +17,19 @@ export type TypeScriptElements =
   | "type";
 
 export function createTSNamePolicy(): NamePolicy<TypeScriptElements> {
+  const caseOptions = {
+    prefixCharacters: "$_",
+    suffixCharacters: "$_",
+  };
   return createNamePolicy((name, element) => {
     switch (element) {
       case "class":
       case "type":
       case "interface":
       case "enum":
-        return pascalCase(name);
+        return pascalCase(name, caseOptions);
       default:
-        return camelCase(name);
+        return camelCase(name, caseOptions);
     }
   });
 }

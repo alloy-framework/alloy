@@ -33,16 +33,16 @@ jobs:
           ${{ steps.detect-package-manager.outputs.runner }} astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
-        working-directory: ${{ env.BUILD_PATH }}/packages/docs
+        working-directory: ./packages/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/packages/docs/dist
+          path: ./packages/docs/dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/packages/docs/dist
+          path: ./packages/docs/dist
 
   format:
     runs-on: ubuntu-latest

@@ -29,7 +29,7 @@ Declaration({ name: string, refkey: Refkey, symbol: OutputSymbol}).children(chil
   <tr>
     <td style="text-align: right;font-weight: bold;">children</td>
     <td>
-      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/children/">Children</a></code>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../types/children/">Children</a></code>
   
   
   
@@ -49,7 +49,7 @@ Declaration({ name: string, refkey: Refkey, symbol: OutputSymbol}).children(chil
   <tr>
     <td style="text-align: right;font-weight: bold;">refkey</td>
     <td>
-      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/types/refkey/">Refkey</a></code>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../types/refkey/">Refkey</a></code>
   
   
   
@@ -59,7 +59,7 @@ Declaration({ name: string, refkey: Refkey, symbol: OutputSymbol}).children(chil
   <tr>
     <td style="text-align: right;font-weight: bold;">symbol</td>
     <td>
-      <Badge text="optional" variant="note" size="small" /> <code><a href="/reference/core/contexts/declaration/">Declaration context interface</a></code>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../contexts/declaration/">Declaration context interface</a></code>
   
   
   
@@ -72,12 +72,12 @@ Declaration({ name: string, refkey: Refkey, symbol: OutputSymbol}).children(chil
 
 This component must be called in one of two ways: with a name and an optional refkey, or else passing in the symbol. When called with a name and refkey, a symbol will be created in the current scope with that name and refkey. If a refkey is not provided, `refkey(props.name)` is used.
 
-When called with a symbol, that symbol is merely exposed via <a href="/reference/core/contexts/declaration/">Declaration context</a>. It is assumed that the caller of this component has created the symbol with the `createSymbol` API on the <a href="/reference/core/contexts/binder/">Binder context</a>.
+When called with a symbol, that symbol is merely exposed via <a href="../../contexts/declaration/">Declaration context</a>. It is assumed that the caller of this component has created the symbol with the `createSymbol` API on the <a href="../../contexts/binder/">Binder context</a>.
 
 
 
 ### Contexts provided
 
 
-* <a href="/reference/core/contexts/binder/">Binder context</a>
+* <a href="../../contexts/binder/">Binder context</a>
 

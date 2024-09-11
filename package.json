@@ -20,6 +20,7 @@
       "esbuild": "0.23"
     }
   },
+  "dependencies": {},
   "devDependencies": {
     "@babel/preset-typescript": "catalog:",
     "babel-preset-alloy": "workspace:~",

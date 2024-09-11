@@ -133,3 +133,7 @@ dist
 
 # Don't commit generated files
 sample-output/
+
+# API Extractor output
+packages/*/temp
+packages/*/tsdoc-metadata.json

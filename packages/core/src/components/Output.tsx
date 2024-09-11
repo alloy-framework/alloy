@@ -1,12 +1,16 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import {
-  BinderContext,
   createOutputBinder,
   getSymbolCreator,
   SymbolCreator,
 } from "../binder.js";
-import { NamePolicy, NamePolicyContext } from "../name-policy.js";
+import { NamePolicy } from "../name-policy.js";
 import { SourceDirectory } from "./SourceDirectory.js";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { BinderContext } from "../context/binder.js";
+import { NamePolicyContext } from "../context/name-policy.js";
+import { SourceFile } from "./SourceFile.js";
 
 export interface OutputProps {
   children?: Children;
@@ -31,6 +35,13 @@ export interface OutputProps {
   basePath?: string;
 }
 
+/**
+ * This component is the root component for all your emitted output. Place your
+ * various {@link SourceDirectory} and {@link SourceFile} components inside
+ * `Output` to create directories and files in your output directory.
+ *
+ * @see {@link NamePolicyContext}
+ */
 export function Output(props: OutputProps) {
   const basePath = props.basePath ?? "./";
   const binder = createOutputBinder({

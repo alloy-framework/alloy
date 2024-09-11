@@ -1,0 +1,23 @@
+---
+title: useNamespace
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { useNamespace } from "@alloy-js/core" 
+
+<useNamespace >
+    {children}
+</useNamespace>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { useNamespace } from "@alloy-js/core/stc" 
+
+useNamespace({ }).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+

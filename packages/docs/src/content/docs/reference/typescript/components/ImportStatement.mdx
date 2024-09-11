@@ -1,0 +1,47 @@
+---
+title: ImportStatement
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { ImportStatement } from "@alloy-js/core" 
+
+<ImportStatement path="string" symbols={Set<ImportedSymbol>}>
+    {children}
+</ImportStatement>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { ImportStatement } from "@alloy-js/core/stc" 
+
+ImportStatement({ path: string, symbols: Set<ImportedSymbol>}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">path</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">symbols</td>
+    <td>
+       <code>Set&lt;<a href="../../types/importedsymbol/">ImportedSymbol</a>></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

@@ -1,0 +1,67 @@
+---
+title: Scope
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { Scope } from "@alloy-js/core" 
+
+<Scope kind="string" name="string" value={OutputScope}>
+    {children}
+</Scope>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { Scope } from "@alloy-js/core/stc" 
+
+Scope({ kind: string, name: string, value: OutputScope}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">kind</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">value</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../contexts/scope/">Scope context interface</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

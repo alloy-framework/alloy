@@ -9,7 +9,7 @@ export interface AnnotationProps {
 
 /**
  * Use an annotation in code, not declaring a new annotation.
- * For instance, use this if you want to annotate a method with '@Override'.
+ * For instance, use this if you want to annotate a method with '\@Override'.
  */
 export function Annotation(props: AnnotationProps) {
   const args =

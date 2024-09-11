@@ -1,0 +1,51 @@
+{
+  "name": "@alloy-js/csharp",
+  "version": "0.1.0",
+  "description": "",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./stc": {
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
+    }
+  },
+  "scripts": {
+    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
+    "build-tsc": "tsc -p .",
+    "generate-docs": "api-extractor run",
+    "build": "npm run build-src && npm run build-tsc && npm run generate-docs",
+    "clean": "rimraf dist/ .temp/",
+    "format": "pnpm run prettier-exec --write",
+    "prettier-exec": "prettier --config ../../.prettierrc.yaml **/*.{ts,js,tsx,json,yml,yaml}",
+    "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
+    "watch-tsc": "tsc -p . --watch",
+    "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\"",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "jhendrix@microsoft.com",
+  "license": "ISC",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "change-case": "catalog:",
+    "pathe": "catalog:"
+  },
+  "devDependencies": {
+    "@babel/cli": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@microsoft/api-extractor": "^7.47.7",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "babel-preset-alloy": "workspace:~",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "overrides": {
+    "esbuild": "0.23"
+  },
+  "type": "module"
+}

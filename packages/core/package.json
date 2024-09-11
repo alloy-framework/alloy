@@ -24,7 +24,8 @@
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",
     "build-testing": "babel testing -d dist/testing --extensions .ts,.tsx",
-    "build": "tsc -p . && npm run build-src && npm run build-testing",
+    "generate-docs": "api-extractor run",
+    "build": "tsc -p . && npm run build-src && npm run build-testing && pnpm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@babel/cli": "catalog:",
+    "@microsoft/api-extractor": "^7.47.7",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",

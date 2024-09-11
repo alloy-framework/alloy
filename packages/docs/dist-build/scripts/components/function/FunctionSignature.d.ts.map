@@ -1,0 +1,1 @@
+{"version":3,"file":"FunctionSignature.d.ts","sourceRoot":"","sources":["../../../../scripts/components/function/FunctionSignature.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,gCAAgC,CAAC;AAGlE,MAAM,WAAW,sBAAsB;IACrC,EAAE,EAAE,WAAW,CAAC;CACjB;AAED,wBAAgB,iBAAiB,CAAC,KAAK,EAAE,sBAAsB,kIAS9D"}

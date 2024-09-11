@@ -1,0 +1,77 @@
+---
+title: ProjectDirectory
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { ProjectDirectory } from "@alloy-js/core" 
+
+<ProjectDirectory description="string" name="string" srcDir="string" version="string">
+    {children}
+</ProjectDirectory>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { ProjectDirectory } from "@alloy-js/core/stc" 
+
+ProjectDirectory({ description: string, name: string, srcDir: string, version: string}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">description</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">srcDir</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">version</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

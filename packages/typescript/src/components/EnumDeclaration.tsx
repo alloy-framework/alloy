@@ -11,12 +11,11 @@ import {
   createTSSymbol,
   useTSScope,
 } from "../symbols/index.js";
-import { DeclarationProps } from "./Declaration.js";
+import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 import { Name } from "./Name.js";
 
-export interface EnumDeclarationProps
-  extends Omit<DeclarationProps, "nameKind"> {
+export interface EnumDeclarationProps extends BaseDeclarationProps {
   /**
    * A JS object representing the enum member names and values.
    */

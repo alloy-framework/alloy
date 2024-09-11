@@ -15,7 +15,8 @@
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",
     "build-tsc": "tsc -p .",
-    "build": "npm run build-src && npm run build-tsc",
+    "generate-docs": "api-extractor run",
+    "build": "npm run build-src && npm run build-tsc && npm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
     "watch-tsc": "tsc -p . --watch",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@babel/cli": "catalog:",
     "@babel/preset-typescript": "catalog:",
+    "@microsoft/api-extractor": "^7.47.7",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "babel-preset-alloy": "workspace:~",

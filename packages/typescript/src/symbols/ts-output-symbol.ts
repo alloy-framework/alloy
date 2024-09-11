@@ -19,7 +19,7 @@ export interface TSOutputSymbol extends OutputSymbol {
   memberScope?: TSMemberScope;
 }
 
-interface createTsSymbolOptions {
+export interface createTsSymbolOptions {
   name: string;
   refkey: Refkey;
   binder?: Binder;

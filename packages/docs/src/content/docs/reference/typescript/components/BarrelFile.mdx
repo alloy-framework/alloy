@@ -1,0 +1,85 @@
+---
+title: BarrelFile
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Creates a source file which re-exports the exports in other files and nested barrel files in the source directory its placed in.
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { BarrelFile } from "@alloy-js/core" 
+
+<BarrelFile export={boolean | string} path="string">
+    {children}
+</BarrelFile>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { BarrelFile } from "@alloy-js/core/stc" 
+
+BarrelFile({ export: boolean | string, path: string}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">export</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean | string</code>
+  
+  Whether the source file is exported out of the package. When true, this source file with its source file relative to the project root. Otherwise, it will be exported with the specified path.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">path</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>string</code>
+  
+  The name of the source file
+  
+  
+  </td>
+  </tr>
+</table>
+
+  ### Remarks
+
+This component must be placed directly inside a <a href="../../../core/components/sourcedirectory/">SourceDirectory</a> component. It will only discover nested barrel files directly within nested source directories.
+
+
+
+  ### Example
+
+Creating a barrel file which exports the two other source files in the same directory
+
+<Code code={`
+  <Output>
+    <SourceDirectory path="src">
+      <SourceFile path="one.ts" />
+      <SourceFile path="two.ts" />
+      <BarrelFile />
+    </SourceDirectory>
+  </Output>
+` } lang="tsx" />
+
+The barrel file will contain the following contents:
+
+<Code code={`
+  export * from "./one.js";
+  export * from "./two.js";
+` } lang="ts" />
+
+
+
+### See also
+
+
+* <a href="../../../core/components/sourcedirectory/">SourceDirectory</a>
+* <a href="../sourcefile/">SourceFile</a>
+

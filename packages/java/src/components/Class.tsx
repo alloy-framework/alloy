@@ -1,17 +1,15 @@
 import { Children, code, Scope } from "@alloy-js/core";
 import { collectArguments } from "../arguments.js";
+import { collectGenerics, GenericTypes } from "../generics.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import {
-  AccessModifier,
-  collectAccessModifier,
-  collectModifiers,
-  ObjectModifiers,
-} from "../object-modifiers.js";
+import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { Name } from "./Name.js";
 
-export interface ClassProps extends DeclarationProps, ObjectModifiers {
-  accessModifier?: AccessModifier;
+export interface ClassProps
+  extends DeclarationProps,
+    ObjectModifiers,
+    GenericTypes {
   extends?: Children;
   implements?: Children;
 }
@@ -23,9 +21,10 @@ export function Class(props: ClassProps) {
   const implementsExpression = props.implements ?
     code` implements ${collectedInterfaces}`
   : "";
+  const generics = props.generics ? collectGenerics(props.generics) : "";
   const modifiers = collectModifiers(props);
   return <Declaration {...props} name={name}>
-      {collectAccessModifier(props.accessModifier)}{modifiers}class <Name />{extendExpression}{implementsExpression} {"{"}
+      {modifiers}class <Name />{generics}{extendExpression}{implementsExpression} {"{"}
         <Scope name={name} kind='class'>
           {props.children}
         </Scope>

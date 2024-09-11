@@ -4,7 +4,7 @@ import { Children, mapJoin } from "@alloy-js/core";
  * Collect a set of arguments to be passed to a method, class init.
  * Can take single child, or array of children
  *
- * @param args Children to collect
+ * @param args - Children to collect
  */
 export function collectArguments(args: Children): Children {
   return Array.isArray(args) ?
@@ -15,7 +15,7 @@ export function collectArguments(args: Children): Children {
 /**
  * Collect a set of named arguments. Will pass to object as named arguments.
  *
- * @param args Record of name to argument value
+ * @param args -  of name to argument value
  */
 export function collectNamedArguments(
   args: Record<string, Children>,

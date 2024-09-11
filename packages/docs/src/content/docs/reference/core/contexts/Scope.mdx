@@ -1,0 +1,88 @@
+---
+title: Scope context
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Code code={`const ScopeContext: ComponentContext<OutputScope>`} lang="ts" />
+
+### Accessor
+
+<Code code={`import { useScope } from "@alloy-js/core";
+
+const myContext = useScope();`} lang="ts" />
+
+
+
+### Context interface
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">binder</td>
+    <td>
+       <code><a href="../binder/">Binder context interface</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+       <code>Set&lt;<a href="../scope/">Scope context interface</a>></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">getSymbolNames</td>
+    <td>`() => Set<string>`</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">kind</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">parent</td>
+    <td>
+       <code><a href="../scope/">Scope context interface</a> | undefined</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">symbols</td>
+    <td>
+       <code>Set&lt;<a href="../declaration/">Declaration context interface</a>></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>
+

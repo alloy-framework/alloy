@@ -1,11 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { createContext, useContext } from "../context.js";
-
-export const IndentContext = createContext<IndentState>({
-  level: 0,
-  indent: "  ",
-  indentString: "",
-});
+import { useContext } from "../context.js";
+import { IndentContext } from "../context/indent.js";
 
 export interface IndentProps {
   children?: Children;

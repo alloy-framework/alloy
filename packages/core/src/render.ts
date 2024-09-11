@@ -5,13 +5,17 @@ import {
   effect,
   getContext,
   isComponentCreator,
+  popStack,
+  printRenderStack,
+  pushStack,
   root,
   untrack,
 } from "@alloy-js/core/jsx-runtime";
 import { isRef } from "@vue/reactivity";
-import { Indent, IndentContext, IndentState } from "./components/Indent.js";
-import { SourceFileContext } from "./components/SourceFile.js";
+import { Indent, IndentState } from "./components/Indent.js";
 import { useContext } from "./context.js";
+import { IndentContext } from "./context/indent.js";
+import { SourceFileContext } from "./context/source-file.js";
 import { isRefkey } from "./refkey.js";
 
 /**
@@ -243,9 +247,14 @@ export function renderTree(children: Children) {
   const state: RenderState = {
     newline: false,
   };
-  root(() => {
-    renderWorker(rootElem, children, state);
-  }, "render worker");
+  try {
+    root(() => {
+      renderWorker(rootElem, children, state);
+    }, "render worker");
+  } catch (e) {
+    printRenderStack();
+    throw e;
+  }
 
   return rootElem;
 }
@@ -300,7 +309,9 @@ function appendChild(
         node.push(indentState.indent);
       }
       const componentRoot: RenderTextTree = [];
+      pushStack(child.component, child.props);
       renderWorker(componentRoot, untrack(child), state);
+      popStack();
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
     }, child.component.name);

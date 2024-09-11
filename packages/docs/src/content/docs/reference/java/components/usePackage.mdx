@@ -1,0 +1,23 @@
+---
+title: usePackage
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { usePackage } from "@alloy-js/core" 
+
+<usePackage >
+    {children}
+</usePackage>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { usePackage } from "@alloy-js/core/stc" 
+
+usePackage({ }).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+

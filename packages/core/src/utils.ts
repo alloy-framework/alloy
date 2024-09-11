@@ -31,34 +31,34 @@ const defaultJoinOptions: JoinOptions = {
  * Defaults to joining with a newline.
  *
  * @see {@link join} for joining without mapping.
- * @param src Source map.
- * @param cb Mapper function.
- * @param options Join options.
+ * @param src - Source map.
+ * @param cb - Mapper function.
+ * @param options - Join options.
  * @returns The mapped and joined array.
+ *
  */
 export function mapJoin<T, U, V>(
   src: Map<T, U>,
   cb: (key: T, value: U) => V,
   options?: JoinOptions,
 ): (V | string)[];
-
 /**
- * Map a array to another array using a mapper and place a joiner between each
- * element. Defaults to joining with a newline.
+ * Map a array or iterator to another array using a mapper and place a joiner
+ * between each element. Defaults to joining with a newline.
  *
  * @see {@link join} for joining without mapping.
- * @param src Source array.
- * @param cb Mapper function.
- * @param options Join options.
+ * @param src - Source array.
+ * @param cb - Mapper function.
+ * @param options - Join options.
  * @returns The mapped and joined array.
  */
 export function mapJoin<T, V>(
-  src: T[],
+  src: T[] | IterableIterator<T>,
   cb: (value: T) => V,
   options?: JoinOptions,
 ): (V | string)[];
 export function mapJoin<T, U, V>(
-  src: Map<T, U> | T[],
+  src: Map<T, U> | T[] | Iterable<T>,
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
 ): (V | string)[] {
@@ -66,6 +66,10 @@ export function mapJoin<T, U, V>(
   const ender = options.ender === true ? options.joiner : options.ender;
 
   const mapped: (V | string)[] = [];
+  if (typeof (src as any).next === "function") {
+    src = Array.from(src as Iterable<T>);
+  }
+
   if (Array.isArray(src)) {
     for (const [index, item] of src.entries()) {
       mapped.push(cb(item));
@@ -77,7 +81,7 @@ export function mapJoin<T, U, V>(
       mapped.push(ender);
     }
   } else {
-    const entries = [...src.entries()];
+    const entries = [...(src as Map<T, U>).entries()];
     for (const [index, [key, value]] of entries.entries()) {
       mapped.push(cb(key, value));
       if (index !== entries.length - 1) {
@@ -93,26 +97,26 @@ export function mapJoin<T, U, V>(
 }
 
 /**
- * Place a joiner between each element of an array. Defaults to joining with a
- * newline.
+ * Place a joiner between each element of an array or iterator. Defaults to
+ * joining with a newline.
  *
- * @see {@link mapJoin} for mapping before joining.
- * @param src
- * @param rawOptions
+ * @see mapJoin for mapping before joining.
  * @returns The joined array
  */
 export function join<T>(
-  src: T[],
-  rawOptions: JoinOptions = {},
+  src: T[] | Iterator<T>,
+  options: JoinOptions = {},
 ): (T | string)[] {
-  const options = { ...defaultJoinOptions, ...rawOptions };
+  const mergedOptions = { ...defaultJoinOptions, ...options };
   const joined = [];
-  const ender = options.ender === true ? options.joiner : options.ender;
+  const ender =
+    mergedOptions.ender === true ? mergedOptions.joiner : mergedOptions.ender;
+  src = Array.from(src as Iterable<T>);
 
   for (const [index, item] of src.entries()) {
     joined.push(item);
     if (index !== src.length - 1) {
-      joined.push(options.joiner!);
+      joined.push(mergedOptions.joiner!);
     }
   }
 
@@ -125,9 +129,9 @@ export function join<T>(
 
 /**
  * Returns a memo which is a list of all the provided children.
- * If you want this as an array, see childrenArray.
+ * If you want this as an array, see {@link childrenArray}.
  */
-export function children(fn: () => Children) {
+export function children(fn: () => Children): () => Children {
   return memo(() => collectChildren(fn()));
 
   function collectChildren(children: Children): Children {
@@ -144,7 +148,7 @@ export function children(fn: () => Children) {
   }
 }
 
-export function childrenArray(fn: () => Children) {
+export function childrenArray(fn: () => Children): Child[] {
   const c = children(fn)();
   if (Array.isArray(c)) {
     return c;
@@ -187,7 +191,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
       children(...children: Children[]): ComponentCreator<T>;
     } = () => Component(args[0]!);
     fn.component = Component;
-
+    fn.props = args[0]!;
     fn.code = (
       template: TemplateStringsArray,
       ...substitutions: Children[]
@@ -199,6 +203,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
+      fn.props = args[0]!;
       return fn;
     };
 
@@ -210,9 +215,14 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
+      fn.props = args[0]!;
       return fn;
     };
 
     return fn;
   };
+}
+
+function isIterable(obj: any): obj is Iterable<any> {
+  return obj != null && typeof obj[Symbol.iterator] === "function";
 }

@@ -1,4 +1,5 @@
 import {
+  ComponentContext,
   SourceFile as CoreSourceFile,
   createContext,
   OutputSymbol,
@@ -15,7 +16,8 @@ export interface SourceFileContext {
   addImport(symbol: OutputSymbol): string;
 }
 
-export const SourceFileContext = createContext<SourceFileContext>();
+export const SourceFileContext: ComponentContext<SourceFileContext> =
+  createContext();
 
 export interface SourceFileProps {
   path: string;

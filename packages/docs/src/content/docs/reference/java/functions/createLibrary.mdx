@@ -1,0 +1,43 @@
+---
+title: createLibrary
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+
+
+
+<Code code={`import { createLibrary } from "@alloy-js/core";
+
+function createLibrary<const T extends LibraryDescriptor>(props: CreateLibraryProps<T>): LibraryRefkeys<T> & SymbolCreator;`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">props</td>
+    <td>
+    
+      `CreateLibraryProps<T>`
+      
+      
+    </td>
+  </tr>
+</table>
+
+
+
+### Returns
+
+<code><a href="../../types/libraryrefkeys/">LibraryRefkeys</a>&lt;T> &amp; <a href="../../../core/types/symbolcreator/">SymbolCreator</a></code>
+
+
+
+
+
+
+
+

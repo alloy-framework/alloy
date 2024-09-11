@@ -1,0 +1,57 @@
+---
+title: SourceFile
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { SourceFile } from "@alloy-js/core" 
+
+<SourceFile path="string" using={Array<string>}>
+    {children}
+</SourceFile>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { SourceFile } from "@alloy-js/core/stc" 
+
+SourceFile({ path: string, using: Array<string>}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">path</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">using</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>Array&lt;string></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

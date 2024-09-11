@@ -1,0 +1,137 @@
+---
+title: VarDeclaration
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { VarDeclaration } from "@alloy-js/core" 
+
+<VarDeclaration const let type={Children} value={Children} var>
+    {children}
+</VarDeclaration>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { VarDeclaration } from "@alloy-js/core/stc" 
+
+VarDeclaration({ const: boolean, let: boolean, type: Children, value: Children, var: boolean}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">const</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">default</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  Whether this is the default export of the module.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">export</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  Whether to export this declaration from the module.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">kind</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>"type" | "value"</code>
+  
+  Whether this is a declaration of a type (e.g. interface, type alias) or a value (e.g. var, const, let).
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">let</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  The base name of this declaration. May change depending on naming policy and any conflicts.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/refkey/">Refkey</a></code>
+  
+  The unique key for this declaration.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">type</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">value</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">var</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

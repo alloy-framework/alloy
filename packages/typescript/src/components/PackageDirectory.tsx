@@ -1,5 +1,6 @@
 import {
   Children,
+  ComponentContext,
   createContext,
   Ref,
   Scope,
@@ -28,7 +29,7 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
   children?: Children;
 }
 
-export const PackageContext = createContext<PackageContext>();
+export const PackageContext: ComponentContext<PackageContext> = createContext();
 
 export function usePackage() {
   const ctx = useContext(PackageContext);

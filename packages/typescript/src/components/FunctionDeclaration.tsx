@@ -12,7 +12,7 @@ import {
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSSymbolFlags, useTSScope } from "../symbols/index.js";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface ParameterDescriptor {
@@ -27,8 +27,7 @@ function isParameterDescriptor(
     typeof value === "object" && value !== null && Object.hasOwn(value, "type")
   );
 }
-export interface FunctionDeclarationProps
-  extends Omit<DeclarationProps, "nameKind"> {
+export interface FunctionDeclarationProps extends BaseDeclarationProps {
   async?: boolean;
   parameters?: Record<string, Children | ParameterDescriptor>;
   returnType?: Children;
@@ -110,7 +109,7 @@ FunctionDeclaration.Parameters = taggedComponent(
 
           return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
         },
-        { joiner: "," },
+        { joiner: ", " },
       );
     } else {
       value = undefined;

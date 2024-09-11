@@ -1,0 +1,199 @@
+---
+title: ObjectDeclaration
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Shorthand to instantiate a new object. Declares it with 'new' and passes arguments to the constructor of the object, if any
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { ObjectDeclaration } from "@alloy-js/core" 
+
+<ObjectDeclaration arguments={Children} type={Children}>
+    {children}
+</ObjectDeclaration>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { ObjectDeclaration } from "@alloy-js/core/stc" 
+
+ObjectDeclaration({ arguments: Children, type: Children}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">abstract</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">arguments</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">default</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">final</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">native</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">private</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">protected</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">public</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/refkey/">Refkey</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">static</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">strictfp</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">synchronized</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">transient</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">type</td>
+    <td>
+       <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">volatile</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>

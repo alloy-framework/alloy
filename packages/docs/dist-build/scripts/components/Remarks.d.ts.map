@@ -1,0 +1,1 @@
+{"version":3,"file":"Remarks.d.ts","sourceRoot":"","sources":["../../../scripts/components/Remarks.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,gCAAgC,CAAC;AAC9D,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AAGnD,MAAM,WAAW,YAAY;IAC3B,IAAI,EAAE,OAAO,GAAG;QAAE,YAAY,CAAC,EAAE,UAAU,CAAA;KAAE,CAAC;CAC/C;AAED,wBAAgB,OAAO,CAAC,KAAK,EAAE,YAAY,yCAa1C"}

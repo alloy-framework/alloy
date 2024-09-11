@@ -1,5 +1,13 @@
 name: CI
 on: [push, pull_request]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -19,6 +27,19 @@ jobs:
         run: pnpm test
 
       - run: pnpx pkg-pr-new publish './packages/*' --pnpm
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build with Astro
+        run: |
+          pnpx astro build \
+            --site "${{ steps.pages.outputs.origin }}" \
+            --base "${{ steps.pages.outputs.base_path }}"
+        working-directory: ./packages/docs
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./packages/docs/dist
 
   format:
     runs-on: ubuntu-latest
@@ -46,3 +67,15 @@ jobs:
 
       - run: pnpm run lint
         name: Lint
+
+  deploy-docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

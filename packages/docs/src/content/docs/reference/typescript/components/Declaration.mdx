@@ -1,0 +1,99 @@
+---
+title: Declaration
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+Create a TypeScript declaration. Generally, this component shouldn't be used directly, and instead prefer components for specific declarations, e.g. <a href="../enumdeclaration/">EnumDeclaration</a>, <a href="../interfacedeclaration/">InterfaceDeclaration</a>, <a href="../typedeclaration/">TypeDeclaration</a>, etc.
+
+<Tabs syncKey="component-style">
+    <TabItem label="jsx">
+        <Code code={`import { Declaration } from "@alloy-js/core" 
+
+<Declaration nameKind={TypeScriptElements}>
+    {children}
+</Declaration>`} lang="tsx" />
+</TabItem>
+<TabItem label="stc">
+    <Code code={`import { Declaration } from "@alloy-js/core/stc" 
+
+Declaration({ nameKind: TypeScriptElements}).children(children)` } lang="ts" />
+</TabItem>
+</Tabs>
+
+### Props
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">children</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/children/">Children</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">default</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  Whether this is the default export of the module.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">export</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>boolean</code>
+  
+  Whether to export this declaration from the module.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">kind</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code>"type" | "value"</code>
+  
+  Whether this is a declaration of a type (e.g. interface, type alias) or a value (e.g. var, const, let).
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">name</td>
+    <td>
+       <code>string</code>
+  
+  The base name of this declaration. May change depending on naming policy and any conflicts.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">nameKind</td>
+    <td>
+       <code><a href="../../types/typescriptelements/">TypeScriptElements</a></code>
+  
+  The name policy kind to apply to the declaration.
+  
+  
+  </td>
+  </tr>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td>
+      <Badge text="optional" variant="note" size="small" /> <code><a href="../../../core/types/refkey/">Refkey</a></code>
+  
+  The unique key for this declaration.
+  
+  
+  </td>
+  </tr>
+</table>

@@ -1,9 +1,8 @@
 import { memo } from "@alloy-js/core/jsx-runtime";
 import { computed, reactive, Ref, shallowRef } from "@vue/reactivity";
-import { useScope } from "./components/Scope.js";
-import { createContext, useContext } from "./context.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useScope } from "./context/scope.js";
 import { Refkey } from "./refkey.js";
-
 export type Metadata = object;
 
 export interface OutputSymbol {
@@ -21,12 +20,6 @@ export interface OutputScope {
   parent: OutputScope | undefined;
   binder: Binder;
   getSymbolNames(): Set<string>;
-}
-
-export const BinderContext = createContext<Binder>();
-
-export function useBinder() {
-  return useContext(BinderContext)!;
 }
 
 /**

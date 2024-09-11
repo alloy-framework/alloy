@@ -6,7 +6,7 @@ import { JavaOutputScope } from "./scopes.js";
 /**
  * Resolve reference to symbol reference, and handle dependency management
  *
- * @param refkey Reference key to symbol
+ * @param refkey - Reference key to symbol
  */
 export function ref(refkey: Refkey) {
   const sourceFile = useContext(SourceFileContext);

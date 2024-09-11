@@ -4,9 +4,10 @@ import {
   getContext,
 } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
-import { createContext, useContext } from "../context.js";
+import { useContext } from "../context.js";
+import { SourceDirectoryContext } from "../context/source-directory.js";
+import { SourceFileContext } from "../context/source-file.js";
 import { Refkey } from "../refkey.js";
-import { SourceDirectoryContext } from "./SourceDirectory.js";
 
 export interface SourceFileProps {
   path: string;
@@ -14,14 +15,6 @@ export interface SourceFileProps {
   children?: Children[];
   reference?: ComponentDefinition<{ refkey: Refkey }>;
 }
-
-export interface SourceFileContext {
-  path: string;
-  filetype: string;
-  reference?: ComponentDefinition<{ refkey: Refkey }>;
-}
-
-export const SourceFileContext = createContext<SourceFileContext>();
 
 export function SourceFile(props: SourceFileProps) {
   const parentDirectory = useContext(SourceDirectoryContext)!;

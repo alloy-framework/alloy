@@ -1,0 +1,31 @@
+---
+title: Assignment context
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+AssignmentContext tracks the target of an assignment. Value-producing expressions that need symbol tracking should check to see if they are in assignment context and if so handle it appropriately. Expressions which do not need symbol tracking should unset assignment context so expressions contained within them don't inadvertantly expose symbols.
+
+<Code code={`const AssignmentContext: ComponentContext<AssignmentContext>`} lang="ts" />
+
+### Accessor
+
+<Code code={`const myContext = useContext(AssignmentContext);`} lang="ts" />
+
+### Context interface
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">target</td>
+    <td>
+       <code><a href="../../types/tsoutputsymbol/">TSOutputSymbol</a></code>
+  
+  
+  
+  
+  </td>
+  </tr>
+</table>
+

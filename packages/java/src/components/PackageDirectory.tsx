@@ -1,5 +1,6 @@
 import {
   Children,
+  ComponentContext,
   createContext,
   Scope,
   SourceDirectory,
@@ -23,7 +24,8 @@ export interface PackageDirectoryContext {
   qualifiedName: string;
 }
 
-export const PackageDirectoryContext = createContext<PackageDirectoryContext>();
+export const PackageDirectoryContext: ComponentContext<PackageDirectoryContext> =
+  createContext();
 
 export function usePackage() {
   return useContext(PackageDirectoryContext);

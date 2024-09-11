@@ -1,0 +1,43 @@
+---
+title: resolve
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Badge } from '@astrojs/starlight/components';
+
+
+
+Resolve a refkey in the current scope. Returns a Ref for the resolution result. The value of the ref will be undefined if the identifier hasn't been resolved yet.
+
+<Code code={`import { resolve } from "@alloy-js/core";
+
+function resolve<TScope extends OutputScope, TSymbol extends OutputSymbol>(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>>;`} lang="ts" />
+
+### Parameters
+
+<table>
+  <tr>
+    <td style="text-align: right;font-weight: bold;">refkey</td>
+    <td>
+    
+      `Refkey`
+      
+      
+    </td>
+  </tr>
+</table>
+
+
+
+### Returns
+
+<code>Ref&lt;<a href="../../types/resolutionresult/">ResolutionResult</a>&lt;TScope, TSymbol>></code>
+
+
+
+
+
+
+
+

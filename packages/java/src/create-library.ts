@@ -36,12 +36,12 @@ function createSymbols(
   }
 }
 
-type LibraryRefkeys<T extends LibraryDescriptor> = {
+export type LibraryRefkeys<T extends LibraryDescriptor> = {
   [S in T[keyof T] extends readonly string[] ? T[keyof T][number]
   : never]: Refkey;
 };
 
-interface CreateLibraryProps<T extends LibraryDescriptor> {
+export interface CreateLibraryProps<T extends LibraryDescriptor> {
   groupId: string;
   artifactId: string;
   version: string;

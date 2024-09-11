@@ -1,6 +1,8 @@
 import * as core from "@alloy-js/core";
-import * as base from "../components/index.js";
-import * as symbols from "./index.js";
+import { useNamespace } from "../components/Namespace.jsx";
+import { useSourceFile } from "../components/SourceFile.jsx";
+import { CSharpOutputSymbol } from "./csharp-output-symbol.js";
+import { CSharpOutputScope } from "./scopes.js";
 
 // when resolving references across source files, the last element
 // in pathDown will be the containing source file. we only need this
@@ -10,18 +12,17 @@ interface SourceFileScope extends core.OutputScope {
   kind: "source-file";
 }
 
-type ReferenceScope = symbols.CSharpOutputScope | SourceFileScope;
+type ReferenceScope = CSharpOutputScope | SourceFileScope;
 
 // converts a refkey to its fully qualified name
 // e.g. if refkey is for bar in enum type foo, and
 // foo is in the same namespace as the refkey, then
 // the result would be foo.bar.
 export function ref(refkey: core.Refkey): () => string {
-  const targetNamespaceCtx = base.useNamespace();
-  const resolveResult = core.resolve<
-    ReferenceScope,
-    symbols.CSharpOutputSymbol
-  >(refkey as core.Refkey);
+  const targetNamespaceCtx = useNamespace();
+  const resolveResult = core.resolve<ReferenceScope, CSharpOutputSymbol>(
+    refkey as core.Refkey,
+  );
 
   return core.memo(() => {
     if (resolveResult.value === undefined) {
@@ -46,7 +47,7 @@ export function ref(refkey: core.Refkey): () => string {
     if (sourceNamespace && sourceNamespace.name !== targetNamespaceCtx!.name) {
       // the source symbol is in a different namespace that the target refkey.
       // add the applicable using statement to the target's source file.
-      const targetSrc = base.useSourceFile();
+      const targetSrc = useSourceFile();
       targetSrc!.addUsing(sourceNamespace.name);
     }
 

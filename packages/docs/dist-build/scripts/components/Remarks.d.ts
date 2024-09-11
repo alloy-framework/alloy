@@ -5,5 +5,5 @@ export interface RemarksProps {
         tsdocComment?: DocComment;
     };
 }
-export declare function Remarks(props: RemarksProps): "" | import("@alloy-js/core").Child[];
+export declare function Remarks(props: RemarksProps): import("@alloy-js/core").Child[] | "";
 //# sourceMappingURL=Remarks.d.ts.map

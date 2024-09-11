@@ -49,8 +49,6 @@ export interface InterfaceMemberProps {
 
 /**
  * Create a TypeScript interface declaration.
- * @param props
- * @returns
  */
 export function InterfaceMember(props: InterfaceMemberProps) {
   const namer = useTSNamePolicy();

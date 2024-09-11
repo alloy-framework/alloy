@@ -16,7 +16,8 @@ if ((globalThis as any).ALLOY) {
   );
 }
 (globalThis as any).ALLOY = true;
-interface Disposable {
+
+export interface Disposable {
   (): void;
 }
 

@@ -10,11 +10,13 @@ export interface GenericTypes {
 /**
  * Collect generics types to pass definitions to components
  *
- * @param generics Record of type variable, (T, Z, etc), mapped to its bounds (if any).
+ * @remarks
  *
  * Input of `{ T: 'String' }` will produce `<T extends String>`.
  *
  * Can then be passed to class definition, method definition, using a generic class etc.
+ *
+ * @param generics - Record of type variable, (T, Z, etc), mapped to its bounds (if any).
  */
 export function collectGenerics(generics: Record<string, Children>) {
   const genericTypes = mapJoin(
@@ -35,7 +37,7 @@ export function collectGenerics(generics: Record<string, Children>) {
  * or whatever type we like. These are where we define the types. Can also pass wildcard types like `List<? extends String>`, which
  * allows you to pass unknown types.
  *
- * @param generics Takes an array of either direct child (refkey or defining type), or a record which passes a wildcard type with optional bounds
+ * @param generics - Takes an array of either direct child (refkey or defining type), or a record which passes a wildcard type with optional bounds
  */
 export function passGenerics(generics: (Child | Record<"?", Children>)[]) {
   return mapJoin(

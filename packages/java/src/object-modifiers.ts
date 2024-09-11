@@ -1,7 +1,8 @@
 /**
  * Objects extend this interface to allow to take modifiers as boolean props.
  * Then can declare components like so
- * '<Class public final abstract />'
+ *
+ * `<Class public final abstract />`
  *
  * Error will be thrown if try to specify multiple access modifiers
  */

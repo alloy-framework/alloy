@@ -31,9 +31,9 @@ const defaultJoinOptions: JoinOptions = {
  * Defaults to joining with a newline.
  *
  * @see {@link join} for joining without mapping.
- * @param src Source map.
- * @param cb Mapper function.
- * @param options Join options.
+ * @param src - Source map.
+ * @param cb - Mapper function.
+ * @param options - Join options.
  * @returns The mapped and joined array.
  *
  */
@@ -47,9 +47,9 @@ export function mapJoin<T, U, V>(
  * between each element. Defaults to joining with a newline.
  *
  * @see {@link join} for joining without mapping.
- * @param src Source array.
- * @param cb Mapper function.
- * @param options Join options.
+ * @param src - Source array.
+ * @param cb - Mapper function.
+ * @param options - Join options.
  * @returns The mapped and joined array.
  */
 export function mapJoin<T, V>(
@@ -100,9 +100,7 @@ export function mapJoin<T, U, V>(
  * Place a joiner between each element of an array or iterator. Defaults to
  * joining with a newline.
  *
- * @see {@link mapJoin} for mapping before joining.
- * @param src
- * @param options
+ * @see mapJoin for mapping before joining.
  * @returns The joined array
  */
 export function join<T>(

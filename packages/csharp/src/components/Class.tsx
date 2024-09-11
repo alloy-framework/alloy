@@ -1,31 +1,37 @@
 import * as core from "@alloy-js/core";
-import * as csharp from "../index.js";
-import * as symbols from "../symbols/index.js";
-import * as base from "./index.js";
+import {
+  AccessModifier,
+  getAccessModifier,
+  getMethodModifier,
+  MethodModifier,
+} from "../modifiers.js";
+import { useCSharpNamePolicy } from "../name-policy.js";
+import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
+import { useCSharpScope, createCSharpMemberScope } from "../symbols/scopes.js";
+import { Name } from "./Name.jsx";
+import { Parameters } from "./Parameters.jsx";
 
 // properties for creating a class
-export interface ClassProps extends Omit<base.DeclarationProps, "nameKind"> {
-  accessModifier?: csharp.AccessModifier;
+export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
+  accessModifier?: AccessModifier;
 }
 
 // a C# class declaration
 export function Class(props: ClassProps) {
-  const name = csharp.useCSharpNamePolicy().getName(props.name, "class");
-  const scope = symbols.useCSharpScope();
+  const name = useCSharpNamePolicy().getName(props.name!, "class");
+  const scope = useCSharpScope();
 
-  const thisClassSymbol = scope.binder.createSymbol<symbols.CSharpOutputSymbol>(
-    {
-      name: name,
-      scope,
-      refkey: props.refkey ?? core.refkey(props.name),
-    },
-  );
+  const thisClassSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
+    name: name,
+    scope,
+    refkey: props.refkey ?? core.refkey(props.name),
+  });
 
   // this creates a new scope for the class definition.
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const thisClassScope = symbols.createCSharpMemberScope(
+  const thisClassScope = createCSharpMemberScope(
     scope.binder,
     scope,
     thisClassSymbol,
@@ -33,7 +39,7 @@ export function Class(props: ClassProps) {
   );
 
   return <core.Declaration symbol={thisClassSymbol}>
-      {csharp.getAccessModifier(props.accessModifier)}class <base.Name />{!props.children && ";"}{props.children &&
+      {getAccessModifier(props.accessModifier)}class <Name />{!props.children && ";"}{props.children &&
         <>
           {"\n{"}
             <core.Scope value={thisClassScope}>
@@ -47,7 +53,7 @@ export function Class(props: ClassProps) {
 
 // properties for creating a class member
 export interface ClassMemberProps {
-  accessModifier?: csharp.AccessModifier;
+  accessModifier?: AccessModifier;
   name: string;
   type: core.Children;
   refkey?: core.Refkey;
@@ -55,41 +61,41 @@ export interface ClassMemberProps {
 
 // a C# class member (i.e. a field within a class like "private int count")
 export function ClassMember(props: ClassMemberProps) {
-  const name = csharp.useCSharpNamePolicy().getName(props.name, "class-member");
-  const scope = symbols.useCSharpScope();
+  const name = useCSharpNamePolicy().getName(props.name, "class-member");
+  const scope = useCSharpScope();
   if (scope.kind !== "member" || scope.name !== "class") {
     throw new Error("can't define a class member outside of a class scope");
   }
 
-  const memberSymbol = scope.binder.createSymbol<symbols.CSharpOutputSymbol>({
+  const memberSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
     name: name,
     scope,
     refkey: props.refkey ?? core.refkey(props.name),
   });
 
   return <core.Declaration symbol={memberSymbol}>
-      {csharp.getAccessModifier(props.accessModifier)}{props.type} <base.Name />;
+      {getAccessModifier(props.accessModifier)}{props.type} <Name />;
     </core.Declaration>;
 }
 
 // properties for creating a method
 export interface ClassMethodProps
-  extends Omit<base.DeclarationProps, "nameKind"> {
-  accessModifier?: csharp.AccessModifier;
-  methodModifier?: csharp.MethodModifier;
+  extends Omit<core.DeclarationProps, "nameKind"> {
+  accessModifier?: AccessModifier;
+  methodModifier?: MethodModifier;
   parameters?: Record<string, core.Children>;
   returns?: core.Children;
 }
 
 // a C# class method
 export function ClassMethod(props: ClassMethodProps) {
-  const name = csharp.useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = symbols.useCSharpScope();
+  const name = useCSharpNamePolicy().getName(props.name!, "class-method");
+  const scope = useCSharpScope();
   if (scope.kind !== "member" || scope.name !== "class") {
     throw new Error("can't define a class method outside of a class scope");
   }
 
-  const methodSymbol = scope.binder.createSymbol<symbols.CSharpOutputSymbol>({
+  const methodSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
     name: name,
     scope,
     refkey: props.refkey ?? core.refkey(props.name),
@@ -99,22 +105,22 @@ export function ClassMethod(props: ClassMethodProps) {
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const methodScope = symbols.createCSharpMemberScope(
+  const methodScope = createCSharpMemberScope(
     scope.binder,
     scope,
     methodSymbol,
     "method",
   );
 
-  const accessModifier = csharp.getAccessModifier(props.accessModifier);
-  const methodModifier = csharp.getMethodModifier(props.methodModifier);
+  const accessModifier = getAccessModifier(props.accessModifier);
+  const methodModifier = getMethodModifier(props.methodModifier);
   const params = props.parameters ?
-    <base.Parameters parameters={props.parameters} />
+    <Parameters parameters={props.parameters} />
   : "";
   const returns = props.returns ?? "void";
 
   return <core.Declaration symbol={methodSymbol}>
-      {accessModifier}{methodModifier}{returns} <base.Name />({params}){!props.children && " {}"}{props.children &&
+      {accessModifier}{methodModifier}{returns} <Name />({params}){!props.children && " {}"}{props.children &&
         <>
           {"\n{"}
             <core.Scope value={methodScope}>

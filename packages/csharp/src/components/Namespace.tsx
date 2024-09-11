@@ -1,5 +1,5 @@
 import * as core from "@alloy-js/core";
-import * as symbols from "../symbols/index.js";
+import { createCSharpNamespaceScope } from "../symbols/scopes.js";
 
 // contains the info for the current namespace
 export interface NamespaceContext {
@@ -21,7 +21,7 @@ export interface NamespaceProps {
 
 // a C# namespace. contains one or more source files
 export function Namespace(props: NamespaceProps) {
-  const scope = symbols.createCSharpNamespaceScope(
+  const scope = createCSharpNamespaceScope(
     core.useBinder(),
     core.useScope(),
     props.name,

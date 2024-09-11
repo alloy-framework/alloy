@@ -61,8 +61,7 @@ export interface DeclarationProps extends BaseDeclarationProps {
  * Create a TypeScript declaration. Generally, this component shouldn't be used
  * directly, and instead prefer components for specific declarations, e.g.
  * {@link EnumDeclaration}, {@link InterfaceDeclaration},
- * {@link FunctionDeclaration}, {@link TypeDeclaration}, or
- * {@link VarDeclaration}.
+ * {@link TypeDeclaration}, etc.
  */
 export function Declaration(props: DeclarationProps) {
   const namePolicy = useTSNamePolicy();

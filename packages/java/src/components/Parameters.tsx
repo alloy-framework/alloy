@@ -7,7 +7,7 @@ export interface ParametersProps {
 /**
  * Render a set of parameters for a method or constructor
  *
- * @param props Takes record of parameter name to type
+ * @param props - Takes record of parameter name to type
  */
 export function Parameters(props: ParametersProps) {
   const { parameters = {} } = props;

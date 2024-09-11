@@ -7,8 +7,8 @@ import {
   useContext,
 } from "@alloy-js/core";
 import { expect, it } from "vitest";
-import "../../testing/extend-expect.js";
 import { SourceDirectoryContext } from "../../src/context/source-directory.js";
+import "../../testing/extend-expect.js";
 
 it("tracks its content", () => {
   let context;

@@ -1,9 +1,9 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { OutputSymbol } from "../binder.js";
-import { createContext, useContext, ComponentContext } from "../context.js";
-import { Refkey, refkey } from "../refkey.js";
+import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
+import { Refkey, refkey } from "../refkey.js";
 
 export interface DeclarationProps {
   name?: string;

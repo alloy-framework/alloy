@@ -23,6 +23,9 @@
     "@microsoft/api-extractor": "^7.47.7",
     "@microsoft/api-extractor-model": "^7.29.6",
     "@microsoft/tsdoc": "^0.15.0",
+    "@alloy-js/typescript": "workspace:~",
+    "@alloy-js/java": "workspace:~",
+    "@alloy-js/csharp": "workspace:~",
     "redent": "^4.0.0"
   }
 }

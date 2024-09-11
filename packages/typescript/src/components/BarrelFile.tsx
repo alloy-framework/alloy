@@ -1,8 +1,6 @@
 import {
   mapJoin,
   memo,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  SourceDirectory,
   SourceDirectoryContext,
   useContext,
 } from "@alloy-js/core";

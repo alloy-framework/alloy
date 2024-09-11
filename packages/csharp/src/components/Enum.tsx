@@ -2,7 +2,7 @@ import * as core from "@alloy-js/core";
 import { AccessModifier, getAccessModifier } from "../modifiers.js";
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { useCSharpScope, createCSharpMemberScope } from "../symbols/scopes.js";
+import { createCSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum

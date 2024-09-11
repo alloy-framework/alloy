@@ -13,9 +13,7 @@ import { TypeDeclaration } from "./TypeDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { VarDeclaration } from "./VarDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { InterfaceDeclaration } from "./Interface.jsx";
 

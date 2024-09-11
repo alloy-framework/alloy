@@ -12,7 +12,7 @@ import {
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSSymbolFlags, useTSScope } from "../symbols/index.js";
-import { Declaration, BaseDeclarationProps } from "./Declaration.js";
+import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface ParameterDescriptor {

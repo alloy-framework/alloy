@@ -5,9 +5,9 @@ import {
 } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { useContext } from "../context.js";
-import { Refkey } from "../refkey.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
+import { Refkey } from "../refkey.js";
 
 export interface SourceFileProps {
   path: string;

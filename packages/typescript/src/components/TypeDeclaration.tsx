@@ -1,4 +1,4 @@
-import { Declaration, BaseDeclarationProps } from "./Declaration.js";
+import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { Name } from "./Name.js";
 
 export interface TypeDeclarationProps extends BaseDeclarationProps {}

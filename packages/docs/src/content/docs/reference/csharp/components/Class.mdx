@@ -10,14 +10,14 @@ import { Badge } from '@astrojs/starlight/components';
     <TabItem label="jsx">
         <Code code={`import { Class } from "@alloy-js/core" 
 
-<Class accessModifier={csharp.AccessModifier}>
+<Class accessModifier={AccessModifier}>
     {children}
 </Class>`} lang="tsx" />
 </TabItem>
 <TabItem label="stc">
     <Code code={`import { Class } from "@alloy-js/core/stc" 
 
-Class({ accessModifier: csharp.AccessModifier}).children(children)` } lang="ts" />
+Class({ accessModifier: AccessModifier}).children(children)` } lang="ts" />
 </TabItem>
 </Tabs>
 

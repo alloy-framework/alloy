@@ -10,14 +10,14 @@ import { Badge } from '@astrojs/starlight/components';
     <TabItem label="jsx">
         <Code code={`import { Enum } from "@alloy-js/core" 
 
-<Enum accessModifier={csharp.AccessModifier}>
+<Enum accessModifier={AccessModifier}>
     {children}
 </Enum>`} lang="tsx" />
 </TabItem>
 <TabItem label="stc">
     <Code code={`import { Enum } from "@alloy-js/core/stc" 
 
-Enum({ accessModifier: csharp.AccessModifier}).children(children)` } lang="ts" />
+Enum({ accessModifier: AccessModifier}).children(children)` } lang="ts" />
 </TabItem>
 </Tabs>
 

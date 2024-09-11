@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "pnpm run build-scripts && node dist-build/scripts/build-json.js && astro check && astro build",
+    "build-scripts": "tsc -p scripts.tsconfig.json",
     "preview": "astro preview",
     "astro": "astro"
   },

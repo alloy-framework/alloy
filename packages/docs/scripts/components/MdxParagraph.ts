@@ -5,8 +5,5 @@ export interface MdxParagraphProps {
 }
 
 export function MdxParagraph(props: MdxParagraphProps) {
-  return [
-    props.children,
-    "\n\n"
-  ]
+  return [props.children, "\n\n"];
 }

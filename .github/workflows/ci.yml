@@ -4,11 +4,11 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
         run: pnpm test
 
       - run: pnpx pkg-pr-new publish './packages/*' --pnpm
-      
+
       - name: Build with Astro
         run: |
           ${{ steps.detect-package-manager.outputs.runner }} astro build \
@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ env.BUILD_PATH }}/packages/docs/dist
-          
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -70,7 +70,7 @@ jobs:
 
       - run: pnpm run lint
         name: Lint
-        
+
   deploy-docs:
     environment:
       name: github-pages

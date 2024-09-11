@@ -1,6 +1,7 @@
 import { type Children } from "@alloy-js/core";
 import { type ApiItem } from "@microsoft/api-extractor-model";
 import { DocCodeSpan, DocDeclarationReference, DocLinkTag, DocNode, DocParagraph, DocPlainText, DocSection } from "@microsoft/tsdoc";
+import type { DeclarationReference } from "@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference.js";
 export interface TsDocProps {
     node: DocNode;
     context?: ApiItem;
@@ -29,5 +30,5 @@ export interface TsDocCodeSpanProps {
     node: DocCodeSpan;
 }
 export declare function TsDocCodeSpan(props: TsDocCodeSpanProps): string;
-export declare function resolveCodeDestination(decl: DocDeclarationReference, context: ApiItem): ApiItem | undefined;
+export declare function resolveCodeDestination(decl: DeclarationReference | DocDeclarationReference, context: ApiItem | undefined): ApiItem | undefined;
 //# sourceMappingURL=TsDoc.d.ts.map

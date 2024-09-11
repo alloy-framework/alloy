@@ -1,10 +1,7 @@
-import { DocDeclaration, Examples, Excerpt, Frontmatter, MdxSourceFile, Remarks, SeeAlso, Summary, } from "../stc/index.js";
+import { DocSourceFile, Examples, Excerpt, Remarks, SeeAlso, Summary, } from "../stc/index.js";
 export function VariableDoc(props) {
     const apiVariable = props.variable.variable;
     const title = props.variable.variable.displayName;
-    return MdxSourceFile({ path: title + ".mdx" }).children(DocDeclaration({
-        name: title,
-        apiItem: apiVariable,
-    }), Frontmatter({ title }), Summary({ type: apiVariable }), Excerpt({ excerpt: apiVariable.excerpt, context: apiVariable }), Remarks({ type: apiVariable }), Examples({ type: apiVariable }), SeeAlso({ type: apiVariable }));
+    return DocSourceFile({ title, declares: apiVariable }).children(Summary({ type: apiVariable }), Excerpt({ excerpt: apiVariable.excerpt, context: apiVariable }), Remarks({ type: apiVariable }), Examples({ type: apiVariable }), SeeAlso({ type: apiVariable }));
 }
 //# sourceMappingURL=VariableDoc.js.map

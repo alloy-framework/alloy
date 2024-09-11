@@ -137,3 +137,7 @@ sample-output/
 # API Extractor output
 packages/*/temp
 packages/*/tsdoc-metadata.json
+
+# Generated docs
+packages/docs/src/content/docs/reference
+packages/docs/dist-build

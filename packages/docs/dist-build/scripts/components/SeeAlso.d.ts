@@ -6,5 +6,5 @@ export interface SeeAlsoProps {
     };
     splitContexts?: boolean;
 }
-export declare function SeeAlso(props: SeeAlsoProps): "" | (false | import("@alloy-js/core").Child[])[];
+export declare function SeeAlso(props: SeeAlsoProps): "" | (false | import("@alloy-js/core").ComponentCreator<import("./MdxSection.js").MdxSectionProps>)[];
 //# sourceMappingURL=SeeAlso.d.ts.map

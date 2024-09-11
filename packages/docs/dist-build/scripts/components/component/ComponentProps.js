@@ -1,10 +1,7 @@
-import { code } from "@alloy-js/core";
-import { InterfaceMembers } from "../stc/index.js";
+import { InterfaceMembers, MdxSection } from "../stc/index.js";
 export function ComponentProps(props) {
-    return code `
-    ### Props
-
-    ${InterfaceMembers({ iface: props.propType, flatten: true })}
-  `;
+    if (!props.propType)
+        return "";
+    return MdxSection({ title: "Props", level: 3 }).children(InterfaceMembers({ iface: props.propType, flatten: true }));
 }
 //# sourceMappingURL=ComponentProps.js.map

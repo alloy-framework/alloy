@@ -18,6 +18,10 @@ export default defineConfig({
             // Each item here is one entry in the navigation menu.
             { label: "Getting started", slug: "guides/getting-started" },
             { label: "Basic concepts", slug: "guides/basic-concepts" },
+            {
+              label: "Example walkthrough",
+              slug: "guides/typescript-walkthrough",
+            },
           ],
         },
         {

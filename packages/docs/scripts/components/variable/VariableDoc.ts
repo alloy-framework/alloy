@@ -1,10 +1,8 @@
 import type { VariableApi } from "../../build-json.js";
 import {
-  DocDeclaration,
+  DocSourceFile,
   Examples,
   Excerpt,
-  Frontmatter,
-  MdxSourceFile,
   Remarks,
   SeeAlso,
   Summary,
@@ -19,12 +17,7 @@ export function VariableDoc(props: VariableDocProps) {
 
   const title = props.variable.variable.displayName;
 
-  return MdxSourceFile({ path: title + ".mdx" }).children(
-    DocDeclaration({
-      name: title,
-      apiItem: apiVariable,
-    }),
-    Frontmatter({ title }),
+  return DocSourceFile({ title, declares: apiVariable }).children(
     Summary({ type: apiVariable }),
     Excerpt({ excerpt: apiVariable.excerpt, context: apiVariable }),
     Remarks({ type: apiVariable }),

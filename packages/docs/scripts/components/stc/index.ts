@@ -7,8 +7,8 @@ import { ContextAccessor as ContextAccessorJsx } from "../context/ContextAccesso
 import { ContextDoc as ContextDocJsx } from "../context/ContextDoc.js";
 import { ContextInterface as ContextInterfaceJsx } from "../context/ContextInterface.js";
 import { ContextSignature as ContextSignatureJsx } from "../context/ContextSignature.js";
-import { Doc as DocJsx } from "../Doc.js";
 import { DocDeclaration as DocDeclarationJsx } from "../DocDeclaration.js";
+import { DocSourceFile as DocSourceFileJsx } from "../DocSourceFile.js";
 import { Examples as ExamplesJsx } from "../Examples.js";
 import { Excerpt as ExcerptJsx } from "../Excerpt.js";
 import { Frontmatter as FrontmatterJsx } from "../Frontmatter.js";
@@ -19,6 +19,8 @@ import { FunctionParameters as FunctionParametersJsx } from "../function/Functio
 import { FunctionReturn as FunctionReturnJsx } from "../function/FunctionReturn.js";
 import { FunctionSignature as FunctionSignatureJsx } from "../function/FunctionSignature.js";
 import { InterfaceMembers as InterfaceMembersJsx } from "../InterfaceMembers.js";
+import { MdxParagraph as MdxParagraphJsx } from "../MdxParagraph.js";
+import { MdxSection as MdxSectionJsx } from "../MdxSection.js";
 import { MdxSourceFile as MdxSourceFileJsx } from "../MdxSourceFile.js";
 import { PackageDocs as PackageDocsJsx } from "../PackageDocs.js";
 import { Reference as ReferenceJsx } from "../Reference.js";
@@ -36,7 +38,6 @@ import {
 import { TypeDoc as TypeDocJsx } from "../type/TypeDoc.js";
 import { TypeMembers as TypeMembersJsx } from "../type/TypeMembers.js";
 import { VariableDoc as VariableDocJsx } from "../variable/VariableDoc.js";
-
 export const ComponentDoc = stc(ComponentDocJsx);
 export const ComponentSignature = stc(ComponentSignatureJsx);
 export const DocDeclaration = stc(DocDeclarationJsx);
@@ -50,7 +51,6 @@ export const TsDocPlainText = stc(TsDocPlainTextJsx);
 export const TsDocSection = stc(TsDocSectionJsx);
 export const TsDocLinkTag = stc(TsDocLinkTagJsx);
 export const TsDocCodeSpan = stc(TsDocCodeSpanJsx);
-export const Doc = stc(DocJsx);
 export const ComponentProps = stc(ComponentPropsJsx);
 export const InterfaceMembers = stc(InterfaceMembersJsx);
 export const Remarks = stc(RemarksJsx);
@@ -59,6 +59,9 @@ export const Examples = stc(ExamplesJsx);
 export const Code = stc(CodeJsx);
 export const Excerpt = stc(ExcerptJsx);
 export const Summary = stc(SummaryJsx);
+export const DocSourceFile = stc(DocSourceFileJsx);
+export const MdxParagraph = stc(MdxParagraphJsx);
+export const MdxSection = stc(MdxSectionJsx);
 
 export const FunctionDoc = stc(FunctionDocJsx);
 export const FunctionOverloadDoc = stc(FunctionOverloadDocJsx);

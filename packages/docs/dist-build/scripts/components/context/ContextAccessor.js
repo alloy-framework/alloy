@@ -1,27 +1,20 @@
-import { code } from "@alloy-js/core";
-import { TsDoc } from "../stc/index.js";
+import { Code, MdxSection, Summary } from "../stc/index.js";
 export function ContextAccessor(props) {
-    if (props.context.contextAccessor) {
-        return code `
-      ### Accessor
-
-      <Code code={\`import { ${props.context.contextAccessor.displayName} } from "@alloy-js/core";
+    const { contextAccessor } = props.context;
+    const section = MdxSection({ title: "Accessor", level: 3 });
+    if (contextAccessor) {
+        const code = `
+      import { ${contextAccessor.displayName} } from "@alloy-js/core";
       
-      const myContext = ${props.context.contextAccessor.displayName}();\`} lang="ts" />
-
-      ${props.context.contextAccessor.tsdocComment &&
-            TsDoc({
-                node: props.context.contextAccessor.tsdocComment.summarySection,
-                context: props.context.contextAccessor,
-            })}
+      const myContext = ${contextAccessor.displayName}();
     `;
+        return section.children(Code({ code, language: "ts" }), Summary({ type: contextAccessor }));
     }
     else {
-        return code `
-      ### Accessor
-
-      <Code code={\`const myContext = useContext(${props.context.name}Context);\`} lang="ts" />
+        const code = `
+      const myContext = useContext(${props.context.name}Context);
     `;
+        return section.children(Code({ code, language: "ts" }));
     }
 }
 //# sourceMappingURL=ContextAccessor.js.map

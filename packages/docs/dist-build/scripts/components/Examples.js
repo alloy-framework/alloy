@@ -1,6 +1,5 @@
-import { code, mapJoin } from "@alloy-js/core";
 import { StandardTags } from "@microsoft/tsdoc";
-import { TsDoc } from "./stc/index.js";
+import { MdxParagraph, MdxSection, TsDoc } from "./stc/index.js";
 export function Examples(props) {
     if (!props.type.tsdocComment)
         return "";
@@ -8,16 +7,10 @@ export function Examples(props) {
         StandardTags.example.tagNameWithUpperCase);
     if (exampleBlocks.length === 0)
         return "";
-    const exampleCode = mapJoin(exampleBlocks, (block) => {
-        return TsDoc({ node: block, context: props.type });
-    }, { joiner: "\n\n" });
-    return code `
-
-  
-    ### Example${exampleBlocks.length > 1 ? "s" : ""}
-
-    ${exampleCode}
-
-  `;
+    const exampleCode = exampleBlocks.map((block) => MdxParagraph().children(TsDoc({ node: block, context: props.type })));
+    return MdxSection({
+        title: `Example${exampleBlocks.length > 1 ? "s" : ""}`,
+        level: 3,
+    }).children(exampleCode);
 }
 //# sourceMappingURL=Examples.js.map

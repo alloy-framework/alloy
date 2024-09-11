@@ -6,7 +6,7 @@ import type {
   DocLinkTag,
   DocParagraph,
 } from "@microsoft/tsdoc";
-import { TsDoc } from "./stc/index.js";
+import { MdxSection, TsDoc } from "./stc/index.js";
 import { resolveCodeDestination } from "./TsDoc.js";
 
 export interface SeeAlsoProps {
@@ -53,35 +53,23 @@ export function SeeAlso(props: SeeAlsoProps) {
 
   const contextsProvidedList =
     contextsProvided.length > 0 &&
-    code`
-
-
-      ### Contexts provided
-
-
-      ${mapJoin(contextsProvided, (seeBlock) => {
+    MdxSection({ title: "Contexts provided", level: 3 }).children(
+      mapJoin(contextsProvided, (seeBlock) => {
         return code`
           * ${TsDoc({ node: seeBlock, context: props.type })}
         `;
-      })}
+      }),
+    );
 
-
-    `;
   const seeAlsoList =
     seeBlocks.length > 0 &&
-    code`
-
-      ### See also
-
-
-      ${mapJoin(seeBlocks, (seeBlock) => {
+    MdxSection({ title: "See also", level: 3 }).children(
+      mapJoin(seeBlocks, (seeBlock) => {
         return code`
           * ${TsDoc({ node: seeBlock, context: props.type })}
         `;
-      })}
-
-
-    `;
+      }),
+    );
 
   return [contextsProvidedList, seeAlsoList];
 }

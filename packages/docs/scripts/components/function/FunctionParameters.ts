@@ -1,6 +1,6 @@
 import { code, mapJoin } from "@alloy-js/core";
 import type { ApiFunction, Parameter } from "@microsoft/api-extractor-model";
-import { TsDoc } from "../stc/index.js";
+import { MdxSection, TsDoc } from "../stc/index.js";
 
 export interface FunctionParametersProps {
   fn: ApiFunction;
@@ -22,9 +22,7 @@ export function FunctionParameters(props: FunctionParametersProps) {
     `,
   );
 
-  return code`
-    ### Parameters
-
+  return MdxSection({ title: "Parameters", level: 3 }).code`
     <table>
       ${params}
     </table>

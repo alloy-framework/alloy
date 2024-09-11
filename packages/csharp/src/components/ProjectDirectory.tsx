@@ -1,10 +1,24 @@
 import * as core from "@alloy-js/core";
+import { join } from "pathe";
 
+// properties for creating the project directory
 export interface ProjectDirectoryProps {
+  // the name of the project directory
   name: string;
+
+  // the semver of the project
   version: string;
+
+  // project description
   description: string;
+
+  // parent path where the project directory will be created
+  path: string;
+
+  // directory name for source files. defaults to "src"
   srcDir?: string;
+
+  // child components of the project
   children?: core.Children;
 }
 
@@ -14,19 +28,19 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
     props.srcDir = "src";
   }
 
-  return <>
-      <core.SourceFile path={props.name+".csproj"} filetype="xml">
-        {core.code`
-          <Project Sdk="Microsoft.NET.Sdk">
-            <PropertyGroup>
-              <Version>${props.version}</Version>
-              <Description>${props.description}</Description>
-            </PropertyGroup>
-          </Project>
-        `}
-      </core.SourceFile>
-      <core.SourceDirectory path={props.srcDir}>
-        {props.children}
-      </core.SourceDirectory>
-    </>;
+  return <core.SourceDirectory path={join(props.path, props.name)}>
+    <core.SourceFile path={props.name+".csproj"} filetype="xml">
+      {core.code`
+        <Project Sdk="Microsoft.NET.Sdk">
+          <PropertyGroup>
+            <Version>${props.version}</Version>
+            <Description>${props.description}</Description>
+          </PropertyGroup>
+        </Project>
+      `}
+    </core.SourceFile>
+    <core.SourceDirectory path={props.srcDir}>
+      {props.children}
+    </core.SourceDirectory>
+  </core.SourceDirectory>;
 }

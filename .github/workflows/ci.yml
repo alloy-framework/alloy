@@ -31,8 +31,8 @@ jobs:
       - name: Build with Astro
         run: |
           pnpx astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
+            --site "${{ steps.deploy-docs.outputs.origin }}" \
+            --base "${{ steps.deploy-docs.outputs.base_path }}"
         working-directory: ./packages/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

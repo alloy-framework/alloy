@@ -313,6 +313,15 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
+      '@alloy-js/csharp':
+        specifier: workspace:~
+        version: link:../csharp
+      '@alloy-js/java':
+        specifier: workspace:~
+        version: link:../java
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../typescript
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.2.0)

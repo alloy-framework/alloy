@@ -63,13 +63,16 @@ create and provide context via `createContext()`, and any nested components can
 retrieve that context via `useContext()`.
 
 ```tsx
+// context interface
 export interface NameContext {
   name: string
 }
 
+// context variable
 export const NameContext = createContext<NameContext>();
 
 function Person(props) {
+  // context provider
   return <NameContext.Provider value="Brian">
     {props.children}
   </NameContext.Provider>
@@ -77,11 +80,19 @@ function Person(props) {
 
 // in some other component
 function Greeting(props) {
+  // context accessor
   const name = useContext(NameContext);
 
   return <>Hello {name}</>;
 }
 ```
+
+This example demonstrates the four components of the context system:
+
+1. The context interface: The data type for context values. Often an interface but may be any kind of value.
+1. The context variable: context is declared using `createContext`, providing the context interface, and exporting the resulting value.
+2. The context provider: the context variable has a `Provider` member which is a component that allows setting the context value for any children of the `Provider`.
+3. The context accessor: `useContext` is passed the context variable and the current context value is retrieved. Some frequently used contexts may also provide a specific context accessor, such as `useScope` or `useNamePolicy`.
 
 Many of the built-in components provide context. For example, `Output` provides the binder, `SourceDirectory` provides directory metadata, `Declaration` provides the current declaration.
 

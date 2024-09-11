@@ -27,12 +27,14 @@ jobs:
         run: pnpm test
 
       - run: pnpx pkg-pr-new publish './packages/*' --pnpm
-
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - name: Build with Astro
         run: |
           pnpx astro build \
-            --site "${{ steps.deploy-docs.outputs.origin }}" \
-            --base "${{ steps.deploy-docs.outputs.base_path }}"
+            --site "${{ steps.pages.outputs.origin }}" \
+            --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ./packages/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

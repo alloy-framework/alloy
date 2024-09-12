@@ -44,14 +44,18 @@ export function root<T>(fn: (d: Disposable) => T, src?: string): T {
     owner: globalContext,
     context: {},
   } as any;
-  const ret = untrack(() =>
-    fn(() => {
-      for (const d of globalContext!.disposables) {
-        d();
-      }
-    }),
-  );
-  globalContext = globalContext!.owner;
+  let ret;
+  try {
+    ret = untrack(() =>
+      fn(() => {
+        for (const d of globalContext!.disposables) {
+          d();
+        }
+      }),
+    );
+  } finally {
+    globalContext = globalContext!.owner;
+  }
 
   return ret;
 }
@@ -94,8 +98,11 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     cleanupFn(false);
     const oldContext = globalContext;
     globalContext = context;
-    current = fn(current);
-    globalContext = oldContext;
+    try {
+      current = fn(current);
+    } finally {
+      globalContext = oldContext;
+    }
   });
 
   cleanup(() => cleanupFn(true));

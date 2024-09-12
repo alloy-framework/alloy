@@ -22,7 +22,9 @@ it("defines a project directory file with multiple source files", () => {
   const projDir = res.contents[0] as core.OutputDirectory;
 
   expect(projDir.path).equals("~/projects/TestProject");
-  expect(projDir.contents[0].path).equals("~/projects/TestProject/TestProject.csproj");
+  expect(projDir.contents[0].path).equals(
+    "~/projects/TestProject/TestProject.csproj",
+  );
   expect(projDir.contents[0].contents).toBe(coretest.d`
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>

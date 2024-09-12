@@ -129,6 +129,31 @@ it("uses refkeys for members, params, and return type", () => {
   `);
 });
 
+it("declares class with generic parameters", () => {
+  const typeParameters = {
+    T: core.refkey(),
+    U: core.refkey(),
+  };
+
+  const res = utils.toSourceText(
+    <csharp.Class accessModifier='public' name="TestClass" typeParameters={typeParameters}>
+      <csharp.ClassMember accessModifier="public" name="MemberOne" type={typeParameters.T} />
+      <csharp.ClassMember accessModifier="private" name="MemberTwo" type={typeParameters.U} />
+    </csharp.Class>,
+  );
+
+  expect(res).toBe(coretest.d`
+    namespace TestCode
+    {
+      public class TestClass<T, U>
+      {
+        public T memberOne;
+        private U memberTwo;
+      }
+    }
+  `);
+});
+
 it("declares class with invalid members", () => {
   const decl =
     <csharp.Class accessModifier='public' name="TestClass">

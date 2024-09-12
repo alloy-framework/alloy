@@ -27,6 +27,9 @@ jobs:
         run: pnpm test
 
       - run: pnpx pkg-pr-new publish './packages/*' --pnpm
+      - name: Generate docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-docs
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

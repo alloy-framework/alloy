@@ -1,7 +1,6 @@
-import { code, mapJoin } from "@alloy-js/core";
 import type { ApiItem } from "@microsoft/api-extractor-model";
 import { StandardTags, type DocBlock, type DocComment } from "@microsoft/tsdoc";
-import { TsDoc } from "./stc/index.js";
+import { MdxParagraph, MdxSection, TsDoc } from "./stc/index.js";
 
 export interface ExamplesProps {
   type: ApiItem & { tsdocComment?: DocComment };
@@ -18,20 +17,12 @@ export function Examples(props: ExamplesProps) {
 
   if (exampleBlocks.length === 0) return "";
 
-  const exampleCode = mapJoin(
-    exampleBlocks,
-    (block) => {
-      return TsDoc({ node: block, context: props.type });
-    },
-    { joiner: "\n\n" },
+  const exampleCode = exampleBlocks.map((block) =>
+    MdxParagraph().children(TsDoc({ node: block, context: props.type })),
   );
 
-  return code`
-
-  
-    ### Example${exampleBlocks.length > 1 ? "s" : ""}
-
-    ${exampleCode}
-
-  `;
+  return MdxSection({
+    title: `Example${exampleBlocks.length > 1 ? "s" : ""}`,
+    level: 3,
+  }).children(exampleCode);
 }

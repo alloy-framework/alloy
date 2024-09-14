@@ -1,14 +1,13 @@
 import type { ContextApi } from "../../build-json.js";
+import type { DeclarationDescriptor } from "../DocSourceFile.js";
 import {
   ContextAccessor,
   ContextInterface,
   ContextSignature,
-  DocDeclaration,
-  Frontmatter,
-  MdxSourceFile,
+  DocSourceFile,
   Remarks,
   SeeAlso,
-  TsDoc,
+  Summary,
 } from "../stc/index.js";
 
 export interface ContextDocProps {
@@ -17,43 +16,33 @@ export interface ContextDocProps {
 
 export function ContextDoc(props: ContextDocProps) {
   const title = props.context.name + " context";
+  const { contextVariable, contextAccessor, contextInterface } = props.context;
 
-  return MdxSourceFile({ path: props.context.name + ".mdx" }).children(
-    props.context.contextAccessor &&
-      DocDeclaration({
-        name: title + " accessor",
-        apiItem: props.context.contextAccessor,
-      }),
-    typeof props.context.contextInterface !== "string" &&
-      DocDeclaration({
-        name: title + " interface",
-        apiItem: props.context.contextInterface,
-      }),
-    DocDeclaration({
-      name: title,
-      apiItem: props.context.contextVariable,
-    }),
+  const declares: DeclarationDescriptor[] = [
+    { name: title, apiItem: contextVariable },
+  ];
 
-    Frontmatter({ title }),
+  if (contextAccessor) {
+    declares.push({
+      name: title + " accessor",
+      apiItem: contextAccessor,
+    });
+  }
+  if (typeof contextInterface !== "string") {
+    declares.push({
+      name: title + " interface",
+      apiItem: contextInterface,
+    });
+  }
 
-    props.context.contextVariable.tsdocComment && [
-      TsDoc({
-        node: props.context.contextVariable.tsdocComment.summarySection,
-        context: props.context.contextVariable,
-      }),
-      "\n\n",
-    ],
-
+  return DocSourceFile({ title, declares }).children(
+    Summary({ type: contextVariable }),
     ContextSignature({ context: props.context }),
-    "\n\n",
     ContextAccessor({ context: props.context }),
-    "\n\n",
     ContextInterface({ context: props.context }),
-    "\n\n",
     Remarks({
       type: props.context.contextVariable,
     }),
-
     SeeAlso({
       type: props.context.contextVariable,
       splitContexts: true,

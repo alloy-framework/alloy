@@ -50,11 +50,7 @@ export declare const TsDocCodeSpan: (props: import("../TsDoc.js").TsDocCodeSpanP
     code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../TsDoc.js").TsDocCodeSpanProps>;
     children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../TsDoc.js").TsDocCodeSpanProps>;
 };
-export declare const Doc: (props: import("../Doc.js").DocProps) => import("@alloy-js/core").ComponentCreator<import("../Doc.js").DocProps> & {
-    code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Doc.js").DocProps>;
-    children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Doc.js").DocProps>;
-};
-export declare const ComponentProps: (props: import("../component/ComponentProps.js").ComponentPropsProps) => import("@alloy-js/core").ComponentCreator<import("../component/ComponentProps.js").ComponentPropsProps> & {
+export declare const ComponentProps: (props?: import("../component/ComponentProps.js").ComponentPropsProps | undefined) => import("@alloy-js/core").ComponentCreator<import("../component/ComponentProps.js").ComponentPropsProps> & {
     code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../component/ComponentProps.js").ComponentPropsProps>;
     children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../component/ComponentProps.js").ComponentPropsProps>;
 };
@@ -82,9 +78,21 @@ export declare const Excerpt: (props: import("../Excerpt.js").ExcerptProps) => i
     code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Excerpt.js").ExcerptProps>;
     children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Excerpt.js").ExcerptProps>;
 };
-export declare const Summary: (props: import("../Summary.js").SummaryProps) => import("@alloy-js/core").ComponentCreator<import("../Summary.js").SummaryProps> & {
+export declare const Summary: (props?: import("../Summary.js").SummaryProps | undefined) => import("@alloy-js/core").ComponentCreator<import("../Summary.js").SummaryProps> & {
     code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Summary.js").SummaryProps>;
     children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../Summary.js").SummaryProps>;
+};
+export declare const DocSourceFile: (props: import("../DocSourceFile.js").DocSourceFileProps) => import("@alloy-js/core").ComponentCreator<import("../DocSourceFile.js").DocSourceFileProps> & {
+    code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../DocSourceFile.js").DocSourceFileProps>;
+    children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../DocSourceFile.js").DocSourceFileProps>;
+};
+export declare const MdxParagraph: (props?: import("../MdxParagraph.js").MdxParagraphProps | undefined) => import("@alloy-js/core").ComponentCreator<import("../MdxParagraph.js").MdxParagraphProps> & {
+    code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../MdxParagraph.js").MdxParagraphProps>;
+    children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../MdxParagraph.js").MdxParagraphProps>;
+};
+export declare const MdxSection: (props: import("../MdxSection.js").MdxSectionProps) => import("@alloy-js/core").ComponentCreator<import("../MdxSection.js").MdxSectionProps> & {
+    code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../MdxSection.js").MdxSectionProps>;
+    children(...children: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../MdxSection.js").MdxSectionProps>;
 };
 export declare const FunctionDoc: (props: import("../function/FunctionDoc.js").FunctionDocProps) => import("@alloy-js/core").ComponentCreator<import("../function/FunctionDoc.js").FunctionDocProps> & {
     code(template: TemplateStringsArray, ...substitutions: import("@alloy-js/core").Children[]): import("@alloy-js/core").ComponentCreator<import("../function/FunctionDoc.js").FunctionDocProps>;

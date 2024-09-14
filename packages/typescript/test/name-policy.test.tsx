@@ -32,3 +32,31 @@ it("applies to functions and variables", () => {
     oneTwo;
   `);
 });
+
+it("keeps _ and $ prefix", () => {
+  const ref1 = refkey({});
+  const ref2 = refkey({});
+
+  const namePolicy = createTSNamePolicy();
+  const res = render(
+    <Output namePolicy={namePolicy}>
+      <ts.SourceFile path="test.ts">
+        <ts.FunctionDeclaration name="_foo-bar" refkey={ref1} />
+        <ts.VarDeclaration name="$one-two" refkey={ref2}>
+          "hello"
+        </ts.VarDeclaration>
+        <ts.Reference refkey={ref1} />;
+        <ts.Reference refkey={ref2} />;
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  expect(res.contents[0].contents).toEqual(d`
+    function _fooBar() {
+      
+    }
+    const $oneTwo = "hello";
+    _fooBar;
+    $oneTwo;
+  `);
+});

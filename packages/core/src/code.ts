@@ -169,6 +169,16 @@ function* childTokens(
       }
 
       if (newline) {
+        if (line === "" && currentIndent().level > -1) {
+          // for empty lines we want to just continue with the current indentation
+          lineTokens.push({
+            kind: "line",
+            line: "",
+            indentationLevel: currentIndent().level,
+            newline,
+          });
+          continue;
+        }
         const lineIndent = line.match(/^\s+/)?.[0] ?? "";
         const startIndent = currentIndent();
         if (lineIndent.length > startIndent.literalIndent.length) {

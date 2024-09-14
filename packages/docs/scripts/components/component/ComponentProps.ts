@@ -1,15 +1,14 @@
-import { code } from "@alloy-js/core";
 import type { ApiInterface } from "@microsoft/api-extractor-model";
-import { InterfaceMembers } from "../stc/index.js";
+import { InterfaceMembers, MdxSection } from "../stc/index.js";
 
 export interface ComponentPropsProps {
-  propType: ApiInterface;
+  propType?: ApiInterface;
 }
 
 export function ComponentProps(props: ComponentPropsProps) {
-  return code`
-    ### Props
+  if (!props.propType) return "";
 
-    ${InterfaceMembers({ iface: props.propType, flatten: true })}
-  `;
+  return MdxSection({ title: "Props", level: 3 }).children(
+    InterfaceMembers({ iface: props.propType, flatten: true }),
+  );
 }

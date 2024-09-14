@@ -14,6 +14,7 @@ import { Parameters } from "./Parameters.jsx";
 // properties for creating a class
 export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
   accessModifier?: AccessModifier;
+  typeParameters?: Record<string, core.Refkey>;
 }
 
 // a C# class declaration
@@ -38,8 +39,24 @@ export function Class(props: ClassProps) {
     "class",
   );
 
+  let typeParams: string | undefined;
+  if (props.typeParameters) {
+    const typeParamNames = new Array<string>();
+    for (const entry of Object.entries(props.typeParameters)) {
+      typeParamNames.push(entry[0]);
+      // create a symbol for each type param so its
+      // refkey resolves to the type param's name
+      scope.binder.createSymbol<CSharpOutputSymbol>({
+        name: entry[0],
+        scope: thisClassScope,
+        refkey: entry[1],
+      });
+    }
+    typeParams = `<${typeParamNames.join(", ")}>`;
+  }
+
   return <core.Declaration symbol={thisClassSymbol}>
-      {getAccessModifier(props.accessModifier)}class <Name />{!props.children && ";"}{props.children &&
+      {getAccessModifier(props.accessModifier)}class <Name />{typeParams}{!props.children && ";"}{props.children &&
         <>
           {"\n{"}
             <core.Scope value={thisClassScope}>

@@ -1,7 +1,8 @@
-import { IndentContext, stc, useContext } from "@alloy-js/core";
+import { Code, MdxParagraph } from "../stc/index.js";
 export function ComponentSignature(props) {
     let paramHelp = "";
     let stcParamHelp = "";
+    // construct the code snippet for the component signature
     if (props.component.componentProps) {
         const propType = props.component.componentProps;
         const allParamHelp = propType.members
@@ -24,27 +25,29 @@ export function ComponentSignature(props) {
         }
     }
     const name = props.component.componentFunction.name;
-    const currentIndent = useContext(IndentContext);
-    return stc(IndentContext.Provider)({
-        value: { ...currentIndent, indent: "    " },
-    }).code `
-      <Tabs syncKey="component-style">
-        <TabItem label="jsx">
-          <Code code={\`import { ${name} } from "@alloy-js/core" 
+    const packageSrc = props.component.componentFunction.getAssociatedPackage()?.displayName;
+    const jsxCode = `
+    import { ${name} } from "${packageSrc}";
 
-          <${name} ${paramHelp}>
-          \t{children}
-          </${name}>\`} lang="tsx" />
-        </TabItem>
-        <TabItem label="stc">
-          <Code code={\`import { ${name} } from "@alloy-js/core/stc" 
+    <${name} ${paramHelp}>
+      {children}
+    </${name}> 
+  `;
+    const stcCode = `
+    import { ${name} } from "${packageSrc}/stc";
 
-          ${name}({ ${stcParamHelp}}).children(children)\` } lang="ts" />
-        </TabItem>
-      </Tabs>
-
-
-    `;
+    ${name}({ ${stcParamHelp}}).children(children)
+  `;
+    return MdxParagraph().code `
+    <Tabs syncKey="component-style">
+      <TabItem label="jsx">
+    ${Code({ code: jsxCode, language: "tsx" })}
+      </TabItem>
+      <TabItem label="stc">
+    ${Code({ code: stcCode, language: "ts" })}
+      </TabItem>
+    </Tabs>
+  `;
 }
 function propHelp(prop) {
     if (prop.propertyTypeExcerpt.text === "boolean") {

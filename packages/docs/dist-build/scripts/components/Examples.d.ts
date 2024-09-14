@@ -5,5 +5,5 @@ export interface ExamplesProps {
         tsdocComment?: DocComment;
     };
 }
-export declare function Examples(props: ExamplesProps): import("@alloy-js/core").Child[] | "";
+export declare function Examples(props: ExamplesProps): "" | import("@alloy-js/core").ComponentCreator<import("./MdxSection.js").MdxSectionProps>;
 //# sourceMappingURL=Examples.d.ts.map

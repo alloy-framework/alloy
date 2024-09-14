@@ -1,14 +1,9 @@
-import { code } from "@alloy-js/core";
-import { InterfaceMembers } from "../stc/index.js";
+import { InterfaceMembers, MdxSection } from "../stc/index.js";
 export function ContextInterface(props) {
-    return code `
-    ### Context interface
-
-    ${typeof props.context.contextInterface === "string" ?
+    return MdxSection({ title: "Context interface", level: 3 }).children(typeof props.context.contextInterface === "string" ?
         props.context.contextInterface
         : InterfaceMembers({
             iface: props.context.contextInterface,
-        })}
-  `;
+        }));
 }
 //# sourceMappingURL=ContextInterface.js.map

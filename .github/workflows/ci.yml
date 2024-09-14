@@ -27,6 +27,9 @@ jobs:
         run: pnpm test
 
       - run: pnpx pkg-pr-new publish './packages/*' --pnpm
+      - name: Generate docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-docs
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -37,6 +40,7 @@ jobs:
             --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ./packages/docs
       - name: Upload artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./packages/docs/dist
@@ -69,6 +73,7 @@ jobs:
         name: Lint
 
   deploy-docs:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

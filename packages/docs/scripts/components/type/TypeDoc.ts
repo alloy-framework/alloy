@@ -1,11 +1,9 @@
 import { ApiInterface, ApiItemKind } from "@microsoft/api-extractor-model";
 import type { TypeApi } from "../../build-json.js";
 import {
-  DocDeclaration,
+  DocSourceFile,
   Examples,
   Excerpt,
-  Frontmatter,
-  MdxSourceFile,
   Remarks,
   SeeAlso,
   Summary,
@@ -20,12 +18,7 @@ export function TypeDoc(props: TypeDocProps) {
   const apiType = props.type.type;
   const title = apiType.displayName;
 
-  return MdxSourceFile({ path: title + ".mdx" }).children(
-    DocDeclaration({
-      name: title,
-      apiItem: apiType,
-    }),
-    Frontmatter({ title }),
+  return DocSourceFile({ title, declares: [apiType] }).children(
     Summary({ type: apiType }),
     apiType.kind === ApiItemKind.TypeAlias ?
       Excerpt({ excerpt: apiType.excerpt, context: apiType })

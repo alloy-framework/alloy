@@ -42,3 +42,21 @@ it("renders has auto-indentation", () => {
     }
   `);
 });
+
+it("handles blank lines", () => {
+  const template = code`
+    {
+      a
+
+      x
+    }
+  `;
+
+  expect(template).toRenderTo(`
+    {
+      a
+      
+      x
+    }
+  `);
+});

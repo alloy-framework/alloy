@@ -1,7 +1,6 @@
-import { code, useContext } from "@alloy-js/core";
 import type { ApiFunction, ApiInterface } from "@microsoft/api-extractor-model";
-import { ApiModelContext } from "../../contexts/api-model.js";
-import { InterfaceMembers } from "../stc/index.js";
+import { InterfaceMembers, MdxSection } from "../stc/index.js";
+import { resolveCodeDestination } from "../TsDoc.js";
 
 export interface FunctionOptionsProps {
   fn: ApiFunction;
@@ -11,18 +10,12 @@ export function FunctionOptions(props: FunctionOptionsProps) {
   const lastParam = props.fn.parameters.at(-1);
   if (!lastParam || lastParam.name !== "options") return "";
 
-  const optionTypeRef =
-    lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference;
-  const apiModel = useContext(ApiModelContext)!;
-
-  const optionsType = apiModel.resolveDeclarationReference(
-    optionTypeRef!,
+  const optionsType = resolveCodeDestination(
+    lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference!,
     undefined,
-  ).resolvedApiItem!;
+  );
 
-  return code`
-    ### Options
-
-    ${InterfaceMembers({ iface: optionsType as ApiInterface, flatten: true })}
-  `;
+  return MdxSection({ title: "Options", level: 3 }).children(
+    InterfaceMembers({ iface: optionsType as ApiInterface, flatten: true }),
+  );
 }

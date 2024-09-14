@@ -1,5 +1,5 @@
 import { code, mapJoin } from "@alloy-js/core";
-import { TsDoc } from "../stc/index.js";
+import { MdxSection, TsDoc } from "../stc/index.js";
 export function FunctionParameters(props) {
     const params = mapJoin(props.fn.parameters, (param) => code `
       <tr>
@@ -12,9 +12,7 @@ export function FunctionParameters(props) {
         </td>
       </tr>
     `);
-    return code `
-    ### Parameters
-
+    return MdxSection({ title: "Parameters", level: 3 }).code `
     <table>
       ${params}
     </table>

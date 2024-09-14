@@ -1,0 +1,46 @@
+---
+title: Example walkthrough
+description: Building an example TypeScript emitter
+---
+
+Let's build a simple project that consumes a simplified REST API specification
+and produces a TypeScript client that interacts with a service that implements
+that specification.
+
+## Defining the problem
+
+Let's say we have a super simple OpenAPI-like REST API description that follows
+the following schema:
+
+```ts
+interface RestApi {
+  operations: RestApiOperation[];
+  models: RestApiModel[];
+}
+
+interface RestApiOperation {
+  name: string;
+  endpoint: string;
+  verb: "get" | "post";
+  requestBody?: RestApiModel;
+  responseBody?: RestApiModel;
+}
+
+interface RestApiOperationParameter {
+  name: string;
+  type: RestApi
+}
+
+interface RestApiModel {
+  name: string;
+  properties: RestApiModelProperty[]
+}
+
+interface RestApiModelProperty {
+  name: string;
+  type: RestApiModel | "string" | "number" | "boolean";
+}
+```
+
+
+

@@ -43,8 +43,11 @@ function apiPath(packagePath: string) {
   return resolve(packagePath, "temp/api.json");
 }
 
+console.time("queryApis");
 const apis = queryApis(apiModel);
+console.timeEnd("queryApis");
 
+console.time("render");
 const sfs = render(
   Output({ basePath: docPath }).children(
     stc(ApiModelContext.Provider)({ value: apiModel }).children(
@@ -72,10 +75,11 @@ const sfs = render(
     ),
   ),
 );
+console.timeEnd("render");
 
-const cwd = process.cwd();
-
+console.time("writeFiles");
 writeSourceFiles(sfs);
+console.timeEnd("writeFiles");
 
 function writeSourceFiles(sfs: OutputDirectory) {
   for (const item of sfs.contents) {

@@ -3,7 +3,12 @@ import type {
   ApiInterface,
   HeritageType,
 } from "@microsoft/api-extractor-model";
-import { Excerpt, InterfaceMembers } from "../stc/index.js";
+import {
+  Excerpt,
+  InterfaceMembers,
+  MdxParagraph,
+  MdxSection,
+} from "../stc/index.js";
 
 export interface TypeMembersProps {
   type: ApiInterface;
@@ -21,11 +26,8 @@ export function TypeMembers(props: TypeMembersProps) {
 
     extendsInfo = code`Extends ${extendsItems}`;
   }
-  return code`
-    ### Members
-
-    ${extendsInfo}
-    
-    ${InterfaceMembers({ iface: props.type })}
-  `;
+  return MdxSection({ title: "Members", level: 3 }).children(
+    extendsInfo && MdxParagraph().children(extendsInfo),
+    InterfaceMembers({ iface: props.type }),
+  );
 }

@@ -19,12 +19,17 @@ const apiPackages = {
 function apiPath(packagePath) {
     return resolve(packagePath, "temp/api.json");
 }
+console.time("queryApis");
 const apis = queryApis(apiModel);
+console.timeEnd("queryApis");
+console.time("render");
 const sfs = render(Output({ basePath: docPath }).children(stc(ApiModelContext.Provider)({ value: apiModel }).children(stc(ContentRootDir.Provider)({ value: rootDir }).children(Object.entries(apis.packages).map(([name, record]) => {
     return PackageDocs({ name }).children(SourceDirectory({ path: "components" }).children(record.components.map((component) => ComponentDoc({ component }))), SourceDirectory({ path: "functions" }).children(record.functions.map((fn) => FunctionDoc({ fn }))), SourceDirectory({ path: "contexts" }).children(record.contexts.map((context) => ContextDoc({ context }))), SourceDirectory({ path: "types" }).children(record.types.map((type) => TypeDoc({ type }))), SourceDirectory({ path: "variables" }).children(record.variables.map((variable) => VariableDoc({ variable }))));
 })))));
-const cwd = process.cwd();
+console.timeEnd("render");
+console.time("writeFiles");
 writeSourceFiles(sfs);
+console.timeEnd("writeFiles");
 function writeSourceFiles(sfs) {
     for (const item of sfs.contents) {
         switch (item.kind) {

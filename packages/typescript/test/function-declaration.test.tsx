@@ -1,7 +1,11 @@
 import { Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { FunctionDeclaration, VarDeclaration } from "../src/index.js";
+import {
+  FunctionDeclaration,
+  ParameterDescriptor,
+  VarDeclaration,
+} from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
 it("works", () => {
@@ -171,6 +175,26 @@ describe("symbols", () => {
     expect(toSourceText(decl)).toBe(d`
       function foo(conflict: any) {
         const conflict_2 = 1;
+      }
+    `);
+  });
+
+  it("create optional parameters", () => {
+    const paramDesc: ParameterDescriptor = {
+      refkey: refkey(),
+      type: "any",
+      optional: true,
+    };
+    const decl =
+      <>
+        <FunctionDeclaration name="foo" parameters={{foo: paramDesc}}>
+          console.log(foo);
+        </FunctionDeclaration>
+      </>;
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(foo?: any) {
+        console.log(foo);
       }
     `);
   });

@@ -18,6 +18,7 @@ import { Name } from "./Name.js";
 export interface ParameterDescriptor {
   type: Children;
   refkey: Refkey;
+  optional?: boolean;
 }
 
 function isParameterDescriptor(
@@ -101,13 +102,14 @@ FunctionDeclaration.Parameters = taggedComponent(
               refkey: refkey(),
               type: value,
             };
+          const optionality = descriptor.optional ? "?" : "";
           const sym = createTSSymbol({
             name: key,
             refkey: descriptor.refkey,
             flags: TSSymbolFlags.ParameterSymbol,
           });
 
-          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
+          return <>{namePolicy.getName(sym.name, "parameter")}{optionality}: {descriptor.type}</>;
         },
         { joiner: ", " },
       );

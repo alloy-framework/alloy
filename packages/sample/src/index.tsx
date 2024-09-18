@@ -7,10 +7,10 @@ const result = ay.render(
   <ay.Output externals={[ts.node.fs]}>
   <ts.PackageDirectory name="greeting-lib" path="greeting-lib" version="1.0.0">
     <ts.SourceFile path="greetings.ts">
-      <ts.FunctionDeclaration name="getGreeting" parameters={{
-        foo: "string",
-        bar: "string"
-      }}>
+      <ts.FunctionDeclaration name="getGreeting" parameters={[[
+        "foo", "string"],
+        ["bar", "string"]
+        ]}>
         <ts.VarDeclaration name="foo">"string"</ts.VarDeclaration>
         return "Hello world!";
       </ts.FunctionDeclaration>

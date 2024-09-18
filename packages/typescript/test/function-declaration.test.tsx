@@ -148,7 +148,7 @@ describe("symbols", () => {
 
     const decl =
       <>
-        <FunctionDeclaration name="foo" parameters={{sym: { type: "any", refkey: rk }}}>
+        <FunctionDeclaration name="foo" parameters={[["sym", { type: "any", refkey: rk }]]}>
           <FunctionDeclaration name="bar">
             {rk}
           </FunctionDeclaration>
@@ -167,7 +167,7 @@ describe("symbols", () => {
   it("creates symbols for parameters and addresses conflicts", () => {
     const decl =
       <>
-        <FunctionDeclaration name="foo" parameters={{conflict: "any"}}>
+        <FunctionDeclaration name="foo" parameters={[["conflict", "any"]]}>
           <VarDeclaration name="conflict">1</VarDeclaration>
         </FunctionDeclaration>
       </>;
@@ -187,7 +187,7 @@ describe("symbols", () => {
     };
     const decl =
       <>
-        <FunctionDeclaration name="foo" parameters={{foo: paramDesc}}>
+        <FunctionDeclaration name="foo" parameters={[["foo", paramDesc]]}>
           console.log(foo);
         </FunctionDeclaration>
       </>;

@@ -30,7 +30,7 @@ function isParameterDescriptor(
 }
 export interface FunctionDeclarationProps extends BaseDeclarationProps {
   async?: boolean;
-  parameters?: Record<string, Children | ParameterDescriptor>;
+  parameters?: [string, Children | ParameterDescriptor][];
   returnType?: Children;
   children?: Children;
 }
@@ -72,7 +72,7 @@ function getReturnType(
   }
 }
 export interface FunctionParametersProps {
-  parameters?: Record<string, Children | ParameterDescriptor>;
+  parameters?: [string, Children | ParameterDescriptor][];
   children?: Children;
 }
 
@@ -94,8 +94,8 @@ FunctionDeclaration.Parameters = taggedComponent(
       }
 
       value = mapJoin(
-        new Map(Object.entries(props.parameters)),
-        (key, value) => {
+        props.parameters,
+        ([key, value]) => {
           const descriptor: ParameterDescriptor = isParameterDescriptor(value) ?
             value
           : {

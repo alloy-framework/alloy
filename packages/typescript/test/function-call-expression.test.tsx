@@ -16,7 +16,7 @@ it("can declare and call a function with parameters", () => {
         <PackageDirectory path="." name="test" version="1.0.0">
           <SourceFile path="index.ts">
             <VarDeclaration name="foo" value={`"Foo"`} const />
-            <FunctionDeclaration refkey={functionRefkey} name="bar" parameters={{"foo?": "string", "baz?": "number"}} >
+            <FunctionDeclaration refkey={functionRefkey} name="bar" parameters={[["foo?", "string"], ["baz?", "number"]]} >
                 const message = foo ? foo : "Hello, World!";
                 console.log(message);
                 if(baz) console.log(baz)

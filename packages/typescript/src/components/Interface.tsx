@@ -36,6 +36,7 @@ export function InterfaceExpression(props: InterfaceExpressionProps) {
     }
   `;
 }
+
 export interface InterfaceMemberProps {
   name?: string;
   indexer?: Children;

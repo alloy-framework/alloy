@@ -1,6 +1,7 @@
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
 export * from "./Block.js";
+export * from "./ClassDeclaration.jsx";
 export * from "./Declaration.js";
 export * from "./EnumDeclaration.js";
 export * from "./EnumMember.js";
@@ -9,7 +10,6 @@ export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
-export * from "./Name.js";
 export * from "./ObjectExpression.js";
 export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";

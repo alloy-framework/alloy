@@ -1,5 +1,5 @@
+import { Name } from "@alloy-js/core";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-import { Name } from "./Name.js";
 
 export interface TypeDeclarationProps extends BaseDeclarationProps {}
 

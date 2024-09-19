@@ -5,10 +5,10 @@ export function tsNameConflictResolver(
   symbols: TSOutputSymbol[],
 ) {
   const goodNamedSymbols = symbols.filter(
-    (s) => ~s.flags & TSSymbolFlags.LocalImportSymbol,
+    (s) => ~s.tsFlags & TSSymbolFlags.LocalImportSymbol,
   );
   const badNamedSymbols = symbols.filter(
-    (s) => s.flags & TSSymbolFlags.LocalImportSymbol,
+    (s) => s.tsFlags & TSSymbolFlags.LocalImportSymbol,
   );
   let nameCount = 1;
   if (goodNamedSymbols.length > 1) {

@@ -1,4 +1,11 @@
-import { memo, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
+import {
+  memo,
+  OutputSymbolFlags,
+  Refkey,
+  resolve,
+  untrack,
+  useContext,
+} from "@alloy-js/core";
 import { usePackage } from "../components/PackageDirectory.jsx";
 import { SourceFileContext } from "../components/SourceFile.jsx";
 import { TSOutputScope } from "./scopes.js";
@@ -7,7 +14,7 @@ import { TSModuleScope } from "./ts-module-scope.js";
 import { TSOutputSymbol } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
-export function ref(refkey: Refkey) {
+export function ref(refkey: Refkey): () => string {
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
@@ -18,7 +25,7 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
 
-    const { targetDeclaration, pathDown } = resolveResult.value;
+    const { targetDeclaration, pathDown, memberPath } = resolveResult.value;
 
     validateSymbolReachable(pathDown);
 
@@ -27,6 +34,7 @@ export function ref(refkey: Refkey) {
     // * module: target symbol is in a different module
     // * local: target symbol is within the current module
     const targetLocation = pathDown[0]?.kind ?? "local";
+    let localSymbol: TSOutputSymbol | undefined;
 
     if (targetLocation === "package") {
       // need package import
@@ -43,7 +51,6 @@ export function ref(refkey: Refkey) {
 
       const importSymbol = symbolPath[0];
 
-      let localSymbol;
       // find public dependency
       for (const module of sourcePackage.exportedSymbols.values()) {
         if (module.exportedSymbols.has(importSymbol.refkey)) {
@@ -60,9 +67,6 @@ export function ref(refkey: Refkey) {
             " is not exported from package",
         );
       }
-
-      symbolPath[0] = localSymbol;
-      return buildMemberExpression(symbolPath);
     } else if (targetLocation === "module") {
       const symbolPath = [
         ...(pathDown.slice(1) as TSMemberScope[]).map((s) => s.owner),
@@ -70,19 +74,35 @@ export function ref(refkey: Refkey) {
       ];
 
       const importSymbol = symbolPath[0];
-      const localSymbol = untrack(() =>
+      localSymbol = untrack(() =>
         sourceFile!.scope.addImport(importSymbol, pathDown[0] as TSModuleScope),
       );
-      symbolPath[0] = localSymbol;
-
-      return buildMemberExpression(symbolPath);
     }
 
-    // local reference
-    const syms = (pathDown as TSMemberScope[]).map((s) => s.owner);
-    syms.push(targetDeclaration);
-    return buildMemberExpression(syms);
+    if (memberPath && memberPath.length > 0) {
+      if (localSymbol) {
+        memberPath[0] = localSymbol;
+      }
+
+      return addThisPrefix(
+        targetDeclaration,
+        buildMemberExpression(memberPath),
+      );
+    } else {
+      return addThisPrefix(
+        localSymbol ?? targetDeclaration,
+        localSymbol ? localSymbol.name : targetDeclaration.name,
+      );
+    }
   });
+}
+
+function addThisPrefix(rootSymbol: TSOutputSymbol, name: string) {
+  if (rootSymbol.flags & OutputSymbolFlags.InstanceMember) {
+    return `this.${name}`;
+  } else {
+    return name;
+  }
 }
 
 function buildMemberExpression(symbolPath: TSOutputSymbol[]) {

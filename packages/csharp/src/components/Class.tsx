@@ -8,11 +8,12 @@ import {
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { createCSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.jsx";
-import { Parameters } from "./Parameters.jsx";
+import { Name } from "./Name.js";
+import { ParameterProps, Parameters } from "./Parameters.js";
 
 // properties for creating a class
 export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
+  name: string;
   accessModifier?: AccessModifier;
   typeParameters?: Record<string, core.Refkey>;
 }
@@ -36,14 +37,16 @@ export function Class(props: ClassProps) {
     scope.binder,
     scope,
     thisClassSymbol,
-    "class",
+    "class-decl",
   );
 
   let typeParams: string | undefined;
   if (props.typeParameters) {
     const typeParamNames = new Array<string>();
     for (const entry of Object.entries(props.typeParameters)) {
-      typeParamNames.push(entry[0]);
+      typeParamNames.push(
+        useCSharpNamePolicy().getName(entry[0], "type-parameter"),
+      );
       // create a symbol for each type param so its
       // refkey resolves to the type param's name
       scope.binder.createSymbol<CSharpOutputSymbol>({
@@ -68,11 +71,63 @@ export function Class(props: ClassProps) {
     </core.Declaration>;
 }
 
+export interface ClassConstructorProps {
+  accessModifier?: AccessModifier;
+  parameters?: Array<ParameterProps>;
+  refkey?: core.Refkey;
+  symbol?: core.OutputSymbol;
+  children?: core.Children;
+}
+
+// a C# class constructor
+export function ClassConstructor(props: ClassConstructorProps) {
+  const scope = useCSharpScope();
+  if (scope.kind !== "member" || scope.name !== "class-decl") {
+    throw new Error(
+      "can't define a class constructor outside of a class-decl scope",
+    );
+  }
+
+  // fetch the class name from the scope
+  const name = useCSharpNamePolicy().getName(scope.owner.name, "class-method");
+  const ctorSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
+    name: name,
+    scope,
+    refkey: props.refkey ?? core.refkey(name),
+  });
+
+  // scope for ctor declaration
+  const ctorDeclScope = createCSharpMemberScope(
+    scope.binder,
+    scope,
+    ctorSymbol,
+    "constructor-decl",
+  );
+
+  const accessModifier = getAccessModifier(props.accessModifier);
+  const params = props.parameters ?
+    <Parameters parameters={props.parameters} />
+  : "";
+
+  // note that scope wraps the ctor decl so that the params get the correct scope
+  return <core.Declaration symbol={ctorSymbol}>
+    <core.Scope value={ctorDeclScope}>
+      {accessModifier}<Name />({params}){!props.children && " {}"}{props.children &&
+        <>
+          {"\n{"}
+            {props.children}
+          {"}"}
+        </>
+        }
+      </core.Scope>
+    </core.Declaration>;
+}
+
 // properties for creating a class member
 export interface ClassMemberProps {
-  accessModifier?: AccessModifier;
   name: string;
   type: core.Children;
+  accessModifier?: AccessModifier;
   refkey?: core.Refkey;
 }
 
@@ -80,8 +135,10 @@ export interface ClassMemberProps {
 export function ClassMember(props: ClassMemberProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-member");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class") {
-    throw new Error("can't define a class member outside of a class scope");
+  if (scope.kind !== "member" || scope.name !== "class-decl") {
+    throw new Error(
+      "can't define a class member outside of a class-decl scope",
+    );
   }
 
   const memberSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
@@ -98,9 +155,10 @@ export function ClassMember(props: ClassMemberProps) {
 // properties for creating a method
 export interface ClassMethodProps
   extends Omit<core.DeclarationProps, "nameKind"> {
+  name: string;
   accessModifier?: AccessModifier;
   methodModifier?: MethodModifier;
-  parameters?: Record<string, core.Children>;
+  parameters?: Array<ParameterProps>;
   returns?: core.Children;
 }
 
@@ -108,7 +166,7 @@ export interface ClassMethodProps
 export function ClassMethod(props: ClassMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "class-method");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class") {
+  if (scope.kind !== "member" || scope.name !== "class-decl") {
     throw new Error("can't define a class method outside of a class scope");
   }
 
@@ -118,15 +176,12 @@ export function ClassMethod(props: ClassMethodProps) {
     refkey: props.refkey ?? core.refkey(props.name),
   });
 
-  // this creates a new scope for the class method.
-  // members will automatically "inherit" this scope so
-  // that refkeys to them will produce the fully-qualified
-  // name e.g. Foo.Bar.
+  // scope for method declaration
   const methodScope = createCSharpMemberScope(
     scope.binder,
     scope,
     methodSymbol,
-    "method",
+    "method-decl",
   );
 
   const accessModifier = getAccessModifier(props.accessModifier);
@@ -136,15 +191,16 @@ export function ClassMethod(props: ClassMethodProps) {
   : "";
   const returns = props.returns ?? "void";
 
+  // note that scope wraps the method decl so that the params get the correct scope
   return <core.Declaration symbol={methodSymbol}>
+    <core.Scope value={methodScope}>
       {accessModifier}{methodModifier}{returns} <Name />({params}){!props.children && " {}"}{props.children &&
         <>
           {"\n{"}
-            <core.Scope value={methodScope}>
-              {props.children}
-            </core.Scope>
+            {props.children}
           {"}"}
         </>
         }
+      </core.Scope>
     </core.Declaration>;
 }

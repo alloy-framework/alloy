@@ -18,6 +18,9 @@ export interface ProjectDirectoryProps {
   // directory name for source files. defaults to "src"
   srcDir?: string;
 
+  // the .NET TFM for this project. defaults to net8.0
+  targetFrameworkMoniker?: string;
+
   // child components of the project
   children?: core.Children;
 }
@@ -28,6 +31,10 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
     props.srcDir = "src";
   }
 
+  if (!props.targetFrameworkMoniker) {
+    props.targetFrameworkMoniker = "net8.0";
+  }
+
   return <core.SourceDirectory path={join(props.path, props.name)}>
     <core.SourceFile path={props.name+".csproj"} filetype="xml">
       {core.code`
@@ -35,6 +42,7 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
           <PropertyGroup>
             <Version>${props.version}</Version>
             <Description>${props.description}</Description>
+            <TargetFramework>${props.targetFrameworkMoniker}</TargetFramework>
           </PropertyGroup>
         </Project>
       `}

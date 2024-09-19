@@ -36,9 +36,12 @@ it("uses multiple namespaces", () => {
 
 it("adds using statement across namespaces", () => {
   const inputTypeRefkey = core.refkey();
-  const params = {
-    BodyParam: inputTypeRefkey,
-  };
+  const params = [
+    {
+      name: "BodyParam",
+      type: inputTypeRefkey,
+    },
+  ];
 
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>

@@ -7,6 +7,7 @@ import { Name } from "./Name.jsx";
 
 // properties for creating an enum
 export interface EnumProps extends Omit<core.DeclarationProps, "nameKind"> {
+  name: string;
   accessModifier?: AccessModifier;
 }
 
@@ -29,7 +30,7 @@ export function Enum(props: EnumProps) {
     scope.binder,
     scope,
     thisEnumSymbol,
-    "enum",
+    "enum-decl",
   );
 
   return <core.Declaration symbol={thisEnumSymbol}>
@@ -54,12 +55,20 @@ export interface EnumMemberProps {
 // a member within a C# enum
 export function EnumMember(props: EnumMemberProps) {
   const scope = useCSharpScope();
-  if (scope.kind === "member" && scope.name !== "enum") {
-    throw new Error("can't define an enum member outside of an enum scope");
+  if (scope.kind === "member" && scope.name !== "enum-decl") {
+    throw new Error(
+      "can't define an enum member outside of an enum-decl scope",
+    );
   }
-  const name = useCSharpNamePolicy().getName(props.name, "enum-member");
 
-  return <core.Declaration name={name} refkey={props.refkey}>
+  const name = useCSharpNamePolicy().getName(props.name, "enum-member");
+  const thisEnumValueSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
+    name: name,
+    scope,
+    refkey: props.refkey ?? core.refkey(props.name),
+  });
+
+  return <core.Declaration symbol={thisEnumValueSymbol}>
       <Name />
     </core.Declaration>;
 }

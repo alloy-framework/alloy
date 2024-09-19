@@ -58,10 +58,16 @@ it("declares class with some methods", () => {
 });
 
 it("declares class with params and return type", () => {
-  const params = {
-    IntParam: "int",
-    StringParam: "string",
-  };
+  const params = [
+    {
+      name: "IntParam",
+      type: "int",
+    },
+    {
+      name: "StringParam",
+      type: "string",
+    },
+  ];
   const res = utils.toSourceText(
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns="string" />
@@ -81,10 +87,16 @@ it("declares class with params and return type", () => {
 
 it("uses refkeys for members, params, and return type", () => {
   const inputTypeRefkey = core.refkey();
-  const params = {
-    IntParam: "int",
-    BodyParam: inputTypeRefkey,
-  };
+  const params = [
+    {
+      name: "IntParam",
+      type: "int",
+    },
+    {
+      name: "BodyParam",
+      type: inputTypeRefkey,
+    },
+  ];
 
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
@@ -162,6 +174,73 @@ it("declares class with invalid members", () => {
     </csharp.Class>;
 
   expect(() => utils.toSourceText(decl)).toThrow(
-    "can't define an enum member outside of an enum scope",
+    "can't define an enum member outside of an enum-decl scope",
   );
+});
+
+it("declares class with constructor", () => {
+  const res = utils.toSourceText(
+    <csharp.Class accessModifier='public' name="TestClass">
+      <csharp.ClassConstructor accessModifier="public" />
+    </csharp.Class>,
+  );
+
+  expect(res).toBe(coretest.d`
+    namespace TestCode
+    {
+      public class TestClass
+      {
+        public TestClass() {}
+      }
+    }
+  `);
+});
+
+it("declares class with constructor params and assigns values to fields", () => {
+  const thisNameRefkey = core.refkey();
+  const thisSizeRefkey = core.refkey();
+  const paramNameRefkey = core.refkey();
+  const paramSizeRefkey = core.refkey();
+
+  const ctorParams = [
+    {
+      name: "name",
+      type: "string",
+      refkey: paramNameRefkey,
+    },
+    {
+      name: "size",
+      type: "int",
+      refkey: paramSizeRefkey,
+    },
+  ];
+
+  const res = utils.toSourceText(
+    <csharp.Class accessModifier='public' name="TestClass">
+      <csharp.ClassMember accessModifier="private" name="name" type="string" refkey={thisNameRefkey} />
+      <csharp.ClassMember accessModifier="private" name="size" type="int" refkey={thisSizeRefkey} />
+      <csharp.ClassConstructor accessModifier="public" parameters={ctorParams}>
+        {thisNameRefkey} = {paramNameRefkey};
+        {thisSizeRefkey} = {paramSizeRefkey};
+      </csharp.ClassConstructor>
+    </csharp.Class>,
+  );
+
+  // TODO: assignments to members should have this. prefix
+  // e.g. this.name = name;
+  expect(res).toBe(coretest.d`
+    namespace TestCode
+    {
+      public class TestClass
+      {
+        private string name;
+        private int size;
+        public TestClass(string name, int size)
+        {
+          name = name;
+          size = size;
+        }
+      }
+    }
+  `);
 });

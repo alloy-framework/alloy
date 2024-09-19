@@ -4,7 +4,6 @@ import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MemberDeclarationContext } from "../context/member-declaration.js";
-import { MemberScopeContext } from "../context/member-scope.js";
 import { Refkey, refkey } from "../refkey.js";
 
 export interface MemberDeclarationProps {
@@ -23,7 +22,7 @@ export interface MemberDeclarationProps {
  * This component must be called in one of two ways: with a name and an optional
  * refkey, or else passing in the symbol. When called with a name and refkey, a
  * symbol will be created in the current scope (provided by
- * {@link MemberScopeContext}) with that name and refkey. If a refkey is not
+ * {@link MemberDeclarationContext}) with that name and refkey. If a refkey is not
  * provided, `refkey(props.name)` is used.
  *
  * When called with a symbol, that symbol is merely exposed via

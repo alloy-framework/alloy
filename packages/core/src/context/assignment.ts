@@ -34,10 +34,10 @@ export const AssignmentContext: ComponentContext<AssignmentContext> =
   createContext();
 
 /**
- * Creates a new {@link AssignmentContext}.
+ * Creates a new {@link (AssignmentContext:interface)}.
  *
  * @param target - The symbol that is the target of the current assignment.
- * @returns A new {@link AssignmentContext}.
+ * @returns A new {@link (AssignmentContext:interface)}.
  */
 export function createAssignmentContext(
   target: OutputSymbol,

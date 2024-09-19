@@ -111,11 +111,6 @@ export interface OutputSymbol {
    * TypeScript, instance members of symbols for classes are available when the
    * class is instantiated with a new expression.
    *
-   * Unlike static members, instance members cannot be referenced directly with
-   * a refkey, because these refkeys are not unique in your output. Instead,
-   * instance members are resolved using the {@link resolveMember} function
-   * which requires passing in the root symbol to resolve members from.
-   *
    * When a symbol cannot have instance members, this is undefined.
    */
   instanceMemberScope?: OutputScope;
@@ -820,7 +815,7 @@ function symbolNames(symbols: Set<OutputSymbol>): () => Set<string> {
  * Use symbol flags to determine the scope in which a symbol with those flags
  * should be declared given the current context.
  *
- * @param flags The symbol flags to use to determine the default scope.
+ * @param flags - The symbol flags to use to determine the default scope.
  * @returns an {@link OutputScope} that is the default scope for the given
  * flags.
  */

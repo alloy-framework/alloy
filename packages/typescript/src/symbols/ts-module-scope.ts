@@ -51,7 +51,7 @@ export function createTSModuleScope(
         binder,
         name: targetSymbol.name,
         refkey: refkey({}),
-        flags: TSSymbolFlags.LocalImportSymbol,
+        tsFlags: TSSymbolFlags.LocalImportSymbol,
       });
 
       this.importedSymbols.set(targetSymbol, localSymbol);

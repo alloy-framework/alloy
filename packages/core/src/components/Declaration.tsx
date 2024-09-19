@@ -17,14 +17,16 @@ export interface DeclarationProps {
  *
  * @remarks
  *
- * This component must be called in one of two ways: with a name and an optional refkey,
- * or else passing in the symbol. When called with a name and refkey, a symbol will be
- * created in the current scope with that name and refkey. If a refkey is not provided,
+ * This component must be called in one of two ways: with a name and an optional
+ * refkey, or else passing in the symbol. When called with a name and refkey, a
+ * symbol will be created in the current scope (provided by
+ * {@link ScopeContext}) with that name and refkey. If a refkey is not provided,
  * `refkey(props.name)` is used.
  *
- * When called with a symbol, that symbol is merely exposed via {@link DeclarationContext }. It
- * is assumed that the caller of this component has created the symbol with the `createSymbol` API
- * on the {@link BinderContext }.
+ * When called with a symbol, that symbol is merely exposed via
+ * {@link DeclarationContext }. It is assumed that the caller of this component
+ * has created the symbol with the `createSymbol` API on the
+ * {@link BinderContext }.
  *
  * @see {@link BinderContext}
  */

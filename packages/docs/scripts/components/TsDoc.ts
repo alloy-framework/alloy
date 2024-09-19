@@ -63,6 +63,9 @@ export function TsDoc(props: TsDocProps): Children {
         language: (props.node as DocFencedCode).language,
       });
       break;
+    case DocNodeKind.SoftBreak:
+      content = "\n";
+      break;
     default:
       console.log("Unknown TSDoc kind " + props.node.kind);
       break;
@@ -81,7 +84,12 @@ export interface TsDocParagraphProps {
   node: DocParagraph;
 }
 export function TsDocParagraph(props: TsDocParagraphProps) {
-  const trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+  let trimmed;
+  if ((props.node.nodes[0] as DocPlainText)?.text?.match(/^\* |^\d+\. /)) {
+    trimmed = props.node;
+  } else {
+    trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+  }
 
   return trimmed.nodes.map((node) => TsDoc({ node }));
 }

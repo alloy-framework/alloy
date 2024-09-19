@@ -44,7 +44,6 @@ export function TSConfigJson(props: TSConfigJsonProps) {
         target: "esnext",
         module: "nodenext",
         strict: true,
-        verbatimModuleSyntax: true,
         declaration: true,
         sourceMap: true,
         declarationMap: true,

@@ -38,6 +38,9 @@ export function TsDoc(props) {
                 language: props.node.language,
             });
             break;
+        case DocNodeKind.SoftBreak:
+            content = "xxxxxxx \n";
+            break;
         default:
             console.log("Unknown TSDoc kind " + props.node.kind);
             break;
@@ -50,7 +53,14 @@ export function TsDoc(props) {
     }
 }
 export function TsDocParagraph(props) {
-    const trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+    let trimmed;
+    if (props.node.nodes[0]?.text?.match(/^\* |^\d+\. /)) {
+        trimmed = props.node;
+        console.log(props.node);
+    }
+    else {
+        trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+    }
     return trimmed.nodes.map((node) => TsDoc({ node }));
 }
 export function TsDocPlainText(props) {

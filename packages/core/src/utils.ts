@@ -6,7 +6,11 @@ import {
   isComponentCreator,
   memo,
 } from "@alloy-js/core/jsx-runtime";
+import { mkdirSync, statSync, writeFileSync } from "node:fs";
+import { relative, resolve } from "pathe";
 import { code } from "./code.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { OutputDirectory, OutputFile, render } from "./render.js";
 
 export interface JoinOptions {
   /**
@@ -223,6 +227,62 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
   };
 }
 
-function isIterable(obj: any): obj is Iterable<any> {
-  return obj != null && typeof obj[Symbol.iterator] === "function";
+/**
+ * A visitor to collect the output from {@link render}. Used by
+ * {@link traverseOutput}.
+ */
+export interface OutputVisitor {
+  visitDirectory(directory: OutputDirectory): void;
+  visitFile(file: OutputFile): void;
+}
+
+/**
+ * Traverse the output from {@link render} and call the visitor for each
+ * file and directory within it.
+ *
+ * @param sourceDirectory - The root directory to traverse.
+ * @param visitor - The visitor to call for each file and directory.
+ */
+export function traverseOutput(
+  sourceDirectory: OutputDirectory,
+  visitor: OutputVisitor,
+) {
+  visitor.visitDirectory(sourceDirectory);
+  for (const item of sourceDirectory.contents) {
+    if (item.kind === "directory") {
+      traverseOutput(item, visitor);
+    } else {
+      visitor.visitFile(item);
+    }
+  }
+}
+
+/**
+ * Write the output from {@link render} to the file system.
+ *
+ */
+export function writeOutput(output: OutputDirectory, basePath: string = "") {
+  traverseOutput(output, {
+    visitDirectory(directory) {
+      const path = resolve(basePath, directory.path);
+      if (statSync(path)) {
+        return;
+      }
+      // eslint-disable-next-line no-console
+      console.log("create", relative(process.cwd(), path));
+      mkdirSync(path, { recursive: true });
+    },
+    visitFile(file) {
+      const path = resolve(basePath, file.path);
+      if (statSync(path)) {
+        // eslint-disable-next-line no-console
+        console.log("overwrite", relative(process.cwd(), path));
+      } else {
+        // eslint-disable-next-line no-console
+        console.log("create", relative(process.cwd(), path));
+      }
+
+      writeFileSync(path, file.contents);
+    },
+  });
 }

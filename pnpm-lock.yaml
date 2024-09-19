@@ -387,46 +387,6 @@ importers:
         specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
 
-  packages/sample:
-    dependencies:
-      '@alloy-js/core':
-        specifier: workspace:~
-        version: link:../core
-      '@alloy-js/java':
-        specifier: workspace:~
-        version: link:../java
-      '@alloy-js/typescript':
-        specifier: workspace:~
-        version: link:../typescript
-    devDependencies:
-      '@babel/cli':
-        specifier: 'catalog:'
-        version: 7.24.8(@babel/core@7.25.2)
-      '@babel/preset-typescript':
-        specifier: 'catalog:'
-        version: 7.24.7(@babel/core@7.25.2)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
-      '@rollup/plugin-typescript':
-        specifier: 'catalog:'
-        version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
-      '@types/node':
-        specifier: 'catalog:'
-        version: 20.14.15
-      babel-preset-alloy:
-        specifier: workspace:~
-        version: link:../babel-preset-alloy
-      concurrently:
-        specifier: 'catalog:'
-        version: 8.2.2
-      typescript:
-        specifier: 'catalog:'
-        version: 5.5.4
-      vitest:
-        specifier: 'catalog:'
-        version: 2.0.5(@types/node@20.14.15)
-
   packages/typescript:
     dependencies:
       '@alloy-js/core':
@@ -466,6 +426,86 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 2.0.5(@types/node@22.2.0)
+
+  samples/basic-project:
+    dependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../../packages/core
+      '@alloy-js/java':
+        specifier: workspace:~
+        version: link:../../packages/java
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../../packages/typescript
+    devDependencies:
+      '@babel/cli':
+        specifier: 'catalog:'
+        version: 7.24.8(@babel/core@7.25.2)
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 7.24.7(@babel/core@7.25.2)
+      '@rollup/plugin-babel':
+        specifier: 'catalog:'
+        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
+      '@rollup/plugin-typescript':
+        specifier: 'catalog:'
+        version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.14.15
+      babel-preset-alloy:
+        specifier: workspace:~
+        version: link:../../packages/babel-preset-alloy
+      concurrently:
+        specifier: 'catalog:'
+        version: 8.2.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.5.4
+      vitest:
+        specifier: 'catalog:'
+        version: 2.0.5(@types/node@20.14.15)
+
+  samples/client-emitter:
+    dependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../../packages/core
+      '@alloy-js/java':
+        specifier: workspace:~
+        version: link:../../packages/java
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../../packages/typescript
+    devDependencies:
+      '@babel/cli':
+        specifier: 'catalog:'
+        version: 7.24.8(@babel/core@7.25.2)
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 7.24.7(@babel/core@7.25.2)
+      '@rollup/plugin-babel':
+        specifier: 'catalog:'
+        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.20.0)
+      '@rollup/plugin-typescript':
+        specifier: 'catalog:'
+        version: 11.1.6(rollup@4.20.0)(tslib@2.6.3)(typescript@5.5.4)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.14.15
+      babel-preset-alloy:
+        specifier: workspace:~
+        version: link:../../packages/babel-preset-alloy
+      concurrently:
+        specifier: 'catalog:'
+        version: 8.2.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.5.4
+      vitest:
+        specifier: 'catalog:'
+        version: 2.0.5(@types/node@20.14.15)
 
 packages:
 
@@ -3509,37 +3549,6 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
-  vite@5.4.0:
-    resolution: {integrity: sha512-5xokfMX0PIiwCMCMb9ZJcMyh5wbBun0zUzKib+L65vAZ8GY9ePZMXxFrHbr/Kyll2+LSCY7xtERPpxkBDKngwg==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      sass-embedded: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-
   vite@5.4.3:
     resolution: {integrity: sha512-IH+nl64eq9lJjFqU+/yrRnrHPVTlgy42/+IzbOdaFDVlyLgI/wDlf+FCobXLX1cT0X5+7LMyH1mIy2xJdLfo8Q==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -4033,7 +4042,7 @@ snapshots:
   '@babel/helper-member-expression-to-functions@7.24.8':
     dependencies:
       '@babel/traverse': 7.25.3
-      '@babel/types': 7.25.2
+      '@babel/types': 7.25.6
     transitivePeerDependencies:
       - supports-color
 
@@ -4044,7 +4053,7 @@ snapshots:
   '@babel/helper-module-imports@7.24.7':
     dependencies:
       '@babel/traverse': 7.25.3
-      '@babel/types': 7.25.2
+      '@babel/types': 7.25.6
     transitivePeerDependencies:
       - supports-color
 
@@ -4060,7 +4069,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.24.7':
     dependencies:
-      '@babel/types': 7.25.2
+      '@babel/types': 7.25.6
 
   '@babel/helper-plugin-utils@7.24.8': {}
 
@@ -4083,7 +4092,7 @@ snapshots:
   '@babel/helper-skip-transparent-expression-wrappers@7.24.7':
     dependencies:
       '@babel/traverse': 7.25.3
-      '@babel/types': 7.25.2
+      '@babel/types': 7.25.6
     transitivePeerDependencies:
       - supports-color
 
@@ -7602,7 +7611,7 @@ snapshots:
       debug: 4.3.6
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@20.14.15)
+      vite: 5.4.3(@types/node@20.14.15)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7620,7 +7629,7 @@ snapshots:
       debug: 4.3.6
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@22.2.0)
+      vite: 5.4.3(@types/node@22.2.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7632,22 +7641,13 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.0(@types/node@20.14.15):
+  vite@5.4.3(@types/node@20.14.15):
     dependencies:
       esbuild: 0.23.0
-      postcss: 8.4.41
+      postcss: 8.4.45
       rollup: 4.20.0
     optionalDependencies:
       '@types/node': 20.14.15
-      fsevents: 2.3.3
-
-  vite@5.4.0(@types/node@22.2.0):
-    dependencies:
-      esbuild: 0.23.0
-      postcss: 8.4.41
-      rollup: 4.20.0
-    optionalDependencies:
-      '@types/node': 22.2.0
       fsevents: 2.3.3
 
   vite@5.4.3(@types/node@22.2.0):
@@ -7681,7 +7681,7 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 1.0.0
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@20.14.15)
+      vite: 5.4.3(@types/node@20.14.15)
       vite-node: 2.0.5(@types/node@20.14.15)
       why-is-node-running: 2.3.0
     optionalDependencies:
@@ -7714,7 +7714,7 @@ snapshots:
       tinybench: 2.9.0
       tinypool: 1.0.0
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@22.2.0)
+      vite: 5.4.3(@types/node@22.2.0)
       vite-node: 2.0.5(@types/node@22.2.0)
       why-is-node-running: 2.3.0
     optionalDependencies:

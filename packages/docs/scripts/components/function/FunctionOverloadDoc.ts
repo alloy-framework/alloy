@@ -19,9 +19,9 @@ export interface FunctionOverloadDocProps {
 
 export function FunctionOverloadDoc(props: FunctionOverloadDocProps) {
   const root =
-    props.omitOverloadIndex ?
+    props.omitOverloadIndex ? MdxParagraph() : (
       MdxSection({ title: `Overload ${props.fn.overloadIndex}`, level: 2 })
-    : MdxParagraph();
+    );
 
   return root.children(
     Summary({ type: props.fn }),

@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - samples/*
 catalog:
   "@babel/cli": ^7.24.7
   "@babel/core": ^7.24.7

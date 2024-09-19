@@ -19,6 +19,10 @@
     "./stc": {
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"
+    },
+    "./components": {
+      "development": "./src/components/index.ts",
+      "import": "./dist/src/components/index.js"
     }
   },
   "scripts": {

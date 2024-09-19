@@ -36,6 +36,9 @@ it("uses multiple namespaces", () => {
 
 it("adds using statement across namespaces", () => {
   const inputTypeRefkey = core.refkey();
+  const outputTypeRefkey = core.refkey();
+  const twoValRefkey = core.refkey();
+
   const params = [
     {
       name: "BodyParam",
@@ -48,19 +51,19 @@ it("adds using statement across namespaces", () => {
       <csharp.Namespace name='Models'>
         <csharp.SourceFile path="Models.cs">
           <csharp.Class accessModifier='public' name="Input" refkey={inputTypeRefkey} />
-          <csharp.Class accessModifier='public' name="Output" />
+          <csharp.Class accessModifier='public' name="Output" refkey={outputTypeRefkey} />
           <csharp.Enum accessModifier='public' name="TestEnum">
             <csharp.EnumMember name="One" />,
-            <csharp.EnumMember name="Two" />
+            <csharp.EnumMember name="Two" refkey={twoValRefkey} />
           </csharp.Enum>
         </csharp.SourceFile>
       </csharp.Namespace>
       <csharp.Namespace name='Client'>
         <csharp.SourceFile path="Client.cs">
           <csharp.Class accessModifier='public' name="Client">
-            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={core.refkey("Output")} />
+            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={outputTypeRefkey} />
           </csharp.Class>
-          {core.refkey("Two")};
+          {twoValRefkey};
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,

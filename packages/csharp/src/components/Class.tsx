@@ -5,7 +5,7 @@ import {
   getMethodModifier,
   MethodModifier,
 } from "../modifiers.js";
-import { useCSharpNamePolicy } from "../name-policy.js";
+import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { createCSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.js";
@@ -133,7 +133,11 @@ export interface ClassMemberProps {
 
 // a C# class member (i.e. a field within a class like "private int count")
 export function ClassMember(props: ClassMemberProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-member");
+  let nameElement: CSharpElements = "class-member-private";
+  if (props.accessModifier === "public") {
+    nameElement = "class-member-public";
+  }
+  const name = useCSharpNamePolicy().getName(props.name, nameElement);
   const scope = useCSharpScope();
   if (scope.kind !== "member" || scope.name !== "class-decl") {
     throw new Error(

@@ -30,7 +30,7 @@ it("declares class with some members", () => {
     {
       public class TestClass
       {
-        public string memberOne;
+        public string MemberOne;
         private int memberTwo;
       }
     }
@@ -87,6 +87,9 @@ it("declares class with params and return type", () => {
 
 it("uses refkeys for members, params, and return type", () => {
   const inputTypeRefkey = core.refkey();
+  const testResultTypeRefkey = core.refkey();
+  const enumTypeRefkey = core.refkey();
+
   const params = [
     {
       name: "IntParam",
@@ -102,16 +105,16 @@ it("uses refkeys for members, params, and return type", () => {
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name='TestCode'>
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier='public' name="TestEnum">
+          <csharp.Enum accessModifier='public' name="TestEnum" refkey={enumTypeRefkey}>
             <csharp.EnumMember name="One" />,
             <csharp.EnumMember name="Two" />
           </csharp.Enum>
           <csharp.Class accessModifier="public" name="TestInput" refkey={inputTypeRefkey} />
-          <csharp.Class accessModifier="public" name="TestResult" />
+          <csharp.Class accessModifier="public" name="TestResult" refkey={testResultTypeRefkey} />
           <csharp.Class accessModifier='public' name="TestClass">
-            <csharp.ClassMember accessModifier="private" name="MemberOne" type={core.refkey("TestEnum")} />
-            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={core.refkey("TestResult")}>
-              return new {core.refkey("TestResult")}();
+            <csharp.ClassMember accessModifier="private" name="MemberOne" type={enumTypeRefkey} />
+            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={testResultTypeRefkey}>
+              return new {testResultTypeRefkey}();
             </csharp.ClassMethod>
           </csharp.Class>
         </csharp.SourceFile>
@@ -149,8 +152,8 @@ it("declares class with generic parameters", () => {
 
   const res = utils.toSourceText(
     <csharp.Class accessModifier='public' name="TestClass" typeParameters={typeParameters}>
-      <csharp.ClassMember accessModifier="public" name="MemberOne" type={typeParameters.T} />
-      <csharp.ClassMember accessModifier="private" name="MemberTwo" type={typeParameters.U} />
+      <csharp.ClassMember accessModifier="public" name="memberOne" type={typeParameters.T} />
+      <csharp.ClassMember accessModifier="private" name="memberTwo" type={typeParameters.U} />
     </csharp.Class>,
   );
 
@@ -159,7 +162,7 @@ it("declares class with generic parameters", () => {
     {
       public class TestClass<T, U>
       {
-        public T memberOne;
+        public T MemberOne;
         private U memberTwo;
       }
     }

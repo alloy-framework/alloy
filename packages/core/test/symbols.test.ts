@@ -304,7 +304,7 @@ describe("instance members", () => {
     const binder = createOutputBinder();
     const {
       scopes: { root },
-      symbols: { root: rootSym, instance },
+      symbols: { instance },
     } = createScopeTree(binder, {
       root: {
         symbols: {

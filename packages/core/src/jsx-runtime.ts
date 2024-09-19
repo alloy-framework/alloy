@@ -157,15 +157,17 @@ export function pushStack(component: Component<any>, props: Props) {
 
 export function popStack() {
   if (!shouldDebug) return;
-  const item = renderStack.pop();
+  renderStack.pop();
 }
 
 export function printRenderStack() {
   if (!shouldDebug) return;
 
+  // eslint-disable-next-line no-console
   console.error("Error rendering:");
   for (let i = renderStack.length - 1; i >= 0; i--) {
     const { component, props } = renderStack[i];
+    // eslint-disable-next-line no-console
     console.error(`    at ${component.name}(${inspectProps(props)})`);
   }
 }

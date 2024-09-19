@@ -68,10 +68,10 @@ export interface DeclarationProps extends BaseDeclarationProps {
  *
  * @remarks
  *
- * This component will wrap its contents in a {@link CoreDeclaration} component,
+ * This component will wrap its contents in a {@link @alloy-js/core#Declaration} component,
  * so children can make use of declaration context. Additionally, if the
- * provided symbol flags have {@link OutputSymbolFlags.MemberContainer}, this
- * component will create a {@link MemberScope}
+ * provided symbol flags have {@link @alloy-js/core#OutputSymbolFlags.MemberContainer}, this
+ * component will create a {@link @alloy-js/core#MemberScope}.
  *
  */
 export function Declaration(props: DeclarationProps) {

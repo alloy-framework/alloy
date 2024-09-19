@@ -2,7 +2,6 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { OutputSymbol, OutputSymbolFlags } from "../binder.js";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MemberDeclarationContext } from "../context/member-declaration.js";
 import { Refkey, refkey } from "../refkey.js";
 

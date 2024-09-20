@@ -65,7 +65,7 @@ the intricacies of real world REST API description languages.
 ## Initial steps
 
 First, let's initialize our alloy project. See [the getting started
-guide](./getting-started) for details, but the easiest way is to clone the
+guide](../getting-started) for details, but the easiest way is to clone the
 starter template.
 
 <Code code={`git clone https://github.com/alloy-framework/alloy-project-template my-project
@@ -226,7 +226,7 @@ Before writing more of our emitter, one observation we can make is that the
 schema for the service we are emitting is going to be needed in a lot of places.
 Typically you would probably just import the schema itself from a ts file
 somewhere and be done, but there's another option: storing it in
-[context](./basic-concepts/#context). Context is useful because we won't need to
+[context](../basic-concepts/#context). Context is useful because we won't need to
 explicitly provide the current schema to our emitters. It is also useful in that
 the same context can have different values in different parts of your program.
 So by putting the schema in Context, we gain some additional flexibility down
@@ -269,7 +269,7 @@ To create context, create `src/context/api.ts` with the following contents:
   }
 `} frame="code"lang="tsx" title="src/context/api.ts" />
 
-As described in [Basic concepts](./basic-concepts/#context), there are three parts to our context:
+As described in [Basic concepts](../basic-concepts/#context), there are three parts to our context:
 
 1. `interface ApiContext` - the context interface, the type components see when they get the context.
 2. `const ApiContext` - the context variable, which identifies the context and
@@ -390,7 +390,7 @@ similar to a map followed by a join on an Array, except it works in terms of
 properly handles components (`ModelProperty` in this case). By default,
 `mapJoin` joins with a single line break, but a different joiner can be provided.
 
-A [refkey](./basic-concepts/#declarations-and-references) is a unique identifier
+A [refkey](../basic-concepts/#declarations-and-references) is a unique identifier
 for some symbol, and is used to create references to that symbol. Since we are
 going to be referencing our model interfaces from other model interfaces and
 also the client, we give them a refkey.

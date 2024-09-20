@@ -24,8 +24,6 @@ jobs:
 
       - run: pnpm install
         name: Install dependencies
-      - run: pnpm build
-        name: Build
 
       - name: Create release branch
         run: pnpm tsx ./eng/prepare-release-pr.ts

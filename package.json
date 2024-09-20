@@ -21,6 +21,7 @@
     }
   },
   "devDependencies": {
+    "@actions/github": "^6.0.0",
     "@alloy-js/babel-preset": "workspace:~",
     "@babel/preset-typescript": "catalog:",
     "@chronus/chronus": "^0.13.0",

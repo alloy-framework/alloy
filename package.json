@@ -23,14 +23,15 @@
   "devDependencies": {
     "@alloy-js/babel-preset": "workspace:~",
     "@babel/preset-typescript": "catalog:",
-    "@chronus/chronus": "^0.12.1",
-    "@chronus/github": "^0.4.3",
+    "@chronus/chronus": "^0.13.0",
+    "@chronus/github": "^0.4.4",
     "concurrently": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
+    "tsx": "^4.19.1",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }

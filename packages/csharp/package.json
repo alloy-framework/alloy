@@ -27,7 +27,7 @@
   },
   "keywords": [],
   "author": "jhendrix@microsoft.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",

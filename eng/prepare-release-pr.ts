@@ -11,7 +11,7 @@ const branchName = "publish/auto-release";
 
 const plan = await resolveCurrentReleasePlan(NodeChronusHost, process.cwd());
 const changeStatus = await renderReleasePlanAsMarkdown(plan);
-execSync(`pnpm change version`, { stdio: "inherit" });
+execSync(`pnpm chronus version`, { stdio: "inherit" });
 const stdout = execSync(`git status --porcelain`).toString();
 
 if (stdout.trim() !== "") {

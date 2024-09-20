@@ -28,6 +28,6 @@ jobs:
         name: Build
 
       - name: Create release branch
-        run: node ./eng/prepare-release-pr.js
+        run: pnpm tsx ./eng/prepare-release-pr.ts
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

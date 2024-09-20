@@ -26,6 +26,7 @@
     "@babel/preset-typescript": "catalog:",
     "@chronus/chronus": "^0.13.0",
     "@chronus/github": "^0.4.4",
+    "@chronus/github-pr-commenter": "^0.5.4",
     "concurrently": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",

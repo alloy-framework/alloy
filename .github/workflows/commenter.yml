@@ -1,0 +1,31 @@
+name: Make Change Comment
+
+on:
+  workflow_run:
+    workflows: ["Check Changes"]
+    types:
+      - completed
+
+permissions:
+  pull-requests: write
+
+jobs:
+  commenter:
+    if: ${{ github.actor != 'dependabot[bot]' && !startsWith(github.head_ref, 'publish/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: comment
+          run-id: ${{github.event.workflow_run.id }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
+      - uses: ./.github/actions/setup
+
+      - run: pnpm install
+        name: Install dependencies
+
+      - run: pnpm chronus-github --comment-file comment.json
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        name: Create/update comment

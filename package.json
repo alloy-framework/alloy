@@ -23,7 +23,7 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/preset-typescript": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",

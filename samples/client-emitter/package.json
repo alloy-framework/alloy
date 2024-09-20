@@ -26,7 +26,7 @@
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

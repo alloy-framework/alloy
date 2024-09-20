@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/core",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./dist/src/index.js",
   "exports": {
@@ -45,7 +45,7 @@
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@vue/reactivity": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "pathe": "catalog:"
   },
   "devDependencies": {

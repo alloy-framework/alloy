@@ -1,4 +1,3 @@
-
 baseBranch: main
 changelog: ["@chronus/github/changelog", { repo: "alloy-framework/alloy" }]
 changeKinds:

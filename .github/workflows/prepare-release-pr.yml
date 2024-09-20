@@ -30,4 +30,4 @@ jobs:
       - name: Create release branch
         run: node ./eng/prepare-release-pr.js
         env:
-          GITHUB_TOKEN: ${{secrets.CUSTOM_GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

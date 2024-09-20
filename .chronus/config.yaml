@@ -21,6 +21,15 @@ changeKinds:
     title: Internal
     description: Internal changes that are not user facing
 
+versionPolicies:
+  - name: alloy
+    type: lockstep
+    step: minor
+    packages:
+      - "@alloy-js/core"
+      - "@alloy-js/java"
+      - "@alloy-js/csharp"
+      - "@alloy-js/typescript"
 changedFiles:
   - "!**/*.md"
   - "!**/*.test.ts"

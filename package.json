@@ -20,10 +20,11 @@
       "esbuild": "0.23"
     }
   },
-  "dependencies": {},
   "devDependencies": {
-    "@babel/preset-typescript": "catalog:",
     "@alloy-js/babel-preset": "workspace:~",
+    "@babel/preset-typescript": "catalog:",
+    "@chronus/chronus": "^0.12.1",
+    "@chronus/github": "^0.4.3",
     "concurrently": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",

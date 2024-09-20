@@ -9,7 +9,7 @@ export function Client() {
   const methods = mapJoin(operations, (op) => <ClientMethod operation={op} />);
   const name = `${schema.name}Client`;
 
-  return <ts.ClassDeclaration name={name} export default refkey={refkey(schema)}>
+  return <ts.ClassDeclaration name={name} export refkey={refkey(schema)}>
     {methods}
   </ts.ClassDeclaration>;
 }

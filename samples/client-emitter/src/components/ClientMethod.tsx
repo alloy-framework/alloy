@@ -11,7 +11,7 @@ export function ClientMethod(props: ClientMethodProps) {
   const api = useApi();
   const op = props.operation;
 
-  // get the parameters based on the spec's requestBody
+  // get the parameters based on the spec's endpoint and requestBody
   const parameters: Record<string, ts.ParameterDescriptor> = {};
 
   const endpointParam = op.endpoint.match(/:(\w+)$/)?.[1];

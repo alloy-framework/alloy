@@ -3,9 +3,11 @@ import * as ts from "@alloy-js/typescript";
 import { useApi } from "../context/api.js";
 import { RestApiModelProperty } from "../schema.js";
 import { Model } from "./Model.jsx";
+
 interface ModelProps {
   property: RestApiModelProperty;
 }
+
 export function ModelProperty(props: ModelProps) {
   let memberType: Children;
 

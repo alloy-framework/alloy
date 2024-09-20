@@ -20,7 +20,7 @@ const output = render(
         <ts.SourceFile path="client.ts">
           <Client />
         </ts.SourceFile>
-        <ts.BarrelFile export />
+        <ts.BarrelFile export="." />
       </ts.PackageDirectory>
     </ApiContext.Provider>
   </Output>,

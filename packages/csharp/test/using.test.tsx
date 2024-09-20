@@ -59,7 +59,7 @@ it("adds using statement across namespaces", () => {
         </csharp.SourceFile>
       </csharp.Namespace>
       <csharp.Namespace name='Client'>
-        <csharp.SourceFile path="Client.cs">
+        <csharp.SourceFile path="Client.cs" using={["System"]}>
           <csharp.Class accessModifier='public' name="Client">
             <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={outputTypeRefkey} />
           </csharp.Class>
@@ -84,6 +84,7 @@ it("adds using statement across namespaces", () => {
 
   expect(res.contents[1].contents).toBe(coretest.d`
     using Models;
+    using System;
     namespace Client
     {
       public class Client

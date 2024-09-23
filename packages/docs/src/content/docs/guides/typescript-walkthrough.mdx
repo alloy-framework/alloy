@@ -226,12 +226,15 @@ Before writing more of our emitter, one observation we can make is that the
 schema for the service we are emitting is going to be needed in a lot of places.
 Typically you would probably just import the schema itself from a ts file
 somewhere and be done, but there's another option: storing it in
-[context](../basic-concepts/#context). Context is useful because we won't need to
-explicitly provide the current schema to our emitters. It is also useful in that
-the same context can have different values in different parts of your program.
-So by putting the schema in Context, we gain some additional flexibility down
-the line in case we want to support generating clients for multiple services
-within a single package.
+[context](../basic-concepts/#context).
+
+Context is useful because we won't need to pass the current API via props to all
+components which need it. Instead, the current API can be provided to child
+components by way of a Context Provider. Context is also useful in that the same
+context can have different values in different parts of your program. So by
+putting the schema in Context, we gain some additional flexibility down the line
+in case we want to support generating clients for multiple services within a
+single package.
 
 To create context, create `src/context/api.ts` with the following contents:
 
@@ -308,7 +311,49 @@ Encapsulating that logic inside of a component will keep our code clean and
 give us a lot of flexibility down the line.
 
 So let's create both `src/components/Model.tsx` and
-`src/components/ModelProperty.tsx`. Starting with `ModelProperty.tsx`:
+`src/components/ModelProperty.tsx`.
+
+### The Model component
+
+<Code code={`
+  import { mapJoin, refkey } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+
+  import { RestApiModel } from "../schema.js";
+  import { ModelProperty } from "./ModelProperty.jsx";
+
+  interface ModelProps {
+    model: RestApiModel;
+  }
+
+  export function Model(props: ModelProps) {
+    const members = mapJoin(
+      props.model.properties,
+      prop => <ModelProperty property={prop} />
+    );
+
+    return <ts.InterfaceDeclaration export name={props.model.name} refkey={refkey(props.model)}>
+      {members}
+    </ts.InterfaceDeclaration>;
+  }
+`} frame="code"lang="tsx" title="src/components/Model.ts" />
+
+This creates the model properties using a component we'll cover in the next
+section and adds them into an interface declaration. This component introduces
+two new concepts: `mapJoin` and `refkey`.
+
+[mapJoin](../../reference/core/functions/mapjoin/) is a utility that behaves
+similar to a map followed by a join on an Array, except it works in terms of
+`Children` rather than Array elements and strings. Essentially, this means it
+properly handles components (`ModelProperty` in this case). By default,
+`mapJoin` joins with a single line break, but a different joiner can be provided.
+
+A [refkey](../basic-concepts/#declarations-and-references) is a unique identifier
+for some symbol, and is used to create references to that symbol. Since we are
+going to be referencing our model interfaces from other model interfaces and
+also the client, we give them a refkey.
+
+### The ModelProperty component
 
 <Code code={`
   import { Children, refkey } from "@alloy-js/core";
@@ -317,18 +362,19 @@ So let's create both `src/components/Model.tsx` and
   import { RestApiModelProperty } from "../schema.js";
   import { Model } from "./Model.jsx";
 
-  interface ModelProps {
+  interface ModelPropertyProps {
     property: RestApiModelProperty;
   }
 
-  export function ModelProperty(props: ModelProps) {
+  export function ModelProperty(props: ModelPropertyProps) {
     let memberType: Children;
 
     const apiType = props.property.type;
 
     if (typeof apiType === "object") {
       if ("ref" in apiType) {
-        const model = useApi().resolveReference(apiType);
+        const apiContext = useApi();
+        const model = apiContext.resolveReference(apiType);
         memberType = refkey(model);
       } else {
         memberType = <Model model={apiType} />;
@@ -356,56 +402,14 @@ component. This is just the schema for the property.
       [InterfaceMember](../../reference/typescript/components/interfacemember/)
       component from `@alloy-js/typescript`.
 
-Next, let's use this in the `Model` component. In `src/components/Model.tsx`:
-
-<Code code={`
-  import { mapJoin, refkey } from "@alloy-js/core";
-  import * as ts from "@alloy-js/typescript";
-
-  import { RestApiModel } from "../schema.js";
-  import { ModelProperty } from "./ModelProperty.jsx";
-
-  interface ModelProps {
-    model: RestApiModel;
-  }
-
-  export function Model(props: ModelProps) {
-    const members = mapJoin(
-      props.model.properties,
-      prop => <ModelProperty property={prop} />
-    );
-
-    return <ts.InterfaceDeclaration export name={props.model.name} refkey={refkey(props.model)}>
-      {members}
-    </ts.InterfaceDeclaration>;
-  }
-`} frame="code"lang="tsx" title="src/components/Model.ts" />
-
-This component follows a similar structure to the previous, but introduces two
-new concepts: `mapJoin` and `refkey`.
-
-[mapJoin](../../reference/core/functions/mapjoin/) is a utility that behaves
-similar to a map followed by a join on an Array, except it works in terms of
-`Children` rather than Array elements and strings. Essentially, this means it
-properly handles components (`ModelProperty` in this case). By default,
-`mapJoin` joins with a single line break, but a different joiner can be provided.
-
-A [refkey](../basic-concepts/#declarations-and-references) is a unique identifier
-for some symbol, and is used to create references to that symbol. Since we are
-going to be referencing our model interfaces from other model interfaces and
-also the client, we give them a refkey.
-
-With these parts done, we can update our `index.tsx` to make use of these new
+With these two components done, we can update our `index.tsx` to make use of these new
 components. First, we need to create a declaration for each of the models in our
-schema, which we can do using `mapJoin`:
+schema, which we can do using `mapJoin`, and then we can update our output once
+again to the following:
 
 <Code code={`
-const modelDecls = mapJoin(api.models, (model) => <Model model={model} />);
-`} frame="code"lang="tsx" title="src/schema.ts" />
+  const modelDecls = mapJoin(api.models, (model) => <Model model={model} />);
 
-And then we can update our output once again to the following:
-
-<Code code={`
   const output = render(
     <Output>
       <ApiContext.Provider value={createApiContext(api)}>
@@ -424,6 +428,7 @@ And then we can update our output once again to the following:
 
 Now if we build and run `dist/src/index.js`, we get a `models.ts` with the
 following content:
+
 <Code code={`
   export interface Pet {
     name: string;
@@ -462,7 +467,7 @@ let's take it step by step.
   }
 
   export function ClientMethod(props: ClientMethodProps) {
-    const api = useApi();
+    const apiContext = useApi();
     const op = props.operation;
     // ...
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
@@ -485,7 +490,7 @@ component's props, and get access to the current API spec inside the component.
 
   if (op.requestBody) {
     parameters["body"] = {
-      type: refkey(api.resolveReference(op.requestBody)),
+      type: refkey(apiContext.resolveReference(op.requestBody)),
       refkey: refkey(op, "requestBody"),
     };
   }
@@ -503,7 +508,7 @@ create refkeys for these parameters so we can refer to them easily later.
   if (op.responseBody === undefined) {
     returnType = "Promise<void>";
   } else {
-    const responseModel = api.resolveReference(op.responseBody);
+    const responseModel = apiContext.resolveReference(op.responseBody);
 
     const reference: Children = [refkey(responseModel)];
     if (op.responseBody.array) {

@@ -5,5 +5,5 @@ export interface RemarksProps {
         tsdocComment?: DocComment;
     };
 }
-export declare function Remarks(props: RemarksProps): import("@alloy-js/core").ComponentCreator<import("./MdxSection.js").MdxSectionProps> | "";
+export declare function Remarks(props: RemarksProps): "" | import("@alloy-js/core").ComponentCreator<import("./MdxSection.js").MdxSectionProps>;
 //# sourceMappingURL=Remarks.d.ts.map

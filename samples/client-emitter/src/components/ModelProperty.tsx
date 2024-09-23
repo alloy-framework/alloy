@@ -4,18 +4,19 @@ import { useApi } from "../context/api.js";
 import { RestApiModelProperty } from "../schema.js";
 import { Model } from "./Model.jsx";
 
-interface ModelProps {
+interface ModelPropertyProps {
   property: RestApiModelProperty;
 }
 
-export function ModelProperty(props: ModelProps) {
+export function ModelProperty(props: ModelPropertyProps) {
   let memberType: Children;
 
   const apiType = props.property.type;
 
   if (typeof apiType === "object") {
     if ("ref" in apiType) {
-      const model = useApi().resolveReference(apiType);
+      const apiContext = useApi();
+      const model = apiContext.resolveReference(apiType);
       memberType = refkey(model);
     } else {
       memberType = <Model model={apiType} />;

@@ -102,7 +102,7 @@ When you create a declarations, you need to provide the declaration name, and op
 
 One of the more challenging bits of doing codegen is generating references to things you've declared. Alloy makes this painless with refkeys. A refkey is a unique identifier for a symbol you declare in your output code. When you reference a refkey, Alloy calculates the necessary reference syntax along with any imports, package dependencies, or other such things needed for the reference to work.
 
-You can create a refkey by calling `refkey()`. Every time this function is called, you get a new refkey.
+You can create a refkey by calling `refkey()`. Every time this function is called with no arguments, you get a new refkey.
 
 Often you want to create a declaration for a JavaScript value you're holding, like a schema you're converting to source text. In these cases, you don't need to pass along the refkey separately. Instead, you can call `refkey(schemaObj)`, and you'll get the same refkey whenever you pass the same schema.
 

@@ -39,7 +39,7 @@ export function TsDoc(props) {
             });
             break;
         case DocNodeKind.SoftBreak:
-            content = "xxxxxxx \n";
+            content = "\n";
             break;
         default:
             console.log("Unknown TSDoc kind " + props.node.kind);
@@ -56,7 +56,6 @@ export function TsDocParagraph(props) {
     let trimmed;
     if (props.node.nodes[0]?.text?.match(/^\* |^\d+\. /)) {
         trimmed = props.node;
-        console.log(props.node);
     }
     else {
         trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);

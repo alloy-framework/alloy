@@ -5,5 +5,5 @@ export interface SummaryProps {
         tsdocComment?: DocComment;
     };
 }
-export declare function Summary(props: SummaryProps): import("@alloy-js/core").ComponentCreator<import("./MdxParagraph.js").MdxParagraphProps> | "";
+export declare function Summary(props: SummaryProps): "" | import("@alloy-js/core").ComponentCreator<import("./MdxParagraph.js").MdxParagraphProps>;
 //# sourceMappingURL=Summary.d.ts.map

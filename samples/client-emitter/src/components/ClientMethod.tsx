@@ -8,7 +8,7 @@ export interface ClientMethodProps {
 }
 
 export function ClientMethod(props: ClientMethodProps) {
-  const api = useApi();
+  const apiContext = useApi();
   const op = props.operation;
 
   // get the parameters based on the spec's endpoint and requestBody
@@ -24,7 +24,7 @@ export function ClientMethod(props: ClientMethodProps) {
 
   if (op.requestBody) {
     parameters["body"] = {
-      type: refkey(api.resolveReference(op.requestBody)),
+      type: refkey(apiContext.resolveReference(op.requestBody)),
       refkey: refkey(op, "requestBody"),
     };
   }
@@ -34,7 +34,7 @@ export function ClientMethod(props: ClientMethodProps) {
   if (op.responseBody === undefined) {
     returnType = "Promise<void>";
   } else {
-    const responseModel = api.resolveReference(op.responseBody);
+    const responseModel = apiContext.resolveReference(op.responseBody);
 
     const reference: Children = [refkey(responseModel)];
     if (op.responseBody.array) {

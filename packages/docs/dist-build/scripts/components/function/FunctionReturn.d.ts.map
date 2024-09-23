@@ -1,1 +1,0 @@
-{"version":3,"file":"FunctionReturn.d.ts","sourceRoot":"","sources":["../../../../scripts/components/function/FunctionReturn.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,gCAAgC,CAAC;AAGlE,MAAM,WAAW,mBAAmB;IAClC,EAAE,EAAE,WAAW,CAAC;CACjB;AAED,wBAAgB,cAAc,CAAC,KAAK,EAAE,mBAAmB,yFAOxD"}

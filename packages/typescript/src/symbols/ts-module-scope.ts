@@ -34,7 +34,7 @@ export function createTSModuleScope(
     exportedSymbols: new Map(),
     importedSymbols: new Map(),
     importedModules: new Map(),
-    addImport(targetSymbol, targetModule) {
+    addImport(this: TSModuleScope, targetSymbol, targetModule) {
       if (this.importedSymbols.has(targetSymbol)) {
         return this.importedSymbols.get(targetSymbol)!;
       }
@@ -49,6 +49,7 @@ export function createTSModuleScope(
 
       const localSymbol = createTSSymbol({
         binder,
+        scope: this,
         name: targetSymbol.name,
         refkey: refkey({}),
         tsFlags: TSSymbolFlags.LocalImportSymbol,

@@ -146,6 +146,63 @@ it("works with default and named imports and name conflicts", () => {
   });
 });
 
+it("works with default and named imports and name conflicts and references in nested scopes", () => {
+  const res = render(
+    <Output nameConflictResolver={tsNameConflictResolver}>
+      <ts.SourceFile path="test1.ts">
+        <ts.FunctionDeclaration export default name="test1" />
+        <ts.FunctionDeclaration export name="test2" />
+      </ts.SourceFile>
+
+      <ts.SourceFile path="test2.ts">
+        <ts.FunctionDeclaration export default name="test1" refkey={refkey("test3")} />
+        <ts.FunctionDeclaration export name="test2" refkey={refkey("test4")} />
+      </ts.SourceFile>
+
+      <ts.SourceFile path="test3.ts">
+        const v1 = <Reference refkey={refkey("test1")} />;
+        const v1_1 = <Reference refkey={refkey("test2")}/>;
+        <ts.FunctionDeclaration name="foo">
+          const v2 = <Reference refkey={refkey("test3")} />;
+          const v3 = <Reference refkey={refkey("test3")}/>;
+          const v4 = <Reference refkey={refkey("test4")} />;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "test1.ts": `
+      export default function test1() {
+        
+      }
+      export function test2() {
+        
+      }
+    `,
+    "test2.ts": `
+      export default function test1() {
+        
+      }
+      export function test2() {
+        
+      }
+    `,
+    "test3.ts": `
+      import test1_1, { test2 as test2_1 } from "./test1.js";
+      import test1_2, { test2 as test2_2 } from "./test2.js";
+
+      const v1 = test1_1;
+      const v1_1 = test2_1;
+      function foo() {
+        const v2 = test1_2;
+        const v3 = test1_2;
+        const v4 = test2_2;
+      }
+    `,
+  });
+});
+
 it("works with imports from different directories", () => {
   const res = render(
     <Output>

@@ -43,6 +43,7 @@ it("defines a project directory file with multiple source files", () => {
     {
       public class TestClass1;
     }
+
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
@@ -51,6 +52,7 @@ it("defines a project directory file with multiple source files", () => {
     {
       public class TestClass2;
     }
+
   `);
 });
 
@@ -94,6 +96,7 @@ it("defines a project directory file with multiple source files and a custom TFM
     {
       public class TestClass1;
     }
+
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
@@ -102,5 +105,6 @@ it("defines a project directory file with multiple source files and a custom TFM
     {
       public class TestClass2;
     }
+
   `);
 });

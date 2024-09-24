@@ -14,6 +14,7 @@ it("declares class with no members", () => {
     {
       public class TestClass;
     }
+
   `);
 });
 
@@ -34,6 +35,7 @@ it("declares class with some members", () => {
         private int memberTwo;
       }
     }
+
   `);
 });
 
@@ -54,6 +56,7 @@ it("declares class with some methods", () => {
         private virtual void MethodTwo() {}
       }
     }
+
   `);
 });
 
@@ -82,6 +85,7 @@ it("declares class with params and return type", () => {
         public string MethodOne(int intParam, string stringParam) {}
       }
     }
+
   `);
 });
 
@@ -141,6 +145,7 @@ it("uses refkeys for members, params, and return type", () => {
         }
       }
     }
+
   `);
 });
 
@@ -166,6 +171,7 @@ it("declares class with generic parameters", () => {
         private U memberTwo;
       }
     }
+
   `);
 });
 
@@ -196,6 +202,7 @@ it("declares class with constructor", () => {
         public TestClass() {}
       }
     }
+
   `);
 });
 
@@ -245,5 +252,6 @@ it("declares class with constructor params and assigns values to fields", () => 
         }
       }
     }
+
   `);
 });

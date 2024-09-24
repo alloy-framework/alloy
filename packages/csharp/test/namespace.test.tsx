@@ -31,6 +31,7 @@ it("defines multiple namespaces and source files with unique content", () => {
     {
       public class Model1;
     }
+
   `);
 
   expect(res.contents[1].path).equals("Model2.cs");
@@ -39,6 +40,7 @@ it("defines multiple namespaces and source files with unique content", () => {
     {
       public class Model2;
     }
+
   `);
 
   expect(res.contents[2].path).equals("Model3.cs");
@@ -47,6 +49,7 @@ it("defines multiple namespaces and source files with unique content", () => {
     {
       public class Model3;
     }
+
   `);
 
   expect(res.contents[3].path).equals("Model4.cs");
@@ -55,5 +58,6 @@ it("defines multiple namespaces and source files with unique content", () => {
     {
       public class Model4;
     }
+
   `);
 });

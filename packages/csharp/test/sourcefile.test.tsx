@@ -23,6 +23,7 @@ it("defines multiple source files with unique content", () => {
     {
       public class TestClass1;
     }
+
   `);
 
   expect(res.contents[1].path).equals("Test2.cs");
@@ -31,6 +32,7 @@ it("defines multiple source files with unique content", () => {
     {
       public class TestClass2;
     }
+
   `);
 });
 

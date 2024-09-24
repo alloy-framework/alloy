@@ -14,7 +14,9 @@ it("uses a single namespace", () => {
 
   expect(res.contents[0].contents).toBe(coretest.d`
     using Foo;
+
     namespace TestCode {}
+
   `);
 });
 
@@ -30,7 +32,9 @@ it("uses multiple namespaces", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     using Bar.Baz;
     using Foo;
+
     namespace TestCode {}
+
   `);
 });
 
@@ -80,11 +84,13 @@ it("adds using statement across namespaces", () => {
         Two
       }
     }
+
   `);
 
   expect(res.contents[1].contents).toBe(coretest.d`
     using Models;
     using System;
+
     namespace Client
     {
       public class Client
@@ -93,5 +99,6 @@ it("adds using statement across namespaces", () => {
       }
       TestEnum.Two;
     }
+
   `);
 });

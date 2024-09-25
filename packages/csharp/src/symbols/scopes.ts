@@ -20,7 +20,11 @@ export function createCSharpNamespaceScope(
 }
 
 // the kind of member scope. i.e. are we in an enum, class, etc
-export type CSharpMemberScopeName = "class" | "enum" | "method";
+export type CSharpMemberScopeName =
+  | "class-decl"
+  | "constructor-decl"
+  | "enum-decl"
+  | "method-decl";
 
 // indicates that the scope for a symbol resides within a type
 // e.g. for an enum value, class field etc, these would have

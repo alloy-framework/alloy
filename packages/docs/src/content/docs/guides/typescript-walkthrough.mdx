@@ -3,44 +3,702 @@ title: Example walkthrough
 description: Building an example TypeScript emitter
 ---
 
-Let's build a simple project that consumes a simplified REST API specification
-and produces a TypeScript client that interacts with a service that implements
-that specification.
+import { Aside, Code, FileTree } from '@astrojs/starlight/components';
 
-## Defining the problem
+Let's build a project that consumes a simplified REST API specification and
+produces a TypeScript client that interacts with a service that implements that
+specification. Along the way we will learn about the key concepts needed to
+generate code using the alloy framework.
+
+The final source code for this sample can be found in our [github
+repo](https://github.com/alloy-framework/alloy/tree/main/samples/client-emitter).
+
+## Goal
 
 Let's say we have a super simple OpenAPI-like REST API description that follows
-the following schema:
+the following schema format:
 
 ```ts
-interface RestApi {
+export interface RestApi {
+  name: string;
   operations: RestApiOperation[];
   models: RestApiModel[];
 }
 
-interface RestApiOperation {
+export interface RestApiOperation {
   name: string;
   endpoint: string;
   verb: "get" | "post";
-  requestBody?: RestApiModel;
-  responseBody?: RestApiModel;
+  requestBody?: RestApiModelReference;
+  responseBody?: RestApiModelReference;
 }
 
-interface RestApiOperationParameter {
-  name: string;
-  type: RestApi
+export interface RestApiModelReference {
+  ref: string;
+  array?: boolean;
 }
 
-interface RestApiModel {
+export interface RestApiModel {
   name: string;
-  properties: RestApiModelProperty[]
+  properties: RestApiModelProperty[];
 }
 
-interface RestApiModelProperty {
+export interface RestApiModelProperty {
   name: string;
-  type: RestApiModel | "string" | "number" | "boolean";
+  type: RestApiModel | RestApiModelReference | "string" | "number" | "boolean";
 }
 ```
 
+The goal is to turn a service described using this schema format into a REST
+client that can make service calls. This requires reflecting on the schema for a
+given service and turning that into the appropriate source code that can be
+built into a working client for that service.
+
+<Aside>
+
+The schema format described above is woefully underequipped to describe real
+REST APIs. The goal is to describe alloy's key concepts without getting lost in
+the intricacies of real world REST API description languages.
+
+</Aside>
+
+## Initial steps
+
+First, let's initialize our alloy project. See [the getting started
+guide](../getting-started) for details, but the easiest way is to clone the
+starter template.
+
+<Code code={`git clone https://github.com/alloy-framework/alloy-project-template my-project
+cd my-project
+pnpm install
+pnpm build
+`} frame="terminal" lang="sh" />
+
+## Defining our service
+
+Let's generate a client for a hypothetical pet store API, with the following endpoints:
+
+* list pets
+* create a pet
+* get a specific pet
+
+And to make things slightly more interesting, let's say that a pet also has a
+favorite toy.
+
+We can describe this using our schema format above as follows:
+
+<Code code={`
+  export const api: RestApi = {
+    name: "Petstore",
+    operations: [
+      {
+        name: "create_pet",
+        verb: "post",
+        endpoint: "/pets",
+        requestBody: {
+          ref: "Pet",
+        },
+        responseBody: {
+          ref: "Pet",
+        },
+      },
+      {
+        name: "list_pets",
+        verb: "get",
+        endpoint: "/pets",
+        responseBody: {
+          ref: "Pet",
+          array: true,
+        },
+      },
+      {
+        name: "get_pet",
+        verb: "get",
+        endpoint: "/pets/:id",
+        responseBody: {
+          ref: "Pet",
+        },
+      },
+    ],
+    models: [
+      {
+        name: "Pet",
+        properties: [
+          { name: "name", type: "string" },
+          { name: "age", type: "number" },
+          { name: "favoriteToy", type: { ref: "Toy" } },
+        ],
+      },
+      {
+        name: "Toy",
+        properties: [{ name: "name", type: "string" }],
+      },
+    ],
+  };
+`} frame="code" lang="typescript" title="src/schema.ts" />
+
+## Creating our entrypoint
+
+Next, let's create the entrypoint for our code generator, and see some output
+so we can start iterating. Create `src/index.tsx` as follows:
+
+<Code code={`
+  import { mapJoin, Output, render, writeOutput } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+  import { api } from "./schema.js";
+
+  const output = render(
+    <Output>
+      <ts.SourceFile path="models.ts">
+        console.log("hello world!");
+      </ts.SourceFile>
+    </Output>
+  );
+
+  writeOutput(output, "./alloy-output");
+`} frame="code" lang="tsx" title="src/index.tsx" />
+
+We begin by importing some things we need from `@alloy-js/core` and
+`@alloy-js/typescript`. We choose to import language components under a
+namespace to help clarify which components are TypeScript specific but this is
+not a requirement.
+
+Now if we build and run `dist/src/index.js`, we should find
+`alloy-output/models.ts` with hello world in it. Neat, but not very useful.
+Let's fix that.
+
+## Building a package
+
+We want our client to be a package we can package with npm and distribute to our
+users. We're going to need a package.json for that. We'll also need a
+tsconfig.json since we're emitting TypeScript code that needs to be built. We
+could create these manually, but alloy comes with
+[PackageDirectory](../../reference/typescript/components/packagedirectory/)
+component that will generate these for us. And, as we'll see, it will also keep
+these up to date with the structure of our project and its exports.
+
+So let's use that component, and declare some source files inside of it. We'll
+need `models.ts` which we already have. We'll also need `client.ts`. And let's
+also create an `index.ts` that exports both of these and use that as our package
+main. For this, we can use the
+[BarrelFile](../../reference/typescript/components/barrelfile/) component.
+
+Update our output to be the following:
+
+<Code code={`
+  const output = render(
+    <Output>
+      <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
+        <ts.SourceFile path="models.ts">
+        </ts.SourceFile>
+        <ts.SourceFile path="client.ts">
+        </ts.SourceFile>
+        <ts.BarrelFile export="." />
+      </ts.PackageDirectory>
+    </Output>,
+  );
+`} frame="code" lang="tsx" title="src/index.tsx" />
+
+Note how we provide the `export` prop to the BarrelFile component - this ensures that
+this module is exported from the package under the given path.
+
+Now if we build and run `dist/src/index.js`, we'll find we have emitted a
+working package under `alloy-output`:
+
+<FileTree>
+
+- alloy-output
+  - client.ts empty for now
+  - index.ts exporting the other ts files
+  - models.ts empty for now
+  - package.json with exports set appropriately
+  - tsconfig.json with some sane defaults
 
 
+</FileTree>
+
+`index.js` is exporting some empty files though, and we'll get to that, but
+first we need a little context.
+
+## Adding useful context
+
+Before writing more of our emitter, one observation we can make is that the
+schema for the service we are emitting is going to be needed in a lot of places.
+Typically you would probably just import the schema itself from a ts file
+somewhere and be done, but there's another option: storing it in
+[context](../basic-concepts/#context).
+
+Context is useful because we won't need to pass the current API via props to all
+components which need it. Instead, the current API can be provided to child
+components by way of a Context Provider. Context is also useful in that the same
+context can have different values in different parts of your program. So by
+putting the schema in Context, we gain some additional flexibility down the line
+in case we want to support generating clients for multiple services within a
+single package.
+
+To create context, create `src/context/api.ts` with the following contents:
+
+<Code code={`
+  import { createContext, useContext } from "@alloy-js/core";
+  import { RestApi, RestApiModel, RestApiModelReference } from "../schema.js";
+
+  // context interface
+  interface ApiContext {
+    schema: RestApi;
+    resolveReference: (ref: RestApiModelReference) => RestApiModel | undefined;
+  }
+
+  // context variable
+  export const ApiContext = createContext<ApiContext>();
+
+  // context accessor
+  export function useApi(): ApiContext {
+    return useContext(ApiContext)!;
+  }
+
+  export function createApiContext(schema: RestApi): ApiContext {
+    return {
+      schema,
+      resolveReference(node) {
+        const model = schema.models.find((v) => v.name === node.ref);
+
+        if (!model) {
+          throw new Error(\`Unresolved reference \${node.ref}\`);
+        }
+
+        return model;
+      },
+    };
+  }
+`} frame="code"lang="tsx" title="src/context/api.ts" />
+
+As described in [Basic concepts](../basic-concepts/#context), there are three parts to our context:
+
+1. `interface ApiContext` - the context interface, the type components see when they get the context.
+2. `const ApiContext` - the context variable, which identifies the context and
+   gives access to the Provider component for setting the context.
+3. `function useApi` - the context accessor, which returns the current context value.
+
+For our purposes, one of the main things we'll need from context is resolving references to schemas, so
+we add an API for that on the context itself.
+
+With API context established, we can import it into `src/index.tsx` along with
+the api schema itself from `src/schema.ts` and provide it to all child
+components. We do this by using `ApiContext.Provider` as follows:
+
+<Code code={`
+  const output = render(
+    <Output>
+      <ApiContext.Provider value={createApiContext(api)}>
+        <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
+          <ts.SourceFile path="models.ts">
+          </ts.SourceFile>
+          <ts.SourceFile path="client.ts">
+          </ts.SourceFile>
+          <ts.BarrelFile export="." />
+        </ts.PackageDirectory>
+      </ApiContext.Provider>
+    </Output>,
+  );
+`} frame="code" lang="tsx" title="src/index.tsx" />
+
+## Emitting models
+
+For TypeScript, we want to emit the models as TypeScript interfaces that
+describe plain old JavaScript objects. We could place these interfaces directly
+within the models.ts file, but we're going to need some logic to build them.
+Encapsulating that logic inside of a component will keep our code clean and
+give us a lot of flexibility down the line.
+
+So let's create both `src/components/Model.tsx` and
+`src/components/ModelProperty.tsx`.
+
+### The Model component
+
+<Code code={`
+  import { mapJoin, refkey } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+
+  import { RestApiModel } from "../schema.js";
+  import { ModelProperty } from "./ModelProperty.jsx";
+
+  interface ModelProps {
+    model: RestApiModel;
+  }
+
+  export function Model(props: ModelProps) {
+    const members = mapJoin(
+      props.model.properties,
+      prop => <ModelProperty property={prop} />
+    );
+
+    return <ts.InterfaceDeclaration export name={props.model.name} refkey={refkey(props.model)}>
+      {members}
+    </ts.InterfaceDeclaration>;
+  }
+`} frame="code"lang="tsx" title="src/components/Model.ts" />
+
+This creates the model properties using a component we'll cover in the next
+section and adds them into an interface declaration. This component introduces
+two new concepts: `mapJoin` and `refkey`.
+
+[mapJoin](../../reference/core/functions/mapjoin/) is a utility that behaves
+similar to a map followed by a join on an Array, except it works in terms of
+`Children` rather than Array elements and strings. Essentially, this means it
+properly handles components (`ModelProperty` in this case). By default,
+`mapJoin` joins with a single line break, but a different joiner can be provided.
+
+A [refkey](../basic-concepts/#declarations-and-references) is a unique identifier
+for some symbol, and is used to create references to that symbol. Since we are
+going to be referencing our model interfaces from other model interfaces and
+also the client, we give them a refkey.
+
+### The ModelProperty component
+
+<Code code={`
+  import { Children, refkey } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+  import { useApi } from "../context/api.js";
+  import { RestApiModelProperty } from "../schema.js";
+  import { Model } from "./Model.jsx";
+
+  interface ModelPropertyProps {
+    property: RestApiModelProperty;
+  }
+
+  export function ModelProperty(props: ModelPropertyProps) {
+    let memberType: Children;
+
+    const apiType = props.property.type;
+
+    if (typeof apiType === "object") {
+      if ("ref" in apiType) {
+        const apiContext = useApi();
+        const model = apiContext.resolveReference(apiType);
+        memberType = refkey(model);
+      } else {
+        memberType = <Model model={apiType} />;
+      }
+    } else {
+      memberType = apiType;
+    }
+
+    return <ts.InterfaceMember name={props.property.name} type={memberType} />;
+  }
+`} frame="code"lang="tsx" title="src/components/ModelProperty.tsx" />
+
+To explain the various parts:
+
+1. We start by importing the pieces we need, including the context accessor we
+defined in the previous section.
+2. We create `ModelProps` to define the props passed to the `ModelProperty`
+component. This is just the schema for the property.
+3. We define the ModelProperty component which:
+   1. Unpacks the type, handling the case of an API type reference, an inline
+      anonymous type, or a primitive type. Luckily, the primitive type values
+      correspond to the TypeScript syntax for that primitive type, so we can
+      just use those directly.
+   2. Defines the interface member using the
+      [InterfaceMember](../../reference/typescript/components/interfacemember/)
+      component from `@alloy-js/typescript`.
+
+With these two components done, we can update our `index.tsx` to make use of these new
+components. First, we need to create a declaration for each of the models in our
+schema, which we can do using `mapJoin`, and then we can update our output once
+again to the following:
+
+<Code code={`
+  const modelDecls = mapJoin(api.models, (model) => <Model model={model} />);
+
+  const output = render(
+    <Output>
+      <ApiContext.Provider value={createApiContext(api)}>
+        <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
+          <ts.SourceFile path="models.ts">
+            {modelDecls}
+          </ts.SourceFile>
+          <ts.SourceFile path="client.ts">
+          </ts.SourceFile>
+          <ts.BarrelFile export="." />
+        </ts.PackageDirectory>
+      </ApiContext.Provider>
+    </Output>,
+  );
+`} frame="code" lang="tsx" title="src/index.tsx" />
+
+Now if we build and run `dist/src/index.js`, we get a `models.ts` with the
+following content:
+
+<Code code={`
+  export interface Pet {
+    name: string;
+    age: number;
+    favoriteToy: Toy;
+  }
+  export interface Toy {
+    name: string;
+  }
+`} frame="code" lang="tsx" title="alloy-output/models.ts" />
+
+Now it's time for the fun part - the client!
+
+## Creating our client class
+
+In order to create the client, we will again want two components: `Client` and
+`ClientMethod`.
+
+### The ClientMethod component
+
+This component is the most complex by far, because here is where we need to pull
+apart the service endpoint schema and map it into method parameters,
+implementation details, and return type. Rather than paste the whole thing,
+let's take it step by step.
+
+#### 1. Imports and setup
+
+<Code code={`
+  import { Children, code, refkey } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+  import { useApi } from "../context/api.js";
+  import { RestApiOperation } from "../schema.js";
+
+  export interface ClientMethodProps {
+    operation: RestApiOperation;
+  }
+
+  export function ClientMethod(props: ClientMethodProps) {
+    const apiContext = useApi();
+    const op = props.operation;
+    // ...
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+Similar to all previous components, we import the necessary pieces, declare our
+component's props, and get access to the current API spec inside the component.
+
+#### 2. Determine the method's parameters
+
+<Code code={`
+  const parameters: Record<string, ts.ParameterDescriptor> = {};
+
+  const endpointParam = op.endpoint.match(/:(\w+)$/)?.[1];
+  if (endpointParam) {
+    parameters[endpointParam] = {
+      type: "string",
+      refkey: refkey(op, endpointParam),
+    };
+  }
+
+  if (op.requestBody) {
+    parameters["body"] = {
+      type: refkey(apiContext.resolveReference(op.requestBody)),
+      refkey: refkey(op, "requestBody"),
+    };
+  }
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+We construct the parameters expected by the
+[ClassMethod](../../reference/typescript/components/classmethod/) component by
+extracting any parameters defined in the endpoint and by the request body. We
+create refkeys for these parameters so we can refer to them easily later.
+
+#### 3. Determine the method's return type
+
+<Code code={`
+  let returnType: Children;
+  if (op.responseBody === undefined) {
+    returnType = "Promise<void>";
+  } else {
+    const responseModel = apiContext.resolveReference(op.responseBody);
+
+    const reference: Children = [refkey(responseModel)];
+    if (op.responseBody.array) {
+      reference.push("[]");
+    }
+
+    returnType = code\`Promise<\${reference}>\`;
+  }
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+We construct the return type of the class method based on the `responseBody`
+schema property. If it's not present, we simply return `Promise<void>`.
+Otherwise, we resolve the reference to obtain the model schema it returns. We
+reference in our output source code by placing `refkey(responseModel)` in the
+output. Note how this will be the same `refkey` as we defined in our
+`models.ts`, so alloy will take care of importing it for us. Lastly, we wrap the
+reference in a Promise.
+
+#### 4. Determine the endpoint to call
+
+<Code code={`
+  let endpoint: Children;
+  if (endpointParam) {
+    endpoint =
+      <>
+        "{op.endpoint.slice(0, -endpointParam.length - 1)}" + {refkey(op, endpointParam)}
+      </>;
+  } else {
+    endpoint = <>"{op.endpoint}"</>;
+  }
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+The endpoint to call may depend on a path parameter passed into the method, so
+we need to construct that strhing. When the endpoint has a parameter defined, we
+slice off the parameter definition in the endpoint url and concat the value
+passed in. We again refer to the parameter with a refkey, which we defined in
+step 2.
+
+#### 5. Determine the parameters to fetch
+
+<Code code={`
+  const options = op.verb ===
+    "post" && <>, 
+      <ts.ObjectExpression>
+        <ts.ObjectProperty name="method" jsValue="POST" />,
+        <ts.ObjectProperty name="body">JSON.stringify({refkey(op, "requestBody")})</ts.ObjectProperty>
+      </ts.ObjectExpression>
+    </>;
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+When we are doing a POST, we need to tell `fetch` to use that verb and provide
+the body. We can do this by constructing an object expression using the
+[ObjectExpression](../../reference/typescript/components/objectexpression/)
+component. The `body` property is set to a snippet of source code that JSON
+stringifies the `requestBody` parameter, which we defined in step 2.
+
+#### 6. Assembling the method body
+
+Finally, we can pull everything together into the method body:
+
+<Code code={`
+  return <ts.ClassMethod
+    async
+    name={op.name}
+    parameters={parameters}
+    returnType={returnType}
+  >
+    const response = await fetch({endpoint}{options});
+    
+    if (!response.ok) <ts.Block>
+      throw new Error("Request failed: " + response.status);
+    </ts.Block>
+
+    return response.json() as {returnType};
+  </ts.ClassMethod>;
+`} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
+
+The class method is defined as async, given a name based on what's in the API spec,
+and all the parts we assembled previously are slotted into the appropriate place.
+
+### The Client component
+
+The Client component is relatively straight forward:
+
+<Code code={`
+  import { mapJoin, refkey } from "@alloy-js/core";
+  import * as ts from "@alloy-js/typescript";
+  import { useApi } from "../context/api.js";
+  import { ClientMethod } from "./ClientMethod.jsx";
+
+  export function Client() {
+    const schema = useApi().schema;
+    const methods = mapJoin(schema.operations, (op) => <ClientMethod operation={op} />);
+    const name = \`\${schema.name}Client\`;
+
+    return <ts.ClassDeclaration name={name} export refkey={refkey(schema)}>
+      {methods}
+    </ts.ClassDeclaration>;
+  }
+`} frame="code"lang="tsx" title="src/components/Client.tsx" />
+
+We join together using `mapJoin` each of the methods, and add those into a
+ClassDeclaration. The class itself gets a name of the service concatenated with
+`Client`. It is exported from the module. It is also given a refkey for good
+measure, although we don't use it yet.
+
+With this, we can drop the client into our output by importing the `Client`
+component and updating our output like the following:
+
+<Code code={`
+  <Output>
+    <ApiContext.Provider value={createApiContext(api)}>
+      <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
+        <ts.SourceFile path="models.ts">
+          {modelDecls}
+        </ts.SourceFile>
+        <ts.SourceFile path="client.ts">
+          <Client />
+        </ts.SourceFile>
+        <ts.BarrelFile export="." />
+      </ts.PackageDirectory>
+    </ApiContext.Provider>
+  </Output>
+`} frame="code"lang="tsx" title="src/schema.ts" />
+
+## Adding a name policy
+
+If we generated code at this point, we'd see something amiss - snake case in our
+TypeScript! Hissss. The spec author has poor taste, but there's no accounting
+for that. Thankfully we can fix this fairly easily by providing a naming policy.
+The naming policy is used by all the built-in Alloy components to recase any
+names provided by a `name` prop.
+
+In `src/index.tsx`, we can create a naming policy and pass it as a prop to the `Output` component like so:
+
+<Code code={`
+  const namePolicy = ts.createTSNamePolicy();
+
+  const output = render(
+    <Output namePolicy={namePolicy}>
+      <ApiContext.Provider value={createApiContext(api)}>
+        <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
+          <ts.SourceFile path="models.ts">
+            {modelDecls}
+          </ts.SourceFile>
+          <ts.SourceFile path="client.ts">
+            <Client />
+          </ts.SourceFile>
+          <ts.BarrelFile export="." />
+        </ts.PackageDirectory>
+      </ApiContext.Provider>
+    </Output>,
+  );
+`} frame="code"lang="tsx" title="src/schema.ts" />
+
+And with that, we check our output, and we have a working client!
+
+<Code code={`
+  import { Pet } from "./models.js";
+
+  export default class PetstoreClient {
+    async createPet(body: Pet): Promise<Pet> {
+      const response = await fetch("/pets", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed: " + response.status);
+      }
+
+      return response.json() as Promise<Pet>;
+    }
+    async listPets(): Promise<Pet[]> {
+      const response = await fetch("/pets");
+
+      if (!response.ok) {
+        throw new Error("Request failed: " + response.status);
+      }
+
+      return response.json() as Promise<Pet[]>;
+    }
+    async getPet(id: string): Promise<Pet> {
+      const response = await fetch("/pets/" + id);
+
+      if (!response.ok) {
+        throw new Error("Request failed: " + response.status);
+      }
+
+      return response.json() as Promise<Pet>;
+    }
+  }
+`} frame="code" lang="ts" title="alloy-output/client.ts" />

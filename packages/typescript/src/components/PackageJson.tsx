@@ -5,7 +5,6 @@ import { usePackage } from "./PackageDirectory.js";
 export interface PackageJsonFileProps {
   name: string;
   version: string;
-  path: string;
   type?: "module" | "commonjs";
   devDependencies?: Record<string, string>;
   scripts?: Record<string, string>;

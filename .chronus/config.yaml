@@ -1,0 +1,35 @@
+baseBranch: main
+changelog: ["@chronus/github/changelog", { repo: "alloy-framework/alloy" }]
+changeKinds:
+  breaking:
+    versionType: major
+    title: Breaking Change
+    description: Changes that break existing features
+
+  feature:
+    versionType: minor
+    title: Feature
+    description: Adds new features
+
+  fix:
+    versionType: patch
+    title: Bug Fix
+    description: Fixes to existing features
+
+  internal:
+    versionType: none
+    title: Internal
+    description: Internal changes that are not user facing
+
+versionPolicies:
+  - name: alloy
+    type: lockstep
+    step: minor
+    packages:
+      - "@alloy-js/core"
+      - "@alloy-js/java"
+      - "@alloy-js/csharp"
+      - "@alloy-js/typescript"
+changedFiles:
+  - "!**/*.md"
+  - "!**/*.test.ts"

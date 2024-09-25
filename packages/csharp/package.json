@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/csharp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "exports": {
     ".": {
@@ -27,7 +27,7 @@
   },
   "keywords": [],
   "author": "jhendrix@microsoft.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",
@@ -39,7 +39,7 @@
     "@microsoft/api-extractor": "^7.47.7",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

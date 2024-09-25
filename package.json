@@ -20,16 +20,20 @@
       "esbuild": "0.23"
     }
   },
-  "dependencies": {},
   "devDependencies": {
+    "@actions/github": "^6.0.0",
+    "@alloy-js/babel-preset": "workspace:~",
     "@babel/preset-typescript": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@chronus/chronus": "^0.13.0",
+    "@chronus/github": "^0.4.4",
+    "@chronus/github-pr-commenter": "^0.5.4",
     "concurrently": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-vitest": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
+    "tsx": "^4.19.1",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }

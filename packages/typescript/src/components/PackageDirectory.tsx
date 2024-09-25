@@ -27,6 +27,7 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
   exports?: PackageExports | ExportPath;
   tsConfig?: { outDir?: string };
   children?: Children;
+  path?: string;
 }
 
 export const PackageContext: ComponentContext<PackageContext> = createContext();
@@ -49,7 +50,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageContext = createPackageContext(
     props.name,
     props.version,
-    props.path,
+    props.path ?? ".",
   );
 
   if (props.exports) {
@@ -68,7 +69,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     }
   }
 
-  return <SourceDirectory path={props.path}>
+  return <SourceDirectory path={props.path ?? "."}>
     <PackageContext.Provider value={packageContext}>
       <Scope value={packageContext.scope}>
         <PackageJsonFile {...props} />

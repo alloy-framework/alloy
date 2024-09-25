@@ -4,6 +4,7 @@ import {
   findKeyedChild,
   findUnkeyedChildren,
   mapJoin,
+  Name,
   Refkey,
   refkey,
   Scope,
@@ -13,11 +14,11 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSSymbolFlags, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-import { Name } from "./Name.js";
 
 export interface ParameterDescriptor {
   type: Children;
   refkey: Refkey;
+  optional?: boolean;
 }
 
 function isParameterDescriptor(
@@ -101,13 +102,14 @@ FunctionDeclaration.Parameters = taggedComponent(
               refkey: refkey(),
               type: value,
             };
+          const optionality = descriptor.optional ? "?" : "";
           const sym = createTSSymbol({
             name: key,
             refkey: descriptor.refkey,
-            flags: TSSymbolFlags.ParameterSymbol,
+            tsFlags: TSSymbolFlags.ParameterSymbol,
           });
 
-          return <>{namePolicy.getName(sym.name, "parameter")}: {descriptor.type}</>;
+          return <>{namePolicy.getName(sym.name, "parameter")}{optionality}: {descriptor.type}</>;
         },
         { joiner: ", " },
       );

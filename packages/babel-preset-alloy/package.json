@@ -1,17 +1,17 @@
 {
-  "name": "babel-preset-alloy",
-  "version": "1.0.0",
+  "name": "@alloy-js/babel-preset",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@alloy-js/babel-plugin-alloy": "workspace:~",
+    "@alloy-js/babel-plugin": "workspace:~",
     "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:~"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module"
 }

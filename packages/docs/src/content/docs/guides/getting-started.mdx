@@ -73,7 +73,7 @@ Next, create the following `babel.config.js` file:
 <Code code={`
   export default {
     sourceMaps: true,
-    presets: ["@babel/preset-typescript", "babel-preset-alloy"]
+    presets: ["@babel/preset-typescript", "@alloy-js/babel-preset"]
   };
 `} lang="js" title="babel.config.js" frame="code"/>
 
@@ -112,7 +112,7 @@ Next, create your `vitest.config.js`:
         sourceMaps: "both",
         babelHelpers: "bundled",
         extensions: [".ts", ".tsx"],
-        presets: ["@babel/preset-typescript", "babel-preset-alloy"],
+        presets: ["@babel/preset-typescript", "@alloy-js/babel-preset"],
       }),
     ],
   });

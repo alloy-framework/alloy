@@ -20,7 +20,7 @@ import { isRefkey } from "./refkey.js";
 
 /**
  * The component tree is constructed as the result of transforming JSX with
- * `babel-preset-alloy`. Elements in the component tree (represented by the type
+ * `@alloy-js/babel-preset`. Elements in the component tree (represented by the type
  * Children) are three distinct types of things:
  *
  * 1. Primitive data types, which are either literal JSX or substitutions

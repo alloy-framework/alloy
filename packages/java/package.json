@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/java",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "",
   "exports": {
     ".": {
@@ -25,7 +25,7 @@
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",
@@ -37,7 +37,7 @@
     "@microsoft/api-extractor": "^7.47.7",
     "@rollup/plugin-babel": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

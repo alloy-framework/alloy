@@ -76,7 +76,7 @@ export function PackageDirectory(props: PackageDirectoryProps) {
 
   return <PackageDirectoryContext.Provider value={packageContext}>
       <Scope value={scope}>
-        <SourceDirectory path={packagePath}>
+        <SourceDirectory path={packageName}>
           <ChildPackageDirectory />
         </SourceDirectory>
       </Scope>

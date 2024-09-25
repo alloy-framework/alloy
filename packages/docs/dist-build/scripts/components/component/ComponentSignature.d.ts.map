@@ -1,1 +1,0 @@
-{"version":3,"file":"ComponentSignature.d.ts","sourceRoot":"","sources":["../../../../scripts/components/component/ComponentSignature.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,qBAAqB,CAAC;AAGxD,MAAM,WAAW,uBAAuB;IACtC,SAAS,EAAE,YAAY,CAAC;CACzB;AAED,wBAAgB,kBAAkB,CAAC,KAAK,EAAE,uBAAuB,6FAwDhE"}

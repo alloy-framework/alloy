@@ -14,6 +14,7 @@ it("declares class with no members", () => {
     {
       public class TestClass;
     }
+
   `);
 });
 
@@ -30,10 +31,11 @@ it("declares class with some members", () => {
     {
       public class TestClass
       {
-        public string memberOne;
+        public string MemberOne;
         private int memberTwo;
       }
     }
+
   `);
 });
 
@@ -54,14 +56,21 @@ it("declares class with some methods", () => {
         private virtual void MethodTwo() {}
       }
     }
+
   `);
 });
 
 it("declares class with params and return type", () => {
-  const params = {
-    IntParam: "int",
-    StringParam: "string",
-  };
+  const params = [
+    {
+      name: "IntParam",
+      type: "int",
+    },
+    {
+      name: "StringParam",
+      type: "string",
+    },
+  ];
   const res = utils.toSourceText(
     <csharp.Class accessModifier='public' name="TestClass">
       <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns="string" />
@@ -76,30 +85,40 @@ it("declares class with params and return type", () => {
         public string MethodOne(int intParam, string stringParam) {}
       }
     }
+
   `);
 });
 
 it("uses refkeys for members, params, and return type", () => {
   const inputTypeRefkey = core.refkey();
-  const params = {
-    IntParam: "int",
-    BodyParam: inputTypeRefkey,
-  };
+  const testResultTypeRefkey = core.refkey();
+  const enumTypeRefkey = core.refkey();
+
+  const params = [
+    {
+      name: "IntParam",
+      type: "int",
+    },
+    {
+      name: "BodyParam",
+      type: inputTypeRefkey,
+    },
+  ];
 
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name='TestCode'>
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier='public' name="TestEnum">
+          <csharp.Enum accessModifier='public' name="TestEnum" refkey={enumTypeRefkey}>
             <csharp.EnumMember name="One" />,
             <csharp.EnumMember name="Two" />
           </csharp.Enum>
           <csharp.Class accessModifier="public" name="TestInput" refkey={inputTypeRefkey} />
-          <csharp.Class accessModifier="public" name="TestResult" />
+          <csharp.Class accessModifier="public" name="TestResult" refkey={testResultTypeRefkey} />
           <csharp.Class accessModifier='public' name="TestClass">
-            <csharp.ClassMember accessModifier="private" name="MemberOne" type={core.refkey("TestEnum")} />
-            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={core.refkey("TestResult")}>
-              return new {core.refkey("TestResult")}();
+            <csharp.ClassMember accessModifier="private" name="MemberOne" type={enumTypeRefkey} />
+            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={testResultTypeRefkey}>
+              return new {testResultTypeRefkey}();
             </csharp.ClassMethod>
           </csharp.Class>
         </csharp.SourceFile>
@@ -126,6 +145,7 @@ it("uses refkeys for members, params, and return type", () => {
         }
       }
     }
+
   `);
 });
 
@@ -137,8 +157,8 @@ it("declares class with generic parameters", () => {
 
   const res = utils.toSourceText(
     <csharp.Class accessModifier='public' name="TestClass" typeParameters={typeParameters}>
-      <csharp.ClassMember accessModifier="public" name="MemberOne" type={typeParameters.T} />
-      <csharp.ClassMember accessModifier="private" name="MemberTwo" type={typeParameters.U} />
+      <csharp.ClassMember accessModifier="public" name="memberOne" type={typeParameters.T} />
+      <csharp.ClassMember accessModifier="private" name="memberTwo" type={typeParameters.U} />
     </csharp.Class>,
   );
 
@@ -147,10 +167,11 @@ it("declares class with generic parameters", () => {
     {
       public class TestClass<T, U>
       {
-        public T memberOne;
+        public T MemberOne;
         private U memberTwo;
       }
     }
+
   `);
 });
 
@@ -162,6 +183,75 @@ it("declares class with invalid members", () => {
     </csharp.Class>;
 
   expect(() => utils.toSourceText(decl)).toThrow(
-    "can't define an enum member outside of an enum scope",
+    "can't define an enum member outside of an enum-decl scope",
   );
+});
+
+it("declares class with constructor", () => {
+  const res = utils.toSourceText(
+    <csharp.Class accessModifier='public' name="TestClass">
+      <csharp.ClassConstructor accessModifier="public" />
+    </csharp.Class>,
+  );
+
+  expect(res).toBe(coretest.d`
+    namespace TestCode
+    {
+      public class TestClass
+      {
+        public TestClass() {}
+      }
+    }
+
+  `);
+});
+
+it("declares class with constructor params and assigns values to fields", () => {
+  const thisNameRefkey = core.refkey();
+  const thisSizeRefkey = core.refkey();
+  const paramNameRefkey = core.refkey();
+  const paramSizeRefkey = core.refkey();
+
+  const ctorParams = [
+    {
+      name: "name",
+      type: "string",
+      refkey: paramNameRefkey,
+    },
+    {
+      name: "size",
+      type: "int",
+      refkey: paramSizeRefkey,
+    },
+  ];
+
+  const res = utils.toSourceText(
+    <csharp.Class accessModifier='public' name="TestClass">
+      <csharp.ClassMember accessModifier="private" name="name" type="string" refkey={thisNameRefkey} />
+      <csharp.ClassMember accessModifier="private" name="size" type="int" refkey={thisSizeRefkey} />
+      <csharp.ClassConstructor accessModifier="public" parameters={ctorParams}>
+        {thisNameRefkey} = {paramNameRefkey};
+        {thisSizeRefkey} = {paramSizeRefkey};
+      </csharp.ClassConstructor>
+    </csharp.Class>,
+  );
+
+  // TODO: assignments to members should have this. prefix
+  // e.g. this.name = name;
+  expect(res).toBe(coretest.d`
+    namespace TestCode
+    {
+      public class TestClass
+      {
+        private string name;
+        private int size;
+        public TestClass(string name, int size)
+        {
+          name = name;
+          size = size;
+        }
+      }
+    }
+
+  `);
 });

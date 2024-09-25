@@ -18,6 +18,7 @@ export default tsEslint.config(
       "packages/babel-plugin-alloy/**/*",
       "packages/babel-preset-alloy/**/*",
       "packages/docs/**/*",
+      "samples/**/*", // for some reason eslint is unhappy with some files in here
     ],
   },
   eslint.configs.recommended,

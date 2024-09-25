@@ -1,6 +1,8 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  MemberScope,
+  OutputSymbolFlags,
   refkey,
   Refkey,
 } from "@alloy-js/core";
@@ -12,8 +14,6 @@ import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
 import { TypeDeclaration } from "./TypeDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { InterfaceDeclaration } from "./Interface.jsx";
 
@@ -39,6 +39,11 @@ export interface BaseDeclarationProps {
    */
   default?: boolean;
 
+  /**
+   * Flags for the symbol created by this component.
+   */
+  flags?: OutputSymbolFlags;
+
   children?: Children;
 
   /**
@@ -60,13 +65,21 @@ export interface DeclarationProps extends BaseDeclarationProps {
  * directly, and instead prefer components for specific declarations, e.g.
  * {@link EnumDeclaration}, {@link InterfaceDeclaration},
  * {@link TypeDeclaration}, etc.
+ *
+ * @remarks
+ *
+ * This component will wrap its contents in a {@link @alloy-js/core#Declaration} component,
+ * so children can make use of declaration context. Additionally, if the
+ * provided symbol flags have {@link @alloy-js/core#OutputSymbolFlags.MemberContainer}, this
+ * component will create a {@link @alloy-js/core#MemberScope}.
+ *
  */
 export function Declaration(props: DeclarationProps) {
   const namePolicy = useTSNamePolicy();
 
-  let flags: TSSymbolFlags = TSSymbolFlags.None;
+  let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
   if (props.kind && props.kind === "type") {
-    flags &= TSSymbolFlags.TypeSymbol;
+    tsFlags &= TSSymbolFlags.TypeSymbol;
   }
 
   const sym = createTSSymbol({
@@ -74,10 +87,19 @@ export function Declaration(props: DeclarationProps) {
     refkey: props.refkey ?? refkey(props.name),
     export: props.export,
     default: props.default,
-    flags,
+    flags: props.flags,
+    tsFlags,
   });
 
+  let children: Children;
+
+  if (sym.flags & OutputSymbolFlags.MemberContainer) {
+    children = <MemberScope owner={sym}>{props.children}</MemberScope>;
+  } else {
+    children = () => props.children;
+  }
+
   return <CoreDeclaration symbol={sym}>
-    {props.export ? "export " : ""}{props.default ? "default " : ""}{props.children}
+    {props.export ? "export " : ""}{props.default ? "default " : ""}{children}
   </CoreDeclaration>;
 }

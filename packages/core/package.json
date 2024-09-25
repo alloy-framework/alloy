@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/core",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "",
   "main": "./dist/src/index.js",
   "exports": {
@@ -19,6 +19,10 @@
     "./stc": {
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"
+    },
+    "./components": {
+      "development": "./src/components/index.ts",
+      "import": "./dist/src/components/index.js"
     }
   },
   "scripts": {
@@ -36,12 +40,12 @@
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@vue/reactivity": "catalog:",
-    "babel-preset-alloy": "workspace:~",
+    "@alloy-js/babel-preset": "workspace:~",
     "pathe": "catalog:"
   },
   "devDependencies": {

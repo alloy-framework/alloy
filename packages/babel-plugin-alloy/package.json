@@ -1,6 +1,6 @@
 {
-  "name": "@alloy-js/babel-plugin-alloy",
-  "version": "1.0.0",
+  "name": "@alloy-js/babel-plugin",
+  "version": "0.1.0",
   "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc -p .",

@@ -4,6 +4,8 @@
     { "path": "packages/core" },
     { "path": "packages/typescript" },
     { "path": "packages/prettier-plugin-alloy" },
-    { "path": "packages/java" }
+    { "path": "packages/java" },
+    { "path": "samples/client-emitter" },
+    { "path": "samples/basic-project" }
   ]
 }

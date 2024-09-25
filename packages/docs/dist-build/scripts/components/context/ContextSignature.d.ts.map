@@ -1,1 +1,0 @@
-{"version":3,"file":"ContextSignature.d.ts","sourceRoot":"","sources":["../../../../scripts/components/context/ContextSignature.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,qBAAqB,CAAC;AAGtD,MAAM,WAAW,qBAAqB;IACpC,OAAO,EAAE,UAAU,CAAC;CACrB;AAED,wBAAgB,gBAAgB,CAAC,KAAK,EAAE,qBAAqB,6FAG5D"}

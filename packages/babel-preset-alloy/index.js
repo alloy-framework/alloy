@@ -1,4 +1,4 @@
-import alloyTransform from "@alloy-js/babel-plugin-alloy";
+import alloyTransform from "@alloy-js/babel-plugin";
 import jsxTransform from "@alloy-js/babel-plugin-jsx-dom-expressions";
 
 export default function (context, options = {}) {

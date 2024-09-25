@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/babel-plugin-jsx-dom-expressions",
-  "description": "A JSX to DOM plugin that wraps expressions for fine grained change detection",
+  "description": "A JSX to DOM plugin that wraps expressions for fine grained change detection, modified for Alloy",
   "version": "0.37.21",
   "author": "Ryan Carniato",
   "license": "MIT",

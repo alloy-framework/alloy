@@ -1,10 +1,8 @@
-import { Children, code } from "@alloy-js/core";
+import { Children, code, Name } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { Declaration, DeclarationProps } from "./Declaration.js";
-import { Name } from "./Name.js";
+import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 
-export interface InterfaceDeclarationProps
-  extends Omit<DeclarationProps, "nameKind"> {
+export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
 }
 
@@ -38,6 +36,7 @@ export function InterfaceExpression(props: InterfaceExpressionProps) {
     }
   `;
 }
+
 export interface InterfaceMemberProps {
   name?: string;
   indexer?: Children;

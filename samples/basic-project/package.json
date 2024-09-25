@@ -1,0 +1,38 @@
+{
+  "name": "@alloy-js/sample",
+  "private": "true",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
+    "build-tsc": "tsc -p .",
+    "build": "npm run build-src && npm run build-tsc",
+    "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
+    "watch-tsc": "tsc -p . --watch",
+    "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\""
+  },
+  "keywords": [],
+  "author": "brian.terlson@microsoft.com",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@alloy-js/java": "workspace:~"
+  },
+  "devDependencies": {
+    "@babel/cli": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@rollup/plugin-babel": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/node": "catalog:",
+    "@alloy-js/babel-preset": "workspace:~",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "overrides": {
+    "esbuild": "0.23"
+  },
+  "type": "module"
+}

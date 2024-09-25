@@ -1,3 +1,5 @@
+import { markRaw } from "@vue/reactivity";
+
 const objectIds = new WeakMap<WeakKey, Refkey>();
 let objId = 0;
 
@@ -17,11 +19,16 @@ const RefkeySym: unique symbol = Symbol();
 export type Refkey = { key: string; [RefkeySym]: true };
 
 function createRefkey(key: string): Refkey {
-  return {
+  const refkey: Refkey = {
     key,
     [RefkeySym]: true,
   };
+
+  markRaw(refkey);
+
+  return refkey;
 }
+
 export function isRefkey(value: unknown): value is Refkey {
   return (
     typeof value === "object" &&

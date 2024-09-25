@@ -1,1 +1,0 @@
-{"version":3,"file":"ComponentProps.d.ts","sourceRoot":"","sources":["../../../../scripts/components/component/ComponentProps.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,gCAAgC,CAAC;AAGnE,MAAM,WAAW,mBAAmB;IAClC,QAAQ,CAAC,EAAE,YAAY,CAAC;CACzB;AAED,wBAAgB,cAAc,CAAC,KAAK,EAAE,mBAAmB,8FAMxD"}

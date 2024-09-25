@@ -14,6 +14,7 @@ it("declares enum with no members", () => {
     {
       public enum TestEnum;
     }
+
   `);
 });
 
@@ -34,6 +35,7 @@ it("declares enum with members", () => {
         Two
       }
     }
+
   `);
 });
 
@@ -54,6 +56,7 @@ it("applies naming policy to enum and members", () => {
         Two
       }
     }
+
   `);
 });
 
@@ -87,6 +90,7 @@ it("can reference things by refkey", () => {
       TestEnum;
       TestEnum.Two;
     }
+
   `);
 });
 
@@ -129,6 +133,7 @@ it("can reference things by refkey across files", () => {
       OtherEnum;
       OtherEnum.Bar;
     }
+
   `);
 
   expect(res.contents[1].path).toBe("Other.cs");
@@ -143,5 +148,6 @@ it("can reference things by refkey across files", () => {
       OtherEnum;
       OtherEnum.Bar;
     }
+
   `);
 });

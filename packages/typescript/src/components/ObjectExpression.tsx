@@ -1,21 +1,17 @@
 import {
+  AssignmentContext,
   Children,
   computed,
+  createAssignmentContext,
+  getAssignmentSymbol,
   mapJoin,
+  MemberScope,
   memo,
+  OutputSymbolFlags,
   Refkey,
-  Scope,
-  useBinder,
-  useContext,
 } from "@alloy-js/core";
-import {
-  createTSMemberScope,
-  createTSSymbol,
-  TSSymbolFlags,
-  useTSScope,
-} from "../symbols/index.js";
+import { createTSSymbol } from "../symbols/index.js";
 import { ValueExpression } from "./ValueExpression.js";
-import { AssignmentContext } from "./VarDeclaration.jsx";
 
 export interface ObjectExpressionProps {
   children?: Children;
@@ -26,13 +22,10 @@ export interface ObjectExpressionProps {
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
-  const assignmentContext = useContext(AssignmentContext);
-  if (assignmentContext) {
-    assignmentContext.target.memberScope = createTSMemberScope(
-      useBinder(),
-      useTSScope(),
-      assignmentContext.target,
-    );
+  const assignmentSymbol = getAssignmentSymbol();
+
+  if (assignmentSymbol) {
+    assignmentSymbol.binder.addStaticMembersToSymbol(assignmentSymbol);
   }
 
   const elements = computed(() => {
@@ -69,12 +62,12 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     if (elements.value.length === 0) {
       return "{}";
     } else {
-      if (assignmentContext) {
+      if (assignmentSymbol) {
         return <>
           {"{"}
-            <Scope value={assignmentContext.target.memberScope}>
+            <MemberScope owner={assignmentSymbol}>
               {elements.value}
-            </Scope>
+            </MemberScope>
           {"}"}
         </>;
       } else {
@@ -112,7 +105,7 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     sym = createTSSymbol({
       name: props.name,
       refkey: props.refkey,
-      flags: TSSymbolFlags.MemberSymbol,
+      flags: OutputSymbolFlags.StaticMember,
     });
   }
 
@@ -127,9 +120,7 @@ export function ObjectProperty(props: ObjectPropertyProps) {
   }
 
   const assignmentContext: AssignmentContext | undefined = sym ?
-    {
-      target: sym,
-    }
+    createAssignmentContext(sym)
   : undefined;
   return <>
     {sym ? sym.name : name}: <AssignmentContext.Provider value={assignmentContext}>

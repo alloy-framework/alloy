@@ -1,20 +1,16 @@
 import {
   Declaration as CoreDeclaration,
-  Scope,
+  MemberScope,
+  Name,
+  OutputSymbolFlags,
   mapJoin,
   refkey,
   useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import {
-  createTSMemberScope,
-  createTSSymbol,
-  useTSScope,
-} from "../symbols/index.js";
+import { createTSSymbol, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
-import { Name } from "./Name.js";
-
 export interface EnumDeclarationProps extends BaseDeclarationProps {
   /**
    * A JS object representing the enum member names and values.
@@ -36,9 +32,8 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     refkey: props.refkey ?? refkey(name),
     default: props.default,
     export: props.export,
+    flags: OutputSymbolFlags.StaticMemberContainer,
   });
-
-  sym.memberScope = createTSMemberScope(binder, scope, sym);
 
   const jsValueMembers = mapJoin(
     Object.entries(props.jsValue ?? {}),
@@ -50,9 +45,9 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
 
   return <CoreDeclaration symbol={sym}>
     {props.export ? "export " : ""}{props.default ? "default " : ""}enum <Name /> {"{"}
-      <Scope value={sym.memberScope}>
+      <MemberScope owner={sym}>
         {jsValueMembers}{jsValueMembers.length > 0 && props.children && ",\n"}{props.children}
-      </Scope>
+      </MemberScope>
     {"}"}
   </CoreDeclaration>;
 }

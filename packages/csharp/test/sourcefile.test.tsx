@@ -21,7 +21,7 @@ it("defines multiple source files with unique content", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass1;
+        public class TestClass1;
     }
 
   `);
@@ -30,7 +30,7 @@ it("defines multiple source files with unique content", () => {
   expect(res.contents[1].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass2;
+        public class TestClass2;
     }
 
   `);

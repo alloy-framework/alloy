@@ -29,7 +29,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace Namespace1
     {
-      public class Model1;
+        public class Model1;
     }
 
   `);
@@ -38,7 +38,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   expect(res.contents[1].contents).toBe(coretest.d`
     namespace Namespace1
     {
-      public class Model2;
+        public class Model2;
     }
 
   `);
@@ -47,7 +47,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   expect(res.contents[2].contents).toBe(coretest.d`
     namespace Namespace2
     {
-      public class Model3;
+        public class Model3;
     }
 
   `);
@@ -56,7 +56,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   expect(res.contents[3].contents).toBe(coretest.d`
     namespace Namespace2
     {
-      public class Model4;
+        public class Model4;
     }
 
   `);

@@ -76,13 +76,13 @@ it("adds using statement across namespaces", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace Models
     {
-      public class Input;
-      public class Output;
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
+        public class Input;
+        public class Output;
+        public enum TestEnum
+        {
+            One,
+            Two
+        }
     }
 
   `);
@@ -93,11 +93,11 @@ it("adds using statement across namespaces", () => {
 
     namespace Client
     {
-      public class Client
-      {
-        public Output MethodOne(Input bodyParam) {}
-      }
-      TestEnum.Two;
+        public class Client
+        {
+            public Output MethodOne(Input bodyParam) {}
+        }
+        TestEnum.Two;
     }
 
   `);

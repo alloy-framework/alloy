@@ -12,7 +12,7 @@ it("declares enum with no members", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum;
+        public enum TestEnum;
     }
 
   `);
@@ -29,11 +29,11 @@ it("declares enum with members", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
+        public enum TestEnum
+        {
+            One,
+            Two
+        }
     }
 
   `);
@@ -50,11 +50,11 @@ it("applies naming policy to enum and members", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
+        public enum TestEnum
+        {
+            One,
+            Two
+        }
     }
 
   `);
@@ -82,13 +82,13 @@ it("can reference things by refkey", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
-      TestEnum;
-      TestEnum.Two;
+        public enum TestEnum
+        {
+            One,
+            Two
+        }
+        TestEnum;
+        TestEnum.Two;
     }
 
   `);
@@ -125,13 +125,13 @@ it("can reference things by refkey across files", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
-      OtherEnum;
-      OtherEnum.Bar;
+        public enum TestEnum
+        {
+            One,
+            Two
+        }
+        OtherEnum;
+        OtherEnum.Bar;
     }
 
   `);
@@ -140,13 +140,13 @@ it("can reference things by refkey across files", () => {
   expect(res.contents[1].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public enum OtherEnum
-      {
-        Foo,
-        Bar
-      }
-      OtherEnum;
-      OtherEnum.Bar;
+        public enum OtherEnum
+        {
+            Foo,
+            Bar
+        }
+        OtherEnum;
+        OtherEnum.Bar;
     }
 
   `);

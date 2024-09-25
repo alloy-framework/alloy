@@ -1,6 +1,5 @@
 ---
-# Change versionKind to one of: breaking, feature, fix, internal
-changeKind: fix
+changeKind: feature
 packages:
   - "@alloy-js/java"
 ---

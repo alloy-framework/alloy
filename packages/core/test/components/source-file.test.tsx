@@ -62,7 +62,12 @@ it("can change its indent level", () => {
     </SourceFile>
   </Output>,
   ).toRenderTo(`
+    hello
+        there
 
-
+    base
+        indented
+        base
+            indented
   `);
 });

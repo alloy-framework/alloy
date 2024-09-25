@@ -1,6 +1,6 @@
 import { code, Declaration, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
 
@@ -46,6 +46,67 @@ it("declares bodyless function", () => {
       public void testMethod();
     }
   `);
+});
+
+describe("can throw errors", () => {
+  it("of generic Exception", () => {
+    const res = toSourceText(
+      <jv.Declaration name="Test">
+        {code`
+        class Test {
+          ${<jv.Method public name="testMethod" throws={'Exception'} />}
+        }
+      `}
+      </jv.Declaration>,
+    );
+
+    expect(res).toBe(d`
+    package me.test.code;
+    
+    class Test {
+      public void testMethod() throws Exception;
+    }
+  `);
+  });
+
+  it("of custom Exception", () => {
+    const res = testRender(
+      <>
+        <jv.SourceFile path="Test.java">
+          <jv.Declaration name="Test">
+            {code`
+              class Test {
+                ${<jv.Method public name="testMethod" throws={refkey('CustomError')} />}
+              }
+            `}
+          </jv.Declaration>
+        </jv.SourceFile>
+        <jv.PackageDirectory package="errors">
+          <jv.SourceFile path="CustomError.java">
+            <jv.Declaration name="CustomError">
+              {code`
+                public class CustomError extends Exception {
+                }
+              `}
+            </jv.Declaration>
+          </jv.SourceFile>
+
+        </jv.PackageDirectory>
+      </>,
+    );
+
+    assertFileContents(res, {
+      "Test.java": d`
+      package me.test.code;
+      
+      import me.test.code.errors.CustomError;
+
+      class Test {
+        public void testMethod() throws CustomError;
+      }
+    `,
+    });
+  });
 });
 
 it("declares return type", () => {

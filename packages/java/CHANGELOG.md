@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/java
 
+## 0.3.0
+
+### Features
+
+- [#37](https://github.com/alloy-framework/alloy/pull/37) @alloy-js/java: Allowing specifying `throws` clause to methods
+
+
 
 
 ## 0.2.0

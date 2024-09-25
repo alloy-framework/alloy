@@ -41,7 +41,7 @@ it("defines a project directory file with multiple source files", () => {
   expect(srcDir.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass1;
+        public class TestClass1;
     }
 
   `);
@@ -50,7 +50,7 @@ it("defines a project directory file with multiple source files", () => {
   expect(srcDir.contents[1].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass2;
+        public class TestClass2;
     }
 
   `);
@@ -94,7 +94,7 @@ it("defines a project directory file with multiple source files and a custom TFM
   expect(srcDir.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass1;
+        public class TestClass1;
     }
 
   `);
@@ -103,7 +103,7 @@ it("defines a project directory file with multiple source files and a custom TFM
   expect(srcDir.contents[1].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass2;
+        public class TestClass2;
     }
 
   `);

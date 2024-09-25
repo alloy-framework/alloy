@@ -49,7 +49,7 @@ export function SourceFile(props: SourceFileProps) {
     addUsing,
   };
 
-  return <core.SourceFile path={props.path} filetype="cs" reference={Reference}>
+  return <core.SourceFile path={props.path} filetype="cs" reference={Reference} indent="    ">
       <SourceFileContext.Provider value={sourceFileCtx}>
         <core.Scope name={props.path} kind="source-file">
           {using.length > 0 ? (

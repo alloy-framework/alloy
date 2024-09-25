@@ -12,7 +12,7 @@ it("declares class with no members", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass;
+        public class TestClass;
     }
 
   `);
@@ -29,11 +29,11 @@ it("declares class with some members", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass
-      {
-        public string MemberOne;
-        private int memberTwo;
-      }
+        public class TestClass
+        {
+            public string MemberOne;
+            private int memberTwo;
+        }
     }
 
   `);
@@ -50,11 +50,11 @@ it("declares class with some methods", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass
-      {
-        public void MethodOne() {}
-        private virtual void MethodTwo() {}
-      }
+        public class TestClass
+        {
+            public void MethodOne() {}
+            private virtual void MethodTwo() {}
+        }
     }
 
   `);
@@ -80,10 +80,10 @@ it("declares class with params and return type", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass
-      {
-        public string MethodOne(int intParam, string stringParam) {}
-      }
+        public class TestClass
+        {
+            public string MethodOne(int intParam, string stringParam) {}
+        }
     }
 
   `);
@@ -129,21 +129,21 @@ it("uses refkeys for members, params, and return type", () => {
   expect(res.contents[0].contents).toBe(coretest.d`
     namespace TestCode
     {
-      public enum TestEnum
-      {
-        One,
-        Two
-      }
-      public class TestInput;
-      public class TestResult;
-      public class TestClass
-      {
-        private TestEnum memberOne;
-        public TestResult MethodOne(int intParam, TestInput bodyParam)
+        public enum TestEnum
         {
-          return new TestResult();
+            One,
+            Two
         }
-      }
+        public class TestInput;
+        public class TestResult;
+        public class TestClass
+        {
+            private TestEnum memberOne;
+            public TestResult MethodOne(int intParam, TestInput bodyParam)
+            {
+                return new TestResult();
+            }
+        }
     }
 
   `);
@@ -165,11 +165,11 @@ it("declares class with generic parameters", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass<T, U>
-      {
-        public T MemberOne;
-        private U memberTwo;
-      }
+        public class TestClass<T, U>
+        {
+            public T MemberOne;
+            private U memberTwo;
+        }
     }
 
   `);
@@ -197,10 +197,10 @@ it("declares class with constructor", () => {
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass
-      {
-        public TestClass() {}
-      }
+        public class TestClass
+        {
+            public TestClass() {}
+        }
     }
 
   `);
@@ -241,16 +241,16 @@ it("declares class with constructor params and assigns values to fields", () => 
   expect(res).toBe(coretest.d`
     namespace TestCode
     {
-      public class TestClass
-      {
-        private string name;
-        private int size;
-        public TestClass(string name, int size)
+        public class TestClass
         {
-          name = name;
-          size = size;
+            private string name;
+            private int size;
+            public TestClass(string name, int size)
+            {
+                name = name;
+                size = size;
+            }
         }
-      }
     }
 
   `);

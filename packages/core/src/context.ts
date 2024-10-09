@@ -11,6 +11,7 @@ export interface ComponentContext<T> {
   id: symbol;
   default: T | undefined;
   Provider: ComponentDefinition<ContextProviderProps<T>>;
+  name?: string;
 }
 
 export interface ContextProviderProps<T = unknown> {
@@ -31,13 +32,17 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
   return context.default;
 }
 
+export const contextsByKey = new Map<symbol, ComponentContext<any>>();
+
 export function createContext<T = unknown>(
   defaultValue?: T,
+  name?: string,
 ): ComponentContext<T> {
-  const id = Symbol("context");
-  return {
+  const id = Symbol(name ?? "context");
+  const ctx = {
     id,
     default: defaultValue,
+    name,
     Provider(props: ContextProviderProps<T>) {
       const context = getContext();
 
@@ -50,4 +55,10 @@ export function createContext<T = unknown>(
       return rendered.value;
     },
   };
+  contextsByKey.set(id, ctx);
+  return ctx;
+}
+
+export function createNamedContext<T>(name: string, defaultValue?: T) {
+  return createContext<T>(defaultValue, name);
 }

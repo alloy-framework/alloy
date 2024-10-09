@@ -1,7 +1,7 @@
 import {
   Children,
   ComponentContext,
-  createContext,
+  createNamedContext,
   Ref,
   Scope,
   shallowRef,
@@ -30,7 +30,8 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
   path?: string;
 }
 
-export const PackageContext: ComponentContext<PackageContext> = createContext();
+export const PackageContext: ComponentContext<PackageContext> =
+  createNamedContext("@alloy-js/typescript PackageDirectory");
 
 export function usePackage() {
   const ctx = useContext(PackageContext);

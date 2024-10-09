@@ -1,5 +1,9 @@
 import { OutputSymbol } from "../binder.js";
-import { ComponentContext, createContext, useContext } from "../context.js";
+import {
+  ComponentContext,
+  createNamedContext,
+  useContext,
+} from "../context.js";
 
 export interface AssignmentContext {
   /**
@@ -31,7 +35,7 @@ export interface AssignmentContext {
  * symbols for the object value's properties.
  */
 export const AssignmentContext: ComponentContext<AssignmentContext> =
-  createContext();
+  createNamedContext("Assignment");
 
 /**
  * Creates a new {@link (AssignmentContext:interface)}.

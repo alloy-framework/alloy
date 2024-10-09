@@ -238,6 +238,12 @@ importers:
       '@vue/reactivity':
         specifier: 'catalog:'
         version: 3.4.37
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      cli-table3:
+        specifier: ^0.6.5
+        version: 0.6.5
       pathe:
         specifier: 'catalog:'
         version: 1.1.2
@@ -763,6 +769,10 @@ packages:
     resolution: {integrity: sha512-vAMCUnr0Ky+KoQEIFXPJ/rP8+Piw6DsSTB8fNQp8yqknHH+yQruJJr2vtG+MPmBz5/hhNJd5xwuUcl2Bdtau7Q==}
     engines: {node: '>=16.0.0'}
     hasBin: true
+
+  '@colors/colors@1.5.0':
+    resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
+    engines: {node: '>=0.1.90'}
 
   '@ctrl/tinycolor@4.1.0':
     resolution: {integrity: sha512-WyOx8cJQ+FQus4Mm4uPIZA64gbk3Wxh0so5Lcii0aJifqwoVOlfFtorjLE0Hen4OYyHZMXDWqMmaQemBhgxFRQ==}
@@ -2081,6 +2091,10 @@ packages:
   cli-spinners@2.9.2:
     resolution: {integrity: sha512-ywqV+5MmyL4E7ybXgKys4DugZbX0FC6LnwrhjuykIjnK9k8OQacQ7axGKnjDXWNhns0xot3bZI5h55H8yo9cJg==}
     engines: {node: '>=6'}
+
+  cli-table3@0.6.5:
+    resolution: {integrity: sha512-+W/5efTR7y5HRD7gACw9yQjqMVvEMLBHmboM/kPWam+H+Hmyrgjh6YncVKK122YZkXrLudzTuAukUw9FnMf7IQ==}
+    engines: {node: 10.* || >= 12.*}
 
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -4904,6 +4918,9 @@ snapshots:
       - bluebird
       - supports-color
 
+  '@colors/colors@1.5.0':
+    optional: true
+
   '@ctrl/tinycolor@4.1.0': {}
 
   '@emmetio/abbreviation@2.3.3':
@@ -6413,6 +6430,12 @@ snapshots:
       restore-cursor: 5.1.0
 
   cli-spinners@2.9.2: {}
+
+  cli-table3@0.6.5:
+    dependencies:
+      string-width: 4.2.3
+    optionalDependencies:
+      '@colors/colors': 1.5.0
 
   cliui@8.0.1:
     dependencies:

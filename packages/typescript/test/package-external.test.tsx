@@ -5,6 +5,7 @@ import * as ts from "../src/index.js";
 import { findFile } from "./utils.js";
 
 it("imports external packages", () => {
+  debug.component.tree();
   const res = render(
     <Output>
       <ts.PackageDirectory name="greeting-lib" path="greeting-lib" version="1.0.0">

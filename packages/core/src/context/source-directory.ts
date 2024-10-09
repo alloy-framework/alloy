@@ -1,4 +1,4 @@
-import { ComponentContext, createContext } from "../context.js";
+import { ComponentContext, createNamedContext } from "../context.js";
 import { SourceFileContext } from "./source-file.js";
 
 export interface SourceDirectoryContext {
@@ -8,4 +8,4 @@ export interface SourceDirectoryContext {
 }
 
 export const SourceDirectoryContext: ComponentContext<SourceDirectoryContext> =
-  createContext();
+  createNamedContext("SourceDirectory");

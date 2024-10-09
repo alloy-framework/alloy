@@ -19,3 +19,4 @@ export * from "./name-policy.js";
 export * from "./refkey.js";
 export * from "./render.js";
 export * from "./utils.js";
+import "./debug.js";

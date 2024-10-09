@@ -30,6 +30,12 @@ export interface Context {
 
   // store random info about the node
   meta?: Record<string, any>;
+
+  /**
+   * When this context was created by a component, this will
+   * be the component that created it.
+   */
+  componentOwner?: ComponentCreator<unknown>;
 }
 
 let globalContext: Context | null = null;
@@ -37,13 +43,16 @@ export function getContext() {
   return globalContext;
 }
 
-export function root<T>(fn: (d: Disposable) => T, src?: string): T {
+export function root<T>(
+  fn: (d: Disposable) => T,
+  componentOwner?: ComponentCreator<any>,
+): T {
   globalContext = {
-    src,
+    componentOwner,
     disposables: [],
     owner: globalContext,
     context: {},
-  } as any;
+  };
   let ret;
   try {
     ret = untrack(() =>

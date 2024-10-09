@@ -1,7 +1,7 @@
 import {
   ComponentContext,
   SourceFile as CoreSourceFile,
-  createContext,
+  createNamedContext,
   Scope,
   SourceDirectoryContext,
   useBinder,
@@ -21,7 +21,7 @@ export interface SourceFileContext {
 }
 
 export const SourceFileContext: ComponentContext<SourceFileContext> =
-  createContext();
+  createNamedContext("@alloy-js/typescript SourceFile");
 
 export function useSourceFile() {
   return useContext(SourceFileContext)!;

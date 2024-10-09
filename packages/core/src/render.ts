@@ -250,7 +250,7 @@ export function renderTree(children: Children) {
   try {
     root(() => {
       renderWorker(rootElem, children, state);
-    }, "render worker");
+    });
   } catch (e) {
     printRenderStack();
     throw e;
@@ -314,7 +314,7 @@ function appendChild(
       popStack();
       node.push(componentRoot);
       traceRender("appendChild:component-done", printChild(child));
-    }, child.component.name);
+    }, child);
   } else if (typeof child === "function") {
     traceRender("appendChild:memo", child.toString());
     const index = node.length;

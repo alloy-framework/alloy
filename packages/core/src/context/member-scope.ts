@@ -1,5 +1,9 @@
 import { OutputScope } from "../binder.js";
-import { ComponentContext, createContext, useContext } from "../context.js";
+import {
+  ComponentContext,
+  createNamedContext,
+  useContext,
+} from "../context.js";
 
 /**
  * The member scope context provides the instance and static member scopes that
@@ -10,7 +14,7 @@ export interface MemberScopeContext {
   instanceMembers?: OutputScope;
 }
 export const MemberScopeContext: ComponentContext<MemberScopeContext> =
-  createContext();
+  createNamedContext("MemberScope");
 
 export function useMemberScope() {
   return useContext(MemberScopeContext)!;

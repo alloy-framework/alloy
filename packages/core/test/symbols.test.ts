@@ -404,3 +404,105 @@ describe("instantiating members", () => {
     ).toBeDefined();
   });
 });
+
+describe("symbol name resolution", () => {
+  it("resolves static symbols", () => {
+    const binder = createOutputBinder();
+    const {
+      symbols: { static: staticSym },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          root: {
+            flags:
+              OutputSymbolFlags.InstanceMemberContainer |
+              OutputSymbolFlags.StaticMemberContainer,
+            staticMembers: {
+              static: {
+                flags: OutputSymbolFlags.StaticMember,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const result = binder.resolveFQN("root.root.static");
+    expect(result.value).toEqual(staticSym);
+  });
+
+  it("resolves static symbols that are added later", () => {
+    const binder = createOutputBinder();
+    const result = binder.resolveFQN("root.root.static");
+    expect(result.value).toBeUndefined();
+
+    const {
+      symbols: { static: staticSym },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          root: {
+            flags:
+              OutputSymbolFlags.InstanceMemberContainer |
+              OutputSymbolFlags.StaticMemberContainer,
+            staticMembers: {
+              static: {
+                flags: OutputSymbolFlags.StaticMember,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    expect(result.value).toEqual(staticSym);
+  });
+
+  it("resolves instance symbols", () => {
+    const binder = createOutputBinder();
+    const {
+      symbols: { instance },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          root: {
+            flags: OutputSymbolFlags.InstanceMemberContainer,
+            instanceMembers: {
+              instance: {
+                flags: OutputSymbolFlags.InstanceMember,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const result = binder.resolveFQN("root.root#instance");
+    expect(result.value).toEqual(instance);
+  });
+
+  it("resolves instance symbols that are added later", () => {
+    const binder = createOutputBinder();
+    const result = binder.resolveFQN("root.root#instance");
+    expect(result.value).toBeUndefined();
+
+    const {
+      symbols: { instance },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          root: {
+            flags: OutputSymbolFlags.InstanceMemberContainer,
+            instanceMembers: {
+              instance: {
+                flags: OutputSymbolFlags.InstanceMember,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    expect(result.value).toEqual(instance);
+  });
+});

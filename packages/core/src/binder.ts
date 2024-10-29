@@ -1,8 +1,9 @@
-import { memo } from "@alloy-js/core/jsx-runtime";
+import { memo, untrack } from "@alloy-js/core/jsx-runtime";
 import {
   computed,
   effect,
   reactive,
+  ref,
   Ref,
   ShallowRef,
   shallowRef,
@@ -302,6 +303,45 @@ export interface Binder {
     key: Refkey,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
+  /**
+   * Find a symbol with a given name in the given scope. Returns a ref
+   * for the symbol, such that when the symbol is available, the ref value
+   * will update.
+   */
+  findSymbolName<
+    TScope extends OutputScope = OutputScope,
+    TSymbol extends OutputSymbol = OutputSymbol,
+  >(
+    currentScope: TScope | undefined,
+    name: string,
+  ): Ref<TSymbol | undefined>;
+
+  findScopeName<TScope extends OutputScope = OutputScope>(
+    currentScope: TScope | undefined,
+    name: string,
+  ): Ref<TScope | undefined>;
+
+  /**
+   * Resolve a fully qualified name to a symbol. The syntax for a fully
+   * qualified name is as follows:
+   *
+   * * `::` accesses a nested scope
+   * * `.` accesses a nested static member
+   * * `#` accesses a nested instance member
+   *
+   * Per-language packages may provide their own resolveFQN function
+   * that uses syntax more natural to that  language.
+   */
+  resolveFQN<
+    TScope extends OutputScope = OutputScope,
+    TSymbol extends OutputSymbol = OutputSymbol,
+  >(
+    fqn: string,
+  ): Ref<TSymbol | TScope | undefined>;
+
+  /**
+   * The global scope. This is the root scope for all symbols.
+   */
   globalScope: OutputScope;
 }
 
@@ -377,6 +417,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     addStaticMembersToSymbol,
     addInstanceMembersToSymbol,
     instantiateSymbolInto,
+    findSymbolName,
+    findScopeName,
+    resolveFQN: resolveFQN as any,
     globalScope: undefined as any,
   };
 
@@ -396,6 +439,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
   const knownDeclarations = new Map<Refkey, OutputSymbol>();
   const waitingDeclarations = new Map<Refkey, Ref<OutputSymbol | undefined>>();
+  const waitingSymbolNames = new Map<
+    OutputScope,
+    Map<string, Ref<OutputSymbol | undefined>>
+  >();
+  const waitingScopeNames = new Map<
+    OutputScope,
+    Map<string, Ref<OutputScope | undefined>>
+  >();
 
   return binder;
 
@@ -452,6 +503,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
     if (parentScope) {
       parentScope.children.add(scope);
+    }
+
+    if (waitingScopeNames.has(parentScope!)) {
+      const waiting = waitingScopeNames.get(parentScope!);
+      if (waiting?.has(name)) {
+        const ref = waiting.get(name)!;
+        ref.value = scope;
+      }
     }
 
     return scope as T;
@@ -757,6 +816,121 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       const signal = waitingDeclarations.get(refkey)!;
       signal.value = symbol;
     }
+
+    const waitingScope = waitingSymbolNames.get(symbol.scope);
+    if (waitingScope) {
+      const waitingName = waitingScope.get(symbol.name);
+      if (waitingName) {
+        waitingName.value = symbol;
+      }
+    }
+  }
+
+  function findSymbolName<TSymbol extends OutputSymbol = OutputSymbol>(
+    scope: OutputScope | undefined,
+    name: string,
+  ): Ref<TSymbol | undefined> {
+    return untrack(() => {
+      scope ??= binder.globalScope;
+      for (const sym of scope.symbols) {
+        if (sym.name === name) {
+          return shallowRef(sym) as Ref<TSymbol>;
+        }
+      }
+
+      const symRef = shallowRef<OutputSymbol | undefined>(undefined);
+      if (!waitingSymbolNames.has(scope)) {
+        waitingSymbolNames.set(scope, new Map());
+      }
+      const waiting = waitingSymbolNames.get(scope)!;
+      waiting.set(name, symRef);
+      return symRef as Ref<TSymbol | undefined>;
+    });
+  }
+
+  function findScopeName<TScope extends OutputScope = OutputScope>(
+    scope: OutputScope | undefined,
+    name: string,
+  ): Ref<TScope | undefined> {
+    return untrack(() => {
+      scope ??= binder.globalScope;
+      for (const child of scope.children) {
+        if (child.name === name) {
+          return ref(child) as Ref<TScope>;
+        }
+      }
+
+      const scopeRef = shallowRef<OutputScope | undefined>(undefined);
+      if (!waitingScopeNames.has(scope)) {
+        waitingScopeNames.set(scope, new Map());
+      }
+      const waiting = waitingScopeNames.get(scope)!;
+      waiting.set(name, scopeRef);
+
+      return scopeRef as Ref<TScope | undefined>;
+    });
+  }
+
+  function findScopeOrSymbolName(scope: OutputScope, name: string) {
+    return untrack(() => {
+      return computed(() => {
+        return (
+          findSymbolName(scope, name).value ?? findScopeName(scope, name).value
+        );
+      });
+    });
+  }
+
+  function resolveFQN(
+    fqn: string,
+  ): Ref<OutputScope | OutputSymbol | undefined> {
+    const parts = fqn.match(/[^.#]+|[.#]/g);
+    if (!parts) return ref(undefined);
+    if (parts.length === 0) return ref(undefined);
+
+    parts.unshift(".");
+
+    return computed(() => {
+      let base: OutputScope | OutputSymbol | undefined = binder.globalScope;
+
+      for (let i = 0; i < parts.length; i += 2) {
+        if (base === undefined) {
+          return;
+        }
+
+        const op = parts[i];
+        const name = parts[i + 1];
+
+        if (op === ".") {
+          if ("originalName" in base) {
+            if (!base.staticMemberScope) {
+              return undefined;
+            }
+
+            base = findSymbolName(
+              (base as OutputSymbol).staticMemberScope,
+              name,
+            ).value;
+          } else {
+            base = findScopeOrSymbolName(base, name).value;
+          }
+        } else if (op === "#") {
+          if ("originalName" in base) {
+            if (!base.instanceMemberScope) {
+              return undefined;
+            }
+            base = findSymbolName(
+              (base as OutputSymbol).instanceMemberScope,
+              name,
+            ).value;
+          } else {
+            return undefined;
+          }
+        }
+      }
+
+      return base;
+    });
   }
 }
 

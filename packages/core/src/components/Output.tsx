@@ -9,6 +9,7 @@ import { NamePolicyContext } from "../context/name-policy.js";
 import { NamePolicy } from "../name-policy.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { extensionEffects } from "../slot.js";
 import { SourceFile } from "./SourceFile.js";
 
 export interface OutputProps {
@@ -58,6 +59,7 @@ export function Output(props: OutputProps) {
   }
 
   return <BinderContext.Provider value={binder}>
+    {() => { extensionEffects.forEach(e => e())}}
     {
       props.namePolicy ?
         <NamePolicyContext.Provider value={props.namePolicy}>

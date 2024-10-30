@@ -1,4 +1,4 @@
-import { ref, Ref } from "@vue/reactivity";
+import { isRef, Ref } from "@vue/reactivity";
 import { OutputSymbol } from "./binder.js";
 import { useBinder } from "./context/binder.js";
 import {
@@ -33,7 +33,7 @@ export function defineSlot<
   return {
     find: ((...args: any[]) =>
       () =>
-        ref(finder(...args))) as any,
+        finder(...args)) as any,
     create(key, props, defaultContent) {
       return function () {
         return memo(() => {
@@ -42,6 +42,7 @@ export function defineSlot<
           }
 
           const component = slotMappers.get(key);
+
           if (!component) {
             return defaultContent;
           }
@@ -65,12 +66,24 @@ export function replace<T>(
         slotMappers.delete(prev.value);
       }
 
-      const slotKey = slotKeyFn();
-      if (slotKey.value === undefined) {
-        return slotKey;
+      let slotKey = slotKeyFn();
+      if (typeof slotKey === "function") {
+        slotKey = (slotKey as any)();
       }
 
-      slotMappers.set(slotKey.value, replacement);
+      if (isRef(slotKey)) {
+        if (slotKey.value === undefined) {
+          return slotKey;
+        }
+
+        slotMappers.set(slotKey.value, replacement);
+      } else {
+        if (slotKey === undefined) {
+          return slotKey;
+        }
+
+        slotMappers.set(slotKey, replacement);
+      }
 
       return slotKey;
     });
@@ -91,6 +104,8 @@ export function rename(
 }
 
 export function resolveFQN(fqn: string) {
-  const binder = useBinder();
-  return binder.resolveFQN(fqn);
+  return () => {
+    const binder = useBinder();
+    return binder.resolveFQN(fqn) as Ref<OutputSymbol | undefined>;
+  };
 }

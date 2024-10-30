@@ -4,8 +4,6 @@ import { SourceFile } from "../../src/components/SourceFile.jsx";
 import {
   Declaration,
   Name,
-  OutputSymbol,
-  Ref,
   refkey,
   Scope,
   useBinder,
@@ -145,10 +143,7 @@ it("can rename", () => {
     return <FunctionSlotInstance />;
   }
 
-  rename(() => {
-    const binder = useBinder();
-    return binder.resolveFQN("foo.bar") as Ref<OutputSymbol | undefined>;
-  }, "bazxxx");
+  rename(resolveFQN("foo.bar"), "bazxxx");
 
   const tree = render(
     <Output>

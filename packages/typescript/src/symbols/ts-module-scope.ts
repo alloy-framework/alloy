@@ -29,7 +29,7 @@ export function createTSModuleScope(
 ): TSModuleScope {
   return binder.createScope<TSModuleScope>({
     kind: "module",
-    name: path.replace(/\./g, "_"),
+    name: path,
     parent,
     exportedSymbols: new Map(),
     importedSymbols: new Map(),

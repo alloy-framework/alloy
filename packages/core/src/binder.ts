@@ -507,8 +507,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
     if (waitingScopeNames.has(parentScope!)) {
       const waiting = waitingScopeNames.get(parentScope!);
-      if (waiting?.has(name)) {
-        const ref = waiting.get(name)!;
+      const targetName = name.replace(/\./g, "_");
+      if (waiting?.has(targetName)) {
+        const ref = waiting.get(targetName)!;
         ref.value = scope;
       }
     }
@@ -854,8 +855,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   ): Ref<TScope | undefined> {
     return untrack(() => {
       scope ??= binder.globalScope;
+
       for (const child of scope.children) {
-        if (child.name === name) {
+        if (child.name.replace(/\./g, "_") === name) {
           return ref(child) as Ref<TScope>;
         }
       }
@@ -865,7 +867,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         waitingScopeNames.set(scope, new Map());
       }
       const waiting = waitingScopeNames.get(scope)!;
-      waiting.set(name, scopeRef);
+      waiting.set(name.replace(/\./g, "_"), scopeRef);
 
       return scopeRef as Ref<TScope | undefined>;
     });

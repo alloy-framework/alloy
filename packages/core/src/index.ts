@@ -18,4 +18,5 @@ export * from "./jsx-runtime.js";
 export * from "./name-policy.js";
 export * from "./refkey.js";
 export * from "./render.js";
+export * from "./slot.js";
 export * from "./utils.js";

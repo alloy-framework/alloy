@@ -1,5 +1,6 @@
 import { ref, Ref } from "@vue/reactivity";
 import { OutputSymbol } from "./binder.js";
+import { useBinder } from "./context/binder.js";
 import {
   Children,
   Component,
@@ -87,4 +88,9 @@ export function rename(
       sym.name = newName;
     });
   });
+}
+
+export function resolveFQN(fqn: string) {
+  const binder = useBinder();
+  return binder.resolveFQN(fqn);
 }

@@ -11,7 +11,7 @@ import {
   useBinder,
 } from "../../src/index.js";
 import { render } from "../../src/render.js";
-import { defineSlot, rename, replace } from "../../src/slot.js";
+import { defineSlot, rename, replace, resolveFQN } from "../../src/slot.js";
 import "../../testing/extend-expect.js";
 
 it("works with string keys", () => {
@@ -65,12 +65,8 @@ it("works with symbols", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
 
   interface FunctionComponentProps {
     name: string;
@@ -122,12 +118,8 @@ it("can rename", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
 
   interface FunctionComponentProps {
     name: string;

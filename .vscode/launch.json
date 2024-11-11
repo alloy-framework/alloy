@@ -20,6 +20,22 @@
       "smartStep": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "cwd": "${workspaceFolder}"
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Sample Emitter",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/samples/client-emitter/dist/src/index.js",
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "smartStep": true,
+      "console": "internalConsole",
+      "outputCapture": "std",
+      "autoAttachChildProcesses": true,
+      "env": {
+        "FORCE_COLOR": "3"
+      },
     }
   ]
 }

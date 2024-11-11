@@ -18,12 +18,7 @@ const debug: DebugInterface = {
   component: {
     stack: debugStack,
     tree() {
-      for (let i = 0; i < 240; i += 10) {
-        for (let j = 0; j < 240; j += 10) {
-          process.stdout.write(chalk.bgRgb(i, j, 0)(" "));
-        }
-        process.stdout.write("\n");
-      }
+      console.log("tree");
     },
     watch() {
       console.log("watch");

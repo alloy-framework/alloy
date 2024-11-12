@@ -1,5 +1,4 @@
 import { resolveFQN, useContext } from "@alloy-js/core";
-import { ProjectContext } from "./components/ProjectDirectory.jsx";
 
 export function resolveJavaFQN(artifactId: string, javaFileName: string, pkg?: string,  memberName?: string, isStatic: boolean = false) {
 

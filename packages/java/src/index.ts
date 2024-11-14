@@ -3,8 +3,7 @@ export * from "./builtins/index.js";
 export * from "./components/index.js";
 export * from "./create-library.js";
 export * from "./generics.js";
+export * from "./javaslots.js";
 export * from "./name-policy.js";
 export * from "./object-modifiers.js";
 export * from "./symbols/index.js";
-export * from "./javaslots.js";
-

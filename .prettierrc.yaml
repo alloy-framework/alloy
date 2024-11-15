@@ -6,3 +6,6 @@ overrides:
   - files: "**/*.tsx"
     options:
       parser: alloy-ts
+  - files: "packages/dev-tools/**/*.tsx"
+    options:
+      parser: typescript

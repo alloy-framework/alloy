@@ -1,6 +1,7 @@
-import { mapJoin, Output, render, writeOutput } from "@alloy-js/core";
+import { mapJoin, Output } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 
+import { writeDebugFile } from "@alloy-js/dev-tools";
 import { Client } from "./components/Client.jsx";
 import { Model } from "./components/Model.jsx";
 import { ApiContext, createApiContext } from "./context/api.js";
@@ -10,7 +11,7 @@ const modelDecls = mapJoin(api.models, (model) => <Model model={model} />);
 
 const namePolicy = ts.createTSNamePolicy();
 
-const output = render(
+const component =
   <Output namePolicy={namePolicy}>
     <ApiContext.Provider value={createApiContext(api)}>
       <ts.PackageDirectory name={`${api.name}-client`} version="1.0.0">
@@ -23,7 +24,10 @@ const output = render(
         <ts.BarrelFile export="." />
       </ts.PackageDirectory>
     </ApiContext.Provider>
-  </Output>,
-);
+  </Output>;
 
-writeOutput(output, "./alloy-output");
+writeDebugFile(component, "./debug.html");
+
+// Render output and send to dev tools
+// const output = render(component);
+// writeOutput(output, "./alloy-output");

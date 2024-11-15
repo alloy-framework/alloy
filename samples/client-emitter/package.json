@@ -18,7 +18,8 @@
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "@alloy-js/java": "workspace:~"
+    "@alloy-js/java": "workspace:~",
+    "@alloy-js/dev-tools": "workspace:~"
   },
   "devDependencies": {
     "@babel/cli": "catalog:",

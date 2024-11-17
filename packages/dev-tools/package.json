@@ -1,0 +1,30 @@
+{
+  "name": "@alloy-js/dev-tools",
+  "version": "0.0.1",
+  "description": "Development tools for Alloy code generation",
+  "main": "./dist/src/index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "vitest run",
+    "test:watch": "vitest -w"
+  },
+  "keywords": [],
+  "author": "brian.terlson@microsoft.com",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "@uiw/react-json-view": "2.0.0-alpha.30",
+    "esbuild": "^0.19.8",
+    "flatted": "^3.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module"
+}

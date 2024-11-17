@@ -167,6 +167,7 @@ const nodesToContext = new WeakMap<RenderTextTree, Context>();
 export function getContextForRenderNode(node: RenderTextTree) {
   return nodesToContext.get(node);
 }
+
 export type RenderStructure = {};
 
 export type RenderTextTree = (string | RenderTextTree)[];

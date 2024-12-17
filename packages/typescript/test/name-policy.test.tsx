@@ -60,3 +60,31 @@ it("keeps _ and $ prefix", () => {
     $oneTwo;
   `);
 });
+
+it("appends _ to reserved words", () => {
+  const ref1 = refkey({});
+  const ref2 = refkey({});
+
+  const namePolicy = createTSNamePolicy();
+  const res = render(
+    <Output namePolicy={namePolicy}>
+      <ts.SourceFile path="test.ts">
+        <ts.FunctionDeclaration name="default" refkey={ref1} parameters={{"await": "any"}} />
+        <ts.VarDeclaration name="super" refkey={ref2}>
+          "hello"
+        </ts.VarDeclaration>
+        <ts.Reference refkey={ref1} />;
+        <ts.Reference refkey={ref2} />;
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  expect(res.contents[0].contents).toEqual(d`
+    function default_(await_: any) {
+      
+    }
+    const super_ = "hello";
+    default_;
+    super_;
+  `);
+});

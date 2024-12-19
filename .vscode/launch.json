@@ -13,10 +13,7 @@
       "console": "internalConsole",
       "outputCapture": "std",
       "autoAttachChildProcesses": true,
-      "outFiles": [
-        "${workspaceFolder}/**/*.(m|c|)js",
-        "!**/node_modules/**"
-      ],
+      "outFiles": ["${workspaceFolder}/**/*.(m|c|)js", "!**/node_modules/**"],
       "smartStep": true,
       "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
       "cwd": "${workspaceFolder}"
@@ -35,7 +32,7 @@
       "autoAttachChildProcesses": true,
       "env": {
         "FORCE_COLOR": "3"
-      },
+      }
     }
   ]
 }

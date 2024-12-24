@@ -71,18 +71,3 @@ it("can change its indent level", () => {
             indented
   `);
 });
-
-it.only("does things", () => {
-  function DebugMe() {
-    debug.component.stack();
-  }
-
-  const tree = render(
-    <Output>
-        <SourceFile path="hi.txt" filetype="text">
-          base
-            <DebugMe />
-        </SourceFile>
-      </Output>,
-  );
-});

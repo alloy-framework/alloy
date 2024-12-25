@@ -322,15 +322,12 @@ export interface Binder {
   ): Ref<TScope | undefined>;
 
   /**
-   * Resolve a fully qualified name to a symbol. The syntax for a fully
-   * qualified name is as follows:
+   * Resolve a fully qualified name to a symbol. Access a nested scope by name
+   * with `::`, a nested static member with `.` and a nested instance member
+   * with `#`.
    *
-   * * `::` accesses a nested scope
-   * * `.` accesses a nested static member
-   * * `#` accesses a nested instance member
-   *
-   * Per-language packages may provide their own resolveFQN function
-   * that uses syntax more natural to that  language.
+   * Per-language packages may provide their own resolveFQN function that uses
+   * syntax more natural to that  language.
    */
   resolveFQN<
     TScope extends OutputScope = OutputScope,

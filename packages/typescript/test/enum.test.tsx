@@ -99,8 +99,8 @@ it("uses the naming policy", () => {
     </Output>,
   ).toRenderTo(`
     enum MyEnum {
-      fooProp = 1,
-      barProp = 2
+      FooProp = 1,
+      BarProp = 2
     }
   `);
 });

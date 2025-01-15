@@ -4,4 +4,5 @@ packages:
   - "@alloy-js/typescript"
 ---
 
-Handle reserved words in typescript naming policy
+Update TypeScript name policy to handle reserved words and properly case
+enum members.

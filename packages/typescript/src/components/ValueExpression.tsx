@@ -14,8 +14,10 @@ export function ValueExpression(props: ValueExpressionProps) {
       return "undefined";
     } else if (typeof jsValue === "number" || typeof jsValue === "boolean") {
       return String(jsValue);
+    } else if (typeof jsValue === "bigint") {
+      return `${jsValue}n`;
     } else if (typeof jsValue === "string") {
-      return `"${jsValue}"`;
+      return JSON.stringify(jsValue);
     } else if (typeof jsValue === "object") {
       if (jsValue === null) {
         return "null";

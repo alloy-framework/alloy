@@ -59,8 +59,7 @@ export function Output(props: OutputProps) {
   }
 
   return <BinderContext.Provider value={binder}>
-    {() => { extensionEffects.forEach(e => e())}}
-    {
+    {() => { extensionEffects.forEach(e => e())}}{
       props.namePolicy ?
         <NamePolicyContext.Provider value={props.namePolicy}>
           {dir}

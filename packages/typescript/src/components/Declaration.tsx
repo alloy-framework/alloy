@@ -7,7 +7,11 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
+import {
+  createTSSymbol,
+  TSOutputSymbol,
+  TSSymbolFlags,
+} from "../symbols/index.js";
 
 // imports for documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,6 +48,11 @@ export interface BaseDeclarationProps {
    */
   flags?: OutputSymbolFlags;
 
+  /**
+   * The symbol to use for this declaration.
+   */
+  symbol?: TSOutputSymbol;
+
   children?: Children;
 
   /**
@@ -77,19 +86,24 @@ export interface DeclarationProps extends BaseDeclarationProps {
 export function Declaration(props: DeclarationProps) {
   const namePolicy = useTSNamePolicy();
 
-  let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
-  if (props.kind && props.kind === "type") {
-    tsFlags &= TSSymbolFlags.TypeSymbol;
-  }
+  let sym: TSOutputSymbol;
+  if (props.symbol) {
+    sym = props.symbol;
+  } else {
+    let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
+    if (props.kind && props.kind === "type") {
+      tsFlags &= TSSymbolFlags.TypeSymbol;
+    }
 
-  const sym = createTSSymbol({
-    name: namePolicy.getName(props.name, props.nameKind),
-    refkey: props.refkey ?? refkey(props.name),
-    export: props.export,
-    default: props.default,
-    flags: props.flags,
-    tsFlags,
-  });
+    sym = createTSSymbol({
+      name: namePolicy.getName(props.name, props.nameKind),
+      refkey: props.refkey ?? refkey(props.name),
+      export: props.export,
+      default: props.default,
+      flags: props.flags,
+      tsFlags,
+    });
+  }
 
   let children: Children;
 

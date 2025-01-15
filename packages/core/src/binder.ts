@@ -508,8 +508,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
     if (waitingScopeNames.has(parentScope!)) {
       const waiting = waitingScopeNames.get(parentScope!);
-      if (waiting?.has(name)) {
-        const ref = waiting.get(name)!;
+      const targetName = name.replace(/\./g, "_");
+      if (waiting?.has(targetName)) {
+        const ref = waiting.get(targetName)!;
         ref.value = scope;
       }
     }
@@ -839,11 +840,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         }
       }
 
-      const symRef = shallowRef<OutputSymbol | undefined>(undefined);
       if (!waitingSymbolNames.has(scope)) {
         waitingSymbolNames.set(scope, new Map());
       }
       const waiting = waitingSymbolNames.get(scope)!;
+      if (waiting.has(name)) {
+        return waiting.get(name) as Ref<TSymbol | undefined>;
+      }
+      const symRef = shallowRef<OutputSymbol | undefined>(undefined);
       waiting.set(name, symRef);
       return symRef as Ref<TSymbol | undefined>;
     });
@@ -855,18 +859,24 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   ): Ref<TScope | undefined> {
     return untrack(() => {
       scope ??= binder.globalScope;
+
       for (const child of scope.children) {
-        if (child.name === name) {
+        if (child.name.replace(/\./g, "_") === name) {
           return ref(child) as Ref<TScope>;
         }
       }
 
-      const scopeRef = shallowRef<OutputScope | undefined>(undefined);
       if (!waitingScopeNames.has(scope)) {
         waitingScopeNames.set(scope, new Map());
       }
       const waiting = waitingScopeNames.get(scope)!;
-      waiting.set(name, scopeRef);
+      const key = name.replace(/\./g, "_");
+      if (waiting.has(key)) {
+        return waiting.get(key) as Ref<TScope | undefined>;
+      }
+
+      const scopeRef = shallowRef<OutputScope | undefined>(undefined);
+      waiting.set(name.replace(/\./g, "_"), scopeRef);
 
       return scopeRef as Ref<TScope | undefined>;
     });

@@ -72,13 +72,15 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
             <td>\`(${method.parameters
               .map((param) => param.parameterTypeExcerpt.text)
               .join(", ")}) => ${method.returnTypeExcerpt.text}\`</td>
-            <td>${
-              method.tsdocComment?.summarySection &&
-              TsDoc({
-                node: method.tsdocComment.summarySection,
-                context: method,
-              })
-            }</td>
+            <td>
+              ${
+                method.tsdocComment?.summarySection &&
+                TsDoc({
+                  node: method.tsdocComment.summarySection,
+                  context: method,
+                })
+              }
+            </td>
           </tr>
         `;
       }

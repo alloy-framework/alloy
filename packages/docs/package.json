@@ -13,21 +13,21 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.3",
-    "@astrojs/starlight": "^0.27.0",
-    "astro": "^4.15.3",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.31.0",
+    "astro": "^5.1.6",
     "astro-expressive-code": "^0.36.1",
     "sharp": "^0.32.5",
     "typescript": "^5.5.4"
   },
   "devDependencies": {
     "@alloy-js/core": "workspace:~",
+    "@alloy-js/csharp": "workspace:~",
+    "@alloy-js/java": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "^7.47.7",
     "@microsoft/api-extractor-model": "^7.29.6",
     "@microsoft/tsdoc": "^0.15.0",
-    "@alloy-js/typescript": "workspace:~",
-    "@alloy-js/java": "workspace:~",
-    "@alloy-js/csharp": "workspace:~",
     "redent": "^4.0.0"
   }
 }

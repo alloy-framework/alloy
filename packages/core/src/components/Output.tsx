@@ -1,4 +1,3 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import {
   createOutputBinder,
   getSymbolCreator,
@@ -6,6 +5,7 @@ import {
 } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { NamePolicyContext } from "../context/name-policy.js";
+import { Children } from "../jsx-runtime.js";
 import { NamePolicy } from "../name-policy.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

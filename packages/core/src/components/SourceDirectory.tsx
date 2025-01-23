@@ -1,8 +1,8 @@
-import { Children, getContext } from "@alloy-js/core/jsx-runtime";
 import { shallowReactive } from "@vue/reactivity";
 import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
+import { Children, getContext } from "../jsx-runtime.js";
 
 export interface SourceDirectoryProps {
   path: string;

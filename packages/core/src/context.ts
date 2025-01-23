@@ -1,11 +1,11 @@
+import { shallowRef } from "@vue/reactivity";
 import {
   Children,
   ComponentDefinition,
   effect,
   getContext,
   untrack,
-} from "@alloy-js/core/jsx-runtime";
-import { shallowRef } from "@vue/reactivity";
+} from "./jsx-runtime.js";
 
 export interface ComponentContext<T> {
   id: symbol;

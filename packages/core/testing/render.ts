@@ -1,5 +1,5 @@
 import { RenderTextTree, renderTree } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { Children } from "../src/jsx-runtime.js";
 
 export function printTree(tree: RenderTextTree) {
   return (tree as any).flat(Infinity).join("");

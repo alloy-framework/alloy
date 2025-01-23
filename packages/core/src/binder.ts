@@ -1,4 +1,3 @@
-import { memo, untrack } from "@alloy-js/core/jsx-runtime";
 import {
   computed,
   effect,
@@ -10,6 +9,7 @@ import {
 } from "@vue/reactivity";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
+import { memo, untrack } from "./jsx-runtime.js";
 import { refkey, Refkey } from "./refkey.js";
 export type Metadata = object;
 

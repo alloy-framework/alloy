@@ -1,5 +1,5 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { OutputSymbol } from "../binder.js";
+import { Children } from "../jsx-runtime.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { OutputSymbolFlags } from "../binder.js";

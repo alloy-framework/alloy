@@ -1,13 +1,9 @@
-import {
-  Children,
-  ComponentDefinition,
-  getContext,
-} from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { useContext } from "../context.js";
 import { IndentContext } from "../context/indent.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
+import { Children, ComponentDefinition, getContext } from "../jsx-runtime.js";
 import { Refkey } from "../refkey.js";
 
 export interface SourceFileProps {

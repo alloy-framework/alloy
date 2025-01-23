@@ -1,6 +1,6 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { useContext } from "../context.js";
 import { IndentContext } from "../context/indent.js";
+import { Children } from "../jsx-runtime.js";
 
 export interface IndentProps {
   children?: Children;

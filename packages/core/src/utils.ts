@@ -1,3 +1,6 @@
+import { mkdirSync, statSync, writeFileSync } from "node:fs";
+import { relative, resolve } from "pathe";
+import { code } from "./code.js";
 import {
   Child,
   Children,
@@ -5,10 +8,7 @@ import {
   ComponentDefinition,
   isComponentCreator,
   memo,
-} from "@alloy-js/core/jsx-runtime";
-import { mkdirSync, statSync, writeFileSync } from "node:fs";
-import { relative, resolve } from "pathe";
-import { code } from "./code.js";
+} from "./jsx-runtime.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { OutputDirectory, OutputFile, render } from "./render.js";
 

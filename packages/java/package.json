@@ -42,8 +42,5 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "overrides": {
-    "esbuild": "0.23"
-  },
   "type": "module"
 }

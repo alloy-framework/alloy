@@ -15,11 +15,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
-  "pnpm": {
-    "overrides": {
-      "esbuild": "0.23"
-    }
-  },
   "devDependencies": {
     "@actions/github": "^6.0.0",
     "@alloy-js/babel-preset": "workspace:~",

@@ -4,14 +4,12 @@ import { SourceFile } from "../../src/components/SourceFile.jsx";
 import {
   Declaration,
   Name,
-  OutputSymbol,
-  Ref,
   refkey,
   Scope,
   useBinder,
 } from "../../src/index.js";
 import { render } from "../../src/render.js";
-import { defineSlot, rename, replace } from "../../src/slot.js";
+import { defineSlot, rename, replace, resolveFQN } from "../../src/slot.js";
 import "../../testing/extend-expect.js";
 
 it("works with string keys", () => {
@@ -65,12 +63,8 @@ it("works with symbols", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
 
   interface FunctionComponentProps {
     name: string;
@@ -122,12 +116,8 @@ it("can rename", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
 
   interface FunctionComponentProps {
     name: string;
@@ -153,10 +143,112 @@ it("can rename", () => {
     return <FunctionSlotInstance />;
   }
 
-  rename(() => {
+  rename(resolveFQN("foo.bar"), "bazxxx");
+
+  const tree = render(
+    <Output>
+      <SourceFile path="test.ts" filetype="ts">
+        <Scope name="foo">
+          <MyFunctionComponent name="bar" />
+        </Scope>
+      </SourceFile>
+    </Output>,
+  );
+
+  console.log(tree.contents[0].contents);
+});
+
+it("can rename the same thing, last wins", () => {
+  interface FunctionSlotProps extends FunctionComponentProps {
+    additionalProp: string;
+  }
+
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
+
+  interface FunctionComponentProps {
+    name: string;
+  }
+
+  function MyFunctionComponent(props: FunctionComponentProps) {
     const binder = useBinder();
-    return binder.resolveFQN("foo.bar") as Ref<OutputSymbol | undefined>;
-  }, "bazxxx");
+    const sym = binder.createSymbol({
+      name: props.name,
+      refkey: refkey(),
+    });
+
+    const FunctionSlotInstance = FunctionSlot.create(
+      sym,
+      { ...props, additionalProp: "hi" },
+      <Declaration symbol={sym}>
+        function <Name />() {"{"}
+          console.log("hello world");
+        {"}"}
+      </Declaration>,
+    );
+
+    return <FunctionSlotInstance />;
+  }
+
+  rename(resolveFQN("foo.bar"), "bazxxx");
+  rename(resolveFQN("foo.bar"), "bazyyy");
+  rename(resolveFQN("foo.bar"), "bazzzz");
+
+  const tree = render(
+    <Output>
+      <SourceFile path="test.ts" filetype="ts">
+        <Scope name="foo">
+          <MyFunctionComponent name="bar" />
+        </Scope>
+      </SourceFile>
+    </Output>,
+  );
+
+  console.log(tree.contents[0].contents);
+});
+
+it("works with symbols with rename", () => {
+  interface FunctionSlotProps extends FunctionComponentProps {
+    additionalProp: string;
+  }
+
+  const FunctionSlot = defineSlot<FunctionSlotProps>((query: { fqn: string }) =>
+    resolveFQN(query.fqn));
+
+  interface FunctionComponentProps {
+    name: string;
+  }
+
+  function MyFunctionComponent(props: FunctionComponentProps) {
+    const binder = useBinder();
+    const sym = binder.createSymbol({
+      name: props.name,
+      refkey: refkey(),
+    });
+
+    const FunctionSlotInstance = FunctionSlot.create(
+      sym,
+      { ...props, additionalProp: "hi" },
+      <Declaration symbol={sym}>
+        function <Name />() {"{"}
+          console.log("hello world");
+        {"}"}
+      </Declaration>,
+    );
+
+    return <FunctionSlotInstance />;
+  }
+
+  const fqn = resolveFQN("foo.bar");
+
+  rename(fqn, "baz");
+  // extension.tsx
+  replace(FunctionSlot.find({ fqn: "foo.bar" }), (props: any) => {
+    return <>
+      // original
+      { props.original }
+    </>;
+  });
 
   const tree = render(
     <Output>

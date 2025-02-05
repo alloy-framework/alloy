@@ -3,7 +3,8 @@ import { JsonArray } from "./JsonArray.jsx";
 import { JsonObject } from "./JsonObject.jsx";
 
 export interface JsonValueProps {
-  /** The refkey for the JSON array. When provided, this value can be referenced
+  /**
+   * The refkey for the JSON value. When provided, this value can be referenced
    * elsewhere via this refkey.
    **/
   refkey?: Refkey;

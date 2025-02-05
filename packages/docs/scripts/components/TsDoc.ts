@@ -106,7 +106,7 @@ export interface TsDocSectionProps {
 }
 
 export function TsDocSection(props: TsDocSectionProps) {
-  return mapJoin(props.node.nodes as DocNode[], (node) => TsDoc({ node }), {
+  return mapJoin(props.node.nodes as DocNode[], (node) => stc.TsDoc({ node }), {
     joiner: "\n\n",
   });
 }

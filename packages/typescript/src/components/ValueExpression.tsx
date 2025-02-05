@@ -1,4 +1,4 @@
-import { memo } from "@alloy-js/core";
+import { Children, memo } from "@alloy-js/core";
 import { ArrayExpression } from "./ArrayExpression.js";
 import { ObjectExpression } from "./ObjectExpression.js";
 
@@ -6,8 +6,8 @@ export interface ValueExpressionProps {
   jsValue?: unknown;
 }
 
-export function ValueExpression(props: ValueExpressionProps) {
-  return memo(() => {
+export function ValueExpression(props: ValueExpressionProps): Children {
+  return memo((): Children => {
     const jsValue = props.jsValue;
 
     if (typeof jsValue === "undefined") {
@@ -28,7 +28,7 @@ export function ValueExpression(props: ValueExpressionProps) {
       }
     } else if (typeof jsValue === "function") {
       // functions are inserted as-is.
-      return jsValue;
+      return jsValue as () => Children;
     }
   });
 }

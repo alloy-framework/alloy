@@ -1,5 +1,9 @@
 import { OutputSymbol } from "../binder.js";
-import { ComponentContext, createNamedContext } from "../context.js";
+import {
+  ComponentContext,
+  createNamedContext,
+  useContext,
+} from "../context.js";
 
 /**
  * Provides the symbol for the member currently being declared.
@@ -8,3 +12,7 @@ import { ComponentContext, createNamedContext } from "../context.js";
  */
 export const MemberDeclarationContext: ComponentContext<OutputSymbol> =
   createNamedContext("MemberDeclaration");
+
+export function useMemberDeclaration() {
+  return useContext(MemberDeclarationContext);
+}

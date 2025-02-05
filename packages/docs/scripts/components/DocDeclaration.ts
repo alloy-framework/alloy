@@ -1,10 +1,10 @@
 import {
-  Declaration,
   refkey,
   SourceFileContext,
   useBinder,
   useContext,
 } from "@alloy-js/core";
+import { Declaration } from "@alloy-js/core/stc";
 import type { ApiItem } from "@microsoft/api-extractor-model";
 import type { DocSymbol } from "../symbols/doc-symbol.js";
 

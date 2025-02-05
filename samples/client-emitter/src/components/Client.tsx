@@ -1,9 +1,9 @@
-import { mapJoin, refkey } from "@alloy-js/core";
+import { Children, mapJoin, refkey } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import { useApi } from "../context/api.js";
 import { ClientMethod } from "./ClientMethod.jsx";
 
-export function Client() {
+export function Client(): Children {
   const schema = useApi().schema;
   const operations = schema.operations;
   const methods = mapJoin(operations, (op) => <ClientMethod operation={op} />);

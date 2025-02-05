@@ -17,7 +17,7 @@ export interface SourceFileProps {
    */
   filetype: string;
 
-  children?: Children[];
+  children?: Children;
 
   /**
    * The component to use to render refkeys references within the file's

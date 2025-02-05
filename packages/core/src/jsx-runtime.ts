@@ -158,20 +158,18 @@ const renderStack: {
   props: Props;
 }[] = [];
 
-export const shouldDebug = !!process.env.ALLOY_DEBUG;
-
 export function pushStack(component: Component<any>, props: Props) {
-  if (!shouldDebug) return;
+  if (!shouldDebug()) return;
   renderStack.push({ component, props });
 }
 
 export function popStack() {
-  if (!shouldDebug) return;
+  if (!shouldDebug()) return;
   renderStack.pop();
 }
 
 export function printRenderStack() {
-  if (!shouldDebug) return;
+  if (!shouldDebug()) return;
 
   // eslint-disable-next-line no-console
   console.error("Error rendering:");
@@ -296,4 +294,8 @@ export function mergeProps(...sources: any): any {
     }
   }
   return target;
+}
+
+function shouldDebug() {
+  return typeof process !== "undefined" && !!process.env?.ALLOY_DEBUG;
 }

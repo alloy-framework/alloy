@@ -19,4 +19,5 @@ export * from "./refkey.js";
 export * from "./render.js";
 export * from "./tap.js";
 export * from "./utils.js";
+export * from "./write-output.js";
 import "./debug.js";

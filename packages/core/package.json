@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "main": "./dist/src/index.js",
   "exports": {
@@ -25,6 +25,10 @@
       "development": "./src/components/index.ts",
       "import": "./dist/src/components/index.js"
     }
+  },
+  "browser": {
+    "./dist/src/write-output.js": "./dist/src/write-output.browser.js",
+    "./src/write-output.ts": "./src/write-output.browser.ts"
   },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",

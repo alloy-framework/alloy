@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.4.0
+
+### Features
+
+- [80f1ba8](https://github.com/alloy-framework/alloy/commit/80f1ba88470960ce57487b644ae3c3f37f9c4690) Indent source files with 4 spaces as Anders intended.
+
+
 ## 0.3.0
 
 ### Features

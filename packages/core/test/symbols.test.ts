@@ -20,7 +20,6 @@ it("works", () => {
   const symbol = binder.createSymbol({
     name: "sym",
     scope,
-    refkey: "foo",
   });
 
   expect([...scope.getSymbolNames()]).toEqual(["sym"]);
@@ -41,13 +40,11 @@ it("resolves symbol conflicts", () => {
   const _s1 = binder.createSymbol({
     name: "sym",
     scope,
-    refkey: "foo",
   });
 
   const s2 = binder.createSymbol({
     name: "sym",
     scope,
-    refkey: "foo",
   });
 
   expect(s2.name).toEqual("sym_2");
@@ -504,5 +501,64 @@ describe("symbol name resolution", () => {
     });
 
     expect(result.value).toEqual(instance);
+  });
+});
+
+describe("refkey resolution", () => {
+  it("resolves existing symbols by refkey", () => {
+    const key = refkey();
+    const binder = createOutputBinder();
+    const sym = binder.createSymbol({
+      name: "foo",
+      refkey: key,
+      scope: binder.globalScope,
+    });
+
+    const resolvedSym = binder.resolveDeclarationByKey(
+      undefined,
+      undefined,
+      key,
+    );
+    expect(resolvedSym.value?.targetDeclaration).toBe(sym);
+  });
+
+  it("resolves symbols by refkey when symbol is added later", () => {
+    const key = refkey();
+    const binder = createOutputBinder();
+
+    const resolvedSym = binder.resolveDeclarationByKey(
+      undefined,
+      undefined,
+      key,
+    );
+
+    const sym = binder.createSymbol({
+      name: "foo",
+      refkey: key,
+      scope: binder.globalScope,
+    });
+
+    expect(resolvedSym.value?.targetDeclaration).toBe(sym);
+  });
+
+  it("resolves symbols by refkey when refkey is added later", () => {
+    const key = refkey();
+    const binder = createOutputBinder();
+
+    const resolvedSym = binder.resolveDeclarationByKey(
+      undefined,
+      undefined,
+      key,
+    );
+
+    const sym = binder.createSymbol({
+      name: "foo",
+      scope: binder.globalScope,
+    });
+
+    expect(resolvedSym.value).toBe(undefined);
+
+    sym.refkey = key;
+    expect(resolvedSym.value?.targetDeclaration).toBe(sym);
   });
 });

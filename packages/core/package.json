@@ -9,6 +9,7 @@
       "import": "./dist/src/index.js"
     },
     "./jsx-runtime": {
+      "types": "./dist/src/jsx-runtime.d.ts",
       "development": "./src/jsx-runtime.ts",
       "import": "./dist/src/jsx-runtime.js"
     },

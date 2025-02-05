@@ -6,7 +6,7 @@ import { Children, getContext } from "../jsx-runtime.js";
 
 export interface SourceDirectoryProps {
   path: string;
-  children?: Children[];
+  children?: Children;
 }
 
 export function SourceDirectory(props: SourceDirectoryProps) {

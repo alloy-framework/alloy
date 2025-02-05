@@ -17,7 +17,13 @@ export interface InterfaceMembersProps {
 export function InterfaceMembers(props: InterfaceMembersProps) {
   let members = props.iface.members as ApiItem[];
   if (props.flatten) {
-    for (const extendsType of props.iface.extendsTypes) {
+    try {
+      for (const extendsType of props.iface.extendsTypes) {
+      }
+    } catch (e) {
+      console.log("Failure to do anything with", props.iface);
+    }
+    for (const extendsType of props.iface.extendsTypes ?? []) {
       const refType = resolveExcerptReference(
         extendsType.excerpt.spannedTokens[0],
         props.iface,

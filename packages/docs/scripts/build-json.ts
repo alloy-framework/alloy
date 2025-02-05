@@ -9,6 +9,7 @@ import {
   ApiModel,
   ApiTypeAlias,
   ApiVariable,
+  ExcerptTokenKind,
 } from "@microsoft/api-extractor-model";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -37,6 +38,7 @@ const apiPackages = {
   ),
   csharp: apiModel.loadPackage(apiPath(resolve(packagesPath, "csharp"))),
   java: apiModel.loadPackage(apiPath(resolve(packagesPath, "java"))),
+  json: apiModel.loadPackage(apiPath(resolve(packagesPath, "json"))),
 };
 
 function apiPath(packagePath: string) {
@@ -115,7 +117,7 @@ export interface VariableApi {
 export interface ComponentApi {
   kind: "component";
   componentFunction: ApiFunction;
-  componentProps?: ApiInterface;
+  componentProps: ApiInterface[];
 }
 
 export interface ContextApi {
@@ -220,23 +222,52 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
           if ((member as ApiFunction).overloadIndex > 1) continue;
 
           if (isComponent(member as ApiFunction)) {
-            let propType: ApiInterface | undefined = undefined;
+            let propTypes: ApiInterface[] = [];
             if ((member as ApiFunction).parameters.length > 0) {
               const propsTypeRef = (member as ApiFunction).parameters[0]
                 .parameterTypeExcerpt.spannedTokens[0].canonicalReference;
-              propType = apiModel.resolveDeclarationReference(
+              const resolvedPropType = apiModel.resolveDeclarationReference(
                 propsTypeRef!,
                 undefined,
-              ).resolvedApiItem! as ApiInterface;
-            }
-            if (propType) {
-              propTypes.add(propType);
+              ).resolvedApiItem!;
+
+              if (resolvedPropType.kind === ApiItemKind.Interface) {
+                propTypes.push(resolvedPropType as ApiInterface);
+              } else if (resolvedPropType.kind === ApiItemKind.TypeAlias) {
+                for (const token of (resolvedPropType as ApiTypeAlias)
+                  .typeExcerpt.tokens) {
+                  if (token.kind !== ExcerptTokenKind.Reference) {
+                    continue;
+                  }
+
+                  const aliasRef = apiModel.resolveDeclarationReference(
+                    token.canonicalReference!,
+                    resolvedPropType,
+                  ).resolvedApiItem;
+
+                  if (!aliasRef) continue;
+                  if (aliasRef.kind !== ApiItemKind.Interface) {
+                    console.log(
+                      "Warning: type alias for component props has unknown type reference kind " +
+                        ApiItemKind[aliasRef.kind],
+                    );
+                    continue;
+                  }
+
+                  propTypes.push(aliasRef as ApiInterface);
+                }
+              } else {
+                throw new Error(
+                  "Cannot create props reference for kind " +
+                    ApiItemKind[resolvedPropType.kind],
+                );
+              }
             }
 
             packageRecord.components.push({
               kind: "component",
               componentFunction: member as ApiFunction,
-              componentProps: propType,
+              componentProps: propTypes,
             });
           } else {
             const fns = member.getMergedSiblings() as ApiFunction[];

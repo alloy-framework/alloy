@@ -171,7 +171,7 @@ export type RenderStructure = {};
 
 export type RenderTextTree = (string | RenderTextTree)[];
 
-function traceRender(phase: string, message: string) {
+function traceRender(phase: string, message: () => string) {
   return false;
   // console.log(`[\x1b[34m${phase}\x1b[0m]: ${message}`);
 }
@@ -268,7 +268,7 @@ function renderWorker(
   children: Children,
   state: RenderState,
 ) {
-  traceRender("render", dumpChildren(children));
+  traceRender("render", () => dumpChildren(children));
 
   if (Array.isArray(node)) {
     nodesToContext.set(node, getContext()!);
@@ -290,7 +290,7 @@ function appendChild(
   indentState: IndentState,
   state: RenderState,
 ) {
-  traceRender("appendChild", printChild(rawChild));
+  traceRender("appendChild", () => printChild(rawChild));
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
@@ -300,11 +300,11 @@ function appendChild(
       state.newline = false;
     }
     const reindented = reindent(child, indentState.indentString);
-    traceRender("appendChild:string", JSON.stringify(reindented));
+    traceRender("appendChild:string", () => JSON.stringify(reindented));
     node.push(reindented);
   } else if (isComponentCreator(child)) {
     root(() => {
-      traceRender("appendChild:component", printChild(child));
+      traceRender("appendChild:component", () => printChild(child));
       if (child.component === Indent && state.newline) {
         node.push(indentState.indent);
       }
@@ -313,13 +313,13 @@ function appendChild(
       renderWorker(componentRoot, untrack(child), state);
       popStack();
       node.push(componentRoot);
-      traceRender("appendChild:component-done", printChild(child));
+      traceRender("appendChild:component-done", () => printChild(child));
     }, child);
   } else if (typeof child === "function") {
-    traceRender("appendChild:memo", child.toString());
+    traceRender("appendChild:memo", () => child.toString());
     const index = node.length;
     effect((prev: any) => {
-      traceRender("memoEffect:run", "");
+      traceRender("memoEffect:run", () => "");
       let res = child();
       while (typeof res === "function" && !isComponentCreator(res)) {
         res = res();
@@ -330,11 +330,11 @@ function appendChild(
       node[index] = newNodes;
       return newNodes;
     });
-    traceRender("appendChild:memo-done", "");
+    traceRender("appendChild:memo-done", () => "");
   } else {
-    traceRender("appendChild:array", dumpChildren(child));
+    traceRender("appendChild:array", () => dumpChildren(child));
     renderWorker(node, child, state);
-    traceRender("appendChild:array-done", dumpChildren(child));
+    traceRender("appendChild:array-done", () => dumpChildren(child));
   }
 }
 
@@ -383,6 +383,8 @@ function printChild(child: Child): string {
     return "<" + child.component.name + ">";
   } else if (typeof child === "function") {
     return "$memo";
+  } else if (isRef(child)) {
+    return "$ref";
   } else {
     return JSON.stringify(child);
   }

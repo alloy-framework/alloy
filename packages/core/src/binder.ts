@@ -7,6 +7,7 @@ import {
   ShallowRef,
   shallowRef,
 } from "@vue/reactivity";
+import { useBinder } from "./context/binder.js";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { memo, untrack } from "./jsx-runtime.js";
@@ -223,6 +224,21 @@ export interface OutputScope {
   getSymbolNames(): Set<string>;
 }
 
+export type CreateSymbolOptions<T extends OutputSymbol = OutputSymbol> = {
+  name: string;
+  scope?: OutputScope;
+  refkey?: Refkey;
+  flags?: OutputSymbolFlags;
+} & Omit<T, keyof OutputSymbol>;
+
+export type CreateScopeOptions<T extends OutputScope = OutputScope> = {
+  kind: T["kind"];
+  name: string;
+  parent?: OutputScope | undefined;
+  flags?: OutputScopeFlags;
+  owner?: OutputSymbol;
+} & Omit<T, keyof OutputScope>;
+
 /**
  * The binder tracks all output scopes and symbols. Scopes are nested containers
  * for symbols.
@@ -241,28 +257,13 @@ export interface Binder {
    * Create a new scope. The scope will be added to the parent scope's children.
    * The returned scope object is reactive.
    */
-  createScope<T extends OutputScope>(
-    args: {
-      kind: T["kind"];
-      name: string;
-      parent?: OutputScope | undefined;
-      flags?: OutputScopeFlags;
-      owner?: OutputSymbol;
-    } & Omit<T, keyof OutputScope>,
-  ): T;
+  createScope<T extends OutputScope>(args: CreateScopeOptions<T>): T;
 
   /**
    * Create a new symbol. The symbol will be added to the parent scope's symbols.
    * The returned symbol object is reactive.
    */
-  createSymbol<T extends OutputSymbol>(
-    args: {
-      name: string;
-      scope?: OutputScope;
-      refkey?: unknown;
-      flags?: OutputSymbolFlags;
-    } & Omit<T, keyof OutputSymbol>,
-  ): T;
+  createSymbol<T extends OutputSymbol>(args: CreateSymbolOptions<T>): T;
 
   /**
    * Instantiate the static members of a symbol into the instance members of
@@ -451,15 +452,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
   return binder;
 
-  function createScope<T extends OutputScope>(
-    args: {
-      kind: string;
-      name: string;
-      parent?: OutputScope;
-      flags?: OutputScopeFlags;
-      owner?: OutputSymbol;
-    } & Omit<T, keyof OutputScope>,
-  ): T {
+  function createScope<T extends OutputScope>(args: CreateScopeOptions<T>): T {
     const {
       kind,
       name,
@@ -518,12 +511,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function createSymbol<T extends OutputSymbol>(
-    args: {
-      name: string;
-      scope?: OutputScope;
-      refkey?: Refkey;
-      flags?: OutputSymbolFlags;
-    } & Omit<T, keyof OutputSymbol>,
+    args: CreateSymbolOptions<T>,
   ): T {
     const {
       name,
@@ -591,7 +579,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     scope.symbolsByRefkey.set(symbol.refkey, symbol);
 
     deconflict(symbol);
-    notifyRefkey(refkey, symbol);
+    notifyRefkey(symbol);
 
     return symbol;
   }
@@ -807,24 +795,25 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     return computed(() => cb(declSignal.value));
   }
 
-  function notifyRefkey(
-    refkey: Refkey | undefined,
-    symbol: OutputSymbol,
-  ): void {
-    if (!refkey) return;
-    knownDeclarations.set(refkey, symbol);
-    if (waitingDeclarations.has(refkey)) {
-      const signal = waitingDeclarations.get(refkey)!;
-      signal.value = symbol;
-    }
+  function notifyRefkey(symbol: OutputSymbol): void {
+    effect(() => {
+      const refkey = symbol.refkey;
+      if (!refkey) return;
 
-    const waitingScope = waitingSymbolNames.get(symbol.scope);
-    if (waitingScope) {
-      const waitingName = waitingScope.get(symbol.name);
-      if (waitingName) {
-        waitingName.value = symbol;
+      knownDeclarations.set(refkey, symbol);
+      if (waitingDeclarations.has(refkey)) {
+        const signal = waitingDeclarations.get(refkey)!;
+        signal.value = symbol;
       }
-    }
+
+      const waitingScope = waitingSymbolNames.get(symbol.scope);
+      if (waitingScope) {
+        const waitingName = waitingScope.get(symbol.name);
+        if (waitingName) {
+          waitingName.value = symbol;
+        }
+      }
+    });
   }
 
   function findSymbolName<TSymbol extends OutputSymbol = OutputSymbol>(
@@ -949,7 +938,7 @@ export function resolve<
   TScope extends OutputScope,
   TSymbol extends OutputSymbol,
 >(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>> {
-  const scope = useScope();
+  const scope = useScope() ?? useBinder().globalScope;
   const memberScope = useMemberScope();
   const binder = scope.binder;
 

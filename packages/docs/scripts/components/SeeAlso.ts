@@ -53,7 +53,7 @@ export function SeeAlso(props: SeeAlsoProps) {
 
   const contextsProvidedList =
     contextsProvided.length > 0 &&
-    MdxSection({ title: "Contexts provided", level: 3 }).children(
+    MdxSection({ title: "Contexts provided", level: 2 }).children(
       mapJoin(contextsProvided, (seeBlock) => {
         return code`
           * ${TsDoc({ node: seeBlock, context: props.type })}

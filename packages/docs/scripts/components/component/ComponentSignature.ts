@@ -1,9 +1,13 @@
-import type { ApiPropertySignature } from "@microsoft/api-extractor-model";
+import type {
+  ApiInterface,
+  ApiPropertySignature,
+} from "@microsoft/api-extractor-model";
 import type { ComponentApi } from "../../build-json.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 
 export interface ComponentSignatureProps {
   component: ComponentApi;
+  propsType?: ApiInterface;
 }
 
 export function ComponentSignature(props: ComponentSignatureProps) {
@@ -11,9 +15,8 @@ export function ComponentSignature(props: ComponentSignatureProps) {
   let stcParamHelp = "";
 
   // construct the code snippet for the component signature
-  if (props.component.componentProps) {
-    const propType = props.component.componentProps;
-    const allParamHelp = (propType.members as ApiPropertySignature[])
+  if (props.propsType) {
+    const allParamHelp = (props.propsType.members as ApiPropertySignature[])
       .filter((prop) => prop.name !== "children")
       .map(propHelp);
 
@@ -23,7 +26,7 @@ export function ComponentSignature(props: ComponentSignatureProps) {
       paramHelp = allParamHelp.join(" ");
     }
 
-    const allStcParamHelp = (propType.members as ApiPropertySignature[])
+    const allStcParamHelp = (props.propsType.members as ApiPropertySignature[])
       .filter((prop) => prop.name !== "children")
       .map(stcPropHelp);
 
@@ -41,7 +44,7 @@ export function ComponentSignature(props: ComponentSignatureProps) {
   const jsxCode = `
     import { ${name} } from "${packageSrc}";
 
-    <${name} ${paramHelp}>
+    <${name}${paramHelp.length > 0 ? " " + paramHelp : ""}>
       {children}
     </${name}> 
   `;
@@ -49,7 +52,7 @@ export function ComponentSignature(props: ComponentSignatureProps) {
   const stcCode = `
     import { ${name} } from "${packageSrc}/stc";
 
-    ${name}({ ${stcParamHelp}}).children(children)
+    ${name}({ ${stcParamHelp} }).children(children)
   `;
 
   return MdxParagraph().code`

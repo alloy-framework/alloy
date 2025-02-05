@@ -117,7 +117,7 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
   cleanup(() => cleanupFn(true));
 }
 
-function cleanup(fn: Disposable) {
+export function cleanup(fn: Disposable) {
   if (globalContext != null) {
     globalContext.disposables.push(fn);
   }
@@ -129,13 +129,14 @@ export type Child =
   | number
   | undefined
   | null
-  | (() => Child | Children)
+  | void
+  | (() => Children)
   | Child[]
   | Ref
   | Refkey;
 
 export type Children = Child | Child[];
-export type Props = Record<string, unknown>;
+export type Props = Record<string, any>;
 
 export interface ComponentDefinition<TProps = Props> {
   (props: TProps): Child | Children;
@@ -213,6 +214,29 @@ function inspectProps(props: Props) {
 export function isComponentCreator(item: unknown): item is ComponentCreator {
   return typeof item === "function" && (item as any).component;
 }
+
+/**
+ * This namespace is predominantly for interop with React tooling in VSCode
+ * and controls the type of JSX elements, components, and the like.
+ */
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace JSX {
+  export interface IntrinsicElements {}
+  export type ElementType = ComponentDefinition<any>;
+  export type Element = Children;
+  export interface ElementChildrenAttribute {
+    children: {};
+  }
+  export interface ElementAttributesProperty {
+    props: {};
+  }
+}
+
+export function jsx(type: Component<any>, props: Record<string, unknown>) {
+  return createComponent(type, props);
+}
+
+export const jsxs = jsx;
 
 export function createComponent<TProps extends Props = Props>(
   C: Component<TProps>,

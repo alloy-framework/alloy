@@ -2,10 +2,14 @@ import { code } from "./code.js";
 import {
   Child,
   Children,
+  cleanup,
   ComponentCreator,
   ComponentDefinition,
+  Disposable,
   isComponentCreator,
   memo,
+  root,
+  untrack,
 } from "./jsx-runtime.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { OutputDirectory, OutputFile, render } from "./render.js";
@@ -40,10 +44,10 @@ const defaultJoinOptions: JoinOptions = {
  *
  */
 export function mapJoin<T, U, V>(
-  src: Map<T, U>,
+  src: () => Map<T, U>,
   cb: (key: T, value: U) => V,
   options?: JoinOptions,
-): (V | string)[];
+): () => (V | string | undefined)[];
 /**
  * Map a array or iterator to another array using a mapper and place a joiner
  * between each element. Defaults to joining with a newline.
@@ -55,18 +59,96 @@ export function mapJoin<T, U, V>(
  * @returns The mapped and joined array.
  */
 export function mapJoin<T, V>(
-  src: T[] | IterableIterator<T>,
+  src: () => T[] | IterableIterator<T>,
   cb: (value: T) => V,
   options?: JoinOptions,
-): (V | string)[];
+): () => (V | string | undefined)[];
 export function mapJoin<T, U, V>(
-  src: Map<T, U> | T[] | Iterable<T>,
+  src: () => Map<T, U> | T[] | Iterable<T>,
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
-): (V | string)[] {
+): () => (V | string | undefined)[] {
   const options = { ...defaultJoinOptions, ...rawOptions };
-  const ender = options.ender === true ? options.joiner : options.ender;
+  const ender =
+    options.ender === true ? options.joiner : options.ender || undefined;
+  let currentItems: (T | [T, U])[] = [];
+  const disposables: Disposable[] = [];
+  const mapped: (V | string | undefined)[] = [];
 
+  cleanup(() => {
+    console.log("Cleanup!!!");
+    for (const d of disposables) d();
+  });
+
+  return () => {
+    console.log("Mapping");
+    const itemsSource = src();
+    const items = Array.isArray(itemsSource) ? itemsSource : [...itemsSource];
+    const compare: any = getCompareFunction(itemsSource);
+    const mapper: any = getMapperFunction(itemsSource);
+
+    return untrack(() => {
+      let startIndex = 0;
+      for (; startIndex < items.length; startIndex++) {
+        console.log("Compare", items[startIndex], currentItems[startIndex]);
+        if (!compare(items[startIndex], currentItems[startIndex])) {
+          break;
+        }
+      }
+
+      console.log("Diff starts at index" + startIndex);
+      if (startIndex > 0 && startIndex < items.length) {
+        // need to update the previous joiner (might be ender or absent)
+        mapped[startIndex * 2 - 1] = options.joiner;
+      }
+      for (; startIndex < items.length; startIndex++) {
+        currentItems[startIndex] = items[startIndex];
+        if (disposables[startIndex]) disposables[startIndex]();
+        console.log("about to map", startIndex);
+        mapped[startIndex * 2] = root((disposer) => {
+          disposables[startIndex] = disposer;
+          return mapper(items[startIndex]);
+        });
+
+        mapped[startIndex * 2 + 1] =
+          startIndex < items.length - 1 ? options.joiner : ender;
+      }
+
+      return mapped;
+    });
+  };
+
+  function getCompareFunction(itemsSource: Map<T, U> | T[] | Iterable<T>) {
+    return Array.isArray(itemsSource) || isIterable(itemsSource) ?
+        compareArray
+      : compareMap;
+  }
+
+  function getMapperFunction(itemsSource: Map<T, U> | T[] | Iterable<T>) {
+    return Array.isArray(itemsSource) || isIterable(itemsSource) ?
+        mapArray
+      : mapMap;
+  }
+  function compareArray(elem1: T, elem2: T) {
+    return elem1 === elem2;
+  }
+
+  function compareMap(record1: [T, U], record2: [T, U]) {
+    return record1[0] === record2[0] && record1[1] === record2[1];
+  }
+
+  function mapArray(item: T) {
+    return cb(item);
+  }
+
+  function mapMap(item: [T, U]) {
+    return cb(item[0], item[1]);
+  }
+
+  function isIterable<T>(x: unknown): x is Iterable<T> {
+    return typeof (x as any).next === "function";
+  }
+  /*
   const mapped: (V | string)[] = [];
   if (typeof (src as any).next === "function") {
     src = Array.from(src as Iterable<T>);
@@ -96,6 +178,7 @@ export function mapJoin<T, U, V>(
   }
 
   return mapped;
+  */
 }
 
 /**

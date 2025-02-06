@@ -303,7 +303,7 @@ function appendChild(
     traceRender("appendChild:string", () => JSON.stringify(reindented));
     node.push(reindented);
   } else if (isComponentCreator(child)) {
-    root(() => {
+    effect(() => {
       traceRender("appendChild:component", () => printChild(child));
       if (child.component === Indent && state.newline) {
         node.push(indentState.indent);
@@ -314,7 +314,7 @@ function appendChild(
       popStack();
       node.push(componentRoot);
       traceRender("appendChild:component-done", () => printChild(child));
-    }, child);
+    });
   } else if (typeof child === "function") {
     traceRender("appendChild:memo", () => child.toString());
     const index = node.length;

@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/json
 
+## 0.5.1
+
+No changes, version bump only.
+
 
 
 ## 0.5.0

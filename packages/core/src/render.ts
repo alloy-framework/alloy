@@ -276,7 +276,7 @@ function renderWorker(
 
   const indent = useContext(IndentContext)!;
   if (Array.isArray(children)) {
-    for (const child of children) {
+    for (const child of (children as any).flat(Infinity)) {
       appendChild(node, child, indent, state);
     }
   } else {
@@ -303,7 +303,7 @@ function appendChild(
     traceRender("appendChild:string", () => JSON.stringify(reindented));
     node.push(reindented);
   } else if (isComponentCreator(child)) {
-    root(() => {
+    effect(() => {
       traceRender("appendChild:component", () => printChild(child));
       if (child.component === Indent && state.newline) {
         node.push(indentState.indent);
@@ -314,7 +314,7 @@ function appendChild(
       popStack();
       node.push(componentRoot);
       traceRender("appendChild:component-done", () => printChild(child));
-    }, child);
+    });
   } else if (typeof child === "function") {
     traceRender("appendChild:memo", () => child.toString());
     const index = node.length;
@@ -326,15 +326,13 @@ function appendChild(
       }
       const newNodes: RenderTextTree = [];
       renderWorker(newNodes, res, state);
-      //node.splice(index, prev ? prev.length : 0, ...newNodes);
       node[index] = newNodes;
+
       return newNodes;
     });
     traceRender("appendChild:memo-done", () => "");
   } else {
-    traceRender("appendChild:array", () => dumpChildren(child));
-    renderWorker(node, child, state);
-    traceRender("appendChild:array-done", () => dumpChildren(child));
+    throw new Error("Unexpected child type");
   }
 }
 

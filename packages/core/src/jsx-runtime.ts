@@ -49,16 +49,12 @@ export function getContext() {
   return globalContext;
 }
 
-export function getElementCache(key: ElementCacheKey) {
-  return getContext()?.elementCache.get(key);
+export function getElementCache() {
+  return getContext()!.elementCache;
 }
 
-export function setElementCache(key: ElementCacheKey, value: RenderTextTree) {
-  return getContext()?.elementCache.set(key, value);
-}
-
-type ElementCacheKey = ComponentCreator | (() => unknown);
-type ElementCache = Map<ElementCacheKey, RenderTextTree>;
+export type ElementCacheKey = ComponentCreator | (() => unknown);
+export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
 
 export function root<T>(
   fn: (d: Disposable) => T,

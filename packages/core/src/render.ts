@@ -15,7 +15,6 @@ import {
   printRenderStack,
   pushStack,
   root,
-  setElementCache,
   untrack,
 } from "./jsx-runtime.js";
 import { isRefkey } from "./refkey.js";
@@ -305,15 +304,14 @@ function appendChild(
     traceRender("appendChild:string", () => JSON.stringify(reindented));
     node.push(reindented);
   } else {
+    const cache = getElementCache();
+    if (cache.has(child as any)) {
+      node.push(cache.get(child as any)!);
+      return;
+    }
+
     if (isComponentCreator(child)) {
       effect(() => {
-        const cachedValue = getElementCache(child as any);
-        if (cachedValue) {
-          console.log("Using cache");
-          node.push(cachedValue);
-          return;
-        }
-
         traceRender("appendChild:component", () => printChild(child));
         if (child.component === Indent && state.newline) {
           node.push(indentState.indent);
@@ -323,21 +321,13 @@ function appendChild(
         renderWorker(componentRoot, untrack(child), state);
         popStack();
         node.push(componentRoot);
-        setElementCache(child, componentRoot);
-        console.log("Set component cache", printChild(child));
+        cache.set(child, componentRoot);
         traceRender("appendChild:component-done", () => printChild(child));
       });
     } else if (typeof child === "function") {
       traceRender("appendChild:memo", () => child.toString());
       const index = node.length;
       effect(() => {
-        const cachedValue = getElementCache(child as any);
-        if (cachedValue) {
-          console.log("Using cache for memo");
-          node.push(cachedValue);
-          return;
-        }
-
         traceRender("memoEffect:run", () => "");
         let res = child();
         while (typeof res === "function" && !isComponentCreator(res)) {
@@ -346,7 +336,7 @@ function appendChild(
         const newNodes: RenderTextTree = [];
         renderWorker(newNodes, res, state);
         node[index] = newNodes;
-        setElementCache(child, newNodes);
+        cache.set(child, newNodes);
         return newNodes;
       });
       traceRender("appendChild:memo-done", () => "");

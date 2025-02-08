@@ -9,6 +9,7 @@ import {
   effect as vueEffect,
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
+import { RenderTextTree } from "./render.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -32,6 +33,11 @@ export interface Context {
   meta?: Record<string, any>;
 
   /**
+   * A cache of RenderTextTree nodes created within this context,
+   * indexed by the component or function which created them.
+   */
+  elementCache: ElementCache;
+  /**
    * When this context was created by a component, this will
    * be the component that created it.
    */
@@ -43,6 +49,13 @@ export function getContext() {
   return globalContext;
 }
 
+export function getElementCache() {
+  return getContext()!.elementCache;
+}
+
+export type ElementCacheKey = ComponentCreator | (() => unknown);
+export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
+
 export function root<T>(
   fn: (d: Disposable) => T,
   componentOwner?: ComponentCreator<any>,
@@ -52,6 +65,7 @@ export function root<T>(
     disposables: [],
     owner: globalContext,
     context: {},
+    elementCache: new Map(),
   };
   let ret;
   try {
@@ -88,12 +102,12 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
 }
 
 export function effect<T>(fn: (prev?: T) => T, current?: T) {
-  const context = {
-    src: "effect",
+  const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
     owner: globalContext,
-  } as any;
+    elementCache: new Map(),
+  };
 
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;

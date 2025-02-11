@@ -49,7 +49,7 @@ it("renders an enum given a JS value", () => {
   expect(
     <Output>
       <ts.SourceFile path="foo.ts">
-        <ts.EnumDeclaration name="MyEnum" jsValue={members} />
+        <ts.EnumDeclaration name="MyEnum" members={members} />
       </ts.SourceFile>
     </Output>,
   ).toRenderTo(`
@@ -69,7 +69,7 @@ it("renders an enum given a JS value and children", () => {
   expect(
     <Output>
       <ts.SourceFile path="foo.ts">
-        <ts.EnumDeclaration name="MyEnum" jsValue={members}>
+        <ts.EnumDeclaration name="MyEnum" members={members}>
           custom = "hello"
         </ts.EnumDeclaration>
       </ts.SourceFile>
@@ -94,7 +94,7 @@ it("uses the naming policy", () => {
   expect(
     <Output namePolicy={policy}>
       <ts.SourceFile path="foo.ts">
-        <ts.EnumDeclaration name="my-enum" jsValue={members} />
+        <ts.EnumDeclaration name="my-enum" members={members} />
       </ts.SourceFile>
     </Output>,
   ).toRenderTo(`
@@ -128,5 +128,100 @@ describe("symbols", () => {
       
       MyEnum.foo;
     `);
+  });
+});
+
+describe("docs", () => {
+  it("renders an enum given member descriptors", () => {
+    const members = {
+      foo: { jsValue: 1, doc: "Test Doc 1" } as ts.EnumMemberDescriptor,
+      bar: { jsValue: 2, doc: ["Multiline", "Doc"] } as ts.EnumMemberDescriptor,
+    };
+
+    expect(
+      <Output>
+        <ts.SourceFile path="foo.ts">
+          <ts.EnumDeclaration name="MyEnum" members={members} />
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo(`
+      enum MyEnum {
+        /** Test Doc 1 */
+        foo = 1,
+        /**
+         * Multiline
+         * Doc
+         */
+        bar = 2
+      }
+    `);
+  });
+
+  it("renders an enum with a single-line doc comment", () => {
+    expect(
+      <Output>
+        <ts.SourceFile path="foo.ts">
+          <ts.EnumDeclaration name="MyEnum" doc="This is a test enum">
+            <ts.EnumMember name="foo" jsValue={1} />,
+            <ts.EnumMember name="bar" jsValue={2} />
+          </ts.EnumDeclaration>
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo(`
+      /** This is a test enum */
+      enum MyEnum {
+        foo = 1,
+        bar = 2
+      }
+    `);
+  });
+
+  it("renders an enum with a multi-line doc comment", () => {
+    expect(
+      <Output>
+        <ts.SourceFile path="foo.ts">
+          <ts.EnumDeclaration name="AnotherEnum" doc={["Line one", "Line two"]}>
+            <ts.EnumMember name="foo" jsValue={10} />,
+            <ts.EnumMember name="bar" jsValue={20} />
+          </ts.EnumDeclaration>
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo(`
+      /**
+       * Line one
+       * Line two
+       */
+      enum AnotherEnum {
+        foo = 10,
+        bar = 20
+      }
+    `);
+  });
+
+  it("renders an enum with a multi-line doc comment, also for members", () => {
+    expect(
+      <Output>
+          <ts.SourceFile path="foo.ts">
+            <ts.EnumDeclaration name="AnotherEnum" doc={["Line one", "Line two"]}>
+              <ts.EnumMember name="foo" jsValue={10}  doc={"Single line comment"} />,
+              <ts.EnumMember name="bar" jsValue={20}  doc={["Multiline", "Comment"]} />
+            </ts.EnumDeclaration>
+          </ts.SourceFile>
+        </Output>,
+    ).toRenderTo(`
+        /**
+         * Line one
+         * Line two
+         */
+        enum AnotherEnum {
+          /** Single line comment */
+          foo = 10,
+          /**
+           * Multiline
+           * Comment
+           */
+          bar = 20
+        }
+      `);
   });
 });

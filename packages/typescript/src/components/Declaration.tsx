@@ -16,6 +16,7 @@ import { TypeDeclaration } from "./TypeDeclaration.jsx";
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { InterfaceDeclaration } from "./Interface.jsx";
+import { JSDoc } from "./JSDoc.jsx";
 
 export interface BaseDeclarationProps {
   /**
@@ -51,6 +52,10 @@ export interface BaseDeclarationProps {
    * value (e.g. var, const, let).
    */
   kind?: "type" | "value";
+  /**
+   * Documentation for the declaration.
+   */
+  doc?: string | string[];
 }
 
 export interface DeclarationProps extends BaseDeclarationProps {
@@ -99,7 +104,7 @@ export function Declaration(props: DeclarationProps) {
     children = () => props.children;
   }
 
-  return <CoreDeclaration symbol={sym}>
+  return <JSDoc content={props.doc}><CoreDeclaration symbol={sym}>
     {props.export ? "export " : ""}{props.default ? "default " : ""}{children}
-  </CoreDeclaration>;
+  </CoreDeclaration></JSDoc>;
 }

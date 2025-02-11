@@ -12,8 +12,10 @@ import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import {
   FunctionDeclaration,
+  getFunctionDoc,
   ParameterDescriptor,
 } from "./FunctionDeclaration.jsx";
+import { JSDoc } from "./JSDoc.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -72,6 +74,7 @@ export interface ClassMemberProps {
   jsPrivate?: boolean;
   static?: boolean;
   children?: Children;
+  doc?: string | string[];
 }
 
 export function ClassMember(props: ClassMemberProps) {
@@ -97,7 +100,7 @@ export function ClassMember(props: ClassMemberProps) {
     name = `#${name}`;
   }
 
-  return <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
+  return <JSDoc content={props.doc}><MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
     {
       props.public && "public "
     }{
@@ -107,7 +110,7 @@ export function ClassMember(props: ClassMemberProps) {
     }{
       props.static && "static "
     }{props.children}
-  </MemberDeclaration>;
+  </MemberDeclaration></JSDoc>;
 }
 
 export interface ClassFieldProps extends ClassMemberProps {
@@ -133,7 +136,8 @@ export interface ClassMethodProps extends ClassMemberProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const returnType = props.returnType && <>: {props.returnType}</>;
-  return <ClassMember {...props}>
+  const methodDoc = getFunctionDoc(props.doc, props.parameters);
+  return <ClassMember {...props} doc={methodDoc}>
     {
       props.async && "async "
     }<MemberName /><Scope name={props.name} kind="function">

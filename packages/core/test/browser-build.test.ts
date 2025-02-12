@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
-import { describe, beforeAll, afterAll, it, expect } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const testDir = join(__dirname, ".temp", "vite-test-project");
 
@@ -25,7 +25,7 @@ describe("Browser Build Test", () => {
       `
         import { writeOutput } from "@alloy-js/core";
         console.log("Alloy-js core imported successfully!", writeOutput);
-      `
+      `,
     );
 
     writeFileSync(
@@ -39,9 +39,8 @@ describe("Browser Build Test", () => {
             target: "esnext",
           }
         });
-      `
+      `,
     );
-    
 
     // Create an index.html file
     writeFileSync(
@@ -58,7 +57,7 @@ describe("Browser Build Test", () => {
         <script type="module" src="/index.js"></script>
       </body>
       </html>
-      `
+      `,
     );
 
     writeFileSync(
@@ -67,12 +66,12 @@ describe("Browser Build Test", () => {
         {
           type: "module",
           scripts: {
-            build: "vite build"
-          }
+            build: "vite build",
+          },
         },
         null,
-        2
-      )
+        2,
+      ),
     );
   });
 

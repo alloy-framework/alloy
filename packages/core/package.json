@@ -26,9 +26,11 @@
       "import": "./dist/src/components/index.js"
     }
   },
-  "browser": {
-    "./dist/src/write-output.js": "./dist/src/write-output.browser.js",
-    "./src/write-output.ts": "./src/write-output.browser.ts"
+  "imports": {
+    "#write-output": {
+      "browser": "./dist/src/write-output.browser.js",
+      "default": "./dist/src/write-output.js"
+    }
   },
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",

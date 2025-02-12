@@ -199,3 +199,45 @@ describe("symbols", () => {
     `);
   });
 });
+
+describe("docs", () => {
+  it("renders a function with a single-line doc comment", () => {
+    expect(
+      toSourceText(
+        <FunctionDeclaration name="foo" doc="This is a test function" />,
+      ),
+    ).toBe(d`
+      /** This is a test function */
+      function foo() {
+        
+      }
+    `);
+  });
+
+  it("renders a function with parameter descriptors including docs", () => {
+    expect(
+      toSourceText(
+        <FunctionDeclaration
+          name="foo"
+          doc="Function with params"
+          parameters={{
+            a: { type: "number", doc: "Parameter a" } as ParameterDescriptor,
+            b: { type: "number", doc: ["Line 1 for b", "Line 2 for b"] } as ParameterDescriptor,
+          }}
+        >
+          return a + b;
+        </FunctionDeclaration>,
+      ),
+    ).toBe(d`
+      /**
+       * Function with params
+       * @param a Parameter a
+       * @param b Line 1 for b
+       * Line 2 for b
+       */
+      function foo(a: number, b: number) {
+        return a + b;
+      }
+    `);
+  });
+});

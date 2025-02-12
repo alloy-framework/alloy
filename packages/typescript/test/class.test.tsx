@@ -33,6 +33,58 @@ it("creates extends", () => {
   `);
 });
 
+it("renders a class with docs for the class and its members", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration name="Foo" doc="This is a class documentation">
+      <ts.ClassField name="bar" doc="This is a field documentation">123</ts.ClassField>
+      <ts.ClassMethod name="baz" doc="This is a method documentation">
+        return 123;
+      </ts.ClassMethod>
+    </ts.ClassDeclaration>,
+  );
+  expect(res).toEqual(d`
+    /** This is a class documentation */
+    class Foo {
+      /** This is a field documentation */
+      bar = 123;
+      /** This is a method documentation */
+      baz() {
+        return 123;
+      }
+    }
+  `);
+});
+
+it("renders a method with parameter docs", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration name="Foo">
+      <ts.ClassMethod
+        name="bar"
+        doc="Method documentation"
+        returnType="void"
+        parameters={{
+          a: { type: "number", doc: "Parameter a doc" } as ts.ParameterDescriptor,
+          b: { type: "string", doc: ["Line 1 for b", "Line 2 for b"] } as ts.ParameterDescriptor,
+        }}
+      >
+      </ts.ClassMethod>
+    </ts.ClassDeclaration>,
+  );
+  expect(res).toEqual(d`
+    class Foo {
+      /**
+       * Method documentation
+       * @param a Parameter a doc
+       * @param b Line 1 for b
+       * Line 2 for b
+       */
+      bar(a: number, b: string): void {
+        
+      }
+    }
+  `);
+});
+
 describe("instance members", () => {
   it("can be created", () => {
     const res = toSourceText(

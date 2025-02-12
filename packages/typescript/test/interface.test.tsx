@@ -122,3 +122,68 @@ it("supports the naming policy", () => {
     }
   `);
 });
+
+it("emits single-line JSDoc comments", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo" doc="This is a single-line comment" />,
+  );
+  expect(res).toEqual(d`
+    /** This is a single-line comment */
+    interface Foo {
+      
+    }
+  `);
+});
+
+it("emits multi-line JSDoc comments", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration
+      name="Foo"
+      doc={["This is a multi-line comment", "with multiple lines"]}
+    />,
+  );
+  expect(res).toEqual(d`
+    /**
+     * This is a multi-line comment
+     * with multiple lines
+     */
+    interface Foo {
+      
+    }
+  `);
+});
+
+it("emits JSDoc comments for interface members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember name="member" type="string" doc="Member description" />;
+    </ts.InterfaceDeclaration>,
+  );
+  expect(res).toEqual(d`
+    interface Foo {
+      /** Member description */
+      member: string;
+    }
+  `);
+});
+
+it("emits multi-line JSDoc comments for interface members", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceMember
+        name="member"
+        type="string"
+        doc={["Member description line 1", "Member description line 2"]}
+      />;
+    </ts.InterfaceDeclaration>,
+  );
+  expect(res).toEqual(d`
+    interface Foo {
+      /**
+       * Member description line 1
+       * Member description line 2
+       */
+      member: string;
+    }
+  `);
+});

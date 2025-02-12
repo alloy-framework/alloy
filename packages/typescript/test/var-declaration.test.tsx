@@ -1,6 +1,6 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as ts from "../src/index.js";
 import { assertFileContents } from "./utils.js";
 
@@ -41,5 +41,20 @@ it("works end-to-end", () => {
 
       export let hi: TestType = "hello";
     `,
+  });
+});
+
+describe("docs", () => {
+  it("renders a var declaration with a doc comment", () => {
+    expect(
+      <Output>
+        <ts.SourceFile path="test.ts">
+          <ts.VarDeclaration name="myVar" doc="This is a test variable" value="456" />
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo(`
+      /** This is a test variable */
+      const myVar = 456;
+    `);
   });
 });

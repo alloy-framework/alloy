@@ -1,6 +1,7 @@
 import { Children, code, Name } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { JSDoc } from "./JSDoc.js";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -44,6 +45,7 @@ export interface InterfaceMemberProps {
   children?: Children;
   optional?: boolean;
   readonly?: boolean;
+  doc?: string | string[];
 }
 
 /**
@@ -55,8 +57,8 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   const optionality = props.optional ? "?" : "";
   const readonly = props.readonly ? "readonly " : "";
   if (props.indexer) {
-    return <>[{props.indexer}]: {type}</>;
+    return <JSDoc content={props.doc}>[{props.indexer}]: {type}</JSDoc>;
   } else {
-    return <>{readonly}{namer.getName(props.name!, "interface-member")}{optionality}: {type}</>;
+    return <JSDoc content={props.doc}>{readonly}{namer.getName(props.name!, "interface-member")}{optionality}: {type}</JSDoc>;
   }
 }

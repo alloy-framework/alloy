@@ -4,4 +4,4 @@ packages:
   - "@alloy-js/core"
 ---
 
-Fix browser mappings
+Fix browser mappings to use import

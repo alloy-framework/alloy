@@ -7,7 +7,9 @@ import {
   filterChildren,
   trimWhitespace,
   transformCondition,
-  convertJSXIdentifier
+  convertJSXIdentifier,
+  isComponent,
+  getTagName
 } from "./utils";
 import { transformNode, getCreateTemplate } from "./transform";
 
@@ -33,6 +35,10 @@ export default function transformComponent(path) {
     runningObject = [],
     dynamicSpread = false,
     hasChildren = path.node.children.length > 0;
+
+  const node = path.node;
+  let tagName = getTagName(node);
+  const isComponentTag = isComponent(tagName);
 
   if (config.builtIns.indexOf(tagId.name) > -1 && !path.scope.hasBinding(tagId.name)) {
     const newTagId = registerImportMethod(path, tagId.name);
@@ -185,7 +191,7 @@ export default function transformComponent(path) {
       }
     });
 
-  const childResult = transformComponentChildren(path.get("children"), config);
+  const childResult = transformComponentChildren(path.get("children"), isComponentTag, config);
   if (childResult && childResult[0]) {
     if (childResult[1]) {
       const body =
@@ -208,7 +214,8 @@ export default function transformComponent(path) {
     props = [t.callExpression(registerImportMethod(path, "mergeProps"), props)];
   }
   const componentArgs = [tagId, props[0]];
-  exprs.push(t.callExpression(registerImportMethod(path, "createComponent"), componentArgs));
+
+  exprs.push(t.callExpression(registerImportMethod(path, isComponentTag ? "createComponent" : "createIntrinsic"), componentArgs));
 
   // handle hoisting conditionals
   if (exprs.length > 1) {
@@ -223,7 +230,7 @@ export default function transformComponent(path) {
   return { exprs, template: "", component: true };
 }
 
-function transformComponentChildren(children, config) {
+function transformComponentChildren(children, isComponentTag, config) {
   const filteredChildren = filterChildren(children, config.preserveWhitespace);
   if (!filteredChildren.length) return;
   let dynamic = false;
@@ -256,6 +263,10 @@ function transformComponentChildren(children, config) {
     }
     return memo;
   }, []);
+
+  if (!isComponentTag) {
+    return [t.arrayExpression(transformedChildren), false];
+  }
 
   if (transformedChildren.length === 1) {
     transformedChildren = transformedChildren[0];

@@ -195,25 +195,5 @@ export function getCreateTemplate(config, path, result) {
 }
 
 export function transformElement(config, path, info = {}) {
-  const node = path.node;
-  let tagName = getTagName(node);
-  // <Component ...></Component>
-  if (isComponent(tagName)) return transformComponent(path);
-
-  // <div ...></div>
-  // const element = getTransformElemet(config, path, tagName);
-
-  const tagRenderer = (config.renderers ?? []).find(renderer =>
-    renderer.elements.includes(tagName)
-  );
-
-  if (tagRenderer?.name === "dom" || getConfig(path).generate === "dom") {
-    return transformElementDOM(path, info);
-  }
-
-  if (getConfig(path).generate === "ssr") {
-    return transformElementSSR(path, info);
-  }
-
-  return transformElementUniversal(path, info);
+  return transformComponent(path);
 }

@@ -5,6 +5,10 @@ interface Options {
   alloyModuleName: string | undefined;
 }
 
+const FormattingCommands = {
+  Group: "group",
+  Indent: "indent",
+};
 const visited = new Set();
 export function transformJSX(
   path: NodePath<
@@ -89,7 +93,8 @@ function transformElement(
 
   function createIndent() {
     if (currentIndent) return;
-    const id = registerIndent(path, opts);
+    // const id = registerIndent(path, opts);
+    const id = t.jsxIdentifier("indent");
     currentIndent = t.jsxElement(
       t.jsxOpeningElement(id, []),
       t.jsxClosingElement(id),

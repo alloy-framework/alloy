@@ -37,8 +37,6 @@ describe("mapJoin", () => {
       (value) => <Foo value={value} />,
     );
 
-    console.log(joined());
-
     expect(joined()).toRenderTo(`
       Value: 1
       Value: 2

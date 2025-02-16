@@ -22,6 +22,11 @@ export interface Disposable {
   (): void;
 }
 
+interface ContextDebugInfo {
+  kind: "effect" | "memo";
+  createdBy?: string;
+}
+
 export interface Context {
   disposables: Disposable[];
   owner: Context | null;
@@ -42,6 +47,11 @@ export interface Context {
    * be the component that created it.
    */
   componentOwner?: ComponentCreator<unknown>;
+
+  /**
+   *
+   */
+  debugInfo?: ContextDebugInfo;
 }
 
 let globalContext: Context | null = null;
@@ -53,34 +63,53 @@ export function getElementCache() {
   return getContext()!.elementCache;
 }
 
-export type ElementCacheKey = ComponentCreator | (() => unknown);
+export type ElementCacheKey =
+  | ComponentCreator
+  | (() => unknown)
+  | CustomContext;
 export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
 
-export function root<T>(
-  fn: (d: Disposable) => T,
-  componentOwner?: ComponentCreator<any>,
-): T {
-  globalContext = {
-    componentOwner,
+export interface RootOptions {
+  componentOwner?: ComponentCreator<any>;
+  debugInfo?: ContextDebugInfo;
+}
+
+export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
+  const context: Context = {
+    componentOwner: options?.componentOwner,
     disposables: [],
     owner: globalContext,
     context: {},
     elementCache: new Map(),
+    debugInfo: options?.debugInfo,
   };
+
+  globalContext = context;
+  console.log("[Context]: new root context");
   let ret;
   try {
     ret = untrack(() =>
       fn(() => {
-        for (const d of globalContext!.disposables) {
+        console.log("Disposing", globalContext?.debugInfo);
+        for (const d of context!.disposables) {
+          console.log(d);
           d();
         }
       }),
     );
   } finally {
+    console.log("[Context]: restored from root context");
     globalContext = globalContext!.owner;
   }
 
   return ret;
+}
+
+interface RootContextProps {
+  context: Context;
+}
+export function RootContext(props: RootContextProps) {
+  return;
 }
 
 export function untrack<T>(fn: () => T): T {
@@ -92,49 +121,103 @@ export function untrack<T>(fn: () => T): T {
 
 export function memo<T>(fn: () => T, equal?: boolean): () => T {
   const o = shallowRef();
-  effect((prev) => {
-    const res = fn();
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (!equal || prev !== res) && (o.value = res);
-    return res;
-  });
-  return () => o.value;
+  effect(
+    (prev) => {
+      const res = fn();
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      (!equal || prev !== res) && (o.value = res);
+      return res;
+    },
+    undefined as T,
+    {
+      debugInfo: {
+        kind: "memo",
+        createdBy: fn.toString(),
+      },
+    },
+  );
+  const val = () => o.value;
+  (val as any).fn = fn;
+  return val;
 }
 
-export function effect<T>(fn: (prev?: T) => T, current?: T) {
+export interface EffectOptions {
+  debugInfo: ContextDebugInfo;
+}
+
+export function effect<T>(
+  fn: (prev?: T) => T,
+  current?: T,
+  options?: EffectOptions,
+) {
   const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
     owner: globalContext,
     elementCache: new Map(),
+    debugInfo: options?.debugInfo,
   };
 
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;
     context.disposables = [];
     for (let k = 0, len = d.length; k < len; k++) d[k]();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     final && stop(c);
   };
 
+  onCleanup(() => cleanupFn(true));
   const c = vueEffect(() => {
     cleanupFn(false);
+
     const oldContext = globalContext;
+    console.log("[Context]: new effect context", context.debugInfo);
     globalContext = context;
     try {
       current = fn(current);
     } finally {
+      console.log("[Context]: restored from effect context", context.debugInfo);
       globalContext = oldContext;
     }
-  });
-
-  cleanup(() => cleanupFn(true));
+  }, {});
 }
 
-export function cleanup(fn: Disposable) {
+export function onCleanup(fn: Disposable) {
   if (globalContext != null) {
     globalContext.disposables.push(fn);
   }
+}
+
+/**
+ * Create a custom reactive context for the children returned by
+ * the provided context.
+ */
+export interface CustomContext {
+  [CUSTOM_CONTEXT_SYM]: true;
+  useCustomContext: (useCb: CustomContextChildrenCallback) => void;
+}
+
+export type CustomContextChildrenCallback = (child: Children) => void;
+const CUSTOM_CONTEXT_SYM = Symbol();
+
+export function createCustomContext(
+  useCallback: (useChildren: CustomContextChildrenCallback) => void,
+): CustomContext {
+  return {
+    [CUSTOM_CONTEXT_SYM]: true,
+    useCustomContext(useCb: (children: Children) => void): void {
+      useCallback(useCb);
+    },
+  };
+}
+
+export function isCustomContext(child: Children): child is CustomContext {
+  return (
+    typeof child === "object" &&
+    child !== null &&
+    Object.hasOwn(child, CUSTOM_CONTEXT_SYM)
+  );
 }
 
 export type Child =
@@ -147,7 +230,8 @@ export type Child =
   | (() => Children)
   | Child[]
   | Ref
-  | Refkey;
+  | Refkey
+  | CustomContext;
 
 export type Children = Child | Child[];
 export type Props = Record<string, any>;

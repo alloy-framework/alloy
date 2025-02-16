@@ -76,7 +76,7 @@ export function JsonArray(props: JsonArrayProps) {
   }
 
   const elements = mapJoin(
-    jsValue,
+    () => jsValue,
     (value) => {
       return <JsonArrayElement><JsonValue jsValue={value} /></JsonArrayElement>;
     },

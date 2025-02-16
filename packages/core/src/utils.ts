@@ -1,13 +1,16 @@
+import { toRaw } from "@vue/reactivity";
 import { code } from "./code.js";
 import {
   Child,
   Children,
-  cleanup,
   ComponentCreator,
   ComponentDefinition,
+  createCustomContext,
+  CustomContext,
   Disposable,
   isComponentCreator,
   memo,
+  onCleanup,
   root,
   untrack,
 } from "./jsx-runtime.js";
@@ -47,7 +50,7 @@ export function mapJoin<T, U, V>(
   src: () => Map<T, U>,
   cb: (key: T, value: U) => V,
   options?: JoinOptions,
-): () => (V | string | undefined)[];
+): () => (V | string | undefined | CustomContext)[];
 /**
  * Map a array or iterator to another array using a mapper and place a joiner
  * between each element. Defaults to joining with a newline.
@@ -62,58 +65,85 @@ export function mapJoin<T, V>(
   src: () => T[] | IterableIterator<T>,
   cb: (value: T) => V,
   options?: JoinOptions,
-): () => (V | string | undefined)[];
+): () => (V | string | undefined | CustomContext)[];
 export function mapJoin<T, U, V>(
   src: () => Map<T, U> | T[] | Iterable<T>,
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
-): () => (V | string | undefined)[] {
+): () => (V | string | undefined | CustomContext)[] {
   const options = { ...defaultJoinOptions, ...rawOptions };
   const ender =
     options.ender === true ? options.joiner : options.ender || undefined;
   let currentItems: (T | [T, U])[] = [];
   const disposables: Disposable[] = [];
-  const mapped: (V | string | undefined)[] = [];
+  const mapped: (V | string | undefined | CustomContext)[] = [];
+  let previousItemsLen = 0;
 
-  cleanup(() => {
-    console.log("Cleanup!!!");
+  console.log("Starting thing!");
+  onCleanup(() => {
+    console.log("Cleaning up entire thing");
     for (const d of disposables) d();
   });
 
   return () => {
-    console.log("Mapping");
     const itemsSource = src();
-    const items = Array.isArray(itemsSource) ? itemsSource : [...itemsSource];
+    // need to unpack reactives for branding checks
+    const itemsSourceRaw = toRaw(itemsSource);
+    const items =
+      Array.isArray(itemsSourceRaw) ? (itemsSource as T[]) : [...itemsSource];
+    // this is important to access here in reactive context so we are
+    // notified of new items from reactives.
+    const itemsLen = items.length;
     const compare: any = getCompareFunction(itemsSource);
     const mapper: any = getMapperFunction(itemsSource);
 
     return untrack(() => {
       let startIndex = 0;
-      for (; startIndex < items.length; startIndex++) {
-        console.log("Compare", items[startIndex], currentItems[startIndex]);
+      for (
+        ;
+        startIndex < itemsLen && startIndex < currentItems.length;
+        startIndex++
+      ) {
         if (!compare(items[startIndex], currentItems[startIndex])) {
           break;
         }
       }
 
-      console.log("Diff starts at index" + startIndex);
-      if (startIndex > 0 && startIndex < items.length) {
+      if (startIndex > 0 && startIndex < itemsLen) {
         // need to update the previous joiner (might be ender or absent)
         mapped[startIndex * 2 - 1] = options.joiner;
       }
-      for (; startIndex < items.length; startIndex++) {
+      for (; startIndex < itemsLen; startIndex++) {
         currentItems[startIndex] = items[startIndex];
-        if (disposables[startIndex]) disposables[startIndex]();
-        console.log("about to map", startIndex);
-        mapped[startIndex * 2] = root((disposer) => {
-          disposables[startIndex] = disposer;
-          return mapper(items[startIndex]);
+        if (disposables[startIndex]) {
+          disposables[startIndex]();
+        }
+        const cleanupIndex = startIndex;
+        mapped[startIndex * 2] = createCustomContext((cb) => {
+          return root(
+            (disposer) => {
+              disposables[cleanupIndex] = disposer;
+              disposer();
+              cb(mapper(items[cleanupIndex]));
+            },
+            { debugInfo: { kind: "effect", createdBy: "mapJoin" } },
+          );
         });
 
         mapped[startIndex * 2 + 1] =
           startIndex < items.length - 1 ? options.joiner : ender;
       }
 
+      mapped.length = startIndex * 2;
+      mapped[mapped.length - 1] = ender;
+      for (; startIndex < previousItemsLen; startIndex++) {
+        disposables[startIndex]?.();
+      }
+
+      previousItemsLen = itemsLen;
+
+      console.log("Returning " + mapped.length + " elements");
+      console.log(mapped);
       return mapped;
     });
   };

@@ -1,4 +1,4 @@
-import { Children, cleanup, effect, memo } from "@alloy-js/core/jsx-runtime";
+import { Children, effect, memo, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { ref } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { renderTree } from "../../src/render.js";
@@ -6,22 +6,22 @@ import { renderTree } from "../../src/render.js";
 describe("memo cleanup", () => {
   it("cleans up when memo value is recomputed", () => {
     const r = ref(1);
-    let cleanedUp = false;
+    let callCount = 0;
     const m = memo(() => {
-      cleanup(() => {
-        cleanedUp = true;
+      onCleanup(() => {
+        callCount++;
       });
 
       return r.value;
     });
 
     expect(m()).toBe(1);
-    expect(cleanedUp).toBe(false);
+    expect(callCount).toBe(0);
 
     r.value = 2;
 
     expect(m()).toBe(2);
-    expect(cleanedUp).toBe(true);
+    expect(callCount).toBe(1);
   });
 });
 
@@ -30,7 +30,7 @@ describe("effect cleanup", () => {
     const r = ref(1);
     let cleanedUp = false;
     effect(() => {
-      cleanup(() => {
+      onCleanup(() => {
         cleanedUp = true;
       });
 
@@ -49,7 +49,7 @@ describe("element cleanup", () => {
   it("should clean up when the element is unmounted", () => {
     let cleanedUp = false;
     function Component() {
-      cleanup(() => {
+      onCleanup(() => {
         cleanedUp = true;
       });
       return "hi!";
@@ -68,14 +68,14 @@ describe("element cleanup", () => {
     let cleanedUpC2 = false;
 
     function C1(props: { children: Children }) {
-      cleanup(() => {
+      onCleanup(() => {
         cleanedUpC1 = true;
       });
       return props.children;
     }
 
     function C2() {
-      cleanup(() => {
+      onCleanup(() => {
         cleanedUpC2 = true;
       });
     }

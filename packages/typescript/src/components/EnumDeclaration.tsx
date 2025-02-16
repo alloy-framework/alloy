@@ -36,7 +36,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   });
 
   const jsValueMembers = mapJoin(
-    Object.entries(props.jsValue ?? {}),
+    () => Object.entries(props.jsValue ?? {}),
     ([name, value]) => {
       return <EnumMember name={name} jsValue={value} />;
     },
@@ -46,7 +46,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   return <CoreDeclaration symbol={sym}>
     {props.export ? "export " : ""}{props.default ? "default " : ""}enum <Name /> {"{"}
       <MemberScope owner={sym}>
-        {jsValueMembers}{jsValueMembers.length > 0 && props.children && ",\n"}{props.children}
+        {jsValueMembers}{jsValueMembers().length > 0 && props.children && ",\n"}{props.children}
       </MemberScope>
     {"}"}
   </CoreDeclaration>;

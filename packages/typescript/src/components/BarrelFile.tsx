@@ -85,9 +85,12 @@ export function BarrelFile(props: BarrelFileProps) {
     );
 
     const allModules = [...sourceFiles, ...nestedBarrels];
-    return mapJoin(allModules, (module) => {
-      return <ExportStatement star from={module} />;
-    });
+    return mapJoin(
+      () => allModules,
+      (module) => {
+        return <ExportStatement star from={module} />;
+      },
+    );
   });
 
   return <SourceFile path={path} export={props.export}>

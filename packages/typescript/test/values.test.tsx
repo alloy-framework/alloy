@@ -37,7 +37,7 @@ it("renders an object with properties, mapped", () => {
     ["bar", "2"],
   ]);
   const props = mapJoin(
-    propValues,
+    () => propValues,
     (name, value) => {
       return <ts.ObjectProperty name={name} value={value} />;
     },

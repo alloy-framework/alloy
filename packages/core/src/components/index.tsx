@@ -1,4 +1,5 @@
 export * from "./Declaration.js";
+export * from "./For.js";
 export * from "./Indent.js";
 export * from "./MemberDeclaration.jsx";
 export * from "./MemberName.jsx";

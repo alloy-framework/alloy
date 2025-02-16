@@ -12,17 +12,19 @@ export function ArrayExpression(props: ArrayExpressionProps) {
     let elements: any[] = [];
 
     if (jsValue) {
-      elements = mapJoin(
-        jsValue,
-        (value) => {
-          return <ValueExpression jsValue={value} />;
-        },
-        { joiner: ",\n" },
-      );
+      elements = [
+        mapJoin(
+          () => jsValue,
+          (value) => {
+            return <ValueExpression jsValue={value} />;
+          },
+          { joiner: ",\n" },
+        ),
+      ];
     }
 
     if (props.children) {
-      if (elements.length > 0) {
+      if (jsValue && jsValue.length > 0) {
         elements.push(",");
       }
       elements.push("\n", props.children);

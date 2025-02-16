@@ -28,7 +28,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     assignmentSymbol.binder.addStaticMembersToSymbol(assignmentSymbol);
   }
 
-  const elements = computed(() => {
+  const jsValueProperties = computed(() => {
     const jsValue = props.jsValue;
     let properties: [string, unknown][];
     if (Array.isArray(jsValue)) {
@@ -40,13 +40,23 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     } else {
       properties = [];
     }
-    const elements = mapJoin(
-      properties,
-      ([name, value]) => {
-        return <ObjectProperty name={name} jsValue={value} />;
-      },
-      { joiner: ",\n" },
-    );
+    return properties;
+  });
+
+  const elements = computed(() => {
+    const elements: Children[] = [];
+
+    if (jsValueProperties.value.length > 0) {
+      elements.push(
+        mapJoin(
+          () => jsValueProperties.value,
+          ([name, value]) => {
+            return <ObjectProperty name={name} jsValue={value} />;
+          },
+          { joiner: ",\n" },
+        ),
+      );
+    }
 
     if (props.children) {
       if (elements.length > 0) {

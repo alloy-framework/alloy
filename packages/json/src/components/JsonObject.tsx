@@ -85,7 +85,7 @@ export function JsonObject(props: JsonObjectProps) {
       properties = [];
     }
     const elements = mapJoin(
-      properties,
+      () => properties,
       ([name, value]) => {
         return <JsonObjectProperty name={name} jsValue={value} />;
       },

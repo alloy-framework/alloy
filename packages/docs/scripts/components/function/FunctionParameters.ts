@@ -8,7 +8,7 @@ export interface FunctionParametersProps {
 
 export function FunctionParameters(props: FunctionParametersProps) {
   const params = mapJoin(
-    props.fn.parameters as Parameter[],
+    () => props.fn.parameters as Parameter[],
     (param) => code`
       <tr>
         <td style="text-align: right;font-weight: bold;">${param.name}</td>

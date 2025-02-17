@@ -19,7 +19,7 @@ export function TypeMembers(props: TypeMembersProps) {
 
   if (props.type.extendsTypes.length > 0) {
     const extendsItems = mapJoin(
-      props.type.extendsTypes as HeritageType[],
+      () => props.type.extendsTypes as HeritageType[],
       (type) => Excerpt({ excerpt: type.excerpt, context: props.type }),
       { joiner: "," },
     );

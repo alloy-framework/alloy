@@ -54,21 +54,27 @@ export function SeeAlso(props: SeeAlsoProps) {
   const contextsProvidedList =
     contextsProvided.length > 0 &&
     MdxSection({ title: "Contexts provided", level: 2 }).children(
-      mapJoin(contextsProvided, (seeBlock) => {
-        return code`
+      mapJoin(
+        () => contextsProvided,
+        (seeBlock) => {
+          return code`
           * ${TsDoc({ node: seeBlock, context: props.type })}
         `;
-      }),
+        },
+      ),
     );
 
   const seeAlsoList =
     seeBlocks.length > 0 &&
     MdxSection({ title: "See also", level: 3 }).children(
-      mapJoin(seeBlocks, (seeBlock) => {
-        return code`
+      mapJoin(
+        () => seeBlocks,
+        (seeBlock) => {
+          return code`
           * ${TsDoc({ node: seeBlock, context: props.type })}
         `;
-      }),
+        },
+      ),
     );
 
   return [contextsProvidedList, seeAlsoList];

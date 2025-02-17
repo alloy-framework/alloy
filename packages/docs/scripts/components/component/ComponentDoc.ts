@@ -26,14 +26,16 @@ export function ComponentDoc(props: ComponentDocProps) {
     overloadBlocks = [ComponentSignature({ component: props.component })];
   } else {
     let index = 1;
-    if (componentProps.length > 1) debugger;
-    overloadBlocks = mapJoin(componentProps, (iface) => {
-      return MdxSection({ title: "Overload " + index++, level: 2 }).children(
-        Summary({ type: iface }),
-        ComponentSignature({ component: props.component, propsType: iface }),
-        ComponentProps({ propType: iface }),
-      );
-    });
+    overloadBlocks = mapJoin(
+      () => componentProps,
+      (iface) => {
+        return MdxSection({ title: "Overload " + index++, level: 2 }).children(
+          Summary({ type: iface }),
+          ComponentSignature({ component: props.component, propsType: iface }),
+          ComponentProps({ propType: iface }),
+        );
+      },
+    );
   }
 
   return DocSourceFile({

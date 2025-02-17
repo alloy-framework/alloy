@@ -4,7 +4,6 @@ import {
   ComponentDefinition,
   effect,
   getContext,
-  untrack,
 } from "./jsx-runtime.js";
 
 export interface ComponentContext<T> {
@@ -49,8 +48,8 @@ export function createContext<T = unknown>(
       const rendered = shallowRef();
       effect(() => {
         context!.context![id] = props.value;
-        rendered.value = untrack(() => props.children);
-      });
+        rendered.value = () => props.children;
+      }, undefined);
 
       return rendered.value;
     },

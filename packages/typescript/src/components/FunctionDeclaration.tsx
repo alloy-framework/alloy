@@ -94,7 +94,7 @@ FunctionDeclaration.Parameters = taggedComponent(
       }
 
       value = mapJoin(
-        new Map(Object.entries(props.parameters)),
+        () => new Map(Object.entries(props.parameters!)),
         (key, value) => {
           const descriptor: ParameterDescriptor = isParameterDescriptor(value) ?
             value

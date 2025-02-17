@@ -1,4 +1,5 @@
 export * from "./Declaration.js";
+export * from "./For.js";
 export * from "./Indent.js";
 export * from "./MemberDeclaration.jsx";
 export * from "./MemberName.jsx";
@@ -8,3 +9,4 @@ export * from "./Output.js";
 export * from "./Scope.js";
 export * from "./SourceDirectory.js";
 export * from "./SourceFile.js";
+export * from "./Switch.jsx";

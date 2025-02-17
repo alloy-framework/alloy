@@ -7,7 +7,11 @@ export interface FunctionCallExpressionProps {
 }
 export function FunctionCallExpression(props: FunctionCallExpressionProps) {
   const args = props.args && props.args.length ?
-    mapJoin(props.args, (arg) => arg, { joiner: ", " })
+    mapJoin(
+      () => props.args!,
+      (arg) => arg,
+      { joiner: ", " },
+    )
   : null;
   return <>
         <Reference refkey={props.refkey} />({args})

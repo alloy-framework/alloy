@@ -9,6 +9,7 @@ import {
   effect as vueEffect,
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
+import { RenderTextTree } from "./render.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -32,6 +33,11 @@ export interface Context {
   meta?: Record<string, any>;
 
   /**
+   * A cache of RenderTextTree nodes created within this context,
+   * indexed by the component or function which created them.
+   */
+  elementCache: ElementCache;
+  /**
    * When this context was created by a component, this will
    * be the component that created it.
    */
@@ -43,21 +49,35 @@ export function getContext() {
   return globalContext;
 }
 
-export function root<T>(
-  fn: (d: Disposable) => T,
-  componentOwner?: ComponentCreator<any>,
-): T {
-  globalContext = {
-    componentOwner,
+export function getElementCache() {
+  return getContext()!.elementCache;
+}
+
+export type ElementCacheKey =
+  | ComponentCreator
+  | (() => unknown)
+  | CustomContext;
+export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
+
+export interface RootOptions {
+  componentOwner?: ComponentCreator<any>;
+}
+
+export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
+  const context: Context = {
+    componentOwner: options?.componentOwner,
     disposables: [],
     owner: globalContext,
     context: {},
+    elementCache: new Map(),
   };
+
+  globalContext = context;
   let ret;
   try {
     ret = untrack(() =>
       fn(() => {
-        for (const d of globalContext!.disposables) {
+        for (const d of context!.disposables) {
           d();
         }
       }),
@@ -83,28 +103,31 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (!equal || prev !== res) && (o.value = res);
     return res;
-  });
+  }, undefined as T);
   return () => o.value;
 }
 
 export function effect<T>(fn: (prev?: T) => T, current?: T) {
-  const context = {
-    src: "effect",
+  const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
     owner: globalContext,
-  } as any;
+    elementCache: new Map(),
+  };
 
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;
     context.disposables = [];
     for (let k = 0, len = d.length; k < len; k++) d[k]();
+
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     final && stop(c);
   };
 
+  onCleanup(() => cleanupFn(true));
   const c = vueEffect(() => {
     cleanupFn(false);
+
     const oldContext = globalContext;
     globalContext = context;
     try {
@@ -112,15 +135,62 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     } finally {
       globalContext = oldContext;
     }
-  });
-
-  cleanup(() => cleanupFn(true));
+  }, {});
 }
 
-export function cleanup(fn: Disposable) {
+/**
+ * Register a cleanup function which is called when the current reactive scope
+ * is recalculated or disposed. This is useful to clean up any side effects
+ * created in the reactive scope.
+ *
+ * @remarks
+ *
+ * When onCleanup is called inside a component definition, the provided function
+ * is called when the component is removed from the tree. This can be useful to
+ * clean up any side effects created as a result of rendering the component. For
+ * example, if rendering a component creates a symbol, `onCleanup` can be used
+ * to remove the symbol when the component is removed from the tree.
+ *
+ * When onCleanup is called inside a memo or effect, the function is called when
+ * the effect is refreshed (e.g. when a memo or computed recalculates) or
+ * disposed (e.g. it is no longer needed because it is attached to a component
+ * which was removed).
+ */
+export function onCleanup(fn: Disposable) {
   if (globalContext != null) {
     globalContext.disposables.push(fn);
   }
+}
+
+/**
+ * Create a custom reactive context for the children returned by
+ * the provided context.
+ */
+export interface CustomContext {
+  [CUSTOM_CONTEXT_SYM]: true;
+  useCustomContext: (useCb: CustomContextChildrenCallback) => void;
+}
+
+export type CustomContextChildrenCallback = (child: Children) => void;
+const CUSTOM_CONTEXT_SYM = Symbol();
+
+export function createCustomContext(
+  useCallback: (useChildren: CustomContextChildrenCallback) => void,
+): CustomContext {
+  return {
+    [CUSTOM_CONTEXT_SYM]: true,
+    useCustomContext(useCb: (children: Children) => void): void {
+      useCallback(useCb);
+    },
+  };
+}
+
+export function isCustomContext(child: Children): child is CustomContext {
+  return (
+    typeof child === "object" &&
+    child !== null &&
+    Object.hasOwn(child, CUSTOM_CONTEXT_SYM)
+  );
 }
 
 export type Child =
@@ -133,7 +203,8 @@ export type Child =
   | (() => Children)
   | Child[]
   | Ref
-  | Refkey;
+  | Refkey
+  | CustomContext;
 
 export type Children = Child | Child[];
 export type Props = Record<string, any>;

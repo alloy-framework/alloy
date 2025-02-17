@@ -1,9 +1,10 @@
 import {
   Children,
   computed,
-  mapJoin,
+  For,
   MemberDeclaration,
   MemberScope,
+  onCleanup,
   OutputSymbolFlags,
   Refkey,
   useMemberDeclaration,
@@ -72,32 +73,24 @@ export function JsonObject(props: JsonObjectProps) {
     </MemberScope>;
   }
 
-  const elements = computed(() => {
+  const entries = computed(() => {
     const jsValue = props.jsValue;
-    let properties: [string, unknown][];
     if (Array.isArray(jsValue)) {
-      properties = jsValue;
+      return jsValue;
     } else if (jsValue instanceof Map) {
-      properties = [...jsValue.entries()];
+      return [...jsValue.entries()];
     } else if (jsValue !== undefined) {
-      properties = globalThis.Object.entries(jsValue);
+      return globalThis.Object.entries(jsValue);
     } else {
-      properties = [];
+      return [];
     }
-    const elements = mapJoin(
-      properties,
-      ([name, value]) => {
-        return <JsonObjectProperty name={name} jsValue={value} />;
-      },
-      { joiner: ",\n" },
-    );
-
-    return elements;
   });
 
   return <MemberScope owner={memberSymbol}>
     {"{"}
-      {elements}
+      <For each={entries} joiner={",\n"}>
+        {([name, value], index) => <JsonObjectProperty name={name} jsValue={value} />}
+      </For>
     {"}"}
   </MemberScope>;
 }
@@ -134,6 +127,10 @@ export function JsonObjectProperty(props: ObjectPropertyProps) {
   const sym = createJsonOutputSymbol({
     name: props.name,
     flags: OutputSymbolFlags.StaticMember,
+  });
+
+  onCleanup(() => {
+    sym.binder.deleteSymbol(sym);
   });
 
   const wrap = (children: Children) => {

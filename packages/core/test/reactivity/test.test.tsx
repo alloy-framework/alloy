@@ -38,10 +38,10 @@ it("works with a complex case", () => {
 
   function ImportStatements(props: ImportStatementsProps) {
     return memo(() =>
-      mapJoin(props.records, (
-        path,
-        types,
-      ) => <ImportStatement path={path} types={types} />));
+      mapJoin(
+        () => props.records,
+        (path, types) => <ImportStatement path={path} types={types} />,
+      ));
   }
 
   interface ImportStatementProps {

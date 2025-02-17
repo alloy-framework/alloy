@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/typescript
 
+## 0.6.0
+
+No changes, version bump only.
+
 ## 0.5.0
 
 No changes, version bump only.

@@ -1,5 +1,6 @@
 import { computed, ref, triggerRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
+import { renderTree } from "../src/render.js";
 import { join, mapJoin } from "../src/utils.js";
 import "../testing/extend-expect.js";
 
@@ -63,11 +64,9 @@ describe("mapJoin", () => {
       return joined().length;
     });
     expect(len.value).toBe(4);
-    expect(callCount).toBe(2);
     arr.value.push(3);
     triggerRef(arr);
     expect(len.value).toBe(6);
-    expect(callCount).toBe(3);
   });
 
   it("can map an array reactively (with render)", () => {
@@ -86,10 +85,11 @@ describe("mapJoin", () => {
       },
     );
 
+    renderTree(joined);
+
     expect(callCount).toBe(2);
     arr.value.push(3);
     triggerRef(arr);
-    expect(len.value).toBe(6);
     expect(callCount).toBe(3);
   });
   it("can map a joiner", () => {
@@ -99,9 +99,13 @@ describe("mapJoin", () => {
       return <>Value: {props.value}</>;
     }
 
-    const joined = mapJoin(arr, (value) => <Foo value={value} />, {
-      joiner: "-",
-    });
+    const joined = mapJoin(
+      () => arr,
+      (value) => <Foo value={value} />,
+      {
+        joiner: "-",
+      },
+    );
 
     expect(joined).toRenderTo(`
       Value: 1-Value: 2
@@ -115,10 +119,14 @@ describe("mapJoin", () => {
       return <>Value: {props.value}</>;
     }
 
-    const joined = mapJoin(arr, (value) => <Foo value={value} />, {
-      joiner: "-",
-      ender: ";",
-    });
+    const joined = mapJoin(
+      () => arr,
+      (value) => <Foo value={value} />,
+      {
+        joiner: "-",
+        ender: ";",
+      },
+    );
 
     expect(joined).toRenderTo(`
       Value: 1-Value: 2;
@@ -132,10 +140,14 @@ describe("mapJoin", () => {
       return <>Value: {props.value}</>;
     }
 
-    const joined = mapJoin(arr, (value) => <Foo value={value} />, {
-      joiner: "-",
-      ender: ";",
-    });
+    const joined = mapJoin(
+      () => arr,
+      (value) => <Foo value={value} />,
+      {
+        joiner: "-",
+        ender: ";",
+      },
+    );
 
     expect(joined).toRenderTo(`
       Value: 1-Value: 2;

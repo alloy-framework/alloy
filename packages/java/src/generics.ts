@@ -20,8 +20,8 @@ export interface GenericTypes {
  */
 export function collectGenerics(generics: Record<string, Children>) {
   const genericTypes = mapJoin(
-    new Map(Object.entries(generics)),
-    (key, value) => {
+    () => Object.entries(generics),
+    ([key, value]) => {
       const extendsExpression = value ? code` extends ${value}` : "";
       return [key, extendsExpression];
     },
@@ -41,7 +41,7 @@ export function collectGenerics(generics: Record<string, Children>) {
  */
 export function passGenerics(generics: (Child | Record<"?", Children>)[]) {
   return mapJoin(
-    generics,
+    () => generics,
     (val) => {
       if (typeof val === "object" && val) {
         const key = Object.keys(val)[0];

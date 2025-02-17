@@ -12,8 +12,8 @@ export interface ParametersProps {
 export function Parameters(props: ParametersProps) {
   const { parameters = {} } = props;
   return mapJoin(
-    new Map(Object.entries(parameters)),
-    (name, type) => {
+    () => Object.entries(parameters),
+    ([name, type]) => {
       return [type, " ", name];
     },
     { joiner: ", " },

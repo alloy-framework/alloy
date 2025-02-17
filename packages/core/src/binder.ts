@@ -266,6 +266,12 @@ export interface Binder {
   createSymbol<T extends OutputSymbol>(args: CreateSymbolOptions<T>): T;
 
   /**
+   * Delete the given symbol. The symbol will be removed from its parent's
+   * scope. Any resolutions to this symbol will become undefined.
+   */
+  deleteSymbol(symbol: OutputSymbol): void;
+
+  /**
    * Instantiate the static members of a symbol into the instance members of
    * another symbol.
    *
@@ -415,6 +421,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   const binder: Binder = {
     createScope,
     createSymbol,
+    deleteSymbol,
     resolveDeclarationByKey,
     addStaticMembersToSymbol,
     addInstanceMembersToSymbol,
@@ -582,6 +589,18 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     notifyRefkey(symbol);
 
     return symbol;
+  }
+
+  function deleteSymbol(symbol: OutputSymbol) {
+    symbol.scope.symbols.delete(symbol);
+
+    if (!refkey) {
+      return;
+    }
+
+    const resolution = waitingDeclarations.get(symbol.refkey);
+    if (!resolution) return;
+    resolution.value = undefined;
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
@@ -800,12 +819,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       const refkey = symbol.refkey;
       if (!refkey) return;
 
+      // notify those waiting for this refkey
       knownDeclarations.set(refkey, symbol);
       if (waitingDeclarations.has(refkey)) {
         const signal = waitingDeclarations.get(refkey)!;
         signal.value = symbol;
       }
 
+      // notify those waiting for this symbol name
       const waitingScope = waitingSymbolNames.get(symbol.scope);
       if (waitingScope) {
         const waitingName = waitingScope.get(symbol.name);

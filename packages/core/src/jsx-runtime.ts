@@ -22,11 +22,6 @@ export interface Disposable {
   (): void;
 }
 
-interface ContextDebugInfo {
-  kind: "effect" | "memo";
-  createdBy?: string;
-}
-
 export interface Context {
   disposables: Disposable[];
   owner: Context | null;
@@ -47,11 +42,6 @@ export interface Context {
    * be the component that created it.
    */
   componentOwner?: ComponentCreator<unknown>;
-
-  /**
-   *
-   */
-  debugInfo?: ContextDebugInfo;
 }
 
 let globalContext: Context | null = null;
@@ -71,7 +61,6 @@ export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
 
 export interface RootOptions {
   componentOwner?: ComponentCreator<any>;
-  debugInfo?: ContextDebugInfo;
 }
 
 export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
@@ -81,35 +70,23 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     owner: globalContext,
     context: {},
     elementCache: new Map(),
-    debugInfo: options?.debugInfo,
   };
 
   globalContext = context;
-  console.log("[Context]: new root context");
   let ret;
   try {
     ret = untrack(() =>
       fn(() => {
-        console.log("Disposing", globalContext?.debugInfo);
         for (const d of context!.disposables) {
-          console.log(d);
           d();
         }
       }),
     );
   } finally {
-    console.log("[Context]: restored from root context");
     globalContext = globalContext!.owner;
   }
 
   return ret;
-}
-
-interface RootContextProps {
-  context: Context;
-}
-export function RootContext(props: RootContextProps) {
-  return;
 }
 
 export function untrack<T>(fn: () => T): T {
@@ -121,41 +98,23 @@ export function untrack<T>(fn: () => T): T {
 
 export function memo<T>(fn: () => T, equal?: boolean): () => T {
   const o = shallowRef();
-  effect(
-    (prev) => {
-      const res = fn();
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      (!equal || prev !== res) && (o.value = res);
-      return res;
-    },
-    undefined as T,
-    {
-      debugInfo: {
-        kind: "memo",
-        createdBy: fn.toString(),
-      },
-    },
-  );
+  effect((prev) => {
+    const res = fn();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    (!equal || prev !== res) && (o.value = res);
+    return res;
+  }, undefined as T);
   const val = () => o.value;
   (val as any).fn = fn;
   return val;
 }
 
-export interface EffectOptions {
-  debugInfo: ContextDebugInfo;
-}
-
-export function effect<T>(
-  fn: (prev?: T) => T,
-  current?: T,
-  options?: EffectOptions,
-) {
+export function effect<T>(fn: (prev?: T) => T, current?: T) {
   const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
     owner: globalContext,
     elementCache: new Map(),
-    debugInfo: options?.debugInfo,
   };
 
   const cleanupFn = (final: boolean) => {
@@ -172,17 +131,33 @@ export function effect<T>(
     cleanupFn(false);
 
     const oldContext = globalContext;
-    console.log("[Context]: new effect context", context.debugInfo);
     globalContext = context;
     try {
       current = fn(current);
     } finally {
-      console.log("[Context]: restored from effect context", context.debugInfo);
       globalContext = oldContext;
     }
   }, {});
 }
 
+/**
+ * Register a cleanup function which is called when the current reactive scope
+ * is recalculated or disposed. This is useful to clean up any side effects
+ * created in the reactive scope.
+ *
+ * @remarks
+ *
+ * When onCleanup is called inside a component definition, the provided function
+ * is called when the component is removed from the tree. This can be useful to
+ * clean up any side effects created as a result of rendering the component. For
+ * example, if rendering a component creates a symbol, `onCleanup` can be used
+ * to remove the symbol when the component is removed from the tree.
+ *
+ * When onCleanup is called inside a memo or effect, the function is called when
+ * the effect is refreshed (e.g. when a memo or computed recalculates) or
+ * disposed (e.g. it is no longer needed because it is attached to a component
+ * which was removed).
+ */
 export function onCleanup(fn: Disposable) {
   if (globalContext != null) {
     globalContext.disposables.push(fn);

@@ -79,9 +79,7 @@ export function mapJoin<T, U, V>(
   const mapped: (V | string | undefined | CustomContext)[] = [];
   let previousItemsLen = 0;
 
-  console.log("Starting thing!");
   onCleanup(() => {
-    console.log("Cleaning up entire thing");
     for (const d of disposables) d();
   });
 
@@ -120,14 +118,11 @@ export function mapJoin<T, U, V>(
         }
         const cleanupIndex = startIndex;
         mapped[startIndex * 2] = createCustomContext((cb) => {
-          return root(
-            (disposer) => {
-              disposables[cleanupIndex] = disposer;
-              disposer();
-              cb(mapper(items[cleanupIndex]));
-            },
-            { debugInfo: { kind: "effect", createdBy: "mapJoin" } },
-          );
+          return root((disposer) => {
+            disposables[cleanupIndex] = disposer;
+            disposer();
+            cb(mapper(items[cleanupIndex]));
+          });
         });
 
         mapped[startIndex * 2 + 1] =
@@ -142,8 +137,6 @@ export function mapJoin<T, U, V>(
 
       previousItemsLen = itemsLen;
 
-      console.log("Returning " + mapped.length + " elements");
-      console.log(mapped);
       return mapped;
     });
   };
@@ -282,6 +275,16 @@ export function findKeyedChild(children: Child[], tag: symbol) {
   }
 
   return null;
+}
+
+export function findKeyedChildren(children: Child[], tag: symbol) {
+  const keyedChildren: ComponentCreator[] = [];
+  for (const child of children) {
+    if (isKeyedChild(child) && child.tag === tag) {
+      keyedChildren.push(child);
+    }
+  }
+  return keyedChildren;
 }
 
 export function findUnkeyedChildren(children: Child[]) {

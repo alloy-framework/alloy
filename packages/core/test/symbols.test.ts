@@ -562,3 +562,76 @@ describe("refkey resolution", () => {
     expect(resolvedSym.value?.targetDeclaration).toBe(sym);
   });
 });
+
+describe("Deleting symbols", () => {
+  it("updates resolutions", () => {
+    const key = refkey();
+    const binder = createOutputBinder();
+
+    const resolvedSym = binder.resolveDeclarationByKey(
+      undefined,
+      undefined,
+      key,
+    );
+
+    const sym = binder.createSymbol({
+      name: "foo",
+      scope: binder.globalScope,
+    });
+
+    expect(resolvedSym.value).toBe(undefined);
+
+    sym.refkey = key;
+    expect(resolvedSym.value?.targetDeclaration).toBe(sym);
+
+    binder.deleteSymbol(sym);
+
+    expect(resolvedSym.value).toBe(undefined);
+  });
+
+  it("removes from parent scopes", () => {
+    const binder = createOutputBinder();
+    const result = binder.resolveFQN("root.root#instance");
+    expect(result.value).toBeUndefined();
+
+    const {
+      symbols: { instance, root, staticc },
+      scopes: { rootScope },
+    } = createScopeTree(binder, {
+      rootScope: {
+        symbols: {
+          root: {
+            flags:
+              OutputSymbolFlags.InstanceMemberContainer |
+              OutputSymbolFlags.StaticMemberContainer,
+            instanceMembers: {
+              instance: {
+                flags: OutputSymbolFlags.InstanceMember,
+              },
+            },
+            staticMembers: {
+              staticc: {
+                flags: OutputSymbolFlags.StaticMember,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const staticScope = root.staticMemberScope!;
+    const instanceScope = root.instanceMemberScope!;
+
+    expect(staticScope.symbols.size).toBe(1);
+    binder.deleteSymbol(staticc);
+    expect(staticScope.symbols.size).toBe(0);
+
+    expect(instanceScope.symbols.size).toBe(1);
+    binder.deleteSymbol(instance);
+    expect(instanceScope.symbols.size).toBe(0);
+
+    expect(rootScope.symbols.size).toBe(1);
+    binder.deleteSymbol(root);
+    expect(rootScope.symbols.size).toBe(0);
+  });
+});

@@ -1,10 +1,13 @@
 import {
   Children,
-  mapJoin,
+  For,
+  Match,
   MemberDeclaration,
   MemberScope,
+  onCleanup,
   OutputSymbolFlags,
   Refkey,
+  Switch,
   useMemberDeclaration,
   useMemberScope,
 } from "@alloy-js/core";
@@ -71,47 +74,48 @@ export function JsonArray(props: JsonArrayProps) {
 
   const jsValue = props.jsValue ?? [];
 
-  if (jsValue.length === 0) {
-    return "[]";
-  }
-
-  const elements = mapJoin(
-    () => jsValue,
-    (value) => {
-      return <JsonArrayElement><JsonValue jsValue={value} /></JsonArrayElement>;
-    },
-    { joiner: ",\n" },
-  );
-
-  let contents;
-  if (jsValue.length === 1) {
-    contents = <>[{elements}]</>;
-  } else {
-    contents = <>
-      [
-        {elements}
-      ]
-    </>;
-  }
-
   return <MemberScope owner={memberSymbol}>
-    {contents}
+    <Switch>
+      <Match when={jsValue.length === 0}>
+        []
+      </Match>
+      <Match when={jsValue.length === 1}>
+        [<JsonArrayElement jsValue={jsValue[0]} />]
+      </Match>
+      <Match else>
+        [
+          <For each={jsValue} joiner={",\n"}>
+            {(value) => <JsonArrayElement jsValue={value} />}
+          </For>
+        ]
+      </Match>
+    </Switch>
   </MemberScope>;
 }
 
-export interface JsonArrayElementProps {
-  children: Children;
+/**
+ * Create a JSON Array element by providing a JS value that will be serialized
+ * to JSON.
+ */
+export interface JsonArrayElementPropsWithJsValue {
+  jsValue: unknown;
 }
 
 /**
+ * Create a JSON Array element by providing children.
+ */
+export interface JsonArrayElementPropsWithChildren {
+  children: Children;
+}
+
+export type JsonArrayElementProps =
+  | JsonArrayElementPropsWithJsValue
+  | JsonArrayElementPropsWithChildren;
+
+/**
  * Create a JSON Array element. This component should be used inside of a
- * {@link JsonArray} component.
- *
- * @remarks
- *
- * It does not add any syntax, but is required in
- * order to establish the correct scope for the array element, allowing
- * references to array elements to work properly.
+ * {@link JsonArray} component. Can either be provided `children`, or a JS
+ * value which will be serialized to JSON.
  *
  * @see {@link @alloy-js/core#(MemberDeclarationContext:variable)}
  */
@@ -132,7 +136,18 @@ export function JsonArrayElement(props: JsonArrayElementProps) {
     flags: OutputSymbolFlags.StaticMember,
   });
 
-  return <MemberDeclaration symbol={sym}>
-    {props.children}
-  </MemberDeclaration>;
+  onCleanup(() => {
+    sym.binder.deleteSymbol(sym);
+  });
+
+  function wrap(children: Children) {
+    return <MemberDeclaration symbol={sym}>
+      {children}
+    </MemberDeclaration>;
+  }
+  if (!("jsValue" in props)) {
+    return wrap(() => props.children);
+  } else {
+    return wrap(<JsonValue jsValue={props.jsValue} />);
+  }
 }

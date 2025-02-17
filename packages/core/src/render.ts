@@ -175,8 +175,8 @@ export type RenderStructure = {};
 export type RenderTextTree = (string | RenderTextTree)[];
 
 function traceRender(phase: string, message: () => string) {
-  //return false;
-  console.log(`[\x1b[34m${phase}\x1b[0m]: ${message()}`);
+  return false;
+  //console.log(`[\x1b[34m${phase}\x1b[0m]: ${message()}`);
 }
 
 export function render(children: Children): OutputDirectory {
@@ -321,53 +321,34 @@ function appendChild(
         cache.set(child, newNode);
       });
     } else if (isComponentCreator(child)) {
-      effect(
-        () => {
-          traceRender("appendChild:component", () => printChild(child));
-          if (child.component === Indent && state.newline) {
-            node.push(indentState.indent);
-          }
-          const componentRoot: RenderTextTree = [];
-          pushStack(child.component, child.props);
-          renderWorker(componentRoot, untrack(child), state);
-          popStack();
-          node.push(componentRoot);
-          cache.set(child, componentRoot);
-          traceRender("appendChild:component-done", () => printChild(child));
-        },
-        undefined,
-        {
-          debugInfo: {
-            kind: "effect",
-            createdBy: "Render " + child.component.name,
-          },
-        },
-      );
+      effect(() => {
+        traceRender("appendChild:component", () => printChild(child));
+        if (child.component === Indent && state.newline) {
+          node.push(indentState.indent);
+        }
+        const componentRoot: RenderTextTree = [];
+        pushStack(child.component, child.props);
+        renderWorker(componentRoot, untrack(child), state);
+        popStack();
+        node.push(componentRoot);
+        cache.set(child, componentRoot);
+        traceRender("appendChild:component-done", () => printChild(child));
+      });
     } else if (typeof child === "function") {
       traceRender("appendChild:memo", () => child.toString());
       const index = node.length;
-      effect(
-        () => {
-          traceRender("memoEffect:run", () => "");
-          let res = child();
-          while (typeof res === "function" && !isComponentCreator(res)) {
-            res = res();
-          }
-          const newNodes: RenderTextTree = [];
-          renderWorker(newNodes, res, state);
-          node[index] = newNodes;
-          cache.set(child, newNodes);
-          return newNodes;
-        },
-        undefined,
-        {
-          debugInfo: {
-            kind: "effect",
-            createdBy:
-              "Render fn " + child.toString() + (child as any).fn?.toString(),
-          },
-        },
-      );
+      effect(() => {
+        traceRender("memoEffect:run", () => "");
+        let res = child();
+        while (typeof res === "function" && !isComponentCreator(res)) {
+          res = res();
+        }
+        const newNodes: RenderTextTree = [];
+        renderWorker(newNodes, res, state);
+        node[index] = newNodes;
+        cache.set(child, newNodes);
+        return newNodes;
+      });
       traceRender("appendChild:memo-done", () => "");
     } else {
       throw new Error("Unexpected child type");

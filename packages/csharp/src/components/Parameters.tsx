@@ -41,12 +41,8 @@ export interface ParametersProps {
 }
 
 // a collection of parameters
-export function Parameters(props: ParametersProps): Array<core.Child | string> {
-  return core.mapJoin(
-    props.parameters,
-    (param) => {
-      return <Parameter {...param} />;
-    },
-    { joiner: ", " },
-  );
+export function Parameters(props: ParametersProps) {
+  return <core.For each={props.parameters} joiner={", "}>
+    {(param) => <Parameter {...param} />}
+  </core.For>;
 }

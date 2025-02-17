@@ -74,7 +74,7 @@ export function mapJoin<T, U, V>(
   const options = { ...defaultJoinOptions, ...rawOptions };
   const ender =
     options.ender === true ? options.joiner : options.ender || undefined;
-  let currentItems: (T | [T, U])[] = [];
+  const currentItems: (T | [T, U])[] = [];
   const disposables: Disposable[] = [];
   const mapped: (V | string | undefined | CustomContext)[] = [];
   let previousItemsLen = 0;
@@ -171,37 +171,6 @@ export function mapJoin<T, U, V>(
   function isIterable<T>(x: unknown): x is Iterable<T> {
     return typeof (x as any).next === "function";
   }
-  /*
-  const mapped: (V | string)[] = [];
-  if (typeof (src as any).next === "function") {
-    src = Array.from(src as Iterable<T>);
-  }
-
-  if (Array.isArray(src)) {
-    for (const [index, item] of src.entries()) {
-      mapped.push(cb(item));
-      if (index !== src.length - 1) {
-        mapped.push(options.joiner!);
-      }
-    }
-    if (src.length > 0 && ender) {
-      mapped.push(ender);
-    }
-  } else {
-    const entries = [...(src as Map<T, U>).entries()];
-    for (const [index, [key, value]] of entries.entries()) {
-      mapped.push(cb(key, value));
-      if (index !== entries.length - 1) {
-        mapped.push(options.joiner!);
-      }
-    }
-    if (entries.length > 0 && ender) {
-      mapped.push(ender);
-    }
-  }
-
-  return mapped;
-  */
 }
 
 /**

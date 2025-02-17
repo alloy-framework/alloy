@@ -11,9 +11,10 @@ export interface ForProps<T extends any[] | Ref<any[]>, U extends Children> {
   each: T;
 
   /**
-   * The string to join the items with.
+   * The string to join the items with. By default, this is a line break.
    */
   joiner?: string;
+
   /**
    * The string to end the items with. Only emitted when there is more than one
    * item.
@@ -26,6 +27,33 @@ export interface ForProps<T extends any[] | Ref<any[]>, U extends Children> {
   children: (item: UnwrapMaybeRef<T>[number], index: number) => U;
 }
 
+/**
+ * The For component iterates over the provided array and invokes the child
+ * callback for each item. It can optionally be provided with a `joiner` which
+ * is placed between each item, and an `ender` which is placed after the last
+ * item when there is at least one item.
+ *
+ * @example
+ *
+ * ```tsx
+ * const items = ["apple", "pear", "plum"];
+ * return <For each={items}>
+ *   {(item) => <>Fruit: {item}</>}
+ * </For>
+ * ```
+ *
+ * @remarks
+ *
+ * When the `each` prop is a reactive (e.g. a reactive array, or ref to an
+ * array), `For` will automatically update when the array changes. When doing
+ * so, it will attempt to avoid re-rendering items which have not changed. For
+ * example, when appending an item to a reactive array, existing items will not
+ * be re-rendered. Note that presently the implementation is fairly simple -
+ * when making modifications to the middle of an array it likely that every
+ * element after the modification will be rerendered.
+ *
+ * @see {@link mapJoin} for mapping arrays to elements outside of JSX templates.
+ */
 export function For<T extends any[] | Ref<any[]>, U extends Children>(
   props: ForProps<T, U>,
 ) {

@@ -364,10 +364,7 @@ type NormalizedChild =
   | string
   | (() => Child | Children)
   | CustomContext
-  | NormalizedChild[]
-  | boolean
-  | null
-  | undefined;
+  | NormalizedChild[];
 
 function normalizeChild(child: Child): NormalizedChild {
   if (Array.isArray(child)) {

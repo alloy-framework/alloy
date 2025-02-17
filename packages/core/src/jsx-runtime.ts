@@ -104,9 +104,7 @@ export function memo<T>(fn: () => T, equal?: boolean): () => T {
     (!equal || prev !== res) && (o.value = res);
     return res;
   }, undefined as T);
-  const val = () => o.value;
-  (val as any).fn = fn;
-  return val;
+  return () => o.value;
 }
 
 export function effect<T>(fn: (prev?: T) => T, current?: T) {

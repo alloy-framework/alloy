@@ -1,5 +1,28 @@
 # Changelog - @alloy-js/core
 
+## 0.6.0
+
+### Breaking Changes
+
+- [#55](https://github.com/alloy-framework/alloy/pull/55) `mapJoin` now properly handles reactive sources. To support this, the array source must be wrapped in a callback. For example, `mapJoin(someArray, ...)` needs to be updated to `mapJoin(() => someArray, ...)`. The return value of `mapJoin` is now a memo rather than an array.
+
+### Features
+
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Add `For` component to iterate over a provided array and render a component for each element.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Add `Switch` component to conditionally render content.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Add support to the binder for deleting symbols.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) The `Declaration` component will now delete its symbol when its removed from the tree.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Don't re-render unchanged elements when doing reactive updates.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Add `createCustomContext` to allow establishing a custom reactive context during render.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Add `findKeyedChildren` which finds multiple children with the given key.
+
+### Bug Fixes
+
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Export missing STC components.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Properly handle reactive updates in the children of a context Provider.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Fix cleanup of root contexts when cleanup is invoked from another context.
+
+
 ## 0.5.0
 
 ### Features

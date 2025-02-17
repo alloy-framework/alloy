@@ -52,7 +52,7 @@ export interface ForProps<T extends any[] | Ref<any[]>, U extends Children> {
  * when making modifications to the middle of an array it likely that every
  * element after the modification will be rerendered.
  *
- * @see {@link mapJoin} for mapping arrays to elements outside of JSX templates.
+ * @see {@link (mapJoin:1)} for mapping arrays to elements outside of JSX templates.
  */
 export function For<T extends any[] | Ref<any[]>, U extends Children>(
   props: ForProps<T, U>,

@@ -1,13 +1,13 @@
 import {
   Children,
   For,
-  Match,
+  Indent,
+  List,
   MemberDeclaration,
   MemberScope,
   onCleanup,
   OutputSymbolFlags,
   Refkey,
-  Switch,
   useMemberDeclaration,
   useMemberScope,
 } from "@alloy-js/core";
@@ -66,30 +66,30 @@ export function JsonArray(props: JsonArrayProps) {
 
   if (!("jsValue" in props)) {
     return <MemberScope owner={memberSymbol}>
-      [
-        {props.children}
-      ]
+      <group>
+        [
+        <Indent break="soft">
+          <List comma line>
+            {props.children}
+          </List>
+        </Indent>
+        ]
+      </group>
     </MemberScope>;
   }
 
   const jsValue = props.jsValue ?? [];
 
   return <MemberScope owner={memberSymbol}>
-    <Switch>
-      <Match when={jsValue.length === 0}>
-        []
-      </Match>
-      <Match when={jsValue.length === 1}>
-        [<JsonArrayElement jsValue={jsValue[0]} />]
-      </Match>
-      <Match else>
-        [
-          <For each={jsValue} joiner={",\n"}>
+    <group>
+      [
+        <Indent break="soft">
+          <For each={jsValue} comma line>
             {(value) => <JsonArrayElement jsValue={value} />}
           </For>
-        ]
-      </Match>
-    </Switch>
+        </Indent>
+      ]
+    </group>
   </MemberScope>;
 }
 

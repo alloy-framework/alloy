@@ -2,22 +2,10 @@ import { describe, expect, it } from "vitest";
 import { Children } from "../../src/jsx-runtime.js";
 import "../../testing/extend-expect.js";
 describe("string nodes", () => {
-  it("renders string nodes", () => {
-    expect(<>
-      a
-      b
-        c
-    </>).toRenderTo(`
-      a
-      b
-        c
-    `);
-  });
-
   it("renders string nodes with substitutions", () => {
     const str = "hi";
     expect(<>
-      a {str}
+      a {str}<hbr />
       {str}
     </>).toRenderTo(`
       a hi
@@ -55,18 +43,6 @@ describe("component nodes", () => {
     expect(<>
       <Str /> <Str />
     </>).toRenderTo("Str Str");
-  });
-
-  it("renders components on multiple lines", () => {
-    expect(<>
-      <Str /> <Str />
-      <Arr /> <Arr />
-    </>).toRenderTo(`
-    Str Str
-    Item 1
-    Item 2 Item 1
-    Item 2
-    `);
   });
 });
 
@@ -115,7 +91,7 @@ it("renders text fragments", () => {
   }
 
   expect(<>
-      hi
+      hi<hbr />
       <Foo />
     </>).toRenderTo(`
     hi

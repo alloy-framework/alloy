@@ -1,8 +1,7 @@
-import { stc } from "../../utils.js";
+import { stc, sti } from "../../utils.js";
 import * as base from "../index.js";
 
 export const Declaration = stc(base.Declaration);
-export const Indent = stc(base.Indent);
 export const Output = stc(base.Output);
 export const Scope = stc(base.Scope);
 export const SourceDirectory = stc(base.SourceDirectory);
@@ -13,3 +12,6 @@ export const MemberScope = stc(base.MemberScope);
 export const MemberName = stc(base.MemberName);
 export const MemberDeclaration = stc(base.MemberDeclaration);
 export const Name = stc(base.Name);
+export const Indent = stc(base.Indent);
+
+export const indent = sti("indent");

@@ -1,4 +1,5 @@
-import { code, Indent, stc } from "@alloy-js/core";
+import { stc } from "@alloy-js/core";
+import { Indent } from "@alloy-js/core/stc";
 import { expect, it } from "vitest";
 import "../testing/extend-expect.js";
 
@@ -7,15 +8,16 @@ it("is applied by output", () => {
     return "Foo component";
   }
   const FooStc = stc(Foo);
-  const IndentStc = stc(Indent);
 
-  expect(code`
-    ${FooStc({ x: "hi" })}
-    ${IndentStc().code`
+  expect([
+    FooStc(),
+    Indent({ noTrailingBreak: true }).code`
       child!
-    `} 
-  `).toRenderTo(`
+      child2!
+    `,
+  ]).toRenderTo(`
     Foo component
       child!
+      child2!
   `);
 });

@@ -2,6 +2,8 @@ import {
   Children,
   computed,
   For,
+  Indent,
+  List,
   MemberDeclaration,
   MemberScope,
   onCleanup,
@@ -17,6 +19,7 @@ export interface JsonObjectPropsBase {
    * elsewhere via this refkey.
    **/
   refkey?: Refkey;
+  style?: { concise?: boolean };
 }
 
 /**
@@ -67,9 +70,15 @@ export function JsonObject(props: JsonObjectProps) {
 
   if (!("jsValue" in props)) {
     return <MemberScope owner={memberSymbol}>
-      {"{"}
-        {props.children}
-      {"}"}
+      <group>
+        {"{"}
+          <Indent break={props.style?.concise ? "soft" : "hard"}>
+            <List comma softline>
+              { props.children }
+            </List>
+          </Indent>
+        {"}"}
+      </group>
     </MemberScope>;
   }
 
@@ -87,11 +96,15 @@ export function JsonObject(props: JsonObjectProps) {
   });
 
   return <MemberScope owner={memberSymbol}>
-    {"{"}
-      <For each={entries} joiner={",\n"}>
-        {([name, value], index) => <JsonObjectProperty name={name} jsValue={value} />}
-      </For>
-    {"}"}
+    <group>
+      {"{"}
+        <Indent break={props.style?.concise ? "soft" : "hard"}>
+          <For each={entries} comma softline>
+            {([name, value]) => <JsonObjectProperty name={name} jsValue={value} />}
+          </For>
+        </Indent>
+      {"}"}
+    </group>
   </MemberScope>;
 }
 

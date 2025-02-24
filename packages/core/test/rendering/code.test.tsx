@@ -55,7 +55,7 @@ it("handles blank lines", () => {
   expect(template).toRenderTo(`
     {
       a
-      
+    
       x
     }
   `);

@@ -1,4 +1,4 @@
-import { Output, reactive, renderTree } from "@alloy-js/core";
+import { List, Output, reactive, renderTree } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d, printTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
@@ -10,10 +10,7 @@ import { SourceFile } from "../src/components/SourceFile.jsx";
 import { jsonTest } from "./utils.jsx";
 
 it("renders objects", () => {
-  const template = jsonTest({
-    a: 1,
-    b: "hello",
-  });
+  const template = jsonTest({ a: 1, b: "hello" });
 
   expect(template).toRenderTo(`
     {
@@ -44,10 +41,12 @@ it("can can manually assemble objects", () => {
     <Output>
       <SourceFile path="test.json">
         <JsonObject>
-          <JsonObjectProperty name="foo">12</JsonObjectProperty>,
-          <JsonObjectProperty name="bar">
-            13
-          </JsonObjectProperty>
+          <List comma softline>
+            <JsonObjectProperty name="foo">12</JsonObjectProperty>
+            <JsonObjectProperty name="bar">
+              13
+            </JsonObjectProperty>
+          </List>
         </JsonObject>
       </SourceFile>
     </Output>;

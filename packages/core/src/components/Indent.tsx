@@ -1,33 +1,21 @@
-import { useContext } from "../context.js";
-import { IndentContext } from "../context/indent.js";
-import { Children } from "../jsx-runtime.js";
+import { Children } from "@alloy-js/core/jsx-runtime";
 
 export interface IndentProps {
-  children?: Children;
-  indent?: string;
+  children: Children;
+  break?: "space" | "soft" | "hard";
+  noTrailingBreak?: boolean;
 }
-
-export interface IndentState {
-  level: number;
-  indent: string;
-  indentString: string; // awful name
-  noLeading?: boolean;
-}
-
 export function Indent(props: IndentProps) {
-  const previousIndent = useContext(IndentContext) ?? {
-    level: 0,
-    indent: props.indent ?? "  ",
-    indentString: "",
-  };
+  const breakStyle = props.break ?? "hard";
+  const breakElem =
+    breakStyle === "hard" ? <hbr />
+    : breakStyle === "soft" ? <sbr />
+    : <br />;
 
-  const level = previousIndent.level + 1;
-
-  const currentIndent = {
-    level,
-    indent: props.indent ?? previousIndent.indent,
-    indentString: (props.indent ?? previousIndent.indent).repeat(level),
-  };
-
-  return <IndentContext.Provider value={currentIndent}>{props.children}</IndentContext.Provider>;
+  return <>
+    <indent>
+      {breakElem}
+      {props.children}
+    </indent>{!props.noTrailingBreak && breakElem}
+  </>;
 }

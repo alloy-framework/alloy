@@ -43,31 +43,3 @@ it("has reactive context", () => {
 
   expect(tree.contents[1].contents).toEqual("hi.txt contents.txt");
 });
-
-it("can change its indent level", () => {
-  function Nested() {
-    return <>
-      base
-        indented
-    </>;
-  }
-  expect(
-    <Output>
-    <SourceFile path="hi.txt" filetype="text" indent="    ">
-      hello
-        there
-
-      <Nested />
-        <Nested />
-    </SourceFile>
-  </Output>,
-  ).toRenderTo(`
-    hello
-        there
-
-    base
-        indented
-        base
-            indented
-  `);
-});

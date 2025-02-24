@@ -271,20 +271,6 @@ function isDynamic(path, { checkMember, checkTags, checkCallExpressions = true, 
   return dynamic;
 }
 
-function getStaticExpression(path) {
-  const node = path.node;
-  let value, type;
-  return (
-    t__namespace.isJSXExpressionContainer(node) &&
-    t__namespace.isJSXElement(path.parent) &&
-    !isComponent(getTagName(path.parent)) &&
-    !t__namespace.isSequenceExpression(node.expression) &&
-    (value = path.get("expression").evaluate().value) !== undefined &&
-    ((type = typeof value) === "string" || type === "number") &&
-    value
-  );
-}
-
 // remove unnecessary JSX Text nodes
 function filterChildren(children, preserve = false) {
   if (preserve) return children;
@@ -1016,17 +1002,23 @@ function convertComponentIdentifier(node) {
 }
 
 function transformComponent(path) {
+  const node = path.node;
+  let tagName = getTagName(node);
+  const isComponentTag = isComponent(tagName);
+
   let exprs = [],
     config = getConfig(path),
-    tagId = convertComponentIdentifier(path.node.openingElement.name),
+    tagId = isComponentTag
+      ? convertComponentIdentifier(path.node.openingElement.name)
+      : t__namespace.stringLiteral(path.node.openingElement.name.name),
     props = [],
     runningObject = [],
     dynamicSpread = false,
     hasChildren = path.node.children.length > 0;
 
-  const node = path.node;
-  let tagName = getTagName(node);
-  const isComponentTag = isComponent(tagName);
+  
+  
+  
 
   if (config.builtIns.indexOf(tagId.name) > -1 && !path.scope.hasBinding(tagId.name)) {
     const newTagId = registerImportMethod(path, tagId.name);
@@ -1179,7 +1171,7 @@ function transformComponent(path) {
       }
     });
 
-  const childResult = transformComponentChildren(path.get("children"), isComponentTag, config);
+  const childResult = transformComponentChildren(path.get("children"), config);
   if (childResult && childResult[0]) {
     if (childResult[1]) {
       const body =
@@ -1218,7 +1210,7 @@ function transformComponent(path) {
   return { exprs, template: "", component: true };
 }
 
-function transformComponentChildren(children, isComponentTag, config) {
+function transformComponentChildren(children, config) {
   const filteredChildren = filterChildren(children, config.preserveWhitespace);
   if (!filteredChildren.length) return;
   let dynamic = false;
@@ -1251,10 +1243,6 @@ function transformComponentChildren(children, isComponentTag, config) {
     }
     return memo;
   }, []);
-
-  if (!isComponentTag) {
-    return [t__namespace.arrayExpression(transformedChildren), false];
-  }
 
   if (transformedChildren.length === 1) {
     transformedChildren = transformedChildren[0];
@@ -1372,6 +1360,7 @@ function transformThis(path) {
 }
 
 function transformNode(path, info = {}) {
+  
   const config = getConfig(path);
   const node = path.node;
   let staticValue;
@@ -1382,7 +1371,7 @@ function transformNode(path, info = {}) {
     // <><div /><Component /></>
     transformFragmentChildren(path, path.get("children"), results, config);
     return results;
-  } else if (t__namespace.isJSXText(node) || (staticValue = getStaticExpression(path)) !== false) {
+  } else if (t__namespace.isJSXText(node)) {
     const text =
       staticValue !== undefined
         ? info.doNotEscape

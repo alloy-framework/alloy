@@ -53,7 +53,8 @@
     "@vue/reactivity": "catalog:",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.5",
-    "pathe": "catalog:"
+    "pathe": "catalog:",
+    "prettier": "^3.5.1"
   },
   "devDependencies": {
     "@babel/cli": "catalog:",

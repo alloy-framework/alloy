@@ -16,6 +16,7 @@ export default function (context, options = {}) {
       {
         alloyModuleName:
           options.alloyModuleName ?? defaultOptions.alloyModuleName,
+        legacyWhitespace: options.legacyWhitespace ?? defaultOptions.legacyWhitespace,
       },
     ],
     [jsxTransform, Object.assign(defaultOptions, options)],

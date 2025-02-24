@@ -1,8 +1,8 @@
 import "@alloy-js/core/testing";
-import { d, printTree } from "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
-import { onCleanup, reactive, renderTree } from "../../src/index.js";
+import { onCleanup, printTree, reactive, renderTree } from "../../src/index.js";
 
 it("works", () => {
   const messages = ["hi", "bye"];

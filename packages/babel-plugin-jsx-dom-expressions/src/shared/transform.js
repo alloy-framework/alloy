@@ -96,6 +96,7 @@ export function transformThis(path) {
 }
 
 export function transformNode(path, info = {}) {
+  
   const config = getConfig(path);
   const node = path.node;
   let staticValue;
@@ -106,7 +107,7 @@ export function transformNode(path, info = {}) {
     // <><div /><Component /></>
     transformFragmentChildren(path, path.get("children"), results, config);
     return results;
-  } else if (t.isJSXText(node) || (staticValue = getStaticExpression(path)) !== false) {
+  } else if (t.isJSXText(node)) {
     const text =
       staticValue !== undefined
         ? info.doNotEscape

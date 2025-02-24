@@ -28,17 +28,23 @@ function convertComponentIdentifier(node) {
 }
 
 export default function transformComponent(path) {
+  const node = path.node;
+  let tagName = getTagName(node);
+  const isComponentTag = isComponent(tagName);
+
   let exprs = [],
     config = getConfig(path),
-    tagId = convertComponentIdentifier(path.node.openingElement.name),
+    tagId = isComponentTag
+      ? convertComponentIdentifier(path.node.openingElement.name)
+      : t.stringLiteral(path.node.openingElement.name.name),
     props = [],
     runningObject = [],
     dynamicSpread = false,
     hasChildren = path.node.children.length > 0;
 
-  const node = path.node;
-  let tagName = getTagName(node);
-  const isComponentTag = isComponent(tagName);
+  
+  
+  
 
   if (config.builtIns.indexOf(tagId.name) > -1 && !path.scope.hasBinding(tagId.name)) {
     const newTagId = registerImportMethod(path, tagId.name);
@@ -191,7 +197,7 @@ export default function transformComponent(path) {
       }
     });
 
-  const childResult = transformComponentChildren(path.get("children"), isComponentTag, config);
+  const childResult = transformComponentChildren(path.get("children"), config);
   if (childResult && childResult[0]) {
     if (childResult[1]) {
       const body =
@@ -230,7 +236,7 @@ export default function transformComponent(path) {
   return { exprs, template: "", component: true };
 }
 
-function transformComponentChildren(children, isComponentTag, config) {
+function transformComponentChildren(children, config) {
   const filteredChildren = filterChildren(children, config.preserveWhitespace);
   if (!filteredChildren.length) return;
   let dynamic = false;
@@ -263,10 +269,6 @@ function transformComponentChildren(children, isComponentTag, config) {
     }
     return memo;
   }, []);
-
-  if (!isComponentTag) {
-    return [t.arrayExpression(transformedChildren), false];
-  }
 
   if (transformedChildren.length === 1) {
     transformedChildren = transformedChildren[0];

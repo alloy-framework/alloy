@@ -1,8 +1,8 @@
-import helperModuleImports from "@babel/helper-module-imports";
 import { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 interface Options {
   alloyModuleName: string | undefined;
+  legacyWhitespace: boolean;
 }
 
 const FormattingCommands = {
@@ -45,12 +45,21 @@ function transformElement(
     return;
   }
 
+  if (!opts.legacyWhitespace) {
+    stripLeadingWhitespace(path);
+    path.get("children").forEach((child) => {
+      transformJSX(child, { opts });
+    });
+    return;
+  }
+
   let currentIndent: undefined | t.JSXElement = undefined;
   let lines: string[] = [];
   let indentedLines: string[] = [];
   const newChildren: t.JSXElement["children"] = [];
 
   for (const child of childTokens(path)) {
+    console.log({ child });
     if (child.indented) {
       flushLines();
       createIndent();
@@ -115,36 +124,6 @@ function transformElement(
     if (indentedLines.length === 0) return;
     currentIndent!.children.push(createJSXText(indentedLines.join("\n")));
     indentedLines = [];
-  }
-}
-
-function registerIndent(path: NodePath, opts: Options) {
-  const moduleName = opts.alloyModuleName ?? "@alloy-js/core:Indent";
-  let imports: Map<string, any>;
-  if (path.scope.getProgramParent().data.imports) {
-    imports = path.scope.getProgramParent().data.imports as any;
-  } else {
-    imports = new Map();
-    path.scope.getProgramParent().data.imports = imports;
-  }
-
-  if (!imports.has(`${moduleName}:Indent`)) {
-    const id: t.Identifier = helperModuleImports.addNamed(
-      path,
-      "Indent",
-      moduleName,
-      {
-        nameHint: `$Indent`,
-      },
-    );
-    imports.set(`${moduleName}:Indent`, id);
-    return t.jsxIdentifier(id.name);
-  } else {
-    const id = imports.get(`${moduleName}:Indent`);
-    // the cloning is required to play well with babel-preset-env which is
-    // transpiling import as we add them and using the same identifier causes
-    // problems with the multiple identifiers of the same thing
-    return t.jsxIdentifier(id.name);
   }
 }
 
@@ -246,6 +225,18 @@ function* childTokens(
         sourcePath: child as OtherToken["sourcePath"],
         indented,
       };
+    }
+  }
+}
+
+// removes all leading whitespace from literal strings
+// inside the JSX template
+function stripLeadingWhitespace(path: NodePath<t.JSXElement | t.JSXFragment>) {
+  const children = path.get("children");
+  for (const child of children) {
+    if (child.isJSXText()) {
+      child.node.value = child.node.value.replace(/\r?\n\s*/g, "");
+      child.node.extra!.raw = child.node.value;
     }
   }
 }

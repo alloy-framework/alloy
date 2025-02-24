@@ -1,6 +1,5 @@
-import { children, Children, renderTree } from "@alloy-js/core";
+import { children, Children, printTree, renderTree } from "@alloy-js/core";
 import { expect, it } from "vitest";
-import { d, printTree } from "../testing/render.js";
 
 it("handles a single element", () => {
   function Foo(props: { children?: Children }) {
@@ -26,8 +25,5 @@ it("handles a multiple elements", () => {
     <Bar />
   </Foo>);
 
-  expect(printTree(res)).toBe(d`
-    Bar
-    Bar
-  `);
+  expect(printTree(res)).toBe(`BarBar`);
 });

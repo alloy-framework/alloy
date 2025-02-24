@@ -1,6 +1,5 @@
 import { join } from "pathe";
 import { useContext } from "../context.js";
-import { IndentContext } from "../context/indent.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
 import { Children, ComponentDefinition, getContext } from "../jsx-runtime.js";
@@ -45,11 +44,6 @@ export function SourceFile(props: SourceFileProps) {
   nodeContext.meta.sourceFile = context;
 
   return <SourceFileContext.Provider value={context}>
-    { props.indent
-      ? <IndentContext.Provider value={{ level: 0, indent: props.indent, indentString: "" }}>
-          {props.children}
-        </IndentContext.Provider>
-      : props.children
-    }
+    { props.children }
   </SourceFileContext.Provider>;
 }

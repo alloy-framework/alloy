@@ -6,9 +6,12 @@ import {
   ComponentCreator,
   ComponentDefinition,
   createCustomContext,
+  createIntrinsic,
   CustomContext,
   Disposable,
+  IntrinsicElementBase,
   isComponentCreator,
+  JSX,
   memo,
   onCleanup,
   root,
@@ -21,14 +24,19 @@ export interface JoinOptions {
   /**
    * The string to place between each element.
    */
-  joiner?: string;
+  joiner?: Children;
 
   /**
    * When true, the joiner is placed at the end of the array. When a string,
    * that string is placed at the end of the array. The ender is only emitted
    * when the array has at least one element.
    */
-  ender?: string | boolean;
+  ender?: Children;
+
+  /**
+   * When true, falsy values with the exception of 0 are skipped.
+   */
+  skipFalsy?: boolean;
 }
 const defaultJoinOptions: JoinOptions = {
   joiner: "\n",
@@ -70,13 +78,13 @@ export function mapJoin<T, U, V>(
   src: () => Map<T, U> | T[] | Iterable<T>,
   cb: (key: T, value?: U) => V,
   rawOptions: JoinOptions = {},
-): () => (V | string | undefined | CustomContext)[] {
+): () => Children {
   const options = { ...defaultJoinOptions, ...rawOptions };
   const ender =
     options.ender === true ? options.joiner : options.ender || undefined;
   const currentItems: (T | [T, U])[] = [];
   const disposables: Disposable[] = [];
-  const mapped: (V | string | undefined | CustomContext)[] = [];
+  const mapped: Children[] = [];
   let previousItemsLen = 0;
 
   onCleanup(() => {
@@ -87,8 +95,14 @@ export function mapJoin<T, U, V>(
     const itemsSource = src();
     // need to unpack reactives for branding checks
     const itemsSourceRaw = toRaw(itemsSource);
-    const items =
+    let items =
       Array.isArray(itemsSourceRaw) ? (itemsSource as T[]) : [...itemsSource];
+    if (options.skipFalsy) {
+      items = items.filter(
+        (item) =>
+          item !== null && item !== undefined && typeof item !== "boolean",
+      );
+    }
     // this is important to access here in reactive context so we are
     // notified of new items from reactives.
     const itemsLen = items.length;
@@ -111,6 +125,7 @@ export function mapJoin<T, U, V>(
         // need to update the previous joiner (might be ender or absent)
         mapped[startIndex * 2 - 1] = options.joiner;
       }
+
       for (; startIndex < itemsLen; startIndex++) {
         currentItems[startIndex] = items[startIndex];
         if (disposables[startIndex]) {
@@ -180,12 +195,12 @@ export function mapJoin<T, U, V>(
  * @see mapJoin for mapping before joining.
  * @returns The joined array
  */
-export function join<T>(
+export function join<T extends Children>(
   src: T[] | Iterator<T>,
   options: JoinOptions = {},
-): (T | string)[] {
+): Children {
   const mergedOptions = { ...defaultJoinOptions, ...options };
-  const joined = [];
+  const joined: Children[] = [];
   const ender =
     mergedOptions.ender === true ? mergedOptions.joiner : mergedOptions.ender;
   src = Array.from(src as Iterable<T>);
@@ -225,7 +240,7 @@ export function children(fn: () => Children): () => Children {
   }
 }
 
-export function childrenArray(fn: () => Children): Child[] {
+export function childrenArray(fn: () => Children): Children[] {
   const c = children(fn)();
   if (Array.isArray(c)) {
     return c;
@@ -246,7 +261,7 @@ export function findKeyedChild(children: Child[], tag: symbol) {
   return null;
 }
 
-export function findKeyedChildren(children: Child[], tag: symbol) {
+export function findKeyedChildren(children: Children[], tag: symbol) {
   const keyedChildren: ComponentCreator[] = [];
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
@@ -260,15 +275,55 @@ export function findUnkeyedChildren(children: Child[]) {
   return children.filter((child) => !isKeyedChild(child));
 }
 
-export function isKeyedChild(child: Child): child is ComponentCreator {
+export function isKeyedChild(child: Children): child is ComponentCreator {
   return isComponentCreator(child) && !!child.tag;
 }
+
+export function sti<T extends keyof JSX.IntrinsicElements>(name: T) {
+  return (
+    ...args: unknown extends T ? []
+    : {} extends Omit<JSX.IntrinsicElements[T], "children"> ?
+      [props?: JSX.IntrinsicElements[T]]
+    : [props: JSX.IntrinsicElements[T]]
+  ) => {
+    const props: JSX.IntrinsicElements[T] | undefined = args[0];
+    const fn = () => createIntrinsic(name, props!);
+    fn.children = (
+      ...children: Children[]
+    ): (() => IntrinsicElementBase<T>) => {
+      const propsWithChildren = {
+        ...(props ?? {}),
+        children,
+      };
+
+      return () => createIntrinsic(name, propsWithChildren as any);
+    };
+
+    fn.code = (
+      template: TemplateStringsArray,
+      ...substitutions: Children[]
+    ): (() => IntrinsicElementBase<T>) => {
+      const propsWithChildren = {
+        ...(args[0] ?? {}),
+        children: code(template, ...substitutions),
+      };
+
+      return () => createIntrinsic(name, propsWithChildren as any);
+    };
+    return fn;
+  };
+}
+
+type MakeChildrenOptional<T extends object> =
+  T extends { children?: any } ?
+    Omit<T, "children"> & Partial<Pick<T, "children">>
+  : T;
 
 export function stc<T extends {}>(Component: ComponentDefinition<T>) {
   return (
     ...args: unknown extends T ? []
-    : {} extends Omit<T, "children"> ? [props?: T]
-    : [props: T]
+    : {} extends Omit<T, "children"> ? [props?: MakeChildrenOptional<T>]
+    : [props: MakeChildrenOptional<T>]
   ) => {
     const fn: ComponentCreator<T> & {
       code(
@@ -276,7 +331,7 @@ export function stc<T extends {}>(Component: ComponentDefinition<T>) {
         ...substitutions: Children[]
       ): ComponentCreator<T>;
       children(...children: Children[]): ComponentCreator<T>;
-    } = () => Component(args[0]!);
+    } = () => Component(args[0] as any);
     fn.component = Component;
     fn.props = args[0]!;
     fn.code = (

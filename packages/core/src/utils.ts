@@ -1,7 +1,6 @@
 import { toRaw } from "@vue/reactivity";
 import { code } from "./code.js";
 import {
-  Child,
   Children,
   ComponentCreator,
   ComponentDefinition,
@@ -251,7 +250,7 @@ export function childrenArray(fn: () => Children): Children[] {
   }
 }
 
-export function findKeyedChild(children: Child[], tag: symbol) {
+export function findKeyedChild(children: Children[], tag: symbol) {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;
@@ -271,7 +270,7 @@ export function findKeyedChildren(children: Children[], tag: symbol) {
   return keyedChildren;
 }
 
-export function findUnkeyedChildren(children: Child[]) {
+export function findUnkeyedChildren(children: Children[]) {
   return children.filter((child) => !isKeyedChild(child));
 }
 

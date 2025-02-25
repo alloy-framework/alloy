@@ -7,6 +7,7 @@ export const Scope = stc(base.Scope);
 export const SourceDirectory = stc(base.SourceDirectory);
 export const SourceFile = stc(base.SourceFile);
 export const Switch = stc(base.Switch);
+export const Show = stc(base.Show);
 export const For = stc(base.For);
 export const MemberScope = stc(base.MemberScope);
 export const MemberName = stc(base.MemberName);

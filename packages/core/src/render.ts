@@ -491,7 +491,7 @@ function debugPrintChild(child: Children): string {
 }
 
 const defaultPrintTreeOptions: doc.printer.Options = {
-  printWidth: 40,
+  printWidth: 80,
   tabWidth: 2,
 };
 export function printTree(

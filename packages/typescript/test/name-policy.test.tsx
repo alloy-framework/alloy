@@ -14,19 +14,20 @@ it("applies to functions and variables", () => {
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="foo-bar" refkey={ref1} />
-        <ts.VarDeclaration name="one-two" refkey={ref2}>
-          "hello"
-        </ts.VarDeclaration>
-        <ts.Reference refkey={ref1} />;
-        <ts.Reference refkey={ref2} />;
+        <hbr />
+        <ts.StatementList>
+          <ts.VarDeclaration name="one-two" refkey={ref2}>
+            "hello"
+          </ts.VarDeclaration>
+          <ts.Reference refkey={ref1} />
+          <ts.Reference refkey={ref2} />
+        </ts.StatementList>
       </ts.SourceFile>
     </Output>,
   );
 
   expect(res.contents[0].contents).toEqual(d`
-    function fooBar() {
-      
-    }
+    function fooBar() {}
     const oneTwo = "hello";
     fooBar;
     oneTwo;
@@ -42,19 +43,20 @@ it("keeps _ and $ prefix", () => {
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="_foo-bar" refkey={ref1} />
-        <ts.VarDeclaration name="$one-two" refkey={ref2}>
-          "hello"
-        </ts.VarDeclaration>
-        <ts.Reference refkey={ref1} />;
-        <ts.Reference refkey={ref2} />;
+        <hbr />
+        <ts.StatementList>
+          <ts.VarDeclaration name="$one-two" refkey={ref2}>
+            "hello"
+          </ts.VarDeclaration>
+          <ts.Reference refkey={ref1} />
+          <ts.Reference refkey={ref2} />
+        </ts.StatementList>
       </ts.SourceFile>
     </Output>,
   );
 
   expect(res.contents[0].contents).toEqual(d`
-    function _fooBar() {
-      
-    }
+    function _fooBar() {}
     const $oneTwo = "hello";
     _fooBar;
     $oneTwo;
@@ -69,20 +71,25 @@ it("appends _ to reserved words", () => {
   const res = render(
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
-        <ts.FunctionDeclaration name="default" refkey={ref1} parameters={{"await": "any"}} />
-        <ts.VarDeclaration name="super" refkey={ref2}>
-          "hello"
-        </ts.VarDeclaration>
-        <ts.Reference refkey={ref1} />;
-        <ts.Reference refkey={ref2} />;
+        <ts.FunctionDeclaration
+          name="default"
+          refkey={ref1}
+          parameters={{ await: "any" }}
+        />
+        <hbr />
+        <ts.StatementList>
+          <ts.VarDeclaration name="super" refkey={ref2}>
+            "hello"
+          </ts.VarDeclaration>
+          <ts.Reference refkey={ref1} />
+          <ts.Reference refkey={ref2} />
+        </ts.StatementList>
       </ts.SourceFile>
     </Output>,
   );
 
   expect(res.contents[0].contents).toEqual(d`
-    function default_(await_: any) {
-      
-    }
+    function default_(await_: any) {}
     const super_ = "hello";
     default_;
     super_;

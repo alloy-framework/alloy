@@ -65,32 +65,36 @@ export function JsonArray(props: JsonArrayProps) {
   }
 
   if (!("jsValue" in props)) {
-    return <MemberScope owner={memberSymbol}>
-      <group>
-        [
-        <Indent break="soft">
-          <List comma line>
-            {props.children}
-          </List>
-        </Indent>
-        ]
-      </group>
-    </MemberScope>;
+    return (
+      <MemberScope owner={memberSymbol}>
+        <group>
+          [
+          <Indent break="soft" trailingBreak>
+            <List comma line>
+              {props.children}
+            </List>
+          </Indent>
+          ]
+        </group>
+      </MemberScope>
+    );
   }
 
   const jsValue = props.jsValue ?? [];
 
-  return <MemberScope owner={memberSymbol}>
-    <group>
-      [
-        <Indent break="soft">
+  return (
+    <MemberScope owner={memberSymbol}>
+      <group>
+        [
+        <Indent break="soft" trailingBreak>
           <For each={jsValue} comma line>
             {(value) => <JsonArrayElement jsValue={value} />}
           </For>
         </Indent>
-      ]
-    </group>
-  </MemberScope>;
+        ]
+      </group>
+    </MemberScope>
+  );
 }
 
 /**
@@ -141,9 +145,7 @@ export function JsonArrayElement(props: JsonArrayElementProps) {
   });
 
   function wrap(children: Children) {
-    return <MemberDeclaration symbol={sym}>
-      {children}
-    </MemberDeclaration>;
+    return <MemberDeclaration symbol={sym}>{children}</MemberDeclaration>;
   }
   if (!("jsValue" in props)) {
     return wrap(() => props.children);

@@ -1,6 +1,7 @@
 import {
   Output,
   mapJoin,
+  printTree,
   reactive,
   refkey,
   render,
@@ -9,7 +10,7 @@ import {
 import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 
-import { d, renderToString } from "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import * as ts from "../src/index.js";
 import { assertFileContents } from "./utils.jsx";
 
@@ -20,7 +21,7 @@ it("renders an object", () => {
 it("renders an object with properties", () => {
   expect(
     <ts.ObjectExpression>
-      <ts.ObjectProperty name="foo" value="1" />,
+      <ts.ObjectProperty name="foo" value="1" />,<hbr />
       <ts.ObjectProperty name="bar" value="2" />
     </ts.ObjectExpression>,
   ).toRenderTo(`
@@ -44,10 +45,7 @@ it("renders an object with properties, mapped", () => {
     { joiner: ",\n" },
   );
 
-  expect(<ts.ObjectExpression>
-      {props}
-    </ts.ObjectExpression>)
-    .toRenderTo(`
+  expect(<ts.ObjectExpression>{props}</ts.ObjectExpression>).toRenderTo(`
     {
       foo: 1,
       bar: 2
@@ -57,22 +55,23 @@ it("renders an object with properties, mapped", () => {
 
 it("is reactive", () => {
   const jsValue = reactive(new Map());
-  jsValue.set("hi", 1);
 
   const tree = renderTree(<ts.ObjectExpression jsValue={jsValue} />);
 
-  expect(renderToString(tree)).toEqual(d`
+  expect(printTree(tree)).toEqual(`{}`);
+  jsValue.set("hi", 1);
+  expect(printTree(tree)).toEqual(d`
     {
-      hi: 1
+      hi: 1,
     }
   `);
 
   jsValue.set("bye", 2);
 
-  expect(renderToString(tree)).toEqual(d`
+  expect(printTree(tree)).toEqual(d`
     {
       hi: 1,
-      bye: 2
+      bye: 2,
     }
   `);
 });
@@ -84,10 +83,7 @@ it("renders objects with arrays", () => {
 
   expect(<ts.ObjectExpression jsValue={jsValue} />).toRenderTo(`
     {
-      a: [
-        1,
-        2
-      ]
+      a: [1, 2],
     }
   `);
 });
@@ -108,12 +104,8 @@ it("renders complex objects", () => {
       b: "hello",
       c: true,
       d: {
-        prop: [
-          1,
-          2,
-          3
-        ]
-      }
+        prop: [1, 2, 3],
+      },
     }
   `);
 });
@@ -133,17 +125,14 @@ it("renders falsy values", () => {
       b: "",
       c: false,
       d: null,
-      e: undefined
+      e: undefined,
     }
   `);
 });
 
 it("allows embedding things with functions", () => {
   function Foo() {
-    return <>
-      a
-      b
-    </>;
+    return <>a b</>;
   }
   const jsValue = {
     a: () => "hello",
@@ -153,8 +142,7 @@ it("allows embedding things with functions", () => {
   expect(<ts.ObjectExpression jsValue={jsValue} />).toRenderTo(`
     {
       a: hello,
-      b: a
-      b
+      b: a b,
     }
   `);
 });
@@ -163,22 +151,30 @@ describe("symbols", () => {
   it("can reference members", () => {
     const innerRefkey = refkey();
     const outerRefkey = refkey();
-    const decl =
+    const decl = (
       <Output>
         <ts.SourceFile path="foo.ts">
-          <ts.VarDeclaration name="refme" refkey={outerRefkey}>
-            <ts.ObjectExpression>
-              <ts.ObjectProperty name="foo" refkey={innerRefkey} jsValue="hello" />
-            </ts.ObjectExpression>
-          </ts.VarDeclaration>
-          {innerRefkey}
+          <ts.StatementList>
+            <ts.VarDeclaration name="refme" refkey={outerRefkey}>
+              <ts.ObjectExpression>
+                <ts.ObjectProperty
+                  name="foo"
+                  refkey={innerRefkey}
+                  jsValue="hello"
+                />
+                ,
+              </ts.ObjectExpression>
+            </ts.VarDeclaration>
+            {innerRefkey}
+          </ts.StatementList>
         </ts.SourceFile>
-      </Output>;
+      </Output>
+    );
     expect(decl).toRenderTo(`
       const refme = {
-        foo: "hello"
+        foo: "hello",
       };
-      refme.foo
+      refme.foo;
     `);
   });
 
@@ -186,30 +182,33 @@ describe("symbols", () => {
     const varRefkey = refkey();
     const fooRefkey = refkey();
     const barRefkey = refkey();
-    const decl =
+    const decl = (
       <Output>
         <ts.SourceFile path="foo.ts">
-          <ts.VarDeclaration name="refme" refkey={varRefkey}>
-            <ts.ObjectExpression>
-              <ts.ObjectProperty name="foo" refkey={fooRefkey}>
-                <ts.ObjectExpression>
-                  <ts.ObjectProperty name="bar" refkey={barRefkey}>
-                    "hello";
-                  </ts.ObjectProperty>
-                </ts.ObjectExpression>
-              </ts.ObjectProperty>
-            </ts.ObjectExpression>
-          </ts.VarDeclaration>
-          {barRefkey}
+          <ts.StatementList>
+            <ts.VarDeclaration name="refme" refkey={varRefkey}>
+              <ts.ObjectExpression>
+                <ts.ObjectProperty name="foo" refkey={fooRefkey}>
+                  <ts.ObjectExpression>
+                    <ts.ObjectProperty name="bar" refkey={barRefkey}>
+                      "hello",
+                    </ts.ObjectProperty>
+                  </ts.ObjectExpression>
+                </ts.ObjectProperty>
+              </ts.ObjectExpression>
+            </ts.VarDeclaration>
+            {barRefkey}
+          </ts.StatementList>
         </ts.SourceFile>
-      </Output>;
+      </Output>
+    );
     expect(decl).toRenderTo(`
       const refme = {
         foo: {
-          bar: "hello";
+          bar: "hello",
         }
       };
-      refme.foo.bar
+      refme.foo.bar;
     `);
   });
 
@@ -217,7 +216,7 @@ describe("symbols", () => {
     const varRefkey = refkey();
     const fooRefkey = refkey();
     const barRefkey = refkey();
-    const decl =
+    const decl = (
       <Output>
         <ts.SourceFile path="foo.ts">
           <ts.VarDeclaration export name="refme" refkey={varRefkey}>
@@ -225,7 +224,7 @@ describe("symbols", () => {
               <ts.ObjectProperty name="foo" refkey={fooRefkey}>
                 <ts.ObjectExpression>
                   <ts.ObjectProperty name="bar" refkey={barRefkey}>
-                    "hello";
+                    "hello",
                   </ts.ObjectProperty>
                 </ts.ObjectExpression>
               </ts.ObjectProperty>
@@ -233,22 +232,17 @@ describe("symbols", () => {
           </ts.VarDeclaration>
         </ts.SourceFile>
 
-        <ts.SourceFile path="bar.ts">
-          console.log({barRefkey});
-        </ts.SourceFile>
-
-      </Output>;
+        <ts.SourceFile path="bar.ts">console.log({barRefkey});</ts.SourceFile>
+      </Output>
+    );
     expect(decl).toRenderTo(`
       export const refme = {
         foo: {
-          bar: "hello";
+          bar: "hello",
         }
-      };
-
-      import { refme } from "./foo.js";
+      }import { refme } from "./foo.js";
 
       console.log(refme.foo.bar);
-
     `);
   });
 
@@ -256,7 +250,7 @@ describe("symbols", () => {
     const varRefkey = refkey();
     const fooRefkey = refkey();
     const barRefkey = refkey();
-    const decl =
+    const decl = (
       <Output>
         <ts.PackageDirectory name="SourcePackage" path="sp" version="1.0.0">
           <ts.SourceFile export="." path="foo.ts">
@@ -275,11 +269,10 @@ describe("symbols", () => {
         </ts.PackageDirectory>
 
         <ts.PackageDirectory name="DepPackage" path="dp" version="1.0.0">
-          <ts.SourceFile path="bar.ts">
-            console.log({barRefkey});
-          </ts.SourceFile>
+          <ts.SourceFile path="bar.ts">console.log({barRefkey});</ts.SourceFile>
         </ts.PackageDirectory>
-      </Output>;
+      </Output>
+    );
     const res = render(decl);
     assertFileContents(res, {
       "dp/bar.ts": `

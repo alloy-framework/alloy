@@ -16,5 +16,5 @@ export default function transformFragmentChildren(path, children, results, confi
       return memo;
     }, []);
 
-  results.exprs.push(childNodes.length === 1 ? childNodes[0] : t.arrayExpression(childNodes));
+  results.exprs.push(t.arrayExpression(childNodes));
 }

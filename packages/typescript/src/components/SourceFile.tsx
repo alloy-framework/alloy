@@ -3,6 +3,7 @@ import {
   SourceFile as CoreSourceFile,
   createNamedContext,
   Scope,
+  Show,
   SourceDirectoryContext,
   useBinder,
   useContext,
@@ -58,14 +59,20 @@ export function SourceFile(props: SourceFileProps) {
     }
   }
 
-  return <CoreSourceFile path={props.path} filetype="typescript" reference={Reference}>
-      {scope.importedModules.size > 0 ? (
-        <>
-          <ImportStatements records={scope.importedModules} />
-          {"\n"}
-        </>
-      ) : undefined}<SourceFileContext.Provider value={sfContext}>
+  return (
+    <CoreSourceFile
+      path={props.path}
+      filetype="typescript"
+      reference={Reference}
+    >
+      <Show when={scope.importedModules.size > 0}>
+        <ImportStatements records={scope.importedModules} />
+        <hbr />
+        <hbr />
+      </Show>
+      <SourceFileContext.Provider value={sfContext}>
         <Scope value={scope}>{props.children}</Scope>
       </SourceFileContext.Provider>
-    </CoreSourceFile>;
+    </CoreSourceFile>
+  );
 }

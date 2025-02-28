@@ -2,9 +2,7 @@
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
 import { Child, Children } from "@alloy-js/core/jsx-runtime";
-import { sti } from "./utils.js";
-const indent = sti("indent");
-
+import { indent } from "./components/stc/index.js";
 interface IndentLevelData {
   kind: "indent";
   children: (string | Children | IndentLevelData)[];

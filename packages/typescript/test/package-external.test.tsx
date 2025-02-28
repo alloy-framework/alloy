@@ -5,10 +5,13 @@ import * as ts from "../src/index.js";
 import { findFile } from "./utils.js";
 
 it("imports external packages", () => {
-  debug.component.tree();
   const res = render(
     <Output>
-      <ts.PackageDirectory name="greeting-lib" path="greeting-lib" version="1.0.0">
+      <ts.PackageDirectory
+        name="greeting-lib"
+        path="greeting-lib"
+        version="1.0.0"
+      >
         <ts.SourceFile path="greetings.ts">
           <ts.FunctionDeclaration name="getGreeting">
             return "Hello world!";
@@ -20,13 +23,14 @@ it("imports external packages", () => {
             console.log("Hello world!");
           </ts.FunctionDeclaration>
         </ts.SourceFile>
-      
+
         <ts.BarrelFile export="." />
       </ts.PackageDirectory>
 
       <ts.PackageDirectory name="consumer" path="consumer" version="1.0.0">
         <ts.SourceFile export="." path="ref.ts">
-          <ts.Reference refkey={refkey("getGreeting")} />();
+          <ts.Reference refkey={refkey("getGreeting")} />
+          ();
         </ts.SourceFile>
       </ts.PackageDirectory>
     </Output>,

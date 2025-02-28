@@ -1,7 +1,8 @@
+import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed, ref, triggerRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { renderTree } from "../src/render.js";
-import { join, mapJoin } from "../src/utils.js";
+import { children, join, mapJoin } from "../src/utils.js";
 import "../testing/extend-expect.js";
 
 describe("mapJoin", () => {
@@ -12,7 +13,11 @@ describe("mapJoin", () => {
     ]);
 
     function Foo(props: { key: string; value: number }) {
-      return <>Key: {props.key}, Value: {props.value}</>;
+      return (
+        <>
+          Key: {props.key}, Value: {props.value}
+        </>
+      );
     }
 
     const joined = mapJoin(
@@ -211,5 +216,46 @@ describe("join", () => {
     expect(joined).toRenderTo(`
       Value: 1-Value: 2;
     `);
+  });
+});
+
+describe("children", () => {
+  let resolvedChildren: Children;
+  function ResolveChildren(props: any) {
+    resolvedChildren = children(() => props.children, {
+      preserveFragments: props.preserveFragments,
+    })();
+  }
+
+  it("resolves a single child", () => {
+    renderTree(<ResolveChildren>1</ResolveChildren>);
+    expect(resolvedChildren).toEqual("1");
+  });
+
+  it("resolves multiple children", () => {
+    renderTree(<ResolveChildren>1{"2"}3</ResolveChildren>);
+    expect(resolvedChildren).toEqual(["1", "2", "3"]);
+  });
+
+  it("resolves fragments by default", () => {
+    renderTree(
+      <ResolveChildren>
+        <>1</>
+        <>2</>
+        <>3</>
+      </ResolveChildren>,
+    );
+    expect(resolvedChildren).toEqual(["1", "2", "3"]);
+  });
+
+  it("preserves fragments if asked", () => {
+    renderTree(
+      <ResolveChildren preserveFragments>
+        <>1</>
+        <>2</>
+        <>3</>
+      </ResolveChildren>,
+    );
+    expect(resolvedChildren).toEqual([["1"], ["2"], ["3"]]);
   });
 });

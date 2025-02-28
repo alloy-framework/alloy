@@ -11,7 +11,7 @@ it("is applied by output", () => {
 
   expect([
     FooStc(),
-    Indent({ noTrailingBreak: true }).code`
+    Indent().code`
       child!
       child2!
     `,

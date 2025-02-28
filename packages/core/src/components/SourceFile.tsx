@@ -4,8 +4,9 @@ import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
 import { Children, ComponentDefinition, getContext } from "../jsx-runtime.js";
 import { Refkey } from "../refkey.js";
+import { PrintTreeOptions } from "../render.js";
 
-export interface SourceFileProps {
+export interface SourceFileProps extends PrintTreeOptions {
   /**
    * The path of this file relative to its parent directory
    */
@@ -23,12 +24,6 @@ export interface SourceFileProps {
    * contents.
    */
   reference?: ComponentDefinition<{ refkey: Refkey }>;
-
-  /**
-   * A string representing one indent level, used when reindenting contents of
-   * this file.
-   */
-  indent?: string;
 }
 
 export function SourceFile(props: SourceFileProps) {
@@ -42,8 +37,15 @@ export function SourceFile(props: SourceFileProps) {
   const nodeContext = getContext()!;
   nodeContext.meta ??= {};
   nodeContext.meta.sourceFile = context;
+  nodeContext.meta.printOptions = {
+    printWidth: props.printWidth,
+    tabWidth: props.tabWidth,
+    useTabs: props.useTabs,
+  };
 
-  return <SourceFileContext.Provider value={context}>
-    { props.children }
-  </SourceFileContext.Provider>;
+  return (
+    <SourceFileContext.Provider value={context}>
+      {props.children}
+    </SourceFileContext.Provider>
+  );
 }

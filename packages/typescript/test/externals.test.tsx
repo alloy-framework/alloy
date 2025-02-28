@@ -5,7 +5,6 @@ import {
   createPackage,
   FunctionDeclaration,
   PackageDirectory,
-  Reference,
   SourceFile,
 } from "../src/index.js";
 import { assertFileContents } from "./utils.js";
@@ -29,8 +28,8 @@ it("can import builtins", () => {
     <Output externals={[testLib, fs]}>
       <PackageDirectory path="." name="test" version="1.0.0">
         <SourceFile path="index.ts">
-          <Reference refkey={testLib["./subpath"].nice} />;
-          await <Reference refkey={fs["./promises"].readFile} />();
+          {testLib["./subpath"].nice};<hbr />
+          await {fs["./promises"].readFile}();
         </SourceFile>
       </PackageDirectory>
     </Output>,
@@ -78,8 +77,8 @@ it("can import builtins without a package", () => {
   const res = render(
     <Output externals={[testLib, fs]}>
       <SourceFile path="index.ts">
-        <Reference refkey={testLib["./subpath"].nice} />;
-        await <Reference refkey={fs["./promises"].readFile} />();
+        {testLib["./subpath"].nice};<hbr />
+        await {fs["./promises"].readFile}();
       </SourceFile>
     </Output>,
   );
@@ -115,8 +114,8 @@ it("can import builtins without a package", () => {
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
           <FunctionDeclaration name="bar">
-            <Reference refkey={testLib["./subpath"].nice} />;
-            await <Reference refkey={fs["./promises"].readFile} />();
+            {testLib["./subpath"].nice};<hbr />
+            await {fs["./promises"].readFile}();
           </FunctionDeclaration>
         </FunctionDeclaration>
       </SourceFile>

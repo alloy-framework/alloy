@@ -9,6 +9,7 @@ import {
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { Block } from "./Block.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import {
   FunctionDeclaration,
@@ -56,11 +57,12 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const extendsPart = props.extends && <> extends {props.extends}</>;
   const flags = OutputSymbolFlags.MemberContainer;
 
-  return <Declaration {...props} flags={flags} nameKind="class">
-    class <Name />{extendsPart} {"{"}
-      {props.children}
-    {"}"}
-  </Declaration>;
+  return (
+    <Declaration {...props} flags={flags} nameKind="class">
+      class <Name />
+      {extendsPart} <Block>{props.children}</Block>
+    </Declaration>
+  );
 }
 
 export interface ClassMemberProps {
@@ -97,17 +99,15 @@ export function ClassMember(props: ClassMemberProps) {
     name = `#${name}`;
   }
 
-  return <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
-    {
-      props.public && "public "
-    }{
-      props.private && "private "
-    }{
-      props.protected && "protected "
-    }{
-      props.static && "static "
-    }{props.children}
-  </MemberDeclaration>;
+  return (
+    <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
+      {props.public && "public "}
+      {props.private && "private "}
+      {props.protected && "protected "}
+      {props.static && "static "}
+      {props.children}
+    </MemberDeclaration>
+  );
 }
 
 export interface ClassFieldProps extends ClassMemberProps {
@@ -119,9 +119,13 @@ export function ClassField(props: ClassFieldProps) {
   const typeSection = props.type && <>: {props.type}</>;
   const initializerSection = props.children && <> = {props.children}</>;
 
-  return <ClassMember {...props}>
-    <MemberName />{typeSection}{initializerSection};
-  </ClassMember>;
+  return (
+    <ClassMember {...props}>
+      <MemberName />
+      {typeSection}
+      {initializerSection}
+    </ClassMember>
+  );
 }
 
 export interface ClassMethodProps extends ClassMemberProps {
@@ -133,13 +137,14 @@ export interface ClassMethodProps extends ClassMemberProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const returnType = props.returnType && <>: {props.returnType}</>;
-  return <ClassMember {...props}>
-    {
-      props.async && "async "
-    }<MemberName /><Scope name={props.name} kind="function">
-      (<FunctionDeclaration.Parameters parameters={props.parameters} />){returnType} {"{"}
-        {props.children}
-      {"}"}
-    </Scope>
-  </ClassMember>;
+  return (
+    <ClassMember {...props}>
+      {props.async && "async "}
+      <MemberName />
+      <Scope name={props.name} kind="function">
+        (<FunctionDeclaration.Parameters parameters={props.parameters} />)
+        {returnType} <Block>{props.children}</Block>
+      </Scope>
+    </ClassMember>
+  );
 }

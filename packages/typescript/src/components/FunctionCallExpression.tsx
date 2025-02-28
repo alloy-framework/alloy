@@ -1,19 +1,20 @@
-import { Children, mapJoin, Refkey } from "@alloy-js/core";
-import { Reference } from "./Reference.js";
+import { Children, For, Indent } from "@alloy-js/core";
 
 export interface FunctionCallExpressionProps {
-  refkey: Refkey;
+  target: Children;
   args?: Children[];
 }
+
 export function FunctionCallExpression(props: FunctionCallExpressionProps) {
-  const args = props.args && props.args.length ?
-    mapJoin(
-      () => props.args!,
-      (arg) => arg,
-      { joiner: ", " },
-    )
-  : null;
-  return <>
-        <Reference refkey={props.refkey} />({args})
-    </>;
+  return (
+    <group>
+      {props.target}(
+      <Indent break="soft" trailingBreak>
+        <For each={props.args ?? []} comma line>
+          {(arg) => arg}
+        </For>
+      </Indent>
+      )
+    </group>
+  );
 }

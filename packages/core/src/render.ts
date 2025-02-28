@@ -1,6 +1,6 @@
 import { isRef } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
-import { builders } from "prettier/doc.js";
+import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
 import {
@@ -41,7 +41,7 @@ const {
     ifBreak,
     indentIfBreak,
   },
-} = doc;
+} = prettier;
 
 /**
  * Turning components into source text involves three different trees produced
@@ -176,9 +176,20 @@ function traceRender(phase: string, message: () => string) {
   //console.log(`[\x1b[34m${phase}\x1b[0m]: ${message()}`);
 }
 
-export function render(children: Children): OutputDirectory {
+export function render(
+  children: Children,
+  options?: PrintTreeOptions,
+): OutputDirectory {
   const tree = renderTree(children);
   let rootDirectory: OutputDirectory | undefined = undefined;
+
+  // when passing Output, the first render tree child is the Output component.
+  const rootRenderOptions =
+    Array.isArray(tree) ?
+      (getContextForRenderNode(tree[0] as RenderedTextTree)?.meta
+        ?.printOptions ?? {})
+    : {};
+
   collectSourceFiles(undefined, tree);
 
   if (!rootDirectory) {
@@ -222,11 +233,25 @@ export function render(children: Children): OutputDirectory {
           "Source file doesn't have parent directory. Make sure you have used the Output component.",
         );
       }
+
       const sourceFile: OutputFile = {
         kind: "file",
         path: context.meta?.sourceFile.path,
         filetype: context.meta?.sourceFile.filetype,
-        contents: printTree(root),
+        contents: printTree(root, {
+          printWidth:
+            options?.printWidth ??
+            context.meta?.printOptions?.printWidth ??
+            rootRenderOptions.printWidth,
+          tabWidth:
+            options?.tabWidth ??
+            context.meta?.printOptions?.tabWidth ??
+            rootRenderOptions.tabWidth,
+          useTabs:
+            options?.useTabs ??
+            context.meta?.printOptions?.useTabs ??
+            rootRenderOptions.useTabs,
+        }),
       };
 
       currentDirectory.contents.push(sourceFile);
@@ -490,15 +515,37 @@ function debugPrintChild(child: Children): string {
   }
 }
 
-const defaultPrintTreeOptions: doc.printer.Options = {
+export interface PrintTreeOptions {
+  /**
+   * The number of characters the printer will wrap on. Defaults to 100
+   * characters.
+   */
+  printWidth?: number;
+
+  /**
+   * Whether to use tabs instead of spaces for indentation. Defaults to false.
+   */
+  useTabs?: boolean;
+
+  /**
+   * The number of spaces to use for indentation. Defaults to 2 spaces.
+   */
+  tabWidth?: number;
+}
+
+const defaultPrintTreeOptions: PrintTreeOptions = {
   printWidth: 80,
   tabWidth: 2,
 };
-export function printTree(
-  tree: RenderedTextTree,
-  options?: Partial<doc.printer.Options>,
-) {
-  options = { ...defaultPrintTreeOptions, ...(options ?? {}) };
+
+export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
+  options = {
+    ...defaultPrintTreeOptions,
+    ...Object.fromEntries(
+      Object.entries(options ?? {}).filter(([_, v]) => v !== undefined),
+    ),
+  };
+
   const d = printTreeWorker(tree);
   return doc.printer.printDocToString(d, options as doc.printer.Options)
     .formatted;
@@ -511,7 +558,7 @@ function printTreeWorker(tree: RenderedTextTree): Doc {
       const normalizedNode = node
         .split(/\r?\n/)
         .flatMap((line, index, array) =>
-          index < array.length - 1 ? [line, builders.hardline] : [line],
+          index < array.length - 1 ? [line, hardline] : [line],
         );
       doc.push(normalizedNode);
     } else if (isPrintHook(node)) {

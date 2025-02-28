@@ -3,7 +3,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 export interface IndentProps {
   children: Children;
   break?: "space" | "soft" | "hard";
-  noTrailingBreak?: boolean;
+  trailingBreak?: boolean;
 }
 export function Indent(props: IndentProps) {
   const breakStyle = props.break ?? "hard";
@@ -12,10 +12,13 @@ export function Indent(props: IndentProps) {
     : breakStyle === "soft" ? <sbr />
     : <br />;
 
-  return <>
-    <indent>
-      {breakElem}
-      {props.children}
-    </indent>{!props.noTrailingBreak && breakElem}
-  </>;
+  return (
+    <>
+      <indent>
+        {breakElem}
+        {props.children}
+      </indent>
+      {props.trailingBreak && breakElem}
+    </>
+  );
 }

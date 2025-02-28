@@ -9,7 +9,6 @@ it("doesn't recalculate when dependencies don't change", () => {
     callCount += 1;
     return signal.value;
   });
-  console.log("first call");
   expect(callCount).toBe(1);
   m();
   expect(callCount).toBe(1);

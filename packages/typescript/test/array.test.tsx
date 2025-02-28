@@ -9,7 +9,9 @@ it("works", () => {
   `);
 
   expect(
-    toSourceText(<ArrayExpression jsValue={[1, 2, 3, "foo".repeat(10)]} />),
+    toSourceText(<ArrayExpression jsValue={[1, 2, 3, "foo".repeat(10)]} />, {
+      printWidth: 20,
+    }),
   ).toBe(d`
     [
       1,

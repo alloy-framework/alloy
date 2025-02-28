@@ -10,9 +10,7 @@ import { toSourceText } from "./utils.js";
 it("declares interfaces", () => {
   const res = toSourceText(<ts.InterfaceDeclaration name="Foo" />);
   expect(res).toEqual(d`
-    interface Foo {
-      
-    }
+    interface Foo {}
   `);
 });
 
@@ -21,9 +19,7 @@ it("accepts export and default", () => {
     <ts.InterfaceDeclaration name="Foo" export default />,
   );
   expect(res).toEqual(d`
-    export default interface Foo {
-      
-    }
+    export default interface Foo {}
   `);
 });
 
@@ -33,18 +29,21 @@ it("creates extends", () => {
   );
 
   expect(res).toEqual(d`
-    interface Foo extends string {
-      
-    }
+    interface Foo extends string {}
   `);
 });
 
 it("can create members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.InterfaceMember name="member" type="string" />;
-      <ts.InterfaceMember name="circular" type={<Reference refkey={refkey("Foo")} />} />;
-      <ts.InterfaceMember indexer="str: string" type="number" />;
+      <ts.StatementList>
+        <ts.InterfaceMember name="member" type="string" />
+        <ts.InterfaceMember
+          name="circular"
+          type={<Reference refkey={refkey("Foo")} />}
+        />
+        <ts.InterfaceMember indexer="str: string" type="number" />
+      </ts.StatementList>
     </ts.InterfaceDeclaration>,
   );
 
@@ -60,9 +59,15 @@ it("can create members", () => {
 it("can create optional members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.InterfaceMember name="member" type="string" />;
-      <ts.InterfaceMember optional name="circular" type={<Reference refkey={refkey("Foo")} />} />;
-      <ts.InterfaceMember indexer="str: string" type="number" />;
+      <ts.StatementList>
+        <ts.InterfaceMember name="member" type="string" />
+        <ts.InterfaceMember
+          optional
+          name="circular"
+          type={<Reference refkey={refkey("Foo")} />}
+        />
+        <ts.InterfaceMember indexer="str: string" type="number" />
+      </ts.StatementList>
     </ts.InterfaceDeclaration>,
   );
 
@@ -78,9 +83,14 @@ it("can create optional members", () => {
 it("can create readonly members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.InterfaceMember readonly name="member" type="string" />;
-      <ts.InterfaceMember name="circular" type={<Reference refkey={refkey("Foo")} />} />;
-      <ts.InterfaceMember indexer="str: string" type="number" />;
+      <ts.StatementList>
+        <ts.InterfaceMember readonly name="member" type="string" />
+        <ts.InterfaceMember
+          name="circular"
+          type={<Reference refkey={refkey("Foo")} />}
+        />
+        <ts.InterfaceMember indexer="str: string" type="number" />
+      </ts.StatementList>
     </ts.InterfaceDeclaration>,
   );
 

@@ -6,7 +6,7 @@ export interface StatementListProps {
 
 export function StatementList(props: StatementListProps) {
   return (
-    <List semicolon hardline ender=";">
+    <List semicolon hardline enderPunctuation>
       {props.children}
     </List>
   );

@@ -21,7 +21,7 @@ export function ArrayExpression(props: ArrayExpressionProps) {
           </>
         )}
       </Indent>
-      ]
+      <sbr />]
     </group>
   );
 }

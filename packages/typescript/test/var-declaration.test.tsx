@@ -7,10 +7,10 @@ import { assertFileContents } from "./utils.js";
 it("works", () => {
   expect(
     <Output>
-    <ts.SourceFile path="test.js">
-      <ts.VarDeclaration name="hi" value="12" />
-    </ts.SourceFile>
-  </Output>,
+      <ts.SourceFile path="test.js">
+        <ts.VarDeclaration name="hi" value="12" />;
+      </ts.SourceFile>
+    </Output>,
   ).toRenderTo("const hi = 12;");
 });
 
@@ -25,9 +25,15 @@ it("works end-to-end", () => {
         </ts.TypeDeclaration>
       </ts.SourceFile>
       <ts.SourceFile path="test.ts">
-        <ts.VarDeclaration export let name="hi" type={<ts.Reference refkey={TestType} />}>
+        <ts.VarDeclaration
+          export
+          let
+          name="hi"
+          type={<ts.Reference refkey={TestType} />}
+        >
           "hello"
         </ts.VarDeclaration>
+        ;
       </ts.SourceFile>
     </Output>,
   );

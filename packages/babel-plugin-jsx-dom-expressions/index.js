@@ -1279,7 +1279,7 @@ function transformFragmentChildren(path, children, results, config) {
       return memo;
     }, []);
 
-  results.exprs.push(childNodes.length === 1 ? childNodes[0] : t__namespace.arrayExpression(childNodes));
+  results.exprs.push(t__namespace.arrayExpression(childNodes));
 }
 
 function transformJSX(path) {

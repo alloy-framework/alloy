@@ -59,7 +59,6 @@ function transformElement(
   const newChildren: t.JSXElement["children"] = [];
 
   for (const child of childTokens(path)) {
-    console.log({ child });
     if (child.indented) {
       flushLines();
       createIndent();
@@ -229,13 +228,19 @@ function* childTokens(
   }
 }
 
-// removes all leading whitespace from literal strings
-// inside the JSX template
+// Remove all leading and trailing whitespace and replace any amount of
+// interstitial whitespace with a single space.
+
 function stripLeadingWhitespace(path: NodePath<t.JSXElement | t.JSXFragment>) {
   const children = path.get("children");
   for (const child of children) {
     if (child.isJSXText()) {
-      child.node.value = child.node.value.replace(/\r?\n\s*/g, "");
+      let currentValue = child.node.value;
+      currentValue = currentValue.replace(
+        /(^(\s*\r?\n\s*)+)|((\s*\r?\n\s*)+$)/g,
+        "",
+      );
+      child.node.value = currentValue.replace(/(\s*\r?\n\s*)+/g, " ");
       child.node.extra!.raw = child.node.value;
     }
   }

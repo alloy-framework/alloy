@@ -213,15 +213,15 @@ export type Children = Child | Children[];
 export type Props = Record<string, any>;
 
 export interface ComponentDefinition<TProps = Props> {
-  (props: TProps): Child | Children;
+  (props: TProps): Children;
 }
 export interface Component<TProps = Props> {
-  (props: TProps): Child | Children;
+  (props: TProps): Children;
   tag?: symbol;
 }
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
-  (): Child | Children;
+  (): Children;
   props: Props;
   tag?: symbol;
 }

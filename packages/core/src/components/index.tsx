@@ -12,3 +12,4 @@ export * from "./Show.jsx";
 export * from "./SourceDirectory.js";
 export * from "./SourceFile.js";
 export * from "./Switch.jsx";
+export * from "./Wrap.jsx";

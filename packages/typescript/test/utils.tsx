@@ -3,17 +3,20 @@ import {
   Output,
   OutputDirectory,
   OutputFile,
+  PrintTreeOptions,
   render,
 } from "@alloy-js/core";
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as ts from "../src/index.js";
 
-export function toSourceText(c: Children): string {
+export function toSourceText(c: Children, options?: PrintTreeOptions): string {
+  console.log("These options", options);
   const res = render(
     <Output>
       <ts.SourceFile path="test.ts">{c}</ts.SourceFile>
     </Output>,
+    options,
   );
 
   return res.contents[0].contents as string;

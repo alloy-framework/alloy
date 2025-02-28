@@ -1,4 +1,4 @@
-import { Children, splitProps } from "@alloy-js/core/jsx-runtime";
+import { Children, memo, splitProps } from "@alloy-js/core/jsx-runtime";
 import { childrenArray, JoinOptions } from "../utils.js";
 import { For } from "./For.jsx";
 
@@ -19,16 +19,24 @@ export interface BaseListProps {
   hardline?: boolean;
   literalline?: boolean;
 
-  /** Text to place at the end of the list when there is at least one item */
+  /**
+   * Text to place at the end of the list when there is at least one item. If
+   * set to true, the joiner is used.
+   **/
   ender?: Children;
+
+  /**
+   * Place the join punctuation at the end, but without a line break.
+   */
+  enderPunctuation?: boolean;
 }
 
 export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
-  let joiner;
+  let joiner, punctuation;
   if ("joiner" in props) {
     joiner = props.joiner;
   } else {
-    const punctuation =
+    punctuation =
       props.comma ? ","
       : props.semicolon ? ";"
       : "";
@@ -49,7 +57,10 @@ export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
     );
   }
 
-  const ender = props.ender;
+  const ender =
+    "ender" in props ? props.ender
+    : props.enderPunctuation ? punctuation
+    : undefined;
 
   return { joiner, ender };
 }
@@ -67,8 +78,13 @@ export interface ListProps extends BaseListProps {
  */
 export function List(props: ListProps) {
   const [rest, forProps] = splitProps(props, ["children"]);
+  const resolvedChildren = memo(() =>
+    childrenArray(() => rest.children, {
+      preserveFragments: true,
+    }),
+  );
   return (
-    <For each={childrenArray(() => rest.children)} {...forProps}>
+    <For each={resolvedChildren} {...forProps}>
       {(child) => child}
     </For>
   );

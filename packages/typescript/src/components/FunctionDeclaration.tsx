@@ -73,14 +73,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   );
 
   const sBody = bodyChild ?? (
-    <FunctionDeclaration.Body>
-      {filteredChildren.length > 0 && (
-        <>
-          <breakParent />
-          {filteredChildren}
-        </>
-      )}
-    </FunctionDeclaration.Body>
+    <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>
   );
 
   const asyncKwd = props.async ? "async " : "";
@@ -89,7 +82,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     <Declaration {...props} nameKind="function">
       {asyncKwd}function <Name />
       <Scope name={props.name} kind="function">
-        {sTypeParameters}({sParams}){sReturnType} <Block>{sBody}</Block>
+        {sTypeParameters}({sParams}){sReturnType} {sBody}
       </Scope>
     </Declaration>
   );
@@ -249,6 +242,6 @@ export interface FunctionBodyProps {
 FunctionDeclaration.Body = taggedComponent(
   functionBodyTag,
   function Body(props: FunctionBodyProps) {
-    return props.children;
+    return <Block>{props.children}</Block>;
   },
 );

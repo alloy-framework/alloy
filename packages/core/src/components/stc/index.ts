@@ -1,4 +1,4 @@
-import { stc, sti } from "../../utils.js";
+import { stc, sti } from "../../stc.js";
 import * as base from "../index.js";
 
 export const Declaration = stc(base.Declaration);
@@ -14,5 +14,7 @@ export const MemberName = stc(base.MemberName);
 export const MemberDeclaration = stc(base.MemberDeclaration);
 export const Name = stc(base.Name);
 export const Indent = stc(base.Indent);
+export const Wrap = stc(base.Wrap);
+export const List = stc(base.List);
 
 export const indent = sti("indent");

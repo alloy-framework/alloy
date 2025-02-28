@@ -5,15 +5,16 @@ import {
 } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { NamePolicyContext } from "../context/name-policy.js";
-import { Children } from "../jsx-runtime.js";
+import { Children, getContext } from "../jsx-runtime.js";
 import { NamePolicy } from "../name-policy.js";
+import { PrintTreeOptions } from "../render.js";
 import { extensionEffects } from "../slot.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SourceFile } from "./SourceFile.js";
 
-export interface OutputProps {
+export interface OutputProps extends PrintTreeOptions {
   children?: Children;
   /**
    * External libraries whose symbols should be available for reference.
@@ -48,10 +49,18 @@ export function Output(props: OutputProps) {
   const binder = createOutputBinder({
     nameConflictResolver: props.nameConflictResolver,
   });
-  const dir =
-    <SourceDirectory path={basePath}>
-    {props.children}
-  </SourceDirectory>;
+
+  const nodeContext = getContext()!;
+  nodeContext.meta ??= {};
+  nodeContext.meta.printOptions = {
+    printWidth: props.printWidth,
+    tabWidth: props.tabWidth,
+    useTabs: props.useTabs,
+  };
+
+  const dir = (
+    <SourceDirectory path={basePath}>{props.children}</SourceDirectory>
+  );
 
   if (props.externals) {
     for (const global of props.externals) {
@@ -59,13 +68,16 @@ export function Output(props: OutputProps) {
     }
   }
 
-  return <BinderContext.Provider value={binder}>
-    {() => { extensionEffects.forEach(e => e())}}{
-      props.namePolicy ?
+  return (
+    <BinderContext.Provider value={binder}>
+      {() => {
+        extensionEffects.forEach((e) => e());
+      }}
+      {props.namePolicy ?
         <NamePolicyContext.Provider value={props.namePolicy}>
           {dir}
-        </NamePolicyContext.Provider> :
-        dir
-    }
-  </BinderContext.Provider>;
+        </NamePolicyContext.Provider>
+      : dir}
+    </BinderContext.Provider>
+  );
 }

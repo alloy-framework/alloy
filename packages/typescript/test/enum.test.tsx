@@ -9,15 +9,17 @@ it("renders an enum with enum children", () => {
     <Output>
       <ts.SourceFile path="foo.ts">
         <ts.EnumDeclaration name="MyEnum">
-          <ts.EnumMember name="foo" value="1" />,
-          <ts.EnumMember name="bar" value="2" />
+          <ts.CommaList>
+            <ts.EnumMember name="foo" value="1" />
+            <ts.EnumMember name="bar" value="2" />
+          </ts.CommaList>
         </ts.EnumDeclaration>
       </ts.SourceFile>
     </Output>,
   ).toRenderTo(`
     enum MyEnum {
       foo = 1,
-      bar = 2
+      bar = 2,
     }
   `);
 });
@@ -27,15 +29,17 @@ it("renders an enum with enum children specifying JS Value", () => {
     <Output>
       <ts.SourceFile path="foo.ts">
         <ts.EnumDeclaration name="MyEnum">
-          <ts.EnumMember name="foo" jsValue="1" />,
-          <ts.EnumMember name="bar" jsValue={2} />
+          <ts.CommaList>
+            <ts.EnumMember name="foo" jsValue="1" />
+            <ts.EnumMember name="bar" jsValue={2} />
+          </ts.CommaList>
         </ts.EnumDeclaration>
       </ts.SourceFile>
     </Output>,
   ).toRenderTo(`
     enum MyEnum {
       foo = "1",
-      bar = 2
+      bar = 2,
     }
   `);
 });
@@ -55,7 +59,7 @@ it("renders an enum given a JS value", () => {
   ).toRenderTo(`
     enum MyEnum {
       foo = 1,
-      bar = 2
+      bar = 2,
     }
   `);
 });
@@ -100,7 +104,7 @@ it("uses the naming policy", () => {
   ).toRenderTo(`
     enum MyEnum {
       FooProp = 1,
-      BarProp = 2
+      BarProp = 2,
     }
   `);
 });
@@ -113,19 +117,20 @@ describe("symbols", () => {
       <Output>
         <ts.SourceFile path="foo.ts">
           <ts.EnumDeclaration name="MyEnum">
-            <ts.EnumMember name="foo" jsValue="1" refkey={memberOne} />,
-            <ts.EnumMember name="bar" jsValue={2} />
+            <ts.CommaList>
+              <ts.EnumMember name="foo" jsValue="1" refkey={memberOne} />
+              <ts.EnumMember name="bar" jsValue={2} />
+            </ts.CommaList>
           </ts.EnumDeclaration>
-
+          <hbr />
           {memberOne};
         </ts.SourceFile>
       </Output>,
     ).toRenderTo(`
       enum MyEnum {
         foo = "1",
-        bar = 2
+        bar = 2,
       }
-      
       MyEnum.foo;
     `);
   });

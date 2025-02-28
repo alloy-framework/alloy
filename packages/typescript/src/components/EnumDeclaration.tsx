@@ -1,14 +1,16 @@
 import {
+  computed,
   Declaration as CoreDeclaration,
+  For,
   MemberScope,
   Name,
   OutputSymbolFlags,
-  mapJoin,
   refkey,
   useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, useTSScope } from "../symbols/index.js";
+import { Block } from "./Block.jsx";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 export interface EnumDeclarationProps extends BaseDeclarationProps {
@@ -35,19 +37,24 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     flags: OutputSymbolFlags.StaticMemberContainer,
   });
 
-  const jsValueMembers = mapJoin(
-    () => Object.entries(props.jsValue ?? {}),
-    ([name, value]) => {
-      return <EnumMember name={name} jsValue={value} />;
-    },
-    { joiner: ",\n" },
-  );
-
-  return <CoreDeclaration symbol={sym}>
-    {props.export ? "export " : ""}{props.default ? "default " : ""}enum <Name /> {"{"}
+  const valueEntries = computed(() => Object.entries(props.jsValue ?? {}));
+  return (
+    <CoreDeclaration symbol={sym}>
+      {props.export ? "export " : ""}
+      {props.default ? "default " : ""}enum <Name />{" "}
       <MemberScope owner={sym}>
-        {jsValueMembers}{jsValueMembers().length > 0 && props.children && ",\n"}{props.children}
+        <Block>
+          <For each={valueEntries} comma hardline enderPunctuation>
+            {([name, value]) => <EnumMember name={name} jsValue={value} />}
+          </For>
+          {props.children && (
+            <>
+              {valueEntries.value.length > 0 && <hbr />}
+              {props.children}
+            </>
+          )}
+        </Block>
       </MemberScope>
-    {"}"}
-  </CoreDeclaration>;
+    </CoreDeclaration>
+  );
 }

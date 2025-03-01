@@ -6,12 +6,12 @@ import * as csharp from "../src/index.js";
 it("defines multiple source files with unique content", () => {
   const res = core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test1.cs">
-          <csharp.Class accessModifier='public' name="TestClass1" />
+          <csharp.Class accessModifier="public" name="TestClass1" />
         </csharp.SourceFile>
         <csharp.SourceFile path="Test2.cs">
-          <csharp.Class accessModifier='public' name="TestClass2" />
+          <csharp.Class accessModifier="public" name="TestClass2" />
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
@@ -23,7 +23,6 @@ it("defines multiple source files with unique content", () => {
     {
         public class TestClass1;
     }
-
   `);
 
   expect(res.contents[1].path).equals("Test2.cs");
@@ -32,15 +31,15 @@ it("defines multiple source files with unique content", () => {
     {
         public class TestClass2;
     }
-
   `);
 });
 
 it("throws when declaring a source file outside a namespace", () => {
-  const decl =
+  const decl = (
     <core.Output>
-    <csharp.SourceFile path="Test.cs" />
-  </core.Output>;
+      <csharp.SourceFile path="Test.cs" />
+    </core.Output>
+  );
 
   expect(() => core.render(decl)).toThrow(
     "SourceFile must be declared inside a namespace",

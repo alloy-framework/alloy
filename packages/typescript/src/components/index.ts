@@ -1,6 +1,7 @@
+export * from "../../../core/src/components/Block.jsx";
+export * from "../../../core/src/components/StatementList.jsx";
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
-export * from "./Block.js";
 export * from "./ClassDeclaration.jsx";
 export * from "./CommaList.jsx";
 export * from "./Declaration.js";
@@ -16,7 +17,6 @@ export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
-export * from "./StatementList.jsx";
 export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
 export * from "./ValueExpression.js";

@@ -1,5 +1,6 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import { it } from "vitest";
+import { StatementList } from "../../core/src/components/StatementList.jsx";
 import {
   FunctionCallExpression,
   FunctionDeclaration,
@@ -7,7 +8,6 @@ import {
   SourceFile,
   VarDeclaration,
 } from "../../typescript/src/index.js";
-import { StatementList } from "../src/components/StatementList.jsx";
 import { assertFileContents } from "./utils.js";
 
 it("can declare and call a function with parameters", () => {

@@ -1,7 +1,7 @@
 import { Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { StatementList } from "../src/components/StatementList.jsx";
+import { StatementList } from "../../core/src/components/StatementList.jsx";
 import {
   FunctionDeclaration,
   ParameterDescriptor,

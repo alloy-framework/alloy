@@ -33,17 +33,17 @@ export function Enum(props: EnumProps) {
     "enum-decl",
   );
 
-  return <core.Declaration symbol={thisEnumSymbol}>
-      {getAccessModifier(props.accessModifier)}enum <Name />{!props.children && ";"}{props.children && 
-        <>
-          {"\n{"}
-            <core.Scope value={thisEnumScope}>
-              {props.children}
-            </core.Scope>
-          {"}"}
-        </>
-        }
-    </core.Declaration>;
+  return (
+    <core.Declaration symbol={thisEnumSymbol}>
+      {getAccessModifier(props.accessModifier)}enum <Name />
+      {!props.children && ";"}
+      {props.children && (
+        <core.Scope value={thisEnumScope}>
+          <core.Block newline>{props.children}</core.Block>
+        </core.Scope>
+      )}
+    </core.Declaration>
+  );
 }
 
 // properties for creating a C# enum member
@@ -68,7 +68,9 @@ export function EnumMember(props: EnumMemberProps) {
     refkey: props.refkey ?? core.refkey(props.name),
   });
 
-  return <core.Declaration symbol={thisEnumValueSymbol}>
+  return (
+    <core.Declaration symbol={thisEnumValueSymbol}>
       <Name />
-    </core.Declaration>;
+    </core.Declaration>
+  );
 }

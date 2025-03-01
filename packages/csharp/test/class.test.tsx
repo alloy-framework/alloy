@@ -6,7 +6,7 @@ import * as utils from "./utils.js";
 
 it("declares class with no members", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass" />,
+    <csharp.Class accessModifier="public" name="TestClass" />,
   );
 
   expect(res).toBe(coretest.d`
@@ -14,15 +14,24 @@ it("declares class with no members", () => {
     {
         public class TestClass;
     }
-
   `);
 });
 
 it("declares class with some members", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass">
-      <csharp.ClassMember accessModifier="public" name="MemberOne" type="string" />
-      <csharp.ClassMember accessModifier="private" name="MemberTwo" type="int" />
+    <csharp.Class accessModifier="public" name="TestClass">
+      <core.StatementList>
+        <csharp.ClassMember
+          accessModifier="public"
+          name="MemberOne"
+          type="string"
+        />
+        <csharp.ClassMember
+          accessModifier="private"
+          name="MemberTwo"
+          type="int"
+        />
+      </core.StatementList>
     </csharp.Class>,
   );
 
@@ -35,15 +44,20 @@ it("declares class with some members", () => {
             private int memberTwo;
         }
     }
-
   `);
 });
 
 it("declares class with some methods", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass">
-      <csharp.ClassMethod accessModifier="public" name="MethodOne" />
-      <csharp.ClassMethod accessModifier="private" methodModifier="virtual" name="MethodTwo" />
+    <csharp.Class accessModifier="public" name="TestClass">
+      <core.List>
+        <csharp.ClassMethod accessModifier="public" name="MethodOne" />
+        <csharp.ClassMethod
+          accessModifier="private"
+          methodModifier="virtual"
+          name="MethodTwo"
+        />
+      </core.List>
     </csharp.Class>,
   );
 
@@ -56,7 +70,6 @@ it("declares class with some methods", () => {
             private virtual void MethodTwo() {}
         }
     }
-
   `);
 });
 
@@ -72,8 +85,13 @@ it("declares class with params and return type", () => {
     },
   ];
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass">
-      <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns="string" />
+    <csharp.Class accessModifier="public" name="TestClass">
+      <csharp.ClassMethod
+        accessModifier="public"
+        name="MethodOne"
+        parameters={params}
+        returns="string"
+      />
     </csharp.Class>,
   );
 
@@ -85,7 +103,6 @@ it("declares class with params and return type", () => {
             public string MethodOne(int intParam, string stringParam) {}
         }
     }
-
   `);
 });
 
@@ -107,17 +124,45 @@ it("uses refkeys for members, params, and return type", () => {
 
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier='public' name="TestEnum" refkey={enumTypeRefkey}>
-            <csharp.EnumMember name="One" />,
-            <csharp.EnumMember name="Two" />
+          <csharp.Enum
+            accessModifier="public"
+            name="TestEnum"
+            refkey={enumTypeRefkey}
+          >
+            <core.List comma hardline>
+              <csharp.EnumMember name="One" />
+              <csharp.EnumMember name="Two" />
+            </core.List>
           </csharp.Enum>
-          <csharp.Class accessModifier="public" name="TestInput" refkey={inputTypeRefkey} />
-          <csharp.Class accessModifier="public" name="TestResult" refkey={testResultTypeRefkey} />
-          <csharp.Class accessModifier='public' name="TestClass">
-            <csharp.ClassMember accessModifier="private" name="MemberOne" type={enumTypeRefkey} />
-            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={testResultTypeRefkey}>
+          <hbr />
+          <csharp.Class
+            accessModifier="public"
+            name="TestInput"
+            refkey={inputTypeRefkey}
+          />
+          <hbr />
+          <csharp.Class
+            accessModifier="public"
+            name="TestResult"
+            refkey={testResultTypeRefkey}
+          />
+          <hbr />
+          <csharp.Class accessModifier="public" name="TestClass">
+            <csharp.ClassMember
+              accessModifier="private"
+              name="MemberOne"
+              type={enumTypeRefkey}
+            />
+            ;
+            <hbr />
+            <csharp.ClassMethod
+              accessModifier="public"
+              name="MethodOne"
+              parameters={params}
+              returns={testResultTypeRefkey}
+            >
               return new {testResultTypeRefkey}();
             </csharp.ClassMethod>
           </csharp.Class>
@@ -145,7 +190,6 @@ it("uses refkeys for members, params, and return type", () => {
             }
         }
     }
-
   `);
 });
 
@@ -156,9 +200,23 @@ it("declares class with generic parameters", () => {
   };
 
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass" typeParameters={typeParameters}>
-      <csharp.ClassMember accessModifier="public" name="memberOne" type={typeParameters.T} />
-      <csharp.ClassMember accessModifier="private" name="memberTwo" type={typeParameters.U} />
+    <csharp.Class
+      accessModifier="public"
+      name="TestClass"
+      typeParameters={typeParameters}
+    >
+      <csharp.ClassMember
+        accessModifier="public"
+        name="memberOne"
+        type={typeParameters.T}
+      />
+      ;<hbr />
+      <csharp.ClassMember
+        accessModifier="private"
+        name="memberTwo"
+        type={typeParameters.U}
+      />
+      ;
     </csharp.Class>,
   );
 
@@ -171,16 +229,16 @@ it("declares class with generic parameters", () => {
             private U memberTwo;
         }
     }
-
   `);
 });
 
 it("declares class with invalid members", () => {
-  const decl =
-    <csharp.Class accessModifier='public' name="TestClass">
-      <csharp.EnumMember name="One" />,
+  const decl = (
+    <csharp.Class accessModifier="public" name="TestClass">
+      <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
-    </csharp.Class>;
+    </csharp.Class>
+  );
 
   expect(() => utils.toSourceText(decl)).toThrow(
     "can't define an enum member outside of an enum-decl scope",
@@ -189,7 +247,7 @@ it("declares class with invalid members", () => {
 
 it("declares class with constructor", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass">
+    <csharp.Class accessModifier="public" name="TestClass">
       <csharp.ClassConstructor accessModifier="public" />
     </csharp.Class>,
   );
@@ -202,7 +260,6 @@ it("declares class with constructor", () => {
             public TestClass() {}
         }
     }
-
   `);
 });
 
@@ -226,11 +283,23 @@ it("declares class with constructor params and assigns values to fields", () => 
   ];
 
   const res = utils.toSourceText(
-    <csharp.Class accessModifier='public' name="TestClass">
-      <csharp.ClassMember accessModifier="private" name="name" type="string" refkey={thisNameRefkey} />
-      <csharp.ClassMember accessModifier="private" name="size" type="int" refkey={thisSizeRefkey} />
+    <csharp.Class accessModifier="public" name="TestClass">
+      <csharp.ClassMember
+        accessModifier="private"
+        name="name"
+        type="string"
+        refkey={thisNameRefkey}
+      />
+      ;<hbr />
+      <csharp.ClassMember
+        accessModifier="private"
+        name="size"
+        type="int"
+        refkey={thisSizeRefkey}
+      />
+      ;<hbr />
       <csharp.ClassConstructor accessModifier="public" parameters={ctorParams}>
-        {thisNameRefkey} = {paramNameRefkey};
+        {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
       </csharp.ClassConstructor>
     </csharp.Class>,
@@ -252,6 +321,5 @@ it("declares class with constructor params and assigns values to fields", () => 
             }
         }
     }
-
   `);
 });

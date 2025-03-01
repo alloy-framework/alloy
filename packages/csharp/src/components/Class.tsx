@@ -40,7 +40,7 @@ export function Class(props: ClassProps) {
     "class-decl",
   );
 
-  let typeParams: string | undefined;
+  let typeParams: core.Children;
   if (props.typeParameters) {
     const typeParamNames = new Array<string>();
     for (const entry of Object.entries(props.typeParameters)) {
@@ -55,20 +55,29 @@ export function Class(props: ClassProps) {
         refkey: entry[1],
       });
     }
-    typeParams = `<${typeParamNames.join(", ")}>`;
+    typeParams = (
+      <group>
+        {"<"}
+        <core.For each={typeParamNames} comma line>
+          {(name) => name}
+        </core.For>
+        {">"}
+      </group>
+    );
   }
 
-  return <core.Declaration symbol={thisClassSymbol}>
-      {getAccessModifier(props.accessModifier)}class <Name />{typeParams}{!props.children && ";"}{props.children &&
-        <>
-          {"\n{"}
-            <core.Scope value={thisClassScope}>
-              {props.children}
-            </core.Scope>
-          {"}"}
-        </>
-        }
-    </core.Declaration>;
+  return (
+    <core.Declaration symbol={thisClassSymbol}>
+      {getAccessModifier(props.accessModifier)}class <Name />
+      {typeParams}
+      {!props.children && ";"}
+      {props.children && (
+        <core.Block newline>
+          <core.Scope value={thisClassScope}>{props.children}</core.Scope>
+        </core.Block>
+      )}
+    </core.Declaration>
+  );
 }
 
 export interface ClassConstructorProps {
@@ -105,22 +114,18 @@ export function ClassConstructor(props: ClassConstructorProps) {
   );
 
   const accessModifier = getAccessModifier(props.accessModifier);
-  const params = props.parameters ?
-    <Parameters parameters={props.parameters} />
-  : "";
+  const params =
+    props.parameters ? <Parameters parameters={props.parameters} /> : "";
 
   // note that scope wraps the ctor decl so that the params get the correct scope
-  return <core.Declaration symbol={ctorSymbol}>
-    <core.Scope value={ctorDeclScope}>
-      {accessModifier}<Name />({params}){!props.children && " {}"}{props.children &&
-        <>
-          {"\n{"}
-            {props.children}
-          {"}"}
-        </>
-        }
+  return (
+    <core.Declaration symbol={ctorSymbol}>
+      <core.Scope value={ctorDeclScope}>
+        {accessModifier}
+        <Name />({params})<core.Block newline>{props.children}</core.Block>
       </core.Scope>
-    </core.Declaration>;
+    </core.Declaration>
+  );
 }
 
 // properties for creating a class member
@@ -151,9 +156,12 @@ export function ClassMember(props: ClassMemberProps) {
     refkey: props.refkey ?? core.refkey(props.name),
   });
 
-  return <core.Declaration symbol={memberSymbol}>
-      {getAccessModifier(props.accessModifier)}{props.type} <Name />;
-    </core.Declaration>;
+  return (
+    <core.Declaration symbol={memberSymbol}>
+      {getAccessModifier(props.accessModifier)}
+      {props.type} <Name />
+    </core.Declaration>
+  );
 }
 
 // properties for creating a method
@@ -190,21 +198,19 @@ export function ClassMethod(props: ClassMethodProps) {
 
   const accessModifier = getAccessModifier(props.accessModifier);
   const methodModifier = getMethodModifier(props.methodModifier);
-  const params = props.parameters ?
-    <Parameters parameters={props.parameters} />
-  : "";
+  const params =
+    props.parameters ? <Parameters parameters={props.parameters} /> : "";
   const returns = props.returns ?? "void";
 
   // note that scope wraps the method decl so that the params get the correct scope
-  return <core.Declaration symbol={methodSymbol}>
-    <core.Scope value={methodScope}>
-      {accessModifier}{methodModifier}{returns} <Name />({params}){!props.children && " {}"}{props.children &&
-        <>
-          {"\n{"}
-            {props.children}
-          {"}"}
-        </>
-        }
+  return (
+    <core.Declaration symbol={methodSymbol}>
+      <core.Scope value={methodScope}>
+        {accessModifier}
+        {methodModifier}
+        {returns} <Name />({params})
+        <core.Block newline>{props.children}</core.Block>
       </core.Scope>
-    </core.Declaration>;
+    </core.Declaration>
+  );
 }

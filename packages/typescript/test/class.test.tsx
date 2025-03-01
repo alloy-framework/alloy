@@ -2,8 +2,8 @@ import { List, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { StatementList } from "../../core/src/components/StatementList.jsx";
 import * as ts from "../src/components/index.js";
-import { StatementList } from "../src/components/StatementList.jsx";
 import { toSourceText } from "./utils.js";
 
 it("declares classes", () => {

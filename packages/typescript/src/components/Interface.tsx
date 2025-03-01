@@ -1,6 +1,6 @@
 import { Children, Name } from "@alloy-js/core";
+import { Block } from "../../../core/src/components/Block.jsx";
 import { useTSNamePolicy } from "../name-policy.js";
-import { Block } from "./Block.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {

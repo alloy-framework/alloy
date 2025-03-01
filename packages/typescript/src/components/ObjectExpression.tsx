@@ -12,8 +12,8 @@ import {
   Switch,
   Wrap,
 } from "@alloy-js/core";
+import { Block } from "../../../core/src/components/Block.jsx";
 import { createTSSymbol } from "../symbols/index.js";
-import { Block } from "./Block.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
 export interface ObjectExpressionProps {

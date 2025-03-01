@@ -8,9 +8,9 @@ import {
   refkey,
   useBinder,
 } from "@alloy-js/core";
+import { Block } from "../../../core/src/components/Block.jsx";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, useTSScope } from "../symbols/index.js";
-import { Block } from "./Block.jsx";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 export interface EnumDeclarationProps extends BaseDeclarationProps {

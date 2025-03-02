@@ -3,32 +3,36 @@ import {
   Output,
   OutputDirectory,
   OutputFile,
+  PrintTreeOptions,
   render,
 } from "@alloy-js/core";
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as jv from "../src/index.js";
 
-export function toSourceText(c: Children): string {
+export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   const res = render(
     <Output>
-      <jv.PackageDirectory package='me.test.code'>
+      <jv.PackageDirectory package="me.test.code">
         <jv.SourceFile path="Test.java">{c}</jv.SourceFile>
       </jv.PackageDirectory>
     </Output>,
+    options,
   );
 
   const file = findFile(res, "Test.java");
   return file.contents;
 }
 
-export function testRender(c: Children): OutputDirectory {
+export function testRender(
+  c: Children,
+  options?: PrintTreeOptions,
+): OutputDirectory {
   return render(
     <Output>
-      <jv.PackageDirectory package='me.test.code'>
-        {c}
-      </jv.PackageDirectory>
+      <jv.PackageDirectory package="me.test.code">{c}</jv.PackageDirectory>
     </Output>,
+    options,
   );
 }
 

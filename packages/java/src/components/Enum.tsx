@@ -1,38 +1,38 @@
 import { Children, code, Scope } from "@alloy-js/core";
-import { collectArguments } from "../arguments.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { ArgumentList } from "./ArgumentList.jsx";
 import { Declaration, DeclarationProps } from "./Declaration.js";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 
-export interface EnumProps extends DeclarationProps, ObjectModifiers {
-  implements?: Children;
+export interface EnumProps extends DeclarationProps, ModifierProps {
+  implements?: Children[];
 }
 
 export function Enum(props: EnumProps) {
   const name = useJavaNamePolicy().getName(props.name, "enum");
-  const collectedInterfaces = collectArguments(props.implements);
-  const implementsExpression = props.implements ?
-    code` implements ${collectedInterfaces}`
-  : "";
-  const modifiers = collectModifiers(props);
+  const collectedInterfaces = <ArgumentList args={props.implements} />;
+  const implementsExpression =
+    props.implements ? code` implements ${collectedInterfaces}` : "";
+  const modifiers = <Modifiers {...props} />;
 
-  return <Declaration {...props} name={name}>
-      {modifiers}enum <Name />{implementsExpression} {"{"}
-        <Scope kind='enum'>
-          {props.children}
-        </Scope>
+  return (
+    <Declaration {...props} name={name}>
+      {modifiers}enum <Name />
+      {implementsExpression} {"{"}
+      <Scope kind="enum">{props.children}</Scope>
       {"}"}
-    </Declaration>;
+    </Declaration>
+  );
 }
 
-export interface EnumMemberProps extends ObjectModifiers {
+export interface EnumMemberProps extends ModifierProps {
   name: string;
-  arguments?: Children;
+  arguments?: Children[];
 }
 
 export function EnumMember(props: EnumMemberProps) {
-  const collectedArgs = collectArguments(props.arguments);
+  const collectedArgs = <ArgumentList args={props.arguments} />;
   const args = props.arguments ? code`(${collectedArgs})` : "";
   const name = useJavaNamePolicy().getName(props.name, "enum-member");
 

@@ -1,10 +1,10 @@
 import { code } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 import { Parameters } from "./Parameters.js";
 
-export interface ConstructorProps extends ObjectModifiers {
+export interface ConstructorProps extends ModifierProps {
   name?: string;
   parameters?: Record<string, Children>; // Map of parameter name to type
   children?: Children;
@@ -16,7 +16,7 @@ export interface ConstructorProps extends ObjectModifiers {
  */
 export function Constructor(props: ConstructorProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
-  const modifiers = collectModifiers(props);
+  const modifiers = <Modifiers {...props} />;
   return code`
         ${modifiers}${props.name ?? <Name />}(${params}) {
           ${props.children}

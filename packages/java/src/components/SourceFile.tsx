@@ -67,18 +67,22 @@ export function SourceFile(props: SourceFileProps) {
     addImport,
   };
 
-  return <CoreSourceFile path={props.path} filetype="java" reference={Reference}>
-      package {packageCtx.qualifiedName};
-
-      {importRecords.length > 0 ? (
+  return (
+    <CoreSourceFile path={props.path} filetype="java" reference={Reference}>
+      package {packageCtx.qualifiedName};<hbr />
+      <hbr />
+      {importRecords.length > 0 ?
         <>
           <ImportStatements imports={importRecords} />
-          {"\n"}
+          <hbr />
+          <hbr />
         </>
-      ) : undefined}<SourceFileContext.Provider value={sfContext}>
-      <Scope name={props.path} kind="source-file">
-        {props.children}
-      </Scope>
-    </SourceFileContext.Provider>
-    </CoreSourceFile>;
+      : undefined}
+      <SourceFileContext.Provider value={sfContext}>
+        <Scope name={props.path} kind="source-file">
+          {props.children}
+        </Scope>
+      </SourceFileContext.Provider>
+    </CoreSourceFile>
+  );
 }

@@ -2,13 +2,13 @@ import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender } from "./utils.js";
+import { assertFileContents, testRender } from "./utils.jsx";
 
 it("passes types", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TypeOne.java">
-        <jv.Declaration name='TypeOne'>
+        <jv.Declaration name="TypeOne">
           {code`
             public interface TypeOne {
             }
@@ -16,7 +16,7 @@ it("passes types", () => {
         </jv.Declaration>
       </jv.SourceFile>
       <jv.SourceFile path="TypeTwo.java">
-        <jv.Declaration name='TypeTwo'>
+        <jv.Declaration name="TypeTwo">
           {code`
             public interface TypeTwo {
             }
@@ -28,9 +28,9 @@ it("passes types", () => {
           <jv.Class public name="TestGenerics">
             {code`
               public TestGenerics() {
-                List${<jv.Generics types={[refkey("TypeOne")]} />} list = new ArrayList${<jv.Generics />}();
-                List${<jv.Generics types={[{'?': refkey("TypeTwo")}]} />} list2 = new ArrayList${<jv.Generics />}();
-                List${<jv.Generics types={[{'?': ''}]} />} list3 = new ArrayList${<jv.Generics />}();
+                List${(<jv.TypeArguments arguments={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
+                List${(<jv.TypeArguments arguments={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
+                List${(<jv.TypeArguments arguments={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
               }
             `}
           </jv.Class>

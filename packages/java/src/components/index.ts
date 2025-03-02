@@ -1,10 +1,8 @@
 export * from "./Annotation.js";
-export * from "./Block.js";
 export * from "./Class.js";
 export * from "./Constructor.js";
 export * from "./Declaration.js";
 export * from "./Enum.js";
-export * from "./Generics.js";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./MavenProject.js";
@@ -16,5 +14,6 @@ export * from "./Parameters.js";
 export * from "./ProjectDirectory.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
+export * from "./TypeArguments.jsx";
 export * from "./Value.js";
 export * from "./Variable.js";

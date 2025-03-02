@@ -18,6 +18,7 @@ export interface BaseListProps {
   softline?: boolean;
   hardline?: boolean;
   literalline?: boolean;
+  space?: boolean;
 
   /**
    * Text to place at the end of the list when there is at least one item. If
@@ -52,6 +53,8 @@ export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
           <lbr />
         : props.line ?
           <br />
+        : props.space ?
+          <> </>
         : <hbr />}
       </>
     );

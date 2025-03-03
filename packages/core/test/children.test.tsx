@@ -20,10 +20,12 @@ it("handles a multiple elements", () => {
     return "Bar";
   }
 
-  const res = renderTree(<Foo>
-    <Bar />
-    <Bar />
-  </Foo>);
+  const res = renderTree(
+    <Foo>
+      <Bar />
+      <Bar />
+    </Foo>,
+  );
 
   expect(printTree(res)).toBe(`BarBar`);
 });

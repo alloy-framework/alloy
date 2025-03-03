@@ -18,7 +18,5 @@ export interface DeclarationProps {
  */
 export function Declaration(props: DeclarationProps) {
   const sym = createJavaSymbol(props);
-  return <CoreDeclaration symbol={sym}>
-    {props.children}
-  </CoreDeclaration>;
+  return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;
 }

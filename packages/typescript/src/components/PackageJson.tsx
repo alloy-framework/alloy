@@ -56,14 +56,17 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       ]);
     }
 
-    pkgJson.exports = exportsEntries.length === 0 ?
-      undefined
-    : Object.fromEntries(exportsEntries);
+    pkgJson.exports =
+      exportsEntries.length === 0 ?
+        undefined
+      : Object.fromEntries(exportsEntries);
 
     return JSON.stringify(pkgJson, null, 2);
   });
 
-  return <SourceFile path="package.json" filetype="json">
-    {jsonContent}
-  </SourceFile>;
+  return (
+    <SourceFile path="package.json" filetype="json">
+      {jsonContent}
+    </SourceFile>
+  );
 }

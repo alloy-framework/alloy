@@ -12,7 +12,7 @@ import { SourceFile } from "../src/components/SourceFile.jsx";
 it("references objects within the same file", () => {
   const objectValue = refkey();
   const nullKey = refkey();
-  const template =
+  const template = (
     <Output>
       <SourceFile path="test.json">
         <JsonObject refkey={objectValue}>
@@ -20,10 +20,13 @@ it("references objects within the same file", () => {
             <JsonValue jsValue={null} refkey={nullKey} />
           </JsonObjectProperty>
           <JsonObjectProperty name="refToNull">{nullKey}</JsonObjectProperty>
-          <JsonObjectProperty name="refToObject">{objectValue}</JsonObjectProperty>
+          <JsonObjectProperty name="refToObject">
+            {objectValue}
+          </JsonObjectProperty>
         </JsonObject>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     {
@@ -37,7 +40,7 @@ it("references objects within the same file", () => {
 it("references objects across files", () => {
   const objectValue = refkey();
   const nullKey = refkey();
-  const template =
+  const template = (
     <Output>
       <SourceFile path="test.json">
         <JsonObject refkey={objectValue}>
@@ -49,10 +52,13 @@ it("references objects across files", () => {
       <SourceFile path="test.json">
         <JsonObject>
           <JsonObjectProperty name="refToNull">{nullKey}</JsonObjectProperty>
-          <JsonObjectProperty name="refToObject">{objectValue}</JsonObjectProperty>
+          <JsonObjectProperty name="refToObject">
+            {objectValue}
+          </JsonObjectProperty>
         </JsonObject>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     {
@@ -67,7 +73,7 @@ it("references objects across files", () => {
 it("references objects across files and directories", () => {
   const objectValue = refkey();
   const nullKey = refkey();
-  const template =
+  const template = (
     <Output>
       <SourceDirectory path="subdir">
         <SourceFile path="test.json">
@@ -81,10 +87,13 @@ it("references objects across files and directories", () => {
       <SourceFile path="test.json">
         <JsonObject>
           <JsonObjectProperty name="refToNull">{nullKey}</JsonObjectProperty>
-          <JsonObjectProperty name="refToObject">{objectValue}</JsonObjectProperty>
+          <JsonObjectProperty name="refToObject">
+            {objectValue}
+          </JsonObjectProperty>
         </JsonObject>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     {
@@ -99,7 +108,7 @@ it("references objects across files and directories", () => {
 it("references arrays within the same file", () => {
   const arrayValue = refkey();
   const nullKey = refkey();
-  const template =
+  const template = (
     <Output>
       <SourceFile path="test.json">
         <JsonArray refkey={arrayValue}>
@@ -110,7 +119,8 @@ it("references arrays within the same file", () => {
           </JsonArrayElement>
         </JsonArray>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     ["#/2", "#", null]
@@ -122,7 +132,7 @@ it("does complex references", () => {
   const arrayValue = refkey();
   const nullKey = refkey();
   const nestedKey = refkey();
-  const template =
+  const template = (
     <Output>
       <SourceFile path="test.json">
         <JsonObject refkey={objectValue}>
@@ -130,8 +140,12 @@ it("does complex references", () => {
             <JsonValue jsValue={null} refkey={nullKey} />
           </JsonObjectProperty>
           <JsonObjectProperty name="refToNull">{nullKey}</JsonObjectProperty>
-          <JsonObjectProperty name="refToObject">{objectValue}</JsonObjectProperty>
-          <JsonObjectProperty name="refToNested">{nestedKey}</JsonObjectProperty>
+          <JsonObjectProperty name="refToObject">
+            {objectValue}
+          </JsonObjectProperty>
+          <JsonObjectProperty name="refToNested">
+            {nestedKey}
+          </JsonObjectProperty>
           <JsonObjectProperty name="nestedArray">
             <JsonArray refkey={arrayValue}>
               <JsonArrayElement>{nullKey}</JsonArrayElement>
@@ -147,7 +161,8 @@ it("does complex references", () => {
           </JsonObjectProperty>
         </JsonObject>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     {

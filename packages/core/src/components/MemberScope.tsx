@@ -34,7 +34,9 @@ export function MemberScope(props: MemberScopeProps) {
     instanceMembers: props.owner.instanceMemberScope,
     staticMembers: props.owner.staticMemberScope,
   };
-  return <MemberScopeContext.Provider value={context}>
+  return (
+    <MemberScopeContext.Provider value={context}>
       {props.children}
-    </MemberScopeContext.Provider>;
+    </MemberScopeContext.Provider>
+  );
 }

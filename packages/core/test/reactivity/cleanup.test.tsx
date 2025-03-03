@@ -55,9 +55,7 @@ describe("element cleanup", () => {
       return "hi!";
     }
     const el = ref<unknown>(<Component />);
-    const template = <>
-      {el}
-    </>;
+    const template = <>{el}</>;
     renderTree(template);
     el.value = "";
     expect(cleanedUp).toBe(true);
@@ -79,12 +77,12 @@ describe("element cleanup", () => {
         cleanedUpC2 = true;
       });
     }
-    const el = ref<unknown>(<C1>
-      <C2></C2>
-    </C1>);
-    const template = <>
-      {el}
-    </>;
+    const el = ref<unknown>(
+      <C1>
+        <C2></C2>
+      </C1>,
+    );
+    const template = <>{el}</>;
     renderTree(template);
     el.value = "";
     expect(cleanedUpC1).toBe(true);

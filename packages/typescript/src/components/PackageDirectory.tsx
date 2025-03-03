@@ -70,15 +70,17 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     }
   }
 
-  return <SourceDirectory path={props.path ?? "."}>
-    <PackageContext.Provider value={packageContext}>
-      <Scope value={packageContext.scope}>
-        <PackageJsonFile {...props} />
-        <TSConfigJson {... props.tsConfig} />
-        {props.children}
-      </Scope>
-    </PackageContext.Provider>
-  </SourceDirectory>;
+  return (
+    <SourceDirectory path={props.path ?? "."}>
+      <PackageContext.Provider value={packageContext}>
+        <Scope value={packageContext.scope}>
+          <PackageJsonFile {...props} />
+          <TSConfigJson {...props.tsConfig} />
+          {props.children}
+        </Scope>
+      </PackageContext.Provider>
+    </SourceDirectory>
+  );
 }
 
 function createPackageContext(

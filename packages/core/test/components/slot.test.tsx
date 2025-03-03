@@ -33,7 +33,7 @@ it("works with string keys", () => {
       { ...props, additionalProp: "hi" },
       <>
         function {props.name}() {"{"}
-          console.log("hello world");
+        console.log("hello world");
         {"}"}
       </>,
     );
@@ -43,10 +43,12 @@ it("works with string keys", () => {
 
   // extension.tsx
   replace(FunctionSlot.find({ name: "foo" }), (props: any) => {
-    return <>
-      // original
-      { props.original }
-    </>;
+    return (
+      <>
+        // original
+        {props.original}
+      </>
+    );
   });
 
   const tree = render(
@@ -65,12 +67,12 @@ it("works with symbols", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>(
+    (query: { fqn: string }) => {
+      const binder = useBinder();
+      return binder.resolveFQN(query.fqn);
+    },
+  );
 
   interface FunctionComponentProps {
     name: string;
@@ -87,8 +89,9 @@ it("works with symbols", () => {
       sym,
       { ...props, additionalProp: "hi" },
       <Declaration symbol={sym}>
-        function <Name />() {"{"}
-          console.log("hello world");
+        function <Name />
+        () {"{"}
+        console.log("hello world");
         {"}"}
       </Declaration>,
     );
@@ -98,10 +101,12 @@ it("works with symbols", () => {
 
   // extension.tsx
   replace(FunctionSlot.find({ fqn: "foo.bar" }), (props: any) => {
-    return <>
-      // original
-      { props.original }
-    </>;
+    return (
+      <>
+        // original
+        {props.original}
+      </>
+    );
   });
 
   const tree = render(
@@ -122,12 +127,12 @@ it("can rename", () => {
     additionalProp: string;
   }
 
-  const FunctionSlot = defineSlot<FunctionSlotProps>((query: {
-    fqn: string;
-  }) => {
-    const binder = useBinder();
-    return binder.resolveFQN(query.fqn);
-  });
+  const FunctionSlot = defineSlot<FunctionSlotProps>(
+    (query: { fqn: string }) => {
+      const binder = useBinder();
+      return binder.resolveFQN(query.fqn);
+    },
+  );
 
   interface FunctionComponentProps {
     name: string;
@@ -144,8 +149,9 @@ it("can rename", () => {
       sym,
       { ...props, additionalProp: "hi" },
       <Declaration symbol={sym}>
-        function <Name />() {"{"}
-          console.log("hello world");
+        function <Name />
+        () {"{"}
+        console.log("hello world");
         {"}"}
       </Declaration>,
     );

@@ -30,9 +30,11 @@ export function Parameter(props: ParameterProps) {
     refkey: props.refkey ?? core.refkey(props.name),
   });
 
-  return <core.Declaration symbol={memberSymbol}>
+  return (
+    <core.Declaration symbol={memberSymbol}>
       {props.type} <Name />
-    </core.Declaration>;
+    </core.Declaration>
+  );
 }
 
 export interface ParametersProps {
@@ -42,7 +44,9 @@ export interface ParametersProps {
 
 // a collection of parameters
 export function Parameters(props: ParametersProps) {
-  return <core.For each={props.parameters} joiner={", "}>
-    {(param) => <Parameter {...param} />}
-  </core.For>;
+  return (
+    <core.For each={props.parameters} joiner={", "}>
+      {(param) => <Parameter {...param} />}
+    </core.For>
+  );
 }

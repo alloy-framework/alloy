@@ -31,9 +31,9 @@ export function Namespace(props: NamespaceProps) {
     name: props.name,
   };
 
-  return <NamespaceContext.Provider value={namespaceCtx}>
-      <core.Scope value={scope}>
-        {props.children}
-      </core.Scope>
-    </NamespaceContext.Provider>;
+  return (
+    <NamespaceContext.Provider value={namespaceCtx}>
+      <core.Scope value={scope}>{props.children}</core.Scope>
+    </NamespaceContext.Provider>
+  );
 }

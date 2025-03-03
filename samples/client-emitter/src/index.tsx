@@ -13,9 +13,7 @@ const output = render(
     <ApiContext.Provider value={createApiContext(api)}>
       <ts.PackageDirectory name={`${api.name}-client`} version="1.0.0">
         <ts.SourceFile path="models.ts">
-          <For each={api.models}>
-            {(model) => <Model model={model} />}
-          </For>
+          <For each={api.models}>{(model) => <Model model={model} />}</For>
         </ts.SourceFile>
         <ts.SourceFile path="client.ts">
           <Client />

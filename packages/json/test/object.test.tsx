@@ -37,19 +37,18 @@ it("renders nested objects", () => {
 });
 
 it("can can manually assemble objects", () => {
-  const template =
+  const template = (
     <Output>
       <SourceFile path="test.json">
         <JsonObject>
           <List comma softline>
             <JsonObjectProperty name="foo">12</JsonObjectProperty>
-            <JsonObjectProperty name="bar">
-              13
-            </JsonObjectProperty>
+            <JsonObjectProperty name="bar">13</JsonObjectProperty>
           </List>
         </JsonObject>
       </SourceFile>
-    </Output>;
+    </Output>
+  );
 
   expect(template).toRenderTo(`
     {

@@ -24,7 +24,9 @@ export function ValueExpression(props: ValueExpressionProps): Children {
       } else if (Array.isArray(jsValue)) {
         return <ArrayExpression jsValue={jsValue as unknown[]} />;
       } else {
-        return <ObjectExpression jsValue={jsValue as Record<string, unknown>} />;
+        return (
+          <ObjectExpression jsValue={jsValue as Record<string, unknown>} />
+        );
       }
     } else if (typeof jsValue === "function") {
       // functions are inserted as-is.

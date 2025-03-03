@@ -61,16 +61,18 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
     props.gradleProjectConfig !== undefined;
   const defaultCodePath = usingBuildSystem ? "src/main/java" : "src";
 
-  return <>
+  return (
+    <>
       <Scope value={scope}>
         <ProjectContext.Provider value={projectContext}>
           <SourceDirectory path={defaultCodePath}>
-                {props.children}
+            {props.children}
           </SourceDirectory>
-          {scope.mavenProjectConfig ? (
+          {scope.mavenProjectConfig ?
             <MavenProject projectConfig={scope.mavenProjectConfig} />
-          ) : undefined}
+          : undefined}
         </ProjectContext.Provider>
       </Scope>
-    </>;
+    </>
+  );
 }

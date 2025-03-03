@@ -99,7 +99,11 @@ export function Declaration(props: DeclarationProps) {
     children = () => props.children;
   }
 
-  return <CoreDeclaration symbol={sym}>
-    {props.export ? "export " : ""}{props.default ? "default " : ""}{children}
-  </CoreDeclaration>;
+  return (
+    <CoreDeclaration symbol={sym}>
+      {props.export ? "export " : ""}
+      {props.default ? "default " : ""}
+      {children}
+    </CoreDeclaration>
+  );
 }

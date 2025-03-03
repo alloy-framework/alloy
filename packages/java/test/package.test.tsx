@@ -5,9 +5,8 @@ import { findFile, testRender } from "./utils.js";
 it("emits correct package directory", () => {
   const res = testRender(
     <>
-      <jv.PackageDirectory package='my.emit.package'>
-        <jv.SourceFile path="Test.java">
-        </jv.SourceFile>
+      <jv.PackageDirectory package="my.emit.package">
+        <jv.SourceFile path="Test.java"></jv.SourceFile>
       </jv.PackageDirectory>
     </>,
   );

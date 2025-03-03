@@ -10,7 +10,9 @@ export function UsingDirective(props: UsingDirectiveProps) {
     return props.namespaces.sort();
   });
 
-  return <core.For each={sortedNamespaces}>
-    {namespace => `using ${namespace};`}
-  </core.For>;
+  return (
+    <core.For each={sortedNamespaces}>
+      {(namespace) => `using ${namespace};`}
+    </core.For>
+  );
 }

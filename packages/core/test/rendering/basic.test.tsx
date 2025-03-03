@@ -4,10 +4,13 @@ import "../../testing/extend-expect.js";
 describe("string nodes", () => {
   it("renders string nodes with substitutions", () => {
     const str = "hi";
-    expect(<>
-      a {str}<hbr />
-      {str}
-    </>).toRenderTo(`
+    expect(
+      <>
+        a {str}
+        <hbr />
+        {str}
+      </>,
+    ).toRenderTo(`
       a hi
       hi
     `);
@@ -40,9 +43,11 @@ describe("component nodes", () => {
   });
 
   it("renders components on same line", () => {
-    expect(<>
-      <Str /> <Str />
-    </>).toRenderTo("Str Str");
+    expect(
+      <>
+        <Str /> <Str />
+      </>,
+    ).toRenderTo("Str Str");
   });
 });
 
@@ -61,21 +66,15 @@ describe("memo nodes", () => {
   }
 
   it("renders basic memos", () => {
-    expect(<>
-      {getStr()}
-    </>).toRenderTo("Str");
+    expect(<>{getStr()}</>).toRenderTo("Str");
   });
 
   it("renders component memos", () => {
-    expect(<>
-      {getFoo()}
-    </>).toRenderTo("Foo");
+    expect(<>{getFoo()}</>).toRenderTo("Foo");
   });
 
   it("renders array memos", () => {
-    expect(<>
-      {getArr()}
-    </>).toRenderTo("Foo\nFoo");
+    expect(<>{getArr()}</>).toRenderTo("Foo\nFoo");
   });
 });
 
@@ -90,10 +89,13 @@ it("renders text fragments", () => {
     return "bye";
   }
 
-  expect(<>
-      hi<hbr />
+  expect(
+    <>
+      hi
+      <hbr />
       <Foo />
-    </>).toRenderTo(`
+    </>,
+  ).toRenderTo(`
     hi
     bye
   `);
@@ -124,9 +126,9 @@ it("keeps spaces between expressions", () => {
   function getStr() {
     return "getStr";
   }
-  expect(<>
-    a {str} {str} {getStr()} {getStr()} c
-  </>).toRenderTo(
-    "a str str getStr getStr c",
-  );
+  expect(
+    <>
+      a {str} {str} {getStr()} {getStr()} c
+    </>,
+  ).toRenderTo("a str str getStr getStr c");
 });

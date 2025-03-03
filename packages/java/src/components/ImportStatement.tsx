@@ -15,7 +15,8 @@ export function ImportStatements(props: ImportStatementsProps) {
     mapJoin(
       () => props.imports,
       (importProp) => () => <ImportStatement {...importProp} />,
-    ));
+    ),
+  );
 }
 
 export function ImportStatement(props: ImportSymbol) {

@@ -18,7 +18,9 @@ it("tracks its content", () => {
   const _ = renderTree(
     <Output>
       <Test />
-      <SourceFile path="hi.txt" filetype="text">hello!</SourceFile>
+      <SourceFile path="hi.txt" filetype="text">
+        hello!
+      </SourceFile>
     </Output>,
   );
   expect(context!.contents.length).toEqual(1);
@@ -31,12 +33,18 @@ it("has reactive context", () => {
       return sdContext.contents.map((v) => v.path).join(" ");
     });
 
-    return <SourceFile path="contents.txt" filetype="text">{allFiles.value}</SourceFile>;
+    return (
+      <SourceFile path="contents.txt" filetype="text">
+        {allFiles.value}
+      </SourceFile>
+    );
   }
 
   const tree = render(
     <Output>
-      <SourceFile path="hi.txt" filetype="text">hello!</SourceFile>
+      <SourceFile path="hi.txt" filetype="text">
+        hello!
+      </SourceFile>
       <TrackContents />
     </Output>,
   );

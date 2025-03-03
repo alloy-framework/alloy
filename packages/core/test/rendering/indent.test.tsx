@@ -5,10 +5,12 @@ import "../../testing/extend-expect.js";
 
 describe("Indent component", () => {
   it("indents explicitly indented content on a subsequent line", () => {
-    expect(<>
-      one
-      <Indent>hi</Indent>
-    </>).toRenderTo("one\n  hi");
+    expect(
+      <>
+        one
+        <Indent>hi</Indent>
+      </>,
+    ).toRenderTo("one\n  hi");
   });
 
   it("indents explicitly indented content", () => {
@@ -16,7 +18,8 @@ describe("Indent component", () => {
       <>
         one
         <Indent>
-          hi<hbr />
+          hi
+          <hbr />
           bye
         </Indent>
       </>,
@@ -34,19 +37,19 @@ describe("Indent component", () => {
 
     expect(
       <>
-      base
-      <Indent>
-        {getValue()}
-      </Indent>
-      <Indent>
-        {getValue()}<hbr />
-        bye
-      </Indent>
-      <Indent>
-        bye<hbr />
-        {getValue()}
-      </Indent>
-    </>,
+        base
+        <Indent>{getValue()}</Indent>
+        <Indent>
+          {getValue()}
+          <hbr />
+          bye
+        </Indent>
+        <Indent>
+          bye
+          <hbr />
+          {getValue()}
+        </Indent>
+      </>,
     ).toRenderTo(`
       base
         hi
@@ -64,11 +67,12 @@ describe("Indent component", () => {
 
     expect(
       <>
-      base
-      <Indent>
-        <Foo /><Foo />
-      </Indent>
-    </>,
+        base
+        <Indent>
+          <Foo />
+          <Foo />
+        </Indent>
+      </>,
     ).toRenderTo(`
       base
         FooFoo
@@ -78,26 +82,26 @@ describe("Indent component", () => {
   it("works with nested indents", () => {
     expect(
       <>
-      base
-      <Indent>
-        1<hbr />
-        2
+        base
         <Indent>
-          3<hbr />
-          4
+          1<hbr />2
           <Indent>
-            5<hbr />
-            6
-          </Indent><hbr />
-          7<hbr />
-          8
-        </Indent><hbr />
-        9<hbr />
-        10
-      </Indent><hbr />
-      11<hbr />
-      12
-    </>,
+            3<hbr />4
+            <Indent>
+              5<hbr />6
+            </Indent>
+            <hbr />
+            7<hbr />8
+          </Indent>
+          <hbr />
+          9<hbr />
+          10
+        </Indent>
+        <hbr />
+        11
+        <hbr />
+        12
+      </>,
     ).toRenderTo(`
       base
         1

@@ -41,7 +41,8 @@ it("works with a complex case", () => {
       mapJoin(
         () => props.records,
         (path, types) => <ImportStatement path={path} types={types} />,
-      ));
+      ),
+    );
   }
 
   interface ImportStatementProps {

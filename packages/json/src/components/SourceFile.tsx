@@ -38,11 +38,14 @@ export function SourceFile(props: SourceFileProps) {
     jsonValueSym.name = context.path;
   });
 
-  return <CoreSourceFile filetype="json" path={props.path} reference={Reference}>
-    <SfTapper /><JsonFileContext.Provider value={fileContext}>
-      <MemberDeclaration symbol={jsonValueSym}>
-        {props.children}
-      </MemberDeclaration>
-    </JsonFileContext.Provider>
-  </CoreSourceFile>;
+  return (
+    <CoreSourceFile filetype="json" path={props.path} reference={Reference}>
+      <SfTapper />
+      <JsonFileContext.Provider value={fileContext}>
+        <MemberDeclaration symbol={jsonValueSym}>
+          {props.children}
+        </MemberDeclaration>
+      </JsonFileContext.Provider>
+    </CoreSourceFile>
+  );
 }

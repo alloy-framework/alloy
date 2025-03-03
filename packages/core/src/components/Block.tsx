@@ -2,12 +2,12 @@ import { Children, childrenArray, computed, Indent } from "@alloy-js/core";
 
 export interface BlockProps {
   /**
-   * The opening punctuation of the block. Defaults to "{".
+   * The opening punctuation of the block. Defaults to "\{".
    */
   opener?: string;
 
   /**
-   * The closing punctuation of the block. Defaults to "}".
+   * The closing punctuation of the block. Defaults to "\}".
    */
   closer?: string;
 
@@ -23,8 +23,8 @@ export interface BlockProps {
 
 /**
  * Create an indented block of source text. The block has `opener` text which is
- * added prior to the block, which defaults to "{", and `closer` text which is
- * added after the block, which defaults to "}".
+ * added prior to the block, which defaults to "\{", and `closer` text which is
+ * added after the block, which defaults to "\}".
  */
 export function Block(props: BlockProps) {
   const childCount = computed(() => childrenArray(() => props.children).length);

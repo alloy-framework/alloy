@@ -50,13 +50,16 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
     declaration = binder.createSymbol({
       name: props.name!,
       refkey: rk,
-      flags: props.static ?
-        OutputSymbolFlags.StaticMember
-      : OutputSymbolFlags.InstanceMember,
+      flags:
+        props.static ?
+          OutputSymbolFlags.StaticMember
+        : OutputSymbolFlags.InstanceMember,
     });
   }
 
-  return <MemberDeclarationContext.Provider value={declaration}>
-    {props.children}
-  </MemberDeclarationContext.Provider>;
+  return (
+    <MemberDeclarationContext.Provider value={declaration}>
+      {props.children}
+    </MemberDeclarationContext.Provider>
+  );
 }

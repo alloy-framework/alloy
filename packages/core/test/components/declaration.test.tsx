@@ -16,13 +16,16 @@ it("creates and cleans up a symbol", () => {
 
   const binderRef = GetBinder.ref;
   const doDecl = ref(true);
-  const template =
+  const template = (
     <Output>
       <GetBinder />
       <Scope>
-        { doDecl.value ? <Declaration name="foo"></Declaration> : "" }
+        {doDecl.value ?
+          <Declaration name="foo"></Declaration>
+        : ""}
       </Scope>
-    </Output>;
+    </Output>
+  );
 
   renderTree(template);
 

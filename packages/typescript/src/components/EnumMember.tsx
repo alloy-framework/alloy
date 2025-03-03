@@ -44,9 +44,12 @@ export function EnumMember(props: EnumMemberProps) {
     });
   }
   const nameCode = sym ? sym.name : name;
-  const valueCode = props.jsValue ?
-    <ValueExpression jsValue={props.jsValue} />
-  : props.value;
+  const valueCode =
+    props.jsValue ? <ValueExpression jsValue={props.jsValue} /> : props.value;
 
-  return <>{nameCode} = {valueCode}</>;
+  return (
+    <>
+      {nameCode} = {valueCode}
+    </>
+  );
 }

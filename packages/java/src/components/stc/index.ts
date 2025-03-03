@@ -15,6 +15,7 @@ export const ImportStatement = stc(base.ImportStatement);
 export const Interface = stc(base.Interface);
 export const MavenProject = stc(base.MavenProject);
 export const Method = stc(base.Method);
+export const Modifiers = stc(base.Modifiers);
 export const Name = stc(base.Name);
 export const ObjectDeclaration = stc(base.ObjectDeclaration);
 export const PackageDirectory = stc(base.PackageDirectory);

@@ -11,6 +11,7 @@ export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./MavenProject.js";
 export * from "./Method.js";
+export * from "./Modifiers.jsx";
 export * from "./Name.js";
 export * from "./NamedArgumentList.jsx";
 export * from "./ObjectDeclaration.js";

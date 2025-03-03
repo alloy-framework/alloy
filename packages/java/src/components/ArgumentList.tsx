@@ -2,10 +2,16 @@ import { Children, For, Indent } from "@alloy-js/core";
 
 export interface ArgumentListProps {
   args?: Children[];
+  omitParensWhenEmpty?: boolean;
 }
 
+/**
+ * A list of arguments to be passed to a function, constructor, enum, and so
+ * forth. Includes parenthesis when arguments are passed, otherwise returns an
+ * empty string.
+ */
 export function ArgumentList(props: ArgumentListProps) {
-  if (!props.args || props.args.length === 0) {
+  if (props.omitParensWhenEmpty && (!props.args || props.args.length === 0)) {
     return "";
   }
 
@@ -13,7 +19,7 @@ export function ArgumentList(props: ArgumentListProps) {
     <group>
       (
       <Indent break="soft" trailingBreak>
-        <For each={props.args} comma line>
+        <For each={props.args ?? []} comma line>
           {(value) => value}
         </For>
       </Indent>

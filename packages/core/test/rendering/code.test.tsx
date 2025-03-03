@@ -17,7 +17,7 @@ it("renders allows substitutions of elements", () => {
     return "hi";
   }
   expect(code`
-    foo ${<Foo />} bar
+    foo ${(<Foo />)} bar
   `).toRenderTo("foo hi bar");
 });
 
@@ -31,7 +31,7 @@ it("renders has auto-indentation", () => {
 
   const template = code`
     if (x === 1) {
-      ${<Foo />}
+      ${(<Foo />)}
     }
   `;
 

@@ -9,9 +9,11 @@ it("declares basic empty function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method public name="testMethod">
-            System.out.println("Test");
-          </jv.Method>}
+          ${(
+            <jv.Method public name="testMethod">
+              System.out.println("Test");
+            </jv.Method>
+          )}
         }
       `}
     </jv.Declaration>,
@@ -33,7 +35,7 @@ it("declares bodyless function", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method public name="testMethod" />}
+          ${(<jv.Method public name="testMethod" />)}
         }
       `}
     </jv.Declaration>,
@@ -54,7 +56,7 @@ describe("can throw errors", () => {
       <jv.Declaration name="Test">
         {code`
         class Test {
-          ${<jv.Method public name="testMethod" throws={'Exception'} />}
+          ${(<jv.Method public name="testMethod" throws={"Exception"} />)}
         }
       `}
       </jv.Declaration>,
@@ -76,7 +78,7 @@ describe("can throw errors", () => {
           <jv.Declaration name="Test">
             {code`
               class Test {
-                ${<jv.Method public name="testMethod" throws={refkey('CustomError')} />}
+                ${(<jv.Method public name="testMethod" throws={refkey("CustomError")} />)}
               }
             `}
           </jv.Declaration>
@@ -90,7 +92,6 @@ describe("can throw errors", () => {
               `}
             </jv.Declaration>
           </jv.SourceFile>
-
         </jv.PackageDirectory>
       </>,
     );
@@ -114,10 +115,13 @@ it("declares return type", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Method public name="testMethod" return='String'>
-            System.out.println("Test");
-            return "Test";
-          </jv.Method>}
+          ${(
+            <jv.Method public name="testMethod" return="String">
+              System.out.println("Test");
+              <hbr />
+              return "Test";
+            </jv.Method>
+          )}
         }
       `}
     </jv.Declaration>,
@@ -139,24 +143,30 @@ it("declares parameters", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="Model.java">
-        <jv.Declaration name='Model'>
+        <jv.Declaration name="Model">
           {code`
             public class Model {
             }
           `}
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='imports'>
+      <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Method public name="testMethod" parameters={{
-                  myModel: refkey("Model"),
-                  name: "String"
-                  }}>
+                ${(
+                  <jv.Method
+                    public
+                    name="testMethod"
+                    parameters={{
+                      myModel: refkey("Model"),
+                      name: "String",
+                    }}
+                  >
                     System.out.println("Test");
-                  </jv.Method>}
+                  </jv.Method>
+                )}
               }
             `}
           </Declaration>
@@ -184,21 +194,27 @@ it("defines generics", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="Model.java">
-        <jv.Declaration name='Model'>
+        <jv.Declaration name="Model">
           {code`
             public class Model {
             }
           `}
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='imports'>
+      <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Method public generics={{ T: refkey("Model"), N: 'String', K: ''}} name="testMethod">
-                  System.out.println("Test");
-                </jv.Method>}
+                ${(
+                  <jv.Method
+                    public
+                    generics={{ T: refkey("Model"), N: "String", K: "" }}
+                    name="testMethod"
+                  >
+                    System.out.println("Test");
+                  </jv.Method>
+                )}
               }
             `}
           </Declaration>

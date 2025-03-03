@@ -10,7 +10,7 @@ it("selects the true branch", () => {
 });
 
 it("works with reactivity", () => {
-  let count = ref(0);
+  const count = ref(0);
   const template = (
     <Show when={count.value % 2 === 0} fallback={"odd"}>
       even

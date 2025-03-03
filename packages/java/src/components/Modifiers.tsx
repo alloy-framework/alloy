@@ -38,6 +38,9 @@ const modifiers = [
   "strictfp",
 ];
 
+/**
+ * Renders the modifiers based on the provided props.
+ **/
 export function Modifiers(props: ModifierProps) {
   const modifierList = modifiers.filter(
     (modifier) => props[modifier as keyof ModifierProps],

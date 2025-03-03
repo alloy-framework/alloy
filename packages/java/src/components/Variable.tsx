@@ -12,5 +12,5 @@ export function Variable(props: VariableProps) {
   const name = useJavaNamePolicy().getName(props.name, "variable");
   const modifiers = <Modifiers {...props} />;
 
-  return code`${modifiers}${props.type} ${name}${props.value ? code` = ${props.value}` : ""};`;
+  return code`${modifiers}${props.type} ${name}${props.value ? code` = ${props.value}` : ""}`;
 }

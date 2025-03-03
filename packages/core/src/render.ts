@@ -39,7 +39,6 @@ const {
     markAsRoot,
     softline,
     ifBreak,
-    indentIfBreak,
   },
 } = prettier;
 

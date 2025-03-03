@@ -2,7 +2,7 @@
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
 import { Child, Children } from "@alloy-js/core/jsx-runtime";
-import { indent } from "./components/stc/index.js";
+import { hbr, indent } from "./components/stc/index.js";
 interface IndentLevelData {
   kind: "indent";
   children: (string | Children | IndentLevelData)[];
@@ -39,6 +39,8 @@ export function code(
   popIndent();
   flushLines();
 
+  return childNodesFor(indentNodes[0]);
+
   function childNodesFor(indentNode: IndentLevelData): Child[] {
     return indentNode.children.map((child) => {
       if (
@@ -46,15 +48,12 @@ export function code(
         child !== null &&
         (child as any).kind === "indent"
       ) {
-        return () =>
-          indent({ children: childNodesFor(child as IndentLevelData) });
+        return indent({ children: childNodesFor(child as IndentLevelData) });
       } else {
         return child as Child;
       }
     });
   }
-
-  return childNodesFor(indentNodes[0]);
 
   function pushIndent() {
     flushLines();
@@ -63,7 +62,7 @@ export function code(
       children: [],
       pendingLines: [""],
     };
-    indentNodes.at(-1)!.children.push(newIndent as any);
+    indentNodes.at(-1)!.children.push(newIndent);
     indentNodes.push(newIndent);
   }
 
@@ -84,7 +83,13 @@ export function code(
   }
   function flushLines() {
     const currentIndent = indentNodes.at(-1)!;
-    currentIndent.children.push(currentIndent.pendingLines.join("\n"));
+    currentIndent.children.push(
+      ...currentIndent.pendingLines
+        .map((str, index) =>
+          index < currentIndent.pendingLines.length - 1 ? [str, hbr()] : [str],
+        )
+        .flat(),
+    );
     currentIndent.pendingLines = [];
   }
 }

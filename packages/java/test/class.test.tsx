@@ -27,18 +27,7 @@ it("extends class", () => {
           <jv.Class
             public
             name="TestSubclass"
-            extends={
-              <>
-                {refkey("TestSuperclass")}
-                <jv.TypeArguments
-                  arguments={[
-                    "longlonglong",
-                    "longlonglonglong",
-                    "longlonglonglonglonglong",
-                  ]}
-                />
-              </>
-            }
+            extends={refkey("TestSuperclass")}
           ></jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>

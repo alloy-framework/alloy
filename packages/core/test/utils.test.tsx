@@ -50,7 +50,6 @@ describe("mapJoin", () => {
   });
 
   it("can map an array reactively (without render)", () => {
-    let callCount = 0;
     const arr = ref([1, 2]);
 
     function Foo(props: { value: number }) {
@@ -60,7 +59,6 @@ describe("mapJoin", () => {
     const joined = mapJoin(
       () => arr.value,
       (value) => {
-        callCount++;
         return <Foo value={value} />;
       },
     );

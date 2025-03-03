@@ -1,4 +1,4 @@
-import { code } from "@alloy-js/core";
+import { Block } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
@@ -15,11 +15,12 @@ export interface ConstructorProps extends ModifierProps {
  * If no name is provided, will try take name from class or enum declaration
  */
 export function Constructor(props: ConstructorProps) {
-  const params = <Parameters parameters={props.parameters}></Parameters>;
-  const modifiers = <Modifiers {...props} />;
-  return code`
-        ${modifiers}${props.name ?? <Name />}(${params}) {
-          ${props.children}
-        }
-    `;
+  return (
+    <>
+      <Modifiers {...props} />
+      {props.name ?? <Name />}(
+      <Parameters parameters={props.parameters} />){" "}
+      <Block>{props.children}</Block>
+    </>
+  );
 }

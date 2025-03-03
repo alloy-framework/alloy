@@ -1,5 +1,6 @@
 import {
   AssignmentContext,
+  Block,
   Children,
   computed,
   createAssignmentContext,
@@ -12,7 +13,6 @@ import {
   Switch,
   Wrap,
 } from "@alloy-js/core";
-import { Block } from "../../../core/src/components/Block.jsx";
 import { createTSSymbol } from "../symbols/index.js";
 import { ValueExpression } from "./ValueExpression.js";
 

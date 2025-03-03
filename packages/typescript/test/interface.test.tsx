@@ -1,4 +1,4 @@
-import { NamePolicyContext, refkey } from "@alloy-js/core";
+import { NamePolicyContext, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
@@ -36,14 +36,14 @@ it("creates extends", () => {
 it("can create members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.StatementList>
+      <StatementList>
         <ts.InterfaceMember name="member" type="string" />
         <ts.InterfaceMember
           name="circular"
           type={<Reference refkey={refkey("Foo")} />}
         />
         <ts.InterfaceMember indexer="str: string" type="number" />
-      </ts.StatementList>
+      </StatementList>
     </ts.InterfaceDeclaration>,
   );
 
@@ -59,7 +59,7 @@ it("can create members", () => {
 it("can create optional members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.StatementList>
+      <StatementList>
         <ts.InterfaceMember name="member" type="string" />
         <ts.InterfaceMember
           optional
@@ -67,7 +67,7 @@ it("can create optional members", () => {
           type={<Reference refkey={refkey("Foo")} />}
         />
         <ts.InterfaceMember indexer="str: string" type="number" />
-      </ts.StatementList>
+      </StatementList>
     </ts.InterfaceDeclaration>,
   );
 
@@ -83,14 +83,14 @@ it("can create optional members", () => {
 it("can create readonly members", () => {
   const res = toSourceText(
     <ts.InterfaceDeclaration name="Foo">
-      <ts.StatementList>
+      <StatementList>
         <ts.InterfaceMember readonly name="member" type="string" />
         <ts.InterfaceMember
           name="circular"
           type={<Reference refkey={refkey("Foo")} />}
         />
         <ts.InterfaceMember indexer="str: string" type="number" />
-      </ts.StatementList>
+      </StatementList>
     </ts.InterfaceDeclaration>,
   );
 

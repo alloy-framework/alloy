@@ -1,4 +1,4 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey, render, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
@@ -15,13 +15,13 @@ it("applies to functions and variables", () => {
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="foo-bar" refkey={ref1} />
         <hbr />
-        <ts.StatementList>
+        <StatementList>
           <ts.VarDeclaration name="one-two" refkey={ref2}>
             "hello"
           </ts.VarDeclaration>
           <ts.Reference refkey={ref1} />
           <ts.Reference refkey={ref2} />
-        </ts.StatementList>
+        </StatementList>
       </ts.SourceFile>
     </Output>,
   );
@@ -44,13 +44,13 @@ it("keeps _ and $ prefix", () => {
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="_foo-bar" refkey={ref1} />
         <hbr />
-        <ts.StatementList>
+        <StatementList>
           <ts.VarDeclaration name="$one-two" refkey={ref2}>
             "hello"
           </ts.VarDeclaration>
           <ts.Reference refkey={ref1} />
           <ts.Reference refkey={ref2} />
-        </ts.StatementList>
+        </StatementList>
       </ts.SourceFile>
     </Output>,
   );
@@ -77,13 +77,13 @@ it("appends _ to reserved words", () => {
           parameters={{ await: "any" }}
         />
         <hbr />
-        <ts.StatementList>
+        <StatementList>
           <ts.VarDeclaration name="super" refkey={ref2}>
             "hello"
           </ts.VarDeclaration>
           <ts.Reference refkey={ref1} />
           <ts.Reference refkey={ref2} />
-        </ts.StatementList>
+        </StatementList>
       </ts.SourceFile>
     </Output>,
   );

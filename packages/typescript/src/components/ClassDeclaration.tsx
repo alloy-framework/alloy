@@ -1,4 +1,5 @@
 import {
+  Block,
   Children,
   MemberDeclaration,
   MemberName,
@@ -7,7 +8,6 @@ import {
   Refkey,
   Scope,
 } from "@alloy-js/core";
-import { Block } from "../../../core/src/components/Block.jsx";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";

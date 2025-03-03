@@ -1,5 +1,3 @@
-export * from "../../../core/src/components/Block.jsx";
-export * from "../../../core/src/components/StatementList.jsx";
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
 export * from "./ClassDeclaration.jsx";

@@ -1,4 +1,5 @@
 import {
+  Block,
   computed,
   Declaration as CoreDeclaration,
   For,
@@ -8,7 +9,6 @@ import {
   refkey,
   useBinder,
 } from "@alloy-js/core";
-import { Block } from "../../../core/src/components/Block.jsx";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";

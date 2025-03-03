@@ -1,11 +1,12 @@
 import {
-  Output,
   mapJoin,
+  Output,
   printTree,
   reactive,
   refkey,
   render,
   renderTree,
+  StatementList,
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
@@ -154,7 +155,7 @@ describe("symbols", () => {
     const decl = (
       <Output>
         <ts.SourceFile path="foo.ts">
-          <ts.StatementList>
+          <StatementList>
             <ts.VarDeclaration name="refme" refkey={outerRefkey}>
               <ts.ObjectExpression>
                 <ts.ObjectProperty
@@ -166,7 +167,7 @@ describe("symbols", () => {
               </ts.ObjectExpression>
             </ts.VarDeclaration>
             {innerRefkey}
-          </ts.StatementList>
+          </StatementList>
         </ts.SourceFile>
       </Output>
     );
@@ -185,7 +186,7 @@ describe("symbols", () => {
     const decl = (
       <Output>
         <ts.SourceFile path="foo.ts">
-          <ts.StatementList>
+          <StatementList>
             <ts.VarDeclaration name="refme" refkey={varRefkey}>
               <ts.ObjectExpression>
                 <ts.ObjectProperty name="foo" refkey={fooRefkey}>
@@ -198,7 +199,7 @@ describe("symbols", () => {
               </ts.ObjectExpression>
             </ts.VarDeclaration>
             {barRefkey}
-          </ts.StatementList>
+          </StatementList>
         </ts.SourceFile>
       </Output>
     );

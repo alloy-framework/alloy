@@ -1,4 +1,5 @@
 import {
+  Block,
   childrenArray,
   code,
   findKeyedChild,
@@ -13,7 +14,6 @@ import {
   taggedComponent,
 } from "@alloy-js/core";
 import { Children, onCleanup } from "@alloy-js/core/jsx-runtime";
-import { Block } from "../../../core/src/components/Block.jsx";
 import { useTSNamePolicy } from "../name-policy.js";
 import {
   createTSSymbol,

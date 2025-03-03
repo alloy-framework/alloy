@@ -1,4 +1,10 @@
-import { Output, SourceDirectory, refkey, render } from "@alloy-js/core";
+import {
+  Output,
+  SourceDirectory,
+  StatementList,
+  refkey,
+  render,
+} from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { it } from "vitest";
 import * as ts from "../src/components/index.js";
@@ -112,7 +118,7 @@ it("works with default and named imports and name conflicts", () => {
       </ts.SourceFile>
 
       <ts.SourceFile path="test3.ts">
-        <ts.StatementList>
+        <StatementList>
           <>
             const v1 = <Reference refkey={refkey("test1")} />
           </>
@@ -128,7 +134,7 @@ it("works with default and named imports and name conflicts", () => {
           <>
             const v4 = <Reference refkey={refkey("test4")} />
           </>
-        </ts.StatementList>
+        </StatementList>
       </ts.SourceFile>
     </Output>,
   );
@@ -176,17 +182,17 @@ it("works with default and named imports and name conflicts and references in ne
       </ts.SourceFile>
 
       <ts.SourceFile path="test3.ts">
-        <ts.StatementList>
+        <StatementList>
           <>
             const v1 = <Reference refkey={refkey("test1")} />
           </>
           <>
             const v1_1 = <Reference refkey={refkey("test2")} />
           </>
-        </ts.StatementList>
+        </StatementList>
         <hbr />
         <ts.FunctionDeclaration name="foo">
-          <ts.StatementList>
+          <StatementList>
             <>
               const v2 = <Reference refkey={refkey("test3")} />
             </>
@@ -196,7 +202,7 @@ it("works with default and named imports and name conflicts and references in ne
             <>
               const v4 = <Reference refkey={refkey("test4")} />
             </>
-          </ts.StatementList>
+          </StatementList>
         </ts.FunctionDeclaration>
       </ts.SourceFile>
     </Output>,

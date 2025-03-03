@@ -80,7 +80,7 @@ const res = ay.render(
               parameters={{ args: "String[]" }}
             >
               {code`
-                ${javaUtil.List}${(<jv.Generics types={[refkey("Animal")]} />)} animals = new ${javaUtil.ArrayList}${(<jv.Generics />)}();
+                ${javaUtil.List}${(<jv.TypeArguments arguments={[refkey("Animal")]} />)} animals = new ${javaUtil.ArrayList}${(<jv.TypeArguments />)}();
                 
                 animals.add(new ${refkey("Cat")}());
               `}

@@ -10,6 +10,7 @@ export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
+export * from "./MemberChainExpression.jsx";
 export * from "./ObjectExpression.js";
 export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";

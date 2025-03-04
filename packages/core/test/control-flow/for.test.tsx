@@ -17,6 +17,19 @@ it("works", () => {
   `);
 });
 
+it("handles map entries", () => {
+  const map = new Map([["a", { name: "foo" }]]);
+  const entries = Array.from(map.entries());
+  const template = (
+    <For each={entries}>
+      {([key, value]) => (
+        <>
+          {key}: {value.name}
+        </>
+      )}
+    </For>
+  );
+});
 it("doesn't rerender mappers", () => {
   const messages = reactive(["hi", "bye"]);
   let count = 0;

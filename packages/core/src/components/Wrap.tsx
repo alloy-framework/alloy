@@ -14,7 +14,7 @@ export interface WrapProps<TProps> {
   with: ComponentDefinition<TProps>;
 
   /** Props to pass to the wrapper component. */
-  props?: TProps;
+  props?: Omit<TProps, "children">;
 }
 
 /**

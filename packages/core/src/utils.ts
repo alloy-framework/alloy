@@ -50,7 +50,7 @@ const defaultJoinOptions: JoinOptions = {
  */
 export function mapJoin<T, U, V>(
   src: () => Map<T, U>,
-  cb: (key: T, value: U) => V,
+  cb: (key: T, value: U, index: number) => V,
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 /**
@@ -65,12 +65,12 @@ export function mapJoin<T, U, V>(
  */
 export function mapJoin<T, V>(
   src: () => T[] | IterableIterator<T>,
-  cb: (value: T) => V,
+  cb: (value: T, index: number) => V,
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 export function mapJoin<T, U, V>(
   src: () => Map<T, U> | T[] | Iterable<T>,
-  cb: (key: T, value?: U) => V,
+  cb: (key: T, valueOrIndex: U | number, index: number) => V,
   rawOptions: JoinOptions = {},
 ): () => Children {
   const options = { ...defaultJoinOptions, ...rawOptions };
@@ -130,7 +130,7 @@ export function mapJoin<T, U, V>(
           return root((disposer) => {
             disposables[cleanupIndex] = disposer;
             disposer();
-            cb(mapper(items[cleanupIndex]));
+            cb(mapper(items[cleanupIndex], cleanupIndex));
           });
         });
 
@@ -169,12 +169,12 @@ export function mapJoin<T, U, V>(
     return record1[0] === record2[0] && record1[1] === record2[1];
   }
 
-  function mapArray(item: T) {
-    return cb(item);
+  function mapArray(item: T, index: number) {
+    return (cb as any)(item, index);
   }
 
-  function mapMap(item: [T, U]) {
-    return cb(item[0], item[1]);
+  function mapMap(item: [T, U], index: number) {
+    return cb(item[0], item[1], index);
   }
 
   function isIterable<T>(x: unknown): x is Iterable<T> {

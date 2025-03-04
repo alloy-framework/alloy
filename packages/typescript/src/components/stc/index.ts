@@ -18,6 +18,7 @@ export const ImportStatements = stc(base.ImportStatements);
 export const InterfaceDeclaration = stc(base.InterfaceDeclaration);
 export const InterfaceExpression = stc(base.InterfaceExpression);
 export const InterfaceMember = stc(base.InterfaceMember);
+export const MemberchainExpression = stc(base.MemberChainExpression);
 export const ObjectExpression = stc(base.ObjectExpression);
 export const ObjectProperty = stc(base.ObjectProperty);
 export const PackageDirectory = stc(base.PackageDirectory);

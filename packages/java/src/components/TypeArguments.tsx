@@ -1,7 +1,7 @@
 import { Children, For, Indent, Match, Switch } from "@alloy-js/core";
 
 export interface TypeArgumentsProps {
-  arguments?: Children[] | TypeArgumentDescriptor[];
+  args?: Children[] | TypeArgumentDescriptor[];
 }
 
 export interface WildcardTypeArgumentDescriptor {
@@ -34,7 +34,7 @@ export type TypeArgumentDescriptor =
 export function TypeArguments(props: TypeArgumentsProps) {
   return (
     <Switch>
-      <Match when={!props.arguments || props.arguments.length === 0}>
+      <Match when={!props.args || props.args.length === 0}>
         <>{"<>"}</>
       </Match>
       <Match else>
@@ -42,12 +42,8 @@ export function TypeArguments(props: TypeArgumentsProps) {
           {"<"}
           <Indent break="soft">
             <Switch>
-              <Match when={isTypeArgumentDescriptor(props.arguments![0])}>
-                <For
-                  each={props.arguments as TypeArgumentDescriptor[]}
-                  comma
-                  line
-                >
+              <Match when={isTypeArgumentDescriptor(props.args![0])}>
+                <For each={props.args as TypeArgumentDescriptor[]} comma line>
                   {(value) => {
                     if ("name" in value) {
                       return value.name;
@@ -64,7 +60,7 @@ export function TypeArguments(props: TypeArgumentsProps) {
                 </For>
               </Match>
               <Match else>
-                <For each={props.arguments as Children[]} comma line>
+                <For each={props.args as Children[]} comma line>
                   {(value) => value}
                 </For>
               </Match>

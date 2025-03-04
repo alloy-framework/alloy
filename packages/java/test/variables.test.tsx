@@ -78,7 +78,7 @@ it("declares new object", () => {
           <Declaration name="Test">
             {code`
               public class Test {
-                ${(<jv.ObjectDeclaration public static type={refkey("Model")} name="myModel" arguments={[<jv.Value value="initValue" />]} />)};
+                ${(<jv.ObjectDeclaration public static type={refkey("Model")} name="myModel" args={[<jv.Value value="initValue" />]} />)};
               }
             `}
           </Declaration>

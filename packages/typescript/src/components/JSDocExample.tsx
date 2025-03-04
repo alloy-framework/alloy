@@ -7,6 +7,10 @@ export interface JSDocExampleProps {
   children: Children;
 }
 
+/**
+ * Create a JSDoc example set off with `@example`. When the `fenced` prop is true, a `language` prop can
+ * also be set.
+ */
 export function JSDocExample(props: JSDocExampleProps) {
   return (
     <>

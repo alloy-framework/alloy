@@ -8,7 +8,7 @@ export interface ObjectDeclarationProps
   extends DeclarationProps,
     ModifierProps {
   type: Children;
-  arguments?: Children[];
+  args?: Children[];
 }
 
 /**
@@ -16,7 +16,7 @@ export interface ObjectDeclarationProps
  * Declares it with 'new' and passes arguments to the constructor of the object, if any
  */
 export function ObjectDeclaration(props: ObjectDeclarationProps) {
-  const args = <ArgumentList args={props.arguments} />;
+  const args = <ArgumentList args={props.args} />;
   const value = code`new ${props.type}${args}`;
   return <Variable {...props} value={value} />;
 }

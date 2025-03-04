@@ -6,6 +6,10 @@ export interface CommaListProps {
   softline?: boolean;
 }
 
+/**
+ * A comma-separated list of items (e.g. arguments to a function call,
+ * parameters, etc).
+ */
 export function CommaList(props: CommaListProps) {
   return (
     <List

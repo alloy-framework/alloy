@@ -28,9 +28,9 @@ it("passes types", () => {
           <jv.Class public name="TestGenerics">
             {code`
               public TestGenerics() {
-                List${(<jv.TypeArguments arguments={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
-                List${(<jv.TypeArguments arguments={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
-                List${(<jv.TypeArguments arguments={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
+                List${(<jv.TypeArguments args={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
+                List${(<jv.TypeArguments args={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
+                List${(<jv.TypeArguments args={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
               }
             `}
           </jv.Class>

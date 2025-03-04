@@ -4,6 +4,9 @@ export interface ExtendsClauseProps {
   extends: Children[] | undefined;
 }
 
+/**
+ * The extends clause for a class or interface.
+ */
 export function ExtendsClause(props: ExtendsClauseProps) {
   return (
     <Show when={props.extends !== undefined && props.extends.length > 0}>

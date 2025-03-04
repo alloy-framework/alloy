@@ -6,13 +6,18 @@ import * as csharp from "../src/index.js";
 it("defines a project directory file with multiple source files", () => {
   const res = core.render(
     <core.Output>
-      <csharp.ProjectDirectory name="TestProject" path="~/projects" version="0.1.0" description="a test project">
-        <csharp.Namespace name='TestCode'>
+      <csharp.ProjectDirectory
+        name="TestProject"
+        path="~/projects"
+        version="0.1.0"
+        description="a test project"
+      >
+        <csharp.Namespace name="TestCode">
           <csharp.SourceFile path="Test1.cs">
-            <csharp.Class accessModifier='public' name="TestClass1" />
+            <csharp.Class accessModifier="public" name="TestClass1" />
           </csharp.SourceFile>
           <csharp.SourceFile path="Test2.cs">
-            <csharp.Class accessModifier='public' name="TestClass2" />
+            <csharp.Class accessModifier="public" name="TestClass2" />
           </csharp.SourceFile>
         </csharp.Namespace>
       </csharp.ProjectDirectory>
@@ -43,7 +48,6 @@ it("defines a project directory file with multiple source files", () => {
     {
         public class TestClass1;
     }
-
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
@@ -52,20 +56,25 @@ it("defines a project directory file with multiple source files", () => {
     {
         public class TestClass2;
     }
-
   `);
 });
 
 it("defines a project directory file with multiple source files and a custom TFM", () => {
   const res = core.render(
     <core.Output>
-      <csharp.ProjectDirectory name="TestProject" path="~/projects" version="0.1.0" description="a test project" targetFrameworkMoniker="netstandard2.1">
-        <csharp.Namespace name='TestCode'>
+      <csharp.ProjectDirectory
+        name="TestProject"
+        path="~/projects"
+        version="0.1.0"
+        description="a test project"
+        targetFrameworkMoniker="netstandard2.1"
+      >
+        <csharp.Namespace name="TestCode">
           <csharp.SourceFile path="Test1.cs">
-            <csharp.Class accessModifier='public' name="TestClass1" />
+            <csharp.Class accessModifier="public" name="TestClass1" />
           </csharp.SourceFile>
           <csharp.SourceFile path="Test2.cs">
-            <csharp.Class accessModifier='public' name="TestClass2" />
+            <csharp.Class accessModifier="public" name="TestClass2" />
           </csharp.SourceFile>
         </csharp.Namespace>
       </csharp.ProjectDirectory>
@@ -96,7 +105,6 @@ it("defines a project directory file with multiple source files and a custom TFM
     {
         public class TestClass1;
     }
-
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
@@ -105,6 +113,5 @@ it("defines a project directory file with multiple source files and a custom TFM
     {
         public class TestClass2;
     }
-
   `);
 });

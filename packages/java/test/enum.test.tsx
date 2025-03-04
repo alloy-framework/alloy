@@ -5,15 +5,12 @@ import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender, toSourceText } from "./utils.js";
 
 it("works", () => {
-  const res = toSourceText(<jv.Enum public name="TestEnum">
-    </jv.Enum>);
+  const res = toSourceText(<jv.Enum public name="TestEnum"></jv.Enum>);
 
   expect(res).toBe(d`
     package me.test.code;
 
-    public enum TestEnum {
-      
-    }
+    public enum TestEnum {}
   `);
 });
 
@@ -21,7 +18,7 @@ it("implements interfaces", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="InterfaceOne.java">
-        <jv.Declaration name='InterfaceOne'>
+        <jv.Declaration name="InterfaceOne">
           {code`
             public interface InterfaceOne {
             }
@@ -29,7 +26,7 @@ it("implements interfaces", () => {
         </jv.Declaration>
       </jv.SourceFile>
       <jv.SourceFile path="InterfaceTwo.java">
-        <jv.Declaration name='InterfaceTwo'>
+        <jv.Declaration name="InterfaceTwo">
           {code`
             public interface InterfaceTwo {
             }
@@ -38,11 +35,15 @@ it("implements interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestEnum.java">
-          <jv.Enum public name="TestEnum" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
-          </jv.Enum>
+          <jv.Enum
+            public
+            name="TestEnum"
+            implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}
+          ></jv.Enum>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
+    { printWidth: 100 },
   );
 
   assertFileContents(res, {
@@ -52,9 +53,7 @@ it("implements interfaces", () => {
       import me.test.code.InterfaceOne;
       import me.test.code.InterfaceTwo;
 
-      public enum TestEnum implements InterfaceOne, InterfaceTwo {
-        
-      }
+      public enum TestEnum implements InterfaceOne, InterfaceTwo {}
     `,
   });
 });
@@ -62,8 +61,10 @@ it("implements interfaces", () => {
 it("declares members", () => {
   const res = toSourceText(
     <jv.Enum public name="TestEnum">
-      <jv.EnumMember name="ONE" />,
-      <jv.EnumMember name="TWO" />;
+      <jv.EnumMemberList>
+        <jv.EnumMember name="ONE" />
+        <jv.EnumMember name="TWO" />
+      </jv.EnumMemberList>
     </jv.Enum>,
   );
 
@@ -80,13 +81,17 @@ it("declares members", () => {
 it("declares members with arguments", () => {
   const res = toSourceText(
     <jv.Enum public name="TestEnum">
-      <jv.EnumMember name="ONE" arguments={[<jv.Value value="One" />]} />,
-      <jv.EnumMember name="TWO" arguments={[<jv.Value value="Two" />]} />;
-
-      <jv.Constructor parameters={{
-        value: "String"
-      }}>
-      </jv.Constructor>
+      <jv.EnumMemberList>
+        <jv.EnumMember name="ONE" args={[<jv.Value value="One" />]} />
+        <jv.EnumMember name="TWO" args={[<jv.Value value="Two" />]} />
+      </jv.EnumMemberList>
+      <hbr />
+      <hbr />
+      <jv.Constructor
+        parameters={{
+          value: "String",
+        }}
+      ></jv.Constructor>
     </jv.Enum>,
   );
 
@@ -96,10 +101,8 @@ it("declares members with arguments", () => {
     public enum TestEnum {
       ONE("One"),
       TWO("Two");
-      
-      TestEnum(String value) {
-        
-      }
+    
+      TestEnum(String value) {}
     }
   `);
 });

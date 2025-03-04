@@ -1,4 +1,4 @@
-import { Output, render } from "@alloy-js/core";
+import { Output, render, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -19,11 +19,19 @@ it("uses import from external library", () => {
   const res = render(
     <Output externals={[testLib]}>
       <jv.PackageDirectory package="me.test.code">
-        <jv.SourceFile path='TestImport.java'>
+        <jv.SourceFile path="TestImport.java">
           <jv.Class public name="TestImport">
-            <jv.ObjectDeclaration type={testLib["TestModel"]} name="myTestModel" />
-            <jv.ObjectDeclaration type={testLib["TestClass"]} name="myTestClass" />
-            <jv.ObjectDeclaration type={testLib["Tester"]} name="myTester" />
+            <StatementList>
+              <jv.ObjectDeclaration
+                type={testLib["TestModel"]}
+                name="myTestModel"
+              />
+              <jv.ObjectDeclaration
+                type={testLib["TestClass"]}
+                name="myTestClass"
+              />
+              <jv.ObjectDeclaration type={testLib["Tester"]} name="myTester" />
+            </StatementList>
           </jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>

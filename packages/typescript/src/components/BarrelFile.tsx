@@ -1,9 +1,4 @@
-import {
-  mapJoin,
-  memo,
-  SourceDirectoryContext,
-  useContext,
-} from "@alloy-js/core";
+import { For, memo, SourceDirectoryContext, useContext } from "@alloy-js/core";
 import { basename } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { TSModuleScope } from "../symbols/index.js";
@@ -84,16 +79,12 @@ export function BarrelFile(props: BarrelFileProps) {
       (m) => basename(m.name) !== "index.ts",
     );
 
-    const allModules = [...sourceFiles, ...nestedBarrels];
-    return mapJoin(
-      () => allModules,
-      (module) => {
-        return <ExportStatement star from={module} />;
-      },
-    );
+    return [...sourceFiles, ...nestedBarrels];
   });
 
-  return <SourceFile path={path} export={props.export}>
-    {exports}
-  </SourceFile>;
+  return (
+    <SourceFile path={path} export={props.export}>
+      <For each={exports}>{(mod) => <ExportStatement star from={mod} />}</For>
+    </SourceFile>
+  );
 }

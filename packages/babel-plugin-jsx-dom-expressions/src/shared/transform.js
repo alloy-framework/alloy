@@ -96,6 +96,7 @@ export function transformThis(path) {
 }
 
 export function transformNode(path, info = {}) {
+  
   const config = getConfig(path);
   const node = path.node;
   let staticValue;
@@ -106,7 +107,7 @@ export function transformNode(path, info = {}) {
     // <><div /><Component /></>
     transformFragmentChildren(path, path.get("children"), results, config);
     return results;
-  } else if (t.isJSXText(node) || (staticValue = getStaticExpression(path)) !== false) {
+  } else if (t.isJSXText(node)) {
     const text =
       staticValue !== undefined
         ? info.doNotEscape
@@ -195,25 +196,5 @@ export function getCreateTemplate(config, path, result) {
 }
 
 export function transformElement(config, path, info = {}) {
-  const node = path.node;
-  let tagName = getTagName(node);
-  // <Component ...></Component>
-  if (isComponent(tagName)) return transformComponent(path);
-
-  // <div ...></div>
-  // const element = getTransformElemet(config, path, tagName);
-
-  const tagRenderer = (config.renderers ?? []).find(renderer =>
-    renderer.elements.includes(tagName)
-  );
-
-  if (tagRenderer?.name === "dom" || getConfig(path).generate === "dom") {
-    return transformElementDOM(path, info);
-  }
-
-  if (getConfig(path).generate === "ssr") {
-    return transformElementSSR(path, info);
-  }
-
-  return transformElementUniversal(path, info);
+  return transformComponent(path);
 }

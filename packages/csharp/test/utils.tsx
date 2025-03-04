@@ -6,7 +6,7 @@ import * as csharp from "../src/index.js";
 export function toSourceText(c: core.Children): string {
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">{c}</csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
@@ -19,9 +19,7 @@ export function toSourceText(c: core.Children): string {
 export function testRender(c: core.Children): core.OutputDirectory {
   return core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
-        {c}
-      </csharp.Namespace>
+      <csharp.Namespace name="TestCode">{c}</csharp.Namespace>
     </core.Output>,
   );
 }

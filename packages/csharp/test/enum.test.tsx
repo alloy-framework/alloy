@@ -6,7 +6,7 @@ import * as utils from "./utils.js";
 
 it("declares enum with no members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier='public' name="TestEnum" />,
+    <csharp.Enum accessModifier="public" name="TestEnum" />,
   );
 
   expect(res).toBe(coretest.d`
@@ -14,14 +14,13 @@ it("declares enum with no members", () => {
     {
         public enum TestEnum;
     }
-
   `);
 });
 
 it("declares enum with members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier='public' name="TestEnum">
-      <csharp.EnumMember name="One" />,
+    <csharp.Enum accessModifier="public" name="TestEnum">
+      <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
     </csharp.Enum>,
   );
@@ -35,14 +34,13 @@ it("declares enum with members", () => {
             Two
         }
     }
-
   `);
 });
 
 it("applies naming policy to enum and members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier='public' name="testEnum">
-      <csharp.EnumMember name="one" />,
+    <csharp.Enum accessModifier="public" name="testEnum">
+      <csharp.EnumMember name="one" />,<hbr />
       <csharp.EnumMember name="two" />
     </csharp.Enum>,
   );
@@ -56,7 +54,6 @@ it("applies naming policy to enum and members", () => {
             Two
         }
     }
-
   `);
 });
 
@@ -66,13 +63,14 @@ it("can reference things by refkey", () => {
 
   const res = core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier='public' name="TestEnum" refkey={enumRK}>
-            <csharp.EnumMember name="One" />,
+          <csharp.Enum accessModifier="public" name="TestEnum" refkey={enumRK}>
+            <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" refkey={twoRK} />
           </csharp.Enum>
-          {enumRK};
+          <hbr />
+          {enumRK};<hbr />
           {twoRK};
         </csharp.SourceFile>
       </csharp.Namespace>
@@ -90,7 +88,6 @@ it("can reference things by refkey", () => {
         TestEnum;
         TestEnum.Two;
     }
-
   `);
 });
 
@@ -100,21 +97,23 @@ it("can reference things by refkey across files", () => {
 
   const res = core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier='public' name="TestEnum">
-            <csharp.EnumMember name="One" />,
+          <csharp.Enum accessModifier="public" name="TestEnum">
+            <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" />
           </csharp.Enum>
-          {enumRK};
+          <hbr />
+          {enumRK};<hbr />
           {barRK};
         </csharp.SourceFile>
         <csharp.SourceFile path="Other.cs">
-          <csharp.Enum accessModifier='public' name="OtherEnum" refkey={enumRK}>
-            <csharp.EnumMember name="Foo" />,
+          <csharp.Enum accessModifier="public" name="OtherEnum" refkey={enumRK}>
+            <csharp.EnumMember name="Foo" />,<hbr />
             <csharp.EnumMember name="Bar" refkey={barRK} />
           </csharp.Enum>
-          {enumRK};
+          <hbr />
+          {enumRK};<hbr />
           {barRK};
         </csharp.SourceFile>
       </csharp.Namespace>
@@ -133,7 +132,6 @@ it("can reference things by refkey across files", () => {
         OtherEnum;
         OtherEnum.Bar;
     }
-
   `);
 
   expect(res.contents[1].path).toBe("Other.cs");
@@ -148,6 +146,5 @@ it("can reference things by refkey across files", () => {
         OtherEnum;
         OtherEnum.Bar;
     }
-
   `);
 });

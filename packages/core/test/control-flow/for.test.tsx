@@ -1,18 +1,15 @@
 import "@alloy-js/core/testing";
-import { d, printTree } from "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
-import { onCleanup, reactive, renderTree } from "../../src/index.js";
+import { onCleanup, printTree, reactive, renderTree } from "../../src/index.js";
 
 it("works", () => {
   const messages = ["hi", "bye"];
 
-  const template =
-    <For each={messages}>
-      {(message) => <>
-        {message}, Jose!
-      </>}
-    </For>;
+  const template = (
+    <For each={messages}>{(message) => <>{message}, Jose!</>}</For>
+  );
 
   expect(template).toRenderTo(`
     hi, Jose!
@@ -20,15 +17,23 @@ it("works", () => {
   `);
 });
 
+it("handles map entries", () => {
+  const map = new Map([["a", { name: "foo" }]]);
+  const entries = Array.from(map.entries());
+  const template = (
+    <For each={entries}>
+      {([key, value]) => (
+        <>
+          {key}: {value.name}
+        </>
+      )}
+    </For>
+  );
+});
 it("doesn't rerender mappers", () => {
   const messages = reactive(["hi", "bye"]);
   let count = 0;
-  const template =
-    <For each={messages}>
-      {() => <>
-        item {count++}
-      </>}
-    </For>;
+  const template = <For each={messages}>{() => <>item {count++}</>}</For>;
   const tree = renderTree(template);
   expect(count).toBe(2);
 
@@ -45,12 +50,7 @@ it("doesn't rerender mappers", () => {
 it("doesn't rerender mappers (with splice)", () => {
   const messages = reactive(["hi", "maybe", "bye"]);
   let count = 0;
-  const template =
-    <For each={messages}>
-      {(msg) => <>
-        item {count++}
-      </>}
-    </For>;
+  const template = <For each={messages}>{(msg) => <>item {count++}</>}</For>;
   const tree = renderTree(template);
   expect(count).toBe(3);
   messages.splice(1, 1);
@@ -76,10 +76,7 @@ it("cleans up things which end up removed (with push)", () => {
 
   const items = reactive(["a", "b"]);
 
-  const template =
-    <For each={items}>
-      {(item) => <Letter letter={item} />}
-    </For>;
+  const template = <For each={items}>{(item) => <Letter letter={item} />}</For>;
 
   const tree = renderTree(template);
 
@@ -113,10 +110,7 @@ it("cleans up things which end up removed (with splice)", () => {
 
   const items = reactive(["a", "b", "c"]);
 
-  const template =
-    <For each={items}>
-      {(item) => <Letter letter={item} />}
-    </For>;
+  const template = <For each={items}>{(item) => <Letter letter={item} />}</For>;
 
   const tree = renderTree(template);
 

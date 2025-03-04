@@ -20,9 +20,7 @@ it("renders boolean", () => {
 
 it("renders other objects", () => {
   function Test() {
-    return <>
-      Test
-    </>;
+    return <>Test</>;
   }
 
   expect(<jv.Value value={Test} />).toRenderTo("Test");

@@ -20,7 +20,11 @@ export function SourceDirectory(props: SourceDirectoryProps) {
   nodeContext.meta.directory = {
     path: sdPath,
   };
-  return <SourceDirectoryContext.Provider value={context}>{props.children}</SourceDirectoryContext.Provider>;
+  return (
+    <SourceDirectoryContext.Provider value={context}>
+      {props.children}
+    </SourceDirectoryContext.Provider>
+  );
 }
 
 function createSourceDirectoryContext(

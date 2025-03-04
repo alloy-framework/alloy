@@ -4,7 +4,9 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 export interface TypeDeclarationProps extends BaseDeclarationProps {}
 
 export function TypeDeclaration(props: TypeDeclarationProps) {
-  return <Declaration {...props} nameKind="type">
-    type <Name /> = {props.children};
-  </Declaration>;
+  return (
+    <Declaration {...props} nameKind="type">
+      type <Name /> = {props.children};
+    </Declaration>
+  );
 }

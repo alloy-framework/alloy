@@ -7,7 +7,9 @@ import {
   filterChildren,
   trimWhitespace,
   transformCondition,
-  convertJSXIdentifier
+  convertJSXIdentifier,
+  isComponent,
+  getTagName
 } from "./utils";
 import { transformNode, getCreateTemplate } from "./transform";
 
@@ -26,13 +28,23 @@ function convertComponentIdentifier(node) {
 }
 
 export default function transformComponent(path) {
+  const node = path.node;
+  let tagName = getTagName(node);
+  const isComponentTag = isComponent(tagName);
+
   let exprs = [],
     config = getConfig(path),
-    tagId = convertComponentIdentifier(path.node.openingElement.name),
+    tagId = isComponentTag
+      ? convertComponentIdentifier(path.node.openingElement.name)
+      : t.stringLiteral(path.node.openingElement.name.name),
     props = [],
     runningObject = [],
     dynamicSpread = false,
     hasChildren = path.node.children.length > 0;
+
+  
+  
+  
 
   if (config.builtIns.indexOf(tagId.name) > -1 && !path.scope.hasBinding(tagId.name)) {
     const newTagId = registerImportMethod(path, tagId.name);
@@ -208,7 +220,8 @@ export default function transformComponent(path) {
     props = [t.callExpression(registerImportMethod(path, "mergeProps"), props)];
   }
   const componentArgs = [tagId, props[0]];
-  exprs.push(t.callExpression(registerImportMethod(path, "createComponent"), componentArgs));
+
+  exprs.push(t.callExpression(registerImportMethod(path, isComponentTag ? "createComponent" : "createIntrinsic"), componentArgs));
 
   // handle hoisting conditionals
   if (exprs.length > 1) {

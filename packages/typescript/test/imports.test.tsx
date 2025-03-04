@@ -1,4 +1,10 @@
-import { Output, SourceDirectory, refkey, render } from "@alloy-js/core";
+import {
+  Output,
+  SourceDirectory,
+  StatementList,
+  refkey,
+  render,
+} from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { it } from "vitest";
 import * as ts from "../src/components/index.js";
@@ -10,7 +16,12 @@ it("works with default imports", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="asdf" refkey={refkey("test")} />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="asdf"
+          refkey={refkey("test")}
+        />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -21,9 +32,7 @@ it("works with default imports", () => {
 
   assertFileContents(res, {
     "test1.ts": `
-      export default function asdf() {
-        
-      }
+      export default function asdf() {}
     `,
     "test2.ts": `
       import asdf from "./test1.js";
@@ -48,9 +57,7 @@ it("works with named imports", () => {
 
   assertFileContents(res, {
     "test1.ts": `
-      export function test() {
-        
-      }
+      export function test() {}
     `,
     "test2.ts": `
       import { test } from "./test1.js";
@@ -65,11 +72,12 @@ it("works with default and named imports", () => {
     <Output>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration export default name="test1" />
+        <hbr />
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
-        const v1 = <Reference refkey={refkey("test1")} />;
+        const v1 = <Reference refkey={refkey("test1")} />;<hbr />
         const v2 = <Reference refkey={refkey("test2")} />;
       </ts.SourceFile>
     </Output>,
@@ -77,12 +85,8 @@ it("works with default and named imports", () => {
 
   assertFileContents(res, {
     "test1.ts": `
-      export default function test1() {
-        
-      }
-      export function test2() {
-        
-      }
+      export default function test1() {}
+      export function test2() {}
     `,
     "test2.ts": `
       import test1, { test2 } from "./test1.js";
@@ -98,40 +102,51 @@ it("works with default and named imports and name conflicts", () => {
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration export default name="test1" />
+        <br />
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
-        <ts.FunctionDeclaration export default name="test1" refkey={refkey("test3")} />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="test1"
+          refkey={refkey("test3")}
+        />
+        <br />
         <ts.FunctionDeclaration export name="test2" refkey={refkey("test4")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test3.ts">
-        const v1 = <Reference refkey={refkey("test1")} />;
-        const v1_1 = <Reference refkey={refkey("test2")}/>;
-        const v2 = <Reference refkey={refkey("test3")} />;
-        const v3 = <Reference refkey={refkey("test3")}/>;
-        const v4 = <Reference refkey={refkey("test4")} />;
+        <StatementList>
+          <>
+            const v1 = <Reference refkey={refkey("test1")} />
+          </>
+          <>
+            const v1_1 = <Reference refkey={refkey("test2")} />
+          </>
+          <>
+            const v2 = <Reference refkey={refkey("test3")} />
+          </>
+          <>
+            const v3 = <Reference refkey={refkey("test3")} />
+          </>
+          <>
+            const v4 = <Reference refkey={refkey("test4")} />
+          </>
+        </StatementList>
       </ts.SourceFile>
     </Output>,
   );
 
   assertFileContents(res, {
     "test1.ts": `
-      export default function test1() {
-        
-      }
-      export function test2() {
-        
-      }
+      export default function test1() {}
+      export function test2() {}
     `,
     "test2.ts": `
-      export default function test1() {
-        
-      }
-      export function test2() {
-        
-      }
+      export default function test1() {}
+      export function test2() {}
     `,
     "test3.ts": `
       import test1_1, { test2 as test2_1 } from "./test1.js";
@@ -151,21 +166,43 @@ it("works with default and named imports and name conflicts and references in ne
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration export default name="test1" />
+        <hbr />
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
-        <ts.FunctionDeclaration export default name="test1" refkey={refkey("test3")} />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="test1"
+          refkey={refkey("test3")}
+        />
+        <hbr />
         <ts.FunctionDeclaration export name="test2" refkey={refkey("test4")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test3.ts">
-        const v1 = <Reference refkey={refkey("test1")} />;
-        const v1_1 = <Reference refkey={refkey("test2")}/>;
+        <StatementList>
+          <>
+            const v1 = <Reference refkey={refkey("test1")} />
+          </>
+          <>
+            const v1_1 = <Reference refkey={refkey("test2")} />
+          </>
+        </StatementList>
+        <hbr />
         <ts.FunctionDeclaration name="foo">
-          const v2 = <Reference refkey={refkey("test3")} />;
-          const v3 = <Reference refkey={refkey("test3")}/>;
-          const v4 = <Reference refkey={refkey("test4")} />;
+          <StatementList>
+            <>
+              const v2 = <Reference refkey={refkey("test3")} />
+            </>
+            <>
+              const v3 = <Reference refkey={refkey("test3")} />
+            </>
+            <>
+              const v4 = <Reference refkey={refkey("test4")} />
+            </>
+          </StatementList>
         </ts.FunctionDeclaration>
       </ts.SourceFile>
     </Output>,
@@ -173,20 +210,12 @@ it("works with default and named imports and name conflicts and references in ne
 
   assertFileContents(res, {
     "test1.ts": `
-      export default function test1() {
-        
-      }
-      export function test2() {
-        
-      }
+      export default function test1() {}
+      export function test2() {}
     `,
     "test2.ts": `
-      export default function test1() {
-        
-      }
-      export function test2() {
-        
-      }
+      export default function test1() {}
+      export function test2() {}
     `,
     "test3.ts": `
       import test1_1, { test2 as test2_1 } from "./test1.js";
@@ -209,12 +238,13 @@ it("works with imports from different directories", () => {
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
           <ts.FunctionDeclaration export name="test" />
-          const v = <Reference refkey={refkey("test2")} />
+          <hbr />
+          const v = <Reference refkey={refkey("test2")} />;
         </ts.SourceFile>
       </SourceDirectory>
 
       <ts.SourceFile path="test2.ts">
-        const v = <Reference refkey={refkey("test")} />;
+        const v = <Reference refkey={refkey("test")} />;<hbr />
         <ts.FunctionDeclaration export name="test2" />
       </ts.SourceFile>
     </Output>,
@@ -224,18 +254,14 @@ it("works with imports from different directories", () => {
     "src/test1.ts": `
       import { test2 } from "../test2.js";
 
-      export function test() {
-        
-      }
-      const v = test2
+      export function test() {}
+      const v = test2;
     `,
     "test2.ts": `
       import { test } from "./src/test1.js";
 
       const v = test;
-      export function test2() {
-        
-      }
+      export function test2() {}
     `,
   });
 });
@@ -246,12 +272,13 @@ it("handles conflicts with local declarations", () => {
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
           <ts.FunctionDeclaration export name="test" />
-          const v = <Reference refkey={refkey("test2")} />
+          <hbr />
+          const v = <Reference refkey={refkey("test2")} />;
         </ts.SourceFile>
       </SourceDirectory>
 
       <ts.SourceFile path="test2.ts">
-        const v = <Reference refkey={refkey("test")} />;
+        const v = <Reference refkey={refkey("test")} />;<hbr />
         <ts.FunctionDeclaration export name="test" />
       </ts.SourceFile>
     </Output>,
@@ -262,9 +289,7 @@ it("handles conflicts with local declarations", () => {
       import { test as test_1 } from "./src/test1.js";
 
       const v = test_1;
-      export function test() {
-        
-      }
+      export function test() {}
     `,
   });
 });

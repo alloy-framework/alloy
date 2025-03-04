@@ -6,9 +6,15 @@ interface ModelProps {
   model: RestApiModel;
 }
 export function Model(props: ModelProps) {
-  return <ts.InterfaceDeclaration export name={props.model.name} refkey={refkey(props.model)}>
-    <For each={props.model.properties}>
-      {(prop) => <ModelProperty property={prop} />}
-    </For>
-  </ts.InterfaceDeclaration>;
+  return (
+    <ts.InterfaceDeclaration
+      export
+      name={props.model.name}
+      refkey={refkey(props.model)}
+    >
+      <For each={props.model.properties} comma hardline enderPunctuation>
+        {(prop) => <ModelProperty property={prop} />}
+      </For>
+    </ts.InterfaceDeclaration>
+  );
 }

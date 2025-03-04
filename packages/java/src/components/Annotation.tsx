@@ -1,10 +1,10 @@
-import { code } from "@alloy-js/core";
-import { Child } from "@alloy-js/core/jsx-runtime";
-import { collectNamedArguments } from "../arguments.js";
+import { Match, Switch } from "@alloy-js/core";
+import { Children } from "@alloy-js/core/jsx-runtime";
+import { NamedArgumentList } from "./NamedArgumentList.jsx";
 
 export interface AnnotationProps {
-  type: Child;
-  value?: Record<string, Child>; // Either single value or named values if many
+  type: Children;
+  value?: Record<string, Children>; // Either single value or named values if many
 }
 
 /**
@@ -12,12 +12,23 @@ export interface AnnotationProps {
  * For instance, use this if you want to annotate a method with '\@Override'.
  */
 export function Annotation(props: AnnotationProps) {
-  const args =
-    props.value ?
-      Object.keys(props.value).length === 1 ?
-        Object.values(props.value)[0]
-      : collectNamedArguments(props.value as Record<string, Child>)
-    : "";
-  const supplyingArgs = props.value ? code`(${args})` : "";
-  return code`@${props.type}${supplyingArgs}`;
+  return (
+    <>
+      @{props.type}
+      <Switch>
+        <Match
+          when={
+            props.value &&
+            Object.keys(props.value).length === 1 &&
+            "value" in props.value
+          }
+        >
+          ({props.value!["value"]})
+        </Match>
+        <Match when={!!props.value}>
+          <NamedArgumentList args={props.value!} />
+        </Match>
+      </Switch>
+    </>
+  );
 }

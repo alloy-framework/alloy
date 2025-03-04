@@ -1,4 +1,4 @@
-import { Children, code, Name } from "@alloy-js/core";
+import { Block, Children, Name } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 
@@ -18,11 +18,12 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
 
-  return <Declaration {...props} nameKind="interface">
-    interface <Name />{extendsPart} <InterfaceExpression>
-      {props.children}
-    </InterfaceExpression>
-  </Declaration>;
+  return (
+    <Declaration {...props} nameKind="interface">
+      interface <Name />
+      {extendsPart} <InterfaceExpression>{props.children}</InterfaceExpression>
+    </Declaration>
+  );
 }
 
 export interface InterfaceExpressionProps {
@@ -30,11 +31,7 @@ export interface InterfaceExpressionProps {
 }
 
 export function InterfaceExpression(props: InterfaceExpressionProps) {
-  return code`
-    {
-      ${props.children}
-    }
-  `;
+  return <Block>{props.children}</Block>;
 }
 
 export interface InterfaceMemberProps {
@@ -55,8 +52,18 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   const optionality = props.optional ? "?" : "";
   const readonly = props.readonly ? "readonly " : "";
   if (props.indexer) {
-    return <>[{props.indexer}]: {type}</>;
+    return (
+      <>
+        [{props.indexer}]: {type}
+      </>
+    );
   } else {
-    return <>{readonly}{namer.getName(props.name!, "interface-member")}{optionality}: {type}</>;
+    return (
+      <>
+        {readonly}
+        {namer.getName(props.name!, "interface-member")}
+        {optionality}: {type}
+      </>
+    );
   }
 }

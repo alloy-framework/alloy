@@ -1,10 +1,10 @@
 import { Children, code } from "@alloy-js/core";
-import { collectGenerics, GenericTypes } from "../generics.js";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Parameters } from "./Parameters.js";
+import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
 
-export interface MethodProps extends ObjectModifiers, GenericTypes {
+export interface MethodProps extends ModifierProps, TypeParametersProps {
   name: string;
   return?: Children;
   throws?: Children;
@@ -15,18 +15,20 @@ export interface MethodProps extends ObjectModifiers, GenericTypes {
 export function Method(props: MethodProps) {
   const params = <Parameters parameters={props.parameters}></Parameters>;
   const name = useJavaNamePolicy().getName(props.name, "method");
-  const modifiers = collectModifiers(props);
+  const modifiers = <Modifiers {...props} />;
   const throwsClause = props.throws ? code` throws ${props.throws}` : "";
-  const generics = props.generics ?
-    code`${collectGenerics(props.generics)}${" "}`
-  : "";
-  const sBody = props.children !== undefined ?
-    code`
+  const generics =
+    props.generics ?
+      code`${(<TypeParameters generics={props.generics} />)}${" "}`
+    : "";
+  const sBody =
+    props.children !== undefined ?
+      code`
     ${" "}{
       ${props.children}
     }
   `
-  : ";";
+    : ";";
   return code`
         ${modifiers}${generics}${props.return ?? "void"} ${name}(${params})${throwsClause}${sBody}
     `;

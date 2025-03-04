@@ -6,16 +6,13 @@ import { assertFileContents, testRender, toSourceText } from "./utils.js";
 
 it("works", () => {
   const res = toSourceText(
-    <jv.Class public abstract final name='TestClass'>
-    </jv.Class>,
+    <jv.Class public abstract final name="TestClass"></jv.Class>,
   );
 
   expect(res).toBe(d`
     package me.test.code;
 
-    public abstract final class TestClass {
-      
-    }
+    public abstract final class TestClass {}
   `);
 });
 
@@ -23,13 +20,15 @@ it("extends class", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TestSuperclass.java">
-        <jv.Class public name='TestSuperclass'>
-        </jv.Class>
+        <jv.Class public name="TestSuperclass"></jv.Class>
       </jv.SourceFile>
-      <jv.PackageDirectory package='import'>
+      <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class public name='TestSubclass' extends={refkey("TestSuperclass")}>
-          </jv.Class>
+          <jv.Class
+            public
+            name="TestSubclass"
+            extends={refkey("TestSuperclass")}
+          ></jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
@@ -41,9 +40,7 @@ it("extends class", () => {
 
       import me.test.code.TestSuperclass;
 
-      public class TestSubclass extends TestSuperclass {
-        
-      }
+      public class TestSubclass extends TestSuperclass {}
     `,
   });
 });
@@ -52,7 +49,7 @@ it("implements interfaces", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="InterfaceOne.java">
-        <jv.Declaration name='InterfaceOne'>
+        <jv.Declaration name="InterfaceOne">
           {code`
             public interface InterfaceOne {
             }
@@ -60,7 +57,7 @@ it("implements interfaces", () => {
         </jv.Declaration>
       </jv.SourceFile>
       <jv.SourceFile path="InterfaceTwo.java">
-        <jv.Declaration name='InterfaceTwo'>
+        <jv.Declaration name="InterfaceTwo">
           {code`
             public interface InterfaceTwo {
             }
@@ -69,8 +66,11 @@ it("implements interfaces", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestSubclass.java">
-          <jv.Class public name="TestSubclass" implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}>
-          </jv.Class>
+          <jv.Class
+            public
+            name="TestSubclass"
+            implements={[refkey("InterfaceOne"), refkey("InterfaceTwo")]}
+          ></jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
@@ -83,9 +83,7 @@ it("implements interfaces", () => {
       import me.test.code.InterfaceOne;
       import me.test.code.InterfaceTwo;
 
-      public class TestSubclass implements InterfaceOne, InterfaceTwo {
-        
-      }
+      public class TestSubclass implements InterfaceOne, InterfaceTwo {}
     `,
   });
 });
@@ -94,7 +92,7 @@ it("defines generics", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TypeOne.java">
-        <jv.Declaration name='TypeOne'>
+        <jv.Declaration name="TypeOne">
           {code`
             public interface TypeOne {
             }
@@ -102,7 +100,7 @@ it("defines generics", () => {
         </jv.Declaration>
       </jv.SourceFile>
       <jv.SourceFile path="TypeTwo.java">
-        <jv.Declaration name='TypeTwo'>
+        <jv.Declaration name="TypeTwo">
           {code`
             public interface TypeTwo {
             }
@@ -111,11 +109,20 @@ it("defines generics", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestGenerics.java">
-          <jv.Class public name="TestGenerics" generics={{ T: refkey("TypeOne"), N: refkey("TypeTwo"), J: 'String', K: ''}}>
-          </jv.Class>
+          <jv.Class
+            public
+            name="TestGenerics"
+            generics={{
+              T: refkey("TypeOne"),
+              N: refkey("TypeTwo"),
+              J: "String",
+              K: "",
+            }}
+          ></jv.Class>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
+    { printWidth: 100 },
   );
 
   assertFileContents(res, {
@@ -125,9 +132,7 @@ it("defines generics", () => {
       import me.test.code.TypeOne;
       import me.test.code.TypeTwo;
 
-      public class TestGenerics<T extends TypeOne, N extends TypeTwo, J extends String, K> {
-        
-      }
+      public class TestGenerics<T extends TypeOne, N extends TypeTwo, J extends String, K> {}
     `,
   });
 });

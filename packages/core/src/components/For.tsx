@@ -1,30 +1,26 @@
 import { Children, memo } from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref } from "@vue/reactivity";
-import { JoinOptions, mapJoin } from "../utils.js";
+import { mapJoin } from "../utils.js";
+import { BaseListProps, baseListPropsToMapJoinArgs } from "./List.jsx";
 
-export type UnwrapMaybeRef<T> = T extends Ref<infer U> ? U : T;
+export type UnwrapMaybeRefOrMemo<T> =
+  T extends Ref<infer U> ? U
+  : T extends () => infer U ? U
+  : T;
 
-export interface ForProps<T extends any[] | Ref<any[]>, U extends Children> {
+export interface ForProps<
+  T extends any[] | Ref<any[]> | (() => any[]),
+  U extends Children,
+> extends BaseListProps {
   /**
    * The array to iterate over.
    */
   each: T;
 
   /**
-   * The string to join the items with. By default, this is a line break.
-   */
-  joiner?: string;
-
-  /**
-   * The string to end the items with. Only emitted when there is more than one
-   * item.
-   */
-  ender?: string;
-
-  /**
    * A function to call for each item.
    */
-  children: (item: UnwrapMaybeRef<T>[number], index: number) => U;
+  children: (item: UnwrapMaybeRefOrMemo<T>[number], index: number) => U;
 }
 
 /**
@@ -54,23 +50,20 @@ export interface ForProps<T extends any[] | Ref<any[]>, U extends Children> {
  *
  * @see {@link (mapJoin:1)} for mapping arrays to elements outside of JSX templates.
  */
-export function For<T extends any[] | Ref<any[]>, U extends Children>(
-  props: ForProps<T, U>,
-) {
+export function For<
+  T extends any[] | Ref<any[]> | (() => any[]),
+  U extends Children,
+>(props: ForProps<T, U>) {
   const cb = props.children;
-  const options: JoinOptions = {};
-  if (Object.hasOwn(props, "joiner")) {
-    options.joiner = props.joiner;
-  }
-
-  if (Object.hasOwn(props, "ender")) {
-    options.ender = props.ender;
-  }
+  const options = baseListPropsToMapJoinArgs(props);
+  options.skipFalsy = true;
   return memo(() => {
     const maybeRef = props.each;
 
     return (mapJoin as any)(
-      () => (isRef(maybeRef) ? maybeRef.value : maybeRef),
+      typeof maybeRef === "function" ? maybeRef : (
+        () => (isRef(maybeRef) ? maybeRef.value : maybeRef)
+      ),
       cb,
       options,
     );

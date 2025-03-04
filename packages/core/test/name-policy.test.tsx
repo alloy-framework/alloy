@@ -11,9 +11,9 @@ it("is applied by output", () => {
     const namer = useNamePolicy();
     return namer!.getName("hi", "name");
   }
-  expect(<Output namePolicy={policy}>
-    <Foo />
-  </Output>).toRenderTo(
-    "namehi",
-  );
+  expect(
+    <Output namePolicy={policy}>
+      <Foo />
+    </Output>,
+  ).toRenderTo("namehi");
 });

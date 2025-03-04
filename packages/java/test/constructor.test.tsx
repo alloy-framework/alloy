@@ -7,23 +7,21 @@ import { assertFileContents, testRender, toSourceText } from "./utils.js";
 it("works", () => {
   const res = toSourceText(
     <>
-    <Declaration name="TestClass">
-      {code`
+      <Declaration name="TestClass">
+        {code`
         public class TestClass {
-          ${<jv.Constructor public name="TestClass" />}
+          ${(<jv.Constructor public name="TestClass" />)}
         }
       `}
-    </Declaration>
-  </>,
+      </Declaration>
+    </>,
   );
 
   expect(res).toBe(d`
     package me.test.code;
 
     public class TestClass {
-      public TestClass() {
-        
-      }
+      public TestClass() {}
     }
   `);
 });
@@ -31,23 +29,21 @@ it("works", () => {
 it("takes name from class", () => {
   const res = toSourceText(
     <>
-    <Declaration name="TestClass">
-      {code`
+      <Declaration name="TestClass">
+        {code`
         public class TestClass {
-          ${<jv.Constructor public />}
+          ${(<jv.Constructor public />)}
         }
       `}
-    </Declaration>
-  </>,
+      </Declaration>
+    </>,
   );
 
   expect(res).toBe(d`
     package me.test.code;
 
     public class TestClass {
-      public TestClass() {
-        
-      }
+      public TestClass() {}
     }
   `);
 });
@@ -56,22 +52,27 @@ it("declares parameters", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="Model.java">
-        <jv.Declaration name='Model'>
+        <jv.Declaration name="Model">
           {code`
             public class Model {
             }
           `}
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='imports'>
+      <jv.PackageDirectory package="imports">
         <jv.SourceFile path="TestClass.java">
           <Declaration name="TestClass">
             {code`
               public class TestClass {
-                ${<jv.Constructor public parameters={{
-                  type: refkey("Model"),
-                  age: "int"
-                }} />}
+                ${(
+                  <jv.Constructor
+                    public
+                    parameters={{
+                      type: refkey("Model"),
+                      age: "int",
+                    }}
+                  />
+                )}
               }
             `}
           </Declaration>
@@ -87,9 +88,7 @@ it("declares parameters", () => {
       import me.test.code.Model;
 
       public class TestClass {
-        public TestClass(Model type, int age) {
-          
-        }
+        public TestClass(Model type, int age) {}
       }
     `,
   });

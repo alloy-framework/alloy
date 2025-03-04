@@ -1,15 +1,18 @@
 // Much of the implementations in this file are inspired by vuerx-js
 // See: https://github.com/ryansolid/vuerx-jsx.
 import {
+  isReactive,
   pauseTracking,
+  proxyRefs,
   Ref,
   resetTracking,
   shallowRef,
   stop,
+  toRefs,
   effect as vueEffect,
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
-import { RenderTextTree } from "./render.js";
+import { RenderedTextTree } from "./render.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -57,7 +60,7 @@ export type ElementCacheKey =
   | ComponentCreator
   | (() => unknown)
   | CustomContext;
-export type ElementCache = Map<ElementCacheKey, RenderTextTree>;
+export type ElementCache = Map<ElementCacheKey, RenderedTextTree>;
 
 export interface RootOptions {
   componentOwner?: ComponentCreator<any>;
@@ -201,24 +204,24 @@ export type Child =
   | null
   | void
   | (() => Children)
-  | Child[]
   | Ref
   | Refkey
-  | CustomContext;
+  | CustomContext
+  | IntrinsicElement;
 
-export type Children = Child | Child[];
+export type Children = Child | Children[];
 export type Props = Record<string, any>;
 
 export interface ComponentDefinition<TProps = Props> {
-  (props: TProps): Child | Children;
+  (props: TProps): Children;
 }
 export interface Component<TProps = Props> {
-  (props: TProps): Child | Children;
+  (props: TProps): Children;
   tag?: symbol;
 }
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
-  (): Child | Children;
+  (): Children;
   props: Props;
   tag?: symbol;
 }
@@ -290,8 +293,30 @@ export function isComponentCreator(item: unknown): item is ComponentCreator {
  */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace JSX {
-  export interface IntrinsicElements {}
-  export type ElementType = ComponentDefinition<any>;
+  export interface IntrinsicElements {
+    group: { shouldBreak?: boolean; id?: symbol; children: Children };
+    line: {};
+    br: {};
+    hardline: {};
+    hbr: {};
+    softline: {};
+    sbr: {};
+    literalline: {};
+    lbr: {};
+    indent: { children: Children };
+    fill: { children: Children };
+    breakParent: {};
+    ifBreak: { children: Children; flatContents?: Children; groupId?: symbol };
+    lineSuffix: { children: Children };
+    lineSuffixBoundary: {};
+    dedent: { children: Children };
+    align:
+      | { children: Children; width: number }
+      | { children: Children; string: string };
+    markAsRoot: { children: Children };
+    dedentToRoot: { children: Children };
+  }
+  export type ElementType = string | ComponentDefinition<any>;
   export type Element = Children;
   export interface ElementChildrenAttribute {
     children: {};
@@ -329,6 +354,73 @@ export function taggedComponent<TProps = Props>(
   return component;
 }
 
+export const intrinsicElementKey = Symbol();
+
+export type IndentIntrinsicElement = IntrinsicElementBase<"indent">;
+export type BrIntrinsicElement = IntrinsicElementBase<"br">;
+export type LineIntrinsicElement = IntrinsicElementBase<"line">;
+export type HbrIntrinsicElement = IntrinsicElementBase<"hbr">;
+export type HardlineIntrinsicElement = IntrinsicElementBase<"hardline">;
+export type SbrIntrinsicElement = IntrinsicElementBase<"sbr">;
+export type SoftlineIntrinsicElement = IntrinsicElementBase<"softline">;
+export type GroupIntrinsicElement = IntrinsicElementBase<"group">;
+export type AlignIntrinsicElement = IntrinsicElementBase<"align">;
+export type FillIntrinsicElement = IntrinsicElementBase<"fill">;
+export type BreakParentIntrinsicElement = IntrinsicElementBase<"breakParent">;
+export type LineSuffixIntrinsicElement = IntrinsicElementBase<"lineSuffix">;
+export type LineSuffixBoundaryIntrinsicElement =
+  IntrinsicElementBase<"lineSuffixBoundary">;
+export type DedentIntrinsicElement = IntrinsicElementBase<"dedent">;
+export type DedentToRootIntrinsicElement = IntrinsicElementBase<"dedentToRoot">;
+export type MarkAsRootIntrinsicElement = IntrinsicElementBase<"markAsRoot">;
+export type LiterallineIntrinsicElement = IntrinsicElementBase<"literalline">;
+export type LbrIntrinsicElement = IntrinsicElementBase<"lbr">;
+export type IfBreakIntrinsicElement = IntrinsicElementBase<"ifBreak">;
+
+export type IntrinsicElement =
+  | IndentIntrinsicElement
+  | BrIntrinsicElement
+  | LineIntrinsicElement
+  | HbrIntrinsicElement
+  | HardlineIntrinsicElement
+  | SbrIntrinsicElement
+  | SoftlineIntrinsicElement
+  | GroupIntrinsicElement
+  | AlignIntrinsicElement
+  | FillIntrinsicElement
+  | BreakParentIntrinsicElement
+  | LineSuffixIntrinsicElement
+  | LineSuffixBoundaryIntrinsicElement
+  | DedentIntrinsicElement
+  | LiterallineIntrinsicElement
+  | LbrIntrinsicElement
+  | DedentToRootIntrinsicElement
+  | MarkAsRootIntrinsicElement
+  | IfBreakIntrinsicElement;
+
+export interface IntrinsicElementBase<
+  TKey extends keyof JSX.IntrinsicElements = keyof JSX.IntrinsicElements,
+> {
+  [intrinsicElementKey]: true;
+  name: TKey;
+  props: JSX.IntrinsicElements[TKey];
+}
+export function createIntrinsic<TKey extends keyof JSX.IntrinsicElements>(
+  name: TKey,
+  props: JSX.IntrinsicElements[TKey],
+): IntrinsicElementBase<TKey> {
+  return {
+    [intrinsicElementKey]: true,
+    name,
+    props,
+  };
+}
+
+export function isIntrinsicElement(type: unknown): type is IntrinsicElement {
+  return (
+    typeof type === "object" && type !== null && intrinsicElementKey in type
+  );
+}
 export function mergeProps<T, U>(source: T, source1: U): T & U;
 export function mergeProps<T, U, V>(
   source: T,
@@ -365,6 +457,61 @@ export function mergeProps(...sources: any): any {
     }
   }
   return target;
+}
+
+export type SplitProps<T, K extends (readonly (keyof T)[])[]> = [
+  ...{
+    [P in keyof K]: P extends `${number}` ?
+      Pick<T, Extract<K[P], readonly (keyof T)[]>[number]>
+    : never;
+  },
+  { [P in keyof T as Exclude<P, K[number][number]>]: T[P] },
+];
+
+export function splitProps<
+  T extends Record<any, any>,
+  K extends [readonly (keyof T)[], ...(readonly (keyof T)[])[]],
+>(props: T, ...keys: K): SplitProps<T, K> {
+  if (isReactive(props)) {
+    const refs = untrack(() => toRefs(props));
+    const remainingKeys = new Set(Object.keys(refs));
+
+    const result: any = keys.map((keySet) => {
+      const resultSet: any = {};
+      for (const key of keySet) {
+        resultSet[key] = refs[key];
+        remainingKeys.delete(key as string);
+      }
+      return proxyRefs(resultSet);
+    });
+
+    const remaining: any = {};
+    for (const key of remainingKeys) {
+      remaining[key] = refs[key];
+    }
+
+    return [...result, proxyRefs(remaining)] as any;
+  }
+
+  const descriptors = Object.getOwnPropertyDescriptors(props);
+  const remainingKeys = new Set(Object.keys(descriptors));
+  const result: any = keys.map((keySet) => {
+    const resultSet: any = {};
+    for (const key of keySet) {
+      if (key in descriptors) {
+        Object.defineProperty(resultSet, key, descriptors[key]);
+        remainingKeys.delete(key as string);
+      }
+    }
+    return resultSet;
+  });
+
+  const remaining: any = {};
+  for (const key of remainingKeys) {
+    Object.defineProperty(remaining, key, descriptors[key]);
+  }
+
+  return [...result, remaining] as any;
 }
 
 function shouldDebug() {

@@ -56,7 +56,9 @@ export function TSConfigJson(props: TSConfigJsonProps) {
     return JSON.stringify(jsonContent, null, 2);
   });
 
-  return <SourceFile path="tsconfig.json" filetype="json">
-    {jsonContent}
-  </SourceFile>;
+  return (
+    <SourceFile path="tsconfig.json" filetype="json">
+      {jsonContent}
+    </SourceFile>
+  );
 }

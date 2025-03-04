@@ -1,16 +1,16 @@
 // this code is split into a tokenizer and a parser of sorts because I feel like
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
-import { Child, Indent } from "@alloy-js/core";
-
+import { Child, Children } from "@alloy-js/core/jsx-runtime";
+import { hbr, indent } from "./components/stc/index.js";
 interface IndentLevelData {
   kind: "indent";
-  children: (string | Child | IndentLevelData)[];
+  children: (string | Children | IndentLevelData)[];
   pendingLines: string[];
 }
 export function code(
   template: TemplateStringsArray,
-  ...substitutions: Child[]
+  ...substitutions: Children[]
 ) {
   const indentNodes: IndentLevelData[] = [
     {
@@ -39,6 +39,8 @@ export function code(
   popIndent();
   flushLines();
 
+  return childNodesFor(indentNodes[0]);
+
   function childNodesFor(indentNode: IndentLevelData): Child[] {
     return indentNode.children.map((child) => {
       if (
@@ -46,15 +48,12 @@ export function code(
         child !== null &&
         (child as any).kind === "indent"
       ) {
-        return () =>
-          Indent({ children: childNodesFor(child as IndentLevelData) });
+        return indent({ children: childNodesFor(child as IndentLevelData) });
       } else {
         return child as Child;
       }
     });
   }
-
-  return childNodesFor(indentNodes[0]);
 
   function pushIndent() {
     flushLines();
@@ -63,7 +62,7 @@ export function code(
       children: [],
       pendingLines: [""],
     };
-    indentNodes.at(-1)!.children.push(newIndent as any);
+    indentNodes.at(-1)!.children.push(newIndent);
     indentNodes.push(newIndent);
   }
 
@@ -84,7 +83,13 @@ export function code(
   }
   function flushLines() {
     const currentIndent = indentNodes.at(-1)!;
-    currentIndent.children.push(currentIndent.pendingLines.join("\n"));
+    currentIndent.children.push(
+      ...currentIndent.pendingLines
+        .map((str, index) =>
+          index < currentIndent.pendingLines.length - 1 ? [str, hbr()] : [str],
+        )
+        .flat(),
+    );
     currentIndent.pendingLines = [];
   }
 }
@@ -103,12 +108,12 @@ interface LineToken extends ChildTokenBase {
 
 interface OtherToken extends ChildTokenBase {
   kind: "other";
-  value: Child;
+  value: Children;
 }
 
 function* childTokens(
   template: TemplateStringsArray,
-  substitutions: Child[],
+  substitutions: Children[],
 ): IterableIterator<ChildToken> {
   let newline = false;
   const indentStack: { level: number; literalIndent: string }[] = [

@@ -1,10 +1,14 @@
-import helperModuleImports from "@babel/helper-module-imports";
 import { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 interface Options {
   alloyModuleName: string | undefined;
+  legacyWhitespace: boolean;
 }
 
+const FormattingCommands = {
+  Group: "group",
+  Indent: "indent",
+};
 const visited = new Set();
 export function transformJSX(
   path: NodePath<
@@ -38,6 +42,14 @@ function transformElement(
 ) {
   const children = path.get("children");
   if (children.length === 0) {
+    return;
+  }
+
+  if (!opts.legacyWhitespace) {
+    stripLeadingWhitespace(path);
+    path.get("children").forEach((child) => {
+      transformJSX(child, { opts });
+    });
     return;
   }
 
@@ -89,7 +101,8 @@ function transformElement(
 
   function createIndent() {
     if (currentIndent) return;
-    const id = registerIndent(path, opts);
+    // const id = registerIndent(path, opts);
+    const id = t.jsxIdentifier("indent");
     currentIndent = t.jsxElement(
       t.jsxOpeningElement(id, []),
       t.jsxClosingElement(id),
@@ -110,36 +123,6 @@ function transformElement(
     if (indentedLines.length === 0) return;
     currentIndent!.children.push(createJSXText(indentedLines.join("\n")));
     indentedLines = [];
-  }
-}
-
-function registerIndent(path: NodePath, opts: Options) {
-  const moduleName = opts.alloyModuleName ?? "@alloy-js/core:Indent";
-  let imports: Map<string, any>;
-  if (path.scope.getProgramParent().data.imports) {
-    imports = path.scope.getProgramParent().data.imports as any;
-  } else {
-    imports = new Map();
-    path.scope.getProgramParent().data.imports = imports;
-  }
-
-  if (!imports.has(`${moduleName}:Indent`)) {
-    const id: t.Identifier = helperModuleImports.addNamed(
-      path,
-      "Indent",
-      moduleName,
-      {
-        nameHint: `$Indent`,
-      },
-    );
-    imports.set(`${moduleName}:Indent`, id);
-    return t.jsxIdentifier(id.name);
-  } else {
-    const id = imports.get(`${moduleName}:Indent`);
-    // the cloning is required to play well with babel-preset-env which is
-    // transpiling import as we add them and using the same identifier causes
-    // problems with the multiple identifiers of the same thing
-    return t.jsxIdentifier(id.name);
   }
 }
 
@@ -241,6 +224,24 @@ function* childTokens(
         sourcePath: child as OtherToken["sourcePath"],
         indented,
       };
+    }
+  }
+}
+
+// Remove all leading and trailing whitespace and replace any amount of
+// interstitial whitespace with a single space.
+
+function stripLeadingWhitespace(path: NodePath<t.JSXElement | t.JSXFragment>) {
+  const children = path.get("children");
+  for (const child of children) {
+    if (child.isJSXText()) {
+      let currentValue = child.node.value;
+      currentValue = currentValue.replace(
+        /(^(\s*\r?\n\s*)+)|((\s*\r?\n\s*)+$)/g,
+        "",
+      );
+      child.node.value = currentValue.replace(/(\s*\r?\n\s*)+/g, " ");
+      child.node.extra!.raw = child.node.value;
     }
   }
 }

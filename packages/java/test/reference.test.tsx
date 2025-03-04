@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { Block, refkey } from "@alloy-js/core";
 import { it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { assertFileContents, testRender } from "./utils.js";
@@ -8,18 +8,19 @@ it("imports reference to source file", () => {
     <>
       <jv.SourceFile path="TestReference.java">
         <jv.Declaration name="TestReference">
-          public class TestReference {"{"}
-            public TestReference() {"{}"}
-          {"}"}
+          public class TestReference{" "}
+          <Block>public TestReference() {"{}"}</Block>
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='import'>
+      <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestImport.java">
           <jv.Declaration name="TestImport">
-            public class TestImport {"{"}
+            public class TestImport{" "}
+            <Block>
               {refkey("TestReference")} myImportedVariable;
+              <hbr />
               public TestImport() {"{}"}
-            {"}"}
+            </Block>
           </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
@@ -52,17 +53,18 @@ it("doesn't import if in same package", () => {
     <>
       <jv.SourceFile path="TestReference.java">
         <jv.Declaration name="TestReference">
-          public class TestReference {"{"}
-            public TestReference() {"{}"}
-          {"}"}
+          public class TestReference{" "}
+          <Block>public TestReference() {"{}"}</Block>
         </jv.Declaration>
       </jv.SourceFile>
       <jv.SourceFile path="TestImport.java">
         <jv.Declaration name="TestImport">
-          public class TestImport {"{"}
+          public class TestImport{" "}
+          <Block>
             {refkey("TestReference")} myImportedVariable;
+            <hbr />
             public TestImport() {"{}"}
-          {"}"}
+          </Block>
         </jv.Declaration>
       </jv.SourceFile>
     </>,

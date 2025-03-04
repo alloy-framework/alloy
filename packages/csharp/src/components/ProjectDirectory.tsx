@@ -35,9 +35,10 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
     props.targetFrameworkMoniker = "net8.0";
   }
 
-  return <core.SourceDirectory path={join(props.path, props.name)}>
-    <core.SourceFile path={props.name+".csproj"} filetype="xml">
-      {core.code`
+  return (
+    <core.SourceDirectory path={join(props.path, props.name)}>
+      <core.SourceFile path={props.name + ".csproj"} filetype="xml">
+        {core.code`
         <Project Sdk="Microsoft.NET.Sdk">
           <PropertyGroup>
             <Version>${props.version}</Version>
@@ -46,9 +47,10 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
           </PropertyGroup>
         </Project>
       `}
-    </core.SourceFile>
-    <core.SourceDirectory path={props.srcDir}>
-      {props.children}
+      </core.SourceFile>
+      <core.SourceDirectory path={props.srcDir}>
+        {props.children}
+      </core.SourceDirectory>
     </core.SourceDirectory>
-  </core.SourceDirectory>;
+  );
 }

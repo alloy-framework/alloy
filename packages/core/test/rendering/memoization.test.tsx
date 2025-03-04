@@ -22,9 +22,7 @@ it("memoizes child components", () => {
     return list;
   });
 
-  const template = <>
-    {items}
-  </>;
+  const template = <>{items}</>;
 
   renderTree(template);
   doThing.value = true;

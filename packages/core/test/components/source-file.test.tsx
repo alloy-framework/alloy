@@ -18,7 +18,9 @@ it("tracks its content", () => {
   const _ = renderTree(
     <Output>
       <Test />
-      <SourceFile path="hi.txt" filetype="text">hello!</SourceFile>
+      <SourceFile path="hi.txt" filetype="text">
+        hello!
+      </SourceFile>
     </Output>,
   );
   expect(context!.contents.length).toEqual(1);
@@ -31,43 +33,21 @@ it("has reactive context", () => {
       return sdContext.contents.map((v) => v.path).join(" ");
     });
 
-    return <SourceFile path="contents.txt" filetype="text">{allFiles.value}</SourceFile>;
+    return (
+      <SourceFile path="contents.txt" filetype="text">
+        {allFiles.value}
+      </SourceFile>
+    );
   }
 
   const tree = render(
     <Output>
-      <SourceFile path="hi.txt" filetype="text">hello!</SourceFile>
+      <SourceFile path="hi.txt" filetype="text">
+        hello!
+      </SourceFile>
       <TrackContents />
     </Output>,
   );
 
   expect(tree.contents[1].contents).toEqual("hi.txt contents.txt");
-});
-
-it("can change its indent level", () => {
-  function Nested() {
-    return <>
-      base
-        indented
-    </>;
-  }
-  expect(
-    <Output>
-    <SourceFile path="hi.txt" filetype="text" indent="    ">
-      hello
-        there
-
-      <Nested />
-        <Nested />
-    </SourceFile>
-  </Output>,
-  ).toRenderTo(`
-    hello
-        there
-
-    base
-        indented
-        base
-            indented
-  `);
 });

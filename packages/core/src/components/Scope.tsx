@@ -21,7 +21,9 @@ export function Scope(props: ScopeProps) {
     scope = binder.createScope({ kind, name: props.name! });
   }
 
-  return <ScopeContext.Provider value={scope}>
+  return (
+    <ScopeContext.Provider value={scope}>
       {props.children}
-    </ScopeContext.Provider>;
+    </ScopeContext.Provider>
+  );
 }

@@ -51,7 +51,9 @@ export function Declaration(props: DeclarationProps) {
     });
   }
 
-  return <DeclarationContext.Provider value={declaration}>
-    {props.children}
-  </DeclarationContext.Provider>;
+  return (
+    <DeclarationContext.Provider value={declaration}>
+      {props.children}
+    </DeclarationContext.Provider>
+  );
 }

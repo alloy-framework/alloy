@@ -34,9 +34,15 @@ export function VarDeclaration(props: VarDeclarationProps) {
 
   const assignmentContext = createAssignmentContext(sym);
 
-  return <CoreDeclaration symbol={sym}>
-    {props.export ? "export " : ""}{props.default ? "default " : ""}{keyword} <Name />{type} = <AssignmentContext.Provider value={assignmentContext}>
-      {props.value ?? props.children};
-    </AssignmentContext.Provider>
-  </CoreDeclaration>;
+  return (
+    <CoreDeclaration symbol={sym}>
+      {props.export ? "export " : ""}
+      {props.default ? "default " : ""}
+      {keyword} <Name />
+      {type} ={" "}
+      <AssignmentContext.Provider value={assignmentContext}>
+        {props.value ?? props.children}
+      </AssignmentContext.Provider>
+    </CoreDeclaration>
+  );
 }

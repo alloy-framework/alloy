@@ -14,26 +14,28 @@ it("renders arrays", () => {
   const template = jsonTest([1, "hello"]);
 
   expect(template).toRenderTo(`
-    [
-      1,
-      "hello"
-    ]
+    [1, "hello"]
   `);
 });
 
 it("renders nested arrays", () => {
-  const template = jsonTest([1, ["hello"]]);
+  const template = jsonTest([1, ["hello there this is a long thing"]]);
 
-  expect(template).toRenderTo(`
+  expect(template).toRenderTo(
+    `
     [
       1,
-      ["hello"]
+      [
+        "hello there this is a long thing"
+      ]
     ]
-  `);
+  `,
+    { printWidth: 20 },
+  );
 });
 
 it("works reactively", () => {
-  const arr = reactive([] as number[]);
+  const arr = reactive([] as (number | string)[]);
 
   const template = jsonTest(arr);
   const tree = renderTree(template);
@@ -45,9 +47,15 @@ it("works reactively", () => {
 
   arr.push(2);
   expect(printTree(tree)).toEqual(d`
+    [1, 2]
+  `);
+
+  arr.push("this is a long item that should be wrapped");
+  expect(printTree(tree, { printWidth: 20 })).toEqual(d`
     [
       1,
-      2
+      2,
+      "this is a long item that should be wrapped"
     ]
   `);
 });

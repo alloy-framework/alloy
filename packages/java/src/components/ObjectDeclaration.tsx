@@ -1,14 +1,14 @@
 import { Children, code } from "@alloy-js/core";
-import { collectArguments } from "../arguments.js";
-import { ObjectModifiers } from "../object-modifiers.js";
+import { ArgumentList } from "./ArgumentList.jsx";
 import { DeclarationProps } from "./Declaration.js";
+import { ModifierProps } from "./Modifiers.jsx";
 import { Variable } from "./Variable.js";
 
 export interface ObjectDeclarationProps
   extends DeclarationProps,
-    ObjectModifiers {
+    ModifierProps {
   type: Children;
-  arguments?: Children;
+  args?: Children[];
 }
 
 /**
@@ -16,7 +16,7 @@ export interface ObjectDeclarationProps
  * Declares it with 'new' and passes arguments to the constructor of the object, if any
  */
 export function ObjectDeclaration(props: ObjectDeclarationProps) {
-  const args = props.arguments ? collectArguments(props.arguments) : "";
-  const value = code`new ${props.type}(${args})`;
+  const args = <ArgumentList args={props.args} />;
+  const value = code`new ${props.type}${args}`;
   return <Variable {...props} value={value} />;
 }

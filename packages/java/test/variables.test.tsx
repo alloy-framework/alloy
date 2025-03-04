@@ -9,7 +9,7 @@ it("works", () => {
     <jv.Declaration name="Test">
       {code`
         class Test {
-          ${<jv.Variable public static final type="String" name='myVar' value={<jv.Value value="Test" /> } />}
+          ${(<jv.Variable public static final type="String" name="myVar" value={<jv.Value value="Test" />} />)};
         }
       `}
     </jv.Declaration>,
@@ -28,19 +28,19 @@ it("works with external type", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="Model.java">
-        <jv.Declaration name='Model'>
+        <jv.Declaration name="Model">
           {code`
             public class Model {
             }
           `}
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='imports'>
+      <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.Variable public static type={refkey("Model")} name='myModel' />}
+                ${(<jv.Variable public static type={refkey("Model")} name="myModel" />)};
               }
             `}
           </Declaration>
@@ -66,19 +66,19 @@ it("declares new object", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="Model.java">
-        <jv.Declaration name='Model'>
+        <jv.Declaration name="Model">
           {code`
             public class Model {
             }
           `}
         </jv.Declaration>
       </jv.SourceFile>
-      <jv.PackageDirectory package='imports'>
+      <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
           <Declaration name="Test">
             {code`
               public class Test {
-                ${<jv.ObjectDeclaration public static type={refkey("Model")} name='myModel' arguments={<jv.Value value="initValue" />} />}
+                ${(<jv.ObjectDeclaration public static type={refkey("Model")} name="myModel" args={[<jv.Value value="initValue" />]} />)};
               }
             `}
           </Declaration>

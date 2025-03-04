@@ -9,7 +9,6 @@ it("exports source files", () => {
   const res = render(
     <Output>
       <PackageDirectory name="greeting-js" path="." version="1.0.0">
-        
         <ts.SourceFile path="greeting.ts">
           <ts.FunctionDeclaration name="getGreeting">
             return "Hello world!";
@@ -20,13 +19,13 @@ it("exports source files", () => {
           <ts.VarDeclaration name="greeting">
             {refkey("getGreeting")}()
           </ts.VarDeclaration>
+          ;<hbr />
           <ts.FunctionDeclaration export name="printGreeting">
             console.log(greeting);
           </ts.FunctionDeclaration>
         </ts.SourceFile>
 
         <ts.BarrelFile export="." />
-        
       </PackageDirectory>
     </Output>,
   );

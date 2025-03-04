@@ -4,17 +4,13 @@ import { describe, expect, it } from "vitest";
 import "../../testing/extend-expect.js";
 
 describe("Indent component", () => {
-  it("indents explicitly indented content on a single line", () => {
-    expect(<>
-      one<Indent>hi</Indent>
-    </>).toRenderTo("onehi");
-  });
-
   it("indents explicitly indented content on a subsequent line", () => {
-    expect(<>
-      one
-      <Indent>hi</Indent>
-    </>).toRenderTo("one\n  hi");
+    expect(
+      <>
+        one
+        <Indent>hi</Indent>
+      </>,
+    ).toRenderTo("one\n  hi");
   });
 
   it("indents explicitly indented content", () => {
@@ -23,6 +19,7 @@ describe("Indent component", () => {
         one
         <Indent>
           hi
+          <hbr />
           bye
         </Indent>
       </>,
@@ -40,19 +37,19 @@ describe("Indent component", () => {
 
     expect(
       <>
-      base
-      <Indent>
-        {getValue()}
-      </Indent>
-      <Indent>
-        {getValue()}
-        bye
-      </Indent>
-      <Indent>
-        bye
-        {getValue()}
-      </Indent>
-    </>,
+        base
+        <Indent>{getValue()}</Indent>
+        <Indent>
+          {getValue()}
+          <hbr />
+          bye
+        </Indent>
+        <Indent>
+          bye
+          <hbr />
+          {getValue()}
+        </Indent>
+      </>,
     ).toRenderTo(`
       base
         hi
@@ -70,11 +67,12 @@ describe("Indent component", () => {
 
     expect(
       <>
-      base
-      <Indent>
-        <Foo /><Foo />
-      </Indent>
-    </>,
+        base
+        <Indent>
+          <Foo />
+          <Foo />
+        </Indent>
+      </>,
     ).toRenderTo(`
       base
         FooFoo
@@ -84,26 +82,26 @@ describe("Indent component", () => {
   it("works with nested indents", () => {
     expect(
       <>
-      base
-      <Indent>
-        1
-        2
+        base
         <Indent>
-          3
-          4
+          1<hbr />2
           <Indent>
-            5
-            6
+            3<hbr />4
+            <Indent>
+              5<hbr />6
+            </Indent>
+            <hbr />
+            7<hbr />8
           </Indent>
-          7
-          8
+          <hbr />
+          9<hbr />
+          10
         </Indent>
-        9
-        10
-      </Indent>
-      11
-      12
-    </>,
+        <hbr />
+        11
+        <hbr />
+        12
+      </>,
     ).toRenderTo(`
       base
         1
@@ -120,489 +118,4 @@ describe("Indent component", () => {
       12
     `);
   });
-});
-
-describe("implicit indenting", () => {
-  it("indents implicitly indented components", () => {
-    function Foo() {
-      return <>
-        hi
-        bye
-      </>;
-    }
-
-    expect(<>
-        one
-          <Foo />
-      </>).toRenderTo(`
-      one
-        hi
-        bye
-    `);
-  });
-
-  it("indents memo substitutions with line breaks properly", () => {
-    function getStr() {
-      return "a\nb";
-    }
-    expect(<>
-      base
-        {getStr()}
-    </>).toRenderTo(`
-      base
-        a
-        b
-    `);
-  });
-
-  it("indents multiple implicitly indented components", () => {
-    function Foo() {
-      return <>
-        hi
-        bye
-      </>;
-    }
-
-    expect(
-      <>
-        one
-          <Foo />
-          <Foo />
-        
-        two
-          <Foo />
-          <Foo />
-      </>,
-    ).toRenderTo(`
-      one
-        hi
-        bye
-        hi
-        bye
-
-      two
-        hi
-        bye
-        hi
-        bye
-    `);
-  });
-
-  it("implictly indents memos", () => {
-    function Foo() {
-      return "Foo";
-    }
-    const hi = "const hi";
-    function getHi() {
-      return "getHi";
-    }
-
-    expect(
-      <>
-      base
-        {getHi()}
-      base {hi}
-        {getHi()}
-      base {getHi()}
-        {getHi()}
-      base <Foo />
-        {getHi()}
-    </>,
-    ).toRenderTo(`
-      base
-        getHi
-      base const hi
-        getHi
-      base getHi
-        getHi
-      base Foo
-        getHi
-    `);
-  });
-
-  it("implictly indents consts", () => {
-    function Foo() {
-      return "Foo";
-    }
-    const hi = "const hi";
-    function getHi() {
-      return "getHi";
-    }
-
-    function ArrComponent() {
-      return [<Foo />, <Foo />];
-    }
-
-    const arr = [<Foo />, <Foo />];
-
-    expect(
-      <>
-      base
-        {hi}
-      base {hi}
-        {hi}
-      base {getHi()}
-        {hi}
-      base <Foo />
-        {hi}
-      base <ArrComponent />
-        {hi}
-      base {arr}
-        {hi}
-    </>,
-    ).toRenderTo(`
-      base
-        const hi
-      base const hi
-        const hi
-      base getHi
-        const hi
-      base Foo
-        const hi
-      base FooFoo
-        const hi
-      base FooFoo
-        const hi
-    `);
-  });
-
-  it("indents children", () => {
-    function Foo(props: any) {
-      return <>
-        a
-        {props.children}
-        b
-      </>;
-    }
-
-    function getChild() {
-      return "hi";
-    }
-    expect(
-      <>
-      base
-        <Foo>
-          child
-          {getChild()}
-        </Foo>
-      </>,
-    ).toRenderTo(`
-    base
-      a
-      child
-      hi
-      b
-    `);
-  });
-
-  it("implicity indents within children", () => {
-    function Foo(props: any) {
-      return <>
-        a
-        {props.children}
-        b
-      </>;
-    }
-
-    function getChild() {
-      return "hi";
-    }
-    expect(
-      <>
-      base
-        <Foo>
-          child
-            {getChild()}
-        </Foo>
-      </>,
-    ).toRenderTo(`
-      base
-        a
-        child
-          hi
-        b
-    `);
-  });
-
-  it("doesn't indent things on the same line", () => {
-    const str = "str";
-    function getStr() {
-      return "getstr";
-    }
-    function Foo() {
-      return "Foo";
-    }
-    expect(
-      <>
-      base
-      {str} {getStr()}
-      item <Foo /> <Foo />
-        {str} {getStr()}
-        item <Foo /> <Foo />
-      </>,
-    ).toRenderTo(`
-      base
-      str getstr
-      item Foo Foo
-        str getstr
-        item Foo Foo
-    `);
-  });
-});
-
-describe("array handling", () => {
-  it("handles a simple array", () => {
-    const simpleArray = [<>hi</>];
-    expect(<>
-      a
-      {simpleArray}
-      b
-    </>).toRenderTo(`
-      a
-      hi
-      b
-    `);
-  });
-
-  it("handles indented simple array", () => {
-    const simpleArray = [<>hi</>];
-    expect(<>
-      a
-        {simpleArray}
-      b
-    </>).toRenderTo(`
-      a
-        hi
-      b
-    `);
-  });
-
-  it("handles indented simple array with line breaks", () => {
-    const val = "hi";
-    function getHi() {
-      return "getHi";
-    }
-    const arr = [<>{val}</>, "\n", <>{getHi()}</>];
-    expect(<>
-      a
-        {arr}
-      b
-    </>).toRenderTo(`
-      a
-        hi
-        getHi
-      b
-    `);
-  });
-
-  it("handles indented component array", () => {
-    function Foo() {
-      return "Foo";
-    }
-    const arr = [<Foo />, <Foo />];
-    expect(<>
-      a
-        {arr}
-      b
-    </>).toRenderTo(`
-      a
-        FooFoo
-      b
-    `);
-  });
-
-  it("handles indented component array with line breaks", () => {
-    function Foo() {
-      return "Foo";
-    }
-    const arr = [<Foo />, "\n", <Foo />];
-    expect(<>
-      a
-        {arr}
-      b
-    </>).toRenderTo(`
-      a
-        Foo
-        Foo
-      b
-    `);
-  });
-
-  it("indents arrays of components (map scenario)", () => {
-    function Foo() {
-      return <>
-        a
-        b
-      </>;
-    }
-
-    function Bar() {
-      return <>
-        c
-        d
-      </>;
-    }
-
-    const foos = [<Foo />, "\n", <Bar />];
-
-    expect(<>
-      base
-        {foos}
-    </>).toRenderTo(`
-      base
-        a
-        b
-        c
-        d
-    `);
-  });
-
-  it("handles arrays of components with children", () => {
-    function Foo(props: any) {
-      return <>
-        hi
-        {props.children}
-          {props.children}
-      </>;
-    }
-
-    const arr = [
-      <Foo>
-        a
-        b
-      </Foo>,
-      "\n",
-      <Foo>
-        c
-        d
-      </Foo>,
-    ];
-
-    expect(<>
-      base
-      {arr}
-        {arr}
-    </>).toRenderTo(`
-      base
-      hi
-      a
-      b
-        a
-        b
-      hi
-      c
-      d
-        c
-        d
-        hi
-        a
-        b
-          a
-          b
-        hi
-        c
-        d
-          c
-          d
-    `);
-  });
-});
-
-it("doesn't indent things on the same line simple", () => {
-  const str = "str";
-  function getStr() {
-    return "getstr";
-  }
-  function Foo() {
-    return "Foo";
-  }
-  const array = [<>{getStr()} {getStr()}</>];
-  expect(
-    <>
-    base
-    <Indent>
-      {str} {getStr()}
-      {array}
-      <Foo /> {str} {getStr()}
-    </Indent>
-  </>,
-  ).toRenderTo(`
-      base
-        str getstr
-        getstr getstr
-        Foo str getstr
-  `);
-});
-
-describe("Children rendering", () => {
-  it("handles children via props.children", () => {
-    function Foo(props: any) {
-      return <>
-        a
-        {props.children}
-        d
-      </>;
-    }
-
-    expect(<>
-      base
-      <Foo>
-        b
-        c
-      </Foo>
-    </>)
-      .toRenderTo(`
-      base
-      a
-      b
-      c
-      d
-    `);
-  });
-
-  it("handles children via destructured children", () => {
-    function Foo({ children }: any) {
-      return <>
-        a
-        {children}
-        d
-      </>;
-    }
-
-    expect(<>
-      base
-      <Foo>
-        b
-        c
-      </Foo>
-    </>)
-      .toRenderTo(`
-      base
-      a
-      b
-      c
-      d
-    `);
-  });
-
-  it("handles children via returning children", () => {
-    function Foo({ children }: any) {
-      return children;
-    }
-
-    expect(<>
-      base
-      <Foo>
-        b
-        c
-      </Foo>
-    </>)
-      .toRenderTo(`
-      base
-      b
-      c
-    `);
-  });
-
-  it("can place children on a single line", () => {});
 });

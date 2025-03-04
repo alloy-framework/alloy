@@ -2,6 +2,8 @@ import {
   Children,
   computed,
   For,
+  Indent,
+  List,
   MemberDeclaration,
   MemberScope,
   onCleanup,
@@ -17,6 +19,7 @@ export interface JsonObjectPropsBase {
    * elsewhere via this refkey.
    **/
   refkey?: Refkey;
+  style?: { concise?: boolean };
 }
 
 /**
@@ -66,11 +69,19 @@ export function JsonObject(props: JsonObjectProps) {
   }
 
   if (!("jsValue" in props)) {
-    return <MemberScope owner={memberSymbol}>
-      {"{"}
-        {props.children}
-      {"}"}
-    </MemberScope>;
+    return (
+      <MemberScope owner={memberSymbol}>
+        <group>
+          {"{"}
+          <Indent break={props.style?.concise ? "soft" : "hard"} trailingBreak>
+            <List comma softline>
+              {props.children}
+            </List>
+          </Indent>
+          {"}"}
+        </group>
+      </MemberScope>
+    );
   }
 
   const entries = computed(() => {
@@ -86,13 +97,21 @@ export function JsonObject(props: JsonObjectProps) {
     }
   });
 
-  return <MemberScope owner={memberSymbol}>
-    {"{"}
-      <For each={entries} joiner={",\n"}>
-        {([name, value], index) => <JsonObjectProperty name={name} jsValue={value} />}
-      </For>
-    {"}"}
-  </MemberScope>;
+  return (
+    <MemberScope owner={memberSymbol}>
+      <group>
+        {"{"}
+        <Indent break={props.style?.concise ? "soft" : "hard"} trailingBreak>
+          <For each={entries} comma softline>
+            {([name, value]) => (
+              <JsonObjectProperty name={name} jsValue={value} />
+            )}
+          </For>
+        </Indent>
+        {"}"}
+      </group>
+    </MemberScope>
+  );
 }
 
 /**
@@ -134,9 +153,11 @@ export function JsonObjectProperty(props: ObjectPropertyProps) {
   });
 
   const wrap = (children: Children) => {
-    return <MemberDeclaration symbol={sym}>
-      "{props.name}": {children}
-    </MemberDeclaration>;
+    return (
+      <MemberDeclaration symbol={sym}>
+        "{props.name}": {children}
+      </MemberDeclaration>
+    );
   };
 
   if (!("jsValue" in props)) {

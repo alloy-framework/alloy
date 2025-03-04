@@ -1,33 +1,37 @@
-import { Children, code, Scope } from "@alloy-js/core";
-import { collectArguments } from "../arguments.js";
-import { collectGenerics, GenericTypes } from "../generics.js";
+import { Block, Children, Scope, Show } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
+import { ExtendsClause } from "./ExtendsClause.js";
+import { ImplementsClause } from "./ImplementsClause.js";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
+import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
 
 export interface ClassProps
   extends DeclarationProps,
-    ObjectModifiers,
-    GenericTypes {
+    ModifierProps,
+    TypeParametersProps {
   extends?: Children;
-  implements?: Children;
+  implements?: Children[];
 }
 
 export function Class(props: ClassProps) {
   const name = useJavaNamePolicy().getName(props.name, "class");
-  const extendExpression = props.extends ? code` extends ${props.extends}` : "";
-  const collectedInterfaces = collectArguments(props.implements);
-  const implementsExpression = props.implements ?
-    code` implements ${collectedInterfaces}`
-  : "";
-  const generics = props.generics ? collectGenerics(props.generics) : "";
-  const modifiers = collectModifiers(props);
-  return <Declaration {...props} name={name}>
-      {modifiers}class <Name />{generics}{extendExpression}{implementsExpression} {"{"}
-        <Scope name={name} kind='class'>
-          {props.children}
+
+  return (
+    <Declaration {...props} name={name}>
+      <group>
+        <Modifiers {...props} />
+        class <Name />
+        <Show when={!!props.generics}>
+          <TypeParameters generics={props.generics} />
+        </Show>
+        <ExtendsClause extends={props.extends ? [props.extends] : []} />
+        <ImplementsClause interfaces={props.implements} />{" "}
+        <Scope name={name} kind="class">
+          <Block>{props.children}</Block>
         </Scope>
-      {"}"}
-    </Declaration>;
+      </group>
+    </Declaration>
+  );
 }

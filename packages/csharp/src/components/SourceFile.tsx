@@ -16,10 +16,13 @@ export function useSourceFile(): SourceFileContext | undefined {
   return core.useContext(SourceFileContext) as SourceFileContext;
 }
 
-// properties fro creating a C# source file
 export interface SourceFileProps {
+  /** Path of the source file */
   path: string;
+
+  /** A list of namespaces to use */
   using?: Array<string>;
+
   children?: core.Children;
 }
 
@@ -49,21 +52,26 @@ export function SourceFile(props: SourceFileProps) {
     addUsing,
   };
 
-  return <core.SourceFile path={props.path} filetype="cs" reference={Reference} indent="    ">
+  return (
+    <core.SourceFile
+      path={props.path}
+      filetype="cs"
+      reference={Reference}
+      tabWidth={4}
+    >
       <SourceFileContext.Provider value={sourceFileCtx}>
         <core.Scope name={props.path} kind="source-file">
-          {using.length > 0 ? (
+          {using.length > 0 && (
             <>
-              <UsingDirective namespaces={using} />{"\n\n"}
+              <UsingDirective namespaces={using} />
+              <hbr />
+              <hbr />
             </>
-          ) : undefined}namespace {namespaceCtx.name}{!props.children && " {}\n"}{props.children && 
-            <>
-              {"\n{"}
-                {props.children}
-              {"}\n"}
-            </>
-          }
+          )}
+          namespace {namespaceCtx.name}
+          <core.Block newline>{props.children}</core.Block>
         </core.Scope>
       </SourceFileContext.Provider>
-    </core.SourceFile>;
+    </core.SourceFile>
+  );
 }

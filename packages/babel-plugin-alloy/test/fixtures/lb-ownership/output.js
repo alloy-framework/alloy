@@ -1,2 +1,1 @@
-const v = <>a
-<B>a</B></>;
+const v = <>a<B>a</B></>;

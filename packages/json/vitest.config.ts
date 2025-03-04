@@ -12,7 +12,7 @@ export default defineConfig({
       sourceMaps: "both",
       babelHelpers: "bundled",
       extensions: [".ts", ".tsx"],
-      presets: ["@babel/preset-typescript", "@alloy-js/babel-preset"],
+      presets: ["@babel/preset-typescript", ["@alloy-js/babel-preset"]],
     }),
   ],
 });

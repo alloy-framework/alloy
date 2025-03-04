@@ -1,14 +1,17 @@
 import {
   AssignmentContext,
+  Block,
   Children,
   computed,
   createAssignmentContext,
+  For,
   getAssignmentSymbol,
-  mapJoin,
+  Match,
   MemberScope,
-  memo,
   OutputSymbolFlags,
   Refkey,
+  Switch,
+  Wrap,
 } from "@alloy-js/core";
 import { createTSSymbol } from "../symbols/index.js";
 import { ValueExpression } from "./ValueExpression.js";
@@ -43,52 +46,42 @@ export function ObjectExpression(props: ObjectExpressionProps) {
     return properties;
   });
 
-  const elements = computed(() => {
-    const elements: Children[] = [];
-
-    if (jsValueProperties.value.length > 0) {
-      elements.push(
-        mapJoin(
-          () => jsValueProperties.value,
-          ([name, value]) => {
-            return <ObjectProperty name={name} jsValue={value} />;
-          },
-          { joiner: ",\n" },
-        ),
-      );
-    }
-
-    if (props.children) {
-      if (elements.length > 0) {
-        elements.push(",");
-      }
-      elements.push(props.children);
-    }
-
-    return elements;
-  });
-
-  return memo(() => {
-    if (elements.value.length === 0) {
-      return "{}";
-    } else {
-      if (assignmentSymbol) {
-        return <>
-          {"{"}
-            <MemberScope owner={assignmentSymbol}>
-              {elements.value}
-            </MemberScope>
-          {"}"}
-        </>;
-      } else {
-        return <>
-          {"{"}
-            {elements.value}
-          {"}"}
-        </>;
-      }
-    }
-  });
+  return (
+    <Switch>
+      <Match
+        when={jsValueProperties.value.length === 0 && !("children" in props)}
+      >
+        {"{}"}
+      </Match>
+      <Match else>
+        <group>
+          <Wrap
+            when={!!assignmentSymbol}
+            with={MemberScope}
+            props={{ owner: assignmentSymbol! }}
+          >
+            <Block>
+              <For each={jsValueProperties} comma softline enderPunctuation>
+                {([name, value]) => (
+                  <ObjectProperty name={name} jsValue={value} />
+                )}
+              </For>
+              {props.children && (
+                <>
+                  {jsValueProperties.value.length > 0 && (
+                    <>
+                      ,<sbr />
+                    </>
+                  )}
+                  {props.children}
+                </>
+              )}
+            </Block>
+          </Wrap>
+        </group>
+      </Match>
+    </Switch>
+  );
 }
 
 export interface ObjectPropertyProps {
@@ -129,12 +122,14 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.children;
   }
 
-  const assignmentContext: AssignmentContext | undefined = sym ?
-    createAssignmentContext(sym)
-  : undefined;
-  return <>
-    {sym ? sym.name : name}: <AssignmentContext.Provider value={assignmentContext}>
-      {value}
-    </AssignmentContext.Provider>
-  </>;
+  const assignmentContext: AssignmentContext | undefined =
+    sym ? createAssignmentContext(sym) : undefined;
+  return (
+    <>
+      {sym ? sym.name : name}:{" "}
+      <AssignmentContext.Provider value={assignmentContext}>
+        {value}
+      </AssignmentContext.Provider>
+    </>
+  );
 }

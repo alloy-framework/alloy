@@ -2,24 +2,15 @@ import { describe, expect, it } from "vitest";
 import { Children } from "../../src/jsx-runtime.js";
 import "../../testing/extend-expect.js";
 describe("string nodes", () => {
-  it("renders string nodes", () => {
-    expect(<>
-      a
-      b
-        c
-    </>).toRenderTo(`
-      a
-      b
-        c
-    `);
-  });
-
   it("renders string nodes with substitutions", () => {
     const str = "hi";
-    expect(<>
-      a {str}
-      {str}
-    </>).toRenderTo(`
+    expect(
+      <>
+        a {str}
+        <hbr />
+        {str}
+      </>,
+    ).toRenderTo(`
       a hi
       hi
     `);
@@ -52,21 +43,11 @@ describe("component nodes", () => {
   });
 
   it("renders components on same line", () => {
-    expect(<>
-      <Str /> <Str />
-    </>).toRenderTo("Str Str");
-  });
-
-  it("renders components on multiple lines", () => {
-    expect(<>
-      <Str /> <Str />
-      <Arr /> <Arr />
-    </>).toRenderTo(`
-    Str Str
-    Item 1
-    Item 2 Item 1
-    Item 2
-    `);
+    expect(
+      <>
+        <Str /> <Str />
+      </>,
+    ).toRenderTo("Str Str");
   });
 });
 
@@ -85,21 +66,15 @@ describe("memo nodes", () => {
   }
 
   it("renders basic memos", () => {
-    expect(<>
-      {getStr()}
-    </>).toRenderTo("Str");
+    expect(<>{getStr()}</>).toRenderTo("Str");
   });
 
   it("renders component memos", () => {
-    expect(<>
-      {getFoo()}
-    </>).toRenderTo("Foo");
+    expect(<>{getFoo()}</>).toRenderTo("Foo");
   });
 
   it("renders array memos", () => {
-    expect(<>
-      {getArr()}
-    </>).toRenderTo("Foo\nFoo");
+    expect(<>{getArr()}</>).toRenderTo("Foo\nFoo");
   });
 });
 
@@ -114,10 +89,13 @@ it("renders text fragments", () => {
     return "bye";
   }
 
-  expect(<>
+  expect(
+    <>
       hi
+      <hbr />
       <Foo />
-    </>).toRenderTo(`
+    </>,
+  ).toRenderTo(`
     hi
     bye
   `);
@@ -148,9 +126,9 @@ it("keeps spaces between expressions", () => {
   function getStr() {
     return "getStr";
   }
-  expect(<>
-    a {str} {str} {getStr()} {getStr()} c
-  </>).toRenderTo(
-    "a str str getStr getStr c",
-  );
+  expect(
+    <>
+      a {str} {str} {getStr()} {getStr()} c
+    </>,
+  ).toRenderTo("a str str getStr getStr c");
 });

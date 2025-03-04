@@ -11,7 +11,5 @@ export interface DeclarationProps {
 // declares a symbol in the program (class, enum, interface etc)
 export function Declaration(props: DeclarationProps) {
   const sym = createCSharpSymbol(props);
-  return <core.Declaration symbol={sym}>
-    {props.children}
-  </core.Declaration>;
+  return <core.Declaration symbol={sym}>{props.children}</core.Declaration>;
 }

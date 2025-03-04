@@ -1,5 +1,6 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import { it } from "vitest";
+import { StatementList } from "../../core/src/components/StatementList.jsx";
 import {
   FunctionCallExpression,
   FunctionDeclaration,
@@ -13,22 +14,43 @@ it("can declare and call a function with parameters", () => {
   const functionRefkey = refkey();
   const res = render(
     <Output>
-        <PackageDirectory path="." name="test" version="1.0.0">
-          <SourceFile path="index.ts">
-            <VarDeclaration name="foo" value={`"Foo"`} const />
-            <FunctionDeclaration refkey={functionRefkey} name="bar" parameters={{"foo?": "string", "baz?": "number"}} >
-                const message = foo ? foo : "Hello, World!";
-                console.log(message);
-                if(baz) console.log(baz)
-            </FunctionDeclaration>
-            <FunctionCallExpression refkey={functionRefkey} args={[`"Hello!"`]} />;
-            <FunctionCallExpression refkey={functionRefkey} />;
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello {<>World</>}!"</>]} />;
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hey there!"</>]} />;
-            <FunctionCallExpression refkey={functionRefkey} args={[<>"Hello World"</>, <>12345</>]} />;
-          </SourceFile>
-        </PackageDirectory>
-      </Output>,
+      <PackageDirectory path="." name="test" version="1.0.0">
+        <SourceFile path="index.ts">
+          <VarDeclaration name="foo" value={`"Foo"`} const />;<hbr />
+          <FunctionDeclaration
+            refkey={functionRefkey}
+            name="bar"
+            parameters={{ "foo?": "string", "baz?": "number" }}
+          >
+            <StatementList>
+              <>const message = foo ? foo : "Hello, World!"</>
+              <>console.log(message)</>
+              <>if(baz) console.log(baz)</>
+            </StatementList>
+          </FunctionDeclaration>
+          <hbr />
+          <StatementList>
+            <FunctionCallExpression
+              target={functionRefkey}
+              args={[`"Hello!"`]}
+            />
+            <FunctionCallExpression target={functionRefkey} />
+            <FunctionCallExpression
+              target={functionRefkey}
+              args={[<>"Hello {<>World</>}!"</>]}
+            />
+            <FunctionCallExpression
+              target={functionRefkey}
+              args={[<>"Hey there!"</>]}
+            />
+            <FunctionCallExpression
+              target={functionRefkey}
+              args={[<>"Hello World"</>, <>12345</>]}
+            />
+          </StatementList>
+        </SourceFile>
+      </PackageDirectory>
+    </Output>,
   );
 
   assertFileContents(res, {
@@ -37,7 +59,7 @@ it("can declare and call a function with parameters", () => {
         function bar(foo?: string, baz?: number) {
           const message = foo ? foo : "Hello, World!";
           console.log(message);
-          if(baz) console.log(baz)
+          if(baz) console.log(baz);
         }
         bar("Hello!");
         bar();

@@ -2,7 +2,7 @@ import { Output, render } from "@alloy-js/core";
 import { it } from "vitest";
 import { ProjectDirectory } from "../src/components/index.js";
 import { MavenProjectConfig } from "../src/index.js";
-import { assertFileContents } from "./utils.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("generates barebones pom.xml file", () => {
   const projectConfig: MavenProjectConfig = {
@@ -14,8 +14,10 @@ it("generates barebones pom.xml file", () => {
 
   const res = render(
     <Output>
-      <ProjectDirectory name='TestMavenProject' mavenProjectConfig={projectConfig}>
-      </ProjectDirectory>
+      <ProjectDirectory
+        name="TestMavenProject"
+        mavenProjectConfig={projectConfig}
+      ></ProjectDirectory>
     </Output>,
   );
 
@@ -25,18 +27,17 @@ it("generates barebones pom.xml file", () => {
       <project xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-        
+      
         <modelVersion>4.0.0</modelVersion>
         <groupId>me.example</groupId>
         <artifactId>test</artifactId>
         <version>1.0.0</version>
-        
+
         <properties>
           <maven.compiler.source>8</maven.compiler.source>
           <maven.compiler.target>8</maven.compiler.target>
           <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         </properties>
-  
       </project>
     `,
   });
@@ -123,8 +124,10 @@ it("generates complex configuration", () => {
 
   const res = render(
     <Output>
-      <ProjectDirectory name='TestMavenProject' mavenProjectConfig={projectConfig}>
-      </ProjectDirectory>
+      <ProjectDirectory
+        name="TestMavenProject"
+        mavenProjectConfig={projectConfig}
+      ></ProjectDirectory>
     </Output>,
   );
 
@@ -134,18 +137,18 @@ it("generates complex configuration", () => {
       <project xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-        
+
         <modelVersion>4.0.0</modelVersion>
         <groupId>me.example</groupId>
         <artifactId>test</artifactId>
         <version>1.0.0</version>
-        
+      
         <properties>
           <maven.compiler.source>8</maven.compiler.source>
           <maven.compiler.target>8</maven.compiler.target>
           <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         </properties>
-
+      
         <repositories>
           <repository>
             <id>central</id>
@@ -156,7 +159,7 @@ it("generates complex configuration", () => {
             <url>https://repo.maven.apache.org/maven2</url>
           </repository>
         </repositories>
-        
+      
         <pluginRepositories>
           <pluginRepository>
             <id>central</id>
@@ -254,7 +257,6 @@ it("generates complex configuration", () => {
             </resource>
           </resources>
         </build>
-        
       </project>
     `,
   });

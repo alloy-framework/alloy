@@ -1,4 +1,4 @@
-import { Children, code, refkey } from "@alloy-js/core";
+import { Block, Children, code, refkey } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import { useApi } from "../context/api.js";
 import { RestApiOperation } from "../schema.js";
@@ -47,31 +47,45 @@ export function ClientMethod(props: ClientMethodProps) {
   // get the url endpoint, constructed from possible path parameters
   let endpoint: Children;
   if (endpointParam) {
-    endpoint =
+    endpoint = (
       <>
-        "{op.endpoint.slice(0, -endpointParam.length - 1)}" + {refkey(op, endpointParam)}
-      </>;
+        "{op.endpoint.slice(0, -endpointParam.length - 1)}" +{" "}
+        {refkey(op, endpointParam)}
+      </>
+    );
   } else {
     endpoint = <>"{op.endpoint}"</>;
   }
 
   // get the fetch options
-  const options = op.verb ===
-    "post" && <>, 
-      <ts.ObjectExpression>
-        <ts.ObjectProperty name="method" jsValue={"POST"} />,
-        <ts.ObjectProperty name="body">JSON.stringify({refkey(op, "requestBody")})</ts.ObjectProperty>
-      </ts.ObjectExpression>
-    </>;
+  const options = op.verb === "post" && (
+    <ts.ObjectExpression>
+      <ts.CommaList>
+        <ts.ObjectProperty name="method" jsValue={"POST"} />
+        <ts.ObjectProperty name="body">
+          JSON.stringify({refkey(op, "requestBody")})
+        </ts.ObjectProperty>
+      </ts.CommaList>
+    </ts.ObjectExpression>
+  );
 
   // assemble the method
-  return <ts.ClassMethod async name={op.name} parameters={parameters} returnType={returnType}>
-    const response = await fetch({endpoint}{options});
-    
-    if (!response.ok) <ts.Block>
-      throw new Error("Request failed: " + response.status);
-    </ts.Block>
-
-    return response.json() as {returnType};
-  </ts.ClassMethod>;
+  return (
+    <ts.ClassMethod
+      async
+      name={op.name}
+      parameters={parameters}
+      returnType={returnType}
+    >
+      const response = await{" "}
+      <ts.FunctionCallExpression target="fetch" args={[endpoint, options]} />;
+      <hbr />
+      <hbr />
+      if (!response.ok){" "}
+      <Block>throw new Error("Request failed: " + response.status);</Block>
+      <hbr />
+      <hbr />
+      return response.json() as {returnType};
+    </ts.ClassMethod>
+  );
 }

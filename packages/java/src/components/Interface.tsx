@@ -1,31 +1,31 @@
-import { Children, code, Scope } from "@alloy-js/core";
-import { collectArguments } from "../arguments.js";
-import { collectGenerics, GenericTypes } from "../generics.js";
+import { Block, Children, Scope } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
+import { ExtendsClause } from "./ExtendsClause.jsx";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
+import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
 
 export interface InterfaceProps
   extends DeclarationProps,
-    ObjectModifiers,
-    GenericTypes {
-  extends?: Children;
+    ModifierProps,
+    TypeParametersProps {
+  extends?: Children[];
 }
 
 export function Interface(props: InterfaceProps) {
   const name = useJavaNamePolicy().getName(props.name, "interface");
-  const collectedInterfaces = collectArguments(props.extends);
-  const implementsExpression = props.extends ?
-    code` extends ${collectedInterfaces}`
-  : "";
-  const modifiers = collectModifiers(props);
-  const generics = props.generics ? collectGenerics(props.generics) : "";
-  return <Declaration {...props} name={name}>
-      {modifiers}interface <Name />{generics}{implementsExpression} {"{"}
-        <Scope name={name} kind='interface'>
-          {props.children}
-        </Scope>
-      {"}"}
-    </Declaration>;
+  return (
+    <Declaration {...props} name={name}>
+      <group>
+        <Modifiers {...props} />
+        interface <Name />
+        <TypeParameters generics={props.generics} />
+        <ExtendsClause extends={props.extends} />{" "}
+      </group>
+      <Scope name={name} kind="interface">
+        <Block>{props.children}</Block>
+      </Scope>
+    </Declaration>
+  );
 }

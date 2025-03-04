@@ -6,7 +6,7 @@ import * as csharp from "../src/index.js";
 it("uses a single namespace", () => {
   const res = core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test1.cs" using={["Foo"]} />
       </csharp.Namespace>
     </core.Output>,
@@ -16,14 +16,13 @@ it("uses a single namespace", () => {
     using Foo;
 
     namespace TestCode {}
-
   `);
 });
 
 it("uses multiple namespaces", () => {
   const res = core.render(
     <core.Output>
-      <csharp.Namespace name='TestCode'>
+      <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test1.cs" using={["Foo", "Bar.Baz"]} />
       </csharp.Namespace>
     </core.Output>,
@@ -34,7 +33,6 @@ it("uses multiple namespaces", () => {
     using Foo;
 
     namespace TestCode {}
-
   `);
 });
 
@@ -52,21 +50,37 @@ it("adds using statement across namespaces", () => {
 
   const res = core.render(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name='Models'>
+      <csharp.Namespace name="Models">
         <csharp.SourceFile path="Models.cs">
-          <csharp.Class accessModifier='public' name="Input" refkey={inputTypeRefkey} />
-          <csharp.Class accessModifier='public' name="Output" refkey={outputTypeRefkey} />
-          <csharp.Enum accessModifier='public' name="TestEnum">
-            <csharp.EnumMember name="One" />,
+          <csharp.Class
+            accessModifier="public"
+            name="Input"
+            refkey={inputTypeRefkey}
+          />
+          <hbr />
+          <csharp.Class
+            accessModifier="public"
+            name="Output"
+            refkey={outputTypeRefkey}
+          />
+          <hbr />
+          <csharp.Enum accessModifier="public" name="TestEnum">
+            <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" refkey={twoValRefkey} />
           </csharp.Enum>
         </csharp.SourceFile>
       </csharp.Namespace>
-      <csharp.Namespace name='Client'>
+      <csharp.Namespace name="Client">
         <csharp.SourceFile path="Client.cs" using={["System"]}>
-          <csharp.Class accessModifier='public' name="Client">
-            <csharp.ClassMethod accessModifier="public" name="MethodOne" parameters={params} returns={outputTypeRefkey} />
+          <csharp.Class accessModifier="public" name="Client">
+            <csharp.ClassMethod
+              accessModifier="public"
+              name="MethodOne"
+              parameters={params}
+              returns={outputTypeRefkey}
+            />
           </csharp.Class>
+          <hbr />
           {twoValRefkey};
         </csharp.SourceFile>
       </csharp.Namespace>
@@ -84,7 +98,6 @@ it("adds using statement across namespaces", () => {
             Two
         }
     }
-
   `);
 
   expect(res.contents[1].contents).toBe(coretest.d`
@@ -99,6 +112,5 @@ it("adds using statement across namespaces", () => {
         }
         TestEnum.Two;
     }
-
   `);
 });

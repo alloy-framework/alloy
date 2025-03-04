@@ -1,10 +1,7 @@
 import { toRaw } from "@vue/reactivity";
-import { code } from "./code.js";
 import {
-  Child,
   Children,
   ComponentCreator,
-  ComponentDefinition,
   createCustomContext,
   CustomContext,
   Disposable,
@@ -21,14 +18,19 @@ export interface JoinOptions {
   /**
    * The string to place between each element.
    */
-  joiner?: string;
+  joiner?: Children;
 
   /**
    * When true, the joiner is placed at the end of the array. When a string,
    * that string is placed at the end of the array. The ender is only emitted
    * when the array has at least one element.
    */
-  ender?: string | boolean;
+  ender?: Children;
+
+  /**
+   * When true, falsy values with the exception of 0 are skipped.
+   */
+  skipFalsy?: boolean;
 }
 const defaultJoinOptions: JoinOptions = {
   joiner: "\n",
@@ -48,7 +50,7 @@ const defaultJoinOptions: JoinOptions = {
  */
 export function mapJoin<T, U, V>(
   src: () => Map<T, U>,
-  cb: (key: T, value: U) => V,
+  cb: (key: T, value: U, index: number) => V,
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 /**
@@ -63,20 +65,20 @@ export function mapJoin<T, U, V>(
  */
 export function mapJoin<T, V>(
   src: () => T[] | IterableIterator<T>,
-  cb: (value: T) => V,
+  cb: (value: T, index: number) => V,
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 export function mapJoin<T, U, V>(
   src: () => Map<T, U> | T[] | Iterable<T>,
-  cb: (key: T, value?: U) => V,
+  cb: (key: T, valueOrIndex: U | number, index: number) => V,
   rawOptions: JoinOptions = {},
-): () => (V | string | undefined | CustomContext)[] {
+): () => Children {
   const options = { ...defaultJoinOptions, ...rawOptions };
   const ender =
     options.ender === true ? options.joiner : options.ender || undefined;
   const currentItems: (T | [T, U])[] = [];
   const disposables: Disposable[] = [];
-  const mapped: (V | string | undefined | CustomContext)[] = [];
+  const mapped: Children[] = [];
   let previousItemsLen = 0;
 
   onCleanup(() => {
@@ -87,8 +89,14 @@ export function mapJoin<T, U, V>(
     const itemsSource = src();
     // need to unpack reactives for branding checks
     const itemsSourceRaw = toRaw(itemsSource);
-    const items =
+    let items =
       Array.isArray(itemsSourceRaw) ? (itemsSource as T[]) : [...itemsSource];
+    if (options.skipFalsy) {
+      items = items.filter(
+        (item) =>
+          item !== null && item !== undefined && typeof item !== "boolean",
+      );
+    }
     // this is important to access here in reactive context so we are
     // notified of new items from reactives.
     const itemsLen = items.length;
@@ -111,6 +119,7 @@ export function mapJoin<T, U, V>(
         // need to update the previous joiner (might be ender or absent)
         mapped[startIndex * 2 - 1] = options.joiner;
       }
+
       for (; startIndex < itemsLen; startIndex++) {
         currentItems[startIndex] = items[startIndex];
         if (disposables[startIndex]) {
@@ -121,7 +130,7 @@ export function mapJoin<T, U, V>(
           return root((disposer) => {
             disposables[cleanupIndex] = disposer;
             disposer();
-            cb(mapper(items[cleanupIndex]));
+            cb(mapper(items[cleanupIndex], cleanupIndex));
           });
         });
 
@@ -160,12 +169,12 @@ export function mapJoin<T, U, V>(
     return record1[0] === record2[0] && record1[1] === record2[1];
   }
 
-  function mapArray(item: T) {
-    return cb(item);
+  function mapArray(item: T, index: number) {
+    return (cb as any)(item, index);
   }
 
-  function mapMap(item: [T, U]) {
-    return cb(item[0], item[1]);
+  function mapMap(item: [T, U], index: number) {
+    return cb(item[0], item[1], index);
   }
 
   function isIterable<T>(x: unknown): x is Iterable<T> {
@@ -180,12 +189,12 @@ export function mapJoin<T, U, V>(
  * @see mapJoin for mapping before joining.
  * @returns The joined array
  */
-export function join<T>(
+export function join<T extends Children>(
   src: T[] | Iterator<T>,
   options: JoinOptions = {},
-): (T | string)[] {
+): Children {
   const mergedOptions = { ...defaultJoinOptions, ...options };
-  const joined = [];
+  const joined: Children[] = [];
   const ender =
     mergedOptions.ender === true ? mergedOptions.joiner : mergedOptions.ender;
   src = Array.from(src as Iterable<T>);
@@ -204,12 +213,28 @@ export function join<T>(
   return joined;
 }
 
+export interface ChildrenOptions {
+  /**
+   * When true, fragments and arrays are not flattened.
+   */
+  preserveFragments?: boolean;
+}
 /**
  * Returns a memo which is a list of all the provided children.
  * If you want this as an array, see {@link childrenArray}.
  */
-export function children(fn: () => Children): () => Children {
-  return memo(() => collectChildren(fn()));
+export function children(
+  fn: () => Children,
+  options: ChildrenOptions = {},
+): () => Children {
+  return memo(() => {
+    const children = fn();
+    if (options.preserveFragments && Array.isArray(children)) {
+      return children.map(collectChildren);
+    } else {
+      return collectChildren(children);
+    }
+  });
 
   function collectChildren(children: Children): Children {
     if (Array.isArray(children)) {
@@ -225,8 +250,11 @@ export function children(fn: () => Children): () => Children {
   }
 }
 
-export function childrenArray(fn: () => Children): Child[] {
-  const c = children(fn)();
+export function childrenArray(
+  fn: () => Children,
+  options?: ChildrenOptions,
+): Children[] {
+  const c = children(fn, options)();
   if (Array.isArray(c)) {
     return c;
   } else if (c === undefined) {
@@ -236,7 +264,7 @@ export function childrenArray(fn: () => Children): Child[] {
   }
 }
 
-export function findKeyedChild(children: Child[], tag: symbol) {
+export function findKeyedChild(children: Children[], tag: symbol) {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;
@@ -246,7 +274,7 @@ export function findKeyedChild(children: Child[], tag: symbol) {
   return null;
 }
 
-export function findKeyedChildren(children: Child[], tag: symbol) {
+export function findKeyedChildren(children: Children[], tag: symbol) {
   const keyedChildren: ComponentCreator[] = [];
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
@@ -256,58 +284,12 @@ export function findKeyedChildren(children: Child[], tag: symbol) {
   return keyedChildren;
 }
 
-export function findUnkeyedChildren(children: Child[]) {
+export function findUnkeyedChildren(children: Children[]) {
   return children.filter((child) => !isKeyedChild(child));
 }
 
-export function isKeyedChild(child: Child): child is ComponentCreator {
+export function isKeyedChild(child: Children): child is ComponentCreator {
   return isComponentCreator(child) && !!child.tag;
-}
-
-export function stc<T extends {}>(Component: ComponentDefinition<T>) {
-  return (
-    ...args: unknown extends T ? []
-    : {} extends Omit<T, "children"> ? [props?: T]
-    : [props: T]
-  ) => {
-    const fn: ComponentCreator<T> & {
-      code(
-        template: TemplateStringsArray,
-        ...substitutions: Children[]
-      ): ComponentCreator<T>;
-      children(...children: Children[]): ComponentCreator<T>;
-    } = () => Component(args[0]!);
-    fn.component = Component;
-    fn.props = args[0]!;
-    fn.code = (
-      template: TemplateStringsArray,
-      ...substitutions: Children[]
-    ): ComponentCreator<T> => {
-      const propsWithChildren = {
-        ...(args[0] ?? {}),
-        children: code(template, ...substitutions),
-      };
-
-      const fn = () => Component(propsWithChildren as any);
-      fn.component = Component;
-      fn.props = args[0]!;
-      return fn;
-    };
-
-    fn.children = (...children: Children[]): ComponentCreator<T> => {
-      const propsWithChildren = {
-        ...(args[0] ?? {}),
-        children,
-      };
-
-      const fn = () => Component(propsWithChildren as any);
-      fn.component = Component;
-      fn.props = args[0]!;
-      return fn;
-    };
-
-    return fn;
-  };
 }
 
 /**

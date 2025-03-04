@@ -1,40 +1,56 @@
-import { Children, code, Scope } from "@alloy-js/core";
-import { collectArguments } from "../arguments.js";
+import { Block, Children, List, Scope } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
-import { collectModifiers, ObjectModifiers } from "../object-modifiers.js";
+import { ArgumentList } from "./ArgumentList.jsx";
 import { Declaration, DeclarationProps } from "./Declaration.js";
+import { ImplementsClause } from "./ImplementsClause.jsx";
+import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 
-export interface EnumProps extends DeclarationProps, ObjectModifiers {
-  implements?: Children;
+export interface EnumProps extends DeclarationProps, ModifierProps {
+  implements?: Children[];
 }
 
 export function Enum(props: EnumProps) {
   const name = useJavaNamePolicy().getName(props.name, "enum");
-  const collectedInterfaces = collectArguments(props.implements);
-  const implementsExpression = props.implements ?
-    code` implements ${collectedInterfaces}`
-  : "";
-  const modifiers = collectModifiers(props);
 
-  return <Declaration {...props} name={name}>
-      {modifiers}enum <Name />{implementsExpression} {"{"}
-        <Scope kind='enum'>
-          {props.children}
-        </Scope>
-      {"}"}
-    </Declaration>;
+  return (
+    <Declaration {...props} name={name}>
+      <group>
+        <Modifiers {...props} />
+        enum <Name />
+        <ImplementsClause interfaces={props.implements} />
+      </group>{" "}
+      <Scope kind="enum">
+        <Block>{props.children}</Block>
+      </Scope>
+    </Declaration>
+  );
 }
 
-export interface EnumMemberProps extends ObjectModifiers {
+export interface EnumMemberProps extends ModifierProps {
   name: string;
-  arguments?: Children;
+  args?: Children[];
 }
 
 export function EnumMember(props: EnumMemberProps) {
-  const collectedArgs = collectArguments(props.arguments);
-  const args = props.arguments ? code`(${collectedArgs})` : "";
   const name = useJavaNamePolicy().getName(props.name, "enum-member");
 
-  return code`${name}${args}`;
+  return (
+    <>
+      {name}
+      <ArgumentList args={props.args} omitParensWhenEmpty />
+    </>
+  );
+}
+
+export interface EnumMemberListProps {
+  children: Children;
+}
+
+/**
+ * Create a list of enum members, joining with a comma and a hardline, and
+ * ending with a semicolon.
+ */
+export function EnumMemberList(props: EnumMemberListProps) {
+  return <List children={props.children} comma hardline ender=";" />;
 }

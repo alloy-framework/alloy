@@ -5,24 +5,19 @@
   "main": "./dist/src/index.js",
   "exports": {
     ".": {
-      "development": "./src/index.ts",
       "import": "./dist/src/index.js"
     },
     "./jsx-runtime": {
       "types": "./dist/src/jsx-runtime.d.ts",
-      "development": "./src/jsx-runtime.ts",
       "import": "./dist/src/jsx-runtime.js"
     },
     "./testing": {
-      "development": "./testing/index.ts",
       "import": "./dist/testing/index.js"
     },
     "./stc": {
-      "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"
     },
     "./components": {
-      "development": "./src/components/index.ts",
       "import": "./dist/src/components/index.js"
     }
   },

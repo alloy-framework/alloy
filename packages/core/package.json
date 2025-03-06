@@ -41,7 +41,8 @@
     "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
     "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
     "watch-tsc": "tsc -p . --watch",
-    "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\""
+    "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\"",
+    "prepare": "node ../../scripts/strip-dev-exports.js"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

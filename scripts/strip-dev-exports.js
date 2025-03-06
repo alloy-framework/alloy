@@ -3,13 +3,13 @@ import fs from "fs";
 import path from "path";
 
 // Resolve the path to your package.json
-const pkgPath = path.resolve(process.cwd(), './package.json');
-const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+const pkgPath = path.resolve(process.cwd(), "./package.json");
+const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
 
 // Recursively remove "development" keys from exports
 function removeDevExports(exportsField) {
-  if (exportsField && typeof exportsField === 'object') {
-    if ('development' in exportsField) {
+  if (exportsField && typeof exportsField === "object") {
+    if ("development" in exportsField) {
       delete exportsField.development;
     }
     // Recursively handle nested export objects
@@ -24,5 +24,5 @@ if (pkg.exports) {
 }
 
 // Write the modified package.json back
-fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
-console.log('Stripped development exports from package.json.');
+fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf8");
+console.log("Stripped development exports from package.json.");

@@ -22,7 +22,7 @@
     "watch-tsc": "tsc -p . --watch",
     "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\"",
     "test": "vitest run",
-    "prepublish": "node ../../scripts/strip-dev-exports.js"
+    "prepack": "node ../../scripts/strip-dev-exports.js"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

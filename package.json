@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "pnpm@9.7.0",
+  "packageManager": "pnpm@latest-9",
   "scripts": {
     "build": "pnpm -r --workspace-concurrency=Infinity build",
     "watch": "tsc --build ./tsconfig.ws.json --watch",

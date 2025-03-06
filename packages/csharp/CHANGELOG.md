@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.6.0
+
+### Features
+
+- [#56](https://github.com/alloy-framework/alloy/pull/56) Emitted code is now formatted properly.
+
+
 ## 0.5.0
 
 No changes, version bump only.

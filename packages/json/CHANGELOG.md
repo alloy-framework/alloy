@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/json
 
+## 0.6.0
+
+### Features
+
+- [#56](https://github.com/alloy-framework/alloy/pull/56) Emitted code is now formatted properly.
+- [#55](https://github.com/alloy-framework/alloy/pull/55) Objects and arrays now properly handle reactive JS values.
+
+
 
 
 ## 0.5.0

@@ -271,7 +271,7 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 6.0.7(@types/node@22.2.0)(tsx@4.19.1)(yaml@2.5.1)
+        version: 6.0.7(@types/node@22.2.0)(tsx@4.19.1)(yaml@2.7.0)
       vitest:
         specifier: 'catalog:'
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.2.0)(tsx@4.19.1)(yaml@2.7.0)
@@ -7742,7 +7742,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   esutils@2.0.3: {}
 
@@ -8413,7 +8413,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.25.6
       '@babel/types': 7.25.6
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
 
   make-dir@2.1.0:
     dependencies:

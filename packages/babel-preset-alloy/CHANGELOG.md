@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-preset
 
+## 0.2.0
+
+### Features
+
+- [#56](https://github.com/alloy-framework/alloy/pull/56) Added `legacyWhitespace` option to preserve the old whitespace handling behavior (not recommended).
+
+
 
 
 ## 0.1.1

@@ -1,6 +1,6 @@
-import { memo, untrack } from "@alloy-js/core/jsx-runtime";
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+import { memo, untrack } from "../../src/jsx-runtime.js";
 
 it("ignores signals for dependency tracking", () => {
   const signal = ref(0);

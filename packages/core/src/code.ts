@@ -1,8 +1,8 @@
 // this code is split into a tokenizer and a parser of sorts because I feel like
 // it should be psosible to share logic between this and the babel transform, but
 // this is an exercise for the future.
-import { Child, Children } from "@alloy-js/core/jsx-runtime";
 import { hbr, indent } from "./components/stc/index.js";
+import { Child, Children } from "./jsx-runtime.js";
 interface IndentLevelData {
   kind: "indent";
   children: (string | Children | IndentLevelData)[];

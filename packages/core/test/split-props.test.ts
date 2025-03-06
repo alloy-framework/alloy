@@ -1,6 +1,6 @@
-import { splitProps } from "@alloy-js/core/jsx-runtime";
 import { effect, reactive } from "@vue/reactivity";
 import { expect, it, vi } from "vitest";
+import { splitProps } from "../src/jsx-runtime.js";
 
 it("splits regular object props", () => {
   const props = {

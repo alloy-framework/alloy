@@ -29,7 +29,28 @@ it("handles map entries", () => {
       )}
     </For>
   );
+  expect(template).toRenderTo(`
+    a: foo
+  `);
 });
+
+it("handles maps", () => {
+  const map = new Map([["a", { name: "foo" }]]);
+  const template = (
+    <For each={map}>
+      {(key, value) => (
+        <>
+          {key}: {value.name}
+        </>
+      )}
+    </For>
+  );
+
+  expect(template).toRenderTo(`
+    a: foo
+  `);
+});
+
 it("doesn't rerender mappers", () => {
   const messages = reactive(["hi", "bye"]);
   let count = 0;
@@ -38,6 +59,46 @@ it("doesn't rerender mappers", () => {
   expect(count).toBe(2);
 
   messages.push("maybe");
+
+  expect(count).toBe(3);
+  expect(printTree(tree)).toBe(d`
+    item 0
+    item 1
+    item 2
+  `);
+});
+
+it("doesn't rerender mappers with sets", () => {
+  const messages = reactive(new Set(["hi", "bye"]));
+  let count = 0;
+  const template = <For each={messages}>{() => <>item {count++}</>}</For>;
+  const tree = renderTree(template);
+  expect(count).toBe(2);
+
+  messages.add("maybe");
+
+  expect(count).toBe(3);
+  expect(printTree(tree)).toBe(d`
+    item 0
+    item 1
+    item 2
+  `);
+});
+
+it("doesn't rerender mappers with maps", () => {
+  const messages = reactive(
+    new Map([
+      ["hi", "one"],
+      ["bye", "two"],
+    ]),
+  );
+
+  let count = 0;
+  const template = <For each={messages}>{() => <>item {count++}</>}</For>;
+  const tree = renderTree(template);
+  expect(count).toBe(2);
+
+  messages.set("maybe", "three");
 
   expect(count).toBe(3);
   expect(printTree(tree)).toBe(d`

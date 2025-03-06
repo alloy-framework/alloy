@@ -3,13 +3,19 @@ import { isRef, Ref } from "@vue/reactivity";
 import { mapJoin } from "../utils.js";
 import { BaseListProps, baseListPropsToMapJoinArgs } from "./List.jsx";
 
-export type UnwrapMaybeRefOrMemo<T> =
-  T extends Ref<infer U> ? U
-  : T extends () => infer U ? U
-  : T;
+export type ForCallbackArgs<T> =
+  T extends Ref<infer U> ? ForCallbackArgs<U>
+  : T extends () => infer U ? ForCallbackArgs<U>
+  : T extends (infer U)[] ? [value: U]
+  : T extends Map<infer U, infer V> ? [key: U, value: V]
+  : T extends Set<infer U> ? [value: U]
+  : [];
 
 export interface ForProps<
-  T extends any[] | Ref<any[]> | (() => any[]),
+  T extends
+    | ForSupportedCollections
+    | (() => ForSupportedCollections)
+    | Ref<ForSupportedCollections>,
   U extends Children,
 > extends BaseListProps {
   /**
@@ -20,9 +26,10 @@ export interface ForProps<
   /**
    * A function to call for each item.
    */
-  children: (item: UnwrapMaybeRefOrMemo<T>[number], index: number) => U;
+  children: (...args: [...ForCallbackArgs<T>, index: number]) => U;
 }
 
+export type ForSupportedCollections = any[] | Map<any, any> | Set<any>;
 /**
  * The For component iterates over the provided array and invokes the child
  * callback for each item. It can optionally be provided with a `joiner` which
@@ -51,7 +58,10 @@ export interface ForProps<
  * @see {@link (mapJoin:1)} for mapping arrays to elements outside of JSX templates.
  */
 export function For<
-  T extends any[] | Ref<any[]> | (() => any[]),
+  T extends
+    | ForSupportedCollections
+    | (() => ForSupportedCollections)
+    | Ref<ForSupportedCollections>,
   U extends Children,
 >(props: ForProps<T, U>) {
   const cb = props.children;

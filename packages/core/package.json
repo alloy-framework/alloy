@@ -42,7 +42,7 @@
     "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
     "watch-tsc": "tsc -p . --watch",
     "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\"",
-    "prepare": "node ../../scripts/strip-dev-exports.js"
+    "prepublish": "node ../../scripts/strip-dev-exports.js"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

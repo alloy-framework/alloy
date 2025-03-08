@@ -45,3 +45,27 @@ it("works with args which break", () => {
       .array()
   `);
 });
+
+it("works with nested call member chains", () => {
+  expect(
+    toSourceText(
+      <MemberChainExpression>
+        <>z</>
+        <FunctionCallExpression target="string" />
+        <FunctionCallExpression target="array" />
+        <MemberChainExpression>
+          <FunctionCallExpression target="min" args={[5]} />
+          <FunctionCallExpression target="max" args={[10]} />
+        </MemberChainExpression>
+        <FunctionCallExpression target="array" />
+      </MemberChainExpression>,
+      { printWidth: 10 },
+    ),
+  ).toBe(d`
+    z.string()
+      .array()
+      .min(5)
+      .max(10)
+      .array()
+  `);
+});

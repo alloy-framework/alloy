@@ -8,8 +8,8 @@ export interface MemberChainExpressionProps {
 
 /**
  * Create a member chain expression, which is a member expression comprised of
- * either children or {@link FunctionCallExpression} components. It is formatted
- * such that when a linebreak is required, the FunctionCallExpression
+ * either children, {@link FunctionCallExpression} components, or nested member
+ * chain expression components. Other component types are ignored.
  */
 export function MemberChainExpression(props: MemberChainExpressionProps) {
   // chunks are constructed by consuming as many non-call expressions as
@@ -17,7 +17,7 @@ export function MemberChainExpression(props: MemberChainExpressionProps) {
   // any subsequent call expressions
 
   const chunks = computed(() => {
-    const children = childrenArray(() => props.children);
+    const children = flattenCallChains(childrenArray(() => props.children));
     const chunks: Children[][] = [];
 
     let currentChunk: Children[] = [];
@@ -56,4 +56,20 @@ export function MemberChainExpression(props: MemberChainExpressionProps) {
       </Show>
     </group>
   );
+}
+
+function flattenCallChains(children: Children[]): Children[] {
+  const flatChildren = [];
+  for (const child of children) {
+    if (
+      isComponentCreator(child) &&
+      child.component === MemberChainExpression
+    ) {
+      flatChildren.push(...flattenCallChains(child.props.children));
+    } else {
+      flatChildren.push(child);
+    }
+  }
+
+  return flatChildren;
 }

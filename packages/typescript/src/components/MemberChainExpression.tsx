@@ -37,6 +37,10 @@ export function MemberChainExpression(props: MemberChainExpressionProps) {
       }
     }
 
+    if (currentChunk.length > 0) {
+      chunks.push(currentChunk);
+    }
+
     return [chunks[0], chunks.slice(1)];
   });
 

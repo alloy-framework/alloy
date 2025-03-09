@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/java
 
+## 0.7.0
+
+No changes, version bump only.
+
 ## 0.6.0
 
 ### Features

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/typescript
 
+## 0.7.0
+
+### Bug Fixes
+
+- [#60](https://github.com/alloy-framework/alloy/pull/60) Fix member chains that don't have a call expression in them
+
+
 ## 0.6.0
 
 ### Features

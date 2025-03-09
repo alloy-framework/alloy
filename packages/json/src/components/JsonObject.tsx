@@ -15,10 +15,17 @@ import { createJsonOutputSymbol } from "../symbols/json-symbol.js";
 import { JsonValue } from "./JsonValue.jsx";
 
 export interface JsonObjectPropsBase {
-  /** The refkey for the JSON array. When provided, this value can be referenced
+  /** The refkey for the JSON object. When provided, this value can be referenced
    * elsewhere via this refkey.
    **/
   refkey?: Refkey;
+
+  /**
+   * The refkeys for the JSON object. When provided, this value can be
+   * referenced elsewhere via any of these refkeys.
+   **/
+  refkeys?: Refkey[];
+
   style?: { concise?: boolean };
 }
 
@@ -65,7 +72,10 @@ export function JsonObject(props: JsonObjectProps) {
   const binder = memberSymbol.binder;
   binder.addStaticMembersToSymbol(memberSymbol);
   if (props.refkey) {
-    memberSymbol.refkey = props.refkey;
+    memberSymbol.refkeys = [
+      ...(props.refkey ? [props.refkey] : []),
+      ...(props.refkeys ?? []),
+    ];
   }
 
   if (!("jsValue" in props)) {

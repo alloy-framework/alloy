@@ -4,7 +4,6 @@ import {
   Declaration as CoreDeclaration,
   createAssignmentContext,
   Name,
-  refkey,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol } from "../symbols/index.js";
@@ -27,7 +26,8 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const name = useTSNamePolicy().getName(props.name, "variable");
   const sym = createTSSymbol({
     name: name,
-    refkey: props.refkey ?? refkey(name),
+    refkey: props.refkey,
+    refkeys: props.refkeys,
     default: props.default,
     export: props.export,
   });

@@ -12,7 +12,9 @@ export function ExportStatement(props: ExportStatementProps) {
   if (props.star) {
     const module = useSourceFile();
     for (const symbol of props.from!.symbols.values()) {
-      module.scope.exportedSymbols.set(symbol.refkey, symbol as TSOutputSymbol);
+      for (const refkey of symbol.refkeys) {
+        module.scope.exportedSymbols.set(refkey, symbol as TSOutputSymbol);
+      }
     }
     return (
       <>

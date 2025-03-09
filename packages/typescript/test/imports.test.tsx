@@ -46,7 +46,7 @@ it("works with named imports", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export name="test" />
+        <ts.FunctionDeclaration export name="test" refkey={refkey("test")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -71,9 +71,14 @@ it("works with default and named imports", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="test1"
+          refkey={refkey("test1")}
+        />
         <hbr />
-        <ts.FunctionDeclaration export name="test2" />
+        <ts.FunctionDeclaration export name="test2" refkey={refkey("test2")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -101,9 +106,14 @@ it("works with default and named imports and name conflicts", () => {
   const res = render(
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="test1"
+          refkey={refkey("test1")}
+        />
         <br />
-        <ts.FunctionDeclaration export name="test2" />
+        <ts.FunctionDeclaration export name="test2" refkey={refkey("test2")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -165,9 +175,14 @@ it("works with default and named imports and name conflicts and references in ne
   const res = render(
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
-        <ts.FunctionDeclaration export default name="test1" />
+        <ts.FunctionDeclaration
+          export
+          default
+          name="test1"
+          refkey={refkey("test1")}
+        />
         <hbr />
-        <ts.FunctionDeclaration export name="test2" />
+        <ts.FunctionDeclaration export name="test2" refkey={refkey("test2")} />
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -237,7 +252,7 @@ it("works with imports from different directories", () => {
     <Output>
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
-          <ts.FunctionDeclaration export name="test" />
+          <ts.FunctionDeclaration export name="test" refkey={refkey("test")} />
           <hbr />
           const v = <Reference refkey={refkey("test2")} />;
         </ts.SourceFile>
@@ -245,7 +260,7 @@ it("works with imports from different directories", () => {
 
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("test")} />;<hbr />
-        <ts.FunctionDeclaration export name="test2" />
+        <ts.FunctionDeclaration export name="test2" refkey={refkey("test2")} />
       </ts.SourceFile>
     </Output>,
   );
@@ -271,7 +286,7 @@ it("handles conflicts with local declarations", () => {
     <Output nameConflictResolver={tsNameConflictResolver}>
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
-          <ts.FunctionDeclaration export name="test" />
+          <ts.FunctionDeclaration export name="test" refkey={refkey("test")} />
           <hbr />
           const v = <Reference refkey={refkey("test2")} />;
         </ts.SourceFile>

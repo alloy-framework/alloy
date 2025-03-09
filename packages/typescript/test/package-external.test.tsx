@@ -13,13 +13,20 @@ it("imports external packages", () => {
         version="1.0.0"
       >
         <ts.SourceFile path="greetings.ts">
-          <ts.FunctionDeclaration name="getGreeting">
+          <ts.FunctionDeclaration
+            name="getGreeting"
+            refkey={refkey("getGreeting")}
+          >
             return "Hello world!";
           </ts.FunctionDeclaration>
         </ts.SourceFile>
 
         <ts.SourceFile path="logGreetings.ts">
-          <ts.FunctionDeclaration export name="printGreeting">
+          <ts.FunctionDeclaration
+            export
+            name="printGreeting"
+            refkey={refkey("printGreeting")}
+          >
             console.log("Hello world!");
           </ts.FunctionDeclaration>
         </ts.SourceFile>

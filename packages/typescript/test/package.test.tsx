@@ -10,7 +10,10 @@ it("exports source files", () => {
     <Output>
       <PackageDirectory name="greeting-js" path="." version="1.0.0">
         <ts.SourceFile path="greeting.ts">
-          <ts.FunctionDeclaration name="getGreeting">
+          <ts.FunctionDeclaration
+            name="getGreeting"
+            refkey={refkey("getGreeting")}
+          >
             return "Hello world!";
           </ts.FunctionDeclaration>
         </ts.SourceFile>
@@ -20,7 +23,11 @@ it("exports source files", () => {
             {refkey("getGreeting")}()
           </ts.VarDeclaration>
           ;<hbr />
-          <ts.FunctionDeclaration export name="printGreeting">
+          <ts.FunctionDeclaration
+            export
+            name="printGreeting"
+            refkey={refkey("printGreeting")}
+          >
             console.log(greeting);
           </ts.FunctionDeclaration>
         </ts.SourceFile>

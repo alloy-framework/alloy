@@ -158,7 +158,7 @@ describe("static members", () => {
     const resolution = binder.resolveDeclarationByKey(
       root,
       undefined,
-      staticSym.refkey,
+      staticSym.refkeys[0],
     );
     expect(resolution.value).toBeDefined();
     const { commonScope, pathUp, pathDown, targetDeclaration, memberPath } =
@@ -202,7 +202,7 @@ describe("static members", () => {
     const resolution = binder.resolveDeclarationByKey(
       root,
       undefined,
-      nested_static.refkey,
+      nested_static.refkeys[0],
     );
     expect(resolution.value).toBeDefined();
     const { commonScope, pathUp, pathDown, targetDeclaration, memberPath } =
@@ -284,7 +284,7 @@ describe("instance members", () => {
     const resolution = binder.resolveDeclarationByKey(
       undefined,
       rootSym.instanceMemberScope!,
-      instance.refkey,
+      instance.refkeys[0],
     );
     expect(resolution.value).toBeDefined();
     const { commonScope, pathUp, pathDown, targetDeclaration, memberPath } =
@@ -318,7 +318,7 @@ describe("instance members", () => {
     });
 
     expect(() =>
-      binder.resolveDeclarationByKey(root, undefined, instance.refkey),
+      binder.resolveDeclarationByKey(root, undefined, instance.refkeys[0]),
     ).toThrow(/Cannot resolve member symbols/);
   });
 });
@@ -349,7 +349,10 @@ describe("instantiating members", () => {
       instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
     ).toBeTruthy();
     expect(instantiation.instanceMemberScope).toBeDefined();
-    const expectedRefkey = refkey(instantiation.refkey, instance.refkey);
+    const expectedRefkey = refkey(
+      instantiation.refkeys[0],
+      instance.refkeys[0],
+    );
     expect(
       instantiation.instanceMemberScope!.symbolsByRefkey.get(expectedRefkey),
     ).toBeDefined();
@@ -380,7 +383,10 @@ describe("instantiating members", () => {
       instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
     ).toBeTruthy();
     expect(instantiation.instanceMemberScope).toBeDefined();
-    const expectedRefkey = refkey(instantiation.refkey, instance.refkey);
+    const expectedRefkey = refkey(
+      instantiation.refkeys[0],
+      instance.refkeys[0],
+    );
     expect(
       instantiation.instanceMemberScope!.symbolsByRefkey.get(expectedRefkey),
     ).toBeDefined();
@@ -393,7 +399,7 @@ describe("instantiating members", () => {
       flags: OutputSymbolFlags.InstanceMember,
     });
     const newExpectedRefkey = refkey(
-      instantiation.refkey,
+      instantiation.refkeys[0],
       newInstanceMemberRefkey,
     );
     expect(
@@ -558,7 +564,7 @@ describe("refkey resolution", () => {
 
     expect(resolvedSym.value).toBe(undefined);
 
-    sym.refkey = key;
+    sym.refkeys[0] = key;
     expect(resolvedSym.value?.targetDeclaration).toBe(sym);
   });
 });
@@ -581,7 +587,7 @@ describe("Deleting symbols", () => {
 
     expect(resolvedSym.value).toBe(undefined);
 
-    sym.refkey = key;
+    sym.refkeys[0] = key;
     expect(resolvedSym.value?.targetDeclaration).toBe(sym);
 
     binder.deleteSymbol(sym);

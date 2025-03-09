@@ -3,7 +3,6 @@ import {
   Declaration as CoreDeclaration,
   MemberScope,
   OutputSymbolFlags,
-  refkey,
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
@@ -28,6 +27,11 @@ export interface BaseDeclarationProps {
    * The unique key for this declaration.
    */
   refkey?: Refkey;
+
+  /**
+   * Multiple unique keys for this declaration.
+   */
+  refkeys?: Refkey[];
 
   /**
    * Whether to export this declaration from the module.
@@ -84,7 +88,8 @@ export function Declaration(props: DeclarationProps) {
 
   const sym = createTSSymbol({
     name: namePolicy.getName(props.name, props.nameKind),
-    refkey: props.refkey ?? refkey(props.name),
+    refkey: props.refkey,
+    refkeys: props.refkeys,
     export: props.export,
     default: props.default,
     flags: props.flags,

@@ -39,11 +39,23 @@ export function MemberChainExpression(props: MemberChainExpressionProps) {
 
     return [chunks[0], chunks.slice(1)];
   });
+  const groupId = Symbol();
 
   return (
     <group>
-      <List joiner="." children={chunks.value[0]} />
-      <Show when={chunks.value[1].length > 0}>
+      <group id={groupId}>
+        <List joiner="." children={chunks.value[0]} />
+      </group>
+      <Show when={chunks.value[1].length === 1}>
+        <For each={chunks.value[1]} softline>
+          {(chunk) => (
+            <>
+              .<List joiner="." children={chunk} />
+            </>
+          )}
+        </For>
+      </Show>
+      <Show when={chunks.value[1].length > 1}>
         <indent>
           <For each={chunks.value[1]} softline>
             {(chunk) => (

@@ -32,6 +32,7 @@ const {
     group,
     hardline,
     indent,
+    indentIfBreak,
     line,
     lineSuffix,
     lineSuffixBoundary,
@@ -348,6 +349,19 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       switch (child.name) {
         case "indent":
           return formatHookWithChildren(indent);
+        case "indentIfBreak":
+          node.push(
+            createRenderTreeHook(newNode, {
+              print(tree, print) {
+                return indentIfBreak(print(tree), {
+                  groupId: child.props.groupId,
+                  negate: child.props.negate,
+                });
+              },
+            }),
+          );
+          renderWorker(newNode, child.props.children);
+          return;
         case "fill":
           return formatHookWithChildren(fill as any);
         case "group":

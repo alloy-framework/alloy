@@ -6,7 +6,6 @@ import {
   MemberScope,
   Name,
   OutputSymbolFlags,
-  refkey,
   useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
@@ -31,7 +30,8 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     binder,
     scope,
     name: name,
-    refkey: props.refkey ?? refkey(name),
+    refkey: props.refkey,
+    refkeys: props.refkeys,
     default: props.default,
     export: props.export,
     flags: OutputSymbolFlags.StaticMemberContainer,

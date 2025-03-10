@@ -46,6 +46,44 @@ it("works with args which break", () => {
   `);
 });
 
+it("works with args when it doesn't break", () => {
+  expect(
+    toSourceText(
+      <MemberChainExpression>
+        <>z</>
+        <FunctionCallExpression
+          target="object"
+          args={[<ValueExpression jsValue={{ a: 1, b: 2 }} />]}
+        />
+      </MemberChainExpression>,
+    ),
+  ).toBe(d`
+    z.object({
+      a: 1,
+      b: 2,
+    })
+  `);
+
+  expect(
+    toSourceText(
+      <MemberChainExpression>
+        <>z</>
+        <>z2</>
+        <>z3</>
+        <FunctionCallExpression
+          target="object"
+          args={[<ValueExpression jsValue={{ a: 1, b: 2 }} />]}
+        />
+      </MemberChainExpression>,
+    ),
+  ).toBe(d`
+    z.z2.z3.object({
+      a: 1,
+      b: 2,
+    })
+  `);
+});
+
 it("works with nested call member chains", () => {
   expect(
     toSourceText(

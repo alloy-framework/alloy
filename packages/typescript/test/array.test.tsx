@@ -33,3 +33,15 @@ it("accepts children", () => {
     [1, 2, 3, [4, 5, 6]]
   `);
 });
+
+it("accepts only children", () => {
+  expect(
+    toSourceText(
+      <ArrayExpression>
+        <ArrayExpression jsValue={[4, 5, 6]} />
+      </ArrayExpression>,
+    ),
+  ).toBe(d`
+    [[4, 5, 6]]
+  `);
+});

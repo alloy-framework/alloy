@@ -16,7 +16,11 @@ export function ArrayExpression(props: ArrayExpressionProps) {
         </For>
         {props.children && (
           <>
-            ,<br />
+            {props.jsValue && props.jsValue.length > 0 && (
+              <>
+                ,<br />
+              </>
+            )}
             {props.children}
           </>
         )}

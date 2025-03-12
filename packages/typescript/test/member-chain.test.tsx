@@ -107,3 +107,18 @@ it("works with nested call member chains", () => {
       .array()
   `);
 });
+
+it("works without function call expressions", () => {
+  expect(
+    toSourceText(
+      <MemberChainExpression>
+        <>z</>
+        <>string</>
+        <>min</>
+      </MemberChainExpression>,
+      { printWidth: 5 },
+    ),
+  ).toBe(d`
+    z.string.min
+  `);
+});

@@ -10,6 +10,12 @@ export interface JsonValueProps {
   refkey?: Refkey;
 
   /**
+   * The refkeys for the JSON value. When provided, these values can be
+   * referenced elsewhere via any of these refkeys.
+   **/
+  refkeys?: Refkey[];
+
+  /**
    * The JS value to serialize to JSON. When provided, thi
    */
   jsValue: unknown;
@@ -23,18 +29,22 @@ export interface JsonValueProps {
  * appropriate.
  */
 export function JsonValue(props: JsonValueProps) {
+  const refkeys = [
+    ...(props.refkey ? [props.refkey] : []),
+    ...(props.refkeys ?? []),
+  ];
   if (props.jsValue === null) {
-    setMemberRefkey(props.refkey);
+    setMemberRefkey(refkeys);
     return "null";
   }
 
   if (typeof props.jsValue === "number" || typeof props.jsValue === "boolean") {
-    setMemberRefkey(props.refkey);
+    setMemberRefkey(refkeys);
     return String(props.jsValue);
   }
 
   if (typeof props.jsValue === "string") {
-    setMemberRefkey(props.refkey);
+    setMemberRefkey(refkeys);
     return `"${props.jsValue}"`;
   }
 
@@ -49,11 +59,12 @@ export function JsonValue(props: JsonValueProps) {
   throw new Error("Cannot emit js value with type of " + typeof props.jsValue);
 }
 
-function setMemberRefkey(key?: Refkey) {
-  if (!key) return;
+function setMemberRefkey(keys: Refkey[]) {
+  if (keys.length === 0) return;
   const member = useMemberDeclaration();
   if (!member) {
     throw new Error("Missing member declaration.");
   }
-  member.refkey = key;
+
+  member.refkeys = keys;
 }

@@ -35,7 +35,7 @@ it("creates extends", () => {
 
 it("can create members", () => {
   const res = toSourceText(
-    <ts.InterfaceDeclaration name="Foo">
+    <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
       <StatementList>
         <ts.InterfaceMember name="member" type="string" />
         <ts.InterfaceMember
@@ -58,7 +58,7 @@ it("can create members", () => {
 
 it("can create optional members", () => {
   const res = toSourceText(
-    <ts.InterfaceDeclaration name="Foo">
+    <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
       <StatementList>
         <ts.InterfaceMember name="member" type="string" />
         <ts.InterfaceMember
@@ -82,7 +82,7 @@ it("can create optional members", () => {
 
 it("can create readonly members", () => {
   const res = toSourceText(
-    <ts.InterfaceDeclaration name="Foo">
+    <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
       <StatementList>
         <ts.InterfaceMember readonly name="member" type="string" />
         <ts.InterfaceMember

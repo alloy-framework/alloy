@@ -304,6 +304,7 @@ export namespace JSX {
     literalline: {};
     lbr: {};
     indent: { children: Children };
+    indentIfBreak: { children: Children; groupId: symbol; negate?: boolean };
     fill: { children: Children };
     breakParent: {};
     ifBreak: { children: Children; flatContents?: Children; groupId?: symbol };
@@ -357,6 +358,8 @@ export function taggedComponent<TProps = Props>(
 export const intrinsicElementKey = Symbol();
 
 export type IndentIntrinsicElement = IntrinsicElementBase<"indent">;
+export type IndentIfBreakIntrinsicElement =
+  IntrinsicElementBase<"indentIfBreak">;
 export type BrIntrinsicElement = IntrinsicElementBase<"br">;
 export type LineIntrinsicElement = IntrinsicElementBase<"line">;
 export type HbrIntrinsicElement = IntrinsicElementBase<"hbr">;
@@ -379,6 +382,7 @@ export type IfBreakIntrinsicElement = IntrinsicElementBase<"ifBreak">;
 
 export type IntrinsicElement =
   | IndentIntrinsicElement
+  | IndentIfBreakIntrinsicElement
   | BrIntrinsicElement
   | LineIntrinsicElement
   | HbrIntrinsicElement

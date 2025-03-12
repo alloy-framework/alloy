@@ -19,6 +19,12 @@ export interface JsonArrayPropsBase {
    * elsewhere via this refkey.
    **/
   refkey?: Refkey;
+
+  /**
+   * The refkeys for the JSON array. When provided, this array can be referenced
+   * elsewhere via any of these refkeys.
+   **/
+  refkeys?: Refkey[];
 }
 
 /**
@@ -61,7 +67,10 @@ export function JsonArray(props: JsonArrayProps) {
   const binder = memberSymbol.binder;
   binder.addStaticMembersToSymbol(memberSymbol);
   if (props.refkey) {
-    memberSymbol.refkey = props.refkey;
+    memberSymbol.refkeys = [
+      ...(props.refkey ? [props.refkey] : []),
+      ...(props.refkeys ?? []),
+    ];
   }
 
   if (!("jsValue" in props)) {

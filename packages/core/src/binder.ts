@@ -99,9 +99,9 @@ export interface OutputSymbol {
   binder: Binder;
 
   /**
-   * A unique value that references this symbol.
+   * The unique values that reference this symbol.
    */
-  refkey: Refkey;
+  refkeys: Refkey[];
 
   /**
    * The instance members available on this symbol.
@@ -228,6 +228,7 @@ export type CreateSymbolOptions<T extends OutputSymbol = OutputSymbol> = {
   name: string;
   scope?: OutputScope;
   refkey?: Refkey;
+  refkeys?: Refkey[];
   flags?: OutputSymbolFlags;
 } & Omit<T, keyof OutputSymbol>;
 
@@ -524,9 +525,19 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       name,
       scope = useDefaultScope(args.flags),
       refkey,
+      refkeys,
       flags = OutputSymbolFlags.None,
       ...rest
     } = args;
+
+    const allRefkeys = [];
+    if (refkey) {
+      allRefkeys.push(refkey);
+    }
+
+    if (refkeys) {
+      allRefkeys.push(...refkeys);
+    }
 
     if (!scope) {
       throw new Error(
@@ -556,7 +567,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       originalName: name,
       name: name,
       scope,
-      refkey,
+      refkeys: allRefkeys,
       binder,
       flags,
       ...rest,
@@ -583,7 +594,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
 
     scope.symbols.add(symbol);
-    scope.symbolsByRefkey.set(symbol.refkey, symbol);
+    for (const refkey of allRefkeys) {
+      scope.symbolsByRefkey.set(refkey, symbol);
+    }
 
     deconflict(symbol);
     notifyRefkey(symbol);
@@ -598,9 +611,11 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       return;
     }
 
-    const resolution = waitingDeclarations.get(symbol.refkey);
-    if (!resolution) return;
-    resolution.value = undefined;
+    for (const refkey of symbol.refkeys) {
+      const resolution = waitingDeclarations.get(refkey);
+      if (!resolution) return;
+      resolution.value = undefined;
+    }
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
@@ -619,7 +634,8 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         createSymbol({
           name: sym.name,
           scope: target.instanceMemberScope!,
-          refkey: refkey(target.refkey, sym.refkey),
+          // todo: fix this or change this or something??
+          refkeys: [refkey(target.refkeys[0], sym.refkeys[0])],
           flags: sym.flags | OutputSymbolFlags.InstanceMember,
         });
       }
@@ -816,22 +832,21 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
   function notifyRefkey(symbol: OutputSymbol): void {
     effect(() => {
-      const refkey = symbol.refkey;
-      if (!refkey) return;
+      for (const refkey of symbol.refkeys) {
+        // notify those waiting for this refkey
+        knownDeclarations.set(refkey, symbol);
+        if (waitingDeclarations.has(refkey)) {
+          const signal = waitingDeclarations.get(refkey)!;
+          signal.value = symbol;
+        }
 
-      // notify those waiting for this refkey
-      knownDeclarations.set(refkey, symbol);
-      if (waitingDeclarations.has(refkey)) {
-        const signal = waitingDeclarations.get(refkey)!;
-        signal.value = symbol;
-      }
-
-      // notify those waiting for this symbol name
-      const waitingScope = waitingSymbolNames.get(symbol.scope);
-      if (waitingScope) {
-        const waitingName = waitingScope.get(symbol.name);
-        if (waitingName) {
-          waitingName.value = symbol;
+        // notify those waiting for this symbol name
+        const waitingScope = waitingSymbolNames.get(symbol.scope);
+        if (waitingScope) {
+          const waitingName = waitingScope.get(symbol.name);
+          if (waitingName) {
+            waitingName.value = symbol;
+          }
         }
       }
     });

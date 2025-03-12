@@ -24,7 +24,8 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 
 export interface ParameterDescriptor {
   type?: Children;
-  refkey: Refkey;
+  refkey?: Refkey;
+  refkeys?: Refkey[];
   optional?: boolean;
 }
 
@@ -117,7 +118,7 @@ function normalizeAndDeclareParameters(
         tsFlags: flags,
       });
 
-      return { refkey: symbol.refkey, symbol };
+      return { refkeys: symbol.refkeys, symbol };
     });
   }
 
@@ -136,6 +137,7 @@ function normalizeAndDeclareParameters(
         flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
       ),
       refkey: descriptor.refkey,
+      refkeys: descriptor.refkeys,
       tsFlags: flags,
     });
     descriptor.symbol = symbol;

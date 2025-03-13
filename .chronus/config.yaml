@@ -30,6 +30,8 @@ versionPolicies:
       - "@alloy-js/java"
       - "@alloy-js/csharp"
       - "@alloy-js/typescript"
+      - "@alloy-js/create"
+      
 changedFiles:
   - "!**/*.md"
   - "!**/*.test.ts"

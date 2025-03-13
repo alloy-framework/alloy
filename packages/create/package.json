@@ -3,14 +3,7 @@
   "version": "0.6.0",
   "description": "Create an Alloy project with npm init @alloy-js",
   "main": "./dist/src/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/src/index.js"
-    },
-    "./stc": {
-      "import": "./dist/src/stc/index.js"
-    }
-  },
+  "bin": "./dist/src/index.js",
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",
     "build": "tsc -p . && npm run build-src",

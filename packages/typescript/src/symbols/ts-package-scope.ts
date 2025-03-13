@@ -1,8 +1,4 @@
 import { Binder, OutputScope, Refkey } from "@alloy-js/core";
-import {
-  ExportConditions,
-  PackageExports,
-} from "../components/PackageJson.jsx";
 import { modulePath } from "../utils.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 
@@ -32,20 +28,6 @@ export interface TSPackageScope extends OutputScope {
   dependencies: Set<TSPackageScope>;
 
   /**
-   * Fixed dependencies of this package. Only use this for packages in which you
-   * do not intend to reference via the `Reference` component. Symbols from raw
-   * dependencies cannot be auto imported.
-   */
-  rawDependencies: Map<string, string>;
-
-  /**
-   * Fixed exports of this package. Only use this for exports which you want to
-   * add manually to the package. Otherwise use the `export` prop on
-   * `SourceFile` to add an export.
-   */
-  rawExports: PackageExports;
-
-  /**
    * All of the modules contained within the package. These modules may or may not
    * be exported.
    */
@@ -57,9 +39,7 @@ export interface TSPackageScope extends OutputScope {
   builtin?: boolean;
 
   addExport(publicPath: string, localModule: TSModuleScope): void;
-  addRawExport(publicPath: string, exportPath: string | ExportConditions): void;
   addDependency(pkg: TSPackageScope): void;
-  addRawDependency(packageName: string, version: string): void;
   addModule(module: TSModuleScope): void;
   findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null;
 }
@@ -78,8 +58,6 @@ export function createTSPackageScope(
     parent,
     exportedSymbols: new Map(),
     dependencies: new Set(),
-    rawDependencies: new Map(),
-    rawExports: {},
     modules: new Set(),
     version,
     path: path,
@@ -89,12 +67,6 @@ export function createTSPackageScope(
     },
     addExport(publicPath, module) {
       this.exportedSymbols.set(modulePath(publicPath), module);
-    },
-    addRawDependency(packageName, version) {
-      this.rawDependencies.set(packageName, version);
-    },
-    addRawExport(localPath, exportPath) {
-      this.rawExports[localPath] = exportPath;
     },
     addModule(module) {
       this.modules.add(module);

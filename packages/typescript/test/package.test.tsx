@@ -60,12 +60,58 @@ it("exports source files", () => {
         "name": "greeting-js",
         "version": "1.0.0",
         "type": "module",
-        "dependencies": {},
         "devDependencies": {
           "typescript": "^5.5.2"
         },
         "exports": {
           "./printing.js": "./dist/printing.js",
+          ".": "./dist/index.js"
+        }
+      }
+    `,
+  });
+});
+
+it("combines ref'd exports with explicit exports", () => {
+  const res = render(
+    <Output>
+      <PackageDirectory
+        name="greeting-js"
+        path="."
+        version="1.0.0"
+        exports={{
+          "./foo": "./foo/test.js",
+        }}
+      >
+        <ts.SourceFile export="." path="index.ts">
+          <ts.FunctionDeclaration
+            export
+            name="printGreeting"
+            refkey={refkey("printGreeting")}
+          >
+            console.log(greeting);
+          </ts.FunctionDeclaration>
+        </ts.SourceFile>
+      </PackageDirectory>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      export function printGreeting() {
+        console.log(greeting);
+      }
+    `,
+    "package.json": `
+      {
+        "name": "greeting-js",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "exports": {
+          "./foo": "./foo/test.js",
           ".": "./dist/index.js"
         }
       }

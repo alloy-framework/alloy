@@ -7,6 +7,7 @@ import {
   shallowRef,
   SourceDirectory,
   SourceDirectoryContext,
+  splitProps,
   useBinder,
   useContext,
   useScope,
@@ -14,17 +15,10 @@ import {
 import { join } from "pathe";
 import { createTSPackageScope, TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
-import {
-  ExportPath,
-  PackageExports,
-  PackageJsonFile,
-  PackageJsonFileProps,
-} from "./PackageJson.js";
+import { PackageJsonFile, PackageJsonFileProps } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {
-  dependencies?: Record<string, string>;
-  exports?: PackageExports | ExportPath;
   tsConfig?: { outDir?: string };
   children?: Children;
   path?: string;
@@ -54,27 +48,23 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     props.path ?? ".",
   );
 
-  if (props.exports) {
-    if (typeof props.exports === "string") {
-      packageContext.scope.addRawExport(".", props.exports);
-    } else {
-      for (const ex of Object.entries(props.exports)) {
-        packageContext.scope.addRawExport(ex[0], ex[1]);
-      }
-    }
+  const devDeps = props.devDependencies ?? {};
+  if (!devDeps["typescript"]) {
+    devDeps["typescript"] = "^5.5.2";
   }
 
-  if (props.dependencies) {
-    for (const dep of Object.entries(props.dependencies)) {
-      packageContext.scope.addRawDependency(dep[0], dep[1]);
-    }
-  }
+  const [_, pkgJsonProps] = splitProps(props, [
+    "tsConfig",
+    "children",
+    "path",
+    "devDependencies",
+  ]);
 
   return (
     <SourceDirectory path={props.path ?? "."}>
       <PackageContext.Provider value={packageContext}>
         <Scope value={packageContext.scope}>
-          <PackageJsonFile {...props} />
+          <PackageJsonFile {...pkgJsonProps} devDependencies={devDeps} />
           <TSConfigJson {...props.tsConfig} />
           {props.children}
         </Scope>

@@ -6,7 +6,7 @@
   "bin": "./dist/src/index.js",
   "scripts": {
     "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-    "build": "tsc -p . && npm run build-src",
+    "build": "node scripts/gen-deps.js && tsc -p . && npm run build-src",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
@@ -37,5 +37,14 @@
     "vite": "catalog:",
     "vitest": "catalog:"
   },
-  "type": "module"
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "package.json",
+    "deps.json",
+    "deps-versions.json"
+  ]
 }

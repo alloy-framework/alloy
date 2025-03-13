@@ -1,6 +1,6 @@
 // @ts-check
 import eslint from "@eslint/js";
-import vitest from "eslint-plugin-vitest";
+import vitest from "@vitest/eslint-plugin";
 import { dirname } from "path";
 import tsEslint from "typescript-eslint";
 import { fileURLToPath } from "url";

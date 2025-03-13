@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/core
 
+## 0.7.0
+
+### Bug Fixes
+
+- [#62](https://github.com/alloy-framework/alloy/pull/62) Fix writeOutput failing to make new files
+
+### Breaking Changes
+
+- [#61](https://github.com/alloy-framework/alloy/pull/61) Symbols now allow for multiple refkeys. The `refkey` property has been removed, however the refkey prop remains on declaration components and the refkey option remains for the binder's createSymbol, so the breakage should be limited to code which interacts directly with symbols."
+
+
 ## 0.6.0
 
 ### Bug Fixes

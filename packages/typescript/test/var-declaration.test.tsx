@@ -8,7 +8,7 @@ it("works", () => {
   expect(
     <Output>
       <ts.SourceFile path="test.js">
-        <ts.VarDeclaration name="hi" value="12" />;
+        <ts.VarDeclaration name="hi" initializer="12" />;
       </ts.SourceFile>
     </Output>,
   ).toRenderTo("const hi = 12;");

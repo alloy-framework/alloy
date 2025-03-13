@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/json
 
+## 0.7.0
+
+### Features
+
+- [#61](https://github.com/alloy-framework/alloy/pull/61) Allow specifying multiple refkeys for values.
+
+
 ## 0.6.0
 
 ### Features

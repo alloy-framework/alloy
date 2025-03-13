@@ -1,5 +1,18 @@
 # Changelog - @alloy-js/typescript
 
+## 0.7.0
+
+### Bug Fixes
+
+- [#60](https://github.com/alloy-framework/alloy/pull/60) Fix member chains that don't have a call expression in them
+- [#61](https://github.com/alloy-framework/alloy/pull/61) Fix extra comma in array expressions with children and no jsValue.
+
+### Features
+
+- [#62](https://github.com/alloy-framework/alloy/pull/62) Improve TypeScript's PackageJson component. It can now be used outside of a PackageDirectory.
+- [#61](https://github.com/alloy-framework/alloy/pull/61) Add support for providing multiple refkeys for a single declaration.
+
+
 ## 0.6.0
 
 ### Features

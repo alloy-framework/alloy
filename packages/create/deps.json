@@ -1,0 +1,17 @@
+{
+  "dependencies": [
+    { "package": "@alloy-js/core", "jsx": true, "stc": true },
+    { "package": "@alloy-js/typescript", "jsx": true, "stc": true }
+  ],
+  "devDependencies": [
+    { "package": "@alloy-js/babel-plugin", "jsx": true, "stc": false },
+    { "package": "@babel/cli", "jsx": true, "stc": false },
+    { "package": "@babel/preset-typescript", "jsx": true, "stc": false },
+    { "package": "@rollup/plugin-babel", "jsx": true, "stc": false },
+    { "package": "@rollup/plugin-typescript", "jsx": true, "stc": false },
+    { "package": "@types/node", "jsx": true, "stc": true },
+    { "package": "concurrently", "jsx": true, "stc": false },
+    { "package": "typescript", "jsx": true, "stc": true },
+    { "package": "vitest", "jsx": true, "stc": true }
+  ]
+}

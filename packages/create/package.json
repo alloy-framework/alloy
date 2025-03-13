@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/create",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Create an Alloy project with npm init @alloy-js",
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
@@ -20,7 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
-    "@alloy-js/typescript": "workspace:~"
+    "@alloy-js/typescript": "workspace:~",
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
     "@alloy-js/babel-plugin": "workspace:~",
@@ -32,7 +33,6 @@
     "@types/prompts": "^2.4.9",
     "concurrently": "catalog:",
     "js-yaml": "^4.1.0",
-    "prompts": "^2.4.2",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

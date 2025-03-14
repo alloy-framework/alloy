@@ -13,7 +13,7 @@ export interface VarDeclarationProps extends BaseDeclarationProps {
   const?: boolean;
   let?: boolean;
   var?: boolean;
-  value?: Children;
+  initializer?: Children;
   type?: Children;
 }
 
@@ -41,7 +41,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
       {keyword} <Name />
       {type} ={" "}
       <AssignmentContext.Provider value={assignmentContext}>
-        {props.value ?? props.children}
+        {props.initializer ?? props.children}
       </AssignmentContext.Provider>
     </CoreDeclaration>
   );

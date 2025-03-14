@@ -16,7 +16,7 @@ it("can declare and call a function with parameters", () => {
     <Output>
       <PackageDirectory path="." name="test" version="1.0.0">
         <SourceFile path="index.ts">
-          <VarDeclaration name="foo" value={`"Foo"`} const />;<hbr />
+          <VarDeclaration name="foo" initializer={`"Foo"`} const />;<hbr />
           <FunctionDeclaration
             refkey={functionRefkey}
             name="bar"

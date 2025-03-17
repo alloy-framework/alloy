@@ -1,5 +1,18 @@
 # Changelog - @alloy-js/typescript
 
+## 0.8.0
+
+### Features
+
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add new BlockScope component that combines a block and a scope.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add IfStatement, ElseIfClause, and ElseClause components.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add SwitchStatement and CaseClause components.
+
+### Breaking Changes
+
+- [#65](https://github.com/alloy-framework/alloy/pull/65) The `value` prop of VarDeclaration has been renamed to `initializer` to align with the ECMAScript grammar.
+
+
 ## 0.7.0
 
 ### Bug Fixes

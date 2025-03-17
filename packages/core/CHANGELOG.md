@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/core
 
+## 0.8.0
+
+### Features
+
+- [#66](https://github.com/alloy-framework/alloy/pull/66) Add `text` helper that processes a string template similar to a JSX template with respect to whitespace handling.
+- [#66](https://github.com/alloy-framework/alloy/pull/66) Add `ProviderStc` to context for providing context inside string template components.
+
+
 ## 0.7.0
 
 ### Bug Fixes

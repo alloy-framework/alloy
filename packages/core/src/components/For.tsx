@@ -1,7 +1,7 @@
 import { Children, memo } from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref } from "@vue/reactivity";
-import { mapJoin } from "../utils.js";
-import { BaseListProps, baseListPropsToMapJoinArgs } from "./List.jsx";
+import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
+import { BaseListProps } from "./List.jsx";
 
 export type ForCallbackArgs<T> =
   T extends Ref<infer U> ? ForCallbackArgs<U>

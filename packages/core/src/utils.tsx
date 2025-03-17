@@ -324,7 +324,7 @@ export function traverseOutput(
 }
 
 /**
- * Convert a list of props to a joiner and ender for use in {@link mapJoin}.
+ * Convert a list of props to a joiner and ender for use in {@link (mapJoin:1)}.
  */
 export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
   let joiner, punctuation;

@@ -15,7 +15,7 @@ export function FunctionOptions(props: FunctionOptionsProps) {
     undefined,
   );
 
-  return MdxSection({ title: "Options", level: 3 }).children(
+  return MdxSection({ title: "Options" }).children(
     InterfaceMembers({ iface: optionsType as ApiInterface, flatten: true }),
   );
 }

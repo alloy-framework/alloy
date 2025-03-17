@@ -1,17 +1,51 @@
 // this code is split into a tokenizer and a parser of sorts because I feel like
-// it should be psosible to share logic between this and the babel transform, but
+// it should be possible to share logic between this and the babel transform, but
 // this is an exercise for the future.
-import { hbr, indent } from "./components/stc/index.js";
+import { hbr, indent } from "./components/stc/sti.js";
 import { Child, Children } from "./jsx-runtime.js";
+
+export function text(
+  template: TemplateStringsArray,
+  ...substitutions: Children[]
+): Children {
+  const children = [];
+  // push the literal parts and the substitutions into the children array. The
+  // first part has all leading whitespace removed, the last part has all
+  // trailing whitespace removed, and each part in the middle replaces any
+  // amount of whitespace with a single space.
+
+  for (let i = 0; i < template.length; i++) {
+    let part = template[i];
+    part = part
+      .replace(/(^(\s*\r?\n\s*)+)|((\s*\r?\n\s*)+$)/g, "")
+      .replace(/(\s*\r?\n\s*)+/g, " ");
+    children.push(part);
+    if (i < substitutions.length) {
+      children.push(substitutions[i]);
+    }
+  }
+
+  return children;
+}
+
 interface IndentLevelData {
   kind: "indent";
   children: (string | Children | IndentLevelData)[];
   pendingLines: string[];
 }
+
+/**
+ * Turn the provided string template into Children by replacing literal line
+ * breaks with hardlines and automatically indenting indented content. Similar
+ * in spirit to the `<code>` element in HTML.
+ *
+ * @see {@link text} for a similar function which treats whitespace similar to
+ * JSX template bodies.
+ */
 export function code(
   template: TemplateStringsArray,
   ...substitutions: Children[]
-) {
+): Children {
   const indentNodes: IndentLevelData[] = [
     {
       kind: "indent",

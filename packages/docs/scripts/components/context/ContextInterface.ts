@@ -7,7 +7,7 @@ export interface ContextInterfaceProps {
 }
 
 export function ContextInterface(props: ContextInterfaceProps) {
-  return MdxSection({ title: "Context interface", level: 3 }).children(
+  return MdxSection({ title: "Context interface" }).children(
     typeof props.context.contextInterface === "string" ?
       props.context.contextInterface
     : InterfaceMembers({

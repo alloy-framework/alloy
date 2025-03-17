@@ -24,12 +24,21 @@ export function ComponentDoc(props: ComponentDocProps) {
 
   if (componentProps.length === 0) {
     overloadBlocks = [ComponentSignature({ component: props.component })];
+  } else if (componentProps.length === 1) {
+    overloadBlocks = [
+      Summary({ type: componentProps[0] }),
+      ComponentSignature({
+        component: props.component,
+        propsType: componentProps[0],
+      }),
+      ComponentProps({ propType: componentProps[0] }),
+    ];
   } else {
     let index = 1;
     overloadBlocks = mapJoin(
       () => componentProps,
       (iface) => {
-        return MdxSection({ title: "Overload " + index++, level: 2 }).children(
+        return MdxSection({ title: "Overload " + index++ }).children(
           Summary({ type: iface }),
           ComponentSignature({ component: props.component, propsType: iface }),
           ComponentProps({ propType: iface }),

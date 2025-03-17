@@ -52,7 +52,13 @@ export function createAssignmentContext(
   };
 }
 
-export function getAssignmentSymbol() {
+/**
+ * Get the symbol being defined.
+ *
+ * @returns The symbol currently being defined, or `undefined` if no symbol is
+ * being defined.
+ */
+export function getAssignmentSymbol(): OutputSymbol | undefined {
   const assignmentContext = useContext(AssignmentContext);
   if (assignmentContext) {
     return assignmentContext.target;

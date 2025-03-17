@@ -126,6 +126,7 @@ export interface ContextApi {
   contextVariable: ApiVariable;
   contextInterface: ApiItem | string;
   contextAccessor?: ApiFunction;
+  contextFactory?: ApiFunction;
 }
 
 export interface TypeApi {
@@ -158,8 +159,8 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
     };
 
     apis.packages[name] = packageRecord;
-    // first, discover contexts, because we need do avoid creating separate documentation
-    // items for anything context related.
+    // Phase 1: discover contexts, because we need do avoid creating separate
+    // documentation items for anything context related.
 
     const contextsByName = new Map<string, ContextApi>();
     const contextApis = new Map<ApiItem, ContextApi>();
@@ -202,6 +203,7 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
       }
     }
 
+    // Phase 2: collect functions, components, variables, and enums
     for (const member of apiPackage.members[0].members) {
       if (contextApis.has(member)) {
         continue;
@@ -218,11 +220,21 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
             }
           }
 
+          if (member.displayName.startsWith("create")) {
+            // possiblely a context factory
+            const contextName = member.displayName.slice(6);
+            const contextRecord = contextsByName.get(contextName);
+            if (contextRecord) {
+              contextRecord.contextFactory = member as ApiFunction;
+              continue;
+            }
+          }
+
           // skip these as we merge these from the first definition
           if ((member as ApiFunction).overloadIndex > 1) continue;
 
           if (isComponent(member as ApiFunction)) {
-            let propTypes: ApiInterface[] = [];
+            let componentPropTypes: ApiInterface[] = [];
             if ((member as ApiFunction).parameters.length > 0) {
               const propsTypeRef = (member as ApiFunction).parameters[0]
                 .parameterTypeExcerpt.spannedTokens[0].canonicalReference;
@@ -232,7 +244,8 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
               ).resolvedApiItem!;
 
               if (resolvedPropType.kind === ApiItemKind.Interface) {
-                propTypes.push(resolvedPropType as ApiInterface);
+                componentPropTypes.push(resolvedPropType as ApiInterface);
+                propTypes.add(resolvedPropType as ApiInterface);
               } else if (resolvedPropType.kind === ApiItemKind.TypeAlias) {
                 for (const token of (resolvedPropType as ApiTypeAlias)
                   .typeExcerpt.tokens) {
@@ -253,8 +266,8 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
                     );
                     continue;
                   }
-
-                  propTypes.push(aliasRef as ApiInterface);
+                  propTypes.add(aliasRef as ApiInterface);
+                  componentPropTypes.push(aliasRef as ApiInterface);
                 }
               } else {
                 throw new Error(
@@ -267,7 +280,7 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
             packageRecord.components.push({
               kind: "component",
               componentFunction: member as ApiFunction,
-              componentProps: propTypes,
+              componentProps: componentPropTypes,
             });
           } else {
             const fns = member.getMergedSiblings() as ApiFunction[];
@@ -284,9 +297,18 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
             variable: member as ApiVariable,
           });
           break;
+      }
+    }
+
+    // phase 3: collect interfaces and type aliases that aren't
+    // context APIs or
+    for (const member of apiPackage.members[0].members) {
+      if (contextApis.has(member) || propTypes.has(member)) {
+        continue;
+      }
+      switch (member.kind) {
         case ApiItemKind.Interface:
         case ApiItemKind.TypeAlias:
-          if (propTypes.has(member) || contextApis.has(member)) continue;
           packageRecord.types.push({
             kind: "type",
             type: member as ApiInterface | ApiTypeAlias,

@@ -15,7 +15,15 @@ export function Client(): Children {
 
   return (
     <ts.ClassDeclaration name={name} export refkey={refkey(schema)}>
-      <For each={schema.operations} joiner={doubleBreak}>
+      <For
+        each={schema.operations}
+        joiner={
+          <>
+            <hbr />
+            <hbr />
+          </>
+        }
+      >
         {(op) => <ClientMethod operation={op} />}
       </For>
     </ts.ClassDeclaration>

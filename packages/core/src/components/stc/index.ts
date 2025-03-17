@@ -1,4 +1,4 @@
-import { stc, sti } from "../../stc.js";
+import { stc } from "../../stc.js";
 import * as base from "../index.js";
 
 export const Block = stc(base.Block);
@@ -19,8 +19,4 @@ export const SourceFile = stc(base.SourceFile);
 export const Switch = stc(base.Switch);
 export const Wrap = stc(base.Wrap);
 
-export const indent = sti("indent");
-export const hbr = sti("hbr");
-export const sbr = sti("sbr");
-export const lbr = sti("lbr");
-export const br = sti("br");
+export * from "./sti.js";

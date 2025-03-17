@@ -23,6 +23,5 @@ export function Examples(props: ExamplesProps) {
 
   return MdxSection({
     title: `Example${exampleBlocks.length > 1 ? "s" : ""}`,
-    level: 3,
   }).children(exampleCode);
 }

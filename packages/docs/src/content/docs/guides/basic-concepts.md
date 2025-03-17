@@ -192,35 +192,84 @@ renderString(<MemoExample />);
 // fourTimesValue: 4
 ```
 
-## Whitespace Rules
+## Formatting
 
-Whether using JSX or string templates, whitespace is processed according to the
-following rules:
+Line breaks are ignored within JSX templates and the `text` string template tag,
+and contiguous chunks of whitespace are replaced with a single space. This works
+similarly to HTML. To control the formatting of the emitted output, various
+formatting intrinsic elements are used to format source text according to the
+formatting configuration for a particular output or source file.
+
+Note that, for many situations, you won't need to use these formatting elements
+directly. Components provided by core like `Indent`, `Block`, `List`, and `For`
+generally handle most formatting for you. Additionally, built-in language
+components like `IfStatement`, `Switch`, and so on handle formatting as well. 
+
+The most common formatting intrinsic elements are:
+
+### Line breaks
+
+Alloy has four distinct kinds of line breaks:
+
+* `<hardline />`, `<hbr />` - hard line breaks. Always printed as a line break.
+* `<softline />`, `<sbr />` - soft line breaks. Printed as a line break if the
+  current group exceeds the configured line width, and otherwise printed as
+  nothing.
+* `<literalline />`, `<lbr />` - literal line breaks. Always printed as a
+  linebreak and ignores the indentation level for the next line.
+* `<line />`, `<br />` - regular line breaks. Printed as a line break if the
+  current group exceeds the configured line width, and otherwise is printed as a
+  space.
+
+  Alloy attempts to fit all the text inside a `<group>` on a single line if
+  possible. If the current group cannot fit on a single line, then all line
+  breaks in the group are printed as line breaks. The `<fill>` element behaves
+  similar to `<group>` except only regular line breaks at the end of a line are
+  printed as line breaks, making it useful for formatting text.
+
+### Indentation
+
+* `<indent>` - increase the indent level by one.
+* `<dedent>` - decrease the dedent level by one.
+* `<dedentToRoot>` - decrease the indent level to the root indentation level, which is either no indent or the indent level set by `<markAsRoot />`.
+* `<align width={number} string={string}>` - increase the indent by the given
+  width or with the given string prefix.
+
+### Conditional formatting
+
+* `<indentIfBreak groupId={symbol} negate={boolean}>` - indent the group if a previously printed group is broken (or if it isn't broken when passing `negate`).
+* `<ifBreak groupId={symbol} flatContents={Children}>` - if the current group (or group referenced by the given `groupId`) is broken, print the children. Otherwise, print `flatContents`.
+
+### `code` content
+
+The `code` template tag is akin to the `<code>` HTML element in that it
+preserves linebreaks. It also normalizes indentation. Whitespace is processed
+according to the following rules:
 
 **Any leading and trailing line breaks are ignored**
 
 ```jsx
-renderString(<>
+renderString(code`
 x
-</>); // "x"
+`); // "x"
 ```
 
 **The first significant line sets the base indent**
 
 ```jsx
-renderString(<>
+renderString(code`
   x
   y
-</>); // "x\ny"
+`); // "x\ny"
 ```
 
 **Lines which increase indent set indent level for any contents on that line**
 
 ```jsx
-renderString(<>
+renderString(code`
   base
-    {"a\nb"}
-</>);
+    ${code`a\nb`}
+`);
 // base
 //   a
 //   b

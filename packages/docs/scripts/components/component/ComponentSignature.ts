@@ -1,8 +1,20 @@
+import { text, type Children } from "@alloy-js/core";
+import {
+  br,
+  group,
+  hbr,
+  ifBreak,
+  indent,
+  List,
+  sbr,
+  Show,
+} from "@alloy-js/core/stc";
 import type {
   ApiInterface,
   ApiPropertySignature,
 } from "@microsoft/api-extractor-model";
 import type { ComponentApi } from "../../build-json.js";
+import { flattenedMembers } from "../../utils.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 
 export interface ComponentSignatureProps {
@@ -11,57 +23,62 @@ export interface ComponentSignatureProps {
 }
 
 export function ComponentSignature(props: ComponentSignatureProps) {
-  let paramHelp = "";
-  let stcParamHelp = "";
-
+  let paramHelp: Children = "";
+  let stcParamHelp: Children = "";
+  const hasChildren =
+    props.propsType &&
+    props.propsType.members.some((prop) => prop.displayName === "children");
   // construct the code snippet for the component signature
   if (props.propsType) {
-    const allParamHelp = (props.propsType.members as ApiPropertySignature[])
-      .filter((prop) => prop.name !== "children")
-      .map(propHelp);
+    const members = (
+      flattenedMembers(props.propsType) as ApiPropertySignature[]
+    ).filter((prop) => prop.name !== "children");
+    paramHelp = List({ line: true }).children(...members.map(propHelp));
 
-    if (allParamHelp.join(" ").length > 80) {
-      paramHelp = "\n    " + allParamHelp.join("\n    ") + "\n";
-    } else {
-      paramHelp = allParamHelp.join(" ");
-    }
-
-    const allStcParamHelp = (props.propsType.members as ApiPropertySignature[])
-      .filter((prop) => prop.name !== "children")
-      .map(stcPropHelp);
-
-    if (allStcParamHelp.join(" ").length > 80) {
-      stcParamHelp = "\n    " + allStcParamHelp.join(",\n    ") + "\n";
-    } else {
-      stcParamHelp = allStcParamHelp.join(", ");
-    }
+    stcParamHelp = List({
+      comma: true,
+      line: true,
+      ender: ifBreak({ flatContents: "", children: "," }),
+    }).children(...members.map(stcPropHelp));
   }
 
   const name = props.component.componentFunction.name;
   const packageSrc =
     props.component.componentFunction.getAssociatedPackage()?.displayName;
 
-  const jsxCode = `
-    import { ${name} } from "${packageSrc}";
+  const jsxCode = text`
+    import { ${name} } from "${packageSrc}";${hbr()}${hbr()}
 
-    <${name}${paramHelp.length > 0 ? " " + paramHelp : ""}>
-      {children}
-    </${name}> 
+    ${group().text`<${name}${indent().children(
+      paramHelp === "" ? "" : br(),
+      paramHelp,
+    )}${sbr()}${hasChildren ? ">" : " />"}`}
+    ${Show({ when: hasChildren }).text`
+      ${indent().children(hbr(), "{children}")}
+      ${hbr()}
+      </${name}> 
+    `}
+
   `;
 
-  const stcCode = `
-    import { ${name} } from "${packageSrc}/stc";
+  const stcCode = text`
+    import { ${name} } from "${packageSrc}/stc";${hbr()}${hbr()}
 
-    ${name}({ ${stcParamHelp} }).children(children)
+    ${group().text`
+      ${name}({${indent().children(
+        stcParamHelp === "" ? "" : br(),
+        stcParamHelp,
+      )}${br()}}).children(children)
+    `}
   `;
 
   return MdxParagraph().code`
     <Tabs syncKey="component-style">
       <TabItem label="jsx">
-    ${Code({ code: jsxCode, language: "tsx" })}
+        ${Code({ language: "tsx" }).children(jsxCode)}
       </TabItem>
       <TabItem label="stc">
-    ${Code({ code: stcCode, language: "ts" })}
+        ${Code({ language: "ts" }).children(stcCode)}
       </TabItem>
     </Tabs>
   `;

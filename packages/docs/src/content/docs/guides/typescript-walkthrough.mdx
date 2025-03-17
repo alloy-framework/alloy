@@ -68,8 +68,9 @@ First, let's initialize our alloy project. See [the getting started
 guide](../getting-started) for details, but the easiest way is to clone the
 starter template.
 
-<Code code={`git clone https://github.com/alloy-framework/alloy-project-template my-project
+<Code code={`mkdir my-project
 cd my-project
+npm init @alloy-js
 pnpm install
 pnpm build
 `} frame="terminal" lang="sh" />
@@ -143,7 +144,7 @@ Next, let's create the entrypoint for our code generator, and see some output
 so we can start iterating. Create `src/index.tsx` as follows:
 
 <Code code={`
-  import { mapJoin, Output, render, writeOutput } from "@alloy-js/core";
+  import { For, Output, render, writeOutput } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { api } from "./schema.js";
 
@@ -316,7 +317,7 @@ So let's create both `src/components/Model.tsx` and
 ### The Model component
 
 <Code code={`
-  import { mapJoin, refkey } from "@alloy-js/core";
+  import { For, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
 
   import { RestApiModel } from "../schema.js";
@@ -327,26 +328,28 @@ So let's create both `src/components/Model.tsx` and
   }
 
   export function Model(props: ModelProps) {
-    const members = mapJoin(
-      props.model.properties,
-      prop => <ModelProperty property={prop} />
+    return (
+      <ts.InterfaceDeclaration
+        export
+        name={props.model.name}
+        refkey={refkey(props.model)}
+      >
+        <For each={props.model.properties} comma hardline enderPunctuation>
+          {(prop) => <ModelProperty property={prop} />}
+        </For>
+      </ts.InterfaceDeclaration>
     );
-
-    return <ts.InterfaceDeclaration export name={props.model.name} refkey={refkey(props.model)}>
-      {members}
-    </ts.InterfaceDeclaration>;
   }
 `} frame="code"lang="tsx" title="src/components/Model.ts" />
 
 This creates the model properties using a component we'll cover in the next
 section and adds them into an interface declaration. This component introduces
-two new concepts: `mapJoin` and `refkey`.
+two new concepts: The `For` component and `refkey`.
 
-[mapJoin](../../reference/core/functions/mapjoin/) is a utility that behaves
-similar to a map followed by a join on an Array, except it works in terms of
-`Children` rather than Array elements and strings. Essentially, this means it
-properly handles components (`ModelProperty` in this case). By default,
-`mapJoin` joins with a single line break, but a different joiner can be provided.
+[For](../../reference/core/components/for/) takes an iterable thing and maps it
+using the provided callback. Various props like `comma`, `hardline`, and
+`enderPunctuation` control what content goes between each element and at the end
+of all the elements. This is the main way we format lists of things.
 
 A [refkey](../basic-concepts/#declarations-and-references) is a unique identifier
 for some symbol, and is used to create references to that symbol. Since we are
@@ -403,20 +406,16 @@ component. This is just the schema for the property.
       component from `@alloy-js/typescript`.
 
 With these two components done, we can update our `index.tsx` to make use of these new
-components. First, we need to create a declaration for each of the models in our
-schema, which we can do using `mapJoin`, and then we can update our output once
-again to the following:
+components. Using `For`, we can emit each of our model declarations.
 
 <Code code={`
-  const modelDecls = mapJoin(api.models, (model) => <Model model={model} />);
-
   const output = render(
     <Output>
       <ApiContext.Provider value={createApiContext(api)}>
         <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
-          <ts.SourceFile path="models.ts">
-            {modelDecls}
-          </ts.SourceFile>
+        <ts.SourceFile path="models.ts">
+          <For each={api.models}>{(model) => <Model model={model} />}</For>
+        </ts.SourceFile>
           <ts.SourceFile path="client.ts">
           </ts.SourceFile>
           <ts.BarrelFile export="." />
@@ -457,7 +456,7 @@ let's take it step by step.
 #### 1. Imports and setup
 
 <Code code={`
-  import { Children, code, refkey } from "@alloy-js/core";
+  import { Block, For, Children, code, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { useApi } from "../context/api.js";
   import { RestApiOperation } from "../schema.js";
@@ -550,13 +549,16 @@ step 2.
 #### 5. Determine the parameters to fetch
 
 <Code code={`
-  const options = op.verb ===
-    "post" && <>, 
-      <ts.ObjectExpression>
-        <ts.ObjectProperty name="method" jsValue="POST" />,
-        <ts.ObjectProperty name="body">JSON.stringify({refkey(op, "requestBody")})</ts.ObjectProperty>
-      </ts.ObjectExpression>
-    </>;
+  const options = op.verb === "post" && (
+    <ts.ObjectExpression>
+      <ts.CommaList>
+        <ts.ObjectProperty name="method" jsValue={"POST"} />
+        <ts.ObjectProperty name="body">
+          JSON.stringify({refkey(op, "requestBody")})
+        </ts.ObjectProperty>
+      </ts.CommaList>
+    </ts.ObjectExpression>
+  );
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
 
 When we are doing a POST, we need to tell `fetch` to use that verb and provide
@@ -570,20 +572,29 @@ stringifies the `requestBody` parameter, which we defined in step 2.
 Finally, we can pull everything together into the method body:
 
 <Code code={`
-  return <ts.ClassMethod
-    async
-    name={op.name}
-    parameters={parameters}
-    returnType={returnType}
-  >
-    const response = await fetch({endpoint}{options});
-    
-    if (!response.ok) <ts.Block>
-      throw new Error("Request failed: " + response.status);
-    </ts.Block>
+  return (
+    <ts.ClassMethod
+      async
+      name={op.name}
+      parameters={parameters}
+      returnType={returnType}
+    >
+      {code`
+        const response = await ${(
+          <ts.FunctionCallExpression
+            target="fetch"
+            args={[endpoint, options]}
+          />
+        )};
+        
+        if (!response.ok) { 
+          throw new Error("Request failed: " + response.status);
+        }
 
-    return response.json() as {returnType};
-  </ts.ClassMethod>;
+        return response.json() as ${returnType};
+      `}
+    </ts.ClassMethod>
+  );
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
 
 The class method is defined as async, given a name based on what's in the API spec,
@@ -594,26 +605,34 @@ and all the parts we assembled previously are slotted into the appropriate place
 The Client component is relatively straight forward:
 
 <Code code={`
-  import { mapJoin, refkey } from "@alloy-js/core";
+  import { refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { useApi } from "../context/api.js";
   import { ClientMethod } from "./ClientMethod.jsx";
 
   export function Client() {
     const schema = useApi().schema;
-    const methods = mapJoin(schema.operations, (op) => <ClientMethod operation={op} />);
     const name = \`\${schema.name}Client\`;
 
     return <ts.ClassDeclaration name={name} export refkey={refkey(schema)}>
-      {methods}
+      <For
+        each={schema.operations}
+        joiner={
+          <>
+            <hbr />
+            <hbr />
+          </>
+        }
+      >
+        {(op) => <ClientMethod operation={op} />}
+      </For>
     </ts.ClassDeclaration>;
   }
 `} frame="code"lang="tsx" title="src/components/Client.tsx" />
 
-We join together using `mapJoin` each of the methods, and add those into a
-ClassDeclaration. The class itself gets a name of the service concatenated with
-`Client`. It is exported from the module. It is also given a refkey for good
-measure, although we don't use it yet.
+We join together each of the methods using `For`. The class itself gets a name
+of the service concatenated with `Client`. It is exported from the module. It is
+also given a refkey for good measure, although we don't use it yet.
 
 With this, we can drop the client into our output by importing the `Client`
 component and updating our output like the following:

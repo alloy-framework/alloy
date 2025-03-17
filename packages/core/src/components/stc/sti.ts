@@ -1,4 +1,4 @@
-import { sti } from "../../index.js";
+import { sti } from "../../sti.js";
 
 export const indent = sti("indent");
 export const group = sti("group");

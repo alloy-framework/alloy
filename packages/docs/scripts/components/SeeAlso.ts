@@ -53,7 +53,7 @@ export function SeeAlso(props: SeeAlsoProps) {
 
   const contextsProvidedList =
     contextsProvided.length > 0 &&
-    MdxSection({ title: "Contexts provided", level: 2 }).children(
+    MdxSection({ title: "Contexts provided" }).children(
       mapJoin(
         () => contextsProvided,
         (seeBlock) => {
@@ -66,7 +66,7 @@ export function SeeAlso(props: SeeAlsoProps) {
 
   const seeAlsoList =
     seeBlocks.length > 0 &&
-    MdxSection({ title: "See also", level: 3 }).children(
+    MdxSection({ title: "See also" }).children(
       mapJoin(
         () => seeBlocks,
         (seeBlock) => {

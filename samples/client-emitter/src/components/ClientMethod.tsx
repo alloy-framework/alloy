@@ -1,4 +1,4 @@
-import { Block, Children, code, refkey } from "@alloy-js/core";
+import { Children, code, refkey } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 import { useApi } from "../context/api.js";
 import { RestApiOperation } from "../schema.js";
@@ -77,15 +77,20 @@ export function ClientMethod(props: ClientMethodProps) {
       parameters={parameters}
       returnType={returnType}
     >
-      const response = await{" "}
-      <ts.FunctionCallExpression target="fetch" args={[endpoint, options]} />;
-      <hbr />
-      <hbr />
-      if (!response.ok){" "}
-      <Block>throw new Error("Request failed: " + response.status);</Block>
-      <hbr />
-      <hbr />
-      return response.json() as {returnType};
+      {code`
+        const response = await ${(
+          <ts.FunctionCallExpression
+            target="fetch"
+            args={[endpoint, options]}
+          />
+        )};
+        
+        if (!response.ok) { 
+          throw new Error("Request failed: " + response.status);
+        }
+
+        return response.json() as ${returnType};
+      `}
     </ts.ClassMethod>
   );
 }

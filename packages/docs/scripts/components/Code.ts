@@ -1,14 +1,18 @@
-import { code } from "@alloy-js/core";
-import redent from "redent";
+import { text, type Children } from "@alloy-js/core";
+import { dedentToRoot, hbr, indent } from "@alloy-js/core/stc";
 
 export interface CodeProps {
-  code: string;
   language: string;
+  children: Children;
 }
 export function Code(props: CodeProps) {
-  const indentedCode = "\n" + redent(props.code, 2);
-
-  return code`
-    <Code code={\`${indentedCode}\` } lang="${props.language}" />
+  return text`
+    <Code
+      code={\`${dedentToRoot().children(
+        indent().children(props.children),
+        hbr(),
+      )}\`}
+      lang="${props.language}"
+    />
   `;
 }

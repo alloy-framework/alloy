@@ -370,15 +370,11 @@ export interface Binder {
  * When we resolve the refkey for `bar` from within `namespace scope 2`, we will get the following
  * resolution result:
  *
- * **targetDeclaration**: symbol bar, the symbol we resolved.
- *
- * **commonScope**: global scope, because this is the most specific scope that contains both the declaration and the reference.
- *
- * **pathUp**: [namespace scope 2], because this is the scope between the reference and the common scope.
- *
- * **pathDown**: [namespace scope 1], because this is the scope between the common scope and the declaration
- *
- * **memberPath**: [foo, bar], because we resolved a member symbol and these are the symbols that lead from the base declaration to the member symbol.
+ * * **targetDeclaration**: symbol bar, the symbol we resolved.
+ * * **commonScope**: global scope, because this is the most specific scope that contains both the declaration and the reference.
+ * * **pathUp**: [namespace scope 2], because this is the scope between the reference and the common scope.
+ * * **pathDown**: [namespace scope 1], because this is the scope between the common scope and the declaration
+ * * **memberPath**: [foo, bar], because we resolved a member symbol and these are the symbols that lead from the base declaration to the member symbol.
  */
 export interface ResolutionResult<
   TScope extends OutputScope,

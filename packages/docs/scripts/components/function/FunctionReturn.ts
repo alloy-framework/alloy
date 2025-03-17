@@ -6,7 +6,7 @@ export interface FunctionReturnProps {
 }
 
 export function FunctionReturn(props: FunctionReturnProps) {
-  return MdxSection({ title: "Returns", level: 3 }).children(
+  return MdxSection({ title: "Returns" }).children(
     Excerpt({ excerpt: props.fn.returnTypeExcerpt, context: props.fn }),
     props.fn.tsdocComment &&
       props.fn.tsdocComment.returnsBlock &&

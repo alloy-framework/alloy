@@ -8,7 +8,7 @@ export interface ComponentPropsProps {
 export function ComponentProps(props: ComponentPropsProps) {
   if (!props.propType) return "";
 
-  return MdxSection({ title: "Props", level: 3 }).children(
+  return MdxSection({ title: "Props" }).children(
     InterfaceMembers({ iface: props.propType, flatten: true }),
   );
 }

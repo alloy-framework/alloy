@@ -26,7 +26,7 @@ export function TypeMembers(props: TypeMembersProps) {
 
     extendsInfo = code`Extends ${extendsItems}`;
   }
-  return MdxSection({ title: "Members", level: 3 }).children(
+  return MdxSection({ title: "Members" }).children(
     extendsInfo && MdxParagraph().children(extendsInfo),
     InterfaceMembers({ iface: props.type }),
   );

@@ -1,0 +1,218 @@
+diff --git a/lib/emitters/TSDocEmitter.js b/lib/emitters/TSDocEmitter.js
+index 8a212a20d2de52283efcf591cee590085b4de2b9..201ee8b414763babfa3cde7894eab377b3cc408d 100644
+--- a/lib/emitters/TSDocEmitter.js
++++ b/lib/emitters/TSDocEmitter.js
+@@ -61,6 +61,10 @@ var TSDocEmitter = /** @class */ (function () {
+             return;
+         }
+         switch (docNode.kind) {
++            case DocNodeKind.SoftBreak:
++                // @ts-ignore
++                this._writeNewline();
++                break;
+             case DocNodeKind.Block:
+                 var docBlock = docNode;
+                 this._ensureLineSkipped();
+diff --git a/lib/transforms/TrimSpacesTransform.js b/lib/transforms/TrimSpacesTransform.js
+index e61af571c3f493f9b7a76690cd7da57c376caf4a..543e86e5b5699cc43cccaabcead66c6b7d47e1c7 100644
+--- a/lib/transforms/TrimSpacesTransform.js
++++ b/lib/transforms/TrimSpacesTransform.js
+@@ -8,80 +8,16 @@ var TrimSpacesTransform = /** @class */ (function () {
+     function TrimSpacesTransform() {
+     }
+     TrimSpacesTransform.transform = function (docParagraph) {
+-        var transformedNodes = [];
+-        // Whether the next nonempty node to be added needs a space before it
+-        var pendingSpace = false;
+-        // The DocPlainText node that we're currently accumulating
+-        var accumulatedTextChunks = [];
+-        var accumulatedNodes = [];
+-        // We always trim leading whitespace for a paragraph.  This flag gets set to true
+-        // as soon as nonempty content is encountered.
+-        var finishedSkippingLeadingSpaces = false;
+-        for (var _i = 0, _a = docParagraph.nodes; _i < _a.length; _i++) {
+-            var node = _a[_i];
+-            switch (node.kind) {
+-                case DocNodeKind.PlainText:
+-                    var docPlainText = node;
+-                    var text = docPlainText.text;
+-                    var startedWithSpace = /^\s/.test(text);
+-                    var endedWithSpace = /\s$/.test(text);
+-                    var collapsedText = text.replace(/\s+/g, ' ').trim();
+-                    if (startedWithSpace && finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    if (collapsedText.length > 0) {
+-                        if (pendingSpace) {
+-                            accumulatedTextChunks.push(' ');
+-                            pendingSpace = false;
+-                        }
+-                        accumulatedTextChunks.push(collapsedText);
+-                        accumulatedNodes.push(node);
+-                        finishedSkippingLeadingSpaces = true;
+-                    }
+-                    if (endedWithSpace && finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    break;
+-                case DocNodeKind.SoftBreak:
+-                    if (finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    accumulatedNodes.push(node);
+-                    break;
+-                default:
+-                    if (pendingSpace) {
+-                        accumulatedTextChunks.push(' ');
+-                        pendingSpace = false;
+-                    }
+-                    // Push the accumulated text
+-                    if (accumulatedTextChunks.length > 0) {
+-                        // TODO: We should probably track the accumulatedNodes somehow, e.g. so we can map them back to the
+-                        // original excerpts.  But we need a developer scenario before we can design this API.
+-                        transformedNodes.push(new DocPlainText({
+-                            configuration: docParagraph.configuration,
+-                            text: accumulatedTextChunks.join('')
+-                        }));
+-                        accumulatedTextChunks.length = 0;
+-                        accumulatedNodes.length = 0;
+-                    }
+-                    transformedNodes.push(node);
+-                    finishedSkippingLeadingSpaces = true;
+-            }
++        if (docParagraph.nodes.length > 0 && 
++            docParagraph.nodes[docParagraph.nodes.length - 1].kind === "SoftBreak") {
++            const transformedNodes = docParagraph.nodes.slice(0, -1);
++            const transformedParagraph = new DocParagraph({
++                configuration: docParagraph.configuration
++            });
++            transformedParagraph.appendNodes(transformedNodes);
++            return transformedParagraph;
+         }
+-        // Push the accumulated text
+-        if (accumulatedTextChunks.length > 0) {
+-            transformedNodes.push(new DocPlainText({
+-                configuration: docParagraph.configuration,
+-                text: accumulatedTextChunks.join('')
+-            }));
+-            accumulatedTextChunks.length = 0;
+-            accumulatedNodes.length = 0;
+-        }
+-        var transformedParagraph = new DocParagraph({
+-            configuration: docParagraph.configuration
+-        });
+-        transformedParagraph.appendNodes(transformedNodes);
+-        return transformedParagraph;
++        return docParagraph;
+     };
+     return TrimSpacesTransform;
+ }());
+diff --git a/lib-commonjs/emitters/TSDocEmitter.js b/lib-commonjs/emitters/TSDocEmitter.js
+index 60535a109e3705baae7cb851e1f7cca6e2b5595b..7d81203310ac78b3ae949f85bee9c4688247596b 100644
+--- a/lib-commonjs/emitters/TSDocEmitter.js
++++ b/lib-commonjs/emitters/TSDocEmitter.js
+@@ -64,6 +64,10 @@ var TSDocEmitter = /** @class */ (function () {
+             return;
+         }
+         switch (docNode.kind) {
++            case DocNode_1.DocNodeKind.SoftBreak:
++                // @ts-ignore
++                this._writeNewline();
++                break;
+             case DocNode_1.DocNodeKind.Block:
+                 var docBlock = docNode;
+                 this._ensureLineSkipped();
+diff --git a/lib-commonjs/transforms/TrimSpacesTransform.js b/lib-commonjs/transforms/TrimSpacesTransform.js
+index b5fe0c49a27a8df5b08e9862541c2449c61c1158..6e54d39581af61241610f1a61d0b1746ac47fb38 100644
+--- a/lib-commonjs/transforms/TrimSpacesTransform.js
++++ b/lib-commonjs/transforms/TrimSpacesTransform.js
+@@ -11,80 +11,16 @@ var TrimSpacesTransform = /** @class */ (function () {
+     function TrimSpacesTransform() {
+     }
+     TrimSpacesTransform.transform = function (docParagraph) {
+-        var transformedNodes = [];
+-        // Whether the next nonempty node to be added needs a space before it
+-        var pendingSpace = false;
+-        // The DocPlainText node that we're currently accumulating
+-        var accumulatedTextChunks = [];
+-        var accumulatedNodes = [];
+-        // We always trim leading whitespace for a paragraph.  This flag gets set to true
+-        // as soon as nonempty content is encountered.
+-        var finishedSkippingLeadingSpaces = false;
+-        for (var _i = 0, _a = docParagraph.nodes; _i < _a.length; _i++) {
+-            var node = _a[_i];
+-            switch (node.kind) {
+-                case nodes_1.DocNodeKind.PlainText:
+-                    var docPlainText = node;
+-                    var text = docPlainText.text;
+-                    var startedWithSpace = /^\s/.test(text);
+-                    var endedWithSpace = /\s$/.test(text);
+-                    var collapsedText = text.replace(/\s+/g, ' ').trim();
+-                    if (startedWithSpace && finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    if (collapsedText.length > 0) {
+-                        if (pendingSpace) {
+-                            accumulatedTextChunks.push(' ');
+-                            pendingSpace = false;
+-                        }
+-                        accumulatedTextChunks.push(collapsedText);
+-                        accumulatedNodes.push(node);
+-                        finishedSkippingLeadingSpaces = true;
+-                    }
+-                    if (endedWithSpace && finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    break;
+-                case nodes_1.DocNodeKind.SoftBreak:
+-                    if (finishedSkippingLeadingSpaces) {
+-                        pendingSpace = true;
+-                    }
+-                    accumulatedNodes.push(node);
+-                    break;
+-                default:
+-                    if (pendingSpace) {
+-                        accumulatedTextChunks.push(' ');
+-                        pendingSpace = false;
+-                    }
+-                    // Push the accumulated text
+-                    if (accumulatedTextChunks.length > 0) {
+-                        // TODO: We should probably track the accumulatedNodes somehow, e.g. so we can map them back to the
+-                        // original excerpts.  But we need a developer scenario before we can design this API.
+-                        transformedNodes.push(new nodes_1.DocPlainText({
+-                            configuration: docParagraph.configuration,
+-                            text: accumulatedTextChunks.join('')
+-                        }));
+-                        accumulatedTextChunks.length = 0;
+-                        accumulatedNodes.length = 0;
+-                    }
+-                    transformedNodes.push(node);
+-                    finishedSkippingLeadingSpaces = true;
+-            }
++        if (docParagraph.nodes.length > 0 && 
++            docParagraph.nodes[docParagraph.nodes.length - 1].kind === "SoftBreak") {
++            const transformedNodes = docParagraph.nodes.slice(0, -1);
++            const transformedParagraph = new nodes_1.DocParagraph({
++                configuration: docParagraph.configuration
++            });
++            transformedParagraph.appendNodes(transformedNodes);
++            return transformedParagraph;
+         }
+-        // Push the accumulated text
+-        if (accumulatedTextChunks.length > 0) {
+-            transformedNodes.push(new nodes_1.DocPlainText({
+-                configuration: docParagraph.configuration,
+-                text: accumulatedTextChunks.join('')
+-            }));
+-            accumulatedTextChunks.length = 0;
+-            accumulatedNodes.length = 0;
+-        }
+-        var transformedParagraph = new nodes_1.DocParagraph({
+-            configuration: docParagraph.configuration
+-        });
+-        transformedParagraph.appendNodes(transformedNodes);
+-        return transformedParagraph;
++        return docParagraph;
+     };
+     return TrimSpacesTransform;
+ }());

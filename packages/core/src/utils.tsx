@@ -12,6 +12,7 @@ import {
   untrack,
 } from "./jsx-runtime.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { BaseListProps } from "./components/List.jsx";
 import { OutputDirectory, OutputFile, render } from "./render.js";
 
 export interface JoinOptions {
@@ -320,4 +321,43 @@ export function traverseOutput(
       visitor.visitFile(item);
     }
   }
+}
+
+/**
+ * Convert a list of props to a joiner and ender for use in {@link (mapJoin:1)}.
+ */
+export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
+  let joiner, punctuation;
+  if ("joiner" in props) {
+    joiner = props.joiner;
+  } else {
+    punctuation =
+      props.comma ? ","
+      : props.semicolon ? ";"
+      : "";
+
+    joiner = (
+      <>
+        {punctuation}
+        {props.softline ?
+          <sbr />
+        : props.hardline ?
+          <hbr />
+        : props.literalline ?
+          <lbr />
+        : props.line ?
+          <br />
+        : props.space ?
+          <> </>
+        : <hbr />}
+      </>
+    );
+  }
+
+  const ender =
+    "ender" in props ? props.ender
+    : props.enderPunctuation ? punctuation
+    : undefined;
+
+  return { joiner, ender };
 }

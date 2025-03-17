@@ -5,11 +5,13 @@ import {
   effect,
   getContext,
 } from "./jsx-runtime.js";
+import { stc, StcSignature } from "./stc.js";
 
 export interface ComponentContext<T> {
   id: symbol;
   default: T | undefined;
   Provider: ComponentDefinition<ContextProviderProps<T>>;
+  ProviderStc: StcSignature<ContextProviderProps<T>>;
   name?: string;
 }
 
@@ -38,21 +40,23 @@ export function createContext<T = unknown>(
   name?: string,
 ): ComponentContext<T> {
   const id = Symbol(name ?? "context");
+  function Provider(props: ContextProviderProps<T>) {
+    const context = getContext();
+
+    const rendered = shallowRef();
+    effect(() => {
+      context!.context![id] = props.value;
+      rendered.value = () => props.children;
+    }, undefined);
+
+    return rendered.value;
+  }
   const ctx = {
     id,
     default: defaultValue,
     name,
-    Provider(props: ContextProviderProps<T>) {
-      const context = getContext();
-
-      const rendered = shallowRef();
-      effect(() => {
-        context!.context![id] = props.value;
-        rendered.value = () => props.children;
-      }, undefined);
-
-      return rendered.value;
-    },
+    Provider,
+    ProviderStc: stc(Provider),
   };
   contextsByKey.set(id, ctx);
   return ctx;

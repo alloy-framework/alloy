@@ -1,5 +1,5 @@
 import { Children, memo, splitProps } from "@alloy-js/core/jsx-runtime";
-import { childrenArray, JoinOptions } from "../utils.js";
+import { childrenArray } from "../utils.js";
 import { For } from "./For.jsx";
 
 export type BreakKind = "none" | "space" | "soft" | "hard" | "literal";
@@ -30,42 +30,6 @@ export interface BaseListProps {
    * Place the join punctuation at the end, but without a line break.
    */
   enderPunctuation?: boolean;
-}
-
-export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
-  let joiner, punctuation;
-  if ("joiner" in props) {
-    joiner = props.joiner;
-  } else {
-    punctuation =
-      props.comma ? ","
-      : props.semicolon ? ";"
-      : "";
-
-    joiner = (
-      <>
-        {punctuation}
-        {props.softline ?
-          <sbr />
-        : props.hardline ?
-          <hbr />
-        : props.literalline ?
-          <lbr />
-        : props.line ?
-          <br />
-        : props.space ?
-          <> </>
-        : <hbr />}
-      </>
-    );
-  }
-
-  const ender =
-    "ender" in props ? props.ender
-    : props.enderPunctuation ? punctuation
-    : undefined;
-
-  return { joiner, ender };
 }
 
 export interface ListProps extends BaseListProps {

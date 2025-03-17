@@ -12,7 +12,7 @@ export function FunctionParameters(props: FunctionParametersProps) {
     (param) => code`
       <tr>
         <td style="text-align: right;font-weight: bold;">${param.name}</td>
-        <td>
+        <td>${param.isOptional && `<Badge text="optional" variant="note" size="small" />`}
         
           \`${param.parameterTypeExcerpt.text}\`
           
@@ -22,7 +22,7 @@ export function FunctionParameters(props: FunctionParametersProps) {
     `,
   );
 
-  return MdxSection({ title: "Parameters", level: 3 }).code`
+  return MdxSection({ title: "Parameters" }).code`
     <table>
       ${params}
     </table>

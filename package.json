@@ -30,7 +30,13 @@
     "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
     "tsx": "^4.19.1",
+    "typedoc": "^0.28.0",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@microsoft/tsdoc@0.15.0": "patches/@microsoft__tsdoc@0.15.0.patch"
+    }
   }
 }

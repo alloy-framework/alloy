@@ -5,6 +5,7 @@ import { ComponentProps as ComponentPropsJsx } from "../component/ComponentProps
 import { ComponentSignature as ComponentSignatureJsx } from "../component/ComponentSignature.js";
 import { ContextAccessor as ContextAccessorJsx } from "../context/ContextAccessor.js";
 import { ContextDoc as ContextDocJsx } from "../context/ContextDoc.js";
+import { ContextFactory as ContextFactoryJsx } from "../context/ContextFactory.js";
 import { ContextInterface as ContextInterfaceJsx } from "../context/ContextInterface.js";
 import { ContextSignature as ContextSignatureJsx } from "../context/ContextSignature.js";
 import { DocDeclaration as DocDeclarationJsx } from "../DocDeclaration.js";
@@ -74,6 +75,7 @@ export const ContextDoc = stc(ContextDocJsx);
 export const ContextSignature = stc(ContextSignatureJsx);
 export const ContextInterface = stc(ContextInterfaceJsx);
 export const ContextAccessor = stc(ContextAccessorJsx);
+export const ContextFactory = stc(ContextFactoryJsx);
 
 export const VariableDoc = stc(VariableDocJsx);
 

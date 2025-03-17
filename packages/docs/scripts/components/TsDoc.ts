@@ -10,6 +10,7 @@ import {
   DocBlock,
   DocCodeSpan,
   DocDeclarationReference,
+  DocEscapedText,
   DocFencedCode,
   DocLinkTag,
   DocNode,
@@ -58,13 +59,17 @@ export function TsDoc(props: TsDocProps): Children {
       // ignore?
       break;
     case DocNodeKind.FencedCode:
-      content = stc.Code({
-        code: (props.node as DocFencedCode).code,
-        language: (props.node as DocFencedCode).language,
-      });
+      content = stc
+        .Code({
+          language: (props.node as DocFencedCode).language,
+        })
+        .children((props.node as DocFencedCode).code);
       break;
     case DocNodeKind.SoftBreak:
       content = "\n";
+      break;
+    case DocNodeKind.EscapedText:
+      content = (props.node as DocEscapedText).encodedText;
       break;
     default:
       console.log("Unknown TSDoc kind " + props.node.kind);
@@ -84,14 +89,16 @@ export interface TsDocParagraphProps {
   node: DocParagraph;
 }
 export function TsDocParagraph(props: TsDocParagraphProps) {
-  let trimmed;
-  if ((props.node.nodes[0] as DocPlainText)?.text?.match(/^\* |^\d+\. /)) {
-    trimmed = props.node;
-  } else {
-    trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+  let trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+  let contentStartIndex = 0;
+  while (
+    contentStartIndex < trimmed.nodes.length &&
+    trimmed.nodes[contentStartIndex].kind === DocNodeKind.SoftBreak
+  ) {
+    contentStartIndex++;
   }
 
-  return trimmed.nodes.map((node) => TsDoc({ node }));
+  return trimmed.nodes.slice(contentStartIndex).map((node) => TsDoc({ node }));
 }
 
 export interface TsDocPlainTextProps {

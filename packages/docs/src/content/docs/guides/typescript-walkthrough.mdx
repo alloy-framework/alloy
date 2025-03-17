@@ -579,20 +579,20 @@ Finally, we can pull everything together into the method body:
       parameters={parameters}
       returnType={returnType}
     >
-      {code`
-        const response = await ${(
+      \{code\`
+        const response = await $\{(
           <ts.FunctionCallExpression
             target="fetch"
-            args={[endpoint, options]}
+            args=\{[endpoint, options]\}
           />
-        )};
+        )\};
         
-        if (!response.ok) { 
+        if (!response.ok) \{ 
           throw new Error("Request failed: " + response.status);
-        }
+        \}
 
-        return response.json() as ${returnType};
-      `}
+        return response.json() as $\{returnType\};
+      \`\}
     </ts.ClassMethod>
   );
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />

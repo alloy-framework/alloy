@@ -19,7 +19,7 @@ it("creates and cleans up a symbol", () => {
   const template = (
     <Output>
       <GetBinder />
-      <Scope>
+      <Scope name="foo">
         {doDecl.value ?
           <Declaration name="foo"></Declaration>
         : ""}

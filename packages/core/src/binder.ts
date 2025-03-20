@@ -127,6 +127,11 @@ export interface OutputSymbol {
    * one static member symbol in the output (i.e., the symbol is unique).
    */
   staticMemberScope?: OutputScope;
+
+  /**
+   * Additional custom metadata about this symbol.
+   */
+  metadata: Record<string, unknown>;
 }
 
 /**
@@ -175,7 +180,7 @@ export interface OutputScope {
    * The kind of scope. Subtypes will likely provide a set of known scope kinds.
    * The kind is not used by the binder itself.
    */
-  kind: string;
+  kind?: string;
 
   /**
    * The name of the scope.
@@ -230,6 +235,7 @@ export type CreateSymbolOptions<T extends OutputSymbol = OutputSymbol> = {
   refkey?: Refkey;
   refkeys?: Refkey[];
   flags?: OutputSymbolFlags;
+  metadata?: Record<string, unknown>;
 } & Omit<T, keyof OutputSymbol>;
 
 export type CreateScopeOptions<T extends OutputScope = OutputScope> = {
@@ -238,6 +244,7 @@ export type CreateScopeOptions<T extends OutputScope = OutputScope> = {
   parent?: OutputScope | undefined;
   flags?: OutputScopeFlags;
   owner?: OutputSymbol;
+  metadata?: Record<string, unknown>;
 } & Omit<T, keyof OutputScope>;
 
 /**
@@ -463,6 +470,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       parent,
       owner,
       flags = OutputScopeFlags.None,
+      metadata = {},
       ...rest
     } = args;
 
@@ -495,6 +503,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       flags,
       owner,
       binder,
+      metadata,
       ...rest,
       getSymbolNames: symbolNames(symbols),
     }) as T;
@@ -523,6 +532,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       refkey,
       refkeys,
       flags = OutputSymbolFlags.None,
+      metadata = {},
       ...rest
     } = args;
 
@@ -566,6 +576,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       refkeys: allRefkeys,
       binder,
       flags,
+      metadata,
       ...rest,
     }) as T;
 

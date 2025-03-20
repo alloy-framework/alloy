@@ -28,6 +28,8 @@ export interface MemberScopeProps {
  *
  * The member scope contains scopes for both instance and static members.
  * However, it does not affect the resolution of static members.
+ *
+ * @see {@link (MemberScopeContext:variable)}
  */
 export function MemberScope(props: MemberScopeProps) {
   const context: MemberScopeContext = {

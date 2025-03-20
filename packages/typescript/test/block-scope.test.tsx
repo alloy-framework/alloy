@@ -8,7 +8,7 @@ it("creates a scope", () => {
   const text = toSourceText(
     <>
       <VarDeclaration name="x" initializer="hi" />;<hbr />
-      <BlockScope>
+      <BlockScope name="foo">
         <VarDeclaration name="x" initializer="hello" />;
       </BlockScope>
     </>,

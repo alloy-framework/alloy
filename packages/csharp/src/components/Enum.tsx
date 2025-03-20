@@ -6,8 +6,10 @@ import { createCSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum
-export interface EnumProps extends Omit<core.DeclarationProps, "nameKind"> {
+export interface EnumProps {
   name: string;
+  refkey?: core.Refkey;
+  children?: core.Children;
   accessModifier?: AccessModifier;
 }
 

@@ -35,6 +35,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     default: props.default,
     export: props.export,
     flags: OutputSymbolFlags.StaticMemberContainer,
+    metadata: props.metadata,
   });
 
   const valueEntries = computed(() => Object.entries(props.jsValue ?? {}));

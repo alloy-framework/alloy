@@ -163,10 +163,10 @@ describe("instance methods", () => {
           />
           <ts.ClassMethod
             name="six"
-            parameters={{
-              a: { type: "number", refkey: a },
-              b: { type: "number", refkey: b },
-            }}
+            parameters={[
+              { name: "a", type: "number", refkey: a },
+              { name: "b", type: "number", refkey: b },
+            ]}
             returnType="number"
           >
             {one} = {a} + {b};

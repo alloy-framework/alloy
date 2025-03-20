@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+import { DeclarationProps } from "../components/Declaration.jsx";
 import { useNamespace } from "../components/Namespace.jsx";
 import { CSharpOutputScope } from "./scopes.js";
 
@@ -8,7 +9,7 @@ export interface CSharpOutputSymbol extends core.OutputSymbol {
 }
 
 // creates a new C# symbol
-export function createCSharpSymbol(props: core.DeclarationProps) {
+export function createCSharpSymbol(props: DeclarationProps) {
   const scope = core.useScope() as CSharpOutputScope;
 
   const namespaceCtx = useNamespace();

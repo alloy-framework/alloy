@@ -34,6 +34,7 @@ export interface createTsSymbolOptions {
   default?: boolean;
   flags?: OutputSymbolFlags;
   tsFlags?: TSSymbolFlags;
+  metadata?: Record<string, unknown>;
 }
 
 export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
@@ -55,6 +56,7 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
     default: !!options.default,
     flags: options.flags ?? OutputSymbolFlags.None,
     tsFlags: options.tsFlags ?? TSSymbolFlags.None,
+    metadata: options.metadata,
   });
 
   if (options.export && scope.kind === "module") {

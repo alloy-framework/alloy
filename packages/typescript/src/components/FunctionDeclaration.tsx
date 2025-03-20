@@ -22,24 +22,45 @@ import {
 } from "../symbols/index.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 
+/**
+ * Information for a TypeScript function parameter.
+ */
 export interface ParameterDescriptor {
+  /**
+   * The name of the parameter.
+   */
+  name: string;
+
+  /**
+   * The type of the parameter.
+   */
   type?: Children;
+
+  /**
+   * The refkey for this parameter.
+   */
   refkey?: Refkey;
+
+  /**
+   * The refkeys for this parameter.
+   */
   refkeys?: Refkey[];
+
+  /**
+   * Whether the parameter is optional.
+   */
   optional?: boolean;
+
+  /**
+   * Arbitrary metadata for the parameter symbol.
+   */
+  metadata?: Record<string, unknown>;
 }
 
-function isParameterDescriptor(
-  value: Children | ParameterDescriptor,
-): value is ParameterDescriptor {
-  return (
-    typeof value === "object" && value !== null && Object.hasOwn(value, "type")
-  );
-}
 export interface FunctionDeclarationProps extends BaseDeclarationProps {
   async?: boolean;
-  parameters?: Record<string, Children | ParameterDescriptor>;
-  typeParameters?: Record<string, Children | ParameterDescriptor> | string[];
+  parameters?: Record<string, Children> | ParameterDescriptor[];
+  typeParameters?: Record<string, Children> | ParameterDescriptor[] | string[];
   returnType?: Children;
   children?: Children;
 }
@@ -98,55 +119,73 @@ function getReturnType(
   }
 }
 
-interface DeclaredParameterDescriptor extends ParameterDescriptor {
+interface DeclaredParameterDescriptor
+  extends Omit<ParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
 }
 
 function normalizeAndDeclareParameters(
-  parameters: Record<string, Children | ParameterDescriptor> | string[],
+  parameters: Record<string, Children> | ParameterDescriptor[] | string[],
   flags: TSSymbolFlags = TSSymbolFlags.ParameterSymbol,
 ): DeclaredParameterDescriptor[] {
   const namePolicy = useTSNamePolicy();
   if (Array.isArray(parameters)) {
-    return parameters.map((paramName) => {
-      const symbol = createTSSymbol({
+    if (parameters.length === 0) {
+      return [];
+    }
+    if (typeof parameters[0] === "string") {
+      return (parameters as string[]).map((paramName) => {
+        const symbol = createTSSymbol({
+          name: namePolicy.getName(
+            paramName,
+            flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
+          ),
+          refkey: refkey(),
+          tsFlags: flags,
+        });
+
+        return { refkeys: symbol.refkeys, symbol };
+      });
+    } else {
+      return (parameters as ParameterDescriptor[]).map((param) => {
+        const symbol = createTSSymbol({
+          name: namePolicy.getName(
+            param.name,
+            flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
+          ),
+          refkey: param.refkey ?? refkey(),
+          tsFlags: flags,
+          metadata: param.metadata,
+        });
+
+        return {
+          ...param,
+          symbol,
+        };
+      });
+    }
+  } else {
+    return Object.entries(parameters).map(([paramName, value]) => {
+      const descriptor: DeclaredParameterDescriptor = {
+        type: value,
+        symbol: undefined as any,
+      };
+
+      descriptor.symbol = createTSSymbol({
         name: namePolicy.getName(
           paramName,
           flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
         ),
-        refkey: refkey(),
         tsFlags: flags,
       });
 
-      return { refkeys: symbol.refkeys, symbol };
+      return descriptor;
     });
   }
-
-  return Object.entries(parameters).map(([paramName, value]) => {
-    const descriptor: DeclaredParameterDescriptor =
-      isParameterDescriptor(value) ? value : (
-        ({
-          refkey: refkey(),
-          type: value,
-        } as any)
-      );
-
-    const symbol = createTSSymbol({
-      name: namePolicy.getName(
-        paramName,
-        flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
-      ),
-      refkey: descriptor.refkey,
-      refkeys: descriptor.refkeys,
-      tsFlags: flags,
-    });
-    descriptor.symbol = symbol;
-    return descriptor;
-  });
 }
 
 export interface FunctionTypeParametersProps {
-  parameters?: Record<string, Children | ParameterDescriptor> | string[];
+  parameters?: Record<string, Children> | ParameterDescriptor[] | string[];
   children?: Children;
 }
 
@@ -200,7 +239,7 @@ function typeParameter(param: DeclaredParameterDescriptor) {
 }
 
 export interface FunctionParametersProps {
-  parameters?: Record<string, Children | ParameterDescriptor>;
+  parameters?: Record<string, Children> | ParameterDescriptor[];
   children?: Children;
 }
 
@@ -211,10 +250,10 @@ FunctionDeclaration.Parameters = taggedComponent(
       return props.children;
     }
 
-    const parameters = normalizeAndDeclareParameters(props.parameters ?? {});
+    const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
     return (
       <group>
-        <Indent break="soft">
+        <Indent break="soft" trailingBreak>
           <For each={parameters} comma line>
             {(param) => parameter(param)}
           </For>

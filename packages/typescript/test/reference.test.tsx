@@ -9,7 +9,9 @@ it("works with back references", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <Declaration name="foo">const foo = 1;</Declaration>
+        <Declaration name="foo" refkey={refkey("foo")}>
+          const foo = 1;
+        </Declaration>
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -37,7 +39,9 @@ it("works with forward references", () => {
         const v = <Reference refkey={refkey("foo")} />;
       </ts.SourceFile>
       <ts.SourceFile path="test1.ts">
-        <Declaration name="foo">const foo = 1;</Declaration>
+        <Declaration name="foo" refkey={refkey("foo")}>
+          const foo = 1;
+        </Declaration>
       </ts.SourceFile>
     </Output>,
   );

@@ -30,6 +30,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
     refkeys: props.refkeys,
     default: props.default,
     export: props.export,
+    metadata: props.metadata,
   });
 
   const assignmentContext = createAssignmentContext(sym);

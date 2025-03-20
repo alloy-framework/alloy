@@ -14,6 +14,7 @@ import { ParameterProps, Parameters } from "./Parameters.js";
 // properties for creating a class
 export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
   name: string;
+  refkey?: core.Refkey;
   accessModifier?: AccessModifier;
   typeParameters?: Record<string, core.Refkey>;
 }
@@ -24,9 +25,9 @@ export function Class(props: ClassProps) {
   const scope = useCSharpScope();
 
   const thisClassSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
-    name: name,
+    name,
     scope,
-    refkey: props.refkey ?? core.refkey(props.name),
+    refkey: props.refkey,
   });
 
   // this creates a new scope for the class definition.
@@ -165,9 +166,10 @@ export function ClassMember(props: ClassMemberProps) {
 }
 
 // properties for creating a method
-export interface ClassMethodProps
-  extends Omit<core.DeclarationProps, "nameKind"> {
+export interface ClassMethodProps {
   name: string;
+  refkey?: core.Refkey;
+  children?: core.Children;
   accessModifier?: AccessModifier;
   methodModifier?: MethodModifier;
   parameters?: Array<ParameterProps>;

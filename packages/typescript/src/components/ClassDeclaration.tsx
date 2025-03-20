@@ -130,7 +130,7 @@ export function ClassField(props: ClassFieldProps) {
 
 export interface ClassMethodProps extends ClassMemberProps {
   async?: boolean;
-  parameters?: Record<string, Children | ParameterDescriptor>;
+  parameters?: Record<string, Children> | ParameterDescriptor[];
   returnType?: Children;
   children?: Children;
 }

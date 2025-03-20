@@ -12,21 +12,23 @@ export function ClientMethod(props: ClientMethodProps) {
   const op = props.operation;
 
   // get the parameters based on the spec's endpoint and requestBody
-  const parameters: Record<string, ts.ParameterDescriptor> = {};
+  const parameters: ts.ParameterDescriptor[] = [];
 
   const endpointParam = op.endpoint.match(/:(\w+)$/)?.[1];
   if (endpointParam) {
-    parameters[endpointParam] = {
+    parameters.push({
+      name: endpointParam,
       type: "string",
       refkey: refkey(op, endpointParam),
-    };
+    });
   }
 
   if (op.requestBody) {
-    parameters["body"] = {
+    parameters.push({
+      name: "body",
       type: refkey(apiContext.resolveReference(op.requestBody)),
       refkey: refkey(op, "requestBody"),
-    };
+    });
   }
 
   // get the return type based on the spec's responseBody.

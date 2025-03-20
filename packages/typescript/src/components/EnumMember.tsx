@@ -27,6 +27,11 @@ export interface EnumMemberProps {
    * The JS value of the enum member.
    */
   jsValue?: string | number;
+
+  /**
+   * Arbitrary symbol metadata for the enum member.
+   */
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -41,6 +46,7 @@ export function EnumMember(props: EnumMemberProps) {
       name,
       refkey: props.refkey,
       flags: OutputSymbolFlags.StaticMember,
+      metadata: props.metadata,
     });
   }
   const nameCode = sym ? sym.name : name;

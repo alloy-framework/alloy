@@ -164,7 +164,7 @@ describe("symbols", () => {
       <>
         <FunctionDeclaration
           name="foo"
-          parameters={{ sym: { type: "any", refkey: rk } }}
+          parameters={[{ name: "sym", type: "any", refkey: rk }]}
         >
           <FunctionDeclaration name="bar">{rk}</FunctionDeclaration>
         </FunctionDeclaration>
@@ -198,13 +198,14 @@ describe("symbols", () => {
 
   it("create optional parameters", () => {
     const paramDesc: ParameterDescriptor = {
+      name: "foo",
       refkey: refkey(),
       type: "any",
       optional: true,
     };
     const decl = (
       <>
-        <FunctionDeclaration name="foo" parameters={{ foo: paramDesc }}>
+        <FunctionDeclaration name="foo" parameters={[paramDesc]}>
           console.log(foo);
         </FunctionDeclaration>
       </>

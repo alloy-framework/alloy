@@ -3,15 +3,58 @@ import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
 import { Children } from "../jsx-runtime.js";
-import { Refkey, refkey } from "../refkey.js";
+import { Refkey } from "../refkey.js";
 
-export interface MemberDeclarationProps {
-  name?: string;
+/**
+ * Create a member declaration by providing a symbol name and optional symbol
+ * metadata.
+ */
+export interface MemberDeclarationPropsWithInfo {
+  /**
+   * The name of this declaration.
+   */
+  name: string;
+
+  /**
+   * The unique key for this declaration.
+   */
   refkey?: Refkey;
-  symbol?: OutputSymbol;
-  children?: Children;
+
+  /**
+   * Multiple unique keys for this declaration.
+   */
+  refkeys?: Refkey[];
+
+  /**
+   * Additional metadata for the declared symbol.
+   */
+  metadata?: Record<string, unknown>;
+
+  /**
+   * Whether this is a static member. If not provided, the member is an instance
+   * member.
+   */
   static?: boolean;
+  children?: Children;
 }
+
+/**
+ * Create a declaration by providing an already created symbol. The symbol is
+ * merely exposed via {@link DeclarationContext}.
+ */
+export interface MemberDeclarationPropsWithSymbol {
+  /**
+   * The symbol being declared. When provided, the name, refkey, and metadata
+   * props are ignored.
+   */
+  symbol: OutputSymbol;
+
+  children?: Children;
+}
+
+export type MemberDeclarationProps =
+  | MemberDeclarationPropsWithInfo
+  | MemberDeclarationPropsWithSymbol;
 
 /**
  * Declares a symbol in the current member scope for this component's children.
@@ -38,20 +81,22 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
   }
 
   let declaration;
-  if (props.symbol) {
+  if ("symbol" in props && props.symbol) {
     declaration = props.symbol;
   } else {
-    if (!props.name) {
+    const infoProps = props as MemberDeclarationPropsWithInfo;
+    if (!infoProps.name) {
       throw new Error(
         "Must provide a member name, or else provide a member symbol",
       );
     }
-    const rk = props.refkey ? props.refkey : refkey(props.name);
     declaration = binder.createSymbol({
-      name: props.name!,
-      refkey: rk,
+      name: infoProps.name!,
+      refkey: infoProps.refkey,
+      refkeys: infoProps.refkeys,
+      metadata: infoProps.metadata,
       flags:
-        props.static ?
+        infoProps.static ?
           OutputSymbolFlags.StaticMember
         : OutputSymbolFlags.InstanceMember,
     });

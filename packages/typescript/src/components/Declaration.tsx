@@ -55,6 +55,11 @@ export interface BaseDeclarationProps {
    * value (e.g. var, const, let).
    */
   kind?: "type" | "value";
+
+  /**
+   * Arbitrary metadata about this declaration.
+   */
+  metadata?: Record<string, unknown>;
 }
 
 export interface DeclarationProps extends BaseDeclarationProps {
@@ -94,10 +99,10 @@ export function Declaration(props: DeclarationProps) {
     default: props.default,
     flags: props.flags,
     tsFlags,
+    metadata: props.metadata,
   });
 
   let children: Children;
-
   if (sym.flags & OutputSymbolFlags.MemberContainer) {
     children = <MemberScope owner={sym}>{props.children}</MemberScope>;
   } else {

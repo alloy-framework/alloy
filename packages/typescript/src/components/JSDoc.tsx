@@ -13,16 +13,7 @@ export interface JSDocProps {
 export function JSDoc(props: JSDocProps) {
   return (
     <JSDocComment>
-      <List
-        joiner={
-          <>
-            <hbr />
-            <hbr />
-          </>
-        }
-      >
-        {childrenArray(() => props.children)}
-      </List>
+      <List doubleHardline>{childrenArray(() => props.children)}</List>
     </JSDocComment>
   );
 }

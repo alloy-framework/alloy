@@ -40,7 +40,7 @@ export function TypeArguments(props: TypeArgumentsProps) {
       <Match else>
         <group>
           {"<"}
-          <Indent break="soft">
+          <Indent softline>
             <Switch>
               <Match when={isTypeArgumentDescriptor(props.args![0])}>
                 <For each={props.args as TypeArgumentDescriptor[]} comma line>

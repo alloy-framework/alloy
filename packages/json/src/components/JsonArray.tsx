@@ -78,7 +78,7 @@ export function JsonArray(props: JsonArrayProps) {
       <MemberScope owner={memberSymbol}>
         <group>
           [
-          <Indent break="soft" trailingBreak>
+          <Indent softline trailingBreak>
             <List comma line>
               {props.children}
             </List>
@@ -95,7 +95,7 @@ export function JsonArray(props: JsonArrayProps) {
     <MemberScope owner={memberSymbol}>
       <group>
         [
-        <Indent break="soft" trailingBreak>
+        <Indent softline trailingBreak>
           <For each={jsValue} comma line>
             {(value) => <JsonArrayElement jsValue={value} />}
           </For>

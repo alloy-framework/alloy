@@ -212,7 +212,7 @@ FunctionDeclaration.TypeParameters = taggedComponent(
       <>
         {"<"}
         <group>
-          <Indent break="soft">
+          <Indent softline>
             <For each={typeParameters} comma line>
               {(param) => typeParameter(param)}
             </For>
@@ -253,7 +253,7 @@ FunctionDeclaration.Parameters = taggedComponent(
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
     return (
       <group>
-        <Indent break="soft" trailingBreak>
+        <Indent softline trailingBreak>
           <For each={parameters} comma line>
             {(param) => parameter(param)}
           </For>

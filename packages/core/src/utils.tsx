@@ -349,6 +349,11 @@ export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
           <br />
         : props.space ?
           <> </>
+        : props.doubleHardline ?
+          <>
+            <hbr />
+            <hbr />
+          </>
         : <hbr />}
       </>
     );

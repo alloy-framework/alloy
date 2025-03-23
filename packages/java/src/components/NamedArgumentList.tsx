@@ -14,7 +14,7 @@ export function NamedArgumentList(props: NamedArgumentListProps) {
   return (
     <group>
       (
-      <Indent break="soft">
+      <Indent softline>
         <For each={Object.entries(props.args)} comma line>
           {([key, value]) => {
             return (

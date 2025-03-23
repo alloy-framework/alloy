@@ -2,8 +2,6 @@ import { Children, memo, splitProps } from "@alloy-js/core/jsx-runtime";
 import { childrenArray } from "../utils.js";
 import { For } from "./For.jsx";
 
-export type BreakKind = "none" | "space" | "soft" | "hard" | "literal";
-
 export interface BaseListProps {
   /** Text to place between each element */
   joiner?: Children;
@@ -14,10 +12,22 @@ export interface BaseListProps {
   /** Place a semicolon between each element */
   semicolon?: boolean;
 
+  /** Place a regular line (`<br />`) between each element */
   line?: boolean;
+
+  /** Place a softline (`<sbr />`) between each element */
   softline?: boolean;
+
+  /** Place a hardline (`<hbr />`) between each element */
   hardline?: boolean;
+
+  /** Place two hardlines between each element */
+  doubleHardline?: boolean;
+
+  /** Place a literal line (`<lbr />`) between each element */
   literalline?: boolean;
+
+  /** Place a space between each element */
   space?: boolean;
 
   /**

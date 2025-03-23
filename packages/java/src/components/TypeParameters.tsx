@@ -16,7 +16,7 @@ export function TypeParameters(props: TypeParametersProps) {
       <Show when={props.generics && Object.keys(props.generics).length > 0}>
         <group>
           {"<"}
-          <Indent break="soft" trailingBreak>
+          <Indent softline trailingBreak>
             <For each={Object.entries(props.generics!)} comma line>
               {([name, constraint]) => (
                 <>

@@ -1,5 +1,22 @@
 # Changelog - @alloy-js/core
 
+## 0.8.0
+
+### Features
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Add metadata record to symbols and scopes for applications to store arbitrary information about them. Various declaration and scope forms have an additional prop to set this metadata.
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Scope name is now optional. Many scopes don't have names.
+- [#66](https://github.com/alloy-framework/alloy/pull/66) Add `text` helper that processes a string template similar to a JSX template with respect to whitespace handling.
+- [#66](https://github.com/alloy-framework/alloy/pull/66) Add `ProviderStc` to context for providing context inside string template components.
+- [#68](https://github.com/alloy-framework/alloy/pull/68) Add `doubleHardline` as a list joiner boolean prop. Useful for markdown paragraphs or separating declarations with a blank line.
+
+### Breaking Changes
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Refkeys no longer default to `refkey(name)`. This behavior is just not very useful and leads to some very confusing behavior especially when multiple same-named symbols exist within a single emit. The old behavior can be achieved by passing the `refkey={refkey(name)}` prop, but this is not recommended.
+- [#67](https://github.com/alloy-framework/alloy/pull/67) DeclarationProps, MemberDeclarationProps, and ScopeProps are now unions in order to properly type check and document the distinct usages of either passing a symbol or props necessary to construct a symbol. Anyone extending these interfaces will need to make a similar split.
+- [#68](https://github.com/alloy-framework/alloy/pull/68) Indent component no longer takes `break` prop. Instead, pass `hardline`, `softline`, `line`, or `literalline` boolean props.
+
+
 ## 0.7.0
 
 ### Bug Fixes

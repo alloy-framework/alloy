@@ -1,5 +1,21 @@
 # Changelog - @alloy-js/typescript
 
+## 0.8.0
+
+### Features
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Expose `metadata` prop on various declaration forms to add arbitrary metadata about the symbol being declared. This metadata is stored on the symbol and can be accessed within e.g. name conflict resolution callbacks.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add new BlockScope component that combines a block and a scope.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add IfStatement, ElseIfClause, and ElseClause components.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add SwitchStatement and CaseClause components.
+
+### Breaking Changes
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Removed all default refkeys based on declaration name.
+- [#67](https://github.com/alloy-framework/alloy/pull/67) The `parameters` prop passed to various function or method defining components now takes a `ParameterDescriptor[]` instead of a `Record<string, ParameterDescriptor>`. `ParameterDescriptor` now has a required `name` property. The record form is dangerous because you have to ensure you have no name conflicts, otherwise you'll silently lose parameters. The `Record<string, Children>` variant remains though may be removed in a future version.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) The `value` prop of VarDeclaration has been renamed to `initializer` to align with the ECMAScript grammar.
+
+
 ## 0.7.0
 
 ### Bug Fixes

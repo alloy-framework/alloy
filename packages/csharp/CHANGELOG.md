@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.8.0
+
+### Breaking Changes
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Removed all default refkeys based on declaration name.
+
+
 ## 0.7.0
 
 No changes, version bump only.

@@ -28,6 +28,7 @@ versionPolicies:
     packages:
       - "@alloy-js/core"
       - "@alloy-js/java"
+      - "@alloy-js/json"
       - "@alloy-js/csharp"
       - "@alloy-js/typescript"
       - "@alloy-js/create"

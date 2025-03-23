@@ -615,15 +615,7 @@ The Client component is relatively straight forward:
     const name = \`\${schema.name}Client\`;
 
     return <ts.ClassDeclaration name={name} export refkey={refkey(schema)}>
-      <For
-        each={schema.operations}
-        joiner={
-          <>
-            <hbr />
-            <hbr />
-          </>
-        }
-      >
+      <For each={schema.operations} doubleHardline>
         {(op) => <ClientMethod operation={op} />}
       </For>
     </ts.ClassDeclaration>;

@@ -12,7 +12,7 @@ export function FunctionCallExpression(props: FunctionCallExpressionProps) {
       <Wrap
         when={!!props.args && props.args.length > 1}
         with={Indent}
-        props={{ break: "soft", trailingBreak: true }}
+        props={{ softline: true, trailingBreak: true }}
       >
         <For each={props.args ?? []} comma line>
           {(arg) => arg}

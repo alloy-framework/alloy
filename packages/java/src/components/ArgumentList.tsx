@@ -18,7 +18,7 @@ export function ArgumentList(props: ArgumentListProps) {
   return (
     <group>
       (
-      <Indent break="soft" trailingBreak>
+      <Indent softline trailingBreak>
         <For each={props.args ?? []} comma line>
           {(value) => value}
         </For>

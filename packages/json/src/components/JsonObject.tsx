@@ -83,7 +83,11 @@ export function JsonObject(props: JsonObjectProps) {
       <MemberScope owner={memberSymbol}>
         <group>
           {"{"}
-          <Indent break={props.style?.concise ? "soft" : "hard"} trailingBreak>
+          <Indent
+            softline={!!props.style?.concise}
+            hardline={!props.style?.concise}
+            trailingBreak
+          >
             <List comma softline>
               {props.children}
             </List>
@@ -111,7 +115,11 @@ export function JsonObject(props: JsonObjectProps) {
     <MemberScope owner={memberSymbol}>
       <group>
         {"{"}
-        <Indent break={props.style?.concise ? "soft" : "hard"} trailingBreak>
+        <Indent
+          softline={!!props.style?.concise}
+          hardline={!props.style?.concise}
+          trailingBreak
+        >
           <For each={entries} comma softline>
             {([name, value]) => (
               <JsonObjectProperty name={name} jsValue={value} />

@@ -10,7 +10,7 @@ export function ArrayExpression(props: ArrayExpressionProps) {
   return (
     <group>
       [
-      <Indent break="soft">
+      <Indent softline>
         <For each={props.jsValue ?? []} comma line>
           {(value) => <ValueExpression jsValue={value} />}
         </For>

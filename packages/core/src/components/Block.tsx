@@ -32,12 +32,9 @@ export function Block(props: BlockProps) {
     <group>
       {props.newline && <br />}
       {props.opener ?? "{"}
-      <Indent break={childCount.value > 0 ? "hard" : "soft"}>
+      <Indent softline={childCount.value === 0} trailingBreak>
         {props.children}
       </Indent>
-      {childCount.value > 0 ?
-        <hbr />
-      : <sbr />}
       {props.closer ?? "}"}
     </group>
   );

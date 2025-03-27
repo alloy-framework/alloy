@@ -337,6 +337,12 @@ export interface Binder {
   ): Ref<TScope | undefined>;
 
   /**
+   * Gets a symbol by its refkey.
+   * @param ref - The refkey to resolve.
+   */
+  getSymbolForRefkey(ref: Refkey): OutputSymbol | undefined;
+
+  /**
    * Resolve a fully qualified name to a symbol. Access a nested scope by name
    * with `::`, a nested static member with `.` and a nested instance member
    * with `#`.
@@ -432,6 +438,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     instantiateSymbolInto,
     findSymbolName,
     findScopeName,
+    getSymbolForRefkey,
     resolveFQN: resolveFQN as any,
     globalScope: undefined as any,
   };
@@ -679,6 +686,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       owner: symbol,
       flags: OutputScopeFlags.InstanceMemberScope,
     });
+  }
+
+  function getSymbolForRefkey(ref: Refkey): OutputSymbol | undefined {
+    return knownDeclarations.get(ref);
   }
 
   function resolveDeclarationByKey<

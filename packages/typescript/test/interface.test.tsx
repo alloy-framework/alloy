@@ -1,8 +1,9 @@
-import { NamePolicyContext, refkey, StatementList } from "@alloy-js/core";
+import { List, NamePolicyContext, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
+import { MemberIdentifier } from "../src/components/MemberIdentifier.jsx";
 import { Reference } from "../src/components/Reference.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
 import { toSourceText } from "./utils.js";
@@ -52,6 +53,152 @@ it("can create members", () => {
       member: string;
       circular: Foo;
       [str: string]: number;
+    }
+  `);
+});
+
+it("can create a chain expression with MemberIdentifiers", () => {
+  const memberRef = refkey("member");
+  const res = toSourceText(
+    <List>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember name="member" type="string" refkey={memberRef} />
+          <ts.InterfaceMember
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+            refkey={refkey("circular")}
+          />
+        </StatementList>
+      </ts.InterfaceDeclaration>
+      <ts.FunctionDeclaration
+        name="foo"
+        parameters={[
+          { name: "foo", type: refkey("Foo"), refkey: refkey("foo") },
+        ]}
+      >
+        <ts.VarDeclaration const name="member">
+          <ts.MemberChainExpression>
+            <MemberIdentifier refkey={refkey("foo")} />
+            <MemberIdentifier refkey={memberRef} />
+          </ts.MemberChainExpression>
+        </ts.VarDeclaration>
+        ;
+      </ts.FunctionDeclaration>
+    </List>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      member: string;
+      circular: Foo;
+    }
+    function foo(foo: Foo) {
+      const member = foo.member;
+    }
+  `);
+});
+
+it("can create a chain expression with MemberIdentifiers and optional chaining on the first element", () => {
+  const memberRef = refkey("member");
+  const res = toSourceText(
+    <List>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember name="member" type="string" refkey={memberRef} />
+          <ts.InterfaceMember
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+            refkey={refkey("circular")}
+          />
+        </StatementList>
+      </ts.InterfaceDeclaration>
+      <ts.FunctionDeclaration
+        name="foo"
+        parameters={[
+          { name: "foo", type: refkey("Foo"), refkey: refkey("foo") },
+        ]}
+      >
+        <ts.VarDeclaration const name="member">
+          <ts.MemberChainExpression>
+            <MemberIdentifier refkey={refkey("foo")} nullish={true} />
+            <MemberIdentifier refkey={memberRef} nullish={true} />
+          </ts.MemberChainExpression>
+        </ts.VarDeclaration>
+        ;
+      </ts.FunctionDeclaration>
+    </List>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      member: string;
+      circular: Foo;
+    }
+    function foo(foo: Foo) {
+      const member = foo?.member;
+    }
+  `);
+});
+
+it("can create a chain expression with MemberIdentifiers and optional chaining on a nested element", () => {
+  const memberRef = refkey("member");
+  const nestedRef = refkey("nested");
+  const nested = (
+    <ts.InterfaceExpression>
+      <ts.InterfaceMember
+        name="nested"
+        type="string"
+        optional={true}
+        refkey={nestedRef}
+      />
+      ;
+    </ts.InterfaceExpression>
+  );
+  const res = toSourceText(
+    <List>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember
+            name="member"
+            type={nested}
+            refkey={memberRef}
+            optional={true}
+          />
+          <ts.InterfaceMember
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+            refkey={refkey("circular")}
+          />
+        </StatementList>
+      </ts.InterfaceDeclaration>
+      <ts.FunctionDeclaration
+        name="foo"
+        parameters={[
+          { name: "foo", type: refkey("Foo"), refkey: refkey("foo") },
+        ]}
+      >
+        <ts.VarDeclaration const name="member">
+          <ts.MemberChainExpression>
+            <MemberIdentifier refkey={refkey("foo")} />
+            <MemberIdentifier refkey={memberRef} nullish={true} />
+            <MemberIdentifier refkey={nestedRef} nullish={true} />
+          </ts.MemberChainExpression>
+        </ts.VarDeclaration>
+        ;
+      </ts.FunctionDeclaration>
+    </List>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo {
+      member?: {
+        nested?: string;
+      };
+      circular: Foo;
+    }
+    function foo(foo: Foo) {
+      const member = foo.member?.nested;
     }
   `);
 });

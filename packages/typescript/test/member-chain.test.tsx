@@ -119,6 +119,7 @@ it("works without function call expressions", () => {
       { printWidth: 5 },
     ),
   ).toBe(d`
-    z.string.min
+    z.string
+    .min
   `);
 });

@@ -40,6 +40,11 @@ export interface BaseListProps {
    * Place the join punctuation at the end, but without a line break.
    */
   enderPunctuation?: boolean;
+
+  /**
+   * Skip falsy values in the list.
+   */
+  skipFalsy?: boolean;
 }
 
 export interface ListProps extends BaseListProps {

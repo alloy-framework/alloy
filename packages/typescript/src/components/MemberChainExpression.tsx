@@ -49,7 +49,7 @@ function isNullish(child: Children): boolean {
 }
 
 /**
- * Renders a TypeScript member expression chain, handling optional chaining, {@link FunctionCallExpression} and {@link MemberIdentifier}.
+ * Renders a TypeScript member expression chain, handling optional chaining, {@link FunctionCallExpression} and MemberIdentifier
  *
  * This component formats complex member chains (e.g., `obj.prop1?.method().prop2`) by grouping related expressions
  * and applying indentation and line breaks for readability.

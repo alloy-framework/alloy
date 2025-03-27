@@ -5,6 +5,7 @@ import { SourceFileContext } from "../context/source-file.js";
 import { Children, ComponentDefinition, getContext } from "../jsx-runtime.js";
 import { Refkey } from "../refkey.js";
 import { PrintTreeOptions } from "../render.js";
+import { Show } from "./Show.jsx";
 
 export interface SourceFileProps extends PrintTreeOptions {
   /**
@@ -24,6 +25,11 @@ export interface SourceFileProps extends PrintTreeOptions {
    * contents.
    */
   reference?: ComponentDefinition<{ refkey: Refkey }>;
+  /**
+   * The header of the file. This is rendered before the contents of the file.
+   * This is useful for adding license headers or other metadata to the file.
+   */
+  header?: Children;
 }
 
 export function SourceFile(props: SourceFileProps) {
@@ -45,6 +51,10 @@ export function SourceFile(props: SourceFileProps) {
 
   return (
     <SourceFileContext.Provider value={context}>
+      <Show when={props.header !== undefined}>
+        {props.header}
+        <hbr />
+      </Show>
       {props.children}
     </SourceFileContext.Provider>
   );

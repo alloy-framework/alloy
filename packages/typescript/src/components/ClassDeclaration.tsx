@@ -7,12 +7,17 @@ import {
   OutputSymbolFlags,
   Refkey,
   Scope,
+  splitProps,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
+import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
+import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
+import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
+import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -56,10 +61,13 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const flags = OutputSymbolFlags.MemberContainer;
 
   return (
-    <Declaration {...props} flags={flags} nameKind="class">
-      class <Name />
-      {extendsPart} <Block>{props.children}</Block>
-    </Declaration>
+    <>
+      <DeclarationJSDoc doc={props.doc} />
+      <Declaration {...props} flags={flags} nameKind="class">
+        class <Name />
+        {extendsPart} <Block>{props.children}</Block>
+      </Declaration>
+    </>
   );
 }
 
@@ -72,6 +80,7 @@ export interface ClassMemberProps {
   jsPrivate?: boolean;
   static?: boolean;
   children?: Children;
+  doc?: string;
 }
 
 export function ClassMember(props: ClassMemberProps) {
@@ -98,13 +107,16 @@ export function ClassMember(props: ClassMemberProps) {
   }
 
   return (
-    <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
-      {props.public && "public "}
-      {props.private && "private "}
-      {props.protected && "protected "}
-      {props.static && "static "}
-      {props.children}
-    </MemberDeclaration>
+    <>
+      <DeclarationJSDoc doc={props.doc} />
+      <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
+        {props.public && "public "}
+        {props.private && "private "}
+        {props.protected && "protected "}
+        {props.static && "static "}
+        {props.children}
+      </MemberDeclaration>
+    </>
   );
 }
 

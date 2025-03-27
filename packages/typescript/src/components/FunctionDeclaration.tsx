@@ -8,6 +8,7 @@ import {
   Indent,
   Name,
   Refkey,
+  refkey,
   Scope,
   Show,
   taggedComponent,
@@ -22,41 +23,7 @@ import {
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-
-/**
- * Information for a TypeScript function parameter.
- */
-export interface ParameterDescriptor {
-  /**
-   * The name of the parameter.
-   */
-  name: string;
-
-  /**
-   * The type of the parameter.
-   */
-  type?: Children;
-
-  /**
-   * The default value of the parameter.
-   */
-  default?: Children;
-
-  /**
-   * The refkey for this parameter.
-   */
-  refkey?: Refkey | Refkey[];
-
-  /**
-   * Whether the parameter is optional.
-   */
-  optional?: boolean;
-
-  /**
-   * Arbitrary metadata for the parameter symbol.
-   */
-  metadata?: Record<string, unknown>;
-}
+import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 /**
  * Information for a TypeScript generic type parameter.

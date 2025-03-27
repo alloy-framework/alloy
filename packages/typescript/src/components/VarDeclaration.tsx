@@ -8,6 +8,7 @@ import {
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
+import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
 
 export interface VarDeclarationProps extends BaseDeclarationProps {
   const?: boolean;
@@ -35,14 +36,17 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const assignmentContext = createAssignmentContext(sym);
 
   return (
-    <CoreDeclaration symbol={sym}>
-      {props.export ? "export " : ""}
-      {props.default ? "default " : ""}
-      {keyword} <Name />
-      {type} ={" "}
-      <AssignmentContext.Provider value={assignmentContext}>
-        {props.initializer ?? props.children}
-      </AssignmentContext.Provider>
-    </CoreDeclaration>
+    <>
+      <DeclarationJSDoc doc={props.doc} />
+      <CoreDeclaration symbol={sym}>
+        {props.export ? "export " : ""}
+        {props.default ? "default " : ""}
+        {keyword} <Name />
+        {type} ={" "}
+        <AssignmentContext.Provider value={assignmentContext}>
+          {props.initializer ?? props.children}
+        </AssignmentContext.Provider>
+      </CoreDeclaration>
+    </>
   );
 }

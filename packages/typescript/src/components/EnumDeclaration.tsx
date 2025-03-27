@@ -11,6 +11,7 @@ import {
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
+import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
 import { EnumMember } from "./EnumMember.jsx";
 export interface EnumDeclarationProps extends BaseDeclarationProps {
   /**
@@ -39,22 +40,25 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
 
   const valueEntries = computed(() => Object.entries(props.jsValue ?? {}));
   return (
-    <CoreDeclaration symbol={sym}>
-      {props.export ? "export " : ""}
-      {props.default ? "default " : ""}enum <Name />{" "}
-      <MemberScope owner={sym}>
-        <Block>
-          <For each={valueEntries} comma hardline enderPunctuation>
-            {([name, value]) => <EnumMember name={name} jsValue={value} />}
-          </For>
-          {props.children && (
-            <>
-              {valueEntries.value.length > 0 && <hbr />}
-              {props.children}
-            </>
-          )}
-        </Block>
-      </MemberScope>
-    </CoreDeclaration>
+    <>
+      <DeclarationJSDoc doc={props.doc} />
+      <CoreDeclaration symbol={sym}>
+        {props.export ? "export " : ""}
+        {props.default ? "default " : ""}enum <Name />{" "}
+        <MemberScope owner={sym}>
+          <Block>
+            <For each={valueEntries} comma hardline enderPunctuation>
+              {([name, value]) => <EnumMember name={name} jsValue={value} />}
+            </For>
+            {props.children && (
+              <>
+                {valueEntries.value.length > 0 && <hbr />}
+                {props.children}
+              </>
+            )}
+          </Block>
+        </MemberScope>
+      </CoreDeclaration>
+    </>
   );
 }

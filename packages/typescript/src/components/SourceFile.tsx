@@ -15,6 +15,7 @@ import { join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
+import { JSComment } from "./JSComment.jsx";
 import { PackageContext } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
 export interface SourceFileContext {
@@ -30,6 +31,8 @@ export function useSourceFile() {
 export interface SourceFileProps {
   path: string;
   children?: Children;
+  header?: Children;
+  headerComment?: string;
   export?: boolean | string;
 }
 
@@ -59,11 +62,20 @@ export function SourceFile(props: SourceFileProps) {
     }
   }
 
+  const header =
+    props.header || props.headerComment ?
+      <SourceFileHeader
+        header={props.header}
+        headerComment={props.headerComment}
+      />
+    : undefined;
+
   return (
     <CoreSourceFile
       path={props.path}
       filetype="typescript"
       reference={Reference}
+      header={header}
     >
       <Show when={scope.importedModules.size > 0}>
         <ImportStatements records={scope.importedModules} />
@@ -74,5 +86,21 @@ export function SourceFile(props: SourceFileProps) {
         <Scope value={scope}>{props.children}</Scope>
       </SourceFileContext.Provider>
     </CoreSourceFile>
+  );
+}
+
+export interface SourceFileHeaderProps {
+  header?: Children;
+  headerComment?: string;
+}
+
+function SourceFileHeader(props: SourceFileHeaderProps) {
+  return (
+    <>
+      <Show when={props.headerComment !== undefined}>
+        <JSComment>{props.headerComment}</JSComment>
+      </Show>
+      <Show when={props.header !== undefined}>{props.header}</Show>
+    </>
   );
 }

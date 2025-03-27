@@ -1,15 +1,15 @@
 import { childrenArray, computed } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 
-export interface JSDocParagraphProps {
+export interface Prose {
   children: Children;
 }
 
 /**
- * Create a paragraph in a JSDoc comment. The text of this component is word
- * wrapped.
+ * Creates a prose element. This is a special element that breaks the children into
+ * multiple lines.
  */
-export function JSDocParagraph(props: JSDocParagraphProps) {
+export function Prose(props: Prose) {
   const brokenChildren = computed(() => {
     const children = childrenArray(() => props.children);
     return children

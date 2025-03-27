@@ -66,7 +66,7 @@ export function For<
 >(props: ForProps<T, U>) {
   const cb = props.children;
   const options = baseListPropsToMapJoinArgs(props);
-  options.skipFalsy = true;
+  options.skipFalsy = props.skipFalsy ?? true;
   return memo(() => {
     const maybeRef = props.each;
 

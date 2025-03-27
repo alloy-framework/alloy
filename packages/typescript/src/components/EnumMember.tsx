@@ -1,6 +1,7 @@
 import { Children, OutputSymbolFlags, Refkey } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
 
 export interface EnumMemberProps {
@@ -32,6 +33,10 @@ export interface EnumMemberProps {
    * Arbitrary symbol metadata for the enum member.
    */
   metadata?: Record<string, unknown>;
+  /**
+   * Documentation for the enum member.
+   */
+  doc?: string;
 }
 
 /**
@@ -55,6 +60,7 @@ export function EnumMember(props: EnumMemberProps) {
 
   return (
     <>
+      <DeclarationJSDoc doc={props.doc} />
       {nameCode} = {valueCode}
     </>
   );

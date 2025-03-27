@@ -60,6 +60,11 @@ export interface BaseDeclarationProps {
    * Arbitrary metadata about this declaration.
    */
   metadata?: Record<string, unknown>;
+
+  /**
+   * Documentation for this declaration
+   */
+  doc?: string;
 }
 
 export interface DeclarationProps extends BaseDeclarationProps {

@@ -7,7 +7,6 @@ import {
   For,
   Indent,
   Name,
-  Refkey,
   refkey,
   Scope,
   Show,
@@ -21,41 +20,8 @@ import {
   TSSymbolFlags,
 } from "../symbols/index.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-
-/**
- * Information for a TypeScript function parameter.
- */
-export interface ParameterDescriptor {
-  /**
-   * The name of the parameter.
-   */
-  name: string;
-
-  /**
-   * The type of the parameter.
-   */
-  type?: Children;
-
-  /**
-   * The refkey for this parameter.
-   */
-  refkey?: Refkey;
-
-  /**
-   * The refkeys for this parameter.
-   */
-  refkeys?: Refkey[];
-
-  /**
-   * Whether the parameter is optional.
-   */
-  optional?: boolean;
-
-  /**
-   * Arbitrary metadata for the parameter symbol.
-   */
-  metadata?: Record<string, unknown>;
-}
+import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
+import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 export interface FunctionDeclarationProps extends BaseDeclarationProps {
   async?: boolean;
@@ -101,12 +67,15 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const asyncKwd = props.async ? "async " : "";
 
   return (
-    <Declaration {...props} nameKind="function">
-      {asyncKwd}function <Name />
-      <Scope name={props.name} kind="function">
-        {sTypeParameters}({sParams}){sReturnType} {sBody}
-      </Scope>
-    </Declaration>
+    <>
+      <FunctionDeclarationJSDoc doc={props.doc} parameters={props.parameters} />
+      <Declaration {...props} nameKind="function">
+        {asyncKwd}function <Name />
+        <Scope name={props.name} kind="function">
+          {sTypeParameters}({sParams}){sReturnType} {sBody}
+        </Scope>
+      </Declaration>
+    </>
   );
 }
 

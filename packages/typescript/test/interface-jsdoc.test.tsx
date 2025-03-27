@@ -35,8 +35,16 @@ it("renders an interface declaration with documented properties", () => {
       doc="Standard API response format"
     >
       <StatementList>
-        <ts.InterfaceMember name="success" type="boolean" doc="Wether or not the request completed successfully" />
-        <ts.InterfaceMember name="data" type="unknown" doc="the response payload"/>
+        <ts.InterfaceMember
+          name="success"
+          type="boolean"
+          doc="Wether or not the request completed successfully"
+        />
+        <ts.InterfaceMember
+          name="data"
+          type="unknown"
+          doc="the response payload"
+        />
         <ts.InterfaceMember name="error" optional type="string" />
       </StatementList>
     </ts.InterfaceDeclaration>,

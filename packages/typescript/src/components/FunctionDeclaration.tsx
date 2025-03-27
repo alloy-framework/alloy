@@ -23,6 +23,7 @@ import {
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
 import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 /**
@@ -104,13 +105,16 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   });
 
   return (
-    <Declaration {...props} nameKind="function">
+    <>
+      <FunctionDeclarationJSDoc doc={props.doc} parameters={props.parameters} />
+      <Declaration {...props} nameKind="function">
       {asyncKwd}function <Name />
       <Scope name={props.name} kind="function">
         <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
         {sBody}
       </Scope>
     </Declaration>
+    </>
   );
 }
 

@@ -27,3 +27,4 @@ export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
 export * from "./ValueExpression.js";
 export * from "./VarDeclaration.js";
+export * from "./ParameterDescriptor.js";

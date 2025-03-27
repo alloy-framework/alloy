@@ -2,9 +2,9 @@ import { Output, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
+import { ParameterDescriptor } from "../src/components/ParameterDescriptor.js";
 import {
   FunctionDeclaration,
-  ParameterDescriptor,
   SourceFile,
   TSOutputSymbol,
   TSSymbolFlags,

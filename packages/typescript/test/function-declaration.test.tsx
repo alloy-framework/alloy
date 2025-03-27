@@ -2,11 +2,8 @@ import { Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { StatementList } from "../../core/src/components/StatementList.jsx";
-import {
-  FunctionDeclaration,
-  ParameterDescriptor,
-  VarDeclaration,
-} from "../src/index.js";
+import { ParameterDescriptor } from "../src/components/ParameterDescriptor.js";
+import { FunctionDeclaration, VarDeclaration } from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
 it("works", () => {

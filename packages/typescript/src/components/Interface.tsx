@@ -46,6 +46,7 @@ export interface InterfaceMemberProps {
   children?: Children;
   optional?: boolean;
   readonly?: boolean;
+  doc?: string;
 }
 
 /**
@@ -65,6 +66,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   } else {
     return (
       <>
+        <DeclarationJSDoc doc={props.doc} />
         {readonly}
         {namer.getName(props.name!, "interface-member")}
         {optionality}: {type}

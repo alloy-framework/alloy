@@ -232,10 +232,15 @@ it("renders a method with parameter docs", () => {
         returnType="void"
         parameters={[
           { name: "a", type: "number", doc: "Parameter a doc" },
-          { name: "b", type: "string", doc: "Line 1 for b\nLine 2 for b" },
+          {
+            name: "b",
+            type: "string",
+            doc: "Line 1 for b. This is a long description that should continue in the next line.",
+          },
         ]}
       />
     </ts.ClassDeclaration>,
+    { printWidth: 40 },
   );
   expect(res).toEqual(d`
     class Foo {
@@ -243,8 +248,9 @@ it("renders a method with parameter docs", () => {
        * Method documentation
        *
        * @param {number} a - Parameter a doc
-       * @param {string} b - Line 1 for b
-       *   Line 2 for b
+       * @param {string} b - Line 1 for b.
+       *   This is a long description that
+       *   should continue in the next line.
        **/
       bar(a: number, b: string): void {}
     }

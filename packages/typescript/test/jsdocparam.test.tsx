@@ -169,7 +169,9 @@ it("name, type, description, hyphen and optional with default value with a descr
         defaultValue="John Doe"
         hyphen
       >
-        {"Somebody's name. This is one line\nThis is another line"}
+        Somebody's name. This is one line
+        <hbr />
+        This is another line
       </JSDocParam>
     </JSDoc>
   );

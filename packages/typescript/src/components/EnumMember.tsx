@@ -1,4 +1,4 @@
-import { Children, OutputSymbolFlags, Refkey } from "@alloy-js/core";
+import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
@@ -56,12 +56,15 @@ export function EnumMember(props: EnumMemberProps) {
   }
   const nameCode = sym ? sym.name : name;
   const valueCode =
-    props.jsValue ? <ValueExpression jsValue={props.jsValue} /> : props.value;
+    props.jsValue !== undefined ?
+      <ValueExpression jsValue={props.jsValue} />
+    : props.value;
 
   return (
     <>
       <DeclarationJSDoc doc={props.doc} />
-      {nameCode} = {valueCode}
+      {nameCode}
+      <Show when={valueCode !== undefined}> = {valueCode}</Show>
     </>
   );
 }

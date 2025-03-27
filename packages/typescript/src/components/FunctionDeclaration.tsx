@@ -20,6 +20,7 @@ import {
   TSSymbolFlags,
 } from "../symbols/index.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
 import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 export interface FunctionDeclarationProps extends BaseDeclarationProps {
@@ -66,12 +67,15 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const asyncKwd = props.async ? "async " : "";
 
   return (
-    <Declaration {...props} nameKind="function">
-      {asyncKwd}function <Name />
-      <Scope name={props.name} kind="function">
-        {sTypeParameters}({sParams}){sReturnType} {sBody}
-      </Scope>
-    </Declaration>
+    <>
+      <FunctionDeclarationJSDoc doc={props.doc} parameters={props.parameters} />
+      <Declaration {...props} nameKind="function">
+        {asyncKwd}function <Name />
+        <Scope name={props.name} kind="function">
+          {sTypeParameters}({sParams}){sReturnType} {sBody}
+        </Scope>
+      </Declaration>
+    </>
   );
 }
 

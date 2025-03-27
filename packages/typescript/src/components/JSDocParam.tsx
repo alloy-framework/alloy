@@ -1,4 +1,4 @@
-import { For, Show } from "@alloy-js/core";
+import { Show } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { JSDocParagraph } from "./JSDocParagraph.jsx";
 
@@ -68,23 +68,12 @@ interface JSDocParamDescriptionProps {
 }
 
 function JSDocParamDescription(props: JSDocParamDescriptionProps) {
-  const lines =
-    typeof props.children === "string" ? props.children.split("\n") : [];
   return (
     <Show when={Boolean(props.children)}>
       <Show when={props.hyphen} children={" - "} />
       <Show when={!props.hyphen} children={" "} />
       <align width={2}>
-        <JSDocParagraph>
-          <Show when={typeof props.children === "string"}>
-            <For each={lines} hardline>
-              {(line) => <JSDocParagraph>{line}</JSDocParagraph>}
-            </For>
-          </Show>
-          <Show when={typeof props.children !== "string"}>
-            {props.children}
-          </Show>
-        </JSDocParagraph>
+        <JSDocParagraph>{props.children}</JSDocParagraph>
       </align>
     </Show>
   );

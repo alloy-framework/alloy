@@ -40,7 +40,7 @@ it("works", () => {
           <ts.FunctionDeclaration
             name={"say" + fnSpec.greeting}
             refkey={greetKey}
-            parameters={{ str: "string" }}
+            parameters={[{ name: "str", type: "string" }]}
           >
             return "{fnSpec.greeting} " + str;
           </ts.FunctionDeclaration>
@@ -48,7 +48,7 @@ it("works", () => {
           <ts.FunctionDeclaration
             name={"say" + fnSpec.farewell}
             refkey={farewellKey}
-            parameters={{ str: "string" }}
+            parameters={[{ name: "str", type: "string" }]}
           >
             return "{fnSpec.farewell} " + str;
           </ts.FunctionDeclaration>

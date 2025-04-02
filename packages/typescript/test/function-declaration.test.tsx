@@ -76,7 +76,10 @@ it("supports type parameters by descriptor object", () => {
   const decl = (
     <FunctionDeclaration
       name="foo"
-      typeParameters={{ a: "any", b: "any" }}
+      typeParameters={[
+        { name: "a", type: "any" },
+        { name: "b", type: "any" },
+      ]}
     ></FunctionDeclaration>
   );
 
@@ -183,7 +186,10 @@ describe("symbols", () => {
   it("creates symbols for parameters and addresses conflicts", () => {
     const decl = (
       <>
-        <FunctionDeclaration name="foo" parameters={{ conflict: "any" }}>
+        <FunctionDeclaration
+          name="foo"
+          parameters={[{ name: "conflict", type: "any" }]}
+        >
           <VarDeclaration name="conflict">1</VarDeclaration>;
         </FunctionDeclaration>
       </>

@@ -26,8 +26,7 @@ export interface TSOutputSymbol extends OutputSymbol {
 
 export interface createTsSymbolOptions {
   name: string;
-  refkey?: Refkey;
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
   binder?: Binder;
   scope?: TSOutputScope;
   export?: boolean;
@@ -51,7 +50,6 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
     name: options.name,
     scope,
     refkey: options.refkey,
-    refkeys: options.refkeys,
     export: !!options.export,
     default: !!options.default,
     flags: options.flags ?? OutputSymbolFlags.None,

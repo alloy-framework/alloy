@@ -20,7 +20,10 @@ it("can declare and call a function with parameters", () => {
           <FunctionDeclaration
             refkey={functionRefkey}
             name="bar"
-            parameters={{ "foo?": "string", "baz?": "number" }}
+            parameters={[
+              { name: "foo", optional: true, type: "string" },
+              { name: "baz", optional: true, type: "number" },
+            ]}
           >
             <StatementList>
               <>const message = foo ? foo : "Hello, World!"</>

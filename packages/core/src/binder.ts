@@ -232,8 +232,7 @@ export interface OutputScope {
 export type CreateSymbolOptions<T extends OutputSymbol = OutputSymbol> = {
   name: string;
   scope?: OutputScope;
-  refkey?: Refkey;
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
   flags?: OutputSymbolFlags;
   metadata?: Record<string, unknown>;
 } & Omit<T, keyof OutputSymbol>;
@@ -530,20 +529,12 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       name,
       scope = useDefaultScope(args.flags),
       refkey,
-      refkeys,
       flags = OutputSymbolFlags.None,
       metadata = {},
       ...rest
     } = args;
 
-    const allRefkeys = [];
-    if (refkey) {
-      allRefkeys.push(refkey);
-    }
-
-    if (refkeys) {
-      allRefkeys.push(...refkeys);
-    }
+    const allRefkeys = [refkey ?? []].flat();
 
     if (!scope) {
       throw new Error(
@@ -641,8 +632,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         createSymbol({
           name: sym.name,
           scope: target.instanceMemberScope!,
-          // todo: fix this or change this or something??
-          refkeys: [refkey(target.refkeys[0], sym.refkeys[0])],
+          refkey: [refkey(target.refkeys[0], sym.refkeys[0])],
           flags: sym.flags | OutputSymbolFlags.InstanceMember,
         });
       }

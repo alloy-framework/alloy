@@ -10,11 +10,9 @@ import {
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { getCallSignatureProps } from "../utils.js";
+import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
-import {
-  FunctionDeclaration,
-  ParameterDescriptor,
-} from "./FunctionDeclaration.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -128,22 +126,20 @@ export function ClassField(props: ClassFieldProps) {
   );
 }
 
-export interface ClassMethodProps extends ClassMemberProps {
+export interface ClassMethodProps extends ClassMemberProps, CallSignatureProps {
   async?: boolean;
-  parameters?: Record<string, Children> | ParameterDescriptor[];
-  returnType?: Children;
   children?: Children;
 }
 
 export function ClassMethod(props: ClassMethodProps) {
-  const returnType = props.returnType && <>: {props.returnType}</>;
+  const callProps = getCallSignatureProps(props);
+
   return (
     <ClassMember {...props}>
       {props.async && "async "}
       <MemberName />
       <Scope name={props.name} kind="function">
-        (<FunctionDeclaration.Parameters parameters={props.parameters} />)
-        {returnType} <Block>{props.children}</Block>
+        <CallSignature {...callProps} /> <Block>{props.children}</Block>
       </Scope>
     </ClassMember>
   );

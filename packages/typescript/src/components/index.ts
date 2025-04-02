@@ -1,3 +1,4 @@
+export * from "../parameter-descriptor.js";
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
 export * from "./BlockScope.js";
@@ -27,4 +28,3 @@ export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
 export * from "./ValueExpression.js";
 export * from "./VarDeclaration.js";
-export * from "../parameter-descriptor.js";

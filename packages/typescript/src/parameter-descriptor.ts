@@ -1,4 +1,4 @@
-import { Refkey, Children } from "@alloy-js/core";
+import { Children, Refkey } from "@alloy-js/core";
 
 /**
  * Information for a TypeScript function parameter.
@@ -35,7 +35,7 @@ export interface ParameterDescriptor {
   metadata?: Record<string, unknown>;
 
   /**
-   * Documentation for the parameter. 
+   * Documentation for the parameter.
    */
   doc?: string;
 }

@@ -77,8 +77,8 @@ it("supports type parameters by descriptor object", () => {
     <FunctionDeclaration
       name="foo"
       typeParameters={[
-        { name: "a", type: "any" },
-        { name: "b", type: "any" },
+        { name: "a", extends: "any" },
+        { name: "b", extends: "any" },
       ]}
     ></FunctionDeclaration>
   );

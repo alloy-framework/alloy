@@ -161,10 +161,26 @@ interface DeclaredParameterDescriptor
   symbol: TSOutputSymbol;
 }
 
+interface DeclaredTypeParameterDescriptor
+  extends Omit<TypeParameterDescriptor, "name"> {
+  symbol: TSOutputSymbol;
+}
+function normalizeAndDeclareParameters(
+  parameters: TypeParameterDescriptor[] | string[],
+  flags?: TSSymbolFlags,
+): DeclaredTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
+  flags?: TSSymbolFlags,
+): DeclaredParameterDescriptor[];
+function normalizeAndDeclareParameters(
+  parameters: string[],
+  flags?: TSSymbolFlags,
+): DeclaredParameterDescriptor[] | DeclaredTypeParameterDescriptor[];
+function normalizeAndDeclareParameters(
+  parameters: ParameterDescriptor[] | TypeParameterDescriptor[] | string[],
   flags: TSSymbolFlags = TSSymbolFlags.ParameterSymbol,
-): DeclaredParameterDescriptor[] {
+): DeclaredParameterDescriptor[] | DeclaredTypeParameterDescriptor[] {
   const namePolicy = useTSNamePolicy();
   if (parameters.length === 0) {
     return [];
@@ -242,14 +258,14 @@ FunctionDeclaration.TypeParameters = taggedComponent(
   },
 );
 
-function typeParameter(param: DeclaredParameterDescriptor) {
+function typeParameter(param: DeclaredTypeParameterDescriptor) {
   return (
     <group>
       {param.symbol.name}
-      <Show when={!!param.type}>
+      <Show when={!!param.extends}>
         {" "}
         extends
-        <indent> {param.type}</indent>
+        <indent> {param.extends}</indent>
       </Show>
     </group>
   );

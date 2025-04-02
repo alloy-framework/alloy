@@ -1,7 +1,7 @@
 import { For, Show } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { JSDocParagraph } from "./JSDocParagraph.jsx";
+import { Prose } from "./Prose.jsx";
 
 export interface JSDocParametersProps {
   parameters: ParameterDescriptor[];
@@ -98,7 +98,7 @@ function JSDocParamDescription(props: JSDocParamDescriptionProps) {
       <Show when={props.hyphen} children={" - "} />
       <Show when={!props.hyphen} children={" "} />
       <align width={2}>
-        <JSDocParagraph>{props.children}</JSDocParagraph>
+        <Prose>{props.children}</Prose>
       </align>
     </Show>
   );

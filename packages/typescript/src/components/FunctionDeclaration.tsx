@@ -25,7 +25,7 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
-import { JSDocParagraph } from "./JSDocParagraph.jsx";
+import { Prose } from "./Prose.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
 
 /**
@@ -110,7 +110,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     <>
       <Show when={Boolean(props.doc)}>
         <JSDoc>
-          {props.doc && <JSDocParagraph children={props.doc} />}
+          {props.doc && <Prose children={props.doc} />}
           {Array.isArray(props.parameters) && (
             <JSDocParameters parameters={props.parameters} />
           )}

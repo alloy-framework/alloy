@@ -5,5 +5,6 @@ packages:
   - "@alloy-js/typescript"
 ---
 
-- Support SourceFile header
-- Rename JSDocParagraph component to Prose.
+- Support SourceFile header. This PR adds the following components:
+    - Rename `JSDocParagraph` component to `Prose`.
+    - `SingleLineCommentBlock` component to handle single line comments `//`.

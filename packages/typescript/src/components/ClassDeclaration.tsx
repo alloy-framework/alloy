@@ -7,6 +7,7 @@ import {
   OutputSymbolFlags,
   Refkey,
   Scope,
+  Show,
   splitProps,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
@@ -14,9 +15,10 @@ import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
-import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
 import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
-import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
+import { JSDoc } from "./JSDoc.jsx";
+import { Prose } from "./Prose.jsx";
+import { JSDocParameters } from "./JSDocParam.jsx";
 import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
@@ -62,7 +64,10 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
 
   return (
     <>
-      <DeclarationJSDoc doc={props.doc} />
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
       <Declaration {...props} flags={flags} nameKind="class">
         class <Name />
         {extendsPart} <Block>{props.children}</Block>
@@ -108,7 +113,10 @@ export function ClassMember(props: ClassMemberProps) {
 
   return (
     <>
-      <DeclarationJSDoc doc={props.doc} />
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
       <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
         {props.public && "public "}
         {props.private && "private "}
@@ -145,14 +153,27 @@ export interface ClassMethodProps extends ClassMemberProps, CallSignatureProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const callProps = getCallSignatureProps(props);
+  const [docProps, rest] = splitProps(props, ["doc"]);
+
 
   return (
-    <ClassMember {...props}>
+    <>
+      <Show when={Boolean(docProps.doc)}>
+        <JSDoc>
+          {props.doc && <Prose children={docProps.doc} />}
+          {Array.isArray(rest.parameters) && (
+            <JSDocParameters parameters={rest.parameters} />
+          )}
+        </JSDoc>
+        <hbr />
+      </Show>
+      <ClassMember {...rest}>
       {props.async && "async "}
       <MemberName />
       <Scope name={props.name} kind="function">
         <CallSignature {...callProps} /> <Block>{props.children}</Block>
       </Scope>
     </ClassMember>
+    </>
   );
 }

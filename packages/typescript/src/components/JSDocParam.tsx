@@ -1,9 +1,34 @@
-import { Show } from "@alloy-js/core";
+import { For, Show } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { JSDocParagraph } from "./JSDocParagraph.jsx";
+import { ParameterDescriptor } from "./ParameterDescriptor.js";
+
+export interface JSDocParametersProps {
+  parameters: ParameterDescriptor[];
+}
+
+/**
+ * A component that creates a JSDoc block with `@param` tags for each parameter.
+ */
+export function JSDocParameters(props: JSDocParametersProps) {
+  return (
+    <For each={props.parameters}>
+      {(param) => (
+        <JSDocParam
+          name={param.name}
+          type={param.type}
+          optional={param.optional}
+          hyphen
+        >
+          {param.doc}
+        </JSDocParam>
+      )}
+    </For>
+  );
+}
 
 export interface JSDocParamProps {
-  name: string;
+  name: Children;
   type?: Children;
   children?: Children;
   hyphen?: boolean;
@@ -46,7 +71,7 @@ function JSDocParamType(props: JSDocParamTypeProps) {
 }
 
 interface JSDocParamNameProps {
-  name: string;
+  name: Children;
   optional?: boolean;
   defaultValue?: Children;
 }

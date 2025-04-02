@@ -6,13 +6,14 @@ import {
   MemberScope,
   Name,
   OutputSymbolFlags,
+  Show,
   useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
-import { DeclarationJSDoc } from "./DeclarationJSDoc.jsx";
 import { EnumMember } from "./EnumMember.jsx";
+import { JSDoc } from "./JSDoc.jsx";
 export interface EnumDeclarationProps extends BaseDeclarationProps {
   /**
    * A JS object representing the enum member names and values.
@@ -41,7 +42,10 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const valueEntries = computed(() => Object.entries(props.jsValue ?? {}));
   return (
     <>
-      <DeclarationJSDoc doc={props.doc} />
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
       <CoreDeclaration symbol={sym}>
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}enum <Name />{" "}

@@ -23,7 +23,9 @@ import {
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-import { FunctionDeclarationJSDoc } from "./FunctionDeclarationJSDoc.jsx";
+import { JSDoc } from "./JSDoc.jsx";
+import { JSDocParagraph } from "./JSDocParagraph.jsx";
+import { JSDocParameters } from "./JSDocParam.jsx";
 import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 /**
@@ -106,7 +108,15 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
   return (
     <>
-      <FunctionDeclarationJSDoc doc={props.doc} parameters={props.parameters} />
+      <Show when={Boolean(props.doc)}>
+        <JSDoc>
+          {props.doc && <JSDocParagraph children={props.doc} />}
+          {Array.isArray(props.parameters) && (
+            <JSDocParameters parameters={props.parameters} />
+          )}
+        </JSDoc>
+        <hbr />
+      </Show>
       <Declaration {...props} nameKind="function">
       {asyncKwd}function <Name />
       <Scope name={props.name} kind="function">

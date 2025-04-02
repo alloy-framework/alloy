@@ -6,8 +6,8 @@ export interface Prose {
 }
 
 /**
- * Creates a prose element. This is a special element that breaks the children into
- * multiple lines.
+ * Create a block of text which will break once a word exceeds the configured line width.
+ * The children are expected to be strings, and a <br /> is added between each word.
  */
 export function Prose(props: Prose) {
   const brokenChildren = computed(() => {

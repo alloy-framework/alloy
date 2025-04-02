@@ -33,6 +33,6 @@ it("Line wraps a header", () => {
   expect(tree.contents[0].contents).toEqual(d`
     // This is a very long header that is very long and should be wrapped. Meaning,
     // it should be split into multiple lines.
-    
+
     hello!`);
 });

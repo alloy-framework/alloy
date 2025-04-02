@@ -15,9 +15,9 @@ import { join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
-import { JSComment } from "./JSComment.jsx";
 import { PackageContext } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
+import { SingleLineCommentBlock } from "./SingleLineCommentBlock.jsx";
 export interface SourceFileContext {
   scope: TSModuleScope;
 }
@@ -98,9 +98,10 @@ function SourceFileHeader(props: SourceFileHeaderProps) {
   return (
     <>
       <Show when={props.headerComment !== undefined}>
-        <JSComment>{props.headerComment}</JSComment>
+        <SingleLineCommentBlock>{props.headerComment}</SingleLineCommentBlock>
       </Show>
       <Show when={props.header !== undefined}>{props.header}</Show>
+      <hbr />
     </>
   );
 }

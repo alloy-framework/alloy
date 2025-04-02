@@ -5,4 +5,5 @@ packages:
   - "@alloy-js/typescript"
 ---
 
-Support SourceFile header
+- Support SourceFile header
+- Rename JSDocParagraph component to Prose.

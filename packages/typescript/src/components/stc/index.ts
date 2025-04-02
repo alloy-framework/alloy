@@ -3,6 +3,7 @@ import * as base from "../index.js";
 
 export const ArrayExpression = stc(base.ArrayExpression);
 export const BarrelFile = stc(base.BarrelFile);
+export const CallSignature = stc(base.CallSignature);
 export const ClassDeclaration = stc(base.ClassDeclaration);
 export const ClassField = stc(base.ClassField);
 export const ClassMember = stc(base.ClassMember);

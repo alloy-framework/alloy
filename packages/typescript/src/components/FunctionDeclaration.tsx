@@ -112,8 +112,8 @@ export const functionBodyTag = Symbol();
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link FunctionDeclaration.Parameters} or
- *    {@link FunctionDeclaration.TypeParameters} components.
+ *    {@link (FunctionDeclaration:namespace).Parameters} or
+ *    {@link (FunctionDeclaration:namespace).TypeParameters} components.
  */
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const children = childrenArray(() => props.children);

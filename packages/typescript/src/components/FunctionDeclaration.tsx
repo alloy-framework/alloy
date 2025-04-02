@@ -15,6 +15,7 @@ import {
 } from "@alloy-js/core";
 import { Children, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
+import { ParameterDescriptor } from "../parameter-descriptor.js";
 import {
   createTSSymbol,
   TSOutputSymbol,
@@ -26,7 +27,6 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParagraph } from "./JSDocParagraph.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
-import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 /**
  * Information for a TypeScript generic type parameter.

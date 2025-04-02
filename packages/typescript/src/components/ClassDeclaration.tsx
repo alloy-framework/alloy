@@ -11,6 +11,7 @@ import {
   splitProps,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
+import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
@@ -19,7 +20,6 @@ import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { Prose } from "./Prose.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
-import { ParameterDescriptor } from "./ParameterDescriptor.js";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;

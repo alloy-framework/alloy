@@ -2,13 +2,13 @@ import { Output, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
-import { ParameterDescriptor } from "../src/components/ParameterDescriptor.js";
 import {
   FunctionDeclaration,
   SourceFile,
   TSOutputSymbol,
   TSSymbolFlags,
 } from "../src/index.js";
+import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 it("handles custom name conflict resolver based on metadata", () => {
   function resolver(name: string, symbols: TSOutputSymbol[]) {
     const goodNamedSymbols = symbols.filter(

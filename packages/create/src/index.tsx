@@ -435,13 +435,7 @@ const main = async () => {
                 sourcemap: "both",
               },
               plugins: [
-                babel({
-                  inputSourceMap: true as any,
-                  sourceMaps: "both",
-                  babelHelpers: "bundled",
-                  extensions: [".ts", ".tsx"],
-                  presets: ["@babel/preset-typescript", ["@alloy-js/babel-preset"]],
-                }),
+                alloyPlugin(),
               ],
             });
           `}

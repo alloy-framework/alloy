@@ -25,8 +25,8 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
-import { Prose } from "./Prose.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
+import { Prose } from "./Prose.jsx";
 
 /**
  * Information for a TypeScript generic type parameter.

@@ -49,7 +49,7 @@ export interface InterfaceMemberProps {
   children?: Children;
   optional?: boolean;
   readonly?: boolean;
-  doc?: string;
+  doc?: Children;
 }
 
 /**

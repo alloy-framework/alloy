@@ -35,8 +35,12 @@ it("renders an enum declaration with documented members", () => {
       doc="Represents cardinal directions. Used for navigation purposes"
     >
       <ts.CommaList>
-        <ts.EnumMember name="North" jsValue={0} doc="Bound to the north" />
-        <ts.EnumMember name="East" jsValue={1} doc="Bound to the East" />
+        <ts.EnumMember name="North" jsValue={0} doc={["Bound to the north"]} />
+        <ts.EnumMember
+          name="East"
+          jsValue={1}
+          doc={["Bound to the East", "A second doc paragraph"]}
+        />
         <ts.EnumMember name="South" jsValue={2} doc="Opposite to North" />
         <ts.EnumMember name="West" jsValue={3} doc="Going west!" />
       </ts.CommaList>
@@ -53,6 +57,8 @@ it("renders an enum declaration with documented members", () => {
       North = 0,
       /**
        * Bound to the East
+       *
+       * A second doc paragraph
        **/
       East = 1,
       /**

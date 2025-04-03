@@ -59,7 +59,7 @@ export interface BaseDeclarationProps {
   /**
    * Documentation for this declaration
    */
-  doc?: string;
+  doc?: Children;
 }
 
 export interface DeclarationProps extends BaseDeclarationProps {

@@ -37,5 +37,5 @@ export interface ParameterDescriptor {
   /**
    * Documentation for the parameter.
    */
-  doc?: string;
+  doc?: Children;
 }

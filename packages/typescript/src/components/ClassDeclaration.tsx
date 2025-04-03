@@ -18,8 +18,8 @@ import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
-import { Prose } from "./Prose.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
+import { Prose } from "./Prose.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -85,7 +85,7 @@ export interface ClassMemberProps {
   jsPrivate?: boolean;
   static?: boolean;
   children?: Children;
-  doc?: string;
+  doc?: Children;
 }
 
 export function ClassMember(props: ClassMemberProps) {
@@ -153,14 +153,15 @@ export interface ClassMethodProps extends ClassMemberProps, CallSignatureProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const callProps = getCallSignatureProps(props);
-  const [docProps, rest] = splitProps(props, ["doc"]);
+  const returnType = props.returnType && <>: {props.returnType}</>;
+  const [_, rest] = splitProps(props, ["doc"]);
 
 
   return (
     <>
-      <Show when={Boolean(docProps.doc)}>
+      <Show when={Boolean(props.doc)}>
         <JSDoc>
-          {props.doc && <Prose children={docProps.doc} />}
+          {props.doc && <Prose children={props.doc} />}
           {Array.isArray(rest.parameters) && (
             <JSDocParameters parameters={rest.parameters} />
           )}

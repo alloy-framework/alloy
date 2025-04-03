@@ -33,10 +33,11 @@ export interface EnumMemberProps {
    * Arbitrary symbol metadata for the enum member.
    */
   metadata?: Record<string, unknown>;
+
   /**
    * Documentation for the enum member.
    */
-  doc?: string;
+  doc?: Children;
 }
 
 /**

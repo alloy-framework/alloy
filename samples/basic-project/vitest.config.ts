@@ -10,7 +10,5 @@ export default defineConfig({
     jsx: "preserve",
     sourcemap: "both",
   },
-  plugins: [
-    alloyPlugin(),
-  ],
+  plugins: [alloyPlugin()],
 });

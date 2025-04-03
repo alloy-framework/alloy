@@ -9,9 +9,8 @@
     "watch": "tsc --build ./tsconfig.ws.json --watch",
     "clean": "pnpm -r run clean && rimraf **/.temp/",
     "test": "vitest run",
-    "format": "pnpm run prettier-exec --write",
-    "format:check": "pnpm run prettier-exec --check",
-    "prettier-exec": "prettier --config ./.prettierrc.yaml **/*.{ts,js,tsx,json,yml,yaml}",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },

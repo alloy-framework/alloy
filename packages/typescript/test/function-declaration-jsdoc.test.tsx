@@ -9,7 +9,7 @@ it("renders a function declaration with documentation", () => {
     <ts.FunctionDeclaration
       name="greet"
       doc="A function that greets a person"
-      parameters={{ name: "string" }}
+      parameters={[{ name: "name", type: "string" }]}
       returnType="string"
     />,
   );

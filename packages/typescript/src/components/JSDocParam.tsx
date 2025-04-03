@@ -4,15 +4,16 @@ import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Prose } from "./Prose.jsx";
 
 export interface JSDocParametersProps {
-  parameters: ParameterDescriptor[];
+  parameters: ParameterDescriptor[] | string[];
 }
 
 /**
  * A component that creates a JSDoc block with `@param` tags for each parameter.
  */
 export function JSDocParameters(props: JSDocParametersProps) {
+  const parameters = normalizeParametersForDoc(props.parameters);
   return (
-    <For each={props.parameters}>
+    <For each={parameters}>
       {(param) => (
         <JSDocParam
           name={param.name}
@@ -25,6 +26,16 @@ export function JSDocParameters(props: JSDocParametersProps) {
       )}
     </For>
   );
+}
+
+function normalizeParametersForDoc(
+  parameters: ParameterDescriptor[] | string[],
+): ParameterDescriptor[] {
+  if (parameters.some((p) => typeof p === "string")) {
+    return [];
+  }
+
+  return parameters as ParameterDescriptor[];
 }
 
 export interface JSDocParamProps {

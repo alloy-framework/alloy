@@ -24,14 +24,9 @@ export interface BaseDeclarationProps {
   name: string;
 
   /**
-   * The unique key for this declaration.
+   * The refkey or array of refkeys for this declaration.
    */
-  refkey?: Refkey;
-
-  /**
-   * Multiple unique keys for this declaration.
-   */
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
 
   /**
    * Whether to export this declaration from the module.
@@ -94,7 +89,6 @@ export function Declaration(props: DeclarationProps) {
   const sym = createTSSymbol({
     name: namePolicy.getName(props.name, props.nameKind),
     refkey: props.refkey,
-    refkeys: props.refkeys,
     export: props.export,
     default: props.default,
     flags: props.flags,

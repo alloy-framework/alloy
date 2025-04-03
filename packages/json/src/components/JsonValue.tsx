@@ -4,16 +4,10 @@ import { JsonObject } from "./JsonObject.jsx";
 
 export interface JsonValueProps {
   /**
-   * The refkey for the JSON value. When provided, this value can be referenced
-   * elsewhere via this refkey.
+   * The refkey or array of refkeys for the JSON value. When provided, this
+   * value can be referenced elsewhere via this refkey.
    **/
-  refkey?: Refkey;
-
-  /**
-   * The refkeys for the JSON value. When provided, these values can be
-   * referenced elsewhere via any of these refkeys.
-   **/
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
 
   /**
    * The JS value to serialize to JSON. When provided, thi
@@ -29,10 +23,7 @@ export interface JsonValueProps {
  * appropriate.
  */
 export function JsonValue(props: JsonValueProps) {
-  const refkeys = [
-    ...(props.refkey ? [props.refkey] : []),
-    ...(props.refkeys ?? []),
-  ];
+  const refkeys = [props.refkey ?? []].flat();
   if (props.jsValue === null) {
     setMemberRefkey(refkeys);
     return "null";

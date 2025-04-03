@@ -13,10 +13,10 @@ const result = ay.render(
       <ts.SourceFile path="greetings.ts">
         <ts.FunctionDeclaration
           name="getGreeting"
-          parameters={{
-            foo: "string",
-            bar: "string",
-          }}
+          parameters={[
+            { name: "foo", type: "string" },
+            { name: "bar", type: "string" },
+          ]}
         >
           <ts.VarDeclaration name="foo">"string"</ts.VarDeclaration>
           return "Hello world!";

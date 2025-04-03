@@ -31,7 +31,6 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     scope,
     name: name,
     refkey: props.refkey,
-    refkeys: props.refkeys,
     default: props.default,
     export: props.export,
     flags: OutputSymbolFlags.StaticMemberContainer,

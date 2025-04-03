@@ -29,14 +29,9 @@ export interface DeclarationPropsWithInfo {
   name: string;
 
   /**
-   * The unique key for this declaration.
+   * The unique key or array of unique keys for this declaration.
    */
-  refkey?: Refkey;
-
-  /**
-   * Multiple unique keys for this declaration.
-   */
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
 
   /**
    * Additional metadata for the declared symbol.
@@ -80,7 +75,6 @@ export function Declaration(props: DeclarationProps) {
     declaration = binder.createSymbol({
       name: props.name!,
       refkey: props.refkey,
-      refkeys: props.refkeys,
       metadata: props.metadata,
     });
 

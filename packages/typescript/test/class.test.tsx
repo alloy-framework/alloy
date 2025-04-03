@@ -159,7 +159,10 @@ describe("instance methods", () => {
           <ts.ClassMethod name="four" protected />
           <ts.ClassMethod
             name="five"
-            parameters={{ a: "string", b: "string" }}
+            parameters={[
+              { name: "a", type: "string" },
+              { name: "b", type: "string" },
+            ]}
           />
           <ts.ClassMethod
             name="six"

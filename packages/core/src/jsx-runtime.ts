@@ -1,6 +1,7 @@
 // Much of the implementations in this file are inspired by vuerx-js
 // See: https://github.com/ryansolid/vuerx-jsx.
 import {
+  computed,
   isReactive,
   pauseTracking,
   proxyRefs,
@@ -620,6 +621,59 @@ export function splitProps<
   }
 
   return [...result, remaining] as any;
+}
+
+/**
+ * Applies default values to a props object. Reactive props are handled properly
+ * by ensuring that their value is not accessed by `defaultProps`, avoiding any
+ * unintended side effects.
+ */
+export function defaultProps<T extends {}>(props: T, defaults: Partial<T>): T {
+  if (isReactive(props)) {
+    const refs = untrack(() => toRefs(props));
+    for (const key in defaults) {
+      const originalRef = refs[key];
+      refs[key] = computed(() =>
+        originalRef.value === undefined ? defaults[key] : originalRef.value,
+      ) as any;
+    }
+
+    return proxyRefs(refs);
+  }
+  const withDefaults = {} as T;
+  const copied = new Set<string>();
+  for (const key in defaults) {
+    copied.add(key);
+    const desc = Object.getOwnPropertyDescriptor(props, key);
+    if (!desc) {
+      withDefaults[key] = defaults[key]!;
+      continue;
+    }
+
+    if (desc.get) {
+      const originalGet = desc.get;
+      desc.get = function () {
+        const value = originalGet.call(this);
+        return value === undefined ? defaults[key as keyof T] : value;
+      };
+      Object.defineProperty(withDefaults, key, desc);
+    } else {
+      desc.value =
+        desc.value === undefined ? defaults[key as keyof T] : desc.value;
+      Object.defineProperty(withDefaults, key, desc);
+    }
+  }
+
+  const descriptors = Object.getOwnPropertyDescriptors(props);
+  for (const key in descriptors) {
+    if (copied.has(key)) {
+      continue;
+    }
+
+    Object.defineProperty(withDefaults, key, descriptors[key]);
+  }
+
+  return withDefaults;
 }
 
 function shouldDebug() {

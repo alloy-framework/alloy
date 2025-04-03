@@ -1,6 +1,7 @@
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
 export * from "./BlockScope.js";
+export * from "./CallSignature.jsx";
 export * from "./ClassDeclaration.jsx";
 export * from "./CommaList.jsx";
 export * from "./Declaration.js";

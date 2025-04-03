@@ -27,7 +27,6 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const sym = createTSSymbol({
     name: name,
     refkey: props.refkey,
-    refkeys: props.refkeys,
     default: props.default,
     export: props.export,
     metadata: props.metadata,

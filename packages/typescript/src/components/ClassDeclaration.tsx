@@ -151,7 +151,6 @@ export interface ClassMethodProps extends ClassMemberProps, CallSignatureProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const callProps = getCallSignatureProps(props);
-  const returnType = props.returnType && <>: {props.returnType}</>;
   const [_, rest] = splitProps(props, ["doc"]);
 
   return (

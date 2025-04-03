@@ -1,5 +1,5 @@
-import { babel } from "@rollup/plugin-babel";
 import { defineConfig } from "vitest/config";
+import alloyPlugin from "@alloy-js/rollup-plugin";
 
 export default defineConfig({
   esbuild: {
@@ -7,12 +7,6 @@ export default defineConfig({
     sourcemap: "both",
   },
   plugins: [
-    babel({
-      inputSourceMap: true as any,
-      sourceMaps: "both",
-      babelHelpers: "bundled",
-      extensions: [".ts", ".tsx"],
-      presets: ["@babel/preset-typescript", ["@alloy-js/babel-preset"]],
-    }),
+    alloyPlugin(),
   ],
 });

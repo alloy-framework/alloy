@@ -426,7 +426,7 @@ const main = async () => {
       <Show when={packageInfo.type !== "stc-project"}>
         <SourceFile path="vitest.config.ts">
           {code`
-            import { babel } from "@rollup/plugin-babel";
+            import alloyPlugin from "@alloy-js/rollup-plugin";
             import { defineConfig } from "vitest/config";
 
             export default defineConfig({

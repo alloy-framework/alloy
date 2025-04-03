@@ -262,15 +262,15 @@ importers:
         specifier: ^3.5.1
         version: 3.5.1
     devDependencies:
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.13.10)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -302,15 +302,15 @@ importers:
       '@alloy-js/babel-plugin':
         specifier: workspace:~
         version: link:../babel-plugin-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -351,6 +351,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
@@ -360,9 +363,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.13.10)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -437,6 +437,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
@@ -446,9 +449,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.13.10)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -474,6 +474,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
@@ -483,9 +486,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.13.10)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -511,6 +511,25 @@ importers:
         specifier: 'catalog:'
         version: 3.0.4(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.1)(yaml@2.7.0)
 
+  packages/rollup-plugin:
+    dependencies:
+      '@alloy-js/babel-preset':
+        specifier: workspace:~
+        version: link:../babel-preset-alloy
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 7.24.7(@babel/core@7.25.2)
+      '@rollup/plugin-babel':
+        specifier: 'catalog:'
+        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.0.4(@types/debug@4.1.12)(@types/node@22.13.10)(tsx@4.19.1)(yaml@2.7.0)
+
   packages/typescript:
     dependencies:
       '@alloy-js/core':
@@ -526,6 +545,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
@@ -535,9 +557,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.47.7
         version: 7.47.7(@types/node@22.13.10)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -566,15 +585,15 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../../packages/babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../../packages/rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -606,15 +625,15 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../../packages/babel-preset-alloy
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../../packages/rollup-plugin
       '@babel/cli':
         specifier: 'catalog:'
         version: 7.24.8(@babel/core@7.25.2)
       '@babel/preset-typescript':
         specifier: 'catalog:'
         version: 7.24.7(@babel/core@7.25.2)
-      '@rollup/plugin-babel':
-        specifier: 'catalog:'
-        version: 6.0.4(@babel/core@7.25.2)(@types/babel__core@7.20.5)(rollup@4.30.1)
       '@rollup/plugin-typescript':
         specifier: 'catalog:'
         version: 11.1.6(rollup@4.30.1)(tslib@2.6.3)(typescript@5.7.3)
@@ -6108,7 +6127,7 @@ snapshots:
 
   '@mdx-js/mdx@3.1.0(acorn@8.14.0)':
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       '@types/mdx': 2.0.13
@@ -6524,7 +6543,7 @@ snapshots:
 
   '@rollup/pluginutils@5.1.4(rollup@4.30.1)':
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       estree-walker: 2.0.2
       picomatch: 4.0.2
     optionalDependencies:
@@ -6766,7 +6785,7 @@ snapshots:
 
   '@types/acorn@4.0.6':
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   '@types/argparse@1.0.38': {}
 
@@ -6801,7 +6820,7 @@ snapshots:
 
   '@types/estree-jsx@1.0.5':
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   '@types/estree@1.0.5': {}
 
@@ -7838,7 +7857,7 @@ snapshots:
 
   estree-util-attach-comments@3.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
 
   estree-util-build-jsx@3.0.1:
     dependencies:
@@ -7851,7 +7870,7 @@ snapshots:
 
   estree-util-scope@1.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       devlop: 1.1.0
 
   estree-util-to-js@2.0.0:
@@ -8184,7 +8203,7 @@ snapshots:
 
   hast-util-to-estree@3.1.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
       comma-separated-tokens: 2.0.3
@@ -8233,7 +8252,7 @@ snapshots:
 
   hast-util-to-jsx-runtime@2.3.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/hast': 3.0.4
       '@types/unist': 3.0.3
       comma-separated-tokens: 2.0.3
@@ -8856,7 +8875,7 @@ snapshots:
 
   micromark-extension-mdx-expression@3.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       devlop: 1.1.0
       micromark-factory-mdx-expression: 2.0.2
       micromark-factory-space: 2.0.0
@@ -8868,7 +8887,7 @@ snapshots:
   micromark-extension-mdx-jsx@3.0.1:
     dependencies:
       '@types/acorn': 4.0.6
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       micromark-factory-mdx-expression: 2.0.2
@@ -8885,7 +8904,7 @@ snapshots:
 
   micromark-extension-mdxjs-esm@3.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       devlop: 1.1.0
       micromark-core-commonmark: 2.0.1
       micromark-util-character: 2.1.0
@@ -8921,7 +8940,7 @@ snapshots:
 
   micromark-factory-mdx-expression@2.0.2:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       devlop: 1.1.0
       micromark-factory-space: 2.0.0
       micromark-util-character: 2.1.0
@@ -8986,7 +9005,7 @@ snapshots:
   micromark-util-events-to-acorn@2.0.2:
     dependencies:
       '@types/acorn': 4.0.6
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/unist': 3.0.3
       devlop: 1.1.0
       estree-util-visit: 2.0.0
@@ -9510,7 +9529,7 @@ snapshots:
 
   recma-build-jsx@1.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
@@ -9526,14 +9545,14 @@ snapshots:
 
   recma-parse@1.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       esast-util-from-js: 2.0.1
       unified: 11.0.5
       vfile: 6.0.3
 
   recma-stringify@1.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       estree-util-to-js: 2.0.0
       unified: 11.0.5
       vfile: 6.0.3
@@ -9597,7 +9616,7 @@ snapshots:
 
   rehype-recma@1.0.0:
     dependencies:
-      '@types/estree': 1.0.5
+      '@types/estree': 1.0.6
       '@types/hast': 3.0.4
       hast-util-to-estree: 3.1.0
     transitivePeerDependencies:

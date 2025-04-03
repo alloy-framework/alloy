@@ -11,12 +11,10 @@ import {
   splitProps,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
-import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
 import { Prose } from "./Prose.jsx";
@@ -156,7 +154,6 @@ export function ClassMethod(props: ClassMethodProps) {
   const returnType = props.returnType && <>: {props.returnType}</>;
   const [_, rest] = splitProps(props, ["doc"]);
 
-
   return (
     <>
       <Show when={Boolean(props.doc)}>
@@ -169,12 +166,12 @@ export function ClassMethod(props: ClassMethodProps) {
         <hbr />
       </Show>
       <ClassMember {...rest}>
-      {props.async && "async "}
-      <MemberName />
-      <Scope name={props.name} kind="function">
-        <CallSignature {...callProps} /> <Block>{props.children}</Block>
-      </Scope>
-    </ClassMember>
+        {props.async && "async "}
+        <MemberName />
+        <Scope name={props.name} kind="function">
+          <CallSignature {...callProps} /> <Block>{props.children}</Block>
+        </Scope>
+      </ClassMember>
     </>
   );
 }

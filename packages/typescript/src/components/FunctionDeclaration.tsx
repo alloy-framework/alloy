@@ -7,15 +7,16 @@ import {
   For,
   Indent,
   Name,
-  Refkey,
-  refkey,
   Scope,
   Show,
   taggedComponent,
 } from "@alloy-js/core";
 import { Children, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
-import { ParameterDescriptor, TypeParameterDescriptor } from "../parameter-descriptor.js";
+import {
+  ParameterDescriptor,
+  TypeParameterDescriptor,
+} from "../parameter-descriptor.js";
 import {
   createTSSymbol,
   TSOutputSymbol,
@@ -27,7 +28,6 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
 import { Prose } from "./Prose.jsx";
-
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,
@@ -89,12 +89,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
         <hbr />
       </Show>
       <Declaration {...props} nameKind="function">
-      {asyncKwd}function <Name />
-      <Scope name={props.name} kind="function">
-        <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
-        {sBody}
-      </Scope>
-    </Declaration>
+        {asyncKwd}function <Name />
+        <Scope name={props.name} kind="function">
+          <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
+          {sBody}
+        </Scope>
+      </Declaration>
     </>
   );
 }

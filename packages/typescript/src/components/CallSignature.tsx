@@ -1,8 +1,9 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import {
-  FunctionDeclaration,
-} from "./FunctionDeclaration.jsx";
-import { ParameterDescriptor, TypeParameterDescriptor } from "../parameter-descriptor.js";
+  ParameterDescriptor,
+  TypeParameterDescriptor,
+} from "../parameter-descriptor.js";
+import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 
 export interface CallSignatureProps {
   /**

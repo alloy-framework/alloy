@@ -15,7 +15,7 @@ import {
 } from "@alloy-js/core";
 import { Children, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+import { ParameterDescriptor, TypeParameterDescriptor } from "../parameter-descriptor.js";
 import {
   createTSSymbol,
   TSOutputSymbol,
@@ -28,35 +28,6 @@ import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParameters } from "./JSDocParam.jsx";
 import { Prose } from "./Prose.jsx";
 
-/**
- * Information for a TypeScript generic type parameter.
- */
-export interface TypeParameterDescriptor {
-  /**
-   * The name of the type parameter.
-   */
-  name: string;
-
-  /**
-   * The extends constraint for the type parameter.
-   */
-  extends?: Children;
-
-  /**
-   * The default type of the type parameter.
-   */
-  default?: Children;
-
-  /**
-   * A refkey or array of refkeys for this type parameter.
-   */
-  refkey?: Refkey | Refkey[];
-
-  /**
-   * Arbitrary metadata for the type parameter symbol.
-   */
-  metadata?: Record<string, unknown>;
-}
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,

@@ -16,6 +16,8 @@ it("renders a function declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * A function that greets a person
+     *
+     * @param {string} name
      **/
     function greet(name: string): string {}
   `);

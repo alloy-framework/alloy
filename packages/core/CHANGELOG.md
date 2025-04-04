@@ -14,9 +14,7 @@
 - [#66](https://github.com/alloy-framework/alloy/pull/66) Add `text` helper that processes a string template similar to a JSX template with respect to whitespace handling.
 - [#66](https://github.com/alloy-framework/alloy/pull/66) Add `ProviderStc` to context for providing context inside string template components.
 - [#68](https://github.com/alloy-framework/alloy/pull/68) Add `doubleHardline` as a list joiner boolean prop. Useful for markdown paragraphs or separating declarations with a blank line.
-- [#69](https://github.com/alloy-framework/alloy/pull/69) - Support SourceFile header. This PR adds the following components:
-    - Rename `JSDocParagraph` component to `Prose`.
-    - `SingleLineCommentBlock` component to handle single line comments `//`.
+- [#69](https://github.com/alloy-framework/alloy/pull/69) Add SourceFile `header` prop.
 - [#71](https://github.com/alloy-framework/alloy/pull/71) Add `skipFalsy` prop to `For` component for controlling whether to skip falsy values. Previously this defaulted to true, it now defaults to false (which likely just fixes bugs).
 - [#78](https://github.com/alloy-framework/alloy/pull/78) Add `Prose` component for wrapping string paragraphs at the line width.
 

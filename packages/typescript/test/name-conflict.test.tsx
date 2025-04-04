@@ -4,11 +4,11 @@ import { camelCase } from "change-case";
 import { expect, it } from "vitest";
 import {
   FunctionDeclaration,
-  ParameterDescriptor,
   SourceFile,
   TSOutputSymbol,
   TSSymbolFlags,
 } from "../src/index.js";
+import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 it("handles custom name conflict resolver based on metadata", () => {
   function resolver(name: string, symbols: TSOutputSymbol[]) {
     const goodNamedSymbols = symbols.filter(

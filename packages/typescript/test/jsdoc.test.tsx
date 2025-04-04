@@ -31,7 +31,7 @@ describe("JSDoc", () => {
   });
 });
 
-describe("JSDocParagraph", () => {
+describe("Prose", () => {
   it("formats properly", () => {
     const template = (
       <JSDoc>

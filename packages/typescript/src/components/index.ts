@@ -1,3 +1,4 @@
+export * from "../parameter-descriptor.js";
 export * from "./ArrayExpression.js";
 export * from "./BarrelFile.js";
 export * from "./BlockScope.js";

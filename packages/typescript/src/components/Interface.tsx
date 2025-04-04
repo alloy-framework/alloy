@@ -1,6 +1,7 @@
-import { Block, Children, Name } from "@alloy-js/core";
+import { Block, Children, Name, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { JSDoc } from "./JSDoc.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -19,10 +20,17 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
 
   return (
-    <Declaration {...props} nameKind="interface">
-      interface <Name />
-      {extendsPart} <InterfaceExpression>{props.children}</InterfaceExpression>
-    </Declaration>
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      <Declaration {...props} nameKind="interface">
+        interface <Name />
+        {extendsPart}{" "}
+        <InterfaceExpression>{props.children}</InterfaceExpression>
+      </Declaration>
+    </>
   );
 }
 
@@ -41,6 +49,7 @@ export interface InterfaceMemberProps {
   children?: Children;
   optional?: boolean;
   readonly?: boolean;
+  doc?: Children;
 }
 
 /**
@@ -60,6 +69,10 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   } else {
     return (
       <>
+        <Show when={Boolean(props.doc)}>
+          <JSDoc children={props.doc} />
+          <hbr />
+        </Show>
         {readonly}
         {namer.getName(props.name!, "interface-member")}
         {optionality}: {type}

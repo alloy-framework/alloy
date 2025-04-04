@@ -7,13 +7,16 @@ import {
   For,
   Indent,
   Name,
-  Refkey,
   Scope,
   Show,
   taggedComponent,
 } from "@alloy-js/core";
 import { Children, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
+import {
+  ParameterDescriptor,
+  TypeParameterDescriptor,
+} from "../parameter-descriptor.js";
 import {
   createTSSymbol,
   TSOutputSymbol,
@@ -22,71 +25,9 @@ import {
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-
-/**
- * Information for a TypeScript function parameter.
- */
-export interface ParameterDescriptor {
-  /**
-   * The name of the parameter.
-   */
-  name: string;
-
-  /**
-   * The type of the parameter.
-   */
-  type?: Children;
-
-  /**
-   * The default value of the parameter.
-   */
-  default?: Children;
-
-  /**
-   * The refkey for this parameter.
-   */
-  refkey?: Refkey | Refkey[];
-
-  /**
-   * Whether the parameter is optional.
-   */
-  optional?: boolean;
-
-  /**
-   * Arbitrary metadata for the parameter symbol.
-   */
-  metadata?: Record<string, unknown>;
-}
-
-/**
- * Information for a TypeScript generic type parameter.
- */
-export interface TypeParameterDescriptor {
-  /**
-   * The name of the type parameter.
-   */
-  name: string;
-
-  /**
-   * The extends constraint for the type parameter.
-   */
-  extends?: Children;
-
-  /**
-   * The default type of the type parameter.
-   */
-  default?: Children;
-
-  /**
-   * A refkey or array of refkeys for this type parameter.
-   */
-  refkey?: Refkey | Refkey[];
-
-  /**
-   * Arbitrary metadata for the type parameter symbol.
-   */
-  metadata?: Record<string, unknown>;
-}
+import { JSDoc } from "./JSDoc.jsx";
+import { JSDocParams } from "./JSDocParam.jsx";
+import { Prose } from "./Prose.jsx";
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,
@@ -137,13 +78,24 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   });
 
   return (
-    <Declaration {...props} nameKind="function">
-      {asyncKwd}function <Name />
-      <Scope name={props.name} kind="function">
-        <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
-        {sBody}
-      </Scope>
-    </Declaration>
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc>
+          {props.doc && <Prose children={props.doc} />}
+          {Array.isArray(props.parameters) && (
+            <JSDocParams parameters={props.parameters} />
+          )}
+        </JSDoc>
+        <hbr />
+      </Show>
+      <Declaration {...props} nameKind="function">
+        {asyncKwd}function <Name />
+        <Scope name={props.name} kind="function">
+          <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
+          {sBody}
+        </Scope>
+      </Declaration>
+    </>
   );
 }
 

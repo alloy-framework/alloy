@@ -7,12 +7,17 @@ import {
   OutputSymbolFlags,
   Refkey,
   Scope,
+  Show,
+  splitProps,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
+import { JSDoc } from "./JSDoc.jsx";
+import { JSDocParams } from "./JSDocParam.jsx";
+import { Prose } from "./Prose.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -56,10 +61,16 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const flags = OutputSymbolFlags.MemberContainer;
 
   return (
-    <Declaration {...props} flags={flags} nameKind="class">
-      class <Name />
-      {extendsPart} <Block>{props.children}</Block>
-    </Declaration>
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      <Declaration {...props} flags={flags} nameKind="class">
+        class <Name />
+        {extendsPart} <Block>{props.children}</Block>
+      </Declaration>
+    </>
   );
 }
 
@@ -72,6 +83,7 @@ export interface ClassMemberProps {
   jsPrivate?: boolean;
   static?: boolean;
   children?: Children;
+  doc?: Children;
 }
 
 export function ClassMember(props: ClassMemberProps) {
@@ -98,13 +110,19 @@ export function ClassMember(props: ClassMemberProps) {
   }
 
   return (
-    <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
-      {props.public && "public "}
-      {props.private && "private "}
-      {props.protected && "protected "}
-      {props.static && "static "}
-      {props.children}
-    </MemberDeclaration>
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
+        {props.public && "public "}
+        {props.private && "private "}
+        {props.protected && "protected "}
+        {props.static && "static "}
+        {props.children}
+      </MemberDeclaration>
+    </>
   );
 }
 
@@ -133,14 +151,26 @@ export interface ClassMethodProps extends ClassMemberProps, CallSignatureProps {
 
 export function ClassMethod(props: ClassMethodProps) {
   const callProps = getCallSignatureProps(props);
+  const [_, rest] = splitProps(props, ["doc"]);
 
   return (
-    <ClassMember {...props}>
-      {props.async && "async "}
-      <MemberName />
-      <Scope name={props.name} kind="function">
-        <CallSignature {...callProps} /> <Block>{props.children}</Block>
-      </Scope>
-    </ClassMember>
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc>
+          {props.doc && <Prose children={props.doc} />}
+          {Array.isArray(rest.parameters) && (
+            <JSDocParams parameters={rest.parameters} />
+          )}
+        </JSDoc>
+        <hbr />
+      </Show>
+      <ClassMember {...rest}>
+        {props.async && "async "}
+        <MemberName />
+        <Scope name={props.name} kind="function">
+          <CallSignature {...callProps} /> <Block>{props.children}</Block>
+        </Scope>
+      </ClassMember>
+    </>
   );
 }

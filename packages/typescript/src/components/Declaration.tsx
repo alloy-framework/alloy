@@ -6,11 +6,17 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
+import {
+  createTSSymbol,
+  TSOutputSymbol,
+  TSSymbolFlags,
+} from "../symbols/index.js";
 
 // imports for documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TypeDeclaration } from "./TypeDeclaration.jsx";
+
+import { PrivateScopeContext } from "../context/private-scope.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,14 +30,9 @@ export interface BaseDeclarationProps {
   name: string;
 
   /**
-   * The unique key for this declaration.
+   * The refkey or array of refkeys for this declaration.
    */
-  refkey?: Refkey;
-
-  /**
-   * Multiple unique keys for this declaration.
-   */
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
 
   /**
    * Whether to export this declaration from the module.
@@ -60,13 +61,28 @@ export interface BaseDeclarationProps {
    * Arbitrary metadata about this declaration.
    */
   metadata?: Record<string, unknown>;
+
+  /**
+   * Documentation for this declaration
+   */
+  doc?: Children;
 }
 
-export interface DeclarationProps extends BaseDeclarationProps {
+export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
+  /**
+   * The name of this declaration.
+   */
+  name?: string;
+
   /**
    * The name policy kind to apply to the declaration.
    */
-  nameKind: TypeScriptElements;
+  nameKind?: TypeScriptElements;
+
+  /**
+   * The symbol to use for this declaration.
+   */
+  symbol?: TSOutputSymbol;
 }
 
 /**
@@ -84,29 +100,53 @@ export interface DeclarationProps extends BaseDeclarationProps {
  *
  */
 export function Declaration(props: DeclarationProps) {
-  const namePolicy = useTSNamePolicy();
+  let sym: TSOutputSymbol;
 
-  let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
-  if (props.kind && props.kind === "type") {
-    tsFlags &= TSSymbolFlags.TypeSymbol;
+  if (props.symbol) {
+    sym = props.symbol;
+  } else {
+    const namePolicy = useTSNamePolicy();
+
+    let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
+    if (props.kind && props.kind === "type") {
+      tsFlags &= TSSymbolFlags.TypeSymbol;
+    }
+
+    sym = createTSSymbol({
+      name: namePolicy.getName(props.name!, props.nameKind!),
+      refkey: props.refkey,
+      export: props.export,
+      default: props.default,
+      flags: props.flags,
+      tsFlags,
+      metadata: props.metadata,
+    });
   }
 
-  const sym = createTSSymbol({
-    name: namePolicy.getName(props.name, props.nameKind),
-    refkey: props.refkey,
-    refkeys: props.refkeys,
-    export: props.export,
-    default: props.default,
-    flags: props.flags,
-    tsFlags,
-    metadata: props.metadata,
-  });
+  function withMemberScope(children: Children) {
+    return <MemberScope owner={sym}>{children}</MemberScope>;
+  }
 
-  let children: Children;
+  function withPrivateMemberScope(children: Children) {
+    const context: PrivateScopeContext = {
+      instanceMembers: sym.privateMemberScope!,
+      staticMembers: sym.privateStaticMemberScope!,
+    };
+    return (
+      <PrivateScopeContext.Provider value={context}>
+        {children}
+      </PrivateScopeContext.Provider>
+    );
+  }
+
+  let children: Children = () => props.children;
+
   if (sym.flags & OutputSymbolFlags.MemberContainer) {
-    children = <MemberScope owner={sym}>{props.children}</MemberScope>;
-  } else {
-    children = () => props.children;
+    children = withMemberScope(children);
+  }
+
+  if (sym.tsFlags & TSSymbolFlags.PrivateMemberContainer) {
+    children = withPrivateMemberScope(children);
   }
 
   return (

@@ -16,14 +16,9 @@ export interface MemberDeclarationPropsWithInfo {
   name: string;
 
   /**
-   * The unique key for this declaration.
+   * The refkey or array refkeys for this declaration.
    */
-  refkey?: Refkey;
-
-  /**
-   * Multiple unique keys for this declaration.
-   */
-  refkeys?: Refkey[];
+  refkey?: Refkey | Refkey[];
 
   /**
    * Additional metadata for the declared symbol.
@@ -93,7 +88,6 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
     declaration = binder.createSymbol({
       name: infoProps.name!,
       refkey: infoProps.refkey,
-      refkeys: infoProps.refkeys,
       metadata: infoProps.metadata,
       flags:
         infoProps.static ?

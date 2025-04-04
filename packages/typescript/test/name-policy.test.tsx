@@ -74,7 +74,7 @@ it("appends _ to reserved words", () => {
         <ts.FunctionDeclaration
           name="default"
           refkey={ref1}
-          parameters={{ await: "any" }}
+          parameters={[{ name: "await", type: "any" }]}
         />
         <hbr />
         <StatementList>

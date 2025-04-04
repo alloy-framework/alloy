@@ -36,7 +36,7 @@
     "@babel/cli": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "^7.47.7",
-    "@rollup/plugin-babel": "catalog:",
+    "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",

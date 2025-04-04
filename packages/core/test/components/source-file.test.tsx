@@ -9,6 +9,7 @@ import {
 import { expect, it } from "vitest";
 import { SourceDirectoryContext } from "../../src/context/source-directory.js";
 import "../../testing/extend-expect.js";
+import { d } from "../../testing/render.js";
 
 it("tracks its content", () => {
   let context;
@@ -50,4 +51,20 @@ it("has reactive context", () => {
   );
 
   expect(tree.contents[1].contents).toEqual("hi.txt contents.txt");
+});
+
+it("Includes header", () => {
+  const header = <># This is a header</>;
+  const tree = render(
+    <Output>
+      <SourceFile path="hi.txt" filetype="text" header={header}>
+        hello!
+      </SourceFile>
+    </Output>,
+  );
+
+  expect(tree.contents[0].contents).toEqual(d`
+    # This is a header
+    hello!
+    `);
 });

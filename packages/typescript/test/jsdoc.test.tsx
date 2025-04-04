@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { JSDoc } from "../src/components/JSDoc.jsx";
 import { JSDocComment } from "../src/components/JSDocComment.jsx";
 import { JSDocExample } from "../src/components/JSDocExample.jsx";
-import { JSDocParagraph } from "../src/components/JSDocParagraph.jsx";
+import { Prose } from "../src/components/Prose.jsx";
 import { FunctionCallExpression } from "../src/index.js";
 
 describe("JSDoc", () => {
@@ -31,19 +31,19 @@ describe("JSDoc", () => {
   });
 });
 
-describe("JSDocParagraph", () => {
+describe("Prose", () => {
   it("formats properly", () => {
     const template = (
       <JSDoc>
-        <JSDocParagraph>
+        <Prose>
           This is a long paragraph that should end up being broken into multiple
           paragraphs. Moreover, the line breaks in this paragraph should not be
           carried over into the JSDoc comment.
-        </JSDocParagraph>
-        <JSDocParagraph>
+        </Prose>
+        <Prose>
           This is another paragraph. There should be a couple breaks in front of
           it.
-        </JSDocParagraph>
+        </Prose>
       </JSDoc>
     );
 
@@ -70,9 +70,7 @@ describe("JSDocExample", () => {
   it("creates unfenced code samples", () => {
     const template = (
       <JSDoc>
-        <JSDocParagraph>
-          This API is awesome, and it comes with an example!
-        </JSDocParagraph>
+        <Prose>This API is awesome, and it comes with an example!</Prose>
         <JSDocExample>console.log("Hello world!")</JSDocExample>
       </JSDoc>
     );
@@ -94,9 +92,7 @@ describe("JSDocExample", () => {
   it("creates fenced code samples", () => {
     const template = (
       <JSDoc>
-        <JSDocParagraph>
-          This API is awesome, and it comes with an example!
-        </JSDocParagraph>
+        <Prose>This API is awesome, and it comes with an example!</Prose>
         <JSDocExample fenced language="ts">
           console.log("Hello world!")
         </JSDocExample>
@@ -122,9 +118,7 @@ describe("JSDocExample", () => {
   it("creates code samples using other components", () => {
     const template = (
       <JSDoc>
-        <JSDocParagraph>
-          This API is awesome, and it comes with an example!
-        </JSDocParagraph>
+        <Prose>This API is awesome, and it comes with an example!</Prose>
         <JSDocExample language="ts">
           // make a function call.
           <hbr />

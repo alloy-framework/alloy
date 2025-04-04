@@ -29,12 +29,10 @@ const res = ay.render(
     </ts.SourceFile>
 
     <ts.SourceFile path="test2.ts">
-      <ts.VarDeclaration name="v">
-        {helloWorldRef}
-      </ts.VarDeclaration>
+      <ts.VarDeclaration name="v">{helloWorldRef}</ts.VarDeclaration>
       console.log(v);
     </ts.SourceFile>
-  </ay.Output>
+  </ay.Output>,
 );
 
 console.log(res[2].contents);
@@ -59,17 +57,18 @@ const res = render(
     `,
 
     ts.SourceFile({ path: "test1.ts" }).children(
-      ts.VarDeclaration({ export: true, name: "foo", refkey: helloWorldRef }).code`
+      ts.VarDeclaration({ export: true, name: "foo", refkey: helloWorldRef })
+        .code`
         "Hello world"
-      `
+      `,
     ),
 
     ts.SourceFile({ path: "test2.ts" }).code`
       ${ts.VarDeclaration({ name: "v" }).children(helloWorldRef)}
       
       console.log(v);
-    `
-  )
+    `,
+  ),
 );
 
 console.log(res[2].contents);
@@ -77,7 +76,6 @@ console.log(res[2].contents);
 //
 // const v = foo;
 ```
-
 
 This project is in pre-beta. Expect everything to change. Feedback is especially
 appreciated. The docs are not great but are being worked on.
@@ -104,8 +102,8 @@ Clone the repo, then:
 
 ### Supported Languages
 
-* C#: @alloy-js/csharp
-* Java: @alloy-js/java
-* TypeScript: @alloy-js/typescript
+- C#: @alloy-js/csharp
+- Java: @alloy-js/java
+- TypeScript: @alloy-js/typescript
 
 More are coming soon.

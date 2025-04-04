@@ -4,6 +4,46 @@ import { describe, expect, it } from "vitest";
 
 import * as ts from "../src/index.js";
 
+it("renders an enum with only named members, no value", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="foo.ts">
+        <ts.EnumDeclaration name="MyEnum">
+          <ts.CommaList>
+            <ts.EnumMember name="foo" />
+            <ts.EnumMember name="bar" />
+          </ts.CommaList>
+        </ts.EnumDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    enum MyEnum {
+      foo,
+      bar,
+    }
+  `);
+});
+
+it("renders enum member with falsy value", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="foo.ts">
+        <ts.EnumDeclaration name="MyEnum">
+          <ts.CommaList>
+            <ts.EnumMember name="foo" jsValue={0} />
+            <ts.EnumMember name="bar" jsValue={""} />
+          </ts.CommaList>
+        </ts.EnumDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    enum MyEnum {
+      foo = 0,
+      bar = "",
+    }
+  `);
+});
+
 it("renders an enum with enum children", () => {
   expect(
     <Output>
@@ -112,6 +152,7 @@ it("uses the naming policy", () => {
 describe("symbols", () => {
   it("can reference enum members by refkey", () => {
     const memberOne = refkey();
+    const memberTwo = refkey();
 
     expect(
       <Output>
@@ -119,19 +160,25 @@ describe("symbols", () => {
           <ts.EnumDeclaration name="MyEnum">
             <ts.CommaList>
               <ts.EnumMember name="foo" jsValue="1" refkey={memberOne} />
-              <ts.EnumMember name="bar" jsValue={2} />
+              <ts.EnumMember
+                name="mangled-name"
+                jsValue={2}
+                refkey={memberTwo}
+              />
             </ts.CommaList>
           </ts.EnumDeclaration>
           <hbr />
-          {memberOne};
+          {memberOne};<hbr />
+          {memberTwo};
         </ts.SourceFile>
       </Output>,
     ).toRenderTo(`
       enum MyEnum {
         foo = "1",
-        bar = 2,
+        "mangled-name" = 2,
       }
       MyEnum.foo;
+      MyEnum["mangled-name"];
     `);
   });
 });

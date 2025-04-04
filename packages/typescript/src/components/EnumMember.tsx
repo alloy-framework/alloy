@@ -1,6 +1,8 @@
-import { Children, OutputSymbolFlags, Refkey } from "@alloy-js/core";
+import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { JSDoc } from "./JSDoc.jsx";
+import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
 
 export interface EnumMemberProps {
@@ -32,6 +34,11 @@ export interface EnumMemberProps {
    * Arbitrary symbol metadata for the enum member.
    */
   metadata?: Record<string, unknown>;
+
+  /**
+   * Documentation for the enum member.
+   */
+  doc?: Children;
 }
 
 /**
@@ -49,13 +56,20 @@ export function EnumMember(props: EnumMemberProps) {
       metadata: props.metadata,
     });
   }
-  const nameCode = sym ? sym.name : name;
+  const actualName = sym ? sym.name : name;
   const valueCode =
-    props.jsValue ? <ValueExpression jsValue={props.jsValue} /> : props.value;
+    props.jsValue !== undefined ?
+      <ValueExpression jsValue={props.jsValue} />
+    : props.value;
 
   return (
     <>
-      {nameCode} = {valueCode}
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      <PropertyName name={actualName} />
+      <Show when={valueCode !== undefined}> = {valueCode}</Show>
     </>
   );
 }

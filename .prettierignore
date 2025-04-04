@@ -11,3 +11,7 @@ packages/docs/dist-build
 packages/docs/public
 packages/docs/docs
 packages/docs/src
+
+
+.chronus/changes/
+CHANGELOG.md

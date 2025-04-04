@@ -132,3 +132,17 @@ it("supports the naming policy", () => {
     }
   `);
 });
+
+it("handles invalid identifier names", () => {
+  const res = toSourceText(
+    <ts.InterfaceExpression>
+      <ts.InterfaceMember name="invalid-name" type="string" />;
+    </ts.InterfaceExpression>,
+  );
+
+  expect(res).toEqual(d`
+    {
+      "invalid-name": string;
+    }
+  `);
+});

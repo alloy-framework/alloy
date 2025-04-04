@@ -61,7 +61,7 @@ export function List(props: ListProps) {
     }),
   );
   return (
-    <For each={resolvedChildren} {...forProps}>
+    <For each={resolvedChildren} {...forProps} skipFalsy>
       {(child) => child}
     </For>
   );

@@ -45,3 +45,63 @@ it("accepts only children", () => {
     [[4, 5, 6]]
   `);
 });
+
+it("renders a falsy jsValue", () => {
+  expect(
+    toSourceText(<ArrayExpression jsValue={[undefined]}></ArrayExpression>),
+  ).toBe(d`
+    [undefined]
+  `);
+});
+
+it("renders a falsy jsValue with no leading comma", () => {
+  expect(toSourceText(<ArrayExpression jsValue={[null]}></ArrayExpression>))
+    .toBe(d`
+    [null]
+  `);
+});
+
+it("renders a falsy jsValue and children", () => {
+  expect(
+    toSourceText(<ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>),
+  ).toBe(d`
+    [false, "Hello"]
+  `);
+});
+
+it("renders a falsy jsValue but not invisible children", () => {
+  expect(
+    toSourceText(
+      <ArrayExpression jsValue={[false]}>
+        {null}
+        {undefined}
+      </ArrayExpression>,
+    ),
+  ).toBe(d`
+    [false]
+  `);
+});
+
+it("renders a falsy jsValue and visible children", () => {
+  expect(
+    toSourceText(<ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>),
+  ).toBe(d`
+    [false, "Hello"]
+  `);
+});
+
+it("renders a falsy jsValue and visible falsy children", () => {
+  expect(
+    toSourceText(<ArrayExpression jsValue={[false]}>false</ArrayExpression>),
+  ).toBe(d`
+      [false, false]
+    `);
+});
+
+it("renders a falsy jsValue but not invisible falsy children", () => {
+  expect(
+    toSourceText(<ArrayExpression jsValue={[false]}>{false}</ArrayExpression>),
+  ).toBe(d`
+      [false]
+    `);
+});

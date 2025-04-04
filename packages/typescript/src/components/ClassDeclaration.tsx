@@ -4,12 +4,14 @@ import {
   MemberDeclaration,
   Name,
   OutputSymbolFlags,
+  Prose,
   Refkey,
   Scope,
   Show,
   splitProps,
   useMemberScope,
 } from "@alloy-js/core";
+
 import { usePrivateScope } from "../context/private-scope.js";
 import { useTSNamePolicy } from "../name-policy.js";
 import { TSOutputScope } from "../symbols/scopes.js";
@@ -20,7 +22,6 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { PropertyName } from "./PropertyName.jsx";
-import { Prose } from "./Prose.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;

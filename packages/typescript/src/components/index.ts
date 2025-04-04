@@ -20,7 +20,6 @@ export * from "./MemberChainExpression.jsx";
 export * from "./ObjectExpression.js";
 export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";
-export * from "./Prose.jsx";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./SwitchStatement.jsx";

@@ -11,6 +11,7 @@ export const MemberName = stc(base.MemberName);
 export const MemberScope = stc(base.MemberScope);
 export const Name = stc(base.Name);
 export const Output = stc(base.Output);
+export const Prose = stc(base.Prose);
 export const Scope = stc(base.Scope);
 export const Show = stc(base.Show);
 export const StatementList = stc(base.StatementList);

@@ -7,6 +7,7 @@ import {
   For,
   Indent,
   Name,
+  Prose,
   Scope,
   Show,
   taggedComponent,
@@ -27,7 +28,6 @@ import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
-import { Prose } from "./Prose.jsx";
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,

@@ -1,10 +1,10 @@
+import { Prose } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { JSDoc } from "../src/components/JSDoc.jsx";
 import { JSDocComment } from "../src/components/JSDocComment.jsx";
 import { JSDocExample } from "../src/components/JSDocExample.jsx";
-import { Prose } from "../src/components/Prose.jsx";
 import { FunctionCallExpression } from "../src/index.js";
 
 describe("JSDoc", () => {

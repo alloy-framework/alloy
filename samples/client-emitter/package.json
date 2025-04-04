@@ -23,7 +23,7 @@
   "devDependencies": {
     "@babel/cli": "catalog:",
     "@babel/preset-typescript": "catalog:",
-    "@rollup/plugin-babel": "catalog:",
+    "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
     "@alloy-js/babel-preset": "workspace:~",

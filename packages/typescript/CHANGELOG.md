@@ -1,5 +1,33 @@
 # Changelog - @alloy-js/typescript
 
+## 0.8.0
+
+### Bug Fixes
+
+- [#71](https://github.com/alloy-framework/alloy/pull/71) Fix ArrayExpression not rendering falsy elements when passed a `jsValue`.
+
+### Features
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Expose `metadata` prop on various declaration forms to add arbitrary metadata about the symbol being declared. This metadata is stored on the symbol and can be accessed within e.g. name conflict resolution callbacks.
+- [#74](https://github.com/alloy-framework/alloy/pull/74) Add CallSignature component for creating TypeScript call signatures. Suitable for placing inside an `InterfaceDeclaration` or `InterfaceExpression`.
+- [#76](https://github.com/alloy-framework/alloy/pull/76) Support declaring and referencing properties with invalid property names. Added a `PropertyName` component to handle escaping property declaration names.
+- [#76](https://github.com/alloy-framework/alloy/pull/76) Properly model private symbols. Private symbols are now stored in separate scopes and will no longer conflict with non-private symbols. Access rules for private symbols are verified (e.g. that static private symbols cannot be referenced outside their scope).
+- [#69](https://github.com/alloy-framework/alloy/pull/69) Add `SingleLineCommentBlock` component to handle single line comments `//`.
+- [#72](https://github.com/alloy-framework/alloy/pull/72) Adding support for JSDocs on declarations via the `docs` prop.
+- [#72](https://github.com/alloy-framework/alloy/pull/72) Add `JSDocParam` component which renders a single JSDoc comment for a parameter.
+- [#72](https://github.com/alloy-framework/alloy/pull/72) Add `JSDocParams` which takes an array of `ParameterDescription` to render JSDocParam comments for each.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add new BlockScope component that combines a block and a scope.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add IfStatement, ElseIfClause, and ElseClause components.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) Add SwitchStatement and CaseClause components.
+
+### Breaking Changes
+
+- [#67](https://github.com/alloy-framework/alloy/pull/67) Removed all default refkeys based on declaration name.
+- [#67](https://github.com/alloy-framework/alloy/pull/67) The `parameters` prop passed to various function or method defining components now takes a `ParameterDescriptor[]` instead of a `Record<string, ParameterDescriptor>`. `ParameterDescriptor` now has a required `name` property. The record form is dangerous because you have to ensure you have no name conflicts, otherwise you'll silently lose parameters.
+- [#74](https://github.com/alloy-framework/alloy/pull/74) Remove plural `refkeys` prop. Can now pass an array for the `refkey` prop.
+- [#65](https://github.com/alloy-framework/alloy/pull/65) The `value` prop of VarDeclaration has been renamed to `initializer` to align with the ECMAScript grammar.
+- [#69](https://github.com/alloy-framework/alloy/pull/69) Remove `JSDocParagraph` component, can just use `Prose` from core.
+
 ## 0.7.0
 
 ### Bug Fixes

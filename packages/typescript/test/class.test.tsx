@@ -61,6 +61,8 @@ describe("instance members", () => {
 
   it("can be referenced", () => {
     const one = refkey();
+    const privateOne = refkey();
+
     const res = toSourceText(
       <ts.ClassDeclaration name="Foo">
         <StatementList>
@@ -68,6 +70,10 @@ describe("instance members", () => {
             1
           </ts.ClassField>
           <ts.ClassField name="two">{one} + 1</ts.ClassField>
+          <ts.ClassField name="one" refkey={privateOne} jsPrivate>
+            1
+          </ts.ClassField>
+          <ts.ClassField name="three">{privateOne} + 1</ts.ClassField>
         </StatementList>
       </ts.ClassDeclaration>,
     );
@@ -76,6 +82,8 @@ describe("instance members", () => {
       class Foo {
         one = 1;
         two = this.one + 1;
+        #one = 1;
+        three = this.#one + 1;
       }
     `);
   });
@@ -97,6 +105,64 @@ describe("instance members", () => {
       );
     }).toThrow(/Cannot resolve member symbols/);
   });
+
+  it("cannot be referenced outside the class when protected", () => {
+    const one = refkey();
+    expect(() => {
+      toSourceText(
+        <>
+          <ts.ClassDeclaration name="Foo">
+            <StatementList>
+              <ts.ClassField name="one" refkey={one} protected>
+                1
+              </ts.ClassField>
+            </StatementList>
+          </ts.ClassDeclaration>
+          {one}
+        </>,
+      );
+    }).toThrow(/Cannot resolve member symbols/);
+  });
+
+  it("cannot be referenced outside the class when private", () => {
+    const one = refkey();
+    expect(() => {
+      toSourceText(
+        <>
+          <ts.ClassDeclaration name="Foo">
+            <StatementList>
+              <ts.ClassField name="one" refkey={one} jsPrivate>
+                1
+              </ts.ClassField>
+            </StatementList>
+          </ts.ClassDeclaration>
+          {one}
+        </>,
+      );
+    }).toThrow(/Cannot resolve private member symbols/);
+  });
+
+  it("works with invalid identifier names", () => {
+    const one = refkey();
+
+    const res = toSourceText(
+      <ts.ClassDeclaration name="Foo">
+        <StatementList>
+          <ts.ClassField name="o-n-e" refkey={one}>
+            1
+          </ts.ClassField>
+          <ts.ClassField name="t-w-o">{one} + 1</ts.ClassField>
+        </StatementList>
+      </ts.ClassDeclaration>,
+    );
+
+    expect(res).toEqual(d`
+      class Foo {
+        "o-n-e" = 1;
+        "t-w-o" = this["o-n-e"] + 1;
+      }
+    `);
+  });
 });
 
 describe("static members", () => {
@@ -108,6 +174,10 @@ describe("static members", () => {
           <ts.ClassField static name="one" refkey={one}>
             1
           </ts.ClassField>
+
+          <ts.ClassField static name="two" jsPrivate>
+            2
+          </ts.ClassField>
         </StatementList>
       </ts.ClassDeclaration>,
     );
@@ -115,12 +185,14 @@ describe("static members", () => {
     expect(res).toBe(d`
       class Foo {
         static one = 1;
+        static #two = 2;
       }
     `);
   });
 
   it("can be referenced", () => {
     const one = refkey();
+    const two = refkey();
     const res = toSourceText(
       <>
         <ts.ClassDeclaration name="Foo">
@@ -128,6 +200,10 @@ describe("static members", () => {
             <ts.ClassField static name="one" refkey={one}>
               1
             </ts.ClassField>
+            <ts.ClassField static name="two" refkey={two} jsPrivate>
+              2
+            </ts.ClassField>
+            <ts.ClassMethod name="getTwo">return {two};</ts.ClassMethod>
           </StatementList>
         </ts.ClassDeclaration>
         <hbr />
@@ -138,9 +214,33 @@ describe("static members", () => {
     expect(res).toBe(d`
       class Foo {
         static one = 1;
+        static #two = 2;
+        getTwo() {
+          return Foo.#two;
+        };
       }
       Foo.one;
     `);
+  });
+
+  it("cannot be referenced outside the class when private", () => {
+    const two = refkey();
+
+    expect(() =>
+      toSourceText(
+        <>
+          <ts.ClassDeclaration name="Foo">
+            <StatementList>
+              <ts.ClassField static name="two" refkey={two} jsPrivate>
+                2
+              </ts.ClassField>
+            </StatementList>
+          </ts.ClassDeclaration>
+          <hbr />
+          {two};
+        </>,
+      ),
+    ).toThrow(/Cannot resolve/);
   });
 });
 

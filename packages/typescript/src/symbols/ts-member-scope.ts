@@ -1,4 +1,4 @@
-import { Binder, OutputScope } from "@alloy-js/core";
+import { Binder, OutputScope, OutputScopeFlags } from "@alloy-js/core";
 import { TSOutputSymbol } from "./ts-output-symbol.js";
 
 export interface TSMemberScope extends OutputScope {
@@ -9,13 +9,17 @@ export interface TSMemberScope extends OutputScope {
 
 export function createTSMemberScope(
   binder: Binder,
-  parent: OutputScope,
+  parent: OutputScope | undefined,
   owner: TSOutputSymbol,
   isStatic: boolean = false,
 ): TSMemberScope {
   return binder.createScope<TSMemberScope>({
     kind: "member",
     name: "members",
+    flags:
+      isStatic ?
+        OutputScopeFlags.StaticMemberScope
+      : OutputScopeFlags.MemberScope,
     owner,
     parent,
     isStatic,

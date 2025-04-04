@@ -31,3 +31,10 @@ export function getCallSignatureProps(
 
   return defaultProps(callSignatureProps, defaults);
 }
+
+const identifierRegex =
+  /^(?:[\p{ID_Start}$_])(?:[\p{ID_Continue}$\u200C\u200D])*$/u;
+
+export function isValidJSIdentifier(str: string) {
+  return identifierRegex.test(str);
+}

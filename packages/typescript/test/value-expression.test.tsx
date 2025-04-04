@@ -28,6 +28,15 @@ it.each([
       }
     `,
   ],
+  [
+    { "mangled-name": 1, "@pagination": 2 },
+    d`
+      {
+        "mangled-name": 1,
+        "@pagination": 2,
+      }
+    `,
+  ],
 ])("works - %o => %s", (jsValue, expectedSource) => {
   expect(toSourceText(<ValueExpression jsValue={jsValue} />)).toBe(
     expectedSource,

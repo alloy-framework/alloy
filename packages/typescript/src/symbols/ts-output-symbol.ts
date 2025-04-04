@@ -6,14 +6,16 @@ import {
   useDefaultScope,
 } from "@alloy-js/core";
 import { TSOutputScope } from "./scopes.js";
-import { TSMemberScope } from "./ts-member-scope.js";
+import { createTSMemberScope, TSMemberScope } from "./ts-member-scope.js";
 
 // prettier-ignore
 export enum TSSymbolFlags {
-  None              = 0,
-  LocalImportSymbol = 1 << 0,
-  TypeSymbol        = 1 << 1,
-  ParameterSymbol   = 1 << 2,
+  None                   = 0,
+  LocalImportSymbol      = 1 << 0,
+  TypeSymbol             = 1 << 1,
+  ParameterSymbol        = 1 << 2,
+  PrivateMember          = 1 << 3,
+  PrivateMemberContainer = 1 << 4,
 }
 
 export interface TSOutputSymbol extends OutputSymbol {
@@ -21,7 +23,8 @@ export interface TSOutputSymbol extends OutputSymbol {
   export: boolean;
   default: boolean;
   tsFlags: TSSymbolFlags;
-  memberScope?: TSMemberScope;
+  privateMemberScope?: TSMemberScope;
+  privateStaticMemberScope?: TSMemberScope;
 }
 
 export interface createTsSymbolOptions {
@@ -45,7 +48,7 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
   }
 
   const binder = scope.binder;
-
+  const tsFlags = options.tsFlags ?? TSSymbolFlags.None;
   const sym = binder.createSymbol<TSOutputSymbol>({
     name: options.name,
     scope,
@@ -53,9 +56,19 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
     export: !!options.export,
     default: !!options.default,
     flags: options.flags ?? OutputSymbolFlags.None,
-    tsFlags: options.tsFlags ?? TSSymbolFlags.None,
+    tsFlags,
     metadata: options.metadata,
   });
+
+  if (tsFlags & TSSymbolFlags.PrivateMemberContainer) {
+    sym.privateMemberScope = createTSMemberScope(binder, undefined, sym);
+    sym.privateStaticMemberScope = createTSMemberScope(
+      binder,
+      undefined,
+      sym,
+      true,
+    );
+  }
 
   if (options.export && scope.kind === "module") {
     for (const refkey of sym.refkeys) {

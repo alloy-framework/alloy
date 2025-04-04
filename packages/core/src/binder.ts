@@ -706,12 +706,6 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     targetDeclarationBase: TSymbol,
   ): ResolutionResult<TScope, TSymbol> {
     if (targetDeclarationBase.flags & OutputSymbolFlags.InstanceMember) {
-      if (targetDeclarationBase.scope !== currentMemberScope) {
-        throw new Error(
-          "Cannot resolve member symbols from a different member scope",
-        );
-      }
-
       // todo: handle referencing nested objects by refkey
       return {
         pathUp: [],

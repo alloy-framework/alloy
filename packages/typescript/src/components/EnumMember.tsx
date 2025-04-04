@@ -2,6 +2,7 @@ import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { JSDoc } from "./JSDoc.jsx";
+import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
 
 export interface EnumMemberProps {
@@ -55,7 +56,7 @@ export function EnumMember(props: EnumMemberProps) {
       metadata: props.metadata,
     });
   }
-  const nameCode = sym ? sym.name : name;
+  const actualName = sym ? sym.name : name;
   const valueCode =
     props.jsValue !== undefined ?
       <ValueExpression jsValue={props.jsValue} />
@@ -67,7 +68,7 @@ export function EnumMember(props: EnumMemberProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      {nameCode}
+      <PropertyName name={actualName} />
       <Show when={valueCode !== undefined}> = {valueCode}</Show>
     </>
   );

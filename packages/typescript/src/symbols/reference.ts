@@ -5,13 +5,19 @@ import {
   resolve,
   untrack,
   useContext,
+  useMemberScope,
 } from "@alloy-js/core";
 import { usePackage } from "../components/PackageDirectory.jsx";
 import { SourceFileContext } from "../components/SourceFile.jsx";
+import {
+  PrivateScopeContext,
+  usePrivateScope,
+} from "../context/private-scope.js";
+import { isValidJSIdentifier } from "../utils.js";
 import { TSOutputScope } from "./scopes.js";
 import { TSMemberScope } from "./ts-member-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
-import { TSOutputSymbol } from "./ts-output-symbol.js";
+import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
 export function ref(refkey: Refkey): () => string {
@@ -19,6 +25,8 @@ export function ref(refkey: Refkey): () => string {
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
   );
+  const currentScope = useMemberScope();
+  const currentPrivateScope = usePrivateScope();
 
   return memo(() => {
     if (resolveResult.value === undefined) {
@@ -27,7 +35,25 @@ export function ref(refkey: Refkey): () => string {
 
     const { targetDeclaration, pathDown, memberPath } = resolveResult.value;
 
-    validateSymbolReachable(pathDown);
+    // if we resolved a instance member, check if we should be able to access
+    // it.
+    if (targetDeclaration.flags & OutputSymbolFlags.InstanceMember) {
+      if (targetDeclaration.tsFlags & TSSymbolFlags.PrivateMember) {
+        if (currentPrivateScope?.instanceMembers !== targetDeclaration.scope) {
+          throw new Error(
+            "Cannot resolve private member symbols from a different scope",
+          );
+        }
+      } else {
+        if (currentScope?.instanceMembers !== targetDeclaration.scope) {
+          throw new Error(
+            "Cannot resolve member symbols from a different member scope",
+          );
+        }
+      }
+    }
+
+    validateSymbolReachable(pathDown, memberPath, currentPrivateScope);
 
     // Where the target declaration is relative to the referencing scope.
     // * package: target symbol is in a different package
@@ -87,37 +113,63 @@ export function ref(refkey: Refkey): () => string {
         memberPath[0] = localSymbol;
       }
 
-      return addThisPrefix(
-        targetDeclaration,
-        buildMemberExpression(memberPath),
-      );
+      return buildMemberExpression(memberPath);
     } else {
-      return addThisPrefix(
-        localSymbol ?? targetDeclaration,
-        localSymbol ? localSymbol.name : targetDeclaration.name,
-      );
+      return buildMemberExpression([localSymbol ?? targetDeclaration]);
     }
   });
 }
 
-function addThisPrefix(rootSymbol: TSOutputSymbol, name: string) {
-  if (rootSymbol.flags & OutputSymbolFlags.InstanceMember) {
-    return `this.${name}`;
+function buildMemberExpression(path: TSOutputSymbol[]) {
+  let memberExpr = "";
+
+  const base = path[0];
+  if (base.flags & OutputSymbolFlags.InstanceMember) {
+    memberExpr += "this";
   } else {
-    return name;
+    memberExpr += base.name;
+    path = path.slice(1);
   }
+
+  for (const sym of path) {
+    if (sym.tsFlags & TSSymbolFlags.PrivateMember) {
+      memberExpr += `.#${sym.name}`;
+    } else if (isValidJSIdentifier(sym.name)) {
+      memberExpr += `.${sym.name}`;
+    } else {
+      memberExpr += `[${JSON.stringify(sym.name)}]`;
+    }
+  }
+
+  return memberExpr;
 }
 
-function buildMemberExpression(symbolPath: TSOutputSymbol[]) {
-  return symbolPath.map((sym) => sym.name).join(".");
-}
-
-function validateSymbolReachable(path: TSOutputScope[]) {
+function validateSymbolReachable(
+  path: TSOutputScope[],
+  memberPath: TSOutputSymbol[] | undefined,
+  currentPrivateScope: PrivateScopeContext | undefined,
+) {
   for (const scope of path) {
     if (scope.kind === "function") {
       throw new Error(
         "Cannot reference a symbol inside a function from outside a function",
       );
+    }
+  }
+
+  if (memberPath) {
+    for (const sym of memberPath) {
+      // make sure we're not trying to access a static private from outside
+      // the static member scope.
+      if (
+        sym.flags & OutputSymbolFlags.StaticMember &&
+        sym.tsFlags & TSSymbolFlags.PrivateMember &&
+        currentPrivateScope?.staticMembers !== sym.scope
+      ) {
+        throw new Error(
+          "Cannot resolve private static member symbols from a different scope",
+        );
+      }
     }
   }
 }

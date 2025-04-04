@@ -2,21 +2,24 @@ import {
   Block,
   Children,
   MemberDeclaration,
-  MemberName,
   Name,
   OutputSymbolFlags,
   Refkey,
   Scope,
   Show,
   splitProps,
+  useMemberScope,
 } from "@alloy-js/core";
+import { usePrivateScope } from "../context/private-scope.js";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { TSOutputScope } from "../symbols/scopes.js";
+import { createTSSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { PropertyName } from "./PropertyName.jsx";
 import { Prose } from "./Prose.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
@@ -57,8 +60,21 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
  * ```
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
+  const namePolicy = useTSNamePolicy();
   const extendsPart = props.extends && <> extends {props.extends}</>;
-  const flags = OutputSymbolFlags.MemberContainer;
+
+  const sym = createTSSymbol({
+    name: namePolicy.getName(props.name!, "class"),
+    refkey: props.refkey,
+    export: props.export,
+    default: props.default,
+    flags:
+      (props.flags ?? OutputSymbolFlags.None) |
+      (OutputSymbolFlags.MemberContainer |
+        OutputSymbolFlags.StaticMemberContainer),
+    tsFlags: TSSymbolFlags.PrivateMemberContainer,
+    metadata: props.metadata,
+  });
 
   return (
     <>
@@ -66,7 +82,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <Declaration {...props} flags={flags} nameKind="class">
+      <Declaration symbol={sym} export={props.export} default={props.default}>
         class <Name />
         {extendsPart} <Block>{props.children}</Block>
       </Declaration>
@@ -87,27 +103,37 @@ export interface ClassMemberProps {
 }
 
 export function ClassMember(props: ClassMemberProps) {
-  let sym: TSOutputSymbol | undefined;
   const namer = useTSNamePolicy();
-  let name = namer.getName(props.name, "class-member-data");
+  const name = namer.getName(props.name, "class-member-data");
 
-  if (props.refkey) {
-    let flags = OutputSymbolFlags.None;
-    if (props.static) {
-      flags |= OutputSymbolFlags.StaticMember;
-    } else {
-      flags |= OutputSymbolFlags.InstanceMember;
-    }
+  let flags = OutputSymbolFlags.None;
 
-    sym = createTSSymbol({
-      name: props.jsPrivate ? `#${name}` : name,
-      refkey: props.refkey,
-      flags,
-    });
-  } else if (props.jsPrivate) {
-    // we won't be using the symbol name, so munge the name
-    name = `#${name}`;
+  if (props.static) {
+    flags |= OutputSymbolFlags.StaticMember;
+  } else {
+    flags |= OutputSymbolFlags.InstanceMember;
   }
+
+  let scope: TSOutputScope;
+  if (props.jsPrivate) {
+    const memberScope = usePrivateScope()!;
+    scope =
+      props.static ? memberScope.staticMembers : memberScope.instanceMembers;
+  } else {
+    const memberScope = useMemberScope();
+    scope = (
+      props.static ?
+        memberScope.staticMembers!
+      : memberScope.instanceMembers!) as TSOutputScope;
+  }
+
+  const sym = createTSSymbol({
+    name,
+    scope,
+    refkey: props.refkey,
+    flags,
+    tsFlags: props.jsPrivate ? TSSymbolFlags.PrivateMember : TSSymbolFlags.None,
+  });
 
   return (
     <>
@@ -115,7 +141,7 @@ export function ClassMember(props: ClassMemberProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <MemberDeclaration symbol={sym} name={name} refkey={props.refkey}>
+      <MemberDeclaration symbol={sym}>
         {props.public && "public "}
         {props.private && "private "}
         {props.protected && "protected "}
@@ -137,7 +163,7 @@ export function ClassField(props: ClassFieldProps) {
 
   return (
     <ClassMember {...props}>
-      <MemberName />
+      <PropertyName />
       {typeSection}
       {initializerSection}
     </ClassMember>
@@ -166,7 +192,7 @@ export function ClassMethod(props: ClassMethodProps) {
       </Show>
       <ClassMember {...rest}>
         {props.async && "async "}
-        <MemberName />
+        <PropertyName />
         <Scope name={props.name} kind="function">
           <CallSignature {...callProps} /> <Block>{props.children}</Block>
         </Scope>

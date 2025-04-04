@@ -13,7 +13,9 @@ import {
   Switch,
   Wrap,
 } from "@alloy-js/core";
+import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol } from "../symbols/index.js";
+import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
 export interface ObjectExpressionProps {
@@ -96,7 +98,10 @@ export interface ObjectPropertyProps {
 export function ObjectProperty(props: ObjectPropertyProps) {
   let name;
   if (props.name) {
-    name = props.name;
+    const namer = useTSNamePolicy();
+    name = (
+      <PropertyName name={namer.getName(props.name, "object-member-data")} />
+    );
   } else if (props.nameExpression) {
     name = <>[{props.nameExpression}]</>;
   } else {
@@ -126,7 +131,7 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     sym ? createAssignmentContext(sym) : undefined;
   return (
     <>
-      {sym ? sym.name : name}:{" "}
+      {name}:{" "}
       <AssignmentContext.Provider value={assignmentContext}>
         {value}
       </AssignmentContext.Provider>

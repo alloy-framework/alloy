@@ -296,31 +296,6 @@ describe("instance members", () => {
     expect(pathUp).toEqual([]);
     expect(memberPath).toEqual([instance]);
   });
-
-  it("doesn't resolve from outside the member scope", () => {
-    const binder = createOutputBinder();
-    const {
-      scopes: { root },
-      symbols: { instance },
-    } = createScopeTree(binder, {
-      root: {
-        symbols: {
-          root: {
-            flags: OutputSymbolFlags.InstanceMemberContainer,
-            instanceMembers: {
-              instance: {
-                flags: OutputSymbolFlags.InstanceMember,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    expect(() =>
-      binder.resolveDeclarationByKey(root, undefined, instance.refkeys[0]),
-    ).toThrow(/Cannot resolve member symbols/);
-  });
 });
 
 describe("instantiating members", () => {

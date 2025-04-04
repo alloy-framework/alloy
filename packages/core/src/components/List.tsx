@@ -40,11 +40,6 @@ export interface BaseListProps {
    * Place the join punctuation at the end, but without a line break.
    */
   enderPunctuation?: boolean;
-
-  /**
-   * Skip falsy values in the list.
-   */
-  skipFalsy?: boolean;
 }
 
 export interface ListProps extends BaseListProps {
@@ -66,7 +61,7 @@ export function List(props: ListProps) {
     }),
   );
   return (
-    <For each={resolvedChildren} {...forProps}>
+    <For each={resolvedChildren} {...forProps} skipFalsy>
       {(child) => child}
     </For>
   );

@@ -27,6 +27,13 @@ export interface ForProps<
    * A function to call for each item.
    */
   children: (...args: [...ForCallbackArgs<T>, index: number]) => U;
+
+  /**
+   * Whether to skip falsy values. By default, falsy values are mapped. However,
+   * when mapping children, it is useful to skip falsy values, as it enables
+   * omitting list elements via patterns like `{condition && <ListItem />}`.
+   */
+  skipFalsy?: boolean;
 }
 
 export type ForSupportedCollections = any[] | Map<any, any> | Set<any>;
@@ -66,7 +73,7 @@ export function For<
 >(props: ForProps<T, U>) {
   const cb = props.children;
   const options = baseListPropsToMapJoinArgs(props);
-  options.skipFalsy = props.skipFalsy ?? true;
+  options.skipFalsy = props.skipFalsy;
   return memo(() => {
     const maybeRef = props.each;
 

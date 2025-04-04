@@ -14,7 +14,7 @@ export function ArrayExpression(props: ArrayExpressionProps) {
     <group>
       [
       <Indent softline>
-        <For each={props.jsValue ?? []} comma line skipFalsy={false}>
+        <For each={props.jsValue ?? []} comma line>
           {(value) => <ValueExpression jsValue={value} />}
         </For>
         <Show when={hasVisibleChildren}>

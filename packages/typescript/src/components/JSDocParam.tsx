@@ -1,7 +1,6 @@
-import { For, Show } from "@alloy-js/core";
+import { For, Prose, Show } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { Prose } from "./Prose.jsx";
 
 export interface JSDocParamsProps {
   parameters: ParameterDescriptor[] | string[];

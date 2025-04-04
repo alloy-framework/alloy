@@ -1,5 +1,5 @@
+import { Prose } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { Prose } from "./Prose.jsx";
 
 export interface SingleLineCommentBlockProps {
   children: Children;

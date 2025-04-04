@@ -40,8 +40,6 @@ export interface ParameterDescriptor {
   doc?: Children;
 }
 
-
-
 /**
  * Information for a TypeScript generic type parameter.
  */

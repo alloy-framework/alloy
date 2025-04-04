@@ -27,7 +27,7 @@
     "@alloy-js/babel-plugin": "workspace:~",
     "@babel/cli": "catalog:",
     "@babel/preset-typescript": "catalog:",
-    "@rollup/plugin-babel": "catalog:",
+    "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
     "@types/prompts": "^2.4.9",

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/json
 
+## 0.8.0
+
+### Breaking Changes
+
+- [#74](https://github.com/alloy-framework/alloy/pull/74) Remove plural `refkeys` prop. Can now pass an array for the `refkey` prop.
+
+
 ## 0.7.0
 
 ### Features

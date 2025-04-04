@@ -10,9 +10,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "test/**/*.ts",
-    "test/**/*.tsx",
-    "../core/src/components/Block.tsx",
-    "../core/src/components/StatementList.tsx"
-, "../core/src/components/Prose.tsx"  ],
+    "test/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

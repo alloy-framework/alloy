@@ -3,14 +3,14 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Prose } from "./Prose.jsx";
 
-export interface JSDocParametersProps {
+export interface JSDocParamsProps {
   parameters: ParameterDescriptor[] | string[];
 }
 
 /**
  * A component that creates a JSDoc block with `@param` tags for each parameter.
  */
-export function JSDocParameters(props: JSDocParametersProps) {
+export function JSDocParams(props: JSDocParamsProps) {
   const parameters = normalizeParametersForDoc(props.parameters);
   return (
     <For each={parameters}>

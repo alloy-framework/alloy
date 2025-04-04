@@ -26,7 +26,7 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
-import { JSDocParameters } from "./JSDocParam.jsx";
+import { JSDocParams } from "./JSDocParam.jsx";
 import { Prose } from "./Prose.jsx";
 
 export interface FunctionDeclarationProps
@@ -83,7 +83,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
         <JSDoc>
           {props.doc && <Prose children={props.doc} />}
           {Array.isArray(props.parameters) && (
-            <JSDocParameters parameters={props.parameters} />
+            <JSDocParams parameters={props.parameters} />
           )}
         </JSDoc>
         <hbr />

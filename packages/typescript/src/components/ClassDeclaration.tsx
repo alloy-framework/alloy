@@ -16,7 +16,7 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
-import { JSDocParameters } from "./JSDocParam.jsx";
+import { JSDocParams } from "./JSDocParam.jsx";
 import { Prose } from "./Prose.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
@@ -159,7 +159,7 @@ export function ClassMethod(props: ClassMethodProps) {
         <JSDoc>
           {props.doc && <Prose children={props.doc} />}
           {Array.isArray(rest.parameters) && (
-            <JSDocParameters parameters={rest.parameters} />
+            <JSDocParams parameters={rest.parameters} />
           )}
         </JSDoc>
         <hbr />

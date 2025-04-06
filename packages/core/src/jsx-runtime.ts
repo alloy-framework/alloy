@@ -285,7 +285,7 @@ function inspectProps(props: Props) {
 
 // These can be removed with a smarter transform that encodes the information we
 // need in the compiled JSX output.
-export function isComponentCreator<TProps>(
+export function isComponentCreator<TProps = any>(
   item: unknown,
   component?: Component<TProps>,
 ): item is ComponentCreator<TProps> {

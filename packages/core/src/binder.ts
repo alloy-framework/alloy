@@ -317,6 +317,10 @@ export interface Binder {
     key: Refkey,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
+  getSymbolForRefkey<TSymbol extends OutputSymbol>(
+    refkey: Refkey,
+  ): Ref<TSymbol | undefined>;
+
   /**
    * Find a symbol with a given name in the given scope. Returns a ref
    * for the symbol, such that when the symbol is available, the ref value
@@ -426,6 +430,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     createSymbol,
     deleteSymbol,
     resolveDeclarationByKey,
+    getSymbolForRefkey,
     addStaticMembersToSymbol,
     addInstanceMembersToSymbol,
     instantiateSymbolInto,
@@ -797,6 +802,25 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       // default disambiguation is first-wins
       for (let i = 1; i < existingNames.length; i++) {
         existingNames[i].name = existingNames[i].originalName + "_" + (i + 1);
+      }
+    }
+  }
+
+  function getSymbolForRefkey<TSymbol extends OutputSymbol>(
+    refkey: Refkey,
+  ): Ref<TSymbol | undefined> {
+    const symbol = knownDeclarations.get(refkey);
+    if (symbol) {
+      return shallowRef(symbol as TSymbol);
+    } else {
+      if (waitingDeclarations.has(refkey)) {
+        return waitingDeclarations.get(refkey)! as ShallowRef<
+          TSymbol | undefined
+        >;
+      } else {
+        const declSignal = shallowRef();
+        waitingDeclarations.set(refkey, declSignal);
+        return declSignal;
       }
     }
   }

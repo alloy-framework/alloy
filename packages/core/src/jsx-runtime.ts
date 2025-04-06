@@ -220,10 +220,11 @@ export interface Component<TProps = Props> {
   (props: TProps): Children;
   tag?: symbol;
 }
+
 export interface ComponentCreator<TProps = Props> {
   component: Component<TProps>;
   (): Children;
-  props: Props;
+  props: TProps;
   tag?: symbol;
 }
 
@@ -284,8 +285,14 @@ function inspectProps(props: Props) {
 
 // These can be removed with a smarter transform that encodes the information we
 // need in the compiled JSX output.
-export function isComponentCreator(item: unknown): item is ComponentCreator {
-  return typeof item === "function" && (item as any).component;
+export function isComponentCreator<TProps>(
+  item: unknown,
+  component?: Component<TProps>,
+): item is ComponentCreator<TProps> {
+  if (!component) {
+    return typeof item === "function" && (item as any).component;
+  }
+  return typeof item === "function" && (item as any).component === component;
 }
 
 /**

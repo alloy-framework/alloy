@@ -10,8 +10,8 @@ it("renders basic member expression with dot notation", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="obj" />
-        <MemberExpression.Part name="property" />
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="property" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -23,8 +23,8 @@ it("renders member expression with bracket notation for invalid identifiers", ()
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="obj" />
-        <MemberExpression.Part name="property-name" />
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="property-name" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -36,8 +36,8 @@ it("handles nullish chaining", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="obj" nullish={true} />
-        <MemberExpression.Part name="property" />
+        <MemberExpression.Part id="obj" nullish={true} />
+        <MemberExpression.Part id="property" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -49,10 +49,10 @@ it("supports multiple levels of nesting", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="a" />
-        <MemberExpression.Part name="b" />
-        <MemberExpression.Part name="c" />
-        <MemberExpression.Part name="d" />
+        <MemberExpression.Part id="a" />
+        <MemberExpression.Part id="b" />
+        <MemberExpression.Part id="c" />
+        <MemberExpression.Part id="d" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -64,8 +64,8 @@ it("ignores non-part children", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="obj" />
-        <MemberExpression.Part name="property" />
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="property" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -77,12 +77,12 @@ it("flattens nested member expressions", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="outer" />
+        <MemberExpression.Part id="outer" />
         <MemberExpression>
-          <MemberExpression.Part name="inner" />
-          <MemberExpression.Part name="prop" />
+          <MemberExpression.Part id="inner" />
+          <MemberExpression.Part id="prop" />
         </MemberExpression>
-        <MemberExpression.Part name="last" />
+        <MemberExpression.Part id="last" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -94,10 +94,10 @@ it("handles a mix of dot and bracket notation", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="obj" />
-        <MemberExpression.Part name="normalProp" />
-        <MemberExpression.Part name="special-prop" />
-        <MemberExpression.Part name="123" />
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="normalProp" />
+        <MemberExpression.Part id="special-prop" />
+        <MemberExpression.Part id="123" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -109,11 +109,11 @@ it("handles nullish chaining at multiple levels", () => {
   expect(
     toSourceText(
       <MemberExpression>
-        <MemberExpression.Part name="a" />
-        <MemberExpression.Part name="b" nullish={true} />
-        <MemberExpression.Part name="c" />
-        <MemberExpression.Part name="d" nullish={true} />
-        <MemberExpression.Part name="e" />
+        <MemberExpression.Part id="a" />
+        <MemberExpression.Part id="b" nullish={true} />
+        <MemberExpression.Part id="c" />
+        <MemberExpression.Part id="d" nullish={true} />
+        <MemberExpression.Part id="e" />
       </MemberExpression>,
     ),
   ).toBe(d`
@@ -170,7 +170,7 @@ describe("with function calls", () => {
     expect(
       toSourceText(
         <MemberExpression>
-          <MemberExpression.Part name="myFunction" />
+          <MemberExpression.Part id="myFunction" />
           <MemberExpression.Part args={[1, 2]} />
         </MemberExpression>,
       ),
@@ -183,12 +183,12 @@ describe("with function calls", () => {
     expect(
       toSourceText(
         <MemberExpression>
-          <MemberExpression.Part name="method1" nullish />
+          <MemberExpression.Part id="method1" nullish />
           <MemberExpression.Part nullish args={[1, 2]} />
           <MemberExpression.Part nullish args={[]} />
-          <MemberExpression.Part name="method2" nullish />
+          <MemberExpression.Part id="method2" nullish />
           <MemberExpression.Part args={[]} />
-          <MemberExpression.Part name="prop" />
+          <MemberExpression.Part id="prop" />
         </MemberExpression>,
       ),
     ).toBe(d`
@@ -200,9 +200,9 @@ describe("with function calls", () => {
     expect(
       toSourceText(
         <MemberExpression>
-          <MemberExpression.Part name="myFunction" />
+          <MemberExpression.Part id="myFunction" />
           <MemberExpression.Part args={[1, 2]} nullish />
-          <MemberExpression.Part name="prop" />
+          <MemberExpression.Part id="prop" />
         </MemberExpression>,
       ),
     ).toBe(d`
@@ -217,12 +217,12 @@ describe("formatting", () => {
       expect(
         toSourceText(
           <MemberExpression>
-            <MemberExpression.Part name="four" />
-            <MemberExpression.Part name="four" />
-            <MemberExpression.Part name="four" />
-            <MemberExpression.Part name="four" />
-            <MemberExpression.Part name="four" />
-            <MemberExpression.Part name="four" />
+            <MemberExpression.Part id="four" />
+            <MemberExpression.Part id="four" />
+            <MemberExpression.Part id="four" />
+            <MemberExpression.Part id="four" />
+            <MemberExpression.Part id="four" />
+            <MemberExpression.Part id="four" />
           </MemberExpression>,
           { printWidth: 12 },
         ),
@@ -237,9 +237,9 @@ describe("formatting", () => {
       expect(
         toSourceText(
           <MemberExpression>
-            <MemberExpression.Part name="obj" />
-            <MemberExpression.Part name="property-name" />
-            <MemberExpression.Part name="prop" />
+            <MemberExpression.Part id="obj" />
+            <MemberExpression.Part id="property-name" />
+            <MemberExpression.Part id="prop" />
           </MemberExpression>,
           { printWidth: 12 },
         ),
@@ -256,8 +256,8 @@ describe("formatting", () => {
       expect(
         toSourceText(
           <MemberExpression>
-            <MemberExpression.Part name="z" />
-            <MemberExpression.Part name="object" />
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
             <MemberExpression.Part
               args={[<ObjectExpression jsValue={{ x: 1 }} />]}
             />
@@ -275,12 +275,12 @@ describe("formatting", () => {
       expect(
         toSourceText(
           <MemberExpression>
-            <MemberExpression.Part name="z" />
-            <MemberExpression.Part name="object" />
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
             <MemberExpression.Part
               args={[<ObjectExpression jsValue={{ x: 1 }} />]}
             />
-            <MemberExpression.Part name="partial" />
+            <MemberExpression.Part id="partial" />
             <MemberExpression.Part args={[]} />
           </MemberExpression>,
           { printWidth: 12 },

@@ -21,15 +21,42 @@ interface PartDescriptor {
   base: string | Ref<string>;
   accessStyle: Ref<"dot" | "bracket">;
   nullish: Ref<boolean>;
-  args?: Children[];
+  args?: Children[] | boolean;
 }
 
+/**
+ * Create a member expression from parts. Each part can provide one of
+ * the following:
+ *
+ * * **id**: The identifier for the member expression part
+ * * **refkey**: A refkey for a symbol whose name becomes the identifier
+ * * **symbol**: a symbol whose name becomes the identifier part
+ * * **args**: create a method call with the given args
+ *
+ * Additionally, a part can be `nullish`, which means subsequent parts
+ * will use the appropriate conditional access operator e.g. `?.`.
+ *
+ * @example
+ *
+ * ```tsx
+ * <MemberExpression>
+ *   <MemberExpression.Part id="base" />
+ *   <MemberExpression.Part refkey={rk} nullish />
+ *   <MemberExpression.Part symbol={sym} />
+ *   <MemberExpression.Part args={["hello", "world"]} />
+ * </MemberExpression>
+ * ```
+ *
+ * Assuming `rk` is a refkey to a symbol name "prop1", and `sym` is a symbol
+ * with a name of "prop2", this will render:
+ *
+ * ```ts
+ * base.prop1?.prop2("hello", "world")
+ * ```
+ */
 export function MemberExpression(props: MemberExpressionProps): Children {
   const children = flattenMemberExpression(childrenArray(() => props.children));
   const parts: PartDescriptor[] = [];
-
-  let callExprCount = 0;
-
   for (const child of children) {
     if (!isComponentCreator(child, MemberExpression.Part)) {
       // we ignore non-parts
@@ -43,9 +70,9 @@ export function MemberExpression(props: MemberExpressionProps): Children {
       nullish: ref(!!partProps.nullish),
     };
 
-    if (partProps.name) {
-      part.base = partProps.name;
-      part.accessStyle.value = accessStyleForMemberName(partProps.name);
+    if (partProps.id) {
+      part.base = partProps.id;
+      part.accessStyle.value = accessStyleForMemberName(partProps.id);
     } else if (partProps.refkey) {
       const binder = useBinder();
       const symbolRef = binder.getSymbolForRefkey(partProps.refkey);
@@ -68,7 +95,6 @@ export function MemberExpression(props: MemberExpressionProps): Children {
       part.base = toRef(partProps.symbol, "name");
     } else if (partProps.args) {
       part.args = partProps.args;
-      callExprCount++;
     }
 
     parts.push(part);
@@ -130,7 +156,11 @@ export function MemberExpression(props: MemberExpressionProps): Children {
               {isNullish ? "?." : ""}
               <group>
                 (
-                <For each={part.args ?? []} comma line>
+                <For
+                  each={typeof part.args === "boolean" ? [] : (part.args ?? [])}
+                  comma
+                  line
+                >
                   {(arg) => arg}
                 </For>
                 )
@@ -168,13 +198,37 @@ function flattenMemberExpression(children: Children[]): Children[] {
 }
 
 interface MemberExpressionPartProps {
-  name?: string;
+  /**
+   * The identifier for this part of the member expression.
+   */
+  id?: string;
+  /**
+   * A refkey for a symbol whose name becomes the identifier.
+   */
   refkey?: Refkey;
+  /**
+   * A symbol whose name becomes the identifier.
+   */
   symbol?: OutputSymbol;
-  args?: Children[];
+  /**
+   * Arguments to construct a call expression.
+   */
+  args?: Children[] | boolean;
+
+  /**
+   * This part is nullish. Subsequent parts use conditional access operators.
+   */
   nullish?: boolean;
 }
-
+/**
+ * A part of a member expression. Each part can provide one of the following
+ * props:
+ *
+ * * **id**: The identifier for the member expression part
+ * * **refkey**: A refkey for a symbol whose name becomes the identifier
+ * * **symbol**: a symbol whose name becomes the identifier part
+ * * **args**: create a method call with the given args
+ */
 MemberExpression.Part = function (props: MemberExpressionPartProps) {
   /**
    * This component does nothing except hold props which are retrieved by

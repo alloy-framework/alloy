@@ -32,9 +32,9 @@ export function stc<T extends {}>(
   Component: ComponentDefinition<T>,
 ): StcSignature<T> {
   return (...args) => {
-    const fn: StcComponentCreator<T> = () => Component(args[0] as any);
+    const fn: StcComponentCreator<T> = (() => Component(args[0] as T)) as any;
     fn.component = Component;
-    fn.props = args[0]!;
+    fn.props = args[0]! as T;
     fn.code = (template, ...substitutions): ComponentCreator<T> => {
       const propsWithChildren = {
         ...(args[0] ?? {}),
@@ -43,7 +43,7 @@ export function stc<T extends {}>(
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
-      fn.props = args[0]!;
+      fn.props = args[0]! as T;
       return fn;
     };
     fn.text = (template, ...substitutions) => {
@@ -54,7 +54,7 @@ export function stc<T extends {}>(
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
-      fn.props = args[0]!;
+      fn.props = args[0]! as T;
       return fn;
     };
     fn.children = (...children: Children[]): ComponentCreator<T> => {
@@ -65,7 +65,7 @@ export function stc<T extends {}>(
 
       const fn = () => Component(propsWithChildren as any);
       fn.component = Component;
-      fn.props = args[0]!;
+      fn.props = args[0]! as T;
       return fn;
     };
 

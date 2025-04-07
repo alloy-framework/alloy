@@ -6,6 +6,8 @@ export {
   shallowReactive,
   shallowRef,
   toRaw,
+  toRef,
+  toRefs,
   type Ref,
 } from "@vue/reactivity";
 export * from "./binder.js";

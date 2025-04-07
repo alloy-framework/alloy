@@ -92,7 +92,7 @@ export interface ObjectPropertyProps {
   value?: Children;
   jsValue?: unknown;
   children?: Children;
-  refkey?: Refkey;
+  refkey?: Refkey | Refkey[];
 }
 
 export function ObjectProperty(props: ObjectPropertyProps) {

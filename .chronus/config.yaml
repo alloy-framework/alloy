@@ -33,6 +33,7 @@ versionPolicies:
       - "@alloy-js/typescript"
       - "@alloy-js/create"
       - "@alloy-js/cli"
+      - "@alloy-js/markdown"
 
 changedFiles:
   - "!**/*.md"

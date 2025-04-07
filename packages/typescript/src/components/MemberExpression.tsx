@@ -28,6 +28,8 @@ export function MemberExpression(props: MemberExpressionProps): Children {
   const children = flattenMemberExpression(childrenArray(() => props.children));
   const parts: PartDescriptor[] = [];
 
+  let callExprCount = 0;
+
   for (const child of children) {
     if (!isComponentCreator(child, MemberExpression.Part)) {
       // we ignore non-parts
@@ -64,23 +66,21 @@ export function MemberExpression(props: MemberExpressionProps): Children {
         return accessStyleForMemberName(partProps.symbol!.name);
       });
       part.base = toRef(partProps.symbol, "name");
-    }
-
-    // Store args regardless of whether name/refkey/symbol is present
-    if (partProps.args) {
+    } else if (partProps.args) {
       part.args = partProps.args;
+      callExprCount++;
     }
 
     parts.push(part);
   }
 
-  // construct a member expression from the parts. When a part is nullish,
-  // and there is a subsequent part, we use `?.` instead of `.`. accessStyle determines
-  // whether we use dot or bracket notation.
-
   if (parts.length === 0) {
     return <></>;
   }
+
+  // construct a member expression from the parts. When a part is nullish,
+  // and there is a subsequent part, we use `?.` instead of `.`. accessStyle determines
+  // whether we use dot or bracket notation.
 
   const result = computed(() => {
     const expression: Children[] = [];
@@ -102,42 +102,47 @@ export function MemberExpression(props: MemberExpressionProps): Children {
           // Apply dot or bracket notation based on accessStyle for named parts
           if (part.accessStyle.value === "dot") {
             expression.push(
-              <>
-                {isNullish ? "?." : "."}
-                {base}
-              </>,
+              <group>
+                <indent>
+                  <sbr />
+                  {isNullish ? "?." : "."}
+                  {base}
+                </indent>
+              </group>,
             );
           } else {
             // bracket notation - don't include the dot
             expression.push(
-              <>
-                {isNullish ? "?." : ""}[{JSON.stringify(base)}]
-              </>,
+              <group>
+                {isNullish ? "?." : ""}[
+                <indent>
+                  <sbr />
+                  {JSON.stringify(base)}
+                </indent>
+                <sbr />]
+              </group>,
             );
           }
         } else if (part.args !== undefined) {
           // For parts with only args (no name), append function call directly with appropriate nullish operator
-          expression.push(isNullish ? "?." : ".");
+          expression.push(
+            <group>
+              {isNullish ? "?." : ""}
+              <group>
+                (
+                <For each={part.args ?? []} comma line>
+                  {(arg) => arg}
+                </For>
+                )
+              </group>
+            </group>,
+          );
         }
-      }
-
-      // Append function call with arguments if they exist
-      if (part.args !== undefined) {
-        expression.push(
-          <group>
-            (
-            <For each={part.args ?? []} comma line>
-              {(arg) => arg}
-            </For>
-            )
-          </group>,
-        );
       }
     }
 
     return expression;
   });
-
   return <>{result.value}</>;
 }
 

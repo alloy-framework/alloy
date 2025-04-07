@@ -2,6 +2,7 @@ import { refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
+import { ObjectExpression } from "../src/components/stc/index.js";
 import { VarDeclaration } from "../src/components/VarDeclaration.jsx";
 import { toSourceText } from "./utils.js";
 
@@ -169,7 +170,8 @@ describe("with function calls", () => {
     expect(
       toSourceText(
         <MemberExpression>
-          <MemberExpression.Part name="myFunction" args={[1, 2]} />
+          <MemberExpression.Part name="myFunction" />
+          <MemberExpression.Part args={[1, 2]} />
         </MemberExpression>,
       ),
     ).toBe(d`
@@ -198,12 +200,98 @@ describe("with function calls", () => {
     expect(
       toSourceText(
         <MemberExpression>
-          <MemberExpression.Part name="myFunction" args={[1, 2]} nullish />
+          <MemberExpression.Part name="myFunction" />
+          <MemberExpression.Part args={[1, 2]} nullish />
           <MemberExpression.Part name="prop" />
         </MemberExpression>,
       ),
     ).toBe(d`
       myFunction(1, 2)?.prop
     `);
+  });
+});
+
+describe("formatting", () => {
+  describe("simple chains", () => {
+    it("just dots", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part name="four" />
+            <MemberExpression.Part name="four" />
+            <MemberExpression.Part name="four" />
+            <MemberExpression.Part name="four" />
+            <MemberExpression.Part name="four" />
+            <MemberExpression.Part name="four" />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        four.four
+          .four.four
+          .four.four
+      `);
+    });
+
+    it("bracket breaks", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part name="obj" />
+            <MemberExpression.Part name="property-name" />
+            <MemberExpression.Part name="prop" />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        obj[
+          "property-name"
+        ].prop
+      `);
+    });
+  });
+
+  describe("call chains", () => {
+    it("handles single calls", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part name="z" />
+            <MemberExpression.Part name="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        z.object({
+          x: 1,
+        })
+      `);
+    });
+
+    it.skip("handles multiple calls", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part name="z" />
+            <MemberExpression.Part name="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+            <MemberExpression.Part name="partial" />
+            <MemberExpression.Part args={[]} />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        z
+          .object({
+            x: 1,
+          })
+          .partial()
+      `);
+    });
   });
 });

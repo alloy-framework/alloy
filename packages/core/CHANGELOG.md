@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/core
 
+## 0.10.0
+
+No changes, version bump only.
+
 ## 0.9.0
 
 ### Features

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/typescript
 
+## 0.10.0
+
+### Bug Fixes
+
+- [#84](https://github.com/alloy-framework/alloy/pull/84) Export MemberExpression component, stc component, and related types
+
+
 ## 0.9.0
 
 ### Features

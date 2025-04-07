@@ -23,6 +23,7 @@ export const InterfaceMember = stc(base.InterfaceMember);
 export const JSDoc = stc(base.JSDoc);
 export const JSDocExample = stc(base.JSDocExample);
 export const JSDocComment = stc(base.JSDocComment);
+export const MemberExpression = stc(base.MemberExpression);
 export const MemberChainExpression = stc(base.MemberChainExpression);
 export const ObjectExpression = stc(base.ObjectExpression);
 export const ObjectProperty = stc(base.ObjectProperty);

@@ -197,7 +197,7 @@ function flattenMemberExpression(children: Children[]): Children[] {
   return flattened;
 }
 
-interface MemberExpressionPartProps {
+export interface MemberExpressionPartProps {
   /**
    * The identifier for this part of the member expression.
    */

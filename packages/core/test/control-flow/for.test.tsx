@@ -34,6 +34,23 @@ it("handles map entries", () => {
   `);
 });
 
+it("handles iterators", () => {
+  const iterator = new Map([["a", { name: "foo" }]]).entries();
+  const template = (
+    <For each={iterator}>
+      {([key, value]) => (
+        <>
+          {key}: {value.name}
+        </>
+      )}
+    </For>
+  );
+
+  expect(template).toRenderTo(`
+    a: foo
+  `);
+});
+
 it("handles maps", () => {
   const map = new Map([["a", { name: "foo" }]]);
   const template = (

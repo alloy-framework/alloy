@@ -9,6 +9,7 @@ export type ForCallbackArgs<T> =
   : T extends (infer U)[] ? [value: U]
   : T extends Map<infer U, infer V> ? [key: U, value: V]
   : T extends Set<infer U> ? [value: U]
+  : T extends IterableIterator<infer U> ? [value: U]
   : [];
 
 export interface ForProps<
@@ -36,7 +37,11 @@ export interface ForProps<
   skipFalsy?: boolean;
 }
 
-export type ForSupportedCollections = any[] | Map<any, any> | Set<any>;
+export type ForSupportedCollections =
+  | any[]
+  | Map<any, any>
+  | Set<any>
+  | IterableIterator<any>;
 /**
  * The For component iterates over the provided array and invokes the child
  * callback for each item. It can optionally be provided with a `joiner` which

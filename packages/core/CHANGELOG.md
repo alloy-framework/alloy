@@ -1,5 +1,15 @@
 # Changelog - @alloy-js/core
 
+## 0.9.0
+
+### Features
+
+- [#82](https://github.com/alloy-framework/alloy/pull/82) The For component's each prop now supports iterators.
+- [#80](https://github.com/alloy-framework/alloy/pull/80) Add getSymbolForRefkey to binder.
+- [#80](https://github.com/alloy-framework/alloy/pull/80) isComponentCreator now takes an optional Component parameter which allows you to check if a child is a specific component.
+- [#80](https://github.com/alloy-framework/alloy/pull/80) Export `toRef` and `toRefs` utility functions for constructing refs from reactives.
+
+
 ## 0.8.0
 
 ### Bug Fixes

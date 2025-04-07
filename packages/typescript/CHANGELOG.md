@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/typescript
 
+## 0.9.0
+
+### Features
+
+- [#80](https://github.com/alloy-framework/alloy/pull/80) Add MemberExpression component which produces formatted member expressions and applies conditional access operators when needed.
+
+
 ## 0.8.0
 
 ### Bug Fixes

@@ -2,6 +2,7 @@ import { stc } from "@alloy-js/core";
 import * as base from "../index.js";
 
 export const ArrayExpression = stc(base.ArrayExpression);
+export const ArrowFunction = stc(base.ArrowFunction);
 export const BarrelFile = stc(base.BarrelFile);
 export const CallSignature = stc(base.CallSignature);
 export const ClassDeclaration = stc(base.ClassDeclaration);

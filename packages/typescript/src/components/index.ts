@@ -17,6 +17,7 @@ export {
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./FunctionExpression.js";
+export * from "./ArrowFunction.jsx";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./JSDoc.jsx";

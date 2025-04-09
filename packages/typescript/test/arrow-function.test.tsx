@@ -2,25 +2,25 @@ import { Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { StatementList } from "../../core/src/components/StatementList.jsx";
-import { FunctionArrowExpression } from "../src/components/FunctionArrowExpression.jsx";
+import { ArrowFunction } from "../src/components/ArrowFunction.jsx";
 import { VarDeclaration } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { toSourceText } from "./utils.jsx";
 
 it("create basic function", () => {
-  expect(toSourceText(<FunctionArrowExpression />)).toBe(d`
+  expect(toSourceText(<ArrowFunction />)).toBe(d`
         () => {}
     `);
 });
 
 it("can be an async function", () => {
-  expect(toSourceText(<FunctionArrowExpression async />)).toBe(d`
+  expect(toSourceText(<ArrowFunction async />)).toBe(d`
     async () => {}
   `);
 });
 
 it("can be an async with returnType", () => {
-  expect(toSourceText(<FunctionArrowExpression async returnType="Foo" />))
+  expect(toSourceText(<ArrowFunction async returnType="Foo" />))
     .toBe(d`
     async (): Promise<Foo> => {}
   `);
@@ -30,7 +30,7 @@ it("can be an async with returnType element", () => {
   function Foo(_props?: Props) {
     return <>Foo</>;
   }
-  expect(toSourceText(<FunctionArrowExpression async returnType={<Foo />} />))
+  expect(toSourceText(<ArrowFunction async returnType={<Foo />} />))
     .toBe(d`
     async (): Promise<Foo> => {}
   `);
@@ -38,12 +38,12 @@ it("can be an async with returnType element", () => {
 
 it("supports parameters by element", () => {
   const decl = (
-    <FunctionArrowExpression>
+    <ArrowFunction>
       return a + b;
-      <FunctionArrowExpression.Parameters>
+      <ArrowFunction.Parameters>
         a, b
-      </FunctionArrowExpression.Parameters>
-    </FunctionArrowExpression>
+      </ArrowFunction.Parameters>
+    </ArrowFunction>
   );
 
   expect(toSourceText(decl)).toBe(d`
@@ -55,12 +55,12 @@ it("supports parameters by element", () => {
 
 it("supports type parameters by descriptor object", () => {
   const decl = (
-    <FunctionArrowExpression
+    <ArrowFunction
       typeParameters={[
         { name: "a", extends: "any" },
         { name: "b", extends: "any" },
       ]}
-    ></FunctionArrowExpression>
+    ></ArrowFunction>
   );
 
   expect(toSourceText(decl)).toBe(d`
@@ -70,9 +70,9 @@ it("supports type parameters by descriptor object", () => {
 
 it("supports type parameters by descriptor array", () => {
   const decl = (
-    <FunctionArrowExpression
+    <ArrowFunction
       typeParameters={["a", "b"]}
-    ></FunctionArrowExpression>
+    ></ArrowFunction>
   );
 
   expect(toSourceText(decl)).toBe(d`
@@ -82,11 +82,11 @@ it("supports type parameters by descriptor array", () => {
 
 it("supports type parameters by element", () => {
   const decl = (
-    <FunctionArrowExpression>
-      <FunctionArrowExpression.TypeParameters>
+    <ArrowFunction>
+      <ArrowFunction.TypeParameters>
         a, b
-      </FunctionArrowExpression.TypeParameters>
-    </FunctionArrowExpression>
+      </ArrowFunction.TypeParameters>
+    </ArrowFunction>
   );
 
   expect(toSourceText(decl)).toBe(d`
@@ -100,14 +100,14 @@ describe("symbols", () => {
     const outerRefkey = refkey();
     const decl = (
       <StatementList>
-        <FunctionArrowExpression>
+        <ArrowFunction>
           <StatementList>
             {innerRefkey}
             <VarDeclaration name="refme" refkey={innerRefkey}>
               1
             </VarDeclaration>
           </StatementList>
-        </FunctionArrowExpression>
+        </ArrowFunction>
         <VarDeclaration name="refme" refkey={outerRefkey}>
           2
         </VarDeclaration>
@@ -128,11 +128,11 @@ describe("symbols", () => {
     const innerRefkey = refkey();
     const decl = (
       <>
-        <FunctionArrowExpression>
+        <ArrowFunction>
           <VarDeclaration name="refme" refkey={innerRefkey}>
             1
           </VarDeclaration>
-        </FunctionArrowExpression>
+        </ArrowFunction>
         ;{innerRefkey}
       </>
     );
@@ -144,11 +144,11 @@ describe("symbols", () => {
 
     const decl = (
       <>
-        <FunctionArrowExpression
+        <ArrowFunction
           parameters={[{ name: "sym", type: "any", refkey: rk }]}
         >
-          <FunctionArrowExpression>{rk}</FunctionArrowExpression>
-        </FunctionArrowExpression>
+          <ArrowFunction>{rk}</ArrowFunction>
+        </ArrowFunction>
       </>
     );
 
@@ -164,11 +164,11 @@ describe("symbols", () => {
   it("creates symbols for parameters and addresses conflicts", () => {
     const decl = (
       <>
-        <FunctionArrowExpression
+        <ArrowFunction
           parameters={[{ name: "conflict", type: "any" }]}
         >
           <VarDeclaration name="conflict">1</VarDeclaration>;
-        </FunctionArrowExpression>
+        </ArrowFunction>
       </>
     );
 
@@ -188,9 +188,9 @@ describe("symbols", () => {
     };
     const decl = (
       <>
-        <FunctionArrowExpression parameters={[paramDesc]}>
+        <ArrowFunction parameters={[paramDesc]}>
           console.log(foo);
-        </FunctionArrowExpression>
+        </ArrowFunction>
       </>
     );
 

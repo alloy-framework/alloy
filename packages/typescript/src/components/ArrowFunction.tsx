@@ -15,7 +15,7 @@ import {
   getReturnType,
 } from "./FunctionBase.jsx";
 
-export interface FunctionArrowExpressionProps extends CallSignatureProps {
+export interface ArrowFunctionProps extends CallSignatureProps {
   async?: boolean;
   children?: Children;
 }
@@ -44,10 +44,10 @@ export interface FunctionArrowExpressionProps extends CallSignatureProps {
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link (FunctionArrowExpression:namespace).Parameters} or
- *    {@link (FunctionArrowExpression:namespace).TypeParameters} components.
+ *    {@link (ArrowFunction:namespace).Parameters} or
+ *    {@link (ArrowFunction:namespace).TypeParameters} components.
  */
-export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
+export function ArrowFunction(props: ArrowFunctionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
     findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
@@ -58,9 +58,9 @@ export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
   const returnType = getReturnType(props.returnType, { async: props.async });
 
   const sBody = bodyChildren ?? (
-    <FunctionArrowExpression.Body>
+    <ArrowFunction.Body>
       {filteredChildren}
-    </FunctionArrowExpression.Body>
+    </ArrowFunction.Body>
   );
 
   const asyncKwd = props.async ? "async " : "";
@@ -84,6 +84,6 @@ export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
   );
 }
 
-FunctionArrowExpression.TypeParameters = FunctionTypeParameters;
-FunctionArrowExpression.Parameters = FunctionParameters;
-FunctionArrowExpression.Body = FunctionBody;
+ArrowFunction.TypeParameters = FunctionTypeParameters;
+ArrowFunction.Parameters = FunctionParameters;
+ArrowFunction.Body = FunctionBody;

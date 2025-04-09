@@ -2,33 +2,37 @@ import {
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
-  Name,
-  Prose,
   Scope,
-  Show,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   FunctionParameters,
   FunctionTypeParameters,
   getReturnType,
 } from "./FunctionBase.jsx";
-import { JSDoc } from "./JSDoc.jsx";
-import { JSDocParams } from "./JSDocParam.jsx";
 
-export interface FunctionDeclarationProps
-  extends BaseDeclarationProps,
-    CallSignatureProps {
+export interface ArrowFunctionProps extends CallSignatureProps {
   async?: boolean;
   children?: Children;
 }
 
 /**
- * A TypeScript function declaration.
+ * A TypeScript arrow function expression.
+ *
+ * @example
+ * ```tsx
+ * <FunctionExpression async parameters={[{ name: "a", type: "number" }, { name: "b", type: "number" }]}>
+ *   return a + b;
+ * <FunctionExpression>
+ * ```
+ * renders to
+ * ```ts
+ * async (a, b) => { return a + b; }
+ * ```
  *
  * @remarks
  *
@@ -40,10 +44,10 @@ export interface FunctionDeclarationProps
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link (FunctionDeclaration:namespace).Parameters} or
- *    {@link (FunctionDeclaration:namespace).TypeParameters} components.
+ *    {@link (ArrowFunction:namespace).Parameters} or
+ *    {@link (ArrowFunction:namespace).TypeParameters} components.
  */
-export function FunctionDeclaration(props: FunctionDeclarationProps) {
+export function ArrowFunction(props: ArrowFunctionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
     findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
@@ -54,7 +58,9 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const returnType = getReturnType(props.returnType, { async: props.async });
 
   const sBody = bodyChildren ?? (
-    <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>
+    <ArrowFunction.Body>
+      {filteredChildren}
+    </ArrowFunction.Body>
   );
 
   const asyncKwd = props.async ? "async " : "";
@@ -66,19 +72,11 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
   return (
     <>
-      <Show when={Boolean(props.doc)}>
-        <JSDoc>
-          {props.doc && <Prose children={props.doc} />}
-          {Array.isArray(props.parameters) && (
-            <JSDocParams parameters={props.parameters} />
-          )}
-        </JSDoc>
-        <hbr />
-      </Show>
       <Declaration {...props} nameKind="function">
-        {asyncKwd}function <Name />
-        <Scope name={props.name} kind="function">
-          <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
+        {asyncKwd}
+        <Scope kind="function">
+          <CallSignature {...callSignatureProps} returnType={returnType} />
+          {" => "}
           {sBody}
         </Scope>
       </Declaration>
@@ -86,6 +84,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   );
 }
 
-FunctionDeclaration.TypeParameters = FunctionTypeParameters;
-FunctionDeclaration.Parameters = FunctionParameters;
-FunctionDeclaration.Body = FunctionBody;
+ArrowFunction.TypeParameters = FunctionTypeParameters;
+ArrowFunction.Parameters = FunctionParameters;
+ArrowFunction.Body = FunctionBody;

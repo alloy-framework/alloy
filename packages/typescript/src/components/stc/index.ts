@@ -2,6 +2,7 @@ import { stc } from "@alloy-js/core";
 import * as base from "../index.js";
 
 export const ArrayExpression = stc(base.ArrayExpression);
+export const ArrowFunction = stc(base.ArrowFunction);
 export const BarrelFile = stc(base.BarrelFile);
 export const CallSignature = stc(base.CallSignature);
 export const ClassDeclaration = stc(base.ClassDeclaration);
@@ -15,6 +16,7 @@ export const EnumMember = stc(base.EnumMember);
 export const ExportStatement = stc(base.ExportStatement);
 export const FunctionCallExpression = stc(base.FunctionCallExpression);
 export const FunctionDeclaration = stc(base.FunctionDeclaration);
+export const FunctionExpression = stc(base.FunctionExpression);
 export const IfStatement = stc(base.IfStatement);
 export const ElseClause = stc(base.ElseClause);
 export const ElseIfClause = stc(base.ElseIfClause);

@@ -9,9 +9,16 @@ export * from "./Declaration.js";
 export * from "./EnumDeclaration.js";
 export * from "./EnumMember.js";
 export * from "./ExportStatement.js";
+export {
+  type FunctionBodyProps,
+  type FunctionParametersProps,
+  type FunctionTypeParametersProps,
+} from "./FunctionBase.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./IfStatement.jsx";
+export * from "./FunctionExpression.js";
+export * from "./ArrowFunction.jsx";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./JSDoc.jsx";

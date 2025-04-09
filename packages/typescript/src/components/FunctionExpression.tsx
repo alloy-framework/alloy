@@ -24,8 +24,18 @@ export interface FunctionExpressionProps extends CallSignatureProps {
 }
 
 /**
- * A TypeScript function declaration.
+ * A TypeScript function expression.
  *
+ * @example
+ * ```tsx
+ * <FunctionExpression async parameters={[{ name: "a", type: "number" }, { name: "b", type: "number" }]}>
+ *   return a + b;
+ * <FunctionExpression>
+ * ```
+ * renders to
+ * ```ts
+ * async function (a, b) { return a + b; } 
+ * ```
  * @remarks
  *
  * Providing parameters and type parameters can be accomplished in one of three

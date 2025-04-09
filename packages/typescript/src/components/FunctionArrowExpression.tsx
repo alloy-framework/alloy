@@ -2,15 +2,12 @@ import {
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
-  Name,
-  Prose,
   Scope,
-  Show,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   functionBodyTag,
@@ -20,12 +17,8 @@ import {
   functionTypeParametersTag,
   getReturnType,
 } from "./FunctionBase.jsx";
-import { JSDoc } from "./JSDoc.jsx";
-import { JSDocParams } from "./JSDocParam.jsx";
 
-export interface FunctionDeclarationProps
-  extends BaseDeclarationProps,
-    CallSignatureProps {
+export interface FunctionArrowExpressionProps extends CallSignatureProps {
   async?: boolean;
   children?: Children;
 }
@@ -43,10 +36,10 @@ export interface FunctionDeclarationProps
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link (FunctionDeclaration:namespace).Parameters} or
- *    {@link (FunctionDeclaration:namespace).TypeParameters} components.
+ *    {@link (FunctionArrowExpression:namespace).Parameters} or
+ *    {@link (FunctionArrowExpression:namespace).TypeParameters} components.
  */
-export function FunctionDeclaration(props: FunctionDeclarationProps) {
+export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
     findKeyedChild(children, functionTypeParametersTag) ?? undefined;
@@ -57,7 +50,9 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const returnType = getReturnType(props.returnType, { async: props.async });
 
   const sBody = bodyChildren ?? (
-    <FunctionDeclaration.Body>{filteredChildren}</FunctionDeclaration.Body>
+    <FunctionArrowExpression.Body>
+      {filteredChildren}
+    </FunctionArrowExpression.Body>
   );
 
   const asyncKwd = props.async ? "async " : "";
@@ -69,19 +64,10 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
   return (
     <>
-      <Show when={Boolean(props.doc)}>
-        <JSDoc>
-          {props.doc && <Prose children={props.doc} />}
-          {Array.isArray(props.parameters) && (
-            <JSDocParams parameters={props.parameters} />
-          )}
-        </JSDoc>
-        <hbr />
-      </Show>
       <Declaration {...props} nameKind="function">
-        {asyncKwd}function <Name />
-        <Scope name={props.name} kind="function">
-          <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
+        {asyncKwd}
+        <Scope kind="function">
+          <CallSignature {...callSignatureProps} returnType={returnType} />{" => "}
           {sBody}
         </Scope>
       </Declaration>
@@ -89,6 +75,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   );
 }
 
-FunctionDeclaration.TypeParameters = FunctionTypeParameters;
-FunctionDeclaration.Parameters = FunctionParameters;
-FunctionDeclaration.Body = FunctionBody;
+FunctionArrowExpression.TypeParameters = FunctionTypeParameters;
+FunctionArrowExpression.Parameters = FunctionParameters;
+FunctionArrowExpression.Body = FunctionBody;

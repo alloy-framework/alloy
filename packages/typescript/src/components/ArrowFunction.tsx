@@ -58,9 +58,7 @@ export function ArrowFunction(props: ArrowFunctionProps) {
   const returnType = getReturnType(props.returnType, { async: props.async });
 
   const sBody = bodyChildren ?? (
-    <ArrowFunction.Body>
-      {filteredChildren}
-    </ArrowFunction.Body>
+    <ArrowFunction.Body>{filteredChildren}</ArrowFunction.Body>
   );
 
   const asyncKwd = props.async ? "async " : "";

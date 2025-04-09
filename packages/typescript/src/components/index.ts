@@ -1,5 +1,6 @@
 export * from "../parameter-descriptor.js";
 export * from "./ArrayExpression.js";
+export * from "./ArrowFunction.jsx";
 export * from "./BarrelFile.js";
 export * from "./BlockScope.js";
 export * from "./CallSignature.jsx";
@@ -16,9 +17,8 @@ export {
 } from "./FunctionBase.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
-export * from "./IfStatement.jsx";
 export * from "./FunctionExpression.js";
-export * from "./ArrowFunction.jsx";
+export * from "./IfStatement.jsx";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./JSDoc.jsx";

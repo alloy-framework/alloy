@@ -34,7 +34,7 @@ export interface FunctionExpressionProps extends CallSignatureProps {
  * ```
  * renders to
  * ```ts
- * async function (a, b) { return a + b; } 
+ * async function (a, b) { return a + b; }
  * ```
  * @remarks
  *

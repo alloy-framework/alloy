@@ -25,7 +25,7 @@ export interface FunctionArrowExpressionProps extends CallSignatureProps {
 
 /**
  * A TypeScript arrow function expression.
-  *
+ *
  * @example
  * ```tsx
  * <FunctionExpression async parameters={[{ name: "a", type: "number" }, { name: "b", type: "number" }]}>
@@ -34,9 +34,9 @@ export interface FunctionArrowExpressionProps extends CallSignatureProps {
  * ```
  * renders to
  * ```ts
- * async (a, b) => { return a + b; } 
+ * async (a, b) => { return a + b; }
  * ```
- * 
+ *
  * @remarks
  *
  * Providing parameters and type parameters can be accomplished in one of three
@@ -78,7 +78,8 @@ export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
       <Declaration {...props} nameKind="function">
         {asyncKwd}
         <Scope kind="function">
-          <CallSignature {...callSignatureProps} returnType={returnType} />{" => "}
+          <CallSignature {...callSignatureProps} returnType={returnType} />
+          {" => "}
           {sBody}
         </Scope>
       </Declaration>

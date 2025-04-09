@@ -20,8 +20,7 @@ it("can be an async function", () => {
 });
 
 it("can be an async with returnType", () => {
-  expect(toSourceText(<ArrowFunction async returnType="Foo" />))
-    .toBe(d`
+  expect(toSourceText(<ArrowFunction async returnType="Foo" />)).toBe(d`
     async (): Promise<Foo> => {}
   `);
 });
@@ -30,8 +29,7 @@ it("can be an async with returnType element", () => {
   function Foo(_props?: Props) {
     return <>Foo</>;
   }
-  expect(toSourceText(<ArrowFunction async returnType={<Foo />} />))
-    .toBe(d`
+  expect(toSourceText(<ArrowFunction async returnType={<Foo />} />)).toBe(d`
     async (): Promise<Foo> => {}
   `);
 });
@@ -40,9 +38,7 @@ it("supports parameters by element", () => {
   const decl = (
     <ArrowFunction>
       return a + b;
-      <ArrowFunction.Parameters>
-        a, b
-      </ArrowFunction.Parameters>
+      <ArrowFunction.Parameters>a, b</ArrowFunction.Parameters>
     </ArrowFunction>
   );
 
@@ -69,11 +65,7 @@ it("supports type parameters by descriptor object", () => {
 });
 
 it("supports type parameters by descriptor array", () => {
-  const decl = (
-    <ArrowFunction
-      typeParameters={["a", "b"]}
-    ></ArrowFunction>
-  );
+  const decl = <ArrowFunction typeParameters={["a", "b"]}></ArrowFunction>;
 
   expect(toSourceText(decl)).toBe(d`
     <a, b>() => {}
@@ -83,9 +75,7 @@ it("supports type parameters by descriptor array", () => {
 it("supports type parameters by element", () => {
   const decl = (
     <ArrowFunction>
-      <ArrowFunction.TypeParameters>
-        a, b
-      </ArrowFunction.TypeParameters>
+      <ArrowFunction.TypeParameters>a, b</ArrowFunction.TypeParameters>
     </ArrowFunction>
   );
 
@@ -144,9 +134,7 @@ describe("symbols", () => {
 
     const decl = (
       <>
-        <ArrowFunction
-          parameters={[{ name: "sym", type: "any", refkey: rk }]}
-        >
+        <ArrowFunction parameters={[{ name: "sym", type: "any", refkey: rk }]}>
           <ArrowFunction>{rk}</ArrowFunction>
         </ArrowFunction>
       </>
@@ -164,9 +152,7 @@ describe("symbols", () => {
   it("creates symbols for parameters and addresses conflicts", () => {
     const decl = (
       <>
-        <ArrowFunction
-          parameters={[{ name: "conflict", type: "any" }]}
-        >
+        <ArrowFunction parameters={[{ name: "conflict", type: "any" }]}>
           <VarDeclaration name="conflict">1</VarDeclaration>;
         </ArrowFunction>
       </>

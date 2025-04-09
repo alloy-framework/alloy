@@ -15,7 +15,6 @@ export const EnumMember = stc(base.EnumMember);
 export const ExportStatement = stc(base.ExportStatement);
 export const FunctionCallExpression = stc(base.FunctionCallExpression);
 export const FunctionDeclaration = stc(base.FunctionDeclaration);
-export const FunctionExpression = stc(base.FunctionExpression);
 export const IfStatement = stc(base.IfStatement);
 export const ElseClause = stc(base.ElseClause);
 export const ElseIfClause = stc(base.ElseIfClause);

@@ -13,11 +13,8 @@ import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import {
   FunctionBody,
-  functionBodyTag,
   FunctionParameters,
-  functionParametersTag,
   FunctionTypeParameters,
-  functionTypeParametersTag,
   getReturnType,
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
@@ -49,10 +46,10 @@ export interface FunctionDeclarationProps
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, functionTypeParametersTag) ?? undefined;
+    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
   const parametersChildren =
-    findKeyedChild(children, functionParametersTag) ?? undefined;
-  const bodyChildren = findKeyedChild(children, functionBodyTag) ?? undefined;
+    findKeyedChild(children, FunctionParameters.tag) ?? undefined;
+  const bodyChildren = findKeyedChild(children, FunctionBody.tag) ?? undefined;
   const filteredChildren = findUnkeyedChildren(children);
   const returnType = getReturnType(props.returnType, { async: props.async });
 

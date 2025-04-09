@@ -462,9 +462,9 @@ export function createComponent<TProps extends Props = Props>(
 export function taggedComponent<TProps = Props>(
   tag: symbol,
   component: Component<TProps>,
-): Component<TProps> {
+): Component<TProps> & Required<Pick<Component<TProps>, "tag">> {
   component.tag = tag;
-  return component;
+  return component as any;
 }
 
 export const intrinsicElementKey = Symbol();

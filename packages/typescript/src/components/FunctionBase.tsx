@@ -17,9 +17,9 @@ import {
   TSSymbolFlags,
 } from "../symbols/index.js";
 
-export const functionParametersTag = Symbol();
-export const functionTypeParametersTag = Symbol();
-export const functionBodyTag = Symbol();
+const functionParametersTag = Symbol();
+const functionTypeParametersTag = Symbol();
+const functionBodyTag = Symbol();
 
 export interface FunctionBodyProps {
   children?: Children;

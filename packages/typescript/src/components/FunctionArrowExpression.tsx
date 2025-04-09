@@ -10,11 +10,8 @@ import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
-  functionBodyTag,
   FunctionParameters,
-  functionParametersTag,
   FunctionTypeParameters,
-  functionTypeParametersTag,
   getReturnType,
 } from "./FunctionBase.jsx";
 
@@ -53,10 +50,10 @@ export interface FunctionArrowExpressionProps extends CallSignatureProps {
 export function FunctionArrowExpression(props: FunctionArrowExpressionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, functionTypeParametersTag) ?? undefined;
+    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
   const parametersChildren =
-    findKeyedChild(children, functionParametersTag) ?? undefined;
-  const bodyChildren = findKeyedChild(children, functionBodyTag) ?? undefined;
+    findKeyedChild(children, FunctionParameters.tag) ?? undefined;
+  const bodyChildren = findKeyedChild(children, FunctionBody.tag) ?? undefined;
   const filteredChildren = findUnkeyedChildren(children);
   const returnType = getReturnType(props.returnType, { async: props.async });
 

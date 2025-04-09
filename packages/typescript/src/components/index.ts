@@ -11,6 +11,7 @@ export * from "./EnumMember.js";
 export * from "./ExportStatement.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
+export * from "./FunctionExpression.js";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
 export * from "./JSDoc.jsx";

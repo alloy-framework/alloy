@@ -62,6 +62,7 @@
     "@babel/cli": "catalog:",
     "@microsoft/api-extractor": "^7.47.7",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/cli": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",
     "typescript": "catalog:",

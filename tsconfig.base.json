@@ -13,7 +13,7 @@
     "jsx": "preserve",
     "jsxImportSource": "@alloy-js/core",
     "composite": true,
-    "incremental": true
+    "incremental": true,
   },
   "references": [
     { "path": "packages/core" },

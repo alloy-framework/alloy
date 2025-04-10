@@ -82,10 +82,10 @@ describe("Browser Build Test", () => {
     }).not.toThrow();
   });
 
-  afterAll(() => {
-    // Ensure testDir exists before attempting to remove it
-    if (existsSync(testDir)) {
-      rmSync(testDir, { recursive: true, force: true });
-    }
-  });
+  // afterAll(() => {
+  //   // Ensure testDir exists before attempting to remove it
+  //   if (existsSync(testDir)) {
+  //     rmSync(testDir, { recursive: true, force: true });
+  //   }
+  // });
 });

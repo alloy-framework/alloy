@@ -4,7 +4,7 @@
     "declaration": true,
     "verbatimModuleSyntax": true,
     "tsBuildInfoFile": "./temp/.tsbuildinfo",
-    "outDir": "dist",
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",

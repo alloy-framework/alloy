@@ -3,7 +3,7 @@ import * as babel from "@babel/core";
 // @ts-expect-error
 import typescriptPreset from "@babel/preset-typescript";
 import { mkdir, writeFile } from "node:fs/promises";
-import { join, relative, dirname } from "pathe";
+import { dirname, join, relative } from "pathe";
 
 export async function buildFile(filename: string) {
   return babel.transformFileAsync(filename, {

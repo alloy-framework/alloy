@@ -32,26 +32,18 @@
     "./src/write-output.ts": "./src/write-output.browser.ts"
   },
   "scripts": {
-    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-    "build-testing": "babel testing -d dist/testing --extensions .ts,.tsx",
     "generate-docs": "api-extractor run",
-    "build": "tsc -p . && npm run build-src && npm run build-testing && pnpm run generate-docs",
+    "build": "alloy build && pnpm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
-    "watch-testing": "babel testing -d dist/testing --extensions '.ts,.tsx' --watch",
-    "watch-tsc": "tsc -p . --watch",
-    "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\" \"npm run watch-testing\"",
+    "watch": "alloy build --watch",
     "prepack": "node ../../scripts/strip-dev-exports.js"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
-    "@alloy-js/babel-preset": "workspace:~",
-    "@babel/core": "catalog:",
-    "@babel/preset-typescript": "catalog:",
     "@vue/reactivity": "catalog:",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.5",
@@ -59,9 +51,9 @@
     "prettier": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/cli": "catalog:",
     "@microsoft/api-extractor": "^7.47.7",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/cli": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",
     "typescript": "catalog:",

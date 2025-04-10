@@ -20,6 +20,7 @@ export default tsEslint.config(
       "packages/docs/**/*",
       "samples/**/*", // for some reason eslint is unhappy with some files in here
       "**/scripts/**/*",
+      "**/cmd/**/*",
     ],
   },
   eslint.configs.recommended,

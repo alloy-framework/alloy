@@ -48,35 +48,12 @@ You will need `@alloy-js/core` as well as the packages for any languages you wil
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
-    <Code code="npm install @alloy-js/core @alloy-js/typescript" frame="terminal" lang="sh" />
+    <Code code="npm install @alloy-js/core @alloy-js/cli @alloy-js/typescript" frame="terminal" lang="sh" />
   </TabItem>
   <TabItem label="pnpm">
-    <Code code="pnpm install @alloy-js/core @alloy-js/typescript" frame="terminal" lang="sh" />
+    <Code code="pnpm install @alloy-js/core @alloy-js/cli @alloy-js/typescript" frame="terminal" lang="sh" />
   </TabItem>
 </Tabs>
-
-## Install babel transform (optional)
-
-If you are going to use JSX syntax for your templates, you will need to install
-and configure babel. TypeScript's JSX transform is not compatible with alloy.
-
-<Tabs syncKey="package-manager">
-  <TabItem label="npm">
-    <Code code="npm install -d @babel/cli @babel/core @alloy-js/babel-preset" frame="terminal" lang="sh" />
-  </TabItem>
-  <TabItem label="pnpm">
-    <Code code="pnpm install -D @babel/cli @babel/core @alloy-js/babel-preset" frame="terminal" lang="sh" />
-  </TabItem>
-</Tabs>
-
-Next, create the following `babel.config.js` file:
-
-<Code code={`
-  export default {
-    sourceMaps: true,
-    presets: ["@babel/preset-typescript", "@alloy-js/babel-preset"]
-  };
-`} lang="js" title="babel.config.js" frame="code"/>
 
 ## Install test dependencies
 
@@ -85,10 +62,10 @@ recommended. The following assumes you are using vitest.
 
 <Tabs syncKey="package-manager">
   <TabItem label="npm">
-    <Code code="npm install -d vitest @rollup/plugin-babel" frame="terminal" lang="sh" />
+    <Code code="npm install -d vitest @alloy-js/rollup-plugin" frame="terminal" lang="sh" />
   </TabItem>
   <TabItem label="pnpm">
-    <Code code="pnpm install -D vitest @rollup/plugin-babel" frame="terminal" lang="sh" />
+    <Code code="pnpm install -D vitest @alloy-js/rollup-plugin" frame="terminal" lang="sh" />
   </TabItem>
 </Tabs>
 
@@ -121,8 +98,13 @@ it.
 
 You can build your project with the following command:
 
-<Code code="npx babel src -d dist --extensions '.ts,.tsx'" frame="terminal" lang="sh" />
+```sh
+npx alloy build
+```
 
 And test with:
 
-<Code code="vitest run" frame="terminal" lang="sh" />
+
+```sh
+vitest run
+```

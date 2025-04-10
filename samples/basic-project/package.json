@@ -5,12 +5,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-    "build-tsc": "tsc -p .",
-    "build": "npm run build-src && npm run build-tsc",
-    "watch-src": "babel src -d dist/src --extensions .ts,.tsx --watch",
-    "watch-tsc": "tsc -p . --watch",
-    "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\""
+    "build": "alloy build",
+    "clean": "rimraf dist/ .temp/",
+    "test": "vitest run",
+    "test:watch": "vitest -w",
+    "watch": "alloy build --watch"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",
@@ -21,14 +20,13 @@
     "@alloy-js/java": "workspace:~"
   },
   "devDependencies": {
-    "@babel/cli": "catalog:",
-    "@babel/preset-typescript": "catalog:",
+    "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
-    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
+    "rimraf": "catalog:",
     "vitest": "catalog:"
   },
   "type": "module"

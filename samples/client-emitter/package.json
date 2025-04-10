@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "alloy build && pnpm run generate-docs",
+    "build": "alloy build",
     "clean": "rimraf dist/ .temp/",
     "watch": "alloy build --watch"
   },

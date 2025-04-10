@@ -1,8 +1,6 @@
-import { writeFile } from "node:fs/promises";
-import { join, relative } from "node:path";
 import { parseArgs } from "node:util";
-import * as ts from "typescript";
-import { buildFile } from "./babel.js";
+import ts from "typescript";
+import { buildAllFiles } from "./babel.js";
 import { getParseCommandLine } from "./typescript.js";
 
 const args = parseArgs({
@@ -40,13 +38,7 @@ async function build() {
   });
   const emitResult = program.emit();
 
-  const rootDir = opts.options.rootDir ?? program.getCurrentDirectory();
-  const outDir = opts.options.outDir ?? program.getCurrentDirectory() + "/dist";
-  for (const file of opts.fileNames) {
-    const transform = await buildFile(file);
-    const relativePath = relative(rootDir, file).replace(/\.tsx?$/, ".js");
-    await writeFile(join(outDir, relativePath), transform?.code as any);
-  }
+  await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
     .concat(emitResult.diagnostics);
@@ -80,23 +72,11 @@ function watchMain() {
     reportWatchStatusChanged,
     opts.projectReferences,
   );
-  const origCreateProgram = host.createProgram;
-  host.createProgram = (
-    rootNames: ReadonlyArray<string> | undefined,
-    options,
-    host,
-    oldProgram,
-    diags,
-    references,
-  ) => {
-    return origCreateProgram(
-      rootNames,
-      options,
-      host,
-      oldProgram,
-      diags,
-      opts.projectReferences,
-    );
+
+  const origPostProgramCreate = host.afterProgramCreate;
+  host.afterProgramCreate = async (program) => {
+    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
+    origPostProgramCreate!(program);
   };
   ts.createWatchProgram(host);
 }

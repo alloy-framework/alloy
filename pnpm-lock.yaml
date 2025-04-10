@@ -250,6 +250,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.14.15
+      pathe:
+        specifier: 'catalog:'
+        version: 1.1.2
       typescript:
         specifier: 'catalog:'
         version: 5.7.3

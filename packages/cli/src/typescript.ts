@@ -1,6 +1,11 @@
+import { dirname, join } from "pathe";
 import * as ts from "typescript";
 
-export function getParseCommandLine(): ts.ParsedCommandLine {
+export interface Config extends ts.ParsedCommandLine {
+  rootDir: string;
+  outDir: string;
+}
+export function getParseCommandLine(): Config {
   const configPath = findTSConfigFile();
   const opts = ts.getParsedCommandLineOfConfigFile(
     configPath,
@@ -10,7 +15,16 @@ export function getParseCommandLine(): ts.ParsedCommandLine {
       onUnRecoverableConfigFileDiagnostic: (diagnostic) => {},
     },
   );
-  return opts!;
+  if (!opts) {
+    throw new Error("Could not parse 'tsconfig.json'.");
+  }
+  const rootDir = opts.options.rootDir ?? dirname(configPath);
+  const outDir = opts.options.outDir ?? join(dirname(configPath), "dist");
+  return {
+    ...opts,
+    rootDir,
+    outDir,
+  };
 }
 
 function findTSConfigFile() {

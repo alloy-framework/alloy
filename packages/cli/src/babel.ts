@@ -2,12 +2,15 @@ import * as babel from "@babel/core";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import typescriptPreset from "@babel/preset-typescript";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import alloyPreset from "@alloy-js/babel-preset";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "pathe";
 
 export async function buildFile(filename: string) {
   return babel.transformFileAsync(filename, {
-    presets: [typescriptPreset],
+    presets: [typescriptPreset, alloyPreset],
   });
 }
 

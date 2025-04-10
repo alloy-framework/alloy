@@ -5,14 +5,11 @@
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-    "build": "node scripts/gen-deps.js && tsc -p . && npm run build-src",
+    "build": "alloy build",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
-    "watch-tsc": "tsc -p . --watch",
-    "watch": "concurrently --kill-others \"npm run watch-tsc\" \"npm run watch-src\"",
+    "watch": "alloy build --watch",
     "prepack": "node ../../scripts/strip-dev-exports.js"
   },
   "keywords": [],
@@ -25,8 +22,7 @@
   },
   "devDependencies": {
     "@alloy-js/babel-plugin": "workspace:~",
-    "@babel/cli": "catalog:",
-    "@babel/preset-typescript": "catalog:",
+    "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",

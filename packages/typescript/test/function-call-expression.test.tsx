@@ -1,6 +1,5 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey, render, StatementList } from "@alloy-js/core";
 import { it } from "vitest";
-import { StatementList } from "../../core/src/components/StatementList.jsx";
 import {
   FunctionCallExpression,
   FunctionDeclaration,

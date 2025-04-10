@@ -285,16 +285,11 @@ const main = async () => {
     };
   } else {
     scripts = {
-      "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-      "build-tsc": "tsc -p .",
-      build: "npm run build-tsc && npm run build-src",
+      build: "alloy build && pnpm run generate-docs",
       clean: "rimraf dist/ .temp/",
       test: "vitest run",
       "test:watch": "vitest -w",
-      "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
-      "watch-tsc": "tsc -p . --watch",
-      watch:
-        'concurrently --kill-others "npm run watch-tsc" "npm run watch-src"',
+      watch: "alloy build --watch",
     };
   }
 

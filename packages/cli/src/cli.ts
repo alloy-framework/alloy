@@ -2,6 +2,7 @@ import { parseArgs } from "node:util";
 import ts from "typescript";
 import { buildAllFiles } from "./babel.js";
 import { getParseCommandLine } from "./typescript.js";
+import pc from "picocolors";
 
 const args = parseArgs({
   args: process.argv.slice(2),
@@ -37,7 +38,7 @@ async function build() {
     projectReferences: opts.projectReferences,
   });
   const emitResult = program.emit();
-
+  const start = new Date().getTime();
   await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
@@ -53,8 +54,9 @@ async function build() {
     );
     process.exit(1);
   } else {
+    const end = new Date().getTime();
     // eslint-disable-next-line no-console
-    console.log("Build completed successfully.");
+    console.log(`${pc.green("✔")} Build completed successfully in ${pc.magenta(`${end - start}ms`)}`);
   }
 }
 

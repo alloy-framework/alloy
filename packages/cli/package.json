@@ -24,14 +24,15 @@
     "test:watch": "vitest -w"
   },
   "dependencies": {
-    "@alloy-js/babel-preset": "workspace:~"
+    "@alloy-js/babel-preset": "workspace:~",
+    "picocolors": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "catalog:",
     "@types/babel__core": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "pathe": "catalog:",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "bugs": "https://github.com/alloy-framework/alloy/issues"

@@ -72,6 +72,9 @@ catalogs:
     pathe:
       specifier: ^1.1.2
       version: 1.1.2
+    picocolors:
+      specifier: ^1.1.1
+      version: 1.1.1
     prettier:
       specifier: ^3.3.3
       version: 3.3.3
@@ -240,6 +243,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      picocolors:
+        specifier: 'catalog:'
+        version: 1.1.1
     devDependencies:
       '@babel/core':
         specifier: 'catalog:'
@@ -4189,9 +4195,6 @@ packages:
     resolution: {integrity: sha512-vE7JKRyES09KiunauX7nd2Q9/L7lhok4smP9RZTDeD4MVs72Dp2qNFVz39Nz5a0FVEW0BJR6C0DYrq6unoziZA==}
     engines: {node: '>= 14.16'}
 
-  picocolors@1.0.1:
-    resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -5629,7 +5632,7 @@ snapshots:
   '@babel/code-frame@7.24.7':
     dependencies:
       '@babel/highlight': 7.24.7
-      picocolors: 1.0.1
+      picocolors: 1.1.1
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -9797,8 +9800,6 @@ snapshots:
   pathe@2.0.2: {}
 
   pathval@2.0.0: {}
-
-  picocolors@1.0.1: {}
 
   picocolors@1.1.1: {}
 

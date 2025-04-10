@@ -1,7 +1,9 @@
 ---
+# Change versionKind to one of: breaking, feature, fix, internal
 changeKind: internal
 packages:
   - "@alloy-js/core"
+  - "@alloy-js/cli"
   - "@alloy-js/create"
   - "@alloy-js/csharp"
   - "@alloy-js/java"
@@ -9,4 +11,4 @@ packages:
   - "@alloy-js/typescript"
 ---
 
-Alloy cli
+Remove leftover configs

@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/typescript
 
+## 0.11.0
+
+### Bug Fixes
+
+- [#92](https://github.com/alloy-framework/alloy/pull/92) Missing export of `IfStatement`, `ElseIfClause` and `ElseClause`
+
+### Features
+
+- [#91](https://github.com/alloy-framework/alloy/pull/91) Add new `<FunctionExpression />` and `<ArrowFunctionExpression />` components supporting the various formm of function expressions
+
+
 ## 0.10.0
 
 ### Bug Fixes

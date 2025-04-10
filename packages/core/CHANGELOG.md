@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/core
 
+## 0.11.0
+
+### Bug Fixes
+
+- [#91](https://github.com/alloy-framework/alloy/pull/91) `taggedComponent` return type updated to make tag as a required property
+- [#97](https://github.com/alloy-framework/alloy/pull/97) Update `ForCallbackArgs` to handle arrays early, before unions of arrays are distributed. This mitigates a nasty typechecking bug that appears when the type of elements passed to `For` are a union of arrays.
+
+
 ## 0.10.0
 
 No changes, version bump only.

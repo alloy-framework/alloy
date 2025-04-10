@@ -4,9 +4,9 @@ import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
 import { BaseListProps } from "./List.jsx";
 
 export type ForCallbackArgs<T> =
-  T extends Ref<infer U> ? ForCallbackArgs<U>
+  number extends keyof T ? [value: T[number]]
+  : T extends Ref<infer U> ? ForCallbackArgs<U>
   : T extends () => infer U ? ForCallbackArgs<U>
-  : T extends (infer U)[] ? [value: U]
   : T extends Map<infer U, infer V> ? [key: U, value: V]
   : T extends Set<infer U> ? [value: U]
   : T extends IterableIterator<infer U> ? [value: U]

@@ -30,13 +30,10 @@
     "pathe": "catalog:"
   },
   "devDependencies": {
-    "@babel/cli": "catalog:",
-    "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "^7.47.7",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@alloy-js/cli": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
-    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

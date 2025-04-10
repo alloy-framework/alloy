@@ -44,9 +44,6 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
-    "@alloy-js/babel-preset": "workspace:~",
-    "@babel/core": "catalog:",
-    "@babel/preset-typescript": "catalog:",
     "@vue/reactivity": "catalog:",
     "chalk": "^5.3.0",
     "cli-table3": "^0.6.5",
@@ -54,7 +51,6 @@
     "prettier": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/cli": "catalog:",
     "@microsoft/api-extractor": "^7.47.7",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@alloy-js/cli": "workspace:~",

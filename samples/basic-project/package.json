@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "alloy build && pnpm run generate-docs",
+    "build": "alloy build",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
@@ -20,12 +20,10 @@
     "@alloy-js/java": "workspace:~"
   },
   "devDependencies": {
-    "@babel/cli": "catalog:",
-    "@babel/preset-typescript": "catalog:",
+    "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
-    "@alloy-js/babel-preset": "workspace:~",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "rimraf": "catalog:",

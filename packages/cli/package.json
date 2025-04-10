@@ -25,10 +25,11 @@
   },
   "dependencies": {
     "@alloy-js/babel-preset": "workspace:~",
+    "@babel/preset-typescript": "catalog:",
+    "@babel/core": "catalog:",
     "picocolors": "catalog:"
   },
   "devDependencies": {
-    "@babel/core": "catalog:",
     "@types/babel__core": "catalog:",
     "@types/node": "catalog:",
     "pathe": "catalog:",

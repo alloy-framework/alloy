@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/cli",
-  "version": "0.1.0",
+  "version": "0.10.0",
   "type": "module",
   "description": "Alloy cli for building alloy components",
   "homepage": "https://github.com/alloy-framework/alloy",
@@ -27,12 +27,12 @@
     "@alloy-js/babel-preset": "workspace:~",
     "@babel/preset-typescript": "catalog:",
     "@babel/core": "catalog:",
-    "picocolors": "catalog:"
+    "picocolors": "catalog:",
+    "pathe": "catalog:"
   },
   "devDependencies": {
     "@types/babel__core": "catalog:",
     "@types/node": "catalog:",
-    "pathe": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

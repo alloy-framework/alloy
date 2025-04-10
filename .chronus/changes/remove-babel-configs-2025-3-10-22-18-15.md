@@ -3,6 +3,7 @@
 changeKind: internal
 packages:
   - "@alloy-js/core"
+  - "@alloy-js/cli"
   - "@alloy-js/create"
   - "@alloy-js/csharp"
   - "@alloy-js/java"

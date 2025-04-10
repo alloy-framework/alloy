@@ -13,13 +13,10 @@
     }
   },
   "scripts": {
-    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
-    "build-tsc": "tsc -p .",
     "generate-docs": "api-extractor run",
-    "build": "alloy build && npm run generate-docs",
+    "build": "alloy build && pnpm run generate-docs",
     "clean": "rimraf dist/ .temp/",
-    "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
-    "watch-tsc": "tsc -p . --watch",
+    "test:watch": "vitest -w",
     "watch": "alloy build --watch",
     "test": "vitest run",
     "prepack": "node ../../scripts/strip-dev-exports.js"

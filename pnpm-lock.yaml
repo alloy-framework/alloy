@@ -640,6 +640,9 @@ importers:
       concurrently:
         specifier: 'catalog:'
         version: 8.2.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
       typescript:
         specifier: 'catalog:'
         version: 5.7.3

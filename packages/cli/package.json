@@ -24,8 +24,11 @@
     "test:watch": "vitest -w"
   },
   "dependencies": {
+    "@alloy-js/babel-preset": "workspace:~"
   },
   "devDependencies": {
+    "@babel/core": "catalog:",
+    "@types/babel__core": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

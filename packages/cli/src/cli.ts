@@ -1,5 +1,8 @@
+import { writeFile } from "node:fs/promises";
+import { join, relative } from "node:path";
 import { parseArgs } from "node:util";
 import * as ts from "typescript";
+import { buildFile } from "./babel.js";
 import { getParseCommandLine } from "./typescript.js";
 
 const args = parseArgs({
@@ -18,17 +21,17 @@ const formatHost: ts.FormatDiagnosticsHost = {
   getNewLine: () => ts.sys.newLine,
 };
 
-function main() {
+async function main() {
   if (args.values["watch"]) {
     watchMain();
   } else {
-    build();
+    await build();
   }
 }
 
-main();
+await main();
 
-function build() {
+async function build() {
   const opts = getParseCommandLine();
   const program = ts.createIncrementalProgram({
     rootNames: opts.fileNames,
@@ -36,6 +39,14 @@ function build() {
     projectReferences: opts.projectReferences,
   });
   const emitResult = program.emit();
+
+  const rootDir = opts.options.rootDir ?? program.getCurrentDirectory();
+  const outDir = opts.options.outDir ?? program.getCurrentDirectory() + "/dist";
+  for (const file of opts.fileNames) {
+    const transform = await buildFile(file);
+    const relativePath = relative(rootDir, file).replace(/\.tsx?$/, ".js");
+    await writeFile(join(outDir, relativePath), transform?.code as any);
+  }
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
     .concat(emitResult.diagnostics);
@@ -78,7 +89,6 @@ function watchMain() {
     diags,
     references,
   ) => {
-    console.log("Creating program...", references, references === opts.projectReferences);
     return origCreateProgram(
       rootNames,
       options,

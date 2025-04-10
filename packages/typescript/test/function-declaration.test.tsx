@@ -5,7 +5,6 @@ import { FunctionDeclaration, VarDeclaration } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { toSourceText } from "./utils.js";
 
-const a: number = "";
 it("works", () => {
   expect(toSourceText(<FunctionDeclaration name="foo" />)).toBe(d`
       function foo() {}

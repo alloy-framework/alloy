@@ -285,11 +285,11 @@ const main = async () => {
     };
   } else {
     scripts = {
-      "build": "alloy build && pnpm run generate-docs",
+      build: "alloy build && pnpm run generate-docs",
       clean: "rimraf dist/ .temp/",
       test: "vitest run",
       "test:watch": "vitest -w",
-      "watch": "alloy build --watch",
+      watch: "alloy build --watch",
     };
   }
 

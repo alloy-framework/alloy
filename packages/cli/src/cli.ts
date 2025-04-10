@@ -1,8 +1,8 @@
 import { parseArgs } from "node:util";
+import pc from "picocolors";
 import ts from "typescript";
 import { buildAllFiles } from "./babel.js";
 import { getParseCommandLine } from "./typescript.js";
-import pc from "picocolors";
 
 const args = parseArgs({
   args: process.argv.slice(2),
@@ -56,7 +56,9 @@ async function build() {
   } else {
     const end = new Date().getTime();
     // eslint-disable-next-line no-console
-    console.log(`${pc.green("✔")} Build completed successfully in ${pc.magenta(`${end - start}ms`)}`);
+    console.log(
+      `${pc.green("✔")} Build completed successfully in ${pc.magenta(`${end - start}ms`)}`,
+    );
   }
 }
 

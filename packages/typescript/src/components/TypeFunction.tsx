@@ -6,7 +6,8 @@ import {
   Show,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { CallSignatureProps } from "./CallSignature.jsx";
+import { getCallSignatureProps } from "../utils.js";
+import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { Declaration } from "./Declaration.jsx";
 import {
   FunctionParameters,
@@ -14,7 +15,6 @@ import {
   getReturnType,
   TypeFunctionParameters,
 } from "./FunctionBase.jsx";
-import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 
@@ -57,17 +57,10 @@ export function TypeFunction(props: TypeFunctionProps) {
   });
 
   const asyncKwd = props.async ? "async " : "";
-  const sTypeParameters =
-    typeParametersChildren ?
-      <>
-        {"<"}
-        {typeParametersChildren}
-        {">"}
-      </>
-    : <FunctionDeclaration.TypeParameters parameters={props.typeParameters} />;
-  const sParams = props.parametersChildren ?? (
-    <FunctionDeclaration.Parameters parameters={props.parameters} />
-  );
+  const callSignatureProps = getCallSignatureProps(props, {
+    parametersChildren,
+    typeParametersChildren,
+  });
 
   return (
     <>
@@ -83,7 +76,8 @@ export function TypeFunction(props: TypeFunctionProps) {
       <Declaration {...props} nameKind="function">
         {asyncKwd}
         <Scope kind="function">
-          {sTypeParameters}({sParams}){" => "}
+          <CallSignature {...callSignatureProps} returnType={null} />
+          {" => "}
           {returnType}
         </Scope>
       </Declaration>

@@ -16,7 +16,5 @@ export function ReferenceOrContent(props: ReferenceOrContentProps) {
   }
 
   const sym = binder.getSymbolForRefkey(props.refkey);
-  return computed(() =>
-    sym.value === undefined ? props.children : sym.value,
-  );
+  return computed(() => (sym.value === undefined ? props.children : sym.value));
 }

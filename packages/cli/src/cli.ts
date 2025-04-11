@@ -68,13 +68,12 @@ function watchMain() {
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
   const host = ts.createWatchCompilerHost(
-    opts.fileNames,
-    opts.options,
+    opts.configPath,
+    {},
     ts.sys,
     createProgram,
     reportDiagnostic,
     reportWatchStatusChanged,
-    opts.projectReferences,
   );
 
   const origPostProgramCreate = host.afterProgramCreate;

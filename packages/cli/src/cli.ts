@@ -79,6 +79,8 @@ function watchMain() {
 
   const origPostProgramCreate = host.afterProgramCreate;
   host.afterProgramCreate = async (program) => {
+    // eslint-disable-next-line no-console
+    console.clear();
     await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
     origPostProgramCreate!(program);
   };

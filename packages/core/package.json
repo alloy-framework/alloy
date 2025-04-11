@@ -45,20 +45,20 @@
   "license": "MIT",
   "dependencies": {
     "@vue/reactivity": "catalog:",
-    "chalk": "^5.3.0",
-    "cli-table3": "^0.6.5",
+    "picocolors": "catalog:",
+    "cli-table3": "catalog:",
     "pathe": "catalog:",
-    "prettier": "^3.5.1"
+    "prettier": "catalog:"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.47.7",
-    "@alloy-js/rollup-plugin": "workspace:~",
     "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   },
   "type": "module"
 }

@@ -2,6 +2,8 @@ packages:
   - packages/*
   - samples/*
 catalog:
+  "@microsoft/api-extractor": ^7.52.3
+  "@microsoft/api-extractor-model": ^7.30.5
   "@babel/cli": ^7.24.7
   "@babel/core": ^7.24.7
   "@babel/generator": ^7.25.0
@@ -19,6 +21,7 @@ catalog:
   "@vitest/eslint-plugin": ^1.1.37
   "@vue/reactivity": ^3.4.30
   babel-plugin-tester: ^11.0.4
+  cli-table3: ^0.6.5
   change-case: ^5.4.4
   concurrently: ^8.2.2
   eslint: "^9.9.0"

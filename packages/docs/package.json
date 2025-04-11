@@ -14,19 +14,19 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/starlight": "^0.32.5",
+    "@astrojs/starlight": "^0.33.1",
     "astro": "^5.6.1",
-    "astro-expressive-code": "^0.36.1",
-    "sharp": "^0.32.5",
-    "typescript": "^5.5.4"
+    "astro-expressive-code": "^0.40.2",
+    "sharp": "^0.34.1",
+    "typescript": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/csharp": "workspace:~",
     "@alloy-js/java": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "@microsoft/api-extractor": "^7.47.7",
-    "@microsoft/api-extractor-model": "^7.29.6",
+    "@microsoft/api-extractor": "catalog:",
+    "@microsoft/api-extractor-model": "catalog:",
     "@microsoft/tsdoc": "^0.15.0",
     "redent": "^4.0.0"
   }

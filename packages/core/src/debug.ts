@@ -1,5 +1,5 @@
 import { isReactive } from "@vue/reactivity";
-import { Chalk } from "chalk";
+import Chalk from "picocolors";
 import Table from "cli-table3";
 import { contextsByKey } from "./context.js";
 import { Context, getContext } from "./jsx-runtime.js";

@@ -26,7 +26,6 @@ function TestWrapper(props: { children: Children }) {
   );
 }
 
-
 describe("render the reference name if a declaration exists", () => {
   it("declaration is before", () => {
     const rk1 = refkey();

@@ -2,8 +2,8 @@ packages:
   - packages/*
   - samples/*
 catalog:
-  "@microsoft/api-extractor": ^7.52.3
-  "@microsoft/api-extractor-model": ^7.30.5
+  "@microsoft/api-extractor": ~7.47.7
+  "@microsoft/api-extractor-model": ~7.29.6
   "@babel/cli": ^7.24.7
   "@babel/core": ^7.24.7
   "@babel/generator": ^7.25.0

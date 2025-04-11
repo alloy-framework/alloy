@@ -8,6 +8,7 @@ import {
   ReferenceOrContent,
   refkey,
   Scope,
+  SourceFile,
   useBinder,
 } from "../../src/index.js";
 import { d, renderToString } from "../../testing/render.js";
@@ -18,10 +19,12 @@ function TestWrapper(props: { children: Children }) {
   });
   return (
     <Output>
-      <GetBinder />
-      <Scope>
-        <List>{props.children}</List>
-      </Scope>
+      <SourceFile path="test.txt" filetype="txt">
+        <GetBinder />
+        <Scope>
+          <List>{props.children}</List>
+        </Scope>
+      </SourceFile>
     </Output>
   );
 }

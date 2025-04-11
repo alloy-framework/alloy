@@ -2,7 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed } from "@vue/reactivity";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
-import type { Refkey } from "../refkey.js";
+import { type Refkey } from "../refkey.js";
 
 export interface ReferenceOrContentProps {
   readonly refkey: Refkey;
@@ -16,5 +16,7 @@ export function ReferenceOrContent(props: ReferenceOrContentProps) {
   }
 
   const sym = binder.getSymbolForRefkey(props.refkey);
-  return computed(() => (sym.value === undefined ? props.children : sym.value));
+  return computed(() =>
+    sym.value === undefined ? props.children : props.refkey,
+  );
 }

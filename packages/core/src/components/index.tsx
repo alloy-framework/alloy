@@ -9,6 +9,7 @@ export * from "./MemberScope.jsx";
 export * from "./Name.jsx";
 export * from "./Output.js";
 export * from "./Prose.jsx";
+export * from "./ReferenceOrContent.jsx";
 export * from "./Scope.js";
 export * from "./Show.jsx";
 export * from "./SourceDirectory.js";

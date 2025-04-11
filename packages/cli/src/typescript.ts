@@ -2,6 +2,7 @@ import { dirname, join } from "pathe";
 import * as ts from "typescript";
 
 export interface Config extends ts.ParsedCommandLine {
+  configPath: string;
   rootDir: string;
   outDir: string;
 }
@@ -22,6 +23,7 @@ export function getParseCommandLine(): Config {
   const outDir = opts.options.outDir ?? join(dirname(configPath), "dist");
   return {
     ...opts,
+    configPath,
     rootDir,
     outDir,
   };

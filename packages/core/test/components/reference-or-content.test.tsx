@@ -6,7 +6,9 @@ import {
   List,
   Output,
   ReferenceOrContent,
+  Refkey,
   refkey,
+  resolve,
   Scope,
   SourceFile,
   useBinder,
@@ -17,9 +19,15 @@ function TestWrapper(props: { children: Children }) {
   const GetBinder = createTap(() => {
     return useBinder();
   });
+
+  function Reference(props: { refkey: Refkey }) {
+    const result = resolve(props.refkey);
+    return result.value.targetDeclaration.name;
+  }
+
   return (
     <Output>
-      <SourceFile path="test.txt" filetype="txt">
+      <SourceFile path="test.txt" filetype="txt" reference={Reference}>
         <GetBinder />
         <Scope>
           <List>{props.children}</List>

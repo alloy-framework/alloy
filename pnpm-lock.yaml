@@ -31,8 +31,8 @@ catalogs:
       specifier: ~7.29.6
       version: 7.29.9
     '@microsoft/tsdoc':
-      specifier: 0.15.0
-      version: 0.15.0
+      specifier: 0.15.1
+      version: 0.15.1
     '@rollup/plugin-babel':
       specifier: ^6.0.4
       version: 6.0.4
@@ -113,9 +113,9 @@ catalogs:
       version: 3.1.1
 
 patchedDependencies:
-  '@microsoft/tsdoc@0.15.0':
+  '@microsoft/tsdoc@0.15.1':
     hash: feqpbbj7jjnlaslm723zbab6bm
-    path: patches/@microsoft__tsdoc@0.15.0.patch
+    path: patches/@microsoft__tsdoc@0.15.1.patch
 
 importers:
 
@@ -439,7 +439,7 @@ importers:
         version: 7.29.9(@types/node@20.17.30)
       '@microsoft/tsdoc':
         specifier: 'catalog:'
-        version: 0.15.0(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+        version: 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
       redent:
         specifier: ^4.0.0
         version: 4.0.0
@@ -1369,9 +1369,6 @@ packages:
 
   '@microsoft/tsdoc-config@0.17.1':
     resolution: {integrity: sha512-UtjIFe0C6oYgTnad4q1QP4qXwLhe6tIpNTRStJ2RZEPIkqQPREAwE5spzVxsdn9UaEMUqhh0AqSx3X4nWAKXWw==}
-
-  '@microsoft/tsdoc@0.15.0':
-    resolution: {integrity: sha512-HZpPoABogPvjeJOdzCOSJsXeL/SMCBgBZMVC3X3d7YYp2gf31MfxhUoYUNwf1ERPJOnQc0wkFn9trqI6ZEdZuA==}
 
   '@microsoft/tsdoc@0.15.1':
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
@@ -5325,7 +5322,7 @@ snapshots:
 
   '@microsoft/api-extractor-model@7.29.9(@types/node@20.17.30)':
     dependencies:
-      '@microsoft/tsdoc': 0.15.0(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
       '@microsoft/tsdoc-config': 0.17.1
       '@rushstack/node-core-library': 5.10.0(@types/node@20.17.30)
     transitivePeerDependencies:
@@ -5334,7 +5331,7 @@ snapshots:
   '@microsoft/api-extractor@7.47.12(@types/node@20.17.30)':
     dependencies:
       '@microsoft/api-extractor-model': 7.29.9(@types/node@20.17.30)
-      '@microsoft/tsdoc': 0.15.1
+      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
       '@microsoft/tsdoc-config': 0.17.1
       '@rushstack/node-core-library': 5.10.0(@types/node@20.17.30)
       '@rushstack/rig-package': 0.5.3
@@ -5351,14 +5348,12 @@ snapshots:
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:
-      '@microsoft/tsdoc': 0.15.1
+      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
       ajv: 8.12.0
       jju: 1.4.0
       resolve: 1.22.10
 
-  '@microsoft/tsdoc@0.15.0(patch_hash=feqpbbj7jjnlaslm723zbab6bm)': {}
-
-  '@microsoft/tsdoc@0.15.1': {}
+  '@microsoft/tsdoc@0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:

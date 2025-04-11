@@ -34,7 +34,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@microsoft/tsdoc@0.15.0": "patches/@microsoft__tsdoc@0.15.0.patch"
+      "@microsoft/tsdoc@0.15.1": "patches/@microsoft__tsdoc@0.15.1.patch"
     }
   }
 }

@@ -18,9 +18,6 @@ jobs:
           fetch-depth: 0 ## Needed for changelog
       - uses: ./.github/actions/setup
 
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
-
       - run: pnpm install
         name: Install dependencies
 

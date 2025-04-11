@@ -104,7 +104,7 @@ it("mixed", () => {
   `);
 });
 
-it("resolve ", () => {
+it("resolve ref via source file reference", () => {
   const rk1 = refkey();
 
   const GetBinder = createTap(() => useBinder());

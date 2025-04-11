@@ -12,28 +12,28 @@ catalog:
   "@babel/preset-typescript": ^7.24.7
   "@babel/types": ^7.20.7
   "@rollup/plugin-babel": ^6.0.4
-  "@rollup/plugin-node-resolve": ^15.2.3
-  "@rollup/plugin-typescript": ^11.1.6
+  "@rollup/plugin-node-resolve": ^16.0.1
+  "@rollup/plugin-typescript": ^12.1.2
   "@types/babel__core": ^7.20.5
   "@types/babel__generator": ^7.6.8
   "@types/babel__traverse": ^7.20.6
   "@types/node": ^20.14.12
   "@vitest/eslint-plugin": ^1.1.37
-  "@vue/reactivity": ^3.4.30
+  "@vue/reactivity": ^3.5.13
   babel-plugin-tester: ^11.0.4
   cli-table3: ^0.6.5
   change-case: ^5.4.4
-  concurrently: ^8.2.2
+  concurrently: ^9.1.2
   eslint: "^9.9.0"
   html-entities: 2.3.3
-  pathe: ^1.1.2
+  pathe: ^2.0.3
   picocolors: "^1.1.1"
-  prettier-plugin-organize-imports: "^4.0.0"
-  prettier: ^3.3.3
+  prettier-plugin-organize-imports: "^4.1.0"
+  prettier: ^3.5.3
   rimraf: ^6.0.1
-  rollup: ^4.18.1
-  typescript-eslint: "^8.1.0"
-  typescript: ^5.7.3
+  rollup: ^4.39.0
+  typescript-eslint: "^8.29.1"
+  typescript: ^5.8.3
   validate-html-nesting: ^1.2.1
-  vitest: ^3.0.4
-  vite: ^6.0.1
+  vitest: ^3.1.1
+  vite: ^6.2.6

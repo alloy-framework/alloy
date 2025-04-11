@@ -1,5 +1,5 @@
 import { isReactive } from "@vue/reactivity";
-import Chalk from "picocolors";
+import pc from "picocolors";
 import Table from "cli-table3";
 import { contextsByKey } from "./context.js";
 import { Context, getContext } from "./jsx-runtime.js";
@@ -56,14 +56,14 @@ function debugStack() {
         { hAlign: "right", content: "props" },
         props && Object.keys(props).length > 0 ?
           dumpValue(props)
-        : chalk.gray("(none)"),
+        : pc.gray("(none)"),
       ]);
 
       table.push([
         { hAlign: "right", content: "contexts" },
         foundContexts.length > 0 ?
           foundContexts.map((c) => printContext(c, true)).join("\n")
-        : chalk.gray("(none)"),
+        : pc.gray("(none)"),
       ]);
 
       process.stdout.write(table.toString() + "\n\n");
@@ -119,39 +119,38 @@ declare global {
 
 globalThis.debug = debug;
 
-const chalk = new Chalk();
 const style = {
   value: {
     primitive(value: string | number | boolean | null | undefined) {
       switch (typeof value) {
         case "string":
-          return chalk.blue(`"${value}"`);
+          return pc.blue(`"${value}"`);
         case "object":
         case "undefined":
-          return chalk.gray(String(value));
+          return pc.gray(String(value));
         default:
-          return chalk.blue(String(value));
+          return pc.blue(String(value));
       }
     },
     symbol(value: symbol) {
-      return chalk.gray(String(value));
+      return pc.gray(String(value));
     },
   },
   context: {
     name(name: string) {
-      return chalk.bgGray(` ${chalk.white(name)} `);
+      return pc.bgBlack(` ${pc.white(name)} `);
     },
   },
   component: {
     name(name: string) {
-      return chalk.bgBlue(` <${chalk.white(name)}> `);
+      return pc.bgBlue(` <${pc.white(name)}> `);
     },
   },
 };
 
 function reactiveTag(value: unknown) {
   if (isReactive(value)) {
-    return " " + chalk.greenBright(`reactive`) + " ";
+    return " " + pc.greenBright(`reactive`) + " ";
   }
   return "";
 }
@@ -168,7 +167,7 @@ function dumpValue(value: unknown, level = 0) {
       if (value === null) {
         return style.value.primitive(null) + reactiveTag(value);
       } else {
-        if (level > 0) return chalk.gray(`{ ... }` + reactiveTag(value));
+        if (level > 0) return pc.gray(`{ ... }` + reactiveTag(value));
 
         const table = kvTable(" ");
 
@@ -179,7 +178,7 @@ function dumpValue(value: unknown, level = 0) {
         return table.toString();
       }
     case "function":
-      return chalk.gray("ƒ ()");
+      return pc.gray("ƒ ()");
     case "undefined":
       return style.value.primitive(undefined);
   }

@@ -19,5 +19,6 @@ export const SourceDirectory = stc(base.SourceDirectory);
 export const SourceFile = stc(base.SourceFile);
 export const Switch = stc(base.Switch);
 export const Wrap = stc(base.Wrap);
+export const ReferenceOrContent = stc(base.ReferenceOrContent);
 
 export * from "./sti.js";

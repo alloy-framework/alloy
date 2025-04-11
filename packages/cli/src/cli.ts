@@ -68,17 +68,18 @@ function watchMain() {
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
   const host = ts.createWatchCompilerHost(
-    opts.fileNames,
-    opts.options,
+    opts.configPath,
+    {},
     ts.sys,
     createProgram,
     reportDiagnostic,
     reportWatchStatusChanged,
-    opts.projectReferences,
   );
 
   const origPostProgramCreate = host.afterProgramCreate;
   host.afterProgramCreate = async (program) => {
+    // eslint-disable-next-line no-console
+    console.clear();
     await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
     origPostProgramCreate!(program);
   };

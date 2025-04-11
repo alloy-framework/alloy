@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   Children,
   createTap,
@@ -16,9 +16,7 @@ import {
 import { d, renderToString } from "../../testing/render.js";
 
 function TestWrapper(props: { children: Children }) {
-  const GetBinder = createTap(() => {
-    return useBinder();
-  });
+  const GetBinder = createTap(() => useBinder());
 
   function Reference(props: { refkey: Refkey }) {
     const result = resolve(props.refkey);
@@ -104,4 +102,37 @@ it("mixed", () => {
     A
     No Reference B
   `);
+});
+
+it("resolve ", () => {
+  const rk1 = refkey();
+
+  const GetBinder = createTap(() => useBinder());
+
+  const Reference = vi.fn((props: { refkey: Refkey }) => {
+    const result = resolve(props.refkey);
+    return `ViaRef.${result.value.targetDeclaration.name}`;
+  });
+
+  const template = (
+    <Output>
+      <SourceFile path="test.txt" filetype="txt" reference={Reference}>
+        <GetBinder />
+        <Scope>
+          <List>
+            <Declaration name="A" refkey={rk1}>
+              Declare A
+            </Declaration>
+            <ReferenceOrContent refkey={rk1}>No Reference A</ReferenceOrContent>
+          </List>
+        </Scope>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(renderToString(template)).toEqual(d`
+    Declare A
+    ViaRef.A
+  `);
+  expect(Reference).toHaveBeenCalledTimes(1);
 });

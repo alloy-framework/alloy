@@ -46,8 +46,8 @@ catalogs:
       specifier: ^7.6.8
       version: 7.6.8
     '@types/babel__traverse':
-      specifier: ^7.20.6
-      version: 7.20.6
+      specifier: ^7.20.7
+      version: 7.20.7
     '@types/node':
       specifier: ^20.14.12
       version: 20.14.15
@@ -73,8 +73,8 @@ catalogs:
       specifier: ^9.24.0
       version: 9.24.0
     html-entities:
-      specifier: 2.3.3
-      version: 2.3.3
+      specifier: 2.6.0
+      version: 2.6.0
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
@@ -193,7 +193,7 @@ importers:
         version: 7.6.8
       '@types/babel__traverse':
         specifier: 'catalog:'
-        version: 7.20.6
+        version: 7.20.7
       babel-plugin-tester:
         specifier: 'catalog:'
         version: 11.0.4(@babel/core@7.26.10)
@@ -217,7 +217,7 @@ importers:
         version: 7.27.0
       html-entities:
         specifier: 'catalog:'
-        version: 2.3.3
+        version: 2.6.0
       validate-html-nesting:
         specifier: 'catalog:'
         version: 1.2.2
@@ -1914,8 +1914,8 @@ packages:
   '@types/babel__template@7.4.4':
     resolution: {integrity: sha512-h/NUaSyG5EyxBIp8YRxo4RMe2/qQgvyowRwVMzhYhBCONbW8PUsg4lkFMrhgZhUe5z3L3MiLDuvyJ/CaPa2A8A==}
 
-  '@types/babel__traverse@7.20.6':
-    resolution: {integrity: sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==}
+  '@types/babel__traverse@7.20.7':
+    resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -2837,8 +2837,8 @@ packages:
     resolution: {integrity: sha512-sYKnA7eGln5ov8T8gnYlkSOxFJvywzEx9BueN6xo/GKO8PGiI6uK6xx+DIGe45T3bdVjLAQDQW1aicT8z8JwQg==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  html-entities@2.3.3:
-    resolution: {integrity: sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA==}
+  html-entities@2.6.0:
+    resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
 
   html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
@@ -6096,7 +6096,7 @@ snapshots:
       '@babel/types': 7.27.0
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
-      '@types/babel__traverse': 7.20.6
+      '@types/babel__traverse': 7.20.7
 
   '@types/babel__generator@7.6.8':
     dependencies:
@@ -6107,7 +6107,7 @@ snapshots:
       '@babel/parser': 7.27.0
       '@babel/types': 7.27.0
 
-  '@types/babel__traverse@7.20.6':
+  '@types/babel__traverse@7.20.7':
     dependencies:
       '@babel/types': 7.27.0
 
@@ -7365,7 +7365,7 @@ snapshots:
     dependencies:
       lru-cache: 10.4.3
 
-  html-entities@2.3.3: {}
+  html-entities@2.6.0: {}
 
   html-escaper@3.0.3: {}
 

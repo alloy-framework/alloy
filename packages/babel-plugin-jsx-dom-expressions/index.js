@@ -373,51 +373,6 @@ function transformCondition(path, inline, deep) {
   return deep ? expr : t__namespace.arrowFunctionExpression([], expr);
 }
 
-function escapeHTML(s, attr) {
-  if (typeof s !== "string") return s;
-  const delim = "<";
-  const escDelim = "&lt;";
-  let iDelim = s.indexOf(delim);
-  let iAmp = s.indexOf("&");
-
-  if (iDelim < 0 && iAmp < 0) return s;
-
-  let left = 0,
-    out = "";
-
-  while (iDelim >= 0 && iAmp >= 0) {
-    if (iDelim < iAmp) {
-      if (left < iDelim) out += s.substring(left, iDelim);
-      out += escDelim;
-      left = iDelim + 1;
-      iDelim = s.indexOf(delim, left);
-    } else {
-      if (left < iAmp) out += s.substring(left, iAmp);
-      out += "&amp;";
-      left = iAmp + 1;
-      iAmp = s.indexOf("&", left);
-    }
-  }
-
-  if (iDelim >= 0) {
-    do {
-      if (left < iDelim) out += s.substring(left, iDelim);
-      out += escDelim;
-      left = iDelim + 1;
-      iDelim = s.indexOf(delim, left);
-    } while (iDelim >= 0);
-  } else {
-    while (iAmp >= 0) {
-      if (left < iAmp) out += s.substring(left, iAmp);
-      out += "&amp;";
-      left = iAmp + 1;
-      iAmp = s.indexOf("&", left);
-    }
-  }
-
-  return left < s.length ? out + s.substring(left) : out;
-}
-
 function convertJSXIdentifier(node) {
   if (t__namespace.isJSXIdentifier(node)) {
     if (t__namespace.isValidIdentifier(node.name)) {
@@ -527,7 +482,7 @@ function setAttr$1(path, elem, name, value, { isSVG, dynamic, prevId, isCE, tagN
       ),
       [
         t__namespace.stringLiteral(name),
-        dynamic ? value : t__namespace.unaryExpression("!", t__namespace.unaryExpression("!", value))
+        value 
       ]
     );
   }
@@ -553,7 +508,7 @@ function setAttr$1(path, elem, name, value, { isSVG, dynamic, prevId, isCE, tagN
     );
   }
 
-  if (dynamic && name === "textContent") {
+  if (name === "textContent") {
     if (config.hydratable) {
       return t__namespace.callExpression(registerImportMethod(path, "setProperty"), [elem, t__namespace.stringLiteral("data"), value]);
     }
@@ -929,7 +884,6 @@ function wrapDynamics(path, dynamics) {
         t__namespace.arrowFunctionExpression(
           [prevValue],
           setAttr(path, dynamics[0].elem, dynamics[0].key, dynamics[0].value, {
-            dynamic: true,
             prevId: prevValue
           })
         )
@@ -963,7 +917,7 @@ function wrapDynamics(path, dynamics) {
           t__namespace.assignmentExpression(
             "=",
             propMember,
-            setAttr(path, elem, key, varIdent, { dynamic: true, prevId: propMember }),
+            setAttr(path, elem, key, varIdent, { prevId: propMember }),
           ),
         ),
       ),
@@ -1225,10 +1179,7 @@ function transformComponentChildren(children, config) {
       }
     } else {
       const child = transformNode(path, {
-        topLevel: true,
-        componentChild: true,
-        lastElement: true
-      });
+        componentChild: true});
       dynamic = dynamic || child.dynamic;
       if (
         config.generate === "ssr" &&
@@ -1273,7 +1224,7 @@ function transformFragmentChildren(path, children, results, config) {
         const v = htmlEntities.decode(trimWhitespace(path.node.extra.raw, config.preserveWhitespace));
         if (v.length) memo.push(t__namespace.stringLiteral(v));
       } else {
-        const child = transformNode(path, { topLevel: true, fragmentChild: true, lastElement: true });
+        const child = transformNode(path, { fragmentChild: true});
         memo.push(getCreateTemplate(config, path, child)(path, child, true));
       }
       return memo;
@@ -1293,9 +1244,7 @@ function transformJSX(path) {
     t__namespace.isJSXFragment(path.node)
       ? {}
       : {
-          topLevel: true,
-          lastElement: true
-        }
+          }
   );
 
   const template = getCreateTemplate(config, path, result);
@@ -1363,7 +1312,6 @@ function transformNode(path, info = {}) {
   
   const config = getConfig(path);
   const node = path.node;
-  let staticValue;
   if (t__namespace.isJSXElement(node)) {
     return transformElement(config, path, info);
   } else if (t__namespace.isJSXFragment(node)) {
@@ -1373,11 +1321,7 @@ function transformNode(path, info = {}) {
     return results;
   } else if (t__namespace.isJSXText(node)) {
     const text =
-      staticValue !== undefined
-        ? info.doNotEscape
-          ? staticValue.toString()
-          : escapeHTML(staticValue.toString())
-        : trimWhitespace(node.extra.raw);
+      trimWhitespace(node.extra.raw);
     if (!text.length) return null;
     const results = {
       template: text,

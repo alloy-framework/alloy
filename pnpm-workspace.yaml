@@ -4,33 +4,37 @@ packages:
 catalog:
   "@babel/cli": ^7.24.7
   "@babel/core": ^7.24.7
-  "@babel/generator": ^7.25.0
-  "@babel/helper-module-imports": 7.18.6
+  "@babel/generator": ^7.27.0
+  "@microsoft/tsdoc": 0.15.1
+  "@babel/helper-module-imports": 7.25.9
   "@babel/plugin-syntax-jsx": ^7.18.6
-  "@babel/preset-typescript": ^7.24.7
-  "@babel/types": ^7.20.7
+  "@babel/preset-typescript": ^7.27.0
+  "@babel/types": ^7.27.0
+  "@microsoft/api-extractor-model": ~7.29.6
+  "@microsoft/api-extractor": ~7.47.7
   "@rollup/plugin-babel": ^6.0.4
-  "@rollup/plugin-node-resolve": ^15.2.3
-  "@rollup/plugin-typescript": ^11.1.6
+  "@rollup/plugin-node-resolve": ^16.0.1
+  "@rollup/plugin-typescript": ^12.1.2
   "@types/babel__core": ^7.20.5
   "@types/babel__generator": ^7.6.8
-  "@types/babel__traverse": ^7.20.6
+  "@types/babel__traverse": ^7.20.7
   "@types/node": ^20.14.12
-  "@vitest/eslint-plugin": ^1.1.37
-  "@vue/reactivity": ^3.4.30
+  "@vitest/eslint-plugin": ^1.1.42
+  "@vue/reactivity": ^3.5.13
   babel-plugin-tester: ^11.0.4
   change-case: ^5.4.4
-  concurrently: ^8.2.2
-  eslint: "^9.9.0"
-  html-entities: 2.3.3
-  pathe: ^1.1.2
+  cli-table3: ^0.6.5
+  concurrently: ^9.1.2
+  eslint: "^9.24.0"
+  html-entities: 2.6.0
+  pathe: ^2.0.3
   picocolors: "^1.1.1"
-  prettier-plugin-organize-imports: "^4.0.0"
-  prettier: ^3.3.3
+  prettier-plugin-organize-imports: "^4.1.0"
+  prettier: ^3.5.3
   rimraf: ^6.0.1
-  rollup: ^4.18.1
-  typescript-eslint: "^8.1.0"
-  typescript: ^5.7.3
+  rollup: ^4.39.0
+  typescript-eslint: "^8.29.1"
+  typescript: ^5.8.3
   validate-html-nesting: ^1.2.1
-  vitest: ^3.0.4
-  vite: ^6.0.1
+  vite: ^6.2.6
+  vitest: ^3.1.1

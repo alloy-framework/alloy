@@ -1,6 +1,6 @@
 import { isReactive } from "@vue/reactivity";
-import pc from "picocolors";
 import Table from "cli-table3";
+import pc from "picocolors";
 import { contextsByKey } from "./context.js";
 import { Context, getContext } from "./jsx-runtime.js";
 

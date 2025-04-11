@@ -7,9 +7,13 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Alloy",
-      social: {
-        github: "https://github.com/alloy-framework/alloy",
-      },
+      social: [
+        {
+          icon: "github",
+          label: "GitHub",
+          href: "https://github.com/alloy-framework/alloy",
+        },
+      ],
       plugins: [],
       sidebar: [
         {

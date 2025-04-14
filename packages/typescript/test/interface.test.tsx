@@ -109,18 +109,94 @@ it("can create readonly members", () => {
   `);
 });
 
-it("has interface expressions", () => {
+it("can reference member", () => {
+  const ref = refkey("Foo");
   const res = toSourceText(
-    <ts.InterfaceExpression>
-      <ts.InterfaceMember name="member" type="string" />;
-    </ts.InterfaceExpression>,
+    <>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceMember name="prop" type="string" refkey={ref} />
+      </ts.InterfaceDeclaration>
+      <line />
+      <ts.InterfaceDeclaration name="Bar">
+        <ts.InterfaceMember name="ref" type={<Reference refkey={ref} />} />
+      </ts.InterfaceDeclaration>
+    </>,
   );
 
   expect(res).toEqual(d`
+  interface Foo {
+    prop: string
+  }
+  interface Bar {
+    ref: Foo["prop"]
+  }
+`);
+});
+
+describe("interface expressions", () => {
+  it("basic", () => {
+    const res = toSourceText(
+      <ts.InterfaceExpression>
+        <ts.InterfaceMember name="member" type="string" />;
+      </ts.InterfaceExpression>,
+    );
+
+    expect(res).toEqual(d`
     {
       member: string;
     }
   `);
+  });
+
+  it("nested", () => {
+    const res = toSourceText(
+      <ts.InterfaceExpression>
+        <ts.InterfaceMember name="outer">
+          <ts.InterfaceExpression>
+            <ts.InterfaceMember name="inner" type="string" />;
+          </ts.InterfaceExpression>
+        </ts.InterfaceMember>
+      </ts.InterfaceExpression>,
+    );
+
+    expect(res).toEqual(d`
+    {
+      outer: {
+        inner: string;
+      }
+    }
+  `);
+  });
+
+  it("can reference member when nested in a declaration", () => {
+    const ref = refkey("Foo");
+    const res = toSourceText(
+      <>
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMember name="outer">
+            <ts.InterfaceExpression>
+              <ts.InterfaceMember name="inner" type="string" refkey={ref} />
+            </ts.InterfaceExpression>
+          </ts.InterfaceMember>
+        </ts.InterfaceDeclaration>
+        <line />
+        <ts.InterfaceDeclaration name="Bar">
+          <ts.InterfaceMember name="ref" type={<Reference refkey={ref} />} />
+        </ts.InterfaceDeclaration>
+      </>,
+    );
+
+    expect(res).toEqual(d`
+    interface Foo {
+      outer: {
+        inner: string
+      }
+    }
+    interface Bar {
+      ref: Foo["outer"]["inner"]
+    }
+  `);
+  });
 });
 
 it("supports the naming policy", () => {

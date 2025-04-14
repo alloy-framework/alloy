@@ -2,15 +2,21 @@ import {
   Block,
   Children,
   MemberDeclaration,
+  MemberScope,
   Name,
   OutputSymbolFlags,
   Refkey,
   Show,
+  useMemberDeclaration,
+  useMemberScope,
+  Wrap,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
+import { TSOutputScope } from "../symbols/scopes.js";
+import { createTSSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { PropertyName } from "./PropertyName.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
@@ -29,6 +35,16 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
   const flags = OutputSymbolFlags.StaticMemberContainer;
+  const namePolicy = useTSNamePolicy();
+  const sym = createTSSymbol({
+    name: namePolicy.getName(props.name!, "interface"),
+    refkey: props.refkey,
+    export: props.export,
+    default: props.default,
+    flags,
+    tsFlags: TSSymbolFlags.TypeSymbol,
+    metadata: props.metadata,
+  });
 
   return (
     <>
@@ -36,7 +52,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <Declaration {...props} nameKind="interface" flags={flags}>
+      <Declaration {...props} symbol={sym}>
         interface <Name />
         {extendsPart}{" "}
         <InterfaceExpression>{props.children}</InterfaceExpression>
@@ -50,7 +66,22 @@ export interface InterfaceExpressionProps {
 }
 
 export function InterfaceExpression(props: InterfaceExpressionProps) {
-  return <Block>{props.children}</Block>;
+  const parentMemberSym = useMemberDeclaration();
+
+  if (parentMemberSym) {
+    parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
+  }
+  return (
+    <group>
+      <Wrap
+        when={!!parentMemberSym}
+        with={MemberScope}
+        props={{ owner: parentMemberSym! }}
+      >
+        <Block>{props.children}</Block>
+      </Wrap>
+    </group>
+  );
 }
 
 export interface InterfaceMemberProps {
@@ -87,9 +118,18 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   } else {
     const namer = useTSNamePolicy();
     const name = namer.getName(props.name!, "interface-member");
-    if (props.refkey) {
+    const memberScope = useMemberScope();
+
+    if (memberScope) {
+      const sym = createTSSymbol({
+        name,
+        scope: memberScope.staticMembers as TSOutputScope,
+        refkey: props.refkey,
+        flags: OutputSymbolFlags.StaticMember,
+        tsFlags: TSSymbolFlags.TypeSymbol,
+      });
       return (
-        <MemberDeclaration static name={name} refkey={props.refkey}>
+        <MemberDeclaration static symbol={sym} refkey={props.refkey}>
           <Show when={Boolean(props.doc)}>
             <JSDoc children={props.doc} />
             <hbr />

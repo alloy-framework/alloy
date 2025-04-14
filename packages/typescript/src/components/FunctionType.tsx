@@ -18,7 +18,7 @@ import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 
 /**
- * Options for {@link FunctionType} component.
+ * Options for {@link (FunctionType:namespace)} component.
  */
 export interface FunctionTypeProps extends CallSignatureProps {
   /** If the method is async */

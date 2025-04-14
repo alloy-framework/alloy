@@ -20,7 +20,7 @@ import {
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 
-/** Props for {@link InterfaceMethod} component */
+/** Props for {@link (InterfaceMethod:namespace)} component */
 export interface InterfaceMethodProps extends CallSignatureProps {
   /** Interface member name */
   readonly name: string;

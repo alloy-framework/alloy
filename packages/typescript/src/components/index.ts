@@ -18,6 +18,7 @@ export {
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./FunctionExpression.js";
+export * from "./FunctionType.jsx";
 export * from "./IfStatement.jsx";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
@@ -35,6 +36,5 @@ export * from "./SourceFile.js";
 export * from "./SwitchStatement.jsx";
 export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
-export * from "./TypeFunction.jsx";
 export * from "./ValueExpression.js";
 export * from "./VarDeclaration.js";

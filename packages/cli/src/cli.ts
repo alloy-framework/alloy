@@ -80,7 +80,14 @@ function watchMain() {
   host.afterProgramCreate = async (program) => {
     // eslint-disable-next-line no-console
     console.clear();
-    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
+    try {
+      await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(pc.red("Error building files"));
+      // eslint-disable-next-line no-console
+      console.log(e);
+    }
     origPostProgramCreate!(program);
   };
   ts.createWatchProgram(host);

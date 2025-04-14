@@ -9,7 +9,6 @@ import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { ParameterDescriptor } from "../src/components/index.js";
-import { InterfaceMethod } from "../src/components/InterfaceMethod.jsx";
 import { Reference } from "../src/components/Reference.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
 import { toSourceText } from "./utils.js";
@@ -156,8 +155,16 @@ it("handles invalid identifier names", () => {
 
 describe("method members", () => {
   it("render basic", () => {
-    expect(toSourceText(<InterfaceMethod name="foo" />)).toBe(d`
-      foo(): void
+    expect(
+      toSourceText(
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMethod name="foo" />
+        </ts.InterfaceDeclaration>,
+      ),
+    ).toBe(d`
+      interface Foo {
+        foo(): void
+      }
     `);
   });
 
@@ -165,7 +172,7 @@ describe("method members", () => {
     expect(
       toSourceText(
         <ts.InterfaceDeclaration name="Foo">
-          <InterfaceMethod name="foo" />
+          <ts.InterfaceMethod name="foo" />
         </ts.InterfaceDeclaration>,
       ),
     ).toBe(d`
@@ -176,15 +183,30 @@ describe("method members", () => {
   });
 
   it("can be an async function", () => {
-    expect(toSourceText(<InterfaceMethod async name="foo" />)).toBe(d`
-     async foo(): Promise<void>
+    expect(
+      toSourceText(
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMethod async name="foo" />
+        </ts.InterfaceDeclaration>,
+      ),
+    ).toBe(d`
+    interface Foo {
+      foo(): Promise<void>
+    }
   `);
   });
 
   it("can be an async function with returnType", () => {
-    expect(toSourceText(<InterfaceMethod async name="foo" returnType="Foo" />))
-      .toBe(d`
-    async foo(): Promise<Foo>
+    expect(
+      toSourceText(
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMethod async name="foo" returnType="Foo" />
+        </ts.InterfaceDeclaration>,
+      ),
+    ).toBe(d`
+    interface Foo {
+      foo(): Promise<Foo>
+    }
   `);
   });
 
@@ -193,59 +215,86 @@ describe("method members", () => {
       return <>Foo</>;
     }
     expect(
-      toSourceText(<InterfaceMethod async name="foo" returnType={<Foo />} />),
+      toSourceText(
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMethod async name="foo" returnType={<Foo />} />
+        </ts.InterfaceDeclaration>,
+      ),
     ).toBe(d`
-    async foo(): Promise<Foo>
+    interface Foo {
+      foo(): Promise<Foo>
+    }
   `);
   });
 
   it("supports parameters by element", () => {
     const decl = (
-      <InterfaceMethod name="foo">
-        <InterfaceMethod.Parameters>a, b</InterfaceMethod.Parameters>
-      </InterfaceMethod>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceMethod name="foo">
+          <ts.InterfaceMethod.Parameters>a, b</ts.InterfaceMethod.Parameters>
+        </ts.InterfaceMethod>
+      </ts.InterfaceDeclaration>
     );
 
     expect(toSourceText(decl)).toBe(d`
-    foo(a, b): void
+    interface Foo {
+      foo(a, b): void
+    }
   `);
   });
 
   it("supports type parameters by descriptor object", () => {
     const decl = (
-      <InterfaceMethod
-        name="foo"
-        typeParameters={[
-          { name: "a", extends: "any" },
-          { name: "b", extends: "any" },
-        ]}
-      ></InterfaceMethod>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceMethod
+          name="foo"
+          typeParameters={[
+            { name: "a", extends: "any" },
+            { name: "b", extends: "any" },
+          ]}
+        />
+      </ts.InterfaceDeclaration>
     );
 
     expect(toSourceText(decl)).toBe(d`
-    foo<a extends any, b extends any>(): void
+    interface Foo {
+      foo<a extends any, b extends any>(): void
+    }
   `);
   });
 
   it("supports type parameters by descriptor array", () => {
     const decl = (
-      <InterfaceMethod name="foo" typeParameters={["a", "b"]}></InterfaceMethod>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceMethod
+          name="foo"
+          typeParameters={["a", "b"]}
+        ></ts.InterfaceMethod>
+      </ts.InterfaceDeclaration>
     );
 
     expect(toSourceText(decl)).toBe(d`
-    foo<a, b>(): void
+      interface Foo {
+        foo<a, b>(): void
+      }
   `);
   });
 
   it("supports type parameters by element", () => {
     const decl = (
-      <InterfaceMethod name="foo">
-        <InterfaceMethod.TypeParameters>a, b</InterfaceMethod.TypeParameters>
-      </InterfaceMethod>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceMethod name="foo">
+          <ts.InterfaceMethod.TypeParameters>
+            a, b
+          </ts.InterfaceMethod.TypeParameters>
+        </ts.InterfaceMethod>
+      </ts.InterfaceDeclaration>
     );
 
     expect(toSourceText(decl)).toBe(d`
-    foo<a, b>(): void
+    interface Foo {
+      foo<a, b>(): void
+    }
   `);
   });
 
@@ -258,16 +307,15 @@ describe("method members", () => {
         optional: true,
       };
       const decl = (
-        <>
-          <InterfaceMethod
-            name="foo"
-            parameters={[paramDesc]}
-          ></InterfaceMethod>
-        </>
+        <ts.InterfaceDeclaration name="Foo">
+          <ts.InterfaceMethod name="foo" parameters={[paramDesc]} />
+        </ts.InterfaceDeclaration>
       );
 
       expect(toSourceText(decl)).toBe(d`
-      foo(foo?: any): void
+      interface Foo {
+        foo(foo?: any): void
+      }
     `);
     });
   });

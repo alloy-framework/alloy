@@ -10,8 +10,8 @@ import {
 import type { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import type {
+  FunctionTypeParameterDescriptor,
   ParameterDescriptor,
-  TypeFunctionParameterDescriptor,
 } from "../parameter-descriptor.js";
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
 import {
@@ -21,7 +21,7 @@ import {
 } from "../symbols/index.js";
 
 const functionParametersTag = Symbol();
-const functionTypeParametersTag = Symbol();
+const typeParametersTag = Symbol();
 const functionBodyTag = Symbol();
 
 export interface FunctionBodyProps {
@@ -32,7 +32,7 @@ export interface FunctionParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
   readonly children?: Children;
 }
-export interface TypeFunctionParametersProps {
+export interface FunctionTypeParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
   readonly children?: Children;
 }
@@ -44,8 +44,8 @@ export const FunctionBody = taggedComponent(
   },
 );
 
-export interface FunctionTypeParametersProps {
-  parameters?: ParameterDescriptor[] | string[];
+export interface TypeParametersProps {
+  parameters?: TypeParameterDescriptor[] | string[];
   children?: Children;
 }
 
@@ -70,9 +70,9 @@ export const FunctionParameters = taggedComponent(
   },
 );
 
-export const TypeFunctionParameters = taggedComponent(
+export const FunctionTypeParameters = taggedComponent(
   functionParametersTag,
-  function Parameters(props: TypeFunctionParametersProps) {
+  function Parameters(props: FunctionTypeParametersProps) {
     if (props.children) {
       return props.children;
     }
@@ -107,8 +107,8 @@ interface DeclaredParameterDescriptor
   extends Omit<ParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
 }
-interface DeclaredTypeFunctionParameterDescriptor
-  extends Omit<TypeFunctionParameterDescriptor, "name"> {
+interface DeclaredFunctionTypeParameterDescriptor
+  extends Omit<FunctionTypeParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
 }
 
@@ -118,13 +118,13 @@ interface DeclaredTypeParameterDescriptor
 }
 
 function normalizeAndDeclareParameters(
-  parameters: TypeFunctionParameterDescriptor[] | string[],
+  parameters: FunctionTypeParameterDescriptor[] | string[],
   flags?: TSSymbolFlags,
 ): DeclaredTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
   parameters: TypeParameterDescriptor[] | string[],
   flags?: TSSymbolFlags,
-): DeclaredTypeFunctionParameterDescriptor[];
+): DeclaredFunctionTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
   flags?: TSSymbolFlags,
@@ -136,7 +136,7 @@ function normalizeAndDeclareParameters(
 function normalizeAndDeclareParameters(
   parameters:
     | ParameterDescriptor[]
-    | TypeFunctionParameterDescriptor[]
+    | FunctionTypeParameterDescriptor[]
     | TypeParameterDescriptor[]
     | string[],
   flags: TSSymbolFlags = TSSymbolFlags.ParameterSymbol,
@@ -177,9 +177,9 @@ function normalizeAndDeclareParameters(
   }
 }
 
-export const FunctionTypeParameters = taggedComponent(
-  functionTypeParametersTag,
-  function TypeParameters(props: FunctionTypeParametersProps) {
+export const TypeParameters = taggedComponent(
+  typeParametersTag,
+  function TypeParameters(props: TypeParametersProps) {
     if (props.children) {
       return props.children;
     }

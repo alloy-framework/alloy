@@ -11,8 +11,8 @@ import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   FunctionParameters,
-  FunctionTypeParameters,
   getReturnType,
+  TypeParameters,
 } from "./FunctionBase.jsx";
 
 export interface ArrowFunctionProps extends CallSignatureProps {
@@ -50,7 +50,7 @@ export interface ArrowFunctionProps extends CallSignatureProps {
 export function ArrowFunction(props: ArrowFunctionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
+    findKeyedChild(children, TypeParameters.tag) ?? undefined;
   const parametersChildren =
     findKeyedChild(children, FunctionParameters.tag) ?? undefined;
   const bodyChildren = findKeyedChild(children, FunctionBody.tag) ?? undefined;
@@ -82,6 +82,6 @@ export function ArrowFunction(props: ArrowFunctionProps) {
   );
 }
 
-ArrowFunction.TypeParameters = FunctionTypeParameters;
+ArrowFunction.TypeParameters = TypeParameters;
 ArrowFunction.Parameters = FunctionParameters;
 ArrowFunction.Body = FunctionBody;

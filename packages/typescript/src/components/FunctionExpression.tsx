@@ -11,8 +11,8 @@ import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   FunctionParameters,
-  FunctionTypeParameters,
   getReturnType,
+  TypeParameters,
 } from "./FunctionBase.jsx";
 
 export interface FunctionExpressionProps extends CallSignatureProps {
@@ -49,7 +49,7 @@ export interface FunctionExpressionProps extends CallSignatureProps {
 export function FunctionExpression(props: FunctionExpressionProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
+    findKeyedChild(children, TypeParameters.tag) ?? undefined;
   const parametersChildren =
     findKeyedChild(children, FunctionParameters.tag) ?? undefined;
   const bodyChildren = findKeyedChild(children, FunctionBody.tag) ?? undefined;
@@ -81,6 +81,6 @@ export function FunctionExpression(props: FunctionExpressionProps) {
   );
 }
 
-FunctionExpression.TypeParameters = FunctionTypeParameters;
+FunctionExpression.TypeParameters = TypeParameters;
 FunctionExpression.Parameters = FunctionParameters;
 FunctionExpression.Body = FunctionBody;

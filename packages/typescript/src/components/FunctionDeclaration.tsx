@@ -14,8 +14,8 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import {
   FunctionBody,
   FunctionParameters,
-  FunctionTypeParameters,
   getReturnType,
+  TypeParameters,
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
@@ -46,7 +46,7 @@ export interface FunctionDeclarationProps
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
+    findKeyedChild(children, TypeParameters.tag) ?? undefined;
   const parametersChildren =
     findKeyedChild(children, FunctionParameters.tag) ?? undefined;
   const bodyChildren = findKeyedChild(children, FunctionBody.tag) ?? undefined;
@@ -86,6 +86,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   );
 }
 
-FunctionDeclaration.TypeParameters = FunctionTypeParameters;
+FunctionDeclaration.TypeParameters = TypeParameters;
 FunctionDeclaration.Parameters = FunctionParameters;
 FunctionDeclaration.Body = FunctionBody;

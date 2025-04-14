@@ -8,21 +8,19 @@ import {
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { Declaration } from "./Declaration.jsx";
 import {
   FunctionParameters,
   FunctionTypeParameters,
   getReturnType,
-  TypeFunctionParameters,
+  TypeParameters,
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 
-/** Define a TypeScript type function
- *
- * @example `(foo: string, bar: number) => void`
+/**
+ * Options for FunctionType component.
  */
-export interface TypeFunctionProps extends CallSignatureProps {
+export interface FunctionTypeProps extends CallSignatureProps {
   /** If the method is async */
   readonly async?: boolean;
   /** Documentation for this method. */
@@ -33,6 +31,10 @@ export interface TypeFunctionProps extends CallSignatureProps {
 /**
  * A TypeScript function declaration.
  *
+ * @example
+ * ```ts
+ * (foo: string, bar: number) => void
+ * ```
  * @remarks
  *
  * Providing parameters and type parameters can be accomplished in one of three
@@ -43,20 +45,19 @@ export interface TypeFunctionProps extends CallSignatureProps {
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link (TypeFunction:namespace).Parameters} or
- *    {@link (TypeFunction:namespace).TypeParameters} components.
+ *    {@link (FunctionType:namespace).Parameters} or
+ *    {@link (FunctionType:namespace).TypeParameters} components.
  */
-export function TypeFunction(props: TypeFunctionProps) {
+export function FunctionType(props: FunctionTypeProps) {
   const children = childrenArray(() => props.children);
   const typeParametersChildren =
-    findKeyedChild(children, FunctionTypeParameters.tag) ?? undefined;
+    findKeyedChild(children, TypeParameters.tag) ?? undefined;
   const parametersChildren =
     findKeyedChild(children, FunctionParameters.tag) ?? undefined;
   const returnType = getReturnType(props.returnType ?? "void", {
     async: props.async,
   });
 
-  const asyncKwd = props.async ? "async " : "";
   const callSignatureProps = getCallSignatureProps(props, {
     parametersChildren,
     typeParametersChildren,
@@ -73,17 +74,14 @@ export function TypeFunction(props: TypeFunctionProps) {
         </JSDoc>
         <hbr />
       </Show>
-      <Declaration {...props} nameKind="function">
-        {asyncKwd}
-        <Scope kind="function">
-          <CallSignature {...callSignatureProps} returnType={null} />
-          {" => "}
-          {returnType}
-        </Scope>
-      </Declaration>
+      <Scope kind="function">
+        <CallSignature {...callSignatureProps} returnType={null} />
+        {" => "}
+        {returnType}
+      </Scope>
     </>
   );
 }
 
-TypeFunction.TypeParameters = FunctionTypeParameters;
-TypeFunction.Parameters = TypeFunctionParameters;
+FunctionType.TypeParameters = TypeParameters;
+FunctionType.Parameters = FunctionTypeParameters;

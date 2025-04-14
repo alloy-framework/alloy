@@ -5,4 +5,4 @@ packages:
   - "@alloy-js/typescript"
 ---
 
-Add `<InterfaceMethod />` and `<TypeFunction />` component
+Add `<InterfaceMethod />` and `<FunctionType />` component

@@ -28,13 +28,28 @@ export interface FunctionBodyProps {
   readonly children?: Children;
 }
 
+/** Props for function parameters */
 export interface FunctionParametersProps {
+  /** Parameters */
   readonly parameters?: ParameterDescriptor[] | string[];
+  /** Jsx Children */
   readonly children?: Children;
 }
+
+/** Props for a function type(FunctionType or InterfaceMethod) */
 export interface FunctionTypeParametersProps {
+  /** Parameters */
   readonly parameters?: ParameterDescriptor[] | string[];
+  /** Jsx Children */
   readonly children?: Children;
+}
+
+/** Props for type parameters */
+export interface TypeParametersProps {
+  /** Parameters */
+  parameters?: TypeParameterDescriptor[] | string[];
+  /** Jsx Children */
+  children?: Children;
 }
 
 export const FunctionBody = taggedComponent(
@@ -44,11 +59,14 @@ export const FunctionBody = taggedComponent(
   },
 );
 
-export interface TypeParametersProps {
-  parameters?: TypeParameterDescriptor[] | string[];
-  children?: Children;
-}
-
+/**
+ * Represent function parameters(FunctionDeclaration, FunctionExpression, ArrowFunction, etc.)
+ *
+ * @example
+ * ```ts
+ * a: string, b: string = "abc", c?: string,
+ * ```
+ */
 export const FunctionParameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionParametersProps) {
@@ -70,6 +88,15 @@ export const FunctionParameters = taggedComponent(
   },
 );
 
+/**
+ * Represent parameters for a function type(FunctionType or InterfaceMethod)
+ * This differ from {@link FunctionParameters} in that it doesn't allow default values.
+ *
+ * @example
+ * ```ts
+ * a: string, b?: string
+ * ```
+ */
 export const FunctionTypeParameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionTypeParametersProps) {
@@ -177,6 +204,14 @@ function normalizeAndDeclareParameters(
   }
 }
 
+/**
+ * Represent type parameters
+ *
+ * @example
+ * ```ts
+ * <A, B extends string>
+ * ```
+ */
 export const TypeParameters = taggedComponent(
   typeParametersTag,
   function TypeParameters(props: TypeParametersProps) {

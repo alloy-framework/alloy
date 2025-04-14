@@ -20,6 +20,7 @@ import {
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 
+/** Props for {@link InterfaceMethod} component */
 export interface InterfaceMethodProps extends CallSignatureProps {
   /** Interface member name */
   readonly name: string;
@@ -27,7 +28,9 @@ export interface InterfaceMethodProps extends CallSignatureProps {
   readonly async?: boolean;
   /** Documentation for this method. */
   readonly doc?: Children;
+  /** Jsx content */
   readonly children?: Children;
+  /** Ref key for the member declaration */
   readonly refkey?: Refkey | Refkey[];
 }
 

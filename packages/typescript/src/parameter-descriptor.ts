@@ -1,44 +1,55 @@
 import { Children, Refkey } from "@alloy-js/core";
 
 /**
- * Information for a TypeScript function parameter.
+ * Common properties for ParameterDescriptor and FunctionTypeParameterDescriptor.
  */
-export interface ParameterDescriptor {
+export interface ParameterDescriptorBase {
   /**
    * The name of the parameter.
    */
-  name: string;
+  readonly name: string;
 
   /**
    * The type of the parameter.
    */
-  type?: Children;
-
-  /**
-   * The default value of the parameter.
-   */
-  default?: Children;
+  readonly type?: Children;
 
   /**
    * The refkey for this parameter.
    */
-  refkey?: Refkey | Refkey[];
+  readonly refkey?: Refkey | Refkey[];
 
   /**
    * Whether the parameter is optional.
    */
-  optional?: boolean;
+  readonly optional?: boolean;
 
   /**
    * Arbitrary metadata for the parameter symbol.
    */
-  metadata?: Record<string, unknown>;
+  readonly metadata?: Record<string, unknown>;
 
   /**
    * Documentation for the parameter.
    */
-  doc?: Children;
+  readonly doc?: Children;
 }
+
+/**
+ * Information for a TypeScript function parameter.
+ */
+export interface ParameterDescriptor extends ParameterDescriptorBase {
+  /**
+   * The default value of the parameter.
+   */
+  readonly default?: Children;
+}
+
+/**
+ * Information for a TypeScript type function parameter.
+ */
+export interface FunctionTypeParameterDescriptor
+  extends ParameterDescriptorBase {}
 
 /**
  * Information for a TypeScript generic type parameter.
@@ -47,25 +58,25 @@ export interface TypeParameterDescriptor {
   /**
    * The name of the type parameter.
    */
-  name: string;
+  readonly name: string;
 
   /**
    * The extends constraint for the type parameter.
    */
-  extends?: Children;
+  readonly extends?: Children;
 
   /**
    * The default type of the type parameter.
    */
-  default?: Children;
+  readonly default?: Children;
 
   /**
    * A refkey or array of refkeys for this type parameter.
    */
-  refkey?: Refkey | Refkey[];
+  readonly refkey?: Refkey | Refkey[];
 
   /**
    * Arbitrary metadata for the type parameter symbol.
    */
-  metadata?: Record<string, unknown>;
+  readonly metadata?: Record<string, unknown>;
 }

@@ -9,7 +9,10 @@ import {
 } from "@alloy-js/core";
 import type { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
-import type { ParameterDescriptor } from "../parameter-descriptor.js";
+import type {
+  FunctionTypeParameterDescriptor,
+  ParameterDescriptor,
+} from "../parameter-descriptor.js";
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
 import {
   createTSSymbol,
@@ -18,15 +21,34 @@ import {
 } from "../symbols/index.js";
 
 const functionParametersTag = Symbol();
-const functionTypeParametersTag = Symbol();
+const typeParametersTag = Symbol();
 const functionBodyTag = Symbol();
 
 export interface FunctionBodyProps {
-  children?: Children;
+  readonly children?: Children;
 }
 
+/** Props for function parameters */
 export interface FunctionParametersProps {
-  parameters?: ParameterDescriptor[] | string[];
+  /** Parameters */
+  readonly parameters?: ParameterDescriptor[] | string[];
+  /** Jsx Children */
+  readonly children?: Children;
+}
+
+/** Props for a function type(FunctionType or InterfaceMethod) */
+export interface FunctionTypeParametersProps {
+  /** Parameters */
+  readonly parameters?: ParameterDescriptor[] | string[];
+  /** Jsx Children */
+  readonly children?: Children;
+}
+
+/** Props for type parameters */
+export interface TypeParametersProps {
+  /** Parameters */
+  parameters?: TypeParameterDescriptor[] | string[];
+  /** Jsx Children */
   children?: Children;
 }
 
@@ -37,14 +59,47 @@ export const FunctionBody = taggedComponent(
   },
 );
 
-export interface FunctionTypeParametersProps {
-  parameters?: ParameterDescriptor[] | string[];
-  children?: Children;
-}
-
+/**
+ * Represent function parameters(FunctionDeclaration, FunctionExpression, ArrowFunction, etc.)
+ *
+ * @example
+ * ```ts
+ * a: string, b: string = "abc", c?: string,
+ * ```
+ */
 export const FunctionParameters = taggedComponent(
   functionParametersTag,
   function Parameters(props: FunctionParametersProps) {
+    if (props.children) {
+      return props.children;
+    }
+
+    const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    return (
+      <group>
+        <Indent softline trailingBreak>
+          <For each={parameters} comma line>
+            {(param) => parameter(param)}
+          </For>
+          <ifBreak>,</ifBreak>
+        </Indent>
+      </group>
+    );
+  },
+);
+
+/**
+ * Represent parameters for a function type(FunctionType or InterfaceMethod)
+ * This differ from {@link FunctionParameters} in that it doesn't allow default values.
+ *
+ * @example
+ * ```ts
+ * a: string, b?: string
+ * ```
+ */
+export const FunctionTypeParameters = taggedComponent(
+  functionParametersTag,
+  function Parameters(props: FunctionTypeParametersProps) {
     if (props.children) {
       return props.children;
     }
@@ -79,15 +134,24 @@ interface DeclaredParameterDescriptor
   extends Omit<ParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
 }
+interface DeclaredFunctionTypeParameterDescriptor
+  extends Omit<FunctionTypeParameterDescriptor, "name"> {
+  symbol: TSOutputSymbol;
+}
 
 interface DeclaredTypeParameterDescriptor
   extends Omit<TypeParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
 }
+
+function normalizeAndDeclareParameters(
+  parameters: FunctionTypeParameterDescriptor[] | string[],
+  flags?: TSSymbolFlags,
+): DeclaredTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
   parameters: TypeParameterDescriptor[] | string[],
   flags?: TSSymbolFlags,
-): DeclaredTypeParameterDescriptor[];
+): DeclaredFunctionTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
   flags?: TSSymbolFlags,
@@ -97,7 +161,11 @@ function normalizeAndDeclareParameters(
   flags?: TSSymbolFlags,
 ): DeclaredParameterDescriptor[] | DeclaredTypeParameterDescriptor[];
 function normalizeAndDeclareParameters(
-  parameters: ParameterDescriptor[] | TypeParameterDescriptor[] | string[],
+  parameters:
+    | ParameterDescriptor[]
+    | FunctionTypeParameterDescriptor[]
+    | TypeParameterDescriptor[]
+    | string[],
   flags: TSSymbolFlags = TSSymbolFlags.ParameterSymbol,
 ): DeclaredParameterDescriptor[] | DeclaredTypeParameterDescriptor[] {
   const namePolicy = useTSNamePolicy();
@@ -136,9 +204,17 @@ function normalizeAndDeclareParameters(
   }
 }
 
-export const FunctionTypeParameters = taggedComponent(
-  functionTypeParametersTag,
-  function TypeParameters(props: FunctionTypeParametersProps) {
+/**
+ * Represent type parameters
+ *
+ * @example
+ * ```ts
+ * <A, B extends string>
+ * ```
+ */
+export const TypeParameters = taggedComponent(
+  typeParametersTag,
+  function TypeParameters(props: TypeParametersProps) {
     if (props.children) {
       return props.children;
     }

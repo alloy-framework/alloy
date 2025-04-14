@@ -18,9 +18,11 @@ export {
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./FunctionExpression.js";
+export * from "./FunctionType.jsx";
 export * from "./IfStatement.jsx";
 export * from "./ImportStatement.js";
 export * from "./Interface.js";
+export * from "./InterfaceMethod.jsx";
 export * from "./JSDoc.jsx";
 export * from "./JSDocComment.jsx";
 export * from "./JSDocExample.jsx";

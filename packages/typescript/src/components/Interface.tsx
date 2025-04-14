@@ -35,16 +35,6 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const extendsPart = props.extends ? <> extends {props.extends}</> : "";
   const flags = OutputSymbolFlags.StaticMemberContainer;
-  const namePolicy = useTSNamePolicy();
-  const sym = createTSSymbol({
-    name: namePolicy.getName(props.name!, "interface"),
-    refkey: props.refkey,
-    export: props.export,
-    default: props.default,
-    flags,
-    tsFlags: TSSymbolFlags.TypeSymbol,
-    metadata: props.metadata,
-  });
 
   return (
     <>
@@ -52,7 +42,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <Declaration {...props} symbol={sym}>
+      <Declaration {...props} nameKind="interface" flags={flags} kind="type">
         interface <Name />
         {extendsPart}{" "}
         <InterfaceExpression>{props.children}</InterfaceExpression>

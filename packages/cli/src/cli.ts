@@ -78,8 +78,7 @@ function watchMain() {
 
   const origPostProgramCreate = host.afterProgramCreate;
   host.afterProgramCreate = async (program) => {
-    // eslint-disable-next-line no-console
-    console.clear();
+    ts.sys.clearScreen?.();
     try {
       await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
     } catch (e) {

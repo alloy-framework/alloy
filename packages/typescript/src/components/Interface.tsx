@@ -1,16 +1,20 @@
 import {
   Block,
   Children,
-  MemberDeclaration,
+  MemberScope,
   Name,
   OutputSymbolFlags,
   Refkey,
   Show,
+  useMemberDeclaration,
+  useMemberScope,
+  Wrap,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
+import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
@@ -36,7 +40,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <Declaration {...props} nameKind="interface" flags={flags}>
+      <Declaration {...props} nameKind="interface" flags={flags} kind="type">
         interface <Name />
         {extendsPart}{" "}
         <InterfaceExpression>{props.children}</InterfaceExpression>
@@ -50,7 +54,22 @@ export interface InterfaceExpressionProps {
 }
 
 export function InterfaceExpression(props: InterfaceExpressionProps) {
-  return <Block>{props.children}</Block>;
+  const parentMemberSym = useMemberDeclaration();
+
+  if (parentMemberSym) {
+    parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
+  }
+  return (
+    <group>
+      <Wrap
+        when={!!parentMemberSym}
+        with={MemberScope}
+        props={{ owner: parentMemberSym! }}
+      >
+        <Block>{props.children}</Block>
+      </Wrap>
+    </group>
+  );
 }
 
 export interface InterfaceMemberProps {
@@ -87,9 +106,18 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   } else {
     const namer = useTSNamePolicy();
     const name = namer.getName(props.name!, "interface-member");
-    if (props.refkey) {
+    const memberScope = useMemberScope();
+
+    if (memberScope) {
       return (
-        <MemberDeclaration static name={name} refkey={props.refkey}>
+        <MemberDeclaration
+          static
+          exactName={name}
+          kind="type"
+          nameKind="interface-member"
+          flags={OutputSymbolFlags.StaticMember}
+          refkey={props.refkey}
+        >
           <Show when={Boolean(props.doc)}>
             <JSDoc children={props.doc} />
             <hbr />

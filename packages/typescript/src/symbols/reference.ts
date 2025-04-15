@@ -134,7 +134,10 @@ function buildMemberExpression(path: TSOutputSymbol[]) {
   for (const sym of path) {
     if (sym.tsFlags & TSSymbolFlags.PrivateMember) {
       memberExpr += `.#${sym.name}`;
-    } else if (isValidJSIdentifier(sym.name)) {
+    } else if (
+      isValidJSIdentifier(sym.name) &&
+      !(sym.tsFlags & TSSymbolFlags.TypeSymbol)
+    ) {
       memberExpr += `.${sym.name}`;
     } else {
       memberExpr += `[${JSON.stringify(sym.name)}]`;

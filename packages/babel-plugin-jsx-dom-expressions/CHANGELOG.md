@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-plugin-jsx-dom-expressions
 
+## 0.39.0
+
+### Features
+
+- [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
+
+
 
 
 ## 0.38.0

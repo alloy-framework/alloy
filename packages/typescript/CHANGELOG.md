@@ -1,5 +1,20 @@
 # Changelog - @alloy-js/typescript
 
+## 0.11.0
+
+### Bug Fixes
+
+- [#92](https://github.com/alloy-framework/alloy/pull/92) Missing export of `IfStatement`, `ElseIfClause` and `ElseClause`
+- [#112](https://github.com/alloy-framework/alloy/pull/112) Fix interface member references
+
+### Features
+
+- [#112](https://github.com/alloy-framework/alloy/pull/112) Add new `<MemberDeclaration />` component. A wrapper around alloy `<MemberDeclaration />` with typespec specific props.
+- [#91](https://github.com/alloy-framework/alloy/pull/91) Add new `<FunctionExpression />` and `<ArrowFunctionExpression />` components supporting the various formm of function expressions
+- [#110](https://github.com/alloy-framework/alloy/pull/110) Add `<InterfaceMethod />` and `<FunctionType />` component
+- [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
+
+
 ## 0.10.0
 
 ### Bug Fixes

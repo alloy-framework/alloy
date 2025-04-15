@@ -1,7 +1,6 @@
 import {
   Block,
   Children,
-  MemberDeclaration,
   MemberScope,
   Name,
   OutputSymbolFlags,
@@ -15,8 +14,7 @@ import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
-import { TSOutputScope } from "../symbols/scopes.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
@@ -111,15 +109,15 @@ export function InterfaceMember(props: InterfaceMemberProps) {
     const memberScope = useMemberScope();
 
     if (memberScope) {
-      const sym = createTSSymbol({
-        name,
-        scope: memberScope.staticMembers as TSOutputScope,
-        refkey: props.refkey,
-        flags: OutputSymbolFlags.StaticMember,
-        tsFlags: TSSymbolFlags.TypeSymbol,
-      });
       return (
-        <MemberDeclaration static symbol={sym} refkey={props.refkey}>
+        <MemberDeclaration
+          static
+          exactName={name}
+          kind="type"
+          nameKind="interface-member"
+          flags={OutputSymbolFlags.StaticMember}
+          refkey={props.refkey}
+        >
           <Show when={Boolean(props.doc)}>
             <JSDoc children={props.doc} />
             <hbr />

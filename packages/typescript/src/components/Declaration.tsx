@@ -109,7 +109,7 @@ export function Declaration(props: DeclarationProps) {
 
     let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
     if (props.kind && props.kind === "type") {
-      tsFlags &= TSSymbolFlags.TypeSymbol;
+      tsFlags |= TSSymbolFlags.TypeSymbol;
     }
 
     sym = createTSSymbol({

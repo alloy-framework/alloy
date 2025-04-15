@@ -9,7 +9,7 @@
 
 ### Features
 
-- [#112](https://github.com/alloy-framework/alloy/pull/112) Add new `<MemberDeclaration />` component. A wrapper around alloy `<MemberDeclaration />` with typespec specific props.
+- [#112](https://github.com/alloy-framework/alloy/pull/112) Add new `<MemberDeclaration />` component. A wrapper around alloy `<MemberDeclaration />` with TypeScript specific props.
 - [#91](https://github.com/alloy-framework/alloy/pull/91) Add new `<FunctionExpression />` and `<ArrowFunctionExpression />` components supporting the various formm of function expressions
 - [#110](https://github.com/alloy-framework/alloy/pull/110) Add `<InterfaceMethod />` and `<FunctionType />` component
 - [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies

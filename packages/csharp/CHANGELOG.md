@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.11.0
+
+### Features
+
+- [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
+
+
 ## 0.10.0
 
 No changes, version bump only.

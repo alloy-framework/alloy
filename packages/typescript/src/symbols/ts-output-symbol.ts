@@ -16,6 +16,7 @@ export enum TSSymbolFlags {
   ParameterSymbol        = 1 << 2,
   PrivateMember          = 1 << 3,
   PrivateMemberContainer = 1 << 4,
+  Nullish = 1 << 5,
 }
 
 export interface TSOutputSymbol extends OutputSymbol {
@@ -77,4 +78,8 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
   }
 
   return sym;
+}
+
+export function isNullish(sym: OutputSymbol): boolean {
+  return !!((sym as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish);
 }

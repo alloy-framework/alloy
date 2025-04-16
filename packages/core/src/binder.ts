@@ -623,33 +623,72 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
-    if (~source.flags & OutputSymbolFlags.InstanceMemberContainer) {
-      throw new Error("Can only instantiate symbols with instance members");
-    }
-
+    // Ensure both member scopes exist on the target
     addInstanceMembersToSymbol(target);
+    addStaticMembersToSymbol(target);
 
     effect(() => {
-      // rerun when instance member scope changes
-      for (const sym of source.instanceMemberScope!.symbols) {
-        // but don't want to track anything else
-        untrack(() => {
-          // we don't want to trigger this effect when the symbols
-          // we're instantiating into has changed
+      // copy instance members if it's an instance‐container
+      if (source.flags & OutputSymbolFlags.InstanceMemberContainer) {
+        copyMembers(
+          source.instanceMemberScope!.symbols,
+          target,
+          target.instanceMemberScope!,
+        );
+      }
 
-          if (target.instanceMemberScope!.symbols.has(sym)) {
-            return;
-          }
-
-          createSymbol({
-            name: sym.name,
-            scope: target.instanceMemberScope!,
-            refkey: [refkey(target.refkeys[0], sym.refkeys[0])],
-            flags: sym.flags | OutputSymbolFlags.InstanceMember,
-          });
-        });
+      // copy static members if it's a static‐container
+      if (source.flags & OutputSymbolFlags.StaticMemberContainer) {
+        copyMembers(
+          source.staticMemberScope!.symbols,
+          target,
+          target.staticMemberScope!,
+        );
       }
     });
+
+    /**
+     * Recursively copy `symbols` from `sourceSym` into `intoScope` of `targetSym`.
+     * Always marks each instantiation as StaticMember so lookups use dot notation (e.g. Parent.child)
+     * and preserves any StaticMemberContainer flag to auto create newSym.staticMemberScope.
+     */
+    function copyMembers(
+      symbols: Set<OutputSymbol>,
+      targetSym: OutputSymbol,
+      intoScope: OutputScope,
+    ) {
+      for (const srcSym of symbols) {
+        // skip if we've already instantiated this one
+        const wantKey = refkey(targetSym.refkeys[0], srcSym.refkeys[0]);
+        if (intoScope.symbolsByRefkey.has(wantKey)) {
+          continue;
+        }
+
+        // create the new symbol. Preserve StaticMemberContainer if present
+        const newSym = createSymbol({
+          name: srcSym.name,
+          scope: intoScope,
+          refkey: wantKey,
+          flags: srcSym.flags | OutputSymbolFlags.StaticMember,
+        });
+
+        // if the source symbol itself was a container of static members,
+        // recurse into the newSym.staticMemberScope that createSymbol just gave us
+        if (
+          srcSym.staticMemberScope &&
+          srcSym.staticMemberScope.symbols.size > 0
+        ) {
+          // ensure we have that scope
+          addStaticMembersToSymbol(newSym);
+
+          copyMembers(
+            srcSym.staticMemberScope.symbols,
+            newSym,
+            newSym.staticMemberScope!,
+          );
+        }
+      }
+    }
   }
 
   function addStaticMembersToSymbol(symbol: OutputSymbol) {

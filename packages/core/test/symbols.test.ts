@@ -301,8 +301,25 @@ describe("instance members", () => {
 });
 
 describe("instantiating members", () => {
-  it("instantiates static symbols", () => {
+  it("instantiates instance members", () => {
     const binder = createOutputBinder();
+
+    /**
+     * The following structure would match code like this:
+     * ```ts
+     * // A class with instance members
+     * class Source {
+     *   instance() {
+     *     print("instance");
+     *   }
+     * }
+     *
+     * // Instantiates into t
+     * var t = new Source();
+     *
+     * t.instance();
+     * ```
+     */
     const {
       symbols: { rootSymbol, instance, instantiation },
     } = createScopeTree(binder, {
@@ -312,7 +329,7 @@ describe("instantiating members", () => {
             flags: OutputSymbolFlags.InstanceMemberContainer,
             instanceMembers: {
               instance: {
-                flags: OutputSymbolFlags.StaticMember,
+                flags: OutputSymbolFlags.InstanceMember,
               },
             },
           },
@@ -335,8 +352,9 @@ describe("instantiating members", () => {
     ).toBeDefined();
   });
 
-  it("instantiates static symbols that are added after the instantiation", () => {
+  it("instantiates instance members added after the instantiation", () => {
     const binder = createOutputBinder();
+
     const {
       symbols: { rootSymbol, instance, instantiation },
     } = createScopeTree(binder, {
@@ -346,7 +364,7 @@ describe("instantiating members", () => {
             flags: OutputSymbolFlags.InstanceMemberContainer,
             instanceMembers: {
               instance: {
-                flags: OutputSymbolFlags.StaticMember,
+                flags: OutputSymbolFlags.InstanceMember,
               },
             },
           },
@@ -384,6 +402,271 @@ describe("instantiating members", () => {
     expect(
       instantiation.instanceMemberScope!.symbolsByRefkey.get(newExpectedRefkey),
     ).toBeDefined();
+  });
+
+  it("instantiates static symbols for a static container source", () => {
+    const binder = createOutputBinder();
+
+    /**
+     * The following structure would match code like this:
+     * ```ts
+     * // A class with instance members
+     * class Source {
+     *   static child() {
+     *     print("child");
+     *   }
+     * }
+     *
+     *
+     * var printChild = Source.child;
+     *
+     * printChild();
+     * ```
+     */
+    const {
+      symbols: { source, child, target },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags: OutputSymbolFlags.StaticMemberContainer,
+            staticMembers: {
+              child: { flags: OutputSymbolFlags.StaticMember },
+            },
+          },
+          target: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(source, target);
+
+    // target must now be a StaticMemberContainer too
+    expect(target.flags & OutputSymbolFlags.StaticMemberContainer).toBeTruthy();
+    expect(target.staticMemberScope).toBeDefined();
+
+    const expectedKey = refkey(target.refkeys[0], child.refkeys[0]);
+    expect(
+      target.staticMemberScope!.symbolsByRefkey.get(expectedKey),
+    ).toBeDefined();
+  });
+
+  it("instantiates static symbols added after instantiation", () => {
+    const binder = createOutputBinder();
+    const lateKey = refkey();
+
+    const {
+      symbols: { source, target },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags: OutputSymbolFlags.StaticMemberContainer,
+          },
+          target: {},
+        },
+      },
+    });
+
+    // hook up instantiation
+    binder.instantiateSymbolInto(source, target);
+
+    // now add a brand‐new static member to source
+    const late = binder.createSymbol({
+      name: "lateChild",
+      scope: source.staticMemberScope!,
+      refkey: lateKey,
+      flags: OutputSymbolFlags.StaticMember,
+    });
+
+    // it should *automatically* show up on target.staticMemberScope
+    const expectedKey = refkey(target.refkeys[0], late.refkeys[0]);
+    expect(
+      target.staticMemberScope!.symbolsByRefkey.get(expectedKey),
+    ).toBeDefined();
+  });
+
+  it("recursively instantiates nested static members", () => {
+    const binder = createOutputBinder();
+
+    /**
+     * The following structure would match code like this:
+     * ```ts
+     *   class Source {
+     *     static Level1 = class {
+     *       static level2() { print("deep"); }
+     *     }
+     *   }
+     *
+     *   var target = Source;
+     *
+     *   target.Level1.level2()
+     * ```
+     */
+    const {
+      symbols: { source, level1, level2, target },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags: OutputSymbolFlags.StaticMemberContainer,
+            staticMembers: {
+              level1: {
+                flags:
+                  OutputSymbolFlags.StaticMember |
+                  OutputSymbolFlags.StaticMemberContainer,
+                staticMembers: {
+                  level2: { flags: OutputSymbolFlags.StaticMember },
+                },
+              },
+            },
+          },
+          target: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(source, target);
+
+    // level1 should appear under target.staticMemberScope
+    const key1 = refkey(target.refkeys[0], level1.refkeys[0]);
+    const instantiated1 = target.staticMemberScope!.symbolsByRefkey.get(key1)!;
+    expect(instantiated1.name).toBe(level1.name);
+
+    // and level2 should appear under the *child* staticMemberScope of that instantiated level1
+    const childScope = instantiated1.staticMemberScope!;
+    const key2 = refkey(instantiated1.refkeys[0], level2.refkeys[0]);
+    expect(childScope.symbolsByRefkey.get(key2)).toBeDefined();
+  });
+
+  it("copies both instance *and* static members when source has both flags", () => {
+    const binder = createOutputBinder();
+
+    /**
+     * ```ts
+     *   class Source {
+     *     instance() { print("inst"); }
+     *     static s1()  { print("static"); }
+     *   }
+     *
+     *   let t = new Source()
+     *   t.instance()
+     *   t.s1()
+     * ```
+     */
+    const {
+      symbols: { source, inst },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags:
+              OutputSymbolFlags.InstanceMemberContainer |
+              OutputSymbolFlags.StaticMemberContainer,
+            instanceMembers: {
+              i1: { flags: OutputSymbolFlags.InstanceMember },
+            },
+            staticMembers: {
+              s1: { flags: OutputSymbolFlags.StaticMember },
+            },
+          },
+          inst: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(source, inst);
+
+    expect(inst.instanceMemberScope).toBeDefined();
+    expect(
+      [...inst.instanceMemberScope!.symbols].some((s) => s.name === "i1"),
+    ).toBe(true);
+
+    // static side
+    const symbols = [...source.staticMemberScope!.symbols];
+    expect(inst.staticMemberScope).toBeDefined();
+    const sKey = refkey(inst.refkeys[0], symbols[0].refkeys[0]);
+    expect(inst.staticMemberScope!.symbolsByRefkey.has(sKey)).toBe(true);
+  });
+
+  it("is idempotent, calling twice does not duplicate", () => {
+    const binder = createOutputBinder();
+    const {
+      symbols: { source, target },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags: OutputSymbolFlags.StaticMemberContainer,
+            staticMembers: {
+              a: { flags: OutputSymbolFlags.StaticMember },
+            },
+          },
+          target: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(source, target);
+    const initialCount = target.staticMemberScope!.symbols.size;
+    binder.instantiateSymbolInto(source, target);
+    expect(target.staticMemberScope!.symbols.size).toBe(initialCount);
+  });
+
+  it("instantiates static children of instance members under the instance scope", () => {
+    const binder = createOutputBinder();
+    /**
+     * ```ts
+     *    class Source {
+     *     instM = class {
+     *       static deep() { print("deep"); }
+     *     }
+     *    }
+     *
+     *   var t = new Source();
+     *   t.instM.deep();
+     * ```
+     */
+    const {
+      symbols: { source, deep, target },
+    } = createScopeTree(binder, {
+      root: {
+        symbols: {
+          source: {
+            flags: OutputSymbolFlags.InstanceMemberContainer,
+            instanceMembers: {
+              instM: {
+                flags:
+                  OutputSymbolFlags.InstanceMember |
+                  OutputSymbolFlags.StaticMemberContainer,
+                staticMembers: {
+                  deep: { flags: OutputSymbolFlags.StaticMember },
+                },
+              },
+            },
+          },
+          target: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(source, target);
+
+    // Find the instantiated copy of instM under target.instanceMemberScope
+    const instMSym = [...target.instanceMemberScope!.symbols].find(
+      (s) => s.name === "instM",
+    )!;
+
+    // instMSym should have gotten its own staticMemberScope via the StaticMemberContainer flag
+    expect(instMSym.staticMemberScope).toBeDefined();
+
+    // compute the expected key for the deep child:
+    //    (<target>, <instM>)  then (on that)  (<deep original>)
+    const expectedDeepKey = refkey(instMSym.refkeys[0], deep.refkeys[0]);
+
+    expect(
+      instMSym.staticMemberScope!.symbolsByRefkey.has(expectedDeepKey),
+    ).toBe(true);
   });
 });
 

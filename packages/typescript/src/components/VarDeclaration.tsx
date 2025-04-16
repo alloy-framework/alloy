@@ -7,7 +7,7 @@ import {
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol } from "../symbols/index.js";
+import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
@@ -18,6 +18,7 @@ export interface VarDeclarationProps extends BaseDeclarationProps {
   var?: boolean;
   initializer?: Children;
   type?: Children;
+  nullish?: boolean;
 }
 
 export function VarDeclaration(props: VarDeclarationProps) {
@@ -34,6 +35,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
     default: props.default,
     export: props.export,
     metadata: props.metadata,
+    tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
   });
 
   const assignmentContext = createAssignmentContext(sym);

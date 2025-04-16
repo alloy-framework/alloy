@@ -121,6 +121,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
           kind="type"
           nameKind="interface-member"
           flags={OutputSymbolFlags.StaticMember}
+          nullish={props.optional}
           refkey={props.refkey}
         >
           <Show when={Boolean(props.doc)}>

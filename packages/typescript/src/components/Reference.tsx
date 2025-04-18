@@ -13,7 +13,7 @@ export interface ReferenceProps {
   type?: boolean;
 }
 
-export function Reference({ refkey, type }: Readonly<ReferenceProps>) {
+export function Reference({ refkey, type }: ReferenceProps) {
   const reference = ref(refkey, { type });
 
   return <>{reference}</>;

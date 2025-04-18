@@ -67,7 +67,7 @@ export interface ImportStatementProps {
   symbols: Set<ImportedSymbol>;
 }
 
-export function ImportStatement(props: Readonly<ImportStatementProps>) {
+export function ImportStatement(props: ImportStatementProps) {
   return memo(() => {
     let defaultImportSymbol: ImportedSymbol | undefined = undefined;
     const namedImportSymbols: ImportedSymbol[] = [];

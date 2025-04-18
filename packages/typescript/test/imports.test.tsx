@@ -386,7 +386,7 @@ describe("type imports", () => {
     });
   });
   it("reference same type multiple times", () => {
-    const { component, TypeA, ClassA } = mkTestFile("test1.ts");
+    const { component, TypeA } = mkTestFile("test1.ts");
     const res = render(
       <Output>
         {component}

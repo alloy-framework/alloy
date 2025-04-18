@@ -6,13 +6,15 @@ export interface ReferenceProps {
 
   /**
    * Whether this is a reference to a type.
+   *
+   * @remarks
    * This affect things like import where `type` keyword might be used.
    */
   type?: boolean;
 }
 
 export function Reference({ refkey, type }: Readonly<ReferenceProps>) {
-  const reference = ref(refkey, type);
+  const reference = ref(refkey, { type });
 
   return <>{reference}</>;
 }

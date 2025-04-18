@@ -11,6 +11,10 @@ export interface ImportedSymbol {
 }
 export type ImportRecords = Map<TSModuleScope, Set<ImportedSymbol>>;
 
+export interface AddImportOptions {
+  type?: boolean;
+}
+
 export interface TSModuleScope extends OutputScope {
   kind: "module";
   exportedSymbols: Map<Refkey, TSOutputSymbol>;
@@ -22,7 +26,7 @@ export interface TSModuleScope extends OutputScope {
   addImport(
     symbol: TSOutputSymbol,
     module: TSModuleScope,
-    type?: boolean,
+    options?: AddImportOptions,
   ): TSOutputSymbol;
 }
 
@@ -38,10 +42,10 @@ export function createTSModuleScope(
     exportedSymbols: new Map(),
     importedSymbols: new Map(),
     importedModules: new Map(),
-    addImport(this: TSModuleScope, targetSymbol, targetModule, type) {
+    addImport(this: TSModuleScope, targetSymbol, targetModule, options) {
       const existing = this.importedSymbols.get(targetSymbol);
       if (existing) {
-        if (!type && existing.tsFlags & TSSymbolFlags.TypeSymbol) {
+        if (!options?.type && existing.tsFlags & TSSymbolFlags.TypeSymbol) {
           existing.tsFlags &= ~TSSymbolFlags.TypeSymbol;
         }
         return existing;
@@ -62,7 +66,7 @@ export function createTSModuleScope(
         refkey: refkey({}),
         tsFlags: TSSymbolFlags.LocalImportSymbol,
       });
-      if (type) {
+      if (options?.type) {
         localSymbol.tsFlags |= TSSymbolFlags.TypeSymbol;
       }
 

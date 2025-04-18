@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/typescript
 
+## 0.12.0
+
+### Bug Fixes
+
+- [#121](https://github.com/alloy-framework/alloy/pull/121) JS Doc comment close with `*/` instead of `**/`
+
+### Features
+
+- [#124](https://github.com/alloy-framework/alloy/pull/124) Add `type` prop on `Reference` component to mark this reference as a type only reference allowing imports to be specialized in type import
+
+
 ## 0.11.0
 
 ### Bug Fixes

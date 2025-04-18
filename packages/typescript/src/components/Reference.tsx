@@ -5,7 +5,7 @@ export interface ReferenceProps {
   refkey: Refkey;
 
   /**
-   * If the reference is a type.
+   * Whether this is a reference to a type.
    * This affect things like import where `type` keyword might be used.
    */
   type?: boolean;

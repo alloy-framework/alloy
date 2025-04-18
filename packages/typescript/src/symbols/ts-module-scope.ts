@@ -19,7 +19,11 @@ export interface TSModuleScope extends OutputScope {
    */
   importedSymbols: Map<TSOutputSymbol, TSOutputSymbol>;
   importedModules: ImportRecords;
-  addImport(symbol: TSOutputSymbol, module: TSModuleScope): TSOutputSymbol;
+  addImport(
+    symbol: TSOutputSymbol,
+    module: TSModuleScope,
+    type?: boolean,
+  ): TSOutputSymbol;
 }
 
 export function createTSModuleScope(
@@ -34,9 +38,13 @@ export function createTSModuleScope(
     exportedSymbols: new Map(),
     importedSymbols: new Map(),
     importedModules: new Map(),
-    addImport(this: TSModuleScope, targetSymbol, targetModule) {
-      if (this.importedSymbols.has(targetSymbol)) {
-        return this.importedSymbols.get(targetSymbol)!;
+    addImport(this: TSModuleScope, targetSymbol, targetModule, type) {
+      const existing = this.importedSymbols.get(targetSymbol);
+      if (existing) {
+        if (!type && existing.tsFlags & TSSymbolFlags.TypeSymbol) {
+          existing.tsFlags &= ~TSSymbolFlags.TypeSymbol;
+        }
+        return existing;
       }
 
       if (targetModule.kind !== "module") {
@@ -54,6 +62,9 @@ export function createTSModuleScope(
         refkey: refkey({}),
         tsFlags: TSSymbolFlags.LocalImportSymbol,
       });
+      if (type) {
+        localSymbol.tsFlags |= TSSymbolFlags.TypeSymbol;
+      }
 
       this.importedSymbols.set(targetSymbol, localSymbol);
       this.importedModules.get(targetModule)!.add({

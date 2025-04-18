@@ -17,7 +17,7 @@ export function JSDocComment(props: JSDocCommentProps) {
         <hbr />
         {props.children}
       </align>
-      <hbr /> **/
+      <hbr /> */
     </>
   );
 }

@@ -1,9 +1,17 @@
-import { refkey, StatementList } from "@alloy-js/core";
+import { code, List, refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
-import { ObjectExpression } from "../src/components/stc/index.js";
+import {
+  InterfaceMember,
+  ObjectExpression,
+} from "../src/components/stc/index.js";
 import { VarDeclaration } from "../src/components/VarDeclaration.jsx";
+import {
+  ClassDeclaration,
+  ClassField,
+  InterfaceDeclaration,
+} from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
@@ -140,6 +148,76 @@ describe("with refkeys", () => {
       const test1 = 1;
       const test1_2 = 2;
       test1.test1_2;
+    `);
+  });
+
+  it("handles nullish symbols correctly", () => {
+    const rk1 = refkey();
+    const rk2 = refkey();
+    expect(
+      toSourceText(
+        <StatementList>
+          <VarDeclaration name="test1" refkey={rk1} initializer={1} nullish />
+          <VarDeclaration name="test1" refkey={rk2} initializer={2} nullish />
+          <MemberExpression>
+            <MemberExpression.Part refkey={rk1} />
+            <MemberExpression.Part refkey={rk2} />
+          </MemberExpression>
+        </StatementList>,
+      ),
+    ).toBe(d`
+      const test1 = 1;
+      const test1_2 = 2;
+      test1?.test1_2;
+    `);
+  });
+
+  it("handles nullish class member correctly", () => {
+    const classRefkey = refkey();
+    const interfaceRefkey = refkey();
+    const interfaceMemberRefkey = refkey();
+    const classMemberRefkey = refkey();
+    const instanceRefkey = refkey();
+    const rk2 = refkey();
+    expect(
+      toSourceText(
+        <List hardline>
+          <InterfaceDeclaration name="Bar" refkey={interfaceRefkey}>
+            <InterfaceMember
+              name="prop1"
+              refkey={interfaceMemberRefkey}
+              type={"string"}
+            />
+          </InterfaceDeclaration>
+          <ClassDeclaration name="Foo" refkey={classRefkey}>
+            <ClassField
+              name="test1"
+              refkey={classMemberRefkey}
+              nullish
+              type={interfaceRefkey}
+            />
+          </ClassDeclaration>
+          <VarDeclaration
+            name="inst"
+            refkey={instanceRefkey}
+            initializer={code`new ${classRefkey}();`}
+          />
+          <MemberExpression>
+            <MemberExpression.Part refkey={instanceRefkey} />
+            <MemberExpression.Part refkey={classMemberRefkey} />
+            <MemberExpression.Part refkey={interfaceMemberRefkey} />
+          </MemberExpression>
+        </List>,
+      ),
+    ).toBe(d`
+       interface Bar {
+         prop1: string
+       }
+       class Foo {
+         test1: Bar
+       }
+       const inst = new Foo();
+       inst.test1?.prop1
     `);
   });
 

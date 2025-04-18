@@ -40,6 +40,10 @@ export interface MemberDeclarationProps
    * The symbol to use for this memberdeclaration.
    */
   symbol?: TSOutputSymbol;
+  /**
+   * Whether this member can be null or undefined.
+   */
+  nullish?: boolean;
 }
 
 export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
@@ -50,7 +54,9 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
   } else {
     const namePolicy = useTSNamePolicy();
 
-    let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
+    let tsFlags: TSSymbolFlags =
+      props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None;
+
     if (props.kind === "type") {
       tsFlags |= TSSymbolFlags.TypeSymbol;
     }

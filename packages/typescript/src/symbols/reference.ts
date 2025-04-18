@@ -17,7 +17,11 @@ import { isValidJSIdentifier } from "../utils.js";
 import { TSOutputScope } from "./scopes.js";
 import { TSMemberScope } from "./ts-member-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
-import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
+import {
+  isNullish,
+  TSOutputSymbol,
+  TSSymbolFlags,
+} from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
 export interface RefOptions {
@@ -139,17 +143,21 @@ function buildMemberExpression(path: TSOutputSymbol[]) {
     path = path.slice(1);
   }
 
+  let nullish = isNullish(base);
   for (const sym of path) {
+    const optional = nullish ? "?" : "";
     if (sym.tsFlags & TSSymbolFlags.PrivateMember) {
-      memberExpr += `.#${sym.name}`;
+      memberExpr += `${optional}.#${sym.name}`;
     } else if (
       isValidJSIdentifier(sym.name) &&
       !(sym.tsFlags & TSSymbolFlags.TypeSymbol)
     ) {
-      memberExpr += `.${sym.name}`;
+      memberExpr += `${optional}.${sym.name}`;
     } else {
-      memberExpr += `[${JSON.stringify(sym.name)}]`;
+      const joiner = isNullish(sym) ? "?." : "";
+      memberExpr += `${joiner}[${JSON.stringify(sym.name)}]`;
     }
+    nullish = isNullish(sym);
   }
 
   return memberExpr;

@@ -20,7 +20,10 @@ import { TSModuleScope } from "./ts-module-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
-export function ref(refkey: Refkey): () => string {
+export interface RefOptions {
+  type?: boolean;
+}
+export function ref(refkey: Refkey, options?: RefOptions): () => string {
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
@@ -103,8 +106,13 @@ export function ref(refkey: Refkey): () => string {
       ];
 
       const importSymbol = symbolPath[0];
+
       localSymbol = untrack(() =>
-        sourceFile!.scope.addImport(importSymbol, pathDown[0] as TSModuleScope),
+        sourceFile!.scope.addImport(
+          importSymbol,
+          pathDown[0] as TSModuleScope,
+          { type: options?.type },
+        ),
       );
     }
 

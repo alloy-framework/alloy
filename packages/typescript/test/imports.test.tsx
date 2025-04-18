@@ -1,4 +1,5 @@
 import {
+  List,
   Output,
   SourceDirectory,
   StatementList,
@@ -6,7 +7,7 @@ import {
   render,
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { it } from "vitest";
+import { describe, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
@@ -306,5 +307,137 @@ it("handles conflicts with local declarations", () => {
       const v = test_1;
       export function test() {}
     `,
+  });
+});
+
+describe("type imports", () => {
+  function mkTestFile(name: string) {
+    const TypeA = refkey("TypeA");
+    const TypeB = refkey("TypeB");
+    const ClassA = refkey("ClassA");
+
+    return {
+      component: (
+        <ts.SourceFile path="test1.ts">
+          <ts.InterfaceDeclaration export name="TypeA" refkey={TypeA} />
+          <ts.InterfaceDeclaration export name="TypeB" refkey={TypeB} />
+          <ts.ClassDeclaration export name="ClassA" refkey={ClassA} />
+        </ts.SourceFile>
+      ),
+      TypeA,
+      TypeB,
+      ClassA,
+    };
+  }
+
+  it("adds type keyword only to type imports", () => {
+    const { component, TypeA, ClassA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          <List>
+            <>
+              type A = <Reference refkey={TypeA} type />
+            </>
+            <>
+              class B extends <Reference refkey={ClassA} /> {"{}"}
+            </>
+          </List>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import { type TypeA, ClassA } from "./test1.js";
+
+      type A = TypeA
+      class B extends ClassA {}
+    `,
+    });
+  });
+
+  it("add type keyword for whole import if all are types", () => {
+    const { component, TypeA, TypeB } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          <List>
+            <>
+              type A = <Reference refkey={TypeA} type />
+            </>
+            <>
+              type B = <Reference refkey={TypeB} type />
+            </>
+          </List>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { TypeA, TypeB } from "./test1.js";
+
+      type A = TypeA
+      type B = TypeB
+    `,
+    });
+  });
+  it("reference same type multiple times", () => {
+    const { component, TypeA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          <List>
+            <>
+              type A = <Reference refkey={TypeA} type />
+            </>
+            <>
+              type B = <Reference refkey={TypeA} type />
+            </>
+          </List>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { TypeA } from "./test1.js";
+
+      type A = TypeA
+      type B = TypeA
+    `,
+    });
+  });
+
+  it("same reference used as both type and non type doesn't include type", () => {
+    const { component, ClassA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          <List>
+            <>
+              type A = <Reference refkey={ClassA} type />
+            </>
+            <>
+              class B extends <Reference refkey={ClassA} /> {"{}"}
+            </>
+          </List>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import { ClassA } from "./test1.js";
+
+      type A = ClassA
+      class B extends ClassA {}
+    `,
+    });
   });
 });

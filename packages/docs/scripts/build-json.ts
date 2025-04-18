@@ -238,11 +238,17 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
             if ((member as ApiFunction).parameters.length > 0) {
               const propsTypeRef = (member as ApiFunction).parameters[0]
                 .parameterTypeExcerpt.spannedTokens[0].canonicalReference;
-              const resolvedPropType = apiModel.resolveDeclarationReference(
+              const model = apiModel.resolveDeclarationReference(
                 propsTypeRef!,
                 undefined,
-              ).resolvedApiItem!;
+              );
 
+              const resolvedPropType = model.resolvedApiItem;
+              if (!resolvedPropType) {
+                throw new Error(
+                  `Cannot resolve prop type for ${member.displayName}: ${model.errorMessage}`,
+                );
+              }
               if (resolvedPropType.kind === ApiItemKind.Interface) {
                 componentPropTypes.push(resolvedPropType as ApiInterface);
                 propTypes.add(resolvedPropType as ApiInterface);

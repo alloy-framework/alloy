@@ -19,7 +19,7 @@ it("renders an enum declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * Color enumeration for the application
-     **/
+     */
     enum Color {
       Red,
       Green,
@@ -49,25 +49,25 @@ it("renders an enum declaration with documented members", () => {
   expect(res).toEqual(d`
     /**
      * Represents cardinal directions. Used for navigation purposes
-     **/
+     */
     enum Direction {
       /**
        * Bound to the north
-       **/
+       */
       North = 0,
       /**
        * Bound to the East
        *
        * A second doc paragraph
-       **/
+       */
       East = 1,
       /**
        * Opposite to North
-       **/
+       */
       South = 2,
       /**
        * Going west!
-       **/
+       */
       West = 3,
     }
   `);

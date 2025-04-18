@@ -19,7 +19,7 @@ it("renders an interface declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * Interface representing a person
-     **/
+     */
     interface Person {
       name: string;
       age: number;
@@ -42,7 +42,7 @@ it("renders an interface declaration with docs from a string array with single e
   expect(res).toEqual(d`
     /**
      * Interface representing a person
-     **/
+     */
     interface Person {
       name: string;
       age: number;
@@ -70,7 +70,7 @@ it("renders an interface declaration with docs from a string array", () => {
      * Interface representing a person
      *
      * This should be another paragraph
-     **/
+     */
     interface Person {
       name: string;
       age: number;
@@ -103,15 +103,15 @@ it("renders an interface declaration with documented properties", () => {
   expect(res).toEqual(d`
     /**
      * Standard API response format
-     **/
+     */
     export interface APIResponse {
       /**
        * Wether or not the request completed successfully
-       **/
+       */
       success: boolean;
       /**
        * the response payload
-       **/
+       */
       data: unknown;
       error?: string;
     }
@@ -146,17 +146,17 @@ it("renders an interface declaration with array documented properties ", () => {
   expect(res).toEqual(d`
     /**
      * Standard API response format
-     **/
+     */
     export interface APIResponse {
       /**
        * Wether or not the request completed successfully
        *
        * This is another paragraph
-       **/
+       */
       success: boolean;
       /**
        * the response payload
-       **/
+       */
       data: unknown;
       error?: string;
     }

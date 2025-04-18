@@ -6,6 +6,7 @@ import {
   Show,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
+import { TypeScriptContext } from "../context/ts-context.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import {
@@ -65,7 +66,7 @@ export function FunctionType(props: FunctionTypeProps) {
   });
 
   return (
-    <>
+    <TypeScriptContext.Provider value={{ type: true }}>
       <Show when={Boolean(props.doc)}>
         <JSDoc>
           {props.doc && <Prose children={props.doc} />}
@@ -80,7 +81,7 @@ export function FunctionType(props: FunctionTypeProps) {
         {" => "}
         {returnType}
       </Scope>
-    </>
+    </TypeScriptContext.Provider>
   );
 }
 

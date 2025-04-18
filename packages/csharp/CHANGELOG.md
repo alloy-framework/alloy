@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/csharp
 
+## 0.12.0
+
+No changes, version bump only.
+
 ## 0.11.0
 
 ### Features

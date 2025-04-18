@@ -14,7 +14,7 @@ it("name only", () => {
     d`
           /**
            * @param somebody
-           **/
+           */
         `,
   );
 });
@@ -30,7 +30,7 @@ it("name and type", () => {
     d`
           /**
            * @param {string} somebody
-           **/
+           */
         `,
   );
 });
@@ -48,7 +48,7 @@ it("name, type and description", () => {
     d`
           /**
            * @param {string} somebody Somebody's name.
-           **/
+           */
         `,
   );
 });
@@ -66,7 +66,7 @@ it("name, type and description with hyphen", () => {
     d`
           /**
            * @param {string} somebody - Somebody's name.
-           **/
+           */
         `,
   );
 });
@@ -84,7 +84,7 @@ it("name, type, description, hyphen and optional", () => {
     d`
         /**
          * @param {string} [somebody] - Somebody's name.
-         **/
+         */
         `,
   );
 });
@@ -108,7 +108,7 @@ it("name, type, description, hyphen and optional with default value", () => {
     d`
             /**
              * @param {string} [somebody=John Doe] - Somebody's name.
-             **/
+             */
             `,
   );
 });
@@ -153,7 +153,7 @@ it("name, type, description, hyphen and optional with default value with a very 
            *   even a codename (e.g., "Agent X"). It's used primarily for display
            *   purposes, logging, or greeting messages and is not required to be unique or
            *   validated unless specified by the caller.
-           **/
+           */
           `,
     { printWidth: 80 },
   );
@@ -181,7 +181,7 @@ it("name, type, description, hyphen and optional with default value with a descr
           /**
            * @param {string} [somebody=John Doe] - Somebody's name. This is one line
            *   This is another line
-           **/
+           */
           `,
     { printWidth: 80 },
   );

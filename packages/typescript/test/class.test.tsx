@@ -309,15 +309,15 @@ it("renders a class with docs for the class and its members", () => {
   expect(res).toEqual(d`
     /**
      * This is a class documentation
-     **/
+     */
     class Foo {
       /**
        * This is a field documentation
-       **/
+       */
       bar = 123;
       /**
        * This is a method documentation
-       **/
+       */
       baz() {
         return 123;
       }
@@ -353,7 +353,7 @@ it("renders a method with parameter docs", () => {
        * @param {string} b - Line 1 for b.
        *   This is a long description that
        *   should continue in the next line.
-       **/
+       */
       bar(a: number, b: string): void {}
     }
   `);

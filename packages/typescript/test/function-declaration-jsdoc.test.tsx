@@ -18,7 +18,7 @@ it("renders a function declaration with documentation", () => {
      * A function that greets a person
      *
      * @param {string} name
-     **/
+     */
     function greet(name: string): string {}
   `);
 });
@@ -42,7 +42,7 @@ it("With documented parameters", () => {
      *
      * @param {number} price
      * @param {number} [taxRate]
-     **/
+     */
     export function calculateTotal(price: number, taxRate?: number): number {}
   `);
 });
@@ -84,6 +84,6 @@ it("renders a function with a reference", () => {
      * Creates a new user
      *
      * @param {User} user - The user object to create
-     **/
+     */
     function createUser(user: User): void {}`);
 });

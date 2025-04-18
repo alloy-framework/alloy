@@ -10,6 +10,7 @@ import "@alloy-js/core/testing";
 import { describe, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
+import { TypeScriptContext } from "../src/context/ts-context.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { assertFileContents } from "./utils.js";
 
@@ -437,6 +438,36 @@ describe("type imports", () => {
 
       type A = ClassA
       class B extends ClassA {}
+    `,
+    });
+  });
+
+  it("infer if a type reference from the typescript context", () => {
+    const { component, TypeA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          <TypeScriptContext.Provider value={{ type: true }}>
+            <List>
+              <>
+                type A = <Reference refkey={TypeA} />
+              </>
+              <>
+                type B = <Reference refkey={TypeA} />
+              </>
+            </List>
+          </TypeScriptContext.Provider>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { TypeA } from "./test1.js";
+
+      type A = TypeA
+      type B = TypeA
     `,
     });
   });

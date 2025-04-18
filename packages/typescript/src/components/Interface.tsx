@@ -14,6 +14,7 @@ import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
+import { TypeScriptContext } from "../context/ts-context.js";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 
@@ -35,7 +36,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const flags = OutputSymbolFlags.StaticMemberContainer;
 
   return (
-    <>
+    <TypeScriptContext.Provider value={{ type: true }}>
       <Show when={Boolean(props.doc)}>
         <JSDoc children={props.doc} />
         <hbr />
@@ -45,7 +46,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
         {extendsPart}{" "}
         <InterfaceExpression>{props.children}</InterfaceExpression>
       </Declaration>
-    </>
+    </TypeScriptContext.Provider>
   );
 }
 
@@ -60,15 +61,17 @@ export function InterfaceExpression(props: InterfaceExpressionProps) {
     parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
   }
   return (
-    <group>
-      <Wrap
-        when={!!parentMemberSym}
-        with={MemberScope}
-        props={{ owner: parentMemberSym! }}
-      >
-        <Block>{props.children}</Block>
-      </Wrap>
-    </group>
+    <TypeScriptContext.Provider value={{ type: true }}>
+      <group>
+        <Wrap
+          when={!!parentMemberSym}
+          with={MemberScope}
+          props={{ owner: parentMemberSym! }}
+        >
+          <Block>{props.children}</Block>
+        </Wrap>
+      </group>
+    </TypeScriptContext.Provider>
   );
 }
 

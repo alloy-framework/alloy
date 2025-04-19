@@ -1,0 +1,45 @@
+{
+  "name": "@alloy-js/markdown",
+  "version": "0.10.0",
+  "description": "Alloy components for generating markdown",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./stc": {
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
+    }
+  },
+  "scripts": {
+    "build-src": "babel src -d dist/src --extensions .ts,.tsx",
+    "build-tsc": "tsc -p .",
+    "generate-docs": "api-extractor run",
+    "build": "npm run build-src && npm run build-tsc && npm run generate-docs",
+    "clean": "rimraf dist/ .temp/",
+    "watch-src": "babel src -d dist/src --extensions '.ts,.tsx' --watch",
+    "watch-tsc": "tsc -p . --watch",
+    "watch": "concurrently --kill-others \"npm run watch-src\" \"npm run watch-tsc\"",
+    "test": "vitest run",
+    "prepack": "node ../../scripts/strip-dev-exports.js"
+  },
+  "keywords": [],
+  "author": "brian.terlson@microsoft.com",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~"
+  },
+  "devDependencies": {
+    "@babel/cli": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@microsoft/api-extractor": "^7.47.7",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@rollup/plugin-typescript": "catalog:",
+    "@alloy-js/babel-preset": "workspace:~",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module"
+}

@@ -18,10 +18,10 @@ export function Prose(props: Prose) {
           return child
             .trim()
             .split(/\s+/)
-            .map((word) => (
+            .map((word, index, array) => (
               <>
                 {word}
-                <br />
+                {index < array.length - 1 && <br />}
               </>
             ));
         }

@@ -1,6 +1,5 @@
 import {
   computed,
-  effect,
   reactive,
   ref,
   Ref,
@@ -10,8 +9,9 @@ import {
 import { useBinder } from "./context/binder.js";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { memo, untrack } from "./jsx-runtime.js";
+import { effect, memo, untrack } from "./jsx-runtime.js";
 import { refkey, Refkey } from "./refkey.js";
+import { queueJob, QueueJob } from "./scheduler.js";
 export type Metadata = object;
 
 /**
@@ -464,6 +464,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     OutputScope,
     Map<string, Ref<OutputScope | undefined>>
   >();
+  const deconflictJobs = new Map<OutputScope, Map<string, QueueJob>>();
 
   return binder;
 
@@ -629,16 +630,23 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     addInstanceMembersToSymbol(target);
 
     effect(() => {
+      // rerun when instance member scope changes
       for (const sym of source.instanceMemberScope!.symbols) {
-        if (target.instanceMemberScope!.symbols.has(sym)) {
-          continue;
-        }
+        // but don't want to track anything else
+        untrack(() => {
+          // we don't want to trigger this effect when the symbols
+          // we're instantiating into has changed
 
-        createSymbol({
-          name: sym.name,
-          scope: target.instanceMemberScope!,
-          refkey: [refkey(target.refkeys[0], sym.refkeys[0])],
-          flags: sym.flags | OutputSymbolFlags.InstanceMember,
+          if (target.instanceMemberScope!.symbols.has(sym)) {
+            return;
+          }
+          
+          createSymbol({
+            name: sym.name,
+            scope: target.instanceMemberScope!,
+            refkey: [refkey(target.refkeys[0], sym.refkeys[0])],
+            flags: sym.flags | OutputSymbolFlags.InstanceMember,
+          });
         });
       }
     });
@@ -789,7 +797,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   function deconflict(symbol: OutputSymbol) {
     const scope = symbol.scope;
     const existingNames = [...scope.symbols].filter(
-      (sym) => sym.originalName === symbol.name,
+      (sym) => sym.name === symbol.name,
     );
 
     if (existingNames.length < 2) {
@@ -797,13 +805,44 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
 
     if (options.nameConflictResolver) {
-      options.nameConflictResolver(symbol.name, existingNames);
+      queueJob(
+        deconflictJobForScopeAndName(
+          scope,
+          symbol.name,
+          options.nameConflictResolver,
+        ),
+      );
     } else {
       // default disambiguation is first-wins
       for (let i = 1; i < existingNames.length; i++) {
         existingNames[i].name = existingNames[i].originalName + "_" + (i + 1);
       }
     }
+  }
+
+  function deconflictJobForScopeAndName(
+    scope: OutputScope,
+    name: string,
+    handler: NameConflictResolver,
+  ) {
+    if (!deconflictJobs.has(scope)) {
+      deconflictJobs.set(scope, new Map());
+    }
+
+    const jobs = deconflictJobs.get(scope)!;
+    if (jobs.has(name)) {
+      return jobs.get(name)!;
+    }
+    const job = () => {
+      const conflictedSymbols = [...scope.symbols].filter(
+        (sym) => sym.name === name,
+      );
+      handler(name, conflictedSymbols);
+      jobs.delete(name);
+    };
+
+    jobs.set(name, job);
+    return job;
   }
 
   function getSymbolForRefkey<TSymbol extends OutputSymbol>(

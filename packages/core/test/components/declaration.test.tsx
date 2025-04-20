@@ -7,6 +7,7 @@ import {
   Scope,
   useBinder,
 } from "../../src/index.js";
+import { flushJobs } from "../../src/scheduler.js";
 import { createTap } from "../../src/tap.js";
 
 it("creates and cleans up a symbol", () => {
@@ -33,5 +34,6 @@ it("creates and cleans up a symbol", () => {
   const subScope = [...binder.globalScope.children][0];
   expect(subScope.symbols.size).toBe(1);
   doDecl.value = false;
+  flushJobs();
   expect(subScope.symbols.size).toBe(0);
 });

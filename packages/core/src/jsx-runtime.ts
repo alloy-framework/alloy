@@ -5,6 +5,7 @@ import {
   isReactive,
   pauseTracking,
   proxyRefs,
+  ReactiveEffectRunner,
   Ref,
   resetTracking,
   shallowRef,
@@ -14,6 +15,7 @@ import {
 } from "@vue/reactivity";
 import { Refkey } from "./refkey.js";
 import { RenderedTextTree } from "./render.js";
+import { scheduler } from "./scheduler.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -129,17 +131,25 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
   };
 
   onCleanup(() => cleanupFn(true));
-  const c = vueEffect(() => {
-    cleanupFn(false);
+  const c: ReactiveEffectRunner<void> = vueEffect(
+    () => {
+      cleanupFn(false);
 
-    const oldContext = globalContext;
-    globalContext = context;
-    try {
-      current = fn(current);
-    } finally {
-      globalContext = oldContext;
-    }
-  }, {});
+      const oldContext = globalContext;
+      globalContext = context;
+      try {
+        current = fn(current);
+      } finally {
+        globalContext = oldContext;
+      }
+    },
+    {
+      scheduler: scheduler(() => c),
+    },
+  );
+
+  // allow recursive effects
+  (c as any).effect.flags |= 1 << 5;
 }
 
 /**

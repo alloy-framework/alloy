@@ -8,6 +8,7 @@ import {
   OutputSymbolFlags,
 } from "../src/binder.js";
 import { Refkey, refkey } from "../src/refkey.js";
+import { flushJobs } from "../src/scheduler.js";
 
 it("works", () => {
   const binder = createOutputBinder();
@@ -22,10 +23,11 @@ it("works", () => {
     scope,
   });
 
+  flushJobs();
   expect([...scope.getSymbolNames()]).toEqual(["sym"]);
 
   symbol.name = "bar";
-
+  flushJobs();
   expect([...scope.getSymbolNames()]).toEqual(["bar"]);
 });
 
@@ -354,6 +356,8 @@ describe("instantiating members", () => {
     });
 
     binder.instantiateSymbolInto(rootSymbol, instantiation);
+    console.log("First flush");
+    flushJobs();
     expect(
       instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
     ).toBeTruthy();
@@ -377,6 +381,8 @@ describe("instantiating members", () => {
       instantiation.refkeys[0],
       newInstanceMemberRefkey,
     );
+    console.log("Last flush");
+    flushJobs();
     expect(
       instantiation.instanceMemberScope!.symbolsByRefkey.get(newExpectedRefkey),
     ).toBeDefined();
@@ -540,6 +546,7 @@ describe("refkey resolution", () => {
     expect(resolvedSym.value).toBe(undefined);
 
     sym.refkeys[0] = key;
+    flushJobs();
     expect(resolvedSym.value?.targetDeclaration).toBe(sym);
   });
 });
@@ -563,10 +570,11 @@ describe("Deleting symbols", () => {
     expect(resolvedSym.value).toBe(undefined);
 
     sym.refkeys[0] = key;
+    flushJobs();
     expect(resolvedSym.value?.targetDeclaration).toBe(sym);
 
     binder.deleteSymbol(sym);
-
+    flushJobs();
     expect(resolvedSym.value).toBe(undefined);
   });
 

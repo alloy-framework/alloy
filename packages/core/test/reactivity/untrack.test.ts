@@ -1,6 +1,7 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { memo, untrack } from "../../src/jsx-runtime.js";
+import { flushJobs } from "../../src/scheduler.js";
 
 it("ignores signals for dependency tracking", () => {
   const signal = ref(0);
@@ -12,6 +13,7 @@ it("ignores signals for dependency tracking", () => {
   expect(m()).toBe(0);
 
   signal.value = 1;
+  flushJobs();
 
   expect(m()).toBe(0);
 });
@@ -28,6 +30,7 @@ it("doesn't affect signal changes", () => {
   untrack(() => {
     signal.value = 1;
   });
+  flushJobs();
 
   expect(m()).toBe(1);
 });

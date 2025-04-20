@@ -22,6 +22,7 @@ import {
   untrack,
 } from "./jsx-runtime.js";
 import { isRefkey } from "./refkey.js";
+import { flushJobs } from "./scheduler.js";
 const {
   builders: {
     align,
@@ -181,6 +182,7 @@ export function render(
   options?: PrintTreeOptions,
 ): OutputDirectory {
   const tree = renderTree(children);
+  flushJobs();
   let rootDirectory: OutputDirectory | undefined = undefined;
 
   // when passing Output, the first render tree child is the Output component.
@@ -558,6 +560,9 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
       Object.entries(options ?? {}).filter(([_, v]) => v !== undefined),
     ),
   };
+
+  // make sure queue is empty
+  flushJobs();
 
   const d = printTreeWorker(tree);
   return doc.printer.printDocToString(d, options as doc.printer.Options)

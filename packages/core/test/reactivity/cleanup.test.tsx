@@ -2,6 +2,7 @@ import { Children, effect, memo, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { ref } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { renderTree } from "../../src/render.js";
+import { flushJobs } from "../../src/scheduler.js";
 
 describe("memo cleanup", () => {
   it("cleans up when memo value is recomputed", () => {
@@ -19,6 +20,7 @@ describe("memo cleanup", () => {
     expect(callCount).toBe(0);
 
     r.value = 2;
+    flushJobs();
 
     expect(m()).toBe(2);
     expect(callCount).toBe(1);
@@ -40,6 +42,7 @@ describe("effect cleanup", () => {
     expect(cleanedUp).toBe(false);
 
     r.value = 2;
+    flushJobs();
 
     expect(cleanedUp).toBe(true);
   });
@@ -58,6 +61,7 @@ describe("element cleanup", () => {
     const template = <>{el}</>;
     renderTree(template);
     el.value = "";
+    flushJobs();
     expect(cleanedUp).toBe(true);
   });
 
@@ -85,6 +89,7 @@ describe("element cleanup", () => {
     const template = <>{el}</>;
     renderTree(template);
     el.value = "";
+    flushJobs();
     expect(cleanedUpC1).toBe(true);
     expect(cleanedUpC2).toBe(true);
   });

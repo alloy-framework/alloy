@@ -22,7 +22,3 @@ export function flushJobs() {
     job();
   }
 }
-
-export function jobSize() {
-  return queue.size;
-}

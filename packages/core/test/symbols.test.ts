@@ -356,7 +356,6 @@ describe("instantiating members", () => {
     });
 
     binder.instantiateSymbolInto(rootSymbol, instantiation);
-    console.log("First flush");
     flushJobs();
     expect(
       instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
@@ -381,7 +380,6 @@ describe("instantiating members", () => {
       instantiation.refkeys[0],
       newInstanceMemberRefkey,
     );
-    console.log("Last flush");
     flushJobs();
     expect(
       instantiation.instanceMemberScope!.symbolsByRefkey.get(newExpectedRefkey),

@@ -75,7 +75,6 @@ export const FunctionParameters = taggedComponent(
     }
 
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
-
     return (
       <group>
         <Indent softline trailingBreak>

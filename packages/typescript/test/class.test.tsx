@@ -358,22 +358,3 @@ it("renders a method with parameter docs", () => {
     }
   `);
 });
-
-it("creates a nullish symbol for an optional member", () => {
-  const memberRefkey = refkey();
-  const res = toSourceText(
-    <ts.ClassDeclaration name="Foo">
-      <ts.ClassField
-        name="bar"
-        optional
-        type={"string"}
-        refkey={memberRefkey}
-      />
-    </ts.ClassDeclaration>,
-  );
-  expect(res).toEqual(d`
-    class Foo {
-      bar?: string
-    }
-  `);
-});

@@ -73,7 +73,6 @@ it("is useful for statements", () => {
       <Statement />
     </List>,
   );
-
   expect(printTree(tree)).toEqual(d`
     console.log(true);
     console.log(true);

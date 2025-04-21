@@ -10,7 +10,9 @@ import { VarDeclaration } from "../src/components/VarDeclaration.jsx";
 import {
   ClassDeclaration,
   ClassField,
+  FunctionDeclaration,
   InterfaceDeclaration,
+  ParameterDescriptor,
 } from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
@@ -172,13 +174,101 @@ describe("with refkeys", () => {
     `);
   });
 
+  it("handles optional parameters correctly", () => {
+    const fooRef = refkey();
+    const modelRef = refkey();
+    const parameters: ParameterDescriptor[] = [
+      { name: "foo", optional: true, refkey: fooRef, type: modelRef },
+    ];
+    const messageRef = refkey();
+    const template = (
+      <List hardline>
+        <InterfaceDeclaration name="Model" refkey={modelRef}>
+          <InterfaceMember name="bar" refkey={refkey()} type="string" />
+        </InterfaceDeclaration>
+        <FunctionDeclaration name="fooFunction" parameters={parameters}>
+          <StatementList>
+            <VarDeclaration
+              name="message"
+              const
+              refkey={messageRef}
+              initializer={
+                <MemberExpression>
+                  <MemberExpression.Part refkey={fooRef} />
+                  <MemberExpression.Part id="bar" />
+                </MemberExpression>
+              }
+            />
+            <>console.log({messageRef})</>
+          </StatementList>
+        </FunctionDeclaration>
+      </List>
+    );
+
+    expect(toSourceText(template)).toBe(d`
+      interface Model {
+        bar: string
+      }
+      function fooFunction(foo?: Model) {
+        const message = foo?.bar;
+        console.log(message);
+      }
+    `);
+  });
+
+  it("handles nullish parameters correctly", () => {
+    const fooRef = refkey();
+    const modelRef = refkey();
+    const parameters: ParameterDescriptor[] = [
+      {
+        name: "foo",
+        nullish: true,
+        refkey: fooRef,
+        type: <>{modelRef} | null</>,
+      },
+    ];
+    const messageRef = refkey();
+    const template = (
+      <List hardline>
+        <InterfaceDeclaration name="Model" refkey={modelRef}>
+          <InterfaceMember name="bar" refkey={refkey()} type="string" />
+        </InterfaceDeclaration>
+        <FunctionDeclaration name="fooFunction" parameters={parameters}>
+          <StatementList>
+            <VarDeclaration
+              name="message"
+              const
+              refkey={messageRef}
+              initializer={
+                <MemberExpression>
+                  <MemberExpression.Part refkey={fooRef} />
+                  <MemberExpression.Part id="bar" />
+                </MemberExpression>
+              }
+            />
+            <>console.log({messageRef})</>
+          </StatementList>
+        </FunctionDeclaration>
+      </List>
+    );
+
+    expect(toSourceText(template)).toBe(d`
+      interface Model {
+        bar: string
+      }
+      function fooFunction(foo: Model | null) {
+        const message = foo?.bar;
+        console.log(message);
+      }
+    `);
+  });
+
   it("handles nullish class member correctly", () => {
     const classRefkey = refkey();
     const interfaceRefkey = refkey();
     const interfaceMemberRefkey = refkey();
     const classMemberRefkey = refkey();
     const instanceRefkey = refkey();
-    const rk2 = refkey();
     expect(
       toSourceText(
         <List hardline>

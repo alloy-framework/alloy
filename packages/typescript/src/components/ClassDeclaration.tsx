@@ -175,7 +175,7 @@ export function ClassField(props: ClassFieldProps) {
     </>
   );
   const initializerSection = props.children && <> = {props.children}</>;
-  const nullish = props.nullish !== undefined ? props.nullish : props.optional;
+  const nullish = props.nullish ?? props.optional;
 
   return (
     <ClassMember {...props} nullish={nullish}>

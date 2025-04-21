@@ -25,6 +25,13 @@ export interface ParameterDescriptorBase {
   readonly optional?: boolean;
 
   /**
+   * Whether the parameter is can be null or undefined.
+   * when optional is true, this will be set to true by default,
+   * but explicitly setting this to false will override that.
+   */
+  readonly nullish?: boolean;
+
+  /**
    * Arbitrary metadata for the parameter symbol.
    */
   readonly metadata?: Record<string, unknown>;

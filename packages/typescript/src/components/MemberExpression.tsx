@@ -11,7 +11,7 @@ import {
   toRef,
   useBinder,
 } from "@alloy-js/core";
-import { isNullish } from "../symbols/ts-output-symbol.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { isValidJSIdentifier } from "../utils.js";
 
 export interface MemberExpressionProps {
@@ -79,7 +79,9 @@ export function MemberExpression(props: MemberExpressionProps): Children {
       const symbolRef = binder.getSymbolForRefkey(partProps.refkey);
       part.base = computed(() => {
         if (symbolRef.value) {
-          part.nullish.value = isNullish(symbolRef.value);
+          part.nullish.value = !!(
+            (symbolRef.value as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish
+          );
           part.accessStyle.value = accessStyleForMemberName(
             symbolRef.value.name,
           );
@@ -89,7 +91,9 @@ export function MemberExpression(props: MemberExpressionProps): Children {
         }
       });
     } else if (partProps.symbol) {
-      part.nullish.value = isNullish(partProps.symbol);
+      part.nullish.value = !!(
+        (partProps.symbol as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish
+      );
       part.accessStyle = computed(() => {
         return accessStyleForMemberName(partProps.symbol!.name);
       });

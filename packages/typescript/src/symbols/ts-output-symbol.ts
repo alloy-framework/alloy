@@ -79,7 +79,3 @@ export function createTSSymbol(options: createTsSymbolOptions): TSOutputSymbol {
 
   return sym;
 }
-
-export function isNullish(sym: OutputSymbol): boolean {
-  return !!((sym as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish);
-}

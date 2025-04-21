@@ -83,6 +83,7 @@ export interface InterfaceMemberProps {
   type?: Children;
   children?: Children;
   optional?: boolean;
+  nullish?: boolean;
   readonly?: boolean;
   doc?: Children;
   refkey?: Refkey | Refkey[];
@@ -121,7 +122,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
           kind="type"
           nameKind="interface-member"
           flags={OutputSymbolFlags.StaticMember}
-          nullish={props.optional}
+          nullish={props.nullish ?? props.optional}
           refkey={props.refkey}
         >
           <Show when={Boolean(props.doc)}>

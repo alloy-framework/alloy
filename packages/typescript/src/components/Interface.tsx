@@ -16,6 +16,7 @@ import { JSDoc } from "./JSDoc.jsx";
 
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
+import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -30,47 +31,51 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
  * `default` boolean props determine whether and how this symbol is exported
  * from the package.
  */
-export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
-  const extendsPart = props.extends ? <> extends {props.extends}</> : "";
-  const flags = OutputSymbolFlags.StaticMemberContainer;
+export const InterfaceDeclaration = ensureTypeRefContext(
+  (props: InterfaceDeclarationProps) => {
+    const extendsPart = props.extends ? <> extends {props.extends}</> : "";
+    const flags = OutputSymbolFlags.StaticMemberContainer;
 
-  return (
-    <>
-      <Show when={Boolean(props.doc)}>
-        <JSDoc children={props.doc} />
-        <hbr />
-      </Show>
-      <Declaration {...props} nameKind="interface" flags={flags} kind="type">
-        interface <Name />
-        {extendsPart}{" "}
-        <InterfaceExpression>{props.children}</InterfaceExpression>
-      </Declaration>
-    </>
-  );
-}
+    return (
+      <>
+        <Show when={Boolean(props.doc)}>
+          <JSDoc children={props.doc} />
+          <hbr />
+        </Show>
+        <Declaration {...props} nameKind="interface" flags={flags} kind="type">
+          interface <Name />
+          {extendsPart}{" "}
+          <InterfaceExpression>{props.children}</InterfaceExpression>
+        </Declaration>
+      </>
+    );
+  },
+);
 
 export interface InterfaceExpressionProps {
   children?: Children;
 }
 
-export function InterfaceExpression(props: InterfaceExpressionProps) {
-  const parentMemberSym = useMemberDeclaration();
+export const InterfaceExpression = ensureTypeRefContext(
+  (props: InterfaceExpressionProps) => {
+    const parentMemberSym = useMemberDeclaration();
 
-  if (parentMemberSym) {
-    parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
-  }
-  return (
-    <group>
-      <Wrap
-        when={!!parentMemberSym}
-        with={MemberScope}
-        props={{ owner: parentMemberSym! }}
-      >
-        <Block>{props.children}</Block>
-      </Wrap>
-    </group>
-  );
-}
+    if (parentMemberSym) {
+      parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
+    }
+    return (
+      <group>
+        <Wrap
+          when={!!parentMemberSym}
+          with={MemberScope}
+          props={{ owner: parentMemberSym! }}
+        >
+          <Block>{props.children}</Block>
+        </Wrap>
+      </group>
+    );
+  },
+);
 
 export interface InterfaceMemberProps {
   name?: string;

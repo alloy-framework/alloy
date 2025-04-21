@@ -1,9 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist-build"
+    "noEmit": true
   },
-
   "include": ["scripts/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -43,7 +43,7 @@ it("works end-to-end", () => {
       type TestType = "hello" | "goodbye";
     `,
     "test.ts": `
-      import { TestType } from "./types.js";
+      import type { TestType } from "./types.js";
 
       export let hi: TestType = "hello";
     `,

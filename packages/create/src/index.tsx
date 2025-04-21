@@ -285,7 +285,7 @@ const main = async () => {
     };
   } else {
     scripts = {
-      build: "alloy build && pnpm run generate-docs",
+      build: "alloy build",
       clean: "rimraf dist/ .temp/",
       test: "vitest run",
       "test:watch": "vitest -w",
@@ -360,19 +360,6 @@ const main = async () => {
           export * from "./components/index.js";
         </SourceFile>
       </SourceDirectory>
-      <Show when={packageInfo.type !== "stc-project"}>
-        <SourceFile path="babel.config.cjs">
-          {code`
-            module.exports = {
-              sourceMaps: true,
-              presets: [
-                "@babel/preset-typescript",
-                ["@alloy-js/babel-preset"],
-              ],
-            };
-          `}
-        </SourceFile>
-      </Show>
       <SourceFile path="tsconfig.json">
         {code`
         {

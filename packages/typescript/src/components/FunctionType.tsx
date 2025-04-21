@@ -19,7 +19,7 @@ import { JSDocParams } from "./JSDocParam.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 /**
- * Options for {@link (FunctionType:namespace)} component.
+ * Options for {@link FunctionType} component.
  */
 export interface FunctionTypeProps extends CallSignatureProps {
   /** If the method is async */
@@ -30,26 +30,6 @@ export interface FunctionTypeProps extends CallSignatureProps {
   readonly children?: Children;
 }
 
-/**
- * A TypeScript function declaration.
- *
- * @example
- * ```ts
- * (foo: string, bar: number) => void
- * ```
- * @remarks
- *
- * Providing parameters and type parameters can be accomplished in one of three
- * ways:
- *
- * 1. As an array of {@link TypeParameterDescriptor}s or
- *    {@link TypeParameterDescriptor}s.
- * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
- *    props.
- * 3. As a child of this component via the
- *    {@link (FunctionType:namespace).Parameters} or
- *    {@link (FunctionType:namespace).TypeParameters} components.
- */
 const FunctionTypeComponent = ensureTypeRefContext(
   (props: FunctionTypeProps) => {
     const children = childrenArray(() => props.children);
@@ -87,6 +67,26 @@ const FunctionTypeComponent = ensureTypeRefContext(
   },
 );
 
+/**
+ * A TypeScript function declaration.
+ *
+ * @example
+ * ```ts
+ * (foo: string, bar: number) => void
+ * ```
+ * @remarks
+ *
+ * Providing parameters and type parameters can be accomplished in one of three
+ * ways:
+ *
+ * 1. As an array of {@link TypeParameterDescriptor}s or
+ *    {@link TypeParameterDescriptor}s.
+ * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
+ *    props.
+ * 3. As a child of this component via the
+ *    {@link FunctionType.Parameters} or
+ *    {@link FunctionType.TypeParameters} components.
+ */
 export const FunctionType = Object.assign(FunctionTypeComponent, {
   TypeParameters,
   Parameters: FunctionTypeParameters,

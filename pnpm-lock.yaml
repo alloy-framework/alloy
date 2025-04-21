@@ -96,6 +96,9 @@ catalogs:
     rollup:
       specifier: ^4.39.0
       version: 4.39.0
+    tsx:
+      specifier: ^4.19.3
+      version: 4.19.3
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
@@ -415,6 +418,9 @@ importers:
       sharp:
         specifier: ^0.34.1
         version: 0.34.1
+      tsx:
+        specifier: 'catalog:'
+        version: 4.19.3
       typescript:
         specifier: 'catalog:'
         version: 5.8.3

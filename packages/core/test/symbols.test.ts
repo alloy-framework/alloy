@@ -340,16 +340,53 @@ describe("instantiating members", () => {
 
     binder.instantiateSymbolInto(rootSymbol, instantiation);
     expect(
-      instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
+      instantiation.flags & OutputSymbolFlags.StaticMemberContainer,
     ).toBeTruthy();
-    expect(instantiation.instanceMemberScope).toBeDefined();
+    expect(instantiation.staticMemberScope).toBeDefined();
     const expectedRefkey = refkey(
       instantiation.refkeys[0],
       instance.refkeys[0],
     );
     expect(
-      instantiation.instanceMemberScope!.symbolsByRefkey.get(expectedRefkey),
+      instantiation.staticMemberScope!.symbolsByRefkey.get(expectedRefkey),
     ).toBeDefined();
+  });
+
+  it("doesn't duplicate symbols", () => {
+    const binder = createOutputBinder();
+
+    const {
+      symbols: { rootSymbol, instantiation },
+    } = createScopeTree(binder, {
+      rootScope: {
+        symbols: {
+          rootSymbol: {
+            flags: OutputSymbolFlags.InstanceMemberContainer,
+            instanceMembers: {
+              instance: {
+                flags: OutputSymbolFlags.InstanceMember,
+              },
+            },
+          },
+          instantiation: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(rootSymbol, instantiation);
+    expect(instantiation.staticMemberScope!.symbols.size).toBe(1);
+
+    const lateKey = refkey();
+    // now add a brand‐new static member to source
+    binder.createSymbol({
+      name: "lateChild",
+      scope: rootSymbol.instanceMemberScope!,
+      refkey: lateKey,
+      flags: OutputSymbolFlags.InstanceMember,
+    });
+
+    expect(rootSymbol.instanceMemberScope!.symbols.size).toBe(2);
+    expect(instantiation.staticMemberScope!.symbols.size).toBe(2);
   });
 
   it("instantiates instance members added after the instantiation", () => {
@@ -376,15 +413,15 @@ describe("instantiating members", () => {
     binder.instantiateSymbolInto(rootSymbol, instantiation);
     flushJobs();
     expect(
-      instantiation.flags & OutputSymbolFlags.InstanceMemberContainer,
+      instantiation.flags & OutputSymbolFlags.StaticMemberContainer,
     ).toBeTruthy();
-    expect(instantiation.instanceMemberScope).toBeDefined();
+    expect(instantiation.staticMemberScope).toBeDefined();
     const expectedRefkey = refkey(
       instantiation.refkeys[0],
       instance.refkeys[0],
     );
     expect(
-      instantiation.instanceMemberScope!.symbolsByRefkey.get(expectedRefkey),
+      instantiation.staticMemberScope!.symbolsByRefkey.get(expectedRefkey),
     ).toBeDefined();
 
     const newInstanceMemberRefkey = refkey();
@@ -400,7 +437,7 @@ describe("instantiating members", () => {
     );
     flushJobs();
     expect(
-      instantiation.instanceMemberScope!.symbolsByRefkey.get(newExpectedRefkey),
+      instantiation.staticMemberScope!.symbolsByRefkey.get(newExpectedRefkey),
     ).toBeDefined();
   });
 
@@ -577,9 +614,9 @@ describe("instantiating members", () => {
 
     binder.instantiateSymbolInto(source, inst);
 
-    expect(inst.instanceMemberScope).toBeDefined();
+    expect(inst.staticMemberScope).toBeDefined();
     expect(
-      [...inst.instanceMemberScope!.symbols].some((s) => s.name === "i1"),
+      [...inst.staticMemberScope!.symbols].some((s) => s.name === "i1"),
     ).toBe(true);
 
     // static side
@@ -653,7 +690,7 @@ describe("instantiating members", () => {
     binder.instantiateSymbolInto(source, target);
 
     // Find the instantiated copy of instM under target.instanceMemberScope
-    const instMSym = [...target.instanceMemberScope!.symbols].find(
+    const instMSym = [...target.staticMemberScope!.symbols].find(
       (s) => s.name === "instM",
     )!;
 

@@ -633,7 +633,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         copyMembers(
           source.instanceMemberScope!.symbols,
           target,
-          target.instanceMemberScope!,
+          target.staticMemberScope!,
         );
       }
 

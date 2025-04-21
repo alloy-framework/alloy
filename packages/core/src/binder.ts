@@ -9,7 +9,7 @@ import {
 import { useBinder } from "./context/binder.js";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { effect, memo, untrack } from "./jsx-runtime.js";
+import { effect, memo, onCleanup, untrack } from "./jsx-runtime.js";
 import { refkey, Refkey } from "./refkey.js";
 import { queueJob, QueueJob } from "./scheduler.js";
 export type Metadata = object;
@@ -623,6 +623,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
+    if (target.staticMemberScope) {
+      return;
+    }
+
     // Ensure static member scope exists
     addStaticMembersToSymbol(target);
 
@@ -660,17 +664,16 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         untrack(() => {
           const wantKey = refkey(targetSym.refkeys[0], srcSym.refkeys[0]);
 
-          // skip if we've already instantiated this one
-          if (intoScope.symbolsByRefkey.has(wantKey)) {
-            return;
-          }
-
           // create the new symbol. Preserve StaticMemberContainer if present
           const newSym = createSymbol({
             name: srcSym.name,
             scope: intoScope,
             refkey: wantKey,
             flags: srcSym.flags | OutputSymbolFlags.StaticMember,
+          });
+
+          onCleanup(() => {
+            binder.deleteSymbol(newSym);
           });
 
           // if the source symbol itself was a container of static members,

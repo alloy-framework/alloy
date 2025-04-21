@@ -374,6 +374,7 @@ describe("instantiating members", () => {
     });
 
     binder.instantiateSymbolInto(rootSymbol, instantiation);
+    flushJobs();
     expect(instantiation.staticMemberScope!.symbols.size).toBe(1);
 
     const lateKey = refkey();
@@ -389,6 +390,52 @@ describe("instantiating members", () => {
 
     expect(rootSymbol.instanceMemberScope!.symbols.size).toBe(2);
     expect(instantiation.staticMemberScope!.symbols.size).toBe(2);
+  });
+
+  it("should remove members in instance when source deleted them", () => {
+    const binder = createOutputBinder();
+
+    const {
+      symbols: { rootSymbol, instantiation },
+    } = createScopeTree(binder, {
+      rootScope: {
+        symbols: {
+          rootSymbol: {
+            flags: OutputSymbolFlags.InstanceMemberContainer,
+            instanceMembers: {
+              instance: {
+                flags: OutputSymbolFlags.InstanceMember,
+              },
+            },
+          },
+          instantiation: {},
+        },
+      },
+    });
+
+    binder.instantiateSymbolInto(rootSymbol, instantiation);
+    expect(instantiation.staticMemberScope!.symbols.size).toBe(1);
+
+    const lateKey = refkey();
+    // now add a brand‐new static member to source
+    binder.createSymbol({
+      name: "lateChild",
+      scope: rootSymbol.instanceMemberScope!,
+      refkey: lateKey,
+      flags: OutputSymbolFlags.InstanceMember,
+    });
+
+    flushJobs();
+
+    expect(rootSymbol.instanceMemberScope!.symbols.size).toBe(2);
+    expect(instantiation.staticMemberScope!.symbols.size).toBe(2);
+
+    binder.deleteSymbol(
+      rootSymbol.instanceMemberScope!.symbols.values().next().value!,
+    );
+    flushJobs();
+    expect(rootSymbol.instanceMemberScope!.symbols.size).toBe(1);
+    expect(instantiation.staticMemberScope!.symbols.size).toBe(1);
   });
 
   it("instantiates instance members added after the instantiation", () => {
@@ -649,8 +696,10 @@ describe("instantiating members", () => {
     });
 
     binder.instantiateSymbolInto(source, target);
+    flushJobs();
     const initialCount = target.staticMemberScope!.symbols.size;
     binder.instantiateSymbolInto(source, target);
+    flushJobs();
     expect(target.staticMemberScope!.symbols.size).toBe(initialCount);
   });
 

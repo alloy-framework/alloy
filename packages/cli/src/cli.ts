@@ -80,7 +80,14 @@ function watchMain() {
   host.afterProgramCreate = async (program) => {
     ts.sys.clearScreen?.();
     try {
-      await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
+      await buildAllFiles(
+        program
+          .getSourceFiles()
+          .filter((x) => !x.isDeclarationFile)
+          .map((x) => x.fileName),
+        opts.rootDir,
+        opts.outDir,
+      );
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log(pc.red("Error building files"));

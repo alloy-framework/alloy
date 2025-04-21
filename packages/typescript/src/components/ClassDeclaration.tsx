@@ -22,6 +22,7 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { PropertyName } from "./PropertyName.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;

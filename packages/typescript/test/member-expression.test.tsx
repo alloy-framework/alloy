@@ -154,6 +154,7 @@ describe("with refkeys", () => {
   });
 
   it("handles nullish symbols correctly", () => {
+    // Note that this is deliberately producing invalid references (it's just easiest to test with VarDeclaration).
     const rk1 = refkey();
     const rk2 = refkey();
     expect(

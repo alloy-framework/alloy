@@ -385,6 +385,8 @@ describe("instantiating members", () => {
       flags: OutputSymbolFlags.InstanceMember,
     });
 
+    flushJobs();
+
     expect(rootSymbol.instanceMemberScope!.symbols.size).toBe(2);
     expect(instantiation.staticMemberScope!.symbols.size).toBe(2);
   });
@@ -515,6 +517,8 @@ describe("instantiating members", () => {
       refkey: lateKey,
       flags: OutputSymbolFlags.StaticMember,
     });
+
+    flushJobs();
 
     // it should *automatically* show up on target.staticMemberScope
     const expectedKey = refkey(target.refkeys[0], late.refkeys[0]);

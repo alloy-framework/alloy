@@ -623,8 +623,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
-    // Ensure both member scopes exist on the target
-    addInstanceMembersToSymbol(target);
+    // Ensure static member scope exists
     addStaticMembersToSymbol(target);
 
     effect(() => {
@@ -658,35 +657,38 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       intoScope: OutputScope,
     ) {
       for (const srcSym of symbols) {
-        // skip if we've already instantiated this one
-        const wantKey = refkey(targetSym.refkeys[0], srcSym.refkeys[0]);
-        if (intoScope.symbolsByRefkey.has(wantKey)) {
-          continue;
-        }
+        untrack(() => {
+          const wantKey = refkey(targetSym.refkeys[0], srcSym.refkeys[0]);
 
-        // create the new symbol. Preserve StaticMemberContainer if present
-        const newSym = createSymbol({
-          name: srcSym.name,
-          scope: intoScope,
-          refkey: wantKey,
-          flags: srcSym.flags | OutputSymbolFlags.StaticMember,
+          // skip if we've already instantiated this one
+          if (intoScope.symbolsByRefkey.has(wantKey)) {
+            return;
+          }
+
+          // create the new symbol. Preserve StaticMemberContainer if present
+          const newSym = createSymbol({
+            name: srcSym.name,
+            scope: intoScope,
+            refkey: wantKey,
+            flags: srcSym.flags | OutputSymbolFlags.StaticMember,
+          });
+
+          // if the source symbol itself was a container of static members,
+          // recurse into the newSym.staticMemberScope that createSymbol just gave us
+          if (
+            srcSym.staticMemberScope &&
+            srcSym.staticMemberScope.symbols.size > 0
+          ) {
+            // ensure we have that scope
+            addStaticMembersToSymbol(newSym);
+
+            copyMembers(
+              srcSym.staticMemberScope.symbols,
+              newSym,
+              newSym.staticMemberScope!,
+            );
+          }
         });
-
-        // if the source symbol itself was a container of static members,
-        // recurse into the newSym.staticMemberScope that createSymbol just gave us
-        if (
-          srcSym.staticMemberScope &&
-          srcSym.staticMemberScope.symbols.size > 0
-        ) {
-          // ensure we have that scope
-          addStaticMembersToSymbol(newSym);
-
-          copyMembers(
-            srcSym.staticMemberScope.symbols,
-            newSym,
-            newSym.staticMemberScope!,
-          );
-        }
       }
     }
   }

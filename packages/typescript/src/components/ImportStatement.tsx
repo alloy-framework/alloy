@@ -92,7 +92,7 @@ export function ImportStatement(props: ImportStatementProps) {
 
     if (namedImportSymbols.length > 0) {
       const allNamedImportsAreTypes = namedImportSymbols.every(
-        (nis) => nis.target.tsFlags & TSSymbolFlags.TypeSymbol,
+        (nis) => nis.local.tsFlags & TSSymbolFlags.TypeSymbol,
       );
 
       if (allNamedImportsAreTypes) {

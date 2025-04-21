@@ -19,6 +19,7 @@ import {
   TSOutputSymbol,
   TSSymbolFlags,
 } from "../symbols/index.js";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();
 const typeParametersTag = Symbol();
@@ -124,7 +125,9 @@ function parameter(param: DeclaredParameterDescriptor) {
       {param.symbol.name}
       <Show when={!!param.optional}>?</Show>
       <Show when={!!param.type}>
-        <indent>: {param.type}</indent>
+        <indent>
+          : <TypeRefContext>{param.type}</TypeRefContext>
+        </indent>
       </Show>
     </group>
   );
@@ -255,7 +258,10 @@ function typeParameter(param: DeclaredTypeParameterDescriptor) {
       <Show when={!!param.extends}>
         {" "}
         extends
-        <indent> {param.extends}</indent>
+        <indent>
+          {" "}
+          <TypeRefContext>{param.extends}</TypeRefContext>
+        </indent>
       </Show>
     </group>
   );

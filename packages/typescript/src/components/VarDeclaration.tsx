@@ -10,6 +10,7 @@ import { useTSNamePolicy } from "../name-policy.js";
 import { createTSSymbol } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface VarDeclarationProps extends BaseDeclarationProps {
   const?: boolean;
@@ -24,7 +25,8 @@ export function VarDeclaration(props: VarDeclarationProps) {
     props.var ? "var"
     : props.let ? "let"
     : "const";
-  const type = props.type ? <>: {props.type}</> : undefined;
+  const type =
+    props.type ? <TypeRefContext>: {props.type}</TypeRefContext> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
   const sym = createTSSymbol({
     name: name,

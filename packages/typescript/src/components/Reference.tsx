@@ -1,5 +1,5 @@
 import { Refkey } from "@alloy-js/core";
-import { useTSContext } from "../context/ts-context.js";
+import { isTypeRefContext } from "../context/type-ref-context.js";
 import { ref } from "../symbols/index.js";
 
 export interface ReferenceProps {
@@ -15,8 +15,8 @@ export interface ReferenceProps {
 }
 
 export function Reference({ refkey, type }: ReferenceProps) {
-  const ts = useTSContext();
-  const reference = ref(refkey, { type: type ?? ts.type });
+  const inTypeRef = isTypeRefContext();
+  const reference = ref(refkey, { type: type ?? inTypeRef });
 
   return <>{reference}</>;
 }

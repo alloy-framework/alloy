@@ -10,7 +10,7 @@ import "@alloy-js/core/testing";
 import { describe, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { TypeScriptContext } from "../src/context/ts-context.js";
+import { TypeRefContext } from "../src/context/type-ref-context.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { assertFileContents } from "./utils.js";
 
@@ -448,7 +448,7 @@ describe("type imports", () => {
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
-          <TypeScriptContext.Provider value={{ type: true }}>
+          <TypeRefContext.Provider value={{ type: true }}>
             <List>
               <>
                 type A = <Reference refkey={TypeA} />
@@ -457,7 +457,7 @@ describe("type imports", () => {
                 type B = <Reference refkey={TypeA} />
               </>
             </List>
-          </TypeScriptContext.Provider>
+          </TypeRefContext.Provider>
         </ts.SourceFile>
       </Output>,
     );

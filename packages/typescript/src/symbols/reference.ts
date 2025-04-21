@@ -139,17 +139,21 @@ function buildMemberExpression(path: TSOutputSymbol[]) {
     path = path.slice(1);
   }
 
+  let prevNullish = base.tsFlags & TSSymbolFlags.Nullish;
   for (const sym of path) {
+    const optional = prevNullish ? "?" : "";
     if (sym.tsFlags & TSSymbolFlags.PrivateMember) {
-      memberExpr += `.#${sym.name}`;
+      memberExpr += `${optional}.#${sym.name}`;
     } else if (
       isValidJSIdentifier(sym.name) &&
       !(sym.tsFlags & TSSymbolFlags.TypeSymbol)
     ) {
-      memberExpr += `.${sym.name}`;
+      memberExpr += `${optional}.${sym.name}`;
     } else {
-      memberExpr += `[${JSON.stringify(sym.name)}]`;
+      const joiner = sym.tsFlags & TSSymbolFlags.Nullish ? "?." : "";
+      memberExpr += `${joiner}[${JSON.stringify(sym.name)}]`;
     }
+    prevNullish = sym.tsFlags & TSSymbolFlags.Nullish;
   }
 
   return memberExpr;

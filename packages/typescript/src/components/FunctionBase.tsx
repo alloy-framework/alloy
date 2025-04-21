@@ -189,13 +189,18 @@ function normalizeAndDeclareParameters(
     });
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
+      const nullishFlag =
+        (param.nullish ?? param.optional) ?
+          TSSymbolFlags.Nullish
+        : TSSymbolFlags.None;
+
       const symbol = createTSSymbol({
         name: namePolicy.getName(
           param.name,
           flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
         ),
         refkey: param.refkey,
-        tsFlags: flags,
+        tsFlags: flags | nullishFlag,
         metadata: param.metadata,
       });
 

@@ -171,7 +171,7 @@ export function ClassField(props: ClassFieldProps) {
   const optionality = props.optional ? "?" : "";
   const typeSection = props.type && (
     <>
-      {optionality}: {props.type}
+      {optionality}: <TypeRefContext>{props.type}</TypeRefContext>
     </>
   );
   const initializerSection = props.children && <> = {props.children}</>;

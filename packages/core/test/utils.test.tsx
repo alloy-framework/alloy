@@ -2,6 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed, ref, triggerRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { renderTree } from "../src/render.js";
+import { flushJobs } from "../src/scheduler.js";
 import { children, join, mapJoin } from "../src/utils.js";
 import "../testing/extend-expect.js";
 
@@ -93,6 +94,7 @@ describe("mapJoin", () => {
     expect(callCount).toBe(2);
     arr.value.push(3);
     triggerRef(arr);
+    flushJobs();
     expect(callCount).toBe(3);
   });
   it("can map a joiner", () => {

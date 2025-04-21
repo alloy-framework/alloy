@@ -640,7 +640,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
           if (target.instanceMemberScope!.symbols.has(sym)) {
             return;
           }
-          
+
           createSymbol({
             name: sym.name,
             scope: target.instanceMemberScope!,

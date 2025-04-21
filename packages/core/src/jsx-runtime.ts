@@ -127,11 +127,11 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     for (let k = 0, len = d.length; k < len; k++) d[k]();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    final && stop(c);
+    final && stop(runner);
   };
 
   onCleanup(() => cleanupFn(true));
-  const c: ReactiveEffectRunner<void> = vueEffect(
+  const runner: ReactiveEffectRunner<void> = vueEffect(
     () => {
       cleanupFn(false);
 
@@ -144,12 +144,12 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       }
     },
     {
-      scheduler: scheduler(() => c),
+      scheduler: scheduler(() => runner),
     },
   );
 
-  // allow recursive effects
-  (c as any).effect.flags |= 1 << 5;
+  // allow recursive effects (recursive option does nothing, possible bug)
+  (runner as any).effect.flags |= 1 << 5;
 }
 
 /**

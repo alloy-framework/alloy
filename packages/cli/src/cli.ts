@@ -112,6 +112,13 @@ function reportDiagnostics(diagnostics: readonly ts.Diagnostic[]) {
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
 function reportWatchStatusChanged(diagnostic: ts.Diagnostic) {
+  const time = new Date();
+  const formattedTime = time.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
   // eslint-disable-next-line no-console
-  console.log(diagnostic.messageText);
+  console.log(`[${pc.green(formattedTime)}] ${diagnostic.messageText}`);
 }

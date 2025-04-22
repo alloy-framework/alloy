@@ -112,6 +112,11 @@ function reportDiagnostics(diagnostics: readonly ts.Diagnostic[]) {
  * This is mainly for messages like "Starting compilation" or "Compilation completed".
  */
 function reportWatchStatusChanged(diagnostic: ts.Diagnostic) {
+  const time = new Date();
+  const hours = time.getHours();
+  const amPm = hours >= 12 ? "PM" : "AM";
+  const hours12 = hours % 12 || 12;
+  const formattedTime = `${hours12}:${time.getMinutes()}:${time.getSeconds()} ${amPm}`;
   // eslint-disable-next-line no-console
-  console.log(diagnostic.messageText);
+  console.log(`[${pc.green(formattedTime)}] ${diagnostic.messageText}`);
 }

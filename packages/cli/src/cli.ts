@@ -113,10 +113,12 @@ function reportDiagnostics(diagnostics: readonly ts.Diagnostic[]) {
  */
 function reportWatchStatusChanged(diagnostic: ts.Diagnostic) {
   const time = new Date();
-  const hours = time.getHours();
-  const amPm = hours >= 12 ? "PM" : "AM";
-  const hours12 = hours % 12 || 12;
-  const formattedTime = `${hours12}:${time.getMinutes()}:${time.getSeconds()} ${amPm}`;
+  const formattedTime = time.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
   // eslint-disable-next-line no-console
   console.log(`[${pc.green(formattedTime)}] ${diagnostic.messageText}`);
 }

@@ -1,5 +1,18 @@
 # Changelog - @alloy-js/typescript
 
+## 0.12.0
+
+### Bug Fixes
+
+- [#121](https://github.com/alloy-framework/alloy/pull/121) JS Doc comment close with `*/` instead of `**/`
+
+### Features
+
+- [#117](https://github.com/alloy-framework/alloy/pull/117) Add nullish to TS Symbol flags
+- [#125](https://github.com/alloy-framework/alloy/pull/125) Automatically enter a type context when inside of interface, function type, type declaration, etc. This allow referenced used in there to automatically add the `type` keyword in the import
+- [#124](https://github.com/alloy-framework/alloy/pull/124) Add `type` prop on `Reference` component to mark this reference as a type only reference allowing imports to be specialized in type import
+
+
 ## 0.11.0
 
 ### Bug Fixes

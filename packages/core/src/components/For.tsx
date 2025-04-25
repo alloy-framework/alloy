@@ -38,10 +38,10 @@ export interface ForProps<
 }
 
 export type ForSupportedCollections =
-  | any[]
-  | Map<any, any>
-  | Set<any>
-  | IterableIterator<any>;
+  | readonly unknown[]
+  | ReadonlyMap<unknown, unknown>
+  | ReadonlySet<unknown>
+  | IterableIterator<unknown>;
 /**
  * The For component iterates over the provided array and invokes the child
  * callback for each item. It can optionally be provided with a `joiner` which

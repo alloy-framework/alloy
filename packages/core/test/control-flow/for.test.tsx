@@ -1,6 +1,6 @@
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
 import { onCleanup, printTree, reactive, renderTree } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
@@ -16,6 +16,30 @@ it("works", () => {
     hi, Jose!
     bye, Jose!
   `);
+});
+
+describe("readonly collections", () => {
+  const out = d`
+    a
+    b
+  `;
+  it("array", () => {
+    const messages: readonly string[] = ["a", "b"];
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
+
+  it("map", () => {
+    const messages: ReadonlyMap<string, string> = new Map([
+      ["a", "a"],
+      ["b", "b"],
+    ]);
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
+
+  it("set", () => {
+    const messages: ReadonlySet<string> = new Set(["a", "b"]);
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
 });
 
 it("handles map entries", () => {

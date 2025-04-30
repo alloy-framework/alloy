@@ -1,5 +1,20 @@
 # Changelog - @alloy-js/core
 
+## 0.12.0
+
+### Bug Fixes
+
+- [#134](https://github.com/alloy-framework/alloy/pull/134) Support readonly collection in `<For>` `each` prop.
+
+### Features
+
+- [#114](https://github.com/alloy-framework/alloy/pull/114) instantiateSymbolInto now mirrors both instance and static members (including nested static hierarchies), and no longer errors on static-only sources.
+
+### Breaking Changes
+
+- [#127](https://github.com/alloy-framework/alloy/pull/127) Use a scheduler for effects. Effects are no longer run instantly but are queued to run after the current effect finishes. This significantly reduces effect calls due to coalescing multiple updates and also enables more recursive patterns.
+
+
 ## 0.11.0
 
 ### Bug Fixes

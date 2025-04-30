@@ -1,4 +1,4 @@
-import { List, refkey, StatementList } from "@alloy-js/core";
+import { List, Output, refkey, render, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
@@ -159,6 +159,76 @@ describe("instance members", () => {
       class Foo {
         "o-n-e" = 1;
         "t-w-o" = this["o-n-e"] + 1;
+      }
+    `);
+  });
+
+  it("doesn't conflict with variables outside the class", () => {
+    const rk = refkey();
+    const res = toSourceText(
+      <List>
+        <ts.VarDeclaration name="one">1;</ts.VarDeclaration>
+        <ts.VarDeclaration name="two">2;</ts.VarDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <StatementList>
+            <ts.ClassField name="one" refkey={rk}>
+              1
+            </ts.ClassField>
+            <ts.ClassMethod name="two">{rk} + 1</ts.ClassMethod>
+          </StatementList>
+        </ts.ClassDeclaration>
+      </List>,
+    );
+    expect(res).toEqual(d`
+      const one = 1;
+      const two = 2;
+      class Foo {
+        one = 1;
+        two() {
+          this.one + 1
+        };
+      }
+    `);
+  });
+
+  it("doesn't conflict with imports from other files", () => {
+    const rk1 = refkey();
+    const rk2 = refkey();
+    const tree = render(
+      <Output
+        nameConflictResolver={() => {
+          console.log("CONFLIT");
+        }}
+      >
+        <ts.SourceFile path="decl.ts">
+          <StatementList>
+            <ts.VarDeclaration export name="one" refkey={rk1}>
+              1
+            </ts.VarDeclaration>
+            <ts.VarDeclaration export name="two" refkey={rk2}>
+              2
+            </ts.VarDeclaration>
+          </StatementList>
+        </ts.SourceFile>
+        <ts.SourceFile path="ref.ts">
+          <ts.ClassDeclaration name="Foo">
+            <StatementList>
+              <ts.ClassField name="one">{rk1}</ts.ClassField>
+              <ts.ClassMethod name="two">{rk2}</ts.ClassMethod>
+            </StatementList>
+          </ts.ClassDeclaration>
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    expect(tree.contents[1].contents).toEqual(d`
+      import { one, two } from "./decl.js";
+
+      class Foo {
+        one = one;
+        two() {
+          two
+        };
       }
     `);
   });

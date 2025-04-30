@@ -49,7 +49,16 @@ it("resolves symbol conflicts", () => {
     scope,
   });
 
+  const s3 = binder.createSymbol({
+    name: "sym",
+    scope,
+  });
+
+  flushJobs();
+
+  expect(_s1.name).toEqual("sym");
   expect(s2.name).toEqual("sym_2");
+  expect(s3.name).toEqual("sym_3");
 });
 
 type ScopeRecords = Record<string, ScopeDescriptor>;

@@ -173,6 +173,56 @@ it("works with default and named imports and name conflicts", () => {
   });
 });
 
+it("works with importing the same name many times from different files with the default name conflict resolver", () => {
+  const rk1 = refkey();
+  const rk1i = refkey();
+  const rk2 = refkey();
+  const rk2i = refkey();
+  const rk3 = refkey();
+  const rk3i = refkey();
+
+  const res = render(
+    <Output>
+      <ts.SourceFile path="test1.ts">
+        <ts.VarDeclaration export name="conflict" refkey={rk1}>
+          "hi"
+        </ts.VarDeclaration>
+        <ts.InterfaceDeclaration export name="MyInterface" refkey={rk1i} />
+      </ts.SourceFile>
+      <ts.SourceFile path="test2.ts">
+        <ts.VarDeclaration name="conflict" refkey={rk2}>
+          "hi"
+        </ts.VarDeclaration>
+        <ts.InterfaceDeclaration export name="MyInterface" refkey={rk2i} />
+      </ts.SourceFile>
+      <ts.SourceFile path="test3.ts">
+        <ts.VarDeclaration name="conflict" refkey={rk3}>
+          "hi"
+        </ts.VarDeclaration>
+        <ts.InterfaceDeclaration export name="MyInterface" refkey={rk3i} />
+      </ts.SourceFile>
+      <ts.SourceFile path="test-import.ts">
+        <StatementList>
+          <ts.VarDeclaration name="one" type={rk1i} initializer={rk1} />
+          <ts.VarDeclaration name="two" type={rk2i} initializer={rk2} />
+          <ts.VarDeclaration name="three" type={rk3i} initializer={rk3} />
+        </StatementList>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "test-import.ts": `
+      import { type MyInterface, conflict } from "./test1.js";
+      import { type MyInterface as MyInterface_2, conflict as conflict_2 } from "./test2.js";
+      import { type MyInterface as MyInterface_3, conflict as conflict_3 } from "./test3.js";
+
+      const one: MyInterface = conflict;
+      const two: MyInterface_2 = conflict_2;
+      const three: MyInterface_3 = conflict_3;
+    `,
+  });
+});
 it("works with default and named imports and name conflicts and references in nested scopes", () => {
   const res = render(
     <Output nameConflictResolver={tsNameConflictResolver}>

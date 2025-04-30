@@ -848,26 +848,19 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       return;
     }
 
-    if (options.nameConflictResolver) {
-      queueJob(
-        deconflictJobForScopeAndName(
-          scope,
-          symbol.name,
-          options.nameConflictResolver,
-        ),
-      );
-    } else {
-      // default disambiguation is first-wins
-      for (let i = 1; i < existingNames.length; i++) {
-        existingNames[i].name = existingNames[i].originalName + "_" + (i + 1);
-      }
-    }
+    queueJob(
+      deconflictJobForScopeAndName(
+        scope,
+        symbol.name,
+        options.nameConflictResolver,
+      ),
+    );
   }
 
   function deconflictJobForScopeAndName(
     scope: OutputScope,
     name: string,
-    handler: NameConflictResolver,
+    handler: NameConflictResolver | undefined,
   ) {
     if (!deconflictJobs.has(scope)) {
       deconflictJobs.set(scope, new Map());
@@ -881,12 +874,30 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       const conflictedSymbols = [...scope.symbols].filter(
         (sym) => sym.name === name,
       );
-      handler(name, conflictedSymbols);
+      if (handler) {
+        handler(name, conflictedSymbols);
+      } else {
+        defaultConflictHandler(name, conflictedSymbols);
+      }
       jobs.delete(name);
     };
 
     jobs.set(name, job);
     return job;
+  }
+
+  /**
+   * Default conflict handler. This will rename all but the first symbol
+   * to have a suffix of _2, _3, etc.
+   */
+  function defaultConflictHandler(
+    _: string,
+    conflictedSymbols: OutputSymbol[],
+  ) {
+    for (let i = 1; i < conflictedSymbols.length; i++) {
+      conflictedSymbols[i].name =
+        conflictedSymbols[i].originalName + "_" + (i + 1);
+    }
   }
 
   function getSymbolForRefkey<TSymbol extends OutputSymbol>(

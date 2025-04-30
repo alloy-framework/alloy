@@ -1004,3 +1004,78 @@ describe("Deleting symbols", () => {
     expect(rootScope.symbols.size).toBe(0);
   });
 });
+
+describe("Merging symbols", () => {
+  it("uses the first symbol for the name and scope", () => {
+    const binder = createOutputBinder();
+    const scope = binder.createScope({
+      kind: "foo",
+      name: "scope",
+      parent: binder.globalScope,
+    });
+
+    const s1r1 = refkey();
+    const s1r2 = refkey();
+    const s2r1 = refkey();
+
+    const s1 = binder.createSymbol({
+      name: "sym",
+      scope,
+      flags: OutputSymbolFlags.Transient,
+      refkey: [s1r1, s1r2],
+    });
+
+    const s2 = binder.createSymbol({
+      name: "sym",
+      flags: OutputSymbolFlags.Transient,
+      refkey: s2r1,
+    });
+
+    expect(scope.symbols.size).toBe(0);
+    const merged = binder.mergeSymbols([s1, s2]);
+    expect(merged.name).toBe("sym");
+    expect(merged.scope).toBe(scope);
+    expect(merged.flags & ~OutputSymbolFlags.Transient).toBe(0);
+    expect(scope.symbols.size).toBe(1);
+    expect(Array.from(scope.symbols.values())[0]).toBe(merged);
+    expect(merged.refkeys).toEqual([s1r1, s1r2, s2r1]);
+  });
+
+  it("merges static and instance symbols together", () => {
+    const binder = createOutputBinder();
+    const scope = binder.createScope({
+      kind: "foo",
+      name: "scope",
+      parent: binder.globalScope,
+    });
+
+    const s1 = binder.createSymbol({
+      name: "sym",
+      scope,
+      flags:
+        OutputSymbolFlags.Transient | OutputSymbolFlags.StaticMemberContainer,
+    });
+
+    const s2 = binder.createSymbol({
+      name: "sym",
+      flags:
+        OutputSymbolFlags.Transient | OutputSymbolFlags.StaticMemberContainer,
+    });
+
+    binder.createSymbol({
+      name: "m1",
+      scope: s1.staticMemberScope!,
+      flags: OutputSymbolFlags.StaticMember,
+    });
+
+    binder.createSymbol({
+      name: "m2",
+      scope: s2.staticMemberScope!,
+      flags: OutputSymbolFlags.StaticMember,
+    });
+
+    const merged = binder.mergeSymbols([s1, s2]);
+    expect(merged.staticMemberScope).toBeDefined();
+    expect(merged.staticMemberScope?.symbols.size).toBe(2);
+  });
+});

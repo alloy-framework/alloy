@@ -1,9 +1,9 @@
 import {
-  AssignmentContext,
   Children,
   Declaration as CoreDeclaration,
-  createAssignmentContext,
-  Name,
+  effect,
+  mergeTakenSymbolsWith,
+  OutputSymbolFlags,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
@@ -29,7 +29,8 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const type =
     props.type ? <TypeRefContext>: {props.type}</TypeRefContext> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
-  const sym = createTSSymbol({
+  const baseSym = createTSSymbol({
+    flags: OutputSymbolFlags.Transient,
     name: name,
     refkey: props.refkey,
     default: props.default,
@@ -38,22 +39,24 @@ export function VarDeclaration(props: VarDeclarationProps) {
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
   });
 
-  const assignmentContext = createAssignmentContext(sym);
+  const sym = mergeTakenSymbolsWith(baseSym);
 
+  effect(() => {
+    console.log("Merged symbol");
+    if (!sym.value) {
+      console.log("Undef");
+      return;
+    }
+    console.log(sym.value.name);
+  });
   return (
     <>
       <Show when={Boolean(props.doc)}>
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <CoreDeclaration symbol={sym}>
-        {props.export ? "export " : ""}
-        {props.default ? "default " : ""}
-        {keyword} <Name />
-        {type} ={" "}
-        <AssignmentContext.Provider value={assignmentContext}>
-          {props.initializer ?? props.children}
-        </AssignmentContext.Provider>
+      <CoreDeclaration symbol={sym.value}>
+        {type} = {props.initializer ?? props.children}
       </CoreDeclaration>
     </>
   );

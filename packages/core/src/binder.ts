@@ -5,6 +5,7 @@ import {
   Ref,
   ShallowRef,
   shallowRef,
+  toRef,
 } from "@vue/reactivity";
 import { useBinder } from "./context/binder.js";
 import { useMemberScope } from "./context/member-scope.js";
@@ -50,6 +51,13 @@ export enum OutputSymbolFlags {
   StaticMember = 1 << 3,
 
   /**
+   * Transient symbols are not added to symbol tables and do not create
+   * referencable refkeys. They are used for temporary symbols that are intended
+   * to be used to calculate other symbols e.g. via merging.
+   */
+  Transient = 1 << 4,
+
+  /**
    * Whether this is an instance member or static member of another symbol.
    */
   Member = InstanceMember | StaticMember,
@@ -89,7 +97,8 @@ export interface OutputSymbol {
   flags: OutputSymbolFlags;
 
   /**
-   * The scope in which the symbol is defined.
+   * The scope in which the symbol is defined. This may actually be undefined
+   * when the symbol is transient.
    */
   scope: OutputScope;
 
@@ -208,13 +217,16 @@ export interface OutputScope {
   children: Set<OutputScope>;
 
   /**
-   * The container of this scope.
+   * The container of this scope. This is only defined for scopes which don't
+   * have the {@link OutputScopeFlags.StaticMemberScope} or
+   * {@link OutputScopeFlags.InstanceMemberScope} flag.
    */
   parent: OutputScope | undefined;
 
   /**
    * The symbol that owns this scope. This is only defined for scopes that have
-   * the {@link OutputScopeFlags.StaticMemberScope} flag.
+   * the {@link OutputScopeFlags.StaticMemberScope} or
+   * {@link OutputScopeFlags.InstanceMemberScope} flag.
    */
   owner?: OutputSymbol;
 
@@ -278,6 +290,30 @@ export interface Binder {
    */
   deleteSymbol(symbol: OutputSymbol): void;
 
+  /**
+   * Create a new symbol that merges all the provided source symbols together.
+   * At least one symbol must be passed. This should be used in cases where a
+   * single logical symbol may be declared across multiple components, e.g. a
+   * for a variable declaration that is initialized by its child components. It
+   * should not be used for instantiating symbols, e.g. handling the newing of a
+   * class or typing a value by a provided type - use `instantiateSymbolInto`
+   * instead.
+   *
+   * The first symbol is considered the base symbol and is used to determine the
+   * name and scope of the merged symbol.
+   *
+   * The refkey of the merged symbol is the refkeys from all source symbols.
+   *
+   * All static and instance members from the source symbol are present in the
+   * source symbol. In the case of duplicate names, the last source wins (there
+   * is no name conflict resolution).
+   *
+   * Other properties of the merged symbol are computed as follows:
+   *
+   * * flags - any flag set on any symbol is set on the merged symbol.
+   * * metadata - all metadata is merged together, last one wins.
+   */
+  mergeSymbols(symbols: OutputSymbol[]): OutputSymbol;
   /**
    * Instantiate the static members of a symbol into the instance members of
    * another symbol.
@@ -429,6 +465,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     createScope,
     createSymbol,
     deleteSymbol,
+    mergeSymbols,
     resolveDeclarationByKey,
     getSymbolForRefkey,
     addStaticMembersToSymbol,
@@ -542,27 +579,30 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
     const allRefkeys = [refkey ?? []].flat();
 
-    if (!scope) {
-      throw new Error(
-        "No scope was provided and no scope could be found in context",
-      );
-    }
-
-    if (
-      flags & OutputSymbolFlags.Member &&
-      (scope.flags & OutputScopeFlags.MemberScope) === 0
-    ) {
-      throw new Error("Member symbols must be stored in a member scope.");
-    }
-
-    if (scope.flags & OutputScopeFlags.StaticMemberScope) {
-      if (
-        ~flags & OutputSymbolFlags.InstanceMember &&
-        ~flags & OutputSymbolFlags.StaticMember
-      ) {
+    // validate preconditions for non-transient symbols.
+    if (~flags & OutputSymbolFlags.Transient) {
+      if (!scope) {
         throw new Error(
-          "Symbols stored in a member scope must have either OutputSymbolFlags.InstanceMember or OutputSymbolFlags.StaticMember flags",
+          "No scope was provided and no scope could be found in context",
         );
+      }
+
+      if (
+        flags & OutputSymbolFlags.Member &&
+        (scope.flags & OutputScopeFlags.MemberScope) === 0
+      ) {
+        throw new Error("Member symbols must be stored in a member scope.");
+      }
+
+      if (scope.flags & OutputScopeFlags.StaticMemberScope) {
+        if (
+          ~flags & OutputSymbolFlags.InstanceMember &&
+          ~flags & OutputSymbolFlags.StaticMember
+        ) {
+          throw new Error(
+            "Symbols stored in a member scope must have either OutputSymbolFlags.InstanceMember or OutputSymbolFlags.StaticMember flags",
+          );
+        }
       }
     }
 
@@ -577,35 +617,59 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       ...rest,
     }) as T;
 
-    if (args.flags && args.flags & OutputSymbolFlags.InstanceMemberContainer) {
-      symbol.instanceMemberScope = createScope({
-        kind: "member",
-        name: "instance members",
-        parent: undefined,
-        owner: symbol,
-        flags: OutputScopeFlags.InstanceMemberScope,
-      });
+    addMemberScopes(symbol);
+
+    finalizeSymbol(symbol);
+    if (~symbol.flags & OutputSymbolFlags.Transient) {
+      if (!scope) {
+        throw new Error("Expected scope for symbol " + name);
+      }
+
+      return symbol;
     }
 
-    if (args.flags && args.flags & OutputSymbolFlags.StaticMemberContainer) {
-      symbol.staticMemberScope = createScope({
-        kind: "member",
-        name: "static members",
-        parent: undefined,
-        owner: symbol,
-        flags: OutputScopeFlags.StaticMemberScope,
-      });
+    return symbol;
+  }
+
+  function addMemberScopes(owner: OutputSymbol) {
+    if (owner.flags & OutputSymbolFlags.InstanceMemberContainer) {
+      owner.instanceMemberScope = createMemberScope(owner, "instance");
     }
 
-    scope.symbols.add(symbol);
-    for (const refkey of allRefkeys) {
-      scope.symbolsByRefkey.set(refkey, symbol);
+    if (owner.flags & OutputSymbolFlags.StaticMemberContainer) {
+      owner.staticMemberScope = createMemberScope(owner, "static");
+    }
+  }
+
+  function createMemberScope(owner: OutputSymbol, kind: "static" | "instance") {
+    return createScope({
+      kind: "member",
+      name: `${kind} members`,
+      parent: undefined,
+      owner,
+      flags:
+        kind === "static" ?
+          OutputScopeFlags.StaticMemberScope
+        : OutputScopeFlags.InstanceMemberScope,
+    });
+  }
+
+  /**
+   * Takes a fully initialized symbol and adds it to symbol tables it belongs to
+   * and handles its refkeys.
+   */
+  function finalizeSymbol(symbol: OutputSymbol) {
+    // do nothing for transient symbols
+    if (symbol.flags & OutputSymbolFlags.Transient) {
+      return;
+    }
+    symbol.scope.symbols.add(symbol);
+    for (const refkey of symbol.refkeys) {
+      symbol.scope.symbolsByRefkey.set(refkey, symbol);
     }
 
     deconflict(symbol);
     notifyRefkey(symbol);
-
-    return symbol;
   }
 
   function deleteSymbol(symbol: OutputSymbol) {
@@ -620,6 +684,137 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       if (!resolution) return;
       resolution.value = undefined;
     }
+  }
+
+  function mergeSymbols(symbols: OutputSymbol[]) {
+    if (symbols.length === 0) {
+      throw new Error("No symbols to merge");
+    }
+
+    const baseSymbol = symbols[0];
+
+    const name = toRef(baseSymbol, "name");
+    effect(() => {
+      console.log("Name: ", name.value);
+    });
+    const scope = toRef(baseSymbol, "scope");
+    effect(() => {
+      console.log("Scope: ", scope.value.name);
+    });
+    const flags = mergeFlags(
+      symbols.map((s) => toRef(s.flags)),
+      OutputSymbolFlags.Transient,
+    );
+    effect(() => {
+      console.log("Flags: ", flags.value);
+    });
+    const metadata = mergeRecords(symbols.map((s) => toRef(s.metadata)));
+    effect(() => {
+      console.log("Meta: ", metadata.value);
+    });
+    const refkeys = computed(() => {
+      return symbols.reduce((acc, symbol) => {
+        if (symbol.flags & OutputSymbolFlags.Transient) {
+          return [...acc, ...symbol.refkeys];
+        }
+        return acc;
+      }, [] as Refkey[]);
+    });
+    effect(() => {
+      console.log("Refkeys: ", refkeys.value);
+    });
+    console.log("Creating symbol");
+    const symbol: OutputSymbol = reactive({
+      binder: baseSymbol.binder,
+      instanceMemberScope: undefined,
+      staticMemberScope: undefined,
+      name,
+      flags,
+      metadata,
+      refkeys,
+      originalName: name,
+      scope,
+    });
+
+    // Symbol scopes aren't reactive to changes in merged members. So scopes
+    // must be initialized on the symbol prior to merging.
+    symbol.instanceMemberScope = mergeScopes(
+      symbols.map((s) => s.instanceMemberScope).filter((s) => s !== undefined),
+      { owner: symbol },
+    );
+    symbol.staticMemberScope = mergeScopes(
+      symbols.map((s) => s.staticMemberScope).filter((s) => s !== undefined),
+      { owner: symbol },
+    );
+
+    finalizeSymbol(symbol);
+
+    return symbol;
+  }
+
+  function mergeFlags(
+    flags: Ref<number>[],
+    excludeMask: number = 0,
+  ): Ref<number> {
+    return computed(() => {
+      return flags.reduce((acc, flag) => acc | (flag.value & ~excludeMask), 0);
+    });
+  }
+
+  function mergeRecords<T>(
+    records: Ref<Record<string, T>>[],
+  ): Ref<Record<string, T>> {
+    return computed(() => {
+      return records.reduce((acc, record) => {
+        return { ...acc, ...record.value };
+      }, {});
+    });
+  }
+
+  function mergeSet<T>(sets: Set<T>[]): Set<T> {
+    const mergedSet = new Set<T>();
+
+    effect(() => {
+      for (const set of sets) {
+        for (const item of set) {
+          mergedSet.add(item);
+        }
+      }
+    });
+
+    return mergedSet;
+  }
+
+  function mergeScopes(
+    scopes: OutputScope[],
+    options: { parent?: OutputScope; owner?: OutputSymbol },
+  ) {
+    if (scopes.length === 0) {
+      return undefined;
+    }
+
+    const baseScope = scopes[0];
+
+    const name = toRef(baseScope, "name");
+    const flags = mergeFlags(scopes.map((s) => toRef(s, "flags")));
+
+    const symbols = new Set<OutputSymbol>();
+    const scope: OutputScope = reactive({
+      binder: baseScope.binder,
+      name,
+      flags,
+      symbols: symbols,
+      symbolsByRefkey: new Map(),
+      children: new Set(),
+      parent: options.parent,
+      owner: options.owner,
+      getSymbolNames: symbolNames(symbols),
+    });
+
+    scope.symbols = mergeSet(scopes.map((s) => s.symbols));
+    scope.children = mergeSet(scopes.map((s) => s.children));
+
+    return scope;
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {

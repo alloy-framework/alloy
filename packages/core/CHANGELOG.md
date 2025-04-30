@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.13.0
+
+### Bug Fixes
+
+- [#137](https://github.com/alloy-framework/alloy/pull/137) Fix default symbol conflict resolver not working with more than 2 symbols.
+
+
 ## 0.12.0
 
 ### Bug Fixes

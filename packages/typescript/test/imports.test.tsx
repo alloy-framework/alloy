@@ -11,6 +11,7 @@ import { describe, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { TypeRefContext } from "../src/context/type-ref-context.js";
+import { createPackage } from "../src/create-package.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { assertFileContents } from "./utils.js";
 
@@ -492,6 +493,34 @@ describe("type imports", () => {
     });
   });
 
+  it("value reference from another file doesn't affect a type only reference", () => {
+    const { component, ClassA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          type A = <Reference refkey={ClassA} type />
+        </ts.SourceFile>
+        <ts.SourceFile path="test3.ts">
+          class B extends <Reference refkey={ClassA} /> {"{}"}
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { ClassA } from "./test1.js";
+
+      type A = ClassA
+    `,
+      "test3.ts": `
+      import { ClassA } from "./test1.js";
+
+      class B extends ClassA {}
+    `,
+    });
+  });
+
   it("infer if a type reference from the typescript context", () => {
     const { component, TypeA } = mkTestFile("test1.ts");
     const res = render(
@@ -518,6 +547,34 @@ describe("type imports", () => {
 
       type A = TypeA
       type B = TypeA
+    `,
+    });
+  });
+
+  it("reference from a package", () => {
+    const pkg1 = createPackage({
+      name: "test",
+      version: "^1.0.0",
+      descriptor: {
+        ".": {
+          named: ["Foo"],
+        },
+      },
+    });
+
+    const res = render(
+      <Output externals={[pkg1]}>
+        <ts.SourceFile path="test2.ts">
+          type A = <Reference refkey={pkg1.Foo} type />
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { Foo } from "test";
+
+      type A = Foo
     `,
     });
   });

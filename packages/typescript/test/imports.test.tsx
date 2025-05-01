@@ -493,6 +493,34 @@ describe("type imports", () => {
     });
   });
 
+  it("value reference from another file doesn't affect a type only reference", () => {
+    const { component, ClassA } = mkTestFile("test1.ts");
+    const res = render(
+      <Output>
+        {component}
+        <ts.SourceFile path="test2.ts">
+          type A = <Reference refkey={ClassA} type />
+        </ts.SourceFile>
+        <ts.SourceFile path="test3.ts">
+          class B extends <Reference refkey={ClassA} /> {"{}"}
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { ClassA } from "./test1.js";
+
+      type A = ClassA
+    `,
+      "test3.ts": `
+      import { ClassA } from "./test1.js";
+
+      class B extends ClassA {}
+    `,
+    });
+  });
+
   it("infer if a type reference from the typescript context", () => {
     const { component, TypeA } = mkTestFile("test1.ts");
     const res = render(

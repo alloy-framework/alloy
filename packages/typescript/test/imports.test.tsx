@@ -11,6 +11,7 @@ import { describe, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { TypeRefContext } from "../src/context/type-ref-context.js";
+import { createPackage } from "../src/create-package.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { assertFileContents } from "./utils.js";
 
@@ -518,6 +519,34 @@ describe("type imports", () => {
 
       type A = TypeA
       type B = TypeA
+    `,
+    });
+  });
+
+  it("reference from a package", () => {
+    const pkg1 = createPackage({
+      name: "test",
+      version: "^1.0.0",
+      descriptor: {
+        ".": {
+          named: ["Foo"],
+        },
+      },
+    });
+
+    const res = render(
+      <Output externals={[pkg1]}>
+        <ts.SourceFile path="test2.ts">
+          type A = <Reference refkey={pkg1.Foo} type />
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test2.ts": `
+      import type { Foo } from "test";
+
+      type A = Foo
     `,
     });
   });

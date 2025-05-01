@@ -85,7 +85,9 @@ export function ref(refkey: Refkey, options?: RefOptions): () => string {
         for (const refkey of importSymbol.refkeys) {
           if (module.exportedSymbols.has(refkey)) {
             localSymbol = untrack(() =>
-              sourceFile!.scope.addImport(importSymbol, module),
+              sourceFile!.scope.addImport(importSymbol, module, {
+                type: options?.type,
+              }),
             );
             break;
           }

@@ -95,7 +95,7 @@ it("can create readonly members", () => {
           name="circular"
           type={<Reference refkey={refkey("Foo")} />}
         />
-        <ts.InterfaceMember indexer="str: string" type="number" />
+        <ts.InterfaceMember readonly indexer="str: string" type="number" />
       </StatementList>
     </ts.InterfaceDeclaration>,
   );
@@ -104,7 +104,7 @@ it("can create readonly members", () => {
     interface Foo {
       readonly member: string;
       circular: Foo;
-      [str: string]: number;
+      readonly [str: string]: number;
     }
   `);
 });

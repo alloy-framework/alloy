@@ -106,7 +106,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
   if (props.indexer) {
     return (
       <>
-        [{props.indexer}]: {type}
+        {readonly}[{props.indexer}]: {type}
       </>
     );
   } else {

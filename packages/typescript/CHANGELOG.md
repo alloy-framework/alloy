@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/typescript
 
+## 0.14.0
+
+### Bug Fixes
+
+- [#141](https://github.com/alloy-framework/alloy/pull/141) Fix type import from a package not adding `type` modifier
+- [#140](https://github.com/alloy-framework/alloy/pull/140) Include readonly for indexers
+
+
 ## 0.13.0
 
 No changes, version bump only.

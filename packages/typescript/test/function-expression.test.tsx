@@ -192,4 +192,26 @@ describe("symbols", () => {
       }
     `);
   });
+
+  it("create rest parameters", () => {
+    const paramDesc: ParameterDescriptor = {
+      name: "foo",
+      refkey: refkey(),
+      type: "any[]",
+      rest: true,
+    };
+    const decl = (
+      <>
+        <FunctionExpression parameters={[paramDesc]}>
+          console.log(foo);
+        </FunctionExpression>
+      </>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function (...foo: any[]) {
+        console.log(foo);
+      }
+    `);
+  });
 });

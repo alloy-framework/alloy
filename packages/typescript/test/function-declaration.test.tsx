@@ -219,4 +219,26 @@ describe("symbols", () => {
       }
     `);
   });
+
+  it("create optional parameters", () => {
+    const paramDesc: ParameterDescriptor = {
+      name: "foo",
+      refkey: refkey(),
+      type: "any[]",
+      rest: true,
+    };
+    const decl = (
+      <>
+        <FunctionDeclaration name="foo" parameters={[paramDesc]}>
+          console.log(foo);
+        </FunctionDeclaration>
+      </>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(...foo: any[]) {
+        console.log(foo);
+      }
+    `);
+  });
 });

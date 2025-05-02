@@ -1,4 +1,5 @@
 import {
+  computed,
   mapJoin,
   memo,
   SourceDirectoryContext,
@@ -21,13 +22,14 @@ export interface ImportStatementsProps {
 export function ImportStatements(props: ImportStatementsProps) {
   const pkg = usePackage();
 
-  const imports = [...props.records];
-  imports.sort(([a], [b]) => {
-    return a.name.localeCompare(b.name);
-  });
+  const imports = computed(() =>
+    [...props.records].sort(([a], [b]) => {
+      return a.name.localeCompare(b.name);
+    }),
+  );
 
   return mapJoin(
-    () => imports,
+    () => imports.value,
     ([module, importedSymbols]) => {
       let targetPath: string;
 

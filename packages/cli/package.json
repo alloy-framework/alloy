@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/cli",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "type": "module",
   "description": "Alloy cli for building alloy components",
   "homepage": "https://github.com/alloy-framework/alloy",

@@ -1,5 +1,14 @@
 # Changelog - @alloy-js/typescript
 
+## 0.15.0
+
+### Features
+
+- [#146](https://github.com/alloy-framework/alloy/pull/146) Add support for rest parameters in function components
+- [#146](https://github.com/alloy-framework/alloy/pull/146) Add support for object spread properties
+- [#145](https://github.com/alloy-framework/alloy/pull/145) Sort import statements and named imports
+
+
 ## 0.14.0
 
 ### Bug Fixes

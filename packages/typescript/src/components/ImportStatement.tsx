@@ -21,9 +21,14 @@ export interface ImportStatementsProps {
 export function ImportStatements(props: ImportStatementsProps) {
   const pkg = usePackage();
 
+  const imports = [...props.records];
+  imports.sort(([a], [b]) => {
+    return a.name.localeCompare(b.name);
+  });
+
   return mapJoin(
-    () => props.records,
-    (module, importedSymbols) => {
+    () => imports,
+    ([module, importedSymbols]) => {
       let targetPath: string;
 
       if (

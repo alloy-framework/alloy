@@ -70,6 +70,77 @@ it("works with named imports", () => {
   });
 });
 
+it("sort named imports", () => {
+  const res = render(
+    <Output>
+      <ts.SourceFile path="test1.ts">
+        <List>
+          <>
+            <ts.ClassDeclaration export name="B" refkey={refkey("B")} />
+          </>
+          <>
+            <ts.FunctionDeclaration export name="a" refkey={refkey("a")} />
+          </>
+        </List>
+      </ts.SourceFile>
+
+      <ts.SourceFile path="test2.ts">
+        <List>
+          <>
+            const b = <Reference refkey={refkey("B")} />;
+          </>
+          <>
+            const a = <Reference refkey={refkey("a")} />;
+          </>
+        </List>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "test2.ts": `
+      import { a, B } from "./test1.js";
+
+      const b = B;
+      const a = a;
+    `,
+  });
+});
+
+it("sort statements by import paths", () => {
+  const res = render(
+    <Output>
+      <ts.SourceFile path="a.ts">
+        <ts.ClassDeclaration export default name="A" refkey={refkey("A")} />
+      </ts.SourceFile>
+      <ts.SourceFile path="b.ts">
+        <ts.ClassDeclaration export default name="B" refkey={refkey("B")} />
+      </ts.SourceFile>
+
+      <ts.SourceFile path="test2.ts">
+        <List>
+          <>
+            const b = <Reference refkey={refkey("B")} />;
+          </>
+          <>
+            const a = <Reference refkey={refkey("A")} />;
+          </>
+        </List>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "test2.ts": `
+      import A from "./a.js";
+      import B from "./b.js";
+
+      const b = B;
+      const a = A;
+    `,
+  });
+});
+
 it("works with default and named imports", () => {
   const res = render(
     <Output>

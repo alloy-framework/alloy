@@ -50,8 +50,8 @@ it("can import builtins", () => {
       }
     `,
     "index.ts": `
-      import { nice } from "testLib/subpath";
       import { readFile } from "node:fs/promises";
+      import { nice } from "testLib/subpath";
 
       nice;
       await readFile();
@@ -85,8 +85,8 @@ it("can import builtins without a package", () => {
 
   assertFileContents(res, {
     "index.ts": `
-      import { nice } from "testLib/subpath";
       import { readFile } from "node:fs/promises";
+      import { nice } from "testLib/subpath";
 
       nice;
       await readFile();
@@ -124,8 +124,8 @@ it("can import builtins without a package", () => {
 
   assertFileContents(res, {
     "index.ts": `
-      import { nice } from "testLib/subpath";
       import { readFile } from "node:fs/promises";
+      import { nice } from "testLib/subpath";
 
       function foo() {
         function bar() {

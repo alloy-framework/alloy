@@ -122,6 +122,7 @@ export const FunctionTypeParameters = taggedComponent(
 function parameter(param: DeclaredParameterDescriptor) {
   return (
     <group>
+      <Show when={param.rest}>...</Show>
       {param.symbol.name}
       <Show when={!!param.optional}>?</Show>
       <Show when={!!param.type}>

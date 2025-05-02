@@ -25,6 +25,16 @@ export interface ParameterDescriptorBase {
   readonly optional?: boolean;
 
   /**
+   * Weather the parameter is rest parameter.
+   * @example
+   *
+   * ```ts
+   * ...args: string[]
+   * ```
+   */
+  readonly rest?: boolean;
+
+  /**
    * Whether the parameter is can be null or undefined.
    * when optional is true, this will be set to true by default,
    * but explicitly setting this to false will override that.

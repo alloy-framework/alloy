@@ -1,4 +1,5 @@
 import {
+  computed,
   mapJoin,
   memo,
   SourceDirectoryContext,
@@ -21,9 +22,15 @@ export interface ImportStatementsProps {
 export function ImportStatements(props: ImportStatementsProps) {
   const pkg = usePackage();
 
+  const imports = computed(() =>
+    [...props.records].sort(([a], [b]) => {
+      return a.name.localeCompare(b.name);
+    }),
+  );
+
   return mapJoin(
-    () => props.records,
-    (module, importedSymbols) => {
+    () => imports.value,
+    ([module, importedSymbols]) => {
       let targetPath: string;
 
       if (
@@ -91,6 +98,9 @@ export function ImportStatement(props: ImportStatementProps) {
     }
 
     if (namedImportSymbols.length > 0) {
+      namedImportSymbols.sort((a, b) => {
+        return a.local.name.localeCompare(b.local.name);
+      });
       const allNamedImportsAreTypes = namedImportSymbols.every(
         (nis) => nis.local.tsFlags & TSSymbolFlags.TypeSymbol,
       );

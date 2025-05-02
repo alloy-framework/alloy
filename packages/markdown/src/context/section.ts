@@ -6,6 +6,11 @@ export interface SectionContext {
 
 export const SectionContext = createContext<SectionContext>({ level: 1 });
 
-export function useSectionContext() {
-  return useContext(SectionContext)!;
+export function useSectionContext(): SectionContext {
+  const context = useContext(SectionContext);
+
+  if (context === undefined) {
+    throw new Error("useSectionContext must be used within a Section");
+  }
+  return context;
 }

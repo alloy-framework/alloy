@@ -28,7 +28,7 @@ describe("Prose", () => {
 
         This is another paragraph.
         There should be a couple
-        breaks in front of it. 
+        breaks in front of it.
       `,
       { printWidth: 30 },
     );

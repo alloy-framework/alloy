@@ -1,11 +1,11 @@
 {
   "name": "@alloy-js/create",
-  "version": "0.10.0",
+  "version": "0.14.0",
   "description": "Create an Alloy project with npm init @alloy-js",
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "build": "alloy build",
+    "build": "node scripts/gen-deps.js && alloy build",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",

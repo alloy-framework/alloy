@@ -16,9 +16,10 @@ import {
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 /**
- * Options for {@link (FunctionType:namespace)} component.
+ * Options for {@link FunctionType} component.
  */
 export interface FunctionTypeProps extends CallSignatureProps {
   /** If the method is async */
@@ -28,6 +29,43 @@ export interface FunctionTypeProps extends CallSignatureProps {
   /** Jsx content */
   readonly children?: Children;
 }
+
+const FunctionTypeComponent = ensureTypeRefContext(
+  (props: FunctionTypeProps) => {
+    const children = childrenArray(() => props.children);
+    const typeParametersChildren =
+      findKeyedChild(children, TypeParameters.tag) ?? undefined;
+    const parametersChildren =
+      findKeyedChild(children, FunctionParameters.tag) ?? undefined;
+    const returnType = getReturnType(props.returnType ?? "void", {
+      async: props.async,
+    });
+
+    const callSignatureProps = getCallSignatureProps(props, {
+      parametersChildren,
+      typeParametersChildren,
+    });
+
+    return (
+      <>
+        <Show when={Boolean(props.doc)}>
+          <JSDoc>
+            {props.doc && <Prose children={props.doc} />}
+            {Array.isArray(props.parameters) && (
+              <JSDocParams parameters={props.parameters} />
+            )}
+          </JSDoc>
+          <hbr />
+        </Show>
+        <Scope kind="function">
+          <CallSignature {...callSignatureProps} returnType={null} />
+          {" => "}
+          {returnType}
+        </Scope>
+      </>
+    );
+  },
+);
 
 /**
  * A TypeScript function declaration.
@@ -46,43 +84,10 @@ export interface FunctionTypeProps extends CallSignatureProps {
  * 2. As raw content via the `parametersChildren` or `typeParametersChildren`
  *    props.
  * 3. As a child of this component via the
- *    {@link (FunctionType:namespace).Parameters} or
- *    {@link (FunctionType:namespace).TypeParameters} components.
+ *    {@link FunctionType.Parameters} or
+ *    {@link FunctionType.TypeParameters} components.
  */
-export function FunctionType(props: FunctionTypeProps) {
-  const children = childrenArray(() => props.children);
-  const typeParametersChildren =
-    findKeyedChild(children, TypeParameters.tag) ?? undefined;
-  const parametersChildren =
-    findKeyedChild(children, FunctionParameters.tag) ?? undefined;
-  const returnType = getReturnType(props.returnType ?? "void", {
-    async: props.async,
-  });
-
-  const callSignatureProps = getCallSignatureProps(props, {
-    parametersChildren,
-    typeParametersChildren,
-  });
-
-  return (
-    <>
-      <Show when={Boolean(props.doc)}>
-        <JSDoc>
-          {props.doc && <Prose children={props.doc} />}
-          {Array.isArray(props.parameters) && (
-            <JSDocParams parameters={props.parameters} />
-          )}
-        </JSDoc>
-        <hbr />
-      </Show>
-      <Scope kind="function">
-        <CallSignature {...callSignatureProps} returnType={null} />
-        {" => "}
-        {returnType}
-      </Scope>
-    </>
-  );
-}
-
-FunctionType.TypeParameters = TypeParameters;
-FunctionType.Parameters = FunctionTypeParameters;
+export const FunctionType = Object.assign(FunctionTypeComponent, {
+  TypeParameters,
+  Parameters: FunctionTypeParameters,
+});

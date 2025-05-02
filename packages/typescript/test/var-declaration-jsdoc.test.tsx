@@ -19,7 +19,7 @@ it("renders a variable declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * This is a variable documentation
-     **/
+     */
     const myVar = 123;
   `);
 });
@@ -41,7 +41,7 @@ it("renders a let declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * A counter variable that can be changed
-     **/
+     */
     let counter: number = 0;
   `);
 });
@@ -64,7 +64,7 @@ it("renders an exported variable declaration with documentation", () => {
   expect(res).toEqual(d`
     /**
      * The base URL for API calls
-     **/
+     */
     export const API_URL: string = "https://api.example.com";
   `);
 });

@@ -1,8 +1,9 @@
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
 import { onCleanup, printTree, reactive, renderTree } from "../../src/index.js";
+import { flushJobs } from "../../src/scheduler.js";
 
 it("works", () => {
   const messages = ["hi", "bye"];
@@ -15,6 +16,30 @@ it("works", () => {
     hi, Jose!
     bye, Jose!
   `);
+});
+
+describe("readonly collections", () => {
+  const out = d`
+    a
+    b
+  `;
+  it("array", () => {
+    const messages: readonly string[] = ["a", "b"];
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
+
+  it("map", () => {
+    const messages: ReadonlyMap<string, string> = new Map([
+      ["a", "a"],
+      ["b", "b"],
+    ]);
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
+
+  it("set", () => {
+    const messages: ReadonlySet<string> = new Set(["a", "b"]);
+    expect(<For each={messages}>{(x) => <>{x}</>}</For>).toRenderTo(out);
+  });
 });
 
 it("handles map entries", () => {
@@ -76,6 +101,7 @@ it("doesn't rerender mappers", () => {
   expect(count).toBe(2);
 
   messages.push("maybe");
+  flushJobs();
 
   expect(count).toBe(3);
   expect(printTree(tree)).toBe(d`
@@ -93,7 +119,7 @@ it("doesn't rerender mappers with sets", () => {
   expect(count).toBe(2);
 
   messages.add("maybe");
-
+  flushJobs();
   expect(count).toBe(3);
   expect(printTree(tree)).toBe(d`
     item 0
@@ -116,7 +142,7 @@ it("doesn't rerender mappers with maps", () => {
   expect(count).toBe(2);
 
   messages.set("maybe", "three");
-
+  flushJobs();
   expect(count).toBe(3);
   expect(printTree(tree)).toBe(d`
     item 0
@@ -132,9 +158,11 @@ it("doesn't rerender mappers (with splice)", () => {
   const tree = renderTree(template);
   expect(count).toBe(3);
   messages.splice(1, 1);
+  flushJobs();
   // A sufficiently smart mapJoin would be able to handle this case...
   // but for now we re-render everything after the splice point.
   expect(count).toBe(4);
+
   expect(printTree(tree)).toBe(d`
     item 0
     item 3
@@ -165,12 +193,14 @@ it("cleans up things which end up removed (with push)", () => {
   `);
 
   items.pop();
+  flushJobs();
   expect(cleanups).toEqual(["b"]);
   expect(printTree(tree)).toBe(d`
     Letter a
   `);
 
   items.pop();
+  flushJobs();
   expect(cleanups).toEqual(["b", "a"]);
   expect(printTree(tree)).toBe("");
 });
@@ -200,7 +230,7 @@ it("cleans up things which end up removed (with splice)", () => {
   `);
 
   items.splice(1, 1);
-
+  flushJobs();
   // A sufficiently smart mapJoin would be able to handle this case...
   // but for now we re-render everything after the splice point.
   expect(cleanups).toEqual(["b", "c"]);

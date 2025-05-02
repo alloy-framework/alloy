@@ -19,6 +19,7 @@ import {
   TSOutputSymbol,
   TSSymbolFlags,
 } from "../symbols/index.js";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();
 const typeParametersTag = Symbol();
@@ -124,7 +125,9 @@ function parameter(param: DeclaredParameterDescriptor) {
       {param.symbol.name}
       <Show when={!!param.optional}>?</Show>
       <Show when={!!param.type}>
-        <indent>: {param.type}</indent>
+        <indent>
+          : <TypeRefContext>{param.type}</TypeRefContext>
+        </indent>
       </Show>
     </group>
   );
@@ -186,13 +189,18 @@ function normalizeAndDeclareParameters(
     });
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
+      const nullishFlag =
+        (param.nullish ?? param.optional) ?
+          TSSymbolFlags.Nullish
+        : TSSymbolFlags.None;
+
       const symbol = createTSSymbol({
         name: namePolicy.getName(
           param.name,
           flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
         ),
         refkey: param.refkey,
-        tsFlags: flags,
+        tsFlags: flags | nullishFlag,
         metadata: param.metadata,
       });
 
@@ -255,7 +263,10 @@ function typeParameter(param: DeclaredTypeParameterDescriptor) {
       <Show when={!!param.extends}>
         {" "}
         extends
-        <indent> {param.extends}</indent>
+        <indent>
+          {" "}
+          <TypeRefContext>{param.extends}</TypeRefContext>
+        </indent>
       </Show>
     </group>
   );

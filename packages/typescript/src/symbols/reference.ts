@@ -20,7 +20,10 @@ import { TSModuleScope } from "./ts-module-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
-export function ref(refkey: Refkey): () => string {
+export interface RefOptions {
+  type?: boolean;
+}
+export function ref(refkey: Refkey, options?: RefOptions): () => string {
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
@@ -82,7 +85,9 @@ export function ref(refkey: Refkey): () => string {
         for (const refkey of importSymbol.refkeys) {
           if (module.exportedSymbols.has(refkey)) {
             localSymbol = untrack(() =>
-              sourceFile!.scope.addImport(importSymbol, module),
+              sourceFile!.scope.addImport(importSymbol, module, {
+                type: options?.type,
+              }),
             );
             break;
           }
@@ -103,8 +108,13 @@ export function ref(refkey: Refkey): () => string {
       ];
 
       const importSymbol = symbolPath[0];
+
       localSymbol = untrack(() =>
-        sourceFile!.scope.addImport(importSymbol, pathDown[0] as TSModuleScope),
+        sourceFile!.scope.addImport(
+          importSymbol,
+          pathDown[0] as TSModuleScope,
+          { type: options?.type },
+        ),
       );
     }
 
@@ -131,14 +141,21 @@ function buildMemberExpression(path: TSOutputSymbol[]) {
     path = path.slice(1);
   }
 
+  let prevNullish = base.tsFlags & TSSymbolFlags.Nullish;
   for (const sym of path) {
+    const optional = prevNullish ? "?" : "";
     if (sym.tsFlags & TSSymbolFlags.PrivateMember) {
-      memberExpr += `.#${sym.name}`;
-    } else if (isValidJSIdentifier(sym.name)) {
-      memberExpr += `.${sym.name}`;
+      memberExpr += `${optional}.#${sym.name}`;
+    } else if (
+      isValidJSIdentifier(sym.name) &&
+      !(sym.tsFlags & TSSymbolFlags.TypeSymbol)
+    ) {
+      memberExpr += `${optional}.${sym.name}`;
     } else {
-      memberExpr += `[${JSON.stringify(sym.name)}]`;
+      const joiner = sym.tsFlags & TSSymbolFlags.Nullish ? "?." : "";
+      memberExpr += `${joiner}[${JSON.stringify(sym.name)}]`;
     }
+    prevNullish = sym.tsFlags & TSSymbolFlags.Nullish;
   }
 
   return memberExpr;

@@ -42,5 +42,6 @@ export const CaseClause = stc(base.CaseClause);
 export const TSConfigJson = stc(base.TSConfigJson);
 export const FunctionType = stc(base.FunctionType);
 export const TypeDeclaration = stc(base.TypeDeclaration);
+export const TypeRefContext = stc(base.TypeRefContext);
 export const ValueExpression = stc(base.ValueExpression);
 export const VarDeclaration = stc(base.VarDeclaration);

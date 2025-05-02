@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/core",
-  "version": "0.10.0",
+  "version": "0.14.0",
   "description": "",
   "main": "./dist/src/index.js",
   "exports": {

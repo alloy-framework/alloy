@@ -1,6 +1,5 @@
 import {
   computed,
-  effect,
   reactive,
   ref,
   Ref,
@@ -10,8 +9,9 @@ import {
 import { useBinder } from "./context/binder.js";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { memo, untrack } from "./jsx-runtime.js";
+import { effect, memo, onCleanup, untrack } from "./jsx-runtime.js";
 import { refkey, Refkey } from "./refkey.js";
+import { queueJob, QueueJob } from "./scheduler.js";
 export type Metadata = object;
 
 /**
@@ -464,6 +464,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     OutputScope,
     Map<string, Ref<OutputScope | undefined>>
   >();
+  const deconflictJobs = new Map<OutputScope, Map<string, QueueJob>>();
 
   return binder;
 
@@ -622,26 +623,77 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function instantiateSymbolInto(source: OutputSymbol, target: OutputSymbol) {
-    if (~source.flags & OutputSymbolFlags.InstanceMemberContainer) {
-      throw new Error("Can only instantiate symbols with instance members");
+    if (target.staticMemberScope) {
+      return;
     }
 
-    addInstanceMembersToSymbol(target);
+    // Ensure static member scope exists
+    addStaticMembersToSymbol(target);
 
     effect(() => {
-      for (const sym of source.instanceMemberScope!.symbols) {
-        if (target.instanceMemberScope!.symbols.has(sym)) {
-          continue;
-        }
+      // copy instance members if it's an instance‐container
+      if (source.flags & OutputSymbolFlags.InstanceMemberContainer) {
+        copyMembers(
+          source.instanceMemberScope!.symbols,
+          target,
+          target.staticMemberScope!,
+        );
+      }
 
-        createSymbol({
-          name: sym.name,
-          scope: target.instanceMemberScope!,
-          refkey: [refkey(target.refkeys[0], sym.refkeys[0])],
-          flags: sym.flags | OutputSymbolFlags.InstanceMember,
-        });
+      // copy static members if it's a static‐container
+      if (source.flags & OutputSymbolFlags.StaticMemberContainer) {
+        copyMembers(
+          source.staticMemberScope!.symbols,
+          target,
+          target.staticMemberScope!,
+        );
       }
     });
+
+    /**
+     * Recursively copy `symbols` from `sourceSym` into `intoScope` of `targetSym`.
+     * Always marks each instantiation as StaticMember so lookups use dot notation (e.g. Parent.child)
+     * and preserves any StaticMemberContainer flag to auto create newSym.staticMemberScope.
+     */
+    function copyMembers(
+      symbols: Set<OutputSymbol>,
+      targetSym: OutputSymbol,
+      intoScope: OutputScope,
+    ) {
+      for (const srcSym of symbols) {
+        untrack(() => {
+          const wantKey = refkey(targetSym.refkeys[0], srcSym.refkeys[0]);
+
+          // create the new symbol. Preserve StaticMemberContainer if present
+          const newSym = createSymbol({
+            name: srcSym.name,
+            scope: intoScope,
+            refkey: wantKey,
+            flags: srcSym.flags | OutputSymbolFlags.StaticMember,
+          });
+
+          onCleanup(() => {
+            binder.deleteSymbol(newSym);
+          });
+
+          // if the source symbol itself was a container of static members,
+          // recurse into the newSym.staticMemberScope that createSymbol just gave us
+          if (
+            srcSym.staticMemberScope &&
+            srcSym.staticMemberScope.symbols.size > 0
+          ) {
+            // ensure we have that scope
+            addStaticMembersToSymbol(newSym);
+
+            copyMembers(
+              srcSym.staticMemberScope.symbols,
+              newSym,
+              newSym.staticMemberScope!,
+            );
+          }
+        });
+      }
+    }
   }
 
   function addStaticMembersToSymbol(symbol: OutputSymbol) {
@@ -789,20 +841,62 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   function deconflict(symbol: OutputSymbol) {
     const scope = symbol.scope;
     const existingNames = [...scope.symbols].filter(
-      (sym) => sym.originalName === symbol.name,
+      (sym) => sym.name === symbol.name,
     );
 
     if (existingNames.length < 2) {
       return;
     }
 
-    if (options.nameConflictResolver) {
-      options.nameConflictResolver(symbol.name, existingNames);
-    } else {
-      // default disambiguation is first-wins
-      for (let i = 1; i < existingNames.length; i++) {
-        existingNames[i].name = existingNames[i].originalName + "_" + (i + 1);
+    queueJob(
+      deconflictJobForScopeAndName(
+        scope,
+        symbol.name,
+        options.nameConflictResolver,
+      ),
+    );
+  }
+
+  function deconflictJobForScopeAndName(
+    scope: OutputScope,
+    name: string,
+    handler: NameConflictResolver | undefined,
+  ) {
+    if (!deconflictJobs.has(scope)) {
+      deconflictJobs.set(scope, new Map());
+    }
+
+    const jobs = deconflictJobs.get(scope)!;
+    if (jobs.has(name)) {
+      return jobs.get(name)!;
+    }
+    const job = () => {
+      const conflictedSymbols = [...scope.symbols].filter(
+        (sym) => sym.name === name,
+      );
+      if (handler) {
+        handler(name, conflictedSymbols);
+      } else {
+        defaultConflictHandler(name, conflictedSymbols);
       }
+      jobs.delete(name);
+    };
+
+    jobs.set(name, job);
+    return job;
+  }
+
+  /**
+   * Default conflict handler. This will rename all but the first symbol
+   * to have a suffix of _2, _3, etc.
+   */
+  function defaultConflictHandler(
+    _: string,
+    conflictedSymbols: OutputSymbol[],
+  ) {
+    for (let i = 1; i < conflictedSymbols.length; i++) {
+      conflictedSymbols[i].name =
+        conflictedSymbols[i].originalName + "_" + (i + 1);
     }
   }
 

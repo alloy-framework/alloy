@@ -22,6 +22,7 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { PropertyName } from "./PropertyName.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
@@ -101,6 +102,7 @@ export interface ClassMemberProps {
   static?: boolean;
   children?: Children;
   doc?: Children;
+  nullish?: boolean;
 }
 
 export function ClassMember(props: ClassMemberProps) {
@@ -128,12 +130,19 @@ export function ClassMember(props: ClassMemberProps) {
       : memberScope.instanceMembers!) as TSOutputScope;
   }
 
+  let tsFlags =
+    props.jsPrivate ? TSSymbolFlags.PrivateMember : TSSymbolFlags.None;
+
+  if (props.nullish) {
+    tsFlags |= TSSymbolFlags.Nullish;
+  }
+
   const sym = createTSSymbol({
     name,
     scope,
     refkey: props.refkey,
     flags,
-    tsFlags: props.jsPrivate ? TSSymbolFlags.PrivateMember : TSSymbolFlags.None,
+    tsFlags,
   });
 
   return (
@@ -155,15 +164,22 @@ export function ClassMember(props: ClassMemberProps) {
 
 export interface ClassFieldProps extends ClassMemberProps {
   type?: Children;
+  optional?: boolean;
   children?: Children;
 }
 
 export function ClassField(props: ClassFieldProps) {
-  const typeSection = props.type && <>: {props.type}</>;
+  const optionality = props.optional ? "?" : "";
+  const typeSection = props.type && (
+    <>
+      {optionality}: <TypeRefContext>{props.type}</TypeRefContext>
+    </>
+  );
   const initializerSection = props.children && <> = {props.children}</>;
+  const nullish = props.nullish ?? props.optional;
 
   return (
-    <ClassMember {...props}>
+    <ClassMember {...props} nullish={nullish}>
       <PropertyName />
       {typeSection}
       {initializerSection}

@@ -43,7 +43,16 @@ async function generateDepsVersions() {
       );
       versions[packageName] = babelPluginJson.version;
     } else if (packageName.startsWith("@alloy-js")) {
-      versions[packageName] = packageVersion;
+      // remove the scope from the package name
+      const scopedPackageName = packageName.replace("@alloy-js/", "");
+      const scopedPackagePath = path.join(
+        packageDir,
+        `../${scopedPackageName}/package.json`,
+      );
+      const scopedPackageJson = JSON.parse(
+        await fs.readFile(scopedPackagePath, "utf8"),
+      );
+      versions[packageName] = scopedPackageJson.version;
     } else if (catalog[packageName]) {
       versions[packageName] = catalog[packageName];
     } else {

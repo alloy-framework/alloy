@@ -9,6 +9,7 @@ import {
   ImportedSymbol,
   ImportRecords,
   TSPackageScope,
+  TSSymbolFlags,
 } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
 import { usePackage } from "./PackageDirectory.js";
@@ -90,11 +91,23 @@ export function ImportStatement(props: ImportStatementProps) {
     }
 
     if (namedImportSymbols.length > 0) {
+      const allNamedImportsAreTypes = namedImportSymbols.every(
+        (nis) => nis.local.tsFlags & TSSymbolFlags.TypeSymbol,
+      );
+
+      if (allNamedImportsAreTypes) {
+        parts.push("type ");
+      }
       parts.push("{ ");
       parts.push(
         mapJoin(
           () => namedImportSymbols,
-          (nis) => <ImportBinding importedSymbol={nis} />,
+          (nis) => (
+            <ImportBinding
+              importedSymbol={nis}
+              inTypeImport={allNamedImportsAreTypes}
+            />
+          ),
           { joiner: ", " },
         ),
       );
@@ -109,9 +122,10 @@ export function ImportStatement(props: ImportStatementProps) {
 interface ImportBindingProps {
   importedSymbol: ImportedSymbol;
   default?: boolean;
+  inTypeImport?: boolean;
 }
 
-function ImportBinding(props: ImportBindingProps) {
+function ImportBinding(props: Readonly<ImportBindingProps>) {
   const text = memo(() => {
     const localName = props.importedSymbol.local.name;
     const targetName = props.importedSymbol.target.name;
@@ -124,5 +138,18 @@ function ImportBinding(props: ImportBindingProps) {
     }
   });
 
-  return text;
+  const prefix = memo(() =>
+    (
+      !props.inTypeImport &&
+      props.importedSymbol.local.tsFlags & TSSymbolFlags.TypeSymbol
+    ) ?
+      "type "
+    : "",
+  );
+  return (
+    <>
+      {prefix}
+      {text}
+    </>
+  );
 }

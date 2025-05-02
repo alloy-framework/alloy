@@ -24,7 +24,7 @@ describe("JSDoc", () => {
        * Hello!
        *
        * This is another line
-       **/
+       */
     `,
       { printWidth: 40 },
     );
@@ -59,7 +59,7 @@ describe("Prose", () => {
          * This is another paragraph. There
          * should be a couple breaks in front of
          * it.
-         **/
+         */
       `,
       { printWidth: 40 },
     );
@@ -83,7 +83,7 @@ describe("JSDocExample", () => {
        *
        * @example
        * console.log("Hello world!")
-       **/
+       */
       `,
       { printWidth: 40 },
     );
@@ -109,7 +109,7 @@ describe("JSDocExample", () => {
        * \`\`\`ts
        * console.log("Hello world!")
        * \`\`\`
-       **/
+       */
       `,
       { printWidth: 40 },
     );
@@ -140,7 +140,7 @@ describe("JSDocExample", () => {
        * @example
        * // make a function call.
        * console.log(arg1, arg2);
-       **/
+       */
       `,
       { printWidth: 40 },
     );

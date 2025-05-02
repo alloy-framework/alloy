@@ -36,5 +36,6 @@ export * from "./SourceFile.js";
 export * from "./SwitchStatement.jsx";
 export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
+export * from "./TypeRefContext.jsx";
 export * from "./ValueExpression.js";
 export * from "./VarDeclaration.js";

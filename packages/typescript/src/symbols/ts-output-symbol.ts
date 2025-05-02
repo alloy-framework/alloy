@@ -16,6 +16,7 @@ export enum TSSymbolFlags {
   ParameterSymbol        = 1 << 2,
   PrivateMember          = 1 << 3,
   PrivateMemberContainer = 1 << 4,
+  Nullish = 1 << 5,
 }
 
 export interface TSOutputSymbol extends OutputSymbol {

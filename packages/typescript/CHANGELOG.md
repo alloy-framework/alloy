@@ -1,5 +1,45 @@
 # Changelog - @alloy-js/typescript
 
+## 0.14.0
+
+### Bug Fixes
+
+- [#141](https://github.com/alloy-framework/alloy/pull/141) Fix type import from a package not adding `type` modifier
+- [#140](https://github.com/alloy-framework/alloy/pull/140) Include readonly for indexers
+
+
+## 0.13.0
+
+No changes, version bump only.
+
+## 0.12.0
+
+### Bug Fixes
+
+- [#121](https://github.com/alloy-framework/alloy/pull/121) JS Doc comment close with `*/` instead of `**/`
+
+### Features
+
+- [#117](https://github.com/alloy-framework/alloy/pull/117) Add nullish to TS Symbol flags
+- [#125](https://github.com/alloy-framework/alloy/pull/125) Automatically enter a type context when inside of interface, function type, type declaration, etc. This allow referenced used in there to automatically add the `type` keyword in the import
+- [#124](https://github.com/alloy-framework/alloy/pull/124) Add `type` prop on `Reference` component to mark this reference as a type only reference allowing imports to be specialized in type import
+
+
+## 0.11.0
+
+### Bug Fixes
+
+- [#92](https://github.com/alloy-framework/alloy/pull/92) Missing export of `IfStatement`, `ElseIfClause` and `ElseClause`
+- [#112](https://github.com/alloy-framework/alloy/pull/112) Fix interface member references
+
+### Features
+
+- [#112](https://github.com/alloy-framework/alloy/pull/112) Add new `<MemberDeclaration />` component. A wrapper around alloy `<MemberDeclaration />` with TypeScript specific props.
+- [#91](https://github.com/alloy-framework/alloy/pull/91) Add new `<FunctionExpression />` and `<ArrowFunctionExpression />` components supporting the various formm of function expressions
+- [#110](https://github.com/alloy-framework/alloy/pull/110) Add `<InterfaceMethod />` and `<FunctionType />` component
+- [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
+
+
 ## 0.10.0
 
 ### Bug Fixes

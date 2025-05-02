@@ -24,11 +24,11 @@ import {
 import { ApiModelContext } from "./contexts/api-model.js";
 import { ContentRootDir } from "./contexts/content-root-dir.js";
 
-const rootDir = resolve(import.meta.dirname, "../../src/content/docs");
+const rootDir = resolve(import.meta.dirname, "../src/content/docs");
 
 const docPath = resolve(rootDir, "reference");
 
-const packagesPath = resolve(import.meta.dirname, "../../../");
+const packagesPath = resolve(import.meta.dirname, "../../");
 
 const apiModel: ApiModel = new ApiModel();
 const apiPackages = {
@@ -238,11 +238,24 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
             if ((member as ApiFunction).parameters.length > 0) {
               const propsTypeRef = (member as ApiFunction).parameters[0]
                 .parameterTypeExcerpt.spannedTokens[0].canonicalReference;
-              const resolvedPropType = apiModel.resolveDeclarationReference(
+              if (propsTypeRef === undefined) {
+                // https://github.com/alloy-framework/alloy/issues/128
+                console.log(
+                  `warn: Cannot find props type reference for ${member.displayName}`,
+                );
+                continue;
+              }
+              const model = apiModel.resolveDeclarationReference(
                 propsTypeRef!,
                 undefined,
-              ).resolvedApiItem!;
+              );
 
+              const resolvedPropType = model.resolvedApiItem;
+              if (!resolvedPropType) {
+                throw new Error(
+                  `Cannot resolve prop type for ${member.displayName}: ${model.errorMessage}`,
+                );
+              }
               if (resolvedPropType.kind === ApiItemKind.Interface) {
                 componentPropTypes.push(resolvedPropType as ApiInterface);
                 propTypes.add(resolvedPropType as ApiInterface);

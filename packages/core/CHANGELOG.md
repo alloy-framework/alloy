@@ -1,5 +1,44 @@
 # Changelog - @alloy-js/core
 
+## 0.14.0
+
+No changes, version bump only.
+
+## 0.13.0
+
+### Bug Fixes
+
+- [#137](https://github.com/alloy-framework/alloy/pull/137) Fix default symbol conflict resolver not working with more than 2 symbols.
+
+
+## 0.12.0
+
+### Bug Fixes
+
+- [#134](https://github.com/alloy-framework/alloy/pull/134) Support readonly collection in `<For>` `each` prop.
+
+### Features
+
+- [#114](https://github.com/alloy-framework/alloy/pull/114) instantiateSymbolInto now mirrors both instance and static members (including nested static hierarchies), and no longer errors on static-only sources.
+
+### Breaking Changes
+
+- [#127](https://github.com/alloy-framework/alloy/pull/127) Use a scheduler for effects. Effects are no longer run instantly but are queued to run after the current effect finishes. This significantly reduces effect calls due to coalescing multiple updates and also enables more recursive patterns.
+
+
+## 0.11.0
+
+### Bug Fixes
+
+- [#91](https://github.com/alloy-framework/alloy/pull/91) `taggedComponent` return type updated to make tag as a required property
+- [#97](https://github.com/alloy-framework/alloy/pull/97) Update `ForCallbackArgs` to handle arrays early, before unions of arrays are distributed. This mitigates a nasty typechecking bug that appears when the type of elements passed to `For` are a union of arrays.
+
+### Features
+
+- [#104](https://github.com/alloy-framework/alloy/pull/104) Add new `<ReferenceOrContent />` component
+- [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
+
+
 ## 0.10.0
 
 No changes, version bump only.

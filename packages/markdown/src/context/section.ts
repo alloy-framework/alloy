@@ -1,10 +1,11 @@
-import { createContext, useContext } from "@alloy-js/core";
+import { ComponentContext, createContext, useContext } from "@alloy-js/core";
 
 export interface SectionContext {
   level: number;
 }
 
-export const SectionContext = createContext<SectionContext>({ level: 1 });
+export const SectionContext: ComponentContext<SectionContext> =
+  createContext<SectionContext>({ level: 1 });
 
 export function useSectionContext(): SectionContext {
   const context = useContext(SectionContext);

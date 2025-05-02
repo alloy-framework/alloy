@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/markdown",
-  "version": "0.10.0",
+  "version": "0.14.0",
   "description": "Alloy components for generating markdown",
   "exports": {
     ".": {
@@ -27,7 +27,7 @@
     "@alloy-js/core": "workspace:~"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.47.7",
+    "@microsoft/api-extractor": "catalog:",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@alloy-js/cli": "workspace:~",
     "typescript": "catalog:",

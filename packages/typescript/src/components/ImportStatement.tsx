@@ -91,6 +91,9 @@ export function ImportStatement(props: ImportStatementProps) {
     }
 
     if (namedImportSymbols.length > 0) {
+      namedImportSymbols.sort((a, b) => {
+        return a.local.name.localeCompare(b.local.name);
+      });
       const allNamedImportsAreTypes = namedImportSymbols.every(
         (nis) => nis.local.tsFlags & TSSymbolFlags.TypeSymbol,
       );

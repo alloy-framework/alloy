@@ -75,7 +75,7 @@ it("works", () => {
   `);
 
   expect(findFile(res, "test2.ts").contents).toEqual(d`
-    import { sayHello, sayGoodbye } from "./test1.js";
+    import { sayGoodbye, sayHello } from "./test1.js";
     
     console.log(sayHello("world"));
     console.log(sayGoodbye("world"));

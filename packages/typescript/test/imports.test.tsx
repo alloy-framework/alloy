@@ -214,9 +214,9 @@ it("works with importing the same name many times from different files with the 
 
   assertFileContents(res, {
     "test-import.ts": `
-      import { type MyInterface, conflict } from "./test1.js";
-      import { type MyInterface as MyInterface_2, conflict as conflict_2 } from "./test2.js";
-      import { type MyInterface as MyInterface_3, conflict as conflict_3 } from "./test3.js";
+      import { conflict, type MyInterface } from "./test1.js";
+      import { conflict as conflict_2, type MyInterface as MyInterface_2 } from "./test2.js";
+      import { conflict as conflict_3, type MyInterface as MyInterface_3 } from "./test3.js";
 
       const one: MyInterface = conflict;
       const two: MyInterface_2 = conflict_2;
@@ -402,7 +402,7 @@ describe("type imports", () => {
 
     assertFileContents(res, {
       "test2.ts": `
-      import { type TypeA, ClassA } from "./test1.js";
+      import { ClassA, type TypeA } from "./test1.js";
 
       type A = TypeA
       class B extends ClassA {}

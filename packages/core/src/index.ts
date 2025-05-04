@@ -1,6 +1,8 @@
 export {
   computed,
   isProxy,
+  isReactive,
+  isRef,
   reactive,
   ref,
   shallowReactive,

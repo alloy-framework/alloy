@@ -1,4 +1,11 @@
-import { code, List, refkey, StatementList } from "@alloy-js/core";
+import {
+  code,
+  List,
+  Output,
+  refkey,
+  render,
+  StatementList,
+} from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
@@ -12,9 +19,11 @@ import {
   ClassField,
   FunctionDeclaration,
   InterfaceDeclaration,
+  ObjectProperty,
   ParameterDescriptor,
+  SourceFile,
 } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { assertFileContents, toSourceText } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
@@ -80,6 +89,19 @@ it("ignores non-part children", () => {
     ),
   ).toBe(d`
     obj.property
+  `);
+});
+
+it("ignores allows parts to define children", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part>well</MemberExpression.Part>
+        <MemberExpression.Part>hello</MemberExpression.Part>
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    well.hello
   `);
 });
 
@@ -331,6 +353,42 @@ describe("with refkeys", () => {
       const test1 = 1;
       const test1_2 = 2;
     `);
+  });
+
+  it("creates a full reference to the first refkey", () => {
+    const rk1 = refkey();
+    const res = render(
+      <Output>
+        <SourceFile path="source.ts">
+          <VarDeclaration name="importMe">
+            <ObjectExpression>
+              <ObjectProperty name="prop" refkey={rk1} />
+            </ObjectExpression>
+          </VarDeclaration>
+        </SourceFile>
+        <SourceFile path="index.ts">
+          <StatementList>
+            <MemberExpression>
+              <MemberExpression.Part refkey={rk1} />
+              <MemberExpression.Part id="foo" />
+            </MemberExpression>
+            <MemberExpression>
+              <MemberExpression.Part>{rk1}</MemberExpression.Part>
+              <MemberExpression.Part id="foo" />
+            </MemberExpression>
+          </StatementList>
+        </SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "index.ts": d`
+        import { importMe } from "./source.js";
+
+        importMe.prop.foo;
+        importMe.prop.foo;
+      `,
+    });
   });
 });
 

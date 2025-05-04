@@ -19,7 +19,7 @@ export interface MemberExpressionProps {
 }
 
 interface PartDescriptor {
-  base: string | Ref<string>;
+  base: Children;
   accessStyle: Ref<"dot" | "bracket">;
   nullish: Ref<boolean>;
   args?: Children[] | boolean;
@@ -33,6 +33,7 @@ interface PartDescriptor {
  * * **refkey**: A refkey for a symbol whose name becomes the identifier
  * * **symbol**: a symbol whose name becomes the identifier part
  * * **args**: create a method call with the given args
+ * * **children**: The contents of the part, overrides the other props.
  *
  * Additionally, a part can be `nullish`, which means subsequent parts
  * will use the appropriate conditional access operator e.g. `?.`.
@@ -45,6 +46,7 @@ interface PartDescriptor {
  *   <MemberExpression.Part refkey={rk} nullish />
  *   <MemberExpression.Part symbol={sym} />
  *   <MemberExpression.Part args={["hello", "world"]} />
+ *   <MemberExpression.Part>SomeValue</MemberExpression.Part>
  * </MemberExpression>
  * ```
  *
@@ -52,7 +54,7 @@ interface PartDescriptor {
  * with a name of "prop2", this will render:
  *
  * ```ts
- * base.prop1?.prop2("hello", "world")
+ * base.prop1?.prop2("hello", "world").SomeValue
  * ```
  */
 export function MemberExpression(props: MemberExpressionProps): Children {
@@ -66,30 +68,51 @@ export function MemberExpression(props: MemberExpressionProps): Children {
 
     const partProps = child.props;
     const part: PartDescriptor = {
-      base: "",
+      base: undefined,
       accessStyle: ref("dot"),
       nullish: ref(!!partProps.nullish),
     };
 
-    if (partProps.id) {
+    if (partProps.children) {
+      part.base = partProps.children;
+      part.nullish.value = !!partProps.nullish;
+    } else if (partProps.id) {
       part.base = partProps.id;
       part.accessStyle.value = accessStyleForMemberName(partProps.id);
     } else if (partProps.refkey) {
-      const binder = useBinder();
-      const symbolRef = binder.getSymbolForRefkey(partProps.refkey);
-      part.base = computed(() => {
-        if (symbolRef.value) {
-          part.nullish.value = !!(
-            (symbolRef.value as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish
-          );
-          part.accessStyle.value = accessStyleForMemberName(
-            symbolRef.value.name,
-          );
-          return symbolRef.value.name;
+      if (child === children[0]) {
+        part.base = partProps.refkey;
+        if ("nullish" in partProps) {
+          part.nullish.value = !!partProps.nullish;
         } else {
-          return "<unresolved symbol>";
+          const binder = useBinder();
+          const symbolRef = binder.getSymbolForRefkey(partProps.refkey);
+          part.nullish = computed(() => {
+            return !!(
+              partProps.nullish ??
+              (symbolRef.value as TSOutputSymbol)?.tsFlags &
+                TSSymbolFlags.Nullish
+            );
+          });
         }
-      });
+      } else {
+        const binder = useBinder();
+        const symbolRef = binder.getSymbolForRefkey(partProps.refkey);
+        part.base = computed(() => {
+          if (symbolRef.value) {
+            part.nullish.value = !!(
+              (symbolRef.value as TSOutputSymbol).tsFlags &
+              TSSymbolFlags.Nullish
+            );
+            part.accessStyle.value = accessStyleForMemberName(
+              symbolRef.value.name,
+            );
+            return symbolRef.value.name;
+          } else {
+            return "<unresolved symbol>";
+          }
+        });
+      }
     } else if (partProps.symbol) {
       part.nullish.value = !!(
         (partProps.symbol as TSOutputSymbol).tsFlags & TSSymbolFlags.Nullish
@@ -118,8 +141,8 @@ export function MemberExpression(props: MemberExpressionProps): Children {
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
-      const base = typeof part.base === "string" ? part.base : part.base.value;
-      const hasName = base !== "";
+      const base = part.base;
+      const hasName = base !== undefined;
 
       if (i === 0) {
         expression.push(base);
@@ -224,6 +247,12 @@ export interface MemberExpressionPartProps {
    * This part is nullish. Subsequent parts use conditional access operators.
    */
   nullish?: boolean;
+
+  /**
+   * The contents of this part. When passed, overrides the other props except
+   * nullish.
+   */
+  children?: Children;
 }
 /**
  * A part of a member expression. Each part can provide one of the following

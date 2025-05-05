@@ -24,12 +24,13 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
-    "@alloy-js/core": "workspace:~"
+    "@alloy-js/core": "workspace:~",
+    "yaml": "^2.7.1"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "catalog:",
-    "@alloy-js/rollup-plugin": "workspace:~",
     "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@microsoft/api-extractor": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

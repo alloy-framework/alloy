@@ -19,7 +19,7 @@ export function Code(props: CodeProps) {
   return (
     <List>
       {tripleBackticks + props.lang}
-      {props.content ?? <List children={props.children} />}
+      {props.content ?? props.children}
       {tripleBackticks}
     </List>
   );

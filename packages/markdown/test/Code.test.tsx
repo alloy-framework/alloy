@@ -1,3 +1,4 @@
+import { List } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
@@ -20,8 +21,10 @@ it("renders with js value", () => {
 it("renders with children", () => {
   const template = mdTest(
     <Code lang="ts">
-      <>const foo = 123;</>
-      <>console.log(foo);</>
+      <List>
+        <>const foo = 123;</>
+        <>console.log(foo);</>
+      </List>
     </Code>,
   );
 

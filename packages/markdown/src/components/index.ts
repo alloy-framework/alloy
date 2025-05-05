@@ -1,3 +1,4 @@
+export * from "./Code.jsx";
 export * from "./Heading.jsx";
 export * from "./Link.jsx";
 export * from "./List.jsx";

@@ -520,6 +520,9 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
+      yaml:
+        specifier: ^2.7.1
+        version: 2.7.1
     devDependencies:
       '@alloy-js/cli':
         specifier: workspace:~

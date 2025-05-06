@@ -163,6 +163,19 @@ it("handles nullish chaining at multiple levels", () => {
   `);
 });
 
+it("throws an error when providing conflicting part props", () => {
+  expect(() =>
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="property" nullish={true} args={[1, 2]} />
+      </MemberExpression>,
+    ),
+  ).toThrowError(
+    `Only one of args, id can be used for a MemberExpression part at a time`,
+  );
+});
+
 describe("with refkeys", () => {
   it("handles symbols correctly", () => {
     const rk1 = refkey();

@@ -36,8 +36,15 @@ interface PartDescriptor {
  * * **refkey**: a refkey for a symbol whose name becomes the identifier
  * * **symbol**: a symbol whose name becomes the identifier part
  * * **args**: create a method call with the given args
- * * **children**: the contents of the part, overrides the other props.
- * * **nullish**: indicates whether the part is nullish, affecting access style.
+ * * **children**: arbitrary contents for the identifier part.
+ *
+ * Each part can have a nullish prop, which indicates that the part may be null
+ * or undefined.
+ *
+ * Each part can also have a quoteId prop, which indicates that the identifier
+ * of the part should be quoted (i.e. `["foo"]` instead of `.foo`). This is only
+ * necessary when providing the children prop, otherwise it is determined
+ * automatically.
  *
  * @example
  *
@@ -105,6 +112,13 @@ function childrenToPartDescriptors(children: Children[]): PartDescriptor[] {
   return parts;
 }
 
+const exclusiveParts: (keyof MemberExpressionPartProps)[] = [
+  "children",
+  "args",
+  "refkey",
+  "symbol",
+  "id",
+];
 /**
  * Creates a reactive part descriptor from the given part props.
  *
@@ -116,6 +130,16 @@ function createPartDescriptorFromProps(
   partProps: MemberExpressionPartProps,
   first: boolean,
 ) {
+  const foundProps = exclusiveParts.filter((key) => {
+    return key in partProps;
+  });
+
+  if (foundProps.length > 1) {
+    throw new Error(
+      `Only one of ${foundProps.join(", ")} can be used for a MemberExpression part at a time`,
+    );
+  }
+
   const symbolSource = computed(() => {
     if (partProps.refkey) {
       return getSymbolForRefkey(partProps.refkey).value;
@@ -462,6 +486,15 @@ export interface MemberExpressionPartProps {
  * * **refkey**: A refkey for a symbol whose name becomes the identifier
  * * **symbol**: a symbol whose name becomes the identifier part
  * * **args**: create a method call with the given args
+ * * **children**: arbitrary contents for the identifier part.
+ *
+ * Each part can have a nullish prop, which indicates that the part may be null
+ * or undefined.
+ *
+ * Each part can also have a quoteId prop, which indicates that the identifier
+ * of the part should be quoted (i.e. `["foo"]` instead of `.foo`). This is only
+ * necessary when providing the children prop, otherwise it is determined
+ * automatically.
  */
 MemberExpression.Part = function (props: MemberExpressionPartProps) {
   /**

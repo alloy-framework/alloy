@@ -27,6 +27,46 @@ export interface ModuleSymbolsDescriptor {
   named?: readonly NamedModuleDescriptor[];
 }
 
+function createNamedSymbol(
+  binder: Binder,
+  moduleScope: any,
+  name: string,
+  key: Refkey,
+  flags?: OutputSymbolFlags,
+) {
+  const sym = createTSSymbol({
+    name,
+    scope: moduleScope,
+    refkey: key,
+    export: true,
+    default: false,
+    flags,
+  });
+  moduleScope.exportedSymbols.set(key, sym);
+  return sym;
+}
+
+function createStaticMembers(
+  binder: Binder,
+  namespaceSym: any,
+  staticMembers: string[],
+  keys: any,
+  namespaceName: string,
+) {
+  const namespaceScope = createTSMemberScope(binder, undefined, namespaceSym);
+  for (const staticMember of staticMembers) {
+    const staticKey = keys[namespaceName][staticMember];
+    createTSSymbol({
+      name: staticMember,
+      scope: namespaceScope,
+      refkey: staticKey,
+      export: false,
+      default: false,
+      flags: OutputSymbolFlags.StaticMember,
+    });
+  }
+}
+
 function createSymbols(
   binder: Binder,
   props: CreatePackageProps<PackageDescriptor>,
@@ -63,44 +103,24 @@ function createSymbols(
       if (typeof exportedName === "object") {
         const { name, staticMembers } = exportedName;
         const key = keys[name];
-        // Create the namespace symbol with member container flags
-        const namespaceSym = createTSSymbol({
-          name,
-          scope: moduleScope,
-          refkey: key,
-          export: true,
-          default: false,
-          flags: OutputSymbolFlags.StaticMemberContainer,
-        });
-        const namespaceScope = createTSMemberScope(
+        const namespaceSym = createNamedSymbol(
           binder,
-          undefined,
-          namespaceSym,
+          moduleScope,
+          name,
+          key,
+          OutputSymbolFlags.StaticMemberContainer,
         );
-        moduleScope.exportedSymbols.set(key, namespaceSym);
 
-        // Create the static members in the namespace's static member scope
-        for (const staticMember of staticMembers ?? []) {
-          const staticKey = keys[name][staticMember];
-          createTSSymbol({
-            name: staticMember,
-            scope: namespaceScope,
-            refkey: staticKey,
-            export: false,
-            default: false,
-            flags: OutputSymbolFlags.StaticMember,
-          });
-        }
+        createStaticMembers(
+          binder,
+          namespaceSym,
+          staticMembers ?? [],
+          keys,
+          name,
+        );
       } else {
         const key = keys[exportedName];
-        const sym = createTSSymbol({
-          name: exportedName,
-          scope: moduleScope,
-          refkey: key,
-          export: true,
-          default: false,
-        });
-        moduleScope.exportedSymbols.set(key, sym);
+        createNamedSymbol(binder, moduleScope, exportedName, key);
       }
     }
   }

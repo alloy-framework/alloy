@@ -8,11 +8,8 @@ import {
 } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { InterfaceMember, ObjectExpression } from "../src/components/index.js";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
-import {
-  InterfaceMember,
-  ObjectExpression,
-} from "../src/components/stc/index.js";
 import { VarDeclaration } from "../src/components/VarDeclaration.jsx";
 import {
   ClassDeclaration,
@@ -48,6 +45,19 @@ it("renders member expression with bracket notation for invalid identifiers", ()
     ),
   ).toBe(d`
     obj["property-name"]
+  `);
+});
+
+it("renders member expressions with quotes", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id={`property-"name"`} />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    obj["property-\\"name\\""]
   `);
 });
 
@@ -436,6 +446,20 @@ describe("with function calls", () => {
       myFunction(1, 2)?.prop
     `);
   });
+
+  it("handles function calls returning nullish correctly", () => {
+    expect(
+      toSourceText(
+        <MemberExpression>
+          <MemberExpression.Part id="myFunction" />
+          <MemberExpression.Part args={[1, 2]} nullish />
+          <MemberExpression.Part id="prop" />
+        </MemberExpression>,
+      ),
+    ).toBe(d`
+      myFunction(1, 2)?.prop
+    `);
+  });
 });
 
 describe("formatting", () => {
@@ -497,8 +521,33 @@ describe("formatting", () => {
         })
       `);
     });
-
-    it.skip("handles multiple calls", () => {
+    it("handles single calls with multiple parameters", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[
+                <ObjectExpression jsValue={{ x: 1 }} />,
+                <ObjectExpression jsValue={{ y: 2 }} />,
+              ]}
+            />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        z.object(
+          {
+            x: 1,
+          },
+          {
+            y: 2,
+          }
+        )
+      `);
+    });
+    it("handles multiple calls", () => {
       expect(
         toSourceText(
           <MemberExpression>
@@ -518,6 +567,47 @@ describe("formatting", () => {
             x: 1,
           })
           .partial()
+      `);
+    });
+
+    it("renders multiple calls on the same line when there are no breaks and they fit", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="optional" />
+            <MemberExpression.Part args />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z.object().partial().optional()
+      `);
+    });
+    it("handles multiple calls with id parts", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="z1" nullish />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+            <MemberExpression.Part id="foo" />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args={[]} />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z.z1
+          ?.object({
+            x: 1,
+          })
+          .foo.partial()
       `);
     });
   });

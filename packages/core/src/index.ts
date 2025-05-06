@@ -11,6 +11,8 @@ export {
   toRef,
   toRefs,
   type Ref,
+  type ToRef,
+  type ToRefs,
 } from "@vue/reactivity";
 export * from "./binder.js";
 export * from "./code.js";

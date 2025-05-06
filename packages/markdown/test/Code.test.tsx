@@ -7,7 +7,7 @@ import { mdTest } from "./utils.jsx";
 
 it("renders with js value", () => {
   const template = mdTest(
-    <Code lang="ts" content={"const foo = 123;\nconsole.log(foo);"} />,
+    <Code lang="ts" children={"const foo = 123;\nconsole.log(foo);"} />,
   );
 
   expect(template).toRenderTo(d`

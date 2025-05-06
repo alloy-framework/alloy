@@ -5,8 +5,6 @@ export interface CodeProps {
   /** Language of the code block */
   lang?: string;
 
-  /** Content of the codeblock, use instead of children. */
-  content?: string;
   /** Body of the code block */
   children?: Children;
 }
@@ -19,7 +17,7 @@ export function Code(props: CodeProps) {
   return (
     <List>
       {tripleBackticks + props.lang}
-      {props.content ?? props.children}
+      {props.children}
       {tripleBackticks}
     </List>
   );

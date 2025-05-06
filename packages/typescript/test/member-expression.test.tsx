@@ -610,5 +610,30 @@ describe("formatting", () => {
           .foo.partial()
       `);
     });
+
+    it("handles the first part being a call", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="z1" nullish />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+            <MemberExpression.Part id="foo" />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args={[]} />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z()
+          .z1?.object({
+            x: 1,
+          })
+          .foo.partial()
+      `);
+    });
   });
 });

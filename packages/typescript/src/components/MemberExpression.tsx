@@ -251,9 +251,15 @@ function formatCallChain(parts: PartDescriptor[]): Children {
     while (
       partIndex < parts.length &&
       (partIndex === parts.length - 1 ||
+        chunks.at(-1)!.length === 0 ||
         parts[partIndex + 1].args === undefined)
     ) {
       pushPart();
+      if (chunks.at(-1)!.at(-1)!.args !== undefined) {
+        // the first segment always ends after we see a call
+        // if we happen to take one
+        break;
+      }
     }
 
     // then for all remaining parts, collect all the non-call parts and end with
@@ -263,8 +269,7 @@ function formatCallChain(parts: PartDescriptor[]): Children {
       while (partIndex < parts.length && !parts[partIndex].args) {
         pushPart();
       }
-      if (partIndex < parts.length) {
-        // this is definitely a call part if it exists
+      while (partIndex < parts.length && parts[partIndex].args) {
         pushPart();
       }
     }

@@ -169,10 +169,10 @@ it("can import static members", () => {
 
   assertFileContents(res, {
     "index.ts": `
-      import { other, setRequestHandler, simple } from "@modelcontextprotocol/sdk/server/index.js";
+      import { other, server, simple } from "@modelcontextprotocol/sdk/server/index.js";
 
       function foo() {
-        setRequestHandler();
+        server.setRequestHandler();
         await simple();
         other();
       }

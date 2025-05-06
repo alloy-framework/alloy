@@ -1,12 +1,14 @@
 import {
   Binder,
   getSymbolCreatorSymbol,
+  OutputSymbolFlags,
   Refkey,
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
 
 import {
+  createTSMemberScope,
   createTSModuleScope,
   createTSPackageScope,
   createTSSymbol,
@@ -61,25 +63,33 @@ function createSymbols(
       if (typeof exportedName === "object") {
         const { name, staticMembers } = exportedName;
         const key = keys[name];
-        const sym = createTSSymbol({
+        // Create the namespace symbol with member container flags
+        const namespaceSym = createTSSymbol({
           name,
           scope: moduleScope,
           refkey: key,
           export: true,
           default: false,
+          flags: OutputSymbolFlags.StaticMemberContainer,
         });
-        moduleScope.exportedSymbols.set(key, sym);
+        const namespaceScope = createTSMemberScope(
+          binder,
+          undefined,
+          namespaceSym,
+        );
+        moduleScope.exportedSymbols.set(key, namespaceSym);
 
+        // Create the static members in the namespace's static member scope
         for (const staticMember of staticMembers ?? []) {
-          const staticKey = refkey(`${key}.${staticMember}`);
-          const staticSym = createTSSymbol({
+          const staticKey = keys[name][staticMember];
+          createTSSymbol({
             name: staticMember,
-            scope: moduleScope,
+            scope: namespaceScope,
             refkey: staticKey,
-            export: true,
+            export: false,
             default: false,
+            flags: OutputSymbolFlags.StaticMember,
           });
-          moduleScope.exportedSymbols.set(staticKey, staticSym);
         }
       } else {
         const key = keys[exportedName];

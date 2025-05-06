@@ -1,20 +1,26 @@
-import { code, List, refkey, StatementList } from "@alloy-js/core";
+import {
+  code,
+  List,
+  Output,
+  refkey,
+  render,
+  StatementList,
+} from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { InterfaceMember, ObjectExpression } from "../src/components/index.js";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
-import {
-  InterfaceMember,
-  ObjectExpression,
-} from "../src/components/stc/index.js";
 import { VarDeclaration } from "../src/components/VarDeclaration.jsx";
 import {
   ClassDeclaration,
   ClassField,
   FunctionDeclaration,
   InterfaceDeclaration,
+  ObjectProperty,
   ParameterDescriptor,
+  SourceFile,
 } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { assertFileContents, toSourceText } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
@@ -39,6 +45,19 @@ it("renders member expression with bracket notation for invalid identifiers", ()
     ),
   ).toBe(d`
     obj["property-name"]
+  `);
+});
+
+it("renders member expressions with quotes", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id={`property-"name"`} />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    obj["property-\\"name\\""]
   `);
 });
 
@@ -80,6 +99,19 @@ it("ignores non-part children", () => {
     ),
   ).toBe(d`
     obj.property
+  `);
+});
+
+it("ignores allows parts to define children", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part>well</MemberExpression.Part>
+        <MemberExpression.Part>hello</MemberExpression.Part>
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    well.hello
   `);
 });
 
@@ -128,6 +160,46 @@ it("handles nullish chaining at multiple levels", () => {
     ),
   ).toBe(d`
     a.b?.c.d?.e
+  `);
+});
+
+it("throws an error when providing conflicting part props", () => {
+  expect(() =>
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="obj" />
+        <MemberExpression.Part id="property" nullish={true} args={[1, 2]} />
+      </MemberExpression>,
+    ),
+  ).toThrowError(
+    `Only one of args, id can be used for a MemberExpression part at a time`,
+  );
+});
+
+it("takes children for the id part", () => {
+  expect(
+    toSourceText(
+      <List>
+        <MemberExpression>
+          <MemberExpression.Part>child1</MemberExpression.Part>
+          <MemberExpression.Part quoteId>child2</MemberExpression.Part>
+        </MemberExpression>
+        <MemberExpression>
+          <MemberExpression.Part>child1</MemberExpression.Part>
+          <MemberExpression.Part quoteId>child2</MemberExpression.Part>
+          <MemberExpression.Part args />
+          <MemberExpression.Part quoteId nullish>
+            child3
+          </MemberExpression.Part>
+          <MemberExpression.Part args />
+          <MemberExpression.Part>["foo" + 1]</MemberExpression.Part>
+          <MemberExpression.Part args />
+        </MemberExpression>
+      </List>,
+    ),
+  ).toBe(d`
+    child1["child2"]
+    child1["child2"]()["child3"]?.().["foo" + 1]()
   `);
 });
 
@@ -332,6 +404,42 @@ describe("with refkeys", () => {
       const test1_2 = 2;
     `);
   });
+
+  it("creates a full reference to the first refkey", () => {
+    const rk1 = refkey();
+    const res = render(
+      <Output>
+        <SourceFile path="source.ts">
+          <VarDeclaration name="importMe">
+            <ObjectExpression>
+              <ObjectProperty name="prop" refkey={rk1} />
+            </ObjectExpression>
+          </VarDeclaration>
+        </SourceFile>
+        <SourceFile path="index.ts">
+          <StatementList>
+            <MemberExpression>
+              <MemberExpression.Part refkey={rk1} />
+              <MemberExpression.Part id="foo" />
+            </MemberExpression>
+            <MemberExpression>
+              <MemberExpression.Part>{rk1}</MemberExpression.Part>
+              <MemberExpression.Part id="foo" />
+            </MemberExpression>
+          </StatementList>
+        </SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "index.ts": d`
+        import { importMe } from "./source.js";
+
+        importMe.prop.foo;
+        importMe.prop.foo;
+      `,
+    });
+  });
 });
 
 describe("with function calls", () => {
@@ -362,6 +470,20 @@ describe("with function calls", () => {
       ),
     ).toBe(d`
       method1?.(1, 2)?.()?.method2?.().prop
+    `);
+  });
+
+  it("handles function calls returning nullish correctly", () => {
+    expect(
+      toSourceText(
+        <MemberExpression>
+          <MemberExpression.Part id="myFunction" />
+          <MemberExpression.Part args={[1, 2]} nullish />
+          <MemberExpression.Part id="prop" />
+        </MemberExpression>,
+      ),
+    ).toBe(d`
+      myFunction(1, 2)?.prop
     `);
   });
 
@@ -439,8 +561,33 @@ describe("formatting", () => {
         })
       `);
     });
-
-    it.skip("handles multiple calls", () => {
+    it("handles single calls with multiple parameters", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[
+                <ObjectExpression jsValue={{ x: 1 }} />,
+                <ObjectExpression jsValue={{ y: 2 }} />,
+              ]}
+            />
+          </MemberExpression>,
+          { printWidth: 12 },
+        ),
+      ).toBe(d`
+        z.object(
+          {
+            x: 1,
+          },
+          {
+            y: 2,
+          }
+        )
+      `);
+    });
+    it("handles multiple calls", () => {
       expect(
         toSourceText(
           <MemberExpression>
@@ -460,6 +607,72 @@ describe("formatting", () => {
             x: 1,
           })
           .partial()
+      `);
+    });
+
+    it("renders multiple calls on the same line when there are no breaks and they fit", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="optional" />
+            <MemberExpression.Part args />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z.object().partial().optional()
+      `);
+    });
+    it("handles multiple calls with id parts", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part id="z1" nullish />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+            <MemberExpression.Part id="foo" />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args={[]} />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z.z1
+          ?.object({
+            x: 1,
+          })
+          .foo.partial()
+      `);
+    });
+
+    it("handles the first part being a call", () => {
+      expect(
+        toSourceText(
+          <MemberExpression>
+            <MemberExpression.Part id="z" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="z1" nullish />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part
+              args={[<ObjectExpression jsValue={{ x: 1 }} />]}
+            />
+            <MemberExpression.Part id="foo" />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args={[]} />
+          </MemberExpression>,
+        ),
+      ).toBe(d`
+        z()
+          .z1?.object({
+            x: 1,
+          })
+          .foo.partial()
       `);
     });
   });

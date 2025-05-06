@@ -23,7 +23,7 @@ export interface MemberExpressionProps {
 interface PartDescriptor {
   id: Children;
   accessStyle: "dot" | "bracket";
-  quoteKey: boolean;
+  quoteId: boolean;
   nullish: boolean;
   args?: Children[];
 }
@@ -170,9 +170,8 @@ function createPartDescriptorFromProps(
       if (partProps.args) {
         // not used
         return "dot";
-      } else if ("children" in partProps && partProps.children !== undefined) {
-        // todo: need a way to specify the access style for this
-        return "dot";
+      } else if (partProps.quoteId) {
+        return "bracket";
       } else if (partProps.id) {
         return accessStyleForMemberName(partProps.id);
       } else if (symbolSource.value) {
@@ -181,7 +180,7 @@ function createPartDescriptorFromProps(
         return "dot";
       }
     }),
-    quoteKey: computed(() => {
+    quoteId: computed(() => {
       if (partProps.quoteId) {
         return partProps.quoteId;
       } else if (partProps.id) {
@@ -377,9 +376,9 @@ function formatArrayAccess(prevPart: PartDescriptor, part: PartDescriptor) {
       {prevPart.nullish ? "?." : ""}[
       <indent>
         <sbr />
-        {part.quoteKey && '"'}
+        {part.quoteId && '"'}
         {part.id}
-        {part.quoteKey && '"'}
+        {part.quoteId && '"'}
       </indent>
       <sbr />]
     </group>

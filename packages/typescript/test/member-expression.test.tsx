@@ -176,6 +176,33 @@ it("throws an error when providing conflicting part props", () => {
   );
 });
 
+it("takes children for the id part", () => {
+  expect(
+    toSourceText(
+      <List>
+        <MemberExpression>
+          <MemberExpression.Part>child1</MemberExpression.Part>
+          <MemberExpression.Part quoteId>child2</MemberExpression.Part>
+        </MemberExpression>
+        <MemberExpression>
+          <MemberExpression.Part>child1</MemberExpression.Part>
+          <MemberExpression.Part quoteId>child2</MemberExpression.Part>
+          <MemberExpression.Part args />
+          <MemberExpression.Part quoteId nullish>
+            child3
+          </MemberExpression.Part>
+          <MemberExpression.Part args />
+          <MemberExpression.Part>["foo" + 1]</MemberExpression.Part>
+          <MemberExpression.Part args />
+        </MemberExpression>
+      </List>,
+    ),
+  ).toBe(d`
+    child1["child2"]
+    child1["child2"]()["child3"]?.().["foo" + 1]()
+  `);
+});
+
 describe("with refkeys", () => {
   it("handles symbols correctly", () => {
     const rk1 = refkey();

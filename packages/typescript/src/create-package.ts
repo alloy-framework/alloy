@@ -54,25 +54,32 @@ function createStaticMembers(
   namespaceName: string,
 ) {
   const namespaceScope = createTSMemberScope(binder, undefined, namespaceSym);
-  for (const staticMember of staticMembers) {
-    const memberName =
-      typeof staticMember === "string" ? staticMember : staticMember.name;
-    const staticKey = keys[namespaceName][memberName];
-    const nestedSym = createTSSymbol({
+
+  for (const member of staticMembers) {
+    const memberName = typeof member === "string" ? member : member.name;
+    const memberKey = keys[namespaceName][memberName];
+
+    // Create symbol with appropriate flags based on whether it has nested members
+    const memberFlags =
+      typeof member === "object" && member.staticMembers?.length ?
+        OutputSymbolFlags.StaticMember | OutputSymbolFlags.StaticMemberContainer
+      : OutputSymbolFlags.StaticMember;
+
+    const memberSym = createTSSymbol({
       name: memberName,
       scope: namespaceScope,
-      refkey: staticKey,
+      refkey: memberKey,
       export: false,
       default: false,
-      flags: OutputSymbolFlags.StaticMember,
+      flags: memberFlags,
     });
 
-    // recursively handle nested static members
-    if (typeof staticMember === "object" && staticMember.staticMembers) {
+    // Recursively process nested static members if present
+    if (typeof member === "object" && member.staticMembers) {
       createStaticMembers(
         binder,
-        nestedSym,
-        staticMember.staticMembers,
+        memberSym,
+        member.staticMembers,
         keys[namespaceName],
         memberName,
       );
@@ -140,7 +147,7 @@ function createSymbols(
 }
 
 // Recursive helper type to extract named exports as objects with static members
-type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
+export type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
   [N in Extract<
     T["named"] extends readonly any[] ? T["named"][number] : never,
     { name: string }
@@ -158,7 +165,9 @@ type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
 };
 
 // Helper type to recursively extract exports from descriptors
-type NamedExportsFromDescriptors<T extends readonly NamedModuleDescriptor[]> = {
+export type NamedExportsFromDescriptors<
+  T extends readonly NamedModuleDescriptor[],
+> = {
   [N in Extract<T[number], string>]: Refkey;
 } & {
   [N in Extract<T[number], { name: string }>["name"]]: Refkey &
@@ -173,7 +182,7 @@ type NamedExportsFromDescriptors<T extends readonly NamedModuleDescriptor[]> = {
 };
 
 // Helper type to extract named exports as strings
-type NamedStringExports<T extends ModuleSymbolsDescriptor> = {
+export type NamedStringExports<T extends ModuleSymbolsDescriptor> = {
   [N in Extract<
     T["named"] extends readonly any[] ? T["named"][number] : never,
     string
@@ -181,13 +190,12 @@ type NamedStringExports<T extends ModuleSymbolsDescriptor> = {
 };
 
 // Helper type to handle default exports
-type DefaultExport<T extends ModuleSymbolsDescriptor> =
+export type DefaultExport<T extends ModuleSymbolsDescriptor> =
   T extends { default: string } ? { default: Refkey } : {};
 
 // Combine all exports for a module
-type ModuleExports<T extends ModuleSymbolsDescriptor> = NamedStringExports<T> &
-  NamedObjectExports<T> &
-  DefaultExport<T>;
+export type ModuleExports<T extends ModuleSymbolsDescriptor> =
+  NamedStringExports<T> & NamedObjectExports<T> & DefaultExport<T>;
 
 // Main simplified type
 export type PackageRefkeys<T extends PackageDescriptor> = {

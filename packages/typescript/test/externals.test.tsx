@@ -137,8 +137,6 @@ it("can import builtins without a package", () => {
   });
 });
 
-// TODO: better name and location
-
 it("can import static members", () => {
   const mcpSdk = createPackage({
     name: "@modelcontextprotocol/sdk",

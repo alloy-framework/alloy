@@ -229,7 +229,7 @@ export function createPackage<const T extends PackageDescriptor>(
     for (const named of symbols.named ?? []) {
       if (typeof named === "object") {
         const { name, staticMembers } = named;
-        keys[name] = refkey(props.descriptor, path, name);
+        keys[name] = refkey();
         if (staticMembers) {
           keys[name] = {
             ...keys[name],
@@ -242,7 +242,7 @@ export function createPackage<const T extends PackageDescriptor>(
           };
         }
       } else {
-        keys[named] = refkey(props.descriptor, path, named);
+        keys[named] = refkey();
       }
     }
   }
@@ -260,13 +260,9 @@ function createStaticMemberKeys(
   const result: Record<string, Refkey> = {};
   for (const member of staticMembers) {
     if (typeof member === "string") {
-      result[member] = refkey(descriptor, path, `${parentName}.${member}`);
+      result[member] = refkey();
     } else {
-      result[member.name] = refkey(
-        descriptor,
-        path,
-        `${parentName}.${member.name}`,
-      );
+      result[member.name] = refkey();
       if (member.staticMembers) {
         result[member.name] = {
           ...result[member.name],

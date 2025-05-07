@@ -138,6 +138,7 @@ it("can import builtins without a package", () => {
 });
 
 // TODO: better name and location
+
 it("can import static members", () => {
   const mcpSdk = createPackage({
     name: "@modelcontextprotocol/sdk",
@@ -145,9 +146,15 @@ it("can import static members", () => {
     descriptor: {
       "./server/index.js": {
         named: [
-          { name: "server", staticMembers: ["setRequestHandler"] }, // descriptor form
-          { name: "simple" }, // descriptor form
-          "other", // simple form
+          {
+            name: "server",
+            staticMembers: [
+              "setRequestHandler",
+              { name: "nested", staticMembers: ["nestedHandler"] },
+            ],
+          },
+          { name: "simple" },
+          "other",
         ],
       },
     },
@@ -158,6 +165,8 @@ it("can import static members", () => {
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
           {mcpSdk["./server/index.js"].server.setRequestHandler}();
+          <hbr />
+          {mcpSdk["./server/index.js"].server.nested.nestedHandler}();
           <hbr />
           await {mcpSdk["./server/index.js"].simple}();
           <hbr />
@@ -173,6 +182,7 @@ it("can import static members", () => {
 
       function foo() {
         server.setRequestHandler();
+        server.nested.nestedHandler();
         await simple();
         other();
       }

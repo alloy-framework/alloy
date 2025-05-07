@@ -20,7 +20,7 @@ export interface PackageDescriptor {
 
 export type NamedModuleDescriptor =
   | string
-  | { name: string; staticMembers?: Array<string> }; // TODO: array of strings sufficient?
+  | { name: string; staticMembers?: Array<NamedModuleDescriptor> };
 
 export interface ModuleSymbolsDescriptor {
   default?: string;
@@ -49,21 +49,34 @@ function createNamedSymbol(
 function createStaticMembers(
   binder: Binder,
   namespaceSym: any,
-  staticMembers: string[],
+  staticMembers: NamedModuleDescriptor[],
   keys: any,
   namespaceName: string,
 ) {
   const namespaceScope = createTSMemberScope(binder, undefined, namespaceSym);
   for (const staticMember of staticMembers) {
-    const staticKey = keys[namespaceName][staticMember];
-    createTSSymbol({
-      name: staticMember,
+    const memberName =
+      typeof staticMember === "string" ? staticMember : staticMember.name;
+    const staticKey = keys[namespaceName][memberName];
+    const nestedSym = createTSSymbol({
+      name: memberName,
       scope: namespaceScope,
       refkey: staticKey,
       export: false,
       default: false,
       flags: OutputSymbolFlags.StaticMember,
     });
+
+    // recursively handle nested static members
+    if (typeof staticMember === "object" && staticMember.staticMembers) {
+      createStaticMembers(
+        binder,
+        nestedSym,
+        staticMember.staticMembers,
+        keys[namespaceName],
+        memberName,
+      );
+    }
   }
 }
 
@@ -126,28 +139,45 @@ function createSymbols(
   }
 }
 
-// TODO: simplify this crazy type?
+// Recursive helper type to extract named exports as objects with static members
+type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
+  [N in Extract<
+    T["named"] extends readonly any[] ? T["named"][number] : never,
+    { name: string }
+  >["name"]]: Refkey &
+    (Extract<
+      T["named"] extends readonly any[] ?
+        Extract<T["named"][number], { name: N; staticMembers: any }>
+      : never,
+      { staticMembers: readonly any[] }
+    > extends (
+      { staticMembers: infer SM extends readonly NamedModuleDescriptor[] }
+    ) ?
+      NamedExportsFromDescriptors<SM>
+    : {});
+};
+
+// Helper type to recursively extract exports from descriptors
+type NamedExportsFromDescriptors<T extends readonly NamedModuleDescriptor[]> = {
+  [N in Extract<T[number], string>]: Refkey;
+} & {
+  [N in Extract<T[number], { name: string }>["name"]]: Refkey &
+    (Extract<
+      T[number],
+      { name: N; staticMembers?: readonly NamedModuleDescriptor[] }
+    > extends (
+      { staticMembers: infer SM extends readonly NamedModuleDescriptor[] }
+    ) ?
+      NamedExportsFromDescriptors<SM>
+    : {});
+};
+
 // Helper type to extract named exports as strings
 type NamedStringExports<T extends ModuleSymbolsDescriptor> = {
   [N in Extract<
     T["named"] extends readonly any[] ? T["named"][number] : never,
     string
   >]: Refkey;
-};
-
-// Helper type to extract named exports as objects with static members
-type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
-  [N in Extract<
-    T["named"] extends readonly any[] ? T["named"][number] : never,
-    { name: string }
-  >["name"]]: Refkey & {
-    [SM in Extract<
-      T["named"] extends readonly any[] ?
-        Extract<T["named"][number], { name: N; staticMembers: any }>
-      : never,
-      { staticMembers: readonly string[] }
-    >["staticMembers"][number]]: Refkey;
-  };
 };
 
 // Helper type to handle default exports
@@ -189,21 +219,56 @@ export function createPackage<const T extends PackageDescriptor>(
     for (const named of symbols.named ?? []) {
       if (typeof named === "object") {
         const { name, staticMembers } = named;
-        // Create the base key for the named export
         keys[name] = refkey(props.descriptor, path, name);
-
-        // Create keys for each static member
-        for (const staticMember of staticMembers ?? []) {
-          // Set the static member key
-          keys[name] ??= {};
-          keys[name][staticMember] = refkey(`${keys[name]}.${staticMember}`);
+        if (staticMembers) {
+          keys[name] = {
+            ...keys[name],
+            ...createStaticMemberKeys(
+              props.descriptor,
+              path,
+              name,
+              staticMembers,
+            ),
+          };
         }
       } else {
-        // Handle string named exports
         keys[named] = refkey(props.descriptor, path, named);
       }
     }
   }
 
   return refkeys;
+}
+
+// Helper function to recursively create static member keys
+function createStaticMemberKeys(
+  descriptor: PackageDescriptor,
+  path: string,
+  parentName: string,
+  staticMembers: NamedModuleDescriptor[],
+): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const member of staticMembers) {
+    if (typeof member === "string") {
+      result[member] = refkey(descriptor, path, `${parentName}.${member}`);
+    } else {
+      result[member.name] = refkey(
+        descriptor,
+        path,
+        `${parentName}.${member.name}`,
+      );
+      if (member.staticMembers) {
+        result[member.name] = {
+          ...result[member.name],
+          ...createStaticMemberKeys(
+            descriptor,
+            path,
+            `${parentName}.${member.name}`,
+            member.staticMembers,
+          ),
+        };
+      }
+    }
+  }
+  return result;
 }

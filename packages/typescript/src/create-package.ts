@@ -12,6 +12,8 @@ import {
   createTSModuleScope,
   createTSPackageScope,
   createTSSymbol,
+  TSModuleScope,
+  TSOutputSymbol,
 } from "./symbols/index.js";
 
 export interface PackageDescriptor {
@@ -29,7 +31,7 @@ export interface ModuleSymbolsDescriptor {
 
 function createNamedSymbol(
   binder: Binder,
-  moduleScope: any,
+  moduleScope: TSModuleScope,
   name: string,
   key: Refkey,
   flags?: OutputSymbolFlags,
@@ -48,7 +50,7 @@ function createNamedSymbol(
 
 function createStaticMembers(
   binder: Binder,
-  namespaceSym: any,
+  namespaceSym: TSOutputSymbol,
   staticMembers: NamedModuleDescriptor[],
   keys: any,
   namespaceName: string,
@@ -254,8 +256,8 @@ function createStaticMemberKeys(
   path: string,
   parentName: string,
   staticMembers: NamedModuleDescriptor[],
-): Record<string, any> {
-  const result: Record<string, any> = {};
+): Record<string, Refkey> {
+  const result: Record<string, Refkey> = {};
   for (const member of staticMembers) {
     if (typeof member === "string") {
       result[member] = refkey(descriptor, path, `${parentName}.${member}`);

@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/create",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Create an Alloy project with npm init @alloy-js",
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",

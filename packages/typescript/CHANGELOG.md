@@ -1,5 +1,17 @@
 # Changelog - @alloy-js/typescript
 
+## 0.16.0
+
+### Features
+
+- [#150](https://github.com/alloy-framework/alloy/pull/150) Allow providing explicit children to a MemberExpression.Part.
+- [#150](https://github.com/alloy-framework/alloy/pull/150) Format member expressions with multiple calls in a much better way.
+
+### Breaking Changes
+
+- [#150](https://github.com/alloy-framework/alloy/pull/150) Remove `MemberChainExpression` component. Use `MemberExpression` component instead, which accomplishes the same goals but formats better, handles optional chaining, and more.
+
+
 ## 0.15.0
 
 ### Features

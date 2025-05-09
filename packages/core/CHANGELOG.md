@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/core
 
+## 0.16.0
+
+### Features
+
+- [#150](https://github.com/alloy-framework/alloy/pull/150) Export `isRef` and `isReactive` utility functions.
+- [#150](https://github.com/alloy-framework/alloy/pull/150) Fully resolve refkeys given to the first part of a MemberExpression.
+
+
 ## 0.15.0
 
 No changes, version bump only.

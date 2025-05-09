@@ -26,7 +26,7 @@ function SayHello(props: SayHelloProps) {
 }
 
 const text = <SayHello name="Brian">);
-renderString(text) // "Hello Brian"
+renderString(text) // "Hello Brian!"
 ```
 
 The example above uses JSX syntax to define and reference components, but you
@@ -51,7 +51,7 @@ function SayHello(props: SayHelloProps) {
 const SayHelloStc = stc(SayHello);
 
 const text = SayHelloStc({ name: "Brian" });
-renderString(text) // "Hello Brian"
+renderString(text) // "Hello Brian!"
 ```
 
 ## Context
@@ -98,7 +98,7 @@ Many of the built-in components provide context. For example, `Output` provides 
 
 ## Declarations and references
 
-When you create a declarations, you need to provide the declaration name, and optionally a refkey. Some declarations may have additional props to control things like whether its exported or private. The name you provide may look different in the output depending on your situation, for example a name policy may turn camelCase names into snake_case, or a conflict with another like-named declaration might disambiguate one or the other with a number. 
+When you create a declarations, you need to provide the declaration name, and optionally a refkey. Some declarations may have additional props to control things like whether its exported or private. The name you provide may look different in the output depending on your situation, for example a name policy may turn camelCase names into snake_case, or a conflict with another like-named declaration might disambiguate one or the other with a number.
 
 One of the more challenging bits of doing codegen is generating references to things you've declared. Alloy makes this painless with refkeys. A refkey is a unique identifier for a symbol you declare in your output code. When you reference a refkey, Alloy calculates the necessary reference syntax along with any imports, package dependencies, or other such things needed for the reference to work.
 
@@ -203,7 +203,7 @@ formatting configuration for a particular output or source file.
 Note that, for many situations, you won't need to use these formatting elements
 directly. Components provided by core like `Indent`, `Block`, `List`, and `For`
 generally handle most formatting for you. Additionally, built-in language
-components like `IfStatement`, `Switch`, and so on handle formatting as well. 
+components like `IfStatement`, `Switch`, and so on handle formatting as well.
 
 The most common formatting intrinsic elements are:
 

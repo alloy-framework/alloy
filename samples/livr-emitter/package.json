@@ -1,0 +1,31 @@
+{
+  "name": "@alloy-js/sample-livr-emitter",
+  "private": "true",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "alloy build",
+    "clean": "rimraf dist/ .temp/",
+    "watch": "alloy build --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/json": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@alloy-js/java": "workspace:~"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/node": "catalog:",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module"
+}

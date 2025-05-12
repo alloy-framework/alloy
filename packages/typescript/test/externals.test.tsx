@@ -151,8 +151,8 @@ it("can import static members", () => {
               { name: "nested", staticMembers: ["nestedHandler"] },
             ],
           },
-          { name: "simple" },
-          "other",
+          { name: "noMembers" },
+          "simpleName",
         ],
       },
     },
@@ -162,15 +162,15 @@ it("can import static members", () => {
     <Output externals={[mcpSdk, fs]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
+          {mcpSdk["./server/index.js"].server}();
+          <hbr />
           {mcpSdk["./server/index.js"].server.setRequestHandler}();
           <hbr />
           {mcpSdk["./server/index.js"].server.nested.nestedHandler}();
           <hbr />
-          await {mcpSdk["./server/index.js"].server}();
+          {mcpSdk["./server/index.js"].noMembers}();
           <hbr />
-          {mcpSdk["./server/index.js"].other}();
-          <hbr />
-          {mcpSdk["./server/index.js"].simple}();
+          {mcpSdk["./server/index.js"].simpleName}();
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
@@ -178,14 +178,14 @@ it("can import static members", () => {
 
   assertFileContents(res, {
     "index.ts": `
-      import { other, server, simple } from "@modelcontextprotocol/sdk/server/index.js";
+      import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
 
       function foo() {
+        server();
         server.setRequestHandler();
         server.nested.nestedHandler();
-        await server();
-        other();
-        simple();
+        noMembers();
+        simpleName();
       }
     `,
   });

@@ -64,10 +64,9 @@ function createStaticMembers(
   for (const member of staticMembers) {
     const memberObj = typeof member === "object" ? member : { name: member };
 
+    console.log("creating static member", memberObj);
     // Create a refkey directly if it doesn't exist yet
     keys[memberObj.name] ??= refkey();
-
-    const memberKey = keys[memberObj.name];
 
     let memberFlags = OutputSymbolFlags.StaticMember;
     if (memberObj.staticMembers?.length) {
@@ -81,11 +80,13 @@ function createStaticMembers(
     const memberSym = createTSSymbol({
       name: memberObj.name,
       scope: memberScope,
-      refkey: memberKey,
+      binder,
+      refkey: keys[memberObj.name],
       export: false,
       default: false,
       flags: memberFlags,
     });
+    console.log("created static member", memberSym);
 
     // Handle static members of the current member
     createStaticMembers(
@@ -95,15 +96,66 @@ function createStaticMembers(
       keys[memberObj.name],
     );
 
-    // createInstanceMembers(
-    //   binder,
-    //   memberSym,
-    //   memberObj.instanceMembers ?? [],
-    //   keys[memberObj.name],
-    // );
+    createInstanceMembers(
+      binder,
+      memberSym,
+      memberObj.instanceMembers ?? [],
+      keys[memberObj.name],
+    );
   }
 }
 
+function createInstanceMembers(
+  binder: Binder,
+  ownerSym: TSOutputSymbol,
+  instanceMembers: NamedModuleDescriptor[],
+  keys: Record<string, any>,
+) {
+  const memberScope = createTSMemberScope(binder, ownerSym.scope, ownerSym);
+
+  for (const member of instanceMembers) {
+    const memberObj = typeof member === "object" ? member : { name: member };
+    console.log("creating instance member", memberObj);
+
+    // Create a refkey directly if it doesn't exist yet
+    if (!keys[memberObj.name]) {
+      keys[memberObj.name] = refkey();
+    }
+
+    let memberFlags = OutputSymbolFlags.InstanceMember;
+    if (memberObj.instanceMembers?.length) {
+      memberFlags |= OutputSymbolFlags.InstanceMemberContainer;
+    }
+    if (memberObj.staticMembers?.length) {
+      memberFlags |= OutputSymbolFlags.StaticMemberContainer;
+    }
+
+    const memberSym = createTSSymbol({
+      name: memberObj.name,
+      scope: memberScope,
+      refkey: keys[memberObj.name],
+      export: false,
+      default: false,
+      flags: memberFlags,
+    });
+    console.log("created instance member", memberSym);
+
+    // Recursively handle nested static members
+    createStaticMembers(
+      binder,
+      memberSym,
+      memberObj.staticMembers ?? [],
+      keys[memberObj.name],
+    );
+    // Recursively handle nested instance members
+    createInstanceMembers(
+      binder,
+      memberSym,
+      memberObj.instanceMembers ?? [],
+      keys[memberObj.name],
+    );
+  }
+}
 function createSymbols(
   binder: Binder,
   props: CreatePackageProps<PackageDescriptor>,
@@ -152,31 +204,49 @@ function createSymbols(
       }
 
       const ownerSym = createNamedSymbol(binder, moduleScope, name, key, flags);
-      createStaticMembers(
+      createStaticMembers(binder, ownerSym, staticMembers ?? [], keys[name]);
+      createInstanceMembers(
         binder,
         ownerSym,
-        staticMembers ?? [],
-        keys[name], // pass nested keys
+        instanceMembers ?? [],
+        keys[name],
       );
     }
   }
 }
 
-// Recursive helper type to extract named exports as objects with static members
+// Recursive helper type to extract named exports as objects
+// with nested static AND instance members
 export type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
   [N in Extract<
     T["named"] extends readonly any[] ? T["named"][number] : never,
     { name: string }
   >["name"]]: Refkey &
+    // ── staticMembers recursion ────────────────────────────────
     (Extract<
       T["named"] extends readonly any[] ?
         Extract<T["named"][number], { name: N; staticMembers: any }>
       : never,
       { staticMembers: readonly any[] }
     > extends (
-      { staticMembers: infer SM extends readonly NamedModuleDescriptor[] }
+      {
+        staticMembers: infer SM extends readonly NamedModuleDescriptor[];
+      }
     ) ?
       NamedExportsFromDescriptors<SM>
+    : {}) &
+    // ── instanceMembers recursion ──────────────────────────────
+    (Extract<
+      T["named"] extends readonly any[] ?
+        Extract<T["named"][number], { name: N; instanceMembers: any }>
+      : never,
+      { instanceMembers: readonly any[] }
+    > extends (
+      {
+        instanceMembers: infer IM extends readonly NamedModuleDescriptor[];
+      }
+    ) ?
+      NamedExportsFromDescriptors<IM>
     : {});
 };
 
@@ -184,16 +254,30 @@ export type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
 export type NamedExportsFromDescriptors<
   T extends readonly NamedModuleDescriptor[],
 > = {
+  // plain string members
   [N in Extract<T[number], string>]: Refkey;
 } & {
+  // object members – recurse for both static & instance trees
   [N in Extract<T[number], { name: string }>["name"]]: Refkey &
     (Extract<
       T[number],
       { name: N; staticMembers?: readonly NamedModuleDescriptor[] }
     > extends (
-      { staticMembers: infer SM extends readonly NamedModuleDescriptor[] }
+      {
+        staticMembers: infer SM extends readonly NamedModuleDescriptor[];
+      }
     ) ?
       NamedExportsFromDescriptors<SM>
+    : {}) &
+    (Extract<
+      T[number],
+      { name: N; instanceMembers?: readonly NamedModuleDescriptor[] }
+    > extends (
+      {
+        instanceMembers: infer IM extends readonly NamedModuleDescriptor[];
+      }
+    ) ?
+      NamedExportsFromDescriptors<IM>
     : {});
 };
 
@@ -241,20 +325,31 @@ export function createPackage<const T extends PackageDescriptor>(
     }
 
     for (const named of symbols.named ?? []) {
-      const namedRef = typeof named === "string" ? { name: named } : named;
-      const { name, staticMembers } = namedRef;
+      const namedObj = typeof named === "string" ? { name: named } : named;
 
-      keys[name] = refkey();
+      keys[namedObj.name] = refkey();
 
       // Directly attach symbol creator without initializing nested keys
-      keys[name][getSymbolCreatorSymbol()] = (
+      keys[namedObj.name][getSymbolCreatorSymbol()] = (
         binder: Binder,
         parentSym: TSOutputSymbol,
       ) => {
-        createStaticMembers(binder, parentSym, staticMembers ?? [], keys[name]);
+        createStaticMembers(
+          binder,
+          parentSym,
+          namedObj.staticMembers ?? [],
+          keys[namedObj.name],
+        );
+        createInstanceMembers(
+          binder,
+          parentSym,
+          namedObj.instanceMembers ?? [],
+          keys[namedObj.name],
+        );
       };
     }
   }
 
+  console.log("all my refkeys", refkeys);
   return refkeys;
 }

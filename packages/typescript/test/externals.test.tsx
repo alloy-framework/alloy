@@ -1,4 +1,4 @@
-import { Output, render } from "@alloy-js/core";
+import { Output, refkey, render } from "@alloy-js/core";
 import { it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -193,7 +193,7 @@ it("can import static members", () => {
   });
 });
 
-it("can import instance members", () => {
+it.only("can import instance members", () => {
   const mcpSdk = createPackage({
     name: "@modelcontextprotocol/sdk",
     version: "^3.23.0",
@@ -202,10 +202,8 @@ it("can import instance members", () => {
         named: [
           {
             name: "Server",
-            instanceMembers: [
-              "setRequestHandler",
-              //{ name: "nested", staticMembers: ["nestedHandler"] },
-            ],
+            instanceMembers: ["instanceHandler"],
+            staticMembers: ["setRequestHandler"],
           },
           //{ name: "noMembers" },
           //"simpleName",
@@ -219,9 +217,10 @@ it("can import instance members", () => {
       <SourceFile path="index.ts">
         <ClassDeclaration
           name="MyServer"
+          refkey={refkey("MyServer")}
           extends={mcpSdk["./server/index.js"].Server}
         >
-          <ClassMethod name="handleRequest">TODO</ClassMethod>
+          <ClassMethod name="handleRequest"></ClassMethod>
         </ClassDeclaration>
       </SourceFile>
     </Output>,
@@ -233,7 +232,7 @@ it("can import instance members", () => {
 
       class MyServer extends Server {
         handleRequest() {
-          TODO
+          this.setRequestHandler();
         }
       }
     `,

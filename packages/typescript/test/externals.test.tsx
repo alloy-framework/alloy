@@ -2,6 +2,8 @@ import { Output, render } from "@alloy-js/core";
 import { it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
+  ClassDeclaration,
+  ClassMethod,
   createPackage,
   FunctionDeclaration,
   PackageDirectory,
@@ -186,6 +188,53 @@ it("can import static members", () => {
         server.nested.nestedHandler();
         noMembers();
         simpleName();
+      }
+    `,
+  });
+});
+
+it("can import instance members", () => {
+  const mcpSdk = createPackage({
+    name: "@modelcontextprotocol/sdk",
+    version: "^3.23.0",
+    descriptor: {
+      "./server/index.js": {
+        named: [
+          {
+            name: "Server",
+            instanceMembers: [
+              "setRequestHandler",
+              //{ name: "nested", staticMembers: ["nestedHandler"] },
+            ],
+          },
+          //{ name: "noMembers" },
+          //"simpleName",
+        ],
+      },
+    },
+  });
+
+  const res = render(
+    <Output externals={[mcpSdk]}>
+      <SourceFile path="index.ts">
+        <ClassDeclaration
+          name="MyServer"
+          extends={mcpSdk["./server/index.js"].Server}
+        >
+          <ClassMethod name="handleRequest">TODO</ClassMethod>
+        </ClassDeclaration>
+      </SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+
+      class MyServer extends Server {
+        handleRequest() {
+          TODO
+        }
       }
     `,
   });

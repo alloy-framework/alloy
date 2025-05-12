@@ -37,6 +37,7 @@ function createNamedSymbol(
   flags?: OutputSymbolFlags,
 ) {
   const sym = createTSSymbol({
+    binder,
     name,
     scope: moduleScope,
     refkey: key,
@@ -52,16 +53,20 @@ function createStaticMembers(
   binder: Binder,
   namespaceSym: TSOutputSymbol,
   staticMembers: NamedModuleDescriptor[],
-  keys: any,
-  namespaceName: string,
+  keys: Record<string, any>,
 ) {
-  const namespaceScope = createTSMemberScope(binder, undefined, namespaceSym);
+  const memberScope = createTSMemberScope(binder, undefined, namespaceSym);
 
   for (const member of staticMembers) {
     const memberName = typeof member === "string" ? member : member.name;
-    const memberKey = keys[namespaceName][memberName];
 
-    // Create symbol with appropriate flags based on whether it has nested members
+    // Create a refkey directly if it doesn't exist yet
+    if (!keys[memberName]) {
+      keys[memberName] = refkey();
+    }
+
+    const memberKey = keys[memberName];
+
     const memberFlags =
       typeof member === "object" && member.staticMembers?.length ?
         OutputSymbolFlags.StaticMember | OutputSymbolFlags.StaticMemberContainer
@@ -69,21 +74,20 @@ function createStaticMembers(
 
     const memberSym = createTSSymbol({
       name: memberName,
-      scope: namespaceScope,
+      scope: memberScope,
       refkey: memberKey,
       export: false,
       default: false,
       flags: memberFlags,
     });
 
-    // Recursively process nested static members if present
     if (typeof member === "object" && member.staticMembers) {
+      // Recursively handle nested static members
       createStaticMembers(
         binder,
         memberSym,
         member.staticMembers,
-        keys[namespaceName],
-        memberName,
+        keys[memberName],
       );
     }
   }
@@ -102,10 +106,10 @@ function createSymbols(
     `node_modules/${props.name}`,
     props.builtin,
   );
+
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
     const moduleScope = createTSModuleScope(binder, pkgScope, path);
-
     pkgScope.exportedSymbols.set(path, moduleScope);
 
     if (symbols.default) {
@@ -117,32 +121,37 @@ function createSymbols(
         export: true,
         default: true,
       });
-
       moduleScope.exportedSymbols.set(key, sym);
     }
 
     for (const exportedName of symbols.named ?? []) {
-      if (typeof exportedName === "object") {
-        const { name, staticMembers } = exportedName;
-        const key = keys[name];
-        const namespaceSym = createNamedSymbol(
-          binder,
-          moduleScope,
-          name,
-          key,
-          OutputSymbolFlags.StaticMemberContainer,
-        );
+      const namedRef =
+        typeof exportedName === "string" ?
+          { name: exportedName }
+        : exportedName;
+      const { name, staticMembers } = namedRef;
+      const key = keys[name];
 
+      const flags =
+        staticMembers?.length ?
+          OutputSymbolFlags.StaticMemberContainer
+        : undefined;
+
+      const namespaceSym = createNamedSymbol(
+        binder,
+        moduleScope,
+        name,
+        key,
+        flags,
+      );
+
+      if (staticMembers && staticMembers.length > 0) {
         createStaticMembers(
           binder,
           namespaceSym,
-          staticMembers ?? [],
-          keys,
-          name,
+          staticMembers,
+          keys[name], // pass nested keys
         );
-      } else {
-        const key = keys[exportedName];
-        createNamedSymbol(binder, moduleScope, exportedName, key);
       }
     }
   }
@@ -227,54 +236,22 @@ export function createPackage<const T extends PackageDescriptor>(
     }
 
     for (const named of symbols.named ?? []) {
-      if (typeof named === "object") {
-        const { name, staticMembers } = named;
-        keys[name] = refkey();
-        if (staticMembers) {
-          keys[name] = {
-            ...keys[name],
-            ...createStaticMemberKeys(
-              props.descriptor,
-              path,
-              name,
-              staticMembers,
-            ),
-          };
-        }
-      } else {
-        keys[named] = refkey();
+      const namedRef = typeof named === "string" ? { name: named } : named;
+      const { name, staticMembers } = namedRef;
+
+      keys[name] = refkey();
+
+      if (staticMembers && staticMembers.length > 0) {
+        // Directly attach symbol creator without initializing nested keys
+        keys[name][getSymbolCreatorSymbol()] = (
+          binder: Binder,
+          parentSym: TSOutputSymbol,
+        ) => {
+          createStaticMembers(binder, parentSym, staticMembers, keys[name]);
+        };
       }
     }
   }
 
   return refkeys;
-}
-
-// Helper function to recursively create static member keys
-function createStaticMemberKeys(
-  descriptor: PackageDescriptor,
-  path: string,
-  parentName: string,
-  staticMembers: NamedModuleDescriptor[],
-): Record<string, Refkey> {
-  const result: Record<string, Refkey> = {};
-  for (const member of staticMembers) {
-    if (typeof member === "string") {
-      result[member] = refkey();
-    } else {
-      result[member.name] = refkey();
-      if (member.staticMembers) {
-        result[member.name] = {
-          ...result[member.name],
-          ...createStaticMemberKeys(
-            descriptor,
-            path,
-            `${parentName}.${member.name}`,
-            member.staticMembers,
-          ),
-        };
-      }
-    }
-  }
-  return result;
 }

@@ -166,9 +166,11 @@ it("can import static members", () => {
           <hbr />
           {mcpSdk["./server/index.js"].server.nested.nestedHandler}();
           <hbr />
-          await {mcpSdk["./server/index.js"].simple}();
+          await {mcpSdk["./server/index.js"].server}();
           <hbr />
           {mcpSdk["./server/index.js"].other}();
+          <hbr />
+          {mcpSdk["./server/index.js"].simple}();
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
@@ -181,8 +183,9 @@ it("can import static members", () => {
       function foo() {
         server.setRequestHandler();
         server.nested.nestedHandler();
-        await simple();
+        await server();
         other();
+        simple();
       }
     `,
   });

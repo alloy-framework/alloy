@@ -22,7 +22,11 @@ export interface PackageDescriptor {
 
 export type NamedModuleDescriptor =
   | string
-  | { name: string; staticMembers?: Array<NamedModuleDescriptor> };
+  | {
+      name: string;
+      staticMembers?: Array<NamedModuleDescriptor>;
+      instanceMembers?: Array<NamedModuleDescriptor>;
+    };
 
 export interface ModuleSymbolsDescriptor {
   default?: string;
@@ -51,29 +55,31 @@ function createNamedSymbol(
 
 function createStaticMembers(
   binder: Binder,
-  namespaceSym: TSOutputSymbol,
+  ownerSym: TSOutputSymbol,
   staticMembers: NamedModuleDescriptor[],
   keys: Record<string, any>,
 ) {
-  const memberScope = createTSMemberScope(binder, undefined, namespaceSym);
+  const memberScope = createTSMemberScope(binder, undefined, ownerSym);
 
   for (const member of staticMembers) {
-    const memberName = typeof member === "string" ? member : member.name;
+    const memberObj = typeof member === "object" ? member : { name: member };
 
     // Create a refkey directly if it doesn't exist yet
-    if (!keys[memberName]) {
-      keys[memberName] = refkey();
+    keys[memberObj.name] ??= refkey();
+
+    const memberKey = keys[memberObj.name];
+
+    let memberFlags = OutputSymbolFlags.StaticMember;
+    if (memberObj.staticMembers?.length) {
+      memberFlags |= OutputSymbolFlags.StaticMemberContainer;
     }
 
-    const memberKey = keys[memberName];
-
-    const memberFlags =
-      typeof member === "object" && member.staticMembers?.length ?
-        OutputSymbolFlags.StaticMember | OutputSymbolFlags.StaticMemberContainer
-      : OutputSymbolFlags.StaticMember;
+    if (memberObj.instanceMembers?.length) {
+      memberFlags |= OutputSymbolFlags.InstanceMemberContainer;
+    }
 
     const memberSym = createTSSymbol({
-      name: memberName,
+      name: memberObj.name,
       scope: memberScope,
       refkey: memberKey,
       export: false,
@@ -81,15 +87,20 @@ function createStaticMembers(
       flags: memberFlags,
     });
 
-    if (typeof member === "object" && member.staticMembers) {
-      // Recursively handle nested static members
-      createStaticMembers(
-        binder,
-        memberSym,
-        member.staticMembers,
-        keys[memberName],
-      );
-    }
+    // Handle static members of the current member
+    createStaticMembers(
+      binder,
+      memberSym,
+      memberObj.staticMembers ?? [],
+      keys[memberObj.name],
+    );
+
+    // createInstanceMembers(
+    //   binder,
+    //   memberSym,
+    //   memberObj.instanceMembers ?? [],
+    //   keys[memberObj.name],
+    // );
   }
 }
 
@@ -129,30 +140,24 @@ function createSymbols(
         typeof exportedName === "string" ?
           { name: exportedName }
         : exportedName;
-      const { name, staticMembers } = namedRef;
+      const { name, staticMembers, instanceMembers } = namedRef;
       const key = keys[name];
 
-      const flags =
-        staticMembers?.length ?
-          OutputSymbolFlags.StaticMemberContainer
-        : undefined;
-
-      const namespaceSym = createNamedSymbol(
-        binder,
-        moduleScope,
-        name,
-        key,
-        flags,
-      );
-
-      if (staticMembers && staticMembers.length > 0) {
-        createStaticMembers(
-          binder,
-          namespaceSym,
-          staticMembers,
-          keys[name], // pass nested keys
-        );
+      let flags = OutputSymbolFlags.None;
+      if (staticMembers?.length) {
+        flags |= OutputSymbolFlags.StaticMemberContainer;
       }
+      if (instanceMembers?.length) {
+        flags |= OutputSymbolFlags.InstanceMemberContainer;
+      }
+
+      const ownerSym = createNamedSymbol(binder, moduleScope, name, key, flags);
+      createStaticMembers(
+        binder,
+        ownerSym,
+        staticMembers ?? [],
+        keys[name], // pass nested keys
+      );
     }
   }
 }
@@ -241,15 +246,13 @@ export function createPackage<const T extends PackageDescriptor>(
 
       keys[name] = refkey();
 
-      if (staticMembers && staticMembers.length > 0) {
-        // Directly attach symbol creator without initializing nested keys
-        keys[name][getSymbolCreatorSymbol()] = (
-          binder: Binder,
-          parentSym: TSOutputSymbol,
-        ) => {
-          createStaticMembers(binder, parentSym, staticMembers, keys[name]);
-        };
-      }
+      // Directly attach symbol creator without initializing nested keys
+      keys[name][getSymbolCreatorSymbol()] = (
+        binder: Binder,
+        parentSym: TSOutputSymbol,
+      ) => {
+        createStaticMembers(binder, parentSym, staticMembers ?? [], keys[name]);
+      };
     }
   }
 

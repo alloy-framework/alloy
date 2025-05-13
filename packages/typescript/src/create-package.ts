@@ -86,6 +86,10 @@ function createStaticMembers(
       default: false,
       flags: memberFlags,
     });
+    memberScope.symbols.forEach((s) => {
+      console.log("member scope", s.name);
+    });
+    memberScope.symbols.add(memberSym);
     console.log("created static member", memberSym);
 
     // Handle static members of the current member
@@ -138,6 +142,8 @@ function createInstanceMembers(
       default: false,
       flags: memberFlags,
     });
+
+    memberScope.symbols.add(memberSym);
     console.log("created instance member", memberSym);
 
     // Recursively handle nested static members

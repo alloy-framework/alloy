@@ -1,4 +1,4 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey, render, useBinder } from "@alloy-js/core";
 import { it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -203,7 +203,10 @@ it.only("can import instance members", () => {
           {
             name: "Server",
             instanceMembers: ["instanceHandler"],
-            staticMembers: ["setRequestHandler"],
+            staticMembers: [
+              "setRequestHandler",
+              { name: "nested", staticMembers: ["nestedHandler"] },
+            ],
           },
           //{ name: "noMembers" },
           //"simpleName",
@@ -220,19 +223,85 @@ it.only("can import instance members", () => {
           refkey={refkey("MyServer")}
           extends={mcpSdk["./server/index.js"].Server}
         >
-          <ClassMethod name="handleRequest"></ClassMethod>
+          <ClassMethod name="handleRequest">
+            {(function () {
+              console.log("instantiatingInto");
+              const binder = useBinder();
+              // TODO: param ordering is misleading in doc comment...
+              const source = binder.getSymbolForRefkey(
+                mcpSdk["./server/index.js"].Server,
+              ).value!;
+
+              const target = binder.getSymbolForRefkey(
+                refkey("MyServer"),
+              ).value!;
+
+              if (source === undefined || target === undefined) {
+                throw new Error("Source or target is undefined");
+              }
+              // console.log({
+              //   source: {
+              //     name: source.name,
+              //     staticMembers: source.staticMemberScope?.getSymbolNames(),
+              //     instanceMembers: source.instanceMemberScope?.getSymbolNames(),
+              //   },
+              //   target: {
+              //     name: target.name,
+              //     staticMembers: target.staticMemberScope?.getSymbolNames(),
+              //     instanceMembers: target.instanceMemberScope?.getSymbolNames(),
+              //   },
+              // });
+
+              binder.instantiateSymbolInto(source, target);
+
+              console.log({
+                source: {
+                  name: source.name,
+                  staticMembers: source.staticMemberScope?.getSymbolNames(),
+                  instanceMembers: source.instanceMemberScope?.getSymbolNames(),
+                },
+                target: {
+                  name: target.name,
+                  staticMembers: target.staticMemberScope?.getSymbolNames(),
+                  instanceMembers: target.instanceMemberScope?.getSymbolNames(),
+                },
+              });
+            })()}
+            Static: {mcpSdk["./server/index.js"].Server.setRequestHandler}();
+            <hbr />
+            Static Nested:{" "}
+            {mcpSdk["./server/index.js"].Server.nested.nestedHandler}();
+            <hbr />
+            Instance:{" "}
+            {refkey([
+              mcpSdk["./server/index.js"].Server.instanceHandler,
+              "MyServer",
+            ])}
+            ();
+            <hbr />
+            Instance single:{" "}
+            {refkey(
+              mcpSdk["./server/index.js"].Server.instanceHandler,
+              "MyServer",
+            )}
+            ();
+          </ClassMethod>
         </ClassDeclaration>
       </SourceFile>
     </Output>,
   );
 
+  console.log(res.contents[0].contents);
   assertFileContents(res, {
     "index.ts": `
       import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
       class MyServer extends Server {
         handleRequest() {
-          this.setRequestHandler();
+          Static: Server.setRequestHandler();
+          Static Nested: Server.nested.nestedHandler();
+          Instance: this.instanceHandler();
+          Instance single: this.instanceHandler();
         }
       }
     `,

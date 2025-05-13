@@ -46,4 +46,18 @@ describe("Python Variable", () => {
     );
     expect(res).toBe(`my_var = None`);
   });
+
+  it("declares a python variable with a python value", () => {
+    const policy = py.createPythonNamePolicy();
+    const res = toSourceText(
+      <py.SourceFile path="test.py">
+        <py.Variable
+          name="nameIdPairs"
+          value={<py.Value value={{ John: 123, Doe: 234 }} />}
+        />
+      </py.SourceFile>,
+      policy,
+    );
+    expect(res).toBe(`name_id_pairs = {"John": 123, "Doe": 234}`);
+  });
 });

@@ -1,6 +1,14 @@
-import { OutputDirectory, OutputFile } from "@alloy-js/core";
+import {
+  Children,
+  NamePolicy,
+  Output,
+  OutputDirectory,
+  OutputFile,
+  render,
+} from "@alloy-js/core";
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
+import * as py from "../src/components/index.js";
 
 export function findFile(res: OutputDirectory, path: string): OutputFile {
   const result = findFileWorker(res, path);
@@ -39,4 +47,14 @@ export function assertFileContents(
     const file = findFile(res, path);
     expect(file.contents).toBe(dedent(contents));
   }
+}
+
+export function toSourceText(c: Children, policy?: NamePolicy<string>): string {
+  const res = render(
+    <Output namePolicy={policy}>
+      <py.SourceFile path="test.py">{c}</py.SourceFile>
+    </Output>,
+  );
+  const file = findFile(res, "test.py");
+  return file.contents;
 }

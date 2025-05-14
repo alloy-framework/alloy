@@ -40,8 +40,6 @@ describe("Python Class", () => {
       </Output>,
     );
     const expected = [
-      "from test import Base1",
-      "from test import Base2",
       "class Base1:",
       "  pass",
       "class Base2:",

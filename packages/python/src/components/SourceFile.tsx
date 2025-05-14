@@ -44,11 +44,14 @@ export function SourceFile(props: SourceFileProps) {
       return importedSymbols.get(symbol)!;
     }
 
-    importRecords.push({
-      module: symbol.module ?? "",
-      names: [symbol.name],
-      wildcard: false, // TODO: Handle wildcard imports if needed
-    });
+    // Only add import if the symbol is from a different module
+    if (symbol.module && symbol.module !== module) {
+      importRecords.push({
+        module: symbol.module,
+        names: [symbol.name],
+        wildcard: false, // TODO: Handle wildcard imports if needed
+      });
+    }
 
     importedSymbols.set(symbol, symbol.name);
     return symbol.name;

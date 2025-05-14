@@ -8,6 +8,7 @@ import {
   Scope,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
+import { usePythonNamePolicy } from "../name-policy.js";
 import { PythonOutputSymbol } from "../symbols/python-output-symbol.js";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
 import { Reference } from "./Reference.js";
@@ -54,7 +55,10 @@ export function SourceFile(props: SourceFileProps) {
   }
 
   // Derive module name from file path (strip .py extension)
-  const module = props.path.replace(/\.py$/, "");
+  const module = usePythonNamePolicy().getName(
+    props.path.replace(/\.py$/, ""),
+    "class",
+  );
 
   const sfContext: SourceFileContext = {
     path: props.path,

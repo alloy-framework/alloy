@@ -7,8 +7,6 @@ import { createPythonSymbol } from "../symbols/index.js";
 
 export interface DeclarationProps {
   name: string;
-  // TODO: Write a ModuleComponent to handle this
-  module?: string;
   refkey?: Refkey;
   children?: Children;
 }

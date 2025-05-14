@@ -1,9 +1,9 @@
-import { OutputSymbol } from "../binder.js";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
 import { Children, onCleanup } from "../jsx-runtime.js";
 import { Refkey } from "../refkey.js";
+import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Create a declaration by providing an already created symbol. The symbol is
@@ -68,18 +68,18 @@ export function Declaration(props: DeclarationProps) {
     throw new Error("Need binder context to create declarations");
   }
 
-  let declaration;
+  let declaration: OutputSymbol;
   if ("symbol" in props) {
     declaration = props.symbol;
   } else {
-    declaration = binder.createSymbol({
-      name: props.name!,
-      refkey: props.refkey,
+    declaration = new OutputSymbol(props.name, {
+      binder,
+      refkeys: [props.refkey ?? []].flat(),
       metadata: props.metadata,
     });
 
     onCleanup(() => {
-      binder.deleteSymbol(declaration!);
+      declaration.delete();
     });
   }
 

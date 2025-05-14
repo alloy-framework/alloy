@@ -8,12 +8,10 @@ import {
   SourceDirectory,
   SourceDirectoryContext,
   splitProps,
-  useBinder,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 import { join } from "pathe";
-import { createTSPackageScope, TSPackageScope } from "../symbols/index.js";
+import { TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
 import { PackageJsonFile, PackageJsonFileProps } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
@@ -82,13 +80,7 @@ function createPackageContext(
   // todo: this can probably just use context.
   const fullPath = parentDir ? join(parentDir.path, path) : path;
 
-  const scope = createTSPackageScope(
-    useBinder(),
-    useScope(),
-    name,
-    version,
-    fullPath,
-  );
+  const scope = new TSPackageScope(name, version, fullPath);
 
   return {
     scope,

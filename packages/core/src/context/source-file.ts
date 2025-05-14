@@ -1,6 +1,6 @@
 import { ComponentContext, createNamedContext } from "../context.js";
-import { ComponentDefinition } from "../jsx-runtime.js";
-import { Refkey } from "../refkey.js";
+import type { ComponentDefinition } from "../jsx-runtime.js";
+import type { Refkey } from "../refkey.js";
 
 export interface SourceFileContext {
   path: string;

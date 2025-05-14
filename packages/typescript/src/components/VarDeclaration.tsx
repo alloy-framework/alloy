@@ -1,13 +1,12 @@
 import {
-  AssignmentContext,
   Children,
   Declaration as CoreDeclaration,
-  createAssignmentContext,
+  moveTakenMembersTo,
   Name,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
@@ -29,16 +28,15 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const type =
     props.type ? <TypeRefContext>: {props.type}</TypeRefContext> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
-  const sym = createTSSymbol({
-    name: name,
-    refkey: props.refkey,
+  const sym = new TSOutputSymbol(name, {
+    refkeys: props.refkey,
     default: props.default,
     export: props.export,
     metadata: props.metadata,
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
   });
 
-  const assignmentContext = createAssignmentContext(sym);
+  moveTakenMembersTo(sym);
 
   return (
     <>
@@ -50,10 +48,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}
         {keyword} <Name />
-        {type} ={" "}
-        <AssignmentContext.Provider value={assignmentContext}>
-          {props.initializer ?? props.children}
-        </AssignmentContext.Provider>
+        {type} = {props.initializer ?? props.children}
       </CoreDeclaration>
     </>
   );

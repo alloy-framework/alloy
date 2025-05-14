@@ -5,15 +5,13 @@ import {
   Scope,
   Show,
   SourceDirectoryContext,
-  useBinder,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
-import { createTSModuleScope, TSModuleScope } from "../symbols/index.js";
+import { TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { PackageContext } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
@@ -41,13 +39,12 @@ export function SourceFile(props: SourceFileProps) {
   const sdData = getSourceDirectoryData(directoryContext);
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
-  const scope = createTSModuleScope(useBinder(), useScope(), path);
+  const scope = new TSModuleScope(path);
   sdData.modules.add(scope);
   const pkg = useContext(PackageContext);
   if (pkg) {
     pkg.scope.addModule(scope);
   }
-
   const sfContext: SourceFileContext = {
     scope,
   };

@@ -5,11 +5,10 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
-
 import {
-  createTSModuleScope,
-  createTSPackageScope,
-  createTSSymbol,
+  TSModuleScope,
+  TSOutputSymbol,
+  TSPackageScope,
 } from "./symbols/index.js";
 
 export interface PackageDescriptor {
@@ -26,26 +25,30 @@ function createSymbols(
   props: CreatePackageProps<PackageDescriptor>,
   refkeys: Record<string, any>,
 ) {
-  const pkgScope = createTSPackageScope(
-    binder,
-    undefined,
+  const pkgScope = new TSPackageScope(
     props.name,
     props.version,
     `node_modules/${props.name}`,
-    props.builtin,
+    {
+      binder,
+      builtin: props.builtin,
+    },
   );
+
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = createTSModuleScope(binder, pkgScope, path);
+    const moduleScope = new TSModuleScope(path, {
+      binder,
+      parent: pkgScope,
+    });
 
     pkgScope.exportedSymbols.set(path, moduleScope);
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = createTSSymbol({
-        name: symbols.default,
+      const sym = new TSOutputSymbol(symbols.default, {
         scope: moduleScope,
-        refkey: key,
+        refkeys: key,
         export: true,
         default: true,
       });
@@ -55,10 +58,11 @@ function createSymbols(
 
     for (const exportedName of symbols.named ?? []) {
       const key = keys[exportedName];
-      const sym = createTSSymbol({
-        name: exportedName,
+
+      const sym = new TSOutputSymbol(exportedName, {
+        binder,
         scope: moduleScope,
-        refkey: key,
+        refkeys: key,
         export: true,
         default: false,
       });

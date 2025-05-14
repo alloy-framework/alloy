@@ -1,6 +1,7 @@
 import {
   ComponentContext,
   SourceFile as CoreSourceFile,
+  SourceFileContext as CoreSourceFileContext,
   createContext,
   OutputSymbol,
   reactive,
@@ -9,9 +10,12 @@ import {
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { PythonOutputSymbol } from "../symbols/python-output-symbol.js";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
+import { Reference } from "./Reference.js";
 
-export interface SourceFileContext {
+export interface SourceFileContext extends CoreSourceFileContext {
   addImport(symbol: OutputSymbol): string;
+  /** The module name for this file, e.g. 'test' for test.py */
+  module: string;
 }
 
 export const SourceFileContext: ComponentContext<SourceFileContext> =
@@ -49,12 +53,18 @@ export function SourceFile(props: SourceFileProps) {
     return symbol.name;
   }
 
+  // Derive module name from file path (strip .py extension)
+  const module = props.path.replace(/\.py$/, "");
+
   const sfContext: SourceFileContext = {
+    path: props.path,
+    filetype: "py",
     addImport,
+    module,
   };
 
   return (
-    <CoreSourceFile path={props.path} filetype="py">
+    <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
       {importRecords.length > 0 ?
         <>
           <ImportStatements imports={importRecords} />

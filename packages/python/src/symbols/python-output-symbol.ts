@@ -4,8 +4,10 @@ import {
   refkey,
   Refkey,
   useBinder,
+  useContext,
   useScope,
 } from "@alloy-js/core";
+import { SourceFileContext } from "../components/SourceFile.js";
 
 /**
  * Represents an 'exported' symbol from a .py file. Class, enum, interface etc.
@@ -27,12 +29,14 @@ export function createPythonSymbol(
 ): PythonOutputSymbol {
   const binder = useBinder();
   const scope = useScope();
+  const fileContext = useContext(SourceFileContext);
+  const module = props.module ?? (fileContext ? fileContext.module : "");
 
   const sym = binder.createSymbol<PythonOutputSymbol>({
     name: props.name,
     scope,
     refkey: props.refKey ?? refkey(props.name),
-    module: props.module ? props.module : "", //TODO: Write a ModuleComponent to handle this
+    module: module,
   });
   return sym;
 }

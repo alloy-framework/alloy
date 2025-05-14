@@ -24,10 +24,9 @@ export function Parameter(props: ParameterProps) {
     );
   }
 
-  const memberSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
-    name: name,
+  const memberSymbol = new CSharpOutputSymbol(name, {
     scope,
-    refkey: props.refkey ?? core.refkey(props.name),
+    refkeys: props.refkey ?? core.refkey(props.name),
   });
 
   return (

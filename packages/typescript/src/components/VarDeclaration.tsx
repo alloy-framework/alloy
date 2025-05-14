@@ -1,13 +1,12 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  effect,
-  mergeTakenSymbolsWith,
-  OutputSymbolFlags,
+  moveTakenMembersTo,
+  Name,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/index.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
@@ -29,33 +28,26 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const type =
     props.type ? <TypeRefContext>: {props.type}</TypeRefContext> : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
-  const baseSym = createTSSymbol({
-    flags: OutputSymbolFlags.Transient,
-    name: name,
-    refkey: props.refkey,
+  const sym = new TSOutputSymbol(name, {
+    refkeys: props.refkey,
     default: props.default,
     export: props.export,
     metadata: props.metadata,
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
   });
 
-  const sym = mergeTakenSymbolsWith(baseSym);
+  moveTakenMembersTo(sym);
 
-  effect(() => {
-    console.log("Merged symbol");
-    if (!sym.value) {
-      console.log("Undef");
-      return;
-    }
-    console.log(sym.value.name);
-  });
   return (
     <>
       <Show when={Boolean(props.doc)}>
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <CoreDeclaration symbol={sym.value}>
+      <CoreDeclaration symbol={sym}>
+        {props.export ? "export " : ""}
+        {props.default ? "default " : ""}
+        {keyword} <Name />
         {type} = {props.initializer ?? props.children}
       </CoreDeclaration>
     </>

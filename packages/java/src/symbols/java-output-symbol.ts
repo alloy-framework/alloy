@@ -1,30 +1,36 @@
-import { OutputSymbol, refkey, useBinder, useScope } from "@alloy-js/core";
-import { DeclarationProps, usePackage } from "../components/index.js";
-import { JavaOutputScope } from "./scopes.js";
+import { OutputSymbol, OutputSymbolOptions, refkey } from "@alloy-js/core";
+import { usePackage } from "../components/PackageDirectory.jsx";
 
+export interface JavaOutputSymbolOptions extends OutputSymbolOptions {
+  package?: string;
+}
 /**
  * Represents an 'exported' symbol from a .java file. Class, enum, interface etc.
  * Not considered exported if private
  */
-export interface JavaOutputSymbol extends OutputSymbol {
+export class JavaOutputSymbol extends OutputSymbol {
   /**
    * Fully qualified package name
    */
-  package?: string;
-}
+  get package() {
+    return this.#package;
+  }
+  #package?: string;
 
-export function createJavaSymbol(props: DeclarationProps) {
-  const binder = useBinder();
-  const scope = useScope() as JavaOutputScope;
+  constructor(name: string, options: JavaOutputSymbolOptions = {}) {
+    if (options.refkeys === undefined) {
+      options.refkeys = [refkey(name)];
+    }
+    super(name, options);
 
-  const parentPackage = usePackage();
-
-  const sym = binder.createSymbol<JavaOutputSymbol>({
-    name: props.name,
-    scope,
-    refkey: props.refkey ?? refkey(props.name),
-    package: parentPackage !== null ? parentPackage?.qualifiedName : "",
-  });
-
-  return sym;
+    if (options.package) {
+      this.#package = options.package;
+    } else {
+      const parentPackage = usePackage();
+      this.#package =
+        (options.package ?? parentPackage !== null) ?
+          parentPackage?.qualifiedName
+        : "";
+    }
+  }
 }

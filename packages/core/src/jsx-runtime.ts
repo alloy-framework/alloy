@@ -14,10 +14,10 @@ import {
   toRefs,
   effect as vueEffect,
 } from "@vue/reactivity";
-import { OutputSymbol } from "./binder.js";
-import { Refkey } from "./refkey.js";
-import { RenderedTextTree } from "./render.js";
+import type { Refkey } from "./refkey.js";
+import type { RenderedTextTree } from "./render.js";
 import { scheduler } from "./scheduler.js";
+import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -59,7 +59,7 @@ export interface Context {
   /**
    * The symbol that this component has taken.
    */
-  takenSymbols: Ref<ShallowReactive<Set<OutputSymbol>> | undefined>;
+  takenSymbols?: ShallowReactive<Set<OutputSymbol>>;
 }
 
 let globalContext: Context | null = null;
@@ -89,7 +89,7 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     context: {},
     elementCache: new Map(),
     takesSymbols: false,
-    takenSymbols: shallowRef(undefined),
+    takenSymbols: undefined,
   };
 
   globalContext = context;
@@ -134,7 +134,7 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     owner: globalContext,
     elementCache: new Map(),
     takesSymbols: false,
-    takenSymbols: shallowRef(undefined),
+    takenSymbols: undefined,
   };
 
   const cleanupFn = (final: boolean) => {

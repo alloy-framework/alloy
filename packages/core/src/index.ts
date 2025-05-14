@@ -1,4 +1,6 @@
 export {
+  TrackOpTypes,
+  TriggerOpTypes,
   computed,
   isProxy,
   isReactive,
@@ -10,6 +12,9 @@ export {
   toRaw,
   toRef,
   toRefs,
+  track,
+  trigger,
+  watch,
   type Ref,
   type ToRef,
   type ToRefs,
@@ -25,7 +30,8 @@ export * from "./refkey.js";
 export * from "./render.js";
 export * from "./stc.js";
 export * from "./sti.js";
-export * from "./symbol-flow.js";
+export * from "./symbols/index.js";
+export * from "./symbols/symbol-flow.js";
 export * from "./tap.js";
 export * from "./utils.js";
 export * from "./write-output.js";

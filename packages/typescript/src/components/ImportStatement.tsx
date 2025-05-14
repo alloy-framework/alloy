@@ -21,7 +21,6 @@ export interface ImportStatementsProps {
 
 export function ImportStatements(props: ImportStatementsProps) {
   const pkg = usePackage();
-
   const imports = computed(() =>
     [...props.records].sort(([a], [b]) => {
       return a.name.localeCompare(b.name);

@@ -236,6 +236,7 @@ describe("symbols", () => {
         <ts.SourceFile path="bar.ts">console.log({barRefkey});</ts.SourceFile>
       </Output>
     );
+
     expect(decl).toRenderTo(`
       export const refme = {
         foo: {

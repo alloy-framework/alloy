@@ -71,7 +71,7 @@ describe("Python Class", () => {
     const result = render(
       <Output>
         <SourceFile path="mod1.py">
-          <Class name="A" module="mod1" />
+          <Class name="A" />
         </SourceFile>
         <SourceFile path="mod2.py">
           <Class name="B" bases={[refkey("A")]} />

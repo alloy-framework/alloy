@@ -13,6 +13,7 @@ import {
   createTSPackageScope,
   createTSSymbol,
   TSModuleScope,
+  TSOutputScope,
   TSOutputSymbol,
 } from "./symbols/index.js";
 
@@ -115,7 +116,11 @@ function createInstanceMembers(
   instanceMembers: NamedModuleDescriptor[],
   keys: Record<string, any>,
 ) {
-  const memberScope = createTSMemberScope(binder, ownerSym.scope, ownerSym);
+  ownerSym.instanceMemberScope ??= createTSMemberScope(
+    binder,
+    undefined,
+    ownerSym,
+  );
 
   for (const member of instanceMembers) {
     const memberObj = typeof member === "object" ? member : { name: member };
@@ -136,14 +141,14 @@ function createInstanceMembers(
 
     const memberSym = createTSSymbol({
       name: memberObj.name,
-      scope: memberScope,
+      scope: ownerSym.instanceMemberScope as TSOutputScope,
       refkey: keys[memberObj.name],
       export: false,
       default: false,
       flags: memberFlags,
     });
 
-    memberScope.symbols.add(memberSym);
+    ownerSym.instanceMemberScope.symbols.add(memberSym);
     console.log("created instance member", memberSym);
 
     // Recursively handle nested static members

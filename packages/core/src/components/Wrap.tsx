@@ -1,4 +1,4 @@
-import { Children, ComponentDefinition } from "@alloy-js/core/jsx-runtime";
+import { Children, ComponentDefinition } from "../jsx-runtime.js";
 
 export interface WrapProps<TProps> {
   /**

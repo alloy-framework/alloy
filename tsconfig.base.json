@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "lib": ["es2023", "DOM"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
     "target": "es2022",
     "strict": true,
     "skipLibCheck": true,

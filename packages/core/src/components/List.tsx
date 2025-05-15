@@ -1,4 +1,4 @@
-import { Children, memo, splitProps } from "@alloy-js/core/jsx-runtime";
+import { Children, memo, splitProps } from "../jsx-runtime.js";
 import { childrenArray } from "../utils.js";
 import { For } from "./For.jsx";
 

@@ -469,10 +469,13 @@ export function createComponent<TProps extends Props = Props>(
   return creator;
 }
 
+export type TaggedComponent<TProps> = Component<TProps> &
+  Required<Pick<Component<TProps>, "tag">>;
+
 export function taggedComponent<TProps = Props>(
   tag: symbol,
   component: Component<TProps>,
-): Component<TProps> & Required<Pick<Component<TProps>, "tag">> {
+): TaggedComponent<TProps> {
   component.tag = tag;
   return component as any;
 }

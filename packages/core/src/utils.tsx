@@ -1,6 +1,6 @@
 import { toRaw } from "@vue/reactivity";
 import {
-  Children,
+  type Children,
   ComponentCreator,
   createCustomContext,
   CustomContext,
@@ -265,7 +265,10 @@ export function childrenArray(
   }
 }
 
-export function findKeyedChild(children: Children[], tag: symbol) {
+export function findKeyedChild(
+  children: Children[],
+  tag: symbol,
+): ComponentCreator | null {
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {
       return child;
@@ -275,7 +278,10 @@ export function findKeyedChild(children: Children[], tag: symbol) {
   return null;
 }
 
-export function findKeyedChildren(children: Children[], tag: symbol) {
+export function findKeyedChildren(
+  children: Children[],
+  tag: symbol,
+): ComponentCreator[] {
   const keyedChildren: ComponentCreator[] = [];
   for (const child of children) {
     if (isKeyedChild(child) && child.tag === tag) {

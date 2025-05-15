@@ -10,7 +10,9 @@ export interface MethodProps extends ParametersProps {
 
 export function Method(props: MethodProps) {
   const name = usePythonNamePolicy().getName(props.name, "method");
-  // Always add 'self' as the first parameter
+  // Change this when scopes are implemented
+  // If the parent scope is a class, add "self" to the parameters
+  // otherwise, just use the parameters as is
   const paramPropsWithSelf = [{ name: "self" }, ...(props.parameters ?? [])];
   const params = (
     <Parameters

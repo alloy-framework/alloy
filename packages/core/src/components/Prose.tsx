@@ -1,5 +1,6 @@
-import { childrenArray, computed } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { computed } from "@vue/reactivity";
+import { Children } from "../jsx-runtime.js";
+import { childrenArray } from "../utils.jsx";
 
 export interface Prose {
   children: Children;

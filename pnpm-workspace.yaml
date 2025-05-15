@@ -10,8 +10,8 @@ catalog:
   "@babel/plugin-syntax-jsx": ^7.18.6
   "@babel/preset-typescript": ^7.27.0
   "@babel/types": ^7.27.0
-  "@microsoft/api-extractor-model": ~7.29.6
-  "@microsoft/api-extractor": ~7.47.7
+  "@microsoft/api-extractor-model": ~7.30.6
+  "@microsoft/api-extractor": ~7.52.8
   "@rollup/plugin-babel": ^6.0.4
   "@rollup/plugin-node-resolve": ^16.0.1
   "@rollup/plugin-typescript": ^12.1.2

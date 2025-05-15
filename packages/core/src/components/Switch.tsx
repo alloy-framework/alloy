@@ -1,4 +1,9 @@
-import { Children, memo, taggedComponent } from "@alloy-js/core/jsx-runtime";
+import {
+  Children,
+  memo,
+  TaggedComponent,
+  taggedComponent,
+} from "../jsx-runtime.js";
 import { childrenArray, findKeyedChildren } from "../utils.js";
 
 export interface SwitchProps {
@@ -57,6 +62,9 @@ export const matchTag = Symbol();
  * The Match component is used inside of a {@link Switch} component to
  * define conditionally rendered blocks of content.
  */
-export const Match = taggedComponent(matchTag, (props: MatchProps) => {
-  return () => (props.when ? props.children : undefined);
-});
+export const Match: TaggedComponent<MatchProps> = taggedComponent(
+  matchTag,
+  (props: MatchProps) => {
+    return () => (props.when ? props.children : undefined);
+  },
+);

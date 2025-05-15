@@ -1,5 +1,5 @@
-import { Children, memo } from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref } from "@vue/reactivity";
+import { type Children, memo } from "../jsx-runtime.js";
 import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
 import { BaseListProps } from "./List.jsx";
 
@@ -75,7 +75,7 @@ export function For<
     | (() => ForSupportedCollections)
     | Ref<ForSupportedCollections>,
   U extends Children,
->(props: ForProps<T, U>) {
+>(props: ForProps<T, U>): Children {
   const cb = props.children;
   const options = baseListPropsToMapJoinArgs(props);
   options.skipFalsy = props.skipFalsy;

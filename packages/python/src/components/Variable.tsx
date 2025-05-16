@@ -5,6 +5,7 @@ export interface VariableProps {
   name: string;
   value?: Children;
   type?: Children; // Optional, only for type annotation
+  omitNone?: boolean; // Optional, to omit None assignment
 }
 
 export function Variable(props: VariableProps) {
@@ -13,6 +14,11 @@ export function Variable(props: VariableProps) {
   // Handle optional type annotation
   const typeAnnotation = props.type ? code`: ${props.type}` : "";
 
+  // If omitNone is true and value is undefined, omit assignment entirely
+  if (props.omitNone && props.value === undefined) {
+    return code`${name}${typeAnnotation}`;
+  }
+
   // Always emit assignment; if value is undefined, can emit = None or leave blank per style
-  return code`${name}${typeAnnotation}${props.value ? code` = ${props.value}` : " = None"}`;
+  return code`${name}${typeAnnotation}${props.value !== undefined ? code` = ${props.value}` : " = None"}`;
 }

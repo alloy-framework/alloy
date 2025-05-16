@@ -1,16 +1,15 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { Class } from "../src/components/Class.js";
-import { SourceFile } from "../src/components/SourceFile.js";
+import * as py from "../src/components/index.js";
 import { assertFileContents, toSourceText } from "./utils.jsx";
 
 describe("Python Class", () => {
   it("renders a class with no body as 'pass'", () => {
     const result = toSourceText(
       <Output>
-        <SourceFile path="test.py">
-          <Class name="Foo" />
-        </SourceFile>
+        <py.SourceFile path="test.py">
+          <py.Class name="Foo" />
+        </py.SourceFile>
       </Output>,
     );
     expect(result).toRenderTo(`class Foo:\n  pass\n\n`);
@@ -19,9 +18,9 @@ describe("Python Class", () => {
   it("renders a class with a body", () => {
     const result = toSourceText(
       <Output>
-        <SourceFile path="test.py">
-          <Class name="Bar">print('hi')</Class>
-        </SourceFile>
+        <py.SourceFile path="test.py">
+          <py.Class name="Bar">print('hi')</py.Class>
+        </py.SourceFile>
       </Output>,
     );
     expect(result).toRenderTo(`class Bar:\n  print('hi')\n\n`);
@@ -30,13 +29,13 @@ describe("Python Class", () => {
   it("renders a class with base classes", () => {
     const result = render(
       <Output>
-        <SourceFile path="test.py">
+        <py.SourceFile path="test.py">
           {[
-            <Class name="Base1" />,
-            <Class name="Base2" />,
-            <Class name="Baz" bases={[refkey("Base1"), refkey("Base2")]} />,
+            <py.Class name="Base1" />,
+            <py.Class name="Base2" />,
+            <py.Class name="Baz" bases={[refkey("Base1"), refkey("Base2")]} />,
           ]}
-        </SourceFile>
+        </py.SourceFile>
       </Output>,
     );
     const expected = [
@@ -55,11 +54,11 @@ describe("Python Class", () => {
   it("renders a class with base classes and body", () => {
     const result = toSourceText(
       <Output>
-        <SourceFile path="test.py">
-          <Class name="Qux" bases={["Base"]}>
+        <py.SourceFile path="test.py">
+          <py.Class name="Qux" bases={["Base"]}>
             print('hello')
-          </Class>
-        </SourceFile>
+          </py.Class>
+        </py.SourceFile>
       </Output>,
     );
     expect(result).toRenderTo(`class Qux(Base):\n  print('hello')\n\n`);
@@ -68,12 +67,12 @@ describe("Python Class", () => {
   it("renders classes across modules with inheritance", () => {
     const result = render(
       <Output>
-        <SourceFile path="mod1.py">
-          <Class name="A" />
-        </SourceFile>
-        <SourceFile path="mod2.py">
-          <Class name="B" bases={[refkey("A")]} />
-        </SourceFile>
+        <py.SourceFile path="mod1.py">
+          <py.Class name="A" />
+        </py.SourceFile>
+        <py.SourceFile path="mod2.py">
+          <py.Class name="B" bases={[refkey("A")]} />
+        </py.SourceFile>
       </Output>,
     );
     const mod1Expected = ["class A:", "  pass", "", ""].join("\n");

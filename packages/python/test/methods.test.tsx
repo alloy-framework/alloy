@@ -8,25 +8,40 @@ describe("Python Class", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Method name="foo" />
+          <py.Method name="foo" isInstanceMethod={true} />
         </py.SourceFile>
       </Output>,
     );
     expect(result).toRenderTo(`def foo(self):\n  pass\n\n`);
   });
 
-  it("renders a method with a body", () => {
+  it("renders an instance method with a body", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Method name="bar">print('hi')</py.Method>
+          <py.Method name="bar" isInstanceMethod={true}>
+            print('hi')
+          </py.Method>
         </py.SourceFile>
       </Output>,
     );
     expect(result).toRenderTo(`def bar(self):\n  print('hi')\n\n`);
   });
 
-  it("renders a method with parameters", () => {
+  it("renders a class method with a body", () => {
+    const result = toSourceText(
+      <Output>
+        <py.SourceFile path="test.py">
+          <py.Method name="bar" isClassMethod={true}>
+            print('hi')
+          </py.Method>
+        </py.SourceFile>
+      </Output>,
+    );
+    expect(result).toRenderTo(`def bar(cls):\n  print('hi')\n\n`);
+  });
+
+  it("renders a function with parameters", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
@@ -45,7 +60,7 @@ describe("Python Class", () => {
       </Output>,
     );
     expect(result).toRenderTo(
-      `def baz(self, x: int, y = 0, *args, **kwargs):\n  print(x, y)\n\n`,
+      `def baz(x: int, y = 0, *args, **kwargs):\n  print(x, y)\n\n`,
     );
   });
 

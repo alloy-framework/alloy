@@ -40,7 +40,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable name="myVar" value={null} />
+        <py.Variable name="myVar" value={<py.Value value={null} />} />
       </py.SourceFile>,
       policy,
     );

@@ -1,4 +1,4 @@
-import { Output, refkey, render, useBinder } from "@alloy-js/core";
+import { Output, refkey, render } from "@alloy-js/core";
 import { it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -6,6 +6,7 @@ import {
   ClassMethod,
   createPackage,
   FunctionDeclaration,
+  MemberExpression,
   PackageDirectory,
   SourceFile,
 } from "../src/index.js";
@@ -222,10 +223,12 @@ it.only("can import instance members", () => {
             Static: {mcpSdk["./server/index.js"].Server.create}();
             <hbr />
             Instance:{" "}
-            {refkey([
-              mcpSdk["./server/index.js"].Server.instanceHandler,
-              "MyServer",
-            ])}
+            <MemberExpression>
+              <MemberExpression.Part id="this" />
+              <MemberExpression.Part
+                refkey={mcpSdk["./server/index.js"].Server.instanceHandler}
+              />
+            </MemberExpression>
             ();
           </ClassMethod>
         </ClassDeclaration>

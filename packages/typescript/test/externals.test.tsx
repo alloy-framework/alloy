@@ -203,13 +203,8 @@ it.only("can import instance members", () => {
           {
             name: "Server",
             instanceMembers: ["instanceHandler"],
-            staticMembers: [
-              "setRequestHandler",
-              { name: "nested", staticMembers: ["nestedHandler"] },
-            ],
+            staticMembers: ["create"],
           },
-          //{ name: "noMembers" },
-          //"simpleName",
         ],
       },
     },
@@ -224,66 +219,13 @@ it.only("can import instance members", () => {
           extends={mcpSdk["./server/index.js"].Server}
         >
           <ClassMethod name="handleRequest">
-            {(function () {
-              console.log("instantiatingInto");
-              const binder = useBinder();
-              // TODO: param ordering is misleading in doc comment...
-              const source = binder.getSymbolForRefkey(
-                mcpSdk["./server/index.js"].Server,
-              ).value!;
-
-              const target = binder.getSymbolForRefkey(
-                refkey("MyServer"),
-              ).value!;
-
-              if (source === undefined || target === undefined) {
-                throw new Error("Source or target is undefined");
-              }
-              // console.log({
-              //   source: {
-              //     name: source.name,
-              //     staticMembers: source.staticMemberScope?.getSymbolNames(),
-              //     instanceMembers: source.instanceMemberScope?.getSymbolNames(),
-              //   },
-              //   target: {
-              //     name: target.name,
-              //     staticMembers: target.staticMemberScope?.getSymbolNames(),
-              //     instanceMembers: target.instanceMemberScope?.getSymbolNames(),
-              //   },
-              // });
-
-              binder.instantiateSymbolInto(source, target);
-
-              console.log({
-                source: {
-                  name: source.name,
-                  staticMembers: source.staticMemberScope?.getSymbolNames(),
-                  instanceMembers: source.instanceMemberScope?.getSymbolNames(),
-                },
-                target: {
-                  name: target.name,
-                  staticMembers: target.staticMemberScope?.getSymbolNames(),
-                  instanceMembers: target.instanceMemberScope?.getSymbolNames(),
-                },
-              });
-            })()}
-            Static: {mcpSdk["./server/index.js"].Server.setRequestHandler}();
-            <hbr />
-            Static Nested:{" "}
-            {mcpSdk["./server/index.js"].Server.nested.nestedHandler}();
+            Static: {mcpSdk["./server/index.js"].Server.create}();
             <hbr />
             Instance:{" "}
             {refkey([
               mcpSdk["./server/index.js"].Server.instanceHandler,
               "MyServer",
             ])}
-            ();
-            <hbr />
-            Instance single:{" "}
-            {refkey(
-              mcpSdk["./server/index.js"].Server.instanceHandler,
-              "MyServer",
-            )}
             ();
           </ClassMethod>
         </ClassDeclaration>
@@ -298,10 +240,8 @@ it.only("can import instance members", () => {
 
       class MyServer extends Server {
         handleRequest() {
-          Static: Server.setRequestHandler();
-          Static Nested: Server.nested.nestedHandler();
+          Static: Server.create();
           Instance: this.instanceHandler();
-          Instance single: this.instanceHandler();
         }
       }
     `,

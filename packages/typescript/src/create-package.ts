@@ -65,7 +65,6 @@ function createStaticMembers(
   for (const member of staticMembers) {
     const memberObj = typeof member === "object" ? member : { name: member };
 
-    console.log("creating static member", memberObj);
     // Create a refkey directly if it doesn't exist yet
     keys[memberObj.name] ??= refkey();
 
@@ -87,11 +86,7 @@ function createStaticMembers(
       default: false,
       flags: memberFlags,
     });
-    memberScope.symbols.forEach((s) => {
-      console.log("member scope", s.name);
-    });
     memberScope.symbols.add(memberSym);
-    console.log("created static member", memberSym);
 
     // Handle static members of the current member
     createStaticMembers(
@@ -124,7 +119,6 @@ function createInstanceMembers(
 
   for (const member of instanceMembers) {
     const memberObj = typeof member === "object" ? member : { name: member };
-    console.log("creating instance member", memberObj);
 
     // Create a refkey directly if it doesn't exist yet
     if (!keys[memberObj.name]) {
@@ -149,7 +143,6 @@ function createInstanceMembers(
     });
 
     ownerSym.instanceMemberScope.symbols.add(memberSym);
-    console.log("created instance member", memberSym);
 
     // Recursively handle nested static members
     createStaticMembers(
@@ -361,6 +354,5 @@ export function createPackage<const T extends PackageDescriptor>(
     }
   }
 
-  console.log("all my refkeys", refkeys);
   return refkeys;
 }

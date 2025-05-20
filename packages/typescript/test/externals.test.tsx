@@ -1,12 +1,10 @@
-import { Output, refkey, render } from "@alloy-js/core";
-import { it } from "vitest";
+import { Output, render } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
-  ClassDeclaration,
-  ClassMethod,
   createPackage,
+  createTSSymbol,
   FunctionDeclaration,
-  MemberExpression,
   PackageDirectory,
   SourceFile,
 } from "../src/index.js";
@@ -194,7 +192,7 @@ it("can import static members", () => {
   });
 });
 
-it.only("can import instance members", () => {
+it("can import instance members", () => {
   const mcpSdk = createPackage({
     name: "@modelcontextprotocol/sdk",
     version: "^3.23.0",
@@ -211,42 +209,34 @@ it.only("can import instance members", () => {
     },
   });
 
-  const res = render(
+  function RunTest() {
+    const sym = createTSSymbol({
+      name: "foo",
+    });
+    const binder = sym.binder;
+
+    expect(binder).toBeDefined();
+    const source = binder.getSymbolForRefkey(
+      mcpSdk["./server/index.js"].Server,
+    ).value!;
+    expect(source).toBeDefined();
+    expect(source.instanceMemberScope?.symbols.size).toBe(1);
+
+    binder.instantiateSymbolInto(source, sym);
+
+    expect(sym.staticMemberScope?.symbols.size).toBe(1);
+    expect(sym.staticMemberScope?.symbols.values().next().value?.name).toBe(
+      "instanceHandler",
+    );
+  }
+
+  // TODO:
+  // 2. Update types to namespace instance vs static properties (thing.Server.instance.instanceHandler, thing.Server.static.create)
+  render(
     <Output externals={[mcpSdk]}>
       <SourceFile path="index.ts">
-        <ClassDeclaration
-          name="MyServer"
-          refkey={refkey("MyServer")}
-          extends={mcpSdk["./server/index.js"].Server}
-        >
-          <ClassMethod name="handleRequest">
-            Static: {mcpSdk["./server/index.js"].Server.create}();
-            <hbr />
-            Instance:{" "}
-            <MemberExpression>
-              <MemberExpression.Part id="this" />
-              <MemberExpression.Part
-                refkey={mcpSdk["./server/index.js"].Server.instanceHandler}
-              />
-            </MemberExpression>
-            ();
-          </ClassMethod>
-        </ClassDeclaration>
+        <RunTest />
       </SourceFile>
     </Output>,
   );
-
-  console.log(res.contents[0].contents);
-  assertFileContents(res, {
-    "index.ts": `
-      import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-
-      class MyServer extends Server {
-        handleRequest() {
-          Static: Server.create();
-          Instance: this.instanceHandler();
-        }
-      }
-    `,
-  });
 });

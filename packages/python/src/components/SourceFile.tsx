@@ -6,6 +6,7 @@ import {
   OutputSymbol,
   reactive,
   Scope,
+  useContext,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { usePythonNamePolicy } from "../name-policy.js";
@@ -21,6 +22,11 @@ export interface SourceFileContext extends CoreSourceFileContext {
 
 export const SourceFileContext: ComponentContext<SourceFileContext> =
   createContext();
+
+// Context accessor
+export function useSourceFileContext(): SourceFileContext {
+  return useContext(SourceFileContext)!;
+}
 
 export interface SourceFileProps {
   path: string;

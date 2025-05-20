@@ -1,5 +1,7 @@
 export * from "./Class.js";
 export * from "./Declaration.js";
+export * from "./Enum.js";
+export * from "./EnumMember.js";
 export * from "./ImportStatement.js";
 export * from "./Method.js";
 export * from "./Parameters.js";

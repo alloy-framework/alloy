@@ -151,6 +151,7 @@ it("can import static members", () => {
               "setRequestHandler",
               { name: "nested", staticMembers: ["nestedHandler"] },
             ],
+            instanceMembers: ["instanceHandler"],
           },
           { name: "noMembers" },
           "simpleName",
@@ -165,9 +166,13 @@ it("can import static members", () => {
         <FunctionDeclaration name="foo">
           {mcpSdk["./server/index.js"].server}();
           <hbr />
-          {mcpSdk["./server/index.js"].server.setRequestHandler}();
+          {mcpSdk["./server/index.js"].server.static.setRequestHandler}();
           <hbr />
-          {mcpSdk["./server/index.js"].server.nested.nestedHandler}();
+          {
+            mcpSdk["./server/index.js"].server.static.nested.static
+              .nestedHandler
+          }
+          ();
           <hbr />
           {mcpSdk["./server/index.js"].noMembers}();
           <hbr />
@@ -177,6 +182,7 @@ it("can import static members", () => {
     </Output>,
   );
 
+  console.log(res.contents[0].contents);
   assertFileContents(res, {
     "index.ts": `
       import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";

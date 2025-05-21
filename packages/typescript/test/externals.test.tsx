@@ -182,7 +182,6 @@ it("can import static members", () => {
     </Output>,
   );
 
-  console.log(res.contents[0].contents);
   assertFileContents(res, {
     "index.ts": `
       import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
@@ -208,7 +207,6 @@ it("can import instance members", () => {
           {
             name: "Server",
             instanceMembers: ["instanceHandler"],
-            staticMembers: ["create"],
           },
         ],
       },

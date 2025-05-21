@@ -206,6 +206,26 @@ function createSymbols(
   }
 }
 
+function createRefkeysForMembers(
+  members: NamedModuleDescriptor[],
+  keys: Record<string, any>,
+  namespace: "static" | "instance",
+) {
+  keys[namespace] ??= {};
+
+  for (const member of members) {
+    const memberObj = typeof member === "string" ? { name: member } : member;
+    const memberKey = (keys[namespace][memberObj.name] = refkey());
+
+    if (memberObj.staticMembers?.length) {
+      createRefkeysForMembers(memberObj.staticMembers, memberKey, "static");
+    }
+    if (memberObj.instanceMembers?.length) {
+      createRefkeysForMembers(memberObj.instanceMembers, memberKey, "instance");
+    }
+  }
+}
+
 export type NamedExportsFromDescriptors<
   T extends readonly NamedModuleDescriptor[],
 > = {
@@ -300,7 +320,7 @@ export function createPackage<const T extends PackageDescriptor>(
   };
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
-    const keys = path === "." ? refkeys : ((refkeys[path] = {}), refkeys[path]);
+    const keys = path === "." ? refkeys : (refkeys[path] = {});
 
     if (symbols.default) {
       keys.default = refkey(props.descriptor, path, "default");
@@ -308,73 +328,45 @@ export function createPackage<const T extends PackageDescriptor>(
 
     for (const named of symbols.named ?? []) {
       const namedObj = typeof named === "string" ? { name: named } : named;
-
-      // Create the base refkey
       keys[namedObj.name] = refkey();
+      // const namedKey = (keys[namedObj.name] = refkey());
 
-      // Create namespaces for static and instance
-      if (namedObj.staticMembers?.length || namedObj.instanceMembers?.length) {
-        keys[namedObj.name].static = {};
-        keys[namedObj.name].instance = {};
-      }
-
-      // Process static members
       if (namedObj.staticMembers?.length) {
-        for (const member of namedObj.staticMembers) {
-          const memberObj =
-            typeof member === "string" ? { name: member } : member;
-          // Create the refkey for this static member
-          keys[namedObj.name].static[memberObj.name] = refkey();
-
-          // For nested static members, create nested structure
-          if (memberObj.staticMembers?.length) {
-            keys[namedObj.name].static[memberObj.name].static = {};
-
-            // Process nested static members
-            for (const nestedMember of memberObj.staticMembers) {
-              const nestedObj =
-                typeof nestedMember === "string" ?
-                  { name: nestedMember }
-                : nestedMember;
-              keys[namedObj.name].static[memberObj.name].static[
-                nestedObj.name
-              ] = refkey();
-            }
-          }
-        }
+        createRefkeysForMembers(
+          namedObj.staticMembers,
+          keys[namedObj.name],
+          "static",
+        );
       }
 
-      // Process instance members
       if (namedObj.instanceMembers?.length) {
-        for (const member of namedObj.instanceMembers) {
-          const memberObj =
-            typeof member === "string" ? { name: member } : member;
-          // Create the refkey for this instance member
-          keys[namedObj.name].instance[memberObj.name] = refkey();
-        }
+        createRefkeysForMembers(
+          namedObj.instanceMembers,
+          keys[namedObj.name],
+          "instance",
+        );
       }
 
-      // Attach symbol creator for binding
       keys[namedObj.name][getSymbolCreatorSymbol()] = (
         binder: Binder,
         parentSym: TSOutputSymbol,
       ) => {
-        // Now that we've already created the refkeys structure, we can simply
-        // use it to create the corresponding symbols in the binder
         if (namedObj.staticMembers?.length) {
-          createStaticMembers(
+          assignMembers(
             binder,
             parentSym,
             namedObj.staticMembers,
             keys[namedObj.name],
+            true,
           );
         }
         if (namedObj.instanceMembers?.length) {
-          createInstanceMembers(
+          assignMembers(
             binder,
             parentSym,
             namedObj.instanceMembers,
             keys[namedObj.name],
+            false,
           );
         }
       };

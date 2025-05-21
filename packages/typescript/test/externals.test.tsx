@@ -161,7 +161,7 @@ it("can import static members", () => {
   });
 
   const res = render(
-    <Output externals={[mcpSdk, fs]}>
+    <Output externals={[mcpSdk]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
           {mcpSdk["./server/index.js"].server}();
@@ -203,23 +203,17 @@ it("can import instance members", () => {
     version: "^3.23.0",
     descriptor: {
       "./server/index.js": {
-        named: [
-          {
-            name: "Server",
-            instanceMembers: ["instanceHandler"],
-          },
-        ],
+        named: [{ name: "Server", instanceMembers: ["instanceHandler"] }],
       },
     },
   });
 
   function RunTest() {
-    const sym = createTSSymbol({
-      name: "foo",
-    });
+    const sym = createTSSymbol({ name: "foo" });
     const binder = sym.binder;
 
     expect(binder).toBeDefined();
+
     const source = binder.getSymbolForRefkey(
       mcpSdk["./server/index.js"].Server,
     ).value!;
@@ -229,13 +223,9 @@ it("can import instance members", () => {
     binder.instantiateSymbolInto(source, sym);
 
     expect(sym.staticMemberScope?.symbols.size).toBe(1);
-    expect(sym.staticMemberScope?.symbols.values().next().value?.name).toBe(
-      "instanceHandler",
-    );
+    expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");
   }
 
-  // TODO:
-  // 2. Update types to namespace instance vs static properties (thing.Server.instance.instanceHandler, thing.Server.static.create)
   render(
     <Output externals={[mcpSdk]}>
       <SourceFile path="index.ts">

@@ -1,4 +1,4 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { List, Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
 import { assertFileContents, toSourceText } from "./utils.jsx";
@@ -85,5 +85,31 @@ describe("Python Class", () => {
     ].join("\n");
     assertFileContents(result, { "mod1.py": mod1Expected });
     assertFileContents(result, { "mod2.py": mod2Expected });
+  });
+
+  it("renders a class with class variables like foo: str, and also bar: A where A is another class", () => {
+    const result = render(
+      <Output>
+        <py.SourceFile path="test.py">
+          <py.Class name="A" />
+          <py.Class name="B">
+            <List hardline>
+              <py.Variable name="bar" type={refkey("A")} omitNone />
+              <py.Variable name="foo" type="str" omitNone />
+            </List>
+          </py.Class>
+        </py.SourceFile>
+      </Output>,
+    );
+    const expected = [
+      "class A:",
+      "  pass",
+      "class B:",
+      "  bar: A",
+      "  foo: str",
+      "",
+      "",
+    ].join("\n");
+    assertFileContents(result, { "test.py": expected });
   });
 });

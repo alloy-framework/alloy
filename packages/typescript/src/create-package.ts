@@ -186,24 +186,6 @@ function assignMembers(
   }
 }
 
-function createStaticMembers(
-  binder: Binder,
-  ownerSym: TSOutputSymbol,
-  staticMembers: NamedModuleDescriptor[],
-  keys: Record<string, any>,
-) {
-  assignMembers(binder, ownerSym, staticMembers, keys, true);
-}
-
-function createInstanceMembers(
-  binder: Binder,
-  ownerSym: TSOutputSymbol,
-  instanceMembers: NamedModuleDescriptor[],
-  keys: Record<string, any>,
-) {
-  assignMembers(binder, ownerSym, instanceMembers, keys, false);
-}
-
 function createSymbols(
   binder: Binder,
   props: CreatePackageProps<PackageDescriptor>,
@@ -261,17 +243,19 @@ function createSymbols(
       });
       moduleScope.exportedSymbols.set(key, ownerSym);
 
-      createStaticMembers(
+      assignMembers(
         binder,
         ownerSym,
         namedRef.staticMembers ?? [],
         keys[namedRef.name],
+        /* isStatic */ true,
       );
-      createInstanceMembers(
+      assignMembers(
         binder,
         ownerSym,
         namedRef.instanceMembers ?? [],
         keys[namedRef.name],
+        /* isStatic */ false,
       );
     }
   }

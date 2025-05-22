@@ -1,8 +1,8 @@
 import { Output, render } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { describe, it } from "vitest";
 import * as py from "../src/components/index.js";
 import { assertFileContents } from "./utils.jsx";
-import { d } from "@alloy-js/core/testing";
 
 describe("Python Enum", () => {
   it("classic enum with explicit values", () => {

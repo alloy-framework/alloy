@@ -1,4 +1,4 @@
-import { Block, Children, List, Scope, Show } from "@alloy-js/core";
+import { Children, Indent, List, Scope, Show } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 
@@ -20,10 +20,9 @@ export function Class(props: ClassProps) {
         <Show when={props.bases !== undefined && props.bases.length > 0}>
           (<List children={props.bases} comma space />)
         </Show>
+        :
         <Scope name={name} kind="class">
-          <Block opener=":" closer="">
-            {hasChildren ? props.children : "pass"}
-          </Block>
+          <Indent>{hasChildren ? props.children : "pass"}</Indent>
         </Scope>
       </group>
     </Declaration>

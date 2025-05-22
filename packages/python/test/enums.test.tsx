@@ -2,6 +2,7 @@ import { Output, render } from "@alloy-js/core";
 import { describe, it } from "vitest";
 import * as py from "../src/components/index.js";
 import { assertFileContents } from "./utils.jsx";
+import { d } from "@alloy-js/core/testing";
 
 describe("Python Enum", () => {
   it("classic enum with explicit values", () => {
@@ -20,15 +21,13 @@ describe("Python Enum", () => {
         </py.SourceFile>
       </Output>,
     );
-    const expected = [
-      "from enum import IntEnum",
-      "class Color(IntEnum):",
-      "  RED = 1",
-      "  GREEN = 2",
-      "  BLUE = 3",
-      "",
-      "",
-    ].join("\n");
+    const expected = d`
+      from enum import IntEnum
+      class Color(IntEnum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+    `;
     assertFileContents(result, { "test.py": expected });
   });
 
@@ -44,16 +43,14 @@ describe("Python Enum", () => {
         </py.SourceFile>
       </Output>,
     );
-    const expected = [
-      "from enum import Enum",
-      "from enum import auto",
-      "class Animal(Enum):",
-      "  DOG = auto()",
-      "  CAT = auto()",
-      "  RABBIT = auto()",
-      "",
-      "",
-    ].join("\n");
+    const expected = d`
+      from enum import Enum
+      from enum import auto
+      class Animal(Enum):
+        DOG = auto()
+        CAT = auto()
+        RABBIT = auto()
+    `;
     assertFileContents(result, { "test.py": expected });
   });
 
@@ -74,16 +71,14 @@ describe("Python Enum", () => {
         </py.SourceFile>
       </Output>,
     );
-    const expected = [
-      "from enum import Flag",
-      "from enum import auto",
-      "class Permission(Flag):",
-      "  READ = 1",
-      "  WRITE = auto()",
-      "  EXECUTE = auto()",
-      "",
-      "",
-    ].join("\n");
+    const expected = d`
+      from enum import Flag
+      from enum import auto
+      class Permission(Flag):
+        READ = 1
+        WRITE = auto()
+        EXECUTE = auto()
+    `;
     assertFileContents(result, { "test.py": expected });
   });
 
@@ -104,11 +99,10 @@ describe("Python Enum", () => {
         </py.SourceFile>
       </Output>,
     );
-    const expected = [
-      "from enum import Enum",
-      "Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])",
-      "",
-    ].join("\n");
+    const expected = d`
+      from enum import Enum
+      Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])
+    `;
     assertFileContents(result, { "test.py": expected });
   });
 
@@ -128,11 +122,10 @@ describe("Python Enum", () => {
         </py.SourceFile>
       </Output>,
     );
-    const expected = [
-      "from enum import Enum",
-      "Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW' : 3})",
-      "",
-    ].join("\n");
+    const expected = d`
+      from enum import Enum
+      Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW' : 3})
+    `;
     assertFileContents(result, { "test.py": expected });
   });
 });

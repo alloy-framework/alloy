@@ -15,7 +15,10 @@ export {
   track,
   trigger,
   watch,
+  type Reactive,
   type Ref,
+  type ShallowReactive,
+  type ShallowRef,
   type ToRef,
   type ToRefs,
 } from "@vue/reactivity";

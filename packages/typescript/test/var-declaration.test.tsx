@@ -1,4 +1,10 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import {
+  memberRefkey,
+  Output,
+  refkey,
+  render,
+  StatementList,
+} from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
@@ -46,6 +52,100 @@ it("works end-to-end", () => {
       import type { TestType } from "./types.js";
 
       export let hi: TestType = "hello";
+    `,
+  });
+});
+
+it("instantiates symbols from its type", () => {
+  const ifaceRk = refkey();
+  const ifaceMemberRk = refkey();
+  const classRk = refkey();
+  const classMemberRk = refkey();
+  const v1Rk = refkey();
+  const v2Rk = refkey();
+
+  const res = render(
+    <Output>
+      <ts.SourceFile path="inst.ts">
+        <StatementList>
+          <ts.VarDeclaration export name="one" refkey={v1Rk} type={classRk}>
+            "test"
+          </ts.VarDeclaration>
+          <>{memberRefkey(v1Rk, classMemberRk)}</>
+          <ts.VarDeclaration export name="two" refkey={v2Rk} type={ifaceRk}>
+            "test"
+          </ts.VarDeclaration>
+          <>{memberRefkey(v2Rk, ifaceMemberRk)}</>
+        </StatementList>
+      </ts.SourceFile>
+      <ts.SourceFile path="decl.ts">
+        <ts.InterfaceDeclaration name="Foo" refkey={ifaceRk}>
+          <StatementList>
+            <ts.InterfaceMember name="instanceProp" refkey={ifaceMemberRk}>
+              42
+            </ts.InterfaceMember>
+          </StatementList>
+        </ts.InterfaceDeclaration>
+        <ts.ClassDeclaration name="Bar" refkey={classRk}>
+          <StatementList>
+            <ts.ClassField name="instanceProp" refkey={classMemberRk}>
+              42
+            </ts.ClassField>
+          </StatementList>
+        </ts.ClassDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "inst.ts": `
+      import type { Bar, Foo } from "./decl.js";
+
+      export const one: Bar = "test";
+      one.instanceProp;
+      export const two: Foo = "test";
+      two.instanceProp;
+    `,
+  });
+});
+
+it("instantiates symbols from type even when an expression is passed", () => {
+  const classRk = refkey();
+  const classMemberRk = refkey();
+  const v1Rk = refkey();
+
+  const res = render(
+    <Output>
+      <ts.SourceFile path="inst.ts">
+        <StatementList>
+          <ts.VarDeclaration export name="one" refkey={v1Rk} type={classRk}>
+            <ts.ObjectExpression>
+              <ts.ObjectProperty name="noProp" refkey={refkey()} value="1" />
+            </ts.ObjectExpression>
+          </ts.VarDeclaration>
+          <>{memberRefkey(v1Rk, classMemberRk)}</>
+        </StatementList>
+      </ts.SourceFile>
+      <ts.SourceFile path="decl.ts">
+        <ts.ClassDeclaration name="Bar" refkey={classRk}>
+          <StatementList>
+            <ts.ClassField name="instanceProp" refkey={classMemberRk}>
+              42
+            </ts.ClassField>
+          </StatementList>
+        </ts.ClassDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "inst.ts": `
+      import type { Bar } from "./decl.js";
+
+      export const one: Bar = {
+        noProp: 1
+      };
+      one.instanceProp;
     `,
   });
 });

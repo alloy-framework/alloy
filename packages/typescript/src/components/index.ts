@@ -27,6 +27,7 @@ export * from "./JSDoc.jsx";
 export * from "./JSDocComment.jsx";
 export * from "./JSDocExample.jsx";
 export * from "./MemberExpression.jsx";
+export * from "./NewExpression.jsx";
 export * from "./ObjectExpression.js";
 export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";

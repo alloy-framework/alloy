@@ -57,8 +57,11 @@ export class TSModuleScope extends OutputScope {
     const localSymbol = new TSOutputSymbol(targetSymbol.name, {
       binder: this.binder,
       scope: this,
+      aliasTarget: targetSymbol,
       tsFlags: TSSymbolFlags.LocalImportSymbol,
     });
+
+    targetSymbol.copyTo(localSymbol);
 
     if (options?.type) {
       localSymbol.tsFlags |= TSSymbolFlags.TypeSymbol;

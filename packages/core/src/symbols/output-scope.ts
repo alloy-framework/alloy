@@ -245,7 +245,7 @@ export class OutputScope {
     trace(
       TracePhase.scope.copySymbols,
       () =>
-        `Copying symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
+        `Moving symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
     );
     this.#symbols.addSubset(source.#symbols, {
       onAdd: (symbol) => {
@@ -277,7 +277,7 @@ export class OutputScope {
         if (options?.onAdd) {
           return options.onAdd(symbol);
         }
-        return symbol.cloneInto(this);
+        return symbol.copyToScope(this);
       },
       onDelete: (symbol) => {
         if (options?.onDelete) {

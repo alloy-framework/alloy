@@ -1,6 +1,7 @@
 import {
   Block,
   code,
+  createSymbolSlot,
   For,
   Indent,
   onCleanup,
@@ -116,6 +117,10 @@ export const FunctionTypeParameters = taggedComponent(
 );
 
 function parameter(param: DeclaredParameterDescriptor) {
+  const SymbolSlot = createSymbolSlot();
+
+  SymbolSlot.instantiateInto(param.symbol);
+
   return (
     <group>
       <Show when={param.rest}>...</Show>
@@ -123,7 +128,10 @@ function parameter(param: DeclaredParameterDescriptor) {
       <Show when={!!param.optional}>?</Show>
       <Show when={!!param.type}>
         <indent>
-          : <TypeRefContext>{param.type}</TypeRefContext>
+          :{" "}
+          <SymbolSlot>
+            <TypeRefContext>{param.type}</TypeRefContext>
+          </SymbolSlot>
         </indent>
       </Show>
     </group>

@@ -64,7 +64,6 @@ export class ReactiveUnionSet<T> extends Set<T> {
     return super.size;
   }
 
-  /*
   [Symbol.iterator](): SetIterator<T> {
     track(this, TrackOpTypes.ITERATE, ITERATE_KEY);
     return super[Symbol.iterator]();
@@ -85,7 +84,6 @@ export class ReactiveUnionSet<T> extends Set<T> {
     return super.entries();
   }
 
-  */
   add(item: T) {
     if (this._refcounts.has(item)) {
       this._refcounts.set(item, this._refcounts.get(item)! + 1);

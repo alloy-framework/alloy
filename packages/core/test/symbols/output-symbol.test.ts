@@ -228,7 +228,7 @@ describe("OutputSymbol#cloneInto", () => {
     const scope = new OutputScope("scope", { binder });
     const scope2 = new OutputScope("scope2", { binder });
     const symbol = new OutputSymbol("sym", { binder, scope });
-    const clone = symbol.cloneInto(scope2);
+    const clone = symbol.copyToScope(scope2);
 
     expect(clone.name).toEqual("sym");
     expect(clone.flags).toEqual(symbol.flags);
@@ -256,7 +256,7 @@ describe("OutputSymbol#cloneInto", () => {
       scope: symbol.staticMemberScope!,
     });
     const scope2 = new OutputScope("scope2", { binder });
-    const clone = symbol.cloneInto(scope2);
+    const clone = symbol.copyToScope(scope2);
     expect(clone.staticMemberScope!.symbols.size).toBe(1);
 
     sourceStaticMember.delete();
@@ -283,7 +283,7 @@ describe("OutputSymbol#cloneInto", () => {
     });
 
     const scope2 = new OutputScope("scope2", { binder });
-    const clone = symbol.cloneInto(scope2);
+    const clone = symbol.copyToScope(scope2);
 
     expect(clone.instanceMemberScope).toBeDefined();
     expect(clone.staticMemberScope).toBeDefined();
@@ -342,7 +342,7 @@ describe("OutputSymbol#instantiateInto", () => {
     });
 
     const targetSym = new OutputSymbol("Target", { binder, scope });
-    classSym.instantiateInto(targetSym);
+    classSym.instantiateTo(targetSym);
     expect(targetSym.staticMemberScope).toBeDefined();
     const staticNames = targetSym.staticMemberScope!.symbolNames;
     expect(staticNames.size).toEqual(1);
@@ -365,7 +365,7 @@ describe("OutputSymbol#instantiateInto", () => {
     });
 
     const targetSym = new OutputSymbol("Target", { binder, scope });
-    classSym.instantiateInto(targetSym);
+    classSym.instantiateTo(targetSym);
 
     new OutputSymbol("new-instance-member", {
       binder,
@@ -398,7 +398,7 @@ describe("OutputSymbol#instantiateInto", () => {
     });
 
     const targetSym = new OutputSymbol("Target", { binder, scope });
-    classSym.instantiateInto(targetSym);
+    classSym.instantiateTo(targetSym);
 
     expect(
       targetSym.staticMemberScope!.symbolNames.has("instance-member"),
@@ -447,8 +447,8 @@ describe("OutputSymbol#instantiateInto", () => {
 
     const target = new OutputSymbol("target", { binder, scope });
 
-    source.instantiateInto(target);
-    source.instantiateInto(target);
+    source.instantiateTo(target);
+    source.instantiateTo(target);
 
     expect(target.staticMemberScope).toBeDefined();
     expect(target.staticMemberScope!.symbolNames.size).toEqual(1);

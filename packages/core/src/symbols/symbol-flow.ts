@@ -5,7 +5,9 @@ import {
   onCleanup,
 } from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref, shallowReactive } from "@vue/reactivity";
-import { MemberScopeContext, ScopeContext } from "../index.browser.js";
+
+import { MemberScopeContext } from "../context/member-scope.js";
+import { ScopeContext } from "../context/scope.js";
 import { OutputSymbol, OutputSymbolFlags } from "./output-symbol.js";
 
 export interface TakeSymbolCallback {
@@ -16,21 +18,33 @@ export interface TakeSymbolsCallback {
   (symbols: Set<OutputSymbol>): void;
 }
 
-export function takeSymbols() {
+export function takeSymbols(cb?: (symbol: OutputSymbol) => void) {
   const context = getContext()!;
   context.takesSymbols = true;
   context.takenSymbols = shallowReactive(new Set<OutputSymbol>());
+  if (cb) {
+    effect<Set<OutputSymbol>>((oldSymbols) => {
+      for (const symbol of context.takenSymbols!) {
+        if (oldSymbols && oldSymbols.has(symbol)) {
+          continue;
+        }
+        cb(symbol);
+      }
+
+      return new Set(context.takenSymbols!);
+    });
+  }
   return context.takenSymbols;
 }
 
 export function emitSymbol(
   symbol: OutputSymbol | Ref<OutputSymbol | undefined>,
 ) {
-  let ownerContext: Context | undefined;
+  let symbolTaker: Context | undefined;
   let context = getContext()!.owner;
   while (context) {
     if (context.takesSymbols) {
-      ownerContext = context;
+      symbolTaker = context;
       break;
     }
 
@@ -46,7 +60,7 @@ export function emitSymbol(
     context = context.owner;
   }
 
-  if (!ownerContext) {
+  if (!symbolTaker) {
     return;
   }
 
@@ -54,19 +68,19 @@ export function emitSymbol(
     effect<OutputSymbol | undefined>((prevSymbol) => {
       onCleanup(() => {
         if (symbol.value) {
-          ownerContext.takenSymbols!.delete(symbol.value);
+          symbolTaker.takenSymbols!.delete(symbol.value);
         }
       });
       if (symbol.value === undefined) {
-        ownerContext.takenSymbols!.delete(prevSymbol!);
+        symbolTaker.takenSymbols!.delete(prevSymbol!);
         return undefined;
       } else {
-        ownerContext.takenSymbols!.add(symbol.value);
+        symbolTaker.takenSymbols!.add(symbol.value);
         return symbol.value;
       }
     });
   } else {
-    ownerContext.takenSymbols!.add(symbol);
+    symbolTaker.takenSymbols!.add(symbol);
     onCleanup(() => {
       context!.takenSymbols!.delete(symbol);
     });
@@ -78,17 +92,13 @@ export function moveTakenMembersTo(baseSymbol: OutputSymbol) {
 
   effect(() => {
     for (const symbol of taken) {
-      if (symbol.staticMemberScope) {
-        baseSymbol.flags |= OutputSymbolFlags.StaticMemberContainer;
-        baseSymbol.staticMemberScope!.moveSymbolsFrom(symbol.staticMemberScope);
-      }
-
-      if (symbol.instanceMemberScope) {
-        baseSymbol.flags |= OutputSymbolFlags.InstanceMemberContainer;
-        baseSymbol.instanceMemberScope!.moveSymbolsFrom(
-          symbol.instanceMemberScope,
-        );
+      if (symbol.flags & OutputSymbolFlags.Transient) {
+        symbol.moveTo(baseSymbol);
       }
     }
   });
+}
+
+export function instantiateTakenMembersTo(baseSymbol: OutputSymbol) {
+  takeSymbols((symbol) => symbol.instantiateTo(baseSymbol));
 }

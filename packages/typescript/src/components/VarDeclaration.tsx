@@ -1,8 +1,10 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  moveTakenMembersTo,
+  createSymbolSlot,
+  effect,
   Name,
+  OutputSymbolFlags,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
@@ -21,12 +23,37 @@ export interface VarDeclarationProps extends BaseDeclarationProps {
 }
 
 export function VarDeclaration(props: VarDeclarationProps) {
+  const TypeSymbolSlot = createSymbolSlot();
+  const ValueTypeSymbolSlot = createSymbolSlot();
+
+  effect(() => {
+    if (TypeSymbolSlot.ref.value) {
+      const takenSymbols = TypeSymbolSlot.ref.value;
+      for (const symbol of takenSymbols) {
+        symbol.instantiateTo(sym);
+      }
+    } else if (ValueTypeSymbolSlot.ref.value) {
+      const takenSymbols = ValueTypeSymbolSlot.ref.value;
+      for (const symbol of takenSymbols) {
+        // ignore non-transient symbols (likely not the result of an
+        // expression).
+        if (symbol.flags & OutputSymbolFlags.Transient) {
+          symbol.moveTo(sym);
+        }
+      }
+    }
+  });
+
   const keyword =
     props.var ? "var"
     : props.let ? "let"
     : "const";
   const type =
-    props.type ? <TypeRefContext>: {props.type}</TypeRefContext> : undefined;
+    props.type ?
+      <TypeRefContext>
+        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+      </TypeRefContext>
+    : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
   const sym = new TSOutputSymbol(name, {
     refkeys: props.refkey,
@@ -35,8 +62,6 @@ export function VarDeclaration(props: VarDeclarationProps) {
     metadata: props.metadata,
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
   });
-
-  moveTakenMembersTo(sym);
 
   return (
     <>
@@ -48,7 +73,10 @@ export function VarDeclaration(props: VarDeclarationProps) {
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}
         {keyword} <Name />
-        {type} = {props.initializer ?? props.children}
+        {type} ={" "}
+        <ValueTypeSymbolSlot>
+          {props.initializer ?? props.children}
+        </ValueTypeSymbolSlot>
       </CoreDeclaration>
     </>
   );

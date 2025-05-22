@@ -151,6 +151,7 @@ function assignMembers(
 
     const memberSym = new TSOutputSymbol(memberObj.name, {
       scope,
+      binder,
       refkeys: memberKey,
       export: false,
       default: false,

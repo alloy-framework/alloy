@@ -30,7 +30,7 @@ export interface CreateTsSymbolOptions extends OutputSymbolOptions {
 }
 
 export class TSOutputSymbol extends OutputSymbol {
-  constructor(name: string, options: CreateTsSymbolOptions) {
+  constructor(name: string, options: CreateTsSymbolOptions = {}) {
     super(name, options);
     this.#export = !!options.export;
     this.#default = !!options.default;

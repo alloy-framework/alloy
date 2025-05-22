@@ -4,7 +4,6 @@ import { SourceFile } from "../../src/components/SourceFile.jsx";
 import {
   Declaration,
   Name,
-  OutputSymbol,
   Ref,
   refkey,
   Scope,
@@ -12,6 +11,7 @@ import {
 } from "../../src/index.js";
 import { render } from "../../src/render.js";
 import { defineSlot, rename, replace } from "../../src/slot.js";
+import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 import "../../testing/extend-expect.js";
 
 it("works with string keys", () => {
@@ -70,7 +70,7 @@ it("works with symbols", () => {
   const FunctionSlot = defineSlot<FunctionSlotProps>(
     (query: { fqn: string }) => {
       const binder = useBinder();
-      return binder.resolveFQN(query.fqn);
+      return binder!.resolveFQN(query.fqn);
     },
   );
 
@@ -80,9 +80,8 @@ it("works with symbols", () => {
 
   function MyFunctionComponent(props: FunctionComponentProps) {
     const binder = useBinder();
-    const sym = binder.createSymbol({
-      name: props.name,
-      refkey: refkey(),
+    const sym = new OutputSymbol(props.name, {
+      refkeys: refkey(),
     });
 
     const FunctionSlotInstance = FunctionSlot.create(
@@ -129,7 +128,7 @@ it("can rename", () => {
 
   const FunctionSlot = defineSlot<FunctionSlotProps>(
     (query: { fqn: string }) => {
-      const binder = useBinder();
+      const binder = useBinder()!;
       return binder.resolveFQN(query.fqn);
     },
   );
@@ -139,10 +138,8 @@ it("can rename", () => {
   }
 
   function MyFunctionComponent(props: FunctionComponentProps) {
-    const binder = useBinder();
-    const sym = binder.createSymbol({
-      name: props.name,
-      refkey: refkey(),
+    const sym = new OutputSymbol(props.name, {
+      refkeys: refkey(),
     });
 
     const FunctionSlotInstance = FunctionSlot.create(
@@ -161,7 +158,7 @@ it("can rename", () => {
 
   rename(() => {
     const binder = useBinder();
-    return binder.resolveFQN("foo.bar") as Ref<OutputSymbol | undefined>;
+    return binder!.resolveFQN("foo.bar") as Ref<OutputSymbol | undefined>;
   }, "bazxxx");
 
   const tree = render(

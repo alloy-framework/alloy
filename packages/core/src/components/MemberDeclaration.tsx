@@ -1,9 +1,9 @@
-import { OutputSymbol, OutputSymbolFlags } from "../binder.js";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
 import { Children } from "../jsx-runtime.js";
 import { Refkey } from "../refkey.js";
+import { OutputSymbol, OutputSymbolFlags } from "../symbols/output-symbol.js";
 
 /**
  * Create a member declaration by providing a symbol name and optional symbol
@@ -85,9 +85,9 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
         "Must provide a member name, or else provide a member symbol",
       );
     }
-    declaration = binder.createSymbol({
-      name: infoProps.name!,
-      refkey: infoProps.refkey,
+
+    declaration = new OutputSymbol(infoProps.name!, {
+      refkeys: infoProps.refkey,
       metadata: infoProps.metadata,
       flags:
         infoProps.static ?

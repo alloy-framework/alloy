@@ -3,10 +3,10 @@ import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
   createPackage,
-  createTSSymbol,
   FunctionDeclaration,
   PackageDirectory,
   SourceFile,
+  TSOutputSymbol,
 } from "../src/index.js";
 import { assertFileContents } from "./utils.js";
 
@@ -209,8 +209,8 @@ it("can import instance members", () => {
   });
 
   function RunTest() {
-    const sym = createTSSymbol({ name: "foo" });
-    const binder = sym.binder;
+    const sym = new TSOutputSymbol("foo");
+    const binder = sym.binder!;
 
     expect(binder).toBeDefined();
 
@@ -220,7 +220,7 @@ it("can import instance members", () => {
     expect(source).toBeDefined();
     expect(source.instanceMemberScope?.symbols.size).toBe(1);
 
-    binder.instantiateSymbolInto(source, sym);
+    source.instantiateTo(sym);
 
     expect(sym.staticMemberScope?.symbols.size).toBe(1);
     expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");

@@ -6,14 +6,11 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
-
 import {
-  createTSMemberScope,
-  createTSModuleScope,
-  createTSPackageScope,
-  createTSSymbol,
+  TSModuleScope,
   TSOutputScope,
   TSOutputSymbol,
+  TSPackageScope,
 } from "./symbols/index.js";
 
 export interface PackageDescriptor {
@@ -123,20 +120,14 @@ function assignMembers(
   keys: Record<string, any>,
   isStatic: boolean,
 ) {
-  const scope =
-    isStatic ?
-      (ownerSym.staticMemberScope ??= createTSMemberScope(
-        binder,
-        undefined,
-        ownerSym,
-        true,
-      ))
-    : (ownerSym.instanceMemberScope ??= createTSMemberScope(
-        binder,
-        undefined,
-        ownerSym,
-        false,
-      ));
+  let scope: TSOutputScope;
+  if (isStatic) {
+    ownerSym.flags |= OutputSymbolFlags.StaticMemberContainer;
+    scope = ownerSym.staticMemberScope!;
+  } else {
+    ownerSym.flags |= OutputSymbolFlags.InstanceMemberContainer;
+    scope = ownerSym.instanceMemberScope!;
+  }
 
   const namespace = isStatic ? "static" : "instance";
 
@@ -158,10 +149,10 @@ function assignMembers(
       memberFlags |= OutputSymbolFlags.InstanceMemberContainer;
     }
 
-    const memberSym = createTSSymbol({
-      name: memberObj.name, // Note: name without namespace
-      scope: scope as TSOutputScope,
-      refkey: memberKey,
+    const memberSym = new TSOutputSymbol(memberObj.name, {
+      scope,
+      binder,
+      refkeys: memberKey,
       export: false,
       default: false,
       flags: memberFlags,
@@ -196,26 +187,30 @@ function createSymbols(
   props: CreatePackageProps<PackageDescriptor>,
   refkeys: Record<string, any>,
 ) {
-  const pkgScope = createTSPackageScope(
-    binder,
-    undefined,
+  const pkgScope = new TSPackageScope(
     props.name,
     props.version,
     `node_modules/${props.name}`,
-    props.builtin,
+    {
+      binder,
+      builtin: props.builtin,
+    },
   );
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = createTSModuleScope(binder, pkgScope, path);
+    const moduleScope = new TSModuleScope(path, {
+      binder,
+      parent: pkgScope,
+    });
+
     pkgScope.exportedSymbols.set(path, moduleScope);
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = createTSSymbol({
-        name: symbols.default,
+      const sym = new TSOutputSymbol(symbols.default, {
         scope: moduleScope,
-        refkey: key,
+        refkeys: key,
         export: true,
         default: true,
       });
@@ -237,11 +232,10 @@ function createSymbols(
         flags |= OutputSymbolFlags.InstanceMemberContainer;
       }
 
-      const ownerSym = createTSSymbol({
+      const ownerSym = new TSOutputSymbol(namedRef.name, {
         binder,
-        name: namedRef.name,
         scope: moduleScope,
-        refkey: key,
+        refkeys: key,
         export: true,
         default: false,
         flags,

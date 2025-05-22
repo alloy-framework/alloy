@@ -1,5 +1,5 @@
-import { Children, memo } from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref } from "@vue/reactivity";
+import { type Children, memo } from "../jsx-runtime.js";
 import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
 import { BaseListProps } from "./List.jsx";
 

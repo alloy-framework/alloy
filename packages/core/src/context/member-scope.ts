@@ -1,9 +1,9 @@
-import { OutputScope } from "../binder.js";
 import {
   ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
+import type { OutputScope } from "../symbols/output-scope.js";
 
 /**
  * The member scope context provides the instance and static member scopes that

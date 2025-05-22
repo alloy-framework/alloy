@@ -1,27 +1,22 @@
 import * as core from "@alloy-js/core";
-import { DeclarationProps } from "../components/Declaration.jsx";
 import { useNamespace } from "../components/Namespace.jsx";
 import { CSharpOutputScope } from "./scopes.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
-export interface CSharpOutputSymbol extends core.OutputSymbol {
-  scope: CSharpOutputScope;
-}
 
-// creates a new C# symbol
-export function createCSharpSymbol(props: DeclarationProps) {
-  const scope = core.useScope() as CSharpOutputScope;
-
-  const namespaceCtx = useNamespace();
-  if (!namespaceCtx) {
-    throw new Error("symbol must be declared inside a namespace");
+export class CSharpOutputSymbol extends core.OutputSymbol {
+  get scope() {
+    return super.scope as CSharpOutputScope;
+  }
+  set scope(value: CSharpOutputScope) {
+    super.scope = value;
   }
 
-  const sym = scope.binder.createSymbol<CSharpOutputSymbol>({
-    name: props.name!,
-    scope,
-    refkey: props.refkey ?? core.refkey(props.name),
-  });
-
-  return sym;
+  constructor(name: string, options?: core.OutputSymbolOptions) {
+    const namespaceCtx = useNamespace();
+    if (!namespaceCtx) {
+      throw new Error("symbol must be declared inside a namespace");
+    }
+    super(name, options);
+  }
 }

@@ -1,5 +1,5 @@
 import { ComponentContext, createNamedContext } from "../context.js";
-import { SourceFileContext } from "./source-file.js";
+import type { SourceFileContext } from "./source-file.js";
 
 export interface SourceDirectoryContext {
   contents: (SourceDirectoryContext | SourceFileContext)[];

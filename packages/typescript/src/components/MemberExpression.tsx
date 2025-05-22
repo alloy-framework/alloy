@@ -9,6 +9,7 @@ import {
   ref,
   Refkey,
   Show,
+  takeSymbols,
   ToRefs,
   useBinder,
 } from "@alloy-js/core";
@@ -68,6 +69,9 @@ interface PartDescriptor {
 export function MemberExpression(props: MemberExpressionProps): Children {
   const children = flattenMemberExpression(childrenArray(() => props.children));
   const parts = childrenToPartDescriptors(children);
+  // any symbols emitted from the children won't be relevant to
+  // parent scopes. TODO: emit the proper symbol if we know it?
+  takeSymbols();
 
   if (parts.length === 0) {
     return <></>;
@@ -220,7 +224,7 @@ function escapeId(id: string) {
  */
 function getSymbolForRefkey(refkey: Refkey) {
   const binder = useBinder();
-  return binder.getSymbolForRefkey(refkey);
+  return binder!.getSymbolForRefkey(refkey);
 }
 
 /**

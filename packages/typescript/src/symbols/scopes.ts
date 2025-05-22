@@ -8,8 +8,7 @@ export type TSOutputScope =
   | TSPackageScope
   | TSModuleScope
   | TSFunctionScope
-  | TSMemberScope
-  | TSOtherScope;
+  | TSMemberScope;
 
 export interface TSGlobalScope extends OutputScope {
   kind: "global";
@@ -17,10 +16,6 @@ export interface TSGlobalScope extends OutputScope {
 
 export interface TSFunctionScope extends OutputScope {
   kind: "function";
-}
-
-export interface TSOtherScope extends OutputScope {
-  kind: never;
 }
 
 export function useTSScope() {

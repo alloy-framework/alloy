@@ -8,14 +8,16 @@ import {
   ReactiveEffectRunner,
   Ref,
   resetTracking,
+  ShallowReactive,
   shallowRef,
   stop,
   toRefs,
   effect as vueEffect,
 } from "@vue/reactivity";
-import { Refkey } from "./refkey.js";
-import { RenderedTextTree } from "./render.js";
+import type { Refkey } from "./refkey.js";
+import type { RenderedTextTree } from "./render.js";
 import { scheduler } from "./scheduler.js";
+import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 if ((globalThis as any).ALLOY) {
   throw new Error(
@@ -48,6 +50,16 @@ export interface Context {
    * be the component that created it.
    */
   componentOwner?: ComponentCreator<unknown>;
+
+  /**
+   * Whether this context will take an emitted symbol.
+   */
+  takesSymbols: boolean;
+
+  /**
+   * The symbol that this component has taken.
+   */
+  takenSymbols?: ShallowReactive<Set<OutputSymbol>>;
 }
 
 let globalContext: Context | null = null;
@@ -76,6 +88,8 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     owner: globalContext,
     context: {},
     elementCache: new Map(),
+    takesSymbols: false,
+    takenSymbols: undefined,
   };
 
   globalContext = context;
@@ -119,6 +133,8 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     disposables: [] as (() => void)[],
     owner: globalContext,
     elementCache: new Map(),
+    takesSymbols: false,
+    takenSymbols: undefined,
   };
 
   const cleanupFn = (final: boolean) => {

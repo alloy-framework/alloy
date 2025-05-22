@@ -6,11 +6,7 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import {
-  createTSSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/index.js";
 
 // imports for documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -112,9 +108,8 @@ export function Declaration(props: DeclarationProps) {
       tsFlags |= TSSymbolFlags.TypeSymbol;
     }
 
-    sym = createTSSymbol({
-      name: namePolicy.getName(props.name!, props.nameKind!),
-      refkey: props.refkey,
+    sym = new TSOutputSymbol(namePolicy.getName(props.name!, props.nameKind!), {
+      refkeys: props.refkey,
       export: props.export,
       default: props.default,
       flags: props.flags,

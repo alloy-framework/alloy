@@ -61,7 +61,7 @@ export const InterfaceExpression = ensureTypeRefContext(
     const parentMemberSym = useMemberDeclaration();
 
     if (parentMemberSym) {
-      parentMemberSym.binder.addStaticMembersToSymbol(parentMemberSym);
+      parentMemberSym.flags |= OutputSymbolFlags.StaticMemberContainer;
     }
     return (
       <group>

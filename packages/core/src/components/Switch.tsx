@@ -1,4 +1,4 @@
-import { Children, memo, taggedComponent } from "@alloy-js/core/jsx-runtime";
+import { type Children, memo, taggedComponent } from "../jsx-runtime.js";
 import { childrenArray, findKeyedChildren } from "../utils.js";
 
 export interface SwitchProps {

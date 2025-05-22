@@ -1,9 +1,9 @@
-import { OutputSymbol } from "../binder.js";
 import {
   ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 export interface AssignmentContext {
   /**

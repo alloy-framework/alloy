@@ -2,7 +2,7 @@ import * as core from "@alloy-js/core";
 import { AccessModifier, getAccessModifier } from "../modifiers.js";
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { createCSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
+import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum
@@ -18,34 +18,32 @@ export function Enum(props: EnumProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "enum");
   const scope = useCSharpScope();
 
-  const thisEnumSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
-    name: name,
+  const thisEnumSymbol = new CSharpOutputSymbol(name, {
     scope,
-    refkey: props.refkey ?? core.refkey(props.name),
+    refkeys: props.refkey ?? core.refkey(props.name),
   });
 
   // this creates a new scope for the enum definition.
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const thisEnumScope = createCSharpMemberScope(
-    scope.binder,
-    scope,
-    thisEnumSymbol,
-    "enum-decl",
-  );
+  const thisEnumScope = new CSharpMemberScope("enum-decl", {
+    parent: scope,
+    owner: thisEnumSymbol,
+  });
 
-  return (
-    <core.Declaration symbol={thisEnumSymbol}>
-      {getAccessModifier(props.accessModifier)}enum <Name />
-      {!props.children && ";"}
-      {props.children && (
-        <core.Scope value={thisEnumScope}>
-          <core.Block newline>{props.children}</core.Block>
-        </core.Scope>
-      )}
-    </core.Declaration>
-  );
+  if (thisEnumScope.owner)
+    return (
+      <core.Declaration symbol={thisEnumSymbol}>
+        {getAccessModifier(props.accessModifier)}enum <Name />
+        {!props.children && ";"}
+        {props.children && (
+          <core.Scope value={thisEnumScope}>
+            <core.Block newline>{props.children}</core.Block>
+          </core.Scope>
+        )}
+      </core.Declaration>
+    );
 }
 
 // properties for creating a C# enum member
@@ -64,10 +62,9 @@ export function EnumMember(props: EnumMemberProps) {
   }
 
   const name = useCSharpNamePolicy().getName(props.name, "enum-member");
-  const thisEnumValueSymbol = scope.binder.createSymbol<CSharpOutputSymbol>({
-    name: name,
+  const thisEnumValueSymbol = new CSharpOutputSymbol(name, {
     scope,
-    refkey: props.refkey ?? core.refkey(props.name),
+    refkeys: props.refkey ?? core.refkey(props.name),
   });
 
   return (

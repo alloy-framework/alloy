@@ -4,17 +4,18 @@ import {
   Children,
   computed,
   createAssignmentContext,
+  emitSymbol,
   For,
-  getAssignmentSymbol,
   Match,
   MemberScope,
+  moveTakenMembersTo,
   OutputSymbolFlags,
   Refkey,
   Switch,
-  Wrap,
+  takeSymbols,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol } from "../symbols/index.js";
+import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
@@ -27,11 +28,12 @@ export interface ObjectExpressionProps {
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
-  const assignmentSymbol = getAssignmentSymbol();
+  const symbol = new TSOutputSymbol("", {
+    flags:
+      OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
+  });
 
-  if (assignmentSymbol) {
-    assignmentSymbol.binder.addStaticMembersToSymbol(assignmentSymbol);
-  }
+  emitSymbol(symbol);
 
   const jsValueProperties = computed(() => {
     const jsValue = props.jsValue;
@@ -57,11 +59,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
       </Match>
       <Match else>
         <group>
-          <Wrap
-            when={!!assignmentSymbol}
-            with={MemberScope}
-            props={{ owner: assignmentSymbol! }}
-          >
+          <MemberScope owner={symbol}>
             <Block>
               <For each={jsValueProperties} comma softline enderPunctuation>
                 {([name, value]) => (
@@ -79,7 +77,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
                 </>
               )}
             </Block>
-          </Wrap>
+          </MemberScope>
         </group>
       </Match>
     </Switch>
@@ -110,11 +108,15 @@ export function ObjectProperty(props: ObjectPropertyProps) {
 
   let sym = undefined;
   if (props.refkey && props.name) {
-    sym = createTSSymbol({
-      name: props.name,
-      refkey: props.refkey,
+    sym = new TSOutputSymbol(props.name, {
+      refkeys: props.refkey,
       flags: OutputSymbolFlags.StaticMember,
     });
+
+    moveTakenMembersTo(sym);
+  } else {
+    // noop
+    takeSymbols();
   }
 
   let value;

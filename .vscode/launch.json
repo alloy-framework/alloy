@@ -33,6 +33,40 @@
       "env": {
         "FORCE_COLOR": "3"
       }
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Current File",
+      "program": "${file}",
+      "args": [],
+      "console": "internalConsole",
+      "outputCapture": "std",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "FORCE_COLOR": "3"
+      }
+    },
+
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Compiled JS Output of Current File",
+      "program": "${workspaceFolder}/packages/core/dist/src/test-reactive.js",
+      "args": [],
+      "console": "internalConsole",
+      "outputCapture": "std",
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "FORCE_COLOR": "3"
+      }
     }
   ]
 }

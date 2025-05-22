@@ -35,6 +35,97 @@ it("renders basic member expression with dot notation", () => {
   `);
 });
 
+it("renders basic member expression with numeric id", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="arr" />
+        <MemberExpression.Part id={0} />
+        <MemberExpression.Part id="foo-bar" />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    arr[0]["foo-bar"]
+  `);
+});
+
+it("renders basic member expression with index", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="arr" />
+        <MemberExpression.Part index={0} />
+        <MemberExpression.Part id="foo-bar" />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    arr[0]["foo-bar"]
+  `);
+});
+
+it("renders basic member expression with numeric children", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="arr" />
+        <MemberExpression.Part>0</MemberExpression.Part>
+        <MemberExpression.Part id="foo-bar" />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    arr[0]["foo-bar"]
+  `);
+});
+
+it("renders basic member expression with string children", () => {
+  expect(
+    toSourceText(
+      <MemberExpression>
+        <MemberExpression.Part id="arr" />
+        <MemberExpression.Part>"0"</MemberExpression.Part>
+        <MemberExpression.Part id="foo-bar" />
+      </MemberExpression>,
+    ),
+  ).toBe(d`
+    arr["0"]["foo-bar"]
+  `);
+});
+
+it("renders basic member expression with an expression index", () => {
+  const xRefkey = refkey();
+  expect(
+    toSourceText(
+      <StatementList>
+        <VarDeclaration name="x" initializer={1} refkey={xRefkey} />
+        <MemberExpression>
+          <MemberExpression.Part id="arr" />
+          <MemberExpression.Part>{xRefkey} + 1</MemberExpression.Part>
+          <MemberExpression.Part id="foo-bar" />
+        </MemberExpression>
+      </StatementList>,
+    ),
+  ).toBe(d`
+    const x = 1;
+    arr[x + 1]["foo-bar"];
+  `);
+});
+
+it("renders basic member expression with an expression id", () => {
+  expect(
+    toSourceText(
+      <StatementList>
+        <MemberExpression>
+          <MemberExpression.Part id="arr" />
+          <MemberExpression.Part>"foo" + 1</MemberExpression.Part>
+          <MemberExpression.Part id="foo-bar" />
+        </MemberExpression>
+      </StatementList>,
+    ),
+  ).toBe(d`
+    arr["foo" + 1]["foo-bar"];
+  `);
+});
+
 it("renders member expression with bracket notation for invalid identifiers", () => {
   expect(
     toSourceText(
@@ -192,14 +283,14 @@ it("takes children for the id part", () => {
             child3
           </MemberExpression.Part>
           <MemberExpression.Part args />
-          <MemberExpression.Part>["foo" + 1]</MemberExpression.Part>
+          <MemberExpression.Part>"foo" + 1</MemberExpression.Part>
           <MemberExpression.Part args />
         </MemberExpression>
       </List>,
     ),
   ).toBe(d`
     child1["child2"]
-    child1["child2"]()["child3"]?.().["foo" + 1]()
+    child1["child2"]()["child3"]?.()["foo" + 1]()
   `);
 });
 

@@ -47,6 +47,9 @@ interface ModuleSymbolsDescriptor {
   named?: NamedModuleDescriptor[];
 }
 
+/**
+ * Props for creating a package with a specific name, version, and descriptor.
+ */
 export interface CreatePackageProps<T extends PackageDescriptor> {
   name: string;
   version: string;
@@ -54,6 +57,17 @@ export interface CreatePackageProps<T extends PackageDescriptor> {
   builtin?: boolean;
 }
 
+/**
+ * Infers the exported members of a module based on its descriptor.
+ *
+ * @template D - The module descriptor, which may specify a `default` export (as a string)
+ *   and/or an array of named exports (`named`).
+ *
+ * If `D` includes a `default` property of type `string`, the resulting type will include a
+ * `default` property of type `Refkey`. If `D` includes a `named` property (an array of
+ * `NamedModuleDescriptor`), the resulting type will include the mapped named exports as
+ * defined by `NamedMap`.
+ */
 export type ModuleExports<
   D extends { default?: string; named?: NamedModuleDescriptor[] },
 > = (D extends { default: string } ? { default: Refkey } : {}) &
@@ -70,17 +84,20 @@ export type PackageRefkeys<
 // to their corresponding Refkey types. It handles both string and object
 // entries in the array of named module descriptors.
 // It creates a mapping where:
-// For each L extends NamedModuleDescriptor[]:
+// For each TDescriptor extends NamedModuleDescriptor[]:
 //   • string entries ➜ { [s]: Refkey }
 //   • object entries ➜ { [name]: Refkey & { static: …; instance: … } }
 // ────────────────────────────────────────────────────────────────
-type NamedMap<L extends readonly NamedModuleDescriptor[]> =
+type NamedMap<TDescriptor extends readonly NamedModuleDescriptor[]> =
   // plain-string exports
   {
-    [S in Extract<L[number], string>]: Refkey;
+    [S in Extract<TDescriptor[number], string>]: Refkey;
   } & {
     // object exports, each one is BOTH a Refkey _and_ has .static/.instance
-    [O in Extract<L[number], { name: string }> as O["name"]]: Refkey & {
+    [O in Extract<
+      TDescriptor[number],
+      { name: string }
+    > as O["name"]]: Refkey & {
       static: O extends (
         { staticMembers: infer SM extends NamedModuleDescriptor[] }
       ) ?

@@ -245,6 +245,24 @@ export class OutputSymbol {
     );
   }
 
+  /**
+   * Create an output scope to hold member symbols. By default this just creates
+   * an OutputScope, but can be subclassed to build scope subtypes when needed.
+   */
+  protected createMemberScope(
+    name: string,
+    options: {
+      owner?: OutputSymbol;
+      flags?: OutputScopeFlags;
+    },
+  ) {
+    return new OutputScope(name, {
+      binder: this.#binder,
+      owner: options.owner,
+      flags: options.flags,
+    });
+  }
+
   #staticMemberScope?: OutputScope;
   get staticMemberScope() {
     track(this, TrackOpTypes.GET, "staticMemberScope");

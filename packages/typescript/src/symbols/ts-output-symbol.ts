@@ -110,6 +110,14 @@ export class TSOutputSymbol extends OutputSymbol {
     super.scope = value;
   }
 
+  get staticMemberScope() {
+    return super.staticMemberScope as TSMemberScope | undefined;
+  }
+
+  get instanceMemberScope() {
+    return super.instanceMemberScope as TSMemberScope | undefined;
+  }
+
   #privateMemberScope: TSMemberScope | undefined;
   get privateMemberScope() {
     return this.#privateMemberScope;
@@ -118,5 +126,14 @@ export class TSOutputSymbol extends OutputSymbol {
   #privateStaticMemberScope: TSMemberScope | undefined;
   get privateStaticMemberScope() {
     return this.#privateStaticMemberScope;
+  }
+
+  protected createMemberScope(
+    name: string,
+    options: { owner?: OutputSymbol; flags?: OutputScopeFlags },
+  ): TSMemberScope {
+    return new TSMemberScope(name, {
+      ...options,
+    });
   }
 }

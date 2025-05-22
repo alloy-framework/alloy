@@ -12,7 +12,6 @@ import {
   createTSModuleScope,
   createTSPackageScope,
   createTSSymbol,
-  TSModuleScope,
   TSOutputScope,
   TSOutputSymbol,
 } from "./symbols/index.js";
@@ -21,7 +20,18 @@ export interface PackageDescriptor {
   [path: string]: ModuleSymbolsDescriptor;
 }
 
-export type NamedModuleDescriptor =
+/**
+ * Describes the structure of a module descriptor.
+ *
+ * A module descriptor can either be a string (representing the module name)
+ * or an object with the following properties:
+ * - `name`: The name of the module.
+ * - `staticMembers`: An optional array of named module descriptors representing
+ *   static members of the module.
+ * - `instanceMembers`: An optional array of named module descriptors representing
+ *  instance members of the module.
+ */
+type NamedModuleDescriptor =
   | string
   | {
       name: string;
@@ -29,30 +39,60 @@ export type NamedModuleDescriptor =
       instanceMembers?: Array<NamedModuleDescriptor>;
     };
 
-export interface ModuleSymbolsDescriptor {
+/**
+ * Describes the symbols exported by a module.
+ */
+interface ModuleSymbolsDescriptor {
   default?: string;
-  named?: readonly NamedModuleDescriptor[];
+  named?: NamedModuleDescriptor[];
 }
 
-function createNamedSymbol(
-  binder: Binder,
-  moduleScope: TSModuleScope,
-  name: string,
-  key: Refkey,
-  flags?: OutputSymbolFlags,
-) {
-  const sym = createTSSymbol({
-    binder,
-    name,
-    scope: moduleScope,
-    refkey: key,
-    export: true,
-    default: false,
-    flags,
-  });
-  moduleScope.exportedSymbols.set(key, sym);
-  return sym;
+export interface CreatePackageProps<T extends PackageDescriptor> {
+  name: string;
+  version: string;
+  descriptor: T;
+  builtin?: boolean;
 }
+
+export type ModuleExports<
+  D extends { default?: string; named?: NamedModuleDescriptor[] },
+> = (D extends { default: string } ? { default: Refkey } : {}) &
+  (D["named"] extends NamedModuleDescriptor[] ? NamedMap<D["named"]> : {});
+
+export type PackageRefkeys<
+  PD extends Record<
+    string,
+    { default?: string; named?: NamedModuleDescriptor[] }
+  >,
+> = { [P in keyof PD]: ModuleExports<PD[P]> };
+
+// NamedMap is a utility type that maps the named module descriptors
+// to their corresponding Refkey types. It handles both string and object
+// entries in the array of named module descriptors.
+// It creates a mapping where:
+// For each L extends NamedModuleDescriptor[]:
+//   • string entries ➜ { [s]: Refkey }
+//   • object entries ➜ { [name]: Refkey & { static: …; instance: … } }
+// ────────────────────────────────────────────────────────────────
+type NamedMap<L extends readonly NamedModuleDescriptor[]> =
+  // plain-string exports
+  {
+    [S in Extract<L[number], string>]: Refkey;
+  } & {
+    // object exports, each one is BOTH a Refkey _and_ has .static/.instance
+    [O in Extract<L[number], { name: string }> as O["name"]]: Refkey & {
+      static: O extends (
+        { staticMembers: infer SM extends NamedModuleDescriptor[] }
+      ) ?
+        NamedMap<SM>
+      : {};
+      instance: O extends (
+        { instanceMembers: infer IM extends NamedModuleDescriptor[] }
+      ) ?
+        NamedMap<IM>
+      : {};
+    };
+  };
 
 function assignMembers(
   binder: Binder,
@@ -183,24 +223,38 @@ function createSymbols(
         typeof exportedName === "string" ?
           { name: exportedName }
         : exportedName;
-      const { name, staticMembers, instanceMembers } = namedRef;
-      const key = keys[name];
+      const key = keys[namedRef.name];
 
       let flags = OutputSymbolFlags.None;
-      if (staticMembers?.length) {
+      if (namedRef.staticMembers?.length) {
         flags |= OutputSymbolFlags.StaticMemberContainer;
       }
-      if (instanceMembers?.length) {
+      if (namedRef.instanceMembers?.length) {
         flags |= OutputSymbolFlags.InstanceMemberContainer;
       }
 
-      const ownerSym = createNamedSymbol(binder, moduleScope, name, key, flags);
-      createStaticMembers(binder, ownerSym, staticMembers ?? [], keys[name]);
+      const ownerSym = createTSSymbol({
+        binder,
+        name: namedRef.name,
+        scope: moduleScope,
+        refkey: key,
+        export: true,
+        default: false,
+        flags,
+      });
+      moduleScope.exportedSymbols.set(key, ownerSym);
+
+      createStaticMembers(
+        binder,
+        ownerSym,
+        namedRef.staticMembers ?? [],
+        keys[namedRef.name],
+      );
       createInstanceMembers(
         binder,
         ownerSym,
-        instanceMembers ?? [],
-        keys[name],
+        namedRef.instanceMembers ?? [],
+        keys[namedRef.name],
       );
     }
   }
@@ -215,7 +269,8 @@ function createRefkeysForMembers(
 
   for (const member of members) {
     const memberObj = typeof member === "string" ? { name: member } : member;
-    const memberKey = (keys[namespace][memberObj.name] = refkey());
+    const memberKey = refkey();
+    keys[namespace][memberObj.name] = memberKey;
 
     if (memberObj.staticMembers?.length) {
       createRefkeysForMembers(memberObj.staticMembers, memberKey, "static");
@@ -226,90 +281,6 @@ function createRefkeysForMembers(
   }
 }
 
-export type NamedExportsFromDescriptors<
-  T extends readonly NamedModuleDescriptor[],
-> = {
-  static: {
-    [N in Extract<T[number], string>]: Refkey;
-  } & {
-    [N in Extract<T[number], { name: string }>["name"]]: Extract<
-      T[number],
-      { name: N }
-    > extends (
-      {
-        staticMembers?: infer SM extends readonly NamedModuleDescriptor[];
-      }
-    ) ?
-      NamedExportsFromDescriptors<SM>
-    : {};
-  };
-  instance: {
-    [N in Extract<T[number], string>]: Refkey;
-  } & {
-    [N in Extract<T[number], { name: string }>["name"]]: Extract<
-      T[number],
-      { name: N }
-    > extends (
-      {
-        instanceMembers?: infer IM extends readonly NamedModuleDescriptor[];
-      }
-    ) ?
-      NamedExportsFromDescriptors<IM>
-    : {};
-  };
-};
-
-export type NamedObjectExports<T extends ModuleSymbolsDescriptor> = {
-  [N in Extract<
-    T["named"] extends readonly (infer U)[] ? U : never,
-    { name: string }
-  >["name"]]: {
-    static: Extract<
-      Extract<T["named"] extends readonly (infer U)[] ? U : never, { name: N }>,
-      { staticMembers?: readonly NamedModuleDescriptor[] }
-    > extends (
-      { staticMembers: infer SM extends readonly NamedModuleDescriptor[] }
-    ) ?
-      NamedExportsFromDescriptors<SM>["static"]
-    : {};
-    instance: Extract<
-      Extract<T["named"] extends readonly (infer U)[] ? U : never, { name: N }>,
-      { instanceMembers?: readonly NamedModuleDescriptor[] }
-    > extends (
-      { instanceMembers: infer IM extends readonly NamedModuleDescriptor[] }
-    ) ?
-      NamedExportsFromDescriptors<IM>["instance"]
-    : {};
-  } & Refkey;
-};
-
-// Helper type to extract named exports as strings
-export type NamedStringExports<T extends ModuleSymbolsDescriptor> = {
-  [N in Extract<
-    T["named"] extends readonly any[] ? T["named"][number] : never,
-    string
-  >]: Refkey;
-};
-
-// Helper type to handle default exports
-export type DefaultExport<T extends ModuleSymbolsDescriptor> =
-  T extends { default: string } ? { default: Refkey } : {};
-
-// Combine all exports for a module
-export type ModuleExports<T extends ModuleSymbolsDescriptor> =
-  NamedStringExports<T> & NamedObjectExports<T> & DefaultExport<T>;
-
-// Main simplified type
-export type PackageRefkeys<T extends PackageDescriptor> = {
-  [K in keyof T as K extends "." ? never : K]: ModuleExports<T[K]>;
-} & ModuleExports<T["."]>;
-
-export interface CreatePackageProps<T extends PackageDescriptor> {
-  name: string;
-  version: string;
-  descriptor: T;
-  builtin?: boolean;
-}
 export function createPackage<const T extends PackageDescriptor>(
   props: CreatePackageProps<T>,
 ): PackageRefkeys<T> & SymbolCreator {
@@ -329,7 +300,6 @@ export function createPackage<const T extends PackageDescriptor>(
     for (const named of symbols.named ?? []) {
       const namedObj = typeof named === "string" ? { name: named } : named;
       keys[namedObj.name] = refkey();
-      // const namedKey = (keys[namedObj.name] = refkey());
 
       if (namedObj.staticMembers?.length) {
         createRefkeysForMembers(

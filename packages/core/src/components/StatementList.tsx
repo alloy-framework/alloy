@@ -1,4 +1,5 @@
-import { Children, List } from "@alloy-js/core";
+import type { Children } from "../jsx-runtime.js";
+import { List } from "./List.jsx";
 
 export interface StatementListProps {
   children: Children;

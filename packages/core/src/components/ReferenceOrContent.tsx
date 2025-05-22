@@ -1,7 +1,7 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed } from "@vue/reactivity";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
+import type { Children } from "../jsx-runtime.js";
 import type { Refkey } from "../refkey.js";
 
 export interface ReferenceOrContentProps {

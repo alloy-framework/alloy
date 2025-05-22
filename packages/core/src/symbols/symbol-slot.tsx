@@ -1,5 +1,5 @@
-import { Children, effect, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { Ref, ShallowReactive, shallowRef } from "@vue/reactivity";
+import { Children, effect, onCleanup } from "../jsx-runtime.js";
 import { OutputSymbol } from "./output-symbol.js";
 import { takeSymbols } from "./symbol-flow.js";
 

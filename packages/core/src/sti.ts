@@ -1,10 +1,10 @@
-import {
-  Children,
-  createIntrinsic,
-  IntrinsicElementBase,
-  JSX,
-} from "@alloy-js/core/jsx-runtime";
 import { code, text } from "./code.js";
+import {
+  type Children,
+  createIntrinsic,
+  type IntrinsicElementBase,
+  type JSX,
+} from "./jsx-runtime.js";
 
 export type StiSignature<T extends keyof JSX.IntrinsicElements> = (
   ...args: unknown extends T ? []

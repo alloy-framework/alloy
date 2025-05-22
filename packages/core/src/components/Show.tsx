@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "../jsx-runtime.js";
 
 export interface ShowProps {
   children: Children;

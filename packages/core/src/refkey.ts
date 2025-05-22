@@ -87,14 +87,15 @@ export function refkey(...args: unknown[]): Refkey {
  * Refkeys for instantiated and copied members are a composite refkey of the
  * owner's refkey and the member's refkey. So for example, given a refkey for an
  * instantiation of a class `rk1`, and a refkey for the instance member of that
- * class `rk2`, the refkey for the instantiated static member is `refkey(rk1,
- * rk2)`. This function will return the same refkey given those same parameters.
+ * class `rk2`, the refkey for the instantiated static member is
+ * `refkey(rk1, rk2)`. This function will return the same refkey given those
+ * same parameters.
  *
  * When a static member symbol `rk3` is owned by another static or instance
  * member symbol (i.e. the outer symbol is itself a member container), the
  * refkey of the instaniated static member is still just the composite of the
- * instantiated variable refkey and the refkey of the inner member `refkey(rk1,
- * rk3)`.
+ * instantiated variable refkey and the refkey of the inner member
+ * `refkey(rk1, rk3)`.
  */
 export function memberRefkey(base: Refkey, member: Refkey): Refkey {
   return refkey(base, member);

@@ -279,7 +279,7 @@ export class OutputSymbol {
   }
 
   /**
-   * Tell @vue/reactivity that this symbol should never be wrapped in a reactive
+   * Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
    * proxy.
    */
   [ReactiveFlags.SKIP] = true;
@@ -372,8 +372,8 @@ export class OutputSymbol {
 
   /**
    * Copy member symbols from the target symbol into the target symbol. The
-   * copied symbols have their refkey set to `refkey(targetSymbol.refkey,
-   * this.refkey)`.
+   * copied symbols have their refkey set to
+   * `refkey(targetSymbol.refkey, this.refkey)`.
    */
   copyTo(targetSymbol: OutputSymbol): void {
     if (this.#aliasTarget) {
@@ -427,7 +427,7 @@ export class OutputSymbol {
    * original symbol, and changes to the original symbol's name and flags
    * will overwrite the copy's name and flags.
    *
-   * @param newScope The scope to use for the copy.
+   * @param newScope - The scope to use for the copy.
    */
   copyToScope(newScope: OutputScope, baseSymbol?: OutputSymbol): OutputSymbol {
     if (this.#aliasTarget) {

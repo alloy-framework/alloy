@@ -11,17 +11,17 @@ import {
 } from "@vue/reactivity";
 
 export interface ReactiveUnionSetOptions<T> {
-  onAdd?: OnAddCallback<T>;
-  onDelete?: OnDeleteCallback<T>;
+  onAdd?: OnReactiveSetAddCallback<T>;
+  onDelete?: OnReactiveSetDeleteCallback<T>;
 }
 
-type OnDeleteCallback<T> = (value: T) => void;
-type OnAddCallback<T> = (value: T) => T;
+export type OnReactiveSetDeleteCallback<T> = (value: T) => void;
+export type OnReactiveSetAddCallback<T> = (value: T) => T;
 
 export class ReactiveUnionSet<T> extends Set<T> {
   private _subsets: Set<Set<T>>;
-  private _onAdd?: OnAddCallback<T>;
-  private _onDelete?: OnDeleteCallback<T>;
+  private _onAdd?: OnReactiveSetAddCallback<T>;
+  private _onDelete?: OnReactiveSetDeleteCallback<T>;
   private _refcounts: Map<T, number> = new Map();
   private _indexes: { add: (arg: T) => void; delete: (arg: T) => void }[] = [];
 

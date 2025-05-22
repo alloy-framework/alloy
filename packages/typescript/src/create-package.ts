@@ -31,7 +31,7 @@ export interface PackageDescriptor {
  * - `instanceMembers`: An optional array of named module descriptors representing
  *  instance members of the module.
  */
-type NamedModuleDescriptor =
+export type NamedModuleDescriptor =
   | string
   | {
       name: string;
@@ -42,7 +42,7 @@ type NamedModuleDescriptor =
 /**
  * Describes the symbols exported by a module.
  */
-interface ModuleSymbolsDescriptor {
+export interface ModuleSymbolsDescriptor {
   default?: string;
   named?: NamedModuleDescriptor[];
 }
@@ -60,7 +60,7 @@ export interface CreatePackageProps<T extends PackageDescriptor> {
 /**
  * Infers the exported members of a module based on its descriptor.
  *
- * @template D - The module descriptor, which may specify a `default` export (as a string)
+ * D - The module descriptor, which may specify a `default` export (as a string)
  *   and/or an array of named exports (`named`).
  *
  * If `D` includes a `default` property of type `string`, the resulting type will include a
@@ -78,7 +78,12 @@ export type PackageRefkeys<
     string,
     { default?: string; named?: NamedModuleDescriptor[] }
   >,
-> = { [P in keyof PD]: ModuleExports<PD[P]> };
+  // “Root” module descriptor at key `"."` becomes the “flat” exports on mcpSdk.*
+> = ModuleExports<PD["."]> & {
+  // Every other module-path (e.g. "./foo/bar.js") lives under its own index:
+  //    mcpSdk["./foo/bar.js"].<exports>
+  [P in keyof PD as P extends "." ? never : P]: ModuleExports<PD[P]>;
+};
 
 // NamedMap is a utility type that maps the named module descriptors
 // to their corresponding Refkey types. It handles both string and object
@@ -88,7 +93,7 @@ export type PackageRefkeys<
 //   • string entries ➜ { [s]: Refkey }
 //   • object entries ➜ { [name]: Refkey & { static: …; instance: … } }
 // ────────────────────────────────────────────────────────────────
-type NamedMap<TDescriptor extends readonly NamedModuleDescriptor[]> =
+export type NamedMap<TDescriptor extends readonly NamedModuleDescriptor[]> =
   // plain-string exports
   {
     [S in Extract<TDescriptor[number], string>]: Refkey;

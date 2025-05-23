@@ -5,6 +5,7 @@ export * from "./EnumMember.js";
 export * from "./ImportStatement.js";
 export * from "./Method.js";
 export * from "./Parameters.js";
+export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./Value.js";
 export * from "./VariableDeclaration.js";

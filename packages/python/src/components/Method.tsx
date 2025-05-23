@@ -1,4 +1,4 @@
-import { Children, Indent, Scope } from "@alloy-js/core";
+import { Children, Indent, Scope, Show, code } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { Declaration } from "./Declaration.jsx";
 import { Parameters, ParametersProps } from "./Parameters.jsx";
@@ -8,6 +8,7 @@ export interface MethodProps extends ParametersProps {
   instanceMethod?: boolean; // true if this is an instance method
   classMethod?: boolean; // true if this is a class method
   children?: Children; // method body
+  returnType?: Children; // return type annotation
 }
 
 export function Method(props: MethodProps) {
@@ -34,7 +35,7 @@ export function Method(props: MethodProps) {
   return (
     <Declaration {...props} name={name}>
       <group>
-        def {name}({params}):
+        def {name}({params})<Show when={props.returnType !== undefined}>{code` -> ${props.returnType}`}</Show>:
         <Scope name={name} kind="method">
           <Indent>{props.children ?? "pass"}</Indent>
         </Scope>

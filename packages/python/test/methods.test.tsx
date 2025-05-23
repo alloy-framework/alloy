@@ -19,6 +19,20 @@ describe("Python Method", () => {
     `);
   });
 
+  it("renders a method with no body as 'pass' with return type", () => {
+    const result = toSourceText(
+      <Output>
+        <py.SourceFile path="test.py">
+          <py.Method name="foo" instanceMethod={true} returnType="int"/>
+        </py.SourceFile>
+      </Output>,
+    );
+    expect(result).toRenderTo(d`
+      def foo(self) -> int:
+        pass
+    `);
+  });
+
   it("renders an instance method with a body", () => {
     const result = toSourceText(
       <Output>

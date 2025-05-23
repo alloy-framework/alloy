@@ -14,6 +14,17 @@ describe("Python Variable", () => {
     expect(res).toBe(`my_var: int = 42`);
   });
 
+  it("declares a python variable without value", () => {
+    const policy = py.createPythonNamePolicy();
+    const res = toSourceText(
+      <py.SourceFile path="test.py">
+        <py.VariableDeclaration name="myVar" type="int" omitNone />
+      </py.SourceFile>,
+      policy,
+    );
+    expect(res).toBe(`my_var: int`);
+  });
+
   it("declares a python variable without typeAnnotations", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(

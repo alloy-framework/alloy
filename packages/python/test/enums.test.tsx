@@ -8,7 +8,7 @@ describe("Python Enum", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Enum
+          <py.EnumDeclaration
             name="Color"
             baseType="IntEnum"
             members={[
@@ -36,7 +36,7 @@ describe("Python Enum", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Enum
+          <py.EnumDeclaration
             name="Animal"
             style="auto"
             members={[{ name: "DOG" }, { name: "CAT" }, { name: "RABBIT" }]}
@@ -61,7 +61,7 @@ describe("Python Enum", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Enum
+          <py.EnumDeclaration
             name="Permission"
             baseType="Flag"
             style="auto"
@@ -91,7 +91,7 @@ describe("Python Enum", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Enum
+          <py.EnumDeclaration
             name="Direction"
             style="functional"
             members={[
@@ -116,7 +116,7 @@ describe("Python Enum", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Enum
+          <py.EnumDeclaration
             name="Priority"
             style="functional"
             members={[

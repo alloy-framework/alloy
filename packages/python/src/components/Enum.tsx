@@ -37,7 +37,7 @@ export interface EnumProps extends DeclarationProps {
 /**
  * A Python enum declaration, following https://docs.python.org/3.11/library/enum.html
  */
-export function Enum(props: EnumProps) {
+export function EnumDeclaration(props: EnumProps) {
   const baseType = props.baseType || "Enum";
   const sfContext = useSourceFileContext();
   sfContext.addImport(

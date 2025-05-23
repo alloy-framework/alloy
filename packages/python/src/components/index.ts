@@ -1,6 +1,6 @@
 export * from "./ClassDeclaration.js";
 export * from "./Declaration.js";
-export * from "./Enum.js";
+export * from "./EnumDeclaration.js";
 export * from "./EnumMember.js";
 export * from "./ImportStatement.js";
 export * from "./Method.js";

@@ -1,4 +1,4 @@
-import { Children, Indent, List, Scope, Show } from "@alloy-js/core";
+import { childrenArray, Children, Indent, List, Scope, Show } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 
@@ -11,8 +11,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const name = usePythonNamePolicy().getName(props.name, "class");
   // Determine if children are present
   const hasChildren =
-    props.children !== undefined &&
-    !(Array.isArray(props.children) && props.children.length === 0);
+    childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
   return (
     <Declaration {...props} name={name}>
       <group>

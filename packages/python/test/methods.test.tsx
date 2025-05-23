@@ -9,7 +9,7 @@ describe("Python Method", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Method name="foo" isInstanceMethod={true} />
+          <py.Method name="foo" instanceMethod={true} />
         </py.SourceFile>
       </Output>,
     );
@@ -23,7 +23,7 @@ describe("Python Method", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Method name="bar" isInstanceMethod={true}>
+          <py.Method name="bar" instanceMethod={true}>
             print('hi')
           </py.Method>
         </py.SourceFile>
@@ -39,7 +39,7 @@ describe("Python Method", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Method name="bar" isClassMethod={true}>
+          <py.Method name="bar" classMethod={true}>
             print('hi')
           </py.Method>
         </py.SourceFile>

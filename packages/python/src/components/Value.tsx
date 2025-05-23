@@ -1,12 +1,12 @@
 import { For, Indent, memo } from "@alloy-js/core";
 
 export interface ValueProps {
-  value?: unknown;
+  jsValue?: unknown;
 }
 
 export function Value(props: ValueProps): any {
   return memo(() => {
-    const value = props.value;
+    const value = props.jsValue;
 
     if (typeof value === "undefined") {
       return "None";
@@ -29,7 +29,7 @@ export function Value(props: ValueProps): any {
             {"["}
             <Indent softline trailingBreak>
               <For each={value} comma line>
-                {(v) => <Value value={v} />}
+                {(v) => <Value jsValue={v} />}
               </For>
             </Indent>
             {"]"}
@@ -48,7 +48,7 @@ export function Value(props: ValueProps): any {
               <For each={entries} comma line>
                 {([k, v]) => (
                   <>
-                    <Value value={k} />: <Value value={v} />
+                    <Value jsValue={k} />: <Value jsValue={v} />
                   </>
                 )}
               </For>

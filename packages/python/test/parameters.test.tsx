@@ -37,7 +37,7 @@ describe("Parameters", () => {
               {
                 name: "y",
                 type: "str",
-                defaultValue: <py.Value value="hello" />,
+                defaultValue: <py.Value jsValue="hello" />,
               },
             ]}
           />
@@ -57,7 +57,7 @@ describe("Parameters", () => {
               {
                 name: "y",
                 type: "dict",
-                defaultValue: <py.Value value={{ John: 123, Doe: 234 }} />,
+                defaultValue: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
               },
             ]}
           />
@@ -77,7 +77,7 @@ describe("Parameters", () => {
               {
                 name: "y",
                 type: "dict",
-                defaultValue: <py.Value value={{ John: 123, Doe: 234 }} />,
+                defaultValue: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
               },
             ]}
             args={true}

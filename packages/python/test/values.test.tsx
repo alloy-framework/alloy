@@ -4,38 +4,38 @@ import * as py from "../src/components/index.js";
 
 describe("Value", () => {
   it("renders string value", () => {
-    expect(<py.Value value={"Test"} />).toRenderTo('"Test"');
+    expect(<py.Value jsValue={"Test"} />).toRenderTo('"Test"');
   });
 
   it("renders null/undefined object", () => {
-    expect(<py.Value value={undefined} />).toRenderTo("None");
+    expect(<py.Value jsValue={undefined} />).toRenderTo("None");
   });
 
   it("renders number", () => {
-    expect(<py.Value value={123} />).toRenderTo("123");
+    expect(<py.Value jsValue={123} />).toRenderTo("123");
   });
 
   it("renders boolean", () => {
-    expect(<py.Value value={true} />).toRenderTo("True");
+    expect(<py.Value jsValue={true} />).toRenderTo("True");
   });
 
   it("renders other objects", () => {
     function Test() {
       return <>Test</>;
     }
-    expect(<py.Value value={Test} />).toRenderTo("Test");
+    expect(<py.Value jsValue={Test} />).toRenderTo("Test");
   });
 
   it("renders array", () => {
-    expect(<py.Value value={[1, 2, 3]} />).toRenderTo("[1, 2, 3]");
+    expect(<py.Value jsValue={[1, 2, 3]} />).toRenderTo("[1, 2, 3]");
   });
 
   it("renders object", () => {
-    expect(<py.Value value={{ a: 1, b: 2 }} />).toRenderTo('{"a": 1, "b": 2}');
+    expect(<py.Value jsValue={{ a: 1, b: 2 }} />).toRenderTo('{"a": 1, "b": 2}');
   });
 
   it("renders empty object", () => {
-    expect(<py.Value value={{}} />).toRenderTo("{}");
+    expect(<py.Value jsValue={{}} />).toRenderTo("{}");
   });
 
   it("renders function", () => {
@@ -43,11 +43,11 @@ describe("Value", () => {
       return <>Test</>;
     }
 
-    expect(<py.Value value={Test} />).toRenderTo("Test");
+    expect(<py.Value jsValue={Test} />).toRenderTo("Test");
   });
 
   it("renders nested object", () => {
-    expect(<py.Value value={{ a: { b: { c: 1 } }, d: 2 }} />).toRenderTo(
+    expect(<py.Value jsValue={{ a: { b: { c: 1 } }, d: 2 }} />).toRenderTo(
       '{"a": {"b": {"c": 1}}, "d": 2}',
     );
   });

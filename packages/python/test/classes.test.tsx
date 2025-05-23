@@ -9,7 +9,7 @@ describe("Python Class", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Class name="Foo" />
+          <py.ClassDeclaration name="Foo" />
         </py.SourceFile>
       </Output>,
     );
@@ -23,7 +23,7 @@ describe("Python Class", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Class name="Bar">print('hi')</py.Class>
+          <py.ClassDeclaration name="Bar">print('hi')</py.ClassDeclaration>
         </py.SourceFile>
       </Output>,
     );
@@ -38,11 +38,11 @@ describe("Python Class", () => {
       <Output>
         <py.SourceFile path="test.py">
           {[
-            <py.Class name="Base1" />,
+            <py.ClassDeclaration name="Base1" />,
             <br />,
-            <py.Class name="Base2" />,
+            <py.ClassDeclaration name="Base2" />,
             <br />,
-            <py.Class name="Baz" bases={[refkey("Base1"), refkey("Base2")]} />,
+            <py.ClassDeclaration name="Baz" bases={[refkey("Base1"), refkey("Base2")]} />,
           ]}
         </py.SourceFile>
       </Output>,
@@ -62,9 +62,9 @@ describe("Python Class", () => {
     const result = toSourceText(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Class name="Qux" bases={["Base"]}>
+          <py.ClassDeclaration name="Qux" bases={["Base"]}>
             print('hello')
-          </py.Class>
+          </py.ClassDeclaration>
         </py.SourceFile>
       </Output>,
     );
@@ -78,10 +78,10 @@ describe("Python Class", () => {
     const result = render(
       <Output>
         <py.SourceFile path="mod1.py">
-          <py.Class name="A" />
+          <py.ClassDeclaration name="A" />
         </py.SourceFile>
         <py.SourceFile path="mod2.py">
-          <py.Class name="B" bases={[refkey("A")]} />
+          <py.ClassDeclaration name="B" bases={[refkey("A")]} />
         </py.SourceFile>
       </Output>,
     );
@@ -102,14 +102,14 @@ describe("Python Class", () => {
     const result = render(
       <Output>
         <py.SourceFile path="test.py">
-          <py.Class name="A" />
+          <py.ClassDeclaration name="A" />
           <br />
-          <py.Class name="B">
+          <py.ClassDeclaration name="B">
             <List hardline>
-              <py.Variable name="bar" type={refkey("A")} omitNone />
-              <py.Variable name="foo" type="str" omitNone />
+              <py.VariableDeclaration name="bar" type={refkey("A")} omitNone />
+              <py.VariableDeclaration name="foo" type="str" omitNone />
             </List>
-          </py.Class>
+          </py.ClassDeclaration>
         </py.SourceFile>
       </Output>,
     );

@@ -1,14 +1,14 @@
 import { Children, code } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js"; // assuming you have this
 
-export interface VariableProps {
+export interface VariableDeclarationProps {
   name: string;
   value?: Children;
   type?: Children; // Optional, only for type annotation
   omitNone?: boolean; // Optional, to omit None assignment
 }
 
-export function Variable(props: VariableProps) {
+export function VariableDeclaration(props: VariableDeclarationProps) {
   const name = usePythonNamePolicy().getName(props.name, "variable");
 
   // Handle optional type annotation

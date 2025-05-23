@@ -2,12 +2,12 @@ import { Children, Indent, List, Scope, Show } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 
-export interface ClassProps extends DeclarationProps {
+export interface ClassDeclarationProps extends DeclarationProps {
   name: string;
   bases?: Children[];
 }
 
-export function Class(props: ClassProps) {
+export function ClassDeclaration(props: ClassDeclarationProps) {
   const name = usePythonNamePolicy().getName(props.name, "class");
   // Determine if children are present
   const hasChildren =

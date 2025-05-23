@@ -1,7 +1,7 @@
 import { Children, For, Refkey } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { createPythonSymbol } from "../symbols/index.js";
-import { Class } from "./Class.js";
+import { ClassDeclaration } from "./ClassDeclaration.js";
 import { DeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.js";
 import { useSourceFileContext } from "./SourceFile.js";
@@ -37,7 +37,7 @@ export interface EnumProps extends DeclarationProps {
 /**
  * A Python enum declaration, following https://docs.python.org/3.11/library/enum.html
  */
-export function Enum(props: EnumProps) {
+export function EnumDeclaration(props: EnumProps) {
   const baseType = props.baseType || "Enum";
   const sfContext = useSourceFileContext();
   sfContext.addImport(
@@ -88,11 +88,11 @@ export function Enum(props: EnumProps) {
     );
   }
   return (
-    <Class name={props.name} bases={[baseType]}>
+    <ClassDeclaration name={props.name} bases={[baseType]}>
       <For each={memberList} hardline>
         {(member) => <EnumMember name={member.name} value={member.value} />}
       </For>
       {props.children}
-    </Class>
+    </ClassDeclaration>
   );
 }

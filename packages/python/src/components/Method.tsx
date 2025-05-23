@@ -1,4 +1,4 @@
-import { Block, Children, Scope } from "@alloy-js/core";
+import { Children, Indent, Scope } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
 import { Declaration } from "./Declaration.jsx";
 import { Parameters, ParametersProps } from "./Parameters.jsx";
@@ -34,11 +34,9 @@ export function Method(props: MethodProps) {
   return (
     <Declaration {...props} name={name}>
       <group>
-        def {name}({params})
+        def {name}({params}):
         <Scope name={name} kind="method">
-          <Block opener=":" closer="">
-            {props.children ?? "pass"}
-          </Block>
+          <Indent>{props.children ?? "pass"}</Indent>
         </Scope>
       </group>
     </Declaration>

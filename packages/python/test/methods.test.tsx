@@ -1,9 +1,10 @@
 import { Output } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
 import { toSourceText } from "./utils.jsx";
 
-describe("Python Class", () => {
+describe("Python Method", () => {
   it("renders a method with no body as 'pass'", () => {
     const result = toSourceText(
       <Output>
@@ -12,7 +13,10 @@ describe("Python Class", () => {
         </py.SourceFile>
       </Output>,
     );
-    expect(result).toRenderTo(`def foo(self):\n  pass\n\n`);
+    expect(result).toRenderTo(d`
+      def foo(self):
+        pass
+    `);
   });
 
   it("renders an instance method with a body", () => {
@@ -25,7 +29,10 @@ describe("Python Class", () => {
         </py.SourceFile>
       </Output>,
     );
-    expect(result).toRenderTo(`def bar(self):\n  print('hi')\n\n`);
+    expect(result).toRenderTo(d`
+      def bar(self):
+        print('hi')
+    `);
   });
 
   it("renders a class method with a body", () => {
@@ -38,7 +45,10 @@ describe("Python Class", () => {
         </py.SourceFile>
       </Output>,
     );
-    expect(result).toRenderTo(`def bar(cls):\n  print('hi')\n\n`);
+    expect(result).toRenderTo(d`
+      def bar(cls):
+        print('hi')
+    `);
   });
 
   it("renders a function with parameters", () => {
@@ -60,7 +70,10 @@ describe("Python Class", () => {
       </Output>,
     );
     expect(result).toRenderTo(
-      `def baz(x: int, y = 0, *args, **kwargs):\n  print(x, y)\n\n`,
+      d`
+        def baz(x: int, y = 0, *args, **kwargs):
+          print(x, y)
+      `,
     );
   });
 
@@ -74,6 +87,9 @@ describe("Python Class", () => {
         </py.SourceFile>
       </Output>,
     );
-    expect(result).toRenderTo(`def __init__(self, x, y = 0):\n  pass\n\n`);
+    expect(result).toRenderTo(d`
+      def __init__(self, x, y = 0):
+        pass
+    `);
   });
 });

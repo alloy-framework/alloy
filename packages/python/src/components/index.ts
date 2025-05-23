@@ -7,4 +7,4 @@ export * from "./Method.js";
 export * from "./Parameters.js";
 export * from "./SourceFile.js";
 export * from "./Value.js";
-export * from "./Variable.js";
+export * from "./VariableDeclaration.js";

@@ -1,6 +1,6 @@
 import { Children, List } from "@alloy-js/core";
 import { Declaration } from "./Declaration.js";
-import { Variable } from "./Variable.js";
+import { VariableDeclaration } from "./VariableDeclaration.js";
 
 export interface NamedParameter {
   name: string;
@@ -12,10 +12,10 @@ export interface NamedParameter {
  * Render a single parameter as a Declaration (for symbol creation) or as *args/**kwargs.
  */
 function Parameter(param: NamedParameter) {
-  // Use Variable to render the parameter, wrapped in Declaration for symbol creation
+  // Use VariableDeclaration to render the parameter, wrapped in Declaration for symbol creation
   return (
     <Declaration name={param.name}>
-      <Variable
+      <VariableDeclaration
         name={param.name}
         type={param.type}
         value={param.defaultValue}

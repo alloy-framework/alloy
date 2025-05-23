@@ -7,7 +7,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable name="myVar" type="int" value={42} />
+        <py.VariableDeclaration name="myVar" type="int" value={42} />
       </py.SourceFile>,
       policy,
     );
@@ -18,7 +18,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable name="myVar" value={42} />
+        <py.VariableDeclaration name="myVar" value={42} />
       </py.SourceFile>,
       policy,
     );
@@ -29,7 +29,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable name="myVar" />
+        <py.VariableDeclaration name="myVar" />
       </py.SourceFile>,
       policy,
     );
@@ -40,7 +40,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable name="myVar" value={<py.Value value={null} />} />
+        <py.VariableDeclaration name="myVar" value={<py.Value value={null} />} />
       </py.SourceFile>,
       policy,
     );
@@ -51,7 +51,7 @@ describe("Python Variable", () => {
     const policy = py.createPythonNamePolicy();
     const res = toSourceText(
       <py.SourceFile path="test.py">
-        <py.Variable
+        <py.VariableDeclaration
           name="nameIdPairs"
           value={<py.Value value={{ John: 123, Doe: 234 }} />}
         />

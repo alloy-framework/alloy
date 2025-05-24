@@ -21,13 +21,21 @@ export interface MemberExpressionProps {
   children: Children;
 }
 
-interface PartDescriptor {
+interface PartDescriptorWithId extends PartDescriptorBase {
   id: Children;
+}
+
+interface PartDescriptorWithIndex extends PartDescriptorBase {
+  index: number;
+}
+interface PartDescriptorBase {
   accessStyle: "dot" | "bracket";
   quoteId: boolean;
   nullish: boolean;
   args?: Children[];
 }
+
+type PartDescriptor = PartDescriptorWithId | PartDescriptorWithIndex;
 
 /**
  * Create a member expression from parts. Each part can provide one of
@@ -158,12 +166,16 @@ function createPartDescriptorFromProps(
     id: computed(() => {
       if (partProps.args) {
         return undefined;
-      } else if ("children" in partProps && partProps.children !== undefined) {
+      } else if (partProps.children !== undefined) {
         return partProps.children;
       } else if (first && partProps.refkey) {
         return partProps.refkey;
-      } else if (partProps.id) {
-        return escapeId(partProps.id);
+      } else if (partProps.id !== undefined) {
+        return isNumericIdentifier(partProps.id) ?
+            partProps.id
+          : escapeId(partProps.id);
+      } else if (partProps.index !== undefined) {
+        return partProps.index;
       } else if (symbolSource.value) {
         return escapeId(symbolSource.value.name);
       } else {
@@ -171,13 +183,25 @@ function createPartDescriptorFromProps(
       }
     }),
     accessStyle: computed(() => {
-      if (partProps.args) {
+      if (partProps.children !== undefined) {
+        if (typeof partProps.children === "string") {
+          return partProps.quoteId ? "bracket" : (
+              accessStyleForMemberName(partProps.children)
+            );
+        }
+
+        return "bracket";
+      } else if (partProps.args) {
         // not used
         return "dot";
       } else if (partProps.quoteId) {
         return "bracket";
-      } else if (partProps.id) {
-        return accessStyleForMemberName(partProps.id);
+      } else if (partProps.id !== undefined) {
+        return isNumericIdentifier(partProps.id) ? "bracket" : (
+            accessStyleForMemberName(partProps.id)
+          );
+      } else if (partProps.index !== undefined) {
+        return "bracket";
       } else if (symbolSource.value) {
         return accessStyleForMemberName(symbolSource.value.name);
       } else {
@@ -187,8 +211,10 @@ function createPartDescriptorFromProps(
     quoteId: computed(() => {
       if (partProps.quoteId) {
         return partProps.quoteId;
-      } else if (partProps.id) {
-        return !isValidJSIdentifier(partProps.id);
+      } else if (partProps.id !== undefined) {
+        return isNumericIdentifier(partProps.id) ? false : (
+            !isValidJSIdentifier(partProps.id)
+          );
       } else if (symbolSource.value) {
         return !isValidJSIdentifier(symbolSource.value.name);
       } else {
@@ -307,7 +333,9 @@ function formatCallChain(parts: PartDescriptor[]): Children {
       for (let partIndex = 0; partIndex < chunk.length; partIndex++) {
         if (chunkIndex === 0 && partIndex === 0) {
           // first part is just gonna be the id
-          chunkExpression.push(chunk[0].id);
+          const firstPart =
+            isIdPartDescriptor(chunk[0]) ? chunk[0].id : chunk[0].index;
+          chunkExpression.push(firstPart);
           continue;
         }
         const part = chunk[partIndex];
@@ -351,7 +379,7 @@ function formatNonCallChain(parts: PartDescriptor[]): Children {
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
-      const base = part.id;
+      const base = isIdPartDescriptor(part) ? part.id : part.index;
       if (i === 0) {
         expression.push(base);
       } else {
@@ -381,7 +409,7 @@ function formatArrayAccess(prevPart: PartDescriptor, part: PartDescriptor) {
       <indent>
         <sbr />
         {part.quoteId && '"'}
-        {part.id}
+        {isIdPartDescriptor(part) ? part.id : part.index}
         {part.quoteId && '"'}
       </indent>
       <sbr />]
@@ -395,7 +423,7 @@ function formatDotAccess(prevPart: PartDescriptor, part: PartDescriptor) {
       <indent>
         <sbr />
         {prevPart.nullish ? "?." : "."}
-        {part.id}
+        {isIdPartDescriptor(part) ? part.id : part.index}
       </indent>
     </group>
   );
@@ -449,7 +477,13 @@ export interface MemberExpressionPartProps {
   /**
    * The identifier for this part of the member expression.
    */
-  id?: string;
+  id?: string | number;
+
+  /**
+   * The index for this part of the member expression. This is used when
+   * the part is an array access (i.e. `foo[0]`).
+   */
+  index?: number;
 
   /**
    * Whether the identifier should be quoted or not. Only needed when
@@ -505,3 +539,17 @@ MemberExpression.Part = function (props: MemberExpressionPartProps) {
    * the `MemberExpression` component.
    */
 };
+
+/**
+ * Check if the given id is a numeric identifier.
+ *
+ */
+function isNumericIdentifier(id: Children) {
+  return typeof id === "number";
+}
+
+function isIdPartDescriptor(
+  part: PartDescriptor,
+): part is PartDescriptorWithId {
+  return "id" in part;
+}

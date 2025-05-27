@@ -1,5 +1,20 @@
 # Changelog - @alloy-js/core
 
+## 0.17.0
+
+### Features
+
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Add tracing for symbols. Tracing can be enabled by setting ALLOY_TRACE environment variable to a comma-separated list of symbol, scope, and/or resolve.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Symbols and member scopes now support copy and move operations. These are used in combination with instantiate to model such things as instantiating and applying types to variables.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) New symbol flag Transient which is a symbol that is merely a placeholder. For example, symbols created by expressions are generally transient, and their useful parts are copied into a declaration symbol when appropriate.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Symbols can now be aliased. Alias symbols will look up to their alias target when accessing things like instance or static members.
+
+### Breaking Changes
+
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Refactor symbols to drastically simplify and optimize their usage. Symbols and scopes are now classes, and languages subclass these to add additional behaviors. Many binder APIs which operated on scopes or symbols are now methods on scopes or symbols.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) New takeSymbol/emitSymbol APIs added for passing symbols up the render tree to components which accept them. This is a generalization of the pattern in AssignmentTargetContext, so that context has been deleted.
+
+
 ## 0.16.0
 
 ### Features

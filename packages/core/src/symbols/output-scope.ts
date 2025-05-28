@@ -20,36 +20,9 @@ import {
   traceEffect,
   TracePhase,
 } from "../tracer.js";
-import { OutputSymbol } from "./output-symbol.js";
+import { OutputScopeFlags } from "./flags.js";
+import type { OutputSymbol } from "./output-symbol.js";
 import { SymbolTable } from "./symbol-table.js";
-
-/**
- * Flags that describe an output scope.
- */
-export enum OutputScopeFlags {
-  None = 0,
-
-  /**
-   * This scope is a static member scope.
-   */
-  StaticMemberScope = 1 << 0,
-
-  /**
-   * This scope is an instance member scope.
-   */
-  InstanceMemberScope = 1 << 1,
-
-  /**
-   * This scope is transient, and only exists to be merged with other scopes.
-   */
-  Transient = 1 << 2,
-
-  /**
-   * This scope is a member scope. Scopes with this flag will have an `owner`
-   * property that points to the symbol whose member this scope holds.
-   */
-  MemberScope = StaticMemberScope | InstanceMemberScope,
-}
 
 let scopeCount = 0;
 

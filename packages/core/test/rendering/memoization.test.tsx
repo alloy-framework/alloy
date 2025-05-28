@@ -1,6 +1,6 @@
-import { memo } from "@alloy-js/core/jsx-runtime";
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+import { memo } from "../../src/reactivity.js";
 import { renderTree } from "../../src/render.js";
 import { flushJobs } from "../../src/scheduler.js";
 

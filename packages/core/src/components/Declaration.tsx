@@ -1,8 +1,9 @@
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
-import { Children, onCleanup } from "../jsx-runtime.js";
+import { onCleanup } from "../reactivity.js";
 import { Refkey } from "../refkey.js";
+import type { Children } from "../runtime/component.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**

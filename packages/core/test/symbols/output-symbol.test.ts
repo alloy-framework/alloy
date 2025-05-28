@@ -2,19 +2,16 @@ import { reactive, watch } from "@vue/reactivity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Binder, createOutputBinder } from "../../src/binder.js";
 import { ComponentContext } from "../../src/context.js";
+import { MemberScopeContext } from "../../src/context/member-scope.js";
 import { ScopeContext } from "../../src/index.browser.js";
 import { renderTree } from "../../src/render.js";
 import { flushJobs } from "../../src/scheduler.js";
 import {
-  OutputScope,
   OutputScopeFlags,
-} from "../../src/symbols/output-scope.js";
-import {
-  OutputSymbol,
   OutputSymbolFlags,
-} from "../../src/symbols/output-symbol.js";
-
-import { MemberScopeContext } from "../../src/context/member-scope.js";
+} from "../../src/symbols/flags.js";
+import { OutputScope } from "../../src/symbols/output-scope.js";
+import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 
 let binder: Binder;
 beforeEach(() => {

@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createOutputBinder, refkey } from "../../src/index.browser.js";
 import { flushJobs } from "../../src/scheduler.js";
-import {
-  OutputSymbol,
-  OutputSymbolFlags,
-} from "../../src/symbols/output-symbol.js";
+import { OutputSymbolFlags } from "../../src/symbols/flags.js";
+import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 import { createScopeTree } from "./utils.js";
 
 describe("Symbol name resolution", () => {

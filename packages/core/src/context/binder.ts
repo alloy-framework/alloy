@@ -1,6 +1,6 @@
 import type { Binder } from "../binder.js";
 import {
-  ComponentContext,
+  type ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";

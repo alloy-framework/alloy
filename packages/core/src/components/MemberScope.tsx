@@ -1,6 +1,6 @@
 import { MemberScopeContext } from "../context/member-scope.js";
-import { Children } from "../jsx-runtime.js";
-import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { Children } from "../runtime/component.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 export interface MemberScopeProps {
   /**
    * The name of the member scope.

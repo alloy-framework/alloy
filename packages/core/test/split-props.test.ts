@@ -1,6 +1,6 @@
 import { effect, reactive } from "@vue/reactivity";
 import { expect, it, vi } from "vitest";
-import { splitProps } from "../src/jsx-runtime.js";
+import { splitProps } from "../src/props-combinators.js";
 
 it("splits regular object props", () => {
   const props = {

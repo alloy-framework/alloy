@@ -1,4 +1,4 @@
-import { NameConflictResolver } from "../binder.js";
+import type { NameConflictResolver } from "../binder.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
 import { queueJob } from "../scheduler.js";
 import {
@@ -7,8 +7,8 @@ import {
   trace,
   TracePhase,
 } from "../tracer.js";
-import { OutputScope } from "./output-scope.js";
-import { OutputSymbol } from "./output-symbol.js";
+import type { OutputScope } from "./output-scope.js";
+import type { OutputSymbol } from "./output-symbol.js";
 
 export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   private _namesToDeconflict: Set<string> = new Set();

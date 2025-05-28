@@ -1,5 +1,6 @@
 import { Ref, ShallowReactive, shallowRef } from "@vue/reactivity";
-import { Children, effect, onCleanup } from "../jsx-runtime.js";
+import { effect, onCleanup } from "../reactivity.js";
+import type { Children } from "../runtime/component.js";
 import { OutputSymbol } from "./output-symbol.js";
 import { takeSymbols } from "./symbol-flow.js";
 

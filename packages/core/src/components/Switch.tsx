@@ -1,4 +1,5 @@
-import { type Children, memo, taggedComponent } from "../jsx-runtime.js";
+import { memo } from "../reactivity.js";
+import { type Children, taggedComponent } from "../runtime/component.js";
 import { childrenArray, findKeyedChildren } from "../utils.js";
 
 export interface SwitchProps {

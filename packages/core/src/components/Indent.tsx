@@ -1,4 +1,4 @@
-import type { Children } from "../jsx-runtime.js";
+import type { Children } from "../runtime/component.js";
 
 export interface IndentProps {
   children: Children;

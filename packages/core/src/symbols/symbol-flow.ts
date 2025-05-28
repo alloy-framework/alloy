@@ -1,14 +1,10 @@
-import {
-  Context,
-  effect,
-  getContext,
-  onCleanup,
-} from "@alloy-js/core/jsx-runtime";
 import { isRef, Ref, shallowReactive } from "@vue/reactivity";
+import { Context, effect, getContext, onCleanup } from "../reactivity.js";
 
 import { MemberScopeContext } from "../context/member-scope.js";
 import { ScopeContext } from "../context/scope.js";
-import { OutputSymbol, OutputSymbolFlags } from "./output-symbol.js";
+import { OutputSymbolFlags } from "./flags.js";
+import { OutputSymbol } from "./output-symbol.js";
 
 export interface TakeSymbolCallback {
   (symbol: OutputSymbol): void;

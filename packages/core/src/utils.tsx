@@ -1,19 +1,21 @@
 import { toRaw } from "@vue/reactivity";
+import { BaseListProps } from "./components/List.jsx";
 import {
-  Children,
-  ComponentCreator,
   createCustomContext,
   CustomContext,
   Disposable,
-  isComponentCreator,
   memo,
   onCleanup,
   root,
   untrack,
-} from "./jsx-runtime.js";
+} from "./reactivity.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BaseListProps } from "./components/List.jsx";
 import { OutputDirectory, OutputFile, render } from "./render.js";
+import {
+  Children,
+  ComponentCreator,
+  isComponentCreator,
+} from "./runtime/component.js";
 
 export interface JoinOptions {
   /**

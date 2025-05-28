@@ -4,7 +4,7 @@ import { For } from "../../src/index.js";
 import { printTree, renderTree } from "../../src/render.js";
 import { d } from "../../testing/render.js";
 
-it("it should work with circular reactives", () => {
+it.only("it should work with circular reactives", () => {
   const items: string[] = shallowReactive([]);
   let added = false;
   function MaybeAddString(props: any) {

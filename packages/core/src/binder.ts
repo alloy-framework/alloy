@@ -1,13 +1,11 @@
 import { computed, ref, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { effect, untrack } from "./jsx-runtime.js";
+import { effect, untrack } from "./reactivity.js";
 import { refkey, Refkey } from "./refkey.js";
+import { OutputSymbolFlags } from "./symbols/flags.js";
 import { OutputScope } from "./symbols/output-scope.js";
-import {
-  OutputSymbolFlags,
-  type OutputSymbol,
-} from "./symbols/output-symbol.js";
+import { type OutputSymbol } from "./symbols/output-symbol.js";
 import {
   formatRefkeys,
   formatSymbol,

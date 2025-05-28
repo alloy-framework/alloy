@@ -2,7 +2,8 @@ import { shallowReactive } from "@vue/reactivity";
 import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
-import { Children, getContext } from "../jsx-runtime.js";
+import { getContext } from "../reactivity.js";
+import type { Children } from "../runtime/component.js";
 
 export interface SourceDirectoryProps {
   path: string;

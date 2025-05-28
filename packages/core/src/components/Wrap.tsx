@@ -1,4 +1,4 @@
-import { Children, ComponentDefinition } from "../jsx-runtime.js";
+import type { Children, ComponentDefinition } from "../runtime/component.js";
 
 export interface WrapProps<TProps> {
   /**

@@ -1,4 +1,4 @@
-import type { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core";
 import {
   isTypeRefContext,
   TypeRefContext as TypeRefContextDef,

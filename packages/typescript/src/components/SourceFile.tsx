@@ -6,9 +6,9 @@ import {
   Show,
   SourceDirectoryContext,
   useContext,
+  type Children,
 } from "@alloy-js/core";
 
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { join } from "pathe";
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { TSModuleScope } from "../symbols/index.js";

@@ -7,8 +7,8 @@ import {
   onCleanup,
   Show,
   taggedComponent,
+  type Children,
 } from "@alloy-js/core";
-import type { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import type {
   FunctionTypeParameterDescriptor,

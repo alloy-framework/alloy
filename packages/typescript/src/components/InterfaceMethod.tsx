@@ -6,8 +6,8 @@ import {
   Refkey,
   Scope,
   Show,
+  type Children,
 } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";

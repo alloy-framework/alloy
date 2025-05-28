@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { type Children } from "@alloy-js/core";
 
 export interface JSDocCommentProps {
   children: Children;

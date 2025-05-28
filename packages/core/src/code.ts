@@ -2,7 +2,7 @@
 // it should be possible to share logic between this and the babel transform, but
 // this is an exercise for the future.
 import { hbr, indent } from "./components/stc/sti.js";
-import { Child, Children } from "./jsx-runtime.js";
+import type { Child, Children } from "./runtime/component.js";
 
 export function text(
   template: TemplateStringsArray,

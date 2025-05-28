@@ -1,4 +1,3 @@
-import { effect } from "@alloy-js/core/jsx-runtime";
 import {
   ITERATE_KEY,
   ReactiveFlags,
@@ -9,6 +8,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
+import { effect } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {
   onAdd?: OnReactiveSetAddCallback<T>;

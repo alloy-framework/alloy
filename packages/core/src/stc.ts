@@ -1,9 +1,9 @@
 import { code, text } from "./code.js";
-import type {
+import {
   Children,
   ComponentCreator,
   ComponentDefinition,
-} from "./jsx-runtime.js";
+} from "./runtime/component.js";
 
 export type MakeChildrenOptional<T extends object> =
   T extends { children?: any } ?

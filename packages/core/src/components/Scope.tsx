@@ -1,5 +1,5 @@
 import { ScopeContext } from "../context/scope.js";
-import { Children } from "../jsx-runtime.js";
+import type { Children } from "../runtime/component.js";
 import { OutputScope } from "../symbols/output-scope.js";
 
 /**

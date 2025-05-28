@@ -1,4 +1,4 @@
-import { Children, Refkey } from "@alloy-js/core";
+import type { Children, Refkey } from "@alloy-js/core";
 
 /**
  * Common properties for ParameterDescriptor and FunctionTypeParameterDescriptor.

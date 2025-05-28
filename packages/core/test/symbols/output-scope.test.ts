@@ -3,10 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Binder, createOutputBinder } from "../../src/binder.js";
 import { Refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
-import {
-  OutputScope,
-  OutputScopeFlags,
-} from "../../src/symbols/output-scope.js";
+import { OutputScopeFlags } from "../../src/symbols/flags.js";
+import { OutputScope } from "../../src/symbols/output-scope.js";
 import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
 

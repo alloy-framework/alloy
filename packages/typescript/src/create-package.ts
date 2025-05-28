@@ -1,8 +1,8 @@
 import {
-  Binder,
+  type Binder,
   getSymbolCreatorSymbol,
   OutputSymbolFlags,
-  Refkey,
+  type Refkey,
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";

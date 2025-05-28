@@ -1,13 +1,11 @@
 import { Binder } from "../../src/index.browser.js";
 import { Refkey, refkey } from "../../src/refkey.js";
 import {
-  OutputScope,
   OutputScopeFlags,
-} from "../../src/symbols/output-scope.js";
-import {
-  OutputSymbol,
   OutputSymbolFlags,
-} from "../../src/symbols/output-symbol.js";
+} from "../../src/symbols/flags.js";
+import { OutputScope } from "../../src/symbols/output-scope.js";
+import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 
 type ScopeRecords = Record<string, ScopeDescriptor>;
 type SymbolRecords = Record<string, SymbolDescriptor>;

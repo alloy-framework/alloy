@@ -1,5 +1,4 @@
-import { printTree, renderTree } from "@alloy-js/core";
-import { Children } from "../src/jsx-runtime.js";
+import { Children, printTree, renderTree } from "@alloy-js/core";
 
 export { printTree } from "@alloy-js/core";
 

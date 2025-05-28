@@ -1,4 +1,6 @@
-import { Children, memo, splitProps } from "../jsx-runtime.js";
+import { splitProps } from "../props-combinators.js";
+import { memo } from "../reactivity.js";
+import type { Children } from "../runtime/component.js";
 import { childrenArray } from "../utils.js";
 import { For } from "./For.jsx";
 

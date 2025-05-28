@@ -1,5 +1,5 @@
 import { computed } from "@vue/reactivity";
-import { Children } from "../jsx-runtime.js";
+import type { Children } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { Indent } from "./Indent.jsx";
 

@@ -1,5 +1,5 @@
 import { childrenArray, computed } from "@alloy-js/core";
-import type { Children } from "../jsx-runtime.js";
+import type { Children } from "../runtime/component.js";
 
 export interface Prose {
   children: Children;

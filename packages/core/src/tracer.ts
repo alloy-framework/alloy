@@ -1,9 +1,10 @@
-import { untrack } from "@alloy-js/core/jsx-runtime";
 import { effect, ReactiveEffectRunner } from "@vue/reactivity";
+import { untrack } from "./reactivity.js";
 import type { Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
-import { OutputScope, OutputScopeFlags } from "./symbols/output-scope.js";
-import { OutputSymbol, OutputSymbolFlags } from "./symbols/output-symbol.js";
+import { OutputScopeFlags, OutputSymbolFlags } from "./symbols/flags.js";
+import { type OutputScope } from "./symbols/output-scope.js";
+import { type OutputSymbol } from "./symbols/output-symbol.js";
 
 // enable tracing for specific phases using a comma separated list of
 // dotted identifiers, e.g. `scope.update,symbol.create`.
@@ -30,7 +31,6 @@ debuggerIdsEnv.split(",").forEach((id) => {
   }
 });
 export const TracePhase = {
-  render: {},
   scope: {
     update: {
       area: "scope",
@@ -110,6 +110,40 @@ export const TracePhase = {
       area: "resolve",
       subarea: "failure",
       bg: { r: 100, g: 50, b: 50 },
+    },
+  },
+  effect: {
+    schedule: {
+      area: "effect",
+      subarea: "schedule",
+      bg: { r: 100, g: 100, b: 0 },
+    },
+    track: {
+      area: "effect",
+      subarea: "track",
+      bg: { r: 75, g: 75, b: 0 },
+    },
+    trigger: {
+      area: "effect",
+      subarea: "trigger",
+      bg: { r: 50, g: 50, b: 0 },
+    },
+  },
+  render: {
+    worker: {
+      area: "render",
+      subarea: "worker",
+      bg: { r: 100, g: 50, b: 0 },
+    },
+    appendChild: {
+      area: "render",
+      subarea: "appendChild",
+      bg: { r: 100, g: 50, b: 0 },
+    },
+    renderEffect: {
+      area: "render",
+      subarea: "render effect",
+      bg: { r: 100, g: 50, b: 0 },
     },
   },
 } as const;

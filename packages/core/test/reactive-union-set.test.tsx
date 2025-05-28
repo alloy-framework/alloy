@@ -1,7 +1,7 @@
-import { effect } from "@alloy-js/core/jsx-runtime";
 import { reactive } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { ReactiveUnionSet } from "../src/reactive-union-set.js";
+import { effect } from "../src/reactivity.js";
 import { flushJobs } from "../src/scheduler.js";
 
 describe("is reactive", () => {

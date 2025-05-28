@@ -2,9 +2,10 @@ import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
-import { Children, ComponentDefinition, getContext } from "../jsx-runtime.js";
+import { getContext } from "../reactivity.js";
 import { Refkey } from "../refkey.js";
 import { PrintTreeOptions } from "../render.js";
+import type { Children, ComponentDefinition } from "../runtime/component.js";
 import { Show } from "./Show.jsx";
 
 export interface SourceFileProps extends PrintTreeOptions {

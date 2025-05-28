@@ -1,5 +1,6 @@
 import { isRef, Ref } from "@vue/reactivity";
-import { type Children, memo } from "../jsx-runtime.js";
+import { memo } from "../reactivity.js";
+import type { Children } from "../runtime/component.js";
 import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
 import { BaseListProps } from "./List.jsx";
 

@@ -464,7 +464,7 @@ it("formats based on the output component props", () => {
   `);
 });
 
-it.only("formats based on the source file component props", () => {
+it("formats based on the source file component props", () => {
   const template = (
     <Output>
       <SourceFile path="foo.txt" filetype="text/plain" printWidth={5}>

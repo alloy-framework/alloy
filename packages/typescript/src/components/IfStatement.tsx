@@ -1,5 +1,4 @@
-import { Block } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { Block, type Children } from "@alloy-js/core";
 
 export interface IfStatementProps {
   condition: Children;

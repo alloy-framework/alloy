@@ -1,7 +1,20 @@
-import { Props, refkey, StatementList } from "@alloy-js/core";
+import {
+  List,
+  memberRefkey,
+  Props,
+  refkey,
+  StatementList,
+} from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { FunctionDeclaration, VarDeclaration } from "../src/index.js";
+import { ClassField } from "../src/components/stc/index.js";
+import {
+  ClassDeclaration,
+  FunctionDeclaration,
+  InterfaceDeclaration,
+  InterfaceMember,
+  VarDeclaration,
+} from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { toSourceText } from "./utils.js";
 
@@ -238,6 +251,66 @@ describe("symbols", () => {
     expect(toSourceText(decl)).toBe(d`
       function foo(...foo: any[]) {
         console.log(foo);
+      }
+    `);
+  });
+
+  it("adds symbols for members of parameters when a type is provided", () => {
+    const ifaceRk = refkey();
+    const ifaceMemberRk = refkey();
+    const clsRk = refkey();
+    const clsMemberRk = refkey();
+    const ifaceParamRk = refkey();
+    const clsParamRk = refkey();
+
+    const ifaceParam: ParameterDescriptor = {
+      name: "ifaceParam",
+      refkey: ifaceParamRk,
+      type: ifaceRk,
+      optional: true,
+    };
+
+    const clsParam: ParameterDescriptor = {
+      name: "classParam",
+      refkey: clsParamRk,
+      type: clsRk,
+      optional: true,
+    };
+
+    const decl = (
+      <List doubleHardline>
+        <InterfaceDeclaration name="IFace" refkey={ifaceRk}>
+          <InterfaceMember name="ifaceProp" refkey={ifaceMemberRk}>
+            string
+          </InterfaceMember>
+        </InterfaceDeclaration>
+
+        <ClassDeclaration name="Class" refkey={clsRk}>
+          <ClassField name="classProp" refkey={clsMemberRk}>
+            42
+          </ClassField>
+        </ClassDeclaration>
+        <FunctionDeclaration name="fn" parameters={[ifaceParam, clsParam]}>
+          <StatementList>
+            <>console.log({memberRefkey(ifaceParamRk, ifaceMemberRk)})</>
+            <>console.log({memberRefkey(clsParamRk, clsMemberRk)});</>
+          </StatementList>
+        </FunctionDeclaration>
+      </List>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      interface IFace {
+        ifaceProp: string
+      }
+
+      class Class {
+        classProp = 42
+      }
+
+      function fn(ifaceParam?: IFace, classParam?: Class) {
+        console.log(ifaceParam?.ifaceProp);
+        console.log(classParam?.classProp);;
       }
     `);
   });

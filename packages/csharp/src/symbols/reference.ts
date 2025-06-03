@@ -57,7 +57,7 @@ export function ref(refkey: core.Refkey): () => string {
       .filter((v) => {
         return v.kind === "member";
       })
-      .map((s) => s.owner);
+      .map((s) => s.owner!);
     syms.push(targetDeclaration);
 
     return syms.map((sym) => sym.name).join(".");

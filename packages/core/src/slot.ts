@@ -1,12 +1,11 @@
 import { ref, Ref } from "@vue/reactivity";
-import { OutputSymbol } from "./binder.js";
+import { effect, memo } from "./reactivity.js";
 import {
   Children,
   Component,
   ComponentDefinition,
-  effect,
-  memo,
-} from "./jsx-runtime.js";
+} from "./runtime/component.js";
+import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 export interface SlotInstance extends ComponentDefinition {}
 

@@ -1,19 +1,19 @@
+import { code, text } from "./code.js";
+import { Children } from "./runtime/component.js";
 import {
-  Children,
   createIntrinsic,
   IntrinsicElementBase,
-  JSX,
-} from "@alloy-js/core/jsx-runtime";
-import { code, text } from "./code.js";
+  IntrinsicElements,
+} from "./runtime/intrinsic.js";
 
-export type StiSignature<T extends keyof JSX.IntrinsicElements> = (
+export type StiSignature<T extends keyof IntrinsicElements> = (
   ...args: unknown extends T ? []
-  : {} extends Omit<JSX.IntrinsicElements[T], "children"> ?
-    [props?: JSX.IntrinsicElements[T]]
-  : [props: JSX.IntrinsicElements[T]]
+  : {} extends Omit<IntrinsicElements[T], "children"> ?
+    [props?: IntrinsicElements[T]]
+  : [props: IntrinsicElements[T]]
 ) => StiComponentCreator<T>;
 
-export type StiComponentCreator<T extends keyof JSX.IntrinsicElements> =
+export type StiComponentCreator<T extends keyof IntrinsicElements> =
   (() => IntrinsicElementBase<T>) & {
     code(
       template: TemplateStringsArray,
@@ -26,11 +26,11 @@ export type StiComponentCreator<T extends keyof JSX.IntrinsicElements> =
     children(...children: Children[]): () => IntrinsicElementBase<T>;
   };
 
-export function sti<T extends keyof JSX.IntrinsicElements>(
+export function sti<T extends keyof IntrinsicElements>(
   name: T,
 ): StiSignature<T> {
   return (...args) => {
-    const props: JSX.IntrinsicElements[T] | undefined = args[0];
+    const props: IntrinsicElements[T] | undefined = args[0];
     const fn: StiComponentCreator<T> = () => createIntrinsic(name, props!);
     fn.children = (...children: Children[]) => {
       const propsWithChildren = {

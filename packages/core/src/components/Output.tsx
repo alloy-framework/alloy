@@ -5,9 +5,10 @@ import {
 } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { NamePolicyContext } from "../context/name-policy.js";
-import { Children, getContext } from "../jsx-runtime.js";
 import { NamePolicy } from "../name-policy.js";
+import { getContext } from "../reactivity.js";
 import { PrintTreeOptions } from "../render.js";
+import type { Children } from "../runtime/component.js";
 import { extensionEffects } from "../slot.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 

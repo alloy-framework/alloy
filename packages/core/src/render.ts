@@ -3,26 +3,29 @@ import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
+import { shouldDebug } from "./debug.js";
 import {
-  Child,
-  Children,
   Context,
   CustomContext,
   effect,
   getContext,
   getElementCache,
-  IntrinsicElement,
-  isComponentCreator,
   isCustomContext,
-  isIntrinsicElement,
-  popStack,
-  printRenderStack,
-  pushStack,
   root,
   untrack,
-} from "./jsx-runtime.js";
+} from "./reactivity.js";
 import { isRefkey } from "./refkey.js";
+import {
+  Child,
+  Children,
+  Component,
+  isComponentCreator,
+  Props,
+} from "./runtime/component.js";
+import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs } from "./scheduler.js";
+import { trace, TracePhase } from "./tracer.js";
+
 const {
   builders: {
     align,
@@ -172,11 +175,6 @@ export function isPrintHook(type: unknown): type is PrintHook {
 
 export type RenderedTextTree = (string | RenderedTextTree | PrintHook)[];
 
-function traceRender(phase: string, message: () => string) {
-  return false;
-  //console.log(`[\x1b[34m${phase}\x1b[0m]: ${message()}`);
-}
-
 export function render(
   children: Children,
   options?: PrintTreeOptions,
@@ -284,7 +282,12 @@ export function renderTree(children: Children) {
 }
 
 function renderWorker(node: RenderedTextTree, children: Children) {
-  traceRender("render", () => dumpChildren(children));
+  if (!getContext()) {
+    throw new Error(
+      "Cannot render without a context. Make sure you are using the Output component.",
+    );
+  }
+  trace(TracePhase.render.worker, () => dumpChildren(children));
 
   if (Array.isArray(node)) {
     nodesToContext.set(node, getContext()!);
@@ -300,7 +303,7 @@ function renderWorker(node: RenderedTextTree, children: Children) {
 }
 
 function appendChild(node: RenderedTextTree, rawChild: Child) {
-  traceRender("appendChild", () => debugPrintChild(rawChild));
+  trace(TracePhase.render.appendChild, () => debugPrintChild(rawChild));
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
@@ -308,12 +311,18 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
   } else {
     const cache = getElementCache();
     if (cache.has(child as any)) {
-      traceRender("appendChild:cached", () => debugPrintChild(child));
+      trace(
+        TracePhase.render.appendChild,
+        () => "Cached: " + debugPrintChild(child),
+      );
       node.push(cache.get(child as any)!);
       return;
     }
     if (isCustomContext(child)) {
-      traceRender("appendChild:custom-context", () => debugPrintChild(child));
+      trace(
+        TracePhase.render.appendChild,
+        () => "CustomContext: " + debugPrintChild(child),
+      );
       child.useCustomContext((children) => {
         const newNode: RenderedTextTree = [];
         renderWorker(newNode, children);
@@ -321,10 +330,11 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         cache.set(child, newNode);
       });
     } else if (isIntrinsicElement(child)) {
-      // don't need a new context here because intrinsics are never reactive
-      traceRender("appendChild:intrinsic-element", () =>
-        debugPrintChild(child),
+      trace(
+        TracePhase.render.appendChild,
+        () => "IntrinsicElement: " + debugPrintChild(child),
       );
+      // don't need a new context here because intrinsics are never reactive
       const newNode: RenderedTextTree = [];
 
       function formatHookWithChildren(command: (doc: Doc) => Doc) {
@@ -442,20 +452,26 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       }
     } else if (isComponentCreator(child)) {
       effect(() => {
-        traceRender("appendChild:component", () => debugPrintChild(child));
+        trace(
+          TracePhase.render.appendChild,
+          () => "Component: " + debugPrintChild(child),
+        );
         const componentRoot: RenderedTextTree = [];
         pushStack(child.component, child.props);
         renderWorker(componentRoot, untrack(child));
         popStack();
         node.push(componentRoot);
         cache.set(child, componentRoot);
-        traceRender("appendChild:component-done", () => debugPrintChild(child));
+        trace(
+          TracePhase.render.appendChild,
+          () => "Component done: " + debugPrintChild(child),
+        );
       });
     } else if (typeof child === "function") {
-      traceRender("appendChild:memo", () => child.toString());
+      trace(TracePhase.render.appendChild, () => "Memo: " + child.toString());
       const index = node.length;
       effect(() => {
-        traceRender("memoEffect:run", () => "");
+        trace(TracePhase.render.renderEffect, () => "");
         let res = child();
         while (typeof res === "function" && !isComponentCreator(res)) {
           res = res();
@@ -466,7 +482,6 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         cache.set(child, newNodes);
         return newNodes;
       });
-      traceRender("appendChild:memo-done", () => "");
     } else {
       throw new Error("Unexpected child type");
     }
@@ -525,6 +540,8 @@ function debugPrintChild(child: Children): string {
     return "$memo";
   } else if (isRef(child)) {
     return "$ref";
+  } else if (isIntrinsicElement(child)) {
+    return `<${child.name}>`;
   } else {
     return JSON.stringify(child);
   }
@@ -587,4 +604,58 @@ function printTreeWorker(tree: RenderedTextTree): Doc {
   }
 
   return doc;
+}
+// debugging utilities
+const renderStack: {
+  component: Component<any>;
+  props: Props;
+}[] = [];
+
+export function pushStack(component: Component<any>, props: Props) {
+  if (!shouldDebug()) return;
+  renderStack.push({ component, props });
+}
+
+export function popStack() {
+  if (!shouldDebug()) return;
+  renderStack.pop();
+}
+
+export function printRenderStack() {
+  if (!shouldDebug()) return;
+
+  // eslint-disable-next-line no-console
+  console.error("Error rendering:");
+  for (let i = renderStack.length - 1; i >= 0; i--) {
+    const { component, props } = renderStack[i];
+    // eslint-disable-next-line no-console
+    console.error(`    at ${component.name}(${inspectProps(props)})`);
+  }
+}
+
+function inspectProps(props: Props) {
+  return JSON.stringify(
+    Object.fromEntries(
+      Object.entries(props).map(([key, value]) => {
+        let safeValue;
+        switch (typeof value) {
+          case "string":
+          case "number":
+          case "boolean":
+            safeValue = value;
+            break;
+          case "undefined":
+            safeValue = "undefined";
+            break;
+          case "object":
+            safeValue = value ? "{...}" : null;
+            break;
+          case "function":
+            safeValue = "function";
+            break;
+        }
+        return [key, safeValue];
+      }),
+    ),
+  );
 }

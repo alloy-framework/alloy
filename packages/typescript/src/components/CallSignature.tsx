@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { type Children } from "@alloy-js/core";
 import {
   ParameterDescriptor,
   TypeParameterDescriptor,

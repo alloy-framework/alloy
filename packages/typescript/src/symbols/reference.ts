@@ -23,7 +23,10 @@ import { TSPackageScope } from "./ts-package-scope.js";
 export interface RefOptions {
   type?: boolean;
 }
-export function ref(refkey: Refkey, options?: RefOptions): () => string {
+export function ref(
+  refkey: Refkey,
+  options?: RefOptions,
+): () => [string, TSOutputSymbol | undefined] {
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
@@ -33,11 +36,10 @@ export function ref(refkey: Refkey, options?: RefOptions): () => string {
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return "<Unresolved Symbol>";
+      return ["<Unresolved Symbol>", undefined];
     }
 
     const { targetDeclaration, pathDown, memberPath } = resolveResult.value;
-
     // if we resolved a instance member, check if we should be able to access
     // it.
     if (targetDeclaration.flags & OutputSymbolFlags.InstanceMember) {
@@ -123,9 +125,12 @@ export function ref(refkey: Refkey, options?: RefOptions): () => string {
         memberPath[0] = localSymbol;
       }
 
-      return buildMemberExpression(memberPath);
+      return [buildMemberExpression(memberPath), memberPath.at(-1)];
     } else {
-      return buildMemberExpression([localSymbol ?? targetDeclaration]);
+      return [
+        buildMemberExpression([localSymbol ?? targetDeclaration]),
+        localSymbol ?? targetDeclaration,
+      ];
     }
   });
 }

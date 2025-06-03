@@ -11,7 +11,7 @@ import {
   useMemberDeclaration,
   useMemberScope,
 } from "@alloy-js/core";
-import { createJsonOutputSymbol } from "../symbols/json-symbol.js";
+import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { JsonValue } from "./JsonValue.jsx";
 
 export interface JsonArrayPropsBase {
@@ -59,8 +59,8 @@ export function JsonArray(props: JsonArrayProps) {
   if (!memberSymbol) {
     throw new Error("Missing assignment symbol.");
   }
-  const binder = memberSymbol.binder;
-  binder.addStaticMembersToSymbol(memberSymbol);
+  memberSymbol.flags |= OutputSymbolFlags.StaticMemberContainer;
+
   if (props.refkey) {
     memberSymbol.refkeys = [props.refkey].flat();
   }
@@ -136,13 +136,12 @@ export function JsonArrayElement(props: JsonArrayElementProps) {
 
   const name = String(memberScope.staticMembers.symbols.size);
 
-  const sym = createJsonOutputSymbol({
-    name,
+  const sym = new JsonOutputSymbol(name, {
     flags: OutputSymbolFlags.StaticMember,
   });
 
   onCleanup(() => {
-    sym.binder.deleteSymbol(sym);
+    sym.delete();
   });
 
   function wrap(children: Children) {

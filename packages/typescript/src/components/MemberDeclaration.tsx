@@ -4,11 +4,7 @@ import {
   OutputSymbolFlags,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import {
-  createTSSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/index.js";
 
 export interface MemberDeclarationProps
   extends Omit<MemberDeclarationPropsWithInfo, "name"> {
@@ -61,9 +57,10 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
       tsFlags |= TSSymbolFlags.TypeSymbol;
     }
 
-    sym = createTSSymbol({
-      name: props.exactName ?? namePolicy.getName(props.name!, props.nameKind!),
-      refkey: props.refkey,
+    const name =
+      props.exactName ?? namePolicy.getName(props.name!, props.nameKind!);
+    sym = new TSOutputSymbol(name, {
+      refkeys: props.refkey,
       flags: props.flags,
       tsFlags,
       metadata: props.metadata,

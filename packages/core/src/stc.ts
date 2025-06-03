@@ -1,9 +1,9 @@
+import { code, text } from "./code.js";
 import {
   Children,
   ComponentCreator,
   ComponentDefinition,
-} from "@alloy-js/core/jsx-runtime";
-import { code, text } from "./code.js";
+} from "./runtime/component.js";
 
 export type MakeChildrenOptional<T extends object> =
   T extends { children?: any } ?

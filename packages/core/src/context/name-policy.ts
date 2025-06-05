@@ -3,7 +3,7 @@ import {
   createNamedContext,
   useContext,
 } from "../context.js";
-import { NamePolicy } from "../name-policy.js";
+import type { NamePolicy } from "../name-policy.js";
 
 export const NamePolicyContext: ComponentContext<NamePolicy<string>> =
   createNamedContext<NamePolicy<string>>("NamePolicy", {

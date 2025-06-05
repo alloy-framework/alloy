@@ -1,6 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
-import { memo, untrack } from "../../src/jsx-runtime.js";
+import { memo, untrack } from "../../src/reactivity.js";
 import { flushJobs } from "../../src/scheduler.js";
 
 it("ignores signals for dependency tracking", () => {

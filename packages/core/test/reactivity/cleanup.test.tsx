@@ -1,7 +1,8 @@
-import { Children, effect, memo, onCleanup } from "@alloy-js/core/jsx-runtime";
 import { ref } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
+import { effect, memo, onCleanup } from "../../src/reactivity.js";
 import { renderTree } from "../../src/render.js";
+import type { Children } from "../../src/runtime/component.js";
 import { flushJobs } from "../../src/scheduler.js";
 
 describe("memo cleanup", () => {

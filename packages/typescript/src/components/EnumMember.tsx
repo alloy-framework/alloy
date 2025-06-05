@@ -1,6 +1,6 @@
 import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
@@ -49,9 +49,8 @@ export function EnumMember(props: EnumMemberProps) {
   const name = namer.getName(props.name, "enum-member");
   let sym: TSOutputSymbol | undefined = undefined;
   if (props.refkey) {
-    sym = createTSSymbol({
-      name,
-      refkey: props.refkey,
+    sym = new TSOutputSymbol(name, {
+      refkeys: props.refkey,
       flags: OutputSymbolFlags.StaticMember,
       metadata: props.metadata,
     });

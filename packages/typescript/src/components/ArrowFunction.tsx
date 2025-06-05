@@ -3,8 +3,8 @@ import {
   findKeyedChild,
   findUnkeyedChildren,
   Scope,
+  type Children,
 } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { Declaration } from "./Declaration.jsx";

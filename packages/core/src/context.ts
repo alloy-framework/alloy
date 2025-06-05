@@ -1,11 +1,7 @@
 import { shallowRef } from "@vue/reactivity";
-import {
-  Children,
-  ComponentDefinition,
-  effect,
-  getContext,
-} from "./jsx-runtime.js";
-import { stc, StcSignature } from "./stc.js";
+import { effect, getContext } from "./reactivity.js";
+import type { Children, ComponentDefinition } from "./runtime/component.js";
+import { stc, type StcSignature } from "./stc.js";
 
 export interface ComponentContext<T> {
   id: symbol;

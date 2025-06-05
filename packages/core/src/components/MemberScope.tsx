@@ -1,9 +1,6 @@
-import { OutputSymbol } from "../binder.js";
-import { Children } from "../jsx-runtime.js";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { OutputSymbolFlags } from "../binder.js";
 import { MemberScopeContext } from "../context/member-scope.js";
+import type { Children } from "../runtime/component.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 export interface MemberScopeProps {
   /**
    * The name of the member scope.

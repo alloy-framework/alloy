@@ -1,4 +1,7 @@
-import { Children, childrenArray, computed, Indent } from "@alloy-js/core";
+import { computed } from "@vue/reactivity";
+import type { Children } from "../runtime/component.js";
+import { childrenArray } from "../utils.jsx";
+import { Indent } from "./Indent.jsx";
 
 export interface BlockProps {
   /**

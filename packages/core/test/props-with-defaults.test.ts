@@ -1,6 +1,6 @@
 import { effect, reactive } from "@vue/reactivity";
 import { expect, it, vi } from "vitest";
-import { defaultProps } from "../src/jsx-runtime.js";
+import { defaultProps } from "../src/props-combinators.js";
 
 it("applies defaults to regular object props", () => {
   const props = {

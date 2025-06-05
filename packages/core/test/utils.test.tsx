@@ -1,6 +1,6 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed, ref, triggerRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
+import { Children } from "../src/index.js";
 import { renderTree } from "../src/render.js";
 import { flushJobs } from "../src/scheduler.js";
 import { children, join, mapJoin } from "../src/utils.js";

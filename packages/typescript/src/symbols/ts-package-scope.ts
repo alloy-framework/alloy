@@ -1,13 +1,28 @@
-import { Binder, OutputScope, Refkey } from "@alloy-js/core";
+import {
+  OutputScope,
+  OutputScopeOptions,
+  Refkey,
+  shallowReactive,
+} from "@alloy-js/core";
 import { modulePath } from "../utils.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 
-export interface TSPackageScope extends OutputScope {
-  kind: "package";
+export interface TSPackageScopeOptions extends OutputScopeOptions {
+  builtin?: boolean;
+}
+
+export class TSPackageScope extends OutputScope {
+  get kind() {
+    return "package" as const;
+  }
+
   /**
    * The version of the this package.
    */
-  version: string;
+  get version() {
+    return this.#version;
+  }
+  #version: string;
 
   /**
    * The symbols exported by this package. They are broken down by which paths
@@ -15,70 +30,73 @@ export interface TSPackageScope extends OutputScope {
    * paths, in which case emitters can decide which symbol to use based on their
    * own heuristics.
    */
-  exportedSymbols: Map<string, TSModuleScope>;
-
-  /**
-   * The path of the root directory of the package.
-   */
-  path: string;
+  get exportedSymbols() {
+    return this.#exportedSymbols;
+  }
+  #exportedSymbols: Map<string, TSModuleScope> = shallowReactive(new Map());
 
   /**
    * The scopes for the packages this package depends on.
    */
-  dependencies: Set<TSPackageScope>;
+  get dependencies() {
+    return this.#dependencies;
+  }
+  #dependencies: Set<TSPackageScope> = shallowReactive(new Set());
 
   /**
    * All of the modules contained within the package. These modules may or may not
    * be exported.
    */
-  modules: Set<TSModuleScope>;
+  get modules() {
+    return this.#modules;
+  }
+  #modules: Set<TSModuleScope> = shallowReactive(new Set());
+
+  /**
+   * The path of the root directory of the package.
+   */
+  get path() {
+    return this.#path;
+  }
+  #path: string;
 
   /**
    * Whether this is a built-in package provided by the platform.
    */
-  builtin?: boolean;
+  get builtin() {
+    return this.#builtin;
+  }
+  #builtin: boolean;
 
-  addExport(publicPath: string, localModule: TSModuleScope): void;
-  addDependency(pkg: TSPackageScope): void;
-  addModule(module: TSModuleScope): void;
-  findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null;
-}
+  constructor(
+    name: string,
+    version: string,
+    path: string,
+    options: TSPackageScopeOptions = {},
+  ) {
+    super(name, options);
+    this.#version = version;
+    this.#path = path;
+    this.#builtin = !!options.builtin;
+  }
 
-export function createTSPackageScope(
-  binder: Binder,
-  parent: OutputScope | undefined,
-  name: string,
-  version: string,
-  path: string,
-  builtin: boolean = false,
-) {
-  return binder.createScope<TSPackageScope>({
-    kind: "package",
-    name,
-    parent,
-    exportedSymbols: new Map(),
-    dependencies: new Set(),
-    modules: new Set(),
-    version,
-    path: path,
-    builtin,
-    addDependency(pkg) {
-      this.dependencies.add(pkg);
-    },
-    addExport(publicPath, module) {
-      this.exportedSymbols.set(modulePath(publicPath), module);
-    },
-    addModule(module) {
-      this.modules.add(module);
-    },
-    findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null {
-      for (const [publicPath, module] of this.exportedSymbols) {
-        if (module.exportedSymbols.has(refkey)) {
-          return [publicPath, module];
-        }
+  addDependency(pkg: TSPackageScope) {
+    this.dependencies.add(pkg);
+  }
+  addExport(publicPath: string, module: TSModuleScope) {
+    this.exportedSymbols.set(modulePath(publicPath), module);
+  }
+  addModule(module: TSModuleScope) {
+    this.modules.add(module);
+  }
+
+  findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null {
+    for (const [publicPath, module] of this.exportedSymbols) {
+      if (module.exportedSymbols.has(refkey)) {
+        return [publicPath, module];
       }
+    }
 
-      return null;
-    },
-  });
+    return null;
+  }
 }

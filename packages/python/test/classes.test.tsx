@@ -91,6 +91,7 @@ describe("Python Class", () => {
     `;
     const mod2Expected = d`
       from mod1 import A
+
       class B(A):
         pass
     `;

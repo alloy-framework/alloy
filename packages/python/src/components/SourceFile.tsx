@@ -25,6 +25,8 @@ export const SourceFileContext: ComponentContext<SourceFileContext> =
 
 // Context accessor
 export function useSourceFileContext(): SourceFileContext {
+  const aaa = useContext(SourceFileContext);
+  console.log("useSourceFileContext", aaa);
   return useContext(SourceFileContext)!;
 }
 
@@ -81,6 +83,7 @@ export function SourceFile(props: SourceFileProps) {
       {importRecords.length > 0 ?
         <>
           <ImportStatements imports={importRecords} />
+          <hbr />
           <hbr />
         </>
       : undefined}

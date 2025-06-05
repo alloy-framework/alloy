@@ -7,7 +7,7 @@ import { createPythonSymbol } from "../symbols/index.js";
 
 export interface DeclarationProps {
   name: string;
-  refkey?: Refkey;
+  refkeys?: Refkey;
   children?: Children;
 }
 

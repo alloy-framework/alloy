@@ -7,11 +7,11 @@ import { assertFileContents, toSourceText } from "./utils.jsx";
 describe("Python Class", () => {
   it("renders a class with no body as 'pass'", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.ClassDeclaration name="Foo" />
         </py.SourceFile>
-      </Output>,
+      </>
     );
     expect(result).toRenderTo(d`
       class Foo:
@@ -21,11 +21,11 @@ describe("Python Class", () => {
 
   it("renders a class with a body", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.ClassDeclaration name="Bar">print('hi')</py.ClassDeclaration>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       class Bar:
@@ -60,13 +60,13 @@ describe("Python Class", () => {
 
   it("renders a class with base classes and body", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.ClassDeclaration name="Qux" bases={["Base"]}>
             print('hello')
           </py.ClassDeclaration>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       class Qux(Base):

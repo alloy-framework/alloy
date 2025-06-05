@@ -1,4 +1,4 @@
-import { computed, JSX, mapJoin, memo } from "@alloy-js/core";
+import { computed, mapJoin, memo } from "@alloy-js/core";
 
 export interface ImportSymbol {
   module: string; // The module to import from
@@ -15,7 +15,7 @@ export interface ImportStatementsProps {
  * Represents a Python import statement.
  * Generates an import statement for the given module and names.
  */
-export function ImportStatements(props: ImportStatementsProps): JSX.Element {
+export function ImportStatements(props: ImportStatementsProps) {
   const imports = computed(() =>
     props.imports.sort((a, b) => a.module.localeCompare(b.module)),
   );

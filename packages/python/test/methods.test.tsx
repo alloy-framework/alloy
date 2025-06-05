@@ -7,11 +7,11 @@ import { toSourceText } from "./utils.jsx";
 describe("Python Method", () => {
   it("renders a method with no body as 'pass'", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.Method name="foo" instanceMethod={true} />
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       def foo(self):
@@ -21,11 +21,11 @@ describe("Python Method", () => {
 
   it("renders a method with no body as 'pass' with return type", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.Method name="foo" instanceMethod={true} returnType="int"/>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       def foo(self) -> int:
@@ -35,13 +35,13 @@ describe("Python Method", () => {
 
   it("renders an instance method with a body", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.Method name="bar" instanceMethod={true}>
             print('hi')
           </py.Method>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       def bar(self):
@@ -51,13 +51,13 @@ describe("Python Method", () => {
 
   it("renders a class method with a body", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.Method name="bar" classMethod={true}>
             print('hi')
           </py.Method>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       def bar(cls):
@@ -67,7 +67,7 @@ describe("Python Method", () => {
 
   it("renders a function with parameters", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.Method
             name="baz"
@@ -81,7 +81,7 @@ describe("Python Method", () => {
             print(x, y)
           </py.Method>
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(
       d`
@@ -93,13 +93,13 @@ describe("Python Method", () => {
 
   it("renders an init method with no body as 'pass'", () => {
     const result = toSourceText(
-      <Output>
+      <>
         <py.SourceFile path="test.py">
           <py.InitMethod
             parameters={[{ name: "x" }, { name: "y", defaultValue: 0 }]}
           />
         </py.SourceFile>
-      </Output>,
+      </>,
     );
     expect(result).toRenderTo(d`
       def __init__(self, x, y = 0):

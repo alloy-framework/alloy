@@ -1,10 +1,10 @@
 import { Children, For, Refkey } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
-import { createPythonSymbol } from "../symbols/index.js";
+import { PythonOutputSymbol } from "../symbols/index.js";
 import { ClassDeclaration } from "./ClassDeclaration.js";
 import { DeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.js";
-import { useSourceFileContext } from "./SourceFile.js";
+import { useSourceFile } from "./SourceFile.js";
 
 export interface EnumProps extends DeclarationProps {
   /**
@@ -39,13 +39,12 @@ export interface EnumProps extends DeclarationProps {
  */
 export function EnumDeclaration(props: EnumProps) {
   const baseType = props.baseType || "Enum";
-  const sfContext = useSourceFileContext();
-  sfContext.addImport(
-    createPythonSymbol({
-      name: baseType,
-      module: "enum",
-    }),
-  );
+  const sfContext = useSourceFile();
+  // sfContext.addImport(
+  //   new PythonOutputSymbol(baseType, {
+  //     module: "enum",
+  //   })
+  // );
 
   // Handle enum styles
   if (props.style === "functional") {
@@ -82,7 +81,11 @@ export function EnumDeclaration(props: EnumProps) {
   let memberList: Array<{ name: string; value?: string | number }> =
     props.members ?? [];
   if (props.style === "auto") {
-    sfContext.addImport(createPythonSymbol({ name: "auto", module: "enum" }));
+    // sfContext.addImport(
+    //   new PythonOutputSymbol("auto", {
+    //     module: "enum",
+    //   })
+    // );
     memberList = memberList.map((m) =>
       m.value === undefined ? { name: m.name, value: "auto()" } : m,
     );

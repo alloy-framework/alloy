@@ -1,6 +1,7 @@
-import { Output, render, StatementList } from "@alloy-js/core";
+import { Output, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/components/index.js";
 import { createModule } from "../src/index.js";
 import { findFile } from "./utils.js";

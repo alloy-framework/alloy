@@ -2,23 +2,76 @@
 // Allows discovery of symbols from these libraries for use in the program
 
 import {
-  Binder,
+  type Binder,
   getSymbolCreatorSymbol,
-  Refkey,
+  type Refkey,
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
-import { PythonOutputSymbol } from "./symbols/index.js";
+import { PythonOutputSymbol, ref } from "./symbols/index.js";
 import { createPythonModuleScope } from "./symbols/python-module-scope.js";
 
 export interface ModuleDescriptor {
   [path: string]: ModuleSymbolsDescriptor;
 }
 
+export type NamedModuleDescriptor =
+  | string
+  | {
+      name: string;
+    };
+
 export interface ModuleSymbolsDescriptor {
   default?: string;
-  named?: readonly string[];
+  named?: NamedModuleDescriptor[];
 }
+
+export interface CreateModuleProps<T extends ModuleDescriptor> {
+  name: string;
+  version: string;
+  descriptor: T;
+  builtin?: boolean;
+}
+
+export type ModuleExports<
+  D extends { default?: string; named?: NamedModuleDescriptor[] },
+> = (D extends { default: string } ? { default: Refkey } : {}) &
+  (D["named"] extends NamedModuleDescriptor[] ? NamedMap<D["named"]> : {});
+
+export type ModuleRefkeys<
+  PD extends Record<
+    string,
+    { default?: string; named?: NamedModuleDescriptor[] }
+  >,
+  // “Root” module descriptor at key `"."` becomes the “flat” exports on mcpSdk.*
+> = ModuleExports<PD["."]> & {
+  // Every other module-path (e.g. "./foo/bar.js") lives under its own index:
+  //    mcpSdk["./foo/bar.js"].<exports>
+  [P in keyof PD as P extends "." ? never : P]: ModuleExports<PD[P]>;
+};
+
+export type NamedMap<TDescriptor extends readonly NamedModuleDescriptor[]> =
+  // plain-string exports
+  {
+    [S in Extract<TDescriptor[number], string>]: Refkey;
+  } & {
+    // object exports, each one is BOTH a Refkey _and_ has .static/.instance
+    [O in Extract<
+      TDescriptor[number],
+      { name: string }
+    > as O["name"]]: Refkey & {
+      static: O extends (
+        { staticMembers: infer SM extends NamedModuleDescriptor[] }
+      ) ?
+        NamedMap<SM>
+      : {};
+      instance: O extends (
+        { instanceMembers: infer IM extends NamedModuleDescriptor[] }
+      ) ?
+        NamedMap<IM>
+      : {};
+    };
+  };
 
 function createSymbols(
   binder: Binder,
@@ -27,35 +80,21 @@ function createSymbols(
 ) {
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = createPythonModuleScope(binder, undefined, path);
+    const moduleScope = createPythonModuleScope(path, undefined, binder);
 
     for (const exportedName of symbols.named ?? []) {
-      const key = keys[exportedName];
-      const _sym = binder.createSymbol<PythonOutputSymbol>({
-        name: exportedName,
+      const namedRef =
+        typeof exportedName === "string" ?
+          { name: exportedName }
+        : exportedName;
+      const key = keys[namedRef.name];
+      const _ownerSym = new PythonOutputSymbol(namedRef.name, {
         scope: moduleScope,
-        refkey: key,
+        refkeys: key,
         module: moduleScope.name,
       });
     }
   }
-}
-
-export type ModuleRefkeys<T extends ModuleDescriptor> = {
-  [K in keyof T as K extends "." ? never : K]: {
-    [N in T[K]["named"] extends readonly string[] ? T[K]["named"][number]
-    : never]: Refkey;
-  } & (T[K] extends { default: string } ? { default: Refkey } : {});
-} & (T["."] extends { default: string } ? { default: Refkey } : {}) &
-  (T["."] extends { named: readonly string[] } ?
-    { [N in T["."]["named"][number]]: Refkey }
-  : {});
-
-export interface CreateModuleProps<T extends ModuleDescriptor> {
-  name: string;
-  version: string;
-  descriptor: T;
-  builtin?: boolean;
 }
 
 export function createModule<const T extends ModuleDescriptor>(
@@ -68,9 +107,10 @@ export function createModule<const T extends ModuleDescriptor>(
   };
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
-    const keys = path === "." ? refkeys : ((refkeys[path] = {}), refkeys[path]);
+    const keys = path === "." ? refkeys : (refkeys[path] = {});
     for (const named of symbols.named ?? []) {
-      keys[named] = refkey(props.descriptor, path, named);
+      const namedObj = typeof named === "string" ? { name: named } : named;
+      keys[namedObj.name] = refkey(props.descriptor, path, namedObj);
     }
   }
 

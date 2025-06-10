@@ -8,11 +8,9 @@ import {
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
-import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { useMemberScope } from "../context/member-scope.js";
 import { useScope } from "../context/scope.js";
-import { isRefkey, refkey, type Refkey } from "../refkey.js";
 import {
   formatScopeName,
   formatSymbol,
@@ -21,8 +19,10 @@ import {
   traceEffect,
   TracePhase,
 } from "../tracer.js";
+import type { Binder } from "./binder.js";
 import { OutputScopeFlags, OutputSymbolFlags } from "./flags.js";
 import { OutputScope } from "./output-scope.js";
+import { isRefkey, refkey, type Refkey } from "./refkey.js";
 
 export interface OutputSymbolOptions {
   binder?: Binder;
@@ -243,11 +243,8 @@ export class OutputSymbol {
     return this.#metadata;
   }
 
-  /**
-   * Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
-   * proxy.
-   */
-  [ReactiveFlags.SKIP] = true;
+  [ReactiveFlags.SKIP] = true as const;
+  [ReactiveFlags.IS_SHALLOW] = true as const;
 
   constructor(name: string, options: OutputSymbolOptions = {}) {
     this.#binder = options.binder ?? useBinder();
@@ -456,4 +453,32 @@ export class OutputSymbol {
       }
     }
   }
+
+  toJSON(): SerializedOutputSymbol {
+    return {
+      id: this.id,
+      name: this.name,
+      originalName: this.originalName,
+      flags: this.flags,
+      scope: this.scope?.id ?? null,
+      refkeys: this.refkeys,
+      metadata: this.metadata,
+      instanceMemberScope: this.instanceMemberScope?.id ?? null,
+      staticMemberScope: this.staticMemberScope?.id ?? null,
+      aliasTarget: this.aliasTarget?.id ?? null,
+    };
+  }
+}
+
+export interface SerializedOutputSymbol {
+  id: number;
+  name: string;
+  originalName: string;
+  flags: OutputSymbolFlags;
+  scope: number | null;
+  refkeys: Refkey[];
+  metadata: Record<string, unknown>;
+  instanceMemberScope: number | null;
+  staticMemberScope: number | null;
+  aliasTarget: number | null;
 }

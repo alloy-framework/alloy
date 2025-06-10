@@ -1,44 +1,42 @@
-import { ReactiveEffectRunner } from "@vue/reactivity";
+import { getLastErrorContext } from "./reactivity.js";
 
 export interface QueueJob {
   (): any;
 }
-const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
 
+export interface SchedulerJobOptions {
+  flush?: "sync" | "post";
+}
 export function scheduler(
-  jobGetter: () => ReactiveEffectRunner,
-  immediate = false,
+  jobGetter: () => QueueJob,
+  options: SchedulerJobOptions = {},
 ) {
   return () => {
-    queueJob(jobGetter(), immediate);
+    queueJob(jobGetter(), options);
   };
 }
-export function queueJob(job: QueueJob, immediate = false) {
-  // if we have an immediate job, we don't need to queue the normal job.
-  // the set is serving an important purpose here in deduping the effects we run
-  // (which in effect coalesces multiple update effects together).
-  if (immediate) {
-    immediateQueue.add(job);
+export function queueJob(job: QueueJob, options: SchedulerJobOptions = {}) {
+  if (options?.flush === "sync") {
+    job();
   } else {
     queue.add(job);
   }
 }
 
 export function flushJobs() {
-  let job;
+  let job: QueueJob | null;
   while ((job = takeJob()) !== null) {
-    job();
+    try {
+      job();
+    } catch (e: any) {
+      debug.sendError(e, getLastErrorContext());
+      throw e;
+    }
   }
 }
 
 function takeJob() {
-  if (immediateQueue.size > 0) {
-    // return first item in immediateQueue
-    const job = immediateQueue.values().next().value!;
-    immediateQueue.delete(job);
-    return job;
-  }
   if (queue.size > 0) {
     // return first item in queue
     const job = queue.values().next().value!;

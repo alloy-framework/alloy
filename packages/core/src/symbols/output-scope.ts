@@ -8,11 +8,9 @@ import {
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
-import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { useScope } from "../context/scope.js";
 import type { ReactiveUnionSetOptions } from "../reactive-union-set.js";
-import type { Refkey } from "../refkey.js";
 import {
   formatScope,
   formatScopeName,
@@ -20,8 +18,10 @@ import {
   traceEffect,
   TracePhase,
 } from "../tracer.js";
+import type { Binder } from "./binder.js";
 import { OutputScopeFlags } from "./flags.js";
 import type { OutputSymbol } from "./output-symbol.js";
+import type { Refkey } from "./refkey.js";
 import { SymbolTable } from "./symbol-table.js";
 
 let scopeCount = 0;
@@ -33,6 +33,12 @@ export interface OutputScopeOptions {
   parent?: OutputScope;
   owner?: OutputSymbol;
   binder?: Binder;
+
+  /**
+   * Unique id for this scope. If not provided a unique id is created
+   * automatically.
+   */
+  id?: number;
 }
 
 /**
@@ -164,11 +170,12 @@ export class OutputScope {
     return this.#binder;
   }
 
-  [ReactiveFlags.SKIP] = this;
+  [ReactiveFlags.SKIP] = true as const;
+  [ReactiveFlags.IS_SHALLOW] = true as const;
 
   constructor(name: string, options: OutputScopeOptions = {}) {
     this.#name = name;
-    this.#id = scopeCount++;
+    this.#id = options.id ?? scopeCount++;
     this.#flags = options.flags ?? OutputScopeFlags.None;
     this.#kind = options.kind ?? "scope";
     this.#metadata = reactive(options.metadata ?? {});
@@ -293,4 +300,30 @@ export class OutputScope {
 
     return clone;
   }
+
+  toJSON(): SerializedOutputScope {
+    return {
+      id: this.id,
+      name: this.name,
+      kind: this.kind,
+      flags: this.flags,
+      symbols: Array.from(this.symbols).map((s) => s.id),
+      children: Array.from(this.children).map((c) => c.id),
+      parent: this.parent?.id ?? null,
+      owner: this.owner?.id ?? null,
+      metadata: this.metadata,
+    };
+  }
+}
+
+export interface SerializedOutputScope {
+  id: number;
+  name: string;
+  kind: string;
+  flags: OutputScopeFlags;
+  symbols: number[];
+  children: number[];
+  parent: number | null;
+  owner: number | null;
+  metadata: Record<string, unknown>;
 }

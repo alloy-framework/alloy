@@ -40,6 +40,7 @@ export function ref(
     }
 
     const { targetDeclaration, pathDown, memberPath } = resolveResult.value;
+
     // if we resolved a instance member, check if we should be able to access
     // it.
     if (targetDeclaration.flags & OutputSymbolFlags.InstanceMember) {
@@ -58,7 +59,12 @@ export function ref(
       }
     }
 
-    validateSymbolReachable(pathDown, memberPath, currentPrivateScope);
+    validateSymbolReachable(
+      pathDown,
+      memberPath,
+      targetDeclaration,
+      currentPrivateScope,
+    );
 
     // Where the target declaration is relative to the referencing scope.
     // * package: target symbol is in a different package
@@ -169,12 +175,13 @@ function buildMemberExpression(path: TSOutputSymbol[]) {
 function validateSymbolReachable(
   path: TSOutputScope[],
   memberPath: TSOutputSymbol[] | undefined,
+  targetDeclaration: TSOutputSymbol,
   currentPrivateScope: PrivateScopeContext | undefined,
 ) {
   for (const scope of path) {
     if (scope.kind === "function") {
       throw new Error(
-        "Cannot reference a symbol inside a function from outside a function",
+        `Cannot reference symbol named ${targetDeclaration.name} because it is bound inside a function and the current scope is outside that function.`,
       );
     }
   }

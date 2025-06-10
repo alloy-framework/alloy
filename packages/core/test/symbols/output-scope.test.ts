@@ -1,11 +1,11 @@
 import { reactive, watch } from "@vue/reactivity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Binder, createOutputBinder } from "../../src/binder.js";
-import { Refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
+import { Binder, createOutputBinder } from "../../src/symbols/binder.js";
 import { OutputScopeFlags } from "../../src/symbols/flags.js";
 import { OutputScope } from "../../src/symbols/output-scope.js";
 import { OutputSymbol } from "../../src/symbols/output-symbol.js";
+import { Refkey } from "../../src/symbols/refkey.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
 
 let binder: Binder;

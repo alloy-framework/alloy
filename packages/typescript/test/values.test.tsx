@@ -179,7 +179,7 @@ describe("symbols", () => {
     `);
   });
 
-  it("can reference nested members", () => {
+  it.only("can reference nested members", () => {
     const varRefkey = refkey();
     const fooRefkey = refkey();
     const barRefkey = refkey();

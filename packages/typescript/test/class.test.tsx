@@ -363,6 +363,47 @@ describe("instance methods", () => {
       }
     `);
   });
+
+  it("with parameters", () => {
+    const fprk = refkey();
+    const cprk = refkey();
+    const frk = refkey();
+    const functionParams: ts.ParameterDescriptor[] = [
+      { name: "foo", type: "string", refkey: fprk },
+    ];
+
+    const classParams: ts.ParameterDescriptor[] = [
+      { name: "bar", type: "number", refkey: cprk },
+    ];
+
+    const res = toSourceText(
+      <List>
+        <ts.FunctionDeclaration
+          name="internalFoo"
+          parameters={functionParams}
+          refkey={frk}
+        >
+          console.log({fprk});
+        </ts.FunctionDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <ts.ClassMethod name="two" parameters={classParams}>
+            {cprk}
+          </ts.ClassMethod>
+        </ts.ClassDeclaration>
+      </List>,
+    );
+
+    expect(res).toEqual(d`
+      function internalFoo(foo: string) {
+        console.log(foo);
+      }
+      class Foo {
+        two(bar: number) {
+          bar
+        }
+      }
+    `);
+  });
 });
 
 it("renders a class with docs for the class and its members", () => {

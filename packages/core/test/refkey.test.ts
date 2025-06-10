@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { refkey } from "../src/refkey.js";
+import { refkey } from "../src/symbols/refkey.js";
 
 it("is stable when called with same values", () => {
   const obj = {};

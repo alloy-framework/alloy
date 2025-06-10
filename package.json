@@ -35,6 +35,9 @@
   "pnpm": {
     "patchedDependencies": {
       "@microsoft/tsdoc@0.15.1": "patches/@microsoft__tsdoc@0.15.1.patch"
+    },
+    "overrides": {
+      "@vue/reactivity": "3.5.16"
     }
   }
 }

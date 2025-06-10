@@ -95,11 +95,11 @@ export interface ObjectPropertyProps {
 
 export function ObjectProperty(props: ObjectPropertyProps) {
   let name;
+  let symbolName = props.name;
   if (props.name) {
     const namer = useTSNamePolicy();
-    name = (
-      <PropertyName name={namer.getName(props.name, "object-member-data")} />
-    );
+    symbolName = namer.getName(props.name, "object-member-data");
+    name = <PropertyName name={symbolName} />;
   } else if (props.nameExpression) {
     name = <>[{props.nameExpression}]</>;
   } else {
@@ -108,7 +108,7 @@ export function ObjectProperty(props: ObjectPropertyProps) {
 
   let sym = undefined;
   if (props.refkey && props.name) {
-    sym = new TSOutputSymbol(props.name, {
+    sym = new TSOutputSymbol(symbolName!, {
       refkeys: props.refkey,
       flags: OutputSymbolFlags.StaticMember,
     });

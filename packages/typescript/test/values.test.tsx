@@ -1,4 +1,5 @@
 import {
+  List,
   mapJoin,
   Output,
   printTree,
@@ -282,6 +283,38 @@ describe("symbols", () => {
 
         console.log(refme.foo.bar);
       `,
+    });
+  });
+
+  it("uses name policy", () => {
+    const key1 = refkey();
+    const res = render(
+      <Output namePolicy={ts.createTSNamePolicy()}>
+        <ts.SourceFile path="test.ts">
+          <ts.VarDeclaration const name="dispatcher">
+            <ts.ObjectExpression>
+              <List comma enderPunctuation>
+                <ts.ObjectProperty
+                  name={"foo_bar"}
+                  value={"null"}
+                  refkey={key1}
+                />
+              </List>
+            </ts.ObjectExpression>
+          </ts.VarDeclaration>
+          <line />
+          <ts.FunctionCallExpression target={key1} args={["data"]} />
+        </ts.SourceFile>
+      </Output>,
+    );
+
+    assertFileContents(res, {
+      "test.ts": `
+        const dispatcher = {
+          fooBar: null,
+        }
+        dispatcher.fooBar(data)
+    `,
     });
   });
 });

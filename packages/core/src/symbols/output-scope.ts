@@ -170,6 +170,12 @@ export class OutputScope {
     return this.#binder;
   }
 
+  #deleted = false;
+  get deleted() {
+    track(this, TrackOpTypes.GET, "deleted");
+    return this.#deleted;
+  }
+
   [ReactiveFlags.SKIP] = true as const;
   [ReactiveFlags.IS_SHALLOW] = true as const;
 
@@ -299,6 +305,30 @@ export class OutputScope {
     clone.copySymbolsFrom(this);
 
     return clone;
+  }
+
+  delete() {
+    // Mark as deleted to prevent further operations
+    this.#deleted = true;
+    trigger(this, TriggerOpTypes.SET, "deleted", true, false);
+
+    // Remove this scope from its parent's children
+    if (this.#parent) {
+      this.#parent.children.delete(this);
+    }
+
+    // Delete all symbols in this scope
+    for (const symbol of Array.from(this.#symbols)) {
+      symbol.delete();
+    }
+
+    // Delete all child scopes
+    for (const child of Array.from(this.#children)) {
+      child.delete();
+    }
+
+    // Notify the binder
+    this.#binder?.notifyScopeDeleted(this);
   }
 
   toJSON(): SerializedOutputScope {

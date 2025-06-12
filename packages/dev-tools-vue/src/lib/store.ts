@@ -22,12 +22,22 @@ const state = reactive<StoreState>({
 // Refkey-to-symbol index for efficient lookups
 const refkeyToSymbolIndex = reactive(new Map<string, number>())
 
+// Track which node created each symbol and scope
+const symbolCreatorNodes = reactive(new Map<number, number | null>())
+const scopeCreatorNodes = reactive(new Map<number, number | null>())
+
 // Selected node state for component tree navigation
 export const selectedNodeId = ref<number | null>(null)
 
 // WebSocket connection
 let websocket: WebSocket | null = null
 const wsUrl = ref('ws://localhost:8080') // Default WebSocket URL
+let retryTimeout: ReturnType<typeof setTimeout> | null = null
+const RETRY_DELAY = 2000 // 2 seconds
+
+let initialConnectionSucceeded = false // Tracks if the first connection attempt sequence was successful
+let currentConnectPromise: Promise<void> | null = null
+let resolveCurrentConnectPromise: (() => void) | null = null
 
 // Reactive symbol and scope refs - these update when symbols/scopes become available
 const symbolRefs = new Map<
@@ -64,8 +74,13 @@ export function getSymbol(id: number) {
   return symbolRefs.get(id)!
 }
 
-export function addSymbol(data: SerializedOutputSymbol) {
+export function addSymbol(data: SerializedOutputSymbol, nodeId: number | null = null) {
   state.symbols.set(data.id, data)
+
+  // Track which node created this symbol
+  if (nodeId !== null) {
+    symbolCreatorNodes.set(data.id, nodeId)
+  }
 
   // Update refkey-to-symbol index
   for (const refkey of data.refkeys) {
@@ -79,7 +94,7 @@ export function addSymbol(data: SerializedOutputSymbol) {
   }
 }
 
-export function updateSymbol(data: SerializedOutputSymbol) {
+export function updateSymbol(data: SerializedOutputSymbol, nodeId: number | null = null) {
   const existingSymbol = state.symbols.get(data.id)
   if (existingSymbol) {
     // Clear old refkey mappings before updating
@@ -91,6 +106,11 @@ export function updateSymbol(data: SerializedOutputSymbol) {
 
     // Update properties of the existing object to maintain reactivity
     Object.assign(existingSymbol, data)
+
+    // Update creator node if provided
+    if (nodeId !== null) {
+      symbolCreatorNodes.set(data.id, nodeId)
+    }
 
     // Update refkey-to-symbol index with new mappings
     for (const refkey of data.refkeys) {
@@ -104,7 +124,7 @@ export function updateSymbol(data: SerializedOutputSymbol) {
     }
   } else {
     // If symbol doesn't exist, add it
-    addSymbol(data)
+    addSymbol(data, nodeId)
   }
 }
 
@@ -126,8 +146,13 @@ export function getScope(id: number) {
   return scopeRefs.get(id)!
 }
 
-export function addScope(data: SerializedOutputScope) {
+export function addScope(data: SerializedOutputScope, nodeId: number | null = null) {
   state.scopes.set(data.id, data)
+
+  // Track which node created this scope
+  if (nodeId !== null) {
+    scopeCreatorNodes.set(data.id, nodeId)
+  }
 
   // Update the reactive ref if it exists
   const scopeRef = scopeRefs.get(data.id)
@@ -136,11 +161,16 @@ export function addScope(data: SerializedOutputScope) {
   }
 }
 
-export function updateScope(data: SerializedOutputScope) {
+export function updateScope(data: SerializedOutputScope, nodeId: number | null = null) {
   const existingScope = state.scopes.get(data.id)
   if (existingScope) {
     // Update properties of the existing object to maintain reactivity
     Object.assign(existingScope, data)
+
+    // Update creator node if provided
+    if (nodeId !== null) {
+      scopeCreatorNodes.set(data.id, nodeId)
+    }
 
     // Update the reactive ref if it exists
     const scopeRef = scopeRefs.get(data.id)
@@ -149,7 +179,44 @@ export function updateScope(data: SerializedOutputScope) {
     }
   } else {
     // If scope doesn't exist, add it
-    addScope(data)
+    addScope(data, nodeId)
+  }
+}
+
+export function removeSymbol(symbolId: number) {
+  const symbol = state.symbols.get(symbolId)
+  if (symbol) {
+    // Clear refkey mappings
+    for (const refkey of symbol.refkeys) {
+      if (refkeyToSymbolIndex.get(refkey.key) === symbolId) {
+        refkeyToSymbolIndex.delete(refkey.key)
+      }
+    }
+
+    // Remove from state
+    state.symbols.delete(symbolId)
+    symbolCreatorNodes.delete(symbolId)
+
+    // Update the reactive ref if it exists
+    const symbolRef = symbolRefs.get(symbolId)
+    if (symbolRef) {
+      symbolRef.value = undefined
+    }
+  }
+}
+
+export function removeScope(scopeId: number) {
+  const scope = state.scopes.get(scopeId)
+  if (scope) {
+    // Remove from state
+    state.scopes.delete(scopeId)
+    scopeCreatorNodes.delete(scopeId)
+
+    // Update the reactive ref if it exists
+    const scopeRef = scopeRefs.get(scopeId)
+    if (scopeRef) {
+      scopeRef.value = undefined
+    }
   }
 }
 
@@ -207,8 +274,6 @@ export function addNode(data: SerializedNode) {
   if (data.parentId !== null) {
     const parent = state.nodes.get(data.parentId)
     if (parent && !parent.children.includes(data.id)) {
-      // eslint-disable-next-line no-console
-      console.log('Node ' + data.id + " doesn't have parent " + data.parentId)
       parent.children.push(data.id)
 
       // Update the parent's reactive ref if it exists
@@ -309,74 +374,181 @@ export function connect(url?: string): Promise<void> {
     wsUrl.value = url
   }
 
-  return new Promise((resolve, reject) => {
-    if (websocket?.readyState === WebSocket.OPEN) {
-      resolve()
-      return
-    }
+  if (initialConnectionSucceeded && websocket?.readyState === WebSocket.OPEN && state.isConnected) {
+    return Promise.resolve()
+  }
 
-    state.connectionStatus = 'connecting'
-    websocket = new WebSocket(wsUrl.value)
+  if (currentConnectPromise && !initialConnectionSucceeded) {
+    return currentConnectPromise
+  }
 
-    websocket.onopen = () => {
-      state.isConnected = true
-      state.connectionStatus = 'connected'
-      // eslint-disable-next-line no-console
-      console.log('WebSocket connected to', wsUrl.value)
-      resolve()
-    }
+  initialConnectionSucceeded = false
+  if (retryTimeout) {
+    clearTimeout(retryTimeout)
+    retryTimeout = null
+  }
 
-    websocket.onclose = () => {
-      state.isConnected = false
-      state.connectionStatus = 'disconnected'
-      // eslint-disable-next-line no-console
-      console.log('WebSocket disconnected')
-    }
-
-    websocket.onerror = (error) => {
-      state.connectionStatus = 'error'
-      // eslint-disable-next-line no-console
-      console.error('WebSocket error:', error)
-      reject(error)
-    }
-
-    websocket.onmessage = (event) => {
-      try {
-        const message: WebSocketMessage = JSON.parse(event.data)
-        handleWebSocketMessage(message)
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to parse WebSocket message:', error)
+  currentConnectPromise = new Promise<void>((resolve) => {
+    resolveCurrentConnectPromise = () => {
+      if (currentConnectPromise) {
+        resolve()
       }
     }
+
+    const attemptConnection = () => {
+      if (initialConnectionSucceeded && state.connectionStatus === 'connected') {
+        if (resolveCurrentConnectPromise) {
+          resolveCurrentConnectPromise()
+          resolveCurrentConnectPromise = null
+        }
+        return
+      }
+
+      state.connectionStatus = 'connecting'
+      websocket = new WebSocket(wsUrl.value)
+
+      websocket.onopen = () => {
+        state.isConnected = true
+        state.connectionStatus = 'connected'
+        initialConnectionSucceeded = true
+
+        // eslint-disable-next-line no-console
+        console.log('WebSocket connected to', wsUrl.value)
+
+        if (retryTimeout) {
+          clearTimeout(retryTimeout)
+          retryTimeout = null
+        }
+
+        if (resolveCurrentConnectPromise) {
+          resolveCurrentConnectPromise()
+          resolveCurrentConnectPromise = null
+        }
+      }
+
+      websocket.onclose = () => {
+        state.isConnected = false
+
+        if (initialConnectionSucceeded) {
+          state.connectionStatus = 'disconnected'
+          // eslint-disable-next-line no-console
+          console.log('WebSocket disconnected (was previously connected).')
+          if (retryTimeout) {
+            clearTimeout(retryTimeout)
+            retryTimeout = null
+          }
+        } else {
+          // state.connectionStatus remains 'connecting' (set at the start of attemptConnection)
+          // eslint-disable-next-line no-console
+          console.log(
+            'WebSocket connection attempt failed or closed before initial success. Retrying...',
+          )
+          if (retryTimeout) clearTimeout(retryTimeout) // Clear previous, if any
+          retryTimeout = setTimeout(attemptConnection, RETRY_DELAY)
+        }
+      }
+
+      websocket.onerror = (error) => {
+        // eslint-disable-next-line no-console
+        console.error('WebSocket error:', error)
+
+        if (initialConnectionSucceeded && state.connectionStatus === 'connected') {
+          state.connectionStatus = 'error'
+        }
+      }
+
+      websocket.onmessage = (event) => {
+        try {
+          const message: WebSocketMessage = JSON.parse(event.data)
+          handleWebSocketMessage(message)
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to parse WebSocket message:', error)
+        }
+      }
+    }
+
+    attemptConnection()
   })
+
+  return currentConnectPromise
 }
 
 export function disconnect(): void {
+  if (retryTimeout) {
+    clearTimeout(retryTimeout)
+    retryTimeout = null
+  }
+
+  initialConnectionSucceeded = true
+
   if (websocket) {
-    websocket.close()
+    websocket.onopen = null
+    websocket.onclose = null
+    websocket.onerror = null
+    websocket.onmessage = null
+
+    if (websocket.readyState === WebSocket.OPEN || websocket.readyState === WebSocket.CONNECTING) {
+      websocket.close()
+    }
     websocket = null
   }
+
   state.isConnected = false
   state.connectionStatus = 'disconnected'
+
+  currentConnectPromise = null
+  resolveCurrentConnectPromise = null
+}
+
+// Send message to WebSocket server
+export function sendMessage(message: WebSocketMessage): void {
+  if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+    // eslint-disable-next-line no-console
+    console.warn('WebSocket is not connected. Cannot send message:', message)
+    return
+  }
+
+  try {
+    websocket.send(JSON.stringify(message))
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to send WebSocket message:', error)
+  }
+}
+
+// Send rerender message for a specific component
+export function rerenderComponent(nodeId: number): void {
+  sendMessage({
+    type: 'rerender',
+    data: { nodeId },
+  })
 }
 
 function handleWebSocketMessage(message: WebSocketMessage): void {
   switch (message.type) {
     case 'symbol_added':
-      addSymbol(message.data)
+      addSymbol(message.data.symbol, message.data.nodeId)
       break
 
     case 'symbol_updated':
-      updateSymbol(message.data)
+      updateSymbol(message.data.symbol, message.data.nodeId)
       break
 
     case 'scope_added':
-      addScope(message.data)
+      addScope(message.data.scope, message.data.nodeId)
       break
 
     case 'scope_updated':
-      updateScope(message.data)
+      updateScope(message.data.scope, message.data.nodeId)
+      break
+
+    case 'symbol_deleted':
+      removeSymbol(message.data.symbolId)
+      break
+
+    case 'scope_deleted':
+      removeScope(message.data.scopeId)
       break
 
     case 'file_added':
@@ -403,16 +575,6 @@ function handleWebSocketMessage(message: WebSocketMessage): void {
       setError(message.data)
       break
 
-    /*
-    case 'symbol_removed':
-      removeSymbol((message.data as { id: string }).id)
-      break
-
-    case 'scope_removed':
-      removeScope((message.data as { id: string }).id)
-      break
-      */
-
     default:
       // eslint-disable-next-line no-console
       console.warn('Unknown message type:', (message as any).type)
@@ -437,4 +599,32 @@ export { state as storeState }
 // Node selection functionality
 export function selectNode(nodeId: number | null) {
   selectedNodeId.value = nodeId
+}
+
+// Get creator node for symbols and scopes
+export function getSymbolCreatorNode(symbolId: number): number | null {
+  return symbolCreatorNodes.get(symbolId) || null
+}
+
+export function getScopeCreatorNode(scopeId: number): number | null {
+  return scopeCreatorNodes.get(scopeId) || null
+}
+
+// Get component name for a nodeId
+export function getComponentName(nodeId: number | null): string | null {
+  if (nodeId === null) return null
+  const node = state.nodes.get(nodeId)
+  if (!node) return null
+
+  if (node.kind === 'component') {
+    const componentNode = node as any // SerializedComponentNode
+    return componentNode.component
+  } else if (node.kind === 'intrinsic') {
+    const intrinsicNode = node as any // SerializedIntrinsicElementNode
+    return `<${intrinsicNode.tag}>`
+  } else if (node.kind === 'fragment') {
+    return 'Fragment'
+  }
+
+  return null
 }

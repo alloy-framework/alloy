@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable'
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-vue-next'
 import { getScope } from '@/lib/store'
 import { useTabs } from '@/composables/useTabs'
+import { useMenuHighlight } from '@/composables/useMenuHighlight'
 import SymbolTreeNode from './SymbolTreeNode.vue'
 import FileTree from './FileTree.vue'
 import type { SerializedFileInfo } from '@/lib/types'
@@ -23,6 +24,10 @@ const globalScope = computed(() => getScope(0).value)
 
 // Tab management
 const { addTab } = useTabs()
+const { initializeExpandedState } = useMenuHighlight()
+
+// Initialize expanded state when the component mounts - expand global scope (id: 0)
+initializeExpandedState(0)
 
 // Handle file selection
 const handleFileSelect = (file: SerializedFileInfo) => {
@@ -78,9 +83,7 @@ const handleFileSelect = (file: SerializedFileInfo) => {
           <div v-if="globalScope" class="p-2">
             <SymbolTreeNode :scope="globalScope" />
           </div>
-          <div v-else class="p-2 text-gray-500 text-sm">
-            No global scope found (looking for scope with id: 0)
-          </div>
+          <div v-else class="p-4 text-sm text-gray-500 text-center">No symbols available</div>
         </div>
       </div>
     </ResizablePanel>

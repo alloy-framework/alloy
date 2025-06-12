@@ -243,6 +243,12 @@ export class OutputSymbol {
     return this.#metadata;
   }
 
+  #deleted = false;
+  get deleted() {
+    track(this, TrackOpTypes.GET, "deleted");
+    return this.#deleted;
+  }
+
   [ReactiveFlags.SKIP] = true as const;
   [ReactiveFlags.IS_SHALLOW] = true as const;
 
@@ -278,10 +284,17 @@ export class OutputSymbol {
   }
 
   delete() {
+    if (this.#deleted) {
+      return;
+    }
+
     trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
     if (this.#scope) {
       this.#scope.symbols.delete(this);
     }
+
+    this.#deleted = true;
+    trigger(this, TriggerOpTypes.SET, "deleted", true, false);
 
     this.#binder?.notifySymbolDeleted(this);
   }

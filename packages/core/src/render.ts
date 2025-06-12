@@ -1,4 +1,4 @@
-import { isRef } from "@vue/reactivity";
+import { isRef, ref } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
@@ -185,7 +185,6 @@ export function render(
   options?: PrintTreeOptions,
 ): OutputDirectory {
   const tree = renderTree(children);
-  flushJobs();
   let rootDirectory: OutputDirectory | undefined = undefined;
 
   // when passing Output, the first render tree child is the Output component.
@@ -335,9 +334,9 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         nodesToContext.set(newNode, getContext()!);
         contextsToNode.set(getContext()!, newNode);
         renderWorker(newNode, children);
-        debug.sendFragmentNode(newNode, node);
         onCleanup(() => debug.deleteNode(newNode));
         node.push(newNode);
+        debug.sendFragmentNode(newNode, node);
         cache.set(child, newNode);
       });
     } else if (isIntrinsicElement(child)) {
@@ -522,8 +521,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         );
 
         const componentRoot: RenderedTextTree = [];
-        nodesToContext.set(componentRoot, getContext()!);
-        contextsToNode.set(getContext()!, componentRoot);
+        const context = getContext()!;
+        context.rerenderHook ??= ref();
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        context.rerenderHook.value; // trigger the effect
+        nodesToContext.set(componentRoot, context);
+        contextsToNode.set(context, componentRoot);
         debug.sendComponentNode(componentRoot, node, child);
         renderWorker(
           componentRoot,
@@ -533,9 +536,9 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             return children;
           }),
         );
-        debug.sendComponentNode(componentRoot, node, child);
         onCleanup(() => debug.deleteNode(componentRoot));
         node.push(componentRoot);
+        debug.sendComponentNode(componentRoot, node, child);
         cache.set(child, componentRoot);
         trace(
           TracePhase.render.appendChild,
@@ -559,6 +562,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         debug.sendFragmentNode(newNodes, node);
         onCleanup(() => debug.deleteNode(newNodes));
         node[index] = newNodes;
+        debug.sendFragmentNode(newNodes, node);
         cache.set(child, newNodes);
         return newNodes;
       });
@@ -643,6 +647,11 @@ export interface PrintTreeOptions {
    * The number of spaces to use for indentation. Defaults to 2 spaces.
    */
   tabWidth?: number;
+
+  /**
+   * Whether to flush the job queue before printing. Defaults to false.
+   */
+  noFlush?: boolean;
 }
 
 const defaultPrintTreeOptions: PrintTreeOptions = {
@@ -658,8 +667,11 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
     ),
   };
 
-  // make sure queue is empty
-  flushJobs();
+  // make sure queue is empty unless told not to (e.g. because we are printing
+  // during a render pass).
+  if (!options.noFlush) {
+    flushJobs();
+  }
 
   const d = printTreeWorker(tree);
   return doc.printer.printDocToString(d, options as doc.printer.Options)

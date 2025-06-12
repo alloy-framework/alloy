@@ -14,12 +14,24 @@ import ComponentProps from './ComponentProps.vue'
 // Component tree visualization - default to all nodes expanded
 const expandedNodes = ref(new Set<number>())
 
-// Cache for memoizing expensive operations
-const nodeChildrenCache = new Map<
-  number | string,
-  Array<SerializedNode | { id: string; kind: 'text'; text: string }>
->()
-const flatTreeCache = shallowRef<
+// Optimized caching system for incremental updates
+interface ProcessedNode {
+  id: number | string
+  node: SerializedNode | { id: string; kind: 'text'; text: string }
+  children: ProcessedNode[]
+  depth: number
+  canExpand: boolean
+  parent: ProcessedNode | null
+}
+
+// Fast lookup maps
+const nodeById = new Map<number, SerializedNode>()
+const processedNodeById = new Map<number | string, ProcessedNode>()
+const childrenByParentId = new Map<number, Set<number>>()
+
+// Incremental tree state
+const rootProcessedNodes = shallowRef<ProcessedNode[]>([])
+const flattenedTree = shallowRef<
   Array<{
     node: SerializedNode | { id: string; kind: 'text'; text: string }
     depth: number
@@ -27,130 +39,31 @@ const flatTreeCache = shallowRef<
   }>
 >([])
 
-// Track the version of visible nodes to invalidate cache when needed
-let visibleNodesVersion = 0
-let lastCachedVersion = -1
+// Track what needs recomputation
+const dirtyNodes = new Set<number | string>()
+const dirtySubtrees = new Set<number | string>()
 
-// Initialize expanded state when nodes change
-const initializeExpandedState = () => {
-  const allNodeIds = visibleNodes.value.map((node) => node.id)
-  expandedNodes.value = new Set(allNodeIds)
-}
-
-// Watch for new nodes and auto-expand them
-watch(
-  visibleNodes,
-  (newNodes) => {
-    // Increment version to invalidate caches
-    visibleNodesVersion++
-    nodeChildrenCache.clear()
-
-    newNodes.forEach((node) => {
-      expandedNodes.value.add(node.id)
-    })
-  },
-  { immediate: true },
-)
-
-// Get root nodes (nodes without parents), skipping fragments
-const rootNodes = computed(() => {
-  const roots = visibleNodes.value.filter((node) => node.parentId === null)
-  return skipFragments(roots)
-})
-
-// Helper function to skip fragments and promote their children
-const skipFragments = (
-  nodes: Array<SerializedNode | { id: string; kind: 'text'; text: string }>,
-): Array<SerializedNode | { id: string; kind: 'text'; text: string }> => {
-  const result: Array<SerializedNode | { id: string; kind: 'text'; text: string }> = []
+// Initialize and maintain fast lookup structures
+const rebuildLookupMaps = (nodes: SerializedNode[]) => {
+  nodeById.clear()
+  childrenByParentId.clear()
 
   for (const node of nodes) {
-    if ('kind' in node && node.kind === 'fragment') {
-      // For fragments, add their children instead of the fragment itself
-      const fragmentChildren = getAllChildrenSkippingFragments(node.id as number)
-      result.push(...fragmentChildren)
-    } else if ('kind' in node && node.kind === 'text') {
-      // Skip empty text nodes
-      if ((node as { id: string; kind: 'text'; text: string }).text.trim() !== '') {
-        result.push(node)
+    nodeById.set(node.id, node)
+
+    if (node.parentId !== null) {
+      if (!childrenByParentId.has(node.parentId)) {
+        childrenByParentId.set(node.parentId, new Set())
       }
-    } else {
-      result.push(node)
+      childrenByParentId.get(node.parentId)!.add(node.id)
     }
   }
-
-  return result
 }
 
-// Get all children of a node, skipping fragments and promoting their children (with caching)
-const getAllChildrenSkippingFragments = (
-  nodeId: number | string,
-): Array<SerializedNode | { id: string; kind: 'text'; text: string }> => {
-  // Check cache first
-  if (nodeChildrenCache.has(nodeId)) {
-    return nodeChildrenCache.get(nodeId)!
-  }
+// Fast node retrieval
+const getNode = (id: number): SerializedNode | undefined => nodeById.get(id)
 
-  // Text nodes don't have children
-  if (typeof nodeId === 'string') {
-    const result: Array<SerializedNode | { id: string; kind: 'text'; text: string }> = []
-    nodeChildrenCache.set(nodeId, result)
-    return result
-  }
-
-  // Get direct node children
-  const nodeChildren = visibleNodes.value.filter((node) => node.parentId === nodeId)
-
-  // Get the parent node to access its children array
-  const parentNode = visibleNodes.value.find((node) => node.id === nodeId)
-  const result: Array<SerializedNode | { id: string; kind: 'text'; text: string }> = []
-
-  if (parentNode) {
-    // Process the children array which contains both text content and node references
-    parentNode.children.forEach((child, index) => {
-      if (typeof child === 'string') {
-        // Skip empty text nodes
-        if (child.trim() !== '') {
-          // Text content - create a virtual text node
-          result.push({
-            id: `${nodeId}-text-${index}`,
-            kind: 'text',
-            text: child,
-          })
-        }
-      } else if (typeof child === 'number') {
-        // Node reference - find the actual node
-        const childNode = visibleNodes.value.find((node) => node.id === child)
-        if (childNode) {
-          result.push(childNode)
-        }
-      }
-    })
-  }
-
-  // Also include any direct child nodes that might not be referenced in the children array
-  nodeChildren.forEach((node) => {
-    if (!result.some((item) => 'id' in item && item.id === node.id)) {
-      result.push(node)
-    }
-  })
-
-  // Skip fragments and promote their children
-  const finalResult = skipFragments(result)
-
-  // Cache the result
-  nodeChildrenCache.set(nodeId, finalResult)
-  return finalResult
-}
-
-// Get all children of a node (both node children and text content)
-const getAllChildren = (
-  nodeId: number | string,
-): Array<SerializedNode | { id: string; kind: 'text'; text: string }> => {
-  return getAllChildrenSkippingFragments(nodeId)
-}
-
-// Check if a node is a context provider
+// Helper functions for context detection (moved to top to avoid temporal dead zone)
 const isContextProvider = (
   node: SerializedNode | { id: string; kind: 'text'; text: string },
 ): boolean => {
@@ -161,29 +74,227 @@ const isContextProvider = (
   )
 }
 
-// Check if a node only has context providers as children (directly or through a chain)
 const hasOnlyContextChildren = (
   node: SerializedNode | { id: string; kind: 'text'; text: string },
 ): boolean => {
   if (node.kind === 'text') return false
 
-  const children = getAllChildrenSkippingFragments(node.id)
+  // For this function, we need to check the actual node structure, not the processed cache
+  // since we're checking the logical structure, not a specific depth
+  if ('children' in node && node.children) {
+    const nonEmptyChildren = node.children.filter((child) => {
+      if (typeof child === 'string') {
+        return child.trim() !== ''
+      } else if (typeof child === 'number') {
+        const childNode = getNode(child)
+        return childNode && !(childNode as any).deleted
+      }
+      return false
+    })
 
-  // No children means this is a leaf
-  if (children.length === 0) return false
-
-  // If this node has exactly one child that is a context provider, check recursively
-  if (children.length === 1 && isContextProvider(children[0])) {
-    return true
+    if (nonEmptyChildren.length === 0) return false
+    if (nonEmptyChildren.length === 1 && typeof nonEmptyChildren[0] === 'number') {
+      const childNode = getNode(nonEmptyChildren[0])
+      return childNode ? isContextProvider(childNode) : false
+    }
   }
 
   return false
 }
 
-// Get a flattened view of the tree starting from the given nodes
-const getFlattenedTreeRecursive = (
-  nodes: Array<SerializedNode | { id: string; kind: 'text'; text: string }>,
-  currentDepth: number = 0,
+// Process a single node and its immediate children (non-recursive)
+const processNode = (
+  node: SerializedNode,
+  parent: ProcessedNode | null = null,
+  depth: number = 0,
+): ProcessedNode => {
+  // Use a cache key that includes depth to handle nodes at different levels
+  const cacheKey = `${node.id}-${depth}`
+  const existingProcessed = processedNodeById.get(cacheKey)
+  if (existingProcessed) {
+    return existingProcessed
+  }
+
+  const processedChildren: ProcessedNode[] = []
+  const processedChildIds = new Set<number | string>() // Track processed children to avoid duplicates
+  let canExpand = false
+
+  // Process children from the node's children array
+  if (node.children && node.children.length > 0) {
+    for (let i = 0; i < node.children.length; i++) {
+      const child = node.children[i]
+
+      if (typeof child === 'string') {
+        // Text node - skip empty ones
+        if (child.trim() !== '') {
+          const textNodeId = `${node.id}-text-${i}`
+          if (!processedChildIds.has(textNodeId)) {
+            const textNode = {
+              id: textNodeId,
+              kind: 'text' as const,
+              text: child,
+            }
+            processedChildren.push({
+              id: textNode.id,
+              node: textNode,
+              children: [],
+              depth: depth + 1,
+              canExpand: false,
+              parent: null, // Will be set after creation
+            })
+            processedChildIds.add(textNodeId)
+          }
+        }
+      } else if (typeof child === 'number') {
+        // Node reference - avoid duplicates
+        if (!processedChildIds.has(child)) {
+          const childNode = getNode(child)
+          if (childNode && !(childNode as any).deleted) {
+            // Skip fragments - promote their children instead
+            if (childNode.kind === 'fragment') {
+              const fragmentChildren = processFragmentChildren(childNode, depth + 1)
+              processedChildren.push(...fragmentChildren)
+              canExpand = canExpand || fragmentChildren.length > 0
+            } else {
+              const processedChild = processNode(childNode, null, depth + 1)
+              processedChildren.push(processedChild)
+              canExpand = true
+            }
+            processedChildIds.add(child)
+          }
+        }
+      }
+    }
+  }
+
+  // Also include direct child nodes that might not be in the children array
+  const directChildren = childrenByParentId.get(node.id) || new Set()
+  for (const childId of directChildren) {
+    // Skip if we already processed this child
+    if (!processedChildIds.has(childId)) {
+      const childNode = getNode(childId)
+      if (childNode && !(childNode as any).deleted) {
+        if (childNode.kind === 'fragment') {
+          const fragmentChildren = processFragmentChildren(childNode, depth + 1)
+          processedChildren.push(...fragmentChildren)
+          canExpand = canExpand || fragmentChildren.length > 0
+        } else {
+          const processedChild = processNode(childNode, null, depth + 1)
+          processedChildren.push(processedChild)
+          canExpand = true
+        }
+        processedChildIds.add(childId)
+      }
+    }
+  }
+
+  const processed: ProcessedNode = {
+    id: node.id,
+    node,
+    children: processedChildren,
+    depth,
+    canExpand,
+    parent,
+  }
+
+  // Set parent references for children
+  processedChildren.forEach((child) => {
+    child.parent = processed
+  })
+
+  // Cache the processed node with depth-specific key
+  processedNodeById.set(cacheKey, processed)
+
+  return processed
+}
+
+// Handle fragment children specially - they get promoted to parent level
+const processFragmentChildren = (fragmentNode: SerializedNode, depth: number): ProcessedNode[] => {
+  const result: ProcessedNode[] = []
+  const processedChildIds = new Set<number | string>() // Track processed children to avoid duplicates
+
+  if (fragmentNode.children) {
+    for (let i = 0; i < fragmentNode.children.length; i++) {
+      const child = fragmentNode.children[i]
+
+      if (typeof child === 'string') {
+        if (child.trim() !== '') {
+          const textNodeId = `${fragmentNode.id}-text-${i}`
+          if (!processedChildIds.has(textNodeId)) {
+            const textNode = {
+              id: textNodeId,
+              kind: 'text' as const,
+              text: child,
+            }
+            result.push({
+              id: textNode.id,
+              node: textNode,
+              children: [],
+              depth,
+              canExpand: false,
+              parent: null, // Will be set by caller
+            })
+            processedChildIds.add(textNodeId)
+          }
+        }
+      } else if (typeof child === 'number') {
+        if (!processedChildIds.has(child)) {
+          const childNode = getNode(child)
+          if (childNode && !(childNode as any).deleted) {
+            if (childNode.kind === 'fragment') {
+              // Nested fragment - recursively process
+              result.push(...processFragmentChildren(childNode, depth))
+            } else {
+              result.push(processNode(childNode, null, depth))
+            }
+            processedChildIds.add(child)
+          }
+        }
+      }
+    }
+  }
+
+  // Also check direct children
+  const directChildren = childrenByParentId.get(fragmentNode.id) || new Set()
+  for (const childId of directChildren) {
+    if (!processedChildIds.has(childId)) {
+      const childNode = getNode(childId)
+      if (childNode && !(childNode as any).deleted) {
+        if (childNode.kind === 'fragment') {
+          result.push(...processFragmentChildren(childNode, depth))
+        } else {
+          result.push(processNode(childNode, null, depth))
+        }
+        processedChildIds.add(childId)
+      }
+    }
+  }
+
+  return result
+}
+
+// Build root nodes efficiently
+const buildRootNodes = (): ProcessedNode[] => {
+  const roots: ProcessedNode[] = []
+
+  // Find root nodes (no parent)
+  for (const [id, node] of nodeById) {
+    if (node.parentId === null && !(node as any).deleted) {
+      if (node.kind === 'fragment') {
+        // Root fragment - promote children to root level
+        roots.push(...processFragmentChildren(node, 0))
+      } else {
+        roots.push(processNode(node, null, 0))
+      }
+    }
+  }
+
+  return roots
+}
+
+// Flatten tree for display (only expanded nodes)
+const flattenProcessedTree = (
+  nodes: ProcessedNode[],
 ): Array<{
   node: SerializedNode | { id: string; kind: 'text'; text: string }
   depth: number
@@ -195,97 +306,132 @@ const getFlattenedTreeRecursive = (
     canExpand: boolean
   }> = []
 
-  for (const node of nodes) {
-    if (node.kind === 'text') {
-      result.push({ node, depth: currentDepth, canExpand: false })
-      continue
-    }
+  const processNodes = (nodes: ProcessedNode[]) => {
+    for (const processedNode of nodes) {
+      // Handle context chains specially
+      if (hasOnlyContextChildren(processedNode.node)) {
+        const contextChain = buildContextChain(processedNode)
+        result.push(...contextChain)
+      } else {
+        result.push({
+          node: processedNode.node,
+          depth: processedNode.depth,
+          canExpand: processedNode.canExpand,
+        })
 
-    const children = getAllChildrenSkippingFragments(node.id)
-
-    // Check if this node starts a context chain
-    if (hasOnlyContextChildren(node)) {
-      // Follow the context chain and flatten it
-      let current: SerializedNode | { id: string; kind: 'text'; text: string } = node
-      let chainDepth = currentDepth
-
-      while (current && current.kind !== 'text') {
-        const currentChildren = getAllChildrenSkippingFragments(current.id)
-
-        // Add current node to result
-        result.push({ node: current, depth: chainDepth, canExpand: false })
-
-        // If this node has only context children, continue the chain
+        // Add children if expanded
         if (
-          hasOnlyContextChildren(current) &&
-          currentChildren.length === 1 &&
-          isContextProvider(currentChildren[0])
+          processedNode.canExpand &&
+          typeof processedNode.id === 'number' &&
+          expandedNodes.value.has(processedNode.id)
         ) {
-          current = currentChildren[0]
-          // Context nodes stay at the same depth
-        } else {
-          // End of context chain
-          // Mark the last node as expandable if it has children
-          if (currentChildren.length > 0) {
-            result[result.length - 1].canExpand = true
-
-            // Add the children of the last node in the chain, but only if it's expanded
-            if (expandedNodes.value.has((current as SerializedNode).id)) {
-              const flattenedChildren = getFlattenedTreeRecursive(currentChildren, chainDepth + 1)
-              result.push(...flattenedChildren)
-            }
-          }
-          break
+          processNodes(processedNode.children)
         }
       }
-    } else {
-      // Normal node - add it and its children
-      const canExpand = children.length > 0
-      result.push({ node, depth: currentDepth, canExpand })
+    }
+  }
 
-      // Only show children if this node is expanded
-      if (canExpand && expandedNodes.value.has(node.id as number)) {
-        const flattenedChildren = getFlattenedTreeRecursive(children, currentDepth + 1)
-        result.push(...flattenedChildren)
+  processNodes(nodes)
+  return result
+}
+
+// Build context chain for flattened display
+const buildContextChain = (
+  startNode: ProcessedNode,
+): Array<{
+  node: SerializedNode | { id: string; kind: 'text'; text: string }
+  depth: number
+  canExpand: boolean
+}> => {
+  const result: Array<{
+    node: SerializedNode | { id: string; kind: 'text'; text: string }
+    depth: number
+    canExpand: boolean
+  }> = []
+
+  let current = startNode
+  let chainDepth = startNode.depth
+
+  while (current && current.node.kind !== 'text') {
+    result.push({
+      node: current.node,
+      depth: chainDepth,
+      canExpand: false,
+    })
+
+    if (
+      hasOnlyContextChildren(current.node) &&
+      current.children.length === 1 &&
+      isContextProvider(current.children[0].node)
+    ) {
+      current = current.children[0]
+      // Context nodes stay at same depth
+    } else {
+      // End of context chain
+      if (current.children.length > 0) {
+        result[result.length - 1].canExpand = true
+
+        // Add children if expanded
+        if (typeof current.id === 'number' && expandedNodes.value.has(current.id)) {
+          const flattenedChildren = flattenProcessedTree(current.children)
+          result.push(
+            ...flattenedChildren.map((item) => ({
+              ...item,
+              depth: item.depth + chainDepth + 1 - current.depth,
+            })),
+          )
+        }
       }
+      break
     }
   }
 
   return result
 }
 
-// Computed property for the flattened tree - only recalculates when dependencies change
-const flattenedTree = computed(() => {
-  // Check if we need to recalculate based on version changes
-  const needsRecalc = lastCachedVersion !== visibleNodesVersion || flatTreeCache.value.length === 0
+// Efficient update system - only recompute what changed
+watch(
+  visibleNodes,
+  (newNodes, oldNodes) => {
+    // Clear caches when nodes change
+    processedNodeById.clear()
 
-  if (needsRecalc) {
-    // Only access rootNodes.value once to minimize reactive dependencies
-    const roots = rootNodes.value
-    flatTreeCache.value = getFlattenedTreeRecursive(roots)
-    lastCachedVersion = visibleNodesVersion
-  }
+    // Rebuild lookup maps
+    rebuildLookupMaps(newNodes)
 
-  return flatTreeCache.value
-})
+    // Auto-expand new nodes
+    newNodes.forEach((node) => {
+      expandedNodes.value.add(node.id)
+    })
 
-// Watch for expansion changes and only invalidate the flattened tree cache
+    // Rebuild tree structure
+    rootProcessedNodes.value = buildRootNodes()
+
+    // Update flattened tree
+    flattenedTree.value = flattenProcessedTree(rootProcessedNodes.value)
+  },
+  { immediate: true },
+)
+
+// Efficiently handle expansion changes
 watch(
   expandedNodes,
   () => {
-    // When expansion state changes, we need to recalculate the flattened tree
-    // but we don't need to clear the children cache
-    flatTreeCache.value = getFlattenedTreeRecursive(rootNodes.value)
+    // Only re-flatten the tree, don't rebuild structure
+    flattenedTree.value = flattenProcessedTree(rootProcessedNodes.value)
   },
   { deep: true },
 )
 
-// Get children for a specific node (used by ComponentTreeNode for expansion logic)
+// Get root nodes efficiently
+const rootNodes = computed(() => {
+  return rootProcessedNodes.value.map((pn) => pn.node)
+})
+
+// Simple function for ComponentTreeNode compatibility (returns empty since we handle flattening differently)
 const getNodeChildren = (
   nodeId: number | string,
 ): Array<SerializedNode | { id: string; kind: 'text'; text: string }> => {
-  // For flattened context chains, we don't show children at the ComponentTreeNode level
-  // because they're handled by the flattened tree logic
   return []
 }
 

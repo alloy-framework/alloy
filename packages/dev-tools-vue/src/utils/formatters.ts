@@ -1,4 +1,5 @@
 import { OutputSymbolFlags, OutputScopeFlags } from '@alloy-js/core/symbols'
+import type { Refkey } from '@alloy-js/core'
 
 /**
  * Format symbol flags as human-readable flag names
@@ -53,4 +54,26 @@ export function formatScopeFlags(flags: number): string[] {
   }
 
   return flagNames
+}
+
+/**
+ * Format a single refkey for display
+ */
+export function formatRefkey(refkey: Refkey): string {
+  return `refkey[${refkey.key}]`
+}
+
+/**
+ * Format refkeys as a comma-separated string for display
+ */
+export function formatRefkeys(refkeys: Refkey[] | Refkey | undefined): string {
+  if (!refkeys) {
+    return ''
+  }
+
+  if (Array.isArray(refkeys)) {
+    return refkeys.map(formatRefkey).join(', ')
+  }
+
+  return formatRefkey(refkeys)
 }

@@ -18,22 +18,48 @@ export interface ErrorInfo {
 
 export interface WebSocketSymbolAdded {
   type: 'symbol_added'
-  data: SerializedOutputSymbol
+  data: {
+    symbol: SerializedOutputSymbol
+    nodeId: number | null
+  }
 }
 
 export interface WebSocketSymbolUpdated {
   type: 'symbol_updated'
-  data: SerializedOutputSymbol
+  data: {
+    symbol: SerializedOutputSymbol
+    nodeId: number | null
+  }
+}
+
+export interface WebSocketSymbolDeleted {
+  type: 'symbol_deleted'
+  data: {
+    symbolId: number
+  }
 }
 
 export interface WebSocketScopeAdded {
   type: 'scope_added'
-  data: SerializedOutputScope
+  data: {
+    scope: SerializedOutputScope
+    nodeId: number | null
+  }
 }
 
 export interface WebSocketScopeUpdated {
   type: 'scope_updated'
-  data: SerializedOutputScope
+  data: {
+    scope: SerializedOutputScope
+    nodeId: number | null
+  }
+}
+
+export interface WebSocketScopeDeleted {
+  type: 'scope_deleted'
+  data: {
+    scopeId: number
+  }
 }
 
 export interface SerializedFileInfo {
@@ -43,6 +69,7 @@ export interface SerializedFileInfo {
   contents: string
   nodeId: number
 }
+
 export interface WebSocketFileAdded {
   type: 'file_added'
   data: SerializedFileInfo
@@ -114,14 +141,24 @@ export interface WebSocketErrorAdded {
   data: ErrorInfo
 }
 
+export interface WebSocketRerender {
+  type: 'rerender'
+  data: {
+    nodeId: number
+  }
+}
+
 export type WebSocketMessage =
   | WebSocketScopeAdded
   | WebSocketScopeUpdated
+  | WebSocketScopeDeleted
   | WebSocketSymbolAdded
   | WebSocketSymbolUpdated
+  | WebSocketSymbolDeleted
   | WebSocketFileAdded
   | WebSocketFileUpdated
   | WebSocketNodeAdded
   | WebSocketNodeUpdated
   | WebSocketNodeDeleted
   | WebSocketErrorAdded
+  | WebSocketRerender

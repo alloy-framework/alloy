@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { SerializedNode, SerializedComponentNode } from '@/lib/types'
-import { getSymbolByRefkey } from '@/lib/store'
+import { getSymbolByRefkey, getScope, getSymbol } from '@/lib/store'
 import { useTabs } from '@/composables/useTabs'
 import { computed } from 'vue'
+import { getPropValueInfo } from '@/utils/propHelpers'
 
 interface Props {
   node: SerializedNode | { id: string; kind: 'text'; text: string }
@@ -10,16 +11,6 @@ interface Props {
 
 const props = defineProps<Props>()
 const { addTab } = useTabs()
-
-// Check if an object is a refkey (has only a 'key' property with string value)
-const isRefkeyObject = (value: any): value is { key: string } => {
-  if (typeof value !== 'object' || value === null) {
-    return false
-  }
-
-  const keys = Object.keys(value)
-  return keys.length === 1 && keys[0] === 'key' && typeof value.key === 'string'
-}
 
 // Handle refkey click to open symbol information
 const handleRefkeyClick = (refkeyString: string) => {
@@ -37,33 +28,35 @@ const handleRefkeyClick = (refkeyString: string) => {
   }
 }
 
-// Format a single prop value for display
-const formatPropValue = (
-  value: any,
-): { formatted: string; isRefkey: boolean; refkeyString?: string } => {
-  // Check if value is a refkey object
-  if (isRefkeyObject(value)) {
-    return {
-      formatted: `Refkey(${value.key})`,
-      isRefkey: true,
-      refkeyString: value.key,
-    }
-  }
+// Handle scope click to open scope information
+const handleScopeClick = (scopeId: number, scopeName: string) => {
+  const scopeRef = getScope(scopeId)
+  const scope = scopeRef.value
 
-  if (typeof value === 'string') {
-    return { formatted: `"${value}"`, isRefkey: false }
-  } else if (
-    typeof value === 'number' ||
-    typeof value === 'boolean' ||
-    value === null ||
-    value === undefined
-  ) {
-    return { formatted: String(value), isRefkey: false }
-  } else if (Array.isArray(value)) {
-    return { formatted: '[array]', isRefkey: false }
-  } else {
-    // Objects - show simplified representation
-    return { formatted: '{object}', isRefkey: false }
+  if (scope) {
+    addTab({
+      id: `scope-${scope.id}`,
+      title: scopeName || `Scope ${scope.id}`,
+      type: 'scope',
+      content: scope,
+      closable: true,
+    })
+  }
+}
+
+// Handle symbol click to open symbol information
+const handleSymbolClick = (symbolId: number, symbolName: string) => {
+  const symbolRef = getSymbol(symbolId)
+  const symbol = symbolRef.value
+
+  if (symbol) {
+    addTab({
+      id: `symbol-${symbol.id}`,
+      title: symbolName,
+      type: 'symbol',
+      content: symbol,
+      closable: true,
+    })
   }
 }
 
@@ -81,9 +74,7 @@ const getFormattedProps = () => {
   const nodeProps = typedNode.props
   const propsArray: {
     key: string
-    formatted: string
-    isRefkey: boolean
-    refkeyString?: string
+    valueInfo: ReturnType<typeof getPropValueInfo>
     isContext?: boolean
   }[] = []
 
@@ -94,12 +85,9 @@ const getFormattedProps = () => {
 
     // Format each prop
     const formattedPropEntries = propEntries.map(([key, value]) => {
-      const result = formatPropValue(value)
       return {
         key,
-        formatted: result.formatted,
-        isRefkey: result.isRefkey,
-        refkeyString: result.refkeyString,
+        valueInfo: getPropValueInfo(value),
         isContext: false,
       }
     })
@@ -115,23 +103,17 @@ const getFormattedProps = () => {
         // For Provider components, show context value only if there's no existing value prop
         const hasValueProp = nodeProps && 'value' in nodeProps
         if (!hasValueProp) {
-          const result = formatPropValue(componentNode.context.value)
           propsArray.push({
             key: 'value',
-            formatted: result.formatted,
-            isRefkey: result.isRefkey,
-            refkeyString: result.refkeyString,
+            valueInfo: getPropValueInfo(componentNode.context.value),
             isContext: true,
           })
         }
       } else {
         // For non-Provider components, show context as a special prop
-        const result = formatPropValue(componentNode.context.value)
         propsArray.push({
           key: '[[context]]',
-          formatted: result.formatted,
-          isRefkey: result.isRefkey,
-          refkeyString: result.refkeyString,
+          valueInfo: getPropValueInfo(componentNode.context.value),
           isContext: true,
         })
       }
@@ -154,16 +136,34 @@ const formattedProps = computed(() => getFormattedProps())
           'text-gray-500': !prop.isContext,
         }"
       >
-        {{ prop.key }}=<template v-if="prop.isRefkey">
+        {{ prop.key }}=<template v-if="prop.valueInfo.isRefkey">
           <button
-            @click="handleRefkeyClick(prop.refkeyString!)"
+            @click.stop="handleRefkeyClick(prop.valueInfo.refkeyString!)"
             class="text-blue-600 hover:text-blue-800 underline cursor-pointer"
-            :title="`Open symbol for refkey: ${prop.refkeyString}`"
+            :title="`Open symbol for refkey: ${prop.valueInfo.refkeyString}`"
           >
-            {{ prop.formatted }}
+            {{ prop.valueInfo.formattedValue }}
           </button>
         </template>
-        <template v-else>{{ prop.formatted }}</template>
+        <template v-else-if="prop.valueInfo.isScope">
+          <button
+            @click.stop="handleScopeClick(prop.valueInfo.scopeId!, prop.valueInfo.scopeName!)"
+            class="text-green-600 hover:text-green-800 underline cursor-pointer"
+            :title="`Open scope: ${prop.valueInfo.scopeName}`"
+          >
+            {{ prop.valueInfo.formattedValue }}
+          </button>
+        </template>
+        <template v-else-if="prop.valueInfo.isSymbol">
+          <button
+            @click.stop="handleSymbolClick(prop.valueInfo.symbolId!, prop.valueInfo.symbolName!)"
+            class="text-orange-600 hover:text-orange-800 underline cursor-pointer"
+            :title="`Open symbol: ${prop.valueInfo.symbolName}`"
+          >
+            {{ prop.valueInfo.formattedValue }}
+          </button>
+        </template>
+        <template v-else>{{ prop.valueInfo.formattedValue }}</template>
       </span>
     </template>
   </span>

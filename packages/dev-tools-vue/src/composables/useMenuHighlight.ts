@@ -25,24 +25,14 @@ export function useMenuHighlight() {
     highlightedScope.value = null
   }
 
-  // Clear only highlight-driven expansion (not manual expansion)
-  function clearHighlightExpansion() {
-    expandedFilePaths.value.clear()
-    expandedScopeIds.value.clear()
-    expandedSymbolIds.value.clear()
-  }
-
   // Highlight a file and expand its parent directories
   function highlightFile(file: SerializedFileInfo) {
     // Clear previous highlights but preserve manual expansion state
     clearHighlight()
-    
+
     // Set new highlight
     highlightedFile.value = file
 
-    // Clear previous highlight-driven expansion and add new ones
-    clearHighlightExpansion()
-    
     // Expand all parent directories
     const path = file.path
     for (let i = 0; i < path.length; i++) {
@@ -52,18 +42,18 @@ export function useMenuHighlight() {
   }
 
   // Highlight a symbol and expand its parent scopes
-  function highlightSymbol(symbol: SerializedOutputSymbol, parentScopes: SerializedOutputScope[] = []) {
+  function highlightSymbol(
+    symbol: SerializedOutputSymbol,
+    parentScopes: SerializedOutputScope[] = [],
+  ) {
     // Clear previous highlights but preserve manual expansion state
     clearHighlight()
-    
+
     // Set new highlight
     highlightedSymbol.value = symbol
 
-    // Clear previous highlight-driven expansion and add new ones
-    clearHighlightExpansion()
-
     // Expand all parent scopes
-    parentScopes.forEach(scope => {
+    parentScopes.forEach((scope) => {
       expandedScopeIds.value.add(scope.id)
     })
 
@@ -77,18 +67,18 @@ export function useMenuHighlight() {
   }
 
   // Highlight a scope and expand its parent scopes
-  function highlightScope(scope: SerializedOutputScope, parentScopes: SerializedOutputScope[] = []) {
+  function highlightScope(
+    scope: SerializedOutputScope,
+    parentScopes: SerializedOutputScope[] = [],
+  ) {
     // Clear previous highlights but preserve manual expansion state
     clearHighlight()
-    
+
     // Set new highlight
     highlightedScope.value = scope
 
-    // Clear previous highlight-driven expansion and add new ones
-    clearHighlightExpansion()
-
     // Expand all parent scopes
-    parentScopes.forEach(parentScope => {
+    parentScopes.forEach((parentScope) => {
       expandedScopeIds.value.add(parentScope.id)
     })
   }
@@ -176,6 +166,14 @@ export function useMenuHighlight() {
     }
   }
 
+  // Initialize expanded state for default tree expansion
+  function initializeExpandedState(scopeId: number) {
+    // Add scope to expanded set if not manually collapsed
+    if (!manuallyCollapsedScopeIds.value.has(scopeId)) {
+      expandedScopeIds.value.add(scopeId)
+    }
+  }
+
   return {
     // State
     highlightedFile: computed(() => highlightedFile.value),
@@ -184,10 +182,10 @@ export function useMenuHighlight() {
 
     // Actions
     clearHighlight,
-    clearHighlightExpansion,
     highlightFile,
     highlightSymbol,
     highlightScope,
+    initializeExpandedState,
 
     // Checkers
     isFileHighlighted,

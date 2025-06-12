@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavigationBar from '@/components/NavigationBar.vue'
 import MainContentArea from '@/components/MainContentArea.vue'
 import StatusBar from '@/components/StatusBar.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -9,11 +8,6 @@ import type { ErrorInfo } from './lib/types'
 
 const activeTab = ref('Inspector')
 const { addTab } = useTabs()
-
-const tabs = [
-  { id: 'Inspector', label: 'Inspector' },
-  { id: 'Trace', label: 'Trace' },
-]
 
 // Handle error events from store
 const handleErrorOccurred = (event: CustomEvent<ErrorInfo>) => {
@@ -49,7 +43,6 @@ onUnmounted(() => {
 
 <template>
   <div class="h-screen w-screen flex flex-col bg-gray-50">
-    <NavigationBar :tabs="tabs" :active-tab="activeTab" @update:active-tab="activeTab = $event" />
     <MainContentArea />
     <StatusBar />
   </div>

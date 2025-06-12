@@ -108,6 +108,11 @@ export interface Binder {
   notifySymbolDeleted(symbol: OutputSymbol): void;
 
   /**
+   * Notifies the binder that a scope has been deleted.
+   */
+  notifyScopeDeleted(scope: OutputScope): void;
+
+  /**
    * The symbols that are currently being tracked by the binder.
    */
   symbols: Set<OutputSymbol>;
@@ -193,6 +198,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     notifyScopeCreated,
     notifySymbolCreated,
     notifySymbolDeleted,
+    notifyScopeDeleted,
     nameConflictResolver: options.nameConflictResolver,
     symbols: new Set(),
     scopes: new Set(),
@@ -237,10 +243,21 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
 
     for (const refkey of symbol.refkeys) {
+      const knownDecl = knownDeclarations.get(refkey);
+      if (knownDecl && knownDecl === symbol) {
+        knownDeclarations.delete(refkey);
+      }
+
       const resolution = waitingDeclarations.get(refkey);
       if (!resolution) return;
       resolution.value = undefined;
     }
+    if (globalThis.debug) globalThis.debug.sendDeletedSymbol(symbol);
+  }
+
+  function notifyScopeDeleted(scope: OutputScope) {
+    binder.scopes.delete(scope);
+    if (globalThis.debug) globalThis.debug.sendDeletedScope(scope);
   }
 
   function hasTransientScope(symbol: OutputSymbol) {

@@ -242,14 +242,20 @@ sampleScopeTree.staticMemberScope.owner = 3 // userClass
 function createScopeMessage(scope) {
   return {
     type: 'scope_added',
-    data: scope,
+    data: {
+      scope: scope,
+      nodeId: Math.floor(Math.random() * 1000), // Mock nodeId
+    },
   }
 }
 
 function createSymbolMessage(symbol) {
   return {
     type: 'symbol_added',
-    data: symbol,
+    data: {
+      symbol: symbol,
+      nodeId: Math.floor(Math.random() * 1000), // Mock nodeId
+    },
   }
 }
 

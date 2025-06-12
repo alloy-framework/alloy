@@ -191,6 +191,10 @@ function normalizeAndDeclareParameters(
         tsFlags: flags,
       });
 
+      onCleanup(() => {
+        symbol.delete();
+      });
+
       return { refkeys: symbol.refkeys, symbol };
     });
   } else {
@@ -211,6 +215,10 @@ function normalizeAndDeclareParameters(
           metadata: param.metadata,
         },
       );
+
+      onCleanup(() => {
+        symbol.delete();
+      });
 
       return {
         ...param,

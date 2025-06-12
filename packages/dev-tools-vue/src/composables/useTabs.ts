@@ -1,12 +1,12 @@
 import { ref, computed } from 'vue'
 import { useMenuHighlight } from './useMenuHighlight'
-import { getScope } from '@/lib/store'
+import { getScope, selectedNodeId } from '@/lib/store'
 import type { SerializedOutputScope, SerializedOutputSymbol } from '@alloy-js/core/symbols'
 
 export interface Tab {
   id: string
   title: string
-  type: 'symbol' | 'scope' | 'file' | 'output' | 'error' | 'custom'
+  type: 'symbol' | 'scope' | 'file' | 'output' | 'error' | 'component' | 'custom'
   content?: any
   closable?: boolean
 }
@@ -16,8 +16,8 @@ const tabs = ref<Tab[]>([])
 const activeTabId = ref<string | null>(null)
 
 export function useTabs() {
-  const { highlightFile, highlightSymbol, highlightScope, clearHighlight, clearHighlightExpansion } = useMenuHighlight()
-  
+  const { highlightFile, highlightSymbol, highlightScope, clearHighlight } = useMenuHighlight()
+
   const activeTab = computed(() => {
     return tabs.value.find((tab) => tab.id === activeTabId.value) || null
   })
@@ -51,16 +51,21 @@ export function useTabs() {
       // For scopes, we need to find the parent scopes to expand them
       const parentScopes = findParentScopes(tab.content)
       highlightScope(tab.content, parentScopes)
+    } else if (tab.type === 'component' && tab.content) {
+      // Highlight component in the tree by selecting its node
+      selectedNodeId.value = tab.content.id
     }
   }
 
   // Helper function to find parent scopes for a given symbol or scope
-  function findParentScopes(item: SerializedOutputSymbol | SerializedOutputScope): SerializedOutputScope[] {
+  function findParentScopes(
+    item: SerializedOutputSymbol | SerializedOutputScope,
+  ): SerializedOutputScope[] {
     const parentScopes: SerializedOutputScope[] = []
-    
+
     // Find the parent scope ID from the item
     let parentScopeId: number | null = null
-    
+
     if ('scope' in item) {
       // For symbols, get their scope
       parentScopeId = item.scope
@@ -68,7 +73,7 @@ export function useTabs() {
       // For scopes, get their parent
       parentScopeId = item.parent
     }
-    
+
     // Traverse up the scope hierarchy
     while (parentScopeId !== null && parentScopeId !== 0) {
       const parentScope = getScope(parentScopeId).value
@@ -79,7 +84,7 @@ export function useTabs() {
         break
       }
     }
-    
+
     return parentScopes
   }
 
@@ -97,8 +102,13 @@ export function useTabs() {
   function removeTab(tabId: string) {
     const index = tabs.value.findIndex((tab) => tab.id === tabId)
     if (index === -1) return
+    const removedTab = tabs.value[index]
 
     tabs.value.splice(index, 1)
+    // If a component tab was closed, clear its highlight
+    if (removedTab.type === 'component') {
+      selectedNodeId.value = null
+    }
 
     // If the closed tab was active, switch to another tab
     if (activeTabId.value === tabId) {
@@ -115,7 +125,6 @@ export function useTabs() {
         activeTabId.value = null
         // Clear highlights and highlight-driven expansion when no tabs are open
         clearHighlight()
-        clearHighlightExpansion()
       }
     }
   }

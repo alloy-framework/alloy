@@ -203,6 +203,7 @@ describe("symbols", () => {
         </ts.SourceFile>
       </Output>
     );
+
     expect(decl).toRenderTo(`
       const refme = {
         foo: {

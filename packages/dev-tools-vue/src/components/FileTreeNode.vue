@@ -30,11 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const {
-  isFileHighlighted,
-  isFilePathExpanded,
-  toggleFilePathExpanded
-} = useMenuHighlight()
+const { isFileHighlighted, isFilePathExpanded, toggleFilePathExpanded } = useMenuHighlight()
 
 const hasChildren = computed(() => {
   return !!(props.item.isDirectory && props.item.children && props.item.children.size > 0)

@@ -1,5 +1,6 @@
 import {
   memo,
+  onCleanup,
   OutputSymbolFlags,
   Refkey,
   resolve,
@@ -97,6 +98,9 @@ export function ref(
                 type: options?.type,
               }),
             );
+            onCleanup(() => {
+              localSymbol!.delete();
+            });
             break;
           }
         }

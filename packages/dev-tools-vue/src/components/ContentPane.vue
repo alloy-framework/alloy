@@ -8,7 +8,9 @@ import SymbolDetails from '@/components/SymbolDetails.vue'
 import ScopeDetails from '@/components/ScopeDetails.vue'
 import FileDetails from '@/components/FileDetails.vue'
 import ErrorDetails from '@/components/ErrorDetails.vue'
+import ComponentDetails from '@/components/ComponentDetails.vue'
 import ComponentTree from '@/components/ComponentTree.vue'
+import { OutputSymbolFlags } from '@alloy-js/core/symbols'
 import type { SerializedOutputSymbol, SerializedOutputScope } from '@alloy-js/core/symbols'
 import { ref } from 'vue'
 
@@ -24,7 +26,7 @@ const openSymbolTab = (symbolId: number) => {
   if (symbol) {
     addTab({
       id: `symbol-${symbol.id}`,
-      title: symbol.name,
+      title: symbol.flags & OutputSymbolFlags.Transient ? 'transient' : symbol.name,
       type: 'symbol',
       content: symbol,
       closable: true,
@@ -139,7 +141,19 @@ const stopResize = () => {
         <div class="border-b border-gray-200 px-4 py-2 flex-shrink-0">
           <TabsList class="h-auto p-1 bg-gray-100">
             <div v-for="tab in tabs" :key="tab.id" class="flex items-center gap-1">
-              <TabsTrigger :value="tab.id" class="relative pr-8">
+              <TabsTrigger
+                :value="tab.id"
+                class="relative pr-8"
+                @mousedown="
+                  (event: MouseEvent) => {
+                    if (event.button === 1) {
+                      // Middle click
+                      event.preventDefault()
+                      removeTab(tab.id)
+                    }
+                  }
+                "
+              >
                 {{ tab.title }}
                 <!-- Close button for closable tabs -->
                 <Button
@@ -184,6 +198,11 @@ const stopResize = () => {
             />
 
             <FileDetails v-else-if="tab.type === 'file' && tab.content" :file="tab.content" />
+
+            <ComponentDetails
+              v-else-if="tab.type === 'component' && tab.content"
+              :component="tab.content"
+            />
 
             <ErrorDetails v-else-if="tab.type === 'error' && tab.content" :error="tab.content" />
 

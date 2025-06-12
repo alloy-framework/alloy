@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Type } from 'lucide-vue-next'
 import TreeNode from './TreeNode.vue'
 import ComponentProps from './ComponentProps.vue'
+import { useTabs } from '@/composables/useTabs'
 import type { SerializedNode } from '@/lib/types'
 
 interface TreeNodeProps {
@@ -24,6 +25,8 @@ interface TreeNodeEmits {
 const props = defineProps<TreeNodeProps>()
 const emit = defineEmits<TreeNodeEmits>()
 
+const { addTab } = useTabs()
+
 const allChildren = computed(() => {
   // Text nodes don't have children
   if (props.node.kind === 'text') return []
@@ -36,9 +39,9 @@ const hasChildren = computed(() => {
     return false
   }
 
-  // If isExpandable is explicitly set to true, use that with actual children check
+  // If isExpandable is explicitly set to true, this node can expand regardless of current children
   if (props.isExpandable === true) {
-    return allChildren.value.length > 0
+    return true
   }
 
   // Default behavior - check if there are children
@@ -74,6 +77,20 @@ const handleToggle = () => {
     emit('toggle', props.node.id as number)
   }
 }
+
+const handleSelect = () => {
+  // Only handle selection for component and intrinsic nodes
+  if (props.node.kind === 'component' || props.node.kind === 'intrinsic') {
+    const componentName = displayName.value
+    addTab({
+      id: `component-${props.node.id}`,
+      title: componentName,
+      type: 'component',
+      content: props.node,
+      closable: true,
+    })
+  }
+}
 </script>
 
 <template>
@@ -81,7 +98,7 @@ const handleToggle = () => {
   <div
     v-if="node.kind === 'text'"
     class="flex items-center gap-1 py-1 px-2"
-    :style="{ paddingLeft: `${depth * 16 + 8}px` }"
+    :style="{ paddingLeft: `${depth * 8 + 8}px` }"
     :data-tree-node-id="node.id"
   >
     <div class="w-4 h-4 flex-shrink-0"></div>
@@ -100,7 +117,10 @@ const handleToggle = () => {
     :depth="depth"
     :data="node"
     :show-id-suffix="node.id"
+    :selectable="true"
+    :click-to-select="true"
     @toggle="handleToggle"
+    @select="handleSelect"
   >
     <template #subtitle>
       <ComponentProps :node="node" compact />

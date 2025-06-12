@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import TreeNode from './TreeNode.vue'
 import { getScope, getSymbol } from '@/lib/store'
 import { useTabs } from '@/composables/useTabs'
 import { useMenuHighlight } from '@/composables/useMenuHighlight'
 import { OutputSymbolFlags } from '@alloy-js/core/symbols'
 import type { SerializedOutputScope, SerializedOutputSymbol } from '@alloy-js/core/symbols'
+import { formatRefkeys } from '@/utils/formatters'
 
 interface Props {
   scope: SerializedOutputScope
@@ -23,7 +24,7 @@ const {
   isScopeExpanded,
   isSymbolExpanded,
   toggleScopeExpanded,
-  toggleSymbolExpanded
+  toggleSymbolExpanded,
 } = useMenuHighlight()
 
 // Get symbols in this scope
@@ -40,35 +41,30 @@ const childScopes = computed(() => {
     .filter(Boolean) as SerializedOutputScope[]
 })
 
+// Auto-expand this scope and its symbols by default (similar to ComponentTree approach)
+watch(
+  [() => props.scope, () => scopeSymbols.value, () => childScopes.value],
+  ([scope, symbols, children]) => {
+    if (scope) {
+      // Always expand scopes by default (only if not already expanded)
+      if (!isScopeExpanded(scope.id)) {
+        toggleScopeExpanded(scope.id)
+      }
+
+      // Auto-expand all symbols in this scope (only if not already expanded)
+      symbols.forEach((symbol) => {
+        if (!isSymbolExpanded(symbol.id)) {
+          toggleSymbolExpanded(symbol.id)
+        }
+      })
+
+      // Note: Child scopes will auto-expand themselves when their own SymbolTreeNode is mounted
+    }
+  },
+  { immediate: true },
+)
+
 const hasChildren = computed(() => scopeSymbols.value.length > 0 || childScopes.value.length > 0)
-
-const toggleExpanded = () => {
-  if (hasChildren.value) {
-    toggleScopeExpanded(props.scope.id)
-  }
-}
-
-const openScopeTab = (event: Event) => {
-  event.stopPropagation() // Prevent expanding when clicking on scope name
-  addTab({
-    id: `scope-${props.scope.id}`,
-    title: props.scope.name,
-    type: 'scope',
-    content: props.scope,
-    closable: true,
-  })
-}
-
-const openSymbolTab = (symbol: SerializedOutputSymbol, event: Event) => {
-  event.stopPropagation()
-  addTab({
-    id: `symbol-${symbol.id}`,
-    title: symbol.name,
-    type: 'symbol',
-    content: symbol,
-    closable: true,
-  })
-}
 
 // Helper function to get instance member scope
 const getInstanceMemberScope = (symbol: SerializedOutputSymbol): SerializedOutputScope | null => {
@@ -120,8 +116,14 @@ const isSymbolHighlightedComputed = (symbol: SerializedOutputSymbol) => {
 }
 
 const handleScopeSelect = () => {
-  const event = new Event('click')
-  openScopeTab(event)
+  // Don't pass a fake event - just open the tab directly
+  addTab({
+    id: `scope-${props.scope.id}`,
+    title: props.scope.name,
+    type: 'scope',
+    content: props.scope,
+    closable: true,
+  })
 }
 
 const handleSymbolToggle = (symbolId: number) => {
@@ -129,8 +131,14 @@ const handleSymbolToggle = (symbolId: number) => {
 }
 
 const handleSymbolSelect = (symbol: SerializedOutputSymbol) => {
-  const event = new Event('click')
-  openSymbolTab(symbol, event)
+  // Don't pass a fake event - just open the tab directly
+  addTab({
+    id: `symbol-${symbol.id}`,
+    title: symbol.flags & OutputSymbolFlags.Transient ? 'transient' : symbol.name,
+    type: 'symbol',
+    content: symbol,
+    closable: true,
+  })
 }
 </script>
 
@@ -155,8 +163,7 @@ const handleSymbolSelect = (symbol: SerializedOutputSymbol) => {
       <div v-for="symbol in scopeSymbols" :key="symbol.id" class="symbol-entry">
         <!-- Symbol itself -->
         <TreeNode
-          :title="`🔷 ${symbol.name}`"
-          :subtitle="`(id: ${symbol.id})`"
+          :subtitle="formatRefkeys(symbol.refkeys)"
           :expanded="shouldSymbolBeExpanded(symbol.id)"
           :has-children="hasInstanceMembers(symbol) || hasStaticMembers(symbol)"
           :depth="depth + 1"
@@ -168,6 +175,12 @@ const handleSymbolSelect = (symbol: SerializedOutputSymbol) => {
           @toggle="() => handleSymbolToggle(symbol.id)"
           @select="() => handleSymbolSelect(symbol)"
         >
+          <template #title>
+            🔷
+            <span :class="{ italic: symbol.flags & OutputSymbolFlags.Transient }">
+              {{ symbol.flags & OutputSymbolFlags.Transient ? 'transient' : symbol.name }}
+            </span>
+          </template>
           <!-- Member scopes for this symbol -->
           <template v-if="shouldSymbolBeExpanded(symbol.id)">
             <!-- Instance member scope -->

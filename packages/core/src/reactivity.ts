@@ -2,6 +2,7 @@ import {
   DebuggerEvent,
   pauseTracking,
   ReactiveEffectRunner,
+  Ref,
   resetTracking,
   ShallowReactive,
   shallowRef,
@@ -67,6 +68,11 @@ export interface Context {
    * The symbol that this component has taken.
    */
   takenSymbols?: ShallowReactive<Set<OutputSymbol>>;
+
+  /**
+   * A ref that, when triggered, causes the component to rerender.
+   */
+  rerenderHook?: Ref<void>;
 }
 
 let globalContext: Context | null = null;
@@ -100,7 +106,7 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     ret = untrack(() =>
       fn(() => {
         for (const d of context!.disposables) {
-          d();
+          untrack(d);
         }
       }),
     );

@@ -4,11 +4,11 @@ import { ChevronRight, ChevronDown } from 'lucide-vue-next'
 
 interface TreeNodeProps {
   // Required props
-  title: string
   expanded: boolean
   hasChildren: boolean
 
   // Optional props
+  title?: string
   icon?: any // Vue component for the icon
   subtitle?: string
   depth?: number
@@ -33,7 +33,7 @@ interface TreeNodeEmits {
 
 const props = withDefaults(defineProps<TreeNodeProps>(), {
   depth: 0,
-  indentSize: 16,
+  indentSize: 8,
   hoverBgColor: 'hover:bg-gray-100',
   selectable: true,
   clickToSelect: false,
@@ -74,7 +74,8 @@ const handleClick = (event: Event) => {
       class="flex items-center gap-1 py-1 px-2 rounded cursor-pointer group"
       :class="[
         hoverBgColor,
-        highlighted ? 'bg-blue-200 border-l-4 border-blue-500' : ''
+        'border-l-4 border-transparent',
+        highlighted ? 'bg-blue-200 border-blue-500' : '',
       ]"
       :style="{ paddingLeft }"
       :data-tree-node-id="showIdSuffix"
@@ -100,7 +101,11 @@ const handleClick = (event: Event) => {
       >
         <!-- Title and subtitle on same line, wrapping when needed -->
         <div class="break-words">
-          <span class="font-mono text-sm text-gray-900">{{ title }}</span>
+          <!-- Use slot for title if provided, otherwise fall back to title prop -->
+          <span v-if="$slots.title" class="font-mono text-sm text-gray-900">
+            <slot name="title" />
+          </span>
+          <span v-else class="font-mono text-sm text-gray-900">{{ title }}</span>
           <!-- Use slot for subtitle if provided, otherwise fall back to subtitle prop -->
           <span v-if="$slots.subtitle" class="text-xs text-gray-500 ml-2">
             <slot name="subtitle" />

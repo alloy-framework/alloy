@@ -146,6 +146,23 @@ export const TracePhase = {
       bg: { r: 100, g: 50, b: 0 },
     },
   },
+  scheduler: {
+    queue: {
+      area: "scheduler",
+      subarea: "queue",
+      bg: { r: 200, g: 200, b: 200 },
+    },
+    take: {
+      area: "scheduler",
+      subarea: "take",
+      bg: { r: 150, g: 150, b: 150 },
+    },
+    flush: {
+      area: "scheduler",
+      subarea: "flush",
+      bg: { r: 100, g: 100, b: 100 },
+    },
+  },
 } as const;
 
 interface TracePhase extends TextFormat {
@@ -430,12 +447,12 @@ export function formatScope(scope: OutputSymbol["scope"]): string {
 
   // Show parent scope if present
   if (scope.parent) {
-    details.push(`  parent: ${formatScopeName(scope.parent)}`);
+    details.push(`  parent: ${untrack(() => formatScopeName(scope.parent!))}`);
   }
 
   // Show owner if present (for member scopes)
   if (scope.owner) {
-    details.push(`  owner: ${formatSymbolName(scope.owner)}`);
+    details.push(`  owner: ${untrack(() => formatSymbolName(scope.owner!))}`);
   }
 
   // Show child scopes if present

@@ -31,6 +31,7 @@ export interface ClassMethodProps {
 
   /**
    * If true, the method will be declared as an async method.
+   * If the method has a return type, it will be wrapped in a `Task` automatically.
    */
   async?: boolean;
 }
@@ -55,7 +56,12 @@ export function ClassMethod(props: ClassMethodProps) {
 
   const params =
     props.parameters ? <Parameters parameters={props.parameters} /> : "";
-  const returns = props.returns ?? "void";
+  const returns =
+    props.async ?
+      props.returns && props.returns !== "void" ?
+        `Task<${props.returns}>`
+      : "Task"
+    : (props.returns ?? "void");
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props.accessModifier),

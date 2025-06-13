@@ -69,22 +69,24 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public class TestClass
         {
-          async void MethodOne() {}
+          async Task MethodOne() {}
         }
       `);
   });
-  it("mark method async", () => {
+
+  it("mark method async with return type", () => {
     expect(
       <Wrapper>
-        <ClassMethod async name="MethodOne" />
+        <ClassMethod async name="MethodOne" returns="String" />
       </Wrapper>,
     ).toRenderTo(`
         public class TestClass
         {
-          async void MethodOne() {}
+          async Task<String> MethodOne() {}
         }
       `);
   });
+
   it("combine modifiers", () => {
     expect(
       <Wrapper>

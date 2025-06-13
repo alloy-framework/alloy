@@ -1,10 +1,5 @@
 import * as core from "@alloy-js/core";
-import {
-  AccessModifier,
-  getAccessModifier,
-  getMethodModifier,
-  MethodModifier,
-} from "../modifiers.js";
+import { AccessModifier, getAccessModifier } from "../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
@@ -149,54 +144,6 @@ export function ClassMember(props: ClassMemberProps) {
     <core.Declaration symbol={memberSymbol}>
       {getAccessModifier(props.accessModifier)}
       {props.type} <Name />
-    </core.Declaration>
-  );
-}
-
-// properties for creating a method
-export interface ClassMethodProps {
-  name: string;
-  refkey?: core.Refkey;
-  children?: core.Children;
-  accessModifier?: AccessModifier;
-  methodModifier?: MethodModifier;
-  parameters?: Array<ParameterProps>;
-  returns?: core.Children;
-}
-
-// a C# class method
-export function ClassMethod(props: ClassMethodProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error("can't define a class method outside of a class scope");
-  }
-
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? core.refkey(props.name),
-  });
-
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
-  });
-
-  const accessModifier = getAccessModifier(props.accessModifier);
-  const methodModifier = getMethodModifier(props.methodModifier);
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-  const returns = props.returns ?? "void";
-
-  // note that scope wraps the method decl so that the params get the correct scope
-  return (
-    <core.Declaration symbol={methodSymbol}>
-      <core.Scope value={methodScope}>
-        {accessModifier}
-        {methodModifier}
-        {returns} <Name />({params})
-        <core.Block newline>{props.children}</core.Block>
-      </core.Scope>
     </core.Declaration>
   );
 }

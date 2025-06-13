@@ -43,3 +43,15 @@ const methodModifierLookup: Record<MethodModifier, string> = {
 export function getMethodModifier(methodModifier?: MethodModifier): string {
   return methodModifier ? methodModifierLookup[methodModifier] : "";
 }
+
+export function getAsyncModifier(async?: boolean): string {
+  return async ? "async " : "";
+}
+
+/** Resolve the modifier prefix */
+export function computeModifiersPrefix(
+  modifiers: Array<string | undefined>,
+): string {
+  const resolved = modifiers.filter((x) => x);
+  return resolved.length > 0 ? resolved.join("") : "";
+}

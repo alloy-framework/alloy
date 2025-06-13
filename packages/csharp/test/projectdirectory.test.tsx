@@ -14,10 +14,10 @@ it("defines a project directory file with multiple source files", () => {
       >
         <csharp.Namespace name="TestCode">
           <csharp.SourceFile path="Test1.cs">
-            <csharp.Class accessModifier="public" name="TestClass1" />
+            <csharp.Class public name="TestClass1" />
           </csharp.SourceFile>
           <csharp.SourceFile path="Test2.cs">
-            <csharp.Class accessModifier="public" name="TestClass2" />
+            <csharp.Class public name="TestClass2" />
           </csharp.SourceFile>
         </csharp.Namespace>
       </csharp.ProjectDirectory>
@@ -71,10 +71,10 @@ it("defines a project directory file with multiple source files and a custom TFM
       >
         <csharp.Namespace name="TestCode">
           <csharp.SourceFile path="Test1.cs">
-            <csharp.Class accessModifier="public" name="TestClass1" />
+            <csharp.Class public name="TestClass1" />
           </csharp.SourceFile>
           <csharp.SourceFile path="Test2.cs">
-            <csharp.Class accessModifier="public" name="TestClass2" />
+            <csharp.Class public name="TestClass2" />
           </csharp.SourceFile>
         </csharp.Namespace>
       </csharp.ProjectDirectory>

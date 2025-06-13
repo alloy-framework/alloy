@@ -1,47 +1,48 @@
 // the possible C# access modifiers
 // https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/access-modifiers
-export type AccessModifier =
-  | "public"
-  | "protected"
-  | "private"
-  | "internal"
-  | "protected-internal"
-  | "private-protected"
-  | "file";
 
-// maps the above access modifier value to its C# syntax.
-// note that the C# keyword includes a trailing space
-const accessModifierLookup: Record<AccessModifier, string> = {
-  public: "public ",
-  protected: "protected ",
-  private: "private ",
-  internal: "internal ",
-  "protected-internal": "protected internal ",
-  "private-protected": "private protected ",
-  file: "file ",
-};
+/** Access modifiers. Can only be one */
+export interface AccessModifiers {
+  readonly public?: boolean;
+  readonly protected?: boolean;
+  readonly private?: boolean;
+  readonly internal?: boolean;
+  readonly file?: boolean;
+}
+export type AccessModifier = keyof AccessModifiers;
 
-// returns the C# syntax for the specified access modifier.
-// if no access modifier is specified, the empty string is returned.
-export function getAccessModifier(accessModifier?: AccessModifier): string {
-  return accessModifier ? accessModifierLookup[accessModifier] : "";
+export function getAccessModifier(
+  data: AccessModifiers,
+): AccessModifier | undefined {
+  return (
+    data.public ? "public"
+    : data.protected ? "protected"
+    : data.private ? "private"
+    : data.internal ? "internal"
+    : data.file ? "file"
+    : undefined
+  );
 }
 
-export type MethodModifier = "abstract" | "sealed" | "static" | "virtual";
+/** Method modifiers. Can only be one. */
+export interface MethodModifiers {
+  readonly abstract?: boolean;
+  readonly sealed?: boolean;
+  readonly static?: boolean;
+  readonly virtual?: boolean;
+}
+export type MethodModifier = keyof MethodModifiers;
 
-// maps the above method modifier value to its C# syntax.
-// note that the C# keyword includes a trailing space
-const methodModifierLookup: Record<MethodModifier, string> = {
-  abstract: "abstract ",
-  sealed: "sealed ",
-  static: "static ",
-  virtual: "virtual ",
-};
-
-// returns the C# syntax for the specified method modifier.
-// if no method modifier is specified, the empty string is returned.
-export function getMethodModifier(methodModifier?: MethodModifier): string {
-  return methodModifier ? methodModifierLookup[methodModifier] : "";
+export function getMethodModifier(
+  data: MethodModifiers,
+): MethodModifier | undefined {
+  return (
+    data.abstract ? "abstract"
+    : data.sealed ? "sealed"
+    : data.static ? "static"
+    : data.virtual ? "virtual"
+    : undefined
+  );
 }
 
 export function getAsyncModifier(async?: boolean): string {
@@ -53,5 +54,5 @@ export function computeModifiersPrefix(
   modifiers: Array<string | undefined>,
 ): string {
   const resolved = modifiers.filter((x) => x);
-  return resolved.length > 0 ? resolved.join("") : "";
+  return resolved.length > 0 ? resolved.join(" ") + " " : "";
 }

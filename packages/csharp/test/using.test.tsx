@@ -52,19 +52,11 @@ it("adds using statement across namespaces", () => {
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name="Models">
         <csharp.SourceFile path="Models.cs">
-          <csharp.Class
-            accessModifier="public"
-            name="Input"
-            refkey={inputTypeRefkey}
-          />
+          <csharp.Class public name="Input" refkey={inputTypeRefkey} />
           <hbr />
-          <csharp.Class
-            accessModifier="public"
-            name="Output"
-            refkey={outputTypeRefkey}
-          />
+          <csharp.Class public name="Output" refkey={outputTypeRefkey} />
           <hbr />
-          <csharp.Enum accessModifier="public" name="TestEnum">
+          <csharp.Enum public name="TestEnum">
             <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" refkey={twoValRefkey} />
           </csharp.Enum>
@@ -72,9 +64,9 @@ it("adds using statement across namespaces", () => {
       </csharp.Namespace>
       <csharp.Namespace name="Client">
         <csharp.SourceFile path="Client.cs" using={["System"]}>
-          <csharp.Class accessModifier="public" name="Client">
+          <csharp.Class public name="Client">
             <csharp.ClassMethod
-              accessModifier="public"
+              public
               name="MethodOne"
               parameters={params}
               returns={outputTypeRefkey}

@@ -64,7 +64,7 @@ jobs:
       - run: pnpm -w chronus version --prerelease
         name: Bump prerelease version
 
-      - run: pnpm chronus publish --access public --engine npm --tag next
+      - run: pnpm chronus publish --access public --tag next
         name: Publish Dev versions
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

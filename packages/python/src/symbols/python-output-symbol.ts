@@ -3,13 +3,11 @@ import {
   OutputSymbol,
   OutputSymbolOptions,
   refkey,
-  Refkey,
   useBinder,
   useContext,
   useScope,
 } from "@alloy-js/core";
 import { SourceFileContext } from "../components/SourceFile.js";
-import { PythonOutputScope } from "./reference.js";
 
 /**
  * Represents an 'exported' symbol from a .py file. Class, enum, interface etc.

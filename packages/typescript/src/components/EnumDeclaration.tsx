@@ -10,7 +10,7 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { createTSSymbol, useTSScope } from "../symbols/index.js";
+import { TSOutputSymbol, useTSScope } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 import { JSDoc } from "./JSDoc.jsx";
@@ -28,11 +28,10 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const name = useTSNamePolicy().getName(props.name, "enum");
   const binder = useBinder();
   const scope = useTSScope();
-  const sym = createTSSymbol({
+  const sym = new TSOutputSymbol(name, {
     binder,
     scope,
-    name: name,
-    refkey: props.refkey,
+    refkeys: props.refkey,
     default: props.default,
     export: props.export,
     flags: OutputSymbolFlags.StaticMemberContainer,

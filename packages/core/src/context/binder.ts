@@ -1,6 +1,6 @@
-import { Binder } from "../binder.js";
+import type { Binder } from "../binder.js";
 import {
-  ComponentContext,
+  type ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
@@ -15,5 +15,5 @@ export const BinderContext: ComponentContext<Binder> =
   createNamedContext("Binder");
 
 export function useBinder() {
-  return useContext(BinderContext)!;
+  return useContext(BinderContext);
 }

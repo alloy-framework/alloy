@@ -1,11 +1,12 @@
 import { Output, render } from "@alloy-js/core";
-import { it } from "vitest";
+import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
   createPackage,
   FunctionDeclaration,
   PackageDirectory,
   SourceFile,
+  TSOutputSymbol,
 } from "../src/index.js";
 import { assertFileContents } from "./utils.js";
 
@@ -135,4 +136,101 @@ it("can import builtins without a package", () => {
       }
     `,
   });
+});
+
+it("can import static members", () => {
+  const mcpSdk = createPackage({
+    name: "@modelcontextprotocol/sdk",
+    version: "^3.23.0",
+    descriptor: {
+      "./server/index.js": {
+        named: [
+          {
+            name: "server",
+            staticMembers: [
+              "setRequestHandler",
+              { name: "nested", staticMembers: ["nestedHandler"] },
+            ],
+            instanceMembers: ["instanceHandler"],
+          },
+          { name: "noMembers" },
+          "simpleName",
+        ],
+      },
+    },
+  });
+
+  const res = render(
+    <Output externals={[mcpSdk]}>
+      <SourceFile path="index.ts">
+        <FunctionDeclaration name="foo">
+          {mcpSdk["./server/index.js"].server}();
+          <hbr />
+          {mcpSdk["./server/index.js"].server.static.setRequestHandler}();
+          <hbr />
+          {
+            mcpSdk["./server/index.js"].server.static.nested.static
+              .nestedHandler
+          }
+          ();
+          <hbr />
+          {mcpSdk["./server/index.js"].noMembers}();
+          <hbr />
+          {mcpSdk["./server/index.js"].simpleName}();
+        </FunctionDeclaration>
+      </SourceFile>
+    </Output>,
+  );
+
+  assertFileContents(res, {
+    "index.ts": `
+      import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
+
+      function foo() {
+        server();
+        server.setRequestHandler();
+        server.nested.nestedHandler();
+        noMembers();
+        simpleName();
+      }
+    `,
+  });
+});
+
+it("can import instance members", () => {
+  const mcpSdk = createPackage({
+    name: "@modelcontextprotocol/sdk",
+    version: "^3.23.0",
+    descriptor: {
+      "./server/index.js": {
+        named: [{ name: "Server", instanceMembers: ["instanceHandler"] }],
+      },
+    },
+  });
+
+  function RunTest() {
+    const sym = new TSOutputSymbol("foo");
+    const binder = sym.binder!;
+
+    expect(binder).toBeDefined();
+
+    const source = binder.getSymbolForRefkey(
+      mcpSdk["./server/index.js"].Server,
+    ).value!;
+    expect(source).toBeDefined();
+    expect(source.instanceMemberScope?.symbols.size).toBe(1);
+
+    source.instantiateTo(sym);
+
+    expect(sym.staticMemberScope?.symbols.size).toBe(1);
+    expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");
+  }
+
+  render(
+    <Output externals={[mcpSdk]}>
+      <SourceFile path="index.ts">
+        <RunTest />
+      </SourceFile>
+    </Output>,
+  );
 });

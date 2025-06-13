@@ -20,7 +20,11 @@ it("extends class", () => {
   const res = testRender(
     <>
       <jv.SourceFile path="TestSuperclass.java">
-        <jv.Class public name="TestSuperclass"></jv.Class>
+        <jv.Class
+          public
+          name="TestSuperclass"
+          refkey={refkey("TestSuperclass")}
+        ></jv.Class>
       </jv.SourceFile>
       <jv.PackageDirectory package="import">
         <jv.SourceFile path="TestSubclass.java">

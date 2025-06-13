@@ -1,5 +1,5 @@
 import * as core from "@alloy-js/core";
-import { createCSharpSymbol } from "../symbols/csharp-output-symbol.js";
+import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 
 // properties for creating a declaration
 export interface DeclarationProps {
@@ -10,6 +10,9 @@ export interface DeclarationProps {
 
 // declares a symbol in the program (class, enum, interface etc)
 export function Declaration(props: DeclarationProps) {
-  const sym = createCSharpSymbol(props);
+  const sym = new CSharpOutputSymbol(props.name, {
+    refkeys: props.refkey,
+  });
+
   return <core.Declaration symbol={sym}>{props.children}</core.Declaration>;
 }

@@ -8,8 +8,11 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
-import { createJavaProjectScope, JavaOutputSymbol } from "./symbols/index.js";
-import { createJavaPackageScope } from "./symbols/java-package-scope.js";
+import {
+  JavaOutputSymbol,
+  JavaPackageScope,
+  JavaProjectScope,
+} from "./symbols/index.js";
 
 export interface LibraryDescriptor {
   [pkg: string]: string[];
@@ -20,16 +23,19 @@ function createSymbols(
   props: CreateLibraryProps<LibraryDescriptor>,
   refkeys: Record<string, any>,
 ) {
-  const projectScope = createJavaProjectScope(binder, undefined, props.groupId);
+  const projectScope = new JavaProjectScope(props.groupId, { binder });
 
   for (const [pkg, symbols] of Object.entries(props.descriptor)) {
-    const packageScope = createJavaPackageScope(binder, projectScope, pkg);
+    const packageScope = new JavaPackageScope(pkg, {
+      binder,
+      parent: projectScope,
+    });
 
     for (const symB of symbols) {
-      const _sym = binder.createSymbol<JavaOutputSymbol>({
-        name: symB,
+      new JavaOutputSymbol(symB, {
+        binder,
         scope: packageScope,
-        refkey: refkeys[symB],
+        refkeys: refkeys[symB],
         package: packageScope.name,
       });
     }

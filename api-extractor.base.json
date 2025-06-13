@@ -17,6 +17,11 @@
       "ae-missing-release-tag": {
         "logLevel": "none"
       }
+    },
+    "compilerMessageReporting": {
+      "TS6307": {
+        "logLevel": "none"
+      }
     }
   }
 }

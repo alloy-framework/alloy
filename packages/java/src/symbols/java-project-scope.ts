@@ -1,4 +1,11 @@
-import { Binder, OutputScope } from "@alloy-js/core";
+import {
+  OutputScope,
+  OutputScopeOptions,
+  track,
+  TrackOpTypes,
+  trigger,
+  TriggerOpTypes,
+} from "@alloy-js/core";
 
 /**
  * Represents an external dependency imported through a maven or gradle project
@@ -56,49 +63,93 @@ export interface MavenProjectConfig {
 // TODO: Support gradle projects
 export interface GradleProjectConfig {}
 
+export interface JavaProjectScopeOptions extends OutputScopeOptions {
+  mavenProjectConfig?: MavenProjectConfig;
+  gradleProjectConfig?: GradleProjectConfig;
+}
 /**
  * Represents the java project itself (maven, gradle, etc)
  */
-export interface JavaProjectScope extends OutputScope {
-  kind: "project";
+export class JavaProjectScope extends OutputScope {
+  get kind() {
+    return "project";
+  }
 
   /**
    * The dependencies of this project
    * Map qualified package name to dependency
    */
-  dependencies: Map<string, JavaDependency>;
-  addDependency(dependency: JavaDependency): string;
+  get dependencies() {
+    return this.#dependencies;
+  }
+  #dependencies = new Map<string, JavaDependency>();
 
   /**
    * Define project configuration. Either maven or gradle
    */
-  mavenProjectConfig?: MavenProjectConfig;
-  gradleProjectConfig?: GradleProjectConfig;
-}
+  get mavenProjectConfig() {
+    track(this, TrackOpTypes.GET, "mavenProjectConfig");
+    return this.#mavenProjectConfig;
+  }
 
-export function createJavaProjectScope(
-  binder: Binder,
-  parent: OutputScope | undefined,
-  name: string,
-  mavenProjectConfig?: MavenProjectConfig,
-  gradleProjectConfig?: GradleProjectConfig,
-): JavaProjectScope {
-  return binder.createScope<JavaProjectScope>({
-    kind: "project",
-    name,
-    parent,
-    dependencies: new Map(),
-    addDependency(dependency: JavaDependency): string {
-      const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
+  set(mavenProjectConfig: MavenProjectConfig | undefined) {
+    const old = this.#mavenProjectConfig;
+    if (old === mavenProjectConfig) {
+      return;
+    }
 
-      if (this.dependencies.has(depKey)) {
-        return depKey;
-      }
+    this.#mavenProjectConfig = mavenProjectConfig;
+    trigger(
+      this,
+      TriggerOpTypes.SET,
+      "mavenProjectConfig",
+      mavenProjectConfig,
+      old,
+    );
+  }
+  #mavenProjectConfig?: MavenProjectConfig;
 
-      this.dependencies.set(depKey, dependency);
+  /**
+   * Define project configuration. Either maven or gradle
+   */
+  get gradleProjectConfig() {
+    track(this, TrackOpTypes.GET, "gradleProjectConfig");
+    return this.#gradleProjectConfig;
+  }
+  set gradleProjectConfig(
+    gradleProjectConfig: GradleProjectConfig | undefined,
+  ) {
+    const old = this.#gradleProjectConfig;
+    if (old === gradleProjectConfig) {
+      return;
+    }
+
+    this.#gradleProjectConfig = gradleProjectConfig;
+    trigger(
+      this,
+      TriggerOpTypes.SET,
+      "gradleProjectConfig",
+      gradleProjectConfig,
+      old,
+    );
+  }
+  #gradleProjectConfig?: GradleProjectConfig;
+
+  constructor(name: string, options: JavaProjectScopeOptions = {}) {
+    super(name, options);
+
+    this.#mavenProjectConfig = options.mavenProjectConfig;
+    this.#gradleProjectConfig = options.gradleProjectConfig;
+  }
+
+  addDependency(dependency: JavaDependency): string {
+    const depKey = `${dependency.groupId}.${dependency.artifactId}.${dependency.version}`;
+
+    if (this.dependencies.has(depKey)) {
       return depKey;
-    },
-    mavenProjectConfig,
-    gradleProjectConfig,
-  });
+    }
+
+    this.dependencies.set(depKey, dependency);
+    return depKey;
+  }
 }

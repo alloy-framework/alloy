@@ -1,4 +1,6 @@
-import { Children, memo, splitProps } from "@alloy-js/core/jsx-runtime";
+import { splitProps } from "../props-combinators.js";
+import { memo } from "../reactivity.js";
+import type { Children } from "../runtime/component.js";
 import { childrenArray } from "../utils.js";
 import { For } from "./For.jsx";
 

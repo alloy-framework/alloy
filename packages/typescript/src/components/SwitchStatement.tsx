@@ -1,5 +1,4 @@
-import { Block, Indent, Match, Switch } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { Block, Indent, Match, Switch, type Children } from "@alloy-js/core";
 import { BlockScope } from "./BlockScope.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
 

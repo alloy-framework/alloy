@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Children } from "../../src/jsx-runtime.js";
+import { Children } from "../../src/runtime/component.js";
 import "../../testing/extend-expect.js";
 describe("string nodes", () => {
   it("renders string nodes with substitutions", () => {

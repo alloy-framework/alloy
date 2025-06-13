@@ -4,12 +4,9 @@ import {
   createContext,
   Scope,
   SourceDirectory,
-  useBinder,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 import {
-  createJavaProjectScope,
   GradleProjectConfig,
   JavaProjectScope,
   MavenProjectConfig,
@@ -44,13 +41,10 @@ export interface ProjectDirectoryProps {
  * with a build tool included (maven, gradle etc).
  */
 export function ProjectDirectory(props: ProjectDirectoryProps) {
-  const scope = createJavaProjectScope(
-    useBinder(),
-    useScope(),
-    props.name,
-    props.mavenProjectConfig,
-    props.gradleProjectConfig,
-  );
+  const scope = new JavaProjectScope(props.name, {
+    mavenProjectConfig: props.mavenProjectConfig,
+    gradleProjectConfig: props.gradleProjectConfig,
+  });
 
   const projectContext: ProjectContext = {
     scope,

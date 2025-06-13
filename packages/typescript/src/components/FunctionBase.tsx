@@ -1,24 +1,21 @@
 import {
   Block,
   code,
+  createSymbolSlot,
   For,
   Indent,
   onCleanup,
   Show,
   taggedComponent,
+  type Children,
 } from "@alloy-js/core";
-import type { Children } from "@alloy-js/core/jsx-runtime";
 import { useTSNamePolicy } from "../name-policy.js";
 import type {
   FunctionTypeParameterDescriptor,
   ParameterDescriptor,
 } from "../parameter-descriptor.js";
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
-import {
-  createTSSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/index.js";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();
@@ -120,6 +117,10 @@ export const FunctionTypeParameters = taggedComponent(
 );
 
 function parameter(param: DeclaredParameterDescriptor) {
+  const SymbolSlot = createSymbolSlot();
+
+  SymbolSlot.instantiateInto(param.symbol);
+
   return (
     <group>
       <Show when={param.rest}>...</Show>
@@ -127,7 +128,10 @@ function parameter(param: DeclaredParameterDescriptor) {
       <Show when={!!param.optional}>?</Show>
       <Show when={!!param.type}>
         <indent>
-          : <TypeRefContext>{param.type}</TypeRefContext>
+          :{" "}
+          <SymbolSlot>
+            <TypeRefContext>{param.type}</TypeRefContext>
+          </SymbolSlot>
         </indent>
       </Show>
     </group>
@@ -178,11 +182,12 @@ function normalizeAndDeclareParameters(
   }
   if (typeof parameters[0] === "string") {
     return (parameters as string[]).map((paramName) => {
-      const symbol = createTSSymbol({
-        name: namePolicy.getName(
-          paramName,
-          flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
-        ),
+      const name = namePolicy.getName(
+        paramName,
+        flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
+      );
+
+      const symbol = new TSOutputSymbol(name, {
         tsFlags: flags,
       });
 
@@ -195,15 +200,17 @@ function normalizeAndDeclareParameters(
           TSSymbolFlags.Nullish
         : TSSymbolFlags.None;
 
-      const symbol = createTSSymbol({
-        name: namePolicy.getName(
+      const symbol = new TSOutputSymbol(
+        namePolicy.getName(
           param.name,
           flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
         ),
-        refkey: param.refkey,
-        tsFlags: flags | nullishFlag,
-        metadata: param.metadata,
-      });
+        {
+          refkeys: param.refkey,
+          tsFlags: flags | nullishFlag,
+          metadata: param.metadata,
+        },
+      );
 
       return {
         ...param,
@@ -236,7 +243,7 @@ export const TypeParameters = taggedComponent(
 
     onCleanup(() => {
       for (const param of typeParameters) {
-        param.symbol.binder.deleteSymbol(param.symbol);
+        param.symbol.delete();
       }
     });
 

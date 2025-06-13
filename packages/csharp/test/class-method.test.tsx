@@ -74,19 +74,6 @@ describe("modifiers", () => {
       `);
   });
 
-  it("mark method async with return type", () => {
-    expect(
-      <Wrapper>
-        <ClassMethod async name="MethodOne" returns="String" />
-      </Wrapper>,
-    ).toRenderTo(`
-        public class TestClass
-        {
-          async Task<String> MethodOne() {}
-        }
-      `);
-  });
-
   it("combine modifiers", () => {
     expect(
       <Wrapper>

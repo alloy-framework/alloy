@@ -73,39 +73,6 @@ it("declares class with some methods", () => {
   `);
 });
 
-it("declares class with params and return type", () => {
-  const params = [
-    {
-      name: "IntParam",
-      type: "int",
-    },
-    {
-      name: "StringParam",
-      type: "string",
-    },
-  ];
-  const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
-      <csharp.ClassMethod
-        accessModifier="public"
-        name="MethodOne"
-        parameters={params}
-        returns="string"
-      />
-    </csharp.Class>,
-  );
-
-  expect(res).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass
-        {
-            public string MethodOne(int intParam, string stringParam) {}
-        }
-    }
-  `);
-});
-
 it("uses refkeys for members, params, and return type", () => {
   const inputTypeRefkey = core.refkey();
   const testResultTypeRefkey = core.refkey();

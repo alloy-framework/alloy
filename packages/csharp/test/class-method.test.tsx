@@ -120,11 +120,11 @@ it("applies PascalCase naming policy", () => {
 it("defines params and return type", () => {
   const params = [
     {
-      name: "IntParam",
+      name: "intParam",
       type: "int",
     },
     {
-      name: "StringParam",
+      name: "stringParam",
       type: "string",
     },
   ];
@@ -142,7 +142,7 @@ it("defines params and return type", () => {
   expect(res).toRenderTo(`
     public class TestClass
     {
-      public string MethodOne(int IntParam, string StringParam) {}
+      public string MethodOne(int intParam, string stringParam) {}
     }
   `);
 });

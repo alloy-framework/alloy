@@ -46,7 +46,7 @@ export function getMethodModifier(
 }
 
 export function getAsyncModifier(async?: boolean): string {
-  return async ? "async " : "";
+  return async ? "async" : "";
 }
 
 /** Resolve the modifier prefix */

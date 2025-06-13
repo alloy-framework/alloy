@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/markdown
 
+## 0.18.0
+
+No changes, version bump only.
+
 ## 0.17.0
 
 No changes, version bump only.

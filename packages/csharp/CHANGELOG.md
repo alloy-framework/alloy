@@ -1,5 +1,17 @@
 # Changelog - @alloy-js/csharp
 
+## 0.18.0
+
+### Bug Fixes
+
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Fix abstract class method rendering with a body `{}`
+
+### Features
+
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Add support for `async` class methods
+- [#191](https://github.com/alloy-framework/alloy/pull/191) Access and method modifiers have been converted to flags `<Class public />` instead of `<Class accessModifier="public" />`
+
+
 ## 0.17.0
 
 No changes, version bump only.

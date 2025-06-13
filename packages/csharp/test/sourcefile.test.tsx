@@ -8,10 +8,10 @@ it("defines multiple source files with unique content", () => {
     <core.Output>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test1.cs">
-          <csharp.Class accessModifier="public" name="TestClass1" />
+          <csharp.Class public name="TestClass1" />
         </csharp.SourceFile>
         <csharp.SourceFile path="Test2.cs">
-          <csharp.Class accessModifier="public" name="TestClass2" />
+          <csharp.Class public name="TestClass2" />
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,

@@ -1,5 +1,9 @@
 import * as core from "@alloy-js/core";
-import { AccessModifier, getAccessModifier } from "../modifiers.js";
+import {
+  AccessModifiers,
+  computeModifiersPrefix,
+  getAccessModifier,
+} from "../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
@@ -7,10 +11,11 @@ import { Name } from "./Name.js";
 import { ParameterProps, Parameters } from "./Parameters.js";
 
 // properties for creating a class
-export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
+export interface ClassProps
+  extends Omit<core.DeclarationProps, "nameKind">,
+    AccessModifiers {
   name: string;
   refkey?: core.Refkey;
-  accessModifier?: AccessModifier;
   typeParameters?: Record<string, core.Refkey>;
 }
 
@@ -55,9 +60,10 @@ export function Class(props: ClassProps) {
     );
   }
 
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
   return (
     <core.Declaration symbol={thisClassSymbol}>
-      {getAccessModifier(props.accessModifier)}class <Name />
+      {modifiers}class <Name />
       {typeParams}
       {!props.children && ";"}
       {props.children && (
@@ -69,8 +75,7 @@ export function Class(props: ClassProps) {
   );
 }
 
-export interface ClassConstructorProps {
-  accessModifier?: AccessModifier;
+export interface ClassConstructorProps extends AccessModifiers {
   parameters?: Array<ParameterProps>;
   refkey?: core.Refkey;
   symbol?: core.OutputSymbol;
@@ -98,7 +103,8 @@ export function ClassConstructor(props: ClassConstructorProps) {
     owner: ctorSymbol,
   });
 
-  const accessModifier = getAccessModifier(props.accessModifier);
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
+
   const params =
     props.parameters ? <Parameters parameters={props.parameters} /> : "";
 
@@ -106,7 +112,7 @@ export function ClassConstructor(props: ClassConstructorProps) {
   return (
     <core.Declaration symbol={ctorSymbol}>
       <core.Scope value={ctorDeclScope}>
-        {accessModifier}
+        {modifiers}
         <Name />({params})<core.Block newline>{props.children}</core.Block>
       </core.Scope>
     </core.Declaration>
@@ -114,17 +120,16 @@ export function ClassConstructor(props: ClassConstructorProps) {
 }
 
 // properties for creating a class member
-export interface ClassMemberProps {
+export interface ClassMemberProps extends AccessModifiers {
   name: string;
   type: core.Children;
-  accessModifier?: AccessModifier;
   refkey?: core.Refkey;
 }
 
 // a C# class member (i.e. a field within a class like "private int count")
 export function ClassMember(props: ClassMemberProps) {
   let nameElement: CSharpElements = "class-member-private";
-  if (props.accessModifier === "public") {
+  if (props.public) {
     nameElement = "class-member-public";
   }
   const name = useCSharpNamePolicy().getName(props.name, nameElement);
@@ -140,9 +145,10 @@ export function ClassMember(props: ClassMemberProps) {
     refkeys: props.refkey ?? core.refkey(props.name),
   });
 
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
   return (
     <core.Declaration symbol={memberSymbol}>
-      {getAccessModifier(props.accessModifier)}
+      {modifiers}
       {props.type} <Name />
     </core.Declaration>
   );

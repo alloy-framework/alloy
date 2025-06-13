@@ -1,16 +1,19 @@
 import * as core from "@alloy-js/core";
-import { AccessModifier, getAccessModifier } from "../modifiers.js";
+import {
+  AccessModifiers,
+  computeModifiersPrefix,
+  getAccessModifier,
+} from "../modifiers.js";
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum
-export interface EnumProps {
+export interface EnumProps extends AccessModifiers {
   name: string;
   refkey?: core.Refkey;
   children?: core.Children;
-  accessModifier?: AccessModifier;
 }
 
 // a C# enum declaration
@@ -32,10 +35,12 @@ export function Enum(props: EnumProps) {
     owner: thisEnumSymbol,
   });
 
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
+
   if (thisEnumScope.owner)
     return (
       <core.Declaration symbol={thisEnumSymbol}>
-        {getAccessModifier(props.accessModifier)}enum <Name />
+        {modifiers}enum <Name />
         {!props.children && ";"}
         {props.children && (
           <core.Scope value={thisEnumScope}>

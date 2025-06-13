@@ -5,7 +5,7 @@ import { TestNamespace } from "./utils.jsx";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
-    <Class accessModifier="public" name="TestClass">
+    <Class public name="TestClass">
       {props.children}
     </Class>
   </TestNamespace>
@@ -18,7 +18,7 @@ describe("modifiers", () => {
       (accessModifier) => {
         expect(
           <Wrapper>
-            <ClassMethod accessModifier={accessModifier} name="MethodOne" />
+            <ClassMethod {...{ [accessModifier]: true }} name="MethodOne" />
           </Wrapper>,
         ).toRenderTo(`
         public class TestClass
@@ -36,7 +36,7 @@ describe("modifiers", () => {
       (methodModifier) => {
         expect(
           <Wrapper>
-            <ClassMethod methodModifier={methodModifier} name="MethodOne" />
+            <ClassMethod {...{ [methodModifier]: true }} name="MethodOne" />
           </Wrapper>,
         ).toRenderTo(`
         public class TestClass
@@ -50,7 +50,7 @@ describe("modifiers", () => {
     it("abstract exclude body", () => {
       expect(
         <Wrapper>
-          <ClassMethod methodModifier="abstract" name="MethodOne" />
+          <ClassMethod abstract name="MethodOne" />
         </Wrapper>,
       ).toRenderTo(`
         public class TestClass
@@ -77,13 +77,7 @@ describe("modifiers", () => {
   it("combine modifiers", () => {
     expect(
       <Wrapper>
-        <ClassMethod
-          async
-          returns="Task"
-          accessModifier="public"
-          methodModifier="abstract"
-          name="MethodOne"
-        />
+        <ClassMethod async returns="Task" public abstract name="MethodOne" />
       </Wrapper>,
     ).toRenderTo(`
         public class TestClass
@@ -120,7 +114,7 @@ it("defines params and return type", () => {
   const res = (
     <Wrapper>
       <ClassMethod
-        accessModifier="public"
+        public
         name="MethodOne"
         parameters={params}
         returns="string"

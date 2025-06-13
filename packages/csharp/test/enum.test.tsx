@@ -5,9 +5,7 @@ import * as csharp from "../src/index.js";
 import * as utils from "./utils.js";
 
 it("declares enum with no members", () => {
-  const res = utils.toSourceText(
-    <csharp.Enum accessModifier="public" name="TestEnum" />,
-  );
+  const res = utils.toSourceText(<csharp.Enum public name="TestEnum" />);
 
   expect(res).toBe(coretest.d`
     namespace TestCode
@@ -19,7 +17,7 @@ it("declares enum with no members", () => {
 
 it("declares enum with members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier="public" name="TestEnum">
+    <csharp.Enum public name="TestEnum">
       <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
     </csharp.Enum>,
@@ -39,7 +37,7 @@ it("declares enum with members", () => {
 
 it("applies naming policy to enum and members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum accessModifier="public" name="testEnum">
+    <csharp.Enum public name="testEnum">
       <csharp.EnumMember name="one" />,<hbr />
       <csharp.EnumMember name="two" />
     </csharp.Enum>,
@@ -65,7 +63,7 @@ it("can reference things by refkey", () => {
     <core.Output>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier="public" name="TestEnum" refkey={enumRK}>
+          <csharp.Enum public name="TestEnum" refkey={enumRK}>
             <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" refkey={twoRK} />
           </csharp.Enum>
@@ -99,7 +97,7 @@ it("can reference things by refkey across files", () => {
     <core.Output>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum accessModifier="public" name="TestEnum">
+          <csharp.Enum public name="TestEnum">
             <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" />
           </csharp.Enum>
@@ -108,7 +106,7 @@ it("can reference things by refkey across files", () => {
           {barRK};
         </csharp.SourceFile>
         <csharp.SourceFile path="Other.cs">
-          <csharp.Enum accessModifier="public" name="OtherEnum" refkey={enumRK}>
+          <csharp.Enum public name="OtherEnum" refkey={enumRK}>
             <csharp.EnumMember name="Foo" />,<hbr />
             <csharp.EnumMember name="Bar" refkey={barRK} />
           </csharp.Enum>

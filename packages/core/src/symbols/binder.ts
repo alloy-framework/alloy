@@ -1,18 +1,18 @@
 import { computed, ref, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
-import { useMemberScope } from "./context/member-scope.js";
-import { useScope } from "./context/scope.js";
-import { effect, untrack } from "./reactivity.js";
-import { refkey, Refkey } from "./refkey.js";
-import { OutputSymbolFlags } from "./symbols/flags.js";
-import { OutputScope } from "./symbols/output-scope.js";
-import { type OutputSymbol } from "./symbols/output-symbol.js";
+import { useMemberScope } from "../context/member-scope.js";
+import { useScope } from "../context/scope.js";
+import { effect, untrack } from "../reactivity.js";
 import {
   formatRefkeys,
   formatSymbol,
   formatSymbolName,
   trace,
   TracePhase,
-} from "./tracer.js";
+} from "../tracer.js";
+import { OutputSymbolFlags } from "./flags.js";
+import { OutputScope } from "./output-scope.js";
+import { type OutputSymbol } from "./output-symbol.js";
+import { refkey, Refkey } from "./refkey.js";
 export type Metadata = object;
 
 /**
@@ -106,6 +106,21 @@ export interface Binder {
    * Notifies the binder that a symbol has been deleted.
    */
   notifySymbolDeleted(symbol: OutputSymbol): void;
+
+  /**
+   * Notifies the binder that a scope has been deleted.
+   */
+  notifyScopeDeleted(scope: OutputScope): void;
+
+  /**
+   * The symbols that are currently being tracked by the binder.
+   */
+  symbols: Set<OutputSymbol>;
+
+  /**
+   * The scopes that are currently being tracked by the binder.
+   */
+  scopes: Set<OutputScope>;
 }
 
 /**
@@ -183,7 +198,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     notifyScopeCreated,
     notifySymbolCreated,
     notifySymbolDeleted,
+    notifyScopeDeleted,
     nameConflictResolver: options.nameConflictResolver,
+    symbols: new Set(),
+    scopes: new Set(),
   };
 
   binder.globalScope = new OutputScope("<global>", {
@@ -205,6 +223,8 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   return binder;
 
   function notifyScopeCreated(scope: OutputScope) {
+    binder.scopes.add(scope);
+    if (globalThis.debug) globalThis.debug.sendScope(scope, "scope_added");
     if (!scope.parent || !waitingScopeNames.has(scope.parent)) {
       return;
     }
@@ -217,15 +237,27 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolDeleted(symbol: OutputSymbol) {
+    binder.symbols.delete(symbol);
     if (!refkey) {
       return;
     }
 
     for (const refkey of symbol.refkeys) {
+      const knownDecl = knownDeclarations.get(refkey);
+      if (knownDecl && knownDecl === symbol) {
+        knownDeclarations.delete(refkey);
+      }
+
       const resolution = waitingDeclarations.get(refkey);
       if (!resolution) return;
       resolution.value = undefined;
     }
+    if (globalThis.debug) globalThis.debug.sendDeletedSymbol(symbol);
+  }
+
+  function notifyScopeDeleted(scope: OutputScope) {
+    binder.scopes.delete(scope);
+    if (globalThis.debug) globalThis.debug.sendDeletedScope(scope);
   }
 
   function hasTransientScope(symbol: OutputSymbol) {
@@ -392,10 +424,8 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
-    if (symbol.flags & OutputSymbolFlags.Transient) {
-      // just ignore transient symbols.
-      return;
-    }
+    binder.symbols.add(symbol);
+    if (globalThis.debug) debug.sendSymbol(symbol, "symbol_added");
     effect<Refkey[]>((oldRefkeys) => {
       trace(
         TracePhase.resolve.pending,
@@ -418,6 +448,19 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       }
 
       for (const refkey of symbol.refkeys) {
+        if (knownDeclarations.has(refkey)) {
+          const existingSymbol = knownDeclarations.get(refkey);
+          if (existingSymbol! !== symbol) {
+            throw new Error(
+              "Refkey " +
+                refkey.key +
+                " of symbol " +
+                symbol.name +
+                " has already been associated with a symbol named " +
+                symbol.name,
+            );
+          }
+        }
         // notify those waiting for this refkey
         knownDeclarations.set(refkey, symbol);
         if (waitingDeclarations.has(refkey)) {
@@ -572,11 +615,13 @@ export function resolve<
     throw new Error("Can't resolve refkey without a binder");
   }
 
-  return binder.resolveDeclarationByKey(
+  const result = binder.resolveDeclarationByKey(
     scope,
     memberScope?.instanceMembers,
     refkey,
-  ) as any;
+  );
+
+  return result as any;
 }
 
 const createSymbolsSymbol: unique symbol = Symbol();

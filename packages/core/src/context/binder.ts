@@ -1,9 +1,9 @@
-import type { Binder } from "../binder.js";
 import {
   type ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
+import type { Binder } from "../symbols/binder.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Output } from "../components/Output.js";
 

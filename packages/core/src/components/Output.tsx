@@ -1,8 +1,3 @@
-import {
-  createOutputBinder,
-  getSymbolCreator,
-  SymbolCreator,
-} from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { NamePolicyContext } from "../context/name-policy.js";
 import { NamePolicy } from "../name-policy.js";
@@ -10,6 +5,11 @@ import { getContext } from "../reactivity.js";
 import { PrintTreeOptions } from "../render.js";
 import type { Children } from "../runtime/component.js";
 import { extensionEffects } from "../slot.js";
+import {
+  createOutputBinder,
+  getSymbolCreator,
+  SymbolCreator,
+} from "../symbols/binder.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

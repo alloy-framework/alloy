@@ -1,14 +1,13 @@
-import { effect, ReactiveEffectRunner } from "@vue/reactivity";
-import { untrack } from "./reactivity.js";
-import type { Refkey } from "./refkey.js";
-import { scheduler } from "./scheduler.js";
+import { syncEffect, untrack } from "./reactivity.js";
 import { OutputScopeFlags, OutputSymbolFlags } from "./symbols/flags.js";
 import { type OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
+import type { Refkey } from "./symbols/refkey.js";
 
 // enable tracing for specific phases using a comma separated list of
 // dotted identifiers, e.g. `scope.update,symbol.create`.
-const traceEnv = process.env.ALLOY_TRACE ?? "";
+
+const traceEnv = (globalThis.process && process.env.ALLOY_TRACE) ?? "";
 const tracePhases = new Set<string>(
   traceEnv === "" ? [] : traceEnv.split(",").map((t) => t.trim()),
 );
@@ -21,7 +20,8 @@ if (tracePhases.size > 0) {
   );
 }
 
-const debuggerIdsEnv = process.env.ALLOY_BREAK_ON_DID ?? "";
+const debuggerIdsEnv =
+  (globalThis.process && process.env.ALLOY_BREAK_ON_DID) ?? "";
 const dids = new Set<number>();
 
 debuggerIdsEnv.split(",").forEach((id) => {
@@ -146,6 +146,23 @@ export const TracePhase = {
       bg: { r: 100, g: 50, b: 0 },
     },
   },
+  scheduler: {
+    queue: {
+      area: "scheduler",
+      subarea: "queue",
+      bg: { r: 200, g: 200, b: 200 },
+    },
+    take: {
+      area: "scheduler",
+      subarea: "take",
+      bg: { r: 150, g: 150, b: 150 },
+    },
+    flush: {
+      area: "scheduler",
+      subarea: "flush",
+      bg: { r: 100, g: 100, b: 100 },
+    },
+  },
 } as const;
 
 interface TracePhase extends TextFormat {
@@ -201,7 +218,7 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
   let first = true;
   const triggerIds = new Set<number>();
 
-  const runner: ReactiveEffectRunner<void> = effect(
+  syncEffect(
     () => {
       if (first) {
         // just track what we need, don't log.
@@ -213,7 +230,6 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
       triggerIds.clear();
     },
     {
-      scheduler: scheduler(() => runner, true),
       onTrigger(event) {
         const id = triggerCount++;
         if (dids.has(id)) {
@@ -431,12 +447,12 @@ export function formatScope(scope: OutputSymbol["scope"]): string {
 
   // Show parent scope if present
   if (scope.parent) {
-    details.push(`  parent: ${formatScopeName(scope.parent)}`);
+    details.push(`  parent: ${untrack(() => formatScopeName(scope.parent!))}`);
   }
 
   // Show owner if present (for member scopes)
   if (scope.owner) {
-    details.push(`  owner: ${formatSymbolName(scope.owner)}`);
+    details.push(`  owner: ${untrack(() => formatSymbolName(scope.owner!))}`);
   }
 
   // Show child scopes if present

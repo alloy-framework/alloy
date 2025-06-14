@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "vitest.explorer",
+    "esbenp.prettier-vscode"
+  ]
+}

@@ -34,6 +34,7 @@ export interface EnumProps extends AccessModifiers {
  *   Green,
  *   Blue
  * }
+ * ```
  */
 export function EnumDeclaration(props: EnumProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "enum");

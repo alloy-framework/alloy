@@ -10,7 +10,7 @@ import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum
-export interface EnumProps extends AccessModifiers {
+export interface EnumDeclarationProps extends AccessModifiers {
   name: string;
   refkey?: core.Refkey;
   children?: core.Children;
@@ -36,7 +36,7 @@ export interface EnumProps extends AccessModifiers {
  * }
  * ```
  */
-export function EnumDeclaration(props: EnumProps) {
+export function EnumDeclaration(props: EnumDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "enum");
   const scope = useCSharpScope();
 

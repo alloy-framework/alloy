@@ -10,17 +10,13 @@ export interface AccessModifiers {
   readonly file?: boolean;
 }
 
-export function getAccessModifier(data: AccessModifiers): string {
-  return [
-    data.public && "public",
-    data.protected && "protected",
-    data.private && "private",
-    data.internal && "internal",
-    data.file && "file",
-  ]
-    .filter((x) => x)
-    .join(" ");
-}
+export const getAccessModifier = makeModifiers<AccessModifiers>([
+  "public",
+  "protected",
+  "private",
+  "internal",
+  "file",
+]);
 
 /** Method modifiers. Can only be one. */
 export interface MethodModifiers {
@@ -30,16 +26,12 @@ export interface MethodModifiers {
   readonly virtual?: boolean;
 }
 
-export function getMethodModifier(data: MethodModifiers): string {
-  return [
-    data.abstract && "abstract",
-    data.sealed && "sealed",
-    data.static && "static",
-    data.virtual && "virtual",
-  ]
-    .filter((x) => x)
-    .join(" ");
-}
+export const getMethodModifier = makeModifiers<MethodModifiers>([
+  "abstract",
+  "sealed",
+  "static",
+  "virtual",
+]);
 
 export function getAsyncModifier(async?: boolean): string {
   return async ? "async" : "";
@@ -51,4 +43,13 @@ export function computeModifiersPrefix(
 ): string {
   const resolved = modifiers.filter((x) => x);
   return resolved.length > 0 ? resolved.join(" ") + " " : "";
+}
+
+export function makeModifiers<T>(obj: Array<keyof T>) {
+  return (data: T) => {
+    return obj
+      .map((key) => (data[key] ? key : undefined))
+      .filter((x) => x)
+      .join(" ");
+  };
 }

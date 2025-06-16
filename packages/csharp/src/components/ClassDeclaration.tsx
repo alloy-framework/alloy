@@ -3,6 +3,7 @@ import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
+  makeModifiers,
 } from "../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
@@ -10,10 +11,25 @@ import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 import { ParameterProps, Parameters } from "./Parameters.jsx";
 
+export interface ClassModifiers {
+  readonly abstract?: boolean;
+  readonly partial?: boolean;
+  readonly sealed?: boolean;
+  readonly static?: boolean;
+}
+
+const getClassModifiers = makeModifiers<ClassModifiers>([
+  "abstract",
+  "partial",
+  "sealed",
+  "static",
+]);
+
 // properties for creating a class
-export interface ClassProps
+export interface ClassDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
-    AccessModifiers {
+    AccessModifiers,
+    ClassModifiers {
   name: string;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
@@ -43,7 +59,7 @@ export interface ClassProps
  * }
  * ```
  */
-export function ClassDeclaration(props: ClassProps) {
+export function ClassDeclaration(props: ClassDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "class");
 
   const thisClassSymbol = new CSharpOutputSymbol(name, {
@@ -83,7 +99,10 @@ export function ClassDeclaration(props: ClassProps) {
     );
   }
 
-  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
+  const modifiers = computeModifiersPrefix([
+    getAccessModifier(props),
+    getClassModifiers(props),
+  ]);
   return (
     <core.Declaration symbol={thisClassSymbol}>
       {modifiers}class <Name />

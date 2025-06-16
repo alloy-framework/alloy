@@ -1,20 +1,50 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as csharp from "../src/index.js";
+import { ClassDeclaration } from "../src/index.js";
 import * as utils from "./utils.js";
 
 it("declares class with no members", () => {
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration public name="TestClass" />,
-  );
-
-  expect(res).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass;
-    }
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="TestClass" />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+      class TestClass;
   `);
+});
+
+describe("modifiers", () => {
+  it.each(["public", "private"])("%s", (mod) => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        ${mod} class TestClass;
+    `);
+  });
+
+  it.each(["partial", "abstract", "static", "sealed"])("%s", (mod) => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        ${mod} class TestClass;
+    `);
+  });
+
+  it("combines modifiers", () => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration public abstract partial name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        public abstract partial class TestClass;
+    `);
+  });
 });
 
 it("declares class with some members", () => {

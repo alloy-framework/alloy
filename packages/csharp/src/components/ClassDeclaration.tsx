@@ -7,8 +7,8 @@ import {
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.js";
-import { ParameterProps, Parameters } from "./Parameters.js";
+import { Name } from "./Name.jsx";
+import { ParameterProps, Parameters } from "./Parameters.jsx";
 
 // properties for creating a class
 export interface ClassProps
@@ -19,8 +19,31 @@ export interface ClassProps
   typeParameters?: Record<string, core.Refkey>;
 }
 
-// a C# class declaration
-export function Class(props: ClassProps) {
+/**
+ * CSharp class declaration.
+ * @example
+ * ```tsx
+ * <ClassDeclaration public name="MyClass">
+ *   <ClassMember public name="MyField" type="int" />
+ *   <ClassConstructor>
+ *     <Parameter name="value" type="int" />
+ *     this.MyField = value;
+ *   </ClassConstructor>
+ * </ClassDeclaration>
+ * ```
+ * This will produce:
+ * ```csharp
+ * public class MyClass
+ * {
+ *   public int MyField;
+ *   public MyClass(int value)
+ *   {
+ *     this.MyField = value;
+ *   }
+ * }
+ * ```
+ */
+export function ClassDeclaration(props: ClassProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "class");
 
   const thisClassSymbol = new CSharpOutputSymbol(name, {

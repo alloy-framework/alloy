@@ -5,7 +5,9 @@ import * as csharp from "../src/index.js";
 import * as utils from "./utils.js";
 
 it("declares class with no members", () => {
-  const res = utils.toSourceText(<csharp.Class public name="TestClass" />);
+  const res = utils.toSourceText(
+    <csharp.ClassDeclaration public name="TestClass" />,
+  );
 
   expect(res).toBe(coretest.d`
     namespace TestCode
@@ -17,12 +19,12 @@ it("declares class with no members", () => {
 
 it("declares class with some members", () => {
   const res = utils.toSourceText(
-    <csharp.Class public name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <core.StatementList>
         <csharp.ClassMember public name="MemberOne" type="string" />
         <csharp.ClassMember private name="MemberTwo" type="int" />
       </core.StatementList>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -39,12 +41,12 @@ it("declares class with some members", () => {
 
 it("declares class with some methods", () => {
   const res = utils.toSourceText(
-    <csharp.Class public name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <core.List>
         <csharp.ClassMethod public name="MethodOne" />
         <csharp.ClassMethod private virtual name="MethodTwo" />
       </core.List>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -79,22 +81,30 @@ it("uses refkeys for members, params, and return type", () => {
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum public name="TestEnum" refkey={enumTypeRefkey}>
+          <csharp.EnumDeclaration
+            public
+            name="TestEnum"
+            refkey={enumTypeRefkey}
+          >
             <core.List comma hardline>
               <csharp.EnumMember name="One" />
               <csharp.EnumMember name="Two" />
             </core.List>
-          </csharp.Enum>
+          </csharp.EnumDeclaration>
           <hbr />
-          <csharp.Class public name="TestInput" refkey={inputTypeRefkey} />
+          <csharp.ClassDeclaration
+            public
+            name="TestInput"
+            refkey={inputTypeRefkey}
+          />
           <hbr />
-          <csharp.Class
+          <csharp.ClassDeclaration
             public
             name="TestResult"
             refkey={testResultTypeRefkey}
           />
           <hbr />
-          <csharp.Class public name="TestClass">
+          <csharp.ClassDeclaration public name="TestClass">
             <csharp.ClassMember
               private
               name="MemberOne"
@@ -110,7 +120,7 @@ it("uses refkeys for members, params, and return type", () => {
             >
               return new {testResultTypeRefkey}();
             </csharp.ClassMethod>
-          </csharp.Class>
+          </csharp.ClassDeclaration>
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
@@ -145,11 +155,15 @@ it("declares class with generic parameters", () => {
   };
 
   const res = utils.toSourceText(
-    <csharp.Class public name="TestClass" typeParameters={typeParameters}>
+    <csharp.ClassDeclaration
+      public
+      name="TestClass"
+      typeParameters={typeParameters}
+    >
       <csharp.ClassMember public name="memberOne" type={typeParameters.T} />
       ;<hbr />
       <csharp.ClassMember private name="memberTwo" type={typeParameters.U} />;
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -166,10 +180,10 @@ it("declares class with generic parameters", () => {
 
 it("declares class with invalid members", () => {
   const decl = (
-    <csharp.Class public name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
-    </csharp.Class>
+    </csharp.ClassDeclaration>
   );
 
   expect(() => utils.toSourceText(decl)).toThrow(
@@ -179,9 +193,9 @@ it("declares class with invalid members", () => {
 
 it("declares class with constructor", () => {
   const res = utils.toSourceText(
-    <csharp.Class public name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <csharp.ClassConstructor public />
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -215,7 +229,7 @@ it("declares class with constructor params and assigns values to fields", () => 
   ];
 
   const res = utils.toSourceText(
-    <csharp.Class public name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <csharp.ClassMember
         private
         name="name"
@@ -234,7 +248,7 @@ it("declares class with constructor params and assigns values to fields", () => 
         {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
       </csharp.ClassConstructor>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   // TODO: assignments to members should have this. prefix

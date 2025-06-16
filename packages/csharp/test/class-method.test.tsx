@@ -1,13 +1,13 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
-import { Class, ClassMethod } from "../src/index.js";
+import { ClassDeclaration, ClassMethod } from "../src/index.js";
 import { TestNamespace } from "./utils.jsx";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
-    <Class public name="TestClass">
+    <ClassDeclaration public name="TestClass">
       {props.children}
-    </Class>
+    </ClassDeclaration>
   </TestNamespace>
 );
 

@@ -5,7 +5,9 @@ import * as csharp from "../src/index.js";
 import * as utils from "./utils.js";
 
 it("declares enum with no members", () => {
-  const res = utils.toSourceText(<csharp.Enum public name="TestEnum" />);
+  const res = utils.toSourceText(
+    <csharp.EnumDeclaration public name="TestEnum" />,
+  );
 
   expect(res).toBe(coretest.d`
     namespace TestCode
@@ -17,10 +19,10 @@ it("declares enum with no members", () => {
 
 it("declares enum with members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum public name="TestEnum">
+    <csharp.EnumDeclaration public name="TestEnum">
       <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
-    </csharp.Enum>,
+    </csharp.EnumDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -37,10 +39,10 @@ it("declares enum with members", () => {
 
 it("applies naming policy to enum and members", () => {
   const res = utils.toSourceText(
-    <csharp.Enum public name="testEnum">
+    <csharp.EnumDeclaration public name="testEnum">
       <csharp.EnumMember name="one" />,<hbr />
       <csharp.EnumMember name="two" />
-    </csharp.Enum>,
+    </csharp.EnumDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -63,10 +65,10 @@ it("can reference things by refkey", () => {
     <core.Output>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum public name="TestEnum" refkey={enumRK}>
+          <csharp.EnumDeclaration public name="TestEnum" refkey={enumRK}>
             <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" refkey={twoRK} />
-          </csharp.Enum>
+          </csharp.EnumDeclaration>
           <hbr />
           {enumRK};<hbr />
           {twoRK};
@@ -97,19 +99,19 @@ it("can reference things by refkey across files", () => {
     <core.Output>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum public name="TestEnum">
+          <csharp.EnumDeclaration public name="TestEnum">
             <csharp.EnumMember name="One" />,<hbr />
             <csharp.EnumMember name="Two" />
-          </csharp.Enum>
+          </csharp.EnumDeclaration>
           <hbr />
           {enumRK};<hbr />
           {barRK};
         </csharp.SourceFile>
         <csharp.SourceFile path="Other.cs">
-          <csharp.Enum public name="OtherEnum" refkey={enumRK}>
+          <csharp.EnumDeclaration public name="OtherEnum" refkey={enumRK}>
             <csharp.EnumMember name="Foo" />,<hbr />
             <csharp.EnumMember name="Bar" refkey={barRK} />
-          </csharp.Enum>
+          </csharp.EnumDeclaration>
           <hbr />
           {enumRK};<hbr />
           {barRK};

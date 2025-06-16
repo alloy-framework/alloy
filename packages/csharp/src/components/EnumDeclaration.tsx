@@ -16,8 +16,27 @@ export interface EnumProps extends AccessModifiers {
   children?: core.Children;
 }
 
-// a C# enum declaration
-export function Enum(props: EnumProps) {
+/**
+ * A C# enum declaration
+ * @example
+ * ```tsx
+ * <EnumDeclaration public name="Color">
+ *   <EnumMember name="Red" />
+ *   <EnumMember name="Green" />
+ *   <EnumMember name="Blue" />
+ * </EnumDeclaration>
+ * ```
+ * This will produce:
+ * ```csharp
+ * public enum Color
+ * {
+ *   Red,
+ *   Green,
+ *   Blue
+ * }
+ * ```
+ */
+export function EnumDeclaration(props: EnumProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "enum");
   const scope = useCSharpScope();
 

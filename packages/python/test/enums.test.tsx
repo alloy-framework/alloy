@@ -1,25 +1,23 @@
 import { Output, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
+import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/components/index.js";
-import { assertFileContents } from "./utils.jsx";
+import { assertFileContents, toSourceText } from "./utils.jsx";
 
 describe("Python Enum", () => {
   it("classic enum with explicit values", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.EnumDeclaration
-            name="Color"
-            baseType="IntEnum"
-            members={[
-              { name: "RED", value: 1 },
-              { name: "GREEN", value: 2 },
-              { name: "BLUE", value: 3 },
-            ]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.EnumDeclaration
+        name="Color"
+        baseType="IntEnum"
+        members={[
+          { name: "RED", value: 1 },
+          { name: "GREEN", value: 2 },
+          { name: "BLUE", value: 3 },
+        ]}
+      />,
+      { externals: [enumModule] },
     );
     const expected = d`
       from enum import IntEnum
@@ -28,20 +26,17 @@ describe("Python Enum", () => {
         GREEN = 2
         BLUE = 3
     `;
-    assertFileContents(result, { "test.py": expected });
+    expect(result).toRenderTo(expected);
   });
 
   it("enum with auto() values", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.EnumDeclaration
-            name="Animal"
-            style="auto"
-            members={[{ name: "DOG" }, { name: "CAT" }, { name: "RABBIT" }]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.EnumDeclaration
+        name="Animal"
+        style="auto"
+        members={[{ name: "DOG" }, { name: "CAT" }, { name: "RABBIT" }]}
+      />,
+      { externals: [enumModule] },
     );
     const expected = d`
       from enum import Enum
@@ -51,26 +46,24 @@ describe("Python Enum", () => {
         CAT = auto()
         RABBIT = auto()
     `;
-    assertFileContents(result, { "test.py": expected });
+    expect(result).toRenderTo(expected);
   });
 
   it("enum with mixed manual and auto() values", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.EnumDeclaration
-            name="Permission"
-            baseType="Flag"
-            style="auto"
-            members={[
-              { name: "READ", value: 1 },
-              { name: "WRITE" },
-              { name: "EXECUTE" },
-            ]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.EnumDeclaration
+        name="Permission"
+        baseType="Flag"
+        style="auto"
+        members={[
+          { name: "READ", value: 1 },
+          { name: "WRITE" },
+          { name: "EXECUTE" },
+        ]}
+      />,
+      { externals: [enumModule] },
     );
+
     const expected = d`
       from enum import Flag
       from enum import auto
@@ -79,53 +72,47 @@ describe("Python Enum", () => {
         WRITE = auto()
         EXECUTE = auto()
     `;
-    assertFileContents(result, { "test.py": expected });
+    expect(result).toRenderTo(expected);
   });
 
   it("functional enum with list", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.EnumDeclaration
-            name="Direction"
-            style="functional"
-            members={[
-              { name: "NORTH" },
-              { name: "SOUTH" },
-              { name: "EAST" },
-              { name: "WEST" },
-            ]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.EnumDeclaration
+        name="Direction"
+        style="functional"
+        members={[
+          { name: "NORTH" },
+          { name: "SOUTH" },
+          { name: "EAST" },
+          { name: "WEST" },
+        ]}
+      />,
+      { externals: [enumModule] },
     );
     const expected = d`
       from enum import Enum
       Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])
     `;
-    assertFileContents(result, { "test.py": expected });
+    expect(result).toRenderTo(expected);
   });
 
   it("functional enum with mapping", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.EnumDeclaration
-            name="Priority"
-            style="functional"
-            members={[
-              { name: "HIGH", value: 1 },
-              { name: "MEDIUM", value: 2 },
-              { name: "LOW", value: 3 },
-            ]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.EnumDeclaration
+        name="Priority"
+        style="functional"
+        members={[
+          { name: "HIGH", value: 1 },
+          { name: "MEDIUM", value: 2 },
+          { name: "LOW", value: 3 },
+        ]}
+      />,
+      { externals: [enumModule] },
     );
     const expected = d`
       from enum import Enum
       Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW' : 3})
     `;
-    assertFileContents(result, { "test.py": expected });
+    expect(result).toRenderTo(expected);
   });
 });

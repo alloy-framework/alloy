@@ -12,16 +12,21 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   // Determine if children are present
   const hasChildren =
     childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
+  
+  const updatedProps: ClassDeclarationProps = {
+    ...props,
+    name: name,
+  };
   return (
-    <Declaration {...props} name={name}>
+    <Declaration {...updatedProps} name={updatedProps.name}>
       <group>
-        class {name}
-        <Show when={props.bases !== undefined && props.bases.length > 0}>
-          (<List children={props.bases} comma space />)
+        class {updatedProps.name}
+        <Show when={updatedProps.bases !== undefined && updatedProps.bases.length > 0}>
+          (<List children={updatedProps.bases} comma space />)
         </Show>
         :
-        <Scope name={name} kind="class">
-          <Indent>{hasChildren ? props.children : "pass"}</Indent>
+        <Scope name={updatedProps.name} kind="class">
+          <Indent>{hasChildren ? updatedProps.children : "pass"}</Indent>
         </Scope>
       </group>
     </Declaration>

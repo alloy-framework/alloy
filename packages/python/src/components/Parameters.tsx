@@ -62,3 +62,60 @@ export function Parameters(props: ParametersProps) {
     </List>
   );
 }
+
+export interface CallStatementParameter {
+  name?: string;
+  value?: Children;
+}
+
+export interface CallStatementParametersProps {
+  parameters?: CallStatementParameter[];
+  args?: boolean;
+  kwargs?: boolean;
+}
+
+/**
+ * Render a single parameter as a Declaration (for symbol creation) or as *args/**kwargs.
+ */
+function CallStatementParameter(param: CallStatementParameter) {
+  if (!param.name) {
+    // Create no symbol in case it's an unnamed parameter
+    return (
+      <VariableDeclaration
+        name=''
+        value={param.value}
+        callStatementVar={true}
+      />
+    );
+  }
+  else {
+    // Use VariableDeclaration to render the parameter, wrapped in Declaration for symbol creation
+    return (
+      <Declaration name={param.name}>
+        <VariableDeclaration
+          name={param.name? param.name : ''}
+          value={param.value}
+          callStatementVar={true}
+        />
+      </Declaration>
+    );
+  }
+}
+
+export function CallStatementParameters(props: CallStatementParametersProps) {
+  const { parameters = [], args, kwargs } = props;
+  // Render
+  // Build a flat array of all parameter elements (named, *args, **kwargs)
+  const allParams = [
+    ...parameters.map((param) => <CallStatementParameter {...param} />),
+    ...(args ? ["*args"] : []),
+    ...(kwargs ? ["**kwargs"] : []),
+  ];
+
+  return (
+    <List comma space>
+      {allParams}
+    </List>
+  );
+}
+

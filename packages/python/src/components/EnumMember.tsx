@@ -1,5 +1,6 @@
 import { Children, Show } from "@alloy-js/core";
 import { usePythonNamePolicy } from "../name-policy.js";
+import { enumModule } from "../builtins/python.js";
 
 export interface EnumMemberProps {
   /**
@@ -16,24 +17,28 @@ export interface EnumMemberProps {
    * Functional mappings/list
    */
   functional?: boolean;
+
+  auto?: boolean;
 }
 
 /**
  * A Python enum member.
  */
 export function EnumMember(props: EnumMemberProps) {
-  const name = usePythonNamePolicy().getName(props.name, "class");
+  const name = usePythonNamePolicy().getName(props.name, "enum-member");
+  const autoReference = props.auto === true ? enumModule["."].auto : undefined;
+  const value = props.auto === true ? <>{autoReference}()</> : props.value;
   if (props.functional) {
     return (
       <>
-        '{name}'<Show when={props.value !== undefined}> : {props.value}</Show>
+        '{name}'<Show when={value !== undefined}> : {value}</Show>
       </>
     );
   }
   return (
     <>
-      {props.name}
-      <Show when={props.value !== undefined}> = {props.value}</Show>
+      {name}
+      <Show when={value !== undefined}> = {value}</Show>
     </>
   );
 }

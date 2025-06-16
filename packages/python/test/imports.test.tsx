@@ -1,80 +1,58 @@
 import { Output, render } from "@alloy-js/core";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ImportStatement } from "../src/components/ImportStatement.jsx";
 import * as py from "../src/components/index.js";
-import { assertFileContents } from "./utils.jsx";
+import { assertFileContents, toSourceText } from "./utils.jsx";
 
 describe("ImportStatement", () => {
   it("renders module import", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <ImportStatement module="sys" />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <ImportStatement module="sys" />
     );
-    assertFileContents(result, { "test.py": `import sys` });
+    const expected = `import sys`;
+    expect(result).toRenderTo(expected);
   });
 
   it("renders named imports", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <ImportStatement module="math" names={["sqrt", "pi"]} />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <ImportStatement module="math" names={["sqrt", "pi"]} />
     );
-    assertFileContents(result, {
-      "test.py": `from math import sqrt, pi`,
-    });
+    const expected = `from math import sqrt, pi`;
+    expect(result).toRenderTo(expected);
   });
 
   it("renders named imports with aliases", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <ImportStatement
-            module="math"
-            names={[{ name: "sqrt", alias: "square_root" }, "pi"]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <ImportStatement
+        module="math"
+        names={[{ name: "sqrt", alias: "square_root" }, "pi"]}
+      />
     );
-    assertFileContents(result, {
-      "test.py": `from math import sqrt as square_root, pi`,
-    });
+    const expected = `from math import sqrt as square_root, pi`;
+    expect(result).toRenderTo(expected);
   });
+
   it("renders wildcard import", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <ImportStatement module="os" wildcard />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <ImportStatement module="os" wildcard />
     );
-    assertFileContents(result, {
-      "test.py": `from os import *`,
-    });
+    const expected = `from os import *`;
+    expect(result).toRenderTo(expected);
   });
 });
 
 describe("ImportStatements", () => {
   it("renders multiple import statements", () => {
-    const result = render(
-      <Output>
-        <py.SourceFile path="test.py">
-          <py.ImportStatements
-            imports={[
-              { module: "os", wildcard: true },
-              { module: "sys" },
-              { module: "math", names: ["sqrt", "pi"] },
-            ]}
-          />
-        </py.SourceFile>
-      </Output>,
+    const result = toSourceText(
+      <py.ImportStatements
+        imports={[
+          { module: "os", wildcard: true },
+          { module: "sys" },
+          { module: "math", names: ["sqrt", "pi"] },
+        ]}
+      />
     );
-    assertFileContents(result, {
-      "test.py": `from math import sqrt, pi\nfrom os import *\nimport sys`,
-    });
+    const expected = `from math import sqrt, pi\nfrom os import *\nimport sys`;
+    expect(result).toRenderTo(expected);
   });
 });

@@ -4,11 +4,13 @@ import {
   Output,
   OutputDirectory,
   OutputFile,
+  SymbolCreator,
   render,
 } from "@alloy-js/core";
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as py from "../src/components/index.js";
+import { createPythonNamePolicy } from "../src/name-policy.js";
 
 export function findFile(res: OutputDirectory, path: string): OutputFile {
   const result = findFileWorker(res, path);
@@ -49,9 +51,24 @@ export function assertFileContents(
   }
 }
 
-export function toSourceText(c: Children, policy?: NamePolicy<string>): string {
+export function toSourceText(
+  c: Children,
+  {
+    policy,
+    externals,
+    options,
+  }: {
+    policy?: NamePolicy<string>;
+    externals?: SymbolCreator[];
+    options?: { externals?: SymbolCreator[] };
+  } = {}
+): string {
+  if (!policy) {
+    policy = createPythonNamePolicy();
+  }
+  const mergedExternals = options?.externals ?? externals;
   const res = render(
-    <Output namePolicy={policy}>
+    <Output externals={mergedExternals} namePolicy={policy}>
       <py.SourceFile path="test.py">{c}</py.SourceFile>
     </Output>,
   );

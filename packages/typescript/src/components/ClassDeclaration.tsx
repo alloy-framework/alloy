@@ -15,7 +15,7 @@ import {
 import { usePrivateScope } from "../context/private-scope.js";
 import { useTSNamePolicy } from "../name-policy.js";
 import { TSOutputScope } from "../symbols/scopes.js";
-import { createTSSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
@@ -65,9 +65,8 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const namePolicy = useTSNamePolicy();
   const extendsPart = props.extends && <> extends {props.extends}</>;
 
-  const sym = createTSSymbol({
-    name: namePolicy.getName(props.name!, "class"),
-    refkey: props.refkey,
+  const sym = new TSOutputSymbol(namePolicy.getName(props.name!, "class"), {
+    refkeys: props.refkey,
     export: props.export,
     default: props.default,
     flags:
@@ -137,10 +136,9 @@ export function ClassMember(props: ClassMemberProps) {
     tsFlags |= TSSymbolFlags.Nullish;
   }
 
-  const sym = createTSSymbol({
-    name,
+  const sym = new TSOutputSymbol(name, {
     scope,
-    refkey: props.refkey,
+    refkeys: props.refkey,
     flags,
     tsFlags,
   });

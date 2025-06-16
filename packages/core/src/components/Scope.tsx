@@ -1,8 +1,6 @@
-import { OutputScope } from "../binder.js";
-import { useContext } from "../context.js";
-import { BinderContext } from "../context/binder.js";
 import { ScopeContext } from "../context/scope.js";
-import { Children } from "../jsx-runtime.js";
+import type { Children } from "../runtime/component.js";
+import { OutputScope } from "../symbols/output-scope.js";
 
 /**
  * Declare a scope by providing an already created scope. The scope is merely
@@ -53,11 +51,9 @@ export function Scope(props: ScopeProps) {
   if ("value" in props) {
     scope = props.value;
   } else {
-    const binder = useContext(BinderContext)!;
-    scope = binder.createScope({
+    scope = new OutputScope(props.name ?? "", {
       kind: props.kind,
       metadata: props.metadata,
-      name: props.name ?? "",
     });
   }
 

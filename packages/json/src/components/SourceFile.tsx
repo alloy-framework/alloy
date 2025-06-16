@@ -5,7 +5,7 @@ import {
   MemberDeclaration,
 } from "@alloy-js/core";
 import { JsonFileContext } from "../context/JsonFileContext.js";
-import { createJsonOutputSymbol } from "../symbols/json-symbol.js";
+import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { Reference } from "./Reference.jsx";
 
 export interface SourceFileProps {
@@ -25,9 +25,7 @@ export interface SourceFileProps {
  *
  */
 export function SourceFile(props: SourceFileProps) {
-  const jsonValueSym = createJsonOutputSymbol({
-    name: "",
-  });
+  const jsonValueSym = new JsonOutputSymbol("");
 
   const fileContext: JsonFileContext = {
     symbol: jsonValueSym,

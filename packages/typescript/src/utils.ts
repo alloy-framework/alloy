@@ -1,4 +1,4 @@
-import { defaultProps, splitProps } from "@alloy-js/core/jsx-runtime";
+import { defaultProps, splitProps } from "@alloy-js/core";
 import { CallSignatureProps } from "./components/CallSignature.jsx";
 
 export function modulePath(path: string) {

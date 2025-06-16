@@ -2,21 +2,10 @@ import * as core from "@alloy-js/core";
 import { CSharpOutputSymbol } from "./csharp-output-symbol.js";
 
 // indicates that the scope for a symbols is at the namespace level
-export interface CSharpNamespaceScope extends core.OutputScope {
-  kind: "namespace";
-}
-
-// creates a new namespace scope
-export function createCSharpNamespaceScope(
-  binder: core.Binder,
-  parent: core.OutputScope | undefined,
-  name: string,
-): CSharpNamespaceScope {
-  return binder.createScope<CSharpNamespaceScope>({
-    kind: "namespace",
-    name,
-    parent,
-  });
+export class CSharpNamespaceScope extends core.OutputScope {
+  get kind() {
+    return "namespace";
+  }
 }
 
 // the kind of member scope. i.e. are we in an enum, class, etc
@@ -29,26 +18,18 @@ export type CSharpMemberScopeName =
 // indicates that the scope for a symbol resides within a type
 // e.g. for an enum value, class field etc, these would have
 // member scope where the owner is the containing type.
-export interface CSharpMemberScope extends core.OutputScope {
-  kind: "member";
-  name: CSharpMemberScopeName;
-  owner: CSharpOutputSymbol;
-}
+export class CSharpMemberScope extends core.OutputScope {
+  get kind() {
+    return "member";
+  }
 
-// creates a new member scope.
-// parent is the owning symbol.
-export function createCSharpMemberScope(
-  binder: core.Binder,
-  parent: core.OutputScope,
-  owner: CSharpOutputSymbol,
-  name: CSharpMemberScopeName,
-): CSharpMemberScope {
-  return binder.createScope<CSharpMemberScope>({
-    kind: "member",
-    name: name,
-    owner,
-    parent,
-  });
+  get name() {
+    return super.name as CSharpMemberScopeName;
+  }
+
+  get owner() {
+    return super.owner as CSharpOutputSymbol;
+  }
 }
 
 // contains the possible scopes where a declaration can reside

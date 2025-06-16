@@ -1,5 +1,18 @@
 # Changelog - @alloy-js/typescript
 
+## 0.17.0
+
+### Bug Fixes
+
+- [#163](https://github.com/alloy-framework/alloy/pull/163) Add `index` property to `MemberExpression.Part` to allow defining array indexes and treat numeric `id` props as array indexes.
+
+### Features
+
+- [#153](https://github.com/alloy-framework/alloy/pull/153) Add support to createPackage for defining instance and static members.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Variables will now get instance/static symbols based on the type prop or the children. This allows accessing members off of variable declarations when they are typed as a class or interface or assigned an object expression.
+- [#157](https://github.com/alloy-framework/alloy/pull/157) Add new `NewExpression` component which will emit a symbol containing the instantiation of the given class reference.
+
+
 ## 0.16.0
 
 ### Features

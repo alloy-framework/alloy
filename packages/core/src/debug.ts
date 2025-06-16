@@ -2,7 +2,7 @@ import { isReactive } from "@vue/reactivity";
 import Table from "cli-table3";
 import pc from "picocolors";
 import { contextsByKey } from "./context.js";
-import { Context, getContext } from "./jsx-runtime.js";
+import { Context, getContext } from "./reactivity.js";
 
 interface DebugInterface {
   component: {
@@ -205,4 +205,8 @@ function kvTable(sep = "  ") {
     },
     style: { "padding-left": 0, "padding-right": 0 },
   });
+}
+
+export function shouldDebug() {
+  return typeof process !== "undefined" && !!process.env?.ALLOY_DEBUG;
 }

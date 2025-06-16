@@ -197,7 +197,8 @@ describe("instance members", () => {
     const tree = render(
       <Output
         nameConflictResolver={() => {
-          console.log("CONFLIT");
+          // do nothing
+          return undefined;
         }}
       >
         <ts.SourceFile path="decl.ts">

@@ -1,9 +1,9 @@
-import { OutputSymbol } from "../binder.js";
 import {
   ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Provides the symbol for the member currently being declared.

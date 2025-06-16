@@ -1,4 +1,4 @@
-import { reactive, SourceDirectoryContext } from "@alloy-js/core";
+import { shallowReactive, SourceDirectoryContext } from "@alloy-js/core";
 import { TSModuleScope } from "./symbols/index.js";
 
 export interface SourceDirectoryData {
@@ -16,7 +16,7 @@ export function getSourceDirectoryData(sdContext: SourceDirectoryContext) {
   }
 
   const sdData: SourceDirectoryData = {
-    modules: reactive(new Set()),
+    modules: shallowReactive(new Set()),
   };
 
   sourceDirectoryData.set(sdContext, sdData);

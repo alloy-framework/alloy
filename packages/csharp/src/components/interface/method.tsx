@@ -2,7 +2,6 @@ import {
   Block,
   Children,
   MemberDeclaration,
-  refkey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -13,8 +12,6 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { ParameterProps, Parameters } from "../Parameters.jsx";
 
 /** Method modifiers. Can only be one. */
@@ -38,22 +35,12 @@ export interface InterfaceMethodProps
 // a C# interface method
 export function InterfaceMethod(props: InterfaceMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
-
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
-  });
+  // const scope = useCSharpScope();
+  // if (scope.kind !== "member" || scope.name !== "interface-decl") {
+  //   throw new Error(
+  //     `can't define an interface method outside of an interface scope it was: ${scope.kind}, ${scope.name}`,
+  //   );
+  // }
 
   const params =
     props.parameters ? <Parameters parameters={props.parameters} /> : "";
@@ -64,8 +51,8 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
   ]);
   // note that scope wraps the method decl so that the params get the correct scope
   return (
-    <MemberDeclaration symbol={methodSymbol}>
-      <Scope value={methodScope}>
+    <MemberDeclaration {...props}>
+      <Scope name={props.name} kind="method-decl">
         {modifiers}
         {props.returns ?? "void"} {name}({params})
         {props.children ?

@@ -15,10 +15,7 @@ export interface ParameterProps {
 export function Parameter(props: ParameterProps) {
   const name = useCSharpNamePolicy().getName(props.name, "parameter");
   const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "constructor-decl" && scope.name !== "method-decl")
-  ) {
+  if (scope.kind !== "constructor-decl" && scope.kind !== "method-decl") {
     throw new Error(
       "can't define a parameter outside of a constructor-decl or method-decl scope",
     );

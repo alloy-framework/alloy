@@ -3,7 +3,6 @@ import {
   Children,
   List,
   MemberDeclaration,
-  refkey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -14,8 +13,6 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 
 /** Method modifiers. Can only be one. */
 export interface InterfacePropertyModifiers {
@@ -46,22 +43,22 @@ export interface InterfacePropertyProps
 // a C# interface property
 export function InterfaceProperty(props: InterfacePropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
+  // const scope = useCSharpScope();
+  // if (scope.kind !== "member" || scope.name !== "interface-decl") {
+  //   throw new Error(
+  //     "can't define an interface method outside of an interface scope",
+  //   );
+  // }
 
-  const propertySymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
+  // const propertySymbol = new CSharpOutputSymbol(name, {
+  //   scope,
+  //   refkeys: props.refkey ?? refkey(props.name),
+  // });
 
   // scope for property declaration
-  const propertyScope = new CSharpMemberScope("property-decl", {
-    owner: propertySymbol,
-  });
+  // const propertyScope = new CSharpMemberScope("property-decl", {
+  //   owner: propertySymbol,
+  // });
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
@@ -69,8 +66,8 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
   ]);
   // note that scope wraps the method decl so that the params get the correct scope
   return (
-    <MemberDeclaration symbol={propertySymbol}>
-      <Scope value={propertyScope}>
+    <MemberDeclaration {...props}>
+      <Scope name={props.name} kind="property-decl">
         {modifiers}
         {props.type} {name}{" "}
         <Block newline inline>

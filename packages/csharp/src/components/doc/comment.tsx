@@ -1,4 +1,4 @@
-import { Children, code, List, Prose } from "@alloy-js/core";
+import { Children, code, List, Prose, Show } from "@alloy-js/core";
 
 export interface DocCommentProps {
   children: Children;
@@ -13,6 +13,18 @@ export function DocComment(props: DocCommentProps) {
       </align>
     </>
   );
+}
+
+export interface DocWhenProps {
+  doc: Children | undefined;
+}
+
+/** Conditionally render the given doc in a <DocComment /> component and tail with a line */
+export function DocWhen(props: DocWhenProps) {
+  <Show when={Boolean(props.doc)}>
+    <DocComment children={props.doc} />
+    <hbr />
+  </Show>;
 }
 
 export interface DocCommentTagProps {

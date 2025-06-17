@@ -8,8 +8,8 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
-import { withHbr } from "../utils.jsx";
 
 export interface InterfaceModifiers {
   readonly partial?: boolean;
@@ -96,7 +96,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   ]);
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
-      {withHbr(props.doc)}
+      <DocWhen doc={props.doc} />
       {modifiers}interface <Name />
       {typeParams}
       {props.children ?

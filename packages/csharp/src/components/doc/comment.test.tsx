@@ -288,6 +288,23 @@ it("define typeparamref", () => {
   `);
 });
 
+it("wrap long summary", () => {
+  expect(
+    <DocComment>
+      <DocSummary>
+        This is a very long sample doc comment that exceeds the typical line
+        length limit and should be wrapped appropriately in the generated
+        documentation.
+      </DocSummary>
+    </DocComment>,
+  ).toRenderTo(`
+    /// <summary>
+    /// This is a very long sample doc comment that exceeds the typical line length limit
+    /// and should be wrapped appropriately in the generated documentation.
+    /// </summary>
+  `);
+});
+
 it("combine multiple tags", () => {
   expect(
     <DocComment>

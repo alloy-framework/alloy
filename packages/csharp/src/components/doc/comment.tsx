@@ -1,4 +1,4 @@
-import { Children, code, List } from "@alloy-js/core";
+import { Children, code, List, Prose } from "@alloy-js/core";
 
 export interface DocCommentProps {
   children: Children;
@@ -21,11 +21,14 @@ export interface DocCommentTagProps {
 
 export function makeDocCommentTag(name: string) {
   return function DocCommentTag(props: DocCommentProps) {
-    return code`
+    return (
+      <Prose>
+        {code`
         <${name}>
         ${props.children}
-        </${name}>
-    `;
+        </${name}>`}
+      </Prose>
+    );
   };
 }
 export function makeInlineDocCommentTag(name: string) {

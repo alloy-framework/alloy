@@ -26,7 +26,7 @@ export interface ClassMethodModifiers {
   readonly virtual?: boolean;
 }
 
-export const getMethodModifier = makeModifiers<ClassMethodModifiers>([
+const getMethodModifier = makeModifiers<ClassMethodModifiers>([
   "abstract",
   "sealed",
   "static",

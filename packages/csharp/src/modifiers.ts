@@ -18,21 +18,6 @@ export const getAccessModifier = makeModifiers<AccessModifiers>([
   "file",
 ]);
 
-/** Method modifiers. Can only be one. */
-export interface MethodModifiers {
-  readonly abstract?: boolean;
-  readonly sealed?: boolean;
-  readonly static?: boolean;
-  readonly virtual?: boolean;
-}
-
-export const getMethodModifier = makeModifiers<MethodModifiers>([
-  "abstract",
-  "sealed",
-  "static",
-  "virtual",
-]);
-
 export function getAsyncModifier(async?: boolean): string {
   return async ? "async" : "";
 }

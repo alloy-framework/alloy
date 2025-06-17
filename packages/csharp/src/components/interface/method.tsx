@@ -10,51 +10,39 @@ import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
-  getAsyncModifier,
   makeModifiers,
-} from "../modifiers.js";
-import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { ParameterProps, Parameters } from "./Parameters.jsx";
+} from "../../modifiers.js";
+import { useCSharpNamePolicy } from "../../name-policy.js";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { ParameterProps, Parameters } from "../Parameters.jsx";
 
 /** Method modifiers. Can only be one. */
-export interface ClassMethodModifiers {
-  readonly abstract?: boolean;
-  readonly sealed?: boolean;
-  readonly static?: boolean;
-  readonly virtual?: boolean;
+export interface InterfaceMethodModifiers {
+  readonly new?: boolean;
 }
 
-const getMethodModifier = makeModifiers<ClassMethodModifiers>([
-  "abstract",
-  "sealed",
-  "static",
-  "virtual",
-]);
+const getMethodModifier = makeModifiers<InterfaceMethodModifiers>(["new"]);
 
 // properties for creating a method
-export interface ClassMethodProps
+export interface InterfaceMethodProps
   extends AccessModifiers,
-    ClassMethodModifiers {
+    InterfaceMethodModifiers {
   name: string;
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;
   returns?: Children;
-
-  /**
-   * If true, the method will be declared as an async method.
-   */
-  async?: boolean;
 }
 
-// a C# class method
-export function ClassMethod(props: ClassMethodProps) {
+// a C# interface method
+export function InterfaceMethod(props: InterfaceMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error("can't define a class method outside of a class scope");
+  if (scope.kind !== "member" || scope.name !== "interface-decl") {
+    throw new Error(
+      "can't define an interface method outside of an interface scope",
+    );
   }
 
   const methodSymbol = new CSharpOutputSymbol(name, {
@@ -69,20 +57,20 @@ export function ClassMethod(props: ClassMethodProps) {
 
   const params =
     props.parameters ? <Parameters parameters={props.parameters} /> : "";
-  const returns = props.returns ?? (props.async ? "Task" : "void");
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getMethodModifier(props),
-    getAsyncModifier(props.async),
   ]);
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
         {modifiers}
-        {returns} {name}({params})
-        {props.abstract ? ";" : <Block newline>{props.children}</Block>}
+        {props.returns ?? "void"} {name}({params})
+        {props.children ?
+          <Block newline>{props.children}</Block>
+        : ";"}
       </Scope>
     </MemberDeclaration>
   );

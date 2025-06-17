@@ -1,7 +1,9 @@
 export * from "./ClassDeclaration.jsx";
-export { ClassMethod, type ClassMethodProps } from "./ClassMethod.jsx";
+export * from "./ClassMethod.jsx";
 export * from "./Declaration.js";
 export * from "./EnumDeclaration.jsx";
+export * from "./interface/declaration.js";
+export * from "./interface/method.js";
 export * from "./Name.js";
 export * from "./Namespace.js";
 export * from "./Parameters.js";

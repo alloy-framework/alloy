@@ -9,7 +9,7 @@ import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
 import { Name } from "../Name.jsx";
-import { withBbr } from "../utils.jsx";
+import { withHbr } from "../utils.jsx";
 
 export interface InterfaceModifiers {
   readonly partial?: boolean;
@@ -96,7 +96,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   ]);
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
-      {withBbr(props.doc)}
+      {withHbr(props.doc)}
       {modifiers}interface <Name />
       {typeParams}
       {props.children ?

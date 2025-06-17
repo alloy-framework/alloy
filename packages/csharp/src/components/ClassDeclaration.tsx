@@ -10,7 +10,7 @@ import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 import { ParameterProps, Parameters } from "./Parameters.jsx";
-import { withBbr } from "./utils.js";
+import { withHbr } from "./utils.js";
 
 export interface ClassModifiers {
   readonly abstract?: boolean;
@@ -108,7 +108,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   ]);
   return (
     <core.Declaration symbol={thisClassSymbol}>
-      {withBbr(props.doc)}
+      {withHbr(props.doc)}
       {modifiers}class <Name />
       {typeParams}
       {!props.children && ";"}

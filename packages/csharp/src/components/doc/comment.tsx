@@ -21,10 +21,12 @@ export interface DocWhenProps {
 
 /** Conditionally render the given doc in a <DocComment /> component and tail with a line */
 export function DocWhen(props: DocWhenProps) {
-  <Show when={Boolean(props.doc)}>
-    <DocComment children={props.doc} />
-    <hbr />
-  </Show>;
+  return (
+    <Show when={Boolean(props.doc)}>
+      <DocComment children={props.doc} />
+      <hbr />
+    </Show>
+  );
 }
 
 export interface DocCommentTagProps {

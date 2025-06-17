@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { DocComment } from "../doc/comment.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 
 it("declares class with no members", () => {
@@ -48,13 +47,10 @@ describe("modifiers", () => {
 it("specify doc comment", () => {
   expect(
     <TestNamespace>
-      <InterfaceDeclaration
-        name="TestInterface"
-        doc={<DocComment>This is a test interface</DocComment>}
-      />
+      <InterfaceDeclaration name="TestInterface" doc="This is a test" />
     </TestNamespace>,
   ).toRenderTo(`
-    /// This is a test interface
+    /// This is a test
     interface TestInterface;
   `);
 });

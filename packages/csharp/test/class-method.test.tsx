@@ -1,6 +1,5 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
-import { DocComment } from "../src/components/doc/comment.jsx";
 import { ClassDeclaration, ClassMethod } from "../src/index.js";
 import { TestNamespace } from "./utils.jsx";
 
@@ -135,16 +134,13 @@ it("specify doc comment", () => {
   expect(
     <TestNamespace>
       <ClassDeclaration name="Test">
-        <ClassMethod
-          name="Method"
-          doc={<DocComment>This is a test class</DocComment>}
-        />
+        <ClassMethod name="Method" doc="This is a test" />
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
     class Test
     {
-      /// This is a test class
+      /// This is a test
       void Method() {}
     }
   `);

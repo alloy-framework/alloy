@@ -1,7 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { DocComment } from "../doc/comment.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 
@@ -108,10 +107,7 @@ it("specify doc comment", () => {
   expect(
     <TestNamespace>
       <InterfaceDeclaration name="Test">
-        <InterfaceMethod
-          name="Method"
-          doc={<DocComment>This is a test</DocComment>}
-        />
+        <InterfaceMethod name="Method" doc="This is a test" />
       </InterfaceDeclaration>
     </TestNamespace>,
   ).toRenderTo(`

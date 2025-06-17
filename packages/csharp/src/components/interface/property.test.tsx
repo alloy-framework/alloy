@@ -1,7 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { DocComment } from "../doc/comment.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceProperty } from "./property.jsx";
 
@@ -131,7 +130,7 @@ it("specify doc comment", () => {
           type="string"
           get
           set
-          doc={<DocComment>This is a test</DocComment>}
+          doc="This is a test"
         />
       </InterfaceDeclaration>
     </TestNamespace>,

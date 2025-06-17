@@ -129,6 +129,8 @@ it("specify doc comment", () => {
         <InterfaceProperty
           name="Method"
           type="string"
+          get
+          set
           doc={<DocComment>This is a test</DocComment>}
         />
       </InterfaceDeclaration>

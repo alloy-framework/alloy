@@ -1,6 +1,7 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { DocComment } from "../doc/comment.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 
@@ -99,6 +100,25 @@ it("defines params and return type", () => {
     public interface TestInterface
     {
       public string MethodOne(int intParam, string stringParam);
+    }
+  `);
+});
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name="Test">
+        <InterfaceMethod
+          name="Method"
+          doc={<DocComment>This is a test</DocComment>}
+        />
+      </InterfaceDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface Test
+    {
+      /// This is a test
+      void Method();
     }
   `);
 });

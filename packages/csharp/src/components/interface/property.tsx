@@ -16,6 +16,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { withBbr } from "../utils.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfacePropertyModifiers {
@@ -41,6 +42,9 @@ export interface InterfacePropertyProps
 
   /** If property should have a setter */
   set?: boolean;
+
+  /** Doc comment */
+  doc?: Children;
 }
 
 // a C# interface property
@@ -71,6 +75,7 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
   return (
     <MemberDeclaration symbol={propertySymbol}>
       <Scope value={propertyScope}>
+        {withBbr(props.doc)}
         {modifiers}
         {props.type} {name}{" "}
         <Block newline inline>

@@ -9,6 +9,7 @@ import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
 import { Name } from "../Name.jsx";
+import { withBbr } from "../utils.jsx";
 
 export interface InterfaceModifiers {
   readonly partial?: boolean;
@@ -22,6 +23,9 @@ export interface InterfaceDeclarationProps
     AccessModifiers,
     InterfaceModifiers {
   name: string;
+
+  /** Doc comment */
+  doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
 }
@@ -92,6 +96,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   ]);
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
+      {withBbr(props.doc)}
       {modifiers}interface <Name />
       {typeParams}
       {props.children ?

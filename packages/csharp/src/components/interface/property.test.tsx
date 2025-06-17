@@ -1,6 +1,7 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { DocComment } from "../doc/comment.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceProperty } from "./property.jsx";
 
@@ -117,6 +118,26 @@ it("has getter and setter", () => {
     public interface TestInterface
     {
       string TestProp { get; set; }
+    }
+  `);
+});
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name="Test">
+        <InterfaceProperty
+          name="Method"
+          type="string"
+          doc={<DocComment>This is a test</DocComment>}
+        />
+      </InterfaceDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface Test
+    {
+      /// This is a test
+      string Method { get; set; }
     }
   `);
 });

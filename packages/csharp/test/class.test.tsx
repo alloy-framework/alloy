@@ -1,6 +1,7 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { DocComment } from "../src/components/doc/comment.jsx";
 import * as csharp from "../src/index.js";
 import { ClassDeclaration } from "../src/index.js";
 import * as utils from "./utils.js";
@@ -297,5 +298,19 @@ it("declares class with constructor params and assigns values to fields", () => 
             }
         }
     }
+  `);
+});
+
+it("specify doc comment", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration
+        name="Test"
+        doc={<DocComment>This is a test class</DocComment>}
+      />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test class
+    class Test;
   `);
 });

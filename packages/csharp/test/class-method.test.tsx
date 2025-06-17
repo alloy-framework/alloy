@@ -1,5 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
+import { DocComment } from "../src/components/doc/comment.jsx";
 import { ClassDeclaration, ClassMethod } from "../src/index.js";
 import { TestNamespace } from "./utils.jsx";
 
@@ -126,6 +127,25 @@ it("defines params and return type", () => {
     public class TestClass
     {
       public string MethodOne(int intParam, string stringParam) {}
+    }
+  `);
+});
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration name="Test">
+        <ClassMethod
+          name="Method"
+          doc={<DocComment>This is a test class</DocComment>}
+        />
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    class Test
+    {
+      /// This is a test class
+      void Method() {}
     }
   `);
 });

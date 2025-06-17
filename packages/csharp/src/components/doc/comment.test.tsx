@@ -327,7 +327,8 @@ it("combine multiple tags", () => {
     /// <param name="p1">The first Point to be compared.</param>
     /// <param name="p2">The second Point to be compared.</param>
     /// <returns>
-    /// True if the Points do not have the same location and the exact same type; otherwise, false.
+    /// True if the Points do not have the same location and the exact same type; otherwise,
+    /// false.
     /// </returns>
     /// <seealso cref="Equals" />
     /// <seealso cref="operator==" />

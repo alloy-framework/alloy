@@ -3,7 +3,7 @@ import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as csharp from "../src/index.js";
 import { ClassDeclaration, ClassMember } from "../src/index.js";
-import * as utils from "./utils.js";
+import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
   expect(

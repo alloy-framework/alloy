@@ -170,6 +170,8 @@ export interface ClassMemberProps extends AccessModifiers {
   name: string;
   type: core.Children;
   refkey?: core.Refkey;
+  /** Doc comment */
+  doc?: core.Children;
 }
 
 // a C# class member (i.e. a field within a class like "private int count")
@@ -194,6 +196,7 @@ export function ClassMember(props: ClassMemberProps) {
   const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
   return (
     <core.Declaration symbol={memberSymbol}>
+      <DocWhen doc={props.doc} />
       {modifiers}
       {props.type} <Name />
     </core.Declaration>

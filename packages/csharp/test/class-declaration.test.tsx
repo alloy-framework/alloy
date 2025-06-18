@@ -2,8 +2,8 @@ import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as csharp from "../src/index.js";
-import { ClassDeclaration } from "../src/index.js";
-import * as utils from "./utils.js";
+import { ClassDeclaration, ClassMember } from "../src/index.js";
+import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
   expect(
@@ -308,5 +308,22 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     /// This is a test
     class Test;
+  `);
+});
+
+it("supports class member doc comments", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="Test" doc="This is a test">
+        <ClassMember name="Member" public type="int" doc="This is a member" />
+      </ClassDeclaration>
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test
+    class Test
+    {
+      /// This is a member
+      public int Member
+    }
   `);
 });

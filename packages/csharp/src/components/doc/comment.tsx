@@ -1,4 +1,4 @@
-import { Children, code, List, Prose, Show } from "@alloy-js/core";
+import { Children, code, For, Indent, List, Prose, Show } from "@alloy-js/core";
 
 export interface DocCommentProps {
   children: Children;
@@ -53,7 +53,7 @@ export function makeInlineDocCommentTag(name: string) {
 
 export const DocSummary = makeDocCommentTag("summary");
 export const DocCode = makeDocCommentTag("code");
-export const DocC = makeDocCommentTag("c");
+export const DocC = makeInlineDocCommentTag("c");
 export const DocExample = makeDocCommentTag("example");
 export const DocException = makeDocCommentTag("exception");
 
@@ -85,29 +85,40 @@ export const DocReturns = makeDocCommentTag("returns");
 export const DocRemarks = makeDocCommentTag("remarks");
 export const DocValue = makeDocCommentTag("value");
 export const DocPermission = makeDocCommentTag("permission");
-export const DocResponse = makeDocCommentTag("response");
-export const DocCompletionList = makeDocCommentTag("completionlist");
-export const DocList = makeDocCommentTag("list");
-export const DocItem = makeDocCommentTag("item");
-export const DocTerm = makeDocCommentTag("term");
 export const DocDescription = makeDocCommentTag("description");
 export const DocPara = makeDocCommentTag("para");
 
 export interface DocSeeProps {
-  cref: string;
+  cref?: string;
+  href?: string;
   langword?: string;
   children?: Children;
 }
-export const DocSee = (props: DocSeeProps) =>
-  `<see cref="${props.cref}"${props.langword ? ` langword="${props.langword}"` : ""}${props.children ? `>${props.children}</see>` : " />"}`;
+export const DocSee = (props: DocSeeProps) => {
+  const attributes = [
+    props.cref ? `cref="${props.cref}"` : undefined,
+    props.href ? `href="${props.href}"` : undefined,
+    props.langword ? `langword="${props.langword}"` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return code`<see ${attributes}${props.children ? code`>${props.children}</see>` : " />"}`;
+};
 
 export interface DocSeeAlsoProps {
-  cref: string;
-  langword?: string;
+  cref?: string;
+  href?: string;
   children?: Children;
 }
-export const DocSeeAlso = (props: DocSeeAlsoProps) =>
-  `<seealso cref="${props.cref}"${props.langword ? ` langword="${props.langword}"` : ""}${props.children ? `>${props.children}</seealso>` : " />"}`;
+export const DocSeeAlso = (props: DocSeeAlsoProps) => {
+  const attributes = [
+    props.cref ? `cref="${props.cref}"` : undefined,
+    props.href ? `href="${props.href}"` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return code`<seealso ${attributes}${props.children ? code`>${props.children}</seealso>` : " />"}`;
+};
 
 export interface DocParamRefProps {
   name: string;
@@ -120,3 +131,22 @@ export interface DocTypeParamRefProps {
 }
 export const DocTypeParamRef = (props: DocTypeParamRefProps) =>
   `<typeparamref name="${props.name}" />`;
+
+export interface DocListProps {
+  type?: "bullet" | "number";
+  items: Children[];
+}
+export function DocList(props: DocListProps) {
+  return (
+    <Prose>
+      {`<list type="${props.type ?? "bullet"}">`}
+      <Indent>
+        <For each={props.items}>
+          {(item) => code`<item><description>${item}</description></item>`}
+        </For>
+      </Indent>
+      <hbr />
+      {`</list>`}
+    </Prose>
+  );
+}

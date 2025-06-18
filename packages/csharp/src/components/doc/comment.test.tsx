@@ -1,26 +1,22 @@
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   DocC,
   DocCode,
   DocComment,
-  DocCompletionList,
   DocDescription,
   DocExample,
   DocException,
   DocInclude,
-  DocItem,
   DocList,
   DocPara,
   DocParam,
   DocParamRef,
   DocPermission,
   DocRemarks,
-  DocResponse,
   DocReturns,
   DocSee,
   DocSeeAlso,
   DocSummary,
-  DocTerm,
   DocTypeParam,
   DocTypeParamRef,
   DocValue,
@@ -56,9 +52,7 @@ it("define c", () => {
       <DocC>inline code</DocC>
     </DocComment>,
   ).toRenderTo(`
-    /// <c>
-    /// inline code
-    /// </c>
+    /// <c>inline code</c>
   `);
 });
 
@@ -89,7 +83,7 @@ it("define exception", () => {
 it("define include", () => {
   expect(
     <DocComment>
-      <>{DocInclude({ file: "external.xml", path: "/doc/summary" })}</>
+      <DocInclude file="external.xml" path="/doc/summary" />
     </DocComment>,
   ).toRenderTo(`
     /// <include file="external.xml" path="/doc/summary" />
@@ -164,63 +158,17 @@ it("define permission", () => {
   `);
 });
 
-it("define response", () => {
-  expect(
-    <DocComment>
-      <DocResponse>response info</DocResponse>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <response>
-    /// response info
-    /// </response>
-  `);
-});
-
-it("define completionlist", () => {
-  expect(
-    <DocComment>
-      <DocCompletionList>completion list</DocCompletionList>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <completionlist>
-    /// completion list
-    /// </completionlist>
-  `);
-});
-
 it("define list", () => {
   expect(
     <DocComment>
-      <DocList>list content</DocList>
+      <DocList type="bullet" items={["item 1", "item 2", "item 3"]} />
     </DocComment>,
   ).toRenderTo(`
-    /// <list>
-    /// list content
+    /// <list type="bullet">
+    ///   <item><description>item 1</description></item>
+    ///   <item><description>item 2</description></item>
+    ///   <item><description>item 3</description></item>
     /// </list>
-  `);
-});
-
-it("define item", () => {
-  expect(
-    <DocComment>
-      <DocItem>item content</DocItem>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <item>
-    /// item content
-    /// </item>
-  `);
-});
-
-it("define term", () => {
-  expect(
-    <DocComment>
-      <DocTerm>term content</DocTerm>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <term>
-    /// term content
-    /// </term>
   `);
 });
 
@@ -248,40 +196,93 @@ it("define para", () => {
   `);
 });
 
-it("define see", () => {
-  expect(
-    <DocComment>
-      <>{DocSee({ cref: "T:MyType" })}</>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <see cref="T:MyType" />
-  `);
+describe("define see", () => {
+  it("with cref", () => {
+    expect(
+      <DocComment>
+        <DocSee cref="T:MyType" />
+      </DocComment>,
+    ).toRenderTo(`
+      /// <see cref="T:MyType" />
+    `);
+  });
+
+  it("with href", () => {
+    expect(
+      <DocComment>
+        <DocSee href="https://github.com" />
+      </DocComment>,
+    ).toRenderTo(`
+      /// <see href="https://github.com" />
+    `);
+  });
+  it("with href and children", () => {
+    expect(
+      <DocComment>
+        <DocSee href="https://github.com">GitHub</DocSee>
+      </DocComment>,
+    ).toRenderTo(`
+      /// <see href="https://github.com">GitHub</see>
+    `);
+  });
+
+  it("with langword", () => {
+    expect(
+      <DocComment>
+        <DocSee langword="keyword" />
+      </DocComment>,
+    ).toRenderTo(`
+      /// <see langword="keyword" />
+    `);
+  });
 });
 
-it("define seealso", () => {
-  expect(
-    <DocComment>
-      <>{DocSeeAlso({ cref: "T:OtherType" })}</>
-    </DocComment>,
-  ).toRenderTo(`
-    /// <seealso cref="T:OtherType" />
-  `);
+describe("define seealso", () => {
+  it("with cref", () => {
+    expect(
+      <DocComment>
+        <DocSeeAlso cref="T:OtherType" />
+      </DocComment>,
+    ).toRenderTo(`
+      /// <seealso cref="T:OtherType" />
+    `);
+  });
+
+  it("with href", () => {
+    expect(
+      <DocComment>
+        <DocSeeAlso href="https://github.com" />
+      </DocComment>,
+    ).toRenderTo(`
+      /// <seealso href="https://github.com" />
+    `);
+  });
+
+  it("with children", () => {
+    expect(
+      <DocComment>
+        <DocSeeAlso cref="T:OtherType">OtherType</DocSeeAlso>
+      </DocComment>,
+    ).toRenderTo(`
+      /// <seealso cref="T:OtherType">OtherType</seealso>
+    `);
+  });
 });
 
 it("define paramref", () => {
   expect(
     <DocComment>
-      <>{DocParamRef({ name: "x" })}</>
+      <DocParamRef name="x" />
     </DocComment>,
   ).toRenderTo(`
-    /// <paramref name="x" />
+    /// <paramref name="${"x"}" />
   `);
 });
 
 it("define typeparamref", () => {
   expect(
     <DocComment>
-      <>{DocTypeParamRef({ name: "T" })}</>
+      <DocTypeParamRef name="T" />
     </DocComment>,
   ).toRenderTo(`
     /// <typeparamref name="T" />

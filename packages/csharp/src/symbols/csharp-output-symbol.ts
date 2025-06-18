@@ -5,6 +5,14 @@ import { CSharpOutputScope } from "./scopes.js";
 // represents a symbol from a .cs file. Class, enum, interface etc.
 
 export class CSharpOutputSymbol extends core.OutputSymbol {
+  public static readonly memberSpaces = [
+    "static",
+    "instance",
+    "constructor",
+    "operator",
+  ];
+
+  copy() {}
   get scope() {
     return super.scope as CSharpOutputScope;
   }

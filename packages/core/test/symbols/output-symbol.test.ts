@@ -1,27 +1,46 @@
 import { reactive, watch } from "@vue/reactivity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Binder, createOutputBinder } from "../../src/binder.js";
-import { ComponentContext } from "../../src/context.js";
-import { MemberScopeContext } from "../../src/context/member-scope.js";
-import { ScopeContext } from "../../src/index.browser.js";
-import { renderTree } from "../../src/render.js";
+import { OutputSpace } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
-import {
-  OutputScopeFlags,
-  OutputSymbolFlags,
-} from "../../src/symbols/flags.js";
-import { OutputScope } from "../../src/symbols/output-scope.js";
-import { OutputSymbol } from "../../src/symbols/output-symbol.js";
+import { BasicScope } from "../../src/symbols/basic-scope.js";
+import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
+import { OutputSymbolFlags } from "../../src/symbols/flags.js";
+import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
+import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
 
 let binder: Binder;
 beforeEach(() => {
   binder = createOutputBinder();
 });
 
+function createScope(
+  name: string,
+  parent?: BasicScope,
+  options?: OutputScopeOptions,
+) {
+  return new BasicScope(name, parent, {
+    binder,
+    ...options,
+  });
+}
+
+function createSymbol(
+  name: string,
+  scope: BasicScope | OutputSpace,
+  options?: OutputSymbolOptions,
+) {
+  const space = scope instanceof BasicScope ? scope.symbols : scope;
+  return new BasicSymbol(name, space, {
+    binder,
+    ...options,
+  });
+}
+
 describe("OutputSymbol reactivity", () => {
   it("keeps symbol names up-to-date", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope);
 
     flushJobs();
     expect(scope.symbolNames.has("sym")).toBe(true);
@@ -32,10 +51,10 @@ describe("OutputSymbol reactivity", () => {
   });
 
   it("resolves symbol conflicts", () => {
-    const scope = new OutputScope("scope", { binder });
-    const s1 = new OutputSymbol("sym", { binder, scope });
-    const s2 = new OutputSymbol("sym", { binder, scope });
-    const s3 = new OutputSymbol("sym", { binder, scope });
+    const scope = createScope("scope");
+    const s1 = createSymbol("sym", scope);
+    const s2 = createSymbol("sym", scope);
+    const s3 = createSymbol("sym", scope);
 
     flushJobs();
 
@@ -44,9 +63,9 @@ describe("OutputSymbol reactivity", () => {
     expect(s3.name).toEqual("sym_3");
   });
 
-  it("is reactive on name, flags, scope, instanceMemberScope, and staticMemberScope", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
+  it("is reactive on name, flags, space, and scope", () => {
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope);
 
     const nameSpy = vi.fn();
     watch(() => symbol.name, nameSpy);
@@ -54,86 +73,30 @@ describe("OutputSymbol reactivity", () => {
     watch(() => symbol.flags, flagsSpy);
     const scopeSpy = vi.fn();
     watch(() => symbol.scope, scopeSpy);
-    const instanceMemberScopeSpy = vi.fn();
-    watch(() => symbol.instanceMemberScope, instanceMemberScopeSpy);
-    const staticMemberScopeSpy = vi.fn();
-    watch(() => symbol.staticMemberScope, staticMemberScopeSpy);
 
     symbol.name = "foo";
-    symbol.flags = 0;
-    symbol.scope = new OutputScope("new-scope", { binder });
-    symbol.flags |=
-      OutputSymbolFlags.InstanceMemberContainer |
-      OutputSymbolFlags.StaticMemberContainer;
+    symbol.flags = OutputSymbolFlags.Transient;
+    const newScope = createScope("new-scope");
+    symbol.spaces = [newScope.symbols];
 
     expect(nameSpy).toHaveBeenCalled();
     expect(flagsSpy).toHaveBeenCalled();
     expect(scopeSpy).toHaveBeenCalled();
-    expect(instanceMemberScopeSpy).toHaveBeenCalled();
-    expect(staticMemberScopeSpy).toHaveBeenCalled();
   });
 
   it("doesn't get wrapped in a reactive proxy", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope);
 
     const rSymbol = reactive(symbol);
     expect(rSymbol).toBe(symbol);
   });
 });
 
-describe("OutputSymbol#flags", () => {
-  it("sets member flags based on parent scope", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
-    expect(symbol.flags & OutputSymbolFlags.Member).toBeFalsy();
-    const memberScope = new OutputScope("member-scope", {
-      binder,
-      owner: symbol,
-      flags: OutputScopeFlags.InstanceMemberScope,
-    });
-    const memberSymbol = new OutputSymbol("member-sym", {
-      binder,
-      scope: memberScope,
-    });
-    expect(memberSymbol.flags & OutputSymbolFlags.InstanceMember).toBeTruthy();
-  });
-});
-
-describe("OutputSymbol#staticMemberScope", () => {
-  it("is created when needed", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.StaticMemberContainer,
-    });
-
-    expect(symbol.staticMemberScope).toBeDefined();
-    expect(symbol.staticMemberScope!.symbols.size).toEqual(0);
-  });
-});
-
-describe("OutputSymbol#instanceMemberScope", () => {
-  it("is created when needed", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.InstanceMemberContainer,
-    });
-
-    expect(symbol.instanceMemberScope).toBeDefined();
-    expect(symbol.instanceMemberScope!.symbols.size).toEqual(0);
-  });
-});
-
 describe("OutputSymbol#metadata", () => {
   it("is reactive", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", {
-      binder,
-      scope,
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope, {
       metadata: { foo: "bar" },
     });
 
@@ -147,310 +110,194 @@ describe("OutputSymbol#metadata", () => {
 
 describe("OutputSymbol#scope", () => {
   it("adds to parent scope", () => {
-    const scope = new OutputScope("parent", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
-    expect(scope.symbols.has(symbol)).toBe(true);
-  });
-
-  it("defaults to the current lexical scope when not a member", () => {
-    const scope = new OutputScope("parent", { binder });
-
-    withContext([[ScopeContext, scope]], () => {
-      const symbol = new OutputSymbol("sym", { binder });
-      expect(scope.symbols.has(symbol)).toBe(true);
-    });
-  });
-
-  it("defaults to the current member scope when a member", () => {
-    const symbol = new OutputSymbol("Class", {
-      binder,
-      scope: binder.globalScope,
-      flags: OutputSymbolFlags.MemberContainer,
-    });
-
-    withContext(
-      [
-        [
-          MemberScopeContext,
-          {
-            instanceMembers: symbol.instanceMemberScope,
-            staticMembers: symbol.staticMemberScope,
-          },
-        ],
-      ],
-      () => {
-        const ms = new OutputSymbol("ms", {
-          binder,
-          flags: OutputSymbolFlags.InstanceMember,
-        });
-        const ss = new OutputSymbol("ss", {
-          binder,
-          flags: OutputSymbolFlags.StaticMember,
-        });
-        expect(symbol.instanceMemberScope!.symbols.has(ms)).toBe(true);
-        expect(symbol.staticMemberScope!.symbols.has(ss)).toBe(true);
-      },
-    );
+    const scope = createScope("parent");
+    const symbol = createSymbol("sym", scope);
+    expect(scope.symbols.symbols.has(symbol)).toBe(true);
   });
 });
-
-type ContextRecord<T> = [ComponentContext<T>, T];
-
-function withContext<Ts extends any[]>(
-  contexts: { [K in keyof Ts]: ContextRecord<Ts[K]> },
-  fn: () => void,
-): void {
-  let children = fn;
-  for (let i = 0; i < contexts.length; i++) {
-    const [context, value] = contexts[i];
-    children = context.ProviderStc({ value }).children(children);
-  }
-  renderTree(children);
-}
 
 describe("Symbol#delete", () => {
   it("deletes from parent scope", () => {
-    const scope = new OutputScope("parent", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
-    expect(scope.symbols.has(symbol)).toBe(true);
+    const scope = createScope("parent");
+    const symbol = createSymbol("sym", scope);
+    expect(scope.symbols.symbols.has(symbol)).toBe(true);
     symbol.delete();
-    expect(scope.symbols.has(symbol)).toBe(false);
+    expect(scope.symbols.symbols.has(symbol)).toBe(false);
   });
-
-  it("updates resolution");
 });
 
-describe("OutputSymbol#cloneInto", () => {
-  it("copies values and propagates updates", () => {
-    const scope = new OutputScope("scope", { binder });
-    const scope2 = new OutputScope("scope2", { binder });
-    const symbol = new OutputSymbol("sym", { binder, scope });
-    const clone = symbol.copyToScope(scope2);
+describe("OutputSymbol#copy", () => {
+  it("copies name, flags", () => {
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope, {
+      flags: OutputSymbolFlags.Transient,
+    });
 
-    expect(clone.name).toEqual("sym");
-    expect(clone.flags).toEqual(symbol.flags);
-    expect(clone.originalName).toEqual(symbol.originalName);
+    const copy = symbol.copy();
+    expect(copy.name).toEqual("sym");
+    expect(copy.flags).toEqual(OutputSymbolFlags.Transient);
+    expect(copy.scope).toBeUndefined();
+  });
+
+  it("reactively copies name and flags from the original symbol", () => {
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope, {
+      flags: OutputSymbolFlags.Transient,
+    });
+
+    const copy = symbol.copy();
+    expect(copy.name).toEqual("sym");
+    expect(copy.flags).toEqual(OutputSymbolFlags.Transient);
+    expect(copy.scope).toBeUndefined();
 
     symbol.name = "bar";
-    symbol.flags = OutputSymbolFlags.InstanceMemberContainer;
+    symbol.flags = 0;
 
     flushJobs();
 
-    expect(clone.name).toEqual("bar");
-    expect(clone.flags).toEqual(OutputSymbolFlags.InstanceMemberContainer);
+    expect(copy.flags).toEqual(0);
+    expect(copy.name).toEqual("bar");
   });
 
-  it("works simply", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.StaticMemberContainer,
-    });
+  it("copies member symbols", () => {
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope);
+    const staticMember = createSymbol("static-member", symbol.staticMembers);
+    const instanceMember = createSymbol(
+      "instance-member",
+      symbol.instanceMembers,
+    );
 
-    const sourceStaticMember = new OutputSymbol("static-member", {
-      binder,
-      scope: symbol.staticMemberScope!,
-    });
-    const scope2 = new OutputScope("scope2", { binder });
-    const clone = symbol.copyToScope(scope2);
-    expect(clone.staticMemberScope!.symbols.size).toBe(1);
+    const copy = symbol.copy();
 
-    sourceStaticMember.delete();
-    flushJobs();
-    expect(clone.staticMemberScope!.symbols.size).toBe(0);
+    expect(copy.name).toEqual("sym");
+    expect(copy.flags).toEqual(symbol.flags);
+    expect(copy.staticMembers.symbols.size).toBe(1);
+    const staticMemberCopy = [...copy.staticMembers.symbols][0];
+    expect(staticMemberCopy.name).toBe("static-member");
+    expect(staticMemberCopy.flags).toBe(staticMember.flags);
+    expect(copy.instanceMembers.symbols.size).toBe(1);
+    const instanceMemberCopy = [...copy.instanceMembers.symbols][0];
+    expect(instanceMemberCopy.name).toBe("instance-member");
+    expect(instanceMemberCopy.flags).toBe(instanceMember.flags);
   });
-  it("clones instance and static member scopes", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("sym", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.MemberContainer,
-    });
 
-    const sourceStaticMember = new OutputSymbol("static-member", {
-      binder,
-      scope: symbol.staticMemberScope!,
-      flags: OutputSymbolFlags.StaticMemberContainer,
-    });
+  it("copies member symbols reactively", () => {
+    const scope = createScope("scope");
+    const symbol = createSymbol("sym", scope);
+    const staticMember = createSymbol("static-member", symbol.staticMembers);
+    createSymbol("instance-member", symbol.instanceMembers);
 
-    const sourceInstanceMember = new OutputSymbol("instance-member", {
-      binder,
-      scope: symbol.instanceMemberScope!,
-    });
+    const copy = symbol.copy();
 
-    const scope2 = new OutputScope("scope2", { binder });
-    const clone = symbol.copyToScope(scope2);
+    expect(copy.name).toEqual("sym");
+    expect(copy.flags).toEqual(symbol.flags);
+    expect(copy.staticMembers.symbols.size).toBe(1);
+    const staticMemberCopy = [...copy.staticMembers.symbols][0];
 
-    expect(clone.instanceMemberScope).toBeDefined();
-    expect(clone.staticMemberScope).toBeDefined();
-    const clonedStaticMember = [...clone.staticMemberScope!.symbols][0];
-    expect(clonedStaticMember.name).toBe("static-member");
-    expect(clonedStaticMember).toBeDefined();
-    expect(clonedStaticMember.flags).toBe(sourceStaticMember.flags);
-
-    const clonedInstanceMember = [...clone.instanceMemberScope!.symbols][0];
-    expect(clonedInstanceMember.name).toBe("instance-member");
-    expect(clonedInstanceMember).toBeDefined();
-    expect(clonedInstanceMember.flags).toBe(sourceInstanceMember.flags);
-    expect(clonedInstanceMember.staticMemberScope).toBeUndefined();
-
-    // test reactivity
-    const newStaticSym = new OutputSymbol("new-sym", {
-      binder,
-      scope: symbol.staticMemberScope!,
-    });
-
-    const newInstanceSym = new OutputSymbol("new-sym", {
-      binder,
-      scope: symbol.instanceMemberScope!,
-    });
+    const newStaticMember = createSymbol(
+      "static-member-2",
+      symbol.staticMembers,
+    );
+    staticMember.name = "hi";
 
     flushJobs();
 
-    expect(clone.staticMemberScope!.symbolNames.has("new-sym")).toBe(true);
-    expect(clone.instanceMemberScope!.symbolNames.has("new-sym")).toBe(true);
+    const secondStaticMemberCopy = [...copy.staticMembers.symbols][1];
+    expect(secondStaticMemberCopy.name).toBe("static-member-2");
+    expect(staticMemberCopy.name).toBe("hi");
 
-    newStaticSym.delete();
-    newInstanceSym.delete();
+    newStaticMember.delete();
     flushJobs();
-    expect(clone.staticMemberScope!.symbolNames.has("new-sym")).toBe(false);
-    expect(clone.instanceMemberScope!.symbolNames.has("new-sym")).toBe(false);
+    expect(copy.staticMembers.symbols.size).toBe(1);
+    expect(copy.staticMembers.symbolNames.has("static-member-2")).toBe(false);
+    expect(copy.staticMembers.symbolNames.has("hi")).toBe(true);
   });
 });
 
-describe("OutputSymbol#instantiateInto", () => {
+describe("OutputSymbol#instantiateTo", () => {
   it("copies instance members to static member scope", () => {
-    const scope = new OutputScope("scope", { binder });
-    const classSym = new OutputSymbol("Class", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.MemberContainer,
-    });
+    const scope = createScope("scope");
+    const classSym = createSymbol("Class", scope);
+    createSymbol("instance-member", classSym.instanceMembers);
+    createSymbol("static-member", classSym.staticMembers);
 
-    new OutputSymbol("instance-member", {
-      binder,
-      scope: classSym.instanceMemberScope!,
-    });
-
-    new OutputSymbol("static-member", {
-      binder,
-      scope: classSym.staticMemberScope!,
-    });
-
-    const targetSym = new OutputSymbol("Target", { binder, scope });
+    const targetSym = createSymbol("Target", scope);
     classSym.instantiateTo(targetSym);
-    expect(targetSym.staticMemberScope).toBeDefined();
-    const staticNames = targetSym.staticMemberScope!.symbolNames;
+
+    expect(targetSym.staticMembers.symbols.size).toEqual(1);
+    const staticNames = targetSym.staticMembers.symbolNames;
     expect(staticNames.size).toEqual(1);
     expect(staticNames.has("instance-member")).toBe(true);
-    const instantiatedSym = [...targetSym.staticMemberScope!.symbols][0];
-    expect(instantiatedSym.flags & OutputSymbolFlags.StaticMember).toBeTruthy();
   });
 
   it("is reactive to new instance members", () => {
-    const scope = new OutputScope("scope", { binder });
-    const classSym = new OutputSymbol("Class", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.MemberContainer,
-    });
-
-    new OutputSymbol("instance-member", {
-      binder,
-      scope: classSym.instanceMemberScope!,
-    });
-
-    const targetSym = new OutputSymbol("Target", { binder, scope });
+    const scope = createScope("scope");
+    const classSym = createSymbol("Class", scope);
+    createSymbol("instance-member", classSym.instanceMembers);
+    const targetSym = createSymbol("Target", scope);
     classSym.instantiateTo(targetSym);
-
-    new OutputSymbol("new-instance-member", {
-      binder,
-      scope: classSym.instanceMemberScope!,
-    });
-
+    expect(targetSym.staticMembers.symbols.size).toEqual(1);
+    createSymbol("new-instance-member", classSym.instanceMembers);
+    flushJobs();
     expect(
-      targetSym.staticMemberScope!.symbolNames.has("new-instance-member"),
-    ).toBeDefined();
-    expect(targetSym.instanceMemberScope).toBeUndefined();
+      targetSym.staticMembers.symbolNames.has("new-instance-member"),
+    ).toBeTruthy();
   });
 
   it("copies static members of instance members", () => {
-    const scope = new OutputScope("scope", { binder });
-    const classSym = new OutputSymbol("Class", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.MemberContainer,
-    });
-
-    const instanceMemberSym = new OutputSymbol("instance-member", {
-      binder,
-      scope: classSym.instanceMemberScope!,
-      flags: OutputSymbolFlags.StaticMemberContainer,
-    });
-
-    new OutputSymbol("static-of-instance", {
-      binder,
-      scope: instanceMemberSym.staticMemberScope!,
-    });
-
-    const targetSym = new OutputSymbol("Target", { binder, scope });
+    const scope = createScope("scope");
+    const classSym = createSymbol("Class", scope);
+    const instanceMemberSym = createSymbol(
+      "instance-member",
+      classSym.instanceMembers,
+    );
+    createSymbol("static-of-instance", instanceMemberSym.staticMembers);
+    const targetSym = createSymbol("Target", scope);
     classSym.instantiateTo(targetSym);
 
     expect(
-      targetSym.staticMemberScope!.symbolNames.has("instance-member"),
+      targetSym.staticMembers.symbolNames.has("instance-member"),
     ).toBeTruthy();
-    expect(targetSym.instanceMemberScope).toBeUndefined();
 
-    const instantiatedSS = [...targetSym.staticMemberScope!.symbols][0];
-    expect(instantiatedSS.staticMemberScope).toBeDefined();
+    const instantiatedSS = [
+      ...targetSym.staticMembers.symbols,
+    ][0] as BasicSymbol;
     expect(
-      instantiatedSS.staticMemberScope!.symbolNames.has("static-of-instance"),
+      instantiatedSS.staticMembers.symbolNames.has("static-of-instance"),
     ).toBeTruthy();
 
     // check reactivity
-    const newSym = new OutputSymbol("new-static-of-instance", {
-      binder,
-      scope: instanceMemberSym.staticMemberScope!,
-    });
+    const newSym = new BasicSymbol(
+      "new-static-of-instance",
+      instanceMemberSym.staticMembers,
+    );
 
     flushJobs();
     expect(
-      instantiatedSS.staticMemberScope!.symbolNames.has(
-        "new-static-of-instance",
-      ),
+      instantiatedSS.staticMembers.symbolNames.has("new-static-of-instance"),
     ).toBeTruthy();
 
     newSym.delete();
     flushJobs();
 
     expect(
-      instantiatedSS.staticMemberScope!.symbolNames.has("static-member-2"),
+      instantiatedSS.staticMembers.symbolNames.has("static-member-2"),
     ).toBeFalsy();
   });
 
   it("is idempotent", () => {
-    const scope = new OutputScope("scope", { binder });
-    const source = new OutputSymbol("sym", {
-      binder,
-      scope,
-      flags: OutputSymbolFlags.InstanceMemberContainer,
-    });
+    const scope = createScope("scope");
+    const source = createSymbol("sym", scope);
+    createSymbol("instance-member", source.instanceMembers);
 
-    new OutputSymbol("instance-member", {
-      binder,
-      scope: source.instanceMemberScope!,
-    });
-
-    const target = new OutputSymbol("target", { binder, scope });
+    const target = createSymbol("target", scope);
 
     source.instantiateTo(target);
     source.instantiateTo(target);
 
-    expect(target.staticMemberScope).toBeDefined();
-    expect(target.staticMemberScope!.symbolNames.size).toEqual(1);
-    expect(target.staticMemberScope!.symbolNames.has("instance-member")).toBe(
-      true,
-    );
+    expect(target.staticMembers).toBeDefined();
+    expect(target.staticMembers.symbolNames.size).toEqual(1);
+    expect(target.staticMembers.symbolNames.has("instance-member")).toBe(true);
   });
 });

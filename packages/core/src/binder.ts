@@ -1,14 +1,12 @@
-import { computed, ref, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
+import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
 import { useMemberScope } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { effect, untrack } from "./reactivity.js";
+import { effect } from "./reactivity.js";
 import { refkey, Refkey } from "./refkey.js";
-import { OutputSymbolFlags } from "./symbols/flags.js";
 import { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import {
   formatRefkeys,
-  formatSymbol,
   formatSymbolName,
   trace,
   TracePhase,
@@ -41,51 +39,13 @@ export interface Binder {
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberScope: TScope | undefined,
+    currentMemberOwner: TSymbol | undefined,
     key: Refkey,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
   getSymbolForRefkey<TSymbol extends OutputSymbol>(
     refkey: Refkey,
   ): Ref<TSymbol | undefined>;
-
-  /**
-   * Find a symbol with a given name in the given scope. Returns a ref
-   * for the symbol, such that when the symbol is available, the ref value
-   * will update.
-   */
-  findSymbolName<
-    TScope extends OutputScope = OutputScope,
-    TSymbol extends OutputSymbol = OutputSymbol,
-  >(
-    currentScope: TScope | undefined,
-    name: string,
-  ): Ref<TSymbol | undefined>;
-
-  findScopeName<TScope extends OutputScope = OutputScope>(
-    currentScope: TScope | undefined,
-    name: string,
-  ): Ref<TScope | undefined>;
-
-  /**
-   * Resolve a fully qualified name to a symbol. Access a nested scope by name
-   * with `::`, a nested static member with `.` and a nested instance member
-   * with `#`.
-   *
-   * Per-language packages may provide their own resolveFQN function that uses
-   * syntax more natural to that  language.
-   */
-  resolveFQN<
-    TScope extends OutputScope = OutputScope,
-    TSymbol extends OutputSymbol = OutputSymbol,
-  >(
-    fqn: string,
-  ): Ref<TSymbol | TScope | undefined>;
-
-  /**
-   * The global scope. This is the root scope for all symbols.
-   */
-  globalScope: OutputScope;
 
   /**
    * The name conflict resolver to use for this binder.
@@ -139,11 +99,21 @@ export interface ResolutionResult<
   TSymbol extends OutputSymbol,
 > {
   /**
-   * The symbol for the resolved declaration.
+   * The resolved symbol. May be declared in a lexical scope or be a member symbol.
    */
-  targetDeclaration: TSymbol;
+  symbol: TSymbol;
+
   /**
-   * The scopes between the common scope and the reference
+   * When the symbol is a member symbol, this is the symbol of the lexical
+   * declaration which contains this member symbol, either as one of its own
+   * member symbols, or as a member of one of its members.
+   *
+   * When the symbol is a non-member symbol, this is the same as `symbol`.
+   */
+  lexicalDeclaration: TSymbol;
+
+  /**
+   * The scopes between the common scope and the reference.
    */
   pathUp: TScope[];
 
@@ -153,15 +123,33 @@ export interface ResolutionResult<
   pathDown: TScope[];
 
   /**
-   * The scope which contains both the reference and the declaration.
+   * The lexical scope which contains both the reference and the lexical declaration.
    */
   commonScope: TScope | undefined;
+
+  /**
+   * When resolving a member symbol, this is the symbol whose members contain
+   * both the resolved member and the current member scope.
+   */
+  commonMemberContainer: TSymbol | undefined;
+
+  /**
+   * When resolving a member symbol, this is the path of symbols that lead from
+   * the lexical declaration to the member symbol.
+   */
+  memberPath?: TSymbol[];
 
   /**
    * When resolving a member symbol, this is the path of symbols that lead from
    * the base declaration to the member symbol.
    */
-  memberPath?: TSymbol[];
+  memberPathDown?: TSymbol[];
+
+  /**
+   * When resolving a member symbol, this is the path of symbols that lead from
+   * the current member scope to to the common
+   */
+  memberPathUp?: TSymbol[];
 }
 
 export interface NameConflictResolver {
@@ -176,20 +164,11 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   const binder: Binder = {
     resolveDeclarationByKey,
     getSymbolForRefkey,
-    findSymbolName,
-    findScopeName,
-    resolveFQN: resolveFQN as any,
-    globalScope: undefined as any,
     notifyScopeCreated,
     notifySymbolCreated,
     notifySymbolDeleted,
     nameConflictResolver: options.nameConflictResolver,
   };
-
-  binder.globalScope = new OutputScope("<global>", {
-    binder,
-    kind: "global",
-  });
 
   const knownDeclarations = new Map<Refkey, OutputSymbol>();
   const waitingDeclarations = new Map<Refkey, Ref<OutputSymbol | undefined>>();
@@ -228,50 +207,19 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
   }
 
-  function hasTransientScope(symbol: OutputSymbol) {
-    let sym: OutputSymbol | undefined = symbol;
-    let transient = false;
-    while (sym) {
-      if (sym.flags & OutputSymbolFlags.Transient) {
-        transient = true;
-        break;
-      }
-      if (sym.flags & ~OutputSymbolFlags.Member) {
-        break;
-      }
-
-      sym = sym.scope.owner;
-    }
-
-    return transient;
-  }
   function buildResult<
     TScope extends OutputScope = OutputScope,
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberScope: TScope | undefined,
+    currentMemberOwner: TSymbol | undefined,
     targetDeclarationBase: TSymbol,
   ): ResolutionResult<TScope, TSymbol> {
-    trace(TracePhase.resolve.success, () => {
-      return `Resolved ${formatRefkeys(targetDeclarationBase.refkeys)} to ${formatSymbol(targetDeclarationBase)}`;
-    });
-    if (targetDeclarationBase.flags & OutputSymbolFlags.InstanceMember) {
-      // todo: handle referencing nested objects by refkey
-      return {
-        pathUp: [],
-        pathDown: [],
-        memberPath: [targetDeclarationBase],
-        commonScope: currentMemberScope,
-        targetDeclaration: targetDeclarationBase,
-      };
-    }
-
-    const { memberPath, scopeChain: targetChain } = scopeAndMemberChain<
-      TScope,
-      TSymbol
-    >(targetDeclarationBase);
+    const { memberPath: targetMemberPath, scopeChain: targetChain } =
+      scopeAndMemberChain<TScope, TSymbol>(targetDeclarationBase);
     const currentChain = scopeChain(currentScope);
+    const currentMemberPath = memberPath(currentMemberOwner);
+
     let diffStart = 0;
     while (
       targetChain[diffStart] &&
@@ -280,40 +228,74 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     ) {
       diffStart++;
     }
-
     const pathUp = currentChain.slice(diffStart);
     const pathDown = targetChain.slice(diffStart);
-    const commonScope = targetChain[diffStart - 1] ?? null;
+    const commonScope = targetChain[diffStart - 1] ?? undefined;
+
+    let memberPathUp;
+    let memberPathDown;
+    let commonMemberContainer;
+
+    if (!targetMemberPath) {
+      memberPathDown = undefined;
+      commonMemberContainer = undefined;
+      memberPathUp = currentMemberPath;
+    } else if (!currentMemberPath) {
+      // we've resolved a member, but are not in member context.
+      memberPathDown = targetMemberPath;
+      memberPathUp = undefined;
+      commonMemberContainer = undefined;
+    } else {
+      diffStart = 0;
+      while (
+        targetMemberPath[diffStart] &&
+        currentMemberPath[diffStart] &&
+        targetMemberPath[diffStart] === currentMemberPath[diffStart]
+      ) {
+        diffStart++;
+      }
+      memberPathUp = currentMemberPath.slice(diffStart);
+      memberPathDown = targetMemberPath.slice(diffStart);
+      commonMemberContainer = targetMemberPath[diffStart - 1] ?? undefined;
+    }
 
     return {
       pathUp,
       pathDown,
-      memberPath,
+      memberPath: targetMemberPath,
       commonScope,
-      targetDeclaration:
-        memberPath && memberPath.length > 0 ?
-          memberPath.at(0)!
+      symbol: targetDeclarationBase,
+      commonMemberContainer,
+      lexicalDeclaration:
+        targetMemberPath && targetMemberPath.length > 0 ?
+          (targetMemberPath[0].ownerSymbol! as TSymbol)
         : targetDeclarationBase,
+      memberPathDown,
+      memberPathUp,
     };
   }
 
+  /**
+   * Walk from the provided symbol up to the non-member symbol. This constitutes
+   * the member path. Then, walk from the first non-member symbol's scope up to
+   * the global scope. This constitutes the scope chain.
+   */
   function scopeAndMemberChain<
     TScope extends OutputScope,
     TSymbol extends OutputSymbol,
   >(symbol: TSymbol) {
     const result = {
-      memberPath: [] as TSymbol[],
+      memberPath: undefined as TSymbol[] | undefined,
       scopeChain: [] as TScope[],
     };
-
     let currentSymbol = symbol;
-    while (currentSymbol.flags & OutputSymbolFlags.StaticMember) {
-      result.memberPath.unshift(currentSymbol);
-      currentSymbol = currentSymbol.scope.owner! as TSymbol;
-    }
 
-    if (symbol.flags & OutputSymbolFlags.StaticMember) {
-      result.memberPath.unshift(currentSymbol);
+    if (currentSymbol.isMemberSymbol) {
+      result.memberPath = [];
+      while (currentSymbol.isMemberSymbol) {
+        result.memberPath.unshift(currentSymbol);
+        currentSymbol = currentSymbol.ownerSymbol as TSymbol;
+      }
     }
 
     const startScope = currentSymbol.scope as TScope;
@@ -330,6 +312,27 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
 
     return chain;
+  }
+
+  function memberPath<TSymbol extends OutputSymbol>(
+    symbol: TSymbol | undefined,
+  ) {
+    if (!symbol) {
+      return undefined;
+    }
+
+    if (!symbol.isMemberSymbol) {
+      return undefined;
+    }
+
+    const path = [];
+    let currentSymbol = symbol;
+    while (currentSymbol.isMemberSymbol) {
+      path.unshift(currentSymbol);
+      currentSymbol = currentSymbol.ownerSymbol as TSymbol;
+    }
+
+    return path;
   }
 
   function getSymbolForRefkey<TSymbol extends OutputSymbol = OutputSymbol>(
@@ -352,7 +355,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberScope: TScope | undefined,
+    currentMemberOwner: TSymbol | undefined,
     refkey: Refkey,
   ): ShallowRef<ResolutionResult<TScope, TSymbol> | undefined> {
     const resolvedSymbol = getSymbolForRefkey(refkey);
@@ -374,7 +377,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         () =>
           `${formatRefkeys(refkey)} resolved to ${formatSymbolName(symbol)}.`,
       );
-      if (hasTransientScope(symbol)) {
+      if (symbol.isTransient) {
         trace(
           TracePhase.resolve.failure,
           () => `Symbol ${formatSymbolName(symbol)} in transient scope.`,
@@ -387,20 +390,18 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         () =>
           `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
       );
-      return buildResult(currentScope, currentMemberScope, symbol);
+      return buildResult(currentScope, currentMemberOwner, symbol);
     });
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
-    if (symbol.flags & OutputSymbolFlags.Transient) {
-      // just ignore transient symbols.
-      return;
-    }
     effect<Refkey[]>((oldRefkeys) => {
-      trace(
-        TracePhase.resolve.pending,
-        () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
-      );
+      if (symbol.refkeys) {
+        trace(
+          TracePhase.resolve.pending,
+          () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
+        );
+      }
 
       if (oldRefkeys) {
         for (const refkey of oldRefkeys) {
@@ -425,8 +426,13 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
           signal.value = symbol;
         }
 
+        const scope = symbol.scope;
+        if (!scope) {
+          continue;
+        }
+
         // notify those waiting for this symbol name
-        const waitingScope = waitingSymbolNames.get(symbol.scope);
+        const waitingScope = waitingSymbolNames.get(scope);
         if (waitingScope) {
           const waitingName = waitingScope.get(symbol.name);
           if (waitingName) {
@@ -436,113 +442,6 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       }
 
       return [...symbol.refkeys];
-    });
-  }
-
-  function findSymbolName<TSymbol extends OutputSymbol = OutputSymbol>(
-    scope: OutputScope | undefined,
-    name: string,
-  ): ShallowRef<TSymbol | undefined> {
-    return untrack(() => {
-      scope ??= binder.globalScope;
-      for (const sym of scope.symbols) {
-        if (sym.name === name) {
-          return shallowRef(sym) as Ref<TSymbol>;
-        }
-      }
-
-      const symRef = shallowRef<OutputSymbol | undefined>(undefined);
-      if (!waitingSymbolNames.has(scope)) {
-        waitingSymbolNames.set(scope, new Map());
-      }
-      const waiting = waitingSymbolNames.get(scope)!;
-      waiting.set(name, symRef);
-      return symRef as Ref<TSymbol | undefined>;
-    });
-  }
-
-  function findScopeName<TScope extends OutputScope = OutputScope>(
-    scope: OutputScope | undefined,
-    name: string,
-  ): ShallowRef<TScope | undefined> {
-    return untrack(() => {
-      scope ??= binder.globalScope;
-      for (const child of scope.children) {
-        if (child.name === name) {
-          return shallowRef(child) as Ref<TScope>;
-        }
-      }
-
-      const scopeRef = shallowRef<OutputScope | undefined>(undefined);
-      if (!waitingScopeNames.has(scope)) {
-        waitingScopeNames.set(scope, new Map());
-      }
-      const waiting = waitingScopeNames.get(scope)!;
-      waiting.set(name, scopeRef);
-
-      return scopeRef as Ref<TScope | undefined>;
-    });
-  }
-
-  function findScopeOrSymbolName(scope: OutputScope, name: string) {
-    return untrack(() => {
-      return computed(() => {
-        return (
-          findSymbolName(scope, name).value ?? findScopeName(scope, name).value
-        );
-      });
-    });
-  }
-
-  function resolveFQN(
-    fqn: string,
-  ): Ref<OutputScope | OutputSymbol | undefined> {
-    const parts = fqn.match(/[^.#]+|[.#]/g);
-    if (!parts) return ref(undefined);
-    if (parts.length === 0) return ref(undefined);
-
-    parts.unshift(".");
-
-    return computed(() => {
-      let base: OutputScope | OutputSymbol | undefined = binder.globalScope;
-
-      for (let i = 0; i < parts.length; i += 2) {
-        if (base === undefined) {
-          return;
-        }
-
-        const op = parts[i];
-        const name = parts[i + 1];
-
-        if (op === ".") {
-          if ("originalName" in base) {
-            if (!base.staticMemberScope) {
-              return undefined;
-            }
-
-            base = findSymbolName(
-              (base as OutputSymbol).staticMemberScope,
-              name,
-            ).value;
-          } else {
-            base = findScopeOrSymbolName(base, name).value;
-          }
-        } else if (op === "#") {
-          if ("originalName" in base) {
-            if (!base.instanceMemberScope) {
-              return undefined;
-            }
-            base = findSymbolName(
-              (base as OutputSymbol).instanceMemberScope,
-              name,
-            ).value;
-          } else {
-            return undefined;
-          }
-        }
-      }
-
-      return base;
     });
   }
 }
@@ -563,10 +462,7 @@ export function resolve<
 >(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>> {
   const scope = useScope();
   const memberScope = useMemberScope();
-  const binder =
-    scope?.binder ??
-    memberScope?.instanceMembers?.binder ??
-    memberScope?.staticMembers?.binder;
+  const binder = scope?.binder ?? memberScope?.ownerSymbol.binder;
 
   if (!binder) {
     throw new Error("Can't resolve refkey without a binder");
@@ -574,7 +470,7 @@ export function resolve<
 
   return binder.resolveDeclarationByKey(
     scope,
-    memberScope?.instanceMembers,
+    memberScope?.ownerSymbol,
     refkey,
   ) as any;
 }
@@ -592,30 +488,4 @@ export function getSymbolCreatorSymbol(): typeof createSymbolsSymbol {
 
 export interface SymbolCreator {
   [createSymbolsSymbol](binder: Binder): void;
-}
-
-/**
- * Use symbol flags to determine the scope in which a symbol with those flags
- * should be declared given the current context.
- *
- * @param flags - The symbol flags to use to determine the default scope.
- * @returns an {@link OutputScope} that is the default scope for the given
- * flags.
- */
-export function useDefaultScope(
-  flags: OutputSymbolFlags = OutputSymbolFlags.None,
-) {
-  if ((flags & OutputSymbolFlags.Member) === 0) {
-    return useScope();
-  } else {
-    const memberScope = useMemberScope();
-    if (!memberScope) {
-      throw new Error("Cannot declare member symbols without a member scope");
-    }
-    if (flags & OutputSymbolFlags.InstanceMember) {
-      return memberScope.instanceMembers;
-    } else {
-      return memberScope.staticMembers;
-    }
-  }
 }

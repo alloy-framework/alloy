@@ -89,12 +89,18 @@ export function moveTakenMembersTo(baseSymbol: OutputSymbol) {
   effect(() => {
     for (const symbol of taken) {
       if (symbol.flags & OutputSymbolFlags.Transient) {
-        symbol.moveTo(baseSymbol);
+        symbol.moveMembersTo(baseSymbol);
       }
     }
   });
 }
 
-export function instantiateTakenMembersTo(baseSymbol: OutputSymbol) {
-  takeSymbols((symbol) => symbol.instantiateTo(baseSymbol));
+export function instantiateTakenMembersTo(
+  baseSymbol: OutputSymbol,
+  toSpaceKey: string,
+  fromSpaceKey: string,
+) {
+  takeSymbols((symbol) =>
+    symbol.instantiateTo(baseSymbol, toSpaceKey, fromSpaceKey),
+  );
 }

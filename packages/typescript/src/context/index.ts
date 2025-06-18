@@ -1,1 +1,1 @@
-export * from "./private-scope.js";
+export * from "./type-ref-context.js";

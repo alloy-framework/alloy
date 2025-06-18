@@ -2,7 +2,6 @@ import {
   childrenArray,
   findKeyedChild,
   Prose,
-  Scope,
   Show,
   type Children,
 } from "@alloy-js/core";
@@ -16,6 +15,7 @@ import {
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 /**
@@ -57,11 +57,11 @@ const FunctionTypeComponent = ensureTypeRefContext(
           </JSDoc>
           <hbr />
         </Show>
-        <Scope kind="function">
+        <LexicalScope>
           <CallSignature {...callSignatureProps} returnType={null} />
           {" => "}
           {returnType}
-        </Scope>
+        </LexicalScope>
       </>
     );
   },

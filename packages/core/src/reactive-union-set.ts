@@ -8,7 +8,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { effect } from "./reactivity.js";
+import { effect, untrack } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {
   onAdd?: OnReactiveSetAddCallback<T>;
@@ -133,7 +133,7 @@ export class ReactiveUnionSet<T> extends Set<T> {
     effect(() => {
       for (const [prevSourceValue, prevTargetValue] of prevValues) {
         if (!subset.has(prevSourceValue)) {
-          onDelete?.(prevSourceValue);
+          untrack(() => onDelete?.(prevSourceValue));
           prevValues.delete(prevSourceValue);
           this.delete(prevTargetValue);
         }
@@ -142,7 +142,7 @@ export class ReactiveUnionSet<T> extends Set<T> {
       for (const value of subset) {
         if (!prevValues.has(value)) {
           if (onAdd) {
-            const added = onAdd(value);
+            const added = untrack(() => onAdd(value));
             prevValues.set(value, added);
           } else {
             this.add(value);

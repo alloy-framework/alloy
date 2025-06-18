@@ -1,5 +1,6 @@
-import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
+import { Children, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
+import { createStaticMemberSymbol } from "../symbols/index.js";
 import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { PropertyName } from "./PropertyName.jsx";
@@ -49,9 +50,8 @@ export function EnumMember(props: EnumMemberProps) {
   const name = namer.getName(props.name, "enum-member");
   let sym: TSOutputSymbol | undefined = undefined;
   if (props.refkey) {
-    sym = new TSOutputSymbol(name, {
+    sym = createStaticMemberSymbol(name, {
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMember,
       metadata: props.metadata,
     });
   }

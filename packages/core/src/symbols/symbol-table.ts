@@ -2,12 +2,12 @@ import type { NameConflictResolver } from "../binder.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
 import { queueJob } from "../scheduler.js";
 import {
-  formatScopeName,
+  formatSpaceName,
   formatSymbolName,
   trace,
   TracePhase,
 } from "../tracer.js";
-import type { OutputScope } from "./output-scope.js";
+import type { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
 export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
@@ -26,9 +26,11 @@ export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
       this._namesToDeconflict.delete(name);
     }
   };
-  public scope;
+
+  public space: OutputSpace;
+
   constructor(
-    scope: OutputScope,
+    space: OutputSpace,
     options: {
       nameConflictResolver?: NameConflictResolver;
     } = {},
@@ -37,7 +39,7 @@ export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
       onAdd: (symbol) => {
         trace(
           TracePhase.symbol.addToScope,
-          () => `${formatSymbolName(symbol)} -> ${formatScopeName(scope)}`,
+          () => `${formatSymbolName(symbol)} -> ${formatSpaceName(space)}`,
         );
 
         this._namesToDeconflict.add(symbol.name);
@@ -49,12 +51,12 @@ export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
       onDelete(symbol) {
         trace(
           TracePhase.symbol.removeFromScope,
-          () => `${formatSymbolName(symbol)} -> ${formatScopeName(scope)}`,
+          () => `${formatSymbolName(symbol)} -> ${formatSpaceName(space)}`,
         );
       },
     });
 
-    this.scope = scope;
+    this.space = space;
 
     this._nameConflictResolver = options.nameConflictResolver;
   }

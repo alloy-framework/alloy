@@ -1,4 +1,4 @@
-import { Declaration, Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { it } from "vitest";
 import * as ts from "../src/components/index.js";
@@ -9,9 +9,9 @@ it("works with back references", () => {
   const res = render(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <Declaration name="foo" refkey={refkey("foo")}>
+        <ts.Declaration name="foo" refkey={refkey("foo")}>
           const foo = 1;
-        </Declaration>
+        </ts.Declaration>
       </ts.SourceFile>
 
       <ts.SourceFile path="test2.ts">
@@ -39,9 +39,9 @@ it("works with forward references", () => {
         const v = <Reference refkey={refkey("foo")} />;
       </ts.SourceFile>
       <ts.SourceFile path="test1.ts">
-        <Declaration name="foo" refkey={refkey("foo")}>
+        <ts.Declaration name="foo" refkey={refkey("foo")}>
           const foo = 1;
-        </Declaration>
+        </ts.Declaration>
       </ts.SourceFile>
     </Output>,
   );

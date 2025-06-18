@@ -8,6 +8,7 @@ import {
   SourceFile,
   TSOutputSymbol,
 } from "../src/index.js";
+import { useLexicalScope } from "../src/utils.js";
 import { assertFileContents } from "./utils.js";
 
 it("can import builtins", () => {
@@ -209,21 +210,21 @@ it("can import instance members", () => {
   });
 
   function RunTest() {
-    const sym = new TSOutputSymbol("foo");
+    const scope = useLexicalScope();
+    const sym = new TSOutputSymbol("hi", scope!.values);
     const binder = sym.binder!;
 
     expect(binder).toBeDefined();
 
-    const source = binder.getSymbolForRefkey(
-      mcpSdk["./server/index.js"].Server,
-    ).value!;
+    const source = binder.getSymbolForRefkey(mcpSdk["./server/index.js"].Server)
+      .value! as TSOutputSymbol;
     expect(source).toBeDefined();
-    expect(source.instanceMemberScope?.symbols.size).toBe(1);
+    expect(source.instanceMembers.symbols.size).toBe(1);
 
     source.instantiateTo(sym);
 
-    expect(sym.staticMemberScope?.symbols.size).toBe(1);
-    expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");
+    expect(sym.staticMembers.symbols.size).toBe(1);
+    expect([...sym.staticMembers.symbols][0].name).toBe("instanceHandler");
   }
 
   render(

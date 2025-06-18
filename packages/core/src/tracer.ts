@@ -4,6 +4,11 @@ import type { Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
 import { OutputScopeFlags, OutputSymbolFlags } from "./symbols/flags.js";
 import { type OutputScope } from "./symbols/output-scope.js";
+import type {
+  OutputDeclarationSpace,
+  OutputMemberSpace,
+  OutputSpace,
+} from "./symbols/output-space.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 
 // enable tracing for specific phases using a comma separated list of
@@ -307,21 +312,6 @@ export function formatSymbolName(symbol: OutputSymbol): string {
   });
 }
 
-/**
- * Format the symbols in a member scope, showing their names and IDs
- * @param scope The member scope containing the symbols to format
- * @returns A formatted string representation of the member scope symbols
- */
-function formatMemberScopeSymbols(scope: OutputScope): string {
-  if (!scope || scope.symbols.size === 0) {
-    return "none";
-  }
-
-  return Array.from(scope.symbols)
-    .map((symbol) => formatSymbolName(symbol))
-    .join(", ");
-}
-
 export function formatSymbol(symbol: OutputSymbol): string {
   // Base display with name and ID
   let result = formatSymbolName(symbol);
@@ -345,23 +335,8 @@ export function formatSymbol(symbol: OutputSymbol): string {
     details.push(untrack(() => `  scope: ${formatScopeName(symbol.scope)}`));
   }
 
-  // Show member scopes if present
-  if (symbol.instanceMemberScope) {
-    untrack(() => {
-      const memberCount = symbol.instanceMemberScope!.symbols.size;
-      details.push(
-        `  instance members: ${memberCount} - ${formatMemberScopeSymbols(symbol.instanceMemberScope!)}`,
-      );
-    });
-  }
-
-  if (symbol.staticMemberScope) {
-    untrack(() => {
-      const memberCount = symbol.staticMemberScope!.symbols.size;
-      details.push(
-        `  static members: ${memberCount} - ${formatMemberScopeSymbols(symbol.staticMemberScope!)}`,
-      );
-    });
+  for (const space of symbol.memberSpaces) {
+    details.push(untrack(() => formatSpaceSymbols(space)));
   }
 
   // Show all refkeys with proper formatting
@@ -376,20 +351,37 @@ export function formatSymbol(symbol: OutputSymbol): string {
   return result;
 }
 
-export function formatScopeName(scope: OutputScope): string {
-  let text = colorText(`${scope.name}[${scope.id}]`, {
+export function formatSpaceSymbols(space: OutputSpace) {
+  return `  ${space.key} symbols (${space.symbols.size}): ${[...space.symbols].map((s) => s.name).join(", ")}`;
+}
+
+export function formatScopeName(scope: OutputScope | undefined): string {
+  if (!scope) {
+    return "no scope";
+  }
+
+  return colorText(`${scope.name}[${scope.id}]`, {
     fg: {
       r: 0,
       g: 150,
       b: 50,
     },
   });
+}
 
-  if (scope.owner) {
-    text += untrack(() => ` of ${formatSymbolName(scope.owner!)}`);
-  }
-
-  return text;
+export function formatSpaceName(space: OutputSpace): string {
+  // avoid instance of checks here in order to not create circular module imports.
+  const name =
+    "symbol" in space ?
+      formatSymbolName((space as OutputMemberSpace).symbol)
+    : formatScopeName((space as OutputDeclarationSpace).scope);
+  return colorText(`${name}:${space.key}`, {
+    fg: {
+      r: 0,
+      g: 125,
+      b: 25,
+    },
+  });
 }
 
 /**
@@ -397,7 +389,7 @@ export function formatScopeName(scope: OutputScope): string {
  * @param scope The scope to format
  * @returns A formatted string representation of the scope
  */
-export function formatScope(scope: OutputSymbol["scope"]): string {
+export function formatScope(scope: OutputScope): string {
   if (!scope) {
     return "!Undefined scope!";
   }
@@ -423,25 +415,19 @@ export function formatScope(scope: OutputSymbol["scope"]): string {
     details.push(`  flags: ${flagsInfo.join(", ")}`);
   }
 
-  // Show symbol count
-  const symbolCount = scope.symbols.size;
-  if (symbolCount > 0) {
-    details.push(`  symbols: ${symbolCount}`);
-  }
-
   // Show parent scope if present
   if (scope.parent) {
     details.push(`  parent: ${formatScopeName(scope.parent)}`);
   }
 
-  // Show owner if present (for member scopes)
-  if (scope.owner) {
-    details.push(`  owner: ${formatSymbolName(scope.owner)}`);
-  }
-
   // Show child scopes if present
   if (scope.children && scope.children.size > 0) {
     details.push(`  children: ${scope.children.size}`);
+  }
+
+  // Show declaration spaces
+  for (const space of scope.spaces) {
+    details.push(`  ${untrack(() => formatSpaceSymbols(space))}`);
   }
 
   if (details.length > 0) {

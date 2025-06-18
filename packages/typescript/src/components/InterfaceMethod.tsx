@@ -1,10 +1,8 @@
 import {
   childrenArray,
   findKeyedChild,
-  MemberDeclaration,
   Prose,
   Refkey,
-  Scope,
   Show,
   type Children,
 } from "@alloy-js/core";
@@ -19,6 +17,8 @@ import {
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
+import { MemberDeclaration } from "./MemberDeclaration.jsx";
 
 /** Props for {@link (InterfaceMethod:namespace)} component */
 export interface InterfaceMethodProps extends CallSignatureProps {
@@ -84,9 +84,9 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
       </Show>
       <MemberDeclaration static {...props} refkey={props.refkey}>
         {name}
-        <Scope name={props.name} kind="function">
+        <LexicalScope name={props.name}>
           <CallSignature {...callSignatureProps} returnType={returnType} />
-        </Scope>
+        </LexicalScope>
       </MemberDeclaration>
     </>
   );

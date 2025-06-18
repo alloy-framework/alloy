@@ -15,7 +15,11 @@ import type {
   ParameterDescriptor,
 } from "../parameter-descriptor.js";
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/index.js";
+import {
+  createValueSymbol,
+  TSOutputSymbol,
+  TSSymbolFlags,
+} from "../symbols/index.js";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();
@@ -119,7 +123,7 @@ export const FunctionTypeParameters = taggedComponent(
 function parameter(param: DeclaredParameterDescriptor) {
   const SymbolSlot = createSymbolSlot();
 
-  SymbolSlot.instantiateInto(param.symbol);
+  SymbolSlot.instantiateTo(param.symbol, "static", "instance");
 
   return (
     <group>
@@ -182,14 +186,9 @@ function normalizeAndDeclareParameters(
   }
   if (typeof parameters[0] === "string") {
     return (parameters as string[]).map((paramName) => {
-      const name = namePolicy.getName(
-        paramName,
-        flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
-      );
+      const name = namePolicy.getName(paramName, "parameter");
 
-      const symbol = new TSOutputSymbol(name, {
-        tsFlags: flags,
-      });
+      const symbol = createValueSymbol(name);
 
       return { refkeys: symbol.refkeys, symbol };
     });
@@ -200,11 +199,8 @@ function normalizeAndDeclareParameters(
           TSSymbolFlags.Nullish
         : TSSymbolFlags.None;
 
-      const symbol = new TSOutputSymbol(
-        namePolicy.getName(
-          param.name,
-          flags & TSSymbolFlags.TypeSymbol ? "type" : "parameter",
-        ),
+      const symbol = createValueSymbol(
+        namePolicy.getName(param.name, "parameter"),
         {
           refkeys: param.refkey,
           tsFlags: flags | nullishFlag,

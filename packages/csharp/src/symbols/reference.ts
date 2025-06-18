@@ -39,7 +39,7 @@ export function ref(refkey: core.Refkey): () => string {
     //    file will have at least a source-file entry
     //  - referencing a symbol outside the current namespace will have at least
     //    two entries, namespace, source-file
-    const { targetDeclaration, pathDown } = resolveResult.value;
+    const { symbol: targetDeclaration, pathDown } = resolveResult.value;
 
     const sourceNamespace = pathDown.find((v) => {
       return v.kind === "namespace";

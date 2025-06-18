@@ -3,7 +3,6 @@ import {
   Children,
   MemberScope,
   Name,
-  OutputSymbolFlags,
   Refkey,
   Show,
   useMemberDeclaration,
@@ -34,7 +33,6 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
 export const InterfaceDeclaration = ensureTypeRefContext(
   (props: InterfaceDeclarationProps) => {
     const extendsPart = props.extends ? <> extends {props.extends}</> : "";
-    const flags = OutputSymbolFlags.StaticMemberContainer;
 
     return (
       <>
@@ -42,7 +40,7 @@ export const InterfaceDeclaration = ensureTypeRefContext(
           <JSDoc children={props.doc} />
           <hbr />
         </Show>
-        <Declaration {...props} nameKind="interface" flags={flags} kind="type">
+        <Declaration {...props} nameKind="interface" kind="type">
           interface <Name />
           {extendsPart}{" "}
           <InterfaceExpression>{props.children}</InterfaceExpression>
@@ -60,9 +58,6 @@ export const InterfaceExpression = ensureTypeRefContext(
   (props: InterfaceExpressionProps) => {
     const parentMemberSym = useMemberDeclaration();
 
-    if (parentMemberSym) {
-      parentMemberSym.flags |= OutputSymbolFlags.StaticMemberContainer;
-    }
     return (
       <group>
         <Wrap
@@ -119,9 +114,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
         <MemberDeclaration
           static
           exactName={name}
-          kind="type"
           nameKind="interface-member"
-          flags={OutputSymbolFlags.StaticMember}
           nullish={props.nullish ?? props.optional}
           refkey={props.refkey}
         >

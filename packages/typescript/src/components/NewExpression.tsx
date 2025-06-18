@@ -3,7 +3,7 @@ import {
   instantiateTakenMembersTo as instantiateTakenSymbolsTo,
   OutputSymbolFlags,
 } from "@alloy-js/core";
-import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { createValueSymbol } from "../symbols/index.js";
 import {
   FunctionCallExpression,
   FunctionCallExpressionProps,
@@ -12,10 +12,10 @@ import {
 export interface NewExpressionProps extends FunctionCallExpressionProps {}
 
 export function NewExpression(props: NewExpressionProps) {
-  const sym = new TSOutputSymbol("", {
+  const sym = createValueSymbol("", {
     flags: OutputSymbolFlags.Transient,
   });
-  instantiateTakenSymbolsTo(sym);
+  instantiateTakenSymbolsTo(sym, "static", "instance");
   emitSymbol(sym);
   return (
     <>

@@ -78,6 +78,9 @@ catalogs:
     html-entities:
       specifier: 2.6.0
       version: 2.6.0
+    marked:
+      specifier: ^15.0.12
+      version: 15.0.12
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
@@ -376,7 +379,7 @@ importers:
         specifier: 'catalog:'
         version: 5.4.4
       marked:
-        specifier: ^15.0.12
+        specifier: 'catalog:'
         version: 15.0.12
       pathe:
         specifier: 'catalog:'

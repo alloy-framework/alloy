@@ -27,6 +27,7 @@
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",
+    "marked": "catalog:",
     "pathe": "catalog:"
   },
   "devDependencies": {

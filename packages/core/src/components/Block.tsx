@@ -16,12 +16,15 @@ export interface BlockProps {
 
   /**
    * Whether the block starts on a new line. When true, a hardline is added
-   * prior to the block.
+   * prior to the block. If `inline` is true, this will only apply if the block is also split due to breaking.
    */
   newline?: boolean;
 
   /** The block's contents */
   children?: Children;
+
+  /** If true the block will not indent the content into new lines */
+  inline?: boolean;
 }
 
 /**
@@ -33,9 +36,13 @@ export function Block(props: BlockProps) {
   const childCount = computed(() => childrenArray(() => props.children).length);
   return (
     <group>
-      {props.newline && <br />}
+      {props.newline && (props.inline ? <softline /> : <br />)}
       {props.opener ?? "{"}
-      <Indent softline={childCount.value === 0} trailingBreak>
+      <Indent
+        line={props.inline && childCount.value > 0}
+        softline={childCount.value === 0}
+        trailingBreak
+      >
         {props.children}
       </Indent>
       {props.closer ?? "}"}

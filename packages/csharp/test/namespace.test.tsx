@@ -8,18 +8,18 @@ it("defines multiple namespaces and source files with unique content", () => {
     <core.Output>
       <csharp.Namespace name="Namespace1">
         <csharp.SourceFile path="Model1.cs">
-          <csharp.Class accessModifier="public" name="Model1" />
+          <csharp.ClassDeclaration public name="Model1" />
         </csharp.SourceFile>
         <csharp.SourceFile path="Model2.cs">
-          <csharp.Class accessModifier="public" name="Model2" />
+          <csharp.ClassDeclaration public name="Model2" />
         </csharp.SourceFile>
       </csharp.Namespace>
       <csharp.Namespace name="Namespace2">
         <csharp.SourceFile path="Model3.cs">
-          <csharp.Class accessModifier="public" name="Model3" />
+          <csharp.ClassDeclaration public name="Model3" />
         </csharp.SourceFile>
         <csharp.SourceFile path="Model4.cs">
-          <csharp.Class accessModifier="public" name="Model4" />
+          <csharp.ClassDeclaration public name="Model4" />
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,

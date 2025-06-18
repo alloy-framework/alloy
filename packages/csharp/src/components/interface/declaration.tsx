@@ -8,6 +8,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 
 export interface InterfaceModifiers {
@@ -22,6 +23,9 @@ export interface InterfaceDeclarationProps
     AccessModifiers,
     InterfaceModifiers {
   name: string;
+
+  /** Doc comment */
+  doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
 }
@@ -92,6 +96,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   ]);
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
+      <DocWhen doc={props.doc} />
       {modifiers}interface <Name />
       {typeParams}
       {props.children ?

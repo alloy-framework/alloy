@@ -120,3 +120,25 @@ it("has getter and setter", () => {
     }
   `);
 });
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name="Test">
+        <InterfaceProperty
+          name="Method"
+          type="string"
+          get
+          set
+          doc="This is a test"
+        />
+      </InterfaceDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface Test
+    {
+      /// This is a test
+      string Method { get; set; }
+    }
+  `);
+});

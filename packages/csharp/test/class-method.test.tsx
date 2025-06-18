@@ -129,3 +129,19 @@ it("defines params and return type", () => {
     }
   `);
 });
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration name="Test">
+        <ClassMethod name="Method" doc="This is a test" />
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    class Test
+    {
+      /// This is a test
+      void Method() {}
+    }
+  `);
+});

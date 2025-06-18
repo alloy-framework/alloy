@@ -102,3 +102,19 @@ it("defines params and return type", () => {
     }
   `);
 });
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name="Test">
+        <InterfaceMethod name="Method" doc="This is a test" />
+      </InterfaceDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface Test
+    {
+      /// This is a test
+      void Method();
+    }
+  `);
+});

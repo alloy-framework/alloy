@@ -16,6 +16,7 @@ import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { ParameterProps, Parameters } from "../Parameters.jsx";
+import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfaceMethodModifiers {
@@ -33,6 +34,9 @@ export interface InterfaceMethodProps
   children?: Children;
   parameters?: Array<ParameterProps>;
   returns?: Children;
+
+  /** Doc comment */
+  doc?: Children;
 }
 
 // a C# interface method
@@ -66,6 +70,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
   return (
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
+        <DocWhen doc={props.doc} />
         {modifiers}
         {props.returns ?? "void"} {name}({params})
         {props.children ?

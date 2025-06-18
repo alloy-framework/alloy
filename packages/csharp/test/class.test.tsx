@@ -299,3 +299,14 @@ it("declares class with constructor params and assigns values to fields", () => 
     }
   `);
 });
+
+it("specify doc comment", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="Test" doc="This is a test" />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test
+    class Test;
+  `);
+});

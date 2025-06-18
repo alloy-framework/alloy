@@ -43,3 +43,14 @@ describe("modifiers", () => {
     `);
   });
 });
+
+it("specify doc comment", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name="TestInterface" doc="This is a test" />
+    </TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test
+    interface TestInterface;
+  `);
+});

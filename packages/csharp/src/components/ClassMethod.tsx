@@ -17,6 +17,7 @@ import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { ParameterProps, Parameters } from "./Parameters.jsx";
+import { DocWhen } from "./doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface ClassMethodModifiers {
@@ -47,6 +48,9 @@ export interface ClassMethodProps
    * If true, the method will be declared as an async method.
    */
   async?: boolean;
+
+  /** Doc comment */
+  doc?: Children;
 }
 
 // a C# class method
@@ -80,6 +84,7 @@ export function ClassMethod(props: ClassMethodProps) {
   return (
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
+        <DocWhen doc={props.doc} />
         {modifiers}
         {returns} {name}({params})
         {props.abstract ? ";" : <Block newline>{props.children}</Block>}

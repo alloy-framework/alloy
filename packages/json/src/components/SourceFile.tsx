@@ -25,7 +25,7 @@ export interface SourceFileProps {
  *
  */
 export function SourceFile(props: SourceFileProps) {
-  const jsonValueSym = new JsonOutputSymbol("");
+  const jsonValueSym = new JsonOutputSymbol("", undefined);
 
   const fileContext: JsonFileContext = {
     symbol: jsonValueSym,

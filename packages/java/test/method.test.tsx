@@ -1,4 +1,4 @@
-import { code, Declaration, refkey } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -152,7 +152,7 @@ it("declares parameters", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
-          <Declaration name="Test">
+          <jv.Declaration name="Test">
             {code`
               public class Test {
                 ${(
@@ -169,7 +169,7 @@ it("declares parameters", () => {
                 )}
               }
             `}
-          </Declaration>
+          </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
@@ -203,7 +203,7 @@ it("defines generics", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
-          <Declaration name="Test">
+          <jv.Declaration name="Test">
             {code`
               public class Test {
                 ${(
@@ -217,7 +217,7 @@ it("defines generics", () => {
                 )}
               }
             `}
-          </Declaration>
+          </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,

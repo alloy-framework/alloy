@@ -1,7 +1,8 @@
-import { Block, Children, Scope } from "@alloy-js/core";
+import { Block, Children } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { ExtendsClause } from "./ExtendsClause.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
@@ -23,9 +24,9 @@ export function Interface(props: InterfaceProps) {
         <TypeParameters generics={props.generics} />
         <ExtendsClause extends={props.extends} />{" "}
       </group>
-      <Scope name={name} kind="interface">
+      <LexicalScope name={name}>
         <Block>{props.children}</Block>
-      </Scope>
+      </LexicalScope>
     </Declaration>
   );
 }

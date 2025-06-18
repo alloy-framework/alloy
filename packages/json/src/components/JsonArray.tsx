@@ -6,7 +6,6 @@ import {
   MemberDeclaration,
   MemberScope,
   onCleanup,
-  OutputSymbolFlags,
   Refkey,
   useMemberDeclaration,
   useMemberScope,
@@ -59,7 +58,6 @@ export function JsonArray(props: JsonArrayProps) {
   if (!memberSymbol) {
     throw new Error("Missing assignment symbol.");
   }
-  memberSymbol.flags |= OutputSymbolFlags.StaticMemberContainer;
 
   if (props.refkey) {
     memberSymbol.refkeys = [props.refkey].flat();
@@ -129,16 +127,15 @@ export function JsonArrayElement(props: JsonArrayElementProps) {
   if (!memberScope) {
     throw new Error("Missing member scope.");
   }
+  const owner = memberScope.ownerSymbol as JsonOutputSymbol;
 
-  if (!memberScope.staticMembers) {
+  if (!owner.staticMembers) {
     throw new Error("Missing static members scope.");
   }
 
-  const name = String(memberScope.staticMembers.symbols.size);
+  const name = String(owner.staticMembers.symbols.size);
 
-  const sym = new JsonOutputSymbol(name, {
-    flags: OutputSymbolFlags.StaticMember,
-  });
+  const sym = new JsonOutputSymbol(name, owner.staticMembers);
 
   onCleanup(() => {
     sym.delete();

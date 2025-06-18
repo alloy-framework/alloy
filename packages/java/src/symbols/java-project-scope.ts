@@ -136,7 +136,7 @@ export class JavaProjectScope extends OutputScope {
   #gradleProjectConfig?: GradleProjectConfig;
 
   constructor(name: string, options: JavaProjectScopeOptions = {}) {
-    super(name, options);
+    super(name, undefined, options);
 
     this.#mavenProjectConfig = options.mavenProjectConfig;
     this.#gradleProjectConfig = options.gradleProjectConfig;

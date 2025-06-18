@@ -40,7 +40,6 @@ export interface OutputScopeOptions {
  * within a reactive context.
  */
 export abstract class OutputScope {
-  static readonly defaultDeclarationSpace: string | undefined;
   static readonly declarationSpaces: Readonly<string[]> = [] as const;
 
   // my kingdom for decorators

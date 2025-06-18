@@ -1,4 +1,4 @@
-import { code, Declaration, refkey } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -7,13 +7,13 @@ import { assertFileContents, testRender, toSourceText } from "./utils.js";
 it("works", () => {
   const res = toSourceText(
     <>
-      <Declaration name="TestClass">
+      <jv.Declaration name="TestClass">
         {code`
         public class TestClass {
           ${(<jv.Constructor public name="TestClass" />)}
         }
       `}
-      </Declaration>
+      </jv.Declaration>
     </>,
   );
 
@@ -29,13 +29,13 @@ it("works", () => {
 it("takes name from class", () => {
   const res = toSourceText(
     <>
-      <Declaration name="TestClass">
+      <jv.Declaration name="TestClass">
         {code`
         public class TestClass {
           ${(<jv.Constructor public />)}
         }
       `}
-      </Declaration>
+      </jv.Declaration>
     </>,
   );
 
@@ -61,7 +61,7 @@ it("declares parameters", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="imports">
         <jv.SourceFile path="TestClass.java">
-          <Declaration name="TestClass">
+          <jv.Declaration name="TestClass">
             {code`
               public class TestClass {
                 ${(
@@ -75,7 +75,7 @@ it("declares parameters", () => {
                 )}
               }
             `}
-          </Declaration>
+          </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,

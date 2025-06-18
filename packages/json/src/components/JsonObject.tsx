@@ -7,9 +7,9 @@ import {
   MemberDeclaration,
   MemberScope,
   onCleanup,
-  OutputSymbolFlags,
   Refkey,
   useMemberDeclaration,
+  useMemberScope,
 } from "@alloy-js/core";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { JsonValue } from "./JsonValue.jsx";
@@ -64,7 +64,6 @@ export function JsonObject(props: JsonObjectProps) {
   if (!memberSymbol) {
     throw new Error("Missing assignment symbol.");
   }
-  memberSymbol.flags |= OutputSymbolFlags.StaticMemberContainer;
 
   if (props.refkey) {
     memberSymbol.refkeys = [props.refkey].flat();
@@ -153,9 +152,13 @@ export type ObjectPropertyProps =
  * @see {@link @alloy-js/core#(MemberDeclarationContext:variable)}
  */
 export function JsonObjectProperty(props: ObjectPropertyProps) {
-  const sym = new JsonOutputSymbol(props.name, {
-    flags: OutputSymbolFlags.StaticMember,
-  });
+  const memberScope = useMemberScope();
+  if (!memberScope) {
+    throw new Error("Missing owner symbol.");
+  }
+  const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
+
+  const sym = new JsonOutputSymbol(props.name, ownerSymbol.staticMembers);
 
   onCleanup(() => {
     sym.delete();

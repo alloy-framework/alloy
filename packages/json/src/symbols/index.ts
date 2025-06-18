@@ -16,12 +16,11 @@ export function ref(refkey: Refkey) {
     if (resolveResult.value === undefined) {
       return "<Unresolved Symbol>";
     }
-    const { targetDeclaration, memberPath } = resolveResult.value;
-
+    const { lexicalDeclaration, memberPath } = resolveResult.value;
     let ref = "";
-    if (targetDeclaration !== sourceFile.symbol) {
+    if (lexicalDeclaration !== sourceFile.symbol) {
       const currentPath = sourceFile.symbol.name;
-      const targetPath = targetDeclaration.name;
+      const targetPath = lexicalDeclaration.name;
       ref += relative(dirname(currentPath), targetPath);
     }
 
@@ -33,10 +32,7 @@ export function ref(refkey: Refkey) {
 
     ref += "/";
 
-    ref += memberPath
-      .slice(1)
-      .map((segment) => segment.name)
-      .join("/");
+    ref += memberPath.map((segment) => segment.name).join("/");
 
     return ref;
   });

@@ -124,6 +124,18 @@ it("supports type parameters by element", () => {
   `);
 });
 
+it("do not add an extra comma when there is no parameters", () => {
+  expect(
+    toSourceText(
+      <FunctionDeclaration name="thisFunctionNameIsTooLongSoTheFormatterWillInsertLineBreakAndIfBreakNodes"></FunctionDeclaration>,
+    ),
+  ).toBe(d`
+    function thisFunctionNameIsTooLongSoTheFormatterWillInsertLineBreakAndIfBreakNodes() {
+
+    }
+  `);
+});
+
 describe("symbols", () => {
   it("creates a nested scope", () => {
     const innerRefkey = refkey();

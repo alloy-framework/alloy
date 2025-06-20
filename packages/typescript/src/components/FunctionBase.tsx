@@ -73,6 +73,10 @@ export const FunctionParameters = taggedComponent(
     }
 
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    if (parameters.length === 0) {
+      return null;
+    }
+
     return (
       <group>
         <Indent softline trailingBreak>
@@ -103,6 +107,10 @@ export const FunctionTypeParameters = taggedComponent(
     }
 
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    if (parameters.length === 0) {
+      return null;
+    }
+
     return (
       <group>
         <Indent softline trailingBreak>

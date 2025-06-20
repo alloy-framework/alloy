@@ -23,7 +23,7 @@ export interface InterfacePropertyModifiers {
   readonly new?: boolean;
 }
 
-export const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
+const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 
 // properties for creating a method
 export interface InterfacePropertyProps

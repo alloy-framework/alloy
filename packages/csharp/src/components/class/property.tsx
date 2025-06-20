@@ -31,7 +31,7 @@ export interface InterfacePropertyModifiers {
   readonly readonly?: boolean;
 }
 
-export const getModifiers = makeModifiers<InterfacePropertyModifiers>([
+const getModifiers = makeModifiers<InterfacePropertyModifiers>([
   "new",
   "static",
   "virtual",

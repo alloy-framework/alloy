@@ -1,3 +1,4 @@
+export * from "./class/property.js";
 export * from "./ClassDeclaration.jsx";
 export * from "./ClassMethod.jsx";
 export * from "./Declaration.js";
@@ -6,6 +7,7 @@ export * from "./doc/from-markdown.jsx";
 export * from "./EnumDeclaration.jsx";
 export * from "./interface/declaration.js";
 export * from "./interface/method.js";
+export * from "./interface/property.js";
 export * from "./Name.js";
 export * from "./Namespace.js";
 export * from "./Parameters.js";

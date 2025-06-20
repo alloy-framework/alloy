@@ -1,6 +1,7 @@
 import {
   Block,
   Children,
+  code,
   List,
   MemberDeclaration,
   refkey,
@@ -19,16 +20,32 @@ import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
-export interface InterfacePropertyModifiers {
+export interface ClassPropertyModifiers {
   readonly new?: boolean;
+  readonly static?: boolean;
+  readonly virtual?: boolean;
+  readonly sealed?: boolean;
+  readonly override?: boolean;
+  readonly abstract?: boolean;
+  readonly extern?: boolean;
+  readonly readonly?: boolean;
 }
 
-const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
+const getModifiers = makeModifiers<ClassPropertyModifiers>([
+  "new",
+  "static",
+  "virtual",
+  "sealed",
+  "override",
+  "abstract",
+  "extern",
+  "readonly",
+]);
 
-// properties for creating a method
-export interface InterfacePropertyProps
+/** Properties for {@link ClassProperty} component */
+export interface ClassPropertyProps
   extends AccessModifiers,
-    InterfacePropertyModifiers {
+    ClassPropertyModifiers {
   name: string;
   refkey?: Refkey;
 
@@ -53,21 +70,31 @@ export interface InterfacePropertyProps
    * ```
    */
   nullable?: boolean;
+
+  /**
+   * Property initializer
+   * @example `<ClassProperty name="My" get set init={42} />`
+   *
+   * ```cs
+   * int My { get; set; } = 42;
+   * ```
+   */
+  init?: Children;
 }
 
 /**
- * Render a C# interface property.
+ * Render a C# class property.
  *
- * @example `<InterfaceProperty public name="My" get set  />`
+ * @example `<ClassProperty public name="My" get set  />`
  *
  * ```cs
  * public int My { get; set; };
  * ```
  */
-export function InterfaceProperty(props: InterfacePropertyProps) {
+export function ClassProperty(props: ClassPropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
+  if (scope.kind !== "member" || scope.name !== "class-decl") {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );
@@ -101,6 +128,7 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
             {props.set && "set;"}
           </List>
         </Block>
+        {props.init && code` = ${props.init};`}
       </Scope>
     </MemberDeclaration>
   );

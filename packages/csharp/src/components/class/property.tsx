@@ -20,7 +20,7 @@ import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
-export interface InterfacePropertyModifiers {
+export interface ClassPropertyModifiers {
   readonly new?: boolean;
   readonly static?: boolean;
   readonly virtual?: boolean;
@@ -31,7 +31,7 @@ export interface InterfacePropertyModifiers {
   readonly readonly?: boolean;
 }
 
-const getModifiers = makeModifiers<InterfacePropertyModifiers>([
+const getModifiers = makeModifiers<ClassPropertyModifiers>([
   "new",
   "static",
   "virtual",
@@ -45,7 +45,7 @@ const getModifiers = makeModifiers<InterfacePropertyModifiers>([
 /** Properties for {@link ClassProperty} component */
 export interface ClassPropertyProps
   extends AccessModifiers,
-    InterfacePropertyModifiers {
+    ClassPropertyModifiers {
   name: string;
   refkey?: Refkey;
 

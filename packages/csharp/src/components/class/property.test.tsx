@@ -1,14 +1,14 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { InterfaceDeclaration } from "./declaration.jsx";
+import { ClassDeclaration } from "../ClassDeclaration.jsx";
 import { ClassProperty } from "./property.jsx";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
-    <InterfaceDeclaration public name="TestInterface">
+    <ClassDeclaration public name="TestClass">
       {props.children}
-    </InterfaceDeclaration>
+    </ClassDeclaration>
   </TestNamespace>
 );
 
@@ -27,7 +27,7 @@ describe("modifiers", () => {
             />
           </Wrapper>,
         ).toRenderTo(`
-        public interface TestInterface
+        public class TestClass
         {
           ${accessModifier} string TestProp { get; }
         }
@@ -48,7 +48,7 @@ describe("modifiers", () => {
           />
         </Wrapper>,
       ).toRenderTo(`
-        public interface TestInterface
+        public class TestClass
         {
           ${methodModifier} string TestProp { get; }
         }
@@ -62,7 +62,7 @@ describe("modifiers", () => {
         <ClassProperty public new name="TestProp" type="string" get />
       </Wrapper>,
     ).toRenderTo(`
-        public interface TestInterface
+        public class TestClass
         {
           public new string TestProp { get; }
         }
@@ -76,7 +76,7 @@ it("applies PascalCase naming policy", () => {
       <ClassProperty name="test_prop" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
-    public interface TestInterface
+    public class TestClass
     {
       string TestProp { get; }
     }
@@ -89,7 +89,7 @@ it("has getter only", () => {
       <ClassProperty name="TestProp" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
-    public interface TestInterface
+    public class TestClass
     {
       string TestProp { get; }
     }
@@ -102,7 +102,7 @@ it("has setter only", () => {
       <ClassProperty name="TestProp" type="string" set />
     </Wrapper>,
   ).toRenderTo(`
-    public interface TestInterface
+    public class TestClass
     {
       string TestProp { set; }
     }
@@ -114,7 +114,7 @@ it("has getter and setter", () => {
       <ClassProperty name="TestProp" type="string" get set />
     </Wrapper>,
   ).toRenderTo(`
-    public interface TestInterface
+    public class TestClass
     {
       string TestProp { get; set; }
     }
@@ -124,7 +124,7 @@ it("has getter and setter", () => {
 it("specify doc comment", () => {
   expect(
     <TestNamespace>
-      <InterfaceDeclaration name="Test">
+      <ClassDeclaration name="Test">
         <ClassProperty
           name="Method"
           type="string"
@@ -132,10 +132,10 @@ it("specify doc comment", () => {
           set
           doc="This is a test"
         />
-      </InterfaceDeclaration>
+      </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
-    interface Test
+    class Test
     {
       /// This is a test
       string Method { get; set; }

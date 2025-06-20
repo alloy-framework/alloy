@@ -25,7 +25,7 @@ export interface InterfacePropertyModifiers {
 
 export const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 
-// properties for creating a method
+/** Properties for {@link ClassProperty} component */
 export interface ClassPropertyProps
   extends AccessModifiers,
     InterfacePropertyModifiers {
@@ -49,7 +49,7 @@ export interface ClassPropertyProps
 export function ClassProperty(props: ClassPropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
+  if (scope.kind !== "member" || scope.name !== "class-decl") {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );

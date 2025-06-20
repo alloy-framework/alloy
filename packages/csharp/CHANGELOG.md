@@ -1,5 +1,27 @@
 # Changelog - @alloy-js/csharp
 
+## 0.18.0
+
+### Bug Fixes
+
+- [#205](https://github.com/alloy-framework/alloy/pull/205) Add doc support to class members
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Fix abstract class method rendering with a body `{}`
+- [#201](https://github.com/alloy-framework/alloy/pull/201) Add support for csharp doc comments with various `<Doc*>` components
+
+### Features
+
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Add support for `async` class methods
+- [#193](https://github.com/alloy-framework/alloy/pull/193) Add support for class modifiers `abstract`, `partial`, `sealed` and `static`
+- [#209](https://github.com/alloy-framework/alloy/pull/209) Add `<ClassProperty />` component
+- [#191](https://github.com/alloy-framework/alloy/pull/191) Access and method modifiers have been converted to flags `<Class public />` instead of `<Class accessModifier="public" />`
+- [#198](https://github.com/alloy-framework/alloy/pull/198) Add `<InterfaceDeclaration />`, `<InterfaceMethod />` and `<InterfaceProperty />` components
+- [#202](https://github.com/alloy-framework/alloy/pull/202) Add `<DocFromMarkdown>` component allowing conversion from markdown to csharp doc comment syntax
+
+### Breaking Changes
+
+- [#192](https://github.com/alloy-framework/alloy/pull/192) Rename `Class` -> `ClassDeclaration` and `Enum` -> `EnumDeclaration`
+
+
 ## 0.17.0
 
 No changes, version bump only.

@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/core
 
+## 0.18.0
+
+### Bug Fixes
+
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Added a `@alloy-js/core/testing/matchers` export to be added to `tsconfig.json` `types` in order to load the custom vitest matchers
+
+### Features
+
+- [#198](https://github.com/alloy-framework/alloy/pull/198) Add `inline` option for `<Block>` component to define inline blocks
+
+
 ## 0.17.0
 
 ### Features

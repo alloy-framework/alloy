@@ -26,7 +26,7 @@ export interface InterfacePropertyModifiers {
 export const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 
 // properties for creating a method
-export interface ClassPropertyProps
+export interface InterfacePropertyProps
   extends AccessModifiers,
     InterfacePropertyModifiers {
   name: string;
@@ -43,10 +43,20 @@ export interface ClassPropertyProps
 
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Property initializer
+   * @example `<ClassProperty name="My" get set nullable />`
+   *
+   * ```cs
+   * int? My { get; set; };
+   * ```
+   */
+  nullable?: boolean;
 }
 
 // a C# interface property
-export function ClassProperty(props: ClassPropertyProps) {
+export function InterfaceProperty(props: InterfacePropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();
   if (scope.kind !== "member" || scope.name !== "interface-decl") {
@@ -75,7 +85,8 @@ export function ClassProperty(props: ClassPropertyProps) {
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {props.type} {name}{" "}
+        {props.type}
+        {props.nullable && "?"} {name}{" "}
         <Block newline inline>
           <List joiner=" ">
             {props.get && "get;"}

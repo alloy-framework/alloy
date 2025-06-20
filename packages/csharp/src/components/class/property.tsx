@@ -1,6 +1,7 @@
 import {
   Block,
   Children,
+  code,
   List,
   MemberDeclaration,
   refkey,
@@ -21,9 +22,25 @@ import { DocWhen } from "../doc/comment.jsx";
 /** Method modifiers. Can only be one. */
 export interface InterfacePropertyModifiers {
   readonly new?: boolean;
+  readonly static?: boolean;
+  readonly virtual?: boolean;
+  readonly sealed?: boolean;
+  readonly override?: boolean;
+  readonly abstract?: boolean;
+  readonly extern?: boolean;
+  readonly readonly?: boolean;
 }
 
-export const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
+export const getModifiers = makeModifiers<InterfacePropertyModifiers>([
+  "new",
+  "static",
+  "virtual",
+  "sealed",
+  "override",
+  "abstract",
+  "extern",
+  "readonly",
+]);
 
 /** Properties for {@link ClassProperty} component */
 export interface ClassPropertyProps
@@ -43,6 +60,26 @@ export interface ClassPropertyProps
 
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Property initializer
+   * @example `<ClassProperty name="My" get set nullable />`
+   *
+   * ```cs
+   * int? My { get; set; };
+   * ```
+   */
+  nullable?: boolean;
+
+  /**
+   * Property initializer
+   * @example `<ClassProperty name="My" get set init={42} />`
+   *
+   * ```cs
+   * int My { get; set; } = 42;
+   * ```
+   */
+  init?: Children;
 }
 
 // a C# interface property
@@ -75,13 +112,15 @@ export function ClassProperty(props: ClassPropertyProps) {
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {props.type} {name}{" "}
+        {props.type}
+        {props.nullable && "?"} {name}{" "}
         <Block newline inline>
           <List joiner=" ">
             {props.get && "get;"}
             {props.set && "set;"}
           </List>
         </Block>
+        {props.init && code` = ${props.init};`}
       </Scope>
     </MemberDeclaration>
   );

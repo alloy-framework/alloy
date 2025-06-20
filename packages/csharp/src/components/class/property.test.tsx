@@ -36,8 +36,17 @@ describe("modifiers", () => {
     );
   });
 
-  describe("method modifiers", () => {
-    it.each(["new"] as const)("%s", (methodModifier) => {
+  describe("property modifiers", () => {
+    it.each([
+      "new",
+      "static",
+      "virtual",
+      "sealed",
+      "override",
+      "abstract",
+      "extern",
+      "readonly",
+    ] as const)("%s", (methodModifier) => {
       expect(
         <Wrapper>
           <ClassProperty
@@ -108,6 +117,7 @@ it("has setter only", () => {
     }
   `);
 });
+
 it("has getter and setter", () => {
   expect(
     <Wrapper>
@@ -139,6 +149,32 @@ it("specify doc comment", () => {
     {
       /// This is a test
       string Method { get; set; }
+    }
+  `);
+});
+
+it("specify nullable property", () => {
+  expect(
+    <Wrapper>
+      <ClassProperty name="TestProp" type="string" nullable get set />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+      string? TestProp { get; set; }
+    }
+  `);
+});
+
+it("specify initializer", () => {
+  expect(
+    <Wrapper>
+      <ClassProperty name="TestProp" type="string" get set init={`"abc"`} />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+      string TestProp { get; set; } = "abc";
     }
   `);
 });

@@ -2,7 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
-import { ClassProperty } from "./property.jsx";
+import { InterfaceProperty } from "./property.jsx";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
@@ -19,7 +19,7 @@ describe("modifiers", () => {
       (accessModifier) => {
         expect(
           <Wrapper>
-            <ClassProperty
+            <InterfaceProperty
               {...{ [accessModifier]: true }}
               name="TestProp"
               type="string"
@@ -40,7 +40,7 @@ describe("modifiers", () => {
     it.each(["new"] as const)("%s", (methodModifier) => {
       expect(
         <Wrapper>
-          <ClassProperty
+          <InterfaceProperty
             {...{ [methodModifier]: true }}
             name="TestProp"
             type="string"
@@ -59,7 +59,7 @@ describe("modifiers", () => {
   it("combine modifiers", () => {
     expect(
       <Wrapper>
-        <ClassProperty public new name="TestProp" type="string" get />
+        <InterfaceProperty public new name="TestProp" type="string" get />
       </Wrapper>,
     ).toRenderTo(`
         public interface TestInterface
@@ -73,7 +73,7 @@ describe("modifiers", () => {
 it("applies PascalCase naming policy", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="test_prop" type="string" get />
+      <InterfaceProperty name="test_prop" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
     public interface TestInterface
@@ -86,7 +86,7 @@ it("applies PascalCase naming policy", () => {
 it("has getter only", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get />
+      <InterfaceProperty name="TestProp" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
     public interface TestInterface
@@ -99,7 +99,7 @@ it("has getter only", () => {
 it("has setter only", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" set />
+      <InterfaceProperty name="TestProp" type="string" set />
     </Wrapper>,
   ).toRenderTo(`
     public interface TestInterface
@@ -111,7 +111,7 @@ it("has setter only", () => {
 it("has getter and setter", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get set />
+      <InterfaceProperty name="TestProp" type="string" get set />
     </Wrapper>,
   ).toRenderTo(`
     public interface TestInterface
@@ -125,7 +125,7 @@ it("specify doc comment", () => {
   expect(
     <TestNamespace>
       <InterfaceDeclaration name="Test">
-        <ClassProperty
+        <InterfaceProperty
           name="Method"
           type="string"
           get

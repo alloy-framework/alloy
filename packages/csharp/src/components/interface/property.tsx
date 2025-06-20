@@ -55,7 +55,15 @@ export interface InterfacePropertyProps
   nullable?: boolean;
 }
 
-// a C# interface property
+/**
+ * Render a C# interface property.
+ *
+ * @example `<InterfaceProperty public name="My" get set  />`
+ *
+ * ```cs
+ * public int My { get; set; };
+ * ```
+ */
 export function InterfaceProperty(props: InterfacePropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();

@@ -82,7 +82,15 @@ export interface ClassPropertyProps
   init?: Children;
 }
 
-// a C# interface property
+/**
+ * Render a C# class property.
+ *
+ * @example `<ClassProperty public name="My" get set  />`
+ *
+ * ```cs
+ * public int My { get; set; };
+ * ```
+ */
 export function ClassProperty(props: ClassPropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();

@@ -4,11 +4,11 @@ import {
   createSymbolSlot,
   effect,
   Name,
-  OutputSymbolFlags,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { createValueSymbol } from "../symbols/index.js";
+import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
@@ -30,15 +30,15 @@ export function VarDeclaration(props: VarDeclarationProps) {
     if (TypeSymbolSlot.ref.value) {
       const takenSymbols = TypeSymbolSlot.ref.value;
       for (const symbol of takenSymbols) {
-        symbol.instantiateTo(sym);
+        symbol.instantiateTo(sym, "static", "instance");
       }
     } else if (ValueTypeSymbolSlot.ref.value) {
       const takenSymbols = ValueTypeSymbolSlot.ref.value;
       for (const symbol of takenSymbols) {
         // ignore non-transient symbols (likely not the result of an
         // expression).
-        if (symbol.flags & OutputSymbolFlags.Transient) {
-          symbol.moveTo(sym);
+        if (symbol.isTransient) {
+          symbol.moveMembersTo(sym);
         }
       }
     }
@@ -55,7 +55,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
       </TypeRefContext>
     : undefined;
   const name = useTSNamePolicy().getName(props.name, "variable");
-  const sym = new TSOutputSymbol(name, {
+  const sym = createValueSymbol(name, {
     refkeys: props.refkey,
     default: props.default,
     export: props.export,

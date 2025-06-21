@@ -74,7 +74,7 @@ export class TSPackageScope extends OutputScope {
     path: string,
     options: TSPackageScopeOptions = {},
   ) {
-    super(name, options);
+    super(name, undefined, options);
     this.#version = version;
     this.#path = path;
     this.#builtin = !!options.builtin;
@@ -98,5 +98,9 @@ export class TSPackageScope extends OutputScope {
     }
 
     return null;
+  }
+
+  copyTo(): TSPackageScope {
+    throw new Error("Not supported");
   }
 }

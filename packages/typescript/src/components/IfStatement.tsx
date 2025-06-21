@@ -1,4 +1,5 @@
 import { Block, type Children } from "@alloy-js/core";
+import { BlockScope } from "./BlockScope.jsx";
 
 export interface IfStatementProps {
   condition: Children;
@@ -11,7 +12,7 @@ export interface IfStatementProps {
 export function IfStatement(props: IfStatementProps) {
   return (
     <>
-      if ({props.condition}) <Block>{props.children}</Block>
+      if ({props.condition}) <BlockScope>{props.children}</BlockScope>
     </>
   );
 }

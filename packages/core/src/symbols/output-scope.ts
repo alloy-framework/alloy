@@ -6,32 +6,18 @@ import {
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
-  watch,
 } from "@vue/reactivity";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
-import { useScope } from "../context/scope.js";
-import type { ReactiveUnionSetOptions } from "../reactive-union-set.js";
-import type { Refkey } from "../refkey.js";
-import {
-  formatScope,
-  formatScopeName,
-  trace,
-  traceEffect,
-  TracePhase,
-} from "../tracer.js";
+import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
 import { OutputScopeFlags } from "./flags.js";
-import type { OutputSymbol } from "./output-symbol.js";
-import { SymbolTable } from "./symbol-table.js";
+import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
 
 let scopeCount = 0;
 
 export interface OutputScopeOptions {
   flags?: OutputScopeFlags;
-  kind?: string;
   metadata?: Record<string, unknown>;
-  parent?: OutputScope;
-  owner?: OutputSymbol;
   binder?: Binder;
 }
 
@@ -53,7 +39,10 @@ export interface OutputScopeOptions {
  * Scopes are reactive values, which allows you to observe changes to the scope
  * within a reactive context.
  */
-export class OutputScope {
+export abstract class OutputScope {
+  static readonly defaultDeclarationSpace: string | undefined;
+  static readonly declarationSpaces: Readonly<string[]> = [] as const;
+
   // my kingdom for decorators
   #name: string;
   /**
@@ -63,6 +52,7 @@ export class OutputScope {
     track(this, TrackOpTypes.GET, "name");
     return this.#name;
   }
+
   set name(name: string) {
     const old = this.#name;
     this.#name = name;
@@ -75,16 +65,6 @@ export class OutputScope {
    */
   get id() {
     return this.#id;
-  }
-
-  #kind: string;
-
-  /**
-   * The kind of scope. Subtypes will likely provide a set of known scope kinds.
-   * The kind is not used by the binder itself.
-   */
-  get kind() {
-    return this.#kind;
   }
 
   #flags: OutputScopeFlags;
@@ -108,44 +88,30 @@ export class OutputScope {
   }
 
   #parent?: OutputScope;
-  /**
-   * The container of this scope. This is only defined for scopes which don't
-   * have the {@link OutputScopeFlags.StaticMemberScope} or
-   * {@link OutputScopeFlags.InstanceMemberScope} flag.
-   */
+
   get parent() {
+    track(this, TrackOpTypes.GET, "parent");
     return this.#parent;
   }
 
-  #owner?: OutputSymbol;
-  /**
-   * The symbol that owns this scope. This is only defined for scopes that have
-   * the {@link OutputScopeFlags.StaticMemberScope} or
-   * {@link OutputScopeFlags.InstanceMemberScope} flag.
-   */
-  get owner() {
-    return this.#owner;
+  set parent(scope: OutputScope | undefined) {
+    const old = this.#parent;
+
+    if (old) {
+      old.children.delete(this);
+    }
+
+    if (scope) {
+      scope.children.add(this);
+    }
+
+    trigger(this, TriggerOpTypes.SET, "parent", scope, old);
+    this.#parent = scope;
   }
 
-  #symbols: SymbolTable;
-  /**
-   * The symbols defined within this scope.
-   */
-  get symbols() {
-    return this.#symbols;
-  }
-
-  #symbolsByRefkey: ReadonlyMap<Refkey, OutputSymbol>;
-  /**
-   * The symbols defined within this scope, indexed by refkey.
-   */
-  get symbolsByRefkey() {
-    return this.#symbolsByRefkey;
-  }
-
-  #symbolNames: ReadonlySet<string>;
-  get symbolNames() {
-    return this.#symbolNames;
+  #spaces: Record<string, OutputSpace>;
+  spaceFor(key: string): OutputSpace | undefined {
+    return this.#spaces[key];
   }
 
   #children: Set<OutputScope>;
@@ -166,42 +132,30 @@ export class OutputScope {
 
   [ReactiveFlags.SKIP] = this;
 
-  constructor(name: string, options: OutputScopeOptions = {}) {
+  constructor(
+    name: string,
+    parentScope: OutputScope | undefined,
+    options: OutputScopeOptions = {},
+  ) {
     this.#name = name;
     this.#id = scopeCount++;
     this.#flags = options.flags ?? OutputScopeFlags.None;
-    this.#kind = options.kind ?? "scope";
     this.#metadata = reactive(options.metadata ?? {});
     this.#binder = options.binder ?? useBinder();
-    this.#owner = options.owner;
     this.#children = shallowReactive(new Set());
-
-    if (this.#flags & OutputScopeFlags.MemberScope) {
-      if (!this.#owner) {
-        throw new Error("Member scopes must have an owner");
-      }
-    } else {
-      if (!this.#parent) {
-        this.#parent =
-          options.parent ?? useScope() ?? this.#binder?.globalScope;
-      }
-      if (this.#parent) {
-        // not global scope
-        this.#parent.children.add(this);
-      }
-    }
-
-    this.#symbols = new SymbolTable(this, {
-      nameConflictResolver: this.#binder?.nameConflictResolver,
-    });
-    this.#symbolsByRefkey = this.#symbols.createIndex((s) => s.refkeys);
-    this.#symbolNames = this.#symbols.createDerivedSet((s) => {
-      return s.name;
-    });
-
+    this.#parent = parentScope;
     if (this.#parent) {
       this.#parent.children.add(this);
     }
+
+    const constructor = this.constructor as typeof OutputScope;
+
+    this.#spaces = Object.fromEntries(
+      constructor.declarationSpaces.map((spaceKey) => [
+        spaceKey,
+        new OutputDeclarationSpace(this, spaceKey, this.#binder),
+      ]),
+    );
 
     this.#binder?.notifyScopeCreated(this);
 
@@ -211,86 +165,73 @@ export class OutputScope {
     });
   }
 
-  moveSymbolsFrom(
-    source: OutputScope,
-    options?: ReactiveUnionSetOptions<OutputSymbol>,
-  ) {
+  /*
+  copySymbolsTo(targetScope: OutputScope) {
     trace(
       TracePhase.scope.copySymbols,
       () =>
-        `Moving symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
+        `Copying symbols from ${formatScopeName(this)} to ${formatScopeName(targetScope)}`,
     );
-    this.#symbols.addSubset(source.#symbols, {
-      onAdd: (symbol) => {
-        if (options?.onAdd) {
-          return options.onAdd(symbol);
-        }
-        symbol.scope = this;
-        return symbol;
-      },
-      onDelete: (symbol) => {
-        if (options?.onDelete) {
-          options.onDelete(symbol);
-        }
-      },
-    });
-  }
+    for (const space of this.spaces) {
+      const targetSpace = targetScope.spaceFor(space.key);
+      if (!targetSpace) {
+        throw new Error(`Target scope does not have space ${space.key}`);
+      }
 
-  copySymbolsFrom(
-    source: OutputScope,
-    options?: ReactiveUnionSetOptions<OutputSymbol>,
-  ) {
-    trace(
-      TracePhase.scope.copySymbols,
-      () =>
-        `Copying symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
-    );
-    this.#symbols.addSubset(source.#symbols, {
-      onAdd: (symbol) => {
-        if (options?.onAdd) {
-          return options.onAdd(symbol);
-        }
-        return symbol.copyToScope(this);
-      },
-      onDelete: (symbol) => {
-        if (options?.onDelete) {
-          options.onDelete(symbol);
-        }
-      },
-    });
-  }
-
-  clone(options: { parent?: OutputScope; owner?: OutputSymbol } = {}) {
-    if (this.#flags & OutputScopeFlags.MemberScope && !options.owner) {
-      throw new Error("Member scope clones must specify an owner symbol");
-    } else if (this.#flags & ~OutputScopeFlags.MemberScope && !options.parent) {
-      throw new Error("Non-member scope clones must specify a parent scope");
+      console.log("Copying space key " + space.key);
+      space.copyTo(targetSpace);
     }
-    const clone = new OutputScope(this.#name, {
-      binder: this.#binder,
-      flags: this.#flags,
-      kind: this.#kind,
-      metadata: this.#metadata,
-      parent: options.parent,
-      owner: options.owner,
-    });
+  }
 
+  abstract copy(): OutputScope;
+
+  copyTo(parentScope: OutputScope): OutputScope {
+    const copy = this.copy();
+    copy.parent = parentScope;
+    return copy;
+  }
+  */
+  /**
+   * Copies this symbol to the provided copy symbol. This method only copies
+   * child scopes, symbols in declaration spaces, name, and flags. Subclasses
+   * should copy any additional fields that are needed.
+   */
+  /*
+  protected initializeCopy(copy: OutputScope) {
     watch(
       () => this.name,
-      (newName) => (clone.name = newName),
+      (newName) => (copy.name = newName),
     );
     watch(
       () => this.flags,
-      (newFlags) => (clone.flags = newFlags),
+      (newFlags) => (copy.flags = newFlags),
     );
+
     // todo: this should be reactive, but cloning non-member scopes
     // seems like a very rare thing.
     for (const child of this.#children) {
-      clone.children.add(child.clone());
+      copy.children.add(child.copyTo(copy));
     }
 
-    clone.copySymbolsFrom(this);
+    this.copySymbolsTo(copy);
+  }
+  */
+  /**
+   * Get options for creating a new base OutputScope based on this scope's
+   * non-reactive values. Does not copy symbols or scopes, see initializeCopy
+   * for that functionality.
+   */
+  /*
+  protected getCopyOptions(): OutputScopeOptions {
+    return {
+      binder: this.#binder,
+      flags: this.#flags,
+      metadata: this.#metadata,
+    };
+  }
+    */
 
-    return clone;
+  get spaces() {
+    return Object.values(this.#spaces);
   }
 }

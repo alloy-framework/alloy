@@ -1,9 +1,7 @@
 import {
-  AssignmentContext,
   Block,
   Children,
   computed,
-  createAssignmentContext,
   emitSymbol,
   For,
   Match,
@@ -15,7 +13,10 @@ import {
   takeSymbols,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import {
+  createStaticMemberSymbol,
+  createValueSymbol,
+} from "../symbols/index.js";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
@@ -28,12 +29,10 @@ export interface ObjectExpressionProps {
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
-  const symbol = new TSOutputSymbol("", {
-    flags:
-      OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
-  });
+  const symbol = createValueSymbol("", { flags: OutputSymbolFlags.Transient });
 
   emitSymbol(symbol);
+  moveTakenMembersTo(symbol);
 
   const jsValueProperties = computed(() => {
     const jsValue = props.jsValue;
@@ -108,12 +107,12 @@ export function ObjectProperty(props: ObjectPropertyProps) {
 
   let sym = undefined;
   if (props.refkey && props.name) {
-    sym = new TSOutputSymbol(symbolName!, {
+    sym = createStaticMemberSymbol(symbolName!, {
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMember,
     });
 
     moveTakenMembersTo(sym);
+    emitSymbol(sym);
   } else {
     // noop
     takeSymbols();
@@ -129,14 +128,9 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.children;
   }
 
-  const assignmentContext: AssignmentContext | undefined =
-    sym ? createAssignmentContext(sym) : undefined;
   return (
     <>
-      {name}:{" "}
-      <AssignmentContext.Provider value={assignmentContext}>
-        {value}
-      </AssignmentContext.Provider>
+      {name}: {value}
     </>
   );
 }

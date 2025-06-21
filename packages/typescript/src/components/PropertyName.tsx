@@ -1,5 +1,5 @@
 import { MemberDeclarationContext, useContext } from "@alloy-js/core";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { isValidJSIdentifier } from "../utils.js";
 
 export interface PropertyNameProps {
@@ -33,7 +33,7 @@ export function PropertyName(props: PropertyNameProps) {
       return "(no member declaration context)";
     }
 
-    if (declSymbol.tsFlags & TSSymbolFlags.PrivateMember) {
+    if (declSymbol.isPrivateMemberSymbol) {
       return <>#{declSymbol.name}</>;
     } else {
       return <>{quoteIfNeeded(declSymbol.name)}</>;

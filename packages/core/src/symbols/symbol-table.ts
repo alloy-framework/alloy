@@ -1,4 +1,3 @@
-import type { NameConflictResolver } from "../binder.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
 import { queueJob } from "../scheduler.js";
 import {
@@ -7,6 +6,7 @@ import {
   trace,
   TracePhase,
 } from "../tracer.js";
+import type { NameConflictResolver } from "./binder.js";
 import type { OutputScope } from "./output-scope.js";
 import type { OutputSymbol } from "./output-symbol.js";
 

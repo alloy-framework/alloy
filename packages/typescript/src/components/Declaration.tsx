@@ -2,6 +2,7 @@ import {
   Children,
   Declaration as CoreDeclaration,
   MemberScope,
+  onCleanup,
   OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
@@ -115,6 +116,10 @@ export function Declaration(props: DeclarationProps) {
       flags: props.flags,
       tsFlags,
       metadata: props.metadata,
+    });
+
+    onCleanup(() => {
+      sym.delete();
     });
   }
 

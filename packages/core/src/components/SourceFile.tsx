@@ -3,9 +3,9 @@ import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
 import { getContext } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
 import { PrintTreeOptions } from "../render.js";
 import type { Children, ComponentDefinition } from "../runtime/component.js";
+import { Refkey } from "../symbols/refkey.js";
 import { Show } from "./Show.jsx";
 
 export interface SourceFileProps extends PrintTreeOptions {

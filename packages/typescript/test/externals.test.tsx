@@ -95,49 +95,6 @@ it("can import builtins without a package", () => {
   });
 });
 
-it("can import builtins without a package", () => {
-  const testLib = createPackage({
-    name: "testLib",
-    version: "1.0.0",
-    descriptor: {
-      ".": {
-        default: "defaultExport",
-        named: ["foo", "bar"],
-      },
-      "./subpath": {
-        named: ["nice", "cool"],
-      },
-    },
-  });
-
-  const res = render(
-    <Output externals={[testLib, fs]}>
-      <SourceFile path="index.ts">
-        <FunctionDeclaration name="foo">
-          <FunctionDeclaration name="bar">
-            {testLib["./subpath"].nice};<hbr />
-            await {fs["./promises"].readFile}();
-          </FunctionDeclaration>
-        </FunctionDeclaration>
-      </SourceFile>
-    </Output>,
-  );
-
-  assertFileContents(res, {
-    "index.ts": `
-      import { readFile } from "node:fs/promises";
-      import { nice } from "testLib/subpath";
-
-      function foo() {
-        function bar() {
-          nice;
-          await readFile();
-        }
-      }
-    `,
-  });
-});
-
 it("can import static members", () => {
   const mcpSdk = createPackage({
     name: "@modelcontextprotocol/sdk",

@@ -22,7 +22,6 @@ export {
   type ToRef,
   type ToRefs,
 } from "@vue/reactivity";
-export * from "./binder.js";
 export * from "./code.js";
 export * from "./components/index.js";
 export * from "./context.js";
@@ -31,13 +30,14 @@ export * from "./name-policy.js";
 export * from "./props-combinators.js";
 export * from "./reactive-union-set.js";
 export * from "./reactivity.js";
-export * from "./refkey.js";
 export * from "./render.js";
 export * from "./runtime/component.js";
 export * from "./runtime/intrinsic.js";
 export * from "./stc.js";
 export * from "./sti.js";
+export * from "./symbols/binder.js";
 export * from "./symbols/index.js";
+export * from "./symbols/refkey.js";
 export * from "./symbols/symbol-flow.js";
 export * from "./tap.js";
 export * from "./utils.js";

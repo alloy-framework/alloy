@@ -1,10 +1,10 @@
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
-import type { Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { OutputSymbolFlags } from "../symbols/flags.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { Refkey } from "../symbols/refkey.js";
 
 /**
  * Create a member declaration by providing a symbol name and optional symbol

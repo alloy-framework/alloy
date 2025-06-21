@@ -1,9 +1,7 @@
 import {
-  AssignmentContext,
   Block,
   Children,
   computed,
-  createAssignmentContext,
   emitSymbol,
   For,
   Match,
@@ -129,14 +127,9 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.children;
   }
 
-  const assignmentContext: AssignmentContext | undefined =
-    sym ? createAssignmentContext(sym) : undefined;
   return (
     <>
-      {name}:{" "}
-      <AssignmentContext.Provider value={assignmentContext}>
-        {value}
-      </AssignmentContext.Provider>
+      {name}: {value}
     </>
   );
 }

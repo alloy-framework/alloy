@@ -178,7 +178,7 @@ describe("symbols", () => {
         ;{innerRefkey}
       </>
     );
-    expect(() => toSourceText(decl)).toThrow(/Cannot reference a symbol/);
+    expect(() => toSourceText(decl)).toThrow(/Cannot reference symbol/);
   });
 
   it("creates symbols for parameters", () => {

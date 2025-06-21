@@ -1,29 +1,29 @@
-import { isRef } from "@vue/reactivity";
+import { isRef, ref } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
-import { shouldDebug } from "./debug.js";
 import {
   Context,
   CustomContext,
   effect,
   getContext,
   getElementCache,
+  getLastErrorContext,
   isCustomContext,
+  onCleanup,
   root,
   untrack,
 } from "./reactivity.js";
-import { isRefkey } from "./refkey.js";
 import {
   Child,
   Children,
-  Component,
   isComponentCreator,
   Props,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs } from "./scheduler.js";
+import { isRefkey } from "./symbols/refkey.js";
 import { trace, TracePhase } from "./tracer.js";
 
 const {
@@ -140,10 +140,15 @@ export interface OutputFile {
   filetype: string;
 }
 
-const nodesToContext = new WeakMap<RenderedTextTree, Context>();
+const nodesToContext = new WeakMap<RenderedTextTree | PrintHook, Context>();
 
 export function getContextForRenderNode(node: RenderedTextTree) {
   return nodesToContext.get(node);
+}
+
+const contextsToNode = new WeakMap<Context, RenderedTextTree | PrintHook>();
+export function getRenderNodeForContext(context: Context) {
+  return contextsToNode.get(context);
 }
 
 export const printHookTag = Symbol();
@@ -180,7 +185,6 @@ export function render(
   options?: PrintTreeOptions,
 ): OutputDirectory {
   const tree = renderTree(children);
-  flushJobs();
   let rootDirectory: OutputDirectory | undefined = undefined;
 
   // when passing Output, the first render tree child is the Output component.
@@ -271,10 +275,16 @@ export function renderTree(children: Children) {
   const rootElem: RenderedTextTree = [];
   try {
     root(() => {
+      debug.sendFragmentNode(rootElem, null);
       renderWorker(rootElem, children);
+      debug.sendFragmentNode(rootElem, null);
     });
-  } catch (e) {
-    printRenderStack();
+  } catch (e: any) {
+    // errors caught here are thrown synchronously from the render process, i.e.
+    // those which are the result of evaluating components or initial effect
+    // invocations. Errors from running reactive effects are caught by the
+    // scheduler.
+    debug.sendError(e, getLastErrorContext());
     throw e;
   }
 
@@ -288,10 +298,6 @@ function renderWorker(node: RenderedTextTree, children: Children) {
     );
   }
   trace(TracePhase.render.worker, () => dumpChildren(children));
-
-  if (Array.isArray(node)) {
-    nodesToContext.set(node, getContext()!);
-  }
 
   if (Array.isArray(children)) {
     for (const child of (children as any).flat(Infinity)) {
@@ -325,8 +331,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       );
       child.useCustomContext((children) => {
         const newNode: RenderedTextTree = [];
+        nodesToContext.set(newNode, getContext()!);
+        contextsToNode.set(getContext()!, newNode);
         renderWorker(newNode, children);
+        onCleanup(() => debug.deleteNode(newNode));
         node.push(newNode);
+        debug.sendFragmentNode(newNode, node);
         cache.set(child, newNode);
       });
     } else if (isIntrinsicElement(child)) {
@@ -336,59 +346,94 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       );
       // don't need a new context here because intrinsics are never reactive
       const newNode: RenderedTextTree = [];
+      nodesToContext.set(newNode, getContext()!);
+      contextsToNode.set(getContext()!, newNode);
 
       function formatHookWithChildren(command: (doc: Doc) => Doc) {
-        node.push(
-          createRenderTreeHook(newNode, {
-            print(tree, print) {
-              return command(print(tree));
-            },
-          }),
+        const printHook = createRenderTreeHook(newNode, {
+          print(tree, print) {
+            return command(print(tree));
+          },
+        });
+        node.push(printHook);
+        debug.sendIntrinsicElementNode(
+          printHook,
+          node,
+          (child as any).name,
+          (child as any).props,
         );
+        debug.sendFragmentNode(newNode, printHook);
         renderWorker(newNode, (child as any).props.children);
+        debug.sendFragmentNode(newNode, printHook);
+        onCleanup(() => debug.deleteNode(newNode));
       }
 
       function formatHook(command: Doc) {
-        return node.push(
-          createRenderTreeHook(newNode, {
-            print() {
-              return command;
-            },
-          }),
+        const printHook = createRenderTreeHook(newNode, {
+          print() {
+            return command;
+          },
+        });
+        node.push(printHook);
+        debug.sendIntrinsicElementNode(
+          printHook,
+          node,
+          (child as any).name,
+          (child as any).props,
         );
+        debug.sendFragmentNode(newNode, printHook);
+        onCleanup(() => debug.deleteNode(newNode));
       }
 
       switch (child.name) {
         case "indent":
           return formatHookWithChildren(indent);
-        case "indentIfBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
-              print(tree, print) {
-                return indentIfBreak(print(tree), {
-                  groupId: child.props.groupId,
-                  negate: child.props.negate,
-                });
-              },
-            }),
+        case "indentIfBreak": {
+          const indentIfBreakHook = createRenderTreeHook(newNode, {
+            print(tree, print) {
+              return indentIfBreak(print(tree), {
+                groupId: child.props.groupId,
+                negate: child.props.negate,
+              });
+            },
+          });
+          node.push(indentIfBreakHook);
+          debug.sendIntrinsicElementNode(
+            indentIfBreakHook,
+            node,
+            (child as any).name,
+            (child as any).props,
           );
+          debug.sendFragmentNode(newNode, indentIfBreakHook);
           renderWorker(newNode, child.props.children);
+          debug.sendFragmentNode(newNode, indentIfBreakHook);
+          onCleanup(() => debug.deleteNode(newNode));
           return;
+        }
         case "fill":
           return formatHookWithChildren(fill as any);
-        case "group":
-          node.push(
-            createRenderTreeHook(newNode, {
-              print(tree, print) {
-                return group(print(tree), {
-                  id: child.props.id,
-                  shouldBreak: child.props.shouldBreak,
-                });
-              },
-            }),
+        case "group": {
+          const groupHook = createRenderTreeHook(newNode, {
+            print(tree, print) {
+              return group(print(tree), {
+                id: child.props.id,
+                shouldBreak: child.props.shouldBreak,
+              });
+            },
+          });
+          node.push(groupHook);
+          debug.sendIntrinsicElementNode(
+            groupHook,
+            node,
+            (child as any).name,
+            (child as any).props,
           );
+          debug.sendFragmentNode(newNode, groupHook);
           renderWorker(newNode, child.props.children);
+          debug.sendFragmentNode(newNode, groupHook);
+          onCleanup(() => debug.deleteNode(newNode));
           return;
+        }
         case "line":
         case "br":
           return formatHook(line);
@@ -401,19 +446,28 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         case "literalline":
         case "lbr":
           return formatHook(literalline);
-        case "align":
-          node.push(
-            createRenderTreeHook(newNode, {
-              print(tree, print) {
-                return align(
-                  (child.props as any).width ?? (child.props as any).string!,
-                  print(tree),
-                );
-              },
-            }),
+        case "align": {
+          const alignHook = createRenderTreeHook(newNode, {
+            print(tree, print) {
+              return align(
+                (child.props as any).width ?? (child.props as any).string!,
+                print(tree),
+              );
+            },
+          });
+          node.push(alignHook);
+          debug.sendIntrinsicElementNode(
+            alignHook,
+            node,
+            (child as any).name,
+            (child as any).props,
           );
+          debug.sendFragmentNode(newNode, alignHook);
           renderWorker(newNode, (child as any).props.children);
+          debug.sendFragmentNode(newNode, alignHook);
+          onCleanup(() => debug.deleteNode(newNode));
           return;
+        }
         case "lineSuffix":
           return formatHookWithChildren(lineSuffix);
         case "lineSuffixBoundary":
@@ -426,18 +480,24 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           return formatHookWithChildren(dedentToRoot);
         case "markAsRoot":
           return formatHookWithChildren(markAsRoot);
-        case "ifBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
-              print(tree, print) {
-                return ifBreak(
-                  print((tree as RenderedTextTree[])[0]),
-                  print((tree as RenderedTextTree[])[1]),
-                );
-              },
-            }),
-          );
+        case "ifBreak": {
+          const ifBreakHook = createRenderTreeHook(newNode, {
+            print(tree, print) {
+              return ifBreak(
+                print((tree as RenderedTextTree[])[0]),
+                print((tree as RenderedTextTree[])[1]),
+              );
+            },
+          });
+          node.push(ifBreakHook);
           newNode.push([], []);
+          debug.sendIntrinsicElementNode(
+            ifBreakHook,
+            node,
+            (child as any).name,
+            (child as any).props,
+          );
+          debug.sendFragmentNode(newNode, ifBreakHook);
           renderWorker(
             newNode[0] as RenderedTextTree[],
             (child as any).props.children,
@@ -446,7 +506,10 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             newNode[1] as RenderedTextTree[],
             (child as any).props.flatContents,
           );
+          debug.sendFragmentNode(newNode, ifBreakHook);
+          onCleanup(() => debug.deleteNode(newNode));
           return;
+        }
         default:
           throw new Error("Unknown intrinsic element");
       }
@@ -456,11 +519,26 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           TracePhase.render.appendChild,
           () => "Component: " + debugPrintChild(child),
         );
+
         const componentRoot: RenderedTextTree = [];
-        pushStack(child.component, child.props);
-        renderWorker(componentRoot, untrack(child));
-        popStack();
+        const context = getContext()!;
+        context.rerenderHook ??= ref();
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        context.rerenderHook.value; // trigger the effect
+        nodesToContext.set(componentRoot, context);
+        contextsToNode.set(context, componentRoot);
+        debug.sendComponentNode(componentRoot, node, child);
+        renderWorker(
+          componentRoot,
+          untrack(() => {
+            const children = child();
+            debug.sendComponentNode(componentRoot, node, child);
+            return children;
+          }),
+        );
+        onCleanup(() => debug.deleteNode(componentRoot));
         node.push(componentRoot);
+        debug.sendComponentNode(componentRoot, node, child);
         cache.set(child, componentRoot);
         trace(
           TracePhase.render.appendChild,
@@ -477,8 +555,14 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           res = res();
         }
         const newNodes: RenderedTextTree = [];
+        nodesToContext.set(newNodes, getContext()!);
+        contextsToNode.set(getContext()!, newNodes);
+        debug.sendFragmentNode(newNodes, node);
         renderWorker(newNodes, res);
+        debug.sendFragmentNode(newNodes, node);
+        onCleanup(() => debug.deleteNode(newNodes));
         node[index] = newNodes;
+        debug.sendFragmentNode(newNodes, node);
         cache.set(child, newNodes);
         return newNodes;
       });
@@ -563,6 +647,11 @@ export interface PrintTreeOptions {
    * The number of spaces to use for indentation. Defaults to 2 spaces.
    */
   tabWidth?: number;
+
+  /**
+   * Whether to flush the job queue before printing. Defaults to false.
+   */
+  noFlush?: boolean;
 }
 
 const defaultPrintTreeOptions: PrintTreeOptions = {
@@ -578,8 +667,11 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
     ),
   };
 
-  // make sure queue is empty
-  flushJobs();
+  // make sure queue is empty unless told not to (e.g. because we are printing
+  // during a render pass).
+  if (!options.noFlush) {
+    flushJobs();
+  }
 
   const d = printTreeWorker(tree);
   return doc.printer.printDocToString(d, options as doc.printer.Options)
@@ -604,33 +696,6 @@ function printTreeWorker(tree: RenderedTextTree): Doc {
   }
 
   return doc;
-}
-// debugging utilities
-const renderStack: {
-  component: Component<any>;
-  props: Props;
-}[] = [];
-
-export function pushStack(component: Component<any>, props: Props) {
-  if (!shouldDebug()) return;
-  renderStack.push({ component, props });
-}
-
-export function popStack() {
-  if (!shouldDebug()) return;
-  renderStack.pop();
-}
-
-export function printRenderStack() {
-  if (!shouldDebug()) return;
-
-  // eslint-disable-next-line no-console
-  console.error("Error rendering:");
-  for (let i = renderStack.length - 1; i >= 0; i--) {
-    const { component, props } = renderStack[i];
-    // eslint-disable-next-line no-console
-    console.error(`    at ${component.name}(${inspectProps(props)})`);
-  }
 }
 
 function inspectProps(props: Props) {

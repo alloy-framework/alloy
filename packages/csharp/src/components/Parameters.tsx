@@ -16,7 +16,7 @@ export interface ParameterProps {
   symbol?: core.OutputSymbol;
 }
 
-/** Define a parameter to be used in class, interfaces */
+/** Define a parameter to be used in class or interface method. */
 export function Parameter(props: ParameterProps) {
   const name = useCSharpNamePolicy().getName(props.name, "parameter");
   const scope = useCSharpScope();

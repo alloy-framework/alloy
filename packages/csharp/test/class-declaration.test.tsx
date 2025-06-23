@@ -47,6 +47,45 @@ describe("modifiers", () => {
   });
 });
 
+describe("base", () => {
+  it("define base class", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration name="TestClass" baseType="Foo" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : Foo;
+    `);
+  });
+
+  it("define multiple interface types", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration
+          name="TestClass"
+          interfaceTypes={["Foo", "Bar"]}
+        />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : Foo, Bar;
+    `);
+  });
+
+  it("define base class and multiple interface types", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration
+          name="TestClass"
+          baseType="BaseClass"
+          interfaceTypes={["Foo", "Bar"]}
+        />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : BaseClass, Foo, Bar;
+    `);
+  });
+});
+
 it("declares class with some members", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">

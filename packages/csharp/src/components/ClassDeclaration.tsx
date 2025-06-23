@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+import { join } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -36,6 +37,12 @@ export interface ClassDeclarationProps
   doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
+
+  /** Base class that this class extends */
+  baseType?: core.Children;
+
+  /** Interfaces this class implements */
+  interfaceTypes?: core.Children[];
 }
 
 /**
@@ -102,6 +109,12 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     );
   }
 
+  const bases = [
+    ...(props.baseType ? [props.baseType] : []),
+    ...(props.interfaceTypes || []),
+  ];
+  const base =
+    bases.length > 0 ? <> : {join(bases, { joiner: ", " })}</> : null;
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getClassModifiers(props),
@@ -111,6 +124,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       <DocWhen doc={props.doc} />
       {modifiers}class <Name />
       {typeParams}
+      {base}
       {!props.children && ";"}
       {props.children && (
         <core.Block newline>

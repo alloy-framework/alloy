@@ -57,6 +57,7 @@ describe("base", () => {
         class TestClass : Foo;
     `);
   });
+
   it("define multiple interface types", () => {
     expect(
       <utils.TestNamespace>
@@ -69,6 +70,7 @@ describe("base", () => {
         class TestClass : Foo, Bar;
     `);
   });
+
   it("define base class and multiple interface types", () => {
     expect(
       <utils.TestNamespace>

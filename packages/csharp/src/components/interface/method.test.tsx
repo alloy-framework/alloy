@@ -103,6 +103,58 @@ it("defines params and return type", () => {
   `);
 });
 
+it("defines optional param", () => {
+  const res = (
+    <Wrapper>
+      <InterfaceMethod
+        public
+        name="MethodOne"
+        parameters={[
+          {
+            name: "intParam",
+            type: "int",
+            optional: true,
+          },
+        ]}
+        returns="string"
+      />
+    </Wrapper>
+  );
+
+  expect(res).toRenderTo(`
+    public interface TestInterface
+    {
+      public string MethodOne(int? intParam);
+    }
+  `);
+});
+
+it("defines optional param with default", () => {
+  const res = (
+    <Wrapper>
+      <InterfaceMethod
+        public
+        name="MethodOne"
+        parameters={[
+          {
+            name: "intParam",
+            type: "int",
+            default: 12,
+          },
+        ]}
+        returns="string"
+      />
+    </Wrapper>
+  );
+
+  expect(res).toRenderTo(`
+    public interface TestInterface
+    {
+      public string MethodOne(int intParam = 12);
+    }
+  `);
+});
+
 it("specify doc comment", () => {
   expect(
     <TestNamespace>

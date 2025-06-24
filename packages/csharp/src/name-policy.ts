@@ -9,6 +9,7 @@ export type CSharpElements =
   | "enum-member"
   | "function"
   | "interface"
+  | "record"
   | "class-member-private"
   | "class-member-public"
   | "class-method"
@@ -24,6 +25,7 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
       case "enum":
       case "enum-member":
       case "interface":
+      case "record":
       case "class-member-public":
       case "class-method":
       case "type-parameter":

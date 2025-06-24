@@ -94,7 +94,10 @@ export interface ClassPropertyProps
 export function ClassProperty(props: ClassPropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
+  if (
+    scope.kind !== "member" ||
+    (scope.name !== "class-decl" && scope.name !== "record-decl")
+  ) {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );

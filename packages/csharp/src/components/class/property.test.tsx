@@ -131,6 +131,19 @@ it("has getter and setter", () => {
   `);
 });
 
+it("has getter and init", () => {
+  expect(
+    <Wrapper>
+      <ClassProperty name="TestProp" type="string" get init />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+      string TestProp { get; init; }
+    }
+  `);
+});
+
 it("specify doc comment", () => {
   expect(
     <TestNamespace>
@@ -169,7 +182,13 @@ it("specify nullable property", () => {
 it("specify initializer", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get set init={`"abc"`} />
+      <ClassProperty
+        name="TestProp"
+        type="string"
+        get
+        set
+        initializer={`"abc"`}
+      />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass

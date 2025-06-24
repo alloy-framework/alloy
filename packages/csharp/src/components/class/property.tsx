@@ -58,6 +58,9 @@ export interface ClassPropertyProps
   /** If property should have a setter */
   set?: boolean;
 
+  /** If property should only be set on the type creation */
+  init?: boolean;
+
   /** Doc comment */
   doc?: Children;
 
@@ -79,7 +82,7 @@ export interface ClassPropertyProps
    * int My { get; set; } = 42;
    * ```
    */
-  init?: Children;
+  initializer?: Children;
 }
 
 /**
@@ -117,6 +120,12 @@ export function ClassProperty(props: ClassPropertyProps) {
     getAccessModifier(props),
     getModifiers(props),
   ]);
+
+  if (props.init && props.set) {
+    throw new Error(
+      `Cannot use 'init' and 'set' together on property '${name}'`,
+    );
+  }
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={propertySymbol}>
@@ -129,6 +138,7 @@ export function ClassProperty(props: ClassPropertyProps) {
           <List joiner=" ">
             {props.get && "get;"}
             {props.set && "set;"}
+            {props.init && "init;"}
           </List>
         </Block>
         {props.init && code` = ${props.init};`}

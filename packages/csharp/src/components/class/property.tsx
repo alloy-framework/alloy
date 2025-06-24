@@ -141,7 +141,7 @@ export function ClassProperty(props: ClassPropertyProps) {
             {props.init && "init;"}
           </List>
         </Block>
-        {props.init && code` = ${props.init};`}
+        {props.initializer && code` = ${props.initializer};`}
       </Scope>
     </MemberDeclaration>
   );

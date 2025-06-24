@@ -17,7 +17,7 @@ export interface RecordModifiers {
 
 const getRecordModifiers = makeModifiers<RecordModifiers>(["partial"]);
 
-// properties for creating a class
+/** Props to use the {@link RecordDeclaration} component */
 export interface RecordDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,

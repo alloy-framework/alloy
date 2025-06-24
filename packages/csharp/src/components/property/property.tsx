@@ -19,8 +19,8 @@ import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 
-/** Method modifiers. Can only be one. */
-export interface ClassPropertyModifiers {
+/** Property modifiers. */
+export interface PropertyModifiers {
   readonly new?: boolean;
   readonly static?: boolean;
   readonly virtual?: boolean;
@@ -31,7 +31,7 @@ export interface ClassPropertyModifiers {
   readonly readonly?: boolean;
 }
 
-const getModifiers = makeModifiers<ClassPropertyModifiers>([
+const getModifiers = makeModifiers<PropertyModifiers>([
   "new",
   "static",
   "virtual",
@@ -42,10 +42,8 @@ const getModifiers = makeModifiers<ClassPropertyModifiers>([
   "readonly",
 ]);
 
-/** Properties for {@link ClassProperty} component */
-export interface ClassPropertyProps
-  extends AccessModifiers,
-    ClassPropertyModifiers {
+/** Properties for {@link Property} component */
+export interface PropertyProps extends AccessModifiers, PropertyModifiers {
   name: string;
   refkey?: Refkey;
 
@@ -94,7 +92,7 @@ export interface ClassPropertyProps
  * public int My { get; set; };
  * ```
  */
-export function ClassProperty(props: ClassPropertyProps) {
+export function Property(props: PropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
   const scope = useCSharpScope();
   if (

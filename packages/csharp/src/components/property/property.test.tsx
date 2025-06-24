@@ -2,7 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../ClassDeclaration.jsx";
-import { ClassProperty } from "./property.jsx";
+import { Property } from "./property.jsx";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
@@ -19,7 +19,7 @@ describe("modifiers", () => {
       (accessModifier) => {
         expect(
           <Wrapper>
-            <ClassProperty
+            <Property
               {...{ [accessModifier]: true }}
               name="TestProp"
               type="string"
@@ -49,7 +49,7 @@ describe("modifiers", () => {
     ] as const)("%s", (methodModifier) => {
       expect(
         <Wrapper>
-          <ClassProperty
+          <Property
             {...{ [methodModifier]: true }}
             name="TestProp"
             type="string"
@@ -68,7 +68,7 @@ describe("modifiers", () => {
   it("combine modifiers", () => {
     expect(
       <Wrapper>
-        <ClassProperty public new name="TestProp" type="string" get />
+        <Property public new name="TestProp" type="string" get />
       </Wrapper>,
     ).toRenderTo(`
         public class TestClass
@@ -82,7 +82,7 @@ describe("modifiers", () => {
 it("applies PascalCase naming policy", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="test_prop" type="string" get />
+      <Property name="test_prop" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -95,7 +95,7 @@ it("applies PascalCase naming policy", () => {
 it("has getter only", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get />
+      <Property name="TestProp" type="string" get />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -108,7 +108,7 @@ it("has getter only", () => {
 it("has setter only", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" set />
+      <Property name="TestProp" type="string" set />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -121,7 +121,7 @@ it("has setter only", () => {
 it("has getter and setter", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get set />
+      <Property name="TestProp" type="string" get set />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -134,7 +134,7 @@ it("has getter and setter", () => {
 it("has getter and init", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" get init />
+      <Property name="TestProp" type="string" get init />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -148,13 +148,7 @@ it("specify doc comment", () => {
   expect(
     <TestNamespace>
       <ClassDeclaration name="Test">
-        <ClassProperty
-          name="Method"
-          type="string"
-          get
-          set
-          doc="This is a test"
-        />
+        <Property name="Method" type="string" get set doc="This is a test" />
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
@@ -169,7 +163,7 @@ it("specify doc comment", () => {
 it("specify nullable property", () => {
   expect(
     <Wrapper>
-      <ClassProperty name="TestProp" type="string" nullable get set />
+      <Property name="TestProp" type="string" nullable get set />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -182,13 +176,7 @@ it("specify nullable property", () => {
 it("specify initializer", () => {
   expect(
     <Wrapper>
-      <ClassProperty
-        name="TestProp"
-        type="string"
-        get
-        set
-        initializer={`"abc"`}
-      />
+      <Property name="TestProp" type="string" get set initializer={`"abc"`} />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass

@@ -12,6 +12,7 @@ export * from "./Name.js";
 export * from "./Namespace.js";
 export * from "./Parameters.js";
 export * from "./ProjectDirectory.js";
+export * from "./record/declaration.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./UsingDirective.js";

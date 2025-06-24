@@ -1,4 +1,3 @@
-export * from "./class/property.js";
 export * from "./ClassDeclaration.jsx";
 export * from "./ClassMethod.jsx";
 export * from "./Declaration.js";
@@ -12,6 +11,7 @@ export * from "./Name.js";
 export * from "./Namespace.js";
 export * from "./Parameters.js";
 export * from "./ProjectDirectory.js";
+export * from "./property/property.jsx";
 export * from "./record/declaration.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { ClassProperty } from "../class/property.jsx";
+import { Property } from "../property/property.jsx";
 import { RecordDeclaration } from "./declaration.jsx";
 
 it("declares class with no members", () => {
@@ -60,7 +60,7 @@ it("specify class property inside", () => {
   expect(
     <TestNamespace>
       <RecordDeclaration name="TestRecord" doc="This is a test">
-        <ClassProperty name="Prop" get set type="string" />
+        <Property name="Prop" get set type="string" />
       </RecordDeclaration>
     </TestNamespace>,
   ).toRenderTo(`

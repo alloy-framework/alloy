@@ -7,13 +7,6 @@ type dummy = SymbolCreator;
 export const enumModule = createModule({
   name: "enum",
   descriptor: {
-    ".": [
-      "auto",
-      "Enum",
-      "Flag",
-      "IntEnum",
-      "IntFlag",
-      "StrEnum",
-    ],
+    ".": ["auto", "Enum", "Flag", "IntEnum", "IntFlag", "StrEnum"],
   },
 });

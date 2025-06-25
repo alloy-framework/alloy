@@ -8,9 +8,5 @@ export interface StatementListProps {
  * Join child elements with semicolons and hardlines.
  */
 export function StatementList(props: StatementListProps) {
-  return (
-    <List hardline>
-      {props.children}
-    </List>
-  );
+  return <List hardline>{props.children}</List>;
 }

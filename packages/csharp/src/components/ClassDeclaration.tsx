@@ -1,26 +1,75 @@
 import * as core from "@alloy-js/core";
+import { join } from "@alloy-js/core";
 import {
-  AccessModifier,
+  AccessModifiers,
+  computeModifiersPrefix,
   getAccessModifier,
-  getMethodModifier,
-  MethodModifier,
+  makeModifiers,
 } from "../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.js";
-import { ParameterProps, Parameters } from "./Parameters.js";
+import { Name } from "./Name.jsx";
+import { ParameterProps, Parameters } from "./Parameters.jsx";
+import { DocWhen } from "./doc/comment.jsx";
 
-// properties for creating a class
-export interface ClassProps extends Omit<core.DeclarationProps, "nameKind"> {
-  name: string;
-  refkey?: core.Refkey;
-  accessModifier?: AccessModifier;
-  typeParameters?: Record<string, core.Refkey>;
+export interface ClassModifiers {
+  readonly abstract?: boolean;
+  readonly partial?: boolean;
+  readonly sealed?: boolean;
+  readonly static?: boolean;
 }
 
-// a C# class declaration
-export function Class(props: ClassProps) {
+const getClassModifiers = makeModifiers<ClassModifiers>([
+  "abstract",
+  "partial",
+  "sealed",
+  "static",
+]);
+
+// properties for creating a class
+export interface ClassDeclarationProps
+  extends Omit<core.DeclarationProps, "nameKind">,
+    AccessModifiers,
+    ClassModifiers {
+  name: string;
+  /** Doc comment */
+  doc?: core.Children;
+  refkey?: core.Refkey;
+  typeParameters?: Record<string, core.Refkey>;
+
+  /** Base class that this class extends */
+  baseType?: core.Children;
+
+  /** Interfaces this class implements */
+  interfaceTypes?: core.Children[];
+}
+
+/**
+ * CSharp class declaration.
+ * @example
+ * ```tsx
+ * <ClassDeclaration public name="MyClass">
+ *   <ClassMember public name="MyField" type="int" />
+ *   <ClassConstructor>
+ *     <Parameter name="value" type="int" />
+ *     this.MyField = value;
+ *   </ClassConstructor>
+ * </ClassDeclaration>
+ * ```
+ * This will produce:
+ * ```csharp
+ * public class MyClass
+ * {
+ *   public int MyField;
+ *   public MyClass(int value)
+ *   {
+ *     this.MyField = value;
+ *   }
+ * }
+ * ```
+ */
+export function ClassDeclaration(props: ClassDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "class");
 
   const thisClassSymbol = new CSharpOutputSymbol(name, {
@@ -60,10 +109,22 @@ export function Class(props: ClassProps) {
     );
   }
 
+  const bases = [
+    ...(props.baseType ? [props.baseType] : []),
+    ...(props.interfaceTypes || []),
+  ];
+  const base =
+    bases.length > 0 ? <> : {join(bases, { joiner: ", " })}</> : null;
+  const modifiers = computeModifiersPrefix([
+    getAccessModifier(props),
+    getClassModifiers(props),
+  ]);
   return (
     <core.Declaration symbol={thisClassSymbol}>
-      {getAccessModifier(props.accessModifier)}class <Name />
+      <DocWhen doc={props.doc} />
+      {modifiers}class <Name />
       {typeParams}
+      {base}
       {!props.children && ";"}
       {props.children && (
         <core.Block newline>
@@ -74,8 +135,7 @@ export function Class(props: ClassProps) {
   );
 }
 
-export interface ClassConstructorProps {
-  accessModifier?: AccessModifier;
+export interface ClassConstructorProps extends AccessModifiers {
   parameters?: Array<ParameterProps>;
   refkey?: core.Refkey;
   symbol?: core.OutputSymbol;
@@ -103,7 +163,8 @@ export function ClassConstructor(props: ClassConstructorProps) {
     owner: ctorSymbol,
   });
 
-  const accessModifier = getAccessModifier(props.accessModifier);
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
+
   const params =
     props.parameters ? <Parameters parameters={props.parameters} /> : "";
 
@@ -111,7 +172,7 @@ export function ClassConstructor(props: ClassConstructorProps) {
   return (
     <core.Declaration symbol={ctorSymbol}>
       <core.Scope value={ctorDeclScope}>
-        {accessModifier}
+        {modifiers}
         <Name />({params})<core.Block newline>{props.children}</core.Block>
       </core.Scope>
     </core.Declaration>
@@ -119,17 +180,18 @@ export function ClassConstructor(props: ClassConstructorProps) {
 }
 
 // properties for creating a class member
-export interface ClassMemberProps {
+export interface ClassMemberProps extends AccessModifiers {
   name: string;
   type: core.Children;
-  accessModifier?: AccessModifier;
   refkey?: core.Refkey;
+  /** Doc comment */
+  doc?: core.Children;
 }
 
 // a C# class member (i.e. a field within a class like "private int count")
 export function ClassMember(props: ClassMemberProps) {
   let nameElement: CSharpElements = "class-member-private";
-  if (props.accessModifier === "public") {
+  if (props.public) {
     nameElement = "class-member-public";
   }
   const name = useCSharpNamePolicy().getName(props.name, nameElement);
@@ -145,58 +207,12 @@ export function ClassMember(props: ClassMemberProps) {
     refkeys: props.refkey ?? core.refkey(props.name),
   });
 
+  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
   return (
     <core.Declaration symbol={memberSymbol}>
-      {getAccessModifier(props.accessModifier)}
+      <DocWhen doc={props.doc} />
+      {modifiers}
       {props.type} <Name />
-    </core.Declaration>
-  );
-}
-
-// properties for creating a method
-export interface ClassMethodProps {
-  name: string;
-  refkey?: core.Refkey;
-  children?: core.Children;
-  accessModifier?: AccessModifier;
-  methodModifier?: MethodModifier;
-  parameters?: Array<ParameterProps>;
-  returns?: core.Children;
-}
-
-// a C# class method
-export function ClassMethod(props: ClassMethodProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error("can't define a class method outside of a class scope");
-  }
-
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? core.refkey(props.name),
-  });
-
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
-  });
-
-  const accessModifier = getAccessModifier(props.accessModifier);
-  const methodModifier = getMethodModifier(props.methodModifier);
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-  const returns = props.returns ?? "void";
-
-  // note that scope wraps the method decl so that the params get the correct scope
-  return (
-    <core.Declaration symbol={methodSymbol}>
-      <core.Scope value={methodScope}>
-        {accessModifier}
-        {methodModifier}
-        {returns} <Name />({params})
-        <core.Block newline>{props.children}</core.Block>
-      </core.Scope>
     </core.Declaration>
   );
 }

@@ -18,6 +18,9 @@
       "development": "./testing/index.ts",
       "import": "./dist/testing/index.js"
     },
+    "./testing/matchers": {
+      "types": "./testing/vitest.d.ts"
+    },
     "./stc": {
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"

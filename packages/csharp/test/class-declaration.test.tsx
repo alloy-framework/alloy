@@ -1,38 +1,99 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as csharp from "../src/index.js";
-import * as utils from "./utils.js";
+import { ClassDeclaration, ClassMember } from "../src/index.js";
+import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
-  const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass" />,
-  );
-
-  expect(res).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass;
-    }
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="TestClass" />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+      class TestClass;
   `);
+});
+
+describe("modifiers", () => {
+  it.each(["public", "private"])("%s", (mod) => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        ${mod} class TestClass;
+    `);
+  });
+
+  it.each(["partial", "abstract", "static", "sealed"])("%s", (mod) => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        ${mod} class TestClass;
+    `);
+  });
+
+  it("combines modifiers", () => {
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration public abstract partial name="TestClass" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        public abstract partial class TestClass;
+    `);
+  });
+});
+
+describe("base", () => {
+  it("define base class", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration name="TestClass" baseType="Foo" />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : Foo;
+    `);
+  });
+
+  it("define multiple interface types", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration
+          name="TestClass"
+          interfaceTypes={["Foo", "Bar"]}
+        />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : Foo, Bar;
+    `);
+  });
+
+  it("define base class and multiple interface types", () => {
+    expect(
+      <utils.TestNamespace>
+        <csharp.ClassDeclaration
+          name="TestClass"
+          baseType="BaseClass"
+          interfaceTypes={["Foo", "Bar"]}
+        />
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+        class TestClass : BaseClass, Foo, Bar;
+    `);
+  });
 });
 
 it("declares class with some members", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <core.StatementList>
-        <csharp.ClassMember
-          accessModifier="public"
-          name="MemberOne"
-          type="string"
-        />
-        <csharp.ClassMember
-          accessModifier="private"
-          name="MemberTwo"
-          type="int"
-        />
+        <csharp.ClassMember public name="MemberOne" type="string" />
+        <csharp.ClassMember private name="MemberTwo" type="int" />
       </core.StatementList>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -49,16 +110,12 @@ it("declares class with some members", () => {
 
 it("declares class with some methods", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <core.List>
-        <csharp.ClassMethod accessModifier="public" name="MethodOne" />
-        <csharp.ClassMethod
-          accessModifier="private"
-          methodModifier="virtual"
-          name="MethodTwo"
-        />
+        <csharp.ClassMethod public name="MethodOne" />
+        <csharp.ClassMethod private virtual name="MethodTwo" />
       </core.List>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -68,39 +125,6 @@ it("declares class with some methods", () => {
         {
             public void MethodOne() {}
             private virtual void MethodTwo() {}
-        }
-    }
-  `);
-});
-
-it("declares class with params and return type", () => {
-  const params = [
-    {
-      name: "IntParam",
-      type: "int",
-    },
-    {
-      name: "StringParam",
-      type: "string",
-    },
-  ];
-  const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
-      <csharp.ClassMethod
-        accessModifier="public"
-        name="MethodOne"
-        parameters={params}
-        returns="string"
-      />
-    </csharp.Class>,
-  );
-
-  expect(res).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass
-        {
-            public string MethodOne(int intParam, string stringParam) {}
         }
     }
   `);
@@ -126,8 +150,8 @@ it("uses refkeys for members, params, and return type", () => {
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name="TestCode">
         <csharp.SourceFile path="Test.cs">
-          <csharp.Enum
-            accessModifier="public"
+          <csharp.EnumDeclaration
+            public
             name="TestEnum"
             refkey={enumTypeRefkey}
           >
@@ -135,37 +159,37 @@ it("uses refkeys for members, params, and return type", () => {
               <csharp.EnumMember name="One" />
               <csharp.EnumMember name="Two" />
             </core.List>
-          </csharp.Enum>
+          </csharp.EnumDeclaration>
           <hbr />
-          <csharp.Class
-            accessModifier="public"
+          <csharp.ClassDeclaration
+            public
             name="TestInput"
             refkey={inputTypeRefkey}
           />
           <hbr />
-          <csharp.Class
-            accessModifier="public"
+          <csharp.ClassDeclaration
+            public
             name="TestResult"
             refkey={testResultTypeRefkey}
           />
           <hbr />
-          <csharp.Class accessModifier="public" name="TestClass">
+          <csharp.ClassDeclaration public name="TestClass">
             <csharp.ClassMember
-              accessModifier="private"
+              private
               name="MemberOne"
               type={enumTypeRefkey}
             />
             ;
             <hbr />
             <csharp.ClassMethod
-              accessModifier="public"
+              public
               name="MethodOne"
               parameters={params}
               returns={testResultTypeRefkey}
             >
               return new {testResultTypeRefkey}();
             </csharp.ClassMethod>
-          </csharp.Class>
+          </csharp.ClassDeclaration>
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
@@ -200,24 +224,15 @@ it("declares class with generic parameters", () => {
   };
 
   const res = utils.toSourceText(
-    <csharp.Class
-      accessModifier="public"
+    <csharp.ClassDeclaration
+      public
       name="TestClass"
       typeParameters={typeParameters}
     >
-      <csharp.ClassMember
-        accessModifier="public"
-        name="memberOne"
-        type={typeParameters.T}
-      />
+      <csharp.ClassMember public name="memberOne" type={typeParameters.T} />
       ;<hbr />
-      <csharp.ClassMember
-        accessModifier="private"
-        name="memberTwo"
-        type={typeParameters.U}
-      />
-      ;
-    </csharp.Class>,
+      <csharp.ClassMember private name="memberTwo" type={typeParameters.U} />;
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -234,10 +249,10 @@ it("declares class with generic parameters", () => {
 
 it("declares class with invalid members", () => {
   const decl = (
-    <csharp.Class accessModifier="public" name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <csharp.EnumMember name="One" />,<hbr />
       <csharp.EnumMember name="Two" />
-    </csharp.Class>
+    </csharp.ClassDeclaration>
   );
 
   expect(() => utils.toSourceText(decl)).toThrow(
@@ -247,9 +262,9 @@ it("declares class with invalid members", () => {
 
 it("declares class with constructor", () => {
   const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
-      <csharp.ClassConstructor accessModifier="public" />
-    </csharp.Class>,
+    <csharp.ClassDeclaration public name="TestClass">
+      <csharp.ClassConstructor public />
+    </csharp.ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -283,26 +298,26 @@ it("declares class with constructor params and assigns values to fields", () => 
   ];
 
   const res = utils.toSourceText(
-    <csharp.Class accessModifier="public" name="TestClass">
+    <csharp.ClassDeclaration public name="TestClass">
       <csharp.ClassMember
-        accessModifier="private"
+        private
         name="name"
         type="string"
         refkey={thisNameRefkey}
       />
       ;<hbr />
       <csharp.ClassMember
-        accessModifier="private"
+        private
         name="size"
         type="int"
         refkey={thisSizeRefkey}
       />
       ;<hbr />
-      <csharp.ClassConstructor accessModifier="public" parameters={ctorParams}>
+      <csharp.ClassConstructor public parameters={ctorParams}>
         {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
       </csharp.ClassConstructor>
-    </csharp.Class>,
+    </csharp.ClassDeclaration>,
   );
 
   // TODO: assignments to members should have this. prefix
@@ -320,6 +335,34 @@ it("declares class with constructor params and assigns values to fields", () => 
                 size = size;
             }
         }
+    }
+  `);
+});
+
+it("specify doc comment", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="Test" doc="This is a test" />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test
+    class Test;
+  `);
+});
+
+it("supports class member doc comments", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="Test" doc="This is a test">
+        <ClassMember name="Member" public type="int" doc="This is a member" />
+      </ClassDeclaration>
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    /// This is a test
+    class Test
+    {
+      /// This is a member
+      public int Member
     }
   `);
 });

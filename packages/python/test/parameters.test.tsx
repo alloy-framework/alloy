@@ -1,20 +1,17 @@
-import { Output } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
 import { toSourceText } from "./utils.jsx";
 
 describe("Parameters", () => {
   it("creates empty parameters", () => {
-    const result = toSourceText(
-      <py.Parameters parameters={[]} />
-    );
+    const result = toSourceText(<py.Parameters parameters={[]} />);
     expect(result).toRenderTo(`\n`);
   });
   it("creates a single parameter", () => {
     const result = toSourceText(
       <py.Parameters
         parameters={[{ name: "x", type: "int", defaultValue: 10 }]}
-      />
+      />,
     );
     expect(result).toRenderTo(`x: int = 10\n`);
   });
@@ -30,7 +27,7 @@ describe("Parameters", () => {
             defaultValue: <py.Value jsValue="hello" />,
           },
         ]}
-      />
+      />,
     );
     expect(result).toRenderTo(`x: int, y: str = "hello"`);
   });
@@ -46,7 +43,7 @@ describe("Parameters", () => {
             defaultValue: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
           },
         ]}
-      />
+      />,
     );
     expect(result).toRenderTo(`x: int, y: dict = {"John": 123, "Doe": 234}`);
   });
@@ -64,7 +61,7 @@ describe("Parameters", () => {
         ]}
         args={true}
         kwargs={true}
-      />
+      />,
     );
     expect(result).toRenderTo(
       `x: int, y: dict = {"John": 123, "Doe": 234}, *args, **kwargs`,
@@ -80,7 +77,7 @@ describe("Parameters", () => {
             { name: "y", type: "int", defaultValue: 10 },
             { name: "z", type: "int" },
           ]}
-        />
+        />,
       ),
     ).toThrow(
       "Non-default argument 'z' follows default argument in Python parameters.",
@@ -94,7 +91,7 @@ describe("Parameters", () => {
           { name: "number", value: <py.Value jsValue={42} /> },
           { value: <py.Value jsValue={true} /> },
         ]}
-      />
+      />,
     );
     expect(result).toRenderTo(`name="A name", number=42, True`);
   });

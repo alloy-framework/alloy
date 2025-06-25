@@ -1,9 +1,8 @@
-import { refkey, render } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/components/index.js";
 import { toSourceText } from "./utils.jsx";
-import { enumModule } from "../src/builtins/python.js";
 
 it("correct formatting of class name", () => {
   const result = toSourceText(
@@ -31,6 +30,7 @@ it("correct formatting of Enum name and EnumMember names", () => {
   );
   const expected = d`
     from enum import Enum
+
     Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW_VALUE' : 3})
   `;
   expect(result).toRenderTo(expected);
@@ -48,7 +48,7 @@ it("renders a function with parameters", () => {
       kwargs={true}
     >
       print(x, y)
-    </py.MethodDeclaration>
+    </py.MethodDeclaration>,
   );
   expect(result).toRenderTo(
     d`
@@ -68,7 +68,7 @@ it("correct formatting of instance parameters names", () => {
           type: "dict",
         },
       ]}
-    />
+    />,
   );
   expect(result).toRenderTo(`this_is_a_number: int, and_this_is_a_dict: dict`);
 });
@@ -80,14 +80,16 @@ it("correct formatting of instance parameters names", () => {
         { name: "this-is-a-long-name", value: <py.Value jsValue={"A name"} /> },
         { name: "andThisIsANumber", value: <py.Value jsValue={42} /> },
       ]}
-    />
+    />,
   );
-  expect(result).toRenderTo(`this_is_a_long_name="A name", and_this_is_a_number=42`);
+  expect(result).toRenderTo(
+    `this_is_a_long_name="A name", and_this_is_a_number=42`,
+  );
 });
 
 it("correct formatting of variable name", () => {
   const res = toSourceText(
-    <py.VariableDeclaration name="myVar" type="int" value={42} />
+    <py.VariableDeclaration name="myVar" type="int" value={42} />,
   );
   expect(res).toBe(`my_var: int = 42`);
 });

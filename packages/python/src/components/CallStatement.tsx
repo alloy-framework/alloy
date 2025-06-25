@@ -1,6 +1,8 @@
 import { Children, code } from "@alloy-js/core";
-import { usePythonNamePolicy } from "../name-policy.js";
-import { CallStatementParameters, CallStatementParametersProps } from "./Parameters.jsx";
+import {
+  CallStatementParameters,
+  CallStatementParametersProps,
+} from "./Parameters.jsx";
 
 export interface CallStatementProps extends CallStatementParametersProps {
   type: Children;
@@ -15,9 +17,5 @@ export function CallStatement(props: CallStatementProps) {
     />
   );
   const value = code` ${props.type}(${params})`; // Include params in the value
-  return (
-    <>
-    {value}
-    </>
-  );
+  return <>{value}</>;
 }

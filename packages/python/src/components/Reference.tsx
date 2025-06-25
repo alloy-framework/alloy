@@ -7,6 +7,5 @@ export interface ReferenceProps {
 
 export function Reference(props: ReferenceProps) {
   const reference = ref(props.refkey);
-
-  return <>{reference}</>;
+  return <>{reference()[0]}</>;
 }

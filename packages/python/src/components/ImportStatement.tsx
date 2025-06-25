@@ -1,57 +1,107 @@
 import { computed, mapJoin, memo } from "@alloy-js/core";
-
-export interface ImportSymbol {
-  module: string; // The module to import from
-  names?: Array<string | { name: string; alias?: string }>; // Items to import
-  alias?: string; // Alias for the module itself (if importing the whole module)
-  wildcard?: boolean; // If true, use '*'
-}
+import { ImportedSymbol, ImportRecords } from "../symbols/index.js";
 
 export interface ImportStatementsProps {
-  imports: ImportSymbol[];
+  records: ImportRecords;
+  joinImportsFromSameModule?: boolean;
 }
 
-/**
- * Represents a Python import statement.
- * Generates an import statement for the given module and names.
- */
 export function ImportStatements(props: ImportStatementsProps) {
+  // Sort the import records by module name
   const imports = computed(() =>
-    props.imports.sort((a, b) => a.module.localeCompare(b.module)),
+    [...props.records].sort(([a], [b]) => {
+      return a.name.localeCompare(b.name);
+    }),
   );
 
   return mapJoin(
     () => imports.value,
-    (importProp) => <ImportStatement {...importProp} />,
+    ([module, properties]) => {
+      // Only handling absolute imports for now
+      const targetPath = module.name;
+
+      if (properties.symbols && properties.symbols.size > 0) {
+        // Sort the symbols in a module by the imported name
+        const sortedSymbols = Array.from(properties.symbols).sort((a, b) =>
+          a.local.name.localeCompare(b.local.name),
+        );
+        if (props.joinImportsFromSameModule) {
+          // If joinImportsFromSameModule is true, we will group imports from the same module
+          return (
+            <ImportStatement
+              path={targetPath}
+              symbols={new Set(sortedSymbols)}
+            />
+          );
+        } else {
+          return sortedSymbols.map((symbol, idx, arr) => (
+            <>
+              <ImportStatement path={targetPath} symbols={new Set([symbol])} />
+              {idx < arr.length - 1 && <hbr />}
+            </>
+          ));
+        }
+      } else {
+        // If no symbols are specified, it's either a wildcard import or a module import
+        return (
+          <ImportStatement path={targetPath} symbols={properties.symbols} />
+        );
+      }
+    },
   );
 }
 
-export function ImportStatement(props: ImportSymbol) {
+export interface ImportStatementProps {
+  path: string;
+  symbols?: Set<ImportedSymbol>;
+}
+
+export function ImportStatement(props: ImportStatementProps) {
   return memo(() => {
-    const { module, names, alias, wildcard } = props;
+    const { path, symbols } = props;
+    const importSymbols: ImportedSymbol[] = [];
 
-    const parts: any[] = [];
-
-    if (wildcard) {
-      parts.push(`from ${module} import *`);
-    } else if (!names || names.length === 0) {
-      parts.push(`import ${module}`);
-    } else {
-      const formattedNames = names
-        .map((name) =>
-          typeof name === "string" ? name
-          : name.alias ? `${name.name} as ${name.alias}`
-          : name.name,
-        )
-        .join(", ");
-
-      if (alias) {
-        parts.push(`from ${module} import ${formattedNames} as ${alias}`);
-      } else {
-        parts.push(`from ${module} import ${formattedNames}`);
+    if (symbols && symbols.size > 0) {
+      for (const sym of symbols) {
+        importSymbols.push(sym);
       }
     }
 
+    const parts: any[] = [];
+
+    if (!symbols || symbols.size === 0) {
+      parts.push(`import ${path}`);
+    } else {
+      importSymbols.sort((a, b) => {
+        return a.target.name.localeCompare(b.target.name);
+      });
+      parts.push(`from ${path} import `);
+      parts.push(
+        mapJoin(
+          () => importSymbols,
+          (nis) => <ImportBinding importedSymbol={nis} />,
+          { joiner: ", " },
+        ),
+      );
+    }
     return parts;
   });
+}
+
+interface ImportBindingProps {
+  importedSymbol: ImportedSymbol;
+}
+
+function ImportBinding(props: Readonly<ImportBindingProps>) {
+  const text = memo(() => {
+    const localName = props.importedSymbol.local.name;
+    const targetName = props.importedSymbol.target.name;
+    if (localName === targetName) {
+      return targetName;
+    } else {
+      return `${targetName} as ${localName}`;
+    }
+  });
+
+  return <>{text()}</>;
 }

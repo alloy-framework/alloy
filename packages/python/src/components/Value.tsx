@@ -6,29 +6,29 @@ export interface ValueProps {
 
 export function Value(props: ValueProps): any {
   return memo(() => {
-    const value = props.jsValue;
+    const jsValue = props.jsValue;
 
-    if (typeof value === "undefined") {
+    if (typeof jsValue === "undefined") {
       return "None";
-    } else if (typeof value === "number") {
-      return String(value);
-    } else if (typeof value === "boolean") {
-      return value ? "True" : "False";
-    } else if (typeof value === "string") {
-      return `"${value.replace(/"/g, '\\"')}"`;
-    } else if (typeof value === "function") {
+    } else if (typeof jsValue === "number") {
+      return String(jsValue);
+    } else if (typeof jsValue === "boolean") {
+      return jsValue ? "True" : "False";
+    } else if (typeof jsValue === "string") {
+      return `"${jsValue.replace(/"/g, '\\"')}"`;
+    } else if (typeof jsValue === "function") {
       // functions are inserted as-is.
-      return value;
-    } else if (typeof value === "object") {
-      if (value === null) {
+      return jsValue;
+    } else if (typeof jsValue === "object") {
+      if (jsValue === null) {
         return "None";
-      } else if (Array.isArray(value)) {
+      } else if (Array.isArray(jsValue)) {
         // Recursively emit each element of arrays
         return (
           <group>
             {"["}
             <Indent softline trailingBreak>
-              <For each={value} comma line>
+              <For each={jsValue} comma line>
                 {(v) => <Value jsValue={v} />}
               </For>
             </Indent>
@@ -36,7 +36,7 @@ export function Value(props: ValueProps): any {
           </group>
         );
       } else {
-        const entries = Object.entries(value);
+        const entries = Object.entries(jsValue);
         if (entries.length === 0) {
           return "{}";
         }

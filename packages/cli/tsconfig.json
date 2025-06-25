@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": true,
     "verbatimModuleSyntax": true,
-    "tsBuildInfoFile": "./temp/.tsbuildinfo",
     "outDir": "dist"
   },
   "include": [

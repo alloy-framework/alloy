@@ -1,6 +1,9 @@
+import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { SourceFile } from "../SourceFile.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 
@@ -169,4 +172,79 @@ it("specify doc comment", () => {
       void Method();
     }
   `);
+});
+
+describe("with type parameters", () => {
+  it("reference parameters", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        refkey: refkey(),
+      },
+      {
+        name: "U",
+        refkey: refkey(),
+      },
+    ];
+
+    expect(
+      <TestNamespace>
+        <SourceFile path="TestFile.cs">
+          <InterfaceDeclaration public name="TestInterface">
+            <InterfaceMethod
+              name="Test"
+              public
+              typeParameters={typeParameters}
+              parameters={[
+                {
+                  name: "paramA",
+                  type: typeParameters[0].refkey,
+                },
+              ]}
+              returns={typeParameters[0].refkey}
+            />
+          </InterfaceDeclaration>
+        </SourceFile>
+      </TestNamespace>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+        public interface TestInterface
+        {
+          public T <T, U>Test(T paramA);
+        }
+      }
+    `);
+  });
+
+  it("defines with constraints", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        constraints: "IFoo",
+      },
+      {
+        name: "U",
+        constraints: "IBar",
+      },
+    ];
+
+    expect(
+      <Wrapper>
+        <InterfaceMethod public name="Test" typeParameters={typeParameters}>
+          // Body
+        </InterfaceMethod>
+      </Wrapper>,
+    ).toRenderTo(`
+      public interface TestInterface
+      {
+        public void <T, U>Test()
+          where T : IFoo
+          where U : IBar
+        {
+          // Body
+        }
+      }
+    `);
+  });
 });

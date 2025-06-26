@@ -18,6 +18,9 @@ import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { ParameterProps, Parameters } from "./Parameters.jsx";
 import { DocWhen } from "./doc/comment.jsx";
+import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
+import { TypeParameters } from "./type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface ClassMethodModifiers {
@@ -51,6 +54,20 @@ export interface ClassMethodProps
 
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Type parameters for the method
+   *
+   * @example
+   * ```tsx
+   * <InterfaceMethod name="Test" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public void Test<T>()
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
 }
 
 // a C# class method
@@ -86,7 +103,14 @@ export function ClassMethod(props: ClassMethodProps) {
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {returns} {name}({params})
+        {returns}{" "}
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        {name}({params})
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
         {props.abstract ? ";" : <Block newline>{props.children}</Block>}
       </Scope>
     </MemberDeclaration>

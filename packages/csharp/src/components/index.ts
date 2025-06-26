@@ -15,5 +15,6 @@ export * from "./property/property.jsx";
 export * from "./record/declaration.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
+export type { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
 export * from "./UsingDirective.js";
 export * from "./var/declaration.jsx";

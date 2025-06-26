@@ -10,6 +10,9 @@ import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface InterfaceModifiers {
   readonly partial?: boolean;
@@ -27,7 +30,20 @@ export interface InterfaceDeclarationProps
   /** Doc comment */
   doc?: core.Children;
   refkey?: core.Refkey;
-  typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Type parameters for the interface
+   *
+   * @example
+   * ```tsx
+   * <InterfaceDeclaration name="IList" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public interface IList<T>
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
 }
 
 /**
@@ -65,31 +81,6 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     owner: thisInterfaceSymbol,
   });
 
-  let typeParams: core.Children;
-  if (props.typeParameters) {
-    const typeParamNames = new Array<string>();
-    for (const entry of Object.entries(props.typeParameters)) {
-      typeParamNames.push(
-        useCSharpNamePolicy().getName(entry[0], "type-parameter"),
-      );
-      // create a symbol for each type param so its
-      // refkey resolves to the type param's name
-      new CSharpOutputSymbol(entry[0], {
-        scope: thisInterfaceScope,
-        refkeys: entry[1],
-      });
-    }
-    typeParams = (
-      <group>
-        {"<"}
-        <core.For each={typeParamNames} comma line>
-          {(name) => name}
-        </core.For>
-        {">"}
-      </group>
-    );
-  }
-
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getInterfaceModifiers(props),
@@ -98,7 +89,12 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     <core.Declaration symbol={thisInterfaceSymbol}>
       <DocWhen doc={props.doc} />
       {modifiers}interface <Name />
-      {typeParams}
+      {props.typeParameters && (
+        <TypeParameters parameters={props.typeParameters} />
+      )}
+      {props.typeParameters && (
+        <TypeParameterConstraints parameters={props.typeParameters} />
+      )}
       {props.children ?
         <core.Block newline>
           <core.Scope value={thisInterfaceScope}>{props.children}</core.Scope>

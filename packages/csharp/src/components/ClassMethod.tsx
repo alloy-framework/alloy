@@ -88,8 +88,6 @@ export function ClassMethod(props: ClassMethodProps) {
     owner: methodSymbol,
   });
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
   const returns = props.returns ?? (props.async ? "Task" : "void");
 
   const modifiers = computeModifiersPrefix([
@@ -107,7 +105,7 @@ export function ClassMethod(props: ClassMethodProps) {
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}
-        ({params})
+        <Parameters parameters={props.parameters} />
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}

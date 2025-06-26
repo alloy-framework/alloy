@@ -75,9 +75,6 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
     owner: methodSymbol,
   });
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getMethodModifier(props),
@@ -92,7 +89,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}
-        ({params})
+        <Parameters parameters={props.parameters} />
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}

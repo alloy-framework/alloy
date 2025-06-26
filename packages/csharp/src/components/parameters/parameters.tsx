@@ -52,19 +52,23 @@ export function Parameter(props: ParameterProps) {
 }
 
 export interface ParametersProps {
-  parameters: ParameterProps[];
+  parameters: ParameterProps[] | undefined;
 }
 
 /** Render a collection of parameters */
 export function Parameters(props: ParametersProps) {
   return (
     <group>
-      <Indent softline>
-        <For each={props.parameters} joiner={", "}>
-          {(param) => <Parameter {...param} />}
-        </For>
-      </Indent>
+      {"("}
+      {props.parameters && (
+        <Indent softline>
+          <For each={props.parameters} joiner={", "}>
+            {(param) => <Parameter {...param} />}
+          </For>
+        </Indent>
+      )}
       <softline />
+      {")"}
     </group>
   );
 }

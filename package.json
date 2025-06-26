@@ -11,7 +11,7 @@
     "test": "vitest run",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint --fix ."
   },
   "devDependencies": {

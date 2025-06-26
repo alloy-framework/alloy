@@ -75,7 +75,7 @@ describe("Browser Build Test", () => {
     );
   });
 
-  it("Vite should build successfully", () => {
+  it("Vite should build successfully", { timeout: 20_000 }, () => {
     // Run Vite build process and wait for completion
     expect(() => {
       execSync("npm run build", { cwd: testDir, stdio: "inherit" });

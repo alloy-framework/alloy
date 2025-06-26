@@ -1,6 +1,9 @@
+import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { ClassDeclaration, ClassMember } from "../ClassDeclaration.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 
@@ -169,4 +172,66 @@ it("specify doc comment", () => {
       void Method();
     }
   `);
+});
+
+describe("with type parameters", () => {
+  it("reference parameters", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        refkey: refkey(),
+      },
+      {
+        name: "U",
+        refkey: refkey(),
+      },
+    ];
+
+    expect(
+      <ClassDeclaration public name="TestClass" typeParameters={typeParameters}>
+        <ClassMember public name="memberOne" type={typeParameters[0].refkey} />
+        ;<hbr />
+        <ClassMember private name="memberTwo" type={typeParameters[1].refkey} />
+        ;
+      </ClassDeclaration>,
+    ).toRenderTo(`
+    namespace TestCode
+    {
+        public class TestClass<T, U>
+        {
+            public T MemberOne;
+            private U memberTwo;
+        }
+    }
+  `);
+  });
+
+  it("defines with constraints", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        constraints: "IFoo",
+      },
+      {
+        name: "U",
+        constraints: "IBar",
+      },
+    ];
+
+    expect(
+      <ClassDeclaration public name="TestClass" typeParameters={typeParameters}>
+        // Body
+      </ClassDeclaration>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+          public class TestClass<T, U>
+              where T : IFoo
+              where U : IBar
+          {
+              // Body
+          }
+      }
+    `);
+  });
 });

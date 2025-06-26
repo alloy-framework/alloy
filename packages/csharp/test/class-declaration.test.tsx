@@ -1,8 +1,15 @@
 import * as core from "@alloy-js/core";
+import { List, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
-import { ClassDeclaration, ClassMember } from "../src/index.js";
+import {
+  ClassDeclaration,
+  ClassMember,
+  Property,
+  SourceFile,
+} from "../src/index.js";
 import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
@@ -217,34 +224,77 @@ it("uses refkeys for members, params, and return type", () => {
   `);
 });
 
-it("declares class with generic parameters", () => {
-  const typeParameters = {
-    T: core.refkey(),
-    U: core.refkey(),
-  };
+describe("with type parameters", () => {
+  it("reference parameters", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        refkey: refkey(),
+      },
+      {
+        name: "U",
+        refkey: refkey(),
+      },
+    ];
 
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration
-      public
-      name="TestClass"
-      typeParameters={typeParameters}
-    >
-      <csharp.ClassMember public name="memberOne" type={typeParameters.T} />
-      ;<hbr />
-      <csharp.ClassMember private name="memberTwo" type={typeParameters.U} />;
-    </csharp.ClassDeclaration>,
-  );
-
-  expect(res).toBe(coretest.d`
-    namespace TestCode
-    {
+    expect(
+      <utils.TestNamespace>
+        <SourceFile path="Test.cs">
+          <ClassDeclaration
+            public
+            name="TestClass"
+            typeParameters={typeParameters}
+          >
+            <List>
+              <Property name="PropA" type={typeParameters[0].refkey} get set />
+              <Property name="PropB" type={typeParameters[1].refkey} get set />
+            </List>
+          </ClassDeclaration>
+        </SourceFile>
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
         public class TestClass<T, U>
         {
-            public T MemberOne;
-            private U memberTwo;
+          T PropA { get; set; }
+          U PropB { get; set; }
         }
-    }
-  `);
+      }
+    `);
+  });
+
+  it("defines with constraints", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        constraints: "IFoo",
+      },
+      {
+        name: "U",
+        constraints: "IBar",
+      },
+    ];
+
+    expect(
+      <utils.TestNamespace>
+        <ClassDeclaration
+          public
+          name="TestClass"
+          typeParameters={typeParameters}
+        >
+          // Body
+        </ClassDeclaration>
+      </utils.TestNamespace>,
+    ).toRenderTo(`
+      public class TestClass<T, U>
+        where T : IFoo
+        where U : IBar
+      {
+        // Body
+      }
+    `);
+  });
 });
 
 it("declares class with invalid members", () => {

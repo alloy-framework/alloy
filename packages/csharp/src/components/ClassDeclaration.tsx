@@ -9,9 +9,9 @@ import {
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.jsx";
-import { ParameterProps, Parameters } from "./Parameters.jsx";
 import { DocWhen } from "./doc/comment.jsx";
+import { Name } from "./Name.jsx";
+import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
 import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
 import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
 import { TypeParameters } from "./type-parameters/type-parameters.jsx";

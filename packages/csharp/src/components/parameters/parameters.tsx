@@ -8,10 +8,10 @@ import {
   refkey,
   Refkey,
 } from "@alloy-js/core";
-import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.js";
+import { useCSharpNamePolicy } from "../../name-policy.js";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { useCSharpScope } from "../../symbols/scopes.js";
+import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
   name: string;
@@ -52,11 +52,10 @@ export function Parameter(props: ParameterProps) {
 }
 
 export interface ParametersProps {
-  // param name and type
   parameters: ParameterProps[];
 }
 
-// a collection of parameters
+/** Render a collection of parameters */
 export function Parameters(props: ParametersProps) {
   return (
     <group>

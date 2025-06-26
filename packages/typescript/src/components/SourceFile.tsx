@@ -2,9 +2,11 @@ import {
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  onCleanup,
   Scope,
   Show,
   SourceDirectoryContext,
+  untrack,
   useContext,
   type Children,
 } from "@alloy-js/core";
@@ -40,6 +42,10 @@ export function SourceFile(props: SourceFileProps) {
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
   const scope = new TSModuleScope(path);
+  onCleanup(() => {
+    // todo: this untrack shouldn't be necessary
+    untrack(() => scope.delete());
+  });
   sdData.modules.add(scope);
   const pkg = useContext(PackageContext);
   if (pkg) {

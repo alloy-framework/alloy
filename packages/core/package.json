@@ -28,6 +28,10 @@
     "./components": {
       "development": "./src/components/index.ts",
       "import": "./dist/src/components/index.js"
+    },
+    "./symbols": {
+      "development": "./src/symbols/index.ts",
+      "import": "./dist/src/symbols/index.js"
     }
   },
   "browser": {
@@ -48,16 +52,18 @@
   "license": "MIT",
   "dependencies": {
     "@vue/reactivity": "catalog:",
-    "picocolors": "catalog:",
     "cli-table3": "catalog:",
     "pathe": "catalog:",
-    "prettier": "catalog:"
+    "picocolors": "catalog:",
+    "prettier": "catalog:",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
+    "@types/ws": "^8.18.1",
     "concurrently": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

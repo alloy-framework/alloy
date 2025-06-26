@@ -20,7 +20,7 @@ catalog:
   "@types/babel__traverse": ^7.20.7
   "@types/node": ^20.14.12
   "@vitest/eslint-plugin": ^1.1.42
-  "@vue/reactivity": ^3.5.13
+  "@vue/reactivity": ^3.5.16
   babel-plugin-tester: ^11.0.4
   change-case: ^5.4.4
   cli-table3: ^0.6.5

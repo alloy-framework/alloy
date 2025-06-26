@@ -1,6 +1,8 @@
 import {
+  DebuggerEvent,
   pauseTracking,
   ReactiveEffectRunner,
+  Ref,
   resetTracking,
   ShallowReactive,
   shallowRef,
@@ -9,7 +11,7 @@ import {
 } from "@vue/reactivity";
 import type { RenderedTextTree } from "./render.js";
 import type { Children, ComponentCreator } from "./runtime/component.js";
-import { scheduler } from "./scheduler.js";
+import { scheduler, type SchedulerJobOptions } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
 import { trace, TracePhase } from "./tracer.js";
 
@@ -66,6 +68,11 @@ export interface Context {
    * The symbol that this component has taken.
    */
   takenSymbols?: ShallowReactive<Set<OutputSymbol>>;
+
+  /**
+   * A ref that, when triggered, causes the component to rerender.
+   */
+  rerenderHook?: Ref<void>;
 }
 
 let globalContext: Context | null = null;
@@ -75,6 +82,11 @@ export function getContext() {
 
 export interface RootOptions {
   componentOwner?: ComponentCreator<any>;
+}
+
+let lastErrorContext: Context | null = null;
+export function getLastErrorContext(): Context | null {
+  return lastErrorContext;
 }
 
 export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
@@ -94,7 +106,7 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     ret = untrack(() =>
       fn(() => {
         for (const d of context!.disposables) {
-          d();
+          untrack(d);
         }
       }),
     );
@@ -112,18 +124,42 @@ export function untrack<T>(fn: () => T): T {
   return v;
 }
 
-export function memo<T>(fn: () => T, equal?: boolean): () => T {
+export interface MemoOptions<T> extends ReactiveEffectOptions<T> {
+  equal?: boolean;
+}
+export function memo<T>(fn: () => T, options: MemoOptions<T> = {}): () => T {
   const o = shallowRef();
-  effect((prev) => {
-    const res = fn();
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (!equal || prev !== res) && (o.value = res);
-    return res;
-  }, undefined as T);
+  effect(
+    (prev) => {
+      const res = fn();
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      (!options.equal || prev !== res) && (o.value = res);
+      return res;
+    },
+    { current: undefined as T },
+  );
   return () => o.value;
 }
 
-export function effect<T>(fn: (prev?: T) => T, current?: T) {
+export interface ReactiveEffectOptions<T> extends SchedulerJobOptions {
+  current?: T;
+  flush?: "sync" | "post";
+  onTrack?: (event: DebuggerEvent) => void;
+  onTrigger?: (event: DebuggerEvent) => void;
+}
+
+export function syncEffect<T>(
+  fn: (prev?: T) => T,
+  options: ReactiveEffectOptions<T> = {},
+) {
+  options.flush = "sync";
+  return effect(fn, options);
+}
+
+export function effect<T>(
+  fn: (prev?: T) => T,
+  options: ReactiveEffectOptions<T> = {},
+) {
   const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
@@ -142,6 +178,8 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     final && stop(runner);
   };
 
+  let current = options.current;
+
   onCleanup(() => cleanupFn(true));
   const runner: ReactiveEffectRunner<void> = vueEffect(
     () => {
@@ -151,20 +189,28 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       globalContext = context;
       try {
         current = fn(current);
+      } catch (e) {
+        if (lastErrorContext === null) {
+          lastErrorContext = context;
+        }
+
+        throw e;
       } finally {
         globalContext = oldContext;
       }
     },
     {
-      scheduler: scheduler(() => runner),
+      scheduler: scheduler(() => runner, options),
       onTrack(event) {
+        options.onTrack?.(event);
         trace(TracePhase.effect.track, () => {
-          return `tracking ${event.target}, ${event.key}`;
+          return `tracking ${event.target}, ${typeof event.key === "symbol" ? "[symbol]" : event}`;
         });
       },
       onTrigger(event) {
+        options.onTrigger?.(event);
         trace(TracePhase.effect.trigger, () => {
-          return `triggering ${event.target}, ${event.key}`;
+          return `triggering ${event.target}, ${typeof event.key === "symbol" ? "[symbol]" : event.key}`;
         });
       },
     },

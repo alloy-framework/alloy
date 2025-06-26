@@ -1,45 +1,62 @@
-import { ReactiveEffectRunner } from "@vue/reactivity";
+import { getLastErrorContext } from "./reactivity.js";
+import { trace, TracePhase } from "./tracer.js";
 
 export interface QueueJob {
   (): any;
 }
-const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
+let flushing = false;
+export function jobQueueSize() {
+  return queue.size;
+}
 
+export interface SchedulerJobOptions {
+  flush?: "sync" | "post";
+}
 export function scheduler(
-  jobGetter: () => ReactiveEffectRunner,
-  immediate = false,
+  jobGetter: () => QueueJob,
+  options: SchedulerJobOptions = {},
 ) {
   return () => {
-    queueJob(jobGetter(), immediate);
+    queueJob(jobGetter(), options);
   };
 }
-export function queueJob(job: QueueJob, immediate = false) {
-  // if we have an immediate job, we don't need to queue the normal job.
-  // the set is serving an important purpose here in deduping the effects we run
-  // (which in effect coalesces multiple update effects together).
-  if (immediate) {
-    immediateQueue.add(job);
+export function queueJob(job: QueueJob, options: SchedulerJobOptions = {}) {
+  if (options?.flush === "sync") {
+    trace(TracePhase.scheduler.queue, () => `Scheduling sync job`);
+    job();
   } else {
+    trace(TracePhase.scheduler.queue, () => `Scheduling post job`);
     queue.add(job);
   }
 }
 
 export function flushJobs() {
-  let job;
-  while ((job = takeJob()) !== null) {
-    job();
+  if (flushing) {
+    return;
   }
+  trace(
+    TracePhase.scheduler.flush,
+    () => `flushing jobs, queue size: ${queue.size}`,
+  );
+  flushing = true;
+  let job: QueueJob | null;
+  while ((job = takeJob()) !== null) {
+    try {
+      job();
+    } catch (e: any) {
+      debug.sendError(e, getLastErrorContext());
+      flushing = false;
+      throw e;
+    }
+  }
+
+  flushing = false;
 }
 
 function takeJob() {
-  if (immediateQueue.size > 0) {
-    // return first item in immediateQueue
-    const job = immediateQueue.values().next().value!;
-    immediateQueue.delete(job);
-    return job;
-  }
   if (queue.size > 0) {
+    trace(TracePhase.scheduler.take, () => "taking job");
     // return first item in queue
     const job = queue.values().next().value!;
     queue.delete(job);

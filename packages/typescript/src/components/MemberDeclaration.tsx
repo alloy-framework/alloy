@@ -1,6 +1,7 @@
 import {
   MemberDeclaration as CoreMemberDeclaration,
   MemberDeclarationPropsWithInfo,
+  onCleanup,
   OutputSymbolFlags,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
@@ -64,6 +65,10 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
       flags: props.flags,
       tsFlags,
       metadata: props.metadata,
+    });
+
+    onCleanup(() => {
+      sym.delete();
     });
   }
 

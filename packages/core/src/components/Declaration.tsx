@@ -2,9 +2,9 @@ import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
 import { onCleanup } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
+import { Refkey } from "../symbols/refkey.js";
 
 /**
  * Create a declaration by providing an already created symbol. The symbol is

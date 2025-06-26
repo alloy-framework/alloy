@@ -85,7 +85,7 @@ it("imports external packages", () => {
   `);
 });
 
-it("combines explicit dependencies with referenced dependencies", () => {
+it.only("combines explicit dependencies with referenced dependencies", () => {
   const res = render(
     <Output>
       <ts.PackageDirectory

@@ -1,11 +1,11 @@
 import { reactive, watch } from "@vue/reactivity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Binder, createOutputBinder } from "../../src/binder.js";
 import { ComponentContext } from "../../src/context.js";
 import { MemberScopeContext } from "../../src/context/member-scope.js";
 import { ScopeContext } from "../../src/index.browser.js";
 import { renderTree } from "../../src/render.js";
 import { flushJobs } from "../../src/scheduler.js";
+import { Binder, createOutputBinder } from "../../src/symbols/binder.js";
 import {
   OutputScopeFlags,
   OutputSymbolFlags,
@@ -22,7 +22,6 @@ describe("OutputSymbol reactivity", () => {
   it("keeps symbol names up-to-date", () => {
     const scope = new OutputScope("scope", { binder });
     const symbol = new OutputSymbol("sym", { binder, scope });
-
     flushJobs();
     expect(scope.symbolNames.has("sym")).toBe(true);
 

@@ -20,5 +20,6 @@ export function Reference({ refkey, type }: ReferenceProps) {
   const symbolRef = computed(() => reference()[1]);
 
   emitSymbol(symbolRef);
+
   return <>{reference()[0]}</>;
 }

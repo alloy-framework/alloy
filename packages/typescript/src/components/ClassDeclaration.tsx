@@ -3,6 +3,7 @@ import {
   Children,
   MemberDeclaration,
   Name,
+  onCleanup,
   OutputSymbolFlags,
   Prose,
   Refkey,
@@ -75,6 +76,10 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
         OutputSymbolFlags.StaticMemberContainer),
     tsFlags: TSSymbolFlags.PrivateMemberContainer,
     metadata: props.metadata,
+  });
+
+  onCleanup(() => {
+    sym.delete();
   });
 
   return (

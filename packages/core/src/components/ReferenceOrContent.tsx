@@ -1,8 +1,8 @@
 import { computed } from "@vue/reactivity";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
-import type { Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
+import type { Refkey } from "../symbols/refkey.js";
 
 export interface ReferenceOrContentProps {
   readonly refkey: Refkey;

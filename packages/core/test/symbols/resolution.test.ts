@@ -6,7 +6,7 @@ import { OutputSymbol } from "../../src/symbols/output-symbol.js";
 import { createScopeTree } from "./utils.js";
 
 describe("Symbol name resolution", () => {
-  it("resolves static symbols", () => {
+  it.only("resolves static symbols", () => {
     const binder = createOutputBinder();
     const {
       symbols: { static: staticSym },

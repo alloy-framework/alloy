@@ -2,6 +2,7 @@ import { Children, DeclarationProps, Name, Refkey } from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { Declaration } from "../Declaration.jsx";
 
+/** Props for {@link VarDeclaration} component */
 export interface VarDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
   /** Variable name */

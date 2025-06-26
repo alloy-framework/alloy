@@ -21,14 +21,6 @@ export const TypeParameters = taggedComponent(
   function TypeParameters(props: TypeParametersProps) {
     const typeParameters = normalizeParameters(props.parameters);
 
-    // const typeParameters = normalizeAndDeclareParameters(props.parameters);
-
-    // onCleanup(() => {
-    //   for (const param of typeParameters) {
-    //     param.symbol.delete();
-    //   }
-    // });
-
     return (
       <>
         {"<"}
@@ -37,7 +29,6 @@ export const TypeParameters = taggedComponent(
             <For each={typeParameters} comma line>
               {(param) => <TypeParameter {...param} />}
             </For>
-            <ifBreak>,</ifBreak>
           </Indent>
         </group>
         {">"}

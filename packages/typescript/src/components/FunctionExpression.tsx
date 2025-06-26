@@ -2,7 +2,6 @@ import {
   childrenArray,
   findKeyedChild,
   findUnkeyedChildren,
-  Scope,
   type Children,
 } from "@alloy-js/core";
 import { getCallSignatureProps } from "../utils.js";
@@ -14,6 +13,7 @@ import {
   getReturnType,
   TypeParameters,
 } from "./FunctionBase.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface FunctionExpressionProps extends CallSignatureProps {
   async?: boolean;
@@ -72,10 +72,10 @@ export function FunctionExpression(props: FunctionExpressionProps) {
       <Declaration {...props} nameKind="function">
         {asyncKwd}
         {"function "}
-        <Scope kind="function">
+        <LexicalScope>
           <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
           {sBody}
-        </Scope>
+        </LexicalScope>
       </Declaration>
     </>
   );

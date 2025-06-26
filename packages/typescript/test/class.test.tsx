@@ -102,7 +102,7 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve member symbols/);
+    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
   });
 
   it("cannot be referenced outside the class when protected", () => {
@@ -120,7 +120,7 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve member symbols/);
+    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
   });
 
   it("cannot be referenced outside the class when private", () => {
@@ -138,7 +138,7 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve private member symbols/);
+    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
   });
 
   it("works with invalid identifier names", () => {

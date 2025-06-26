@@ -1,10 +1,10 @@
 import {
   Block,
   BlockProps,
-  Scope,
   ScopePropsWithInfo,
   ScopePropsWithValue,
 } from "@alloy-js/core";
+import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface BlockScopePropsWithScopeValue
   extends ScopePropsWithValue,
@@ -24,8 +24,8 @@ export type BlockScopeProps =
  */
 export function BlockScope(props: BlockScopeProps) {
   return (
-    <Scope {...props}>
+    <LexicalScope {...props}>
       <Block {...props}>{props.children}</Block>
-    </Scope>
+    </LexicalScope>
   );
 }

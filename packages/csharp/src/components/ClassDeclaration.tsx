@@ -40,7 +40,18 @@ export interface ClassDeclarationProps
   doc?: core.Children;
   refkey?: core.Refkey;
 
-  /** Type parameters */
+  /**
+   * Type parameters for the class
+   *
+   * @example
+   * ```tsx
+   * <ClassDeclaration name="MyClass" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass<T>
+   * ```
+   */
   typeParameters?: (string | TypeParameterProps)[];
 
   /** Base class that this class extends */

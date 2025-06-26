@@ -51,7 +51,7 @@ it("works with string keys", () => {
     );
   });
 
-  const tree = render(
+  const _tree = render(
     <Output>
       <SourceFile path="test.ts" filetype="ts">
         <MyFunctionComponent name="foo" />
@@ -59,7 +59,7 @@ it("works with string keys", () => {
     </Output>,
   );
 
-  console.log(tree.contents[0].contents);
+  // console.log(tree.contents[0].contents);
 });
 
 it("works with symbols", () => {
@@ -79,7 +79,6 @@ it("works with symbols", () => {
   }
 
   function MyFunctionComponent(props: FunctionComponentProps) {
-    const binder = useBinder();
     const sym = new OutputSymbol(props.name, {
       refkeys: refkey(),
     });
@@ -108,7 +107,7 @@ it("works with symbols", () => {
     );
   });
 
-  const tree = render(
+  const _tree = render(
     <Output>
       <SourceFile path="test.ts" filetype="ts">
         <Scope name="foo">
@@ -118,7 +117,7 @@ it("works with symbols", () => {
     </Output>,
   );
 
-  console.log(tree.contents[0].contents);
+  // console.log(tree.contents[0].contents);
 });
 
 it("can rename", () => {
@@ -161,7 +160,7 @@ it("can rename", () => {
     return binder!.resolveFQN("foo.bar") as Ref<OutputSymbol | undefined>;
   }, "bazxxx");
 
-  const tree = render(
+  const _tree = render(
     <Output>
       <SourceFile path="test.ts" filetype="ts">
         <Scope name="foo">
@@ -171,5 +170,5 @@ it("can rename", () => {
     </Output>,
   );
 
-  console.log(tree.contents[0].contents);
+  // console.log(tree.contents[0].contents);
 });

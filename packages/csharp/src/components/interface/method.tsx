@@ -88,11 +88,11 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {props.returns ?? "void"}{" "}
+        {props.returns ?? "void"} {name}
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}
-        {name}({params})
+        ({params})
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}

@@ -211,7 +211,7 @@ describe("with type parameters", () => {
       {
         public interface TestInterface
         {
-          public T <T, U>Test(T paramA);
+          public T Test<T, U>(T paramA);
         }
       }
     `);
@@ -238,7 +238,7 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       public interface TestInterface
       {
-        public void <T, U>Test()
+        public void Test<T, U>()
           where T : IFoo
           where U : IBar
         {

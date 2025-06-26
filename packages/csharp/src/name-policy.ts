@@ -5,6 +5,7 @@ import * as changecase from "change-case";
 export type CSharpElements =
   | "class"
   | "constant"
+  | "variable"
   | "enum"
   | "enum-member"
   | "function"

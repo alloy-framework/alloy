@@ -1,5 +1,13 @@
-import * as core from "@alloy-js/core";
-import { code } from "@alloy-js/core";
+import {
+  Children,
+  code,
+  Declaration,
+  For,
+  Indent,
+  OutputSymbol,
+  refkey,
+  Refkey,
+} from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { useCSharpScope } from "../symbols/scopes.js";
@@ -7,13 +15,13 @@ import { Name } from "./Name.js";
 
 export interface ParameterProps {
   name: string;
-  type: core.Children;
+  type: Children;
   /** If the parmaeter is optional(without default value) */
   optional?: boolean;
   /** Default value for the parameter */
-  default?: core.Children;
-  refkey?: core.Refkey;
-  symbol?: core.OutputSymbol;
+  default?: Children;
+  refkey?: Refkey;
+  symbol?: OutputSymbol;
 }
 
 /** Define a parameter to be used in class or interface method. */
@@ -31,15 +39,15 @@ export function Parameter(props: ParameterProps) {
 
   const memberSymbol = new CSharpOutputSymbol(name, {
     scope,
-    refkeys: props.refkey ?? core.refkey(props.name),
+    refkeys: props.refkey ?? refkey(props.name),
   });
 
   return (
-    <core.Declaration symbol={memberSymbol}>
+    <Declaration symbol={memberSymbol}>
       {props.type}
       {props.optional ? "?" : ""} <Name />
       {props.default ? code` = ${props.default}` : ""}
-    </core.Declaration>
+    </Declaration>
   );
 }
 
@@ -51,8 +59,13 @@ export interface ParametersProps {
 // a collection of parameters
 export function Parameters(props: ParametersProps) {
   return (
-    <core.For each={props.parameters} joiner={", "}>
-      {(param) => <Parameter {...param} />}
-    </core.For>
+    <group>
+      <Indent softline>
+        <For each={props.parameters} joiner={", "}>
+          {(param) => <Parameter {...param} />}
+        </For>
+      </Indent>
+      <softline />
+    </group>
   );
 }

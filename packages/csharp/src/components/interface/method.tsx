@@ -17,6 +17,9 @@ import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
 import { ParameterProps, Parameters } from "../Parameters.jsx";
 import { DocWhen } from "../doc/comment.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfaceMethodModifiers {
@@ -33,6 +36,19 @@ export interface InterfaceMethodProps
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;
+  /**
+   * Type parameters for the method
+   *
+   * @example
+   * ```tsx
+   * <InterfaceMethod name="Test" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public void Test<T>()
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
   returns?: Children;
 
   /** Doc comment */
@@ -72,7 +88,14 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {props.returns ?? "void"} {name}({params})
+        {props.returns ?? "void"}{" "}
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        {name}({params})
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
         {props.children ?
           <Block newline>{props.children}</Block>
         : ";"}

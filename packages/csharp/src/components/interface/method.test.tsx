@@ -2,7 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { ClassDeclaration, ClassMember } from "../ClassDeclaration.jsx";
+import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
@@ -188,22 +188,33 @@ describe("with type parameters", () => {
     ];
 
     expect(
-      <ClassDeclaration public name="TestClass" typeParameters={typeParameters}>
-        <ClassMember public name="memberOne" type={typeParameters[0].refkey} />
-        ;<hbr />
-        <ClassMember private name="memberTwo" type={typeParameters[1].refkey} />
-        ;
-      </ClassDeclaration>,
+      <TestNamespace>
+        <SourceFile path="TestFile.cs">
+          <InterfaceDeclaration public name="TestInterface">
+            <InterfaceMethod
+              name="Test"
+              public
+              typeParameters={typeParameters}
+              parameters={[
+                {
+                  name: "paramA",
+                  type: typeParameters[0].refkey,
+                },
+              ]}
+              returns={typeParameters[0].refkey}
+            />
+          </InterfaceDeclaration>
+        </SourceFile>
+      </TestNamespace>,
     ).toRenderTo(`
-    namespace TestCode
-    {
-        public class TestClass<T, U>
+      namespace TestCode
+      {
+        public interface TestInterface
         {
-            public T MemberOne;
-            private U memberTwo;
+          public T <T, U>Test(T paramA);
         }
-    }
-  `);
+      }
+    `);
   });
 
   it("defines with constraints", () => {
@@ -219,18 +230,20 @@ describe("with type parameters", () => {
     ];
 
     expect(
-      <ClassDeclaration public name="TestClass" typeParameters={typeParameters}>
-        // Body
-      </ClassDeclaration>,
+      <Wrapper>
+        <InterfaceMethod public name="Test" typeParameters={typeParameters}>
+          // Body
+        </InterfaceMethod>
+      </Wrapper>,
     ).toRenderTo(`
-      namespace TestCode
+      public interface TestInterface
       {
-          public class TestClass<T, U>
-              where T : IFoo
-              where U : IBar
-          {
-              // Body
-          }
+        public void <T, U>Test()
+          where T : IFoo
+          where U : IBar
+        {
+          // Body
+        }
       }
     `);
   });

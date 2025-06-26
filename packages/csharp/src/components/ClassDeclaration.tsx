@@ -89,8 +89,6 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     owner: thisClassSymbol,
   });
 
-  let typeParams: core.Children;
-
   const bases = [
     ...(props.baseType ? [props.baseType] : []),
     ...(props.interfaceTypes || []),

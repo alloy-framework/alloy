@@ -103,11 +103,11 @@ export function ClassMethod(props: ClassMethodProps) {
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {returns}{" "}
+        {returns} {name}
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}
-        {name}({params})
+        ({params})
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}

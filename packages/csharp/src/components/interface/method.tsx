@@ -15,8 +15,11 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
-import { ParameterProps, Parameters } from "../Parameters.jsx";
 import { DocWhen } from "../doc/comment.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfaceMethodModifiers {
@@ -33,6 +36,19 @@ export interface InterfaceMethodProps
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;
+  /**
+   * Type parameters for the method
+   *
+   * @example
+   * ```tsx
+   * <InterfaceMethod name="Test" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public void Test<T>()
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
   returns?: Children;
 
   /** Doc comment */
@@ -59,9 +75,6 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
     owner: methodSymbol,
   });
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getMethodModifier(props),
@@ -72,7 +85,14 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
         {modifiers}
-        {props.returns ?? "void"} {name}({params})
+        {props.returns ?? "void"} {name}
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        <Parameters parameters={props.parameters} />
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
         {props.children ?
           <Block newline>{props.children}</Block>
         : ";"}

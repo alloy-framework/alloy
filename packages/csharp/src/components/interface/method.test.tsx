@@ -1,6 +1,9 @@
+import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { SourceFile } from "../SourceFile.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 
@@ -169,4 +172,107 @@ it("specify doc comment", () => {
       void Method();
     }
   `);
+});
+
+describe("with type parameters", () => {
+  it("reference parameters", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        refkey: refkey(),
+      },
+      {
+        name: "U",
+        refkey: refkey(),
+      },
+    ];
+
+    expect(
+      <TestNamespace>
+        <SourceFile path="TestFile.cs">
+          <InterfaceDeclaration public name="TestInterface">
+            <InterfaceMethod
+              name="Test"
+              public
+              typeParameters={typeParameters}
+              parameters={[
+                {
+                  name: "paramA",
+                  type: typeParameters[0].refkey,
+                },
+              ]}
+              returns={typeParameters[0].refkey}
+            />
+          </InterfaceDeclaration>
+        </SourceFile>
+      </TestNamespace>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+        public interface TestInterface
+        {
+          public T Test<T, U>(T paramA);
+        }
+      }
+    `);
+  });
+
+  it("defines with constraints", () => {
+    const typeParameters: TypeParameterProps[] = [
+      {
+        name: "T",
+        constraints: "IFoo",
+      },
+      {
+        name: "U",
+        constraints: "IBar",
+      },
+    ];
+
+    expect(
+      <Wrapper>
+        <InterfaceMethod public name="Test" typeParameters={typeParameters}>
+          // Body
+        </InterfaceMethod>
+      </Wrapper>,
+    ).toRenderTo(`
+      public interface TestInterface
+      {
+        public void Test<T, U>()
+          where T : IFoo
+          where U : IBar
+        {
+          // Body
+        }
+      }
+    `);
+  });
+});
+
+describe("formatting", () => {
+  it("Split parameters before type parameters", () => {
+    expect(
+      <Wrapper>
+        <InterfaceMethod
+          public
+          name="Handle"
+          parameters={[
+            {
+              name: "message",
+              type: "Some.Quite.Long.Type.That.Will.Split",
+            },
+          ]}
+          typeParameters={["T"]}
+          returns="Some.Quite.Long.Type.That.Will.Split"
+        />
+      </Wrapper>,
+    ).toRenderTo(`
+      public interface TestInterface
+      {
+        public Some.Quite.Long.Type.That.Will.Split Handle<T>(
+          Some.Quite.Long.Type.That.Will.Split message
+        );
+      }
+    `);
+  });
 });

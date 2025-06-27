@@ -9,9 +9,12 @@ import {
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { Name } from "./Name.jsx";
-import { ParameterProps, Parameters } from "./Parameters.jsx";
 import { DocWhen } from "./doc/comment.jsx";
+import { Name } from "./Name.jsx";
+import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
+import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
+import { TypeParameters } from "./type-parameters/type-parameters.jsx";
 
 export interface ClassModifiers {
   readonly abstract?: boolean;
@@ -36,7 +39,20 @@ export interface ClassDeclarationProps
   /** Doc comment */
   doc?: core.Children;
   refkey?: core.Refkey;
-  typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Type parameters for the class
+   *
+   * @example
+   * ```tsx
+   * <ClassDeclaration name="MyClass" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass<T>
+   * ```
+   */
+  typeParameters?: (string | TypeParameterProps)[];
 
   /** Base class that this class extends */
   baseType?: core.Children;
@@ -84,31 +100,6 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     owner: thisClassSymbol,
   });
 
-  let typeParams: core.Children;
-  if (props.typeParameters) {
-    const typeParamNames = new Array<string>();
-    for (const entry of Object.entries(props.typeParameters)) {
-      typeParamNames.push(
-        useCSharpNamePolicy().getName(entry[0], "type-parameter"),
-      );
-      // create a symbol for each type param so its
-      // refkey resolves to the type param's name
-      new CSharpOutputSymbol(entry[0], {
-        scope: thisClassScope,
-        refkeys: entry[1],
-      });
-    }
-    typeParams = (
-      <group>
-        {"<"}
-        <core.For each={typeParamNames} comma line>
-          {(name) => name}
-        </core.For>
-        {">"}
-      </group>
-    );
-  }
-
   const bases = [
     ...(props.baseType ? [props.baseType] : []),
     ...(props.interfaceTypes || []),
@@ -123,8 +114,13 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     <core.Declaration symbol={thisClassSymbol}>
       <DocWhen doc={props.doc} />
       {modifiers}class <Name />
-      {typeParams}
+      {props.typeParameters && (
+        <TypeParameters parameters={props.typeParameters} />
+      )}
       {base}
+      {props.typeParameters && (
+        <TypeParameterConstraints parameters={props.typeParameters} />
+      )}
       {!props.children && ";"}
       {props.children && (
         <core.Block newline>
@@ -165,15 +161,14 @@ export function ClassConstructor(props: ClassConstructorProps) {
 
   const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-
   // note that scope wraps the ctor decl so that the params get the correct scope
   return (
     <core.Declaration symbol={ctorSymbol}>
       <core.Scope value={ctorDeclScope}>
         {modifiers}
-        <Name />({params})<core.Block newline>{props.children}</core.Block>
+        <Name />
+        <Parameters parameters={props.parameters} />
+        <core.Block newline>{props.children}</core.Block>
       </core.Scope>
     </core.Declaration>
   );

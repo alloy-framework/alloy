@@ -58,6 +58,7 @@ export function SourceFile(props: SourceFileProps) {
       filetype="cs"
       reference={Reference}
       tabWidth={4}
+      printWidth={120}
     >
       <SourceFileContext.Provider value={sourceFileCtx}>
         <core.Scope name={props.path} kind="source-file">

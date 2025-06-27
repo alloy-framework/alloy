@@ -8,7 +8,7 @@ export function TestNamespace(props: {
 }): core.Children {
   return (
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name="TestCode">{props.children}</csharp.Namespace>
+      <csharp.SourceFile path="Test.cs">{props.children}</csharp.SourceFile>
     </core.Output>
   );
 }

@@ -1,65 +1,127 @@
-import * as core from "@alloy-js/core";
-import { useNamespace } from "../components/Namespace.jsx";
-import { useSourceFile } from "../components/SourceFile.jsx";
-import { CSharpOutputSymbol } from "./csharp-output-symbol.js";
-import { CSharpOutputScope } from "./scopes.js";
-
-// when resolving references across source files, the last element
-// in pathDown will be the containing source file. we only need this
-// here so we can find and remove this scope as it's not useful
-// when building the reference
-interface SourceFileScope extends core.OutputScope {
-  kind: "source-file";
-}
-
-type ReferenceScope = CSharpOutputScope | SourceFileScope;
+import { memo, Refkey, resolve } from "@alloy-js/core";
+import { CSharpScope } from "../scopes/csharp.js";
+import {
+  CSharpNamespaceScope,
+  useNamespace,
+} from "../scopes/namespace-scope.js";
+import { useSourceFileScope } from "../scopes/source-file-scope.js";
+import { CSharpSymbol } from "./csharp.js";
+import { CSharpNamespaceSymbol } from "./namespace.js";
 
 // converts a refkey to its fully qualified name
 // e.g. if refkey is for bar in enum type foo, and
 // foo is in the same namespace as the refkey, then
 // the result would be foo.bar.
-export function ref(refkey: core.Refkey): () => string {
-  const targetNamespaceCtx = useNamespace();
-  const resolveResult = core.resolve<ReferenceScope, CSharpOutputSymbol>(
-    refkey as core.Refkey,
-  );
+export function ref(refkey: Refkey): () => string {
+  const refNamespace = useNamespace();
+  const refSfScope = useSourceFileScope()!;
+  const resolveResult = resolve<CSharpScope, CSharpSymbol>(refkey as Refkey);
 
-  return core.memo(() => {
+  return memo(() => {
     if (resolveResult.value === undefined) {
       return "<Unresolved Symbol>";
     }
 
-    // targetDeclaration is the symbol with the refkey
-    // pathDown is an array of scopes to that symbol and can be empty.
-    // the entries are top-down, so namespace, source-file, member
-    //  - referencing a type within the same namespace will have an empty path
-    //  - referencing a member (e.g. enum value) within the same namespace will
-    //    have a single path entry that contains the owning type
-    //  - referencing a type within the same namespace but in a different source
-    //    file will have at least a source-file entry
-    //  - referencing a symbol outside the current namespace will have at least
-    //    two entries, namespace, source-file
-    const { symbol: targetDeclaration, pathDown } = resolveResult.value;
+    const {
+      symbol,
+      memberPathUp,
+      commonScope,
+      commonMemberContainer,
+      lexicalDeclaration,
+    } = resolveResult.value;
+    let { pathDown, memberPathDown = [], pathUp } = resolveResult.value;
+    if (commonMemberContainer) {
+      // If we have a common member, the reference is in a member scope, and the target
+      // is a (possibly nested) member of our current member scope.
+      const firstMember = memberPathDown[0];
+      const parts = [];
 
-    const sourceNamespace = pathDown.find((v) => {
-      return v.kind === "namespace";
-    });
-    if (sourceNamespace && sourceNamespace.name !== targetNamespaceCtx!.name) {
-      // the source symbol is in a different namespace that the target refkey.
-      // add the applicable using statement to the target's source file.
-      const targetSrc = useSourceFile();
-      targetSrc!.addUsing(sourceNamespace.name);
+      // When we're in member scope accessing a proper member, prefer to prefix
+      // with the container name or `this` to avoid name conflicts with
+      // parameters and such.
+      if (
+        firstMember.symbolKind === "method" ||
+        firstMember.symbolKind === "property" ||
+        firstMember.symbolKind === "event" ||
+        firstMember.symbolKind === "field"
+      ) {
+        if (firstMember.isStatic) {
+          parts.push(commonMemberContainer.name);
+        } else {
+          parts.push("this");
+        }
+      }
+
+      for (let i = 0; i < memberPathDown.length; i++) {
+        const member = memberPathDown[i];
+        parts.push(member.name);
+      }
+
+      return parts.join(".");
     }
 
-    // we only need to build the fully-qualified name for members
-    // TODO: possibly a subset of members
-    const syms = (pathDown as ReferenceScope[])
-      .filter((v) => {
-        return v.kind === "member";
-      })
-      .map((s) => s.owner!);
-    syms.push(targetDeclaration);
+    // at this point pathDown doesn't have any namespace scopes as we've
+    // walked up through the members, and pathDown has the entire scope chain
+    // from the reference to the global scope. So here we need to map member paths
+    // from the target symbol to corresponding namespace scopes of the reference.
+    const refNsLocations = pathUp.map((scope) => {
+      if (scope instanceof CSharpNamespaceScope) {
+        return scope.namespaceSymbol;
+      }
+      return undefined;
+    });
 
-    return syms.map((sym) => sym.name).join(".");
+    for (let i = memberPathDown!.length - 1; i >= 0; i--) {
+      const symbol = memberPathDown![i];
+      if (symbol instanceof CSharpNamespaceSymbol) {
+        const nsLocation = refNsLocations.indexOf(symbol);
+        if (nsLocation > -1) {
+          // the path down is the same as the path up at this point, so:
+          pathDown = [];
+          pathUp = [];
+          // remove everything up to and including this index in member path down
+          memberPathDown = memberPathDown?.slice(i + 1);
+        }
+      }
+    }
+
+    // check if we need to add a using.
+    let targetNamespace: CSharpNamespaceScope | undefined = undefined;
+    for (let i = pathUp.length - 1; i >= 0; i--) {
+      const scope = pathUp[i];
+      if (scope instanceof CSharpNamespaceScope) {
+        targetNamespace = scope;
+        break;
+      }
+    }
+    if (targetNamespace && !targetNamespace.namespaceSymbol.isGlobal) {
+      if (pathUp.indexOf(targetNamespace) === -1) {
+        refSfScope.addUsing(targetNamespace.enclosingNamespace!);
+      }
+    }
+
+    // now we need to build up a partially qualified reference
+    const idParts: string[] = [];
+    let startScopeIndex = pathDown.indexOf(targetNamespace!) + 1;
+
+    while (startScopeIndex < pathDown.length) {
+      const scope = pathDown[startScopeIndex];
+      if (scope instanceof CSharpNamespaceScope) {
+        idParts.push(scope.enclosingNamespace!.name);
+        startScopeIndex++;
+      } else {
+        break;
+      }
+    }
+
+    if (memberPathDown && memberPathDown.length > 0) {
+      for (const symbol of memberPathDown) {
+        idParts.push(symbol.name);
+      }
+    } else {
+      idParts.push(symbol.name);
+    }
+
+    return idParts.join(".");
   });
 }

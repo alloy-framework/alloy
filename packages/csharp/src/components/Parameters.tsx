@@ -1,7 +1,7 @@
 import * as core from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../symbols/scopes.js";
+import { useMethodScope } from "../scopes/method-scope.js";
+import { CSharpSymbol } from "../symbols/csharp.js";
 import { Name } from "./Name.js";
 
 export interface ParameterProps {
@@ -14,19 +14,9 @@ export interface ParameterProps {
 // a constructor/method parameter
 export function Parameter(props: ParameterProps) {
   const name = useCSharpNamePolicy().getName(props.name, "parameter");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "constructor-decl" && scope.name !== "method-decl")
-  ) {
-    throw new Error(
-      "can't define a parameter outside of a constructor-decl or method-decl scope",
-    );
-  }
-
-  const memberSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? core.refkey(props.name),
+  const scope = useMethodScope();
+  const memberSymbol = new CSharpSymbol(name, scope.parameters, {
+    refkeys: props.refkey,
   });
 
   return (

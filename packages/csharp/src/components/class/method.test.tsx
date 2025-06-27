@@ -1,7 +1,12 @@
+import { TestNamespace, toSourceText } from "#test/utils.js";
+import { List, toRef, useScope } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
+import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { ClassDeclaration, ClassMethod } from "../src/index.js";
-import { TestNamespace } from "./utils.jsx";
+import { ClassDeclaration, ClassMethod } from "../../index.js";
+import { CSharpScope } from "../../scopes/csharp.js";
+import { CSharpLexicalScope } from "../../scopes/lexical-scope.js";
+import { CSharpSymbol } from "../../symbols/csharp.js";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
@@ -144,4 +149,60 @@ it("specify doc comment", () => {
       void Method() {}
     }
   `);
+});
+
+it("declares class with some methods", () => {
+  const res = toSourceText(
+    <ClassDeclaration public name="TestClass">
+      <List>
+        <ClassMethod public name="MethodOne" />
+        <ClassMethod private virtual name="MethodTwo" />
+      </List>
+    </ClassDeclaration>,
+  );
+
+  expect(res).toBe(d`
+    namespace TestCode;
+
+    public class TestClass
+    {
+        public void MethodOne() {}
+        private virtual void MethodTwo() {}
+    }
+  `);
+});
+
+it("works with locals", () => {
+  const knownLocals = new Map<CSharpScope, Map<string, CSharpSymbol>>();
+
+  function local(name: string) {
+    const currentScope = useScope() as CSharpLexicalScope;
+    // validate we have this scope kind
+    if (knownLocals.has(currentScope)) {
+      const scopeLocals = knownLocals.get(currentScope)!;
+      if (scopeLocals.has(name)) {
+        return toRef(scopeLocals.get(name)!, "name");
+      }
+    } else {
+      knownLocals.set(currentScope, new Map());
+    }
+    const knownNames = knownLocals.get(currentScope)!;
+    const symbol = new CSharpSymbol(name, currentScope.localVariables);
+    knownNames.set(name, symbol);
+    return toRef(symbol, "name");
+  }
+
+  const res = toSourceText(
+    <ClassDeclaration public name="TestClass">
+      <List>
+        <ClassMethod public name="MethodOne">
+          var {local("foo")} = 1;
+          <hbr />
+          Console.WriteLine({local("foo")});
+        </ClassMethod>
+      </List>
+    </ClassDeclaration>,
+  );
+
+  console.log(res);
 });

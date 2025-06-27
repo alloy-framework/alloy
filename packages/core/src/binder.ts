@@ -217,24 +217,13 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   ): ResolutionResult<TScope, TSymbol> {
     const { memberPath: targetMemberPath, scopeChain: targetChain } =
       scopeAndMemberChain<TScope, TSymbol>(targetDeclarationBase);
-    const currentChain = scopeChain(currentScope);
-    const currentMemberPath = memberPath(currentMemberOwner);
-
-    let diffStart = 0;
-    while (
-      targetChain[diffStart] &&
-      currentChain[diffStart] &&
-      targetChain[diffStart] === currentChain[diffStart]
-    ) {
-      diffStart++;
-    }
-    const pathUp = currentChain.slice(diffStart);
-    const pathDown = targetChain.slice(diffStart);
-    const commonScope = targetChain[diffStart - 1] ?? undefined;
 
     let memberPathUp;
     let memberPathDown;
     let commonMemberContainer;
+    let diffStart = 0;
+    const currentChain = scopeChain(currentScope);
+    const currentMemberPath = memberPath(currentMemberOwner);
 
     if (!targetMemberPath) {
       memberPathDown = undefined;
@@ -246,7 +235,6 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       memberPathUp = undefined;
       commonMemberContainer = undefined;
     } else {
-      diffStart = 0;
       while (
         targetMemberPath[diffStart] &&
         currentMemberPath[diffStart] &&
@@ -258,6 +246,34 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       memberPathDown = targetMemberPath.slice(diffStart);
       commonMemberContainer = targetMemberPath[diffStart - 1] ?? undefined;
     }
+
+    if (commonMemberContainer) {
+      // no need to calculate scope differences here since we are accessing a member
+      // of our current member container.
+      return {
+        pathUp: [],
+        pathDown: [],
+        lexicalDeclaration: targetMemberPath![0].ownerSymbol! as TSymbol,
+        symbol: targetDeclarationBase,
+        commonScope: undefined,
+        memberPath: targetMemberPath,
+        commonMemberContainer,
+        memberPathUp,
+        memberPathDown,
+      };
+    }
+    diffStart = 0;
+
+    while (
+      targetChain[diffStart] &&
+      currentChain[diffStart] &&
+      targetChain[diffStart] === currentChain[diffStart]
+    ) {
+      diffStart++;
+    }
+    const pathUp = currentChain.slice(diffStart);
+    const pathDown = targetChain.slice(diffStart);
+    const commonScope = targetChain[diffStart - 1] ?? undefined;
 
     return {
       pathUp,

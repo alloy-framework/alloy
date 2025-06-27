@@ -1,11 +1,4 @@
-import {
-  Block,
-  Children,
-  MemberDeclaration,
-  refkey,
-  Refkey,
-  Scope,
-} from "@alloy-js/core";
+import { Block, Children, MemberDeclaration, Refkey } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -13,10 +6,11 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { MethodSymbol } from "../../symbols/method.js";
+import { useNamedTypeScope } from "../../symbols/named-type.js";
 import { ParameterProps, Parameters } from "../Parameters.jsx";
 import { DocWhen } from "../doc/comment.jsx";
+import { MethodScope } from "../method-scope.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfaceMethodModifiers {
@@ -42,21 +36,16 @@ export interface InterfaceMethodProps
 // a C# interface method
 export function InterfaceMethod(props: InterfaceMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
+  const ownerSymbol = useNamedTypeScope();
+
+  if (ownerSymbol.typeKind !== "interface") {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );
   }
 
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
+  const methodSymbol = new MethodSymbol(name, ownerSymbol.members, "method", {
+    refkeys: props.refkey,
   });
 
   const params =
@@ -69,14 +58,14 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={methodSymbol}>
-      <Scope value={methodScope}>
+      <MethodScope>
         <DocWhen doc={props.doc} />
         {modifiers}
         {props.returns ?? "void"} {name}({params})
         {props.children ?
           <Block newline>{props.children}</Block>
         : ";"}
-      </Scope>
+      </MethodScope>
     </MemberDeclaration>
   );
 }

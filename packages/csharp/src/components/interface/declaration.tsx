@@ -6,8 +6,8 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { CSharpSymbol } from "../../symbols/csharp.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 
@@ -26,7 +26,7 @@ export interface InterfaceDeclarationProps
 
   /** Doc comment */
   doc?: core.Children;
-  refkey?: core.Refkey;
+  refkey?: core.Refkey | core.Refkey[];
   typeParameters?: Record<string, core.Refkey>;
 }
 
@@ -53,16 +53,8 @@ export interface InterfaceDeclarationProps
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "interface");
 
-  const thisInterfaceSymbol = new CSharpOutputSymbol(name, {
+  const symbol = createNamedTypeSymbol(name, "interface", {
     refkeys: props.refkey,
-  });
-
-  // this creates a new scope for the interface definition.
-  // members will automatically "inherit" this scope so
-  // that refkeys to them will produce the fully-qualified
-  // name e.g. Foo.Bar.
-  const thisInterfaceScope = new CSharpMemberScope("interface-decl", {
-    owner: thisInterfaceSymbol,
   });
 
   let typeParams: core.Children;
@@ -74,8 +66,8 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
       );
       // create a symbol for each type param so its
       // refkey resolves to the type param's name
-      new CSharpOutputSymbol(entry[0], {
-        scope: thisInterfaceScope,
+
+      new CSharpSymbol(entry[0], symbol.typeParameters, {
         refkeys: entry[1],
       });
     }
@@ -95,13 +87,13 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     getInterfaceModifiers(props),
   ]);
   return (
-    <core.Declaration symbol={thisInterfaceSymbol}>
+    <core.Declaration symbol={symbol}>
       <DocWhen doc={props.doc} />
       {modifiers}interface <Name />
       {typeParams}
       {props.children ?
         <core.Block newline>
-          <core.Scope value={thisInterfaceScope}>{props.children}</core.Scope>
+          <core.MemberScope owner={symbol}>{props.children}</core.MemberScope>
         </core.Block>
       : ";"}
     </core.Declaration>

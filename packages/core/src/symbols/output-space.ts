@@ -34,7 +34,7 @@ export abstract class OutputSpace {
     return this.#symbolsByRefkey;
   }
 
-  #symbolNames: ReadonlySet<string>;
+  #symbolNames: ReadonlyMap<string, OutputSymbol>;
   get symbolNames() {
     return this.#symbolNames;
   }
@@ -46,7 +46,7 @@ export abstract class OutputSpace {
       nameConflictResolver: binder?.nameConflictResolver,
     });
     this.#symbolsByRefkey = this.#symbols.createIndex((s) => s.refkeys);
-    this.#symbolNames = this.#symbols.createDerivedSet((s) => {
+    this.#symbolNames = this.#symbols.createIndex((s) => {
       return s.name;
     });
   }

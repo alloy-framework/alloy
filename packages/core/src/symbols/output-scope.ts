@@ -7,18 +7,40 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
+import { inspect } from "util";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
+import { untrack } from "../reactivity.js";
 import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
 import { OutputScopeFlags } from "./flags.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
+import { OutputSymbol } from "./output-symbol.js";
 
 let scopeCount = 0;
 
 export interface OutputScopeOptions {
+  /**
+   * Flags for this scope.
+   */
   flags?: OutputScopeFlags;
+
+  /**
+   * Arbitrary metadata that is associated with this scope.
+   */
   metadata?: Record<string, unknown>;
+
+  /**
+   * The binder instance this scope belongs to. If not provided, it will
+   * attempt to find the current binder from context.
+   */
   binder?: Binder;
+
+  /**
+   * The owner symbol of this scope. When provided, this scope becomes a member
+   * scope, which exposes the symbols on its owner symbol instead of having its
+   * own declaration spaces.
+   */
+  ownerSymbol?: OutputSymbol;
 }
 
 /**
@@ -143,6 +165,7 @@ export abstract class OutputScope {
     this.#binder = options.binder ?? useBinder();
     this.#children = shallowReactive(new Set());
     this.#parent = parentScope;
+    this.#ownerSymbol = options.ownerSymbol;
     if (this.#parent) {
       this.#parent.children.add(this);
     }
@@ -164,73 +187,34 @@ export abstract class OutputScope {
     });
   }
 
-  /*
-  copySymbolsTo(targetScope: OutputScope) {
-    trace(
-      TracePhase.scope.copySymbols,
-      () =>
-        `Copying symbols from ${formatScopeName(this)} to ${formatScopeName(targetScope)}`,
-    );
-    for (const space of this.spaces) {
-      const targetSpace = targetScope.spaceFor(space.key);
-      if (!targetSpace) {
-        throw new Error(`Target scope does not have space ${space.key}`);
-      }
-
-      console.log("Copying space key " + space.key);
-      space.copyTo(targetSpace);
-    }
-  }
-
-  abstract copy(): OutputScope;
-
-  copyTo(parentScope: OutputScope): OutputScope {
-    const copy = this.copy();
-    copy.parent = parentScope;
-    return copy;
-  }
-  */
-  /**
-   * Copies this symbol to the provided copy symbol. This method only copies
-   * child scopes, symbols in declaration spaces, name, and flags. Subclasses
-   * should copy any additional fields that are needed.
-   */
-  /*
-  protected initializeCopy(copy: OutputScope) {
-    watch(
-      () => this.name,
-      (newName) => (copy.name = newName),
-    );
-    watch(
-      () => this.flags,
-      (newFlags) => (copy.flags = newFlags),
-    );
-
-    // todo: this should be reactive, but cloning non-member scopes
-    // seems like a very rare thing.
-    for (const child of this.#children) {
-      copy.children.add(child.copyTo(copy));
-    }
-
-    this.copySymbolsTo(copy);
-  }
-  */
-  /**
-   * Get options for creating a new base OutputScope based on this scope's
-   * non-reactive values. Does not copy symbols or scopes, see initializeCopy
-   * for that functionality.
-   */
-  /*
-  protected getCopyOptions(): OutputScopeOptions {
-    return {
-      binder: this.#binder,
-      flags: this.#flags,
-      metadata: this.#metadata,
-    };
-  }
-    */
-
   get spaces() {
     return Object.values(this.#spaces);
+  }
+
+  #ownerSymbol: OutputSymbol | undefined;
+  get ownerSymbol() {
+    return this.#ownerSymbol;
+  }
+
+  /**
+   * Check if this is scope is a member scope. Member scopes have no member
+   * spaces of their own, but instead put members of their owner symbol in
+   * scope.
+   *
+   * @remarks
+   *
+   * By default, all members of the owner symbol are in scope, but
+   * subclasses may override the `inScopeMembers` method to customize this
+   * behavior.
+   */
+  isMemberScope(): this is OutputScope & {
+    inScopeMembers: Set<OutputSymbol>;
+    ownerSymbol: OutputSymbol;
+  } {
+    return !!this.#ownerSymbol;
+  }
+
+  [inspect.custom]() {
+    return untrack(() => `${this.constructor.name} ${this.name}[${this.id}]`);
   }
 }

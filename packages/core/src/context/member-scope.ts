@@ -17,5 +17,5 @@ export const MemberScopeContext: ComponentContext<MemberScopeContext> =
   createNamedContext("MemberScope");
 
 export function useMemberScope() {
-  return useContext(MemberScopeContext)!;
+  return useContext(MemberScopeContext);
 }

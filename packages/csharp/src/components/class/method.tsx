@@ -1,23 +1,18 @@
-import {
-  Block,
-  Children,
-  MemberDeclaration,
-  refkey,
-  Refkey,
-  Scope,
-} from "@alloy-js/core";
+import { Block, Children, MemberDeclaration, Refkey } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   getAsyncModifier,
   makeModifiers,
-} from "../modifiers.js";
-import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { ParameterProps, Parameters } from "./Parameters.jsx";
-import { DocWhen } from "./doc/comment.jsx";
+} from "../../modifiers.js";
+import { useCSharpNamePolicy } from "../../name-policy.js";
+import { nonAccessibilityFromProps } from "../../symbols/csharp.js";
+import { MethodSymbol } from "../../symbols/method.js";
+import { useNamedTypeScope } from "../../symbols/named-type.js";
+import { ParameterProps, Parameters } from "../Parameters.jsx";
+import { DocWhen } from "../doc/comment.jsx";
+import { MethodScope } from "../method-scope.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface ClassMethodModifiers {
@@ -56,19 +51,11 @@ export interface ClassMethodProps
 // a C# class method
 export function ClassMethod(props: ClassMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error("can't define a class method outside of a class scope");
-  }
+  const cls = useNamedTypeScope();
 
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
+  const methodSymbol = new MethodSymbol(name, cls.members, "method", {
+    refkeys: props.refkey,
+    ...nonAccessibilityFromProps(props),
   });
 
   const params =
@@ -83,12 +70,12 @@ export function ClassMethod(props: ClassMethodProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={methodSymbol}>
-      <Scope value={methodScope}>
+      <MethodScope>
         <DocWhen doc={props.doc} />
         {modifiers}
         {returns} {name}({params})
         {props.abstract ? ";" : <Block newline>{props.children}</Block>}
-      </Scope>
+      </MethodScope>
     </MemberDeclaration>
   );
 }

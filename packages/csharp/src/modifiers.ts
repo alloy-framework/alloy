@@ -10,6 +10,20 @@ export interface AccessModifiers {
   readonly file?: boolean;
 }
 
+export interface NonAccessModifiers {
+  readonly override?: boolean;
+  readonly abstract?: boolean;
+  readonly virtual?: boolean;
+  readonly static?: boolean;
+  readonly sealed?: boolean;
+  readonly extern?: boolean;
+  readonly readOnly?: boolean;
+}
+
+export interface DeclarationModifiers
+  extends AccessModifiers,
+    NonAccessModifiers {}
+
 export const getAccessModifier = makeModifiers<AccessModifiers>([
   "public",
   "protected",

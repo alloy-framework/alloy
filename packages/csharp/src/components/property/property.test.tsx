@@ -46,6 +46,7 @@ describe("modifiers", () => {
       "abstract",
       "extern",
       "readonly",
+      "required",
     ] as const)("%s", (methodModifier) => {
       expect(
         <Wrapper>

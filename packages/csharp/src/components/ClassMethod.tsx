@@ -16,6 +16,7 @@ import {
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
+import { AttributeList } from "./attributes/attributes.jsx";
 import { DocWhen } from "./doc/comment.jsx";
 import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
 import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
@@ -68,6 +69,24 @@ export interface ClassMethodProps
    * ```
    */
   typeParameters?: (TypeParameterProps | string)[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <ClassMethod name="MyMethod" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * public void MyMethod() { }
+   * ```
+   */
+  attributes?: Children[];
 }
 
 // a C# class method
@@ -100,6 +119,7 @@ export function ClassMethod(props: ClassMethodProps) {
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} />
         {modifiers}
         {returns} {name}
         {props.typeParameters && (

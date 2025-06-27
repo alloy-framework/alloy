@@ -8,6 +8,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
@@ -44,6 +45,24 @@ export interface InterfaceDeclarationProps
    * ```
    */
   typeParameters?: (TypeParameterProps | string)[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <InterfaceDeclaration name="MyInterface" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * public interface MyInterface
+   * ```
+   */
+  attributes?: core.Children[];
 }
 
 /**
@@ -88,6 +107,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} />
       {modifiers}interface <Name />
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />

@@ -16,6 +16,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
@@ -53,6 +54,24 @@ export interface InterfacePropertyProps
    * ```
    */
   nullable?: boolean;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <InterfaceProperty name="MyProp" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * int MyProp { get; set; }
+   * ```
+   */
+  attributes?: Children[];
 }
 
 /**
@@ -92,6 +111,7 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
     <MemberDeclaration symbol={propertySymbol}>
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} />
         {modifiers}
         {props.type}
         {props.nullable && "?"} {name}{" "}

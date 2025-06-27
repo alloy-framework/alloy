@@ -29,6 +29,11 @@ export interface PropertyModifiers {
   readonly abstract?: boolean;
   readonly extern?: boolean;
   readonly readonly?: boolean;
+  /**
+   * Set required modifier on property
+   * https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/required
+   */
+  readonly required?: boolean;
 }
 
 const getModifiers = makeModifiers<PropertyModifiers>([
@@ -40,6 +45,7 @@ const getModifiers = makeModifiers<PropertyModifiers>([
   "abstract",
   "extern",
   "readonly",
+  "required",
 ]);
 
 /** Properties for {@link Property} component */

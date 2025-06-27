@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/typescript
 
+## 0.18.0
+
+### Bug Fixes
+
+- [#208](https://github.com/alloy-framework/alloy/pull/208) Fix FunctionParameters component adds an extra comma when no params and function name is long
+- [#176](https://github.com/alloy-framework/alloy/pull/176) Fix referencing object expression properties when naming policy is used
+
+
 ## 0.17.0
 
 ### Bug Fixes

@@ -9,7 +9,7 @@ export * from "./interface/method.js";
 export * from "./interface/property.js";
 export * from "./Name.js";
 export * from "./Namespace.js";
-export * from "./Parameters.js";
+export * from "./parameters/parameters.jsx";
 export * from "./ProjectDirectory.js";
 export * from "./property/property.jsx";
 export * from "./record/declaration.js";

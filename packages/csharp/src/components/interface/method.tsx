@@ -15,8 +15,8 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
-import { ParameterProps, Parameters } from "../Parameters.jsx";
 import { DocWhen } from "../doc/comment.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { TypeParameters } from "../type-parameters/type-parameters.jsx";
@@ -75,9 +75,6 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
     owner: methodSymbol,
   });
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
-
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getMethodModifier(props),
@@ -92,7 +89,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}
-        ({params})
+        <Parameters parameters={props.parameters} />
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}

@@ -248,3 +248,31 @@ describe("with type parameters", () => {
     `);
   });
 });
+
+describe("formatting", () => {
+  it("Split parameters before type parameters", () => {
+    expect(
+      <Wrapper>
+        <InterfaceMethod
+          public
+          name="Handle"
+          parameters={[
+            {
+              name: "message",
+              type: "Some.Quite.Long.Type.That.Will.Split",
+            },
+          ]}
+          typeParameters={["T"]}
+          returns="Some.Quite.Long.Type.That.Will.Split"
+        />
+      </Wrapper>,
+    ).toRenderTo(`
+      public interface TestInterface
+      {
+        public Some.Quite.Long.Type.That.Will.Split Handle<T>(
+          Some.Quite.Long.Type.That.Will.Split message
+        );
+      }
+    `);
+  });
+});

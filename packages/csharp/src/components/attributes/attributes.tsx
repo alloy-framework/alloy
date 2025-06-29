@@ -11,8 +11,12 @@ export interface AttributeItem {
   args?: string[];
 }
 
+export type AttributesProp = Array<string | AttributeProps | Children>;
+
 export interface AttributeListProps {
-  attributes?: Children[];
+  /** If the attribute list should finish with a hard line if there is any attribute */
+  endline?: boolean;
+  attributes?: AttributesProp;
   children?: Children[];
 }
 
@@ -31,11 +35,21 @@ export function AttributeList(props: AttributeListProps) {
   return (
     <>
       <For each={attributes} line>
-        {(arg) => arg}
+        {(arg) => renderAttribute(arg)}
       </For>
-      {attributes && attributes.length > 0 && <hbr />}
+      {props.endline && attributes.length > 0 && <hbr />}
     </>
   );
+}
+
+function renderAttribute(attr: string | AttributeProps | Children): Children {
+  if (typeof attr === "string") {
+    return <Attribute name={attr} />;
+  } else if (typeof attr === "object" && attr && "name" in attr) {
+    return <Attribute {...attr} />;
+  } else {
+    return attr;
+  }
 }
 
 export interface AttributeProps {

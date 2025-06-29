@@ -16,7 +16,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
-import { AttributeList } from "../attributes/attributes.jsx";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
@@ -71,7 +71,7 @@ export interface InterfacePropertyProps
    * int MyProp { get; set; }
    * ```
    */
-  attributes?: Children[];
+  attributes?: AttributesProp;
 }
 
 /**
@@ -111,7 +111,7 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
     <MemberDeclaration symbol={propertySymbol}>
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         {props.type}
         {props.nullable && "?"} {name}{" "}

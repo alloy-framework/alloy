@@ -8,7 +8,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
-import { AttributeList } from "../attributes/attributes.jsx";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
@@ -62,7 +62,7 @@ export interface InterfaceDeclarationProps
    * public interface MyInterface
    * ```
    */
-  attributes?: core.Children[];
+  attributes?: AttributesProp;
 }
 
 /**
@@ -107,7 +107,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <core.Declaration symbol={thisInterfaceSymbol}>
       <DocWhen doc={props.doc} />
-      <AttributeList attributes={props.attributes} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}interface <Name />
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />

@@ -86,7 +86,7 @@ export interface ClassMethodProps
    * public void MyMethod() { }
    * ```
    */
-  attributes?: Children[];
+  attributes?: AttributesProp;
 }
 
 // a C# class method
@@ -119,7 +119,7 @@ export function ClassMethod(props: ClassMethodProps) {
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         {returns} {name}
         {props.typeParameters && (

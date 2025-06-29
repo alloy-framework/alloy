@@ -19,7 +19,7 @@ it("define attribute with multiple arg", () => {
   `);
 });
 
-it("define attribute list", () => {
+it("define attribute list with Attribute components", () => {
   expect(
     <AttributeList
       attributes={[<Attribute name="TestA" />, <Attribute name="TestB" />]}
@@ -27,7 +27,24 @@ it("define attribute list", () => {
   ).toRenderTo(`
       [TestA]
       [TestB]
-      
+  `);
+});
+
+it("define attribute list with attribute names", () => {
+  expect(<AttributeList attributes={["TestA", "TestB"]} />).toRenderTo(`
+      [TestA]
+      [TestB]
+  `);
+});
+
+it("define attribute list with attribute props", () => {
+  expect(
+    <AttributeList
+      attributes={[{ name: "TestA" }, { name: "TestB", args: [`"test"`] }]}
+    />,
+  ).toRenderTo(`
+      [TestA]
+      [TestB("test")]
   `);
 });
 
@@ -40,6 +57,5 @@ it("define attribute list with children", () => {
   ).toRenderTo(`
       [TestA]
       [TestB]
-
   `);
 });

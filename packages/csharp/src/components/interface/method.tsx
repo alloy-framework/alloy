@@ -71,7 +71,7 @@ export interface InterfaceMethodProps
    * void MyMethod();
    * ```
    */
-  attributes?: Children[];
+  attributes?: AttributesProp;
 }
 
 // a C# interface method
@@ -103,7 +103,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
     <MemberDeclaration symbol={methodSymbol}>
       <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         {props.returns ?? "void"} {name}
         {props.typeParameters && (

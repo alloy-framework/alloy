@@ -105,7 +105,7 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
    * int MyProp { get; set; }
    * ```
    */
-  attributes?: Children[];
+  attributes?: AttributesProp;
 }
 
 /**
@@ -154,7 +154,7 @@ export function Property(props: PropertyProps) {
     <MemberDeclaration symbol={propertySymbol}>
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         {props.type}
         {props.nullable && "?"} {name}{" "}

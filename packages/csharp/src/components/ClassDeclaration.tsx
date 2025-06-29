@@ -9,7 +9,7 @@ import {
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { AttributeList } from "./attributes/attributes.jsx";
+import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
 import { DocWhen } from "./doc/comment.jsx";
 import { Name } from "./Name.jsx";
 import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
@@ -77,7 +77,7 @@ export interface ClassDeclarationProps
    * public class MyClass
    * ```
    */
-  attributes?: core.Children[];
+  attributes?: AttributesProp;
 }
 
 /**
@@ -132,7 +132,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   return (
     <core.Declaration symbol={thisClassSymbol}>
       <DocWhen doc={props.doc} />
-      <AttributeList attributes={props.attributes} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}class <Name />
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />

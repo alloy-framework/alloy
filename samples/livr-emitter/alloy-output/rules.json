@@ -1,0 +1,105 @@
+{
+  "name": [
+    "required",
+    "string",
+    {
+      "max_length": 50
+    }
+  ],
+  "lastName": [
+    "string",
+    {
+      "length_between": [2, 50]
+    }
+  ],
+  "email": [
+    "required",
+    "email"
+  ],
+  "age": [
+    "integer",
+    {
+      "min_number": 18
+    },
+    {
+      "max_number": 99
+    }
+  ],
+  "address": [
+    "required",
+    {
+      "nested_object": {
+        "street": "string",
+        "city": "required",
+        "zip": [
+          "required",
+          "positive_integer"
+        ],
+        "geo": {
+          "nested_object": {
+            "lat": "decimal",
+            "lng": "decimal"
+          }
+        }
+      }
+    }
+  ],
+  "phones": [
+    {
+      "list_of": [
+        "string",
+        {
+          "max_length": 15
+        }
+      ]
+    }
+  ],
+  "preferences": {
+    "variable_object": [
+      "type",
+      {
+        "email": {
+          "frequency": {
+            "one_of": ["daily", "weekly", "monthly"]
+          }
+        },
+        "sms": {
+          "time": "string"
+        }
+      }
+    ]
+  },
+  "tags": [
+    {
+      "list_of": "string"
+    }
+  ],
+  "website": "url",
+  "created_at": "iso_date",
+  "status": {
+    "one_of": ["active", "inactive", "pending"]
+  },
+  "password": [
+    "required",
+    {
+      "min_length": 8
+    }
+  ],
+  "confirm_password": [
+    "required",
+    {
+      "equal_to_field": "password"
+    }
+  ],
+  "contact": {
+    "or": [
+      ["email"],
+      [
+        "string",
+        {
+          "max_length": 15
+        }
+      ]
+    ]
+  }
+}

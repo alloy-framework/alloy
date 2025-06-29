@@ -1,3 +1,4 @@
+export * from "./attributes/attributes.jsx";
 export * from "./ClassDeclaration.jsx";
 export * from "./ClassMethod.jsx";
 export * from "./Declaration.js";

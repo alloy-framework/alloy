@@ -1,6 +1,7 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceProperty } from "./property.jsx";
 
@@ -139,6 +140,26 @@ it("specify doc comment", () => {
     {
       /// This is a test
       string Method { get; set; }
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <InterfaceProperty
+        name="Test"
+        type="int"
+        attributes={[<Attribute name="Test" />]}
+        get
+        set
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    public interface TestInterface
+    {
+      [Test]
+      int Test { get; set; }
     }
   `);
 });

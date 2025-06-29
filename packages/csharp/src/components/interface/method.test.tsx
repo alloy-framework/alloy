@@ -2,6 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
@@ -170,6 +171,20 @@ it("specify doc comment", () => {
     {
       /// This is a test
       void Method();
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <InterfaceMethod name="Test" attributes={[<Attribute name="Test" />]} />
+    </Wrapper>,
+  ).toRenderTo(`
+    public interface TestInterface
+    {
+      [Test]
+      void Test();
     }
   `);
 });

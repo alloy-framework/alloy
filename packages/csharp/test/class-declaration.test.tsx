@@ -2,6 +2,7 @@ import * as core from "@alloy-js/core";
 import { List, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+import { Attribute } from "../src/components/attributes/attributes.jsx";
 import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
 import {
@@ -414,5 +415,16 @@ it("supports class member doc comments", () => {
       /// This is a member
       public int Member
     }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <utils.TestNamespace>
+      <ClassDeclaration name="Test" attributes={[<Attribute name="Test" />]} />
+    </utils.TestNamespace>,
+  ).toRenderTo(`
+    [Test]
+    class Test;
   `);
 });

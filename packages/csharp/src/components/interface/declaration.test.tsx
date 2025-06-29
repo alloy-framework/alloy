@@ -1,6 +1,7 @@
 import { List, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
@@ -140,4 +141,18 @@ describe("with type parameters", () => {
       }
     `);
   });
+});
+
+it("specify attributes", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration
+        name="Test"
+        attributes={[<Attribute name="Test" />]}
+      />
+    </TestNamespace>,
+  ).toRenderTo(`
+    [Test]
+    interface Test;
+  `);
 });

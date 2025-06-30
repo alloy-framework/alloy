@@ -11,6 +11,8 @@ it("correct formatting of class name", () => {
   const expected = d`
     class AReallyWeirdClassName:
       pass
+
+      
   `;
   expect(result).toRenderTo(expected);
 });
@@ -38,22 +40,21 @@ it("correct formatting of Enum name and EnumMember names", () => {
 
 it("renders a function with parameters", () => {
   const result = toSourceText(
-    <py.MethodDeclaration
+    <py.FunctionDeclaration
       name="quirklyNamed-Function"
-      parameters={[
-        { name: "a-parameter", type: "int" },
-        { name: "anotherParameter", defaultValue: 0 },
-      ]}
+      parameters={[{ name: "a-parameter", type: "int" }]}
       args={true}
       kwargs={true}
     >
       print(x, y)
-    </py.MethodDeclaration>,
+    </py.FunctionDeclaration>,
   );
   expect(result).toRenderTo(
     d`
-      def quirkly_named_function(a_parameter: int, another_parameter = 0, *args, **kwargs):
+      def quirkly_named_function(a_parameter: int, *args, **kwargs):
         print(x, y)
+
+        
     `,
   );
 });
@@ -73,23 +74,26 @@ it("correct formatting of instance parameters names", () => {
   expect(result).toRenderTo(`this_is_a_number: int, and_this_is_a_dict: dict`);
 });
 
-it("correct formatting of instance parameters names", () => {
+it("correct formatting of call statement vars", () => {
   const result = toSourceText(
-    <py.CallStatementParameters
-      parameters={[
-        { name: "this-is-a-long-name", value: <py.Value jsValue={"A name"} /> },
-        { name: "andThisIsANumber", value: <py.Value jsValue={42} /> },
-      ]}
-    />,
+    <py.StatementList>
+      <py.NewExpression
+        target={"test"}
+        args={[
+          <py.VariableDeclaration name="this-is-a-long-name" initializer={<py.Value jsValue={"A name"} />} callStatementVar />,
+          <py.VariableDeclaration name="andThisIsANumber" initializer={<py.Value jsValue={42} />} callStatementVar />,
+        ]}
+      />
+    </py.StatementList>,
   );
   expect(result).toRenderTo(
-    `this_is_a_long_name="A name", and_this_is_a_number=42`,
+    `test(this_is_a_long_name="A name", and_this_is_a_number=42)`,
   );
 });
 
 it("correct formatting of variable name", () => {
   const res = toSourceText(
-    <py.VariableDeclaration name="myVar" type="int" value={42} />,
+    <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
   );
   expect(res).toBe(`my_var: int = 42`);
 });

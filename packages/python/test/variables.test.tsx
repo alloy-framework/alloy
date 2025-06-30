@@ -6,7 +6,7 @@ import { toSourceText } from "./utils.jsx";
 describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText(
-      <py.VariableDeclaration name="myVar" type="int" value={42} />,
+      <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
     );
     expect(res).toBe(`my_var: int = 42`);
   });
@@ -20,7 +20,7 @@ describe("Python Variable", () => {
 
   it("declares a python variable without typeAnnotations", () => {
     const res = toSourceText(
-      <py.VariableDeclaration name="myVar" value={42} />,
+      <py.VariableDeclaration name="myVar" initializer={42} />,
     );
     expect(res).toBe(`my_var = 42`);
   });
@@ -34,7 +34,7 @@ describe("Python Variable", () => {
     const res = toSourceText(
       <py.VariableDeclaration
         name="myVar"
-        value={<py.Value jsValue={null} />}
+        initializer={<py.Value jsValue={null} />}
       />,
     );
     expect(res).toBe(`my_var = None`);
@@ -44,7 +44,7 @@ describe("Python Variable", () => {
     const res = toSourceText(
       <py.VariableDeclaration
         name="nameIdPairs"
-        value={<py.Value jsValue={{ John: 123, Doe: 234 }} />}
+        initializer={<py.Value jsValue={{ John: 123, Doe: 234 }} />}
       />,
     );
     expect(res).toBe(`name_id_pairs = {"John": 123, "Doe": 234}`);
@@ -53,9 +53,9 @@ describe("Python Variable", () => {
   it("declares a python variable receiving other variable as value", () => {
     const res = toSourceText(
       <>
-        <py.VariableDeclaration name="my_var" value={42} />
+        <py.VariableDeclaration name="my_var" initializer={42} />
         <hbr />
-        <py.VariableDeclaration name="my_other_var" value={refkey("my_var")} />
+        <py.VariableDeclaration name="my_other_var" initializer={refkey("my_var")} />
       </>,
     );
     expect(res).toBe(`my_var = 42\nmy_other_var = my_var`);

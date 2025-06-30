@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  MemberScope,
   OutputSymbolFlags,
   refkey,
   Refkey,
@@ -62,22 +63,30 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
  */
 export function Declaration(props: DeclarationProps) {
   let sym: PythonOutputSymbol;
-  const sfContext = useContext(SourceFileContext);
-  const module = sfContext?.module;
 
   if (props.symbol) {
     sym = props.symbol;
   } else {
+    const sfContext = useContext(SourceFileContext);
+    const module = sfContext?.module;
     const name = usePythonNamePolicy().getName(props.name!, props.nameKind!);
     sym = new PythonOutputSymbol(name, {
       refkeys: props.refkey ?? refkey(name!),
-      flags:
-        (props.flags ?? OutputSymbolFlags.None) |
-        OutputSymbolFlags.MemberContainer,
+      flags: props.flags,
       metadata: props.metadata,
       module: module,
     });
   }
 
-  return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;
+  function withMemberScope(children: Children) {
+    return <MemberScope owner={sym}>{children}</MemberScope>;
+  }
+
+  let children: Children = () => props.children;
+
+  if (sym.flags & OutputSymbolFlags.MemberContainer) {
+    children = withMemberScope(children);
+  }
+
+  return <CoreDeclaration symbol={sym}>{children}</CoreDeclaration>;
 }

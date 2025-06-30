@@ -1,29 +1,23 @@
 import { Children, List } from "@alloy-js/core";
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
 import { VariableDeclaration } from "./VariableDeclaration.js";
 
-export interface NamedParameter {
-  name: string;
-  type?: Children;
-  defaultValue?: Children;
-}
-
 /**
- * Render a single parameter as a Declaration (for symbol creation) or as *args/**kwargs.
+ * Render a single parameter as a VariableDeclaration (for symbol creation) or as *args/**kwargs.
  */
-function Parameter(param: NamedParameter) {
-  // Use VariableDeclaration to render the parameter, wrapped in Declaration for symbol creation
+function Parameter(param: ParameterDescriptor) {
   return (
     <VariableDeclaration
       name={param.name}
       type={param.type}
-      value={param.defaultValue}
+      initializer={param.default}
       omitNone={true}
     />
   );
 }
 
 export interface ParametersProps {
-  parameters?: NamedParameter[];
+  parameters?: ParameterDescriptor[];
   args?: boolean;
   kwargs?: boolean;
 }
@@ -37,7 +31,7 @@ export function Parameters(props: ParametersProps) {
   // Validation: non-default args can't follow default args
   let seenDefault = false;
   for (const param of parameters) {
-    if (param.defaultValue) seenDefault = true;
+    if (param.default) seenDefault = true;
     else if (seenDefault) {
       throw new Error(
         `Non-default argument '${param.name}' follows default argument in Python parameters.`,
@@ -49,47 +43,6 @@ export function Parameters(props: ParametersProps) {
   // Build a flat array of all parameter elements (named, *args, **kwargs)
   const allParams = [
     ...parameters.map((param) => <Parameter {...param} />),
-    ...(args ? ["*args"] : []),
-    ...(kwargs ? ["**kwargs"] : []),
-  ];
-
-  return (
-    <List comma space>
-      {allParams}
-    </List>
-  );
-}
-
-export interface CallStatementParameter {
-  name?: string;
-  value?: Children;
-}
-
-export interface CallStatementParametersProps {
-  parameters?: CallStatementParameter[];
-  args?: boolean;
-  kwargs?: boolean;
-}
-
-/**
- * Render a single parameter as a Declaration (for symbol creation) or as *args/**kwargs.
- */
-function CallStatementParameter(param: CallStatementParameter) {
-  return (
-    <VariableDeclaration
-      name={param.name ? param.name : ""}
-      value={param.value}
-      callStatementVar={true}
-    />
-  );
-}
-
-export function CallStatementParameters(props: CallStatementParametersProps) {
-  const { parameters = [], args, kwargs } = props;
-  // Render
-  // Build a flat array of all parameter elements (named, *args, **kwargs)
-  const allParams = [
-    ...parameters.map((param) => <CallStatementParameter {...param} />),
     ...(args ? ["*args"] : []),
     ...(kwargs ? ["**kwargs"] : []),
   ];

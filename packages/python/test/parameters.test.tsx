@@ -9,9 +9,7 @@ describe("Parameters", () => {
   });
   it("creates a single parameter", () => {
     const result = toSourceText(
-      <py.Parameters
-        parameters={[{ name: "x", type: "int", defaultValue: 10 }]}
-      />,
+      <py.Parameters parameters={[{ name: "x", type: "int", default: 10 }]} />,
     );
     expect(result).toRenderTo(`x: int = 10\n`);
   });
@@ -24,7 +22,7 @@ describe("Parameters", () => {
           {
             name: "y",
             type: "str",
-            defaultValue: <py.Value jsValue="hello" />,
+            default: <py.Value jsValue="hello" />,
           },
         ]}
       />,
@@ -40,7 +38,7 @@ describe("Parameters", () => {
           {
             name: "y",
             type: "dict",
-            defaultValue: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
+            default: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
           },
         ]}
       />,
@@ -56,7 +54,7 @@ describe("Parameters", () => {
           {
             name: "y",
             type: "dict",
-            defaultValue: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
+            default: <py.Value jsValue={{ John: 123, Doe: 234 }} />,
           },
         ]}
         args={true}
@@ -74,7 +72,7 @@ describe("Parameters", () => {
         <py.Parameters
           parameters={[
             { name: "x", type: "int" },
-            { name: "y", type: "int", defaultValue: 10 },
+            { name: "y", type: "int", default: 10 },
             { name: "z", type: "int" },
           ]}
         />,
@@ -82,17 +80,5 @@ describe("Parameters", () => {
     ).toThrow(
       "Non-default argument 'z' follows default argument in Python parameters.",
     );
-  });
-  it("creates parameters for an instantiation", () => {
-    const result = toSourceText(
-      <py.CallStatementParameters
-        parameters={[
-          { name: "name", value: <py.Value jsValue={"A name"} /> },
-          { name: "number", value: <py.Value jsValue={42} /> },
-          { value: <py.Value jsValue={true} /> },
-        ]}
-      />,
-    );
-    expect(result).toRenderTo(`name="A name", number=42, True`);
   });
 });

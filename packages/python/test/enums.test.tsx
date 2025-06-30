@@ -77,8 +77,10 @@ describe("Python Enum", () => {
 
       class Dog:
         pass
+
       class Cat:
         pass
+
       class Animal(Enum):
         DOG = Dog
         CAT = Cat

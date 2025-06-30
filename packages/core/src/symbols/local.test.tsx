@@ -49,15 +49,19 @@ it("use simple name", () => {
     console.log(foo);
   `);
 });
-it("use simple name nested", () => {
+
+it("reference in different level of the render tree", () => {
   expect(
     <TestWrapper>
       {code`const ${local("foo")} = 1;`}
-      <hbr />
-      {code`console.log(${local("foo")});`}
+      <List>
+        <hbr />
+        {code`console.log(${local("foo")});`}
+      </List>
     </TestWrapper>,
   ).toRenderTo(`
     const foo = 1;
+    
     console.log(foo);
   `);
 });

@@ -9,6 +9,7 @@ import {
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
 import { DocWhen } from "./doc/comment.jsx";
 import { Name } from "./Name.jsx";
 import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
@@ -59,6 +60,24 @@ export interface ClassDeclarationProps
 
   /** Interfaces this class implements */
   interfaceTypes?: core.Children[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <ClassDeclaration name="MyClass" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * public class MyClass
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 /**
@@ -113,6 +132,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   return (
     <core.Declaration symbol={thisClassSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}class <Name />
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />

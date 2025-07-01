@@ -4,7 +4,7 @@
     "emitDeclarationOnly": true,
     "declaration": true,
     "outDir": "dist",
-    "types": ["@alloy/core/testing/matchers"]
+    "types": ["@alloy-js/core/testing/matchers"]
   },
   "references": [{ "path": "../core" }],
   "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],

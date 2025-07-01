@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.18.1
+
+### Bug Fixes
+
+- [#232](https://github.com/alloy-framework/alloy/pull/232) Improve `toRenderTo` test matcher to work better with SourceFiles
+
+
 ## 0.18.0
 
 ### Bug Fixes

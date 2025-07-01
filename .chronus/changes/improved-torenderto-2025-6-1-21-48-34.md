@@ -3,4 +3,6 @@
 changeKind: internal
 packages:
   - "@alloy-js/csharp"
+  - "@alloy-js/json"
+  - "@alloy-js/typescript"
 ---

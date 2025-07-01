@@ -1,4 +1,4 @@
-import { Indent, Output, SourceFile } from "@alloy-js/core";
+import { Indent, Output, SourceDirectory, SourceFile } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import "./extend-expect.js";
 
@@ -41,6 +41,22 @@ describe("toRenderTo", () => {
       "Test.cs": `
         base
             indented
+        `,
+    });
+  });
+
+  it("expect with specific file name in SourceDirectory", () => {
+    expect(
+      <Output>
+        <SourceDirectory path="src">
+          <SourceFile path="test.txt" filetype="text">
+            content
+          </SourceFile>
+        </SourceDirectory>
+      </Output>,
+    ).toRenderTo({
+      "src/test.txt": `
+          content
         `,
     });
   });

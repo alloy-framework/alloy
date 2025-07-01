@@ -5,7 +5,6 @@ import {
   RenderedTextTree,
   renderTree,
 } from "@alloy-js/core";
-import { join } from "pathe";
 import "vitest";
 import { expect } from "vitest";
 import { dedent } from "./render.js";
@@ -91,25 +90,14 @@ function renderAsFiles(
         ?.printOptions ?? {})
     : {};
 
-  collectSourceFiles("", tree);
-  function collectSourceFiles(
-    currentDirectory: string,
-    root: RenderedTextTree,
-  ) {
+  collectSourceFiles(tree);
+  function collectSourceFiles(root: RenderedTextTree) {
     if (!Array.isArray(root)) {
       return;
     }
     const context = getContextForRenderNode(root);
-
-    if (!context) {
-      return recurse(currentDirectory);
-    }
-
-    if (context.meta?.directory) {
-      recurse(join(currentDirectory, context.meta.directory.path));
-    } else if (context.meta?.sourceFile) {
-      const filepath = join(currentDirectory, context.meta.sourceFile.path);
-      files[filepath] = printTree(root, {
+    if (context?.meta?.sourceFile) {
+      files[context.meta.sourceFile.path] = printTree(root, {
         printWidth:
           options?.printWidth ??
           context.meta?.printOptions?.printWidth ??
@@ -124,12 +112,12 @@ function renderAsFiles(
           rootRenderOptions.useTabs,
       });
     } else {
-      recurse(currentDirectory);
+      visitChildren();
     }
 
-    function recurse(cwd: string) {
+    function visitChildren() {
       for (const child of root) {
-        collectSourceFiles(cwd, child as RenderedTextTree);
+        collectSourceFiles(child as RenderedTextTree);
       }
     }
   }

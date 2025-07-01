@@ -238,15 +238,20 @@ describe("symbols", () => {
       </Output>
     );
 
-    expect(decl).toRenderTo(`
-      export const refme = {
-        foo: {
-          bar: "hello",
+    expect(decl).toRenderTo({
+      "foo.ts": `
+        export const refme = {
+          foo: {
+            bar: "hello",
+          }
         }
-      }import { refme } from "./foo.js";
+      `,
+      "bar.ts": `
+        import { refme } from "./foo.js";
 
-      console.log(refme.foo.bar);
-    `);
+        console.log(refme.foo.bar);
+      `,
+    });
   });
 
   it("can reference nested members in other packages", () => {

@@ -42,14 +42,14 @@ it("references objects across files", () => {
   const nullKey = refkey();
   const template = (
     <Output>
-      <SourceFile path="test.json">
+      <SourceFile path="test1.json">
         <JsonObject refkey={objectValue}>
           <JsonObjectProperty name="nullValue">
             <JsonValue jsValue={null} refkey={nullKey} />
           </JsonObjectProperty>
         </JsonObject>
       </SourceFile>
-      <SourceFile path="test.json">
+      <SourceFile path="test2.json">
         <JsonObject>
           <JsonObjectProperty name="refToNull">{nullKey}</JsonObjectProperty>
           <JsonObjectProperty name="refToObject">
@@ -60,14 +60,19 @@ it("references objects across files", () => {
     </Output>
   );
 
-  expect(template).toRenderTo(`
-    {
-      "nullValue": null
-    }{
-      "refToNull": "test.json#/nullValue",
-      "refToObject": "test.json#"
-    }
-  `);
+  expect(template).toRenderTo({
+    "test1.json": `
+      {
+        "nullValue": null
+      }
+    `,
+    "test2.json": `
+      {
+        "refToNull": "test1.json#/nullValue",
+        "refToObject": "test1.json#"
+      }
+    `,
+  });
 });
 
 it("references objects across files and directories", () => {
@@ -95,14 +100,19 @@ it("references objects across files and directories", () => {
     </Output>
   );
 
-  expect(template).toRenderTo(`
-    {
-      "nullValue": null
-    }{
-      "refToNull": "subdir/test.json#/nullValue",
-      "refToObject": "subdir/test.json#"
-    }
-  `);
+  expect(template).toRenderTo({
+    "subdir/test.json": `
+      {
+        "nullValue": null
+      }
+    `,
+    "test.json": `
+      {
+        "refToNull": "subdir/test.json#/nullValue",
+        "refToObject": "subdir/test.json#"
+      }
+    `,
+  });
 });
 
 it("references arrays within the same file", () => {

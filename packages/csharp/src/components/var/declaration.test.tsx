@@ -52,8 +52,8 @@ it("links refkey", () => {
   ).toRenderTo(`
       namespace TestCode
       {
-        var testVar = 42;
-        var testVar2 = testVar;
+          var testVar = 42;
+          var testVar2 = testVar;
       }
   `);
 });

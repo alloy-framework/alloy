@@ -45,7 +45,7 @@ describe("toRenderTo", () => {
     });
   });
 
-  it("works with toRenderTo", () => {
+  it("each source file respect their print options", () => {
     expect(
       <Output>
         <SourceFile path="Test.cs" tabWidth={4} filetype="csharp">

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.18.2
+
+### Bug Fixes
+
+- Fix invalid .d.ts import
+
+
 ## 0.18.1
 
 ### Bug Fixes

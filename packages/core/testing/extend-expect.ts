@@ -8,7 +8,6 @@ import {
 import "vitest";
 import { expect } from "vitest";
 import { dedent } from "./render.js";
-import "./vitest.d.ts";
 
 interface ToRenderToOptions {
   printWidth?: number;

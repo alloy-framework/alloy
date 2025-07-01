@@ -101,11 +101,11 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       namespace TestCode
       {
-        public interface Test<T, U>
-        {
-          T PropA { get; set; }
-          U PropB { get; set; }
-        }
+          public interface Test<T, U>
+          {
+              T PropA { get; set; }
+              U PropB { get; set; }
+          }
       }
     `);
   });

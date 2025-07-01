@@ -256,11 +256,11 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       namespace TestCode
       {
-        public class TestClass<T, U>
-        {
-          T PropA { get; set; }
-          U PropB { get; set; }
-        }
+          public class TestClass<T, U>
+          {
+              T PropA { get; set; }
+              U PropB { get; set; }
+          }
       }
     `);
   });

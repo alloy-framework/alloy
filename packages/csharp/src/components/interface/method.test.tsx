@@ -224,10 +224,10 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       namespace TestCode
       {
-        public interface TestInterface
-        {
-          public T Test<T, U>(T paramA);
-        }
+          public interface TestInterface
+          {
+              public T Test<T, U>(T paramA);
+          }
       }
     `);
   });

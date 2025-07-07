@@ -15,7 +15,6 @@ import { TypeDeclaration } from "./TypeDeclaration.jsx";
 import { PrivateScopeContext } from "../context/private-scope.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 export interface BaseDeclarationProps {
   /**

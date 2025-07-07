@@ -32,15 +32,6 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   typeParameters?: TypeParameterDescriptor[] | string[];
 }
 
-/**
- * Create a TypeScript interface declaration.
- *
- * @remarks
- *
- * This component will declare a symbol for this interface. The `export` and
- * `default` boolean props determine whether and how this symbol is exported
- * from the package.
- */
 const _InterfaceDeclaration = ensureTypeRefContext(
   (props: InterfaceDeclarationProps) => {
     const children = childrenArray(() => props.children);
@@ -79,6 +70,15 @@ const _InterfaceDeclaration = ensureTypeRefContext(
   },
 );
 
+/**
+ * Create a TypeScript interface declaration.
+ *
+ * @remarks
+ *
+ * This component will declare a symbol for this interface. The `export` and
+ * `default` boolean props determine whether and how this symbol is exported
+ * from the package.
+ */
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return _InterfaceDeclaration(props);
 }

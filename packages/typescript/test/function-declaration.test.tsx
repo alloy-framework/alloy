@@ -267,6 +267,50 @@ describe("symbols", () => {
     `);
   });
 
+  it("creates parameters with default values", () => {
+    const paramDesc: ParameterDescriptor = {
+      name: "foo",
+      refkey: refkey(),
+      type: "string",
+      default: '"bar"',
+    };
+
+    const decl = (
+      <>
+        <FunctionDeclaration name="foo" parameters={[paramDesc]}>
+          console.log(foo);
+        </FunctionDeclaration>
+      </>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(foo: string = "bar") {
+        console.log(foo);
+      }
+    `);
+  });
+
+  it("correctly renders mixed parameters", () => {
+    const params: ParameterDescriptor[] = [
+      { name: "a", refkey: refkey(), type: "string" },
+      { name: "b", refkey: refkey(), type: "number", optional: true },
+      { name: "c", refkey: refkey(), type: "boolean", default: "false" },
+      { name: "d", refkey: refkey(), type: "any[]", rest: true },
+    ];
+
+    const decl = (
+      <FunctionDeclaration name="foo" parameters={params}>
+        console.log(a, b, c, d);
+      </FunctionDeclaration>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(a: string, b?: number, c: boolean = false, ...d: any[]) {
+        console.log(a, b, c, d);
+      }
+    `);
+  });
+
   it("adds symbols for members of parameters when a type is provided", () => {
     const ifaceRk = refkey();
     const ifaceMemberRk = refkey();

@@ -1,6 +1,6 @@
 import { Ref } from "@vue/reactivity";
 import { CustomContext } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
+import { Json, Refkey } from "../refkey.js";
 import { IntrinsicElement } from "./intrinsic.js";
 
 export type Child =
@@ -13,6 +13,7 @@ export type Child =
   | (() => Children)
   | Ref
   | Refkey
+  | Json
   | CustomContext
   | IntrinsicElement;
 

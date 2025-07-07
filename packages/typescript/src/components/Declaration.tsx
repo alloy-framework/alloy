@@ -16,7 +16,6 @@ import { PrivateScopeContext } from "../context/private-scope.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { InterfaceDeclaration } from "./Interface.jsx";
 
 export interface BaseDeclarationProps {
   /**
@@ -84,7 +83,7 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
 /**
  * Create a TypeScript declaration. Generally, this component shouldn't be used
  * directly, and instead prefer components for specific declarations, e.g.
- * {@link EnumDeclaration}, {@link InterfaceDeclaration},
+ * {@link EnumDeclaration}, {@link (InterfaceDeclaration:function)},
  * {@link TypeDeclaration}, etc.
  *
  * @remarks

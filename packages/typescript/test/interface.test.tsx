@@ -229,6 +229,76 @@ it("handles invalid identifier names", () => {
   `);
 });
 
+it("accepts type parameters by descriptors", () => {
+  const typeParams: ts.TypeParameterDescriptor[] = [
+    { name: "T", refkey: refkey() },
+    { name: "U", extends: "number", refkey: refkey() },
+    { name: "V", default: "object", refkey: refkey() },
+    { name: "W", extends: "string", default: '"test"', refkey: refkey() },
+  ];
+
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo" typeParameters={typeParams}>
+      <ts.InterfaceMember name="member" type={typeParams[0].refkey} />;
+      <hbr />
+      <ts.InterfaceMember name="member2" type={typeParams[1].refkey} />;
+      <hbr />
+      <ts.InterfaceMember name="member3" type={typeParams[2].refkey} />;
+      <hbr />
+      <ts.InterfaceMember name="member4" type={typeParams[3].refkey} />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo<T, U extends number, V = object, W extends string = "test"> {
+      member: T;
+      member2: U;
+      member3: V;
+      member4: W;
+    }
+  `);
+});
+
+it("accepts type parameters with extends", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo" typeParameters={["T"]} extends="Bar">
+      <ts.InterfaceMember name="member" type="T" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo<T> extends Bar {
+      member: T;
+    }
+  `);
+});
+
+it("accepts type parameters children", () => {
+  const res = toSourceText(
+    <ts.InterfaceDeclaration name="Foo">
+      <ts.InterfaceDeclaration.TypeParameters>
+        T, U extends number, V = object, W extends string = "test"
+      </ts.InterfaceDeclaration.TypeParameters>
+      <ts.InterfaceMember name="member" type={"T"} />;
+      <hbr />
+      <ts.InterfaceMember name="member2" type="U" />;
+      <hbr />
+      <ts.InterfaceMember name="member3" type="V" />;
+      <hbr />
+      <ts.InterfaceMember name="member4" type="W" />;
+    </ts.InterfaceDeclaration>,
+  );
+
+  expect(res).toEqual(d`
+    interface Foo<T, U extends number, V = object, W extends string = "test"> {
+      member: T;
+      member2: U;
+      member3: V;
+      member4: W;
+    }
+  `);
+});
+
 describe("method members", () => {
   it("render basic", () => {
     expect(

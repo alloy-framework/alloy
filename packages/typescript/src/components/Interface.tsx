@@ -1,6 +1,9 @@
 import {
   Block,
   Children,
+  childrenArray,
+  findKeyedChild,
+  findUnkeyedChildren,
   MemberScope,
   Name,
   OutputSymbolFlags,
@@ -14,12 +17,19 @@ import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
+import { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import { TypeParameters } from "./FunctionBase.jsx";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 export interface InterfaceDeclarationProps extends BaseDeclarationProps {
   extends?: Children;
+
+  /**
+   * The generic type parameters of the interface.
+   */
+  typeParameters?: TypeParameterDescriptor[] | string[];
 }
 
 /**
@@ -31,10 +41,26 @@ export interface InterfaceDeclarationProps extends BaseDeclarationProps {
  * `default` boolean props determine whether and how this symbol is exported
  * from the package.
  */
-export const InterfaceDeclaration = ensureTypeRefContext(
+const _InterfaceDeclaration = ensureTypeRefContext(
   (props: InterfaceDeclarationProps) => {
+    const children = childrenArray(() => props.children);
+
+    const typeParametersChildren =
+      findKeyedChild(children, TypeParameters.tag) ?? undefined;
+
+    const sTypeParameters =
+      typeParametersChildren ?
+        <>
+          {"<"}
+          {typeParametersChildren}
+          {">"}
+        </>
+      : <TypeParameters parameters={props.typeParameters} />;
+
     const extendsPart = props.extends ? <> extends {props.extends}</> : "";
     const flags = OutputSymbolFlags.StaticMemberContainer;
+
+    const filteredChildren = findUnkeyedChildren(children);
 
     return (
       <>
@@ -44,13 +70,20 @@ export const InterfaceDeclaration = ensureTypeRefContext(
         </Show>
         <Declaration {...props} nameKind="interface" flags={flags} kind="type">
           interface <Name />
+          {sTypeParameters}
           {extendsPart}{" "}
-          <InterfaceExpression>{props.children}</InterfaceExpression>
+          <InterfaceExpression>{filteredChildren}</InterfaceExpression>
         </Declaration>
       </>
     );
   },
 );
+
+export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
+  return _InterfaceDeclaration(props);
+}
+
+InterfaceDeclaration.TypeParameters = TypeParameters;
 
 export interface InterfaceExpressionProps {
   children?: Children;

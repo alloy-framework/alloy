@@ -1,4 +1,4 @@
-import { Refkey, useMemberDeclaration } from "@alloy-js/core";
+import { Children, Refkey, useMemberDeclaration } from "@alloy-js/core";
 import { JsonArray } from "./JsonArray.jsx";
 import { JsonObject } from "./JsonObject.jsx";
 
@@ -22,7 +22,7 @@ export interface JsonValueProps {
  * value will be serialized to a string, number, boolean, or null as
  * appropriate.
  */
-export function JsonValue(props: JsonValueProps) {
+export function JsonValue(props: JsonValueProps): Children {
   const refkeys = [props.refkey ?? []].flat();
   if (props.jsValue === null) {
     setMemberRefkey(refkeys);
@@ -44,7 +44,12 @@ export function JsonValue(props: JsonValueProps) {
   }
 
   if (typeof props.jsValue === "object") {
-    return <JsonObject jsValue={props.jsValue as any} />;
+    return <JsonObject jsValue={props.jsValue as Record<string, unknown>} />;
+  }
+
+  if (typeof props.jsValue === "function") {
+    // functions are inserted as-is.
+    return props.jsValue as () => Children;
   }
 
   throw new Error("Cannot emit js value with type of " + typeof props.jsValue);

@@ -2,15 +2,14 @@ import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { jsonTest } from "./utils.jsx";
 
-it("renders primitives", () => {
-  expect(jsonTest(true)).toRenderTo("true");
-  expect(jsonTest(false)).toRenderTo("false");
-
-  expect(jsonTest(10)).toRenderTo("10");
-  expect(jsonTest(-10)).toRenderTo("-10");
-  expect(jsonTest(1.314)).toRenderTo("1.314");
-
-  expect(jsonTest("hello")).toRenderTo('"hello"');
-
-  expect(jsonTest(null)).toRenderTo("null");
+it.each([
+  ["boolean (true)", true, "true"],
+  ["boolean (false)", false, "false"],
+  ["integer", 10, "10"],
+  ["negative integer", -10, "-10"],
+  ["float", 1.314, "1.314"],
+  ["string", "Hello, world!", `"Hello, world!"`],
+  ["null", null, "null"],
+])("%s", (_, data, expected) => {
+  expect(jsonTest(data)).toRenderTo(expected);
 });

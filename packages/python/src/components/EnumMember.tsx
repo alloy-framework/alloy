@@ -52,6 +52,15 @@ export interface EnumMemberProps {
 
 /**
  * A Python enum member.
+ *
+ * @example
+ * ```tsx
+ * <EnumMember name="NORTH" />
+ * ```
+ * This will generate:
+ * ```python
+ * NORTH
+ * ```
  */
 export function EnumMember(props: EnumMemberProps) {
   const sfContext = useContext(SourceFileContext);

@@ -6,6 +6,15 @@ export interface ImportStatementsProps {
   joinImportsFromSameModule?: boolean;
 }
 
+
+/**
+ * A component that renders import statements based on the provided import records.
+ *
+ * @remarks
+ * This component will render import statements for each module and its symbols.
+ * If `joinImportsFromSameModule` is true, it will group imports from the same module
+ * into a single statement.
+ */
 export function ImportStatements(props: ImportStatementsProps) {
   // Sort the import records by module name
   const imports = computed(() =>
@@ -56,6 +65,25 @@ export interface ImportStatementProps {
   symbols?: Set<ImportedSymbol>;
 }
 
+/**
+ * A Python import statement.
+ *
+ * @remarks
+ * This component renders an import statement for a given path and symbols.
+ * If no symbols are provided, it will render a simple import statement.
+ * If symbols are provided, it will render an import statement with the specified symbols.
+ *
+ * @example
+ * ```tsx
+ * <ImportStatement path="os" />
+ * <ImportStatement path="math" symbols={new Set([new ImportedSymbol("sqrt", "sqrt")])} />
+ * ```
+ * This will generate:
+ * ```python
+ * import os
+ * from math import sqrt
+ * ```
+ */
 export function ImportStatement(props: ImportStatementProps) {
   return memo(() => {
     const { path, symbols } = props;

@@ -4,6 +4,20 @@ export interface ValueProps {
   jsValue?: unknown;
 }
 
+/**
+ * A component that renders a JavaScript value in a Python-like syntax.
+ * It handles various types of values including numbers, booleans, strings,
+ * functions, arrays, and objects.
+ * 
+ * @example
+ * ```tsx
+ * <Value jsValue={42} /> // renders "42"
+ * <Value jsValue={true} /> // renders "True"
+ * <Value jsValue="Hello" /> // renders '"Hello"'
+ * <Value jsValue={[1, 2, 3]} /> // renders "[1, 2, 3]"
+ * <Value jsValue={{ key: "value" }} />
+ * ```
+ */
 export function Value(props: ValueProps): any {
   return memo(() => {
     const jsValue = props.jsValue;

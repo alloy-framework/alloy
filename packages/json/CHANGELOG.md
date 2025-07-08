@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/json
 
+## 0.19.0
+
+### Features
+
+- [#238](https://github.com/alloy-framework/alloy/pull/238) Support nesting components in `<JsonValue jsValue=`
+
+
 ## 0.18.0
 
 No changes, version bump only.

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/typescript
 
+## 0.19.0
+
+### Features
+
+- [#234](https://github.com/alloy-framework/alloy/pull/234) Implement support for parameter default values.
+
+
 ## 0.18.0
 
 ### Bug Fixes

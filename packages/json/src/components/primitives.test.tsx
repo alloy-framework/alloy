@@ -1,6 +1,6 @@
+import { jsonTest } from "#test/utils.jsx";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { jsonTest } from "./utils.jsx";
 
 it.each([
   ["boolean (true)", true, "true"],

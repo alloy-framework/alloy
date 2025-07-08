@@ -1,13 +1,10 @@
 import { Output, refkey, SourceDirectory } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { JsonArray, JsonArrayElement } from "../src/components/json-array.jsx";
-import {
-  JsonObject,
-  JsonObjectProperty,
-} from "../src/components/json-object.jsx";
-import { JsonValue } from "../src/components/json-value.jsx";
-import { SourceFile } from "../src/components/source-file.jsx";
+import { JsonArray, JsonArrayElement } from "./json-array.jsx";
+import { JsonObject, JsonObjectProperty } from "./json-object.jsx";
+import { JsonValue } from "./json-value.jsx";
+import { SourceFile } from "./source-file.jsx";
 
 it("references objects within the same file", () => {
   const objectValue = refkey();

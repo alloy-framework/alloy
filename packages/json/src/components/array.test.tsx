@@ -2,7 +2,7 @@ import { reactive, renderTree } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d, printTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { jsonTest } from "./utils.jsx";
+import { jsonTest } from "../../test/utils.jsx";
 
 it("renders empty arrays", () => {
   const template = jsonTest([]);

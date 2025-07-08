@@ -1,6 +1,6 @@
 import { Children, Refkey, useMemberDeclaration } from "@alloy-js/core";
-import { JsonArray } from "./JsonArray.jsx";
-import { JsonObject } from "./JsonObject.jsx";
+import { JsonArray } from "./json-array.jsx";
+import { JsonObject } from "./json-object.jsx";
 
 export interface JsonValueProps {
   /**

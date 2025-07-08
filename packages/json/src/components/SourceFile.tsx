@@ -6,7 +6,7 @@ import {
 } from "@alloy-js/core";
 import { JsonFileContext } from "../context/JsonFileContext.js";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
-import { Reference } from "./Reference.jsx";
+import { Reference } from "./reference2.jsx";
 
 export interface SourceFileProps {
   /** The path for this source file relative to the parent directory */

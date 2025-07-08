@@ -5,7 +5,7 @@ import { expect, it } from "vitest";
 import {
   JsonObject,
   JsonObjectProperty,
-} from "../src/components/JsonObject.jsx";
+} from "../src/components/json-object.jsx";
 import { SourceFile } from "../src/components/SourceFile.jsx";
 import { jsonTest } from "./utils.jsx";
 

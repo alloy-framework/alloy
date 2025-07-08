@@ -12,7 +12,7 @@ import {
   useMemberScope,
 } from "@alloy-js/core";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
-import { JsonValue } from "./JsonValue.jsx";
+import { JsonValue } from "./json-value.jsx";
 
 export interface JsonArrayPropsBase {
   /**

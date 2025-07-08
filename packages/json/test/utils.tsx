@@ -1,6 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { JsonValue } from "../src/components/json-value.jsx";
-import { SourceFile } from "../src/components/SourceFile.jsx";
+import { SourceFile } from "../src/components/source-file.jsx";
 
 export function jsonTest(jsValue: unknown) {
   return (

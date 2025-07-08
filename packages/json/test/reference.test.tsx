@@ -7,7 +7,7 @@ import {
   JsonObjectProperty,
 } from "../src/components/json-object.jsx";
 import { JsonValue } from "../src/components/json-value.jsx";
-import { SourceFile } from "../src/components/SourceFile.jsx";
+import { SourceFile } from "../src/components/source-file.jsx";
 
 it("references objects within the same file", () => {
   const objectValue = refkey();

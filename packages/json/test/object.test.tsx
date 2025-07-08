@@ -6,7 +6,7 @@ import {
   JsonObject,
   JsonObjectProperty,
 } from "../src/components/json-object.jsx";
-import { SourceFile } from "../src/components/SourceFile.jsx";
+import { SourceFile } from "../src/components/source-file.jsx";
 import { jsonTest } from "./utils.jsx";
 
 it("renders objects", () => {

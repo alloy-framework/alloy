@@ -1,7 +1,7 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { JsonValue } from "./json-value.jsx";
-import { SourceFile } from "./SourceFile.jsx";
+import { SourceFile } from "./source-file.jsx";
 
 const TestingJsonObject = () => {
   return (

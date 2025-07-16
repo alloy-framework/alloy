@@ -1,66 +1,93 @@
 import {
-  BlockProps,
   Children,
-  Indent,
   List,
   Name,
+  OutputSymbolFlags,
   Scope,
   childrenArray,
-  computed,
+  takeSymbols,
 } from "@alloy-js/core";
-import { usePythonNamePolicy } from "../name-policy.js";
+import { createPythonSymbol } from "../symbol-creation.js";
 import {
   BaseDeclarationProps,
   Declaration,
   DeclarationProps,
 } from "./Declaration.js";
+import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
+  /**
+   * The classes that this class extends.
+   */
   bases?: Children[];
 }
 
-/** For some reason, when rendering a Block in the Python implementation,
- * it renders a newline after the last line. That doesn't seems to happen
- * in the other language implementations. We are adding this class so we can
- * remove the newline when rendering a ClassDeclaration, and we do that by
- * basically copying the original class and removing the trailingBreak in the
- * Indent component. With that, we are also to be able to test it properly,
- * as we aren't able to assert for the newline correctly.
+/**
+ * Create a Python class declaration.
+ *
+ * @example
+ * ```tsx
+ * <ClassDeclaration name="MyClass" bases={["BaseClass"]}>
+ *   <VariableDeclaration name="a" type="int" />
+ *   <VariableDeclaration name="b" type="str" />
+ *   <py.FunctionDeclaration name="my_method" parameters={[{ name: "a", type: "int" }, { name: "b", type: "str" }]} returnType="int">
+ *     return a + b
+ *   </py.FunctionDeclaration>
+ * </ClassDeclaration>
+ * ```
+ * renders to
+ * ```py
+ * class MyClass(BaseClass):
+ *   a: int = None
+ *   b: str = None
+ *   def my_method(self, a: int, b: str) -> int:
+ *     return a + b
+ * ```
+ * @remarks
+ *
+ * Any parameters or type parameters declared in this signature will be placed
+ * in the current scope. This component does not make a scope to hold its
+ * parameters.
  */
-export function PythonBlock(props: BlockProps) {
-  const childCount = computed(() => childrenArray(() => props.children).length);
-  return (
-    <group>
-      {props.newline && <br />}
-      {props.opener ?? "{"}
-      <Indent softline={childCount.value === 0}>{props.children}</Indent>
-      {props.closer ?? "}"}
-    </group>
-  );
-}
-
 export function ClassDeclaration(props: ClassDeclarationProps) {
-  const name = usePythonNamePolicy().getName(props.name!, "class");
-  // Propagate the name after the name policy was applied
-  const updatedProps: DeclarationProps = {
-    ...props,
-    name: name,
-    nameKind: "class",
-  };
-
-  const hasChildren =
-    childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
   const basesPart = props.bases && (
     <>
       (<List children={props.bases} comma space />)
     </>
   );
+
+  const sym = createPythonSymbol(
+    props.name!,
+    {
+      refkeys: props.refkey,
+      flags:
+        (props.flags ?? OutputSymbolFlags.None) |
+        OutputSymbolFlags.MemberContainer,
+    },
+    "class",
+    true,
+  );
+
+  takeSymbols((memberSymbol) => {
+    // Transform emitted symbols into instance/class members
+    memberSymbol.flags |= OutputSymbolFlags.InstanceMember;
+  });
+
+  // Propagate the name after the name policy was applied
+  const updatedProps: DeclarationProps = {
+    ...props,
+    name: sym.name,
+    nameKind: "class",
+  };
+  const hasChildren =
+    childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
+
   return (
-    <Declaration {...updatedProps}>
+    <Declaration symbol={sym}>
       class <Name />
       <Scope name={updatedProps.name} kind="class">
         {basesPart}
-        <PythonBlock opener=":" closer="" newline={false}>
+        <PythonBlock opener=":">
           {hasChildren ? props.children : "pass"}
         </PythonBlock>
       </Scope>

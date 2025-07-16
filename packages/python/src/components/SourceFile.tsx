@@ -13,17 +13,17 @@ import { PythonModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { Reference } from "./Reference.js";
 
-export interface SourceFileContext {
+export interface PythonSourceFileContext {
   scope: PythonModuleScope;
   /** The module name for this file, e.g. 'test' for test.py */
   module: string;
 }
 
-export const SourceFileContext: ComponentContext<SourceFileContext> =
+export const PythonSourceFileContext: ComponentContext<PythonSourceFileContext> =
   createNamedContext("@alloy-js/python SourceFile");
 
 export function useSourceFile() {
-  return useContext(SourceFileContext)!;
+  return useContext(PythonSourceFileContext)!;
 }
 export interface SourceFileProps {
   path: string;
@@ -67,7 +67,7 @@ export function SourceFile(props: SourceFileProps) {
     .replace(/\.py$/, "")
     .replace(/\//g, ".");
   const scope = new PythonModuleScope(path);
-  const sfContext: SourceFileContext = {
+  const sfContext: PythonSourceFileContext = {
     scope: scope,
     module: path,
   };
@@ -79,11 +79,11 @@ export function SourceFile(props: SourceFileProps) {
         <hbr />
         <hbr />
       </Show>
-      <SourceFileContext.Provider value={sfContext}>
+      <PythonSourceFileContext.Provider value={sfContext}>
         <Scope value={scope} kind="source-file">
           {props.children}
         </Scope>
-      </SourceFileContext.Provider>
+      </PythonSourceFileContext.Provider>
     </CoreSourceFile>
   );
 }

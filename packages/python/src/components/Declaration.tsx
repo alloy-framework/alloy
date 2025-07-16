@@ -1,14 +1,13 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  MemberScope,
   OutputSymbolFlags,
-  refkey,
   Refkey,
-  useContext,
 } from "@alloy-js/core";
-import { PythonElements, usePythonNamePolicy } from "../name-policy.js";
+import { PythonElements } from "../name-policy.js";
+import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
-import { SourceFileContext } from "./SourceFile.js";
 
 export interface BaseDeclarationProps {
   /**
@@ -28,11 +27,6 @@ export interface BaseDeclarationProps {
   flags?: OutputSymbolFlags;
 
   children?: Children;
-
-  /**
-   * Arbitrary metadata about this declaration.
-   */
-  metadata?: Record<string, unknown>;
 
   /**
    * Documentation for this declaration
@@ -58,26 +52,40 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
 }
 
 /**
- * Declare a symbol in the program. Declaring classes, interfaces, enums, etc.
+ * A Python declaration, which can be a class, function, variable, etc.
+ *
+ * @remarks
+ * This component is used to create a declaration with a symbol that can be
+ * referenced in the code. It can also be used to create a member scope for
+ * member containers.
+ *
  */
 export function Declaration(props: DeclarationProps) {
   let sym: PythonOutputSymbol;
-  const sfContext = useContext(SourceFileContext);
-  const module = sfContext?.module;
 
   if (props.symbol) {
     sym = props.symbol;
   } else {
-    const name = usePythonNamePolicy().getName(props.name!, props.nameKind!);
-    sym = new PythonOutputSymbol(name, {
-      refkeys: props.refkey ?? refkey(name!),
-      flags:
-        (props.flags ?? OutputSymbolFlags.None) |
-        OutputSymbolFlags.MemberContainer,
-      metadata: props.metadata,
-      module: module,
-    });
+    sym = createPythonSymbol(
+      props.name!,
+      {
+        refkeys: props.refkey,
+        flags: props.flags,
+      },
+      props.nameKind!,
+      true,
+    );
   }
 
-  return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;
+  function withMemberScope(children: Children) {
+    return <MemberScope owner={sym}>{children}</MemberScope>;
+  }
+
+  let children: Children = () => props.children;
+
+  if (sym.flags & OutputSymbolFlags.MemberContainer) {
+    children = withMemberScope(children);
+  }
+
+  return <CoreDeclaration symbol={sym}>{children}</CoreDeclaration>;
 }

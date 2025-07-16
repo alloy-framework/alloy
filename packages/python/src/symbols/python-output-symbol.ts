@@ -1,4 +1,12 @@
-import { OutputSymbol, OutputSymbolOptions } from "@alloy-js/core";
+import {
+  OutputSymbol,
+  OutputSymbolOptions,
+  track,
+  TrackOpTypes,
+  trigger,
+  TriggerOpTypes,
+} from "@alloy-js/core";
+import { PythonMemberScope } from "./python-member-scope.js";
 
 export interface CreatePythonSymbolOptions extends OutputSymbolOptions {
   module?: string;
@@ -27,5 +35,9 @@ export class PythonOutputSymbol extends OutputSymbol {
 
   set module(value: string | undefined) {
     this.#module = value;
+  }
+
+  get instanceMemberScope() {
+    return super.instanceMemberScope as PythonMemberScope | undefined;
   }
 }

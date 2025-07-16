@@ -1,15 +1,7 @@
-import {
-  Children,
-  OutputSymbolFlags,
-  refkey,
-  Refkey,
-  Show,
-  useContext,
-} from "@alloy-js/core";
+import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
 import { enumModule } from "../builtins/python.js";
-import { usePythonNamePolicy } from "../name-policy.js";
+import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
-import { SourceFileContext } from "./SourceFile.jsx";
 import { Value } from "./Value.jsx";
 
 export interface EnumMemberProps {
@@ -63,16 +55,17 @@ export interface EnumMemberProps {
  * ```
  */
 export function EnumMember(props: EnumMemberProps) {
-  const sfContext = useContext(SourceFileContext);
-  const module = sfContext?.module;
-  const name = usePythonNamePolicy().getName(props.name, "enum-member");
   const autoReference = props.auto === true ? enumModule["."].auto : undefined;
   const value = props.auto === true ? <>{autoReference}()</> : props.value;
-  let sym: PythonOutputSymbol = new PythonOutputSymbol(name, {
-    refkeys: props.refkey ?? refkey(name!),
-    flags: OutputSymbolFlags.StaticMember,
-    module: module,
-  });
+  let sym: PythonOutputSymbol = createPythonSymbol(
+    props.name,
+    {
+      refkeys: props.refkey,
+      flags: OutputSymbolFlags.StaticMember,
+    },
+    "enum-member",
+    true,
+  );
   const valueCode =
     props.jsValue !== undefined ? <Value jsValue={props.jsValue} /> : value;
 

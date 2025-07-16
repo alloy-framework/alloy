@@ -5,7 +5,8 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
-import { PythonModuleScope, PythonOutputSymbol } from "./symbols/index.js";
+import { createPythonSymbol } from "./symbol-creation.js";
+import { PythonModuleScope } from "./symbols/index.js";
 
 export interface ModuleDescriptor {
   [path: string]: string[];
@@ -44,12 +45,18 @@ function createSymbols(
     for (const exportedName of symbols ?? []) {
       const key = keys[exportedName];
 
-      const _ = new PythonOutputSymbol(exportedName, {
-        binder: binder,
-        scope: moduleScope,
-        refkeys: key,
-        module: moduleScope.name,
-      });
+      const _ = createPythonSymbol(
+        exportedName,
+        {
+          binder: binder,
+          scope: moduleScope,
+          refkeys: key,
+          module: moduleScope.name,
+        },
+        undefined,
+        false,
+        false,
+      );
     }
   }
 }

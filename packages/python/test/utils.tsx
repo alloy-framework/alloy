@@ -5,6 +5,7 @@ import {
   Output,
   OutputDirectory,
   OutputFile,
+  PrintTreeOptions,
   SymbolCreator,
   render,
 } from "@alloy-js/core";
@@ -60,10 +61,12 @@ export function toSourceText(
     policy,
     externals,
     options,
+    printOptions,
   }: {
     policy?: NamePolicy<string>;
     externals?: SymbolCreator[];
     options?: { externals?: SymbolCreator[] };
+    printOptions?: PrintTreeOptions;
   } = {},
 ): string {
   if (!policy) {
@@ -74,6 +77,7 @@ export function toSourceText(
     <Output externals={mergedExternals} namePolicy={policy}>
       <py.SourceFile path="test.py">{c}</py.SourceFile>
     </Output>,
+    printOptions,
   );
   const file = findFile(res, "test.py");
   return file.contents;

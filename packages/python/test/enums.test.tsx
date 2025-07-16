@@ -26,6 +26,8 @@ describe("Python Enum", () => {
         RED = 1
         GREEN = 2
         BLUE = 3
+
+        
     `;
     expect(result).toRenderTo(expected);
   });
@@ -50,17 +52,17 @@ describe("Python Enum", () => {
         RED = "1"
         GREEN = 2
         BLUE = "3"
+
+
     `;
     expect(result).toRenderTo(expected);
   });
 
   it("classic enum with a refkey as jsValue", () => {
     const result = toSourceText(
-      <>
+      <py.StatementList>
         <py.ClassDeclaration name="Dog" />
-        <hbr />
         <py.ClassDeclaration name="Cat" />
-        <hbr />
         <py.EnumDeclaration
           name="Animal"
           baseType="Enum"
@@ -69,7 +71,7 @@ describe("Python Enum", () => {
             { name: "CAT", value: refkey("Cat") },
           ]}
         />
-      </>,
+      </py.StatementList>,
       { externals: [enumModule] },
     );
     const expected = d`
@@ -77,11 +79,15 @@ describe("Python Enum", () => {
 
       class Dog:
         pass
+
       class Cat:
         pass
+
       class Animal(Enum):
         DOG = Dog
         CAT = Cat
+
+
     `;
     expect(result).toRenderTo(expected);
   });
@@ -103,6 +109,8 @@ describe("Python Enum", () => {
         DOG = auto()
         CAT = auto()
         RABBIT = auto()
+
+
     `;
     expect(result).toRenderTo(expected);
   });
@@ -130,6 +138,8 @@ describe("Python Enum", () => {
         READ = 1
         WRITE = auto()
         EXECUTE = auto()
+
+
     `;
     expect(result).toRenderTo(expected);
   });

@@ -6,7 +6,6 @@ export interface ImportStatementsProps {
   joinImportsFromSameModule?: boolean;
 }
 
-
 /**
  * A component that renders import statements based on the provided import records.
  *

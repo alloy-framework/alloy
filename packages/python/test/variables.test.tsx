@@ -6,7 +6,7 @@ import { toSourceText } from "./utils.jsx";
 describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText(
-      <py.VariableDeclaration name="myVar" type="int" value={42} />,
+      <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
     );
     expect(res).toBe(`my_var: int = 42`);
   });
@@ -20,7 +20,7 @@ describe("Python Variable", () => {
 
   it("declares a python variable without typeAnnotations", () => {
     const res = toSourceText(
-      <py.VariableDeclaration name="myVar" value={42} />,
+      <py.VariableDeclaration name="myVar" initializer={42} />,
     );
     expect(res).toBe(`my_var = 42`);
   });
@@ -34,7 +34,7 @@ describe("Python Variable", () => {
     const res = toSourceText(
       <py.VariableDeclaration
         name="myVar"
-        value={<py.Value jsValue={null} />}
+        initializer={<py.Value jsValue={null} />}
       />,
     );
     expect(res).toBe(`my_var = None`);
@@ -44,19 +44,50 @@ describe("Python Variable", () => {
     const res = toSourceText(
       <py.VariableDeclaration
         name="nameIdPairs"
-        value={<py.Value jsValue={{ John: 123, Doe: 234 }} />}
+        initializer={<py.Value jsValue={{ John: 123, Doe: 234 }} />}
       />,
     );
     expect(res).toBe(`name_id_pairs = {"John": 123, "Doe": 234}`);
   });
 
+  it("declares a python variable with omitNone", () => {
+    const res = toSourceText(
+      <py.VariableDeclaration name="omitNoneVar" type="int" omitNone={true} />,
+    );
+    expect(res).toBe(`omit_none_var: int`);
+  });
+
+  it("declares a call statement python variable", () => {
+    const res = toSourceText(
+      <py.VariableDeclaration
+        name="callStmtVar"
+        initializer={12}
+        callStatementVar={true}
+      />,
+    );
+    expect(res).toBe(`call_stmt_var=12`);
+  });
+
+  it("declares a call statement python variable without name", () => {
+    const res = toSourceText(
+      <py.VariableDeclaration
+        name=""
+        initializer={12}
+        callStatementVar={true}
+      />,
+    );
+    expect(res).toBe(`12`);
+  });
+
   it("declares a python variable receiving other variable as value", () => {
     const res = toSourceText(
-      <>
-        <py.VariableDeclaration name="my_var" value={42} />
-        <hbr />
-        <py.VariableDeclaration name="my_other_var" value={refkey("my_var")} />
-      </>,
+      <py.StatementList>
+        <py.VariableDeclaration name="my_var" initializer={42} />
+        <py.VariableDeclaration
+          name="my_other_var"
+          initializer={refkey("my_var")}
+        />
+      </py.StatementList>,
     );
     expect(res).toBe(`my_var = 42\nmy_other_var = my_var`);
   });

@@ -8,7 +8,7 @@ export interface ValueProps {
  * A component that renders a JavaScript value in a Python-like syntax.
  * It handles various types of values including numbers, booleans, strings,
  * functions, arrays, and objects.
- * 
+ *
  * @example
  * ```tsx
  * <Value jsValue={42} /> // renders "42"

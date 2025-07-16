@@ -1,6 +1,9 @@
 import { reactive, shallowReactive } from "@alloy-js/core";
+import { createPythonSymbol } from "../symbol-creation.js";
 import { CustomOutputScope } from "./custom-output-scope.js";
-import { PythonOutputSymbol } from "./python-output-symbol.js";
+import {
+  PythonOutputSymbol,
+} from "./python-output-symbol.js";
 
 export class ImportedSymbol {
   local: PythonOutputSymbol;
@@ -64,11 +67,17 @@ export class PythonModuleScope extends CustomOutputScope {
       });
     }
 
-    const localSymbol = new PythonOutputSymbol(targetSymbol.name, {
-      binder: this.binder,
-      scope: this,
-      aliasTarget: targetSymbol,
-    });
+    const localSymbol = createPythonSymbol(
+      targetSymbol.name,
+      {
+        binder: this.binder,
+        scope: this,
+        aliasTarget: targetSymbol,
+      },
+      undefined,
+      false,
+      false,
+    );
 
     targetSymbol.copyTo(localSymbol);
 

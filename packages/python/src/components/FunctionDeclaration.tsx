@@ -4,6 +4,7 @@ import {
   OutputScope,
   OutputSymbolFlags,
   Scope,
+  Show,
   useMemberScope,
   useScope,
 } from "@alloy-js/core";
@@ -73,7 +74,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
             {...callSignatureProps}
             returnType={props.returnType}
           />
-          <PythonBlock opener=":">{props.children ?? "pass"}</PythonBlock>
+          <PythonBlock opener=":">
+            <Show when={Boolean(props.doc)}>
+              {props.doc}
+            </Show>
+            {props.children ?? "pass"}
+          </PythonBlock>
         </Scope>
       </Declaration>
     </>

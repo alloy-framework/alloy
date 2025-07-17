@@ -159,12 +159,12 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       scheduler: scheduler(() => runner),
       onTrack(event) {
         trace(TracePhase.effect.track, () => {
-          return `tracking ${event.target}, ${event.key}`;
+          return `tracking ${event.target}, ${String(event.key)}`;
         });
       },
       onTrigger(event) {
         trace(TracePhase.effect.trigger, () => {
-          return `triggering ${event.target}, ${event.key}`;
+          return `triggering ${event.target}, ${String(event.key)}`;
         });
       },
     },

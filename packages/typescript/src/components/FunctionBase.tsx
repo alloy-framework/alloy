@@ -288,6 +288,10 @@ function typeParameter(param: DeclaredTypeParameterDescriptor) {
           <TypeRefContext>{param.extends}</TypeRefContext>
         </indent>
       </Show>
+      <Show when={!!param.default}>
+        {" = "}
+        <TypeRefContext>{param.default}</TypeRefContext>
+      </Show>
     </group>
   );
 }

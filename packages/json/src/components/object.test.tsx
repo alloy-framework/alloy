@@ -2,12 +2,9 @@ import { List, Output, reactive, renderTree } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d, printTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import {
-  JsonObject,
-  JsonObjectProperty,
-} from "../src/components/JsonObject.jsx";
-import { SourceFile } from "../src/components/SourceFile.jsx";
-import { jsonTest } from "./utils.jsx";
+import { jsonTest } from "../../test/utils.jsx";
+import { JsonObject, JsonObjectProperty } from "./json-object.jsx";
+import { SourceFile } from "./source-file.jsx";
 
 it("renders objects", () => {
   const template = jsonTest({ a: 1, b: "hello" });

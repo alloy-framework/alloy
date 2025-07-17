@@ -29,7 +29,6 @@ export function createPythonSymbol(
       options.refkeys ??
       (createRefkeyIfNeeded ? refkey(processedName) : undefined),
     flags: options.flags,
-    pythonFlags: options.pythonFlags,
     metadata: options.metadata,
     module: sfContext?.module,
   });

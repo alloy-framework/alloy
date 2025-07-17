@@ -1,7 +1,8 @@
 import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.jsx";
+import { d } from "@alloy-js/core/testing";
 
 describe("Python Variable", () => {
   it("declares a python variable", () => {
@@ -77,6 +78,44 @@ describe("Python Variable", () => {
       />,
     ]);
     expect(res).toBe(`12`);
+  });
+
+  it("declares a python variable with a class type", () => {
+    const res = toSourceText([
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass" />
+        <py.VariableDeclaration name="my_var" type={<py.Reference refkey={refkey("MyClass")} />} />
+      </py.StatementList>,
+    ]);
+    expect(res).toBe(d`
+      class MyClass:
+          pass
+
+      my_var: MyClass = None`);
+  });
+
+  it("declares a python variable with a class type from a different module", () => {
+    const res = toSourceTextMultiple([
+      <py.SourceFile path="classes.py">
+        <py.ClassDeclaration name="MyClass" />
+      </py.SourceFile>,
+      <py.SourceFile path="usage.py">
+        <py.VariableDeclaration name="my_var" type={<py.Reference refkey={refkey("MyClass")} />} />
+      </py.SourceFile>
+      ,
+    ]);
+    assertFileContents(res, {
+      "classes.py": `
+        class MyClass:
+            pass
+
+      `,
+      "usage.py": `
+        from classes import MyClass
+
+        my_var: MyClass = None
+      `,
+    });
   });
 
   it("declares a python variable receiving other variable as value", () => {

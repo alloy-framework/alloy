@@ -1,8 +1,8 @@
-import { Props, refkey } from "@alloy-js/core";
+import { printTree, Props, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
-import { toSourceText } from "./utils.js";
+import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.js";
 
 describe("Function Declaration", () => {
   it("renders a function with no body as 'pass'", () => {
@@ -136,15 +136,18 @@ describe("Function Declaration", () => {
     `);
   });
 
-  it("can be an async function with returnType element", () => {
-    function Foo(_props?: Props) {
-      return <>Foo</>;
-    }
+  it("can be an async function with returnType element with Reference", () => {
     expect(
       toSourceText([
-        <py.FunctionDeclaration async name="foo" returnType={<Foo />} />,
+        <py.StatementList>
+          <py.ClassDeclaration name="Foo" />
+          <py.FunctionDeclaration async name="foo" returnType={<py.Reference refkey={refkey("Foo")} />} />
+        </py.StatementList>,
       ]),
     ).toBe(d`
+      class Foo:
+          pass
+
       async def foo() -> Foo:
           pass
 
@@ -181,7 +184,7 @@ describe("Function Declaration", () => {
 
     `);
   });
-  it("renders function with Parameters component", () => {
+  it("renders function with parameters", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.FunctionDeclaration
@@ -199,7 +202,7 @@ describe("Function Declaration", () => {
 
     `);
   });
-  it("renders __init__ function with Parameters component", () => {
+  it("renders __init__ function with parameters", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.InitFunctionDeclaration parameters={parameters}>
@@ -262,5 +265,54 @@ describe("Function Declaration", () => {
           return bar(3)
 
     `);
+  });
+  it("renders complex typing structure", () => {
+    const res = toSourceTextMultiple([
+      <py.SourceFile path="mod1.py">
+        <py.ClassDeclaration name="Foo" />
+      </py.SourceFile>,
+      <py.SourceFile path="mod2.py">
+        <py.ClassDeclaration name="A" />
+        <py.ClassDeclaration name="B" />
+      </py.SourceFile>,
+      <py.SourceFile path="usage.py">
+        <py.FunctionDeclaration
+          async name="foo"
+          parameters={[
+            { name: "x", type: <py.Reference refkey={refkey("A")} /> },
+            { name: "y", type: <py.Reference refkey={refkey("B")} /> },
+          ]}
+          args={true}
+          kwargs={true}
+          returnType={<py.Reference refkey={refkey("Foo")} />}
+        />
+      </py.SourceFile>
+    ]);
+
+    assertFileContents(res, {
+          "mod1.py": `
+            class Foo:
+                pass
+
+            `,
+          "mod2.py": `
+            class A:
+                pass
+
+
+            class B:
+                pass
+
+            `,
+          "usage.py": `
+            from mod1 import Foo
+            from mod2 import A
+            from mod2 import B
+
+            async def foo(x: A, y: B, *args, **kwargs) -> Foo:
+                pass
+
+            `,
+        });
   });
 });

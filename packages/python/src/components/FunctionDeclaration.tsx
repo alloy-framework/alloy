@@ -75,9 +75,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
             returnType={props.returnType}
           />
           <PythonBlock opener=":">
-            <Show when={Boolean(props.doc)}>
-              {props.doc}
-            </Show>
+            <Show when={Boolean(props.doc)}>{props.doc}</Show>
             {props.children ?? "pass"}
           </PythonBlock>
         </Scope>

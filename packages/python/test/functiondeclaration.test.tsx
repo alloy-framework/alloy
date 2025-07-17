@@ -1,8 +1,12 @@
-import { printTree, Props, refkey } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
-import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.js";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.js";
 
 describe("Function Declaration", () => {
   it("renders a function with no body as 'pass'", () => {
@@ -141,7 +145,11 @@ describe("Function Declaration", () => {
       toSourceText([
         <py.StatementList>
           <py.ClassDeclaration name="Foo" />
-          <py.FunctionDeclaration async name="foo" returnType={<py.Reference refkey={refkey("Foo")} />} />
+          <py.FunctionDeclaration
+            async
+            name="foo"
+            returnType={<py.Reference refkey={refkey("Foo")} />}
+          />
         </py.StatementList>,
       ]),
     ).toBe(d`
@@ -277,7 +285,8 @@ describe("Function Declaration", () => {
       </py.SourceFile>,
       <py.SourceFile path="usage.py">
         <py.FunctionDeclaration
-          async name="foo"
+          async
+          name="foo"
           parameters={[
             { name: "x", type: <py.Reference refkey={refkey("A")} /> },
             { name: "y", type: <py.Reference refkey={refkey("B")} /> },
@@ -286,16 +295,16 @@ describe("Function Declaration", () => {
           kwargs={true}
           returnType={<py.Reference refkey={refkey("Foo")} />}
         />
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
 
     assertFileContents(res, {
-          "mod1.py": `
+      "mod1.py": `
             class Foo:
                 pass
 
             `,
-          "mod2.py": `
+      "mod2.py": `
             class A:
                 pass
 
@@ -304,7 +313,7 @@ describe("Function Declaration", () => {
                 pass
 
             `,
-          "usage.py": `
+      "usage.py": `
             from mod1 import Foo
             from mod2 import A
             from mod2 import B
@@ -313,6 +322,6 @@ describe("Function Declaration", () => {
                 pass
 
             `,
-        });
+    });
   });
 });

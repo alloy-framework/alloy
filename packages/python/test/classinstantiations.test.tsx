@@ -37,10 +37,12 @@ it("correct resolving of external module", () => {
       models: ["Request"],
     },
   });
-  const result = toSourceText([
-    <py.StatementList>
-      <py.ClassInstantiation target={requestsLib["models"].Request} />
-    </py.StatementList>],
+  const result = toSourceText(
+    [
+      <py.StatementList>
+        <py.ClassInstantiation target={requestsLib["models"].Request} />
+      </py.StatementList>,
+    ],
     { externals: [requestsLib] },
   );
   const expected = d`
@@ -119,7 +121,7 @@ it("Class instantiation without a reference mixing unnamed and named vars", () =
             callStatementVar
           />,
         ]}
-    />
+      />
     </py.StatementList>,
   ]);
   const expected = d`

@@ -1,6 +1,5 @@
 import {
   Children,
-  Indent,
   List,
   Name,
   OutputSymbolFlags,
@@ -16,7 +15,6 @@ import {
   DeclarationProps,
 } from "./Declaration.js";
 import { PythonBlock } from "./PythonBlock.jsx";
-import { PyDoc } from "./index.js";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   /**
@@ -91,9 +89,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       <Scope name={updatedProps.name} kind="class">
         {basesPart}
         <PythonBlock opener=":">
-          <Show when={Boolean(props.doc)}>
-            {props.doc}
-          </Show>
+          <Show when={Boolean(props.doc)}>{props.doc}</Show>
           {hasChildren ? props.children : "pass"}
         </PythonBlock>
       </Scope>

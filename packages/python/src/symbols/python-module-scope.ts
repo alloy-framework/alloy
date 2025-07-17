@@ -1,9 +1,7 @@
 import { reactive, shallowReactive } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { CustomOutputScope } from "./custom-output-scope.js";
-import {
-  PythonOutputSymbol,
-} from "./python-output-symbol.js";
+import { PythonOutputSymbol } from "./python-output-symbol.js";
 
 export class ImportedSymbol {
   local: PythonOutputSymbol;

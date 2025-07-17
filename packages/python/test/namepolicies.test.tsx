@@ -18,16 +18,18 @@ it("correct formatting of class name", () => {
 });
 
 it("correct formatting of Enum name and EnumMember names", () => {
-  const result = toSourceText([
-    <py.EnumDeclaration
-      name="priority"
-      style="functional"
-      members={[
-        { name: "high", value: 1 },
-        { name: "Medium", value: 2 },
-        { name: "lowValue", value: 3 },
-      ]}
-    />],
+  const result = toSourceText(
+    [
+      <py.EnumDeclaration
+        name="priority"
+        style="functional"
+        members={[
+          { name: "high", value: 1 },
+          { name: "Medium", value: 2 },
+          { name: "lowValue", value: 3 },
+        ]}
+      />,
+    ],
     { externals: [enumModule] },
   );
   const expected = d`

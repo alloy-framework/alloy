@@ -1,8 +1,7 @@
-import { For, Prose, Show, List, childrenArray, Indent, baseListPropsToMapJoinArgs } from "@alloy-js/core";
+import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Value } from "./index.js";
-
 
 interface GoogleStyleDocParamTypeProps {
   type?: Children;
@@ -22,16 +21,12 @@ function GoogleStyleDocParamType(props: GoogleStyleDocParamTypeProps) {
   );
 }
 
-interface GoogleStyleDocParamNameProps{
+interface GoogleStyleDocParamNameProps {
   name: Children;
 }
 
 function GoogleStyleDocParamName(props: GoogleStyleDocParamNameProps) {
-  return (
-    <>
-      {props.name}
-    </>
-  );
+  return <>{props.name}</>;
 }
 
 interface GoogleStyleDocParamDescriptionProps {
@@ -39,13 +34,18 @@ interface GoogleStyleDocParamDescriptionProps {
   defaultValue?: Children;
 }
 
-function GoogleStyleDocParamDescription(props: GoogleStyleDocParamDescriptionProps) {
+function GoogleStyleDocParamDescription(
+  props: GoogleStyleDocParamDescriptionProps,
+) {
   return (
     <Show when={Boolean(props.children)}>
       {": "}
       <align width={4}>
         <Prose>{props.children}</Prose>
-        <Show when={Boolean(props.defaultValue)}> Defaults to <Value jsValue={props.defaultValue}></Value>.</Show>
+        <Show when={Boolean(props.defaultValue)}>
+          {" "}
+          Defaults to <Value jsValue={props.defaultValue}></Value>.
+        </Show>
       </align>
     </Show>
   );
@@ -65,11 +65,12 @@ export interface GoogleStyleDocParamProps {
 export function GoogleStyleDocParam(props: GoogleStyleDocParamProps) {
   return (
     <>
-      <GoogleStyleDocParamName
-        name={props.name}
-      />
+      <GoogleStyleDocParamName name={props.name} />
       <GoogleStyleDocParamType type={props.type} optional={props.optional} />
-      <GoogleStyleDocParamDescription children={props.children} defaultValue={props.defaultValue}/>
+      <GoogleStyleDocParamDescription
+        children={props.children}
+        defaultValue={props.defaultValue}
+      />
     </>
   );
 }
@@ -85,20 +86,20 @@ export function GoogleStyleDocParams(props: GoogleStyleDocParamsProps) {
   const parameters = normalizeParametersForDoc(props.parameters);
   return (
     <>
-        {"Args:"}
-        <Indent>
-            <List doubleHardline>
-                {parameters.map(param => (
-                    <GoogleStyleDocParam
-                    name={param.name}
-                    type={param.type}
-                    optional={param.optional}
-                    >
-                    {param.doc}
-                    </GoogleStyleDocParam>
-                ))}
-            </List>
-        </Indent>
+      {"Args:"}
+      <Indent>
+        <List doubleHardline>
+          {parameters.map((param) => (
+            <GoogleStyleDocParam
+              name={param.name}
+              type={param.type}
+              optional={param.optional}
+            >
+              {param.doc}
+            </GoogleStyleDocParam>
+          ))}
+        </List>
+      </Indent>
     </>
   );
 }
@@ -113,10 +114,8 @@ export interface GoogleStyleDocReturnProps {
 export function GoogleStyleDocReturn(props: GoogleStyleDocReturnProps) {
   return (
     <>
-        {"Returns:"}
-        <Indent>
-            {props.message}
-        </Indent>
+      {"Returns:"}
+      <Indent>{props.message}</Indent>
     </>
   );
 }
@@ -131,10 +130,8 @@ export interface GoogleStyleDocRaisesProps {
 export function GoogleStyleDocRaises(props: GoogleStyleDocRaisesProps) {
   return (
     <>
-        {"Raises:"}
-        <Indent>
-            {props.message}
-        </Indent>
+      {"Raises:"}
+      <Indent>{props.message}</Indent>
     </>
   );
 }
@@ -154,11 +151,7 @@ export function GoogleStyleFunctionDoc(props: GoogleStyleFunctionDocProps) {
     <>
       <PyDoc>
         <Show when={props.description !== undefined}>
-          <List doubleHardline>
-            {props.description.map(param => (
-                param
-            ))}
-          </List>
+          <List doubleHardline>{props.description.map((param) => param)}</List>
         </Show>
         <Show when={props.parameters.length > 0}>
           <GoogleStyleDocParams parameters={props.parameters} />
@@ -167,9 +160,9 @@ export function GoogleStyleFunctionDoc(props: GoogleStyleFunctionDocProps) {
           <GoogleStyleDocReturn message={props.returns!} />
         </Show>
         <Show when={props.raises.length > 0}>
-          {props.raises.map(param => (
+          {props.raises.map((param) => (
             <GoogleStyleDocRaises message={param} />
-         ))}
+          ))}
         </Show>
       </PyDoc>
       <hbr />
@@ -190,11 +183,7 @@ export function GoogleStyleClassDoc(props: GoogleStyleClassDocProps) {
     <>
       <PyDoc>
         <Show when={props.description !== undefined}>
-          <List doubleHardline>
-            {props.description.map(param => (
-                param
-            ))}
-          </List>
+          <List doubleHardline>{props.description.map((param) => param)}</List>
         </Show>
         <Show when={props.parameters.length > 0}>
           <GoogleStyleDocParams parameters={props.parameters} />
@@ -220,14 +209,14 @@ export function PyDocExample(props: PyDocExampleProps) {
     // Split, trim each line, and filter out empty lines
     lines = children[0]
       .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
   } else {
     // For non-string children, filter out empty/whitespace-only strings
     lines = children
-      .map(child => (typeof child === "string" ? child : ""))
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
+      .map((child) => (typeof child === "string" ? child : ""))
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
   }
 
   return (
@@ -235,7 +224,8 @@ export function PyDocExample(props: PyDocExampleProps) {
       <For each={lines}>
         {(line) => (
           <>
-            {">> "}{line}
+            {">> "}
+            {line}
           </>
         )}
       </For>
@@ -267,9 +257,7 @@ export function PyDoc(props: PyDocProps) {
       {'"""'}
       <align string="">
         <hbr />
-        <List doubleHardline>
-            {childrenArray(() => props.children)}
-        </List>
+        <List doubleHardline>{childrenArray(() => props.children)}</List>
       </align>
       <hbr />
       {'"""'}

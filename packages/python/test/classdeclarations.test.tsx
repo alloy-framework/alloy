@@ -1,8 +1,12 @@
-import { memberRefkey, Output, refkey, render } from "@alloy-js/core";
+import { memberRefkey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
-import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.jsx";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.jsx";
 
 describe("Python Class", () => {
   it("renders a class with no body as 'pass'", () => {
@@ -77,7 +81,7 @@ describe("Python Class", () => {
       </py.SourceFile>,
       <py.SourceFile path="mod3.py">
         <py.ClassDeclaration name="C" bases={[refkey("B")]} />
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
     const mod1Expected = d`
       class A:
@@ -233,7 +237,7 @@ describe("Python Class - VariableDeclaration", () => {
             />
           </py.StatementList>
         </py.ClassDeclaration>
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
 
     assertFileContents(res, {

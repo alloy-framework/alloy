@@ -1,8 +1,12 @@
 import { refkey } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.jsx";
-import { d } from "@alloy-js/core/testing";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.jsx";
 
 describe("Python Variable", () => {
   it("declares a python variable", () => {
@@ -84,7 +88,10 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.StatementList>
         <py.ClassDeclaration name="MyClass" />
-        <py.VariableDeclaration name="my_var" type={<py.Reference refkey={refkey("MyClass")} />} />
+        <py.VariableDeclaration
+          name="my_var"
+          type={<py.Reference refkey={refkey("MyClass")} />}
+        />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`
@@ -100,9 +107,11 @@ describe("Python Variable", () => {
         <py.ClassDeclaration name="MyClass" />
       </py.SourceFile>,
       <py.SourceFile path="usage.py">
-        <py.VariableDeclaration name="my_var" type={<py.Reference refkey={refkey("MyClass")} />} />
-      </py.SourceFile>
-      ,
+        <py.VariableDeclaration
+          name="my_var"
+          type={<py.Reference refkey={refkey("MyClass")} />}
+        />
+      </py.SourceFile>,
     ]);
     assertFileContents(res, {
       "classes.py": `

@@ -1,4 +1,4 @@
-import { code, memberRefkey, Output, refkey, render } from "@alloy-js/core";
+import { code, memberRefkey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/components/index.js";
@@ -8,7 +8,11 @@ import {
   VariableDeclaration,
 } from "../src/components/index.js";
 import { ParameterDescriptor, SourceFile } from "../src/index.js";
-import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.js";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
@@ -559,7 +563,7 @@ describe("with refkeys", () => {
             <py.MemberExpression.Part id="foo" />
           </py.MemberExpression>
         </py.StatementList>
-      </SourceFile>
+      </SourceFile>,
     ]);
 
     assertFileContents(res, {
@@ -657,15 +661,17 @@ describe("formatting", () => {
   describe("simple chains", () => {
     it("just dots", () => {
       expect(
-        toSourceText([
-          <py.MemberExpression>
-            <py.MemberExpression.Part id="four" />
-            <py.MemberExpression.Part id="four" />
-            <py.MemberExpression.Part id="two" />
-            <py.MemberExpression.Part id="two" />
-            <py.MemberExpression.Part id="two" />
-            <py.MemberExpression.Part id="two" />
-          </py.MemberExpression>],
+        toSourceText(
+          [
+            <py.MemberExpression>
+              <py.MemberExpression.Part id="four" />
+              <py.MemberExpression.Part id="four" />
+              <py.MemberExpression.Part id="two" />
+              <py.MemberExpression.Part id="two" />
+              <py.MemberExpression.Part id="two" />
+              <py.MemberExpression.Part id="two" />
+            </py.MemberExpression>,
+          ],
           { printOptions: { printWidth: 14 } },
         ),
       ).toBe(d`
@@ -677,12 +683,14 @@ describe("formatting", () => {
 
     it("bracket breaks", () => {
       expect(
-        toSourceText([
-          <py.MemberExpression>
-            <py.MemberExpression.Part id="obj" />
-            <py.MemberExpression.Part key={"property-name"} />
-            <py.MemberExpression.Part id="prop" />
-          </py.MemberExpression>],
+        toSourceText(
+          [
+            <py.MemberExpression>
+              <py.MemberExpression.Part id="obj" />
+              <py.MemberExpression.Part key={"property-name"} />
+              <py.MemberExpression.Part id="prop" />
+            </py.MemberExpression>,
+          ],
           { printOptions: { printWidth: 12 } },
         ),
       ).toBe(d`

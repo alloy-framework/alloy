@@ -1,19 +1,15 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { ImportStatement } from "../src/components/ImportStatement.jsx";
 import * as py from "../src/components/index.js";
-import {
-  ImportedSymbol,
-  ImportRecords,
-  PythonOutputSymbol,
-} from "../src/symbols/index.js";
+import { createPythonSymbol } from "../src/symbol-creation.js";
+import { ImportedSymbol, ImportRecords } from "../src/symbols/index.js";
 import {
   assertFileContents,
   createPythonModuleScope,
   toSourceText,
   toSourceTextMultiple,
 } from "./utils.jsx";
-import { createPythonSymbol } from "../src/symbol-creation.js";
 
 describe("ImportStatement", () => {
   it("renders module import", () => {
@@ -147,7 +143,7 @@ describe("Imports being used", () => {
           <py.VariableDeclaration name="three" initializer={rk3} />
           <py.VariableDeclaration name="two" initializer={rk2} />
         </py.StatementList>
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
     assertFileContents(result, {
       "test.py": `
@@ -189,14 +185,11 @@ describe("Imports being used", () => {
           <py.VariableDeclaration name="two" initializer={rk2} />
           <py.VariableDeclaration name="three" initializer={rk3} />
           <py.VariableDeclaration name="something_else" initializer={rk4} />
-          <py.VariableDeclaration
-            name="something_else_two"
-            initializer={rk5}
-          />
+          <py.VariableDeclaration name="something_else_two" initializer={rk5} />
           <py.VariableDeclaration name="something" initializer={rk6} />
           <py.VariableDeclaration name="something_two" initializer={rk7} />
         </py.StatementList>
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
     assertFileContents(result, {
       "test.py": `

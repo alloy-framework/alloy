@@ -92,7 +92,7 @@ it("correct formatting of source file", () => {
       <py.MemberExpression.Part id="a" />
       <py.MemberExpression.Part id="b" />
       <py.MemberExpression.Part key={"special-prop"} />
-    </py.MemberExpression>
+    </py.MemberExpression>,
   ]);
   const expected = d`
     class SomeClass:

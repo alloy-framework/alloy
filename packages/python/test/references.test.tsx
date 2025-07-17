@@ -1,4 +1,4 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { describe, it } from "vitest";
 import * as py from "../src/index.js";
 import { assertFileContents, toSourceTextMultiple } from "./utils.jsx";
@@ -18,7 +18,7 @@ describe("Reference", () => {
             <py.ClassInstantiation target="User" args={['"Marvin"']} />
           }
         />
-      </py.SourceFile>
+      </py.SourceFile>,
     ]);
     assertFileContents(res, {
       "models.py": `

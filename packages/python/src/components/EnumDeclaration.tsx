@@ -29,6 +29,7 @@ export interface EnumProps extends BaseDeclarationProps {
     name: string;
     value?: Children;
     jsValue?: string | number;
+    doc?: string;
   }>;
   /**
    * The enum style: 'classic' (default), 'auto', or 'functional'.

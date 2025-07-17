@@ -6,24 +6,24 @@ import { toSourceText } from "./utils.js";
 
 describe("Function Declaration", () => {
   it("renders a function with no body as 'pass'", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.FunctionDeclaration name="foo" instanceFunction={true} />,
-    );
+    ]);
     expect(result).toRenderTo(d`
       def foo(self):
-        pass
+          pass
 
         
     `);
   });
 
   it("renders a function with no body as 'pass' with return type", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.FunctionDeclaration name="foo" returnType="int" />,
-    );
+    ]);
     expect(result).toRenderTo(d`
       def foo() -> int:
-        pass
+          pass
 
 
     `);
@@ -31,7 +31,7 @@ describe("Function Declaration", () => {
 
   it("renders a function that calls another function", () => {
     const refkeyFoo = refkey();
-    const result = toSourceText(
+    const result = toSourceText([
       <py.StatementList>
         <py.FunctionDeclaration
           name="foo"
@@ -53,34 +53,34 @@ describe("Function Declaration", () => {
           />
         </py.FunctionDeclaration>
       </py.StatementList>,
-    );
+    ]);
     expect(result).toRenderTo(d`
       def foo(self) -> int:
-        pass
+          pass
 
       def bar(self) -> int:
-        result: int = foo()
+          result: int = foo()
 
 
     `);
   });
 
   it("renders an instance function with a body", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.FunctionDeclaration name="bar" instanceFunction={true}>
         print('hi')
       </py.FunctionDeclaration>,
-    );
+    ]);
     expect(result).toRenderTo(d`
       def bar(self):
-        print('hi')
+          print('hi')
 
 
     `);
   });
 
   it("renders a function with parameters", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.FunctionDeclaration
         name="baz"
         parameters={[
@@ -93,11 +93,11 @@ describe("Function Declaration", () => {
       >
         print(x, y)
       </py.FunctionDeclaration>,
-    );
+    ]);
     expect(result).toRenderTo(
       d`
         def baz(x: int, y=0, z: int = 42, *args, **kwargs):
-          print(x, y)
+            print(x, y)
 
 
       `,
@@ -105,33 +105,33 @@ describe("Function Declaration", () => {
   });
 
   it("renders an __init__ function with no body as 'pass'", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.InitFunctionDeclaration parameters={[{ name: "x" }]} />,
-    );
+    ]);
     expect(result).toRenderTo(d`
       def __init__(self, x):
-        pass
+          pass
 
         
     `);
   });
 
   it("can be an async function", () => {
-    expect(toSourceText(<py.FunctionDeclaration async name="foo" />)).toBe(d`
+    expect(toSourceText([<py.FunctionDeclaration async name="foo" />])).toBe(d`
       async def foo():
-        pass
+          pass
 
     `);
   });
 
   it("can be an async function with returnType", () => {
     expect(
-      toSourceText(
+      toSourceText([
         <py.FunctionDeclaration async name="foo" returnType="Foo" />,
-      ),
+      ]),
     ).toBe(d`
       async def foo() -> Foo:
-        pass
+          pass
 
     `);
   });
@@ -141,12 +141,12 @@ describe("Function Declaration", () => {
       return <>Foo</>;
     }
     expect(
-      toSourceText(
+      toSourceText([
         <py.FunctionDeclaration async name="foo" returnType={<Foo />} />,
-      ),
+      ]),
     ).toBe(d`
       async def foo() -> Foo:
-        pass
+          pass
 
     `);
   });
@@ -158,9 +158,9 @@ describe("Function Declaration", () => {
       </py.FunctionDeclaration>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(toSourceText([decl])).toBe(d`
       def foo(a, b):
-        return a + b
+          return a + b
 
     `);
   });
@@ -175,9 +175,9 @@ describe("Function Declaration", () => {
       </py.FunctionDeclaration>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(toSourceText([decl])).toBe(d`
       def foo[T, U](a, b):
-        return a + b
+          return a + b
 
     `);
   });
@@ -193,9 +193,9 @@ describe("Function Declaration", () => {
       </py.FunctionDeclaration>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(toSourceText([decl])).toBe(d`
       def foo(self, x: int):
-        self.attribute = "value"
+          self.attribute = "value"
 
     `);
   });
@@ -207,9 +207,9 @@ describe("Function Declaration", () => {
       </py.InitFunctionDeclaration>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(toSourceText([decl])).toBe(d`
       def __init__(self, x: int):
-        self.attribute = "value"
+          self.attribute = "value"
 
     `);
   });
@@ -253,13 +253,13 @@ describe("Function Declaration", () => {
       </py.FunctionDeclaration>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(toSourceText([decl])).toBe(d`
       def foo(x: int):
-        def bar(y: int):
-          def foobar(z: int):
-            return z * 2
-          return foobar(2)
-        return bar(3)
+          def bar(y: int):
+              def foobar(z: int):
+                  return z * 2
+              return foobar(2)
+          return bar(3)
 
     `);
   });

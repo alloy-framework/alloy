@@ -13,14 +13,14 @@ it("uses import from external library", () => {
       "models.anothermodule": ["something"],
     },
   });
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       {requestsLib["."].get}
       {requestsLib["."].post}
       {requestsLib["models"].Request}
       {requestsLib["models"].Response}
       {requestsLib["models.anothermodule"].something}
-    </py.StatementList>,
+    </py.StatementList>],
     { externals: [requestsLib] },
   );
   const expected = d`

@@ -11,12 +11,13 @@ import {
   assertFileContents,
   createPythonModuleScope,
   toSourceText,
+  toSourceTextMultiple,
 } from "./utils.jsx";
 import { createPythonSymbol } from "../src/symbol-creation.js";
 
 describe("ImportStatement", () => {
   it("renders module import", () => {
-    const result = toSourceText(<ImportStatement path="sys" />);
+    const result = toSourceText([<ImportStatement path="sys" />]);
     const expected = `import sys`;
     expect(result).toRenderTo(expected);
   });
@@ -34,9 +35,9 @@ describe("ImportStatement", () => {
       new ImportedSymbol(sqrtSymbol, sqrtSymbol),
       new ImportedSymbol(piSymbol, piSymbol),
     ]);
-    const result = toSourceText(
+    const result = toSourceText([
       <ImportStatement path="math" symbols={symbols} />,
-    );
+    ]);
     const expected = `from math import pi, sqrt`;
     expect(result).toRenderTo(expected);
   });
@@ -72,7 +73,7 @@ describe("ImportStatements", () => {
       [sysModuleScope, { symbols: new Set<ImportedSymbol>() }],
     ]);
 
-    const result = toSourceText(<py.ImportStatements records={records} />);
+    const result = toSourceText([<py.ImportStatements records={records} />]);
     const expected = `
     from math import pi
     from math import sqrt
@@ -112,12 +113,12 @@ describe("ImportStatements", () => {
       [requestsScope, { symbols: requestsSymbols }],
     ]);
 
-    const result = toSourceText(
+    const result = toSourceText([
       <py.ImportStatements
         records={records}
         joinImportsFromSameModule={true}
       />,
-    );
+    ]);
     const expected = `
     from math import pi, sqrt
     from requests import get, post`;
@@ -130,26 +131,24 @@ describe("Imports being used", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     const rk3 = refkey();
-    const result = render(
-      <Output>
-        <py.SourceFile path="test_1.py">
-          <py.VariableDeclaration name="conflict" refkey={rk1} />
-        </py.SourceFile>
-        <py.SourceFile path="test_3.py">
-          <py.VariableDeclaration name="conflict" refkey={rk3} />
-        </py.SourceFile>
-        <py.SourceFile path="test_2.py">
-          <py.VariableDeclaration name="conflict" refkey={rk2} />
-        </py.SourceFile>
-        <py.SourceFile path="test.py">
-          <py.StatementList>
-            <py.VariableDeclaration name="one" initializer={rk1} />
-            <py.VariableDeclaration name="three" initializer={rk3} />
-            <py.VariableDeclaration name="two" initializer={rk2} />
-          </py.StatementList>
-        </py.SourceFile>
-      </Output>,
-    );
+    const result = toSourceTextMultiple([
+      <py.SourceFile path="test_1.py">
+        <py.VariableDeclaration name="conflict" refkey={rk1} />
+      </py.SourceFile>,
+      <py.SourceFile path="test_3.py">
+        <py.VariableDeclaration name="conflict" refkey={rk3} />
+      </py.SourceFile>,
+      <py.SourceFile path="test_2.py">
+        <py.VariableDeclaration name="conflict" refkey={rk2} />
+      </py.SourceFile>,
+      <py.SourceFile path="test.py">
+        <py.StatementList>
+          <py.VariableDeclaration name="one" initializer={rk1} />
+          <py.VariableDeclaration name="three" initializer={rk3} />
+          <py.VariableDeclaration name="two" initializer={rk2} />
+        </py.StatementList>
+      </py.SourceFile>
+    ]);
     assertFileContents(result, {
       "test.py": `
         from test_1 import conflict
@@ -170,37 +169,35 @@ describe("Imports being used", () => {
     const rk5 = refkey();
     const rk6 = refkey();
     const rk7 = refkey();
-    const result = render(
-      <Output>
-        <py.SourceFile path="test_1.py">
-          <py.VariableDeclaration name="conflict" refkey={rk1} />
-          <py.VariableDeclaration name="something_else" refkey={rk4} />
-        </py.SourceFile>
-        <py.SourceFile path="test_2.py">
-          <py.VariableDeclaration name="conflict" refkey={rk2} />
-          <py.VariableDeclaration name="something" refkey={rk6} />
-          <py.VariableDeclaration name="something_else" refkey={rk5} />
-        </py.SourceFile>
-        <py.SourceFile path="test_3.py">
-          <py.VariableDeclaration name="conflict" refkey={rk3} />
-          <py.VariableDeclaration name="something" refkey={rk7} />
-        </py.SourceFile>
-        <py.SourceFile path="test.py">
-          <py.StatementList>
-            <py.VariableDeclaration name="one" initializer={rk1} />
-            <py.VariableDeclaration name="two" initializer={rk2} />
-            <py.VariableDeclaration name="three" initializer={rk3} />
-            <py.VariableDeclaration name="something_else" initializer={rk4} />
-            <py.VariableDeclaration
-              name="something_else_two"
-              initializer={rk5}
-            />
-            <py.VariableDeclaration name="something" initializer={rk6} />
-            <py.VariableDeclaration name="something_two" initializer={rk7} />
-          </py.StatementList>
-        </py.SourceFile>
-      </Output>,
-    );
+    const result = toSourceTextMultiple([
+      <py.SourceFile path="test_1.py">
+        <py.VariableDeclaration name="conflict" refkey={rk1} />
+        <py.VariableDeclaration name="something_else" refkey={rk4} />
+      </py.SourceFile>,
+      <py.SourceFile path="test_2.py">
+        <py.VariableDeclaration name="conflict" refkey={rk2} />
+        <py.VariableDeclaration name="something" refkey={rk6} />
+        <py.VariableDeclaration name="something_else" refkey={rk5} />
+      </py.SourceFile>,
+      <py.SourceFile path="test_3.py">
+        <py.VariableDeclaration name="conflict" refkey={rk3} />
+        <py.VariableDeclaration name="something" refkey={rk7} />
+      </py.SourceFile>,
+      <py.SourceFile path="test.py">
+        <py.StatementList>
+          <py.VariableDeclaration name="one" initializer={rk1} />
+          <py.VariableDeclaration name="two" initializer={rk2} />
+          <py.VariableDeclaration name="three" initializer={rk3} />
+          <py.VariableDeclaration name="something_else" initializer={rk4} />
+          <py.VariableDeclaration
+            name="something_else_two"
+            initializer={rk5}
+          />
+          <py.VariableDeclaration name="something" initializer={rk6} />
+          <py.VariableDeclaration name="something_two" initializer={rk7} />
+        </py.StatementList>
+      </py.SourceFile>
+    ]);
     assertFileContents(result, {
       "test.py": `
         from test_1 import conflict

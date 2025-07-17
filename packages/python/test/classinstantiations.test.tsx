@@ -8,7 +8,7 @@ import { toSourceText } from "./utils.jsx";
 it("declaration of class instance with variables", () => {
   // Creating the reference separately so the naming policy doesn't interfere
   const classRef = refkey();
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassDeclaration name="one-class" refkey={classRef} />
       <py.ClassInstantiation
@@ -20,10 +20,10 @@ it("declaration of class instance with variables", () => {
         ]}
       />
     </py.StatementList>,
-  );
+  ]);
   const expected = d`
     class OneClass:
-      pass
+        pass
 
     OneClass("A name", 42, True)
   `;
@@ -37,10 +37,10 @@ it("correct resolving of external module", () => {
       models: ["Request"],
     },
   });
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassInstantiation target={requestsLib["models"].Request} />
-    </py.StatementList>,
+    </py.StatementList>],
     { externals: [requestsLib] },
   );
   const expected = d`
@@ -52,7 +52,7 @@ it("correct resolving of external module", () => {
 });
 
 it("Class instantiation without a reference", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassInstantiation
         target={"ExampleClass"}
@@ -63,7 +63,7 @@ it("Class instantiation without a reference", () => {
         ]}
       />
     </py.StatementList>,
-  );
+  ]);
   const expected = d`
     ExampleClass("A name", 42, True)
   `;
@@ -71,7 +71,7 @@ it("Class instantiation without a reference", () => {
 });
 
 it("Class instantiation without a reference and with call statement vars", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassInstantiation
         target={"ExampleClass"}
@@ -94,7 +94,7 @@ it("Class instantiation without a reference and with call statement vars", () =>
         ]}
       />
     </py.StatementList>,
-  );
+  ]);
   const expected = d`
     ExampleClass(name="A name", number=42, flag=True)
   `;
@@ -102,7 +102,7 @@ it("Class instantiation without a reference and with call statement vars", () =>
 });
 
 it("Class instantiation without a reference mixing unnamed and named vars", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassInstantiation
         target={"ExampleClass"}
@@ -119,9 +119,9 @@ it("Class instantiation without a reference mixing unnamed and named vars", () =
             callStatementVar
           />,
         ]}
-      />
+    />
     </py.StatementList>,
-  );
+  ]);
   const expected = d`
     ExampleClass("A name", number=42, flag=True)
   `;

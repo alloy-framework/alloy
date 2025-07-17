@@ -55,8 +55,42 @@ export function assertFileContents(
   }
 }
 
+export function toSourceTextMultiple(
+  sourceFiles: Children[],
+  {
+    policy,
+    externals,
+    options,
+    printOptions,
+  }: {
+    policy?: NamePolicy<string>;
+    externals?: SymbolCreator[];
+    options?: { externals?: SymbolCreator[] };
+    printOptions?: PrintTreeOptions;
+  } = {},
+): OutputDirectory {
+  if (!policy) {
+    policy = createPythonNamePolicy();
+  }
+  const mergedExternals = options?.externals ?? externals;
+  if (printOptions === undefined) {
+    printOptions = {
+      printWidth: 80,
+      tabWidth: 4,
+    };
+  } else {
+    printOptions.tabWidth = 4;
+  }
+  const content = (
+    <Output externals={mergedExternals} namePolicy={policy}>
+      {sourceFiles}
+    </Output>
+  );
+  return render(content, printOptions);
+}
+
 export function toSourceText(
-  c: Children,
+  c: Children[],
   {
     policy,
     externals,
@@ -69,16 +103,13 @@ export function toSourceText(
     printOptions?: PrintTreeOptions;
   } = {},
 ): string {
-  if (!policy) {
-    policy = createPythonNamePolicy();
-  }
-  const mergedExternals = options?.externals ?? externals;
-  const res = render(
-    <Output externals={mergedExternals} namePolicy={policy}>
-      <py.SourceFile path="test.py">{c}</py.SourceFile>
-    </Output>,
+  const content = <py.SourceFile path="test.py">{c}</py.SourceFile>;
+  const res = toSourceTextMultiple([content], {
+    policy,
+    externals,
+    options,
     printOptions,
-  );
+  });
   const file = findFile(res, "test.py");
   return file.contents;
 }

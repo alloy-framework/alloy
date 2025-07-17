@@ -6,15 +6,15 @@ import { toSourceText } from "./utils.jsx";
 
 describe("FunctionCallExpression", () => {
   it("renders", () => {
-    const result = toSourceText(<py.FunctionCallExpression target="foo" />);
+    const result = toSourceText([<py.FunctionCallExpression target="foo" />]);
     expect(result).toRenderTo(d`
       foo()
     `);
   });
   it("renders with args", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.FunctionCallExpression target="foo" args={["a", "b"]} />,
-    );
+    ]);
     expect(result).toRenderTo(d`
       foo(a, b)
     `);
@@ -23,7 +23,7 @@ describe("FunctionCallExpression", () => {
   it("function call with variables", () => {
     // Creating the reference separately so the naming policy doesn't interfere
     const methodRef = refkey();
-    const result = toSourceText(
+    const result = toSourceText([
       <py.StatementList>
         <py.FunctionDeclaration name="runFunc" refkey={methodRef} />
         <py.FunctionCallExpression
@@ -35,10 +35,10 @@ describe("FunctionCallExpression", () => {
           ]}
         />
       </py.StatementList>,
-    );
+    ]);
     const expected = d`
       def run_func():
-        pass
+          pass
       
       run_func("A name", 42, True)
     `;
@@ -48,7 +48,7 @@ describe("FunctionCallExpression", () => {
   it("function call with variables and assignment", () => {
     // Creating the reference separately so the naming policy doesn't interfere
     const methodRef = refkey();
-    const result = toSourceText(
+    const result = toSourceText([
       <py.StatementList>
         <py.FunctionDeclaration
           name="runFunc"
@@ -75,10 +75,10 @@ describe("FunctionCallExpression", () => {
           }
         />
       </py.StatementList>,
-    );
+    ]);
     const expected = d`
       def run_func(name: str, number: int, flag: bool) -> str:
-        pass
+          pass
       
       result: str = run_func("A name", 42, True)
     `;
@@ -86,7 +86,7 @@ describe("FunctionCallExpression", () => {
   });
 
   it("Method call without a reference and with call statement vars", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.StatementList>
         <py.FunctionCallExpression
           target={"example_method"}
@@ -109,7 +109,7 @@ describe("FunctionCallExpression", () => {
           ]}
         />
       </py.StatementList>,
-    );
+    ]);
     const expected = d`
       example_method(name="A name", number=42, flag=True)
     `;
@@ -117,7 +117,7 @@ describe("FunctionCallExpression", () => {
   });
 
   it("Method call without a reference mixing unnamed and named vars", () => {
-    const result = toSourceText(
+    const result = toSourceText([
       <py.StatementList>
         <py.FunctionCallExpression
           target={"example_method"}
@@ -136,7 +136,7 @@ describe("FunctionCallExpression", () => {
           ]}
         />
       </py.StatementList>,
-    );
+    ]);
     const expected = d`
       example_method("A name", number=42, flag=True)
     `;

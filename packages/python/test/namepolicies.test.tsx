@@ -5,12 +5,12 @@ import * as py from "../src/components/index.js";
 import { toSourceText } from "./utils.jsx";
 
 it("correct formatting of class name", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.ClassDeclaration name="a-really-WeirdClass-name" />,
-  );
+  ]);
   const expected = d`
     class AReallyWeirdClassName:
-      pass
+        pass
 
       
   `;
@@ -18,7 +18,7 @@ it("correct formatting of class name", () => {
 });
 
 it("correct formatting of Enum name and EnumMember names", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.EnumDeclaration
       name="priority"
       style="functional"
@@ -27,7 +27,7 @@ it("correct formatting of Enum name and EnumMember names", () => {
         { name: "Medium", value: 2 },
         { name: "lowValue", value: 3 },
       ]}
-    />,
+    />],
     { externals: [enumModule] },
   );
   const expected = d`
@@ -39,7 +39,7 @@ it("correct formatting of Enum name and EnumMember names", () => {
 });
 
 it("renders a function with parameters", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.FunctionDeclaration
       name="quirklyNamed-Function"
       parameters={[{ name: "a-parameter", type: "int" }]}
@@ -48,11 +48,11 @@ it("renders a function with parameters", () => {
     >
       print(x, y)
     </py.FunctionDeclaration>,
-  );
+  ]);
   expect(result).toRenderTo(
     d`
       def quirkly_named_function(a_parameter: int, *args, **kwargs):
-        print(x, y)
+          print(x, y)
 
         
     `,
@@ -60,7 +60,7 @@ it("renders a function with parameters", () => {
 });
 
 it("correct formatting of call signature parameters names", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.CallSignatureParameters
       parameters={[
         { name: "this-is-a-number", type: "int" },
@@ -70,12 +70,12 @@ it("correct formatting of call signature parameters names", () => {
         },
       ]}
     />,
-  );
+  ]);
   expect(result).toRenderTo(`this_is_a_number: int, and_this_is_a_dict: dict`);
 });
 
 it("correct formatting of call statement vars", () => {
-  const result = toSourceText(
+  const result = toSourceText([
     <py.StatementList>
       <py.ClassInstantiation
         target={"test"}
@@ -93,15 +93,15 @@ it("correct formatting of call statement vars", () => {
         ]}
       />
     </py.StatementList>,
-  );
+  ]);
   expect(result).toRenderTo(
     `test(this_is_a_long_name="A name", and_this_is_a_number=42)`,
   );
 });
 
 it("correct formatting of variable name", () => {
-  const res = toSourceText(
+  const res = toSourceText([
     <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
-  );
+  ]);
   expect(res).toBe(`my_var: int = 42`);
 });

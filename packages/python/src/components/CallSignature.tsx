@@ -27,6 +27,7 @@ export interface CallSignatureParametersProps {
  * @example
  * ```tsx
  * <py.CallSignatureParameters parameters={[ "a", "b" ]} />
+ * ```
  * This will generate:
  * ```python
  * a, b

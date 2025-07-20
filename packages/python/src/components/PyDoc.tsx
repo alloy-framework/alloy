@@ -202,7 +202,7 @@ export interface PyDocExampleProps {
  * Create a PyDoc example, which is prepended by \>\>.
  */
 export function PyDocExample(props: PyDocExampleProps) {
-  let children = childrenArray(() => props.children);
+  const children = childrenArray(() => props.children);
   let lines: string[] = [];
 
   if (children.length === 1 && typeof children[0] === "string") {

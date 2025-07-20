@@ -58,7 +58,7 @@ export interface EnumMemberProps {
 export function EnumMember(props: EnumMemberProps) {
   const autoReference = props.auto === true ? enumModule["."].auto : undefined;
   const value = props.auto === true ? <>{autoReference}()</> : props.value;
-  let sym: PythonOutputSymbol = createPythonSymbol(
+  const sym: PythonOutputSymbol = createPythonSymbol(
     props.name,
     {
       refkeys: props.refkey,

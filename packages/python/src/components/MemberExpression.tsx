@@ -251,7 +251,7 @@ function formatChain(parts: PartDescriptor[]): Children {
           expression.push(formatCallOutput(part));
         } else if (isAttributeDescriptor(part)) {
           expression.push(formatAttributeOutput(part));
-        } else {
+        } else if (isSubscriptionDescriptor(part)) {
           expression.push(formatSubscriptionOutput(part));
         }
       }
@@ -329,7 +329,7 @@ export interface MemberExpressionPartProps {
   key?: Children;
 
   /**
-   * Multiple keys for tuple subscription access (obj[a, b] -> obj[(a, b)]).
+   * Multiple keys for tuple subscription access (obj[a, b] -\> obj[(a, b)]).
    * Use this when you need tuple key access.
    */
   keys?: Children[];
@@ -410,7 +410,7 @@ export interface SubscriptionProps {
   key?: Children;
 
   /**
-   * Multiple keys for tuple subscription access (obj[a, b] -> obj[(a, b)]).
+   * Multiple keys for tuple subscription access (obj[a, b] -\> obj[(a, b)]).
    * Use this when you need tuple key access.
    */
   keys?: Children[];

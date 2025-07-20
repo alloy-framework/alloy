@@ -43,7 +43,6 @@ it("renders basic member expression with key", () => {
 
 it("renders basic member expression with key with reference", () => {
   const rk1 = refkey();
-  const rk2 = refkey();
   expect(
     toSourceText([
       <py.StatementList>

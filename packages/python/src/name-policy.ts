@@ -72,11 +72,6 @@ function ensureNonReservedName(name: string): string {
 }
 
 export function createPythonNamePolicy(): NamePolicy<PythonElements> {
-  const caseOptions = {
-    prefixCharacters: "$_",
-    suffixCharacters: "$_",
-  };
-
   return createNamePolicy((name, element) => {
     let transformedName: string;
 

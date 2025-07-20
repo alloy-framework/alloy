@@ -25,12 +25,12 @@ it("correct formatting of source file", () => {
             <py.VariableDeclaration
               name="x"
               type="int"
-              initializer={<py.Value jsValue={42} />}
+              initializer={<py.Atom jsValue={42} />}
             />
             <py.VariableDeclaration
               name="y"
               type="int"
-              initializer={<py.Value jsValue={42} />}
+              initializer={<py.Atom jsValue={42} />}
             />
             <py.FunctionCallExpression target="foo" args={["a", "b"]} />
             <py.MemberExpression>
@@ -41,20 +41,20 @@ it("correct formatting of source file", () => {
             <py.VariableDeclaration
               name="z"
               type="int"
-              initializer={<py.Value jsValue={42} />}
+              initializer={<py.Atom jsValue={42} />}
             />
           </py.StatementList>
         </py.FunctionDeclaration>
         <py.VariableDeclaration
           name="someVar"
           type="int"
-          initializer={<py.Value jsValue={42} />}
+          initializer={<py.Atom jsValue={42} />}
         />
         <py.FunctionDeclaration name="someOtherMethod" returnType="str" />
         <py.VariableDeclaration
           name="someOtherVar"
           type="int"
-          initializer={<py.Value jsValue={42} />}
+          initializer={<py.Atom jsValue={42} />}
         />
       </py.StatementList>
     </py.ClassDeclaration>,
@@ -63,12 +63,12 @@ it("correct formatting of source file", () => {
         <py.VariableDeclaration
           name="x"
           type="int"
-          initializer={<py.Value jsValue={42} />}
+          initializer={<py.Atom jsValue={42} />}
         />
         <py.VariableDeclaration
           name="y"
           type="int"
-          initializer={<py.Value jsValue={42} />}
+          initializer={<py.Atom jsValue={42} />}
         />
         <py.FunctionCallExpression target="foo" args={["a", "b"]} />
         <py.MemberExpression>
@@ -79,7 +79,7 @@ it("correct formatting of source file", () => {
         <py.VariableDeclaration
           name="z"
           type="int"
-          initializer={<py.Value jsValue={42} />}
+          initializer={<py.Atom jsValue={42} />}
         />
       </py.StatementList>
     </py.FunctionDeclaration>,

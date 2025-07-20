@@ -13,8 +13,8 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
+import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
-import { Value } from "./Value.jsx";
 import { SimpleCommentBlock } from "./index.js";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
@@ -151,7 +151,7 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     return [
       renderRightSideOperator,
       <ValueTypeSymbolSlot>
-        <Value jsValue={value} />
+        <Atom jsValue={value} />
       </ValueTypeSymbolSlot>,
     ];
   };

@@ -1,3 +1,4 @@
+export * from "./Atom.js";
 export * from "./CallSignature.js";
 export * from "./ClassDeclaration.js";
 export * from "./ClassInstantiation.js";
@@ -8,10 +9,10 @@ export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./ImportStatement.js";
 export * from "./MemberExpression.js";
+export * from "./NoNamePolicy.js";
 export * from "./PyDoc.js";
 export * from "./PythonBlock.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./StatementList.js";
-export * from "./Value.js";
 export * from "./VariableDeclaration.js";

@@ -11,14 +11,15 @@ export function createPythonSymbol(
   options: CreatePythonSymbolOptions,
   kind?: PythonElements,
   createRefkeyIfNeeded = false,
-  forceName = false,
 ): PythonOutputSymbol {
   let processedName = name;
   const sfContext = useContext(PythonSourceFileContext);
-  // Only apply the name policy if a kind is provided and forceName is false
-  if (kind && !forceName) {
+  // Only apply the name policy if a kind is provided and name policy context is available
+  if (kind) {
     const namePolicy = usePythonNamePolicy();
-    processedName = namePolicy.getName(name, kind);
+    if (namePolicy) {
+      processedName = namePolicy.getName(name, kind);
+    }
   }
 
   return new PythonOutputSymbol(processedName, {

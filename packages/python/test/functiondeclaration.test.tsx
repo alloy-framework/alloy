@@ -253,13 +253,13 @@ describe("Function Declaration", () => {
           return{" "}
           <py.FunctionCallExpression
             target={foobarRef}
-            args={[<py.Value jsValue={2} />]}
+            args={[<py.Atom jsValue={2} />]}
           />
         </py.FunctionDeclaration>
         return{" "}
         <py.FunctionCallExpression
           target={barRef}
-          args={[<py.Value jsValue={3} />]}
+          args={[<py.Atom jsValue={3} />]}
         />
       </py.FunctionDeclaration>
     );

@@ -84,12 +84,12 @@ it("correct formatting of call statement vars", () => {
         args={[
           <py.VariableDeclaration
             name="this-is-a-long-name"
-            initializer={<py.Value jsValue={"A name"} />}
+            initializer={<py.Atom jsValue={"A name"} />}
             callStatementVar
           />,
           <py.VariableDeclaration
             name="andThisIsANumber"
-            initializer={<py.Value jsValue={42} />}
+            initializer={<py.Atom jsValue={42} />}
             callStatementVar
           />,
         ]}

@@ -29,9 +29,9 @@ describe("FunctionCallExpression", () => {
         <py.FunctionCallExpression
           target={methodRef}
           args={[
-            <py.Value jsValue={"A name"} />,
-            <py.Value jsValue={42} />,
-            <py.Value jsValue={true} />,
+            <py.Atom jsValue={"A name"} />,
+            <py.Atom jsValue={42} />,
+            <py.Atom jsValue={true} />,
           ]}
         />
       </py.StatementList>,
@@ -67,9 +67,9 @@ describe("FunctionCallExpression", () => {
             <py.FunctionCallExpression
               target={methodRef}
               args={[
-                <py.Value jsValue={"A name"} />,
-                <py.Value jsValue={42} />,
-                <py.Value jsValue={true} />,
+                <py.Atom jsValue={"A name"} />,
+                <py.Atom jsValue={42} />,
+                <py.Atom jsValue={true} />,
               ]}
             />
           }
@@ -122,7 +122,7 @@ describe("FunctionCallExpression", () => {
         <py.FunctionCallExpression
           target={"example_method"}
           args={[
-            <py.Value jsValue={"A name"} />,
+            <py.Atom jsValue={"A name"} />,
             <py.VariableDeclaration
               name="number"
               initializer={42}

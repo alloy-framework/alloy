@@ -129,3 +129,31 @@ it("Class instantiation without a reference mixing unnamed and named vars", () =
   `;
   expect(result).toRenderTo(expected);
 });
+
+it("incorrect Class instantiation works", () => {
+  const result = toSourceText([
+    <py.ClassInstantiation
+      target="MyClass"
+      args={[
+        <py.ClassDeclaration name="NestedClass" />,
+        <py.FunctionDeclaration name="myFunc" />,
+        <py.StatementList>
+          <py.VariableDeclaration name="x" />
+        </py.StatementList>,
+      ]}
+    />,
+  ]);
+
+  const expected = d`
+    MyClass(
+        class NestedClass:
+            pass
+        ,
+        def my_func():
+            pass
+        ,
+        x = None
+    )
+  `;
+  expect(result).toRenderTo(expected);
+});

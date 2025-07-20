@@ -1,11 +1,11 @@
 import {
   Children,
+  computed,
   createSymbolSlot,
   For,
   Show,
   useContext,
 } from "@alloy-js/core";
-import { usePythonNamePolicy } from "../name-policy.js";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
@@ -41,39 +41,47 @@ export function CallSignatureParameters(props: CallSignatureParametersProps) {
   const sfContext = useContext(PythonSourceFileContext);
   const module = sfContext?.module;
   const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
-  const additionalArgs =
-    props.instanceFunction ? [{ name: "self" }]
-    : props.classFunction ? [{ name: "cls" }]
-    : [];
+
+  const parameterList = computed(() => {
+    const params = [];
+
+    // Add self/cls parameter if instance or class function
+    if (props.instanceFunction) {
+      params.push(
+        parameter({
+          symbol: createPythonSymbol("self", { module: module }),
+        }),
+      );
+    } else if (props.classFunction) {
+      params.push(
+        parameter({
+          symbol: createPythonSymbol("cls", { module: module }),
+        }),
+      );
+    }
+
+    // Add regular parameters
+    parameters.forEach((param) => {
+      params.push(parameter(param));
+    });
+
+    // Add *args if specified
+    if (props.args) {
+      params.push("*args");
+    }
+
+    // Add **kwargs if specified
+    if (props.kwargs) {
+      params.push("**kwargs");
+    }
+
+    return params;
+  });
+
   return (
-    <group>
-      {additionalArgs.length > 0 ?
-        <For each={additionalArgs} comma line>
-          {(param) =>
-            parameter({
-              ...param,
-              symbol: createPythonSymbol(param.name, { module: module }),
-            })
-          }
-        </For>
-      : null}
-      {additionalArgs.length > 0 && parameters.length > 0 ? ", " : null}
-      <For each={parameters} comma line>
-        {(param) => parameter(param)}
-      </For>
-      {props.args ?
-        <group>
-          <Show when={parameters.length > 0}>, </Show>
-          *args
-        </group>
-      : null}
-      {props.kwargs ?
-        <group>
-          <Show when={parameters.length > 0}>, </Show>
-          **kwargs
-        </group>
-      : null}
-    </group>
+    <For each={parameterList} comma space>
+      {(param) => param}
+    </For>
   );
 }
 
@@ -92,7 +100,7 @@ function parameter(param: DeclaredParameterDescriptor) {
         <Show when={!param.type}>=</Show>
         <Show when={!!param.type}> = </Show>
         <>
-          {!!param.default ?
+          {param.default ?
             <Value jsValue={param.default} />
           : "None"}
         </>
@@ -116,7 +124,6 @@ interface DeclaredParameterDescriptor
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
 ): DeclaredParameterDescriptor[] {
-  const namePolicy = usePythonNamePolicy();
   const sfContext = useContext(PythonSourceFileContext);
   const module = sfContext?.module;
   if (parameters.length === 0) {

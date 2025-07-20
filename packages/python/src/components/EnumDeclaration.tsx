@@ -73,6 +73,47 @@ export function EnumDeclaration(props: EnumProps) {
   return <ClassEnumDeclaration {...props} />;
 }
 
+/**
+ * Create a Python enum using the functional syntax.
+ *
+ * This generates enums using the `Enum('Name', [...])` or `Enum('Name', {...})` syntax.
+ * The format depends on whether enum members have explicit values:
+ * - Members without values: `Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])`
+ * - Members with values: `Enum('Direction', {'NORTH': 1, 'SOUTH': 2, 'EAST': 3, 'WEST': 4})`
+ *
+ * @example
+ * ```tsx
+ * <FunctionalEnumDeclaration
+ *   name="Direction"
+ *   members={[
+ *     { name: "NORTH" },
+ *     { name: "SOUTH" },
+ *     { name: "EAST" },
+ *     { name: "WEST" }
+ *   ]}
+ * />
+ * ```
+ * renders to:
+ * ```python
+ * Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])
+ * ```
+ *
+ * @example
+ * ```tsx
+ * <FunctionalEnumDeclaration
+ *   name="Status"
+ *   members={[
+ *     { name: "PENDING", value: 1 },
+ *     { name: "ACTIVE", value: 2 },
+ *     { name: "INACTIVE", value: 3 }
+ *   ]}
+ * />
+ * ```
+ * renders to:
+ * ```python
+ * Status = Enum('Status', {'PENDING': 1, 'ACTIVE': 2, 'INACTIVE': 3})
+ * ```
+ */
 export function FunctionalEnumDeclaration(props: EnumProps) {
   const binder = useBinder();
   const scope = usePythonScope();
@@ -122,6 +163,75 @@ export function FunctionalEnumDeclaration(props: EnumProps) {
   );
 }
 
+/**
+ * Create a Python enum using the class-based syntax.
+ *
+ * This generates enums using the `class Name(Enum):` syntax with member definitions
+ * inside the class body. Supports various member value styles including auto-generated
+ * values, explicit values, and custom base types.
+ *
+ * @example
+ * ```tsx
+ * <ClassEnumDeclaration
+ *   name="Direction"
+ *   members={[
+ *     { name: "NORTH" },
+ *     { name: "SOUTH" },
+ *     { name: "EAST" },
+ *     { name: "WEST" }
+ *   ]}
+ * />
+ * ```
+ * renders to:
+ * ```python
+ * class Direction(Enum):
+ *     NORTH = "NORTH"
+ *     SOUTH = "SOUTH"
+ *     EAST = "EAST"
+ *     WEST = "WEST"
+ * ```
+ *
+ * @example
+ * With explicit values:
+ * ```tsx
+ * <ClassEnumDeclaration
+ *   name="Status"
+ *   members={[
+ *     { name: "PENDING", value: 1 },
+ *     { name: "ACTIVE", value: 2 },
+ *     { name: "INACTIVE", value: 3 }
+ *   ]}
+ * />
+ * ```
+ * renders to:
+ * ```python
+ * class Status(Enum):
+ *     PENDING = 1
+ *     ACTIVE = 2
+ *     INACTIVE = 3
+ * ```
+ *
+ * @example
+ * With auto() values:
+ * ```tsx
+ * <ClassEnumDeclaration
+ *   name="Color"
+ *   style="auto"
+ *   members={[
+ *     { name: "RED" },
+ *     { name: "GREEN" },
+ *     { name: "BLUE" }
+ *   ]}
+ * />
+ * ```
+ * renders to:
+ * ```python
+ * class Color(Enum):
+ *     RED = auto()
+ *     GREEN = auto()
+ *     BLUE = auto()
+ * ```
+ */
 export function ClassEnumDeclaration(props: EnumProps) {
   const baseType = props.baseType || "Enum";
   const binder = useBinder();

@@ -55,7 +55,6 @@ function createSymbols(
         },
         undefined,
         false,
-        false,
       );
     }
   }

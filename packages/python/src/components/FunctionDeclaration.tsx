@@ -14,12 +14,12 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { PythonBlock } from "./PythonBlock.jsx";
+import { NoNamePolicy } from "./index.js";
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,
     CallSignatureProps {
   async?: boolean;
-  forceName?: boolean; // if true, the name will not be transformed by the name policy
 }
 
 /**
@@ -61,7 +61,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     },
     "function",
     false,
-    props.forceName,
   );
   emitSymbol(sym);
 
@@ -112,12 +111,13 @@ export function InitFunctionDeclaration(
   >,
 ) {
   return (
-    <FunctionDeclaration
-      {...props}
-      name="__init__"
-      instanceFunction={true}
-      classFunction={false}
-      forceName={true}
-    />
+    <NoNamePolicy>
+      <FunctionDeclaration
+        {...props}
+        name="__init__"
+        instanceFunction={true}
+        classFunction={false}
+      />
+    </NoNamePolicy>
   );
 }

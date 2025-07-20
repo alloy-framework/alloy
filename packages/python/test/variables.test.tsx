@@ -39,7 +39,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name="myVar"
-        initializer={<py.Value jsValue={null} />}
+        initializer={<py.Atom jsValue={null} />}
       />,
     ]);
     expect(res).toBe(`my_var = None`);
@@ -49,7 +49,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name="nameIdPairs"
-        initializer={<py.Value jsValue={{ John: 123, Doe: 234 }} />}
+        initializer={<py.Atom jsValue={{ John: 123, Doe: 234 }} />}
       />,
     ]);
     expect(res).toBe(`name_id_pairs = {"John": 123, "Doe": 234}`);

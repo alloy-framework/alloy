@@ -26,10 +26,23 @@ export const PythonSourceFileContext: ComponentContext<PythonSourceFileContext> 
 export function useSourceFile() {
   return useContext(PythonSourceFileContext)!;
 }
+
 export interface SourceFileProps {
+  /**
+   * The path to the file relative to the source directory.
+   */
   path: string;
+  /**
+   * Content to add to the file, such as function definitions, class definitions, and variable declarations.
+   */
   children?: Children;
+  /**
+   * Header comment to add to the file, which will be rendered at the top of the file.
+   */
   header?: Children;
+  /**
+   * Comment to add to the header, which will be rendered as a comment in the file.
+   */
   headerComment?: string;
 }
 
@@ -49,16 +62,6 @@ export interface SourceFileProps {
  * def test():
  *   pass
  * ```
- *
- * @remarks
- *
- * The `path` prop is the path to the file relative to the source directory.
- * The `children` prop can be used to add content to the file, such as
- * function definitions, class definitions, and variable declarations.
- * The `header` prop can be used to add a header comment to the file, which will be rendered
- * at the top of the file.
- * The `headerComment` prop can be used to add a comment to the header,
- * which will be rendered as a comment in the file.
  */
 export function SourceFile(props: SourceFileProps) {
   const directoryContext = useContext(SourceDirectoryContext)!;

@@ -1,7 +1,7 @@
 import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { Value } from "./index.js";
+import { Atom } from "./index.js";
 
 interface GoogleStyleDocParamTypeProps {
   type?: Children;
@@ -44,7 +44,7 @@ function GoogleStyleDocParamDescription(
         <Prose>{props.children}</Prose>
         <Show when={Boolean(props.defaultValue)}>
           {" "}
-          Defaults to <Value jsValue={props.defaultValue}></Value>.
+          Defaults to <Atom jsValue={props.defaultValue}></Atom>.
         </Show>
       </align>
     </Show>

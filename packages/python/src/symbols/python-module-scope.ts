@@ -74,7 +74,6 @@ export class PythonModuleScope extends CustomOutputScope {
       },
       undefined,
       false,
-      false,
     );
 
     targetSymbol.copyTo(localSymbol);

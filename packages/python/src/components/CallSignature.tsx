@@ -9,8 +9,8 @@ import {
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
+import { Atom } from "./Atom.jsx";
 import { PythonSourceFileContext } from "./SourceFile.jsx";
-import { Value } from "./Value.jsx";
 
 export interface CallSignatureParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
@@ -102,7 +102,7 @@ function parameter(param: DeclaredParameterDescriptor) {
         <Show when={!!param.type}> = </Show>
         <>
           {param.default ?
-            <Value jsValue={param.default} />
+            <Atom jsValue={param.default} />
           : "None"}
         </>
       </Show>
@@ -110,7 +110,7 @@ function parameter(param: DeclaredParameterDescriptor) {
         <Show when={!param.type}>=</Show>
         <Show when={!!param.type}> = </Show>
         <>
-          <Value jsValue={param.default} />
+          <Atom jsValue={param.default} />
         </>
       </Show>
     </group>

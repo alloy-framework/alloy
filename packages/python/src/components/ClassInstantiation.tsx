@@ -27,8 +27,10 @@ export interface ClassInstantiationProps extends FunctionCallExpressionProps {}
  * @remarks
  *
  * It is similar to FunctionCallExpression but specifically for class instantiation.
- * Args is a list arguments that can be either Values, which will render as positional arguments,
- * or VariableDeclarations, which will render as named arguments in the call statement.
+ * Args should be a list arguments that can be either simple js values or py.Values, which will render as positional arguments,
+ * or py.VariableDeclarations, which will render as named arguments in the call statement. This component will
+ * not check for the correctness of the python grammar and will just work with any children you provide.
+ * It is up to you to ensure that the arguments you provide are valid in the context of a class instantiation.
  */
 export function ClassInstantiation(props: ClassInstantiationProps) {
   const sfContext = useContext(PythonSourceFileContext);

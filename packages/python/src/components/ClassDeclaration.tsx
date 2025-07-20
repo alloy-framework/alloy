@@ -18,7 +18,7 @@ import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
   /**
-   * The classes that this class extends.
+   * The base classes that this class inherits from.
    */
   bases?: Children[];
 }
@@ -46,9 +46,9 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
  * ```
  * @remarks
  *
- * Any parameters or type parameters declared in this signature will be placed
- * in the current scope. This component does not make a scope to hold its
- * parameters.
+ * Any child declarations (methods, fields, nested classes) will be placed
+ * in the class scope. This component creates a class scope to hold its
+ * members.
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
   const basesPart = props.bases && (

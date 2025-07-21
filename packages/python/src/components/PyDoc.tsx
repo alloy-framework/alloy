@@ -136,7 +136,8 @@ export function GoogleStyleDocRaises(props: GoogleStyleDocRaisesProps) {
   );
 }
 
-export interface GoogleStyleFunctionDocProps extends Omit<FunctionDocProps, "style"> {}
+export interface GoogleStyleFunctionDocProps
+  extends Omit<FunctionDocProps, "style"> {}
 
 /**
  * A component that creates a GoogleStyleFunctionDoc block for parameters.
@@ -211,7 +212,8 @@ export function ClassDoc(props: ClassDocProps) {
   }
 }
 
-export interface GoogleStyleClassDocProps extends Omit<ClassDocProps, "style"> {}
+export interface GoogleStyleClassDocProps
+  extends Omit<ClassDocProps, "style"> {}
 
 /**
  * A component that creates a GoogleStyleClassDoc block for parameters.

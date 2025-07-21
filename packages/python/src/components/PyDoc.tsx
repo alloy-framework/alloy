@@ -136,12 +136,7 @@ export function GoogleStyleDocRaises(props: GoogleStyleDocRaisesProps) {
   );
 }
 
-export interface GoogleStyleFunctionDocProps {
-  description: Children[];
-  parameters: ParameterDescriptor[] | string[];
-  returns?: string;
-  raises: string[];
-}
+export interface GoogleStyleFunctionDocProps extends Omit<FunctionDocProps, "style"> {}
 
 /**
  * A component that creates a GoogleStyleFunctionDoc block for parameters.
@@ -170,10 +165,53 @@ export function GoogleStyleFunctionDoc(props: GoogleStyleFunctionDocProps) {
   );
 }
 
-export interface GoogleStyleClassDocProps {
+export interface FunctionDocProps {
   description: Children[];
   parameters: ParameterDescriptor[] | string[];
+  returns?: string;
+  raises: string[];
+  style?: "google";
 }
+
+/**
+ * A component that creates a FunctionDoc block for parameters.
+ */
+export function FunctionDoc(props: FunctionDocProps) {
+  const style = props.style ?? "google";
+  if (style === "google") {
+    return (
+      <GoogleStyleFunctionDoc
+        description={props.description}
+        parameters={props.parameters}
+        returns={props.returns}
+        raises={props.raises}
+      />
+    );
+  }
+}
+
+export interface ClassDocProps {
+  description: Children[];
+  parameters: ParameterDescriptor[] | string[];
+  style?: "google";
+}
+
+/**
+ * A component that creates a ClassDoc block for parameters.
+ */
+export function ClassDoc(props: ClassDocProps) {
+  const style = props.style ?? "google";
+  if (style === "google") {
+    return (
+      <GoogleStyleClassDoc
+        description={props.description}
+        parameters={props.parameters}
+      />
+    );
+  }
+}
+
+export interface GoogleStyleClassDocProps extends Omit<ClassDocProps, "style"> {}
 
 /**
  * A component that creates a GoogleStyleClassDoc block for parameters.

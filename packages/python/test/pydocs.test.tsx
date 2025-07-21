@@ -279,7 +279,7 @@ describe("GoogleStyleDocParam", () => {
 describe("Full example", () => {
   it("renders correctly in a Class", () => {
     const doc = (
-      <py.GoogleStyleClassDoc
+      <py.ClassDoc
         description={[
           <Prose>
             This is an example of a long docstring that will be broken in lines.
@@ -307,6 +307,7 @@ describe("Full example", () => {
             doc: "Somebody's name. This can be any string representing a person, whether it's a first name, full name, nickname, or even a codename (e.g., 'Agent X'). It's used primarily for display purposes, logging, or greeting messages and is not required to be unique or validated unless specified by the caller.",
           },
         ]}
+        style="google"
       />
     );
     const res = toSourceText(
@@ -362,7 +363,7 @@ describe("Full example", () => {
 
   it("renders correctly in a Function", () => {
     const doc = (
-      <py.GoogleStyleFunctionDoc
+      <py.FunctionDoc
         description={[
           <Prose>
             This is an example of a long docstring that will be broken in lines.
@@ -392,6 +393,7 @@ describe("Full example", () => {
         ]}
         returns="The return value. True for success, False otherwise."
         raises={["ValueError: If somebody2 is equal to somebody."]}
+        style="google"
       />
     );
     const res = toSourceText(

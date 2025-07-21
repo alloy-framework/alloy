@@ -293,10 +293,8 @@ export function PyDoc(props: PyDocProps) {
   return (
     <>
       {'"""'}
-      <align string="">
-        <hbr />
-        <List doubleHardline>{childrenArray(() => props.children)}</List>
-      </align>
+      <hbr />
+      <List doubleHardline>{childrenArray(() => props.children)}</List>
       <hbr />
       {'"""'}
     </>

@@ -8,6 +8,7 @@ interface ModelProps {
 }
 
 export function Model(props: ModelProps) {
+  console.log(`Rendering model: ${props.model}`);
   return (
     <py.ClassDeclaration name={props.model.name} refkey={refkey(props.model)}>
         <For each={props.model.properties} hardline enderPunctuation>

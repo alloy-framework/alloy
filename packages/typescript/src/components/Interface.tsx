@@ -2,6 +2,7 @@ import {
   Block,
   Children,
   childrenArray,
+  emitSymbol,
   findKeyedChild,
   findUnkeyedChildren,
   MemberScope,
@@ -9,15 +10,14 @@ import {
   OutputSymbolFlags,
   Refkey,
   Show,
-  useMemberDeclaration,
   useMemberScope,
-  Wrap,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { TypeParameters } from "./FunctionBase.jsx";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
 import { PropertyName } from "./PropertyName.jsx";
@@ -91,20 +91,18 @@ export interface InterfaceExpressionProps {
 
 export const InterfaceExpression = ensureTypeRefContext(
   (props: InterfaceExpressionProps) => {
-    const parentMemberSym = useMemberDeclaration();
+    const symbol = new TSOutputSymbol("", {
+      flags:
+        OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
+    });
 
-    if (parentMemberSym) {
-      parentMemberSym.flags |= OutputSymbolFlags.StaticMemberContainer;
-    }
+    emitSymbol(symbol);
+
     return (
       <group>
-        <Wrap
-          when={!!parentMemberSym}
-          with={MemberScope}
-          props={{ owner: parentMemberSym! }}
-        >
+        <MemberScope owner={symbol}>
           <Block>{props.children}</Block>
-        </Wrap>
+        </MemberScope>
       </group>
     );
   },

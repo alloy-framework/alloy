@@ -1,12 +1,19 @@
 import { List } from "@alloy-js/core";
 import { expect, it } from "vitest";
-import { InterfaceExpression, InterfaceMember } from "../Interface.jsx";
+import { TestFile } from "../../../test/utils.jsx";
+import {
+  InterfaceDeclaration,
+  InterfaceExpression,
+  InterfaceMember,
+} from "../Interface.jsx";
 
 it("render expression", () => {
   expect(
-    <InterfaceExpression>
-      <InterfaceMember name="foo" type="string" />
-    </InterfaceExpression>,
+    <TestFile>
+      <InterfaceExpression>
+        <InterfaceMember name="foo" type="string" />
+      </InterfaceExpression>
+    </TestFile>,
   ).toRenderTo(`
     {
       foo: string
@@ -16,13 +23,15 @@ it("render expression", () => {
 
 it("render nested", () => {
   expect(
-    <InterfaceExpression>
-      <InterfaceMember name="foo">
-        <InterfaceExpression>
-          <InterfaceMember name="bar" type="string" />
-        </InterfaceExpression>
-      </InterfaceMember>
-    </InterfaceExpression>,
+    <TestFile>
+      <InterfaceExpression>
+        <InterfaceMember name="foo">
+          <InterfaceExpression>
+            <InterfaceMember name="bar" type="string" />
+          </InterfaceExpression>
+        </InterfaceMember>
+      </InterfaceExpression>
+    </TestFile>,
   ).toRenderTo(`
     {
       foo: {
@@ -32,16 +41,18 @@ it("render nested", () => {
   `);
 });
 
-it("separate expressions don't conflict in name", () => {
+it.only("separate expressions don't conflict in name", () => {
   expect(
-    <List>
-      <InterfaceExpression>
-        <InterfaceMember name="bar" type="string" />
-      </InterfaceExpression>
-      <InterfaceExpression>
-        <InterfaceMember name="bar" type="string" />
-      </InterfaceExpression>
-    </List>,
+    <TestFile>
+      <List>
+        <InterfaceExpression>
+          <InterfaceMember name="bar" type="string" />
+        </InterfaceExpression>
+        <InterfaceExpression>
+          <InterfaceMember name="bar" type="string" />
+        </InterfaceExpression>
+      </List>
+    </TestFile>,
   ).toRenderTo(`
     {
       bar: string
@@ -51,22 +62,30 @@ it("separate expressions don't conflict in name", () => {
     }
   `);
 });
-it("separate union", () => {
+
+it("separate expressions when in interface declaration", () => {
   expect(
-    <List>
-      <InterfaceExpression>
-        <InterfaceMember name="bar" type="string" />
-      </InterfaceExpression>
-      <InterfaceExpression>
-        <InterfaceMember name="bar" type="string" />
-      </InterfaceExpression>
-    </List>,
+    <TestFile>
+      <InterfaceDeclaration name="Test">
+        <InterfaceMember name="foo">
+          <List joiner=" | ">
+            <InterfaceExpression>
+              <InterfaceMember name="bar" type="string" />
+            </InterfaceExpression>
+            <InterfaceExpression>
+              <InterfaceMember name="bar" type="string" />
+            </InterfaceExpression>
+          </List>
+        </InterfaceMember>
+      </InterfaceDeclaration>
+    </TestFile>,
   ).toRenderTo(`
-    {
-      bar: string
-    }
-    {
-      bar: string
+    interface Test {
+      foo: {
+        bar: string
+      } | {
+        bar: string
+      }
     }
   `);
 });

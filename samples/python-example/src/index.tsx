@@ -13,12 +13,11 @@ const output = render(
       </py.SourceFile>
       <py.SourceFile path="client.py">
         import requests
-        <br />
-        <br />
         <Client />
       </py.SourceFile>
     </ApiContext.Provider>
   </Output>,
+  { tabWidth: 4 }
 );
 
 writeOutput(output, "./alloy-output");

@@ -54,7 +54,7 @@ export function ClientMethod(props: ClientMethodProps) {
   let returnCode = code`response.json()`
   if (op.responseBody?.array) {
     const responseType = resolveRestAPIReference(op.responseBody, apiContext, false);
-    returnCode = code`[${responseType}(**data) for data in response]`
+    returnCode = code`[${responseType}(**data) for data in response.json()]`
   }
 
   return (
@@ -62,6 +62,7 @@ export function ClientMethod(props: ClientMethodProps) {
       name={op.name}
       parameters={parameters}
       returnType={responseReturnType}
+      instanceFunction={true}
     >
       {code`
         response = requests.${op.verb}(${endpoint}${jsonBody})

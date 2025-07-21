@@ -18,8 +18,7 @@ export function ModelProperty(props: ModelPropertyProps) {
     if ("ref" in apiType) {
       const apiContext = useApi();
       const model = apiContext.resolveReference(apiType);
-      const ref = refkey(model?.name);
-      memberType = <py.Reference refkey={ref} />
+      memberType = refkey(model);
     } else {
       memberType = <Model model={apiType} />;
     }

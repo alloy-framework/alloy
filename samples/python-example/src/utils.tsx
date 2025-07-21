@@ -11,7 +11,7 @@ export function resolveRestAPIReference(reference: RestApiModelReference | RestA
   } else {
     if ("ref" in reference && reference.ref) {
       const responseModel = apiContext.resolveReference(reference);
-      const ref = refkey(responseModel?.name);
+      const ref = refkey(responseModel);
       returnType = <py.Reference refkey={ref} />;
     }
     else if ("type" in reference && reference.type) {

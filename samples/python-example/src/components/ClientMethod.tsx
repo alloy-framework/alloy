@@ -87,12 +87,10 @@ export function ClientMethod(props: ClientMethodProps) {
       returnType={py.requestsModule["models"]["Response"]}
       instanceFunction={true}
     >
-      <py.StatementList>
-        <py.VariableDeclaration name="response" initializer={returnValue} />
-        {code`
-          return ${returnCode}
-        `}
-      </py.StatementList>
+      <py.VariableDeclaration name="response" initializer={returnValue} />
+      {code`
+        return ${returnCode}
+      `}
     </py.FunctionDeclaration>
   );
 }

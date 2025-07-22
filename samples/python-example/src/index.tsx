@@ -67,7 +67,7 @@ function getTopologicallySortedModels(restApiModels: RestApiModel[], apiContext:
 
 let models = getTopologicallySortedModels(api.models, apiContext);
 const output = render(
-  <Output>
+  <Output externals={[py.requestsModule]}>
     <ApiContext.Provider value={apiContext}>
       <py.SourceFile path="models.py">
         <For each={Array.from(models)} doubleHardline>{(item) => <Model model={item[0]} />}</For>

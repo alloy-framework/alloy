@@ -84,7 +84,7 @@ export function ClientMethod(props: ClientMethodProps) {
     <py.FunctionDeclaration
       name={op.name}
       parameters={parameters}
-      returnType={py.requestsModule["."]["Response"]}
+      returnType={py.requestsModule["models"]["Response"]}
       instanceFunction={true}
     >
       <py.StatementList>

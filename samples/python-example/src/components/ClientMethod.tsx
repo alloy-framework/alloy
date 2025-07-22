@@ -57,17 +57,42 @@ export function ClientMethod(props: ClientMethodProps) {
     returnCode = code`[${responseType}(**data) for data in response.json()]`
   }
 
+  let returnArgs = [
+    <py.VariableDeclaration
+      name=""
+      initializer={endpoint}
+      callStatementVar
+    />,
+  ]
+  if (op.verb === "post") {
+    returnArgs.push(
+      <py.VariableDeclaration
+        name="json"
+        initializer={"body"}
+        callStatementVar
+      />
+    );
+  }
+
+  {jsonBody}
+  let returnValue = <py.FunctionCallExpression
+    target={py.requestsModule["."][op.verb]}
+    args={returnArgs}
+  />
+
   return (
     <py.FunctionDeclaration
       name={op.name}
       parameters={parameters}
-      returnType={responseReturnType}
+      returnType={py.requestsModule["."]["Response"]}
       instanceFunction={true}
     >
-      {code`
-        response = requests.${op.verb}(${endpoint}${jsonBody})
-        return ${returnCode}
-      `}
+      <py.StatementList>
+        <py.VariableDeclaration name="response" initializer={returnValue} />
+        {code`
+          return ${returnCode}
+        `}
+      </py.StatementList>
     </py.FunctionDeclaration>
   );
 }

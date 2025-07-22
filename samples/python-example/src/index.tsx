@@ -73,7 +73,6 @@ const output = render(
         <For each={Array.from(models)} doubleHardline>{(item) => <Model model={item[0]} />}</For>
       </py.SourceFile>
       <py.SourceFile path="client.py">
-        import requests
         <Client />
       </py.SourceFile>
     </ApiContext.Provider>

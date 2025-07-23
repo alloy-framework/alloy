@@ -122,7 +122,9 @@ export function Property(props: PropertyProps) {
   const scope = useCSharpScope();
   if (
     scope.kind !== "member" ||
-    (scope.name !== "class-decl" && scope.name !== "record-decl")
+    (scope.name !== "class-decl" &&
+      scope.name !== "record-decl" &&
+      scope.name !== "struct-decl")
   ) {
     throw new Error(
       "can't define an interface method outside of an interface scope",

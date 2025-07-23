@@ -94,10 +94,10 @@ describe("base", () => {
 it("declares class with some members", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <core.StatementList>
+      <List>
         <Field public name="MemberOne" type="string" />
-        <Field private name="MemberTwo" type="int" />
-      </core.StatementList>
+        <Field public name="MemberTwo" type="int" />
+      </List>
     </csharp.ClassDeclaration>,
   );
 
@@ -107,7 +107,7 @@ it("declares class with some members", () => {
         public class TestClass
         {
             public string MemberOne;
-            private int memberTwo;
+            public int MemberTwo;
         }
     }
   `);
@@ -180,7 +180,6 @@ it("uses refkeys for members, params, and return type", () => {
           <hbr />
           <csharp.ClassDeclaration public name="TestClass">
             <Field private name="MemberOne" type={enumTypeRefkey} />
-            ;
             <hbr />
             <csharp.Method
               public
@@ -208,7 +207,7 @@ it("uses refkeys for members, params, and return type", () => {
         public class TestResult;
         public class TestClass
         {
-            private TestEnum memberOne;
+            private TestEnum _memberOne;
             public TestResult MethodOne(int intParam, TestInput bodyParam)
             {
                 return new TestResult();
@@ -344,9 +343,9 @@ it("declares class with constructor params and assigns values to fields", () => 
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
       <Field private name="name" type="string" refkey={thisNameRefkey} />
-      ;<hbr />
+      <hbr />
       <Field private name="size" type="int" refkey={thisSizeRefkey} />
-      ;<hbr />
+      <hbr />
       <Constructor public parameters={ctorParams}>
         {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
@@ -361,12 +360,12 @@ it("declares class with constructor params and assigns values to fields", () => 
     {
         public class TestClass
         {
-            private string name;
-            private int size;
+            private string _name;
+            private int _size;
             public TestClass(string name, int size)
             {
-                name = name;
-                size = size;
+                _name = name;
+                _size = size;
             }
         }
     }
@@ -396,7 +395,7 @@ it("supports class member doc comments", () => {
     class Test
     {
       /// This is a member
-      public int Member
+      public int Member;
     }
   `);
 });

@@ -6,6 +6,7 @@ export type CSharpElements =
   | "class"
   | "constant"
   | "variable"
+  | "struct"
   | "enum"
   | "enum-member"
   | "function"
@@ -23,6 +24,7 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
   return core.createNamePolicy((name, element) => {
     switch (element) {
       case "class":
+      case "struct":
       case "enum":
       case "enum-member":
       case "interface":

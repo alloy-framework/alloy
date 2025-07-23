@@ -1,4 +1,4 @@
-import { List, refkey, StatementList } from "@alloy-js/core";
+import { List, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
@@ -173,17 +173,17 @@ it("defines fields", () => {
   expect(
     <TestNamespace>
       <StructDeclaration public name="TestClass">
-        <StatementList>
+        <List>
           <Field public name="MemberOne" type="string" />
-          <Field private name="MemberTwo" type="int" />
-        </StatementList>
+          <Field public name="MemberTwo" type="int" />
+        </List>
       </StructDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
     public struct TestClass
     {
       public string MemberOne;
-      private int memberTwo;
+      public int MemberTwo;
     }
   `);
 });

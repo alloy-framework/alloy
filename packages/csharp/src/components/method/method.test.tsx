@@ -146,7 +146,7 @@ it("use expression body form", () => {
     <TestNamespace>
       <ClassDeclaration name="Test">
         <Method name="Method" doc="This is a test" expression>
-          this.MyProperty.Value;
+          this.MyProperty.Value
         </Method>
       </ClassDeclaration>
     </TestNamespace>,

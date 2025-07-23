@@ -1,24 +1,123 @@
-import { StatementList } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { List } from "@alloy-js/core";
+import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../ClassDeclaration.jsx";
 import { Field } from "./field.jsx";
 
-it("declares some field", () => {
-  expect(
+function Wrapper(props: { children: any }) {
+  return (
     <TestNamespace>
       <ClassDeclaration public name="TestClass">
-        <StatementList>
-          <Field public name="MemberOne" type="string" />
-          <Field private name="MemberTwo" type="int" />
-        </StatementList>
+        {props.children}
       </ClassDeclaration>
-    </TestNamespace>,
+    </TestNamespace>
+  );
+}
+it("declares multiple fields", () => {
+  expect(
+    <Wrapper>
+      <List>
+        <Field public name="MemberOne" type="string" />
+        <Field public name="MemberTwo" type="int" />
+      </List>
+    </Wrapper>,
   ).toRenderTo(`
     public class TestClass
     {
       public string MemberOne;
-      private int memberTwo;
+      public int MemberTwo;
     }
   `);
+});
+
+describe("modifiers", () => {
+  describe("access modifiers", () => {
+    it.each(["public", "private", "protected", "internal"] as const)(
+      "%s",
+      (accessModifier) => {
+        expect(
+          <Wrapper>
+            <Property
+              {...{ [accessModifier]: true }}
+              name="TestProp"
+              type="string"
+              get
+            />
+          </Wrapper>,
+        ).toRenderTo(`
+        public class TestClass
+        {
+          ${accessModifier} string TestProp { get; }
+        }
+      `);
+      },
+    );
+  });
+
+  describe("modifiers", () => {
+    it.each(["new", "static", "readonly", "volatile"] as const)(
+      "%s",
+      (methodModifier) => {
+        expect(
+          <Wrapper>
+            <Field
+              {...{ [methodModifier]: true }}
+              name="TestField"
+              type="string"
+            />
+          </Wrapper>,
+        ).toRenderTo(`
+        public class TestClass
+        {
+          ${methodModifier} string _testField;
+        }
+      `);
+      },
+    );
+  });
+
+  it("combine modifiers", () => {
+    expect(
+      <Wrapper>
+        <Field public new name="TestField" type="string" />
+      </Wrapper>,
+    ).toRenderTo(`
+        public class TestClass
+        {
+          public new string TestField;
+        }
+      `);
+  });
+});
+
+describe("naming", () => {
+  it("public field are PascalCase", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <Field public name="member_one" type="string" />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+        public string MemberOne;
+      }
+    `);
+  });
+
+  it("private field are camelCase with _ prefix", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <Field private name="member_one" type="string" />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+    public class TestClass
+    {
+      private string _memberOne;
+    }
+  `);
+  });
 });

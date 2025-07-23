@@ -1,7 +1,7 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
-import { ClassDeclaration, ClassMethod } from "../src/index.js";
-import { TestNamespace } from "./utils.jsx";
+import { TestNamespace } from "../../../test/utils.jsx";
+import { ClassDeclaration, Method } from "../../index.js";
 
 const Wrapper = (props: { children: Children }) => (
   <TestNamespace>
@@ -18,7 +18,7 @@ describe("modifiers", () => {
       (accessModifier) => {
         expect(
           <Wrapper>
-            <ClassMethod {...{ [accessModifier]: true }} name="MethodOne" />
+            <Method {...{ [accessModifier]: true }} name="MethodOne" />
           </Wrapper>,
         ).toRenderTo(`
         public class TestClass
@@ -36,7 +36,7 @@ describe("modifiers", () => {
       (methodModifier) => {
         expect(
           <Wrapper>
-            <ClassMethod {...{ [methodModifier]: true }} name="MethodOne" />
+            <Method {...{ [methodModifier]: true }} name="MethodOne" />
           </Wrapper>,
         ).toRenderTo(`
         public class TestClass
@@ -50,7 +50,7 @@ describe("modifiers", () => {
     it("abstract exclude body", () => {
       expect(
         <Wrapper>
-          <ClassMethod abstract name="MethodOne" />
+          <Method abstract name="MethodOne" />
         </Wrapper>,
       ).toRenderTo(`
         public class TestClass
@@ -64,7 +64,7 @@ describe("modifiers", () => {
   it("mark method async", () => {
     expect(
       <Wrapper>
-        <ClassMethod async name="MethodOne" />
+        <Method async name="MethodOne" />
       </Wrapper>,
     ).toRenderTo(`
         public class TestClass
@@ -77,7 +77,7 @@ describe("modifiers", () => {
   it("combine modifiers", () => {
     expect(
       <Wrapper>
-        <ClassMethod async returns="Task" public abstract name="MethodOne" />
+        <Method async returns="Task" public abstract name="MethodOne" />
       </Wrapper>,
     ).toRenderTo(`
         public class TestClass
@@ -91,7 +91,7 @@ describe("modifiers", () => {
 it("applies PascalCase naming policy", () => {
   expect(
     <Wrapper>
-      <ClassMethod name="method_one" />
+      <Method name="method_one" />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
@@ -113,12 +113,7 @@ it("defines params and return type", () => {
   ];
   const res = (
     <Wrapper>
-      <ClassMethod
-        public
-        name="MethodOne"
-        parameters={params}
-        returns="string"
-      />
+      <Method public name="MethodOne" parameters={params} returns="string" />
     </Wrapper>
   );
 
@@ -134,7 +129,7 @@ it("specify doc comment", () => {
   expect(
     <TestNamespace>
       <ClassDeclaration name="Test">
-        <ClassMethod name="Method" doc="This is a test" />
+        <Method name="Method" doc="This is a test" />
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
@@ -150,9 +145,9 @@ it("use expression body form", () => {
   expect(
     <TestNamespace>
       <ClassDeclaration name="Test">
-        <ClassMethod name="Method" doc="This is a test" expression>
+        <Method name="Method" doc="This is a test" expression>
           this.MyProperty.Value;
-        </ClassMethod>
+        </Method>
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`

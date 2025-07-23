@@ -120,8 +120,8 @@ it("declares class with some methods", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
       <core.List>
-        <csharp.ClassMethod public name="MethodOne" />
-        <csharp.ClassMethod private virtual name="MethodTwo" />
+        <csharp.Method public name="MethodOne" />
+        <csharp.Method private virtual name="MethodTwo" />
       </core.List>
     </csharp.ClassDeclaration>,
   );
@@ -189,14 +189,14 @@ it("uses refkeys for members, params, and return type", () => {
             />
             ;
             <hbr />
-            <csharp.ClassMethod
+            <csharp.Method
               public
               name="MethodOne"
               parameters={params}
               returns={testResultTypeRefkey}
             >
               return new {testResultTypeRefkey}();
-            </csharp.ClassMethod>
+            </csharp.Method>
           </csharp.ClassDeclaration>
         </csharp.SourceFile>
       </csharp.Namespace>

@@ -2,6 +2,7 @@ import { List, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
+import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
@@ -133,5 +134,20 @@ it("specify attributes", () => {
   ).toRenderTo(`
     [Test]
     struct Test;
+  `);
+});
+
+it("can define methods", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration name="Test">
+        <Method name="MethodOne" />
+      </StructDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    struct Test
+    {
+      void MethodOne() {}
+    }
   `);
 });

@@ -7,12 +7,7 @@ import { Field } from "../src/components/field/field.jsx";
 import { Constructor } from "../src/components/stc/index.js";
 import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
-import {
-  ClassDeclaration,
-  ClassMember,
-  Property,
-  SourceFile,
-} from "../src/index.js";
+import { ClassDeclaration, Property, SourceFile } from "../src/index.js";
 import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
@@ -393,7 +388,7 @@ it("supports class member doc comments", () => {
   expect(
     <utils.TestNamespace>
       <ClassDeclaration name="Test" doc="This is a test">
-        <ClassMember name="Member" public type="int" doc="This is a member" />
+        <Field name="Member" public type="int" doc="This is a member" />
       </ClassDeclaration>
     </utils.TestNamespace>,
   ).toRenderTo(`

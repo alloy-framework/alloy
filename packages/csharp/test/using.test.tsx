@@ -73,7 +73,7 @@ it("adds using statement across namespaces", () => {
       <csharp.Namespace name="Client">
         <csharp.SourceFile path="Client.cs" using={["System"]}>
           <csharp.ClassDeclaration public name="Client">
-            <csharp.ClassMethod
+            <csharp.Method
               public
               name="MethodOne"
               parameters={params}

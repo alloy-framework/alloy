@@ -3,6 +3,7 @@ import { List, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { Attribute } from "../src/components/attributes/attributes.jsx";
+import { Constructor } from "../src/components/stc/index.js";
 import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
 import {
@@ -314,7 +315,7 @@ it("declares class with invalid members", () => {
 it("declares class with constructor", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <csharp.ClassConstructor public />
+      <Constructor public />
     </csharp.ClassDeclaration>,
   );
 
@@ -364,10 +365,10 @@ it("declares class with constructor params and assigns values to fields", () => 
         refkey={thisSizeRefkey}
       />
       ;<hbr />
-      <csharp.ClassConstructor public parameters={ctorParams}>
+      <Constructor public parameters={ctorParams}>
         {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
-      </csharp.ClassConstructor>
+      </Constructor>
     </csharp.ClassDeclaration>,
   );
 

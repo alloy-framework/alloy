@@ -87,6 +87,21 @@ export interface ClassMethodProps
    * ```
    */
   attributes?: AttributesProp;
+
+  /**
+   * Use expression syntax for the method.
+   * @example
+   * ```tsx
+   * <ClassMethod name="MyMethod" lambda>
+   *   this.MyProperty.Value;
+   * </ClassMethod>
+   * ```
+   * This will produce:
+   * ```csharp
+   * public void MyMethod() => this.MyProperty.Value;
+   * ```
+   */
+  expression?: boolean;
 }
 
 // a C# class method
@@ -129,7 +144,14 @@ export function ClassMethod(props: ClassMethodProps) {
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}
-        {props.abstract ? ";" : <Block newline>{props.children}</Block>}
+        {props.abstract ?
+          ";"
+        : props.expression ?
+          <>
+            {" => "}
+            {props.children}
+          </>
+        : <Block newline>{props.children}</Block>}
       </Scope>
     </MemberDeclaration>
   );

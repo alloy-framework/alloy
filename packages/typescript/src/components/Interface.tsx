@@ -8,7 +8,6 @@ import {
   findKeyedChild,
   findUnkeyedChildren,
   MemberScope,
-  moveTakenMembersTo,
   Name,
   OutputSymbolFlags,
   Refkey,
@@ -187,7 +186,15 @@ export function InterfaceMember(props: InterfaceMemberProps) {
           : TSSymbolFlags.None),
       });
 
-      moveTakenMembersTo(sym);
+      const taken = takeSymbols();
+
+      effect(() => {
+        if (taken.size > 1) return;
+        const symbol = Array.from(taken)[0];
+        if (symbol?.flags & OutputSymbolFlags.Transient) {
+          symbol.moveTo(sym!);
+        }
+      });
     } else {
       // noop
       takeSymbols();

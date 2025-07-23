@@ -12,7 +12,6 @@ import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
 import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
 import { DocWhen } from "./doc/comment.jsx";
 import { Name } from "./Name.jsx";
-import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
 import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
 import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
 import { TypeParameters } from "./type-parameters/type-parameters.jsx";
@@ -147,49 +146,6 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
           <core.Scope value={thisClassScope}>{props.children}</core.Scope>
         </core.Block>
       )}
-    </core.Declaration>
-  );
-}
-
-export interface ClassConstructorProps extends AccessModifiers {
-  parameters?: Array<ParameterProps>;
-  refkey?: core.Refkey;
-  symbol?: core.OutputSymbol;
-  children?: core.Children;
-}
-
-// a C# class constructor
-export function ClassConstructor(props: ClassConstructorProps) {
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error(
-      "can't define a class constructor outside of a class-decl scope",
-    );
-  }
-
-  // fetch the class name from the scope
-  const name = useCSharpNamePolicy().getName(scope.owner!.name, "class-method");
-  const ctorSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? core.refkey(name),
-  });
-
-  // scope for ctor declaration
-  const ctorDeclScope = new CSharpMemberScope("constructor-decl", {
-    owner: ctorSymbol,
-  });
-
-  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
-
-  // note that scope wraps the ctor decl so that the params get the correct scope
-  return (
-    <core.Declaration symbol={ctorSymbol}>
-      <core.Scope value={ctorDeclScope}>
-        {modifiers}
-        <Name />
-        <Parameters parameters={props.parameters} />
-        <core.Block newline>{props.children}</core.Block>
-      </core.Scope>
     </core.Declaration>
   );
 }

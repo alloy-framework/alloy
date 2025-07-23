@@ -12,26 +12,26 @@ import {
   getAccessModifier,
   getAsyncModifier,
   makeModifiers,
-} from "../modifiers.js";
-import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
-import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
-import { DocWhen } from "./doc/comment.jsx";
-import { ParameterProps, Parameters } from "./parameters/parameters.jsx";
-import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
-import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
-import { TypeParameters } from "./type-parameters/type-parameters.jsx";
+} from "../../modifiers.js";
+import { useCSharpNamePolicy } from "../../name-policy.js";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import { DocWhen } from "../doc/comment.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
-export interface ClassMethodModifiers {
+export interface MethodModifiers {
   readonly abstract?: boolean;
   readonly sealed?: boolean;
   readonly static?: boolean;
   readonly virtual?: boolean;
 }
 
-const getMethodModifier = makeModifiers<ClassMethodModifiers>([
+const getMethodModifier = makeModifiers<MethodModifiers>([
   "abstract",
   "sealed",
   "static",
@@ -39,9 +39,7 @@ const getMethodModifier = makeModifiers<ClassMethodModifiers>([
 ]);
 
 // properties for creating a method
-export interface ClassMethodProps
-  extends AccessModifiers,
-    ClassMethodModifiers {
+export interface MethodProps extends AccessModifiers, MethodModifiers {
   name: string;
   refkey?: Refkey;
   children?: Children;
@@ -105,11 +103,16 @@ export interface ClassMethodProps
 }
 
 // a C# class method
-export function ClassMethod(props: ClassMethodProps) {
+export function Method(props: MethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
   const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error("can't define a class method outside of a class scope");
+  if (
+    scope.kind !== "member" ||
+    (scope.name !== "class-decl" && scope.name !== "struct-decl")
+  ) {
+    throw new Error(
+      "can't define a class method outside of a class or struct scope",
+    );
   }
 
   const methodSymbol = new CSharpOutputSymbol(name, {

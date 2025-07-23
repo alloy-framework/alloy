@@ -36,7 +36,7 @@ export interface FieldProps extends AccessModifiers, FieldModifiers {
 /** Render a c# field */
 export function Field(props: FieldProps) {
   let nameElement: CSharpElements = "class-member-private";
-  if (props.public) {
+  if (props.public || props.protected || props.internal) {
     nameElement = "class-member-public";
   }
   const name = useCSharpNamePolicy().getName(props.name, nameElement);

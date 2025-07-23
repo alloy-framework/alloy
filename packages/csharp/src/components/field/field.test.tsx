@@ -37,17 +37,16 @@ describe("modifiers", () => {
       (accessModifier) => {
         expect(
           <Wrapper>
-            <Property
+            <Field
               {...{ [accessModifier]: true }}
               name="TestProp"
               type="string"
-              get
             />
           </Wrapper>,
         ).toRenderTo(`
         public class TestClass
         {
-          ${accessModifier} string TestProp { get; }
+          ${accessModifier} string ${accessModifier === "private" ? "_testProp" : "TestProp"};
         }
       `);
       },

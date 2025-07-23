@@ -41,7 +41,7 @@ it("render nested", () => {
   `);
 });
 
-it.only("separate expressions don't conflict in name", () => {
+it("separate expressions don't conflict in name", () => {
   expect(
     <TestFile>
       <List>

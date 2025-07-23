@@ -145,3 +145,21 @@ it("specify doc comment", () => {
     }
   `);
 });
+
+it("use expression body form", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration name="Test">
+        <ClassMethod name="Method" doc="This is a test" expression>
+          this.MyProperty.Value;
+        </ClassMethod>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    class Test
+    {
+      /// This is a test
+      void Method() => this.MyProperty.Value;
+    }
+  `);
+});

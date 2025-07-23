@@ -29,6 +29,9 @@ export interface MethodModifiers {
   readonly sealed?: boolean;
   readonly static?: boolean;
   readonly virtual?: boolean;
+  readonly override?: boolean;
+  readonly extern?: boolean;
+  readonly readonly?: boolean;
 }
 
 const getMethodModifier = makeModifiers<MethodModifiers>([
@@ -36,6 +39,9 @@ const getMethodModifier = makeModifiers<MethodModifiers>([
   "sealed",
   "static",
   "virtual",
+  "override",
+  "extern",
+  "readonly",
 ]);
 
 // properties for creating a method
@@ -150,12 +156,18 @@ export function Method(props: MethodProps) {
         {props.abstract ?
           ";"
         : props.expression ?
-          <>
-            {" => "}
-            {props.children}
-          </>
+          <ExpressionBody>{props.children}</ExpressionBody>
         : <Block newline>{props.children}</Block>}
       </Scope>
     </MemberDeclaration>
   );
 }
+
+const ExpressionBody = (props: { children?: Children }) => {
+  return (
+    <>
+      {" => "}
+      {props.children};
+    </>
+  );
+};

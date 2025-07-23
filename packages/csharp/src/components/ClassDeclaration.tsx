@@ -6,9 +6,9 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../modifiers.js";
-import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
+import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
+import { CSharpMemberScope } from "../symbols/scopes.js";
 import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
 import { DocWhen } from "./doc/comment.jsx";
 import { Name } from "./Name.jsx";
@@ -146,44 +146,6 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
           <core.Scope value={thisClassScope}>{props.children}</core.Scope>
         </core.Block>
       )}
-    </core.Declaration>
-  );
-}
-
-// properties for creating a class member
-export interface ClassMemberProps extends AccessModifiers {
-  name: string;
-  type: core.Children;
-  refkey?: core.Refkey;
-  /** Doc comment */
-  doc?: core.Children;
-}
-
-// a C# class member (i.e. a field within a class like "private int count")
-export function ClassMember(props: ClassMemberProps) {
-  let nameElement: CSharpElements = "class-member-private";
-  if (props.public) {
-    nameElement = "class-member-public";
-  }
-  const name = useCSharpNamePolicy().getName(props.name, nameElement);
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "class-decl") {
-    throw new Error(
-      "can't define a class member outside of a class-decl scope",
-    );
-  }
-
-  const memberSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? core.refkey(props.name),
-  });
-
-  const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
-  return (
-    <core.Declaration symbol={memberSymbol}>
-      <DocWhen doc={props.doc} />
-      {modifiers}
-      {props.type} <Name />
     </core.Declaration>
   );
 }

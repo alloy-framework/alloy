@@ -1,8 +1,9 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, refkey, StatementList } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
 import { Constructor } from "../constructor/constructor.jsx";
+import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
 import { SourceFile } from "../SourceFile.jsx";
@@ -165,5 +166,34 @@ it("define constructor", () => {
     {
       public Test() {}
     }
+  `);
+});
+
+it("defines fields", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration public name="TestClass">
+        <StatementList>
+          <Field public name="MemberOne" type="string" />
+          <Field private name="MemberTwo" type="int" />
+        </StatementList>
+      </StructDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public struct TestClass
+    {
+      public string MemberOne;
+      private int memberTwo;
+    }
+  `);
+});
+
+it("define multiple interface types", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration name="Test" interfaceTypes={["Foo", "Bar"]} />
+    </TestNamespace>,
+  ).toRenderTo(`
+      struct Test : Foo, Bar;
   `);
 });

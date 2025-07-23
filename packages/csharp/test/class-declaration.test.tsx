@@ -3,15 +3,11 @@ import { List, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { Attribute } from "../src/components/attributes/attributes.jsx";
+import { Field } from "../src/components/field/field.jsx";
 import { Constructor } from "../src/components/stc/index.js";
 import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
-import {
-  ClassDeclaration,
-  ClassMember,
-  Property,
-  SourceFile,
-} from "../src/index.js";
+import { ClassDeclaration, Property, SourceFile } from "../src/index.js";
 import * as utils from "./utils.jsx";
 
 it("declares class with no members", () => {
@@ -99,8 +95,8 @@ it("declares class with some members", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
       <core.StatementList>
-        <csharp.ClassMember public name="MemberOne" type="string" />
-        <csharp.ClassMember private name="MemberTwo" type="int" />
+        <Field public name="MemberOne" type="string" />
+        <Field private name="MemberTwo" type="int" />
       </core.StatementList>
     </csharp.ClassDeclaration>,
   );
@@ -183,11 +179,7 @@ it("uses refkeys for members, params, and return type", () => {
           />
           <hbr />
           <csharp.ClassDeclaration public name="TestClass">
-            <csharp.ClassMember
-              private
-              name="MemberOne"
-              type={enumTypeRefkey}
-            />
+            <Field private name="MemberOne" type={enumTypeRefkey} />
             ;
             <hbr />
             <csharp.Method
@@ -351,19 +343,9 @@ it("declares class with constructor params and assigns values to fields", () => 
 
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <csharp.ClassMember
-        private
-        name="name"
-        type="string"
-        refkey={thisNameRefkey}
-      />
+      <Field private name="name" type="string" refkey={thisNameRefkey} />
       ;<hbr />
-      <csharp.ClassMember
-        private
-        name="size"
-        type="int"
-        refkey={thisSizeRefkey}
-      />
+      <Field private name="size" type="int" refkey={thisSizeRefkey} />
       ;<hbr />
       <Constructor public parameters={ctorParams}>
         {thisNameRefkey} = {paramNameRefkey};<hbr />
@@ -406,7 +388,7 @@ it("supports class member doc comments", () => {
   expect(
     <utils.TestNamespace>
       <ClassDeclaration name="Test" doc="This is a test">
-        <ClassMember name="Member" public type="int" doc="This is a member" />
+        <Field name="Member" public type="int" doc="This is a member" />
       </ClassDeclaration>
     </utils.TestNamespace>,
   ).toRenderTo(`

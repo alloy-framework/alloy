@@ -187,3 +187,13 @@ it("defines fields", () => {
     }
   `);
 });
+
+it("define multiple interface types", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration name="Test" interfaceTypes={["Foo", "Bar"]} />
+    </TestNamespace>,
+  ).toRenderTo(`
+      struct Test : Foo, Bar;
+  `);
+});

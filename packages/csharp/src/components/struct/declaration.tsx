@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+import { join } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -71,6 +72,9 @@ export interface StructDeclarationProps
    * ```
    */
   attributes?: AttributesProp;
+
+  /** Interfaces this struct implements */
+  interfaceTypes?: core.Children[];
 }
 
 /**
@@ -108,6 +112,12 @@ export function StructDeclaration(props: StructDeclarationProps) {
     getAccessModifier(props),
     getStructModifiers(props),
   ]);
+
+  const base =
+    props.interfaceTypes && props.interfaceTypes.length > 0 ?
+      <> : {join(props.interfaceTypes, { joiner: ", " })}</>
+    : null;
+
   return (
     <core.Declaration symbol={thisStructSymbol}>
       <DocWhen doc={props.doc} />
@@ -116,6 +126,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />
       )}
+      {base}
       {props.typeParameters && (
         <TypeParameterConstraints parameters={props.typeParameters} />
       )}

@@ -9,7 +9,6 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { PythonOutputSymbol } from "../symbols/index.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
@@ -42,7 +41,6 @@ export interface FunctionDeclarationProps
  */
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const asyncKwd = props.async ? "async " : "";
-  let sym: PythonOutputSymbol | undefined = undefined;
   const callSignatureProps = getCallSignatureProps(props, {});
   const memberScope = useMemberScope();
   let scope: OutputScope | undefined = undefined;
@@ -52,7 +50,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     scope = useScope();
   }
 
-  sym = createPythonSymbol(
+  const sym = createPythonSymbol(
     props.name,
     {
       scope: scope,

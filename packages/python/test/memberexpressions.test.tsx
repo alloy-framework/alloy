@@ -366,6 +366,7 @@ describe("with refkeys", () => {
             refkey={classMethod1Ref}
             type="str"
             omitNone={true}
+            instanceVariable={true}
           />
         </ClassDeclaration>
         <ClassDeclaration name="Model2" refkey={model2Ref}>
@@ -374,6 +375,7 @@ describe("with refkeys", () => {
             refkey={classMethod2Ref}
             type="str"
             omitNone={true}
+            instanceVariable={true}
           />
         </ClassDeclaration>
         <py.VariableDeclaration

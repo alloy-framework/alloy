@@ -228,6 +228,7 @@ describe("Python Class - VariableDeclaration", () => {
               name="instanceProp"
               refkey={classMemberRk}
               initializer={42}
+              instanceVariable={true}
             />
             <py.FunctionDeclaration
               name="instanceMethod"

@@ -7,7 +7,7 @@ export interface RestApi {
 export interface RestApiOperation {
   name: string;
   endpoint: string;
-  verb: "get" | "post";
+  verb: "get" | "post" | "put" | "delete";
   requestBody?: RestApiModelReference;
   responseBody?: RestApiModelReference | RestApiNonModelReference;
 }
@@ -30,6 +30,8 @@ export interface RestApiModel {
 export interface RestApiModelProperty {
   name: string;
   type: RestApiModel | RestApiModelReference | "string" | "number" | "boolean";
+  array?: boolean;
+  optional?: boolean;
 }
 
 export const api: RestApi = {
@@ -56,14 +58,6 @@ export const api: RestApi = {
       },
     },
     {
-      name: "get_amt_pets",
-      verb: "get",
-      endpoint: "/pets_amt",
-      responseBody: {
-        type: "number",
-      },
-    },
-    {
       name: "get_pet",
       verb: "get",
       endpoint: "/pets/:id",
@@ -71,19 +65,62 @@ export const api: RestApi = {
         ref: "Pet",
       },
     },
+    {
+      name: "update_pet",
+      verb: "put",
+      endpoint: "/pets/:id",
+      requestBody: {
+        ref: "Pet",
+      },
+      responseBody: {
+        ref: "Pet",
+      },
+    },
+    {
+      name: "delete_pet",
+      verb: "delete",
+      endpoint: "/pets/:id/delete",
+      responseBody: {
+        type: "boolean",
+      },
+    },
+    {
+      name: "add_toy_to_pet",
+      verb: "post",
+      endpoint: "/pets/:id/toys",
+      requestBody: {
+        ref: "Toy",
+      },
+      responseBody: {
+        ref: "Pet",
+      },
+    },
+    {
+      name: "get_amt_pets",
+      verb: "get",
+      endpoint: "/pets_amt",
+      responseBody: {
+        type: "number",
+      },
+    },
   ],
   models: [
     {
       name: "Pet",
       properties: [
+        { name: "id", type: "string" },
         { name: "name", type: "string" },
         { name: "age", type: "number" },
-        { name: "favoriteToy", type: { ref: "Toy" } },
+        { name: "favoriteToys", type: { ref: "Toy" }, array: true },
+        { name: "breed", type: "string", optional: true },
       ],
     },
     {
       name: "Toy",
-      properties: [{ name: "name", type: "string" }],
+      properties: [
+        { name: "id", type: "string" },
+        { name: "name", type: "string" }
+      ],
     },
   ],
 };

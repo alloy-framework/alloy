@@ -31,6 +31,8 @@ export function castOpenAPITypeToPython(type: Children) {
       return "str";
     case "number":
       return "int";
+    case "boolean":
+      return "bool";
     default:
       return type;
   }

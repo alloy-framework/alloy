@@ -1,5 +1,6 @@
 import {
   computed,
+  ContentOutputFile,
   Output,
   render,
   renderTree,
@@ -50,7 +51,9 @@ it("has reactive context", () => {
     </Output>,
   );
 
-  expect(tree.contents[1].contents).toEqual("hi.txt contents.txt");
+  expect((tree.contents[1] as ContentOutputFile).contents).toEqual(
+    "hi.txt contents.txt",
+  );
 });
 
 it("Includes header", () => {
@@ -63,7 +66,7 @@ it("Includes header", () => {
     </Output>,
   );
 
-  expect(tree.contents[0].contents).toEqual(d`
+  expect((tree.contents[0] as ContentOutputFile).contents).toEqual(d`
     # This is a header
     hello!
     `);

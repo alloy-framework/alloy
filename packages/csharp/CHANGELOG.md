@@ -1,5 +1,22 @@
 # Changelog - @alloy-js/csharp
 
+## 0.19.0
+
+### Features
+
+- [#246](https://github.com/alloy-framework/alloy/pull/246) Add support for `struct` declaration
+- [#250](https://github.com/alloy-framework/alloy/pull/250) Fields support `new`, `readonly`, `static`  and `volatile` modifier
+- [#250](https://github.com/alloy-framework/alloy/pull/250) Private field respect c# naming convention of `_camelCase`
+- [#251](https://github.com/alloy-framework/alloy/pull/251) Support `readonly`, `override` and `extern` modifier for `Method`
+- [#247](https://github.com/alloy-framework/alloy/pull/247) Add support for expression body syntax in methods
+
+### Breaking Changes
+
+- [#249](https://github.com/alloy-framework/alloy/pull/249) Rename `ClassMember` to `Field` to allow using it with `StructDeclaration`
+- [#248](https://github.com/alloy-framework/alloy/pull/248) Rename `ClassConstructor` to `Constructor` to allow using it with `StructDeclaration`
+- [#248](https://github.com/alloy-framework/alloy/pull/248) Rename `ClassMethod` to `Method` to allow using it with `StructDeclaration`
+
+
 ## 0.18.0
 
 ### Bug Fixes

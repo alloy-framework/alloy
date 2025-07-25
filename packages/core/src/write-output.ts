@@ -1,4 +1,3 @@
-import { existsSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { relative, resolve } from "pathe";
 import { AlloyHost } from "./host/alloy-host.js";
@@ -33,7 +32,7 @@ export async function writeOutput(
         (async () => {
           if ("contents" in file) {
             const path = resolve(basePath, file.path);
-            if (existsSync(path)) {
+            if (await AlloyHost.exists(path)) {
               // eslint-disable-next-line no-console
               console.log("overwrite", relative(process.cwd(), path));
             } else {
@@ -41,12 +40,12 @@ export async function writeOutput(
               console.log("create", relative(process.cwd(), path));
             }
 
-            writeFileSync(path, file.contents);
+            await AlloyHost.write(path, file.contents);
           } else {
             // copy file
             const source = resolve(basePath, file.sourcePath);
             const target = resolve(basePath, file.path);
-            if (existsSync(target)) {
+            if (await AlloyHost.exists(target)) {
               // eslint-disable-next-line no-console
               console.log("copy over", relative(process.cwd(), target));
             } else {

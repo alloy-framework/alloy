@@ -1,7 +1,6 @@
 import { computed } from "@vue/reactivity";
-import { Children } from "../jsx-runtime.js";
 import { createFileResource } from "../resource.js";
-import { isComponentCreator } from "../runtime/component.js";
+import { Children, isComponentCreator } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { SourceFile } from "./SourceFile.jsx";
 
@@ -26,10 +25,10 @@ export interface TemplateFileProps {
  * A component that reads a template file and replaces variable placeholders
  * with actual values.
  *
- * Template files can contain variable placeholders in the format `{{
- * variable_name }}` which will be replaced with values from `TemplateVariable`
- * children components. Whitespace around variable names is ignored, so `{{ name
- * }}`, `{{name}}`, and `{{  name  }}` are all equivalent.
+ * Template files can contain variable placeholders in the format
+ * `{{ variable_name }}` which will be replaced with values from `TemplateVariable`
+ * children components. Whitespace around variable names is ignored, so
+ * `{{ name }}`, `{{name}}`, and `{{  name  }}` are all equivalent.
  *
  * @example
  * Basic usage with template variables:
@@ -41,7 +40,7 @@ export interface TemplateFileProps {
  *   <TemplateVariable name="name" value="John" />
  *   <TemplateVariable name="age" value="25" />
  * </TemplateFile>
- * * ```
+ * ```
  *
  * @example
  * Using children instead of value prop:

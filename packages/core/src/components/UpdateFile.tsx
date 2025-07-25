@@ -1,11 +1,10 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
 import { computed } from "@vue/reactivity";
 import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { createFileResource } from "../resource.js";
+import { Children } from "../runtime/component.js";
 import { SourceFile } from "./SourceFile.jsx";
-
 /**
  * Props for the UpdateFile component.
  */

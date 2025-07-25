@@ -35,13 +35,13 @@ export interface AppendFileProps {
 
 /**
  * A component that reads a file and returns content with new content appended
- * at the end or within specific regions marked by alloy-{region name}-start/alloy-{region name}-end sigils.
+ * at the end or within specific regions marked by alloy-\{region name\}-start/alloy-\{region name\}-end sigils.
  *
  * The component can append content in two ways:
  * 1. **Simple append**: Content is appended to the end of the file
  * 2. **Region-based append**: Content is appended before the end sigil on its own line
  *
- * Region sigils are line-based - any line containing "alloy-{region name}-start" or "alloy-{region name}-end"
+ * Region sigils are line-based - any line containing "alloy-\{region name\}-start" or "alloy-\{region name\}-end"
  * is considered a sigil.
  *
  * @example

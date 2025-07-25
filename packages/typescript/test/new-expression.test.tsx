@@ -1,7 +1,8 @@
 import { Output, refkey, render, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { it } from "vitest";
 import * as ts from "../src/index.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("should instantiate classes", () => {
   const varRk = refkey();
@@ -29,14 +30,16 @@ it("should instantiate classes", () => {
     </Output>,
   );
 
-  expect(tree.contents[0].contents).toEqual(d`
-    import { Foo } from "./decl.js";
+  assertFileContents(tree, {
+    "inst.ts": d`
+      import { Foo } from "./decl.js";
 
-    export const one = new Foo();
-  `);
-  expect(tree.contents[1].contents).toEqual(d`
-    class Foo {
-      instanceProp = 42;
-    }
-  `);
+      export const one = new Foo();
+    `,
+    "decl.ts": d`
+      class Foo {
+        instanceProp = 42;
+      }
+    `,
+  });
 });

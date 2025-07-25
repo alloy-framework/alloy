@@ -4,6 +4,7 @@ import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
+import { findFile } from "./utils.jsx";
 
 it("applies to functions and variables", () => {
   const ref1 = refkey({});
@@ -26,7 +27,7 @@ it("applies to functions and variables", () => {
     </Output>,
   );
 
-  expect(res.contents[0].contents).toEqual(d`
+  expect(findFile(res, "test.ts").contents).toEqual(d`
     function fooBar() {}
     const oneTwo = "hello";
     fooBar;
@@ -55,7 +56,7 @@ it("keeps _ and $ prefix", () => {
     </Output>,
   );
 
-  expect(res.contents[0].contents).toEqual(d`
+  expect(findFile(res, "test.ts").contents).toEqual(d`
     function _fooBar() {}
     const $oneTwo = "hello";
     _fooBar;
@@ -88,7 +89,7 @@ it("appends _ to reserved words", () => {
     </Output>,
   );
 
-  expect(res.contents[0].contents).toEqual(d`
+  expect(findFile(res, "test.ts").contents).toEqual(d`
     function default_(await_: any) {}
     const super_ = "hello";
     default_;

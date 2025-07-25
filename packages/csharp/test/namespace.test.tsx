@@ -1,7 +1,8 @@
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+import { it } from "vitest";
 import * as csharp from "../src/index.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("defines multiple namespaces and source files with unique content", () => {
   const res = core.render(
@@ -25,35 +26,30 @@ it("defines multiple namespaces and source files with unique content", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].path).equals("Model1.cs");
-  expect(res.contents[0].contents).toBe(coretest.d`
-    namespace Namespace1
-    {
-        public class Model1;
-    }
-  `);
-
-  expect(res.contents[1].path).equals("Model2.cs");
-  expect(res.contents[1].contents).toBe(coretest.d`
-    namespace Namespace1
-    {
-        public class Model2;
-    }
-  `);
-
-  expect(res.contents[2].path).equals("Model3.cs");
-  expect(res.contents[2].contents).toBe(coretest.d`
-    namespace Namespace2
-    {
-        public class Model3;
-    }
-  `);
-
-  expect(res.contents[3].path).equals("Model4.cs");
-  expect(res.contents[3].contents).toBe(coretest.d`
-    namespace Namespace2
-    {
-        public class Model4;
-    }
-  `);
+  assertFileContents(res, {
+    "Model1.cs": coretest.d`
+      namespace Namespace1
+      {
+          public class Model1;
+      }
+    `,
+    "Model2.cs": coretest.d`
+      namespace Namespace1
+      {
+          public class Model2;
+      }
+    `,
+    "Model3.cs": coretest.d`
+      namespace Namespace2
+      {
+          public class Model3;
+      }
+    `,
+    "Model4.cs": coretest.d`
+      namespace Namespace2
+      {
+          public class Model4;
+      }
+    `,
+  });
 });

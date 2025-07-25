@@ -9,6 +9,7 @@ import { TypeParameterProps } from "../src/components/type-parameters/type-param
 import * as csharp from "../src/index.js";
 import { ClassDeclaration, Property, SourceFile } from "../src/index.js";
 import * as utils from "./utils.jsx";
+import { findFile } from "./utils.jsx";
 
 it("declares class with no members", () => {
   expect(
@@ -195,7 +196,7 @@ it("uses refkeys for members, params, and return type", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
     namespace TestCode
     {
         public enum TestEnum

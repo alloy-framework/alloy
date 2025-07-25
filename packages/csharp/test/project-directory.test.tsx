@@ -30,7 +30,8 @@ it("defines a project directory file with multiple source files", () => {
   expect(projDir.contents[0].path).equals(
     "~/projects/TestProject/TestProject.csproj",
   );
-  expect(projDir.contents[0].contents).toBe(coretest.d`
+  expect((projDir.contents[0] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>
         <Version>0.1.0</Version>
@@ -43,7 +44,8 @@ it("defines a project directory file with multiple source files", () => {
   const srcDir = projDir.contents[1] as core.OutputDirectory;
 
   expect(srcDir.contents[0].path).equals("~/projects/TestProject/src/Test1.cs");
-  expect(srcDir.contents[0].contents).toBe(coretest.d`
+  expect((srcDir.contents[0] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass1;
@@ -51,7 +53,8 @@ it("defines a project directory file with multiple source files", () => {
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
-  expect(srcDir.contents[1].contents).toBe(coretest.d`
+  expect((srcDir.contents[1] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass2;
@@ -87,7 +90,8 @@ it("defines a project directory file with multiple source files and a custom TFM
   expect(projDir.contents[0].path).equals(
     "~/projects/TestProject/TestProject.csproj",
   );
-  expect(projDir.contents[0].contents).toBe(coretest.d`
+  expect((projDir.contents[0] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>
         <Version>0.1.0</Version>
@@ -100,7 +104,8 @@ it("defines a project directory file with multiple source files and a custom TFM
   const srcDir = projDir.contents[1] as core.OutputDirectory;
 
   expect(srcDir.contents[0].path).equals("~/projects/TestProject/src/Test1.cs");
-  expect(srcDir.contents[0].contents).toBe(coretest.d`
+  expect((srcDir.contents[0] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass1;
@@ -108,7 +113,8 @@ it("defines a project directory file with multiple source files and a custom TFM
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
-  expect(srcDir.contents[1].contents).toBe(coretest.d`
+  expect((srcDir.contents[1] as core.ContentOutputFile).contents)
+    .toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass2;

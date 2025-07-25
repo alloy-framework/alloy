@@ -10,6 +10,14 @@ import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as ts from "../src/index.js";
 
+export function TestFile(props: { children?: Children }) {
+  return (
+    <Output>
+      <ts.SourceFile path="test.ts">{props.children}</ts.SourceFile>
+    </Output>
+  );
+}
+
 export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   const res = render(
     <Output>

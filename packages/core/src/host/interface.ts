@@ -110,7 +110,6 @@ export interface AlloyFileInterface {
    * ```typescript
    * const file = AlloyHost.read('./image.png');
    * const buffer = await file.arrayBuffer();
-   * const view = new DataView(buffer);
    * ```
    */
   arrayBuffer(): Promise<ArrayBuffer>;
@@ -145,15 +144,8 @@ export interface AlloyFileInterface {
    * const file = AlloyHost.read('./large-file.dat');
    * const stream = file.stream();
    *
-   * const reader = stream.getReader();
-   * try {
-   *   while (true) {
-   *     const { done, value } = await reader.read();
-   *     if (done) break;
-   *     console.log('Received chunk of', value.length, 'bytes');
-   *   }
-   * } finally {
-   *   reader.releaseLock();
+   * for await (const chunk of stream) {
+   *   console.log('Received chunk:', chunk);
    * }
    * ```
    */

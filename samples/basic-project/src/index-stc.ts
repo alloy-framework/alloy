@@ -1,7 +1,6 @@
-import { refkey, render } from "@alloy-js/core";
+import { refkey, render, writeOutput } from "@alloy-js/core";
 import * as ay from "@alloy-js/core/stc";
 import * as ts from "@alloy-js/typescript/stc";
-import { writeOutput } from "./write-output.js";
 
 const result = render(
   ay.Output().children(

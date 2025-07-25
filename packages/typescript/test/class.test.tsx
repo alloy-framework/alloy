@@ -3,7 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
-import { toSourceText } from "./utils.js";
+import { findFile, toSourceText } from "./utils.js";
 
 it("declares classes", () => {
   const res = toSourceText(<ts.ClassDeclaration name="Foo" />);
@@ -222,7 +222,7 @@ describe("instance members", () => {
       </Output>,
     );
 
-    expect(tree.contents[1].contents).toEqual(d`
+    expect(findFile(tree, "ref.ts").contents).toEqual(d`
       import { one, two } from "./decl.js";
 
       class Foo {

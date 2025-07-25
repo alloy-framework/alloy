@@ -5,6 +5,7 @@ export interface QueueJob {
 }
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
+const pendingPromises = new Set<Promise<any>>();
 
 export function scheduler(
   jobGetter: () => ReactiveEffectRunner,
@@ -25,10 +26,48 @@ export function queueJob(job: QueueJob, immediate = false) {
   }
 }
 
+/**
+ * Register a promise that the scheduler should wait for during flushJobs.
+ * This is used by async resources to ensure the scheduler waits for their completion.
+ */
+export function trackPromise(promise: Promise<any>) {
+  pendingPromises.add(promise);
+  void promise.finally(() => {
+    pendingPromises.delete(promise);
+  });
+}
+
 export function flushJobs() {
+  // First, run all synchronous jobs
   let job;
   while ((job = takeJob()) !== null) {
     job();
+  }
+
+  // If there are no pending promises, we're done
+  if (pendingPromises.size > 0) {
+    throw new Error(
+      "Asynchronous jobs were found but render was called synchronously. Use `asyncRender` instead.",
+    );
+  }
+}
+
+export async function flushJobsAsync() {
+  // Keep running jobs until both the queues are empty and all promises are resolved
+  while (true) {
+    // First, run all synchronous jobs
+    let job;
+    while ((job = takeJob()) !== null) {
+      job();
+    }
+
+    // If there are no pending promises, we're done
+    if (pendingPromises.size === 0) {
+      break;
+    }
+
+    // Wait for all current promises to complete
+    await Promise.allSettled(Array.from(pendingPromises));
   }
 }
 

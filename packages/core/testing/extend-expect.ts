@@ -7,6 +7,7 @@ import {
 } from "@alloy-js/core";
 import "vitest";
 import { expect } from "vitest";
+import { flushJobs, flushJobsAsync } from "../src/scheduler.js";
 import { dedent } from "./render.js";
 
 interface ToRenderToOptions {
@@ -21,67 +22,82 @@ expect.extend({
     expectedRaw: string | Record<string, string>,
     renderOptions?: ToRenderToOptions,
   ) {
-    const message = () => `Render is${isNot ? " not" : ""} incorrect`;
+    const tree = renderTree(received);
+    flushJobs();
+    const actual = getFilesFromTree(tree, renderOptions);
 
-    const { isNot } = this;
-    const actual = renderAsFiles(received, renderOptions);
-    if (typeof expectedRaw === "string") {
-      const expected = dedent(expectedRaw);
-      let actualStr;
-      if (typeof actual === "string") {
-        actualStr = actual;
-      } else if (Object.keys(actual).length === 1) {
-        // If we have a single file, we can use its content directly.
-        actualStr = Object.values(actual)[0];
-      } else {
-        return {
-          pass: false,
-          message,
-          actual,
-          expected,
-        };
-      }
-      return {
-        pass: actualStr === expected,
-        message,
-        actual: actualStr,
-        expected,
-      };
-    } else if (typeof actual === "object" && typeof expectedRaw === "object") {
-      const expected = expectedRaw;
-      const dedentExpected: Record<string, string> = {};
-      for (const [key, value] of Object.entries(expected)) {
-        dedentExpected[key] = dedent(value);
-      }
-      const pass =
-        Object.keys(actual).length === Object.keys(expected).length &&
-        Object.entries(actual).every(([key, value]) => {
-          return dedentExpected[key] === value;
-        });
-      return {
-        pass,
-        message,
-        actual,
-        expected: dedentExpected,
-      };
+    return validateRender(actual, expectedRaw, this.isNot);
+  },
+  async toRenderToAsync(
+    received: Children,
+    expectedRaw: string | Record<string, string>,
+    renderOptions?: ToRenderToOptions,
+  ) {
+    const tree = renderTree(received);
+    await flushJobsAsync();
+    const actual = getFilesFromTree(tree, renderOptions);
+    return validateRender(actual, expectedRaw, this.isNot);
+  },
+});
+
+function validateRender(
+  actual: string | Record<string, string>,
+  expectedRaw: string | Record<string, string>,
+  isNot: boolean,
+) {
+  const message = () => `Render is${isNot ? " not" : ""} incorrect`;
+
+  if (typeof expectedRaw === "string") {
+    const expected = dedent(expectedRaw);
+    let actualStr;
+    if (typeof actual === "string") {
+      actualStr = actual;
+    } else if (Object.keys(actual).length === 1) {
+      // If we have a single file, we can use its content directly.
+      actualStr = Object.values(actual)[0];
     } else {
       return {
         pass: false,
         message,
         actual,
-        expected: expectedRaw,
+        expected,
       };
     }
-  },
-});
+    return {
+      pass: actualStr === expected,
+      message,
+      actual: actualStr,
+      expected,
+    };
+  } else if (typeof actual === "object" && typeof expectedRaw === "object") {
+    const expected = expectedRaw;
+    const dedentExpected: Record<string, string> = {};
+    for (const [key, value] of Object.entries(expected)) {
+      dedentExpected[key] = dedent(value);
+    }
+    const pass =
+      Object.keys(actual).length === Object.keys(expected).length &&
+      Object.entries(actual).every(([key, value]) => {
+        return dedentExpected[key] === value;
+      });
+    return {
+      pass,
+      message,
+      actual,
+      expected: dedentExpected,
+    };
+  } else {
+    return {
+      pass: false,
+      message,
+      actual,
+      expected: expectedRaw,
+    };
+  }
+}
 
-function renderAsFiles(
-  received: Children,
-  options?: ToRenderToOptions,
-): Record<string, string> | string {
+function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
   const files: Record<string, string> = {};
-  const tree = renderTree(received);
-
   // when passing Output, the first render tree child is the Output component.
   const rootRenderOptions =
     Array.isArray(tree) ?
@@ -90,6 +106,13 @@ function renderAsFiles(
     : {};
 
   collectSourceFiles(tree);
+  // If we found no source files, we return the tree as a string.
+  if (Object.keys(files).length === 0) {
+    return printTree(tree, options);
+  } else {
+    return files;
+  }
+
   function collectSourceFiles(root: RenderedTextTree) {
     if (!Array.isArray(root)) {
       return;
@@ -119,12 +142,5 @@ function renderAsFiles(
         collectSourceFiles(child as RenderedTextTree);
       }
     }
-  }
-
-  // If we found no source files, we return the tree as a string.
-  if (Object.keys(files).length === 0) {
-    return printTree(tree, options);
-  } else {
-    return files;
   }
 }

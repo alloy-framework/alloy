@@ -31,8 +31,8 @@
     }
   },
   "browser": {
-    "./dist/src/write-output.js": "./dist/src/write-output.browser.js",
-    "./src/write-output.ts": "./src/write-output.browser.ts"
+    "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
+    "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts"
   },
   "scripts": {
     "generate-docs": "api-extractor run",

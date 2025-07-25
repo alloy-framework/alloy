@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from "fs";
+import { computed } from "@vue/reactivity";
 import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
+import { createFileResource } from "../resource.js";
 import { Children, isComponentCreator } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { SourceFile } from "./SourceFile.jsx";
@@ -126,123 +127,125 @@ export function AppendFile(props: AppendFileProps): Children {
     parentDirectory ? parentDirectory.path : "",
     props.path,
   );
-  let fileContent = "";
-  if (existsSync(fullPath)) {
-    try {
-      fileContent = readFileSync(fullPath, "utf-8");
-    } catch (error) {
-      throw new Error(`Failed to read file "${fullPath}": ${error}`);
-    }
-  }
 
-  // Find all sigils in the file
-  const sigilInfo: Record<string, SigilInfo> = {};
-  const endSigils: Array<{
-    regionId: string;
-    index: number;
-    indent: string;
-    line: string;
-  }> = [];
-
-  // Reset regex and find all sigils
-  SIGIL_REGEX.lastIndex = 0;
-  let match;
-  while ((match = SIGIL_REGEX.exec(fileContent)) !== null) {
-    const indent = match[1];
-    const fullLine = match[0];
-    const regionId = match[3];
-    const sigilType = match[4];
-    const index = match.index!;
-
-    // Initialize sigil info for this region if not exists
-    if (!sigilInfo[regionId]) {
-      sigilInfo[regionId] = { id: regionId, start: null, end: null };
+  const currentContents = createFileResource(fullPath);
+  const newFileContent = computed(() => {
+    if (currentContents.loading) {
+      return;
     }
 
-    if (sigilType === "start") {
-      sigilInfo[regionId].start = index;
-    } else if (sigilType === "end") {
-      sigilInfo[regionId].end = index;
+    let fileContent = currentContents.error ? "" : currentContents.data!;
 
-      // If this is a region we care about, track it for processing
-      if (regions.includes(regionId)) {
-        endSigils.push({
-          regionId,
-          index,
-          indent,
-          line: fullLine,
-        });
+    // Find all sigils in the file
+    const sigilInfo: Record<string, SigilInfo> = {};
+    const endSigils: Array<{
+      regionId: string;
+      index: number;
+      indent: string;
+      line: string;
+    }> = [];
+
+    // Reset regex and find all sigils
+    SIGIL_REGEX.lastIndex = 0;
+    let match;
+    while ((match = SIGIL_REGEX.exec(fileContent)) !== null) {
+      const indent = match[1];
+      const fullLine = match[0];
+      const regionId = match[3];
+      const sigilType = match[4];
+      const index = match.index!;
+
+      // Initialize sigil info for this region if not exists
+      if (!sigilInfo[regionId]) {
+        sigilInfo[regionId] = { id: regionId, start: null, end: null };
+      }
+
+      if (sigilType === "start") {
+        sigilInfo[regionId].start = index;
+      } else if (sigilType === "end") {
+        sigilInfo[regionId].end = index;
+
+        // If this is a region we care about, track it for processing
+        if (regions.includes(regionId)) {
+          endSigils.push({
+            regionId,
+            index,
+            indent,
+            line: fullLine,
+          });
+        }
       }
     }
-  }
 
-  // Validate regions - check for unclosed regions
-  for (const regionId of regions) {
-    const info = sigilInfo[regionId];
-    if (info && info.start !== null && info.end === null) {
-      throw new Error(
-        `Region "${regionId}" has start sigil but no corresponding end sigil`,
+    // Validate regions - check for unclosed regions
+    for (const regionId of regions) {
+      const info = sigilInfo[regionId];
+      if (info && info.start !== null && info.end === null) {
+        throw new Error(
+          `Region "${regionId}" has start sigil but no corresponding end sigil`,
+        );
+      }
+    }
+
+    // Check if we have any sigils to process
+    if (endSigils.length === 0) {
+      // No sigils found, append all regions to the end
+      const result: Children[] = [fileContent];
+      for (const regionId of regions) {
+        if (fileContent && !fileContent.endsWith("\n")) {
+          result.push("\n");
+        }
+        result.push(appendRegions[regionId]);
+      }
+      return (
+        <SourceFile path={props.path} filetype="text/plain">
+          {result}
+        </SourceFile>
       );
     }
-  }
 
-  // Check if we have any sigils to process
-  if (endSigils.length === 0) {
-    // No sigils found, append all regions to the end
-    const result: Children[] = [fileContent];
-    for (const regionId of regions) {
-      if (fileContent && !fileContent.endsWith("\n")) {
-        result.push("\n");
+    // Sort end sigils by their position in the file
+    endSigils.sort((a, b) => a.index - b.index);
+
+    // Process content with sigils
+    const result: Children[] = [];
+    let lastIndex = 0;
+
+    // Process each end sigil in order
+    for (const { regionId, index, indent, line } of endSigils) {
+      // Add content before this sigil
+      if (index > lastIndex) {
+        const beforeContent = fileContent.substring(lastIndex, index);
+        if (beforeContent) {
+          result.push(beforeContent);
+        }
       }
+
+      // Add the new content with proper indentation
+      result.push(indent);
       result.push(appendRegions[regionId]);
+      result.push("\n");
+
+      // Add the sigil line
+      result.push(line);
+
+      // Update last processed index
+      lastIndex = index + line.length;
     }
-    return (
-      <SourceFile path={props.path} filetype="text/plain">
-        {result}
-      </SourceFile>
-    );
-  }
 
-  // Sort end sigils by their position in the file
-  endSigils.sort((a, b) => a.index - b.index);
-
-  // Process content with sigils
-  const result: Children[] = [];
-  let lastIndex = 0;
-
-  // Process each end sigil in order
-  for (const { regionId, index, indent, line } of endSigils) {
-    // Add content before this sigil
-    if (index > lastIndex) {
-      const beforeContent = fileContent.substring(lastIndex, index);
-      if (beforeContent) {
-        result.push(beforeContent);
+    // Add any remaining content after the last sigil
+    if (lastIndex < fileContent.length) {
+      const remainingPart = fileContent.substring(lastIndex);
+      if (remainingPart) {
+        result.push(remainingPart);
       }
     }
-
-    // Add the new content with proper indentation
-    result.push(indent);
-    result.push(appendRegions[regionId]);
-    result.push("\n");
-
-    // Add the sigil line
-    result.push(line);
-
-    // Update last processed index
-    lastIndex = index + line.length;
-  }
-
-  // Add any remaining content after the last sigil
-  if (lastIndex < fileContent.length) {
-    const remainingPart = fileContent.substring(lastIndex);
-    if (remainingPart) {
-      result.push(remainingPart);
-    }
-  }
+    return result;
+  });
 
   return (
     <SourceFile path={props.path} filetype="text/plain">
-      {result}
+      {newFileContent}
     </SourceFile>
   );
 }

@@ -3,7 +3,7 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppendFile, AppendRegion } from "../../src/components/AppendFile.jsx";
-import { render } from "../../src/render.js";
+import { render, renderAsync } from "../../src/render.js";
 import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
@@ -204,13 +204,13 @@ describe("AppendFile", () => {
 
     writeFileSync(testFilePath, contentWithOnlyStart, "utf-8");
 
-    expect(() =>
-      render(
+    await expect(async () =>
+      renderAsync(
         <AppendFile path={testFilePath} regions={["incomplete"]}>
           <AppendRegion id="incomplete">content</AppendRegion>
         </AppendFile>,
       ),
-    ).toThrow(
+    ).rejects.toThrow(
       'Region "incomplete" has start sigil but no corresponding end sigil',
     );
   });

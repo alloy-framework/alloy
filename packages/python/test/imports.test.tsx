@@ -1,7 +1,7 @@
 import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { ImportStatement } from "../src/components/ImportStatement.jsx";
-import * as py from "../src/components/index.js";
+import * as py from "../src/index.js";
 import { createPythonSymbol } from "../src/symbol-creation.js";
 import { ImportedSymbol, ImportRecords } from "../src/symbols/index.js";
 import {

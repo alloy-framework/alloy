@@ -1,7 +1,7 @@
 import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import * as py from "../src/components/index.js";
+import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
 
 describe("FunctionCallExpression", () => {

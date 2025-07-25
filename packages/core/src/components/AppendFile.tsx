@@ -134,7 +134,7 @@ export function AppendFile(props: AppendFileProps): Children {
       return;
     }
 
-    let fileContent = currentContents.error ? "" : currentContents.data!;
+    const fileContent = currentContents.error ? "" : currentContents.data!;
 
     // Find all sigils in the file
     const sigilInfo: Record<string, SigilInfo> = {};

@@ -99,7 +99,7 @@ describe("TemplateFile", () => {
     );
   });
 
-  it("should handle template with no variables", () => {
+  it("should handle template with no variables", async () => {
     const templatePath = join(tmpdir(), "test-no-vars-template.txt");
     const templateContent = "This is just plain text with no variables.";
     writeFileSync(templatePath, templateContent);
@@ -108,7 +108,7 @@ describe("TemplateFile", () => {
       <TemplateFile src={templatePath} path="output.txt"></TemplateFile>
     );
 
-    expect(result).toRenderToAsync(
+    await expect(result).toRenderToAsync(
       "This is just plain text with no variables.",
     );
   });

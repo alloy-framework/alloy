@@ -12,36 +12,60 @@ export const AlloyHost: AlloyHostInterface = {
     content: string | ArrayBuffer | Uint8Array | ReadableStream<Uint8Array>,
   ): Promise<void> {
     if (typeof content === "string") {
-      await writeFile(destination, content, "utf8");
+      //eslint-disable-next-line no-useless-catch
+      try {
+        await writeFile(destination, content, "utf8");
+      } catch (e) {
+        // get good callstacks
+        throw e;
+      }
     } else if (content instanceof ArrayBuffer) {
-      await writeFile(destination, new Uint8Array(content));
+      //eslint-disable-next-line no-useless-catch
+      try {
+        await writeFile(destination, new Uint8Array(content));
+      } catch (e) {
+        // get good callstacks
+        throw e;
+      }
     } else if (content instanceof Uint8Array) {
-      await writeFile(destination, content);
+      //eslint-disable-next-line no-useless-catch
+      try {
+        await writeFile(destination, content);
+      } catch (e) {
+        // get good callstacks
+        throw e;
+      }
     } else {
       // content is ReadableStream<Uint8Array>
-      const writeStream = createWriteStream(destination);
-      const reader = content.getReader();
-
+      //eslint-disable-next-line no-useless-catch
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        const writeStream = createWriteStream(destination);
+        const reader = content.getReader();
 
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            await new Promise<void>((resolve, reject) => {
+              writeStream.write(value, (err) => {
+                if (err) reject(err);
+                else resolve();
+              });
+            });
+          }
+        } finally {
+          reader.releaseLock();
           await new Promise<void>((resolve, reject) => {
-            writeStream.write(value, (err) => {
+            writeStream.end((err?: Error) => {
               if (err) reject(err);
               else resolve();
             });
           });
         }
-      } finally {
-        reader.releaseLock();
-        await new Promise<void>((resolve, reject) => {
-          writeStream.end((err?: Error) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
+      } catch (e) {
+        // get good callstacks
+        throw e;
       }
     }
   },
@@ -56,7 +80,13 @@ export const AlloyHost: AlloyHostInterface = {
   },
 
   async mkdir(path: string): Promise<void> {
-    await mkdir(path, { recursive: true });
+    //eslint-disable-next-line no-useless-catch
+    try {
+      await mkdir(path, { recursive: true });
+    } catch (e) {
+      // get good callstacks
+      throw e;
+    }
   },
 };
 
@@ -64,43 +94,67 @@ export class AlloyFile implements AlloyFileInterface {
   constructor(private source: string) {}
 
   async text(): Promise<string> {
-    return await readFile(this.source, "utf8");
+    //eslint-disable-next-line no-useless-catch
+    try {
+      return await readFile(this.source, "utf8");
+    } catch (e) {
+      // get good callstacks
+      throw e;
+    }
   }
 
   async arrayBuffer(): Promise<ArrayBuffer> {
-    const buffer = await readFile(this.source);
-    return buffer.buffer.slice(
-      buffer.byteOffset,
-      buffer.byteOffset + buffer.byteLength,
-    );
+    //eslint-disable-next-line no-useless-catch
+    try {
+      const buffer = await readFile(this.source);
+      return buffer.buffer.slice(
+        buffer.byteOffset,
+        buffer.byteOffset + buffer.byteLength,
+      );
+    } catch (e) {
+      // get good callstacks
+      throw e;
+    }
   }
 
   async bytes(): Promise<Uint8Array> {
-    const buffer = await readFile(this.source);
-    return new Uint8Array(buffer);
+    //eslint-disable-next-line no-useless-catch
+    try {
+      const buffer = await readFile(this.source);
+      return new Uint8Array(buffer);
+    } catch (e) {
+      // get good callstacks
+      throw e;
+    }
   }
 
   stream(): ReadableStream<Uint8Array> {
-    const nodeStream = createReadStream(this.source);
+    //eslint-disable-next-line no-useless-catch
+    try {
+      const nodeStream = createReadStream(this.source);
 
-    return new ReadableStream<Uint8Array>({
-      start(controller) {
-        nodeStream.on("data", (chunk) => {
-          controller.enqueue(new Uint8Array(chunk as Buffer));
-        });
+      return new ReadableStream<Uint8Array>({
+        start(controller) {
+          nodeStream.on("data", (chunk) => {
+            controller.enqueue(new Uint8Array(chunk as Buffer));
+          });
 
-        nodeStream.on("end", () => {
-          controller.close();
-        });
+          nodeStream.on("end", () => {
+            controller.close();
+          });
 
-        nodeStream.on("error", (err) => {
-          controller.error(err);
-        });
-      },
+          nodeStream.on("error", (err) => {
+            controller.error(err);
+          });
+        },
 
-      cancel() {
-        nodeStream.destroy();
-      },
-    });
+        cancel() {
+          nodeStream.destroy();
+        },
+      });
+    } catch (e) {
+      // get good callstacks
+      throw e;
+    }
   }
 }

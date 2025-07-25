@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { isReactive } from "@vue/reactivity";
 import Table from "cli-table3";
 import pc from "picocolors";

@@ -18,6 +18,7 @@ export const StatementList = stc(base.StatementList);
 export const SourceDirectory = stc(base.SourceDirectory);
 export const SourceFile = stc(base.SourceFile);
 export const Switch = stc(base.Switch);
+export const TemplateFile = stc(base.TemplateFile);
 export const Wrap = stc(base.Wrap);
 export const ReferenceOrContent = stc(base.ReferenceOrContent);
 

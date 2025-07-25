@@ -1,5 +1,4 @@
-import { dirname } from "node:path";
-import { relative, resolve } from "pathe";
+import { dirname, relative, resolve } from "pathe";
 import { AlloyHost } from "./host/alloy-host.js";
 import { OutputDirectory } from "./render.js";
 import { traverseOutput } from "./utils.js";

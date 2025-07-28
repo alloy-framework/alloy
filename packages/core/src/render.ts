@@ -16,13 +16,13 @@ import {
 } from "./reactivity.js";
 import { isRefkey } from "./refkey.js";
 import {
-  AY_CUSTOM_ELEMENT,
   Child,
   Children,
   Component,
   isComponentCreator,
-  isCustomChildElement,
+  isRenderableObject,
   Props,
+  RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs } from "./scheduler.js";
@@ -519,8 +519,8 @@ function normalizeChild(child: Child): NormalizedChildren {
 
       return sfContext.reference({ refkey: child });
     };
-  } else if (isCustomChildElement(child)) {
-    return child[AY_CUSTOM_ELEMENT].bind(child);
+  } else if (isRenderableObject(child)) {
+    return child[RENDERABLE].bind(child);
   } else if (isCustomContext(child)) {
     return child;
   } else if (isIntrinsicElement(child)) {
@@ -546,7 +546,7 @@ function debugPrintChild(child: Children): string {
     return "$ref";
   } else if (isIntrinsicElement(child)) {
     return `<${child.name}>`;
-  } else if (isCustomChildElement(child)) {
+  } else if (isRenderableObject(child)) {
     return `CustomChildElement(${JSON.stringify(child)})`;
   } else {
     return JSON.stringify(child);

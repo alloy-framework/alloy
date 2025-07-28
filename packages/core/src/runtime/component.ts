@@ -3,25 +3,23 @@ import { CustomContext } from "../reactivity.js";
 import { Refkey } from "../refkey.js";
 import { IntrinsicElement } from "./intrinsic.js";
 
-export const AY_CUSTOM_ELEMENT = Symbol.for("Alloy.CustomElement");
+export const RENDERABLE = Symbol.for("Alloy.CustomElement");
 
-export interface CustomChildElement {
-  [AY_CUSTOM_ELEMENT](): Children;
+export interface RenderableObject {
+  [RENDERABLE](): Children;
 }
 
-export function isCustomChildElement(
-  item: unknown,
-): item is CustomChildElement {
+export function isRenderableObject(item: unknown): item is RenderableObject {
   return (
     typeof item === "object" &&
     item !== null &&
-    AY_CUSTOM_ELEMENT in item &&
-    typeof (item as any)[AY_CUSTOM_ELEMENT] === "function"
+    RENDERABLE in item &&
+    typeof (item as any)[RENDERABLE] === "function"
   );
 }
 
 export type Child =
-  | CustomChildElement
+  | RenderableObject
   | string
   | boolean
   | number

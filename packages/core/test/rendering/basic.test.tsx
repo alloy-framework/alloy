@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AY_CUSTOM_ELEMENT, Children } from "../../src/runtime/component.js";
+import { Children, RENDERABLE } from "../../src/runtime/component.js";
 import "../../testing/extend-expect.js";
 describe("string nodes", () => {
   it("renders string nodes with substitutions", () => {
@@ -52,7 +52,7 @@ describe("component nodes", () => {
 
   it("renders custom elements", () => {
     const customElement = {
-      [AY_CUSTOM_ELEMENT]() {
+      [RENDERABLE]() {
         return (
           <>
             <Str /> <Str />
@@ -62,6 +62,26 @@ describe("component nodes", () => {
     };
 
     expect(customElement).toRenderTo("Str Str");
+  });
+
+  it("renders nested custom elements", () => {
+    const e1 = {
+      [RENDERABLE]() {
+        return <Str />;
+      },
+    };
+
+    const e2 = {
+      [RENDERABLE]() {
+        return (
+          <>
+            {e1} {e1}
+          </>
+        );
+      },
+    };
+
+    expect(e2).toRenderTo("Str Str");
   });
 });
 

@@ -11,6 +11,10 @@ interface CustomMatchers<R = unknown> {
     str: string | Record<string, string>,
     options?: ToRenderToRenderOptions,
   ) => R;
+  toRenderToAsync: (
+    str: string | Record<string, string>,
+    options?: ToRenderToRenderOptions,
+  ) => Promise<R>;
 }
 
 declare module "vitest" {

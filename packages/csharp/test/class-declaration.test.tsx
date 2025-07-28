@@ -3,15 +3,13 @@ import { List, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { Attribute } from "../src/components/attributes/attributes.jsx";
+import { Field } from "../src/components/field/field.jsx";
+import { Constructor } from "../src/components/stc/index.js";
 import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
 import * as csharp from "../src/index.js";
-import {
-  ClassDeclaration,
-  ClassMember,
-  Property,
-  SourceFile,
-} from "../src/index.js";
+import { ClassDeclaration, Property, SourceFile } from "../src/index.js";
 import * as utils from "./utils.jsx";
+import { findFile } from "./utils.jsx";
 
 it("declares class with no members", () => {
   expect(
@@ -97,10 +95,10 @@ describe("base", () => {
 it("declares class with some members", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <core.StatementList>
-        <csharp.ClassMember public name="MemberOne" type="string" />
-        <csharp.ClassMember private name="MemberTwo" type="int" />
-      </core.StatementList>
+      <List>
+        <Field public name="MemberOne" type="string" />
+        <Field public name="MemberTwo" type="int" />
+      </List>
     </csharp.ClassDeclaration>,
   );
 
@@ -110,7 +108,7 @@ it("declares class with some members", () => {
         public class TestClass
         {
             public string MemberOne;
-            private int memberTwo;
+            public int MemberTwo;
         }
     }
   `);
@@ -120,8 +118,8 @@ it("declares class with some methods", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
       <core.List>
-        <csharp.ClassMethod public name="MethodOne" />
-        <csharp.ClassMethod private virtual name="MethodTwo" />
+        <csharp.Method public name="MethodOne" />
+        <csharp.Method private virtual name="MethodTwo" />
       </core.List>
     </csharp.ClassDeclaration>,
   );
@@ -182,28 +180,23 @@ it("uses refkeys for members, params, and return type", () => {
           />
           <hbr />
           <csharp.ClassDeclaration public name="TestClass">
-            <csharp.ClassMember
-              private
-              name="MemberOne"
-              type={enumTypeRefkey}
-            />
-            ;
+            <Field private name="MemberOne" type={enumTypeRefkey} />
             <hbr />
-            <csharp.ClassMethod
+            <csharp.Method
               public
               name="MethodOne"
               parameters={params}
               returns={testResultTypeRefkey}
             >
               return new {testResultTypeRefkey}();
-            </csharp.ClassMethod>
+            </csharp.Method>
           </csharp.ClassDeclaration>
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
     namespace TestCode
     {
         public enum TestEnum
@@ -215,7 +208,7 @@ it("uses refkeys for members, params, and return type", () => {
         public class TestResult;
         public class TestClass
         {
-            private TestEnum memberOne;
+            private TestEnum _memberOne;
             public TestResult MethodOne(int intParam, TestInput bodyParam)
             {
                 return new TestResult();
@@ -314,7 +307,7 @@ it("declares class with invalid members", () => {
 it("declares class with constructor", () => {
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <csharp.ClassConstructor public />
+      <Constructor public />
     </csharp.ClassDeclaration>,
   );
 
@@ -350,24 +343,14 @@ it("declares class with constructor params and assigns values to fields", () => 
 
   const res = utils.toSourceText(
     <csharp.ClassDeclaration public name="TestClass">
-      <csharp.ClassMember
-        private
-        name="name"
-        type="string"
-        refkey={thisNameRefkey}
-      />
-      ;<hbr />
-      <csharp.ClassMember
-        private
-        name="size"
-        type="int"
-        refkey={thisSizeRefkey}
-      />
-      ;<hbr />
-      <csharp.ClassConstructor public parameters={ctorParams}>
+      <Field private name="name" type="string" refkey={thisNameRefkey} />
+      <hbr />
+      <Field private name="size" type="int" refkey={thisSizeRefkey} />
+      <hbr />
+      <Constructor public parameters={ctorParams}>
         {thisNameRefkey} = {paramNameRefkey};<hbr />
         {thisSizeRefkey} = {paramSizeRefkey};
-      </csharp.ClassConstructor>
+      </Constructor>
     </csharp.ClassDeclaration>,
   );
 
@@ -378,12 +361,12 @@ it("declares class with constructor params and assigns values to fields", () => 
     {
         public class TestClass
         {
-            private string name;
-            private int size;
+            private string _name;
+            private int _size;
             public TestClass(string name, int size)
             {
-                name = name;
-                size = size;
+                _name = name;
+                _size = size;
             }
         }
     }
@@ -405,7 +388,7 @@ it("supports class member doc comments", () => {
   expect(
     <utils.TestNamespace>
       <ClassDeclaration name="Test" doc="This is a test">
-        <ClassMember name="Member" public type="int" doc="This is a member" />
+        <Field name="Member" public type="int" doc="This is a member" />
       </ClassDeclaration>
     </utils.TestNamespace>,
   ).toRenderTo(`
@@ -413,7 +396,7 @@ it("supports class member doc comments", () => {
     class Test
     {
       /// This is a member
-      public int Member
+      public int Member;
     }
   `);
 });

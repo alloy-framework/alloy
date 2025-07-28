@@ -5,10 +5,25 @@ import { IntrinsicElement } from "./intrinsic.js";
 
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");
 
+/**
+ * A renderable object is any object that has an `[ay.RENDERABLE]` method that
+ * returns children. This is used to allow custom object types to be used as
+ * children in Alloy components.
+ */
 export interface RenderableObject {
+  /**
+   * Renders this object to children.
+   */
   [RENDERABLE](): Children;
 }
 
+/**
+ * Returns true if the item is a renderable object, meaning it has an `[ay.RENDERABLE]`
+ * method.
+ *
+ * @param item - The item to check.
+ * @returns True if the item is a renderable object.
+ */
 export function isRenderableObject(item: unknown): item is RenderableObject {
   return (
     typeof item === "object" &&

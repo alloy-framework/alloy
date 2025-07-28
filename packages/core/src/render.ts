@@ -520,6 +520,7 @@ function normalizeChild(child: Child): NormalizedChildren {
       return sfContext.reference({ refkey: child });
     };
   } else if (isRenderableObject(child)) {
+    // For custom renderable objects, we will just normalize them to a bound function.
     return child[RENDERABLE].bind(child);
   } else if (isCustomContext(child)) {
     return child;

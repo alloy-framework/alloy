@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/java
 
+## 0.19.0
+
+No changes, version bump only.
+
+## 0.18.0
+
+No changes, version bump only.
+
 ## 0.17.0
 
 No changes, version bump only.

@@ -9,6 +9,7 @@ import {
   TSSymbolFlags,
 } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
+import { findFile } from "./utils.jsx";
 it("handles custom name conflict resolver based on metadata", () => {
   function resolver(name: string, symbols: TSOutputSymbol[]) {
     const goodNamedSymbols = symbols.filter(
@@ -90,7 +91,7 @@ it("handles custom name conflict resolver based on metadata", () => {
     </Output>,
   );
 
-  expect(res.contents[0].contents).toBe(d`
+  expect(findFile(res, "test.ts").contents).toBe(d`
     export function conflicty(
       foo,
       foo1,

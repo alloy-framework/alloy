@@ -2,6 +2,7 @@ import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as csharp from "../src/index.js";
+import { assertFileContents } from "./utils.jsx";
 
 it("defines multiple source files with unique content", () => {
   const res = core.render(
@@ -17,21 +18,20 @@ it("defines multiple source files with unique content", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].path).equals("Test1.cs");
-  expect(res.contents[0].contents).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass1;
-    }
-  `);
-
-  expect(res.contents[1].path).equals("Test2.cs");
-  expect(res.contents[1].contents).toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass2;
-    }
-  `);
+  assertFileContents(res, {
+    "Test1.cs": coretest.d`
+      namespace TestCode
+      {
+          public class TestClass1;
+      }
+    `,
+    "Test2.cs": coretest.d`
+      namespace TestCode
+      {
+          public class TestClass2;
+      }
+    `,
+  });
 });
 
 it("throws when declaring a source file outside a namespace", () => {

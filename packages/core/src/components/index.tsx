@@ -1,4 +1,6 @@
+export * from "./AppendFile.jsx";
 export * from "./Block.js";
+export * from "./CopyFile.jsx";
 export * from "./Declaration.js";
 export * from "./For.js";
 export * from "./Indent.jsx";
@@ -16,4 +18,6 @@ export * from "./SourceDirectory.js";
 export * from "./SourceFile.js";
 export * from "./StatementList.jsx";
 export * from "./Switch.jsx";
+export * from "./TemplateFile.jsx";
+export * from "./UpdateFile.jsx";
 export * from "./Wrap.jsx";

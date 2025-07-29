@@ -1,7 +1,8 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { ClassDeclaration } from "../ClassDeclaration.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
+import { ClassDeclaration } from "../class/declaration.jsx";
 import { Property } from "./property.jsx";
 
 const Wrapper = (props: { children: Children }) => (
@@ -183,6 +184,26 @@ it("specify initializer", () => {
     public class TestClass
     {
       string TestProp { get; set; } = "abc";
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <Property
+        name="Test"
+        type="int"
+        attributes={[<Attribute name="Test" />]}
+        get
+        set
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+      [Test]
+      int Test { get; set; }
     }
   `);
 });

@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/json",
-  "version": "0.17.0",
+  "version": "0.19.0",
   "description": "",
   "exports": {
     ".": {
@@ -11,6 +11,9 @@
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"
     }
+  },
+  "imports": {
+    "#test/*": "./test/*"
   },
   "scripts": {
     "generate-docs": "api-extractor run",

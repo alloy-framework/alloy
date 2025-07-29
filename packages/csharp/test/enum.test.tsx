@@ -3,6 +3,7 @@ import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as csharp from "../src/index.js";
 import * as utils from "./utils.js";
+import { findFile } from "./utils.js";
 
 it("declares enum with no members", () => {
   const res = utils.toSourceText(
@@ -77,7 +78,7 @@ it("can reference things by refkey", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
     namespace TestCode
     {
         public enum TestEnum
@@ -120,8 +121,7 @@ it("can reference things by refkey across files", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].path).toBe("Test.cs");
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
     namespace TestCode
     {
         public enum TestEnum
@@ -134,8 +134,7 @@ it("can reference things by refkey across files", () => {
     }
   `);
 
-  expect(res.contents[1].path).toBe("Other.cs");
-  expect(res.contents[1].contents).toBe(coretest.d`
+  expect(findFile(res, "Other.cs").contents).toBe(coretest.d`
     namespace TestCode
     {
         public enum OtherEnum

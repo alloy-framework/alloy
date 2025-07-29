@@ -23,7 +23,7 @@ import {
   Props,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
-import { flushJobs } from "./scheduler.js";
+import { flushJobs, flushJobsAsync } from "./scheduler.js";
 import { trace, TracePhase } from "./tracer.js";
 
 const {
@@ -133,12 +133,21 @@ export interface OutputDirectory {
   contents: (OutputDirectory | OutputFile)[];
 }
 
-export interface OutputFile {
+export interface OutputFileBase {
   kind: "file";
-  contents: string;
   path: string;
+}
+
+export interface CopyOutputFile extends OutputFileBase {
+  sourcePath: string;
+}
+
+export interface ContentOutputFile extends OutputFileBase {
+  contents: string;
   filetype: string;
 }
+
+export type OutputFile = ContentOutputFile | CopyOutputFile;
 
 const nodesToContext = new WeakMap<RenderedTextTree, Context>();
 
@@ -181,6 +190,22 @@ export function render(
 ): OutputDirectory {
   const tree = renderTree(children);
   flushJobs();
+  return sourceFilesForTree(tree, options);
+}
+
+export async function renderAsync(
+  children: Children,
+  options?: PrintTreeOptions,
+): Promise<OutputDirectory> {
+  const tree = renderTree(children);
+  await flushJobsAsync();
+  return sourceFilesForTree(tree, options);
+}
+
+export function sourceFilesForTree(
+  tree: RenderedTextTree,
+  options?: PrintTreeOptions,
+): OutputDirectory {
   let rootDirectory: OutputDirectory | undefined = undefined;
 
   // when passing Output, the first render tree child is the Output component.
@@ -234,7 +259,7 @@ export function render(
         );
       }
 
-      const sourceFile: OutputFile = {
+      const sourceFile: ContentOutputFile = {
         kind: "file",
         path: context.meta?.sourceFile.path,
         filetype: context.meta?.sourceFile.filetype,
@@ -255,6 +280,21 @@ export function render(
       };
 
       currentDirectory.contents.push(sourceFile);
+    } else if (context.meta?.copyFile) {
+      if (!currentDirectory) {
+        // This shouldn't happen if you're using the Output component.
+        throw new Error(
+          "Copy file doesn't have parent directory. Make sure you have used the Output component.",
+        );
+      }
+
+      const sourceFile: CopyOutputFile = {
+        kind: "file",
+        path: context.meta?.copyFile.path,
+        sourcePath: context.meta?.copyFile.sourcePath,
+      };
+
+      currentDirectory.contents.push(sourceFile);
     } else {
       recurse(currentDirectory);
     }
@@ -266,7 +306,6 @@ export function render(
     }
   }
 }
-
 export function renderTree(children: Children) {
   const rootElem: RenderedTextTree = [];
   try {

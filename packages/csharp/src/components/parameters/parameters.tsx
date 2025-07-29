@@ -30,7 +30,9 @@ export function Parameter(props: ParameterProps) {
   const scope = useCSharpScope();
   if (
     scope.kind !== "member" ||
-    (scope.name !== "constructor-decl" && scope.name !== "method-decl")
+    (scope.name !== "constructor-decl" &&
+      scope.name !== "method-decl" &&
+      scope.name !== "class-decl")
   ) {
     throw new Error(
       "can't define a parameter outside of a constructor-decl or method-decl scope",

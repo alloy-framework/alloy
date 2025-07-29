@@ -1,6 +1,5 @@
 import * as ay from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
-import { writeOutput } from "./write-output.js";
 
 const getGreeting = ay.refkey();
 const result = ay.render(
@@ -40,4 +39,4 @@ const result = ay.render(
   </ay.Output>,
 );
 
-await writeOutput(result, "./sample-output");
+await ay.writeOutput(result, "./sample-output");

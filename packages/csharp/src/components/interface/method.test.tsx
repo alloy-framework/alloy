@@ -2,6 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
@@ -174,6 +175,20 @@ it("specify doc comment", () => {
   `);
 });
 
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <InterfaceMethod name="Test" attributes={[<Attribute name="Test" />]} />
+    </Wrapper>,
+  ).toRenderTo(`
+    public interface TestInterface
+    {
+      [Test]
+      void Test();
+    }
+  `);
+});
+
 describe("with type parameters", () => {
   it("reference parameters", () => {
     const typeParameters: TypeParameterProps[] = [
@@ -209,10 +224,10 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       namespace TestCode
       {
-        public interface TestInterface
-        {
-          public T Test<T, U>(T paramA);
-        }
+          public interface TestInterface
+          {
+              public T Test<T, U>(T paramA);
+          }
       }
     `);
   });

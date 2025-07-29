@@ -1,4 +1,9 @@
-import { render, stc, type OutputDirectory } from "@alloy-js/core";
+import {
+  render,
+  stc,
+  type ContentOutputFile,
+  type OutputDirectory,
+} from "@alloy-js/core";
 import { Output, SourceDirectory } from "@alloy-js/core/stc";
 import {
   ApiEnum,
@@ -91,7 +96,7 @@ function writeSourceFiles(sfs: OutputDirectory) {
         writeSourceFiles(item);
         break;
       case "file":
-        writeFileSync(item.path, item.contents);
+        writeFileSync(item.path, (item as ContentOutputFile).contents);
         break;
     }
   }

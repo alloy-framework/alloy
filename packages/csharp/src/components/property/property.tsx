@@ -17,6 +17,7 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Property modifiers. */
@@ -87,6 +88,24 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
    * ```
    */
   initializer?: Children;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <Property name="MyProp" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * int MyProp { get; set; }
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 /**
@@ -103,7 +122,9 @@ export function Property(props: PropertyProps) {
   const scope = useCSharpScope();
   if (
     scope.kind !== "member" ||
-    (scope.name !== "class-decl" && scope.name !== "record-decl")
+    (scope.name !== "class-decl" &&
+      scope.name !== "record-decl" &&
+      scope.name !== "struct-decl")
   ) {
     throw new Error(
       "can't define an interface method outside of an interface scope",
@@ -135,6 +156,7 @@ export function Property(props: PropertyProps) {
     <MemberDeclaration symbol={propertySymbol}>
       <Scope value={propertyScope}>
         <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         {props.type}
         {props.nullable && "?"} {name}{" "}

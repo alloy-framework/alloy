@@ -1,4 +1,4 @@
-import type { Children } from "@alloy-js/core";
+import type { Children, Component } from "@alloy-js/core";
 import {
   isTypeRefContext,
   TypeRefContext as TypeRefContextDef,
@@ -31,19 +31,19 @@ export const TypeRefContext = ({ children }: TypeRefContextProps) => {
  * If not it will wrap in a {@link TypeRefContext} component.
  * If yes it will not add an extra node and return the original component.
  */
-export function ensureTypeRefContext<A extends unknown[]>(
-  fn: (...args: A) => Children,
-): (...args: A) => Children {
-  return (...args: A) => {
+export function ensureTypeRefContext<TProps>(
+  Comp: Component<TProps>,
+): (props: TProps) => Children {
+  return (props: TProps) => {
     const ref = isTypeRefContext();
     if (!ref) {
       return (
         <TypeRefContextDef.Provider value={{ type: true }}>
-          {fn(...args)}
+          <Comp {...props} />
         </TypeRefContextDef.Provider>
       );
     }
 
-    return fn(...args);
+    return <Comp {...props} />;
   };
 }

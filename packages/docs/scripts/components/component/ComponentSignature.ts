@@ -85,6 +85,9 @@ export function ComponentSignature(props: ComponentSignatureProps) {
 }
 
 function propHelp(prop: ApiPropertySignature) {
+  if (!prop.propertyTypeExcerpt) {
+    return undefined;
+  }
   if (prop.propertyTypeExcerpt.text === "boolean") {
     return `${prop.name}`;
   } else if (prop.propertyTypeExcerpt.text === "string") {
@@ -97,5 +100,5 @@ function propHelp(prop: ApiPropertySignature) {
 }
 
 function stcPropHelp(prop: ApiPropertySignature) {
-  return `${prop.name}: ${prop.propertyTypeExcerpt.text}`;
+  return `${prop.name}: ${prop.propertyTypeExcerpt?.text}`;
 }

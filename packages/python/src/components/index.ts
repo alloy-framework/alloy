@@ -15,5 +15,4 @@ export * from "./PythonBlock.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./StatementList.js";
-export * from "./Value.js";
 export * from "./VariableDeclaration.js";

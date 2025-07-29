@@ -130,7 +130,12 @@ export const api: RestApi = {
         { name: "id", type: "string" },
         { name: "name", type: "string" },
         { name: "age", type: "number" },
-        { name: "favoriteToys", type: { ref: "Toy" }, array: true, doc: "List of favorite toys" },
+        {
+          name: "favoriteToys",
+          type: { ref: "Toy" },
+          array: true,
+          doc: "List of favorite toys",
+        },
         { name: "breed", type: "string", optional: true },
       ],
     },
@@ -138,7 +143,7 @@ export const api: RestApi = {
       name: "Toy",
       properties: [
         { name: "id", type: "string" },
-        { name: "name", type: "string" }
+        { name: "name", type: "string" },
       ],
     },
   ],

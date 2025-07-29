@@ -50,7 +50,7 @@ describe("Python Variable", () => {
       <py.VariableDeclaration
         name="numbers"
         type="list[int]"
-        initializer={<py.Value jsValue={[1, 2, 3]} />}
+        initializer={<py.Atom jsValue={[1, 2, 3]} />}
       />,
     ]);
     expect(res).toBe(`numbers: list[int] = [1, 2, 3]`);

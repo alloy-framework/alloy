@@ -2,8 +2,8 @@ import { Children, code, refkey } from "@alloy-js/core";
 import * as py from "@alloy-js/python";
 import { useApi } from "../context/api.js";
 import { RestApiModelProperty } from "../schema.js";
-import { Model } from "./index.js";
 import { castOpenAPITypeToPython } from "../utils.js";
+import { Model } from "./index.js";
 
 interface ModelPropertyProps {
   property: RestApiModelProperty;
@@ -25,12 +25,20 @@ export function ModelProperty(props: ModelPropertyProps) {
   } else {
     memberType = castOpenAPITypeToPython(apiType);
   }
-  if (props.property.array) { 
+  if (props.property.array) {
     memberType = code`list[${memberType}]`;
   }
   if (props.property.optional) {
     memberType = code`${memberType} | None`;
   }
 
-  return <py.VariableDeclaration name={props.property.name} type={memberType} omitNone instanceVariable doc={props.property.doc} />;
+  return (
+    <py.VariableDeclaration
+      name={props.property.name}
+      type={memberType}
+      omitNone
+      instanceVariable
+      doc={props.property.doc}
+    />
+  );
 }

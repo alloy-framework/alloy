@@ -6,19 +6,19 @@ import { ClientMethod } from "./index.js";
 export function Client() {
   const schema = useApi().schema;
   const name = `${schema.name}Client`;
-  const classDoc = (<py.ClassDoc
-    description={[
-      <Prose>
-        {schema.doc}
-      </Prose>,
-    ]}
-    parameters={[]}
-    style="google"
-  />);
+  const classDoc = (
+    <py.ClassDoc
+      description={[<Prose>{schema.doc}</Prose>]}
+      parameters={[]}
+      style="google"
+    />
+  );
 
-  return <py.ClassDeclaration name={name} refkey={refkey(name)} doc={classDoc}>
-    <For each={schema.operations}>
-      {(op) => <ClientMethod operation={op} />}
-    </For>
-  </py.ClassDeclaration>;
+  return (
+    <py.ClassDeclaration name={name} refkey={refkey(name)} doc={classDoc}>
+      <For each={schema.operations}>
+        {(op) => <ClientMethod operation={op} />}
+      </For>
+    </py.ClassDeclaration>
+  );
 }

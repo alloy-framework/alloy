@@ -1,16 +1,18 @@
-import { Children, For, Output, refkey, render, writeOutput } from "@alloy-js/core";
-import { ApiContext, createApiContext, useApi } from "./context/api.js";
+import { Children, For, Output, render, writeOutput } from "@alloy-js/core";
 import * as py from "@alloy-js/python";
-import { api, RestApiModel } from "./schema.js";
 import { Client } from "./components/Client.jsx";
 import { Model } from "./components/Model.jsx";
 import { Usage } from "./components/Usage.jsx";
-import { castOpenAPITypeToPython } from "./utils.jsx";
+import { ApiContext, createApiContext } from "./context/api.js";
+import { api, RestApiModel } from "./schema.js";
 
 let apiContext = createApiContext(api);
 type ModelItem = [RestApiModel, Children[]];
 
-function getTopologicallySortedModels(restApiModels: RestApiModel[], apiContext: ReturnType<typeof createApiContext>): Set<ModelItem> {
+function getTopologicallySortedModels(
+  restApiModels: RestApiModel[],
+  apiContext: ReturnType<typeof createApiContext>,
+): Set<ModelItem> {
   let modelsWithDependency = new Set<ModelItem>();
 
   for (const model of restApiModels) {
@@ -38,7 +40,10 @@ function getTopologicallySortedModels(restApiModels: RestApiModel[], apiContext:
     const modelsArr = Array.from(modelsSet);
     const modelNameToItem = new Map<string, ModelItem>();
     for (const [model] of modelsArr) {
-      modelNameToItem.set(model.name, modelsArr.find(([m]) => m.name === model.name)!);
+      modelNameToItem.set(
+        model.name,
+        modelsArr.find(([m]) => m.name === model.name)!,
+      );
     }
 
     const visited = new Set<string>();
@@ -71,7 +76,9 @@ const output = render(
   <Output externals={[py.requestsModule]}>
     <ApiContext.Provider value={apiContext}>
       <py.SourceFile path="models.py">
-        <For each={Array.from(models)} doubleHardline>{(item) => <Model model={item[0]} />}</For>
+        <For each={Array.from(models)} doubleHardline>
+          {(item) => <Model model={item[0]} />}
+        </For>
       </py.SourceFile>
       <py.SourceFile path="client.py">
         <Client />
@@ -81,7 +88,7 @@ const output = render(
       </py.SourceFile>
     </ApiContext.Provider>
   </Output>,
-  { tabWidth: 4 }
+  { tabWidth: 4 },
 );
 
 writeOutput(output, "./alloy-output");

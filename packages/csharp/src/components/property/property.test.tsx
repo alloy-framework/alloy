@@ -2,7 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
-import { ClassDeclaration } from "../ClassDeclaration.jsx";
+import { ClassDeclaration } from "../class/declaration.jsx";
 import { Property } from "./property.jsx";
 
 const Wrapper = (props: { children: Children }) => (

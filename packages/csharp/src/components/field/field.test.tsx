@@ -1,7 +1,7 @@
 import { List } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { ClassDeclaration } from "../ClassDeclaration.jsx";
+import { ClassDeclaration } from "../class/declaration.jsx";
 import { Field } from "./field.jsx";
 
 function Wrapper(props: { children: any }) {

@@ -1,20 +1,28 @@
-import * as core from "@alloy-js/core";
-import { join } from "@alloy-js/core";
+import {
+  Block,
+  Children,
+  Declaration,
+  DeclarationProps,
+  join,
+  Name,
+  Refkey,
+  Scope,
+} from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
-} from "../modifiers.js";
-import { useCSharpNamePolicy } from "../name-policy.js";
-import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../symbols/scopes.js";
-import { AttributeList, AttributesProp } from "./attributes/attributes.jsx";
-import { DocWhen } from "./doc/comment.jsx";
-import { Name } from "./Name.jsx";
-import { TypeParameterConstraints } from "./type-parameters/type-parameter-constraints.jsx";
-import { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
-import { TypeParameters } from "./type-parameters/type-parameters.jsx";
+} from "../../modifiers.js";
+import { useCSharpNamePolicy } from "../../name-policy.js";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import { DocWhen } from "../doc/comment.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface ClassModifiers {
   readonly abstract?: boolean;
@@ -32,13 +40,13 @@ const getClassModifiers = makeModifiers<ClassModifiers>([
 
 // properties for creating a class
 export interface ClassDeclarationProps
-  extends Omit<core.DeclarationProps, "nameKind">,
+  extends Omit<DeclarationProps, "nameKind">,
     AccessModifiers,
     ClassModifiers {
   name: string;
   /** Doc comment */
-  doc?: core.Children;
-  refkey?: core.Refkey;
+  doc?: Children;
+  refkey?: Refkey;
 
   /**
    * Type parameters for the class
@@ -55,10 +63,10 @@ export interface ClassDeclarationProps
   typeParameters?: (string | TypeParameterProps)[];
 
   /** Base class that this class extends */
-  baseType?: core.Children;
+  baseType?: Children;
 
   /** Interfaces this class implements */
-  interfaceTypes?: core.Children[];
+  interfaceTypes?: Children[];
 
   /**
    * Define attributes to attach
@@ -77,6 +85,24 @@ export interface ClassDeclarationProps
    * ```
    */
   attributes?: AttributesProp;
+
+  /**
+   * Set the primary constructor parameters
+   * @example
+   * ```tsx
+   *  <ClassDeclaration name="MyClass" primaryConstructor={[
+   *    {name: "value", type: "int"}
+   *  ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass(int value)
+   * {
+   *
+   * }
+   * ```
+   */
+  primaryConstructor?: ParameterProps[];
 }
 
 /**
@@ -129,12 +155,17 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     getClassModifiers(props),
   ]);
   return (
-    <core.Declaration symbol={thisClassSymbol}>
+    <Declaration symbol={thisClassSymbol}>
       <DocWhen doc={props.doc} />
       <AttributeList attributes={props.attributes} endline />
       {modifiers}class <Name />
       {props.typeParameters && (
         <TypeParameters parameters={props.typeParameters} />
+      )}
+      {props.primaryConstructor && (
+        <Scope value={thisClassScope}>
+          <Parameters parameters={props.primaryConstructor} />
+        </Scope>
       )}
       {base}
       {props.typeParameters && (
@@ -142,10 +173,10 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       )}
       {!props.children && ";"}
       {props.children && (
-        <core.Block newline>
-          <core.Scope value={thisClassScope}>{props.children}</core.Scope>
-        </core.Block>
+        <Block newline>
+          <Scope value={thisClassScope}>{props.children}</Scope>
+        </Block>
       )}
-    </core.Declaration>
+    </Declaration>
   );
 }

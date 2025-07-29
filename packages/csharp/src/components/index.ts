@@ -1,5 +1,5 @@
 export * from "./attributes/attributes.jsx";
-export * from "./ClassDeclaration.jsx";
+export * from "./class/declaration.jsx";
 export * from "./constructor/constructor.jsx";
 export * from "./Declaration.js";
 export * from "./doc/comment.jsx";

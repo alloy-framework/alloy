@@ -1,21 +1,40 @@
-import * as core from "@alloy-js/core";
-import { List, refkey } from "@alloy-js/core";
+import {
+  Children,
+  code,
+  createNamePolicy,
+  List,
+  NamePolicyContext,
+  Output,
+  refkey,
+  render,
+} from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { Attribute } from "../src/components/attributes/attributes.jsx";
-import { Field } from "../src/components/field/field.jsx";
-import { Constructor } from "../src/components/stc/index.js";
-import { TypeParameterProps } from "../src/components/type-parameters/type-parameter.jsx";
-import * as csharp from "../src/index.js";
-import { ClassDeclaration, Property, SourceFile } from "../src/index.js";
-import * as utils from "./utils.jsx";
-import { findFile } from "./utils.jsx";
+import { findFile, TestNamespace, toSourceText } from "../../../test/utils.jsx";
+import { createCSharpNamePolicy } from "../../name-policy.js";
+import { Attribute } from "../attributes/attributes.jsx";
+import { Field } from "../field/field.jsx";
+import { Method } from "../method/method.jsx";
+import { Namespace } from "../Namespace.jsx";
+import { Property } from "../property/property.jsx";
+import { SourceFile } from "../SourceFile.jsx";
+import { Constructor, EnumDeclaration, EnumMember } from "../stc/index.js";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { ClassDeclaration } from "./declaration.jsx";
+
+function Wrapper({ children }: { children: Children }) {
+  return (
+    <TestNamespace>
+      <SourceFile path="Test.cs">{children}</SourceFile>
+    </TestNamespace>
+  );
+}
 
 it("declares class with no members", () => {
   expect(
-    <utils.TestNamespace>
+    <TestNamespace>
       <ClassDeclaration name="TestClass" />
-    </utils.TestNamespace>,
+    </TestNamespace>,
   ).toRenderTo(`
       class TestClass;
   `);
@@ -24,9 +43,9 @@ it("declares class with no members", () => {
 describe("modifiers", () => {
   it.each(["public", "private"])("%s", (mod) => {
     expect(
-      <utils.TestNamespace>
+      <TestNamespace>
         <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
         ${mod} class TestClass;
     `);
@@ -34,9 +53,9 @@ describe("modifiers", () => {
 
   it.each(["partial", "abstract", "static", "sealed"])("%s", (mod) => {
     expect(
-      <utils.TestNamespace>
+      <TestNamespace>
         <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
         ${mod} class TestClass;
     `);
@@ -44,9 +63,9 @@ describe("modifiers", () => {
 
   it("combines modifiers", () => {
     expect(
-      <utils.TestNamespace>
+      <TestNamespace>
         <ClassDeclaration public abstract partial name="TestClass" />
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
         public abstract partial class TestClass;
     `);
@@ -56,9 +75,9 @@ describe("modifiers", () => {
 describe("base", () => {
   it("define base class", () => {
     expect(
-      <utils.TestNamespace>
-        <csharp.ClassDeclaration name="TestClass" baseType="Foo" />
-      </utils.TestNamespace>,
+      <TestNamespace>
+        <ClassDeclaration name="TestClass" baseType="Foo" />
+      </TestNamespace>,
     ).toRenderTo(`
         class TestClass : Foo;
     `);
@@ -66,12 +85,9 @@ describe("base", () => {
 
   it("define multiple interface types", () => {
     expect(
-      <utils.TestNamespace>
-        <csharp.ClassDeclaration
-          name="TestClass"
-          interfaceTypes={["Foo", "Bar"]}
-        />
-      </utils.TestNamespace>,
+      <TestNamespace>
+        <ClassDeclaration name="TestClass" interfaceTypes={["Foo", "Bar"]} />
+      </TestNamespace>,
     ).toRenderTo(`
         class TestClass : Foo, Bar;
     `);
@@ -79,13 +95,13 @@ describe("base", () => {
 
   it("define base class and multiple interface types", () => {
     expect(
-      <utils.TestNamespace>
-        <csharp.ClassDeclaration
+      <TestNamespace>
+        <ClassDeclaration
           name="TestClass"
           baseType="BaseClass"
           interfaceTypes={["Foo", "Bar"]}
         />
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
         class TestClass : BaseClass, Foo, Bar;
     `);
@@ -93,13 +109,13 @@ describe("base", () => {
 });
 
 it("declares class with some members", () => {
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration public name="TestClass">
+  const res = toSourceText(
+    <ClassDeclaration public name="TestClass">
       <List>
         <Field public name="MemberOne" type="string" />
         <Field public name="MemberTwo" type="int" />
       </List>
-    </csharp.ClassDeclaration>,
+    </ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -115,13 +131,13 @@ it("declares class with some members", () => {
 });
 
 it("declares class with some methods", () => {
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration public name="TestClass">
-      <core.List>
-        <csharp.Method public name="MethodOne" />
-        <csharp.Method private virtual name="MethodTwo" />
-      </core.List>
-    </csharp.ClassDeclaration>,
+  const res = toSourceText(
+    <ClassDeclaration public name="TestClass">
+      <List>
+        <Method public name="MethodOne" />
+        <Method private virtual name="MethodTwo" />
+      </List>
+    </ClassDeclaration>,
   );
 
   expect(res).toBe(coretest.d`
@@ -137,9 +153,9 @@ it("declares class with some methods", () => {
 });
 
 it("uses refkeys for members, params, and return type", () => {
-  const inputTypeRefkey = core.refkey();
-  const testResultTypeRefkey = core.refkey();
-  const enumTypeRefkey = core.refkey();
+  const inputTypeRefkey = refkey();
+  const testResultTypeRefkey = refkey();
+  const enumTypeRefkey = refkey();
 
   const params = [
     {
@@ -152,48 +168,40 @@ it("uses refkeys for members, params, and return type", () => {
     },
   ];
 
-  const res = core.render(
-    <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name="TestCode">
-        <csharp.SourceFile path="Test.cs">
-          <csharp.EnumDeclaration
-            public
-            name="TestEnum"
-            refkey={enumTypeRefkey}
-          >
-            <core.List comma hardline>
-              <csharp.EnumMember name="One" />
-              <csharp.EnumMember name="Two" />
-            </core.List>
-          </csharp.EnumDeclaration>
+  const res = render(
+    <Output namePolicy={createCSharpNamePolicy()}>
+      <Namespace name="TestCode">
+        <SourceFile path="Test.cs">
+          <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
+            <List comma hardline>
+              <EnumMember name="One" />
+              <EnumMember name="Two" />
+            </List>
+          </EnumDeclaration>
           <hbr />
-          <csharp.ClassDeclaration
-            public
-            name="TestInput"
-            refkey={inputTypeRefkey}
-          />
+          <ClassDeclaration public name="TestInput" refkey={inputTypeRefkey} />
           <hbr />
-          <csharp.ClassDeclaration
+          <ClassDeclaration
             public
             name="TestResult"
             refkey={testResultTypeRefkey}
           />
           <hbr />
-          <csharp.ClassDeclaration public name="TestClass">
+          <ClassDeclaration public name="TestClass">
             <Field private name="MemberOne" type={enumTypeRefkey} />
             <hbr />
-            <csharp.Method
+            <Method
               public
               name="MethodOne"
               parameters={params}
               returns={testResultTypeRefkey}
             >
               return new {testResultTypeRefkey}();
-            </csharp.Method>
-          </csharp.ClassDeclaration>
-        </csharp.SourceFile>
-      </csharp.Namespace>
-    </core.Output>,
+            </Method>
+          </ClassDeclaration>
+        </SourceFile>
+      </Namespace>
+    </Output>,
   );
 
   expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
@@ -232,7 +240,7 @@ describe("with type parameters", () => {
     ];
 
     expect(
-      <utils.TestNamespace>
+      <TestNamespace>
         <SourceFile path="Test.cs">
           <ClassDeclaration
             public
@@ -245,7 +253,7 @@ describe("with type parameters", () => {
             </List>
           </ClassDeclaration>
         </SourceFile>
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
       namespace TestCode
       {
@@ -271,7 +279,7 @@ describe("with type parameters", () => {
     ];
 
     expect(
-      <utils.TestNamespace>
+      <TestNamespace>
         <ClassDeclaration
           public
           name="TestClass"
@@ -279,7 +287,7 @@ describe("with type parameters", () => {
         >
           // Body
         </ClassDeclaration>
-      </utils.TestNamespace>,
+      </TestNamespace>,
     ).toRenderTo(`
       public class TestClass<T, U>
         where T : IFoo
@@ -293,25 +301,26 @@ describe("with type parameters", () => {
 
 it("declares class with invalid members", () => {
   const decl = (
-    <csharp.ClassDeclaration public name="TestClass">
-      <csharp.EnumMember name="One" />,<hbr />
-      <csharp.EnumMember name="Two" />
-    </csharp.ClassDeclaration>
+    <ClassDeclaration public name="TestClass">
+      <EnumMember name="One" />,<hbr />
+      <EnumMember name="Two" />
+    </ClassDeclaration>
   );
 
-  expect(() => utils.toSourceText(decl)).toThrow(
+  expect(() => toSourceText(decl)).toThrow(
     "can't define an enum member outside of an enum-decl scope",
   );
 });
 
-it("declares class with constructor", () => {
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration public name="TestClass">
-      <Constructor public />
-    </csharp.ClassDeclaration>,
-  );
+describe("constructor", () => {
+  it("declares with constructor", () => {
+    const res = toSourceText(
+      <ClassDeclaration public name="TestClass">
+        <Constructor public />
+      </ClassDeclaration>,
+    );
 
-  expect(res).toBe(coretest.d`
+    expect(res).toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass
@@ -320,43 +329,43 @@ it("declares class with constructor", () => {
         }
     }
   `);
-});
+  });
 
-it("declares class with constructor params and assigns values to fields", () => {
-  const thisNameRefkey = core.refkey();
-  const thisSizeRefkey = core.refkey();
-  const paramNameRefkey = core.refkey();
-  const paramSizeRefkey = core.refkey();
+  it("declares with constructor params and assigns values to fields", () => {
+    const thisNameRefkey = refkey();
+    const thisSizeRefkey = refkey();
+    const paramNameRefkey = refkey();
+    const paramSizeRefkey = refkey();
 
-  const ctorParams = [
-    {
-      name: "name",
-      type: "string",
-      refkey: paramNameRefkey,
-    },
-    {
-      name: "size",
-      type: "int",
-      refkey: paramSizeRefkey,
-    },
-  ];
+    const ctorParams = [
+      {
+        name: "name",
+        type: "string",
+        refkey: paramNameRefkey,
+      },
+      {
+        name: "size",
+        type: "int",
+        refkey: paramSizeRefkey,
+      },
+    ];
 
-  const res = utils.toSourceText(
-    <csharp.ClassDeclaration public name="TestClass">
-      <Field private name="name" type="string" refkey={thisNameRefkey} />
-      <hbr />
-      <Field private name="size" type="int" refkey={thisSizeRefkey} />
-      <hbr />
-      <Constructor public parameters={ctorParams}>
-        {thisNameRefkey} = {paramNameRefkey};<hbr />
-        {thisSizeRefkey} = {paramSizeRefkey};
-      </Constructor>
-    </csharp.ClassDeclaration>,
-  );
+    const res = toSourceText(
+      <ClassDeclaration public name="TestClass">
+        <Field private name="name" type="string" refkey={thisNameRefkey} />
+        <hbr />
+        <Field private name="size" type="int" refkey={thisSizeRefkey} />
+        <hbr />
+        <Constructor public parameters={ctorParams}>
+          {thisNameRefkey} = {paramNameRefkey};<hbr />
+          {thisSizeRefkey} = {paramSizeRefkey};
+        </Constructor>
+      </ClassDeclaration>,
+    );
 
-  // TODO: assignments to members should have this. prefix
-  // e.g. this.name = name;
-  expect(res).toBe(coretest.d`
+    // TODO: assignments to members should have this. prefix
+    // e.g. this.name = name;
+    expect(res).toBe(coretest.d`
     namespace TestCode
     {
         public class TestClass
@@ -371,13 +380,83 @@ it("declares class with constructor params and assigns values to fields", () => 
         }
     }
   `);
+  });
+
+  it("declares primary constructor with args", () => {
+    const paramNameRefkey = refkey();
+    const paramSizeRefkey = refkey();
+
+    const ctorParams = [
+      {
+        name: "name",
+        type: "string",
+        refkey: paramNameRefkey,
+      },
+      {
+        name: "size",
+        type: "int",
+        refkey: paramSizeRefkey,
+      },
+    ];
+
+    expect(
+      <Wrapper>
+        <ClassDeclaration
+          public
+          name="TestClass"
+          primaryConstructor={ctorParams}
+        >
+          <Property
+            name="PrettyName"
+            type="string"
+            get
+            initializer={code`$"{${paramNameRefkey}} {${paramSizeRefkey}}"`}
+          />
+        </ClassDeclaration>
+      </Wrapper>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+          public class TestClass(string name, int size)
+          {
+              string PrettyName { get; } = $"{TestClass.name} {TestClass.size}";
+          }
+      }
+  `);
+  });
+
+  it("primary constructor params conflict with method", () => {
+    const ctorParams = [{ name: "name", type: "string" }];
+
+    expect(
+      <Wrapper>
+        <NamePolicyContext.Provider value={createNamePolicy((x) => x)}>
+          <ClassDeclaration
+            public
+            name="TestClass"
+            primaryConstructor={ctorParams}
+          >
+            <Field name="name" type="string" />
+          </ClassDeclaration>
+        </NamePolicyContext.Provider>
+      </Wrapper>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+          public class TestClass(string name)
+          {
+              string name_2;
+          }
+      }
+  `);
+  });
 });
 
 it("specify doc comment", () => {
   expect(
-    <utils.TestNamespace>
+    <TestNamespace>
       <ClassDeclaration name="Test" doc="This is a test" />
-    </utils.TestNamespace>,
+    </TestNamespace>,
   ).toRenderTo(`
     /// This is a test
     class Test;
@@ -386,11 +465,11 @@ it("specify doc comment", () => {
 
 it("supports class member doc comments", () => {
   expect(
-    <utils.TestNamespace>
+    <TestNamespace>
       <ClassDeclaration name="Test" doc="This is a test">
         <Field name="Member" public type="int" doc="This is a member" />
       </ClassDeclaration>
-    </utils.TestNamespace>,
+    </TestNamespace>,
   ).toRenderTo(`
     /// This is a test
     class Test
@@ -403,9 +482,9 @@ it("supports class member doc comments", () => {
 
 it("specify attributes", () => {
   expect(
-    <utils.TestNamespace>
+    <TestNamespace>
       <ClassDeclaration name="Test" attributes={[<Attribute name="Test" />]} />
-    </utils.TestNamespace>,
+    </TestNamespace>,
   ).toRenderTo(`
     [Test]
     class Test;

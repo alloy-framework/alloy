@@ -1,7 +1,7 @@
 import { refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { ClassDeclaration } from "../ClassDeclaration.jsx";
+import { ClassDeclaration } from "../class/declaration.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { Constructor } from "./constructor.jsx";
 

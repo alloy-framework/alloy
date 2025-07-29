@@ -419,7 +419,7 @@ describe("constructor", () => {
       {
           public class TestClass(string name, int size)
           {
-              string PrettyName { get; } = $"{TestClass.name} {TestClass.size}";
+              string PrettyName { get; } = $"{name} {size}";
           }
       }
   `);

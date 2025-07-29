@@ -100,6 +100,7 @@ export interface ClassDeclarationProps
    * {
    *
    * }
+   * ```
    */
   primaryConstructor?: ParameterProps[];
 }

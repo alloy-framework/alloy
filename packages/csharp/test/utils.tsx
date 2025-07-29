@@ -36,13 +36,13 @@ export function testRender(c: core.Children): core.OutputDirectory {
 export function findFile(
   res: core.OutputDirectory,
   path: string,
-): core.OutputFile {
+): core.ContentOutputFile {
   const result = findFileWorker(res, path);
 
   if (!result) {
     throw new Error("Expected to find file " + path);
   }
-  return result;
+  return result as core.ContentOutputFile;
 
   function findFileWorker(
     res: core.OutputDirectory,

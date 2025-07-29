@@ -3,7 +3,9 @@ import {
   Children,
   List,
   MemberDeclaration,
+  refkey,
   Refkey,
+  Scope,
 } from "@alloy-js/core";
 import {
   AccessModifiers,
@@ -12,8 +14,9 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpSymbol } from "../../symbols/csharp.js";
-import { useNamedTypeScope } from "../../symbols/named-type.js";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */
@@ -21,9 +24,7 @@ export interface InterfacePropertyModifiers {
   readonly new?: boolean;
 }
 
-export const getMethodModifier = makeModifiers<InterfacePropertyModifiers>([
-  "new",
-]);
+const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 
 // properties for creating a method
 export interface InterfacePropertyProps
@@ -43,39 +44,84 @@ export interface InterfacePropertyProps
 
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Property initializer
+   * @example `<ClassProperty name="My" get set nullable />`
+   *
+   * ```cs
+   * int? My { get; set; };
+   * ```
+   */
+  nullable?: boolean;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <InterfaceProperty name="MyProp" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * int MyProp { get; set; }
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
-// a C# interface property
+/**
+ * Render a C# interface property.
+ *
+ * @example `<InterfaceProperty public name="My" get set  />`
+ *
+ * ```cs
+ * public int My { get; set; };
+ * ```
+ */
 export function InterfaceProperty(props: InterfacePropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useNamedTypeScope();
-
-  if (scope.typeKind !== "interface") {
+  const scope = useCSharpScope();
+  if (scope.kind !== "member" || scope.name !== "interface-decl") {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );
   }
 
-  const propertySymbol = new CSharpSymbol(name, scope.members, {
-    refkeys: props.refkey,
+  const propertySymbol = new CSharpOutputSymbol(name, {
+    scope,
+    refkeys: props.refkey ?? refkey(props.name),
+  });
+
+  // scope for property declaration
+  const propertyScope = new CSharpMemberScope("property-decl", {
+    owner: propertySymbol,
   });
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
-    getMethodModifier(props),
+    getModifiers(props),
   ]);
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={propertySymbol}>
-      <DocWhen doc={props.doc} />
-      {modifiers}
-      {props.type} {name}{" "}
-      <Block newline inline>
-        <List joiner=" ">
-          {props.get && "get;"}
-          {props.set && "set;"}
-        </List>
-      </Block>
+      <Scope value={propertyScope}>
+        <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} endline />
+        {modifiers}
+        {props.type}
+        {props.nullable && "?"} {name}{" "}
+        <Block newline inline>
+          <List joiner=" ">
+            {props.get && "get;"}
+            {props.set && "set;"}
+          </List>
+        </Block>
+      </Scope>
     </MemberDeclaration>
   );
 }

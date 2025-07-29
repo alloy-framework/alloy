@@ -2,6 +2,7 @@ import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as csharp from "../src/index.js";
+import { assertFileContents, findFile } from "./utils.jsx";
 
 it("uses a single namespace", () => {
   const res = core.render(
@@ -12,7 +13,7 @@ it("uses a single namespace", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test1.cs").contents).toBe(coretest.d`
     using Foo;
 
     namespace TestCode {}
@@ -28,7 +29,7 @@ it("uses multiple namespaces", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
+  expect(findFile(res, "Test1.cs").contents).toBe(coretest.d`
     using Bar.Baz;
     using Foo;
 
@@ -73,7 +74,7 @@ it("adds using statement across namespaces", () => {
       <csharp.Namespace name="Client">
         <csharp.SourceFile path="Client.cs" using={["System"]}>
           <csharp.ClassDeclaration public name="Client">
-            <csharp.ClassMethod
+            <csharp.Method
               public
               name="MethodOne"
               parameters={params}
@@ -87,30 +88,31 @@ it("adds using statement across namespaces", () => {
     </core.Output>,
   );
 
-  expect(res.contents[0].contents).toBe(coretest.d`
-    namespace Models
-    {
-        public class Input;
-        public class Output;
-        public enum TestEnum
-        {
-            One,
-            Two
-        }
-    }
-  `);
+  assertFileContents(res, {
+    "Models.cs": coretest.d`
+      namespace Models
+      {
+          public class Input;
+          public class Output;
+          public enum TestEnum
+          {
+              One,
+              Two
+          }
+      }
+    `,
+    "Client.cs": coretest.d`
+      using Models;
+      using System;
 
-  expect(res.contents[1].contents).toBe(coretest.d`
-    using Models;
-    using System;
-
-    namespace Client
-    {
-        public class Client
-        {
-            public Output MethodOne(Input bodyParam) {}
-        }
-        TestEnum.Two;
-    }
-  `);
+      namespace Client
+      {
+          public class Client
+          {
+              public Output MethodOne(Input bodyParam) {}
+          }
+          TestEnum.Two;
+      }
+    `,
+  });
 });

@@ -1,4 +1,11 @@
-import { Block, Children, MemberDeclaration, Refkey } from "@alloy-js/core";
+import {
+  Block,
+  Children,
+  MemberDeclaration,
+  refkey,
+  Refkey,
+  Scope,
+} from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -6,11 +13,14 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { MethodSymbol } from "../../symbols/method.js";
-import { useNamedTypeScope } from "../../symbols/named-type.js";
-import { ParameterProps, Parameters } from "../Parameters.jsx";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
-import { MethodScope } from "../method-scope.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
 export interface InterfaceMethodModifiers {
@@ -27,29 +37,62 @@ export interface InterfaceMethodProps
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;
+  /**
+   * Type parameters for the method
+   *
+   * @example
+   * ```tsx
+   * <InterfaceMethod name="Test" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public void Test<T>()
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
   returns?: Children;
 
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <InterfaceMethod name="MyMethod" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * void MyMethod();
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 // a C# interface method
 export function InterfaceMethod(props: InterfaceMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const ownerSymbol = useNamedTypeScope();
-
-  if (ownerSymbol.typeKind !== "interface") {
+  const scope = useCSharpScope();
+  if (scope.kind !== "member" || scope.name !== "interface-decl") {
     throw new Error(
       "can't define an interface method outside of an interface scope",
     );
   }
 
-  const methodSymbol = new MethodSymbol(name, ownerSymbol.members, "method", {
-    refkeys: props.refkey,
+  const methodSymbol = new CSharpOutputSymbol(name, {
+    scope,
+    refkeys: props.refkey ?? refkey(props.name),
   });
 
-  const params =
-    props.parameters ? <Parameters parameters={props.parameters} /> : "";
+  // scope for method declaration
+  const methodScope = new CSharpMemberScope("method-decl", {
+    owner: methodSymbol,
+  });
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
@@ -58,14 +101,22 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={methodSymbol}>
-      <MethodScope>
+      <Scope value={methodScope}>
         <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
-        {props.returns ?? "void"} {name}({params})
+        {props.returns ?? "void"} {name}
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        <Parameters parameters={props.parameters} />
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
         {props.children ?
           <Block newline>{props.children}</Block>
         : ";"}
-      </MethodScope>
+      </Scope>
     </MemberDeclaration>
   );
 }

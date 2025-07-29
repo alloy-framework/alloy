@@ -1,5 +1,28 @@
 # Changelog - @alloy-js/typescript
 
+## 0.19.0
+
+### Bug Fixes
+
+- [#243](https://github.com/alloy-framework/alloy/pull/243) Fix property name conflict when using multiple interface expressions under an interface declaration
+- [#239](https://github.com/alloy-framework/alloy/pull/239) Removed an errant space when using a `default` CaseClause.
+
+### Features
+
+- [#234](https://github.com/alloy-framework/alloy/pull/234) Implement support for parameter default values.
+- [#236](https://github.com/alloy-framework/alloy/pull/236) Implemented type parameters for InterfaceDeclaration components.
+  
+  Implemented type parameter defaults.
+
+
+## 0.18.0
+
+### Bug Fixes
+
+- [#208](https://github.com/alloy-framework/alloy/pull/208) Fix FunctionParameters component adds an extra comma when no params and function name is long
+- [#176](https://github.com/alloy-framework/alloy/pull/176) Fix referencing object expression properties when naming policy is used
+
+
 ## 0.17.0
 
 ### Bug Fixes

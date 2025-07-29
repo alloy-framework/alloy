@@ -51,7 +51,7 @@ export function CaseClause(props: CaseClauseProps) {
   return (
     <>
       <Switch>
-        <Match when={"default" in props && props.default}>default </Match>
+        <Match when={"default" in props && props.default}>default</Match>
         <Match else>
           case{" "}
           {"expression" in props ?

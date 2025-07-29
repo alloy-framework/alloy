@@ -1,5 +1,6 @@
 import {
   Children,
+  ContentOutputFile,
   Output,
   OutputDirectory,
   OutputFile,
@@ -36,13 +37,16 @@ export function testRender(
   );
 }
 
-export function findFile(res: OutputDirectory, path: string): OutputFile {
+export function findFile(
+  res: OutputDirectory,
+  path: string,
+): ContentOutputFile {
   const result = findFileWorker(res, path);
 
   if (!result) {
     throw new Error("Expected to find file " + path);
   }
-  return result;
+  return result as ContentOutputFile;
 
   function findFileWorker(
     res: OutputDirectory,

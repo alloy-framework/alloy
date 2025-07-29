@@ -1,5 +1,6 @@
 import {
   Children,
+  ContentOutputFile,
   Output,
   OutputDirectory,
   OutputFile,
@@ -10,6 +11,14 @@ import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as ts from "../src/index.js";
 
+export function TestFile(props: { children?: Children }) {
+  return (
+    <Output>
+      <ts.SourceFile path="test.ts">{props.children}</ts.SourceFile>
+    </Output>
+  );
+}
+
 export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   const res = render(
     <Output>
@@ -18,16 +27,19 @@ export function toSourceText(c: Children, options?: PrintTreeOptions): string {
     options,
   );
 
-  return res.contents[0].contents as string;
+  return findFile(res, "test.ts").contents;
 }
 
-export function findFile(res: OutputDirectory, path: string): OutputFile {
+export function findFile(
+  res: OutputDirectory,
+  path: string,
+): ContentOutputFile {
   const result = findFileWorker(res, path);
 
   if (!result) {
     throw new Error("Expected to find file " + path);
   }
-  return result;
+  return result as ContentOutputFile;
 
   function findFileWorker(
     res: OutputDirectory,

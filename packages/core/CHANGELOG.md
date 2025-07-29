@@ -1,5 +1,52 @@
 # Changelog - @alloy-js/core
 
+## 0.19.0
+
+### Bug Fixes
+
+- [#241](https://github.com/alloy-framework/alloy/pull/241) Fixed an issue where event tracing would sometimes fail due to the presence of symbol properties.
+
+### Features
+
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add AppendFile component which allows for adding to an existing file on disk as opposed to overwriting it.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add CopyFile component which copies an existing file into the output directory.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add TemplateFile component which allows for creating a file from a template on disk. Supports substitutions via {{ substitution_name }}.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add UpdateFile component which allows for updating an existing file on disk. The component is called with the current contents which allows code to decide how to update it.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add `AlloyHost` which provides various File IO utilities.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add `createResource` API to support loading asynchronous data inside a component.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add `createFileResource` API to support loading files inside a component.
+- [#253](https://github.com/alloy-framework/alloy/pull/253) Add `renderAsync` render method which must be used when components require async updates like file io.
+
+### Breaking Changes
+
+- [#253](https://github.com/alloy-framework/alloy/pull/253) The `writeOutput` function is now async.
+
+
+## 0.18.2
+
+### Bug Fixes
+
+- Fix invalid .d.ts import
+
+
+## 0.18.1
+
+### Bug Fixes
+
+- [#232](https://github.com/alloy-framework/alloy/pull/232) Improve `toRenderTo` test matcher to work better with SourceFiles
+
+
+## 0.18.0
+
+### Bug Fixes
+
+- [#182](https://github.com/alloy-framework/alloy/pull/182) Added a `@alloy-js/core/testing/matchers` export to be added to `tsconfig.json` `types` in order to load the custom vitest matchers
+
+### Features
+
+- [#198](https://github.com/alloy-framework/alloy/pull/198) Add `inline` option for `<Block>` component to define inline blocks
+
+
 ## 0.17.0
 
 ### Features

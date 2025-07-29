@@ -18,12 +18,15 @@ const debug: DebugInterface = {
   component: {
     stack: debugStack,
     tree() {
+      //eslint-disable-next-line no-console
       console.log("tree");
     },
     watch() {
+      //eslint-disable-next-line no-console
       console.log("watch");
     },
     render() {
+      //eslint-disable-next-line no-console
       console.log("render");
     },
     context: debugContext,
@@ -77,6 +80,7 @@ function debugStack() {
 function debugContext() {
   let currentContext = getContext();
   while (currentContext !== null) {
+    //eslint-disable-next-line no-console
     console.log(printContext(currentContext));
     currentContext = currentContext.owner;
   }

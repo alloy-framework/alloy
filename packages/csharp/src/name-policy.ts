@@ -5,10 +5,13 @@ import * as changecase from "change-case";
 export type CSharpElements =
   | "class"
   | "constant"
+  | "variable"
+  | "struct"
   | "enum"
   | "enum-member"
   | "function"
   | "interface"
+  | "record"
   | "class-member-private"
   | "class-member-public"
   | "class-method"
@@ -21,9 +24,11 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
   return core.createNamePolicy((name, element) => {
     switch (element) {
       case "class":
+      case "struct":
       case "enum":
       case "enum-member":
       case "interface":
+      case "record":
       case "class-member-public":
       case "class-method":
       case "type-parameter":
@@ -31,6 +36,8 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
         return changecase.pascalCase(name);
       case "constant":
         return changecase.constantCase(name);
+      case "class-member-private":
+        return `_${changecase.camelCase(name)}`;
       default:
         return changecase.camelCase(name);
     }

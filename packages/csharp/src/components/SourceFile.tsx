@@ -33,6 +33,7 @@ export function SourceFile(props: SourceFileProps) {
       filetype="cs"
       reference={Reference}
       tabWidth={4}
+      printWidth={120}
     >
       <Scope value={sourceFileScope}>
         {sourceFileScope.usings.size > 0 && (

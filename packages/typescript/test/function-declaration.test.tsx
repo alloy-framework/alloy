@@ -124,6 +124,18 @@ it("supports type parameters by element", () => {
   `);
 });
 
+it("do not add an extra comma when there is no parameters", () => {
+  expect(
+    toSourceText(
+      <FunctionDeclaration name="thisFunctionNameIsTooLongSoTheFormatterWillInsertLineBreakAndIfBreakNodes"></FunctionDeclaration>,
+    ),
+  ).toBe(d`
+    function thisFunctionNameIsTooLongSoTheFormatterWillInsertLineBreakAndIfBreakNodes() {
+
+    }
+  `);
+});
+
 describe("symbols", () => {
   it("creates a nested scope", () => {
     const innerRefkey = refkey();
@@ -251,6 +263,50 @@ describe("symbols", () => {
     expect(toSourceText(decl)).toBe(d`
       function foo(...foo: any[]) {
         console.log(foo);
+      }
+    `);
+  });
+
+  it("creates parameters with default values", () => {
+    const paramDesc: ParameterDescriptor = {
+      name: "foo",
+      refkey: refkey(),
+      type: "string",
+      default: '"bar"',
+    };
+
+    const decl = (
+      <>
+        <FunctionDeclaration name="foo" parameters={[paramDesc]}>
+          console.log(foo);
+        </FunctionDeclaration>
+      </>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(foo: string = "bar") {
+        console.log(foo);
+      }
+    `);
+  });
+
+  it("correctly renders mixed parameters", () => {
+    const params: ParameterDescriptor[] = [
+      { name: "a", refkey: refkey(), type: "string" },
+      { name: "b", refkey: refkey(), type: "number", optional: true },
+      { name: "c", refkey: refkey(), type: "boolean", default: "false" },
+      { name: "d", refkey: refkey(), type: "any[]", rest: true },
+    ];
+
+    const decl = (
+      <FunctionDeclaration name="foo" parameters={params}>
+        console.log(a, b, c, d);
+      </FunctionDeclaration>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      function foo(a: string, b?: number, c: boolean = false, ...d: any[]) {
+        console.log(a, b, c, d);
       }
     `);
   });

@@ -2,9 +2,11 @@ import {
   Block,
   Children,
   Declaration,
-  For,
-  MemberScope,
+  DeclarationProps,
+  join,
+  Name,
   Refkey,
+  Scope,
 } from "@alloy-js/core";
 import {
   AccessModifiers,
@@ -13,11 +15,14 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpSymbol } from "../../symbols/csharp.js";
-import { createNamedTypeSymbol } from "../../symbols/factories.js";
-import { DeclarationProps } from "../Declaration.jsx";
-import { Name } from "../Name.jsx";
+import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
+import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface ClassModifiers {
   readonly abstract?: boolean;
@@ -41,7 +46,63 @@ export interface ClassDeclarationProps
   name: string;
   /** Doc comment */
   doc?: Children;
-  typeParameters?: Record<string, Refkey>;
+  refkey?: Refkey;
+
+  /**
+   * Type parameters for the class
+   *
+   * @example
+   * ```tsx
+   * <ClassDeclaration name="MyClass" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass<T>
+   * ```
+   */
+  typeParameters?: (string | TypeParameterProps)[];
+
+  /** Base class that this class extends */
+  baseType?: Children;
+
+  /** Interfaces this class implements */
+  interfaceTypes?: Children[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <ClassDeclaration name="MyClass" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * public class MyClass
+   * ```
+   */
+  attributes?: AttributesProp;
+
+  /**
+   * Set the primary constructor parameters
+   * @example
+   * ```tsx
+   *  <ClassDeclaration name="MyClass" primaryConstructor={[
+   *    {name: "value", type: "int"}
+   *  ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass(int value)
+   * {
+   *
+   * }
+   * ```
+   */
+  primaryConstructor?: ParameterProps[];
 }
 
 /**
@@ -70,47 +131,50 @@ export interface ClassDeclarationProps
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "class");
-  const symbol = createNamedTypeSymbol(name, "class", {
+
+  const thisClassSymbol = new CSharpOutputSymbol(name, {
     refkeys: props.refkey,
   });
 
-  let typeParams: Children;
-  if (props.typeParameters) {
-    const typeParamNames = new Array<string>();
-    for (const entry of Object.entries(props.typeParameters)) {
-      typeParamNames.push(
-        useCSharpNamePolicy().getName(entry[0], "type-parameter"),
-      );
+  // this creates a new scope for the class definition.
+  // members will automatically "inherit" this scope so
+  // that refkeys to them will produce the fully-qualified
+  // name e.g. Foo.Bar.
+  const thisClassScope = new CSharpMemberScope("class-decl", {
+    owner: thisClassSymbol,
+  });
 
-      new CSharpSymbol(entry[0], symbol.typeParameters, {
-        refkeys: entry[1],
-      });
-    }
-    typeParams = (
-      <group>
-        {"<"}
-        <For each={typeParamNames} comma line>
-          {(name) => name}
-        </For>
-        {">"}
-      </group>
-    );
-  }
-
+  const bases = [
+    ...(props.baseType ? [props.baseType] : []),
+    ...(props.interfaceTypes || []),
+  ];
+  const base =
+    bases.length > 0 ? <> : {join(bases, { joiner: ", " })}</> : null;
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getClassModifiers(props),
   ]);
-
   return (
-    <Declaration symbol={symbol}>
+    <Declaration symbol={thisClassSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}class <Name />
-      {typeParams}
+      {props.typeParameters && (
+        <TypeParameters parameters={props.typeParameters} />
+      )}
+      {props.primaryConstructor && (
+        <Scope value={thisClassScope}>
+          <Parameters parameters={props.primaryConstructor} />
+        </Scope>
+      )}
+      {base}
+      {props.typeParameters && (
+        <TypeParameterConstraints parameters={props.typeParameters} />
+      )}
       {!props.children && ";"}
       {props.children && (
         <Block newline>
-          <MemberScope owner={symbol}>{props.children}</MemberScope>
+          <Scope value={thisClassScope}>{props.children}</Scope>
         </Block>
       )}
     </Declaration>

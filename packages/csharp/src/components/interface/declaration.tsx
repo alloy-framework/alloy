@@ -6,10 +6,13 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpSymbol } from "../../symbols/csharp.js";
-import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
+import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
+import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface InterfaceModifiers {
   readonly partial?: boolean;
@@ -26,8 +29,39 @@ export interface InterfaceDeclarationProps
 
   /** Doc comment */
   doc?: core.Children;
-  refkey?: core.Refkey | core.Refkey[];
-  typeParameters?: Record<string, core.Refkey>;
+  refkey?: core.Refkey;
+
+  /**
+   * Type parameters for the interface
+   *
+   * @example
+   * ```tsx
+   * <InterfaceDeclaration name="IList" typeParameters={["T"]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * public interface IList<T>
+   * ```
+   */
+  typeParameters?: (TypeParameterProps | string)[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <InterfaceDeclaration name="MyInterface" attributes={[
+   *  <Attribute name="Test" />
+   *  <Attribute name="Test2" args={["arg1", "arg2"]} />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * [Test2("arg1", "arg2")]
+   * public interface MyInterface
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 /**
@@ -57,30 +91,13 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     refkeys: props.refkey,
   });
 
-  let typeParams: core.Children;
-  if (props.typeParameters) {
-    const typeParamNames = new Array<string>();
-    for (const entry of Object.entries(props.typeParameters)) {
-      typeParamNames.push(
-        useCSharpNamePolicy().getName(entry[0], "type-parameter"),
-      );
-      // create a symbol for each type param so its
-      // refkey resolves to the type param's name
-
-      new CSharpSymbol(entry[0], symbol.typeParameters, {
-        refkeys: entry[1],
-      });
-    }
-    typeParams = (
-      <group>
-        {"<"}
-        <core.For each={typeParamNames} comma line>
-          {(name) => name}
-        </core.For>
-        {">"}
-      </group>
-    );
-  }
+  // this creates a new scope for the interface definition.
+  // members will automatically "inherit" this scope so
+  // that refkeys to them will produce the fully-qualified
+  // name e.g. Foo.Bar.
+  const thisInterfaceScope = new CSharpMemberScope("interface-decl", {
+    owner: thisInterfaceSymbol,
+  });
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
@@ -89,8 +106,14 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <core.Declaration symbol={symbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}interface <Name />
-      {typeParams}
+      {props.typeParameters && (
+        <TypeParameters parameters={props.typeParameters} />
+      )}
+      {props.typeParameters && (
+        <TypeParameterConstraints parameters={props.typeParameters} />
+      )}
       {props.children ?
         <core.Block newline>
           <core.MemberScope owner={symbol}>{props.children}</core.MemberScope>

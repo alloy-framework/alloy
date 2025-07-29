@@ -43,7 +43,7 @@ it("handles various cases", () => {
         // block
         break;
       }
-      default :
+      default:
         // default
     }
   `);

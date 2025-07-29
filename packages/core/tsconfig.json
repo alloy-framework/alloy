@@ -11,7 +11,8 @@
     "test/**/*.ts",
     "test/**/*.tsx",
     "testing/**/*.ts",
-    "testing/**/*.d.ts"
+    "testing/**/*.d.ts",
+    "testing/extend-expect.test.tsx"
   ],
   "exclude": ["node_modules", "dist"]
 }

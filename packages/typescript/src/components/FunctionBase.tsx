@@ -77,6 +77,10 @@ export const FunctionParameters = taggedComponent(
     }
 
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    if (parameters.length === 0) {
+      return null;
+    }
+
     return (
       <group>
         <Indent softline trailingBreak>
@@ -107,6 +111,10 @@ export const FunctionTypeParameters = taggedComponent(
     }
 
     const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    if (parameters.length === 0) {
+      return null;
+    }
+
     return (
       <group>
         <Indent softline trailingBreak>
@@ -137,6 +145,10 @@ function parameter(param: DeclaredParameterDescriptor) {
             <TypeRefContext>{param.type}</TypeRefContext>
           </SymbolSlot>
         </indent>
+      </Show>
+      <Show when={!!param.default}>
+        {" = "}
+        <SymbolSlot>{param.default!}</SymbolSlot>
       </Show>
     </group>
   );
@@ -271,6 +283,10 @@ function typeParameter(param: DeclaredTypeParameterDescriptor) {
           {" "}
           <TypeRefContext>{param.extends}</TypeRefContext>
         </indent>
+      </Show>
+      <Show when={!!param.default}>
+        {" = "}
+        <TypeRefContext>{param.default}</TypeRefContext>
       </Show>
     </group>
   );

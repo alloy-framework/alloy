@@ -14,8 +14,8 @@ async function execGit(
   { repositoryPath }: { repositoryPath: string },
 ) {
   const result = await execa("git", args, { cwd: repositoryPath });
-  if (result.code !== "0") {
-    throw new GitError(args, result.code, result.stdio.toString());
+  if (result.exitCode !== 0) {
+    throw new GitError(args, result.exitCode, result.stdio.toString());
   }
   return result;
 }
@@ -23,7 +23,7 @@ async function execGit(
 export class GitError extends Error {
   args: string[];
 
-  constructor(args: string[], code: string, stderr: string) {
+  constructor(args: string[], code: number, stderr: string) {
     super(
       `GitError running: 'git ${args.join(" ")}'. Finished with exit code ${code}\n${stderr}`,
     );

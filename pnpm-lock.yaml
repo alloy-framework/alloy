@@ -120,7 +120,7 @@ catalogs:
 
 patchedDependencies:
   '@microsoft/tsdoc@0.15.1':
-    hash: feqpbbj7jjnlaslm723zbab6bm
+    hash: b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5
     path: patches/@microsoft__tsdoc@0.15.1.patch
 
 importers:
@@ -457,7 +457,7 @@ importers:
         version: 7.30.7(@types/node@24.1.0)
       '@microsoft/tsdoc':
         specifier: 'catalog:'
-        version: 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+        version: 0.15.1(patch_hash=b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5)
       redent:
         specifier: ^4.0.0
         version: 4.0.0
@@ -6035,7 +6035,7 @@ snapshots:
 
   '@microsoft/api-extractor-model@7.30.7(@types/node@24.1.0)':
     dependencies:
-      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+      '@microsoft/tsdoc': 0.15.1(patch_hash=b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5)
       '@microsoft/tsdoc-config': 0.17.1
       '@rushstack/node-core-library': 5.14.0(@types/node@24.1.0)
     transitivePeerDependencies:
@@ -6044,7 +6044,7 @@ snapshots:
   '@microsoft/api-extractor@7.52.9(@types/node@24.1.0)':
     dependencies:
       '@microsoft/api-extractor-model': 7.30.7(@types/node@24.1.0)
-      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+      '@microsoft/tsdoc': 0.15.1(patch_hash=b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5)
       '@microsoft/tsdoc-config': 0.17.1
       '@rushstack/node-core-library': 5.14.0(@types/node@24.1.0)
       '@rushstack/rig-package': 0.5.3
@@ -6061,12 +6061,12 @@ snapshots:
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:
-      '@microsoft/tsdoc': 0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)
+      '@microsoft/tsdoc': 0.15.1(patch_hash=b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5)
       ajv: 8.12.0
       jju: 1.4.0
       resolve: 1.22.10
 
-  '@microsoft/tsdoc@0.15.1(patch_hash=feqpbbj7jjnlaslm723zbab6bm)': {}
+  '@microsoft/tsdoc@0.15.1(patch_hash=b01d931402d28ddb19bdcfaa108870e8dc29cef21700a9a1442a197e91b8d5b5)': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:

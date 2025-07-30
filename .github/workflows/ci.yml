@@ -64,9 +64,6 @@ jobs:
       - run: pnpm install
         name: Install dependencies
 
-      - run: pnpm --filter="@alloy-js/prettier-plugin-alloy..." run  build
-        name: Build
-
       - run: pnpm run format:check
         name: Check formatting
 

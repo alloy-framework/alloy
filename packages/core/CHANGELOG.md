@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.20.0
+
+### Bug Fixes
+
+- [#265](https://github.com/alloy-framework/alloy/pull/265) Connect `componentOwner` in the context tree
+
+
 ## 0.19.0
 
 ### Bug Fixes

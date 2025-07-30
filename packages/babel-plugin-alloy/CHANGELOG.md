@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-plugin
 
+## 0.2.1
+
+### Bug Fixes
+
+- [#260](https://github.com/alloy-framework/alloy/pull/260) Fix memory leak
+
+
 
 
 ## 0.2.0

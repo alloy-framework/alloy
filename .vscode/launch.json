@@ -67,6 +67,13 @@
       "env": {
         "FORCE_COLOR": "3"
       }
+    },
+    {
+      "name": "Attach to nodejs",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     }
   ]
 }

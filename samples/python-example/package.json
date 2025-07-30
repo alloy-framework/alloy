@@ -5,6 +5,7 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "private": true,
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/python": "workspace:~",

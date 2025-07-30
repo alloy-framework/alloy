@@ -24,6 +24,8 @@
     "@vitest/eslint-plugin": "catalog:",
     "concurrently": "catalog:",
     "eslint": "catalog:",
+    "execa": "^9.6.0",
+    "pathe": "^2.0.3",
     "prettier": "catalog:",
     "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",

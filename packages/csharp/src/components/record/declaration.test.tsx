@@ -1,7 +1,24 @@
+import {
+  Children,
+  code,
+  createNamePolicy,
+  NamePolicyContext,
+  refkey,
+} from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Field } from "../field/field.jsx";
 import { Property } from "../property/property.jsx";
+import { SourceFile } from "../SourceFile.jsx";
 import { RecordDeclaration } from "./declaration.jsx";
+
+function Wrapper({ children }: { children: Children }) {
+  return (
+    <TestNamespace>
+      <SourceFile path="Test.cs">{children}</SourceFile>
+    </TestNamespace>
+  );
+}
 
 it("declares class with no members", () => {
   expect(
@@ -70,4 +87,67 @@ it("specify class property inside", () => {
       string Prop { get; set; }
     }
   `);
+});
+
+describe("constructor", () => {
+  it("declares primary constructor with args", () => {
+    const paramNameRefkey = refkey();
+    const paramSizeRefkey = refkey();
+
+    const ctorParams = [
+      {
+        name: "name",
+        type: "string",
+        refkey: paramNameRefkey,
+      },
+      {
+        name: "size",
+        type: "int",
+        refkey: paramSizeRefkey,
+      },
+    ];
+
+    expect(
+      <Wrapper>
+        <RecordDeclaration public name="Test" primaryConstructor={ctorParams}>
+          <Property
+            name="PrettyName"
+            type="string"
+            get
+            initializer={code`$"{${paramNameRefkey}} {${paramSizeRefkey}}"`}
+          />
+        </RecordDeclaration>
+      </Wrapper>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+          public class Test(string name, int size)
+          {
+              string PrettyName { get; } = $"{name} {size}";
+          }
+      }
+  `);
+  });
+
+  it("primary constructor params conflict with method", () => {
+    const ctorParams = [{ name: "name", type: "string" }];
+
+    expect(
+      <Wrapper>
+        <NamePolicyContext.Provider value={createNamePolicy((x) => x)}>
+          <RecordDeclaration public name="Test" primaryConstructor={ctorParams}>
+            <Field name="name" type="string" />
+          </RecordDeclaration>
+        </NamePolicyContext.Provider>
+      </Wrapper>,
+    ).toRenderTo(`
+      namespace TestCode
+      {
+          public class Test(string name)
+          {
+              string name_2;
+          }
+      }
+  `);
+  });
 });

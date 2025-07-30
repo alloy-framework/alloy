@@ -10,3 +10,11 @@ export const enumModule = createModule({
     ".": ["auto", "Enum", "Flag", "IntEnum", "IntFlag", "StrEnum"],
   },
 });
+
+export const requestsModule = createModule({
+  name: "requests",
+  descriptor: {
+    ".": ["get", "post", "put", "delete", "patch", "head", "options"],
+    models: ["Response", "Request"],
+  },
+});

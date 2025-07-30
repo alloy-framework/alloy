@@ -1,6 +1,7 @@
 import {
   Binder,
   Children,
+  ContentOutputFile,
   NamePolicy,
   Output,
   OutputDirectory,
@@ -16,13 +17,16 @@ import { createPythonNamePolicy } from "../src/name-policy.js";
 import { CustomOutputScope } from "../src/symbols/custom-output-scope.js";
 import { PythonModuleScope } from "../src/symbols/index.js";
 
-export function findFile(res: OutputDirectory, path: string): OutputFile {
+export function findFile(
+  res: OutputDirectory,
+  path: string,
+): ContentOutputFile {
   const result = findFileWorker(res, path);
 
   if (!result) {
     throw new Error("Expected to find file " + path);
   }
-  return result;
+  return result as ContentOutputFile;
 
   function findFileWorker(
     res: OutputDirectory,

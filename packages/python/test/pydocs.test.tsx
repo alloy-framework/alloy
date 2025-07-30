@@ -2,7 +2,7 @@ import { Prose } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { enumModule } from "../src/builtins/python.js";
-import * as py from "../src/components/index.js";
+import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
 
 describe("PyDoc", () => {
@@ -33,6 +33,8 @@ describe("PyDoc", () => {
         This is another paragraph, and there's a
         line break before it.
         """
+
+        
       `,
     );
   });
@@ -58,6 +60,8 @@ describe("PyDocExample", () => {
       
       >> print("Hello world!")
       """
+
+
       `,
     );
   });
@@ -84,6 +88,8 @@ describe("PyDocExample", () => {
       
       >> print("Hello world again!")
       """
+
+
       `,
     );
   });
@@ -115,6 +121,8 @@ describe("PyDocExample", () => {
       >> x = "Hello"
       >> print(x)
       """
+
+
       `,
     );
   });
@@ -132,6 +140,8 @@ describe("GoogleStyleDocParam", () => {
           """
           somebody
           """
+
+
           `,
     );
   });
@@ -146,6 +156,8 @@ describe("GoogleStyleDocParam", () => {
           """
           somebody (str)
           """
+
+
           `,
     );
   });
@@ -162,6 +174,8 @@ describe("GoogleStyleDocParam", () => {
           """
           somebody (str): Somebody's name.
           """
+
+
           `,
     );
   });
@@ -178,6 +192,8 @@ describe("GoogleStyleDocParam", () => {
           """
           somebody (str, optional): Somebody's name.
           """
+
+
           `,
     );
   });
@@ -199,6 +215,8 @@ describe("GoogleStyleDocParam", () => {
         """
         somebody (str, optional): Somebody's name. Defaults to \"John Doe\".
         """
+
+
         `,
     );
   });
@@ -244,6 +262,8 @@ describe("GoogleStyleDocParam", () => {
               messages and is not required to be unique or validated unless specified by
               the caller.
           """
+
+
           `,
     );
   });
@@ -271,6 +291,8 @@ describe("GoogleStyleDocParam", () => {
           somebody (str, optional): Somebody's name. This is one line
               This is another line. Defaults to \"John Doe\".
           """
+
+
           `,
     );
   });

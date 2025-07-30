@@ -1,13 +1,14 @@
 import { code, memberRefkey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import * as py from "../src/components/index.js";
+import * as py from "../src/index.js";
 import {
   ClassDeclaration,
   FunctionDeclaration,
+  ParameterDescriptor,
+  SourceFile,
   VariableDeclaration,
-} from "../src/components/index.js";
-import { ParameterDescriptor, SourceFile } from "../src/index.js";
+} from "../src/index.js";
 import {
   assertFileContents,
   toSourceText,
@@ -366,6 +367,7 @@ describe("with refkeys", () => {
             refkey={classMethod1Ref}
             type="str"
             omitNone={true}
+            instanceVariable={true}
           />
         </ClassDeclaration>
         <ClassDeclaration name="Model2" refkey={model2Ref}>
@@ -374,6 +376,7 @@ describe("with refkeys", () => {
             refkey={classMethod2Ref}
             type="str"
             omitNone={true}
+            instanceVariable={true}
           />
         </ClassDeclaration>
         <py.VariableDeclaration

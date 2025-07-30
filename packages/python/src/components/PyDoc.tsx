@@ -143,34 +143,33 @@ export interface GoogleStyleFunctionDocProps
  * A component that creates a GoogleStyleFunctionDoc block for parameters.
  */
 export function GoogleStyleFunctionDoc(props: GoogleStyleFunctionDocProps) {
-  return (
-    <>
-      <PyDoc>
-        <Show when={props.description !== undefined}>
-          <List doubleHardline>{props.description.map((param) => param)}</List>
-        </Show>
-        <Show when={props.parameters.length > 0}>
-          <GoogleStyleDocParams parameters={props.parameters} />
-        </Show>
-        <Show when={props.returns !== undefined}>
-          <GoogleStyleDocReturn message={props.returns!} />
-        </Show>
-        <Show when={props.raises.length > 0}>
-          {props.raises.map((param) => (
-            <GoogleStyleDocRaises message={param} />
-          ))}
-        </Show>
-      </PyDoc>
-      <hbr />
-    </>
-  );
+  // We are creating a list instead of relying on <Show> because otherwise
+  // <List> would render spaces between the elements even if <Show> evaluates to false.
+  const children = [];
+  if (props.description !== undefined) {
+    children.push(
+      <List doubleHardline>{props.description.map((param) => param)}</List>,
+    );
+  }
+  if (props.parameters !== undefined && props.parameters.length > 0) {
+    children.push(<GoogleStyleDocParams parameters={props.parameters} />);
+  }
+  if (props.returns !== undefined) {
+    children.push(<GoogleStyleDocReturn message={props.returns} />);
+  }
+  if (props.raises !== undefined && props.raises.length > 0) {
+    children.push(
+      props.raises!.map((param) => <GoogleStyleDocRaises message={param} />),
+    );
+  }
+  return <PyDoc>{children}</PyDoc>;
 }
 
 export interface FunctionDocProps {
   description: Children[];
-  parameters: ParameterDescriptor[] | string[];
+  parameters?: ParameterDescriptor[] | string[];
   returns?: string;
-  raises: string[];
+  raises?: string[];
   style?: "google";
 }
 
@@ -193,7 +192,7 @@ export function FunctionDoc(props: FunctionDocProps) {
 
 export interface ClassDocProps {
   description: Children[];
-  parameters: ParameterDescriptor[] | string[];
+  parameters?: ParameterDescriptor[] | string[];
   style?: "google";
 }
 
@@ -219,19 +218,18 @@ export interface GoogleStyleClassDocProps
  * A component that creates a GoogleStyleClassDoc block for parameters.
  */
 export function GoogleStyleClassDoc(props: GoogleStyleClassDocProps) {
-  return (
-    <>
-      <PyDoc>
-        <Show when={props.description !== undefined}>
-          <List doubleHardline>{props.description.map((param) => param)}</List>
-        </Show>
-        <Show when={props.parameters.length > 0}>
-          <GoogleStyleDocParams parameters={props.parameters} />
-        </Show>
-      </PyDoc>
-      <hbr />
-    </>
-  );
+  // We are creating a list instead of relying on <Show> because otherwise
+  // <List> would render spaces between the elements even if <Show> evaluates to false.
+  const children = [];
+  if (props.description !== undefined) {
+    children.push(
+      <List doubleHardline>{props.description.map((param) => param)}</List>,
+    );
+  }
+  if (props.parameters !== undefined && props.parameters.length > 0) {
+    children.push(<GoogleStyleDocParams parameters={props.parameters} />);
+  }
+  return <PyDoc>{children}</PyDoc>;
 }
 
 export interface PyDocExampleProps {
@@ -292,13 +290,15 @@ export interface PyDocProps {
  * linebreaks. This is useful for creating PyDoc comments with multiple paragraphs.
  */
 export function PyDoc(props: PyDocProps) {
+  const children = childrenArray(() => props.children);
   return (
     <>
       {'"""'}
       <hbr />
-      <List doubleHardline>{childrenArray(() => props.children)}</List>
+      <List doubleHardline>{children}</List>
       <hbr />
       {'"""'}
+      <hbr />
     </>
   );
 }

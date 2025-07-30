@@ -1,8 +1,8 @@
 import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import * as py from "../src/components/index.js";
 import { createModule } from "../src/create-module.js";
+import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
 
 it("declaration of class instance with variables", () => {

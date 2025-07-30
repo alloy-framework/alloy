@@ -45,6 +45,17 @@ describe("Python Variable", () => {
     expect(res).toBe(`my_var = None`);
   });
 
+  it("declares a python variable that's an array", () => {
+    const res = toSourceText([
+      <py.VariableDeclaration
+        name="numbers"
+        type="list[int]"
+        initializer={<py.Atom jsValue={[1, 2, 3]} />}
+      />,
+    ]);
+    expect(res).toBe(`numbers: list[int] = [1, 2, 3]`);
+  });
+
   it("declares a python variable with a python value", () => {
     const res = toSourceText([
       <py.VariableDeclaration

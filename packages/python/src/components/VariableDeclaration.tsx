@@ -35,6 +35,11 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
    * This is used to handle cases where the variable is part of a call statement.
    */
   callStatementVar?: boolean;
+  /**
+   * Indicates if this variable is an instance variable. Optional.
+   * This is used to handle cases where the variable is part of a class instance.
+   */
+  instanceVariable?: boolean;
 }
 
 /**
@@ -72,11 +77,13 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
  * ```
  */
 export function VariableDeclaration(props: VariableDeclarationProps) {
+  const instanceVariable = props.instanceVariable ?? false;
   const TypeSymbolSlot = createSymbolSlot();
   const ValueTypeSymbolSlot = createSymbolSlot();
   const memberScope = useMemberScope();
   let scope: OutputScope | undefined = undefined;
-  if (memberScope !== undefined) {
+  // Only consider the member scope if this is an instance variable
+  if (memberScope !== undefined && instanceVariable) {
     scope = memberScope.instanceMembers!;
   } else {
     scope = useScope();

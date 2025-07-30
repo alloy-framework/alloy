@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.20.0
+
+### Features
+
+- [#255](https://github.com/alloy-framework/alloy/pull/255) Add suport for class/record primary constructors
+
+
 ## 0.19.0
 
 ### Features

@@ -15,7 +15,7 @@ async function execGit(
 ) {
   const result = await execa("git", args, { cwd: repositoryPath });
 
-  if (result.code !== 0) {
+  if (result.code !== "0") {
     throw new GitError(args, result.stdio.toString());
   }
   return result;

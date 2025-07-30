@@ -308,7 +308,7 @@ it("declares class with invalid members", () => {
   );
 
   expect(() => toSourceText(decl)).toThrow(
-    "can't define an enum member outside of an enum-decl scope",
+    "Can't define a EnumMember outside of a enum-decl scope",
   );
 });
 

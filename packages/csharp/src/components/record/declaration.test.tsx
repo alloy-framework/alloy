@@ -1,13 +1,6 @@
-import {
-  Children,
-  code,
-  createNamePolicy,
-  NamePolicyContext,
-  refkey,
-} from "@alloy-js/core";
+import { Children, code, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
-import { Field } from "../field/field.jsx";
 import { Property } from "../property/property.jsx";
 import { SourceFile } from "../SourceFile.jsx";
 import { RecordDeclaration } from "./declaration.jsx";
@@ -20,7 +13,7 @@ function Wrapper({ children }: { children: Children }) {
   );
 }
 
-it("declares class with no members", () => {
+it("declares record with no members", () => {
   expect(
     <TestNamespace>
       <RecordDeclaration name="TestRecord" />
@@ -73,7 +66,7 @@ it("specify doc comment", () => {
   `);
 });
 
-it("specify class property inside", () => {
+it("specify record property inside", () => {
   expect(
     <TestNamespace>
       <RecordDeclaration name="TestRecord" doc="This is a test">
@@ -121,31 +114,9 @@ describe("constructor", () => {
     ).toRenderTo(`
       namespace TestCode
       {
-          public class Test(string name, int size)
+          public record Test(string name, int size)
           {
               string PrettyName { get; } = $"{name} {size}";
-          }
-      }
-  `);
-  });
-
-  it("primary constructor params conflict with method", () => {
-    const ctorParams = [{ name: "name", type: "string" }];
-
-    expect(
-      <Wrapper>
-        <NamePolicyContext.Provider value={createNamePolicy((x) => x)}>
-          <RecordDeclaration public name="Test" primaryConstructor={ctorParams}>
-            <Field name="name" type="string" />
-          </RecordDeclaration>
-        </NamePolicyContext.Provider>
-      </Wrapper>,
-    ).toRenderTo(`
-      namespace TestCode
-      {
-          public class Test(string name)
-          {
-              string name_2;
           }
       }
   `);

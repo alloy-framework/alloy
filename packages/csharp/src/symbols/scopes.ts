@@ -53,8 +53,9 @@ export function assertMemberOfScope<T extends unknown[]>(
   names: T,
 ): asserts scope is CSharpMemberScope & { name: T[number] } {
   if (scope.kind !== "member" || !names.includes(scope.name as T[number])) {
+    const context = core.getContext();
     throw new Error(
-      `can't define a parameter outside of a ${names.join(" or ")} scope`,
+      `Can't define a ${context?.componentOwner?.component.name} outside of a ${names.join(" or ")} scope`,
     );
   }
 }

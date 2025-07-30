@@ -495,12 +495,15 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           TracePhase.render.appendChild,
           () => "Component: " + debugPrintChild(child),
         );
+        const context = getContext();
+        if (context) context.componentOwner = child;
         const componentRoot: RenderedTextTree = [];
         pushStack(child.component, child.props);
         renderWorker(componentRoot, untrack(child));
         popStack();
         node.push(componentRoot);
         cache.set(child, componentRoot);
+
         trace(
           TracePhase.render.appendChild,
           () => "Component done: " + debugPrintChild(child),

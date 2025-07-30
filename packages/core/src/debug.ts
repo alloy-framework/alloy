@@ -117,7 +117,6 @@ function findContextOwner(context: Context) {
   return currentContext?.componentOwner?.component.name ?? "unknown";
 }
 declare global {
-  // eslint-disable-next-line no-var
   var debug: DebugInterface;
 }
 

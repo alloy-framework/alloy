@@ -70,10 +70,10 @@ catalogs:
       specifier: ^0.6.5
       version: 0.6.5
     concurrently:
-      specifier: ^9.1.2
+      specifier: ^9.2.0
       version: 9.2.0
     eslint:
-      specifier: ^9.24.0
+      specifier: ^9.32.0
       version: 9.32.0
     html-entities:
       specifier: 2.6.0
@@ -88,10 +88,10 @@ catalogs:
       specifier: ^1.1.1
       version: 1.1.1
     prettier:
-      specifier: ^3.5.3
+      specifier: ^3.6.2
       version: 3.6.2
     prettier-plugin-organize-imports:
-      specifier: ^4.1.0
+      specifier: ^4.2.0
       version: 4.2.0
     rimraf:
       specifier: ^6.0.1
@@ -106,7 +106,7 @@ catalogs:
       specifier: ^5.8.3
       version: 5.8.3
     typescript-eslint:
-      specifier: ^8.29.1
+      specifier: ^8.38.0
       version: 8.38.0
     validate-html-nesting:
       specifier: ^1.2.1
@@ -143,7 +143,7 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       '@typescript-eslint/utils':
-        specifier: ^8.29.1
+        specifier: ^8.38.0
         version: 8.38.0(eslint@9.32.0)(typescript@5.8.3)
       '@vitest/eslint-plugin':
         specifier: 'catalog:'
@@ -170,10 +170,10 @@ importers:
         specifier: 'catalog:'
         version: 6.0.1
       tsx:
-        specifier: ^4.19.3
+        specifier: ^4.20.3
         version: 4.20.3
       typedoc:
-        specifier: ^0.28.2
+        specifier: ^0.28.8
         version: 0.28.8(typescript@5.8.3)
       typescript-eslint:
         specifier: 'catalog:'

@@ -23,7 +23,7 @@ async function execGit(
 export class GitError extends Error {
   args: string[];
 
-  constructor(args: string[], code: number, stderr: string) {
+  constructor(args: string[], code: number | undefined, stderr: string) {
     super(
       `GitError running: 'git ${args.join(" ")}'. Finished with exit code ${code}\n${stderr}`,
     );

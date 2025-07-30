@@ -6,7 +6,11 @@ import {
 } from "../modifiers.js";
 import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpOutputSymbol } from "../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../symbols/scopes.js";
+import {
+  CSharpMemberScope,
+  useCSharpMemberScope,
+  useCSharpScope,
+} from "../symbols/scopes.js";
 import { Name } from "./Name.jsx";
 
 // properties for creating an enum
@@ -78,12 +82,7 @@ export interface EnumMemberProps {
 
 // a member within a C# enum
 export function EnumMember(props: EnumMemberProps) {
-  const scope = useCSharpScope();
-  if (scope.kind === "member" && scope.name !== "enum-decl") {
-    throw new Error(
-      "can't define an enum member outside of an enum-decl scope",
-    );
-  }
+  const scope = useCSharpMemberScope(["enum-decl"]);
 
   const name = useCSharpNamePolicy().getName(props.name, "enum-member");
   const thisEnumValueSymbol = new CSharpOutputSymbol(name, {

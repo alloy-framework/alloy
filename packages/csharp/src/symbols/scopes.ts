@@ -39,3 +39,23 @@ export type CSharpOutputScope = CSharpMemberScope | CSharpNamespaceScope;
 export function useCSharpScope(): CSharpOutputScope {
   return core.useScope() as CSharpOutputScope;
 }
+
+export function useCSharpMemberScope<T extends unknown[]>(
+  names: T,
+): CSharpMemberScope & { name: T[number] } {
+  const scope = useCSharpScope();
+  assertMemberOfScope(scope, names);
+  return scope;
+}
+
+export function assertMemberOfScope<T extends unknown[]>(
+  scope: CSharpOutputScope,
+  names: T,
+): asserts scope is CSharpMemberScope & { name: T[number] } {
+  if (scope.kind !== "member" || !names.includes(scope.name as T[number])) {
+    const context = core.getContext();
+    throw new Error(
+      `Can't define a ${context?.componentOwner?.component.name} outside of a ${names.join(" or ")} scope`,
+    );
+  }
+}

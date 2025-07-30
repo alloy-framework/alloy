@@ -7,7 +7,7 @@ import {
 } from "../../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../../symbols/scopes.js";
+import { useCSharpMemberScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Field modifiers. */
@@ -40,15 +40,7 @@ export function Field(props: FieldProps) {
     nameElement = "class-member-public";
   }
   const name = useCSharpNamePolicy().getName(props.name, nameElement);
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "class-decl" && scope.name !== "struct-decl")
-  ) {
-    throw new Error(
-      "can't define a class member outside of a class or struct scope",
-    );
-  }
+  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
 
   const memberSymbol = new CSharpOutputSymbol(name, {
     scope,

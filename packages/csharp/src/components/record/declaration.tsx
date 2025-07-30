@@ -10,6 +10,7 @@ import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
 import { CSharpMemberScope } from "../../symbols/scopes.js";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 export interface RecordModifiers {
   readonly partial?: boolean;
@@ -28,6 +29,24 @@ export interface RecordDeclarationProps
   doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Set the primary constructor parameters
+   * @example
+   * ```tsx
+   *  <ClassDeclaration name="MyClass" primaryConstructor={[
+   *    {name: "value", type: "int"}
+   *  ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass(int value)
+   * {
+   *
+   * }
+   * ```
+   */
+  primaryConstructor?: ParameterProps[];
 }
 
 /**
@@ -99,6 +118,11 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
       <DocWhen doc={props.doc} />
       {modifiers}record <Name />
       {typeParams}
+      {props.primaryConstructor && (
+        <core.Scope value={thisRecordScope}>
+          <Parameters parameters={props.primaryConstructor} />
+        </core.Scope>
+      )}
       {props.children ?
         <core.Block newline>
           <core.Scope value={thisRecordScope}>{props.children}</core.Scope>

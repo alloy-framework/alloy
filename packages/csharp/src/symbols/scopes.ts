@@ -39,3 +39,22 @@ export type CSharpOutputScope = CSharpMemberScope | CSharpNamespaceScope;
 export function useCSharpScope(): CSharpOutputScope {
   return core.useScope() as CSharpOutputScope;
 }
+
+export function useCSharpMemberScope<T extends unknown[]>(
+  names: T,
+): CSharpMemberScope & { name: T[number] } {
+  const scope = useCSharpScope();
+  assertMemberOfScope(scope, names);
+  return scope;
+}
+
+export function assertMemberOfScope<T extends unknown[]>(
+  scope: CSharpOutputScope,
+  names: T,
+): asserts scope is CSharpMemberScope & { name: T[number] } {
+  if (scope.kind !== "member" || !names.includes(scope.name as T[number])) {
+    throw new Error(
+      `can't define a parameter outside of a ${names.join(" or ")} scope`,
+    );
+  }
+}

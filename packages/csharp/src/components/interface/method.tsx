@@ -14,7 +14,10 @@ import {
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import {
+  CSharpMemberScope,
+  useCSharpMemberScope,
+} from "../../symbols/scopes.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
@@ -77,12 +80,8 @@ export interface InterfaceMethodProps
 // a C# interface method
 export function InterfaceMethod(props: InterfaceMethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
+
+  const scope = useCSharpMemberScope(["interface-decl"]);
 
   const methodSymbol = new CSharpOutputSymbol(name, {
     scope,

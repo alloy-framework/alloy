@@ -14,7 +14,10 @@ import {
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import {
+  CSharpMemberScope,
+  useCSharpMemberScope,
+} from "../../symbols/scopes.js";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 /**
@@ -32,15 +35,7 @@ export interface ConstructorProps extends AccessModifiers {
 }
 
 export function Constructor(props: ConstructorProps) {
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "class-decl" && scope.name !== "struct-decl")
-  ) {
-    throw new Error(
-      "can't define a class method outside of a class or struct scope",
-    );
-  }
+  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
 
   const name = useCSharpNamePolicy().getName(scope.owner!.name, "class-method");
   const ctorSymbol = new CSharpOutputSymbol(name, {

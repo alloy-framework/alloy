@@ -12,10 +12,6 @@ export interface TSPackageScopeOptions extends OutputScopeOptions {
 }
 
 export class TSPackageScope extends OutputScope {
-  get kind() {
-    return "package" as const;
-  }
-
   /**
    * The version of the this package.
    */

@@ -1,7 +1,7 @@
 import {
   OutputSpace,
   OutputSymbolOptions,
-  useMemberScope,
+  useMemberContext,
 } from "@alloy-js/core";
 import { CSharpSymbol } from "./csharp.js";
 
@@ -51,7 +51,7 @@ export class NamedTypeSymbol extends CSharpSymbol {
 }
 
 export function useNamedTypeScope() {
-  const memberScope = useMemberScope();
+  const memberScope = useMemberContext();
   if (!memberScope) {
     throw new Error("Expected to be in a member scope");
   }

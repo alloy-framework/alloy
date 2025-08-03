@@ -1,7 +1,7 @@
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
-import { useMemberScope } from "../context/member-scope.js";
+import { useMemberContext } from "../context/member-scope.js";
 import type { Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { BasicSymbol } from "../symbols/basic-symbol.js";
@@ -88,8 +88,7 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
       );
     }
 
-    const scopeContext = useMemberScope();
-    console.log(scopeContext.ownerSymbol.name);
+    const scopeContext = useMemberContext()!;
     if (!(scopeContext.ownerSymbol instanceof BasicSymbol)) {
       throw new Error(
         "MemberDeclaration component cannot create a symbol in a non-basic scope",

@@ -1,12 +1,12 @@
 import {
   Children,
-  MemberScopeContext,
+  MemberContext,
   memo,
   Refkey,
   resolve,
   untrack,
   useContext,
-  useMemberScope,
+  useMemberContext,
 } from "@alloy-js/core";
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { usePackage } from "../components/PackageDirectory.jsx";
@@ -28,7 +28,7 @@ export function ref(
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
   );
-  const currentScope = useMemberScope();
+  const currentScope = useMemberContext();
 
   return memo(() => {
     if (resolveResult.value === undefined) {
@@ -126,7 +126,7 @@ export function ref(
 function validateSymbolReachable(
   path: TSOutputScope[],
   memberPath: TSOutputSymbol[] | undefined,
-  currentPrivateScope: MemberScopeContext | undefined,
+  currentPrivateScope: MemberContext | undefined,
 ) {
   for (const scope of path) {
     if (!(scope instanceof TSModuleScope) && scope instanceof TSLexicalScope) {

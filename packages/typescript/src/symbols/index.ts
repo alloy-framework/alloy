@@ -1,9 +1,11 @@
 import {
   OutputScopeOptions,
-  useScope,
+  OutputSymbolFlags,
 } from "../../../core/src/index.browser.js";
 import { useLexicalScope, useMemberOwner } from "../utils.js";
+import { useTSScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
+import { TSMemberScope } from "./ts-member-scope.js";
 import { CreateTsSymbolOptions, TSOutputSymbol } from "./ts-output-symbol.js";
 
 export * from "./reference.js";
@@ -24,6 +26,11 @@ export function createTypeAndValueSymbol(
 
 export function createTypeSymbol(name: string, options: CreateTsSymbolOptions) {
   const scope = useLexicalScope();
+  if (scope && !scope.types) {
+    throw new Error(
+      "Attempting to create a type symbol in a scope that does not have a type declaration space.",
+    );
+  }
   const spaces = scope ? [scope.types] : [];
   return new TSOutputSymbol(name, spaces, options);
 }
@@ -33,8 +40,19 @@ export function createValueSymbol(
   options: CreateTsSymbolOptions = {},
 ) {
   const scope = useLexicalScope();
+  if (scope && !scope.values) {
+    throw new Error(
+      "Attempting to create a value symbol in a scope that does not have a value declaration space.",
+    );
+  }
   const spaces = scope ? [scope.values] : [];
   return new TSOutputSymbol(name, spaces, options);
+}
+
+export function createTransientValueSymbol() {
+  return new TSOutputSymbol("transient-value", undefined, {
+    flags: OutputSymbolFlags.Transient,
+  });
 }
 
 export function createStaticMemberSymbol(
@@ -93,7 +111,16 @@ export function createLexicalScope(
   name: string,
   options: OutputScopeOptions = {},
 ) {
-  const parent = useScope();
+  const parent = useTSScope();
 
   return new TSLexicalScope(name, parent, options);
+}
+
+export function createMemberScope(
+  name: string,
+  ownerSymbol: TSOutputSymbol,
+  options: OutputScopeOptions = {},
+) {
+  const parent = useTSScope();
+  return new TSMemberScope(name, parent, ownerSymbol, options);
 }

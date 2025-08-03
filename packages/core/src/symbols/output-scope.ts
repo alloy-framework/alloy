@@ -192,6 +192,11 @@ export abstract class OutputScope {
   }
 
   #ownerSymbol: OutputSymbol | undefined;
+  /**
+   * The symbol whose members are in scope. When an owner symbol is present,
+   * this scope is considered a member scope, and does not provide its own
+   * declaration spaces.
+   */
   get ownerSymbol() {
     return this.#ownerSymbol;
   }
@@ -200,17 +205,8 @@ export abstract class OutputScope {
    * Check if this is scope is a member scope. Member scopes have no member
    * spaces of their own, but instead put members of their owner symbol in
    * scope.
-   *
-   * @remarks
-   *
-   * By default, all members of the owner symbol are in scope, but
-   * subclasses may override the `inScopeMembers` method to customize this
-   * behavior.
    */
-  isMemberScope(): this is OutputScope & {
-    inScopeMembers: Set<OutputSymbol>;
-    ownerSymbol: OutputSymbol;
-  } {
+  get isMemberScope() {
     return !!this.#ownerSymbol;
   }
 

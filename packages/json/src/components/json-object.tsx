@@ -1,14 +1,15 @@
 import {
   Children,
   computed,
+  emitSymbol,
   For,
   Indent,
   List,
   MemberDeclaration,
   MemberScope,
   onCleanup,
+  OutputSymbolFlags,
   Refkey,
-  useMemberDeclaration,
   useMemberScope,
 } from "@alloy-js/core";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
@@ -60,18 +61,16 @@ export type JsonObjectProps =
  * @see {@link @alloy-js/core#MemberScopeContext}
  */
 export function JsonObject(props: JsonObjectProps) {
-  const memberSymbol = useMemberDeclaration();
-  if (!memberSymbol) {
-    throw new Error("Missing assignment symbol.");
-  }
-
-  if (props.refkey) {
-    memberSymbol.refkeys = [props.refkey].flat();
-  }
+  const objectSym = new JsonOutputSymbol("object symbol", undefined, {
+    flags: OutputSymbolFlags.Transient,
+    refkeys: props.refkey ? [props.refkey].flat() : undefined,
+  });
+  console.log("Emitting symbol", objectSym);
+  emitSymbol(objectSym);
 
   if (!("jsValue" in props)) {
     return (
-      <MemberScope owner={memberSymbol}>
+      <MemberScope ownerSymbol={objectSym} name="object scope">
         <group>
           {"{"}
           <Indent
@@ -103,7 +102,7 @@ export function JsonObject(props: JsonObjectProps) {
   });
 
   return (
-    <MemberScope owner={memberSymbol}>
+    <MemberScope ownerSymbol={objectSym}>
       <group>
         {"{"}
         <Indent

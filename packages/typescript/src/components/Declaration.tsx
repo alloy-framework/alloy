@@ -1,7 +1,6 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  MemberScope,
   OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
@@ -128,7 +127,7 @@ export function Declaration(props: DeclarationProps) {
     <CoreDeclaration symbol={sym}>
       {props.export ? "export " : ""}
       {props.default ? "default " : ""}
-      <MemberScope owner={sym}>{props.children}</MemberScope>
+      {props.children}
     </CoreDeclaration>
   );
 }

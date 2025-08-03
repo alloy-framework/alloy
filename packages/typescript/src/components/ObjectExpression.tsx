@@ -5,9 +5,7 @@ import {
   emitSymbol,
   For,
   Match,
-  MemberScope,
   moveTakenMembersTo,
-  OutputSymbolFlags,
   Refkey,
   Switch,
   takeSymbols,
@@ -15,8 +13,9 @@ import {
 import { useTSNamePolicy } from "../name-policy.js";
 import {
   createStaticMemberSymbol,
-  createValueSymbol,
+  createTransientValueSymbol,
 } from "../symbols/index.js";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
@@ -29,7 +28,7 @@ export interface ObjectExpressionProps {
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
-  const symbol = createValueSymbol("", { flags: OutputSymbolFlags.Transient });
+  const symbol = createTransientValueSymbol();
 
   emitSymbol(symbol);
   moveTakenMembersTo(symbol);
@@ -58,7 +57,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
       </Match>
       <Match else>
         <group>
-          <MemberScope owner={symbol}>
+          <MemberScope ownerSymbol={symbol}>
             <Block>
               <For each={jsValueProperties} comma softline enderPunctuation>
                 {([name, value]) => (

@@ -1,7 +1,7 @@
 import {
   defaultProps,
   splitProps,
-  useMemberScope,
+  useMemberContext,
   useScope,
 } from "@alloy-js/core";
 import { CallSignatureProps } from "./components/CallSignature.jsx";
@@ -47,22 +47,22 @@ export function isValidJSIdentifier(str: string) {
 }
 
 export function useLexicalScope(): TSLexicalScope | undefined {
-  const scopeContext = useScope();
-  if (!scopeContext) {
+  const scope = useScope();
+  if (!scope) {
     return undefined;
   }
 
-  if (!(scopeContext instanceof TSLexicalScope)) {
+  if (!(scope instanceof TSLexicalScope)) {
     throw new Error(
       "A lexical scope is required but the current scope is not a lexical scope",
     );
   }
 
-  return scopeContext;
+  return scope;
 }
 
 export function useMemberOwner(): TSOutputSymbol {
-  const memberScope = useMemberScope();
+  const memberScope = useMemberContext();
   if (!memberScope) {
     throw new Error("A member owner is required but no member scope was found");
   }

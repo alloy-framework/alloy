@@ -8,7 +8,7 @@ import {
   onCleanup,
   Refkey,
   useMemberDeclaration,
-  useMemberScope,
+  useScope,
 } from "@alloy-js/core";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { JsonValue } from "./json-value.jsx";
@@ -65,7 +65,7 @@ export function JsonArray(props: JsonArrayProps) {
 
   if (!("jsValue" in props)) {
     return (
-      <MemberScope owner={memberSymbol}>
+      <MemberScope ownerSymbol={memberSymbol} name="array scope">
         <group>
           [
           <Indent softline trailingBreak>
@@ -82,7 +82,7 @@ export function JsonArray(props: JsonArrayProps) {
   const jsValue = props.jsValue ?? [];
 
   return (
-    <MemberScope owner={memberSymbol}>
+    <MemberScope ownerSymbol={memberSymbol}>
       <group>
         [
         <Indent softline trailingBreak>
@@ -123,8 +123,9 @@ export type JsonArrayElementProps =
  * @see {@link @alloy-js/core#(MemberDeclarationContext:variable)}
  */
 export function JsonArrayElement(props: JsonArrayElementProps) {
-  const memberScope = useMemberScope();
-  if (!memberScope) {
+  const memberScope = useScope();
+  if (!memberScope || !memberScope.isMemberScope) {
+    console.log(memberScope);
     throw new Error("Missing member scope.");
   }
   const owner = memberScope.ownerSymbol as JsonOutputSymbol;

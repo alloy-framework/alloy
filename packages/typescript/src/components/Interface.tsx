@@ -7,8 +7,8 @@ import {
   emitSymbol,
   findKeyedChild,
   findUnkeyedChildren,
-  MemberScope,
   Name,
+  OutputSymbolFlags,
   Refkey,
   Show,
   takeSymbols,
@@ -18,9 +18,11 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import { useTSLexicalScope, useTSMemberScope } from "../symbols/scopes.js";
 import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { TypeParameters } from "./FunctionBase.jsx";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
@@ -42,8 +44,8 @@ const _InterfaceDeclaration = ensureTypeRefContext(
         const takenSymbols = ExprSlot.ref.value;
         for (const symbol of takenSymbols) {
           // ignore non-transient symbols (likely not the result of an expression).
-          if (symbol.flags & OutputSymbolFlags.Transient) {
-            symbol.moveTo(sym);
+          if (symbol.isTransient) {
+            symbol.moveMembersTo(sym);
           }
         }
       }
@@ -64,11 +66,11 @@ const _InterfaceDeclaration = ensureTypeRefContext(
       : <TypeParameters parameters={props.typeParameters} />;
 
     const extendsPart = props.extends ? <> extends {props.extends}</> : "";
-    const flags = OutputSymbolFlags.StaticMemberContainer;
-
     const name = useTSNamePolicy().getName(props.name, "interface");
     const filteredChildren = findUnkeyedChildren(children);
-    const sym = new TSOutputSymbol(name, {
+    const currentScope = useTSLexicalScope();
+
+    const sym = new TSOutputSymbol(name, currentScope.types, {
       refkeys: props.refkey,
       default: props.default,
       export: props.export,
@@ -81,13 +83,7 @@ const _InterfaceDeclaration = ensureTypeRefContext(
           <JSDoc children={props.doc} />
           <hbr />
         </Show>
-        <Declaration
-          {...props}
-          nameKind="interface"
-          flags={flags}
-          kind="type"
-          symbol={sym}
-        >
+        <Declaration {...props} nameKind="interface" kind="type" symbol={sym}>
           interface <Name />
           {sTypeParameters}
           {extendsPart}{" "}
@@ -121,16 +117,15 @@ export interface InterfaceExpressionProps {
 
 export const InterfaceExpression = ensureTypeRefContext(
   (props: InterfaceExpressionProps) => {
-    const symbol = new TSOutputSymbol("", {
-      flags:
-        OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
+    const symbol = new TSOutputSymbol("", undefined, {
+      flags: OutputSymbolFlags.Transient,
     });
 
     emitSymbol(symbol);
 
     return (
       <group>
-        <MemberScope owner={symbol}>
+        <MemberScope ownerSymbol={symbol}>
           <Block>{props.children}</Block>
         </MemberScope>
       </group>
@@ -175,9 +170,9 @@ export function InterfaceMember(props: InterfaceMemberProps) {
     const name = namer.getName(props.name!, "interface-member");
     let sym = undefined;
     if (props.name) {
-      sym = new TSOutputSymbol(name, {
+      const scope = useTSMemberScope();
+      sym = new TSOutputSymbol(name, scope.ownerSymbol.staticMembers, {
         refkeys: props.refkey,
-        flags: OutputSymbolFlags.StaticMember,
         tsFlags:
           TSSymbolFlags.TypeSymbol |
           ((props.nullish ?? props.optional) ?
@@ -191,7 +186,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
         if (taken.size > 1) return;
         const symbol = Array.from(taken)[0];
         if (symbol?.flags & OutputSymbolFlags.Transient) {
-          symbol.moveTo(sym!);
+          symbol.moveMembersTo(sym!);
         }
       });
     } else {

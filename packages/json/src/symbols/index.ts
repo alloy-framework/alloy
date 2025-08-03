@@ -16,9 +16,28 @@ export function ref(refkey: Refkey) {
     if (resolveResult.value === undefined) {
       return "<Unresolved Symbol>";
     }
-    const { lexicalDeclaration, memberPath } = resolveResult.value;
+    const {
+      pathDown,
+      pathUp,
+      lexicalDeclaration,
+      memberPath,
+      symbol,
+      commonScope,
+      fullPath,
+    } = resolveResult.value;
     let ref = "";
-    if (lexicalDeclaration !== sourceFile.symbol) {
+    console.log({
+      commonScope,
+      pathUp,
+      pathDown,
+      lexicalDeclaration,
+      memberPath,
+      symbol,
+      fullPath,
+    });
+
+    const rootScope = fullPath[0];
+    if (rootScope && rootScope.ownerSymbol === sourceFile.symbol) {
       const currentPath = sourceFile.symbol.name;
       const targetPath = lexicalDeclaration.name;
       ref += relative(dirname(currentPath), targetPath);

@@ -6,16 +6,16 @@ import {
 import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
- * The member scope context provides the symbol upon which new member symbols
+ * The member context provides the symbol upon which new member symbols
  * should be created.
  */
-export interface MemberScopeContext {
+export interface MemberContext {
   ownerSymbol: OutputSymbol;
 }
 
-export const MemberScopeContext: ComponentContext<MemberScopeContext> =
-  createNamedContext("MemberScope");
+export const MemberContext: ComponentContext<MemberContext> =
+  createNamedContext("MemberContext");
 
-export function useMemberScope() {
-  return useContext(MemberScopeContext);
+export function useMemberContext() {
+  return useContext(MemberContext);
 }

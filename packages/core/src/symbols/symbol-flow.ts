@@ -1,8 +1,9 @@
 import { isRef, Ref, shallowReactive } from "@vue/reactivity";
 import { Context, effect, getContext, onCleanup } from "../reactivity.js";
 
-import { MemberScopeContext } from "../context/member-scope.js";
+import { MemberContext } from "../context/member-scope.js";
 import { ScopeContext } from "../context/scope.js";
+import { formatSymbolName, trace, TracePhase } from "../tracer.js";
 import { OutputSymbolFlags } from "./flags.js";
 import { OutputSymbol } from "./output-symbol.js";
 
@@ -36,6 +37,15 @@ export function takeSymbols(cb?: (symbol: OutputSymbol) => void) {
 export function emitSymbol(
   symbol: OutputSymbol | Ref<OutputSymbol | undefined>,
 ) {
+  if (isRef(symbol)) {
+    trace(TracePhase.symbol.flow, () => `Emitting ref to symbol`);
+  } else {
+    trace(
+      TracePhase.symbol.flow,
+      () => `Emitting symbol ${formatSymbolName(symbol)}`,
+    );
+  }
+
   let symbolTaker: Context | undefined;
   let context = getContext()!.owner;
   while (context) {
@@ -46,10 +56,13 @@ export function emitSymbol(
 
     if (
       context.context &&
-      (context.context[ScopeContext.id] ||
-        context.context[MemberScopeContext.id])
+      (context.context[ScopeContext.id] || context.context[MemberContext.id])
     ) {
       // don't cross scope boundaries.
+      trace(
+        TracePhase.symbol.flow,
+        () => `Not emitting symbol across scope boundary`,
+      );
       break;
     }
 
@@ -57,6 +70,7 @@ export function emitSymbol(
   }
 
   if (!symbolTaker) {
+    trace(TracePhase.symbol.flow, () => `No symbol taker found, not emitting`);
     return;
   }
 
@@ -76,6 +90,11 @@ export function emitSymbol(
       }
     });
   } else {
+    trace(
+      TracePhase.symbol.flow,
+      () =>
+        `Emitting symbol ${formatSymbolName(symbol)} taken by ${symbolTaker.componentOwner?.name ?? "unknown component"}`,
+    );
     symbolTaker.takenSymbols!.add(symbol);
     onCleanup(() => {
       context!.takenSymbols!.delete(symbol);
@@ -85,11 +104,16 @@ export function emitSymbol(
 
 export function moveTakenMembersTo(baseSymbol: OutputSymbol) {
   const taken = takeSymbols();
-
   effect(() => {
     for (const symbol of taken) {
       if (symbol.flags & OutputSymbolFlags.Transient) {
         symbol.moveMembersTo(baseSymbol);
+      }
+
+      for (const refkey of symbol.refkeys) {
+        if (!baseSymbol.refkeys.includes(refkey)) {
+          baseSymbol.refkeys.push(refkey);
+        }
       }
     }
   });

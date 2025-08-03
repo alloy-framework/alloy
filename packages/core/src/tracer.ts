@@ -339,6 +339,12 @@ export function formatSymbol(symbol: OutputSymbol): string {
     details.push(untrack(() => formatSpaceSymbols(space)));
   }
 
+  if (symbol.ownerSymbol) {
+    details.push(
+      untrack(() => ` ownerSymbol: ${formatSymbolName(symbol.ownerSymbol!)}`),
+    );
+  }
+
   // Show all refkeys with proper formatting
   if (symbol.refkeys && symbol.refkeys.length > 0) {
     details.push(`  refkeys: ${formatRefkeys(symbol.refkeys)}`);

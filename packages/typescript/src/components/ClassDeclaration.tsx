@@ -21,6 +21,7 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
@@ -81,8 +82,10 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
         <hbr />
       </Show>
       <Declaration symbol={sym} export={props.export} default={props.default}>
-        class <Name />
-        {extendsPart} <Block>{props.children}</Block>
+        <MemberScope ownerSymbol={sym}>
+          class <Name />
+          {extendsPart} <Block>{props.children}</Block>
+        </MemberScope>
       </Declaration>
     </>
   );

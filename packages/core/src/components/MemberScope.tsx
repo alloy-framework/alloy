@@ -1,7 +1,9 @@
-import { MemberScopeContext } from "../context/member-scope.js";
+import { MemberContext } from "../context/member-scope.js";
+import { ScopeContext } from "../index.browser.js";
 import type { Children } from "../runtime/component.js";
 import { OutputScope } from "../symbols/output-scope.js";
 import type { OutputSymbol } from "../symbols/output-symbol.js";
+import { Scope } from "./Scope.jsx";
 
 /**
  * Declare a member scope by providing an already created scope. The scope is
@@ -54,12 +56,25 @@ export type MemberScopeProps =
  * scope and instead must be referenced via the owner symbol itself.
  */
 export function MemberScope(props: MemberScopeProps) {
-  const context: MemberScopeContext = {
-    ownerSymbol: props.owner,
+  if ("value" in props) {
+    const sym = props.value;
+    if (!sym.isMemberScope) {
+      throw new Error(
+        "MemberScope must be passed a value that is a member scope.",
+      );
+    }
+  }
+
+  const context: MemberContext = {
+    ownerSymbol:
+      "value" in props ? props.value.ownerSymbol! : props.ownerSymbol!,
   };
+
   return (
-    <MemberScopeContext.Provider value={context}>
-      {props.children}
-    </MemberScopeContext.Provider>
+    <Scope {...props}>
+      <MemberContext.Provider value={context}>
+        {props.children}
+      </MemberContext.Provider>
+    </Scope>
   );
 }

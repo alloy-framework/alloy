@@ -301,7 +301,7 @@ export abstract class OutputSymbol {
     if (!(this.flags & OutputSymbolFlags.Transient)) {
       throw new Error("Can only move members from transient symbols");
     }
-
+    console.log("Member spaces", this.memberSpaces);
     for (const sourceSpace of this.memberSpaces) {
       const targetSpace = targetSymbol.memberSpaceFor(sourceSpace.key);
       if (!targetSpace) {
@@ -341,6 +341,10 @@ export abstract class OutputSymbol {
     return this.spaces[0] instanceof OutputMemberSpace;
   }
 
+  /**
+   * When this is a member symbol, this returns the symbol that this is symbol
+   * is a member of.
+   */
   get ownerSymbol(): OutputSymbol | undefined {
     if (!this.isMemberSymbol) {
       return undefined;

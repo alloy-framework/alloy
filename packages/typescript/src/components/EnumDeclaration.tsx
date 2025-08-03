@@ -3,7 +3,6 @@ import {
   computed,
   Declaration as CoreDeclaration,
   For,
-  MemberScope,
   Name,
   Show,
 } from "@alloy-js/core";
@@ -12,6 +11,7 @@ import { createTypeAndValueSymbol } from "../symbols/index.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 import { JSDoc } from "./JSDoc.jsx";
+import { MemberScope } from "./MemberScope.jsx";
 export interface EnumDeclarationProps extends BaseDeclarationProps {
   /**
    * A JS object representing the enum member names and values.
@@ -41,7 +41,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
       <CoreDeclaration symbol={sym}>
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}enum <Name />{" "}
-        <MemberScope owner={sym}>
+        <MemberScope ownerSymbol={sym}>
           <Block>
             <For each={valueEntries} comma hardline enderPunctuation>
               {([name, value]) => <EnumMember name={name} jsValue={value} />}

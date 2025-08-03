@@ -164,6 +164,7 @@ describe("OutputScope#symbols", () => {
     expect(s1.name).toBe("sym");
     expect(s2.name).toBe("sym_2");
     expect(s3.name).toBe("sym_3");
+    flushJobs();
     expect(scope.symbolNames.has("sym")).toBe(true);
     expect(scope.symbolNames.has("sym_2")).toBe(true);
     expect(scope.symbolNames.has("sym_3")).toBe(true);

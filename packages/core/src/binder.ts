@@ -1,5 +1,5 @@
 import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
-import { useMemberScope } from "./context/member-scope.js";
+import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { effect } from "./reactivity.js";
 import { refkey, Refkey } from "./refkey.js";
@@ -39,7 +39,6 @@ export interface Binder {
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberOwner: TSymbol | undefined,
     key: Refkey,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
@@ -79,7 +78,7 @@ export interface Binder {
  * scope: global scope
  * ├── scope: namespace scope 1
  * │   └── symbol: foo
- * │       └── static member scope
+ * │       └── static members
  * │           └── symbol: bar
  * └── scope: namespace scope 2
  *    └── (resolve bar from here)
@@ -123,33 +122,21 @@ export interface ResolutionResult<
   pathDown: TScope[];
 
   /**
-   * The lexical scope which contains both the reference and the lexical declaration.
+   * The scopes from the root to scope of the lexical declaration.
    */
-  commonScope: TScope | undefined;
+  fullPath: TScope[];
 
   /**
-   * When resolving a member symbol, this is the symbol whose members contain
-   * both the resolved member and the current member scope.
+   * The lexical scope which contains both the reference and the lexical
+   * declaration. Undefined when they do not share a common scope.
    */
-  commonMemberContainer: TSymbol | undefined;
+  commonScope: TScope | undefined;
 
   /**
    * When resolving a member symbol, this is the path of symbols that lead from
    * the lexical declaration to the member symbol.
    */
   memberPath?: TSymbol[];
-
-  /**
-   * When resolving a member symbol, this is the path of symbols that lead from
-   * the base declaration to the member symbol.
-   */
-  memberPathDown?: TSymbol[];
-
-  /**
-   * When resolving a member symbol, this is the path of symbols that lead from
-   * the current member scope to to the common
-   */
-  memberPathUp?: TSymbol[];
 }
 
 export interface NameConflictResolver {
@@ -212,58 +199,62 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberOwner: TSymbol | undefined,
     targetDeclarationBase: TSymbol,
   ): ResolutionResult<TScope, TSymbol> {
     const { memberPath: targetMemberPath, scopeChain: targetChain } =
       scopeAndMemberChain<TScope, TSymbol>(targetDeclarationBase);
+    console.log({ targetMemberPath, targetChain });
+    let targetLexicalDeclaration =
+      targetMemberPath && targetMemberPath.length > 0 ?
+        (targetMemberPath[0].ownerSymbol! as TSymbol)
+      : targetDeclarationBase;
 
-    let memberPathUp;
-    let memberPathDown;
-    let commonMemberContainer;
-    let diffStart = 0;
+    // when we are resolving from a scope which is a member scope and might have
+    // member scope parents, and any symbols in the member path are members of
+    // the member scope's owner symbol (i.e., those symbols are in scope where
+    // the reference is made), we replace the target member path with an entry
+    // on the scope chain.
+
+    // So, first we find all the owner symbols for any member scopes in scope
+    // for the reference.
     const currentChain = scopeChain(currentScope);
-    const currentMemberPath = memberPath(currentMemberOwner);
-
-    if (!targetMemberPath) {
-      memberPathDown = undefined;
-      commonMemberContainer = undefined;
-      memberPathUp = currentMemberPath;
-    } else if (!currentMemberPath) {
-      // we've resolved a member, but are not in member context.
-      memberPathDown = targetMemberPath;
-      memberPathUp = undefined;
-      commonMemberContainer = undefined;
-    } else {
-      while (
-        targetMemberPath[diffStart] &&
-        currentMemberPath[diffStart] &&
-        targetMemberPath[diffStart] === currentMemberPath[diffStart]
-      ) {
-        diffStart++;
+    const inScopeSymbols = new Map<TSymbol, TScope>();
+    for (const scope of currentChain) {
+      if (scope.isMemberScope) {
+        inScopeSymbols.set(scope.ownerSymbol! as TSymbol, scope);
       }
-      memberPathUp = currentMemberPath.slice(diffStart);
-      memberPathDown = targetMemberPath.slice(diffStart);
-      commonMemberContainer = targetMemberPath[diffStart - 1] ?? undefined;
     }
 
-    if (commonMemberContainer) {
-      // no need to calculate scope differences here since we are accessing a member
-      // of our current member container.
-      return {
-        pathUp: [],
-        pathDown: [],
-        lexicalDeclaration: targetMemberPath![0].ownerSymbol! as TSymbol,
-        symbol: targetDeclarationBase,
-        commonScope: undefined,
-        memberPath: targetMemberPath,
-        commonMemberContainer,
-        memberPathUp,
-        memberPathDown,
-      };
+    // then if the lexical declaration symbol's members are in scope, remove the
+    // symbol from the member path and add its corresponding member scope to the
+    // target chain. The test for a member path existing ensures that we only
+    // consider the member scopes "in scope" for the referenced symbol when we
+    // are trying to reference one of its members, and that when we are not
+    // referencing one of its members, we calculate a reference to the container
+    // symbol itself (i.e. FooClass instead of `this`).
+    if (
+      targetMemberPath &&
+      targetMemberPath.length > 0 &&
+      inScopeSymbols.has(targetLexicalDeclaration)
+    ) {
+      targetChain.push(inScopeSymbols.get(targetLexicalDeclaration)!);
+      targetLexicalDeclaration = targetMemberPath[0];
     }
-    diffStart = 0;
 
+    // Then do similarly for the rest of the member path.
+    for (const symbol of targetMemberPath ?? []) {
+      if (inScopeSymbols.has(symbol)) {
+        targetChain.push(inScopeSymbols.get(symbol)!);
+        targetMemberPath!.shift();
+        targetLexicalDeclaration = targetMemberPath![0];
+      } else {
+        break;
+      }
+    }
+
+    // Now that we have the target chain and scopes, we can determine the common
+    // scopes and paths.
+    let diffStart = 0;
     while (
       targetChain[diffStart] &&
       currentChain[diffStart] &&
@@ -281,13 +272,8 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       memberPath: targetMemberPath,
       commonScope,
       symbol: targetDeclarationBase,
-      commonMemberContainer,
-      lexicalDeclaration:
-        targetMemberPath && targetMemberPath.length > 0 ?
-          (targetMemberPath[0].ownerSymbol! as TSymbol)
-        : targetDeclarationBase,
-      memberPathDown,
-      memberPathUp,
+      lexicalDeclaration: targetLexicalDeclaration,
+      fullPath: targetChain,
     };
   }
 
@@ -330,27 +316,6 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     return chain;
   }
 
-  function memberPath<TSymbol extends OutputSymbol>(
-    symbol: TSymbol | undefined,
-  ) {
-    if (!symbol) {
-      return undefined;
-    }
-
-    if (!symbol.isMemberSymbol) {
-      return undefined;
-    }
-
-    const path = [];
-    let currentSymbol = symbol;
-    while (currentSymbol.isMemberSymbol) {
-      path.unshift(currentSymbol);
-      currentSymbol = currentSymbol.ownerSymbol as TSymbol;
-    }
-
-    return path;
-  }
-
   function getSymbolForRefkey<TSymbol extends OutputSymbol = OutputSymbol>(
     refkey: Refkey,
   ) {
@@ -371,7 +336,6 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
-    currentMemberOwner: TSymbol | undefined,
     refkey: Refkey,
   ): ShallowRef<ResolutionResult<TScope, TSymbol> | undefined> {
     const resolvedSymbol = getSymbolForRefkey(refkey);
@@ -406,7 +370,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         () =>
           `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
       );
-      return buildResult(currentScope, currentMemberOwner, symbol);
+      return buildResult(currentScope, symbol);
     });
   }
 
@@ -477,18 +441,14 @@ export function resolve<
   TSymbol extends OutputSymbol,
 >(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>> {
   const scope = useScope();
-  const memberScope = useMemberScope();
+  const memberScope = useMemberContext();
   const binder = scope?.binder ?? memberScope?.ownerSymbol.binder;
 
   if (!binder) {
     throw new Error("Can't resolve refkey without a binder");
   }
 
-  return binder.resolveDeclarationByKey(
-    scope,
-    memberScope?.ownerSymbol,
-    refkey,
-  ) as any;
+  return binder.resolveDeclarationByKey(scope, refkey) as any;
 }
 
 const createSymbolsSymbol: unique symbol = Symbol();

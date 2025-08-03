@@ -10,11 +10,7 @@ describe("dynamic refkey resolution", () => {
     const binder = createOutputBinder();
     const scope = new BasicScope("global", undefined);
 
-    const resolvedSym = binder.resolveDeclarationByKey(
-      undefined,
-      undefined,
-      key,
-    );
+    const resolvedSym = binder.resolveDeclarationByKey(undefined, key);
 
     const sym = new BasicSymbol("foo", scope.symbols, {
       binder,
@@ -28,11 +24,7 @@ describe("dynamic refkey resolution", () => {
     const key = refkey();
     const binder = createOutputBinder();
 
-    const resolvedSym = binder.resolveDeclarationByKey(
-      undefined,
-      undefined,
-      key,
-    );
+    const resolvedSym = binder.resolveDeclarationByKey(undefined, key);
     const scope = new BasicScope("global", undefined);
     const sym = new BasicSymbol("foo", scope.symbols, {
       binder,
@@ -58,17 +50,14 @@ describe("resolving lexical declarations by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(scope, undefined, key).value!;
+    const result = binder.resolveDeclarationByKey(scope, key).value!;
 
     expect(result.symbol).toBe(sym);
     expect(result.commonScope).toBe(scope);
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.pathDown).toEqual([]);
     expect(result.pathUp).toEqual([]);
-    expect(result.commonMemberContainer).toBeUndefined();
     expect(result.memberPath).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-    expect(result.memberPathDown).toBeUndefined();
   });
 
   it("from a parent scope", () => {
@@ -81,18 +70,16 @@ describe("resolving lexical declarations by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(scope, undefined, key).value!;
+    const result = binder.resolveDeclarationByKey(scope, key).value!;
 
     expect(result.symbol).toBe(sym);
     expect(result.commonScope).toBe(scope);
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.pathDown).toEqual([childScope]);
     expect(result.pathUp).toEqual([]);
-    expect(result.commonMemberContainer).toBeUndefined();
     expect(result.memberPath).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-    expect(result.memberPathDown).toBeUndefined();
   });
+
   it("from a child scope", () => {
     const key = refkey();
     const binder = createOutputBinder();
@@ -103,21 +90,14 @@ describe("resolving lexical declarations by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(
-      childScope,
-      undefined,
-      key,
-    ).value!;
+    const result = binder.resolveDeclarationByKey(childScope, key).value!;
 
     expect(result.symbol).toBe(sym);
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.commonScope).toBe(scope);
     expect(result.pathDown).toEqual([]);
     expect(result.pathUp).toEqual([childScope]);
-    expect(result.commonMemberContainer).toBeUndefined();
     expect(result.memberPath).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-    expect(result.memberPathDown).toBeUndefined();
   });
 
   it("from a parallel scope", () => {
@@ -132,52 +112,14 @@ describe("resolving lexical declarations by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(
-      childScope2,
-      undefined,
-      key,
-    ).value!;
+    const result = binder.resolveDeclarationByKey(childScope2, key).value!;
 
     expect(result.symbol).toBe(sym);
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.pathDown).toEqual([childScope1]);
     expect(result.pathUp).toEqual([childScope2]);
     expect(result.commonScope).toBe(scope);
-    expect(result.commonMemberContainer).toBeUndefined();
     expect(result.memberPath).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-    expect(result.memberPathDown).toBeUndefined();
-  });
-
-  it("from a parallel scope, while defining a member", () => {
-    const key = refkey();
-    const binder = createOutputBinder();
-    const scope = new BasicScope("global", undefined);
-    const childScope1 = new BasicScope("child", scope);
-    const childScope2 = new BasicScope("child2", scope);
-
-    const sym = new BasicSymbol("foo", childScope1.symbols, {
-      binder,
-      refkeys: [key],
-    });
-
-    const definingOwner = new BasicSymbol("root", childScope2.symbols);
-
-    const result = binder.resolveDeclarationByKey(
-      childScope2,
-      definingOwner,
-      key,
-    ).value!;
-
-    expect(result.symbol).toBe(sym);
-    expect(result.lexicalDeclaration).toBe(sym);
-    expect(result.pathDown).toEqual([childScope1]);
-    expect(result.pathUp).toEqual([childScope2]);
-    expect(result.commonScope).toBe(scope);
-    expect(result.commonMemberContainer).toBeUndefined();
-    expect(result.memberPath).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-    expect(result.memberPathDown).toBeUndefined();
   });
 });
 
@@ -195,16 +137,12 @@ describe("resolving members by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(
-      globalScope,
-      undefined,
-      key,
-    ).value!;
+    const result = binder.resolveDeclarationByKey(globalScope, key).value!;
 
     // we successfully resolve the symbol, so:
     expect(result.symbol).toBe(bar);
 
-    // the member off of a declaration in our current scope, so:
+    // the member is off of a declaration in our current scope, so:
     expect(result.commonScope).toBe(globalScope);
     expect(result.pathUp.length).toBe(0);
     expect(result.pathDown.length).toBe(0);
@@ -212,13 +150,8 @@ describe("resolving members by refkey", () => {
     // the declaration symbol carrying the resolved member is:
     expect(result.lexicalDeclaration).toBe(foo);
 
-    // we aren't in a member declaration context, so:
-    expect(result.commonMemberContainer).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
-
     // the path to the resolved symbol is
     expect(result.memberPath).toEqual([bar]);
-    expect(result.memberPathDown).toEqual([bar]);
   });
 
   it("nested members", () => {
@@ -238,21 +171,14 @@ describe("resolving members by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(
-      globalScope,
-      undefined,
-      key,
-    ).value!;
+    const result = binder.resolveDeclarationByKey(globalScope, key).value!;
 
     expect(result.symbol).toBe(baz);
     expect(result.commonScope).toBe(globalScope);
     expect(result.pathUp.length).toBe(0);
     expect(result.pathDown.length).toBe(0);
     expect(result.lexicalDeclaration).toBe(foo);
-    expect(result.commonMemberContainer).toBeUndefined();
-    expect(result.memberPathUp).toBeUndefined();
     expect(result.memberPath).toEqual([bar, baz]);
-    expect(result.memberPathDown).toEqual([bar, baz]);
   });
 
   it("nested members, while declaring a neighboring member", () => {
@@ -263,8 +189,16 @@ describe("resolving members by refkey", () => {
       binder,
     });
 
+    const fooMemberScope = new BasicScope("foo members", globalScope, {
+      ownerSymbol: foo,
+    });
+
     const bar = new BasicSymbol("bar", foo.staticMembers, {
       binder,
+    });
+
+    const barMemberScope = new BasicScope("bar members", fooMemberScope, {
+      ownerSymbol: bar,
     });
 
     const baz = new BasicSymbol("baz", bar.staticMembers, {
@@ -272,17 +206,14 @@ describe("resolving members by refkey", () => {
       refkeys: [key],
     });
 
-    const result = binder.resolveDeclarationByKey(globalScope, bar, key).value!;
+    const result = binder.resolveDeclarationByKey(barMemberScope, key).value!;
 
     expect(result.symbol).toBe(baz);
-    expect(result.commonScope).toBe(globalScope);
+    expect(result.commonScope).toBe(barMemberScope);
     expect(result.pathUp.length).toBe(0);
     expect(result.pathDown.length).toBe(0);
-    expect(result.lexicalDeclaration).toBe(foo);
-    expect(result.commonMemberContainer).toBe(bar);
-    expect(result.memberPathUp).toEqual([]);
-    expect(result.memberPath).toEqual([bar, baz]);
-    expect(result.memberPathDown).toEqual([baz]);
+    expect(result.lexicalDeclaration).toBe(baz);
+    expect(result.memberPath).toEqual([baz]);
   });
 
   it("nested members, while declaring a neighboring nested member", () => {
@@ -293,8 +224,16 @@ describe("resolving members by refkey", () => {
       binder,
     });
 
+    const fooMemberScope = new BasicScope("foo members", globalScope, {
+      ownerSymbol: foo,
+    });
+
     const bar = new BasicSymbol("bar", foo.staticMembers, {
       binder,
+    });
+
+    const barMemberScope = new BasicScope("bar members", fooMemberScope, {
+      ownerSymbol: bar,
     });
 
     const baz = new BasicSymbol("baz", bar.staticMembers, {
@@ -302,24 +241,21 @@ describe("resolving members by refkey", () => {
       refkeys: [key],
     });
 
+    const bazMemberScope = new BasicScope("baz members", barMemberScope, {
+      ownerSymbol: baz,
+    });
+
     const otherBaz = new BasicSymbol("otherBaz", bar.staticMembers, {
       binder,
     });
 
-    const result = binder.resolveDeclarationByKey(
-      globalScope,
-      otherBaz,
-      key,
-    ).value!;
+    const result = binder.resolveDeclarationByKey(bazMemberScope, key).value!;
 
     expect(result.symbol).toBe(baz);
-    expect(result.commonScope).toBe(globalScope);
-    expect(result.pathUp.length).toBe(0);
+    expect(result.commonScope).toBe(barMemberScope);
+    expect(result.pathUp).toEqual([bazMemberScope]);
     expect(result.pathDown.length).toBe(0);
-    expect(result.lexicalDeclaration).toBe(foo);
-    expect(result.commonMemberContainer).toBe(bar);
-    expect(result.memberPathUp).toEqual([otherBaz]);
-    expect(result.memberPath).toEqual([bar, baz]);
-    expect(result.memberPathDown).toEqual([baz]);
+    expect(result.lexicalDeclaration).toBe(baz);
+    expect(result.memberPath).toEqual([otherBaz]);
   });
 });

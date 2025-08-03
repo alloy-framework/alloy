@@ -236,17 +236,22 @@ export class ReactiveUnionSet<T> extends Set<T> {
     this._indexes.push({
       add: (value: T) => {
         effect((oldValue) => {
-          for (const id of [oldValue].flat()) {
-            index.delete(id as U);
+          if (oldValue) {
+            for (const id of [oldValue].flat()) {
+              index.delete(id as U);
+            }
           }
 
-          const mappedValue = mapper(value);
+          // we filter to avoid overwriting existing values (first wins)
+          const mappedValues = [mapper(value)]
+            .flat()
+            .filter((v) => untrack(() => !index.has(v as U)));
 
-          for (const id of [mappedValue].flat()) {
+          for (const id of mappedValues) {
             index.set(id as U, value as any);
           }
 
-          return mappedValue;
+          return mappedValues;
         });
       },
       delete: (value: T) => {

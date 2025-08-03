@@ -15,6 +15,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: ./.github/actions/setup
 
       - name: Install dependencies
@@ -26,7 +29,14 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - run: pnpx pkg-pr-new publish './packages/*' --pnpm
+      - name: Bump version to pr version
+        if: github.event_name == 'pull_request'
+        run: pnpm chronus version --prerelease "{nextVersion}-pr.${{ github.event.pull_request.number }}.${{ github.run_number }}"
+
+      - name: Publish preview versions
+        if: github.event_name == 'pull_request'
+        run: pnpm tsx eng/pkg-pr-new.ts
+
       - name: Generate docs
         working-directory: ./packages/docs
         run: pnpm run generate-docs
@@ -53,9 +63,6 @@ jobs:
 
       - run: pnpm install
         name: Install dependencies
-
-      - run: pnpm --filter="@alloy-js/prettier-plugin-alloy..." run  build
-        name: Build
 
       - run: pnpm run format:check
         name: Check formatting

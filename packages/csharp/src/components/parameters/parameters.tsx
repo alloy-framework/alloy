@@ -10,7 +10,7 @@ import {
 } from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../../symbols/scopes.js";
+import { useCSharpMemberScope } from "../../symbols/scopes.js";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
@@ -27,17 +27,12 @@ export interface ParameterProps {
 /** Define a parameter to be used in class or interface method. */
 export function Parameter(props: ParameterProps) {
   const name = useCSharpNamePolicy().getName(props.name, "parameter");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "constructor-decl" &&
-      scope.name !== "method-decl" &&
-      scope.name !== "class-decl")
-  ) {
-    throw new Error(
-      "can't define a parameter outside of a constructor-decl or method-decl scope",
-    );
-  }
+  const scope = useCSharpMemberScope([
+    "constructor-decl",
+    "method-decl",
+    "class-decl",
+    "record-decl",
+  ]);
 
   const memberSymbol = new CSharpOutputSymbol(name, {
     scope,

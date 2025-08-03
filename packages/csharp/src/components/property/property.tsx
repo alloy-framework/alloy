@@ -16,7 +16,10 @@ import {
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import {
+  CSharpMemberScope,
+  useCSharpMemberScope,
+} from "../../symbols/scopes.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
@@ -119,17 +122,11 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
  */
 export function Property(props: PropertyProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "class-decl" &&
-      scope.name !== "record-decl" &&
-      scope.name !== "struct-decl")
-  ) {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
+  const scope = useCSharpMemberScope([
+    "class-decl",
+    "record-decl",
+    "struct-decl",
+  ]);
 
   const propertySymbol = new CSharpOutputSymbol(name, {
     scope,

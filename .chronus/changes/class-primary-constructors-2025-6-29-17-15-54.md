@@ -5,4 +5,4 @@ packages:
   - "@alloy-js/csharp"
 ---
 
-Add suport for class primary constructors
+Add suport for class/record primary constructors

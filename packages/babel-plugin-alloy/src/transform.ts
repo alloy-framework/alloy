@@ -9,7 +9,6 @@ const FormattingCommands = {
   Group: "group",
   Indent: "indent",
 };
-const visited = new Set();
 export function transformJSX(
   path: NodePath<
     | t.JSXElement
@@ -19,6 +18,28 @@ export function transformJSX(
     | t.JSXText
   >,
   state: { opts: Options },
+) {
+  return transformJSXWorker(path, state, new Set());
+}
+
+type VisitedSet = Set<
+  | t.JSXElement
+  | t.JSXFragment
+  | t.JSXExpressionContainer
+  | t.JSXSpreadChild
+  | t.JSXText
+>;
+
+function transformJSXWorker(
+  path: NodePath<
+    | t.JSXElement
+    | t.JSXFragment
+    | t.JSXExpressionContainer
+    | t.JSXSpreadChild
+    | t.JSXText
+  >,
+  state: { opts: Options },
+  visited: VisitedSet,
 ) {
   const node = path.node;
   if (visited.has(node)) {
@@ -30,6 +51,7 @@ export function transformJSX(
     transformElement(
       path as NodePath<t.JSXElement | t.JSXFragment>,
       state.opts,
+      visited,
     );
   }
 
@@ -39,6 +61,7 @@ export function transformJSX(
 function transformElement(
   path: NodePath<t.JSXElement | t.JSXFragment>,
   opts: Options,
+  visited: VisitedSet,
 ) {
   const children = path.get("children");
   if (children.length === 0) {
@@ -48,7 +71,7 @@ function transformElement(
   if (!opts.legacyWhitespace) {
     stripLeadingWhitespace(path);
     path.get("children").forEach((child) => {
-      transformJSX(child, { opts });
+      transformJSXWorker(child, { opts }, visited);
     });
     return;
   }
@@ -96,7 +119,7 @@ function transformElement(
   });
 
   path.get("children").forEach((child) => {
-    transformJSX(child, { opts });
+    transformJSXWorker(child, { opts }, visited);
   });
 
   function createIndent() {

@@ -15,7 +15,10 @@ import {
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import {
+  CSharpMemberScope,
+  useCSharpMemberScope,
+} from "../../symbols/scopes.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
@@ -111,15 +114,7 @@ export interface MethodProps extends AccessModifiers, MethodModifiers {
 // a C# class method
 export function Method(props: MethodProps) {
   const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "class-decl" && scope.name !== "struct-decl")
-  ) {
-    throw new Error(
-      "can't define a class method outside of a class or struct scope",
-    );
-  }
+  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
 
   const methodSymbol = new CSharpOutputSymbol(name, {
     scope,

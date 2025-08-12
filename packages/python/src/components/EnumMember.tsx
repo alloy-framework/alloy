@@ -1,4 +1,4 @@
-import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
+import { Children, Refkey, Show } from "@alloy-js/core";
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
@@ -62,10 +62,8 @@ export function EnumMember(props: EnumMemberProps) {
     props.name,
     {
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMember,
     },
     "enum-member",
-    true,
   );
   const valueCode =
     props.jsValue !== undefined ? <Atom jsValue={props.jsValue} /> : value;

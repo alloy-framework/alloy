@@ -1,7 +1,7 @@
 import { OutputSpace } from "@alloy-js/core";
 import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 
-export type MethodKinds = "method" | "constructor";
+export type MethodKinds = "ordinary" | "constructor";
 
 export class MethodSymbol extends CSharpSymbol {
   public readonly symbolKind = "method";

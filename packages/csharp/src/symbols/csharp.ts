@@ -58,7 +58,7 @@ export class CSharpSymbol extends OutputSymbol {
 
   constructor(
     name: string,
-    spaces: OutputSpace | OutputSpace[] | undefined,
+    spaces: OutputSpace[] | OutputSpace | undefined,
     options: CSharpSymbolOptions = {},
   ) {
     super(name, spaces, options);
@@ -288,8 +288,7 @@ export function accessibilityFromProps(props: AccessModifiers) {
     }
   }
 
-  // todo: what is the default here?
-  return "internal";
+  return "private";
 }
 
 export function nonAccessibilityFromProps(

@@ -21,7 +21,7 @@ it("declares class with some fields", () => {
     public class TestClass
     {
         public string MemberOne;
-        private int memberTwo;
+        private int _memberTwo;
     }
   `);
 });

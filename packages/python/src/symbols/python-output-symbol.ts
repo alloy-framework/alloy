@@ -1,12 +1,11 @@
-import { OutputSymbol, OutputSymbolOptions } from "@alloy-js/core";
-import { PythonMemberScope } from "./python-member-scope.js";
+import { OutputSymbol, OutputSymbolOptions, SymbolTable } from "@alloy-js/core";
 
-export interface CreatePythonSymbolOptions extends OutputSymbolOptions {
+export interface PythonOutputSymbolOptions extends OutputSymbolOptions {
   module?: string;
 }
 
 export interface CreatePythonSymbolFunctionOptions
-  extends CreatePythonSymbolOptions {
+  extends PythonOutputSymbolOptions {
   name: string;
 }
 
@@ -14,8 +13,14 @@ export interface CreatePythonSymbolFunctionOptions
  * Represents an 'exported' symbol from a .py file. Class, enum, interface etc.
  */
 export class PythonOutputSymbol extends OutputSymbol {
-  constructor(name: string, options: CreatePythonSymbolOptions) {
-    super(name, options);
+  static readonly memberSpaces = ["static", "instance"] as const;
+
+  constructor(
+    name: string,
+    spaces: SymbolTable[] | SymbolTable | undefined,
+    options: PythonOutputSymbolOptions,
+  ) {
+    super(name, spaces, options);
     this.#module = options.module ?? undefined;
   }
 
@@ -26,11 +31,33 @@ export class PythonOutputSymbol extends OutputSymbol {
     return this.#module;
   }
 
-  set module(value: string | undefined) {
-    this.#module = value;
+  get staticMembers() {
+    return this.memberSpaceFor("static")!;
   }
 
-  get instanceMemberScope() {
-    return super.instanceMemberScope as PythonMemberScope | undefined;
+  get instanceMembers() {
+    return this.memberSpaceFor("instance")!;
+  }
+
+  get isStaticMemberSymbol() {
+    return !this.isInstanceMemberSymbol;
+  }
+
+  get isInstanceMemberSymbol() {
+    return this.spaces.some((s) => s.key === "instance");
+  }
+
+  copy() {
+    const copy = new PythonOutputSymbol(this.name, undefined, {
+      binder: this.binder,
+      aliasTarget: this.aliasTarget,
+      module: this.module,
+      flags: this.flags,
+      metadata: this.metadata,
+    });
+
+    this.initializeCopy(copy);
+
+    return copy;
   }
 }

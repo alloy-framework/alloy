@@ -57,7 +57,9 @@ describe("resolving lexical declarations by refkey", () => {
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.pathDown).toEqual([]);
     expect(result.pathUp).toEqual([]);
-    expect(result.memberPath).toBeUndefined();
+    expect(result.memberPath).toEqual([]);
+    expect(result.fullReferencePath).toEqual([scope]);
+    expect(result.fullSymbolPath).toEqual([scope]);
   });
 
   it("from a parent scope", () => {
@@ -77,7 +79,9 @@ describe("resolving lexical declarations by refkey", () => {
     expect(result.lexicalDeclaration).toBe(sym);
     expect(result.pathDown).toEqual([childScope]);
     expect(result.pathUp).toEqual([]);
-    expect(result.memberPath).toBeUndefined();
+    expect(result.memberPath).toEqual([]);
+    expect(result.fullReferencePath).toEqual([scope]);
+    expect(result.fullSymbolPath).toEqual([scope, childScope]);
   });
 
   it("from a child scope", () => {
@@ -97,7 +101,9 @@ describe("resolving lexical declarations by refkey", () => {
     expect(result.commonScope).toBe(scope);
     expect(result.pathDown).toEqual([]);
     expect(result.pathUp).toEqual([childScope]);
-    expect(result.memberPath).toBeUndefined();
+    expect(result.memberPath).toEqual([]);
+    expect(result.fullReferencePath).toEqual([scope, childScope]);
+    expect(result.fullSymbolPath).toEqual([scope]);
   });
 
   it("from a parallel scope", () => {
@@ -119,7 +125,34 @@ describe("resolving lexical declarations by refkey", () => {
     expect(result.pathDown).toEqual([childScope1]);
     expect(result.pathUp).toEqual([childScope2]);
     expect(result.commonScope).toBe(scope);
-    expect(result.memberPath).toBeUndefined();
+    expect(result.memberPath).toEqual([]);
+    expect(result.fullReferencePath).toEqual([scope, childScope2]);
+    expect(result.fullSymbolPath).toEqual([scope, childScope1]);
+  });
+
+  it("from a member scope", () => {
+    const key = refkey();
+    const binder = createOutputBinder();
+    const globalScope = new BasicScope("global", undefined, { binder });
+    const object = new BasicSymbol("object", globalScope.symbols, {
+      binder,
+      refkeys: key,
+    });
+    const memberScope = new BasicScope("object members", globalScope, {
+      binder,
+      ownerSymbol: object,
+    });
+
+    const result = binder.resolveDeclarationByKey(memberScope, key).value!;
+
+    expect(result.symbol).toBe(object);
+    expect(result.lexicalDeclaration).toBe(object);
+    expect(result.commonScope).toBe(globalScope);
+    expect(result.pathDown).toEqual([]);
+    expect(result.pathUp).toEqual([memberScope]);
+    expect(result.memberPath).toEqual([]);
+    expect(result.fullReferencePath).toEqual([globalScope, memberScope]);
+    expect(result.fullSymbolPath).toEqual([globalScope]);
   });
 });
 
@@ -152,6 +185,8 @@ describe("resolving members by refkey", () => {
 
     // the path to the resolved symbol is
     expect(result.memberPath).toEqual([bar]);
+    expect(result.fullReferencePath).toEqual([globalScope]);
+    expect(result.fullSymbolPath).toEqual([globalScope]);
   });
 
   it("nested members", () => {
@@ -179,6 +214,8 @@ describe("resolving members by refkey", () => {
     expect(result.pathDown.length).toBe(0);
     expect(result.lexicalDeclaration).toBe(foo);
     expect(result.memberPath).toEqual([bar, baz]);
+    expect(result.fullReferencePath).toEqual([globalScope]);
+    expect(result.fullSymbolPath).toEqual([globalScope]);
   });
 
   it("nested members, while declaring a neighboring member", () => {
@@ -214,6 +251,16 @@ describe("resolving members by refkey", () => {
     expect(result.pathDown.length).toBe(0);
     expect(result.lexicalDeclaration).toBe(baz);
     expect(result.memberPath).toEqual([baz]);
+    expect(result.fullReferencePath).toEqual([
+      globalScope,
+      fooMemberScope,
+      barMemberScope,
+    ]);
+    expect(result.fullSymbolPath).toEqual([
+      globalScope,
+      fooMemberScope,
+      barMemberScope,
+    ]);
   });
 
   it("nested members, while declaring a neighboring nested member", () => {
@@ -257,5 +304,16 @@ describe("resolving members by refkey", () => {
     expect(result.pathDown.length).toBe(0);
     expect(result.lexicalDeclaration).toBe(baz);
     expect(result.memberPath).toEqual([otherBaz]);
+    expect(result.fullReferencePath).toEqual([
+      globalScope,
+      fooMemberScope,
+      barMemberScope,
+      bazMemberScope,
+    ]);
+    expect(result.fullSymbolPath).toEqual([
+      globalScope,
+      fooMemberScope,
+      barMemberScope,
+    ]);
   });
 });

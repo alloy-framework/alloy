@@ -1,7 +1,6 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  MemberScope,
   OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
@@ -73,19 +72,8 @@ export function Declaration(props: DeclarationProps) {
         flags: props.flags,
       },
       props.nameKind!,
-      true,
     );
   }
 
-  function withMemberScope(children: Children) {
-    return <MemberScope owner={sym}>{children}</MemberScope>;
-  }
-
-  let children: Children = () => props.children;
-
-  if (sym.flags & OutputSymbolFlags.MemberContainer) {
-    children = withMemberScope(children);
-  }
-
-  return <CoreDeclaration symbol={sym}>{children}</CoreDeclaration>;
+  return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;
 }

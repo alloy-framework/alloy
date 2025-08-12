@@ -25,6 +25,8 @@ export function SourceFile(props: SourceFileProps) {
   const sourceFileScope = new CSharpSourceFileScope(props.path);
 
   const nsContext = useNamespaceContext();
+  const globalNs = getGlobalNamespace(useBinder());
+  const nsSymbol = nsContext ? nsContext.symbol : globalNs;
   const nsRef = nsContext ? nsContext.symbol.name : undefined;
 
   return (
@@ -43,7 +45,7 @@ export function SourceFile(props: SourceFileProps) {
             <hbr />
           </>
         )}
-        <Show when={!!nsContext}>
+        <Show when={!!nsContext && nsSymbol !== globalNs}>
           <Show when={sourceFileScope.hasBlockNamespace}>
             namespace {nsRef}
             {" {"}
@@ -65,7 +67,7 @@ export function SourceFile(props: SourceFileProps) {
             {"}"}
           </Show>
         </Show>
-        <Show when={!nsContext}>
+        <Show when={!nsContext || nsSymbol === globalNs}>
           <NamespaceScope symbol={getGlobalNamespace(useBinder())}>
             {props.children}
           </NamespaceScope>

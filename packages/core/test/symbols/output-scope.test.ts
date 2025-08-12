@@ -1,43 +1,11 @@
 import { reactive, watch } from "@vue/reactivity";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Binder, createOutputBinder } from "../../src/binder.js";
+import { describe, expect, it, vi } from "vitest";
 import { Refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
-import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
 import { OutputScopeFlags } from "../../src/symbols/flags.js";
-import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
-import { OutputSpace } from "../../src/symbols/output-space.js";
-import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
-
-let binder: Binder;
-beforeEach(() => {
-  binder = createOutputBinder();
-});
-
-function createScope(
-  name: string,
-  parent?: BasicScope,
-  options?: OutputScopeOptions,
-) {
-  return new BasicScope(name, parent, {
-    binder,
-    ...options,
-  });
-}
-
-function createSymbol(
-  name: string,
-  scope: BasicScope | OutputSpace,
-  options?: OutputSymbolOptions,
-) {
-  const space = scope instanceof BasicScope ? scope.symbols : scope;
-  return new BasicSymbol(name, space, {
-    binder,
-    ...options,
-  });
-}
+import { binder, createScope, createSymbol } from "./utils.js";
 
 describe("OutputScope constructor", () => {
   it("initializes properties correctly with default options", () => {
@@ -47,7 +15,7 @@ describe("OutputScope constructor", () => {
     expect(scope.id).toEqual(expect.any(Number));
     expect(scope.flags).toBe(OutputScopeFlags.None);
     expect(scope.metadata).toEqual({});
-    expect(scope.symbols.symbols).toBeInstanceOf(SymbolTable);
+    expect(scope.symbols).toBeInstanceOf(SymbolTable);
     expect(scope.symbolNames.size).toBe(0);
     expect(scope.children.size).toBe(0);
   });
@@ -148,9 +116,9 @@ describe("OutputScope#symbols", () => {
     const sym2 = createSymbol("sym2", scope);
     flushJobs();
 
-    expect(scope.symbols.symbols.size).toBe(2);
-    expect(scope.symbols.symbols.has(sym1)).toBe(true);
-    expect(scope.symbols.symbols.has(sym2)).toBe(true);
+    expect(scope.symbols.size).toBe(2);
+    expect(scope.symbols.has(sym1)).toBe(true);
+    expect(scope.symbols.has(sym2)).toBe(true);
   });
 
   it("resolves symbol name conflicts", () => {
@@ -175,15 +143,15 @@ describe("OutputScope#symbols", () => {
     const sym = createSymbol("sym", scope);
     flushJobs();
 
-    expect(scope.symbols.symbols.size).toBe(1);
-    expect(scope.symbols.symbols.has(sym)).toBe(true);
+    expect(scope.symbols.size).toBe(1);
+    expect(scope.symbols.has(sym)).toBe(true);
     expect(scope.symbolNames.has("sym")).toBe(true);
 
     sym.delete();
     flushJobs();
 
-    expect(scope.symbols.symbols.size).toBe(0);
-    expect(scope.symbols.symbols.has(sym)).toBe(false);
+    expect(scope.symbols.size).toBe(0);
+    expect(scope.symbols.has(sym)).toBe(false);
     expect(scope.symbolNames.has("sym")).toBe(false);
   });
 
@@ -193,16 +161,16 @@ describe("OutputScope#symbols", () => {
     const sym = createSymbol("sym", scope1);
     flushJobs();
 
-    expect(scope1.symbols.symbols.size).toBe(1);
-    expect(scope2.symbols.symbols.size).toBe(0);
+    expect(scope1.symbols.size).toBe(1);
+    expect(scope2.symbols.size).toBe(0);
 
     sym.spaces = [scope2.symbols];
     flushJobs();
 
-    expect(scope1.symbols.symbols.size).toBe(0);
-    expect(scope2.symbols.symbols.size).toBe(1);
-    expect(scope1.symbols.symbols.has(sym)).toBe(false);
-    expect(scope2.symbols.symbols.has(sym)).toBe(true);
+    expect(scope1.symbols.size).toBe(0);
+    expect(scope2.symbols.size).toBe(1);
+    expect(scope1.symbols.has(sym)).toBe(false);
+    expect(scope2.symbols.has(sym)).toBe(true);
     expect(scope1.symbolNames.has("sym")).toBe(false);
     expect(scope2.symbolNames.has("sym")).toBe(true);
   });
@@ -317,14 +285,14 @@ describe("OutputScope#copy", () => {
   it("clones basic properties", () => {
     const newScope = new BasicScope("newScope", { binder });
     const clonedScope = originalScope.copyTo(newScope);
-    console.log(originalScope.symbols.symbols.size);
+    console.log(originalScope.symbols.size);
     expect(clonedScope.name).toBe(originalScope.name);
     expect(clonedScope.flags).toBe(originalScope.flags);
     expect(clonedScope.id).not.toBe(originalScope.id);
 
     expect(clonedScope.metadata).toEqual(originalScope.metadata);
 
-    expect(clonedScope.symbols.symbols.size).toBe(1);
+    expect(clonedScope.symbols.size).toBe(1);
     expect(clonedScope.children.size).toBe(1);
   });
 

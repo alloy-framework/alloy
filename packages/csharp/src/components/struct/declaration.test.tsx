@@ -6,7 +6,6 @@ import { Constructor } from "../constructor/constructor.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { StructDeclaration } from "./declaration.jsx";
 
@@ -78,24 +77,21 @@ describe("with type parameters", () => {
 
     expect(
       <TestNamespace>
-        <SourceFile path="Test.cs">
-          <StructDeclaration public name="Test" typeParameters={typeParameters}>
-            <List>
-              <Property name="PropA" type={typeParameters[0].refkey} get set />
-              <Property name="PropB" type={typeParameters[1].refkey} get set />
-            </List>
-          </StructDeclaration>
-        </SourceFile>
+        <StructDeclaration public name="Test" typeParameters={typeParameters}>
+          <List>
+            <Property name="PropA" type={typeParameters[0].refkey} get set />
+            <Property name="PropB" type={typeParameters[1].refkey} get set />
+          </List>
+        </StructDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode
-      {
+      namespace TestCode;
+      
           public struct Test<T, U>
           {
               T PropA { get; set; }
               U PropB { get; set; }
           }
-      }
     `);
   });
 

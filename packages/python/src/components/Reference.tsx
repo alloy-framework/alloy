@@ -13,6 +13,7 @@ export interface ReferenceProps {
  * It takes a `refkey` prop which is the key of the symbol to reference.
  */
 export function Reference({ refkey }: ReferenceProps) {
+  console.log(">>>>>>>>>>>>>>>>>>>>Hre");
   const reference = ref(refkey);
   const symbolRef = computed(() => reference()[1]);
 

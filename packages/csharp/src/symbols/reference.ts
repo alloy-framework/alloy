@@ -66,7 +66,7 @@ export function ref(refkey: Refkey): () => string {
     // from the target symbol to corresponding namespace scopes of the reference.
     const refNsLocations = pathUp.map((scope) => {
       if (scope instanceof CSharpNamespaceScope) {
-        return scope.namespaceSymbol;
+        return scope.ownerSymbol;
       }
       return undefined;
     });
@@ -94,7 +94,7 @@ export function ref(refkey: Refkey): () => string {
         break;
       }
     }
-    if (targetNamespace && !targetNamespace.namespaceSymbol.isGlobal) {
+    if (targetNamespace && !targetNamespace.ownerSymbol.isGlobal) {
       if (pathUp.indexOf(targetNamespace) === -1) {
         refSfScope.addUsing(targetNamespace.enclosingNamespace!);
       }

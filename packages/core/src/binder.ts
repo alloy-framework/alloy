@@ -124,7 +124,12 @@ export interface ResolutionResult<
   /**
    * The scopes from the root to scope of the lexical declaration.
    */
-  fullPath: TScope[];
+  fullSymbolPath: TScope[];
+
+  /**
+   * The scopes from the root to the scope of the reference.
+   */
+  fullReferencePath: TScope[];
 
   /**
    * The lexical scope which contains both the reference and the lexical
@@ -136,7 +141,7 @@ export interface ResolutionResult<
    * When resolving a member symbol, this is the path of symbols that lead from
    * the lexical declaration to the member symbol.
    */
-  memberPath?: TSymbol[];
+  memberPath: TSymbol[];
 }
 
 export interface NameConflictResolver {
@@ -203,12 +208,11 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   ): ResolutionResult<TScope, TSymbol> {
     const { memberPath: targetMemberPath, scopeChain: targetChain } =
       scopeAndMemberChain<TScope, TSymbol>(targetDeclarationBase);
-    console.log({ targetMemberPath, targetChain });
+
     let targetLexicalDeclaration =
       targetMemberPath && targetMemberPath.length > 0 ?
         (targetMemberPath[0].ownerSymbol! as TSymbol)
       : targetDeclarationBase;
-
     // when we are resolving from a scope which is a member scope and might have
     // member scope parents, and any symbols in the member path are members of
     // the member scope's owner symbol (i.e., those symbols are in scope where
@@ -218,6 +222,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     // So, first we find all the owner symbols for any member scopes in scope
     // for the reference.
     const currentChain = scopeChain(currentScope);
+
+    console.log("Start state", {
+      currentChain,
+      targetMemberPath,
+      targetLexicalDeclaration,
+      targetChain,
+    });
+
     const inScopeSymbols = new Map<TSymbol, TScope>();
     for (const scope of currentChain) {
       if (scope.isMemberScope) {
@@ -225,13 +237,12 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       }
     }
 
+    console.log("Owner symbols: ", Array.from(inScopeSymbols.keys()));
     // then if the lexical declaration symbol's members are in scope, remove the
     // symbol from the member path and add its corresponding member scope to the
     // target chain. The test for a member path existing ensures that we only
     // consider the member scopes "in scope" for the referenced symbol when we
-    // are trying to reference one of its members, and that when we are not
-    // referencing one of its members, we calculate a reference to the container
-    // symbol itself (i.e. FooClass instead of `this`).
+    // are trying to reference one of its members.
     if (
       targetMemberPath &&
       targetMemberPath.length > 0 &&
@@ -242,7 +253,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     }
 
     // Then do similarly for the rest of the member path.
-    for (const symbol of targetMemberPath ?? []) {
+    for (const symbol of targetMemberPath) {
       if (inScopeSymbols.has(symbol)) {
         targetChain.push(inScopeSymbols.get(symbol)!);
         targetMemberPath!.shift();
@@ -252,6 +263,12 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       }
     }
 
+    console.log({
+      currentChain,
+      targetMemberPath,
+      targetLexicalDeclaration,
+      targetChain,
+    });
     // Now that we have the target chain and scopes, we can determine the common
     // scopes and paths.
     let diffStart = 0;
@@ -273,7 +290,8 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       commonScope,
       symbol: targetDeclarationBase,
       lexicalDeclaration: targetLexicalDeclaration,
-      fullPath: targetChain,
+      fullSymbolPath: targetChain,
+      fullReferencePath: currentChain,
     };
   }
 
@@ -287,7 +305,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     TSymbol extends OutputSymbol,
   >(symbol: TSymbol) {
     const result = {
-      memberPath: undefined as TSymbol[] | undefined,
+      memberPath: [] as TSymbol[],
       scopeChain: [] as TScope[],
     };
     let currentSymbol = symbol;
@@ -358,9 +376,19 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
           `${formatRefkeys(refkey)} resolved to ${formatSymbolName(symbol)}.`,
       );
       if (symbol.isTransient) {
+        console.log(symbol, symbol.flags);
         trace(
           TracePhase.resolve.failure,
-          () => `Symbol ${formatSymbolName(symbol)} in transient scope.`,
+          () => `Symbol ${formatSymbolName(symbol)} is transient.`,
+        );
+        return undefined;
+      }
+
+      const chain = scopeChain(symbol.scope);
+      if (chain.some((scope) => scope.isTransient)) {
+        trace(
+          TracePhase.resolve.failure,
+          () => `Symbol ${formatSymbolName(symbol)} is in a transient scope.`,
         );
         return undefined;
       }

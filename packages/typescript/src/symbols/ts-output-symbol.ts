@@ -1,7 +1,7 @@
 import {
-  OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
+  SymbolTable,
   track,
   TrackOpTypes,
   trigger,
@@ -37,7 +37,7 @@ export class TSOutputSymbol extends OutputSymbol {
 
   constructor(
     name: string,
-    spaces: OutputSpace[] | OutputSpace | undefined,
+    spaces: SymbolTable[] | SymbolTable | undefined,
     options: CreateTsSymbolOptions = {},
   ) {
     super(name, spaces, options);

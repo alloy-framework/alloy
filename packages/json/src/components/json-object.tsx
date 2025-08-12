@@ -7,6 +7,7 @@ import {
   List,
   MemberDeclaration,
   MemberScope,
+  moveTakenMembersTo,
   onCleanup,
   OutputSymbolFlags,
   Refkey,
@@ -65,7 +66,6 @@ export function JsonObject(props: JsonObjectProps) {
     flags: OutputSymbolFlags.Transient,
     refkeys: props.refkey ? [props.refkey].flat() : undefined,
   });
-  console.log("Emitting symbol", objectSym);
   emitSymbol(objectSym);
 
   if (!("jsValue" in props)) {
@@ -152,13 +152,9 @@ export type ObjectPropertyProps =
  */
 export function JsonObjectProperty(props: ObjectPropertyProps) {
   const memberScope = useMemberScope();
-  if (!memberScope) {
-    throw new Error("Missing owner symbol.");
-  }
   const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
-
   const sym = new JsonOutputSymbol(props.name, ownerSymbol.staticMembers);
-
+  moveTakenMembersTo(sym);
   onCleanup(() => {
     sym.delete();
   });

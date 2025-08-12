@@ -219,12 +219,12 @@ it("can import instance members", () => {
     const source = binder.getSymbolForRefkey(mcpSdk["./server/index.js"].Server)
       .value! as TSOutputSymbol;
     expect(source).toBeDefined();
-    expect(source.instanceMembers.symbols.size).toBe(1);
+    expect(source.instanceMembers.size).toBe(1);
 
     source.instantiateTo(sym);
 
-    expect(sym.staticMembers.symbols.size).toBe(1);
-    expect([...sym.staticMembers.symbols][0].name).toBe("instanceHandler");
+    expect(sym.staticMembers.size).toBe(1);
+    expect([...sym.staticMembers][0].name).toBe("instanceHandler");
   }
 
   render(

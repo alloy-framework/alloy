@@ -1,7 +1,7 @@
 import { MemberDeclaration, MemberName, Refkey } from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../../name-policy.js";
+import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { CSharpSymbol } from "../../symbols/csharp.js";
-import { useNamedTypeScope } from "../../symbols/named-type.js";
 
 // properties for creating a C# enum member
 export interface EnumMemberProps {
@@ -11,13 +11,16 @@ export interface EnumMemberProps {
 
 // a member within a C# enum
 export function EnumMember(props: EnumMemberProps) {
-  const symbol = useNamedTypeScope();
+  const scope = useNamedTypeScope();
 
-  if (!symbol) {
+  if (!scope) {
     throw new Error("EnumMember must be used within an EnumDeclaration.");
   }
+
+  const symbol = scope.ownerSymbol;
+
   if (symbol.typeKind !== "enum") {
-    throw new Error("EnumMember can only be used within an enum scope.");
+    throw new Error("EnumMember must be used within an EnumDeclaration.");
   }
 
   const name = useCSharpNamePolicy().getName(props.name, "enum-member");

@@ -2,15 +2,11 @@ import { Children, code, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Property } from "../property/property.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { RecordDeclaration } from "./declaration.jsx";
 
+// Remove Wrapper that added <SourceFile> because TestNamespace already does
 function Wrapper({ children }: { children: Children }) {
-  return (
-    <TestNamespace>
-      <SourceFile path="Test.cs">{children}</SourceFile>
-    </TestNamespace>
-  );
+  return <TestNamespace>{children}</TestNamespace>;
 }
 
 it("declares record with no members", () => {
@@ -112,13 +108,12 @@ describe("constructor", () => {
         </RecordDeclaration>
       </Wrapper>,
     ).toRenderTo(`
-      namespace TestCode
-      {
+      namespace TestCode;
+      
           public record Test(string name, int size)
           {
               string PrettyName { get; } = $"{name} {size}";
           }
-      }
   `);
   });
 });

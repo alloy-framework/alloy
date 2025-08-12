@@ -1,4 +1,5 @@
 import {
+  effect,
   reactive,
   ReactiveFlags,
   shallowReactive,
@@ -165,7 +166,10 @@ export abstract class OutputScope {
     this.#binder = options.binder ?? useBinder();
     this.#children = shallowReactive(new Set());
     this.#parent = parentScope;
-    this.#ownerSymbol = options.ownerSymbol;
+    effect(() => {
+      this.#setOwnerSymbol(options.ownerSymbol?.movedTo ?? options.ownerSymbol);
+    });
+
     if (this.#parent) {
       this.#parent.children.add(this);
     }
@@ -198,16 +202,30 @@ export abstract class OutputScope {
    * declaration spaces.
    */
   get ownerSymbol() {
+    track(this, TrackOpTypes.GET, "ownerSymbol");
     return this.#ownerSymbol;
   }
 
+  #setOwnerSymbol(value: OutputSymbol | undefined) {
+    const old = this.#ownerSymbol;
+    this.#ownerSymbol = value;
+    trigger(this, TriggerOpTypes.SET, "ownerSymbol", value, old);
+  }
+
+  get isTransient() {
+    if (!this.ownerSymbol) {
+      return false;
+    }
+
+    return this.ownerSymbol.isTransient;
+  }
   /**
    * Check if this is scope is a member scope. Member scopes have no member
    * spaces of their own, but instead put members of their owner symbol in
    * scope.
    */
   get isMemberScope() {
-    return !!this.#ownerSymbol;
+    return !!this.ownerSymbol;
   }
 
   [inspect.custom]() {

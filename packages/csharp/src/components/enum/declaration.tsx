@@ -11,6 +11,7 @@ import {
   getAccessModifier,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
+import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { Name } from "../Name.jsx";
 
@@ -46,6 +47,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const symbol = createNamedTypeSymbol(name, "enum", {
     refkeys: props.refkey,
   });
+  const scope = createNamedTypeScope(symbol);
 
   const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
 
@@ -54,7 +56,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
       {modifiers}enum <Name />
       {!props.children && ";"}
       {props.children && (
-        <MemberScope owner={symbol}>
+        <MemberScope value={scope}>
           <Block newline>{props.children}</Block>
         </MemberScope>
       )}

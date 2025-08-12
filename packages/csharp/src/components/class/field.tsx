@@ -10,12 +10,12 @@ import {
   getAccessModifier,
 } from "../../modifiers.js";
 import { CSharpElements, useCSharpNamePolicy } from "../../name-policy.js";
+import { useNamedTypeScope } from "../../scopes/contexts.js";
 import {
   accessibilityFromProps,
   nonAccessibilityFromProps,
 } from "../../symbols/csharp.js";
 import { FieldSymbol } from "../../symbols/field.js";
-import { useNamedTypeScope } from "../../symbols/named-type.js";
 
 export interface ClassFieldProps extends DeclarationModifiers {
   name: string;

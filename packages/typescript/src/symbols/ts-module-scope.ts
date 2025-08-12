@@ -73,10 +73,10 @@ export class TSModuleScope extends TSLexicalScope {
 
   getAllSymbols() {
     const allSymbols = new Set<TSOutputSymbol>();
-    for (const symbol of this.values.symbols) {
+    for (const symbol of this.values) {
       allSymbols.add(symbol as TSOutputSymbol);
     }
-    for (const symbol of this.types.symbols) {
+    for (const symbol of this.types) {
       allSymbols.add(symbol as TSOutputSymbol);
     }
     return allSymbols;

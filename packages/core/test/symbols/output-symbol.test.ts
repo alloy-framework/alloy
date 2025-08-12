@@ -1,41 +1,9 @@
 import { reactive, watch } from "@vue/reactivity";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Binder, createOutputBinder } from "../../src/binder.js";
-import { OutputSpace } from "../../src/index.js";
+import { describe, expect, it, vi } from "vitest";
 import { flushJobs } from "../../src/scheduler.js";
-import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
 import { OutputSymbolFlags } from "../../src/symbols/flags.js";
-import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
-import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
-
-let binder: Binder;
-beforeEach(() => {
-  binder = createOutputBinder();
-});
-
-function createScope(
-  name: string,
-  parent?: BasicScope,
-  options?: OutputScopeOptions,
-) {
-  return new BasicScope(name, parent, {
-    binder,
-    ...options,
-  });
-}
-
-function createSymbol(
-  name: string,
-  scope: BasicScope | OutputSpace,
-  options?: OutputSymbolOptions,
-) {
-  const space = scope instanceof BasicScope ? scope.symbols : scope;
-  return new BasicSymbol(name, space, {
-    binder,
-    ...options,
-  });
-}
+import { createScope, createSymbol } from "./utils.js";
 
 describe("OutputSymbol reactivity", () => {
   it("keeps symbol names up-to-date", () => {
@@ -112,7 +80,7 @@ describe("OutputSymbol#scope", () => {
   it("adds to parent scope", () => {
     const scope = createScope("parent");
     const symbol = createSymbol("sym", scope);
-    expect(scope.symbols.symbols.has(symbol)).toBe(true);
+    expect(scope.symbols.has(symbol)).toBe(true);
   });
 });
 
@@ -120,9 +88,9 @@ describe("Symbol#delete", () => {
   it("deletes from parent scope", () => {
     const scope = createScope("parent");
     const symbol = createSymbol("sym", scope);
-    expect(scope.symbols.symbols.has(symbol)).toBe(true);
+    expect(scope.symbols.has(symbol)).toBe(true);
     symbol.delete();
-    expect(scope.symbols.symbols.has(symbol)).toBe(false);
+    expect(scope.symbols.has(symbol)).toBe(false);
   });
 });
 
@@ -172,12 +140,12 @@ describe("OutputSymbol#copy", () => {
 
     expect(copy.name).toEqual("sym");
     expect(copy.flags).toEqual(symbol.flags);
-    expect(copy.staticMembers.symbols.size).toBe(1);
-    const staticMemberCopy = [...copy.staticMembers.symbols][0];
+    expect(copy.staticMembers.size).toBe(1);
+    const staticMemberCopy = [...copy.staticMembers][0];
     expect(staticMemberCopy.name).toBe("static-member");
     expect(staticMemberCopy.flags).toBe(staticMember.flags);
-    expect(copy.instanceMembers.symbols.size).toBe(1);
-    const instanceMemberCopy = [...copy.instanceMembers.symbols][0];
+    expect(copy.instanceMembers.size).toBe(1);
+    const instanceMemberCopy = [...copy.instanceMembers][0];
     expect(instanceMemberCopy.name).toBe("instance-member");
     expect(instanceMemberCopy.flags).toBe(instanceMember.flags);
   });
@@ -192,8 +160,8 @@ describe("OutputSymbol#copy", () => {
 
     expect(copy.name).toEqual("sym");
     expect(copy.flags).toEqual(symbol.flags);
-    expect(copy.staticMembers.symbols.size).toBe(1);
-    const staticMemberCopy = [...copy.staticMembers.symbols][0];
+    expect(copy.staticMembers.size).toBe(1);
+    const staticMemberCopy = [...copy.staticMembers][0];
 
     const newStaticMember = createSymbol(
       "static-member-2",
@@ -203,13 +171,13 @@ describe("OutputSymbol#copy", () => {
 
     flushJobs();
 
-    const secondStaticMemberCopy = [...copy.staticMembers.symbols][1];
+    const secondStaticMemberCopy = [...copy.staticMembers][1];
     expect(secondStaticMemberCopy.name).toBe("static-member-2");
     expect(staticMemberCopy.name).toBe("hi");
 
     newStaticMember.delete();
     flushJobs();
-    expect(copy.staticMembers.symbols.size).toBe(1);
+    expect(copy.staticMembers.size).toBe(1);
     expect(copy.staticMembers.symbolNames.has("static-member-2")).toBe(false);
     expect(copy.staticMembers.symbolNames.has("hi")).toBe(true);
   });
@@ -225,7 +193,7 @@ describe("OutputSymbol#instantiateTo", () => {
     const targetSym = createSymbol("Target", scope);
     classSym.instantiateTo(targetSym);
 
-    expect(targetSym.staticMembers.symbols.size).toEqual(1);
+    expect(targetSym.staticMembers.size).toEqual(1);
     const staticNames = targetSym.staticMembers.symbolNames;
     expect(staticNames.size).toEqual(1);
     expect(staticNames.has("instance-member")).toBe(true);
@@ -237,7 +205,7 @@ describe("OutputSymbol#instantiateTo", () => {
     createSymbol("instance-member", classSym.instanceMembers);
     const targetSym = createSymbol("Target", scope);
     classSym.instantiateTo(targetSym);
-    expect(targetSym.staticMembers.symbols.size).toEqual(1);
+    expect(targetSym.staticMembers.size).toEqual(1);
     createSymbol("new-instance-member", classSym.instanceMembers);
     flushJobs();
     expect(
@@ -260,9 +228,7 @@ describe("OutputSymbol#instantiateTo", () => {
       targetSym.staticMembers.symbolNames.has("instance-member"),
     ).toBeTruthy();
 
-    const instantiatedSS = [
-      ...targetSym.staticMembers.symbols,
-    ][0] as BasicSymbol;
+    const instantiatedSS = [...targetSym.staticMembers][0] as BasicSymbol;
     expect(
       instantiatedSS.staticMembers.symbolNames.has("static-of-instance"),
     ).toBeTruthy();

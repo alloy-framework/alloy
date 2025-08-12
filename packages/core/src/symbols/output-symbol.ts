@@ -21,11 +21,8 @@ import {
   TracePhase,
 } from "../tracer.js";
 import { OutputSymbolFlags } from "./flags.js";
-import {
-  OutputDeclarationSpace,
-  OutputMemberSpace,
-  OutputSpace,
-} from "./output-space.js";
+import { OutputDeclarationSpace, OutputMemberSpace } from "./output-space.js";
+import { SymbolTable } from "./symbol-table.js";
 
 export interface OutputSymbolOptions {
   binder?: Binder;
@@ -114,13 +111,13 @@ export abstract class OutputSymbol {
     return (this.spaces[0] as OutputDeclarationSpace).scope;
   }
 
-  #spaces: OutputSpace[];
-  get spaces(): OutputSpace[] {
+  #spaces: SymbolTable[];
+  get spaces(): SymbolTable[] {
     track(this, TrackOpTypes.GET, "spaces");
     return this.#spaces;
   }
 
-  set spaces(spaces: OutputSpace[] | OutputSpace | undefined) {
+  set spaces(spaces: SymbolTable[] | SymbolTable | undefined) {
     const old = this.#spaces;
 
     if (old === spaces) {
@@ -138,14 +135,14 @@ export abstract class OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "spaces", spaces, old);
   }
 
-  #handleNewSpaces(newSpaces: OutputSpace[], oldSpaces?: OutputSpace[]) {
+  #handleNewSpaces(newSpaces: SymbolTable[], oldSpaces?: SymbolTable[]) {
     if (oldSpaces) {
       // ensure when changing scope that this symbol only belongs to one of them
-      oldSpaces.forEach((oldSpace) => oldSpace.symbols.delete(this));
+      oldSpaces.forEach((oldSpace) => oldSpace.delete(this));
     }
 
     if (newSpaces) {
-      newSpaces.forEach((newSpace) => newSpace.symbols.add(this));
+      newSpaces.forEach((newSpace) => newSpace.add(this));
     }
   }
 
@@ -191,7 +188,7 @@ export abstract class OutputSymbol {
 
   constructor(
     name: string,
-    spaces: OutputSpace[] | OutputSpace | undefined,
+    spaces: SymbolTable[] | SymbolTable | undefined,
     options: OutputSymbolOptions = {},
   ) {
     this.#binder = options.binder ?? useBinder();
@@ -235,7 +232,7 @@ export abstract class OutputSymbol {
   delete() {
     trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
     if (this.#spaces) {
-      this.#spaces.forEach((space) => space.symbols.delete(this));
+      this.#spaces.forEach((space) => space.delete(this));
     }
 
     this.#binder?.notifySymbolDeleted(this);
@@ -256,8 +253,8 @@ export abstract class OutputSymbol {
     if (this.#aliasTarget) {
       return this.#aliasTarget.instantiateTo(
         targetSymbol,
-        fromSpaceKey,
         toSpaceKey,
+        fromSpaceKey,
       );
     }
 
@@ -301,7 +298,7 @@ export abstract class OutputSymbol {
     if (!(this.flags & OutputSymbolFlags.Transient)) {
       throw new Error("Can only move members from transient symbols");
     }
-    console.log("Member spaces", this.memberSpaces);
+
     for (const sourceSpace of this.memberSpaces) {
       const targetSpace = targetSymbol.memberSpaceFor(sourceSpace.key);
       if (!targetSpace) {
@@ -312,6 +309,8 @@ export abstract class OutputSymbol {
 
       sourceSpace.moveTo(targetSpace);
     }
+
+    this.#setMovedTo(targetSymbol);
   }
 
   copyMembersTo(targetSymbol: OutputSymbol): void {
@@ -331,7 +330,7 @@ export abstract class OutputSymbol {
     }
   }
 
-  copyToSpace(space: OutputSpace) {
+  copyToSpace(space: SymbolTable) {
     const copy = this.copy();
     copy.spaces = space;
     return copy;
@@ -364,6 +363,22 @@ export abstract class OutputSymbol {
 
     return false;
   }
+
+  #movedTo: OutputSymbol | undefined;
+  get movedTo() {
+    track(this, TrackOpTypes.GET, "movedTo");
+    return this.#movedTo;
+  }
+
+  #setMovedTo(value: OutputSymbol | undefined) {
+    this.#movedTo = value;
+    trigger(this, TriggerOpTypes.SET, "movedTo");
+  }
+
+  get isMoved() {
+    return this.movedTo !== undefined;
+  }
+
   /**
    * Makes a copy of this symbol which will update the name and flags
    * of the clone when the original symbol is updated.
@@ -410,8 +425,6 @@ export abstract class OutputSymbol {
   }
 
   [inspect.custom]() {
-    return untrack(
-      () => `${this.constructor.name} Symbol ${this.name}[${this.id}]`,
-    );
+    return untrack(() => `${this.constructor.name} "${this.name}"[${this.id}]`);
   }
 }

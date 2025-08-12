@@ -30,7 +30,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public interface TestInterface
         {
-          ${accessModifier} string TestProp { get; }
+            ${accessModifier} string TestProp { get; }
         }
       `);
       },
@@ -51,7 +51,7 @@ describe("modifiers", () => {
       ).toRenderTo(`
         public interface TestInterface
         {
-          ${methodModifier} string TestProp { get; }
+            ${methodModifier} string TestProp { get; }
         }
       `);
     });
@@ -65,7 +65,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public interface TestInterface
         {
-          public new string TestProp { get; }
+            public new string TestProp { get; }
         }
       `);
   });
@@ -79,7 +79,7 @@ it("applies PascalCase naming policy", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      string TestProp { get; }
+        string TestProp { get; }
     }
 `);
 });
@@ -92,7 +92,7 @@ it("has getter only", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      string TestProp { get; }
+        string TestProp { get; }
     }
   `);
 });
@@ -105,7 +105,7 @@ it("has setter only", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      string TestProp { set; }
+        string TestProp { set; }
     }
   `);
 });
@@ -117,7 +117,7 @@ it("has getter and setter", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      string TestProp { get; set; }
+        string TestProp { get; set; }
     }
   `);
 });
@@ -138,8 +138,8 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     interface Test
     {
-      /// This is a test
-      string Method { get; set; }
+        /// This is a test
+        string Method { get; set; }
     }
   `);
 });
@@ -158,8 +158,8 @@ it("specify attributes", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      [Test]
-      int Test { get; set; }
+        [Test]
+        int Test { get; set; }
     }
   `);
 });

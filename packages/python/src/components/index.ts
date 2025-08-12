@@ -8,6 +8,7 @@ export * from "./EnumMember.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
 export * from "./ImportStatement.js";
+export * from "./LexicalScope.js";
 export * from "./MemberExpression.js";
 export * from "./NoNamePolicy.js";
 export * from "./PyDoc.js";

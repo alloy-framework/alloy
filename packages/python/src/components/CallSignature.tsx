@@ -89,7 +89,7 @@ export function CallSignatureParameters(props: CallSignatureParametersProps) {
 function parameter(param: DeclaredParameterDescriptor) {
   const SymbolSlot = createSymbolSlot();
 
-  SymbolSlot.instantiateInto(param.symbol);
+  SymbolSlot.instantiateTo(param.symbol, "static", "instance");
 
   return (
     <group>
@@ -125,21 +125,12 @@ interface DeclaredParameterDescriptor
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
 ): DeclaredParameterDescriptor[] {
-  const sfContext = useContext(PythonSourceFileContext);
-  const module = sfContext?.module;
   if (parameters.length === 0) {
     return [];
   }
   if (typeof parameters[0] === "string") {
     return (parameters as string[]).map((paramName) => {
-      const symbol = createPythonSymbol(
-        paramName,
-        {
-          module: module,
-        },
-        "parameter",
-        false,
-      );
+      const symbol = createPythonSymbol(paramName, {}, "parameter");
 
       return { refkeys: symbol.refkeys, symbol };
     });
@@ -149,10 +140,8 @@ function normalizeAndDeclareParameters(
         param.name,
         {
           refkeys: param.refkey,
-          module: module,
         },
         "parameter",
-        false,
       );
 
       return {

@@ -35,7 +35,7 @@ export function ref(
       return ["<Unresolved Symbol>", undefined];
     }
 
-    const { symbol, pathDown, memberPath, lexicalDeclaration } =
+    const { symbol, pathDown, memberPath, lexicalDeclaration, commonScope } =
       resolveResult.value;
     // if we resolved a instance member, check if we should be able to access
     // it.
@@ -98,18 +98,19 @@ export function ref(
     }
 
     const base = localSymbol ?? lexicalDeclaration;
-    if (!memberPath) {
+    if (memberPath.length === 0) {
       return [base.name, localSymbol ?? symbol];
     }
     const parts = [];
     const firstPart = memberPath[0];
 
-    if (
-      currentScope &&
-      firstPart.ownerSymbol === currentScope.ownerSymbol &&
-      firstPart.isInstanceMemberSymbol
-    ) {
-      parts.push(<MemberExpression.Part id="this" />);
+    if (commonScope && firstPart.ownerSymbol === commonScope.ownerSymbol) {
+      // we are referencing a member of the class we are inside
+      if (firstPart.isInstanceMemberSymbol) {
+        parts.push(<MemberExpression.Part id="this" />);
+      } else {
+        parts.push(<MemberExpression.Part symbol={commonScope.ownerSymbol} />);
+      }
     } else {
       parts.push(
         <MemberExpression.Part symbol={localSymbol ?? lexicalDeclaration} />,

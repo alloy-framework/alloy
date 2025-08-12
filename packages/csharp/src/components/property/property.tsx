@@ -4,9 +4,8 @@ import {
   code,
   List,
   MemberDeclaration,
-  refkey,
+  MemberName,
   Refkey,
-  Scope,
 } from "@alloy-js/core";
 import {
   AccessModifiers,
@@ -14,12 +13,7 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import {
-  CSharpMemberScope,
-  useCSharpMemberScope,
-} from "../../symbols/scopes.js";
+import { createPropertySymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
@@ -121,21 +115,8 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
  * ```
  */
 export function Property(props: PropertyProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useCSharpMemberScope([
-    "class-decl",
-    "record-decl",
-    "struct-decl",
-  ]);
-
-  const propertySymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for property declaration
-  const propertyScope = new CSharpMemberScope("property-decl", {
-    owner: propertySymbol,
+  const propertySymbol = createPropertySymbol(props.name, {
+    refkeys: props.refkey,
   });
 
   const modifiers = computeModifiersPrefix([
@@ -151,21 +132,19 @@ export function Property(props: PropertyProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={propertySymbol}>
-      <Scope value={propertyScope}>
-        <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} endline />
-        {modifiers}
-        {props.type}
-        {props.nullable && "?"} {name}{" "}
-        <Block newline inline>
-          <List joiner=" ">
-            {props.get && "get;"}
-            {props.set && "set;"}
-            {props.init && "init;"}
-          </List>
-        </Block>
-        {props.initializer && code` = ${props.initializer};`}
-      </Scope>
+      <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
+      {modifiers}
+      {props.type}
+      {props.nullable && "?"} <MemberName />{" "}
+      <Block newline inline>
+        <List joiner=" ">
+          {props.get && "get;"}
+          {props.set && "set;"}
+          {props.init && "init;"}
+        </List>
+      </Block>
+      {props.initializer && code` = ${props.initializer};`}
     </MemberDeclaration>
   );
 }

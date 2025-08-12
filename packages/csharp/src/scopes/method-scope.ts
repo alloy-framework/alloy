@@ -1,4 +1,3 @@
-import { useScope } from "@alloy-js/core";
 import { CSharpLexicalScope } from "./lexical-scope.js";
 
 export class CSharpMethodScope extends CSharpLexicalScope {
@@ -19,12 +18,4 @@ export class CSharpMethodScope extends CSharpLexicalScope {
   get typeParameters() {
     return this.spaceFor("type-parameters")!;
   }
-}
-
-export function useMethodScope() {
-  const scope = useScope();
-  if (!(scope instanceof CSharpMethodScope)) {
-    throw new Error("Expected method scope");
-  }
-  return scope;
 }

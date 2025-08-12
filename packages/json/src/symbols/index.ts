@@ -17,27 +17,22 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
     const {
-      pathDown,
       pathUp,
       lexicalDeclaration,
       memberPath,
-      symbol,
       commonScope,
-      fullPath,
+      fullSymbolPath,
     } = resolveResult.value;
     let ref = "";
-    console.log({
-      commonScope,
-      pathUp,
-      pathDown,
-      lexicalDeclaration,
-      memberPath,
-      symbol,
-      fullPath,
-    });
 
-    const rootScope = fullPath[0];
-    if (rootScope && rootScope.ownerSymbol === sourceFile.symbol) {
+    // When we have no common scope and we don't path up through the symbol
+    // we're referencing (i.e. the symbol we're referencing isn't the symbol for
+    // the file the reference occurs in), append the file path.
+    if (
+      commonScope === undefined &&
+      pathUp[0] &&
+      pathUp[0].ownerSymbol !== lexicalDeclaration
+    ) {
       const currentPath = sourceFile.symbol.name;
       const targetPath = lexicalDeclaration.name;
       ref += relative(dirname(currentPath), targetPath);
@@ -45,13 +40,21 @@ export function ref(refkey: Refkey) {
 
     ref += "#";
 
-    if (!memberPath || memberPath.length === 0) {
+    // when fullPath is non-empty, it means we are resolving something that is a
+    // member of a symbol that is in-scope. So we need to use the full path to
+    // recover the symbol names of the scopes, and then use the member path. The
+    // first entry of the fullPath is the root scope of this file so we ignore
+    // it.
+    if (fullSymbolPath.length <= 1 && memberPath.length === 0) {
       return ref;
     }
 
     ref += "/";
-
-    ref += memberPath.map((segment) => segment.name).join("/");
+    ref += fullSymbolPath
+      .slice(1)
+      .map((s) => s.ownerSymbol!.name)
+      .concat(memberPath.map((s) => s.name))
+      .join("/");
 
     return ref;
   });

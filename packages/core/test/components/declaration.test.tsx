@@ -19,8 +19,8 @@ it("creates and cleans up a symbol", () => {
 
   renderTree(template);
 
-  expect(scope.symbols.symbols.size).toBe(1);
+  expect(scope.symbols.size).toBe(1);
   doDecl.value = false;
   flushJobs();
-  expect(scope.symbols.symbols.size).toBe(0);
+  expect(scope.symbols.size).toBe(0);
 });

@@ -1,49 +1,27 @@
 import { OutputScope, useScope } from "@alloy-js/core";
 import type { CSharpNamespaceSymbol } from "../symbols/namespace.js";
+import { CSharpNamedTypeScope } from "./named-type.js";
 import { CSharpSourceFileScope } from "./source-file-scope.js";
-import { CSharpTypeDeclarationScope } from "./type-declaration-scope.js";
 
-export class CSharpNamespaceScope extends CSharpTypeDeclarationScope {
-  // don't need any declarations spaces because we'll just get that from the
-  // namespace symbol.
-  public static readonly declarationSpaces = [];
-
-  #namespaceSymbol: CSharpNamespaceSymbol;
-  get namespaceSymbol() {
-    return this.#namespaceSymbol;
-  }
-
-  get enclosingNamespace() {
-    return this.#namespaceSymbol.enclosingNamespace;
-  }
-
+export class CSharpNamespaceScope extends CSharpNamedTypeScope {
   constructor(
     namespaceSymbol: CSharpNamespaceSymbol,
     parentScope?: CSharpNamespaceScope | CSharpSourceFileScope,
   ) {
-    super(namespaceSymbol.name, parentScope, {
+    super(namespaceSymbol, parentScope, {
       binder: namespaceSymbol.binder,
     });
-    this.#namespaceSymbol = namespaceSymbol;
   }
 
-  /**
-   * The scope where type declarations are stored.
-   */
-  get declarations() {
-    return this.#namespaceSymbol.members;
+  get ownerSymbol() {
+    return super.ownerSymbol as CSharpNamespaceSymbol;
   }
 }
-
-const namespaceScopes = new WeakMap<
-  CSharpNamespaceSymbol,
-  CSharpNamespaceScope
->();
 
 export function createCSharpNamespaceScope(
   namespaceSymbol: CSharpNamespaceSymbol,
 ) {
-  let parentScope = useScope();
+  const parentScope = useScope();
   if (
     parentScope &&
     !(

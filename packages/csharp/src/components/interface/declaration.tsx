@@ -6,7 +6,8 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { createNamedTypeScope } from "../../scopes/factories.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
@@ -95,9 +96,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const thisInterfaceScope = new CSharpMemberScope("interface-decl", {
-    owner: thisInterfaceSymbol,
-  });
+  const thisInterfaceScope = createNamedTypeScope(symbol);
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
@@ -108,17 +107,17 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
       <DocWhen doc={props.doc} />
       <AttributeList attributes={props.attributes} endline />
       {modifiers}interface <Name />
-      {props.typeParameters && (
-        <TypeParameters parameters={props.typeParameters} />
-      )}
-      {props.typeParameters && (
-        <TypeParameterConstraints parameters={props.typeParameters} />
-      )}
-      {props.children ?
-        <core.Block newline>
-          <core.MemberScope owner={symbol}>{props.children}</core.MemberScope>
-        </core.Block>
-      : ";"}
+      <core.Scope value={thisInterfaceScope}>
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
+        {props.children ?
+          <core.Block newline>{props.children}</core.Block>
+        : ";"}
+      </core.Scope>
     </core.Declaration>
   );
 }

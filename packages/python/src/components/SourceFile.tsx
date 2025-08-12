@@ -70,7 +70,7 @@ export function SourceFile(props: SourceFileProps) {
   const path: string = join(currentDir, props.path)
     .replace(/\.py$/, "")
     .replace(/\//g, ".");
-  const scope = new PythonModuleScope(path);
+  const scope = new PythonModuleScope(path, undefined);
   const sfContext: PythonSourceFileContext = {
     scope: scope,
     module: path,
@@ -84,7 +84,7 @@ export function SourceFile(props: SourceFileProps) {
         <hbr />
       </Show>
       <PythonSourceFileContext.Provider value={sfContext}>
-        <Scope value={scope} kind="source-file">
+        <Scope value={scope}>
           <List doubleHardline>{props.children}</List>
         </Scope>
       </PythonSourceFileContext.Provider>

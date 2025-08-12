@@ -13,6 +13,7 @@ import {
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as py from "../src/components/index.js";
+import { pythonNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { createPythonNamePolicy } from "../src/name-policy.js";
 import { CustomOutputScope } from "../src/symbols/custom-output-scope.js";
 import { PythonModuleScope } from "../src/symbols/index.js";
@@ -86,7 +87,11 @@ export function toSourceTextMultiple(
     printOptions.tabWidth = 4;
   }
   const content = (
-    <Output externals={mergedExternals} namePolicy={policy}>
+    <Output
+      externals={mergedExternals}
+      namePolicy={policy}
+      nameConflictResolver={pythonNameConflictResolver}
+    >
       {sourceFiles}
     </Output>
   );
@@ -124,8 +129,7 @@ export function createPythonModuleScope(
   parent: CustomOutputScope | undefined,
   binder: Binder | undefined = undefined,
 ): PythonModuleScope {
-  return new PythonModuleScope(name, {
-    parent: parent,
+  return new PythonModuleScope(name, parent, {
     binder: binder,
   });
 }

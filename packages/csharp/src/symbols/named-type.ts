@@ -1,13 +1,14 @@
-import {
-  OutputSpace,
-  OutputSymbolOptions,
-  useMemberContext,
-} from "@alloy-js/core";
+import { OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import { CSharpSymbol } from "./csharp.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
 
-export type NamedTypeTypeKind = "class" | "interface" | "enum" | "namespace";
+export type NamedTypeTypeKind =
+  | "class"
+  | "interface"
+  | "enum"
+  | "namespace"
+  | "struct";
 export type NamedTypeSymbolKind = "named-type" | "namespace";
 
 export class NamedTypeSymbol extends CSharpSymbol {
@@ -48,18 +49,4 @@ export class NamedTypeSymbol extends CSharpSymbol {
   get typeParameters() {
     return this.memberSpaceFor("type-parameters")!;
   }
-}
-
-export function useNamedTypeScope() {
-  const memberScope = useMemberContext();
-  if (!memberScope) {
-    throw new Error("Expected to be in a member scope");
-  }
-
-  const ownerSymbol = memberScope.ownerSymbol;
-  if (ownerSymbol instanceof NamedTypeSymbol) {
-    return ownerSymbol;
-  }
-
-  throw new Error("Expected a named type scope");
 }

@@ -7,9 +7,9 @@ import { type OutputScope } from "./symbols/output-scope.js";
 import type {
   OutputDeclarationSpace,
   OutputMemberSpace,
-  OutputSpace,
 } from "./symbols/output-space.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
+import { SymbolTable } from "./symbols/symbol-table.js";
 
 // enable tracing for specific phases using a comma separated list of
 // dotted identifiers, e.g. `scope.update,symbol.create`.
@@ -50,6 +50,11 @@ export const TracePhase = {
     copySymbols: {
       area: "scope",
       subarea: "copySymbols",
+      bg: { r: 0, g: 100, b: 100 },
+    },
+    moveSymbols: {
+      area: "scope",
+      subarea: "moveSymbols",
       bg: { r: 0, g: 100, b: 100 },
     },
   },
@@ -341,7 +346,7 @@ export function formatSymbol(symbol: OutputSymbol): string {
 
   if (symbol.ownerSymbol) {
     details.push(
-      untrack(() => ` ownerSymbol: ${formatSymbolName(symbol.ownerSymbol!)}`),
+      untrack(() => `  ownerSymbol: ${formatSymbolName(symbol.ownerSymbol!)}`),
     );
   }
 
@@ -357,8 +362,8 @@ export function formatSymbol(symbol: OutputSymbol): string {
   return result;
 }
 
-export function formatSpaceSymbols(space: OutputSpace) {
-  return `  ${space.key} symbols (${space.symbols.size}): ${[...space.symbols].map((s) => s.name).join(", ")}`;
+export function formatSpaceSymbols(space: SymbolTable) {
+  return `  ${space.key} symbols (${space.size}): ${[...space].map((s) => s.name).join(", ")}`;
 }
 
 export function formatScopeName(scope: OutputScope | undefined): string {
@@ -375,13 +380,13 @@ export function formatScopeName(scope: OutputScope | undefined): string {
   });
 }
 
-export function formatSpaceName(space: OutputSpace): string {
+export function formatSymbolTableName(table: SymbolTable): string {
   // avoid instance of checks here in order to not create circular module imports.
   const name =
-    "symbol" in space ?
-      formatSymbolName((space as OutputMemberSpace).symbol)
-    : formatScopeName((space as OutputDeclarationSpace).scope);
-  return colorText(`${name}:${space.key}`, {
+    "symbol" in table ?
+      formatSymbolName((table as OutputMemberSpace).symbol)
+    : formatScopeName((table as OutputDeclarationSpace).scope);
+  return colorText(`${name}:${table.key}`, {
     fg: {
       r: 0,
       g: 125,

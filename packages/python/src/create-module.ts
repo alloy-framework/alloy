@@ -36,8 +36,7 @@ function createSymbols(
     // Otherwise, we append the path to the module name
     const fullModuleScopeName = props.name + (path === "." ? "" : `.${path}`);
     const keys = refkeys[path];
-    const moduleScope = new PythonModuleScope(fullModuleScopeName, {
-      parent: undefined,
+    const moduleScope = new PythonModuleScope(fullModuleScopeName, undefined, {
       binder: binder,
     });
 
@@ -45,17 +44,12 @@ function createSymbols(
     for (const exportedName of symbols ?? []) {
       const key = keys[exportedName];
 
-      const _ = createPythonSymbol(
-        exportedName,
-        {
-          binder: binder,
-          scope: moduleScope,
-          refkeys: key,
-          module: moduleScope.name,
-        },
-        undefined,
-        false,
-      );
+      const _ = createPythonSymbol(exportedName, {
+        space: moduleScope.symbols,
+        binder: binder,
+        refkeys: key,
+        module: moduleScope.name,
+      });
     }
   }
 }

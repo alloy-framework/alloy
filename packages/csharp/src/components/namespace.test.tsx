@@ -1,4 +1,4 @@
-import { Output, render } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { ClassDeclaration } from "./class/declaration.jsx";
@@ -6,7 +6,7 @@ import { Namespace } from "./namespace.jsx";
 import { SourceFile } from "./SourceFile.jsx";
 
 it("defines multiple namespaces and source files with unique content", () => {
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="Namespace1">
         <SourceFile path="Model1.cs">
@@ -24,34 +24,29 @@ it("defines multiple namespaces and source files with unique content", () => {
           <ClassDeclaration public name="Model4" />
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
 
-  expect(res.contents[0].path).equals("Model1.cs");
-  expect(res.contents[0].contents).toBe(d`
-    namespace Namespace1;
+  expect(tree).toRenderTo({
+    "Model1.cs": d`
+      namespace Namespace1;
     
-    public class Model1;
-  `);
+      public class Model1;
+    `,
+    "Model2.cs": d`
+      namespace Namespace1;
 
-  expect(res.contents[1].path).equals("Model2.cs");
-  expect(res.contents[1].contents).toBe(d`
-    namespace Namespace1;
-
-    public class Model2;
-  `);
-
-  expect(res.contents[2].path).equals("Model3.cs");
-  expect(res.contents[2].contents).toBe(d`
-    namespace Namespace2;
+      public class Model2;
+    `,
+    "Model3.cs": d`
+      namespace Namespace2;
+      
+      public class Model3;
+    `,
+    "Model4.cs": d`
+      namespace Namespace2;
     
-    public class Model3;
-  `);
-
-  expect(res.contents[3].path).equals("Model4.cs");
-  expect(res.contents[3].contents).toBe(d`
-    namespace Namespace2;
-    
-    public class Model4;
-  `);
+      public class Model4;
+    `,
+  });
 });

@@ -7,7 +7,7 @@ import {
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
-import { CSharpSourceFileScope } from "../scopes/source-file-scope.js";
+import { CSharpSourceFileScope } from "../scopes/source-file.js";
 import { NamespaceScope, NamespaceScopes } from "./namespace-scopes.jsx";
 import { Reference } from "./Reference.jsx";
 import { UsingDirective } from "./UsingDirective.jsx";
@@ -17,6 +17,12 @@ export interface SourceFileProps {
   path: string;
 
   children?: Children;
+
+  /**
+   * A list of using directives to explicitly include. Note that providing
+   * explicit usings is not necessary when referencing symbols via refkeys.
+   */
+  using?: string[];
 }
 
 // a C# source file. exists within the context of a namespace
@@ -38,9 +44,13 @@ export function SourceFile(props: SourceFileProps) {
       printWidth={120}
     >
       <Scope value={sourceFileScope}>
-        {sourceFileScope.usings.size > 0 && (
+        {(sourceFileScope.usings.size > 0 ||
+          (props.using && props.using.length > 0)) && (
           <>
-            <UsingDirective namespaces={Array.from(sourceFileScope.usings)} />
+            <UsingDirective
+              namespaces={Array.from(sourceFileScope.usings)}
+              explicitUsings={props.using}
+            />
             <hbr />
             <hbr />
           </>

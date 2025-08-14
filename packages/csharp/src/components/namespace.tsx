@@ -1,7 +1,7 @@
 import { Block } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamespaceContext } from "../contexts/namespace.js";
-import { useSourceFileScope } from "../scopes/source-file-scope.js";
+import { useSourceFileScope } from "../scopes/source-file.js";
 import { createNamespaceSymbol } from "../symbols/factories.js";
 import { NamespaceScope } from "./namespace-scopes.jsx";
 

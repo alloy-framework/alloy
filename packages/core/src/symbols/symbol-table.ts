@@ -124,7 +124,6 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
 
     target.addSubset(this, {
       onAdd: (symbol) => {
-        console.log("Copying", formatSymbolName(symbol));
         const copy = symbol.copy();
         copy.spaces = [target];
         copy.refkeys = options.createRefkeys?.(symbol) ?? [];

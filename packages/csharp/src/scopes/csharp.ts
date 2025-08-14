@@ -1,5 +1,5 @@
 import { OutputScope, OutputScopeOptions } from "@alloy-js/core";
-import { CSharpNamespaceSymbol } from "../symbols/namespace.js";
+import { NamespaceSymbol } from "../symbols/namespace.js";
 
 export class CSharpScope extends OutputScope {
   constructor(
@@ -11,7 +11,7 @@ export class CSharpScope extends OutputScope {
     this.#namespaceSymbol = parent?.enclosingNamespace;
   }
 
-  #namespaceSymbol: CSharpNamespaceSymbol | undefined;
+  #namespaceSymbol: NamespaceSymbol | undefined;
   get enclosingNamespace() {
     return this.#namespaceSymbol;
   }

@@ -6,7 +6,7 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { createMethodScope } from "../../scopes/factories.js";
+import { createClassScope } from "../../scopes/factories.js";
 import {
   createNamedTypeSymbol,
   createTypeParameterSymbol,
@@ -77,11 +77,11 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
 
   // records don't have their own type kind but instead use class or struct
   // depending on what kind of record we have.
-  const thisRecordSymbol = createNamedTypeSymbol(name, "class", {
+  const thisRecordSymbol = createNamedTypeSymbol(name, "record", {
     refkeys: props.refkey,
   });
 
-  const thisRecordScope = createMethodScope();
+  const thisRecordScope = createClassScope(thisRecordSymbol);
 
   let typeParams: core.Children;
   if (props.typeParameters) {

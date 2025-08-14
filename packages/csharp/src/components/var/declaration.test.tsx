@@ -47,8 +47,6 @@ it("links refkey", () => {
       </List>
     </TestNamespace>,
   ).toRenderTo(`
-      namespace TestCode;
-
       var testVar = 42;
       var testVar2 = testVar;
   `);

@@ -1,13 +1,12 @@
+import type { OutputSpace } from "@alloy-js/core";
 import { CSharpNamedTypeScope } from "./named-type.js";
 
 export class CSharpClassScope extends CSharpNamedTypeScope {
-  public static readonly declarationSpaces = ["parameters"];
-
   /**
    * For now, we stuff class parameters into the member scope. This is to ensure
    * name conflicts are handled correctly.
    */
-  get parameters() {
+  get parameters(): OutputSpace {
     return this.members;
   }
 }

@@ -73,7 +73,7 @@ it("specify record property inside", () => {
     /// This is a test
     record TestRecord
     {
-      string Prop { get; set; }
+        string Prop { get; set; }
     }
   `);
 });
@@ -108,12 +108,10 @@ describe("constructor", () => {
         </RecordDeclaration>
       </Wrapper>,
     ).toRenderTo(`
-      namespace TestCode;
-      
-          public record Test(string name, int size)
-          {
-              string PrettyName { get; } = $"{name} {size}";
-          }
+      public record Test(string name, int size)
+      {
+          string PrettyName { get; } = $"{name} {size}";
+      }
   `);
   });
 });

@@ -5,6 +5,7 @@ export * from "./Declaration.js";
 export * from "./doc/comment.jsx";
 export * from "./doc/from-markdown.jsx";
 export * from "./enum/declaration.jsx";
+export * from "./enum/member.jsx";
 export * from "./field/field.jsx";
 export * from "./interface/declaration.js";
 export * from "./interface/method.js";

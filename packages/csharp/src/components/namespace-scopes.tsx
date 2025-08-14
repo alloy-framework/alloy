@@ -1,11 +1,11 @@
 import { Scope } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamespaceContext } from "../contexts/namespace.js";
-import { createCSharpNamespaceScope } from "../scopes/namespace-scope.js";
-import { CSharpNamespaceSymbol } from "../symbols/namespace.js";
+import { createCSharpNamespaceScope } from "../scopes/namespace.js";
+import { NamespaceSymbol } from "../symbols/namespace.js";
 
 export interface NamespaceScopProps {
-  symbol: CSharpNamespaceSymbol;
+  symbol: NamespaceSymbol;
   children: Children;
 }
 
@@ -19,12 +19,12 @@ export function NamespaceScope(props: NamespaceScopProps) {
 }
 
 export interface NamespaceScopesProps {
-  symbol: CSharpNamespaceSymbol;
+  symbol: NamespaceSymbol;
   children: Children;
 }
 
 export function NamespaceScopes(props: NamespaceScopesProps) {
-  function wrapWithScope(symbol: CSharpNamespaceSymbol, children: Children) {
+  function wrapWithScope(symbol: NamespaceSymbol, children: Children) {
     const scopeChildren = (
       <NamespaceScope symbol={symbol}>{children}</NamespaceScope>
     );

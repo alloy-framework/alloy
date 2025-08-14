@@ -1,7 +1,7 @@
 import { type OutputScopeOptions } from "@alloy-js/core";
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 import { CSharpScope } from "./csharp.js";
-import { CSharpSourceFileScope } from "./source-file-scope.js";
+import { CSharpSourceFileScope } from "./source-file.js";
 
 /**
  * This scope contains NamedTypeSymbols for types that are declared in
@@ -9,9 +9,7 @@ import { CSharpSourceFileScope } from "./source-file-scope.js";
  * member symbol is a NamedTypeSymbol.
  */
 export class CSharpNamedTypeScope extends CSharpScope {
-  // only need to store type parameters in this scope, types will be stored on
-  // the ownerSymbol.
-  public static readonly declarationSpaces = ["type-parameters"];
+  public static readonly declarationSpaces = [];
 
   constructor(
     ownerSymbol: NamedTypeSymbol,
@@ -36,7 +34,11 @@ export class CSharpNamedTypeScope extends CSharpScope {
     return this.ownerSymbol.members;
   }
 
+  /**
+   * For now, we stuff type parameters into the member scope. This is to ensure
+   * name conflicts are handled correctly.
+   */
   get typeParameters() {
-    return this.spaceFor("type-parameters");
+    return this.ownerSymbol.members;
   }
 }

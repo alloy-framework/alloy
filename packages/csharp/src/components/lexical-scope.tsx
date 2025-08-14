@@ -1,10 +1,6 @@
-import {
-  Scope,
-  ScopePropsWithInfo,
-  ScopePropsWithValue,
-  useScope,
-} from "@alloy-js/core";
-import { CSharpLexicalScope } from "../scopes/lexical-scope.js";
+import { Scope, ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { useCSharpScope } from "../scopes/contexts.js";
+import { CSharpLexicalScope } from "../scopes/lexical.js";
 
 export interface LexicalScopePropsWithScopeValue extends ScopePropsWithValue {}
 export interface LeixcalScopePropsWithScopeInfo extends ScopePropsWithInfo {}
@@ -23,7 +19,7 @@ export function LexicalScope(props: LexicalScopeProps) {
     }
     scope = props.value;
   } else {
-    const parentScope = useScope();
+    const parentScope = useCSharpScope();
     scope = new CSharpLexicalScope(props.name ?? "lexical scope", parentScope, {
       ...props,
     });

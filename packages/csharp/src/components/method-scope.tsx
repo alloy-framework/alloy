@@ -1,10 +1,6 @@
-import {
-  Scope,
-  ScopePropsWithInfo,
-  ScopePropsWithValue,
-  useScope,
-} from "@alloy-js/core";
-import { CSharpMethodScope } from "../scopes/method-scope.js";
+import { Scope, ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { useCSharpScope } from "../scopes/contexts.js";
+import { CSharpMethodScope } from "../scopes/method.js";
 
 export interface MethodScopePropsWithScopeValue extends ScopePropsWithValue {}
 export interface MethodScopePropsWithScopeInfo extends ScopePropsWithInfo {}
@@ -21,7 +17,7 @@ export function MethodScope(props: MethodScopeProps) {
     }
     scope = props.value;
   } else {
-    const parentScope = useScope();
+    const parentScope = useCSharpScope();
     scope = new CSharpMethodScope(props.name ?? "method scope", parentScope, {
       ...props,
     });

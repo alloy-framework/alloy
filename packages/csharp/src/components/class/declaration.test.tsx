@@ -1,7 +1,6 @@
 import { Constructor } from "#components/constructor/constructor.jsx";
 import { EnumDeclaration } from "#components/enum/declaration.jsx";
 import { EnumMember } from "#components/enum/member.jsx";
-import { Namespace } from "#components/namespace.jsx";
 import {
   Children,
   code,
@@ -34,8 +33,6 @@ it("declares class with no members", () => {
       <ClassDeclaration name="TestClass" />
     </TestNamespace>,
   ).toRenderTo(`
-      namespace TestCode;
-
       class TestClass;
   `);
 });
@@ -47,8 +44,6 @@ describe("modifiers", () => {
         <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         ${mod} class TestClass;
     `);
   });
@@ -59,8 +54,6 @@ describe("modifiers", () => {
         <ClassDeclaration {...{ [mod]: true }} name="TestClass" />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         ${mod} class TestClass;
     `);
   });
@@ -71,8 +64,6 @@ describe("modifiers", () => {
         <ClassDeclaration public abstract partial name="TestClass" />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         public abstract partial class TestClass;
     `);
   });
@@ -85,8 +76,6 @@ describe("base", () => {
         <ClassDeclaration name="TestClass" baseType="Foo" />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         class TestClass : Foo;
     `);
   });
@@ -97,8 +86,6 @@ describe("base", () => {
         <ClassDeclaration name="TestClass" interfaceTypes={["Foo", "Bar"]} />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         class TestClass : Foo, Bar;
     `);
   });
@@ -113,26 +100,24 @@ describe("base", () => {
         />
       </TestNamespace>,
     ).toRenderTo(`
-        namespace TestCode;
-
         class TestClass : BaseClass, Foo, Bar;
     `);
   });
 });
 
 it("declares class with some members", () => {
-  const res = toSourceText(
-    <ClassDeclaration public name="TestClass">
-      <List>
-        <Field public name="MemberOne" type="string" />
-        <Field public name="MemberTwo" type="int" />
-      </List>
-    </ClassDeclaration>,
+  const tree = (
+    <TestNamespace>
+      <ClassDeclaration public name="TestClass">
+        <List>
+          <Field public name="MemberOne" type="string" />
+          <Field public name="MemberTwo" type="int" />
+        </List>
+      </ClassDeclaration>
+    </TestNamespace>
   );
 
-  expect(res).toBe(coretest.d`
-    namespace TestCode;
-
+  expect(tree).toRenderTo(coretest.d`
     public class TestClass
     {
         public string MemberOne;
@@ -142,18 +127,18 @@ it("declares class with some members", () => {
 });
 
 it("declares class with some methods", () => {
-  const res = toSourceText(
-    <ClassDeclaration public name="TestClass">
-      <List>
-        <Method public name="MethodOne" />
-        <Method private virtual name="MethodTwo" />
-      </List>
-    </ClassDeclaration>,
+  const tree = (
+    <TestNamespace>
+      <ClassDeclaration public name="TestClass">
+        <List>
+          <Method public name="MethodOne" />
+          <Method private virtual name="MethodTwo" />
+        </List>
+      </ClassDeclaration>
+    </TestNamespace>
   );
 
-  expect(res).toBe(coretest.d`
-    namespace TestCode;
-    
+  expect(tree).toRenderTo(coretest.d`
     public class TestClass
     {
         public void MethodOne() {}
@@ -180,43 +165,39 @@ it("uses refkeys for members, params, and return type", () => {
 
   const res = render(
     <Output namePolicy={createCSharpNamePolicy()}>
-      <Namespace name="TestCode">
-        <SourceFile path="Test.cs">
-          <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
-            <List comma hardline>
-              <EnumMember name="One" />
-              <EnumMember name="Two" />
-            </List>
-          </EnumDeclaration>
+      <SourceFile path="Test.cs">
+        <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
+          <List comma hardline>
+            <EnumMember name="One" />
+            <EnumMember name="Two" />
+          </List>
+        </EnumDeclaration>
+        <hbr />
+        <ClassDeclaration public name="TestInput" refkey={inputTypeRefkey} />
+        <hbr />
+        <ClassDeclaration
+          public
+          name="TestResult"
+          refkey={testResultTypeRefkey}
+        />
+        <hbr />
+        <ClassDeclaration public name="TestClass">
+          <Field private name="MemberOne" type={enumTypeRefkey} />
           <hbr />
-          <ClassDeclaration public name="TestInput" refkey={inputTypeRefkey} />
-          <hbr />
-          <ClassDeclaration
+          <Method
             public
-            name="TestResult"
-            refkey={testResultTypeRefkey}
-          />
-          <hbr />
-          <ClassDeclaration public name="TestClass">
-            <Field private name="MemberOne" type={enumTypeRefkey} />
-            <hbr />
-            <Method
-              public
-              name="MethodOne"
-              parameters={params}
-              returns={testResultTypeRefkey}
-            >
-              return new {testResultTypeRefkey}();
-            </Method>
-          </ClassDeclaration>
-        </SourceFile>
-      </Namespace>
+            name="MethodOne"
+            parameters={params}
+            returns={testResultTypeRefkey}
+          >
+            return new {testResultTypeRefkey}();
+          </Method>
+        </ClassDeclaration>
+      </SourceFile>
     </Output>,
   );
 
   expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
-    namespace TestCode;
-
     public enum TestEnum
     {
         One,
@@ -262,8 +243,6 @@ describe("with type parameters", () => {
         </ClassDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode;
-      
       public class TestClass<T, U>
       {
           T PropA { get; set; }
@@ -295,8 +274,6 @@ describe("with type parameters", () => {
         </ClassDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode;
-      
       public class TestClass<T, U>
           where T : IFoo
           where U : IBar
@@ -322,15 +299,15 @@ it("declares class with invalid members", () => {
 
 describe("constructor", () => {
   it("declares with constructor", () => {
-    const res = toSourceText(
-      <ClassDeclaration public name="TestClass">
-        <Constructor public />
-      </ClassDeclaration>,
+    const tree = (
+      <TestNamespace>
+        <ClassDeclaration public name="TestClass">
+          <Constructor public />
+        </ClassDeclaration>
+      </TestNamespace>
     );
 
-    expect(res).toBe(coretest.d`
-    namespace TestCode;
-
+    expect(tree).toRenderTo(coretest.d`
     public class TestClass
     {
         public TestClass() {}
@@ -357,24 +334,24 @@ describe("constructor", () => {
       },
     ];
 
-    const res = toSourceText(
-      <ClassDeclaration public name="TestClass">
-        <Field private name="name" type="string" refkey={thisNameRefkey} />
-        <hbr />
-        <Field private name="size" type="int" refkey={thisSizeRefkey} />
-        <hbr />
-        <Constructor public parameters={ctorParams}>
-          {thisNameRefkey} = {paramNameRefkey};<hbr />
-          {thisSizeRefkey} = {paramSizeRefkey};
-        </Constructor>
-      </ClassDeclaration>,
+    const tree = (
+      <TestNamespace>
+        <ClassDeclaration public name="TestClass">
+          <Field private name="name" type="string" refkey={thisNameRefkey} />
+          <hbr />
+          <Field private name="size" type="int" refkey={thisSizeRefkey} />
+          <hbr />
+          <Constructor public parameters={ctorParams}>
+            {thisNameRefkey} = {paramNameRefkey};<hbr />
+            {thisSizeRefkey} = {paramSizeRefkey};
+          </Constructor>
+        </ClassDeclaration>
+      </TestNamespace>
     );
 
     // TODO: assignments to members should have this. prefix
     // e.g. this.name = name;
-    expect(res).toBe(coretest.d`
-    namespace TestCode;
-    
+    expect(tree).toRenderTo(coretest.d`
     public class TestClass
     {
         private string _name;
@@ -421,8 +398,6 @@ describe("constructor", () => {
         </ClassDeclaration>
       </Wrapper>,
     ).toRenderTo(`
-      namespace TestCode;
-
       public class TestClass(string name, int size)
       {
           string PrettyName { get; } = $"{name} {size}";
@@ -446,8 +421,6 @@ describe("constructor", () => {
         </NamePolicyContext.Provider>
       </Wrapper>,
     ).toRenderTo(`
-      namespace TestCode;
-
       public class TestClass(string name)
       {
           string name_2;
@@ -462,8 +435,6 @@ it("specify doc comment", () => {
       <ClassDeclaration name="Test" doc="This is a test" />
     </TestNamespace>,
   ).toRenderTo(`
-    namespace TestCode;
-
     /// This is a test
     class Test;
   `);
@@ -477,8 +448,6 @@ it("supports class member doc comments", () => {
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
-    namespace TestCode;
-
     /// This is a test
     class Test
     {
@@ -494,8 +463,6 @@ it("specify attributes", () => {
       <ClassDeclaration name="Test" attributes={[<Attribute name="Test" />]} />
     </TestNamespace>,
   ).toRenderTo(`
-    namespace TestCode;
-
     [Test]
     class Test;
   `);

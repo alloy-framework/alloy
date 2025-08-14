@@ -229,6 +229,10 @@ export abstract class OutputScope {
   }
 
   [inspect.custom]() {
-    return untrack(() => `${this.constructor.name} ${this.name}[${this.id}]`);
+    const ownerSymbol =
+      this.ownerSymbol ? ` for ${inspect(this.ownerSymbol)}` : "";
+    return untrack(
+      () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
+    );
   }
 }

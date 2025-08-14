@@ -1,11 +1,11 @@
 import { OutputScope, useScope } from "@alloy-js/core";
-import type { CSharpNamespaceSymbol } from "../symbols/namespace.js";
+import type { NamespaceSymbol } from "../symbols/namespace.js";
 import { CSharpNamedTypeScope } from "./named-type.js";
-import { CSharpSourceFileScope } from "./source-file-scope.js";
+import { CSharpSourceFileScope } from "./source-file.js";
 
 export class CSharpNamespaceScope extends CSharpNamedTypeScope {
   constructor(
-    namespaceSymbol: CSharpNamespaceSymbol,
+    namespaceSymbol: NamespaceSymbol,
     parentScope?: CSharpNamespaceScope | CSharpSourceFileScope,
   ) {
     super(namespaceSymbol, parentScope, {
@@ -14,13 +14,11 @@ export class CSharpNamespaceScope extends CSharpNamedTypeScope {
   }
 
   get ownerSymbol() {
-    return super.ownerSymbol as CSharpNamespaceSymbol;
+    return super.ownerSymbol as NamespaceSymbol;
   }
 }
 
-export function createCSharpNamespaceScope(
-  namespaceSymbol: CSharpNamespaceSymbol,
-) {
+export function createCSharpNamespaceScope(namespaceSymbol: NamespaceSymbol) {
   const parentScope = useScope();
   if (
     parentScope &&

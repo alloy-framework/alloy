@@ -12,7 +12,7 @@ import {
 } from "@alloy-js/core";
 import { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
 import type { CSharpScope } from "../scopes/csharp.js";
-import { CSharpNamespaceSymbol } from "./namespace.js";
+import { NamespaceSymbol } from "./namespace.js";
 
 export type DeclaredAccessibility =
   | "private"
@@ -73,7 +73,7 @@ export class CSharpSymbol extends OutputSymbol {
     this.#isReadOnly = options.isReadOnly ?? false;
   }
 
-  get enclosingNamespace(): CSharpNamespaceSymbol | undefined {
+  get enclosingNamespace(): NamespaceSymbol | undefined {
     if (this.spaces.length === 0) {
       return undefined;
     }
@@ -86,10 +86,10 @@ export class CSharpSymbol extends OutputSymbol {
       // this symbol is a member of something, so get the enclosing namespace from
       // the symbol.
 
-      if (firstSpace.symbol.constructor.name === "CSharpNamespaceSymbol") {
+      if (firstSpace.symbol.constructor.name === "NamespaceSymbol") {
         // this is a namespace symbol, so return the namespace symbol itself.
         // can't use instanceof here due to circular reference issues.
-        return firstSpace.symbol as CSharpNamespaceSymbol;
+        return firstSpace.symbol as NamespaceSymbol;
       }
 
       return (firstSpace.symbol as CSharpSymbol).enclosingNamespace;

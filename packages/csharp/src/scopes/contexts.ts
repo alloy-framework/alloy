@@ -1,6 +1,7 @@
 import { useScope } from "@alloy-js/core";
 import { CSharpScope } from "./csharp.js";
-import { CSharpMethodScope } from "./method-scope.js";
+import { CSharpLexicalScope } from "./lexical.js";
+import { CSharpMethodScope } from "./method.js";
 import { CSharpNamedTypeScope } from "./named-type.js";
 
 export function useCSharpScope() {
@@ -28,6 +29,16 @@ export function useMethodScope() {
   if (!(scope instanceof CSharpMethodScope)) {
     throw new Error(
       `Expected a method scope, but got ${scope.constructor.name}.`,
+    );
+  }
+  return scope;
+}
+
+export function useLexicalScope() {
+  const scope = useScope();
+  if (!(scope instanceof CSharpLexicalScope)) {
+    throw new Error(
+      `Expected a lexical scope, but got ${scope.constructor.name}.`,
     );
   }
   return scope;

@@ -5,7 +5,6 @@ import {
   resolve,
   untrack,
   useContext,
-  useScope,
 } from "@alloy-js/core";
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { PythonSourceFileContext } from "../components/SourceFile.jsx";
@@ -22,10 +21,8 @@ export function ref(
   const resolveResult = resolve<PythonOutputScope, PythonOutputSymbol>(
     refkey as Refkey,
   );
-  const currentScope = useScope();
-  console.log("Returning memo");
+
   return memo(() => {
-    console.log("???");
     if (resolveResult.value === undefined) {
       return ["<Unresolved Symbol>", undefined];
     }
@@ -72,24 +69,17 @@ export function ref(
       );
     }
 
-    const base = localSymbol ?? lexicalDeclaration;
-    if (memberPath.length === 0) {
-      return [base.name, localSymbol ?? symbol];
-    }
     const parts = [];
-    const firstPart = memberPath[0];
-    console.log("???");
-    if (commonScope && firstPart.ownerSymbol === commonScope.ownerSymbol) {
-      // we are referencing a member of the class we are inside
-      if (firstPart.isInstanceMemberSymbol) {
-        console.log("wtf?");
+
+    if (commonScope && commonScope.isMemberScope) {
+      // we are referencing a member of a type we are inside
+      if (lexicalDeclaration.isInstanceMemberSymbol) {
         parts.push(<MemberExpression.Part id="self" />);
       } else {
-        console.log("Testing?");
         parts.push(<MemberExpression.Part symbol={commonScope.ownerSymbol} />);
       }
+      parts.push(<MemberExpression.Part symbol={lexicalDeclaration} />);
     } else {
-      console.log("Pushing local symbol", localSymbol, lexicalDeclaration);
       parts.push(
         <MemberExpression.Part symbol={localSymbol ?? lexicalDeclaration} />,
       );

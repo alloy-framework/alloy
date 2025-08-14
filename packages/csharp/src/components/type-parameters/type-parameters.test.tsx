@@ -15,16 +15,16 @@ it("render very long", () => {
     <TestNamespace>
       <TypeParameters
         parameters={[
-          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesA",
-          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesB",
+          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongA",
+          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongB",
         ]}
       />
     </TestNamespace>,
   ).toRenderTo(
     `
     <
-      SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesA,
-      SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesB>
+        SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongA,
+        SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongB>
     `,
   );
 });

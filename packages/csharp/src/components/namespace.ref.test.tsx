@@ -1,4 +1,4 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { ClassDeclaration } from "./class/declaration.jsx";
@@ -8,7 +8,7 @@ import { SourceFile } from "./SourceFile.jsx";
 it("references types in the same namespace", () => {
   const classRef = refkey();
 
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="Test">
         <SourceFile path="test.cs">
@@ -17,10 +17,10 @@ it("references types in the same namespace", () => {
           {classRef};
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
 
-  expect(res.contents[0].contents).toBe(d`
+  expect(tree).toRenderTo(d`
     namespace Test;
 
     class TestClass;
@@ -31,7 +31,7 @@ it("references types in the same namespace", () => {
 it("references types in a parent namespace", () => {
   const classRef = refkey();
 
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="Test">
         <SourceFile path="test.cs">
@@ -40,10 +40,10 @@ it("references types in a parent namespace", () => {
           <Namespace name="Nested">{classRef};</Namespace>
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
 
-  expect(res.contents[0].contents).toBe(d`
+  expect(tree).toRenderTo(d`
     namespace Test {
         class TestClass;
         namespace Nested {
@@ -56,7 +56,7 @@ it("references types in a parent namespace", () => {
 it("references types in a child namespace", () => {
   const classRef = refkey();
 
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="Test">
         <SourceFile path="test.cs">
@@ -66,10 +66,10 @@ it("references types in a child namespace", () => {
           </Namespace>
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
 
-  expect(res.contents[0].contents).toBe(d`
+  expect(tree).toRenderTo(d`
     namespace Test {
         Nested.TestClass;
         namespace Nested {
@@ -77,4 +77,63 @@ it("references types in a child namespace", () => {
         }
     }
   `);
+});
+
+it("references types in a different top-level namespace declared in the same file", () => {
+  const classRef = refkey();
+
+  const tree = (
+    <Output>
+      <SourceFile path="test.cs">
+        <Namespace name="TestCode1">{classRef}</Namespace>
+        <hbr />
+        <Namespace name="TestCode2">
+          <ClassDeclaration name="TestClass" refkey={classRef} />
+        </Namespace>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(d`
+    using TestCode2;
+
+    namespace TestCode1 {
+        TestClass
+    }
+    namespace TestCode2 {
+        class TestClass;
+    }
+  `);
+});
+
+it("references types in a different top-level namespace declared in a different file", () => {
+  const classRef = refkey();
+
+  const tree = (
+    <Output>
+      <SourceFile path="test.cs">
+        <Namespace name="TestCode1">{classRef};</Namespace>
+      </SourceFile>
+      <SourceFile path="other.cs">
+        <Namespace name="TestCode2">
+          <ClassDeclaration name="TestClass" refkey={classRef} />
+        </Namespace>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo({
+    "test.cs": d`
+      using TestCode2;
+
+      namespace TestCode1 {
+          TestClass;
+      }
+    `,
+    "other.cs": d`
+        namespace TestCode2 {
+            class TestClass;
+        }
+      `,
+  });
 });

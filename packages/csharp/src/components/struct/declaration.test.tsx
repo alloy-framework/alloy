@@ -85,13 +85,11 @@ describe("with type parameters", () => {
         </StructDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode;
-      
-          public struct Test<T, U>
-          {
-              T PropA { get; set; }
-              U PropB { get; set; }
-          }
+      public struct Test<T, U>
+      {
+          T PropA { get; set; }
+          U PropB { get; set; }
+      }
     `);
   });
 
@@ -115,10 +113,10 @@ describe("with type parameters", () => {
       </TestNamespace>,
     ).toRenderTo(`
       public struct Test<T, U>
-        where T : IFoo
-        where U : IBar
+          where T : IFoo
+          where U : IBar
       {
-        // Body
+          // Body
       }
     `);
   });
@@ -145,7 +143,7 @@ it("define methods", () => {
   ).toRenderTo(`
     struct Test
     {
-      void MethodOne() {}
+        void MethodOne() {}
     }
   `);
 });
@@ -160,7 +158,7 @@ it("define constructor", () => {
   ).toRenderTo(`
     struct Test
     {
-      public Test() {}
+        public Test() {}
     }
   `);
 });
@@ -178,8 +176,8 @@ it("defines fields", () => {
   ).toRenderTo(`
     public struct TestClass
     {
-      public string MemberOne;
-      public int MemberTwo;
+        public string MemberOne;
+        public int MemberTwo;
     }
   `);
 });

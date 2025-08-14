@@ -2,9 +2,9 @@ import { OutputScopeOptions } from "@alloy-js/core";
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 import { CSharpClassScope } from "./class.js";
 import { useCSharpScope, useNamedTypeScope } from "./contexts.js";
-import { CSharpMethodScope } from "./method-scope.js";
+import { CSharpMethodScope } from "./method.js";
 import { CSharpNamedTypeScope } from "./named-type.js";
-import { CSharpSourceFileScope } from "./source-file-scope.js";
+import { CSharpSourceFileScope } from "./source-file.js";
 
 export function createNamedTypeScope(
   ownerSymbol: NamedTypeSymbol,

@@ -1,6 +1,6 @@
 import { Namespace } from "#components/namespace.jsx";
 import { SourceFile } from "#components/SourceFile.jsx";
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { EnumDeclaration } from "./declaration.jsx";
@@ -10,7 +10,7 @@ it("can reference things by refkey", () => {
   const enumRK = refkey();
   const twoRK = refkey();
 
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="TestCode">
         <SourceFile path="Test.cs">
@@ -23,10 +23,9 @@ it("can reference things by refkey", () => {
           {twoRK};
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
-
-  expect(res.contents[0].contents).toBe(d`
+  expect(tree).toRenderTo(d`
     namespace TestCode;
 
     public enum TestEnum
@@ -43,7 +42,7 @@ it("can reference things by refkey across files", () => {
   const enumRK = refkey();
   const barRK = refkey();
 
-  const res = render(
+  const tree = (
     <Output>
       <Namespace name="TestCode">
         <SourceFile path="Test.cs">
@@ -65,32 +64,30 @@ it("can reference things by refkey across files", () => {
           {barRK};
         </SourceFile>
       </Namespace>
-    </Output>,
+    </Output>
   );
+  expect(tree).toRenderTo({
+    "Test.cs": d`
+      namespace TestCode;
 
-  expect(res.contents[0].path).toBe("Test.cs");
-  expect(res.contents[0].contents).toBe(d`
-    namespace TestCode;
+      public enum TestEnum
+      {
+          One,
+          Two
+      }
+      OtherEnum;
+      OtherEnum.Bar;
+    `,
+    "Other.cs": d`
+      namespace TestCode;
 
-    public enum TestEnum
-    {
-        One,
-        Two
-    }
-    OtherEnum;
-    OtherEnum.Bar;
-  `);
-
-  expect(res.contents[1].path).toBe("Other.cs");
-  expect(res.contents[1].contents).toBe(d`
-    namespace TestCode;
-
-    public enum OtherEnum
-    {
-        Foo,
-        Bar
-    }
-    OtherEnum;
-    OtherEnum.Bar;
-  `);
+      public enum OtherEnum
+      {
+          Foo,
+          Bar
+      }
+      OtherEnum;
+      OtherEnum.Bar;
+    `,
+  });
 });

@@ -1,4 +1,5 @@
-import { CSharpLexicalScope } from "./lexical-scope.js";
+import type { OutputSpace } from "@alloy-js/core";
+import { CSharpLexicalScope } from "./lexical.js";
 
 export class CSharpMethodScope extends CSharpLexicalScope {
   public static readonly declarationSpaces = [
@@ -7,15 +8,15 @@ export class CSharpMethodScope extends CSharpLexicalScope {
     "type-parameters",
   ];
 
-  get localVariables() {
+  get localVariables(): OutputSpace {
     return this.spaceFor("local-variables")!;
   }
 
-  get parameters() {
+  get parameters(): OutputSpace {
     return this.spaceFor("parameters")!;
   }
 
-  get typeParameters() {
+  get typeParameters(): OutputSpace {
     return this.spaceFor("type-parameters")!;
   }
 }

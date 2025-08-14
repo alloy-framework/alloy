@@ -23,8 +23,6 @@ it("reference constructor parameters in body", () => {
       </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
-    namespace TestCode;
-
     public class TestClass
     {
         public TestClass(string name, int size)

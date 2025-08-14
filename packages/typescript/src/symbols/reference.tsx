@@ -37,6 +37,7 @@ export function ref(
 
     const { symbol, pathDown, memberPath, lexicalDeclaration, commonScope } =
       resolveResult.value;
+
     // if we resolved a instance member, check if we should be able to access
     // it.
     if (symbol.isInstanceMemberSymbol) {
@@ -97,20 +98,16 @@ export function ref(
       );
     }
 
-    const base = localSymbol ?? lexicalDeclaration;
-    if (memberPath.length === 0) {
-      return [base.name, localSymbol ?? symbol];
-    }
     const parts = [];
-    const firstPart = memberPath[0];
 
-    if (commonScope && firstPart.ownerSymbol === commonScope.ownerSymbol) {
-      // we are referencing a member of the class we are inside
-      if (firstPart.isInstanceMemberSymbol) {
+    if (commonScope && commonScope.isMemberScope) {
+      // we are referencing a member of a type we are inside
+      if (lexicalDeclaration.isInstanceMemberSymbol) {
         parts.push(<MemberExpression.Part id="this" />);
       } else {
         parts.push(<MemberExpression.Part symbol={commonScope.ownerSymbol} />);
       }
+      parts.push(<MemberExpression.Part symbol={lexicalDeclaration} />);
     } else {
       parts.push(
         <MemberExpression.Part symbol={localSymbol ?? lexicalDeclaration} />,

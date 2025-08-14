@@ -1,6 +1,11 @@
-import { Children, DeclarationProps, Name, Refkey } from "@alloy-js/core";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { Declaration } from "../Declaration.jsx";
+import {
+  Children,
+  Declaration,
+  DeclarationProps,
+  Name,
+  Refkey,
+} from "@alloy-js/core";
+import { createVariableSymbol } from "../../symbols/factories.js";
 
 /** Props for {@link VarDeclaration} component */
 export interface VarDeclarationProps
@@ -37,10 +42,11 @@ export interface VarDeclarationProps
  * ```
  */
 export function VarDeclaration(props: VarDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "variable");
-
+  const sym = createVariableSymbol(props.name, {
+    refkeys: props.refkey,
+  });
   return (
-    <Declaration name={name} refkey={props.refkey}>
+    <Declaration symbol={sym}>
       {props.type ?? "var"} <Name /> = {props.children};
     </Declaration>
   );

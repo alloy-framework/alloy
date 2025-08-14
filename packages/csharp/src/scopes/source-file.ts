@@ -8,12 +8,12 @@ import {
   TriggerOpTypes,
   useScope,
 } from "@alloy-js/core";
-import { CSharpNamespaceSymbol } from "../symbols/namespace.js";
-import { CSharpScope } from "./csharp.js";
-import { CSharpNamespaceScope } from "./namespace-scope.js";
+import { NamespaceSymbol } from "../symbols/namespace.js";
+import { CSharpLexicalScope } from "./lexical.js";
+import { CSharpNamespaceScope } from "./namespace.js";
 
-export class CSharpSourceFileScope extends CSharpScope {
-  #usings = shallowReactive<Set<CSharpNamespaceSymbol>>(new Set());
+export class CSharpSourceFileScope extends CSharpLexicalScope {
+  #usings = shallowReactive<Set<NamespaceSymbol>>(new Set());
 
   constructor(
     name: string,
@@ -34,7 +34,7 @@ export class CSharpSourceFileScope extends CSharpScope {
     super.parent = v;
   }
 
-  addUsing(using: CSharpNamespaceSymbol) {
+  addUsing(using: NamespaceSymbol) {
     this.#usings.add(using);
   }
 

@@ -8,12 +8,13 @@ export type NamedTypeTypeKind =
   | "interface"
   | "enum"
   | "namespace"
-  | "struct";
+  | "struct"
+  | "record";
 export type NamedTypeSymbolKind = "named-type" | "namespace";
 
 export class NamedTypeSymbol extends CSharpSymbol {
   public readonly symbolKind: NamedTypeSymbolKind = "named-type";
-  public static readonly memberSpaces = ["members", "type-parameters"];
+  public static readonly memberSpaces = ["members"];
 
   constructor(
     name: string,
@@ -44,9 +45,5 @@ export class NamedTypeSymbol extends CSharpSymbol {
 
   get members() {
     return this.memberSpaceFor("members")!;
-  }
-
-  get typeParameters() {
-    return this.memberSpaceFor("type-parameters")!;
   }
 }

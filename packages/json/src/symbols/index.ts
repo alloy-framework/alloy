@@ -17,14 +17,16 @@ export function ref(refkey: Refkey) {
       return "<Unresolved Symbol>";
     }
     const {
+      pathDown,
       pathUp,
       lexicalDeclaration,
       memberPath,
       commonScope,
       fullSymbolPath,
     } = resolveResult.value;
-    let ref = "";
 
+    let ref = "";
+    let isCrossFile = false;
     // When we have no common scope and we don't path up through the symbol
     // we're referencing (i.e. the symbol we're referencing isn't the symbol for
     // the file the reference occurs in), append the file path.
@@ -35,26 +37,36 @@ export function ref(refkey: Refkey) {
     ) {
       const currentPath = sourceFile.symbol.name;
       const targetPath = lexicalDeclaration.name;
+      isCrossFile = true;
       ref += relative(dirname(currentPath), targetPath);
     }
 
     ref += "#";
 
-    // when fullPath is non-empty, it means we are resolving something that is a
-    // member of a symbol that is in-scope. So we need to use the full path to
-    // recover the symbol names of the scopes, and then use the member path. The
-    // first entry of the fullPath is the root scope of this file so we ignore
-    // it.
-    if (fullSymbolPath.length <= 1 && memberPath.length === 0) {
+    if (
+      commonScope === undefined &&
+      pathDown.length === 0 &&
+      memberPath.length === 0
+    ) {
+      // we are referring to the root of a file
       return ref;
     }
 
     ref += "/";
-    ref += fullSymbolPath
-      .slice(1)
-      .map((s) => s.ownerSymbol!.name)
-      .concat(memberPath.map((s) => s.name))
-      .join("/");
+
+    if (isCrossFile) {
+      // the lexical declaration is the file symbol, so we just need any
+      // additional members.
+      ref += memberPath.map((s) => s.name).join("/");
+    } else {
+      // merge together the member scopes, lexical declaration, and member path
+      ref += fullSymbolPath
+        .slice(1)
+        .map((s) => s.ownerSymbol!.name)
+        .concat(lexicalDeclaration.name)
+        .concat(memberPath.map((s) => s.name))
+        .join("/");
+    }
 
     return ref;
   });

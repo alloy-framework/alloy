@@ -12,6 +12,10 @@ export interface AddImportOptions {
   type?: boolean;
 }
 
+/**
+ * A lexical scope for TypeScript which represents the top-level scope of a
+ * module. Manages the module's imported and exported symbols.
+ */
 export class TSModuleScope extends TSLexicalScope {
   #exportedSymbols: Map<Refkey, TSOutputSymbol> = shallowReactive(new Map());
   get exportedSymbols() {

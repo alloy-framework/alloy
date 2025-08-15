@@ -1,13 +1,22 @@
-import { OutputSymbol, type OutputSymbolOptions } from "@alloy-js/core";
+import {
+  BasicSymbol,
+  type OutputSpace,
+  type OutputSymbolOptions,
+} from "@alloy-js/core";
 
-export class DocSymbol extends OutputSymbol {
+export class DocSymbol extends BasicSymbol {
   #path: string;
   get path() {
     return this.#path;
   }
 
-  constructor(name: string, path: string, options?: OutputSymbolOptions) {
-    super(name, options);
+  constructor(
+    name: string,
+    spaces: OutputSpace[] | OutputSpace,
+    path: string,
+    options?: OutputSymbolOptions,
+  ) {
+    super(name, spaces, options);
     this.#path = path;
   }
 }

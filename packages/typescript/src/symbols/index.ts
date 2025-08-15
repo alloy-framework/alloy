@@ -1,4 +1,4 @@
-import { OutputScopeOptions } from "../../../core/src/index.browser.js";
+import { OutputScopeOptions } from "@alloy-js/core";
 import { useLexicalScope, useMemberOwner } from "../utils.js";
 import { useTSScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";

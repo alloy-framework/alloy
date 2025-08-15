@@ -8,6 +8,10 @@ export type LexicalScopeProps =
   | LexicalScopePropsWithScopeValue
   | LeixcalScopePropsWithScopeInfo;
 
+/**
+ * A lexical scope for TypeScript, which contains declaration spaces for types
+ * and values. Declaration components will create symbols in this scope.
+ */
 export function LexicalScope(props: LexicalScopeProps) {
   let scope;
   if ("value" in props) {

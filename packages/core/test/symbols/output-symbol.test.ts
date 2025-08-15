@@ -120,11 +120,8 @@ describe("OutputSymbol#copy", () => {
   it("copies member symbols", () => {
     const scope = createScope("scope");
     const symbol = createSymbol("sym", scope);
-    const staticMember = createSymbol("static-member", symbol.staticMembers);
-    const instanceMember = createSymbol(
-      "instance-member",
-      symbol.instanceMembers,
-    );
+    createSymbol("static-member", symbol.staticMembers);
+    createSymbol("instance-member", symbol.instanceMembers);
 
     const copy = symbol.copy();
 

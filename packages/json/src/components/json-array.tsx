@@ -8,7 +8,6 @@ import {
   MemberScope,
   moveTakenMembersTo,
   onCleanup,
-  OutputSymbolFlags,
   Refkey,
   useMemberScope,
 } from "@alloy-js/core";
@@ -57,7 +56,7 @@ export type JsonArrayProps =
  */
 export function JsonArray(props: JsonArrayProps) {
   const arraySym = new JsonOutputSymbol("array symbol", undefined, {
-    flags: OutputSymbolFlags.Transient,
+    transient: true,
     refkeys: props.refkey ? [props.refkey].flat() : undefined,
   });
   emitSymbol(arraySym);

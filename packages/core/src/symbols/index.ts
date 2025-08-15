@@ -1,6 +1,5 @@
 export * from "./basic-scope.js";
 export * from "./basic-symbol.js";
-export * from "./flags.js";
 export * from "./output-scope.js";
 export * from "./output-space.js";
 export * from "./output-symbol.js";

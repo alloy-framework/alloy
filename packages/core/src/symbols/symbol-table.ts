@@ -8,6 +8,7 @@ import {
   trace,
   TracePhase,
 } from "../tracer.js";
+import { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
 export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
@@ -104,7 +105,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
 
     target.addSubset(this, {
       onAdd: (symbol) => {
-        symbol.spaces = [target];
+        symbol.spaces = [target as OutputSpace];
         return symbol;
       },
     });
@@ -125,7 +126,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
     target.addSubset(this, {
       onAdd: (symbol) => {
         const copy = symbol.copy();
-        copy.spaces = [target];
+        copy.spaces = [target as OutputSpace];
         copy.refkeys = options.createRefkeys?.(symbol) ?? [];
         return copy;
       },

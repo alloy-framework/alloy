@@ -30,7 +30,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   expect(tree).toRenderTo({
     "Model1.cs": d`
       namespace Namespace1;
-    
+
       public class Model1;
     `,
     "Model2.cs": d`
@@ -45,7 +45,7 @@ it("defines multiple namespaces and source files with unique content", () => {
     `,
     "Model4.cs": d`
       namespace Namespace2;
-    
+      
       public class Model4;
     `,
   });

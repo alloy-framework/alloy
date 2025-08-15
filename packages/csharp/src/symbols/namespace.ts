@@ -5,6 +5,9 @@ export interface NamespaceSymbolOptions extends OutputSymbolOptions {
   isGlobal?: boolean;
 }
 
+/**
+ * A symbol for a namespace in C#.
+ */
 export class NamespaceSymbol extends NamedTypeSymbol {
   public readonly symbolKind = "namespace";
   constructor(

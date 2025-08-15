@@ -16,7 +16,6 @@ import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 import { MethodKinds, MethodSymbol } from "./method.js";
 import { NamedTypeSymbol, NamedTypeTypeKind } from "./named-type.js";
 import { NamespaceSymbol } from "./namespace.js";
-import { PropertySymbol } from "./property.js";
 
 /**
  * Create a symbol for a parameter in the current method scope.
@@ -140,7 +139,7 @@ export function createPropertySymbol(
 ) {
   const name = useCSharpNamePolicy().getName(originalName, "class-property");
   const scope = useNamedTypeScope();
-  return new PropertySymbol(name, scope.members, options);
+  return new CSharpSymbol(name, scope.members, options);
 }
 
 export function createVariableSymbol(

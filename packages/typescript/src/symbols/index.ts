@@ -1,7 +1,4 @@
-import {
-  OutputScopeOptions,
-  OutputSymbolFlags,
-} from "../../../core/src/index.browser.js";
+import { OutputScopeOptions } from "../../../core/src/index.browser.js";
 import { useLexicalScope, useMemberOwner } from "../utils.js";
 import { useTSScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
@@ -52,7 +49,7 @@ export function createValueSymbol(
 
 export function createTransientValueSymbol() {
   return new TSOutputSymbol("transient-value", undefined, {
-    flags: OutputSymbolFlags.Transient,
+    transient: true,
   });
 }
 

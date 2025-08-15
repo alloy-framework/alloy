@@ -59,7 +59,6 @@ export function createPythonSymbol(
     binder: binder,
     aliasTarget: options.aliasTarget,
     refkeys: options.refkeys,
-    flags: options.flags,
     metadata: options.metadata,
     module: sfContext?.module,
   });

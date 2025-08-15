@@ -1,4 +1,4 @@
-import { OutputSymbol, OutputSymbolOptions, SymbolTable } from "@alloy-js/core";
+import { OutputSpace, OutputSymbol, OutputSymbolOptions } from "@alloy-js/core";
 
 export interface PythonOutputSymbolOptions extends OutputSymbolOptions {
   module?: string;
@@ -17,7 +17,7 @@ export class PythonOutputSymbol extends OutputSymbol {
 
   constructor(
     name: string,
-    spaces: SymbolTable[] | SymbolTable | undefined,
+    spaces: OutputSpace[] | OutputSpace | undefined,
     options: PythonOutputSymbolOptions,
   ) {
     super(name, spaces, options);
@@ -52,7 +52,6 @@ export class PythonOutputSymbol extends OutputSymbol {
       binder: this.binder,
       aliasTarget: this.aliasTarget,
       module: this.module,
-      flags: this.flags,
       metadata: this.metadata,
     });
 

@@ -2,7 +2,6 @@ import { effect, ReactiveEffectRunner } from "@vue/reactivity";
 import { untrack } from "./reactivity.js";
 import type { Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
-import { OutputScopeFlags, OutputSymbolFlags } from "./symbols/flags.js";
 import { type OutputScope } from "./symbols/output-scope.js";
 import type {
   OutputDeclarationSpace,
@@ -285,24 +284,6 @@ function colorText(text: string, fmt?: TextFormat): string {
 }
 
 /**
- * Format flag values in a concise way, showing only the flags that are set
- * @param flags The numeric flags value to format
- * @param flagEnum The enum containing flag definitions
- * @returns An array of flag names that are set
- */
-function formatFlags<T extends Record<string, string | number>>(
-  flags: number,
-  flagEnum: T,
-): string[] {
-  return Object.entries(flagEnum)
-    .filter(
-      ([name, value]) =>
-        typeof value === "number" && value !== 0 && (flags & value) === value,
-    )
-    .map(([name]) => name);
-}
-
-/**
  * Format a symbol name with its ID in a blue-green color
  * @param symbol The symbol to format
  * @returns A formatted string representation of the symbol name with ID
@@ -326,13 +307,6 @@ export function formatSymbol(symbol: OutputSymbol): string {
 
   if (!symbol.binder) {
     details.push(colorText("  !UNBOUND", { fg: { r: 255, g: 0, b: 0 } }));
-  }
-
-  // Show only enabled flags
-  const flagsInfo = formatFlags(symbol.flags, OutputSymbolFlags);
-
-  if (flagsInfo.length > 0) {
-    details.push(`  flags: ${flagsInfo.join(", ")}`);
   }
 
   // Show scope info with formatted name
@@ -418,12 +392,6 @@ export function formatScope(scope: OutputScope): string {
 
   if (!scope.binder) {
     details.push(colorText("  !UNBOUND", { fg: { r: 255, g: 0, b: 0 } }));
-  }
-  // Show only enabled flags
-  const flagsInfo = formatFlags(scope.flags, OutputScopeFlags);
-
-  if (flagsInfo.length > 0) {
-    details.push(`  flags: ${flagsInfo.join(", ")}`);
   }
 
   // Show parent scope if present

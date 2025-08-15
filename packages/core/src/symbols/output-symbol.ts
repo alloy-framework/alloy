@@ -20,16 +20,19 @@ import {
   traceEffect,
   TracePhase,
 } from "../tracer.js";
-import { OutputSymbolFlags } from "./flags.js";
-import { OutputDeclarationSpace, OutputMemberSpace } from "./output-space.js";
+import {
+  OutputDeclarationSpace,
+  OutputMemberSpace,
+  OutputSpace,
+} from "./output-space.js";
 import { SymbolTable } from "./symbol-table.js";
 
 export interface OutputSymbolOptions {
   binder?: Binder;
-  flags?: OutputSymbolFlags;
   refkeys?: Refkey | Refkey[];
   metadata?: Record<string, unknown>;
   aliasTarget?: OutputSymbol;
+  transient?: boolean;
 }
 
 let symbolCount = 0;
@@ -48,11 +51,22 @@ export abstract class OutputSymbol {
   public static readonly memberSpaces: Readonly<string[]> = [];
 
   #originalName: string;
+  /**
+   * Read only. The requested name of this symbol. The symbol's actual name may
+   * be different depending on naming policy or conflicts with other symbols.
+   *
+   * @readonly
+   */
   get originalName() {
     return this.#originalName;
   }
 
   #name: string;
+  /**
+   * The name of this symbol.
+   *
+   * @reactive
+   */
   get name() {
     track(this, TrackOpTypes.GET, "name");
     return this.#name;
@@ -69,36 +83,38 @@ export abstract class OutputSymbol {
   }
 
   #id: number;
+  /**
+   * The unique id of this symbol.
+   *
+   * @readonly
+   */
   get id() {
     return this.#id;
   }
 
-  #flags: OutputSymbolFlags;
-  get flags() {
-    track(this, TrackOpTypes.GET, "flags");
-    return this.#flags;
-  }
-
   #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({});
+  /**
+   * The member spaces of this symbol.
+   *
+   * @readonly
+   */
   get memberSpaces() {
     return Object.values(this.#memberSpaces);
   }
 
+  /**
+   * Get the member space for the given key.
+   */
   memberSpaceFor(spaceKey: string): OutputMemberSpace | undefined {
     return this.#memberSpaces[spaceKey];
   }
 
-  set flags(flags: OutputSymbolFlags) {
-    const old = this.#flags;
-
-    if (old === flags) {
-      return;
-    }
-
-    this.#flags = flags;
-    trigger(this, TriggerOpTypes.SET, "flags", flags, old);
-  }
-
+  /**
+   * The scope this symbol is in. When this symbol is a member symbol, this will
+   * return undefined.
+   *
+   * @readonly
+   */
   get scope() {
     if (this.isMemberSymbol) {
       return undefined;
@@ -111,13 +127,18 @@ export abstract class OutputSymbol {
     return (this.spaces[0] as OutputDeclarationSpace).scope;
   }
 
-  #spaces: SymbolTable[];
-  get spaces(): SymbolTable[] {
+  #spaces: OutputSpace[];
+  /**
+   * The declaration or member spaces this symbol belongs to.
+   *
+   * @reactive
+   */
+  get spaces(): OutputSpace[] {
     track(this, TrackOpTypes.GET, "spaces");
     return this.#spaces;
   }
 
-  set spaces(spaces: SymbolTable[] | SymbolTable | undefined) {
+  set spaces(spaces: OutputSpace[] | OutputSpace | undefined) {
     const old = this.#spaces;
 
     if (old === spaces) {
@@ -147,11 +168,22 @@ export abstract class OutputSymbol {
   }
 
   #binder: Binder | undefined;
+  /**
+   * The binder that is tracking this symbol.
+   *
+   * @readonly
+   */
   get binder() {
     return this.#binder;
   }
 
   #refkeys: Refkey[];
+
+  /**
+   * The refkeys for this symbol.
+   *
+   * @reactive
+   */
   get refkeys() {
     track(this, TrackOpTypes.GET, "refkeys");
     return this.#refkeys;
@@ -171,48 +203,133 @@ export abstract class OutputSymbol {
   }
 
   #aliasTarget?: OutputSymbol;
+  /**
+   * The symbol that this symbol is an alias for.
+   *
+   * @readonly
+   */
   get aliasTarget() {
     return this.#aliasTarget;
   }
 
+  /**
+   * Whether this symbol is an alias for another symbol.
+   *
+   * @readonly
+   */
+  get isAlias() {
+    return !!this.#aliasTarget;
+  }
+
   #metadata: Record<string, unknown>;
+  /**
+   * An arbitrary bag of metadata for this symbol. This property is read only,
+   * but the metadata is a reactive object.
+   *
+   * @readonly
+   */
   get metadata() {
     return this.#metadata;
   }
 
+  copyToSpace(space: OutputSpace) {
+    const copy = this.copy();
+    copy.spaces = space;
+    return copy;
+  }
+
   /**
-   * Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
-   * proxy.
+   * Whether this symbol is a member of another symbol.
+   *
+   * @readonly
    */
+  get isMemberSymbol() {
+    return this.spaces[0] instanceof OutputMemberSpace;
+  }
+
+  /**
+   * When this is a member symbol, this returns the symbol that this is symbol
+   * is a member of.
+   */
+  get ownerSymbol(): OutputSymbol | undefined {
+    if (!this.isMemberSymbol) {
+      return undefined;
+    }
+
+    return (this.spaces[0] as OutputMemberSpace).symbol;
+  }
+
+  #isTransient: boolean;
+
+  /**
+   * Whether this symbol is a transient symbol. Transient symbols cannot be
+   * referenced and are meant to be combined with other symbols.
+   *
+   * @readonly
+   */
+  get isTransient(): boolean {
+    if (this.#isTransient) {
+      return true;
+    }
+
+    if (this.ownerSymbol) {
+      return this.ownerSymbol.isTransient;
+    }
+
+    return false;
+  }
+
+  #movedTo: OutputSymbol | undefined;
+  /**
+   * The symbol that this symbol's members have been moved to.
+   *
+   * @readonly
+   * @reactive
+   */
+  get movedTo() {
+    track(this, TrackOpTypes.GET, "movedTo");
+    return this.#movedTo;
+  }
+
+  #setMovedTo(value: OutputSymbol | undefined) {
+    this.#movedTo = value;
+    trigger(this, TriggerOpTypes.SET, "movedTo");
+  }
+
+  /**
+   * Whether this symbol's members have been moved to another symbol.
+   *
+   * @reactive
+   */
+  get isMoved() {
+    return this.movedTo !== undefined;
+  }
+
+  // Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
+  // proxy.
   [ReactiveFlags.SKIP] = true;
 
   constructor(
     name: string,
-    spaces: SymbolTable[] | SymbolTable | undefined,
+    spaces: OutputSpace[] | OutputSpace | undefined,
     options: OutputSymbolOptions = {},
   ) {
     this.#binder = options.binder ?? useBinder();
     this.#name = name;
     this.#originalName = name;
     this.#id = symbolCount++;
-    this.#flags = options.flags ?? OutputSymbolFlags.None;
     this.#spaces =
       Array.isArray(spaces) ? spaces
       : spaces === undefined ? []
       : [spaces];
-
     this.#aliasTarget = options.aliasTarget;
-
-    if (this.#aliasTarget) {
-      this.#flags |= OutputSymbolFlags.Alias;
-    }
-
     this.#refkeys = shallowReactive(
       Array.isArray(options.refkeys) ? options.refkeys
       : isRefkey(options.refkeys) ? [options.refkeys]
       : [],
     );
     this.#metadata = reactive(options.metadata ?? {});
+    this.#isTransient = !!options.transient;
     this.#handleNewSpaces(this.#spaces);
     const constructor = this.constructor as typeof OutputSymbol;
     this.#memberSpaces = Object.fromEntries(
@@ -288,14 +405,16 @@ export abstract class OutputSymbol {
   }
 
   /**
-   * Move member symbols from this transient symbol to the target symbol.
+   * Move member symbols from this transient symbol to the target symbol. This is reactive -
+   * whenever a member is added to this symbol, it will be moved to the target
+   * symbol.
    */
   moveMembersTo(targetSymbol: OutputSymbol): void {
     if (this.#aliasTarget) {
       return this.#aliasTarget.moveMembersTo(targetSymbol);
     }
 
-    if (!(this.flags & OutputSymbolFlags.Transient)) {
+    if (!this.isTransient) {
       throw new Error("Can only move members from transient symbols");
     }
 
@@ -313,6 +432,11 @@ export abstract class OutputSymbol {
     this.#setMovedTo(targetSymbol);
   }
 
+  /**
+   * Copy the members of this symbol to the target symbol. This is reactive -
+   * whenever a member is added to this symbol, it will be copied to the target
+   * symbol.
+   */
   copyMembersTo(targetSymbol: OutputSymbol): void {
     if (this.#aliasTarget) {
       return this.#aliasTarget.copyMembersTo(targetSymbol);
@@ -328,55 +452,6 @@ export abstract class OutputSymbol {
 
       sourceSpace.copyTo(targetSpace);
     }
-  }
-
-  copyToSpace(space: SymbolTable) {
-    const copy = this.copy();
-    copy.spaces = space;
-    return copy;
-  }
-
-  get isMemberSymbol() {
-    return this.spaces[0] instanceof OutputMemberSpace;
-  }
-
-  /**
-   * When this is a member symbol, this returns the symbol that this is symbol
-   * is a member of.
-   */
-  get ownerSymbol(): OutputSymbol | undefined {
-    if (!this.isMemberSymbol) {
-      return undefined;
-    }
-
-    return (this.spaces[0] as OutputMemberSpace).symbol;
-  }
-
-  get isTransient(): boolean {
-    if (this.flags & OutputSymbolFlags.Transient) {
-      return true;
-    }
-
-    if (this.ownerSymbol) {
-      return this.ownerSymbol.isTransient;
-    }
-
-    return false;
-  }
-
-  #movedTo: OutputSymbol | undefined;
-  get movedTo() {
-    track(this, TrackOpTypes.GET, "movedTo");
-    return this.#movedTo;
-  }
-
-  #setMovedTo(value: OutputSymbol | undefined) {
-    this.#movedTo = value;
-    trigger(this, TriggerOpTypes.SET, "movedTo");
-  }
-
-  get isMoved() {
-    return this.movedTo !== undefined;
   }
 
   /**
@@ -398,8 +473,8 @@ export abstract class OutputSymbol {
     return {
       binder: this.binder,
       aliasTarget: this.aliasTarget,
-      flags: this.flags,
       metadata: this.metadata,
+      transient: this.isTransient,
     };
   }
 
@@ -417,10 +492,6 @@ export abstract class OutputSymbol {
     watch(
       () => this.name,
       (newName) => (copy.name = newName),
-    );
-    watch(
-      () => this.flags,
-      (newFlags) => (copy.flags = newFlags),
     );
   }
 

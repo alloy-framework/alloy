@@ -2,7 +2,6 @@ import {
   Children,
   Declaration as CoreDeclaration,
   Name,
-  OutputSymbolFlags,
   Show,
   createSymbolSlot,
   effect,
@@ -109,7 +108,8 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
       for (const symbol of takenSymbols) {
         // ignore non-transient symbols (likely not the result of an
         // expression).
-        if (symbol.flags & OutputSymbolFlags.Transient) {
+
+        if (symbol.isTransient) {
           symbol.moveMembersTo(sym);
         }
       }

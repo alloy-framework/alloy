@@ -1,28 +1,22 @@
 import { beforeEach } from "vitest";
 import { Binder, createOutputBinder } from "../../src/binder.js";
+import { OutputSpace } from "../../src/index.js";
 import { Refkey } from "../../src/refkey.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
-import {
-  OutputScopeFlags,
-  OutputSymbolFlags,
-} from "../../src/symbols/flags.js";
 import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
 import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
-import { SymbolTable } from "../../src/symbols/symbol-table.js";
 
 type ScopeRecords = Record<string, ScopeDescriptor>;
 type SymbolRecords = Record<string, SymbolDescriptor>;
 
 interface ScopeDescriptor {
-  flags?: OutputScopeFlags;
   scopes?: ScopeRecords;
   symbols: SymbolRecords;
 }
 
 interface SymbolDescriptor {
   refkey?: Refkey;
-  flags?: OutputSymbolFlags;
   instanceMembers?: SymbolRecords;
   staticMembers?: SymbolRecords;
 }
@@ -45,7 +39,7 @@ export function createScope(
 
 export function createSymbol(
   name: string,
-  scope: BasicScope | SymbolTable,
+  scope: BasicScope | OutputSpace,
   options?: OutputSymbolOptions,
 ) {
   const space = scope instanceof BasicScope ? scope.symbols : scope;

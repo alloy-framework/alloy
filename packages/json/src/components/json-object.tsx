@@ -9,7 +9,6 @@ import {
   MemberScope,
   moveTakenMembersTo,
   onCleanup,
-  OutputSymbolFlags,
   Refkey,
   useMemberScope,
 } from "@alloy-js/core";
@@ -63,7 +62,7 @@ export type JsonObjectProps =
  */
 export function JsonObject(props: JsonObjectProps) {
   const objectSym = new JsonOutputSymbol("object symbol", undefined, {
-    flags: OutputSymbolFlags.Transient,
+    transient: true,
     refkeys: props.refkey ? [props.refkey].flat() : undefined,
   });
   emitSymbol(objectSym);

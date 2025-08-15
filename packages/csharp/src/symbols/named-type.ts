@@ -12,6 +12,11 @@ export type NamedTypeTypeKind =
   | "record";
 export type NamedTypeSymbolKind = "named-type" | "namespace";
 
+/**
+ * A symbol for a named type in C# such as a class, interface, enum, and so
+ * forth. Named types are generally defined in a namespace, and can have members
+ * of their own.
+ */
 export class NamedTypeSymbol extends CSharpSymbol {
   public readonly symbolKind: NamedTypeSymbolKind = "named-type";
   public static readonly memberSpaces = ["members"];

@@ -1,7 +1,6 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
 import { PythonElements } from "../name-policy.js";
@@ -19,11 +18,6 @@ export interface BaseDeclarationProps {
    * The refkey or array of refkeys for this declaration.
    */
   refkey?: Refkey | Refkey[];
-
-  /**
-   * Flags for the symbol created by this component.
-   */
-  flags?: OutputSymbolFlags;
 
   children?: Children;
 
@@ -69,7 +63,6 @@ export function Declaration(props: DeclarationProps) {
       props.name!,
       {
         refkeys: props.refkey,
-        flags: props.flags,
       },
       props.nameKind!,
     );

@@ -1,7 +1,6 @@
 import {
   emitSymbol,
-  instantiateTakenMembersTo as instantiateTakenSymbolsTo,
-  OutputSymbolFlags,
+  instantiateTakenMembersTo,
   useContext,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
@@ -36,10 +35,10 @@ export function ClassInstantiation(props: ClassInstantiationProps) {
   const sfContext = useContext(PythonSourceFileContext);
   const module = sfContext?.module;
   const sym = createPythonSymbol("", {
-    flags: OutputSymbolFlags.Transient,
+    transient: true,
     module: module,
   });
-  instantiateTakenSymbolsTo(sym, "static", "instance");
+  instantiateTakenMembersTo(sym, "static", "instance");
   emitSymbol(sym);
   return (
     <>

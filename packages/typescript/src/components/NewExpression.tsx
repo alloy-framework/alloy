@@ -1,7 +1,6 @@
 import {
   emitSymbol,
   instantiateTakenMembersTo as instantiateTakenSymbolsTo,
-  OutputSymbolFlags,
 } from "@alloy-js/core";
 import { createValueSymbol } from "../symbols/index.js";
 import {
@@ -13,7 +12,7 @@ export interface NewExpressionProps extends FunctionCallExpressionProps {}
 
 export function NewExpression(props: NewExpressionProps) {
   const sym = createValueSymbol("", {
-    flags: OutputSymbolFlags.Transient,
+    transient: true,
   });
   instantiateTakenSymbolsTo(sym, "static", "instance");
   emitSymbol(sym);

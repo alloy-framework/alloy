@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 import { Refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
-import { OutputScopeFlags } from "../../src/symbols/flags.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
 import { binder, createScope, createSymbol } from "./utils.js";
 
@@ -13,7 +12,6 @@ describe("OutputScope constructor", () => {
     expect(scope.name).toBe("testScope");
     expect(scope.binder).toBe(binder);
     expect(scope.id).toEqual(expect.any(Number));
-    expect(scope.flags).toBe(OutputScopeFlags.None);
     expect(scope.metadata).toEqual({});
     expect(scope.symbols).toBeInstanceOf(SymbolTable);
     expect(scope.symbolNames.size).toBe(0);
@@ -30,7 +28,6 @@ describe("OutputScope constructor", () => {
     });
 
     expect(scope.name).toBe("testScope");
-    expect(scope.flags).toBe(OutputScopeFlags.None);
     expect(scope.metadata.foo).toBe("bar");
     expect(scope.parent).toBe(parentScope);
     expect(parentScope.children.has(scope)).toBe(true);
@@ -47,17 +44,6 @@ describe("OutputScope reactivity", () => {
     flushJobs();
     expect(nameSpy).toHaveBeenCalled();
     expect(scope.name).toBe("newName");
-  });
-
-  it("is reactive on flags", () => {
-    const scope = createScope("scope");
-    const flagsSpy = vi.fn();
-    watch(() => scope.flags, flagsSpy);
-
-    scope.flags = OutputScopeFlags.Transient;
-    flushJobs();
-    expect(flagsSpy).toHaveBeenCalled();
-    expect(scope.flags).toBe(OutputScopeFlags.Transient);
   });
 
   it("updates symbolNames when symbols are added", () => {

@@ -4,7 +4,6 @@ import { Context, effect, getContext, onCleanup } from "../reactivity.js";
 import { MemberContext } from "../context/member-scope.js";
 import { ScopeContext } from "../context/scope.js";
 import { formatSymbolName, trace, TracePhase } from "../tracer.js";
-import { OutputSymbolFlags } from "./flags.js";
 import { OutputSymbol } from "./output-symbol.js";
 
 export interface TakeSymbolCallback {
@@ -106,7 +105,7 @@ export function moveTakenMembersTo(baseSymbol: OutputSymbol) {
   const taken = takeSymbols();
   effect(() => {
     for (const symbol of taken) {
-      if (symbol.flags & OutputSymbolFlags.Transient) {
+      if (symbol.isTransient) {
         symbol.moveMembersTo(baseSymbol);
       }
 

@@ -8,7 +8,6 @@ import {
   findKeyedChild,
   findUnkeyedChildren,
   Name,
-  OutputSymbolFlags,
   Refkey,
   Show,
   takeSymbols,
@@ -118,7 +117,7 @@ export interface InterfaceExpressionProps {
 export const InterfaceExpression = ensureTypeRefContext(
   (props: InterfaceExpressionProps) => {
     const symbol = new TSOutputSymbol("", undefined, {
-      flags: OutputSymbolFlags.Transient,
+      transient: true,
     });
 
     emitSymbol(symbol);
@@ -185,7 +184,7 @@ export function InterfaceMember(props: InterfaceMemberProps) {
       effect(() => {
         if (taken.size > 1) return;
         const symbol = Array.from(taken)[0];
-        if (symbol?.flags & OutputSymbolFlags.Transient) {
+        if (symbol?.isTransient) {
           symbol.moveMembersTo(sym!);
         }
       });

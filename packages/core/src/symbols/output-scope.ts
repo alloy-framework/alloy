@@ -13,18 +13,12 @@ import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { untrack } from "../reactivity.js";
 import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
-import { OutputScopeFlags } from "./flags.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
 import { OutputSymbol } from "./output-symbol.js";
 
 let scopeCount = 0;
 
 export interface OutputScopeOptions {
-  /**
-   * Flags for this scope.
-   */
-  flags?: OutputScopeFlags;
-
   /**
    * Arbitrary metadata that is associated with this scope.
    */
@@ -65,10 +59,11 @@ export interface OutputScopeOptions {
 export abstract class OutputScope {
   static readonly declarationSpaces: Readonly<string[]> = [] as const;
 
-  // my kingdom for decorators
   #name: string;
   /**
    * The name of the scope.
+   *
+   * @reactive
    */
   get name() {
     track(this, TrackOpTypes.GET, "name");
@@ -84,33 +79,32 @@ export abstract class OutputScope {
   #id: number;
   /**
    * The unique id of this scope.
+   *
+   * @readonly
    */
   get id() {
     return this.#id;
   }
 
-  #flags: OutputScopeFlags;
-  /**
-   * The flags that describe this scope.
-   */
-  get flags() {
-    track(this, TrackOpTypes.GET, "flags");
-    return this.#flags;
-  }
-  set flags(flags: OutputScopeFlags) {
-    const old = this.#flags;
-    this.#flags = flags;
-    trigger(this, TriggerOpTypes.SET, "flags", flags, old);
-  }
-
   // read only
   #metadata: Record<string, unknown>;
+  /**
+   * Arbitrary metadata associated with this scope. This property is not
+   * reactive but the metadata object is a reactive object.
+   *
+   * @readonly
+   */
   get metadata() {
     return this.#metadata;
   }
 
   #parent?: OutputScope;
 
+  /**
+   * The parent scope of this scope. Undefined if this is a root scope.
+   *
+   * @reactive
+   */
   get parent() {
     track(this, TrackOpTypes.GET, "parent");
     return this.#parent;
@@ -131,7 +125,11 @@ export abstract class OutputScope {
     this.#parent = scope;
   }
 
-  #spaces: Record<string, OutputSpace>;
+  #spaces: Record<string, OutputDeclarationSpace>;
+
+  /**
+   * Get the declaration space for the given key.
+   */
   spaceFor(key: string): OutputSpace | undefined {
     return this.#spaces[key];
   }
@@ -139,6 +137,8 @@ export abstract class OutputScope {
   #children: Set<OutputScope>;
   /**
    * The scopes nested within this scope.
+   *
+   * @readonly
    */
   get children() {
     return this.#children;
@@ -147,6 +147,8 @@ export abstract class OutputScope {
   #binder: Binder | undefined;
   /**
    * The binder that created this scope.
+   *
+   * @readonly
    */
   get binder() {
     return this.#binder;
@@ -161,7 +163,6 @@ export abstract class OutputScope {
   ) {
     this.#name = name;
     this.#id = scopeCount++;
-    this.#flags = options.flags ?? OutputScopeFlags.None;
     this.#metadata = reactive(options.metadata ?? {});
     this.#binder = options.binder ?? useBinder();
     this.#children = shallowReactive(new Set());
@@ -191,6 +192,11 @@ export abstract class OutputScope {
     });
   }
 
+  /**
+   * Get all the declaration spaces in this scope.
+   *
+   * @readonly
+   */
   get spaces() {
     return Object.values(this.#spaces);
   }
@@ -200,6 +206,9 @@ export abstract class OutputScope {
    * The symbol whose members are in scope. When an owner symbol is present,
    * this scope is considered a member scope, and does not provide its own
    * declaration spaces.
+   *
+   * @readonly
+   * @reactive
    */
   get ownerSymbol() {
     track(this, TrackOpTypes.GET, "ownerSymbol");
@@ -212,6 +221,13 @@ export abstract class OutputScope {
     trigger(this, TriggerOpTypes.SET, "ownerSymbol", value, old);
   }
 
+  /**
+   * Whether this scope is a transient scope. Transient scopes are used for
+   * temporary values that are to be combined with other non-transient symbols.
+   * Scopes are transient when their owner symbol is transient.
+   *
+   * @readonly
+   */
   get isTransient() {
     if (!this.ownerSymbol) {
       return false;
@@ -223,6 +239,9 @@ export abstract class OutputScope {
    * Check if this is scope is a member scope. Member scopes have no member
    * spaces of their own, but instead put members of their owner symbol in
    * scope.
+   *
+   * @readonly
+   * @reactive
    */
   get isMemberScope() {
     return !!this.ownerSymbol;

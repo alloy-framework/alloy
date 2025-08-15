@@ -31,16 +31,16 @@ export function ref(refkey: Refkey): () => string {
     if (
       commonScope instanceof CSharpNamespaceScope &&
       commonScope.ownerSymbol.isGlobal &&
-      lexicalDeclaration instanceof NamespaceSymbol &&
+      lexicalDeclaration.symbolKind === "namespace" &&
       memberPath.length > 0
     ) {
       // we need to using the namespace
       let nsToUse: NamespaceSymbol;
       while (
-        lexicalDeclaration instanceof NamespaceSymbol &&
+        lexicalDeclaration.symbolKind === "namespace" &&
         memberPath.length > 0
       ) {
-        nsToUse = lexicalDeclaration;
+        nsToUse = lexicalDeclaration as NamespaceSymbol;
         lexicalDeclaration = memberPath.shift()!;
       }
 

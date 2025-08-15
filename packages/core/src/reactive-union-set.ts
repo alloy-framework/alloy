@@ -208,29 +208,6 @@ export class ReactiveUnionSet<T> extends Set<T> {
     return shallowReadonly(set);
   }
 
-  createFilteredSet(predicate: (value: T) => boolean): ReadonlySet<T> {
-    const set = shallowReactive(new Set<T>());
-    this._indexes.push({
-      add: (value: T) => {
-        effect((prev: T | undefined) => {
-          if (prev !== undefined) {
-            set.delete(prev);
-          }
-
-          if (predicate(value)) {
-            set.add(value);
-          }
-
-          return value;
-        });
-      },
-      delete: (value: T) => {
-        set.delete(value);
-      },
-    });
-    return shallowReadonly(set);
-  }
-
   createIndex<U>(mapper: (value: T) => U | U[]): ReadonlyMap<U, T> {
     const index = shallowReactive(new Map<U, T>());
     this._indexes.push({

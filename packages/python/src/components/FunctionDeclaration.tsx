@@ -1,4 +1,4 @@
-import { emitSymbol, Name, OutputSymbolFlags, Show } from "@alloy-js/core";
+import { emitSymbol, Name, Show } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
@@ -38,7 +38,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     {
       instance: props.instanceFunction,
       refkeys: props.refkey,
-      flags: props.flags ?? OutputSymbolFlags.None,
     },
     "function",
   );

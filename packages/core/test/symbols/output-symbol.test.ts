@@ -2,7 +2,6 @@ import { reactive, watch } from "@vue/reactivity";
 import { describe, expect, it, vi } from "vitest";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
-import { OutputSymbolFlags } from "../../src/symbols/flags.js";
 import { createScope, createSymbol } from "./utils.js";
 
 describe("OutputSymbol reactivity", () => {
@@ -31,24 +30,20 @@ describe("OutputSymbol reactivity", () => {
     expect(s3.name).toEqual("sym_3");
   });
 
-  it("is reactive on name, flags, space, and scope", () => {
+  it("is reactive on name, space, and scope", () => {
     const scope = createScope("scope");
     const symbol = createSymbol("sym", scope);
 
     const nameSpy = vi.fn();
     watch(() => symbol.name, nameSpy);
-    const flagsSpy = vi.fn();
-    watch(() => symbol.flags, flagsSpy);
     const scopeSpy = vi.fn();
     watch(() => symbol.scope, scopeSpy);
 
     symbol.name = "foo";
-    symbol.flags = OutputSymbolFlags.Transient;
     const newScope = createScope("new-scope");
     symbol.spaces = [newScope.symbols];
 
     expect(nameSpy).toHaveBeenCalled();
-    expect(flagsSpy).toHaveBeenCalled();
     expect(scopeSpy).toHaveBeenCalled();
   });
 
@@ -98,32 +93,27 @@ describe("OutputSymbol#copy", () => {
   it("copies name, flags", () => {
     const scope = createScope("scope");
     const symbol = createSymbol("sym", scope, {
-      flags: OutputSymbolFlags.Transient,
+      transient: true,
     });
 
     const copy = symbol.copy();
     expect(copy.name).toEqual("sym");
-    expect(copy.flags).toEqual(OutputSymbolFlags.Transient);
+    expect(copy.isTransient).toBe(true);
     expect(copy.scope).toBeUndefined();
   });
 
-  it("reactively copies name and flags from the original symbol", () => {
+  it("reactively copies name from the original symbol", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope, {
-      flags: OutputSymbolFlags.Transient,
-    });
+    const symbol = createSymbol("sym", scope);
 
     const copy = symbol.copy();
     expect(copy.name).toEqual("sym");
-    expect(copy.flags).toEqual(OutputSymbolFlags.Transient);
     expect(copy.scope).toBeUndefined();
 
     symbol.name = "bar";
-    symbol.flags = 0;
 
     flushJobs();
 
-    expect(copy.flags).toEqual(0);
     expect(copy.name).toEqual("bar");
   });
 
@@ -139,15 +129,12 @@ describe("OutputSymbol#copy", () => {
     const copy = symbol.copy();
 
     expect(copy.name).toEqual("sym");
-    expect(copy.flags).toEqual(symbol.flags);
     expect(copy.staticMembers.size).toBe(1);
     const staticMemberCopy = [...copy.staticMembers][0];
     expect(staticMemberCopy.name).toBe("static-member");
-    expect(staticMemberCopy.flags).toBe(staticMember.flags);
     expect(copy.instanceMembers.size).toBe(1);
     const instanceMemberCopy = [...copy.instanceMembers][0];
     expect(instanceMemberCopy.name).toBe("instance-member");
-    expect(instanceMemberCopy.flags).toBe(instanceMember.flags);
   });
 
   it("copies member symbols reactively", () => {
@@ -159,7 +146,6 @@ describe("OutputSymbol#copy", () => {
     const copy = symbol.copy();
 
     expect(copy.name).toEqual("sym");
-    expect(copy.flags).toEqual(symbol.flags);
     expect(copy.staticMembers.size).toBe(1);
     const staticMemberCopy = [...copy.staticMembers][0];
 

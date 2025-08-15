@@ -1,7 +1,6 @@
 import {
   MemberDeclaration as CoreMemberDeclaration,
   MemberDeclarationPropsWithInfo,
-  OutputSymbolFlags,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
 import {
@@ -24,11 +23,6 @@ export interface MemberDeclarationProps
    * The name policy kind to apply to the memberdeclaration.
    */
   nameKind?: TypeScriptElements;
-
-  /**
-   * Flags for the symbol created by this component.
-   */
-  flags?: OutputSymbolFlags;
 
   /**
    * The symbol to use for this memberdeclaration.
@@ -56,7 +50,6 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
 
     sym = createStaticMemberSymbol(name, {
       refkeys: props.refkey,
-      flags: props.flags,
       tsFlags,
       metadata: props.metadata,
     });

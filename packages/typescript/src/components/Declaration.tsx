@@ -1,7 +1,6 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
@@ -39,11 +38,6 @@ export interface BaseDeclarationProps {
    * Whether this is the default export of the module.
    */
   default?: boolean;
-
-  /**
-   * Flags for the symbol created by this component.
-   */
-  flags?: OutputSymbolFlags;
 
   children?: Children;
 
@@ -90,10 +84,7 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
  * @remarks
  *
  * This component will wrap its contents in a {@link @alloy-js/core#Declaration} component,
- * so children can make use of declaration context. Additionally, if the
- * provided symbol flags have {@link @alloy-js/core#OutputSymbolFlags.MemberContainer}, this
- * component will create a {@link @alloy-js/core#MemberScope}.
- *
+ * so children can make use of declaration context.
  */
 export function Declaration(props: DeclarationProps) {
   let sym: TSOutputSymbol;
@@ -109,7 +100,6 @@ export function Declaration(props: DeclarationProps) {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
-        flags: props.flags,
         metadata: props.metadata,
       });
     } else {
@@ -117,7 +107,6 @@ export function Declaration(props: DeclarationProps) {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
-        flags: props.flags,
         metadata: props.metadata,
       });
     }

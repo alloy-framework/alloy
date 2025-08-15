@@ -4,6 +4,7 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { JavaOutputSymbol } from "../symbols/java-output-symbol.js";
+import { useLexicalScope } from "../utils.js";
 
 export interface DeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main
@@ -17,7 +18,12 @@ export interface DeclarationProps {
  * access modifier so we can manage access
  */
 export function Declaration(props: DeclarationProps) {
-  const sym = new JavaOutputSymbol(props.name, {
+  const scope = useLexicalScope();
+  if (!scope) {
+    throw new Error("A lexical scope is required for declaration");
+  }
+
+  const sym = new JavaOutputSymbol(props.name, scope.symbols, {
     refkeys: props.refkey,
   });
   return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;

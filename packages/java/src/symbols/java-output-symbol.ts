@@ -1,4 +1,9 @@
-import { OutputSymbol, OutputSymbolOptions, refkey } from "@alloy-js/core";
+import {
+  OutputSpace,
+  OutputSymbol,
+  OutputSymbolOptions,
+  refkey,
+} from "@alloy-js/core";
 import { usePackage } from "../components/PackageDirectory.jsx";
 
 export interface JavaOutputSymbolOptions extends OutputSymbolOptions {
@@ -9,6 +14,8 @@ export interface JavaOutputSymbolOptions extends OutputSymbolOptions {
  * Not considered exported if private
  */
 export class JavaOutputSymbol extends OutputSymbol {
+  static memberSpaces = ["static", "instance"] as const;
+
   /**
    * Fully qualified package name
    */
@@ -17,11 +24,15 @@ export class JavaOutputSymbol extends OutputSymbol {
   }
   #package?: string;
 
-  constructor(name: string, options: JavaOutputSymbolOptions = {}) {
+  constructor(
+    name: string,
+    spaces: OutputSpace[] | OutputSpace | undefined,
+    options: JavaOutputSymbolOptions = {},
+  ) {
     if (options.refkeys === undefined) {
       options.refkeys = [refkey(name)];
     }
-    super(name, options);
+    super(name, spaces, options);
 
     if (options.package) {
       this.#package = options.package;
@@ -32,5 +43,15 @@ export class JavaOutputSymbol extends OutputSymbol {
           parentPackage?.qualifiedName
         : "";
     }
+  }
+
+  copy() {
+    const options = this.getCopyOptions();
+    const copy = new JavaOutputSymbol(this.name, undefined, {
+      ...options,
+      package: this.#package,
+    });
+    this.initializeCopy(copy);
+    return copy;
   }
 }

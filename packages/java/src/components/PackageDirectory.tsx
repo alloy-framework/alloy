@@ -6,6 +6,7 @@ import {
   SourceDirectory,
   SourceDirectoryContext,
   useContext,
+  useScope,
 } from "@alloy-js/core";
 import { JavaPackageScope } from "../symbols/java-package-scope.js";
 
@@ -43,7 +44,8 @@ export function PackageDirectory(props: PackageDirectoryProps) {
       parentPackage.qualifiedName + "." + packageName
     : packageName;
 
-  const scope = new JavaPackageScope(fullyQualifiedPackageName);
+  const parentScope = useScope();
+  const scope = new JavaPackageScope(fullyQualifiedPackageName, parentScope);
 
   const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {

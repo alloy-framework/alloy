@@ -19,14 +19,8 @@ describe("ImportStatement", () => {
   });
 
   it("renders named imports", () => {
-    const sqrtSymbol = createPythonSymbol("sqrt", {
-      binder: undefined,
-      scope: undefined,
-    });
-    const piSymbol = createPythonSymbol("pi", {
-      binder: undefined,
-      scope: undefined,
-    });
+    const sqrtSymbol = createPythonSymbol("sqrt", undefined);
+    const piSymbol = createPythonSymbol("pi", undefined);
     const symbols = new Set<ImportedSymbol>([
       new ImportedSymbol(sqrtSymbol, sqrtSymbol),
       new ImportedSymbol(piSymbol, piSymbol),
@@ -42,27 +36,20 @@ describe("ImportStatement", () => {
 describe("ImportStatements", () => {
   it("renders multiple import statements", () => {
     const pythonModuleScope = createPythonModuleScope("math", undefined);
-    const sqrtSymbol = createPythonSymbol("sqrt", {
-      binder: undefined,
-      scope: undefined,
-    });
-    const piSymbol = createPythonSymbol("pi", {
-      binder: undefined,
-      scope: undefined,
-    });
+    const sqrtSymbol = createPythonSymbol("sqrt", undefined);
+    const piSymbol = createPythonSymbol("pi", undefined);
+
     const mathSymbols = new Set<ImportedSymbol>([
       new ImportedSymbol(sqrtSymbol, sqrtSymbol),
       new ImportedSymbol(piSymbol, piSymbol),
     ]);
     const sysModuleScope = createPythonModuleScope("sys", undefined);
     const requestsScope = createPythonModuleScope("requests", undefined);
-    const getSymbol = createPythonSymbol("get", {
-      binder: undefined,
-      scope: undefined,
-    });
+    const getSymbol = createPythonSymbol("get", undefined);
     const requestsSymbols = new Set<ImportedSymbol>([
       new ImportedSymbol(getSymbol, getSymbol),
     ]);
+
     const records = new ImportRecords([
       [pythonModuleScope, { symbols: mathSymbols }],
       [requestsScope, { symbols: requestsSymbols }],
@@ -79,27 +66,15 @@ describe("ImportStatements", () => {
   });
   it("renders multiple import statements, but joining imports from the same module", () => {
     const pythonModuleScope = createPythonModuleScope("math", undefined);
-    const sqrtSymbol = createPythonSymbol("sqrt", {
-      binder: undefined,
-      scope: undefined,
-    });
-    const piSymbol = createPythonSymbol("pi", {
-      binder: undefined,
-      scope: undefined,
-    });
+    const sqrtSymbol = createPythonSymbol("sqrt", undefined);
+    const piSymbol = createPythonSymbol("pi", undefined);
     const mathSymbols = new Set<ImportedSymbol>([
       new ImportedSymbol(sqrtSymbol, sqrtSymbol),
       new ImportedSymbol(piSymbol, piSymbol),
     ]);
     const requestsScope = createPythonModuleScope("requests", undefined);
-    const getSymbol = createPythonSymbol("get", {
-      binder: undefined,
-      scope: undefined,
-    });
-    const postSymbol = createPythonSymbol("post", {
-      binder: undefined,
-      scope: undefined,
-    });
+    const getSymbol = createPythonSymbol("get", undefined);
+    const postSymbol = createPythonSymbol("post", undefined);
     const requestsSymbols = new Set<ImportedSymbol>([
       new ImportedSymbol(getSymbol, getSymbol),
       new ImportedSymbol(postSymbol, postSymbol),

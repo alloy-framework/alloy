@@ -2,19 +2,15 @@ import {
   Children,
   Declaration as CoreDeclaration,
   For,
-  MemberScope,
-  OutputSymbolFlags,
-  Scope,
   Show,
-  useBinder,
 } from "@alloy-js/core";
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { usePythonScope } from "../symbols/scopes.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.js";
-import { PythonBlock } from "./PythonBlock.jsx";
 import { SimpleCommentBlock } from "./index.js";
+import { MemberScope } from "./MemberScope.jsx";
+import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface EnumProps extends BaseDeclarationProps {
   /**
@@ -115,18 +111,12 @@ export function EnumDeclaration(props: EnumProps) {
  * ```
  */
 export function FunctionalEnumDeclaration(props: EnumProps) {
-  const binder = useBinder();
-  const scope = usePythonScope();
   const sym = createPythonSymbol(
     props.name,
     {
-      binder: binder,
-      scope: scope,
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMemberContainer,
     },
     "enum",
-    false,
   );
   const members = props.members ?? [];
   let opener, ender;
@@ -152,12 +142,7 @@ export function FunctionalEnumDeclaration(props: EnumProps) {
     <>
       <CoreDeclaration symbol={sym}>
         {sym.name} = {enumModule["."].Enum}('{sym.name}',{" "}
-        <MemberScope owner={sym}>
-          <Scope name={props.name} kind="enum">
-            {memberExpr}
-          </Scope>
-        </MemberScope>
-        )
+        <MemberScope ownerSymbol={sym}>{memberExpr}</MemberScope>)
       </CoreDeclaration>
     </>
   );
@@ -234,18 +219,12 @@ export function FunctionalEnumDeclaration(props: EnumProps) {
  */
 export function ClassEnumDeclaration(props: EnumProps) {
   const baseType = props.baseType || "Enum";
-  const binder = useBinder();
-  const scope = usePythonScope();
   const sym = createPythonSymbol(
     props.name,
     {
-      binder: binder,
-      scope: scope,
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMemberContainer,
     },
     "enum",
-    false,
   );
   let memberList: Array<{
     name: string;
@@ -268,23 +247,21 @@ export function ClassEnumDeclaration(props: EnumProps) {
         <hbr />
       </Show>
       class {sym.name}({enumModule["."][baseType]})
-      <MemberScope owner={sym}>
-        <Scope name={sym.name} kind="enum">
-          <PythonBlock opener=":">
-            <For each={memberList} hardline>
-              {(member) => (
-                <EnumMember
-                  name={member.name}
-                  value={member.value}
-                  jsValue={member.jsValue}
-                  auto={member.auto}
-                  doc={member.doc}
-                />
-              )}
-            </For>
-            {props.children}
-          </PythonBlock>
-        </Scope>
+      <MemberScope ownerSymbol={sym}>
+        <PythonBlock opener=":">
+          <For each={memberList} hardline>
+            {(member) => (
+              <EnumMember
+                name={member.name}
+                value={member.value}
+                jsValue={member.jsValue}
+                auto={member.auto}
+                doc={member.doc}
+              />
+            )}
+          </For>
+          {props.children}
+        </PythonBlock>
       </MemberScope>
     </CoreDeclaration>
   );

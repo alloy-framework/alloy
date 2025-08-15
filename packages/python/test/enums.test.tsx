@@ -66,8 +66,8 @@ describe("Python Enum", () => {
     const result = toSourceText(
       [
         <py.StatementList>
-          <py.ClassDeclaration name="Dog" />
-          <py.ClassDeclaration name="Cat" />
+          <py.ClassDeclaration name="Dog" refkey={refkey("Dog")} />
+          <py.ClassDeclaration name="Cat" refkey={refkey("Cat")} />
           <py.EnumDeclaration
             name="Animal"
             baseType="Enum"

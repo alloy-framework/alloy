@@ -10,11 +10,9 @@ import {
 
 describe("Function Declaration", () => {
   it("renders a function with no body as 'pass'", () => {
-    const result = toSourceText([
-      <py.FunctionDeclaration name="foo" instanceFunction={true} />,
-    ]);
+    const result = toSourceText([<py.FunctionDeclaration name="foo" />]);
     expect(result).toRenderTo(d`
-      def foo(self):
+      def foo():
           pass
 
         
@@ -39,15 +37,10 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.FunctionDeclaration
           name="foo"
-          instanceFunction={true}
           returnType="int"
           refkey={refkeyFoo}
         />
-        <py.FunctionDeclaration
-          name="bar"
-          instanceFunction={true}
-          returnType="int"
-        >
+        <py.FunctionDeclaration name="bar" returnType="int">
           <py.VariableDeclaration
             name="result"
             type="int"
@@ -59,10 +52,10 @@ describe("Function Declaration", () => {
       </py.StatementList>,
     ]);
     expect(result).toRenderTo(d`
-      def foo(self) -> int:
+      def foo() -> int:
           pass
 
-      def bar(self) -> int:
+      def bar() -> int:
           result: int = foo()
 
 
@@ -71,15 +64,19 @@ describe("Function Declaration", () => {
 
   it("renders an instance function with a body", () => {
     const result = toSourceText([
-      <py.FunctionDeclaration name="bar" instanceFunction={true}>
-        print('hi')
-      </py.FunctionDeclaration>,
+      <py.ClassDeclaration name="MyClass">
+        <py.FunctionDeclaration name="bar" instanceFunction={true}>
+          print('hi')
+        </py.FunctionDeclaration>
+      </py.ClassDeclaration>,
     ]);
     expect(result).toRenderTo(d`
-      def bar(self):
-          print('hi')
+      class MyClass:
+          def bar(self):
+              print('hi')
 
 
+              
     `);
   });
 
@@ -110,13 +107,17 @@ describe("Function Declaration", () => {
 
   it("renders an __init__ function with no body as 'pass'", () => {
     const result = toSourceText([
-      <py.InitFunctionDeclaration parameters={[{ name: "x" }]} />,
+      <py.ClassDeclaration name="MyClass">
+        <py.InitFunctionDeclaration parameters={[{ name: "x" }]} />
+      </py.ClassDeclaration>,
     ]);
     expect(result).toRenderTo(d`
-      def __init__(self, x):
-          pass
+      class MyClass:
+          def __init__(self, x):
+              pass
 
-        
+      
+      
     `);
   });
 
@@ -144,7 +145,7 @@ describe("Function Declaration", () => {
     expect(
       toSourceText([
         <py.StatementList>
-          <py.ClassDeclaration name="Foo" />
+          <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
           <py.FunctionDeclaration
             async
             name="foo"
@@ -195,32 +196,40 @@ describe("Function Declaration", () => {
   it("renders function with parameters", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
-      <py.FunctionDeclaration
-        name="foo"
-        instanceFunction={true}
-        parameters={parameters}
-      >
-        self.attribute = "value"
-      </py.FunctionDeclaration>
+      <py.ClassDeclaration name="MyClass">
+        <py.FunctionDeclaration
+          name="foo"
+          instanceFunction
+          parameters={parameters}
+        >
+          self.attribute = "value"
+        </py.FunctionDeclaration>
+      </py.ClassDeclaration>
     );
 
     expect(toSourceText([decl])).toBe(d`
-      def foo(self, x: int):
-          self.attribute = "value"
+      class MyClass:
+          def foo(self, x: int):
+              self.attribute = "value"
+
 
     `);
   });
   it("renders __init__ function with parameters", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
-      <py.InitFunctionDeclaration parameters={parameters}>
-        self.attribute = "value"
-      </py.InitFunctionDeclaration>
+      <py.ClassDeclaration name="MyClass">
+        <py.InitFunctionDeclaration parameters={parameters}>
+          self.attribute = "value"
+        </py.InitFunctionDeclaration>
+      </py.ClassDeclaration>
     );
 
     expect(toSourceText([decl])).toBe(d`
-      def __init__(self, x: int):
-          self.attribute = "value"
+      class MyClass:
+          def __init__(self, x: int):
+              self.attribute = "value"
+
 
     `);
   });
@@ -277,11 +286,11 @@ describe("Function Declaration", () => {
   it("renders complex typing structure", () => {
     const res = toSourceTextMultiple([
       <py.SourceFile path="mod1.py">
-        <py.ClassDeclaration name="Foo" />
+        <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
       </py.SourceFile>,
       <py.SourceFile path="mod2.py">
-        <py.ClassDeclaration name="A" />
-        <py.ClassDeclaration name="B" />
+        <py.ClassDeclaration name="A" refkey={refkey("A")} />
+        <py.ClassDeclaration name="B" refkey={refkey("B")} />
       </py.SourceFile>,
       <py.SourceFile path="usage.py">
         <py.FunctionDeclaration

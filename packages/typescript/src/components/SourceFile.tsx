@@ -6,6 +6,7 @@ import {
   Show,
   SourceDirectoryContext,
   useContext,
+  useScope,
   type Children,
 } from "@alloy-js/core";
 
@@ -39,7 +40,8 @@ export function SourceFile(props: SourceFileProps) {
   const sdData = getSourceDirectoryData(directoryContext);
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
-  const scope = new TSModuleScope(path);
+  const parent = useScope();
+  const scope = new TSModuleScope(path, parent);
   sdData.modules.add(scope);
   const pkg = useContext(PackageContext);
   if (pkg) {

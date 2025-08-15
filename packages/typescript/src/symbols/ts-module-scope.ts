@@ -1,4 +1,5 @@
-import { OutputScope, reactive, Refkey, shallowReactive } from "@alloy-js/core";
+import { reactive, Refkey, shallowReactive } from "@alloy-js/core";
+import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 
 export interface ImportedSymbol {
@@ -11,11 +12,11 @@ export interface AddImportOptions {
   type?: boolean;
 }
 
-export class TSModuleScope extends OutputScope {
-  get kind() {
-    return "module" as const;
-  }
-
+/**
+ * A lexical scope for TypeScript which represents the top-level scope of a
+ * module. Manages the module's imported and exported symbols.
+ */
+export class TSModuleScope extends TSLexicalScope {
   #exportedSymbols: Map<Refkey, TSOutputSymbol> = shallowReactive(new Map());
   get exportedSymbols() {
     return this.#exportedSymbols;
@@ -24,6 +25,7 @@ export class TSModuleScope extends OutputScope {
   #importedSymbols: Map<TSOutputSymbol, TSOutputSymbol> = shallowReactive(
     new Map(),
   );
+
   get importedSymbols() {
     return this.#importedSymbols;
   }
@@ -40,31 +42,28 @@ export class TSModuleScope extends OutputScope {
   ) {
     const existing = this.importedSymbols.get(targetSymbol);
     if (existing) {
-      if (!options?.type && existing.tsFlags & TSSymbolFlags.TypeSymbol) {
-        existing.tsFlags &= ~TSSymbolFlags.TypeSymbol;
+      if (!options?.type && existing.isTypeSymbol) {
+        existing.spaces.push(this.values);
       }
       return existing;
-    }
-
-    if (targetModule.kind !== "module") {
-      throw new Error("Cannot import symbol that isn't in module scope");
     }
 
     if (!this.importedModules.has(targetModule)) {
       this.importedModules.set(targetModule, new Set());
     }
 
-    const localSymbol = new TSOutputSymbol(targetSymbol.name, {
-      binder: this.binder,
-      scope: this,
-      aliasTarget: targetSymbol,
-      tsFlags: TSSymbolFlags.LocalImportSymbol,
-    });
-
-    targetSymbol.copyTo(localSymbol);
+    let localSymbol;
 
     if (options?.type) {
-      localSymbol.tsFlags |= TSSymbolFlags.TypeSymbol;
+      localSymbol = new TSOutputSymbol(targetSymbol.name, this.types, {
+        aliasTarget: targetSymbol,
+        tsFlags: TSSymbolFlags.LocalImportSymbol,
+      });
+    } else {
+      localSymbol = new TSOutputSymbol(targetSymbol.name, this.values, {
+        aliasTarget: targetSymbol,
+        tsFlags: TSSymbolFlags.LocalImportSymbol,
+      });
     }
 
     this.importedSymbols.set(targetSymbol, localSymbol);
@@ -74,5 +73,16 @@ export class TSModuleScope extends OutputScope {
     });
 
     return localSymbol;
+  }
+
+  getAllSymbols() {
+    const allSymbols = new Set<TSOutputSymbol>();
+    for (const symbol of this.values) {
+      allSymbols.add(symbol as TSOutputSymbol);
+    }
+    for (const symbol of this.types) {
+      allSymbols.add(symbol as TSOutputSymbol);
+    }
+    return allSymbols;
   }
 }

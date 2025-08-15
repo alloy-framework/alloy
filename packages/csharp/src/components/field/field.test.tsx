@@ -24,8 +24,8 @@ it("declares multiple fields", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      public string MemberOne;
-      public int MemberTwo;
+        public string MemberOne;
+        public int MemberTwo;
     }
   `);
 });
@@ -46,7 +46,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public class TestClass
         {
-          ${accessModifier} string ${accessModifier === "private" ? "_testProp" : "TestProp"};
+            ${accessModifier} string ${accessModifier === "private" ? "_testProp" : "TestProp"};
         }
       `);
       },
@@ -68,7 +68,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public class TestClass
         {
-          ${methodModifier} string _testField;
+            ${methodModifier} string _testField;
         }
       `);
       },
@@ -83,7 +83,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public class TestClass
         {
-          public new string TestField;
+            public new string TestField;
         }
       `);
   });
@@ -100,7 +100,7 @@ describe("naming", () => {
     ).toRenderTo(`
       public class TestClass
       {
-        public string MemberOne;
+          public string MemberOne;
       }
     `);
   });
@@ -115,7 +115,7 @@ describe("naming", () => {
     ).toRenderTo(`
     public class TestClass
     {
-      private string _memberOne;
+        private string _memberOne;
     }
   `);
   });

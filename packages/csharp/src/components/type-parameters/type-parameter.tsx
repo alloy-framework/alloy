@@ -1,7 +1,10 @@
-import { Children, MemberDeclaration, refkey, Refkey } from "@alloy-js/core";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../../symbols/scopes.js";
+import {
+  Children,
+  MemberDeclaration,
+  MemberName,
+  Refkey,
+} from "@alloy-js/core";
+import { createTypeParameterSymbol } from "../../symbols/factories.js";
 
 /**
  * Information for a TypeScript generic type parameter.
@@ -24,12 +27,12 @@ export interface TypeParameterProps {
 }
 
 export function TypeParameter(props: TypeParameterProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "type-parameter");
-  const scope = useCSharpScope();
-  const symbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
+  const symbol = createTypeParameterSymbol(props.name, {
+    refkeys: props.refkey,
   });
-
-  return <MemberDeclaration symbol={symbol}>{name}</MemberDeclaration>;
+  return (
+    <MemberDeclaration symbol={symbol}>
+      <MemberName />
+    </MemberDeclaration>
+  );
 }

@@ -11,3 +11,12 @@ export const ScopeContext: ComponentContext<OutputScope> =
 export function useScope() {
   return useContext(ScopeContext)!;
 }
+
+export function useMemberScope() {
+  const scope = useScope();
+  if (!scope.isMemberScope) {
+    throw new Error("Expected a member scope, but got a non-member scope.");
+  }
+
+  return scope;
+}

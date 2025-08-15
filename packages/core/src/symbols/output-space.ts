@@ -1,5 +1,5 @@
-import { inspect } from "util";
 import { Binder } from "../binder.js";
+import { inspect } from "../inspect.js";
 import { untrack } from "../reactivity.js";
 import { OutputScope } from "./output-scope.js";
 import { OutputSymbol } from "./output-symbol.js";

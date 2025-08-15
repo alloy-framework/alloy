@@ -8,9 +8,9 @@ import {
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
-import { inspect } from "util";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
+import { inspect } from "../inspect.js";
 import { untrack } from "../reactivity.js";
 import { isRefkey, refkey, type Refkey } from "../refkey.js";
 import {

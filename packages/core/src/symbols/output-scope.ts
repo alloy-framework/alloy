@@ -8,9 +8,9 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { inspect } from "util";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
+import { inspect } from "../inspect.js";
 import { untrack } from "../reactivity.js";
 import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";

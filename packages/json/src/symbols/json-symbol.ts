@@ -1,7 +1,7 @@
 import {
+  OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
-  SymbolTable,
   track,
   TrackOpTypes,
   trigger,
@@ -42,7 +42,7 @@ export class JsonOutputSymbol extends OutputSymbol {
 
   constructor(
     name: string,
-    spaces: SymbolTable[] | SymbolTable | undefined,
+    spaces: OutputSpace[] | OutputSpace | undefined,
     options: CreateJsonSymbolOptions = {},
   ) {
     super(name, spaces, options);

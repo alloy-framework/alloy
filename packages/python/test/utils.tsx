@@ -6,6 +6,7 @@ import {
   Output,
   OutputDirectory,
   OutputFile,
+  OutputScope,
   PrintTreeOptions,
   SymbolCreator,
   render,
@@ -15,7 +16,6 @@ import { expect } from "vitest";
 import * as py from "../src/components/index.js";
 import { pythonNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { createPythonNamePolicy } from "../src/name-policy.js";
-import { CustomOutputScope } from "../src/symbols/custom-output-scope.js";
 import { PythonModuleScope } from "../src/symbols/index.js";
 
 export function findFile(
@@ -126,7 +126,7 @@ export function toSourceText(
 // Helper function to create a PythonModuleScope to be used in tests
 export function createPythonModuleScope(
   name: string,
-  parent: CustomOutputScope | undefined,
+  parent: OutputScope | undefined,
   binder: Binder | undefined = undefined,
 ): PythonModuleScope {
   return new PythonModuleScope(name, parent, {

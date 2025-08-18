@@ -1,8 +1,8 @@
 import { code } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
-import { d } from "@alloy-js/core/testing";
 
 describe("UnionTypeExpression", () => {
   it("renders a Python union expression - 1 item", () => {
@@ -22,7 +22,21 @@ describe("UnionTypeExpression", () => {
     ).toRenderTo("int | str");
   });
   it("renders a Python union expression - N items", () => {
-    const elements = [code`int`, code`str`, code`float`, code`bool`, code`list`, code`dict`, code`set`, code`tuple`, code`frozenset`, code`bytes`, code`bytearray`, code`memoryview`, code`complex`];
+    const elements = [
+      code`int`,
+      code`str`,
+      code`float`,
+      code`bool`,
+      code`list`,
+      code`dict`,
+      code`set`,
+      code`tuple`,
+      code`frozenset`,
+      code`bytes`,
+      code`bytearray`,
+      code`memoryview`,
+      code`complex`,
+    ];
     expect(
       toSourceText([
         <py.UnionTypeExpression>{elements}</py.UnionTypeExpression>,

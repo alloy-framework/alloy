@@ -6,7 +6,7 @@ export interface UnionTypeExpressionProps {
 }
 
 export function UnionTypeExpression(props: UnionTypeExpressionProps) {
-  var elements = props.children;
+  let elements = props.children;
   if (props.optional) {
     elements = [...elements, code`None`];
   }

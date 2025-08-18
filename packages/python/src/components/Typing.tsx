@@ -1,4 +1,4 @@
-import { Children, code, For, List } from "@alloy-js/core";
+import { Children, code, For } from "@alloy-js/core";
 
 export interface TypingUnionExpressionProps {
   children: Children[];

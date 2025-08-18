@@ -109,7 +109,8 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     if (!props.type || props.callStatementVar) return undefined;
     return (
       <>
-        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>{optionality}
+        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+        {optionality}
       </>
     );
   });

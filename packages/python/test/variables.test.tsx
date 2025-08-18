@@ -98,11 +98,7 @@ describe("Python Variable", () => {
   it("declares a python variable with am optional type", () => {
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration
-          name="my_var"
-          type="int"
-          optional
-        />
+        <py.VariableDeclaration name="my_var" type="int" optional />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`
@@ -112,12 +108,7 @@ describe("Python Variable", () => {
   it("declares a python variable with am optional type omitting none", () => {
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration
-          name="my_var"
-          type="int"
-          optional
-          omitNone
-        />
+        <py.VariableDeclaration name="my_var" type="int" optional omitNone />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`

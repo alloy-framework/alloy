@@ -15,5 +15,5 @@ export * from "./PythonBlock.js";
 export * from "./Reference.js";
 export * from "./SourceFile.js";
 export * from "./StatementList.js";
-export * from "./Typing.js";
+export * from "./UnionTypeExpression.js";
 export * from "./VariableDeclaration.js";

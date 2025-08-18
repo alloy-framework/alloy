@@ -3,12 +3,12 @@ import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
 
-describe("TypingUnionExpression", () => {
+describe("UnionTypeExpression", () => {
   it("renders a Python union expression - 1 item", () => {
     const elements = [code`int`];
     expect(
       toSourceText([
-        <py.TypingUnionExpression>{elements}</py.TypingUnionExpression>,
+        <py.UnionTypeExpression>{elements}</py.UnionTypeExpression>,
       ]),
     ).toRenderTo("int");
   });
@@ -16,7 +16,7 @@ describe("TypingUnionExpression", () => {
     const elements = [code`int`, code`str`];
     expect(
       toSourceText([
-        <py.TypingUnionExpression>{elements}</py.TypingUnionExpression>,
+        <py.UnionTypeExpression>{elements}</py.UnionTypeExpression>,
       ]),
     ).toRenderTo("int | str");
   });
@@ -24,9 +24,7 @@ describe("TypingUnionExpression", () => {
     const elements = [code`int`, code`str`];
     expect(
       toSourceText([
-        <py.TypingUnionExpression optional>
-          {elements}
-        </py.TypingUnionExpression>,
+        <py.UnionTypeExpression optional>{elements}</py.UnionTypeExpression>,
       ]),
     ).toRenderTo("int | str | None");
   });

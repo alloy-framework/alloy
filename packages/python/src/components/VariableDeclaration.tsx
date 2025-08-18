@@ -15,7 +15,7 @@ import {
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
-import { SimpleCommentBlock, TypingUnionExpression } from "./index.js";
+import { SimpleCommentBlock, UnionTypeExpression } from "./index.js";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
@@ -24,7 +24,7 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
   initializer?: Children;
   /**
    * The type of the variable. Used only for type annotation. Optional.
-   * Can either be a TypingUnionExpression, which will be taken as is;
+   * Can either be a UnionTypeExpression, which will be taken as is;
    * or a single type.
    */
   type?: Children;
@@ -108,14 +108,13 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     if (
       props.type &&
       typeof props.type === "object" &&
-      (props.type as any).type === TypingUnionExpression
+      (props.type as any).type === UnionTypeExpression
     ) {
       type = props.type;
     } else {
-      console.log("Creating TypingUnionExpression for type", props.type);
-      // If the type is not a TypingUnionExpression, we create one
+      // If the type is not a UnionTypeExpression, we create one
       // This is useful for cases where the type is a single type
-      type = TypingUnionExpression({ children: [props.type] });
+      type = UnionTypeExpression({ children: [props.type] });
     }
     return (
       <>

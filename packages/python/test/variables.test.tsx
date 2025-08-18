@@ -98,7 +98,7 @@ describe("Python Variable", () => {
   it("declares a python variable with an optional type", () => {
     const elements = [code`int`];
     const typing = (
-      <py.TypingUnionExpression optional>{elements}</py.TypingUnionExpression>
+      <py.UnionTypeExpression optional>{elements}</py.UnionTypeExpression>
     );
     const res = toSourceText([
       <py.StatementList>
@@ -112,7 +112,7 @@ describe("Python Variable", () => {
   it("declares a python variable with an optional type omitting none", () => {
     const elements = [code`int`];
     const typing = (
-      <py.TypingUnionExpression optional>{elements}</py.TypingUnionExpression>
+      <py.UnionTypeExpression optional>{elements}</py.UnionTypeExpression>
     );
     const res = toSourceText([
       <py.StatementList>

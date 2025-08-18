@@ -1,11 +1,11 @@
 import { Children, code, For } from "@alloy-js/core";
 
-export interface TypingUnionExpressionProps {
+export interface UnionTypeExpressionProps {
   children: Children[];
   optional?: boolean;
 }
 
-export function TypingUnionExpression(props: TypingUnionExpressionProps) {
+export function UnionTypeExpression(props: UnionTypeExpressionProps) {
   var elements = props.children;
   if (props.optional) {
     elements = [...elements, code`None`];

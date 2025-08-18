@@ -102,21 +102,9 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   // Handle optional type annotation
   const type = memo(() => {
     if (!props.type || props.callStatementVar) return undefined;
-    let type;
-    if (
-      props.type &&
-      typeof props.type === "object" &&
-      (props.type as any).type === UnionTypeExpression
-    ) {
-      type = props.type;
-    } else {
-      // If the type is not a UnionTypeExpression, we create one
-      // This is useful for cases where the type is a single type
-      type = UnionTypeExpression({ children: [props.type] });
-    }
     return (
       <>
-        : <TypeSymbolSlot>{type}</TypeSymbolSlot>
+        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
       </>
     );
   });

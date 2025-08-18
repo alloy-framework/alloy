@@ -15,7 +15,7 @@ import {
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
-import { SimpleCommentBlock } from "./index.js";
+import { SimpleCommentBlock, TypingUnionExpression } from "./index.js";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
@@ -26,10 +26,6 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
    * The type of the variable. Used only for type annotation. Optional.
    */
   type?: Children;
-  /**
-   * Denotes if the variable is optional.
-   */
-  optional?: boolean;
   /**
    * Indicates if we should omit the None assignment. Optional.
    */
@@ -104,13 +100,24 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   );
   emitSymbol(sym);
   // Handle optional type annotation
-  const optionality = props.optional ? " | None" : "";
   const type = memo(() => {
     if (!props.type || props.callStatementVar) return undefined;
+    let type;
+    if (
+      props.type &&
+      typeof props.type === "object" &&
+      (props.type as any).type === TypingUnionExpression
+    ) {
+      type = props.type;
+    } else {
+      console.log("Creating TypingUnionExpression for type", props.type);
+      // If the type is not a TypingUnionExpression, we create one
+      // This is useful for cases where the type is a single type
+      type = TypingUnionExpression({ children: [props.type] });
+    }
     return (
       <>
-        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
-        {optionality}
+        : <TypeSymbolSlot>{type}</TypeSymbolSlot>
       </>
     );
   });

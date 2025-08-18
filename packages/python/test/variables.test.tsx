@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -95,20 +95,24 @@ describe("Python Variable", () => {
     expect(res).toBe(`12`);
   });
 
-  it("declares a python variable with am optional type", () => {
+  it("declares a python variable with an optional type", () => {
+    const elements = [code`int`]
+    const typing = <py.TypingUnionExpression optional>{elements}</py.TypingUnionExpression>;
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration name="my_var" type="int" optional />
+        <py.VariableDeclaration name="my_var" type={typing} />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`
       my_var: int | None = None`);
   });
 
-  it("declares a python variable with am optional type omitting none", () => {
+  it("declares a python variable with an optional type omitting none", () => {
+    const elements = [code`int`]
+    const typing = <py.TypingUnionExpression optional>{elements}</py.TypingUnionExpression>;
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration name="my_var" type="int" optional omitNone />
+        <py.VariableDeclaration name="my_var" type={typing} omitNone />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`

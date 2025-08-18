@@ -24,6 +24,8 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
   initializer?: Children;
   /**
    * The type of the variable. Used only for type annotation. Optional.
+   * Can either be a TypingUnionExpression, which will be taken as is;
+   * or a single type.
    */
   type?: Children;
   /**

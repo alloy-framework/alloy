@@ -27,6 +27,10 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
    */
   type?: Children;
   /**
+   * Denotes if the variable is optional.
+   */
+  optional?: boolean;
+  /**
    * Indicates if we should omit the None assignment. Optional.
    */
   omitNone?: boolean;
@@ -100,11 +104,12 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   );
   emitSymbol(sym);
   // Handle optional type annotation
+  const optionality = props.optional ? " | None" : "";
   const type = memo(() => {
     if (!props.type || props.callStatementVar) return undefined;
     return (
       <>
-        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>{optionality}
       </>
     );
   });

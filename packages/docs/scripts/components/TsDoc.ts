@@ -63,7 +63,7 @@ export function TsDoc(props: TsDocProps): Children {
         .Code({
           language: (props.node as DocFencedCode).language,
         })
-        .children((props.node as DocFencedCode).code.replace(/`/g, "\`"));
+        .children((props.node as DocFencedCode).code.replace(/`/g, "\\`"));
       break;
     case DocNodeKind.SoftBreak:
       content = "\n";

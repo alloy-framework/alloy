@@ -66,7 +66,7 @@ export function TsDoc(props: TsDocProps): Children {
         .children(
           (props.node as DocFencedCode).code
             .replace(/`/g, "\\`") // escape template literals
-            .replace(/$\{/g, "\\${"), // escape template literal substitutions
+            .replace(/\$\{/g, "\\${"), // escape template literal substitutions
         );
       break;
     case DocNodeKind.SoftBreak:

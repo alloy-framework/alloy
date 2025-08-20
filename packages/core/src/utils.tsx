@@ -311,16 +311,16 @@ export interface OutputVisitor {
  * @param sourceDirectory - The root directory to traverse.
  * @param visitor - The visitor to call for each file and directory.
  */
-export function traverseOutput(
+export async function traverseOutput(
   sourceDirectory: OutputDirectory,
   visitor: OutputVisitor,
 ) {
-  visitor.visitDirectory(sourceDirectory);
+  await visitor.visitDirectory(sourceDirectory);
   for (const item of sourceDirectory.contents) {
     if (item.kind === "directory") {
-      traverseOutput(item, visitor);
+      await traverseOutput(item, visitor);
     } else {
-      visitor.visitFile(item);
+      await visitor.visitFile(item);
     }
   }
 }

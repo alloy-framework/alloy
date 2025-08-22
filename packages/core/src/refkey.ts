@@ -14,6 +14,26 @@ function getObjectKey(value: WeakKey) {
   return key;
 }
 
+const JsonSym: unique symbol = Symbol();
+export type Json = { value: unknown; [JsonSym]: true };
+
+export function json(value: unknown): Json {
+  const json: Json = {
+    value,
+    [JsonSym]: true,
+  };
+
+  markRaw(json);
+
+  return json;
+}
+
+export function isJson(value: unknown): value is Json {
+  return (
+    typeof value === "object" && value !== null && Object.hasOwn(value, JsonSym)
+  );
+}
+
 const RefkeySym: unique symbol = Symbol();
 
 export type Refkey = { key: string; [RefkeySym]: true };

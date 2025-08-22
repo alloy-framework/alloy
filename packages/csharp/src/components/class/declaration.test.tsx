@@ -85,7 +85,7 @@ describe("modifiers", () => {
       </TestNamespace>,
     ).toRenderTo(`
         [Test]
-        public abstract partial class TestClass;
+        public abstract sealed partial class TestClass;
     `);
   });
 });

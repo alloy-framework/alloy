@@ -70,6 +70,24 @@ describe("modifiers", () => {
         public abstract partial class TestClass;
     `);
   });
+
+  it("places visibility, attributes, and modifiers in the correct order", () => {
+    expect(
+      <TestNamespace>
+        <ClassDeclaration
+          partial
+          public
+          abstract
+          sealed
+          name="TestClass"
+          attributes={[<Attribute name="Test" />]}
+        />
+      </TestNamespace>,
+    ).toRenderTo(`
+        [Test]
+        public abstract partial class TestClass;
+    `);
+  });
 });
 
 describe("base", () => {

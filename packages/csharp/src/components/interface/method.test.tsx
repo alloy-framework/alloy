@@ -3,7 +3,6 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
@@ -28,7 +27,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public interface TestInterface
         {
-          ${accessModifier} void MethodOne();
+            ${accessModifier} void MethodOne();
         }
       `);
       },
@@ -44,7 +43,7 @@ describe("modifiers", () => {
       ).toRenderTo(`
         public interface TestInterface
         {
-          ${methodModifier} void MethodOne();
+            ${methodModifier} void MethodOne();
         }
       `);
     });
@@ -58,7 +57,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public interface TestInterface
         {
-          public new Task MethodOne();
+            public new Task MethodOne();
         }
       `);
   });
@@ -72,7 +71,7 @@ it("applies PascalCase naming policy", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      void MethodOne();
+        void MethodOne();
     }
 `);
 });
@@ -102,7 +101,7 @@ it("defines params and return type", () => {
   expect(res).toRenderTo(`
     public interface TestInterface
     {
-      public string MethodOne(int intParam, string stringParam);
+        public string MethodOne(int intParam, string stringParam);
     }
   `);
 });
@@ -128,7 +127,7 @@ it("defines optional param", () => {
   expect(res).toRenderTo(`
     public interface TestInterface
     {
-      public string MethodOne(int? intParam);
+        public string MethodOne(int? intParam);
     }
   `);
 });
@@ -154,7 +153,7 @@ it("defines optional param with default", () => {
   expect(res).toRenderTo(`
     public interface TestInterface
     {
-      public string MethodOne(int intParam = 12);
+        public string MethodOne(int intParam = 12);
     }
   `);
 });
@@ -169,8 +168,8 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     interface Test
     {
-      /// This is a test
-      void Method();
+        /// This is a test
+        void Method();
     }
   `);
 });
@@ -183,8 +182,8 @@ it("specify attributes", () => {
   ).toRenderTo(`
     public interface TestInterface
     {
-      [Test]
-      void Test();
+        [Test]
+        void Test();
     }
   `);
 });
@@ -204,30 +203,25 @@ describe("with type parameters", () => {
 
     expect(
       <TestNamespace>
-        <SourceFile path="TestFile.cs">
-          <InterfaceDeclaration public name="TestInterface">
-            <InterfaceMethod
-              name="Test"
-              public
-              typeParameters={typeParameters}
-              parameters={[
-                {
-                  name: "paramA",
-                  type: typeParameters[0].refkey,
-                },
-              ]}
-              returns={typeParameters[0].refkey}
-            />
-          </InterfaceDeclaration>
-        </SourceFile>
+        <InterfaceDeclaration public name="TestInterface">
+          <InterfaceMethod
+            name="Test"
+            public
+            typeParameters={typeParameters}
+            parameters={[
+              {
+                name: "paramA",
+                type: typeParameters[0].refkey,
+              },
+            ]}
+            returns={typeParameters[0].refkey}
+          />
+        </InterfaceDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode
+      public interface TestInterface
       {
-          public interface TestInterface
-          {
-              public T Test<T, U>(T paramA);
-          }
+          public T Test<T, U>(T paramA);
       }
     `);
   });
@@ -253,12 +247,12 @@ describe("with type parameters", () => {
     ).toRenderTo(`
       public interface TestInterface
       {
-        public void Test<T, U>()
-          where T : IFoo
-          where U : IBar
-        {
-          // Body
-        }
+          public void Test<T, U>()
+              where T : IFoo
+              where U : IBar
+          {
+              // Body
+          }
       }
     `);
   });
@@ -274,19 +268,19 @@ describe("formatting", () => {
           parameters={[
             {
               name: "message",
-              type: "Some.Quite.Long.Type.That.Will.Split",
+              type: "Some.Quite.Long.Type.That.Will.Split.At.One.Hundred.Chars.Line.Width",
             },
           ]}
           typeParameters={["T"]}
-          returns="Some.Quite.Long.Type.That.Will.Split"
+          returns="Some.Quite.Long.Type.That.Will.Split.At.One.Hundred.Chars.Line.Width"
         />
       </Wrapper>,
     ).toRenderTo(`
       public interface TestInterface
       {
-        public Some.Quite.Long.Type.That.Will.Split Handle<T>(
-          Some.Quite.Long.Type.That.Will.Split message
-        );
+          public Some.Quite.Long.Type.That.Will.Split.At.One.Hundred.Chars.Line.Width Handle<T>(
+              Some.Quite.Long.Type.That.Will.Split.At.One.Hundred.Chars.Line.Width message
+          );
       }
     `);
   });

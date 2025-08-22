@@ -10,7 +10,6 @@ import {
   ImportedSymbol,
   ImportRecords,
   TSPackageScope,
-  TSSymbolFlags,
 } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
 import { usePackage } from "./PackageDirectory.js";
@@ -31,11 +30,7 @@ export function ImportStatements(props: ImportStatementsProps) {
     () => imports.value,
     ([module, importedSymbols]) => {
       let targetPath: string;
-
-      if (
-        (pkg && pkg.scope !== module.parent) ||
-        (!pkg && module.parent!.kind !== "global")
-      ) {
+      if (pkg?.scope !== module.parent) {
         // importing from another package, so let's calculate the import.
         const targetPackage = module.parent as TSPackageScope;
         let foundPath: string | false = false;
@@ -101,7 +96,7 @@ export function ImportStatement(props: ImportStatementProps) {
         return a.local.name.localeCompare(b.local.name);
       });
       const allNamedImportsAreTypes = namedImportSymbols.every(
-        (nis) => nis.local.tsFlags & TSSymbolFlags.TypeSymbol,
+        (nis) => nis.local.isTypeSymbol && !nis.local.isValueSymbol,
       );
 
       if (allNamedImportsAreTypes) {
@@ -150,7 +145,8 @@ function ImportBinding(props: Readonly<ImportBindingProps>) {
   const prefix = memo(() =>
     (
       !props.inTypeImport &&
-      props.importedSymbol.local.tsFlags & TSSymbolFlags.TypeSymbol
+      props.importedSymbol.local.isTypeSymbol &&
+      !props.importedSymbol.local.isValueSymbol
     ) ?
       "type "
     : "",

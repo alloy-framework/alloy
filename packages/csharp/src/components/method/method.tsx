@@ -2,7 +2,7 @@ import {
   Block,
   Children,
   MemberDeclaration,
-  refkey,
+  MemberName,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -13,12 +13,8 @@ import {
   getAsyncModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import {
-  CSharpMemberScope,
-  useCSharpMemberScope,
-} from "../../symbols/scopes.js";
+import { createMethodScope } from "../../scopes/factories.js";
+import { createMethodSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
@@ -113,18 +109,12 @@ export interface MethodProps extends AccessModifiers, MethodModifiers {
 
 // a C# class method
 export function Method(props: MethodProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
-
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
+  const methodSymbol = createMethodSymbol(props.name, {
+    refkeys: props.refkey,
   });
 
   // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
-  });
+  const methodScope = createMethodScope();
 
   const returns = props.returns ?? (props.async ? "Task" : "void");
 
@@ -140,7 +130,7 @@ export function Method(props: MethodProps) {
         <DocWhen doc={props.doc} />
         <AttributeList attributes={props.attributes} endline />
         {modifiers}
-        {returns} {name}
+        {returns} <MemberName />
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}

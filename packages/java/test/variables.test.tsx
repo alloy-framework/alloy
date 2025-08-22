@@ -1,4 +1,4 @@
-import { code, Declaration, refkey } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -37,13 +37,13 @@ it("works with external type", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
-          <Declaration name="Test">
+          <jv.Declaration name="Test">
             {code`
               public class Test {
                 ${(<jv.Variable public static type={refkey("Model")} name="myModel" />)};
               }
             `}
-          </Declaration>
+          </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,
@@ -75,13 +75,13 @@ it("declares new object", () => {
       </jv.SourceFile>
       <jv.PackageDirectory package="imports">
         <jv.SourceFile path="Test.java">
-          <Declaration name="Test">
+          <jv.Declaration name="Test">
             {code`
               public class Test {
                 ${(<jv.ObjectDeclaration public static type={refkey("Model")} name="myModel" args={[<jv.Value value="initValue" />]} />)};
               }
             `}
-          </Declaration>
+          </jv.Declaration>
         </jv.SourceFile>
       </jv.PackageDirectory>
     </>,

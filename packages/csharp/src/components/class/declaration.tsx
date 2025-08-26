@@ -32,9 +32,9 @@ export interface ClassModifiers {
 
 const getClassModifiers = makeModifiers<ClassModifiers>([
   "abstract",
-  "partial",
   "sealed",
   "static",
+  "partial",
 ]);
 
 // properties for creating a class

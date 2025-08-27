@@ -1,5 +1,10 @@
 import { Block, Children } from "@alloy-js/core";
 
+export interface PythonBlockProps {
+  children: Children;
+  opener?: string;
+}
+
 /**
  * A Python block component that can be used to render a block of Python code.
  *
@@ -17,7 +22,7 @@ import { Block, Children } from "@alloy-js/core";
  *   y: str = None
  * ```
  */
-export function PythonBlock(props: { children: Children; opener?: string }) {
+export function PythonBlock(props: PythonBlockProps) {
   return (
     <Block opener={props.opener ?? ""} closer="">
       {props.children}

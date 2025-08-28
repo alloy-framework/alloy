@@ -1,19 +1,7 @@
-import {
-  Children,
-  List,
-  Name,
-  OutputSymbolFlags,
-  Scope,
-  Show,
-  childrenArray,
-  takeSymbols,
-} from "@alloy-js/core";
+import { Children, List, Name, Show, childrenArray } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
-import {
-  BaseDeclarationProps,
-  Declaration,
-  DeclarationProps,
-} from "./Declaration.js";
+import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface ClassDeclarationProps extends BaseDeclarationProps {
@@ -61,38 +49,23 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     props.name!,
     {
       refkeys: props.refkey,
-      flags:
-        (props.flags ?? OutputSymbolFlags.None) |
-        OutputSymbolFlags.MemberContainer,
     },
     "class",
-    true,
   );
 
-  takeSymbols((memberSymbol) => {
-    // Transform emitted symbols into instance/class members
-    memberSymbol.flags |= OutputSymbolFlags.InstanceMember;
-  });
-
-  // Propagate the name after the name policy was applied
-  const updatedProps: DeclarationProps = {
-    ...props,
-    name: sym.name,
-    nameKind: "class",
-  };
   const hasChildren =
     childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
 
   return (
     <Declaration symbol={sym}>
       class <Name />
-      <Scope name={updatedProps.name} kind="class">
+      <MemberScope ownerSymbol={sym}>
         {basesPart}
         <PythonBlock opener=":">
           <Show when={Boolean(props.doc)}>{props.doc}</Show>
           {hasChildren ? props.children : "pass"}
         </PythonBlock>
-      </Scope>
+      </MemberScope>
     </Declaration>
   );
 }

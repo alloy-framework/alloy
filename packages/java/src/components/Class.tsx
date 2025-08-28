@@ -1,8 +1,9 @@
-import { Block, Children, Scope, Show } from "@alloy-js/core";
+import { Block, Children, Show } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { ExtendsClause } from "./ExtendsClause.js";
 import { ImplementsClause } from "./ImplementsClause.js";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
@@ -28,9 +29,9 @@ export function Class(props: ClassProps) {
         </Show>
         <ExtendsClause extends={props.extends ? [props.extends] : []} />
         <ImplementsClause interfaces={props.implements} />{" "}
-        <Scope name={name} kind="class">
+        <LexicalScope name={name}>
           <Block>{props.children}</Block>
-        </Scope>
+        </LexicalScope>
       </group>
     </Declaration>
   );

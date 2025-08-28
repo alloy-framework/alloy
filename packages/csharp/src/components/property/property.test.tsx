@@ -30,7 +30,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public class TestClass
         {
-          ${accessModifier} string TestProp { get; }
+            ${accessModifier} string TestProp { get; }
         }
       `);
       },
@@ -61,7 +61,7 @@ describe("modifiers", () => {
       ).toRenderTo(`
         public class TestClass
         {
-          ${methodModifier} string TestProp { get; }
+            ${methodModifier} string TestProp { get; }
         }
       `);
     });
@@ -75,7 +75,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public class TestClass
         {
-          public new string TestProp { get; }
+            public new string TestProp { get; }
         }
       `);
   });
@@ -89,7 +89,7 @@ it("applies PascalCase naming policy", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { get; }
+        string TestProp { get; }
     }
 `);
 });
@@ -102,7 +102,7 @@ it("has getter only", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { get; }
+        string TestProp { get; }
     }
   `);
 });
@@ -115,7 +115,7 @@ it("has setter only", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { set; }
+        string TestProp { set; }
     }
   `);
 });
@@ -128,7 +128,7 @@ it("has getter and setter", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { get; set; }
+        string TestProp { get; set; }
     }
   `);
 });
@@ -141,7 +141,7 @@ it("has getter and init", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { get; init; }
+        string TestProp { get; init; }
     }
   `);
 });
@@ -156,8 +156,8 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     class Test
     {
-      /// This is a test
-      string Method { get; set; }
+        /// This is a test
+        string Method { get; set; }
     }
   `);
 });
@@ -170,7 +170,7 @@ it("specify nullable property", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string? TestProp { get; set; }
+        string? TestProp { get; set; }
     }
   `);
 });
@@ -183,7 +183,7 @@ it("specify initializer", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      string TestProp { get; set; } = "abc";
+        string TestProp { get; set; } = "abc";
     }
   `);
 });
@@ -202,8 +202,8 @@ it("specify attributes", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      [Test]
-      int Test { get; set; }
+        [Test]
+        int Test { get; set; }
     }
   `);
 });

@@ -1,8 +1,9 @@
-import { Block, Children, List, Scope } from "@alloy-js/core";
+import { Block, Children, List } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { ArgumentList } from "./ArgumentList.jsx";
 import { Declaration, DeclarationProps } from "./Declaration.js";
 import { ImplementsClause } from "./ImplementsClause.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 
@@ -20,9 +21,9 @@ export function Enum(props: EnumProps) {
         enum <Name />
         <ImplementsClause interfaces={props.implements} />
       </group>{" "}
-      <Scope kind="enum">
+      <LexicalScope>
         <Block>{props.children}</Block>
-      </Scope>
+      </LexicalScope>
     </Declaration>
   );
 }

@@ -30,8 +30,10 @@ interface PartDescriptorWithIndex extends PartDescriptorBase {
 }
 interface PartDescriptorBase {
   accessStyle: "dot" | "bracket";
+  jsPrivate: boolean;
   quoteId: boolean;
   nullish: boolean;
+  type: boolean;
   args?: Children[];
 }
 
@@ -233,6 +235,18 @@ function createPartDescriptorFromProps(
       return false;
     }),
     args: ref<any>(partProps.args === true ? [] : partProps.args),
+    jsPrivate: computed(() => {
+      return (
+        !!symbolSource.value &&
+        (symbolSource.value as TSOutputSymbol).isPrivateMemberSymbol
+      );
+    }),
+    type: computed(() => {
+      return (
+        !!symbolSource.value &&
+        (symbolSource.value as TSOutputSymbol).isTypeSymbol
+      );
+    }),
   };
 
   return reactive(part);
@@ -386,7 +400,9 @@ function formatNonCallChain(parts: PartDescriptor[]): Children {
         // Determine if we should use nullish operator from previous part
         const prevPart = parts[i - 1];
 
-        if (part.args !== undefined) {
+        if (prevPart.type) {
+          expression.push(formatArrayAccess(prevPart, part));
+        } else if (part.args !== undefined) {
           // For parts with only args (no name), append function call directly with appropriate nullish operator
           expression.push(formatCallExpr(prevPart, part));
         } else if (part.accessStyle === "dot") {
@@ -405,12 +421,12 @@ function formatNonCallChain(parts: PartDescriptor[]): Children {
 function formatArrayAccess(prevPart: PartDescriptor, part: PartDescriptor) {
   return (
     <group>
-      {prevPart.nullish ? "?." : ""}[
+      {!prevPart.type && prevPart.nullish ? "?." : ""}[
       <indent>
         <sbr />
-        {part.quoteId && '"'}
+        {(prevPart.type || part.quoteId) && '"'}
         {isIdPartDescriptor(part) ? part.id : part.index}
-        {part.quoteId && '"'}
+        {(prevPart.type || part.quoteId) && '"'}
       </indent>
       <sbr />]
     </group>
@@ -423,7 +439,11 @@ function formatDotAccess(prevPart: PartDescriptor, part: PartDescriptor) {
       <indent>
         <sbr />
         {prevPart.nullish ? "?." : "."}
-        {isIdPartDescriptor(part) ? part.id : part.index}
+        {isIdPartDescriptor(part) ?
+          part.jsPrivate ?
+            `#${part.id}`
+          : part.id
+        : part.index}
       </indent>
     </group>
   );

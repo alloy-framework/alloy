@@ -1,6 +1,8 @@
-import { ScopeContext } from "../context/scope.js";
+import { ScopeContext, useScope } from "../context/scope.js";
 import type { Children } from "../runtime/component.js";
+import { BasicScope } from "../symbols/basic-scope.js";
 import { OutputScope } from "../symbols/output-scope.js";
+import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Declare a scope by providing an already created scope. The scope is merely
@@ -20,12 +22,6 @@ export interface ScopePropsWithValue {
  */
 export interface ScopePropsWithInfo {
   /**
-   * The kind of scope. This may be used by application code to determine how
-   * to handle symbols in this scope. It is not used by the core framework.
-   */
-  kind?: string;
-
-  /**
    * The name of this scope.
    */
   name?: string;
@@ -34,6 +30,11 @@ export interface ScopePropsWithInfo {
    * Additional metadata for the scope.
    */
   metadata?: Record<string, unknown>;
+
+  /**
+   * Create a member scope with the owner symbol providing the in-scope symbols.
+   */
+  ownerSymbol?: OutputSymbol;
 
   children?: Children;
 }
@@ -51,9 +52,15 @@ export function Scope(props: ScopeProps) {
   if ("value" in props) {
     scope = props.value;
   } else {
-    scope = new OutputScope(props.name ?? "", {
-      kind: props.kind,
+    const parentScope = useScope();
+    if (parentScope && !(parentScope instanceof BasicScope)) {
+      throw new Error(
+        "Scope component can only make scopes within a BasicScope",
+      );
+    }
+    scope = new BasicScope(props.name ?? "", parentScope, {
       metadata: props.metadata,
+      ownerSymbol: props.ownerSymbol,
     });
   }
 

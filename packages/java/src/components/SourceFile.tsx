@@ -4,11 +4,11 @@ import {
   createContext,
   OutputSymbol,
   reactive,
-  Scope,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { JavaOutputSymbol } from "../symbols/index.js";
 import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { usePackage } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";
 
@@ -79,9 +79,7 @@ export function SourceFile(props: SourceFileProps) {
         </>
       : undefined}
       <SourceFileContext.Provider value={sfContext}>
-        <Scope name={props.path} kind="source-file">
-          {props.children}
-        </Scope>
+        <LexicalScope name={props.path}>{props.children}</LexicalScope>
       </SourceFileContext.Provider>
     </CoreSourceFile>
   );

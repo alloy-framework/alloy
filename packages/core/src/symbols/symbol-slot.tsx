@@ -20,26 +20,30 @@ export function createSymbolSlot() {
 
   SymbolSlot.ref = symbolSlotRef;
 
-  SymbolSlot.instantiateInto = (baseSymbol: OutputSymbol) => {
+  SymbolSlot.instantiateTo = (
+    baseSymbol: OutputSymbol,
+    toSpaceKey: string,
+    fromSpaceKey: string,
+  ) => {
     effect(() => {
       if (!symbolSlotRef.value) {
         return;
       }
 
       for (const symbol of symbolSlotRef.value) {
-        symbol.instantiateTo(baseSymbol);
+        symbol.instantiateTo(baseSymbol, toSpaceKey, fromSpaceKey);
       }
     });
   };
 
-  SymbolSlot.copyInto = (baseSymbol: OutputSymbol) => {
+  SymbolSlot.copyMembersTo = (baseSymbol: OutputSymbol) => {
     effect(() => {
       if (!symbolSlotRef.value) {
         return;
       }
 
       for (const symbol of symbolSlotRef.value) {
-        symbol.copyTo(baseSymbol);
+        symbol.copyMembersTo(baseSymbol);
       }
     });
   };

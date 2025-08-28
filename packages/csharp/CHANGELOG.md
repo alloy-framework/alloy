@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/csharp
 
+## 0.20.0
+
+### Bug Fixes
+
+- [#270](https://github.com/alloy-framework/alloy/pull/270) Place partial at the end of the attribute list for classes.
+
+### Features
+
+- [#255](https://github.com/alloy-framework/alloy/pull/255) Add suport for class/record primary constructors
+
+
 ## 0.19.0
 
 ### Features

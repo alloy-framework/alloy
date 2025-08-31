@@ -2,7 +2,7 @@ import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
 import { useMemberContext } from "../context/member-scope.js";
-import type { Refkey } from "../refkey.js";
+import type { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { BasicSymbol } from "../symbols/basic-symbol.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
@@ -15,7 +15,7 @@ export interface MemberDeclarationPropsWithInfo {
   /**
    * The name of this declaration.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The refkey or array refkeys for this declaration.

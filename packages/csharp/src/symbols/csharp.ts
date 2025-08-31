@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputDeclarationSpace,
   OutputMemberSpace,
   OutputSpace,
@@ -57,7 +58,7 @@ export class CSharpSymbol extends OutputSymbol {
   public readonly symbolKind: CSharpSymbolKinds = "symbol";
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: CSharpSymbolOptions = {},
   ) {

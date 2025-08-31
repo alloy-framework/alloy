@@ -6,7 +6,6 @@ import {
 } from "@alloy-js/core";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   FunctionParameters,
@@ -70,14 +69,12 @@ export function ArrowFunction(props: ArrowFunctionProps) {
 
   return (
     <>
-      <Declaration {...props} nameKind="function">
-        {asyncKwd}
-        <LexicalScope>
-          <CallSignature {...callSignatureProps} returnType={returnType} />
-          {" => "}
-          {sBody}
-        </LexicalScope>
-      </Declaration>
+      {asyncKwd}
+      <LexicalScope>
+        <CallSignature {...callSignatureProps} returnType={returnType} />
+        {" => "}
+        {sBody}
+      </LexicalScope>
     </>
   );
 }

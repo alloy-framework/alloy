@@ -3,7 +3,7 @@ import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
 import { useScope } from "../context/scope.js";
 import { onCleanup } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
+import { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
 import { BasicSymbol } from "../symbols/basic-symbol.js";
@@ -30,7 +30,7 @@ export interface DeclarationPropsWithInfo {
   /**
    * The name of this declaration.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The unique key or array of unique keys for this declaration.

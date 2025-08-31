@@ -102,7 +102,9 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
+    }).toThrow(
+      /Cannot reference instance member 'one' without an instance of 'Foo'/,
+    );
   });
 
   it("cannot be referenced outside the class when protected", () => {
@@ -120,7 +122,9 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
+    }).toThrow(
+      /Cannot reference instance member 'one' without an instance of 'Foo'/,
+    );
   });
 
   it("cannot be referenced outside the class when private", () => {
@@ -138,7 +142,9 @@ describe("instance members", () => {
           {one}
         </>,
       );
-    }).toThrow(/Cannot resolve instance member symbols from a different scope/);
+    }).toThrow(
+      /Cannot reference instance member 'one' without an instance of 'Foo'/,
+    );
   });
 
   it("works with invalid identifier names", () => {
@@ -310,7 +316,7 @@ describe("static members", () => {
           {two};
         </>,
       ),
-    ).toThrow(/Cannot resolve/);
+    ).toThrow(/Cannot reference/);
   });
 });
 

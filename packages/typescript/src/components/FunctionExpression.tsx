@@ -6,7 +6,6 @@ import {
 } from "@alloy-js/core";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { Declaration } from "./Declaration.jsx";
 import {
   FunctionBody,
   FunctionParameters,
@@ -69,14 +68,12 @@ export function FunctionExpression(props: FunctionExpressionProps) {
 
   return (
     <>
-      <Declaration {...props} nameKind="function">
-        {asyncKwd}
-        {"function "}
-        <LexicalScope>
-          <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
-          {sBody}
-        </LexicalScope>
-      </Declaration>
+      {asyncKwd}
+      {"function "}
+      <LexicalScope>
+        <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
+        {sBody}
+      </LexicalScope>
     </>
   );
 }

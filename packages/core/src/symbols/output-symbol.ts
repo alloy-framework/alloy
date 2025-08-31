@@ -1,6 +1,8 @@
 import {
+  isRef,
   reactive,
   ReactiveFlags,
+  Ref,
   shallowReactive,
   track,
   TrackOpTypes,
@@ -11,8 +13,9 @@ import {
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
+import { NamePolicyGetter } from "../name-policy.js";
 import { untrack } from "../reactivity.js";
-import { isRefkey, refkey, type Refkey } from "../refkey.js";
+import { Namekey, type Refkey } from "../refkey.js";
 import {
   formatSymbol,
   formatSymbolName,
@@ -28,11 +31,69 @@ import {
 import { SymbolTable } from "./symbol-table.js";
 
 export interface OutputSymbolOptions {
+  /**
+   * The binder instance associated with this symbol. Symbol updates and changes
+   * will be reported to this binder. This binder will be able to find this
+   * symbol via its refkey and other means. Without a binder, this symbol will
+   * be unbound, which means it cannot be referenced by refkey.
+   */
   binder?: Binder;
+
+  /**
+   * The refkey or refkeys associated with this symbol.
+   */
   refkeys?: Refkey | Refkey[];
+
+  /**
+   * Arbitrary metadata about this symbol.
+   */
   metadata?: Record<string, unknown>;
+
+  /**
+   * The symbol this symbol is an alias for.
+   */
   aliasTarget?: OutputSymbol;
+
+  /**
+   * Whether this symbol is transient.
+   */
   transient?: boolean;
+
+  /**
+   * The symbol that provides type information for this symbol. When present,
+   * this symbol will not contain its own members, and instead members will be
+   * provided by the type. This can be provided a Ref, in which case the type
+   * will be the value of that ref.
+   */
+  type?: OutputSymbol | Ref<OutputSymbol | undefined>;
+
+  /**
+   * When provided, this symbol will be named according to the provided name
+   * policy.
+   *
+   * @example
+   *
+   * ```ts
+   * const classNamer = useNamePolicy().for("class");
+   * const symbol = new BasicSymbol("my-class", { namePolicy: classNamer });
+   * console.log(symbol.name); // "MyClass" (assuming a PascalCase class naming policy)
+   * ```
+   */
+  namePolicy?: NamePolicyGetter;
+
+  /**
+   * Whether the name of this symbol should bypass the active name policy. When true,
+   * the name of this symbol will be fixed, though it may conflict with other symbols which are
+   * also ignoring the name policy.
+   */
+  ignoreNamePolicy?: boolean;
+
+  /**
+   * Whether the name of this symbol should bypass the active name conflict resolution.
+   * When true, the name of this symbol will be fixed, though it may conflict with other symbols which are
+   * also ignoring name conflict resolution.
+   */
+  ignoreNameConflict?: boolean;
 }
 
 let symbolCount = 0;
@@ -61,7 +122,8 @@ export abstract class OutputSymbol {
     return this.#originalName;
   }
 
-  #name: string;
+  // this field is set by calling the name accessor.
+  #name!: string;
   /**
    * The name of this symbol.
    *
@@ -71,6 +133,7 @@ export abstract class OutputSymbol {
     track(this, TrackOpTypes.GET, "name");
     return this.#name;
   }
+
   set name(name: string) {
     const old = this.#name;
 
@@ -78,7 +141,10 @@ export abstract class OutputSymbol {
       return;
     }
 
-    this.#name = name;
+    this.#name =
+      this.#namePolicy && !this.#ignoreNamePolicy ?
+        this.#namePolicy(name)
+      : name;
     trigger(this, TriggerOpTypes.SET, "name", name, old);
   }
 
@@ -90,6 +156,30 @@ export abstract class OutputSymbol {
    */
   get id() {
     return this.#id;
+  }
+
+  #ignoreNamePolicy: boolean = false;
+  /**
+   * Whether the name of this symbol bypasses the active name policy. When true,
+   * the name of this symbol will be fixed, though it may conflict with other
+   * symbols which are also ignoring the name policy.
+   *
+   * @readonly
+   */
+  get ignoreNamePolicy() {
+    return this.#ignoreNamePolicy;
+  }
+
+  #ignoreNameConflict: boolean = false;
+
+  /**
+   * Whether the name of this symbol bypasses the active name conflict
+   * resolution. When true, the name of this symbol will be fixed, though it may
+   * conflict with other symbols which are also ignoring name conflict
+   * resolution.
+   */
+  get ignoreNameConflict() {
+    return this.#ignoreNameConflict;
   }
 
   #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({});
@@ -213,6 +303,16 @@ export abstract class OutputSymbol {
   }
 
   /**
+   * If this symbol is an alias for another symbol, return the the aliased symbol. Otherwise, return this symbol.
+   */
+  dealias(): OutputSymbol {
+    if (this.#aliasTarget) {
+      return this.#aliasTarget.dealias();
+    }
+    return this;
+  }
+
+  /**
    * Whether this symbol is an alias for another symbol.
    *
    * @readonly
@@ -305,31 +405,104 @@ export abstract class OutputSymbol {
     return this.movedTo !== undefined;
   }
 
+  #type: OutputSymbol | undefined;
+
+  /**
+   * The symbol which defines the type of this symbol. The type symbol provides
+   * information about the value this symbol contains, such as what members it
+   * has.
+   *
+   * @reactive
+   */
+  get type() {
+    track(this, TrackOpTypes.GET, "type");
+    return this.#type;
+  }
+
+  set type(value: OutputSymbol | Ref<OutputSymbol | undefined> | undefined) {
+    if (isRef(value)) {
+      watch(value, (newValue) => {
+        const old = this.#type;
+        this.#type = newValue && newValue.dealias();
+        trigger(this, TriggerOpTypes.SET, "type", newValue, old);
+      });
+    } else {
+      const old = this.#type;
+      this.#type = value && value.dealias();
+      trigger(this, TriggerOpTypes.SET, "type", value, old);
+    }
+  }
+
+  /**
+   * Whether this symbol has its symbol representing its type available.
+   *
+   * @readonly
+   * @reactive
+   */
+  get hasTypeSymbol() {
+    return this.type !== undefined;
+  }
+
+  #isTyped: boolean = false;
+
+  /**
+   * Whether this symbol's members are provided by a type symbol. The
+   * `typeSymbol` property is this symbol. It may not be available yet, so check
+   * `hasTypeSymbol`.
+   */
+  get isTyped() {
+    return this.#isTyped;
+  }
+
+  #namePolicy: NamePolicyGetter | undefined;
+  get namePolicy() {
+    return this.#namePolicy;
+  }
+
   // Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
   // proxy.
   [ReactiveFlags.SKIP] = true;
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: OutputSymbolOptions = {},
   ) {
     this.#binder = options.binder ?? useBinder();
-    this.#name = name;
-    this.#originalName = name;
+    this.#namePolicy = options.namePolicy;
+
+    if (typeof name === "string") {
+      this.#ignoreNameConflict = !!options.ignoreNameConflict;
+      this.#ignoreNamePolicy = !!options.ignoreNamePolicy;
+      this.name = name;
+      this.#originalName = name;
+      this.#refkeys = shallowReactive(
+        this.#normalizeRefkeyOption(options.refkeys),
+      );
+    } else {
+      this.#ignoreNameConflict =
+        name.options.ignoreNameConflict ?? !!options.ignoreNameConflict;
+      this.#ignoreNamePolicy =
+        name.options.ignoreNamePolicy ?? !!options.ignoreNamePolicy;
+      this.name = name.name;
+      this.#originalName = name.name;
+      this.#refkeys = shallowReactive([
+        name,
+        ...this.#normalizeRefkeyOption(options.refkeys),
+      ]);
+    }
+
     this.#id = symbolCount++;
     this.#spaces =
       Array.isArray(spaces) ? spaces
       : spaces === undefined ? []
       : [spaces];
     this.#aliasTarget = options.aliasTarget;
-    this.#refkeys = shallowReactive(
-      Array.isArray(options.refkeys) ? options.refkeys
-      : isRefkey(options.refkeys) ? [options.refkeys]
-      : [],
-    );
     this.#metadata = reactive(options.metadata ?? {});
     this.#isTransient = !!options.transient;
+    this.#isTyped = !!options.type;
+    this.type = options.type;
+
     this.#handleNewSpaces(this.#spaces);
     const constructor = this.constructor as typeof OutputSymbol;
     this.#memberSpaces = Object.fromEntries(
@@ -346,6 +519,16 @@ export abstract class OutputSymbol {
     this.#binder?.notifySymbolCreated(this);
   }
 
+  #normalizeRefkeyOption(refkeys: Refkey | Refkey[] | undefined) {
+    if (refkeys === undefined) {
+      return [];
+    } else if (Array.isArray(refkeys)) {
+      return refkeys;
+    } else {
+      return [refkeys];
+    }
+  }
+
   delete() {
     trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
     if (this.#spaces) {
@@ -353,55 +536,6 @@ export abstract class OutputSymbol {
     }
 
     this.#binder?.notifySymbolDeleted(this);
-  }
-
-  /**
-   * Takes the instance members or static members on this symbol and creates
-   * corresponding static members on the target symbol. Instance or static
-   * members of instantiated symbols are copied. The refkey of any instantiated
-   * symbols are set to a composite refkey of the target symbol's refkey and the
-   * instantiated symbol's refkey.
-   */
-  instantiateTo(
-    targetSymbol: OutputSymbol,
-    toSpaceKey: string,
-    fromSpaceKey: string,
-  ): void {
-    if (this.#aliasTarget) {
-      return this.#aliasTarget.instantiateTo(
-        targetSymbol,
-        toSpaceKey,
-        fromSpaceKey,
-      );
-    }
-
-    trace(TracePhase.symbol.instantiate, () => {
-      return `${formatSymbolName(this)} -> ${formatSymbolName(targetSymbol)}`;
-    });
-
-    const toSpace = targetSymbol.memberSpaceFor(toSpaceKey);
-    if (!toSpace) {
-      throw new Error("Target space with key " + toSpaceKey + " doesn't exist");
-    }
-    const fromSpace = this.memberSpaceFor(fromSpaceKey);
-    if (!fromSpace) {
-      throw new Error(
-        "Source space with key " + fromSpaceKey + " doesn't exist",
-      );
-    }
-
-    fromSpace!.copyTo(toSpace, {
-      createRefkeys(sourceSymbol) {
-        const instantiationRks = [];
-        for (const baseRk of targetSymbol.refkeys) {
-          for (const sourceRk of sourceSymbol.refkeys) {
-            instantiationRks.push(refkey(baseRk, sourceRk));
-          }
-        }
-
-        return instantiationRks;
-      },
-    });
   }
 
   /**

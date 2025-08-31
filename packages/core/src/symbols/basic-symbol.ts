@@ -29,8 +29,4 @@ export class BasicSymbol extends OutputSymbol {
   get staticMembers() {
     return this.memberSpaceFor("static")!;
   }
-
-  instantiateTo(targetSymbol: OutputSymbol) {
-    super.instantiateTo(targetSymbol, "static", "instance");
-  }
 }

@@ -1,4 +1,4 @@
-import { OutputSpace } from "@alloy-js/core";
+import { Namekey, OutputSpace } from "@alloy-js/core";
 import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 
 export type MethodKinds = "ordinary" | "constructor";
@@ -15,7 +15,7 @@ export class MethodSymbol extends CSharpSymbol {
   }
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace | undefined,
     kind: MethodKinds,
     options: CSharpSymbolOptions = {},

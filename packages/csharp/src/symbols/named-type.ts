@@ -1,4 +1,4 @@
-import { OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
+import { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import { CSharpSymbol } from "./csharp.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
@@ -22,7 +22,7 @@ export class NamedTypeSymbol extends CSharpSymbol {
   public static readonly memberSpaces = ["members"];
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     kind: NamedTypeTypeKind,
     options?: OutputSymbolOptions,

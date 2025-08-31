@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createOutputBinder, refkey } from "../../src/index.browser.js";
+import { createOutputBinder } from "../../src/binder.js";
+import { memberRefkey, refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
+import { binder, createScope, createSymbol } from "./utils.js";
 
 describe("dynamic refkey resolution", () => {
   it("resolves symbols by refkey when symbol is added later", () => {
@@ -385,39 +387,25 @@ describe("resolving members by refkey", () => {
   });
 
   it("nested members, while declaring a neighboring nested member", () => {
-    const key = refkey();
-    const binder = createOutputBinder();
-    const globalScope = new BasicScope("global", undefined, { binder });
-    const foo = new BasicSymbol("foo", globalScope.symbols, {
-      binder,
-    });
-
-    const fooMemberScope = new BasicScope("foo members", globalScope, {
+    const globalScope = createScope("global");
+    const [foo] = createSymbol("foo", globalScope);
+    const fooMemberScope = createScope("foo members", globalScope, {
       ownerSymbol: foo,
     });
-
-    const bar = new BasicSymbol("bar", foo.staticMembers, {
-      binder,
-    });
-
-    const barMemberScope = new BasicScope("bar members", fooMemberScope, {
+    const [bar] = createSymbol("bar", foo.staticMembers);
+    const barMemberScope = createScope("bar members", fooMemberScope, {
       ownerSymbol: bar,
     });
-
-    const baz = new BasicSymbol("baz", bar.staticMembers, {
-      binder,
-      refkeys: [key],
-    });
-
-    const bazMemberScope = new BasicScope("baz members", barMemberScope, {
+    const [baz, bazKey] = createSymbol("baz", bar.staticMembers);
+    const bazMemberScope = createScope("baz members", barMemberScope, {
       ownerSymbol: baz,
     });
+    createSymbol("otherBaz", bar.staticMembers);
 
-    new BasicSymbol("otherBaz", bar.staticMembers, {
-      binder,
-    });
-
-    const result = binder.resolveDeclarationByKey(bazMemberScope, key).value!;
+    const result = binder.resolveDeclarationByKey(
+      bazMemberScope,
+      bazKey,
+    ).value!;
 
     expect(result.symbol).toBe(baz);
     expect(result.commonScope).toBe(barMemberScope);
@@ -436,5 +424,160 @@ describe("resolving members by refkey", () => {
       fooMemberScope,
       barMemberScope,
     ]);
+  });
+});
+
+describe("resolving type members by refkey", () => {
+  it("simple member", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol, typeKey] = createSymbol("MyType", globalScope);
+    const [staticProp, staticKey] = createSymbol(
+      "staticProp",
+      typeSymbol.staticMembers,
+    );
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(typeKey, staticKey),
+    ).value!;
+
+    expect(result.symbol).toBe(staticProp);
+    expect(result.lexicalDeclaration).toBe(typeSymbol);
+    expect(result.memberPath).toEqual([staticProp]);
+  });
+
+  it("nested member", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol, typeKey] = createSymbol("MyType", globalScope);
+    const [staticProp, staticPropKey] = createSymbol(
+      "staticProp",
+      typeSymbol.staticMembers,
+    );
+    const [nestedProp, nestedKey] = createSymbol(
+      "nestedProp",
+      staticProp.staticMembers,
+    );
+
+    // resolve a member of type directly
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(staticPropKey, nestedKey),
+    ).value!;
+
+    expect(result.symbol).toBe(nestedProp);
+    expect(result.lexicalDeclaration).toBe(typeSymbol);
+    expect(result.memberPath).toEqual([staticProp, nestedProp]);
+
+    // resolve from a member refkey
+    const result2 = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(memberRefkey(typeKey, staticPropKey), nestedKey),
+    ).value!;
+
+    expect(result2.symbol).toBe(nestedProp);
+    expect(result2.lexicalDeclaration).toBe(typeSymbol);
+    expect(result2.memberPath).toEqual([staticProp, nestedProp]);
+  });
+
+  it("member of type", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol] = createSymbol("MyType", globalScope);
+    const [staticProp, staticKey] = createSymbol(
+      "staticProp",
+      typeSymbol.staticMembers,
+    );
+
+    const [value, valueKey] = createSymbol("myValue", globalScope, {
+      type: typeSymbol,
+    });
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(valueKey, staticKey),
+    ).value!;
+
+    expect(result.symbol).toBe(staticProp);
+    expect(result.lexicalDeclaration).toBe(value);
+    expect(result.memberPath).toEqual([staticProp]);
+  });
+
+  it("nested member of type", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol] = createSymbol("MyType", globalScope);
+    const [staticProp, staticKey] = createSymbol(
+      "staticProp",
+      typeSymbol.staticMembers,
+    );
+    const [nestedProp, nestedKey] = createSymbol(
+      "nestedProp",
+      staticProp.staticMembers,
+    );
+
+    const [value, valueKey] = createSymbol("myValue", globalScope, {
+      type: typeSymbol,
+    });
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(memberRefkey(valueKey, staticKey), nestedKey),
+    ).value!;
+
+    expect(result.symbol).toBe(nestedProp);
+    expect(result.lexicalDeclaration).toBe(value);
+    expect(result.memberPath).toEqual([staticProp, nestedProp]);
+  });
+
+  it("nested member of nested type", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol] = createSymbol("MyType", globalScope);
+    const [staticProp, staticKey] = createSymbol(
+      "staticProp",
+      typeSymbol.staticMembers,
+    );
+    const [nestedProp, nestedKey] = createSymbol(
+      "nestedProp",
+      staticProp.staticMembers,
+    );
+
+    const [value, valueKey] = createSymbol("myValue", globalScope);
+    const [regularProp, regularPropKey] = createSymbol(
+      "regularProp",
+      value.staticMembers,
+      {
+        type: typeSymbol,
+      },
+    );
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(
+        memberRefkey(memberRefkey(valueKey, regularPropKey), staticKey),
+        nestedKey,
+      ),
+    ).value!;
+
+    expect(result.symbol).toBe(nestedProp);
+    expect(result.lexicalDeclaration).toBe(value);
+    expect(result.memberPath).toEqual([regularProp, staticProp, nestedProp]);
+  });
+
+  it("throws an error when resolving something that isn't a member", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol] = createSymbol("MyType", globalScope);
+    const [, ts2Key] = createSymbol("MyType2", globalScope);
+    const [, staticKey] = createSymbol("staticProp", typeSymbol.staticMembers);
+
+    expect(() => {
+      const result = binder.resolveDeclarationByKey(
+        globalScope,
+        memberRefkey(ts2Key, staticKey),
+      );
+
+      return result.value; // force evaluation
+    }).toThrow(/is not a member/);
   });
 });

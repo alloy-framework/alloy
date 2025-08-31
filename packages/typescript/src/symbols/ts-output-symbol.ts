@@ -136,14 +136,6 @@ export class TSOutputSymbol extends OutputSymbol {
     return this.#hasInstanceMembers;
   }
 
-  instantiateTo(targetSymbol: TSOutputSymbol) {
-    if (this.#hasInstanceMembers) {
-      super.instantiateTo(targetSymbol, "static", "instance");
-    } else {
-      super.instantiateTo(targetSymbol, "static", "static");
-    }
-  }
-
   set tsFlags(value: TSSymbolFlags) {
     const oldValue = this.#tsFlags;
     if (oldValue === value) {

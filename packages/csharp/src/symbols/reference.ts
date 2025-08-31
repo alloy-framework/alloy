@@ -1,4 +1,4 @@
-import { memo, Refkey, resolve } from "@alloy-js/core";
+import { memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -9,13 +9,13 @@ import { NamespaceSymbol } from "./namespace.js";
 // e.g. if refkey is for bar in enum type foo, and
 // foo is in the same namespace as the refkey, then
 // the result would be foo.bar.
-export function ref(refkey: Refkey): () => string {
+export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
   const refSfScope = useSourceFileScope()!;
   const resolveResult = resolve<CSharpScope, CSharpSymbol>(refkey as Refkey);
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return "<Unresolved Symbol>";
+      return ["<Unresolved Symbol>", undefined];
     }
 
     const result = resolveResult.value;
@@ -25,7 +25,7 @@ export function ref(refkey: Refkey): () => string {
     const parts = [];
     if (!commonScope) {
       // this shouldn't be possible in csharp.
-      return "<Unresolved Symbol>";
+      return ["<Unresolved Symbol>", undefined];
     }
 
     if (
@@ -57,6 +57,6 @@ export function ref(refkey: Refkey): () => string {
       parts.push(member.name);
     }
 
-    return parts.join(".");
+    return [parts.join("."), result.symbol];
   });
 }

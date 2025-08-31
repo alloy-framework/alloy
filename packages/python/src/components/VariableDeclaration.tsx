@@ -4,7 +4,6 @@ import {
   Name,
   Show,
   createSymbolSlot,
-  effect,
   emitSymbol,
   memo,
 } from "@alloy-js/core";
@@ -81,9 +80,14 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     {
       instance: props.instanceVariable,
       refkeys: props.refkey,
+      type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
     },
     "variable",
   );
+
+  if (!props.type) {
+    ValueTypeSymbolSlot.moveMembersTo(sym);
+  }
 
   emitSymbol(sym);
   // Handle optional type annotation
@@ -94,26 +98,6 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
         : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
       </>
     );
-  });
-
-  effect(() => {
-    if (TypeSymbolSlot.ref.value) {
-      const takenSymbols = TypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        // If the symbol is a type, instantiate it
-        symbol.instantiateTo(sym, "static", "instance");
-      }
-    } else if (ValueTypeSymbolSlot.ref.value) {
-      const takenSymbols = ValueTypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        // ignore non-transient symbols (likely not the result of an
-        // expression).
-
-        if (symbol.isTransient) {
-          symbol.moveMembersTo(sym);
-        }
-      }
-    }
   });
 
   // If we receive a symbol, resolve it to a name

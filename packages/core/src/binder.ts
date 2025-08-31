@@ -2,7 +2,7 @@ import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { effect } from "./reactivity.js";
-import { refkey, Refkey } from "./refkey.js";
+import { isMemberRefkey, refkey, Refkey } from "./refkey.js";
 import { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import {
@@ -40,8 +40,13 @@ export interface Binder {
   >(
     currentScope: TScope | undefined,
     key: Refkey,
+    options?: ResolveDeclarationByKeyOptions<TScope, TSymbol>,
   ): Ref<ResolutionResult<TScope, TSymbol> | undefined>;
 
+  /**
+   * Get a ref to the symbol associated with the given refkey. The value of the
+   * ref is undefined if the symbol has not been created yet.
+   */
   getSymbolForRefkey<TSymbol extends OutputSymbol>(
     refkey: Refkey,
   ): Ref<TSymbol | undefined>;
@@ -144,10 +149,56 @@ export interface ResolutionResult<
   memberPath: TSymbol[];
 }
 
+/**
+ * Describes a member in a member access chain, tracking both the symbol
+ * and whether this specific member was accessed via a memberRefkey.
+ */
+export interface MemberDescriptor {
+  symbol: OutputSymbol;
+  isMemberAccess: boolean;
+}
+
 export interface NameConflictResolver {
   (name: string, symbols: OutputSymbol[]): void;
 }
 
+/**
+ * The context for a member resolution. This is used to properly resolve a
+ * member in the MemberResolver.
+ */
+export interface MemberResolutionContext<TScope extends OutputScope> {
+  /**
+   * The scopes that the member reference occurred in.
+   */
+  referencePath: TScope[];
+
+  /**
+   * Whether we are using member access e.g. via `memberRefkey`.
+   * This is true when the member was resolved using a memberRefkey,
+   * which may carry additional metadata about the member access in the future.
+   */
+  isMemberAccess: boolean;
+}
+
+/**
+ *
+ */
+export interface MemberResolver<
+  TScope extends OutputScope,
+  TSymbol extends OutputSymbol,
+> {
+  (
+    owner: TSymbol,
+    member: TSymbol,
+    context: MemberResolutionContext<TScope>,
+  ): void;
+}
+export interface ResolveDeclarationByKeyOptions<
+  TScope extends OutputScope,
+  TSymbol extends OutputSymbol,
+> {
+  memberResolver?: MemberResolver<TScope, TSymbol>;
+}
 export interface BinderOptions {
   nameConflictResolver?: NameConflictResolver;
 }
@@ -346,7 +397,30 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       return waitingDeclarations.get(refkey)! as ShallowRef<TSymbol>;
     }
 
-    const symbolRef = shallowRef<TSymbol | undefined>();
+    let symbolRef: ShallowRef<TSymbol | undefined>;
+
+    if (isMemberRefkey(refkey)) {
+      const baseSymbolRef: ShallowRef<TSymbol | undefined> =
+        getSymbolForRefkey<TSymbol>(refkey.base);
+      const memberSymbolRef: ShallowRef<TSymbol | undefined> =
+        getSymbolForRefkey<TSymbol>(refkey.member);
+
+      symbolRef = computed(() => {
+        // even though we don't necessarily need the base symbol to be available
+        // yet (the member symbol might already be declared on a type), we wait
+        // to resolve the member refkey until the base symbol is available.
+        const baseSymbol = baseSymbolRef.value;
+        const memberSymbol = memberSymbolRef.value;
+        if (!baseSymbol || !memberSymbol) {
+          return undefined;
+        }
+
+        return memberSymbol;
+      }) as ShallowRef<TSymbol | undefined>;
+    } else {
+      symbolRef = shallowRef<TSymbol | undefined>();
+    }
+
     waitingDeclarations.set(refkey, symbolRef);
     if (knownDeclarations.has(refkey)) {
       symbolRef.value = knownDeclarations.get(refkey) as TSymbol;
@@ -354,14 +428,23 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     return symbolRef;
   }
 
+  /**
+   * There are two ways to reference a member symbol - directly via its refkey,
+   * and via a member refkey. In the former case, we just find the member
+   * symbol, and then compute its path directly from there. In hte latter case,
+   * we need to find the base of the member expression, and then add the members
+   * from the (possibly nested) member refkey to result.
+   */
   function resolveDeclarationByKey<
     TScope extends OutputScope = OutputScope,
     TSymbol extends OutputSymbol = OutputSymbol,
   >(
     currentScope: TScope | undefined,
     refkey: Refkey,
+    options: ResolveDeclarationByKeyOptions<TScope, TSymbol> = {},
   ): ShallowRef<ResolutionResult<TScope, TSymbol> | undefined> {
     const resolvedSymbol = getSymbolForRefkey(refkey);
+
     return computed(() => {
       trace(
         TracePhase.resolve.pending,
@@ -397,13 +480,120 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         return undefined;
       }
 
-      trace(
-        TracePhase.resolve.success,
-        () =>
-          `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
-      );
-      return buildResult(currentScope, symbol);
+      let result: ResolutionResult<TScope, TSymbol>;
+      let memberDescriptorsFromRefkey: MemberDescriptor[];
+
+      if (isMemberRefkey(refkey)) {
+        memberDescriptorsFromRefkey = getMemberPathFromRefkey(refkey);
+
+        result = buildResult(
+          currentScope,
+          memberDescriptorsFromRefkey[0].symbol as TSymbol,
+        );
+      } else {
+        memberDescriptorsFromRefkey = [];
+        result = buildResult(currentScope, symbol);
+      }
+
+      // When we have member descriptors, this first entry is already part of the result due to passing it
+      // to buildResult above, so we don't need it here.
+      const newMemberPathDescriptors = memberDescriptorsFromRefkey.slice(1);
+      const allDescriptors = [
+        ...result.memberPath.map((s) => ({ symbol: s, isMemberAccess: false })),
+        ...newMemberPathDescriptors,
+      ];
+
+      // update the member path and resolved symbol from our member descriptors
+      // (if we have them)
+      if (memberDescriptorsFromRefkey.length > 0) {
+        for (const descriptor of newMemberPathDescriptors) {
+          result.memberPath.push(descriptor.symbol as TSymbol);
+        }
+        result.symbol = memberDescriptorsFromRefkey.at(-1)!.symbol as TSymbol;
+      }
+
+      // a subcomputed here ensures we don't lose the progress above When
+      // we fail to resolve because a type isn't available yet.
+      return computed(() => {
+        // resolve each member in the member path
+        let currentBase = result.lexicalDeclaration;
+
+        for (const descriptor of allDescriptors) {
+          const member = descriptor.symbol as TSymbol;
+          if (currentBase.isTyped && !currentBase.hasTypeSymbol) {
+            trace(
+              TracePhase.resolve.pending,
+              () =>
+                `${formatRefkeys(refkey)} needs type information from a parent type.`,
+            );
+            // waiting for type
+            return undefined;
+          }
+
+          resolveMember(currentBase, member, options.memberResolver, {
+            referencePath: result.fullReferencePath,
+            isMemberAccess: descriptor.isMemberAccess,
+          });
+
+          currentBase = member;
+        }
+
+        trace(
+          TracePhase.resolve.success,
+          () =>
+            `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
+        );
+        return result;
+      }).value;
     });
+  }
+
+  /**
+   * Extracts member descriptors from a refkey, tracking which members
+   * were accessed via memberRefkey for proper member resolution context.
+   */
+  function getMemberPathFromRefkey(refkey: Refkey): MemberDescriptor[] {
+    if (isMemberRefkey(refkey)) {
+      return [
+        ...getMemberPathFromRefkey(refkey.base),
+        {
+          symbol: getSymbolForRefkey(refkey.member).value!,
+          isMemberAccess: true,
+        },
+      ];
+    }
+
+    return [
+      {
+        symbol: getSymbolForRefkey(refkey).value!,
+        isMemberAccess: false,
+      },
+    ];
+  }
+
+  function resolveMember(
+    base: OutputSymbol,
+    member: OutputSymbol,
+    memberResolver: MemberResolver<any, any> | undefined,
+    context: MemberResolutionContext<any>,
+  ) {
+    if (memberResolver) {
+      memberResolver(base, member, context);
+    } else {
+      // default member resolution
+      if (!member.isMemberSymbol) {
+        throw new Error(`${formatSymbolName(member)} is not a member symbol.`);
+      }
+
+      const memberOwner = base.hasTypeSymbol ? base.type : base.dealias();
+      if (member.ownerSymbol !== memberOwner) {
+        throw new Error(
+          `${formatSymbolName(
+            member,
+          )} is not a member of ${formatSymbolName(base)}.`,
+        );
+      }
+    }
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
@@ -471,7 +661,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 export function resolve<
   TScope extends OutputScope,
   TSymbol extends OutputSymbol,
->(refkey: Refkey): Ref<ResolutionResult<TScope, TSymbol>> {
+>(
+  refkey: Refkey,
+  options: ResolveDeclarationByKeyOptions<TScope, TSymbol> = {},
+): Ref<ResolutionResult<TScope, TSymbol>> {
   const scope = useScope();
   const memberScope = useMemberContext();
   const binder = scope?.binder ?? memberScope?.ownerSymbol.binder;
@@ -480,7 +673,11 @@ export function resolve<
     throw new Error("Can't resolve refkey without a binder");
   }
 
-  return binder.resolveDeclarationByKey(scope, refkey) as any;
+  return binder.resolveDeclarationByKey(
+    scope as TScope,
+    refkey,
+    options,
+  ) as any;
 }
 
 const createSymbolsSymbol: unique symbol = Symbol();

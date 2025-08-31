@@ -94,7 +94,7 @@ export function Declaration(props: DeclarationProps) {
   } else {
     const namePolicy = useTSNamePolicy();
     const name = namePolicy.getName(props.name!, props.nameKind!);
-
+    console.log(props.name);
     if (props.kind === "type") {
       sym = createTypeSymbol(name, {
         refkeys: props.refkey,

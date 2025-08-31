@@ -59,7 +59,7 @@ describe("OutputScope reactivity", () => {
 
   it("updates symbolNames when a symbol's name changes", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("oldName", scope);
+    const [symbol] = createSymbol("oldName", scope);
     flushJobs();
 
     // Verify initial state
@@ -98,8 +98,8 @@ describe("OutputScope reactivity", () => {
 describe("OutputScope#symbols", () => {
   it("adds symbols to its collection", () => {
     const scope = createScope("scope");
-    const sym1 = createSymbol("sym1", scope);
-    const sym2 = createSymbol("sym2", scope);
+    const [sym1] = createSymbol("sym1", scope);
+    const [sym2] = createSymbol("sym2", scope);
     flushJobs();
 
     expect(scope.symbols.size).toBe(2);
@@ -109,9 +109,9 @@ describe("OutputScope#symbols", () => {
 
   it("resolves symbol name conflicts", () => {
     const scope = createScope("scope");
-    const s1 = createSymbol("sym", scope);
-    const s2 = createSymbol("sym", scope);
-    const s3 = createSymbol("sym", scope);
+    const [s1] = createSymbol("sym", scope);
+    const [s2] = createSymbol("sym", scope);
+    const [s3] = createSymbol("sym", scope);
 
     flushJobs();
 
@@ -126,7 +126,7 @@ describe("OutputScope#symbols", () => {
 
   it("updates when a symbol is deleted", () => {
     const scope = createScope("scope");
-    const sym = createSymbol("sym", scope);
+    const [sym] = createSymbol("sym", scope);
     flushJobs();
 
     expect(scope.symbols.size).toBe(1);
@@ -144,7 +144,7 @@ describe("OutputScope#symbols", () => {
   it("updates when a symbol changes scope", () => {
     const scope1 = createScope("scope1");
     const scope2 = createScope("scope2");
-    const sym = createSymbol("sym", scope1);
+    const [sym] = createSymbol("sym", scope1);
     flushJobs();
 
     expect(scope1.symbols.size).toBe(1);
@@ -173,12 +173,12 @@ describe("OutputScope#symbolsByRefkey", () => {
     const key2b = "key2b" as unknown as Refkey;
 
     // Create a symbol with a refkey
-    const sym1 = createSymbol("sym1", scope, {
+    const [sym1] = createSymbol("sym1", scope, {
       refkeys: [key1],
     });
 
     // Create a symbol with multiple refkeys
-    const sym2 = createSymbol("sym2", scope, {
+    const [sym2] = createSymbol("sym2", scope, {
       refkeys: [key2a, key2b],
     });
 

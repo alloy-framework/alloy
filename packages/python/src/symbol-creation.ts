@@ -61,6 +61,7 @@ export function createPythonSymbol(
     refkeys: options.refkeys,
     metadata: options.metadata,
     module: sfContext?.module,
+    type: options.type,
   });
 }
 

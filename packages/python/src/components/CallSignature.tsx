@@ -4,6 +4,7 @@ import {
   createSymbolSlot,
   For,
   Show,
+  SymbolSlot,
   useContext,
 } from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
@@ -87,15 +88,12 @@ export function CallSignatureParameters(props: CallSignatureParametersProps) {
 }
 
 function parameter(param: DeclaredParameterDescriptor) {
-  const SymbolSlot = createSymbolSlot();
-
-  SymbolSlot.instantiateTo(param.symbol, "static", "instance");
-
+  const TypeSlot = param.TypeSlot!; // TypeSlot will always be present when param.type is true.
   return (
     <group>
       {param.symbol.name}
       <Show when={!!param.type}>
-        : <SymbolSlot>{param.type}</SymbolSlot>
+        : <TypeSlot>{param.type}</TypeSlot>
       </Show>
       <Show when={!!param.optional}>
         <Show when={!param.type}>=</Show>
@@ -120,6 +118,7 @@ function parameter(param: DeclaredParameterDescriptor) {
 interface DeclaredParameterDescriptor
   extends Omit<ParameterDescriptor, "name"> {
   symbol: PythonOutputSymbol;
+  TypeSlot?: SymbolSlot;
 }
 
 function normalizeAndDeclareParameters(
@@ -136,10 +135,13 @@ function normalizeAndDeclareParameters(
     });
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
+      const TypeSlot = createSymbolSlot();
+
       const symbol = createPythonSymbol(
         param.name,
         {
           refkeys: param.refkey,
+          type: TypeSlot.firstSymbol,
         },
         "parameter",
       );
@@ -147,6 +149,7 @@ function normalizeAndDeclareParameters(
       return {
         ...param,
         symbol,
+        TypeSlot,
       };
     });
   }

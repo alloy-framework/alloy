@@ -1,12 +1,12 @@
 import {
   Children,
-  MemberContext,
+  MemberResolutionContext,
+  MemberResolver,
   memo,
   Refkey,
   resolve,
   untrack,
   useContext,
-  useMemberContext,
 } from "@alloy-js/core";
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { usePackage } from "../components/PackageDirectory.jsx";
@@ -27,8 +27,8 @@ export function ref(
   const sourceFile = useContext(SourceFileContext);
   const resolveResult = resolve<TSOutputScope, TSOutputSymbol>(
     refkey as Refkey,
+    { memberResolver },
   );
-  const currentScope = useMemberContext();
 
   return memo(() => {
     if (resolveResult.value === undefined) {
@@ -38,17 +38,7 @@ export function ref(
     const { symbol, pathDown, memberPath, lexicalDeclaration, commonScope } =
       resolveResult.value;
 
-    // if we resolved a instance member, check if we should be able to access
-    // it.
-    if (symbol.isInstanceMemberSymbol) {
-      if (!currentScope || currentScope.ownerSymbol !== symbol.ownerSymbol) {
-        throw new Error(
-          "Cannot resolve instance member symbols from a different scope",
-        );
-      }
-    }
-
-    validateSymbolReachable(pathDown, memberPath, currentScope);
+    validateSymbolReachable(pathDown);
 
     // Where the target declaration is relative to the referencing scope.
     // * package: target symbol is in a different package
@@ -121,11 +111,7 @@ export function ref(
   });
 }
 
-function validateSymbolReachable(
-  path: TSOutputScope[],
-  memberPath: TSOutputSymbol[] | undefined,
-  currentPrivateScope: MemberContext | undefined,
-) {
+function validateSymbolReachable(path: TSOutputScope[]) {
   for (const scope of path) {
     if (!(scope instanceof TSModuleScope) && scope instanceof TSLexicalScope) {
       throw new Error(
@@ -133,20 +119,45 @@ function validateSymbolReachable(
       );
     }
   }
+}
 
-  if (memberPath) {
-    for (const sym of memberPath) {
-      // make sure we're not trying to access a static private from outside
-      // the static member scope.
+const memberResolver: MemberResolver<TSOutputScope, TSOutputSymbol> = function (
+  owner: TSOutputSymbol,
+  member: TSOutputSymbol,
+  context: MemberResolutionContext<TSOutputScope>,
+) {
+  if (context.isMemberAccess) {
+    if (!member.isMemberSymbol) {
+      throw new Error(`${member.name} is not a member symbol.`);
+    }
+
+    const memberOwner = owner.hasTypeSymbol ? owner.type : owner.dealias();
+    if (member.ownerSymbol !== memberOwner) {
+      throw new Error(`${member.name} is not a member of ${owner.name}.`);
+    }
+  } else {
+    if (member.isInstanceMemberSymbol) {
       if (
-        sym.isPrivateMemberSymbol &&
-        sym.isStaticMemberSymbol &&
-        currentPrivateScope?.ownerSymbol !== sym.ownerSymbol
+        !context.referencePath.some(
+          (s) => s.isMemberScope && s.ownerSymbol === owner,
+        )
       ) {
         throw new Error(
-          "Cannot resolve private static member symbols from a different scope",
+          `Cannot reference instance member '${member.name}' without an instance of '${owner.name}' in scope`,
+        );
+      }
+    }
+
+    if (member.isPrivateMemberSymbol) {
+      if (
+        !context.referencePath.some(
+          (s) => s.isMemberScope && s.ownerSymbol === owner,
+        )
+      ) {
+        throw new Error(
+          `Cannot reference private member '${member.name}' outside an instance of '${owner.name} in scope'`,
         );
       }
     }
   }
-}
+};

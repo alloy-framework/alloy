@@ -27,31 +27,8 @@ export function ref(
       return ["<Unresolved Symbol>", undefined];
     }
 
-    const {
-      commonScope,
-      lexicalDeclaration,
-      symbol,
-      pathDown,
-      memberPath,
-      fullReferencePath,
-    } = resolveResult.value;
-
-    // if we resolved a instance member, check if we should be able to access
-    if (symbol.isInstanceMemberSymbol) {
-      // the reference path must include a member scope whose owner is the
-      // instance symbol's owner
-
-      const common = fullReferencePath.some(
-        (referenceScope) =>
-          referenceScope.isMemberScope &&
-          referenceScope.ownerSymbol === symbol.ownerSymbol,
-      );
-      if (!common) {
-        throw new Error(
-          `Cannot resolve instance member symbol ${symbol.name} from outside its member scope.`,
-        );
-      }
-    }
+    const { commonScope, lexicalDeclaration, symbol, pathDown, memberPath } =
+      resolveResult.value;
 
     // Where the target declaration is relative to the referencing scope.
     // * module: target symbol is in a different module

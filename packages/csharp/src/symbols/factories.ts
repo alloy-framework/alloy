@@ -1,4 +1,9 @@
-import { OutputSymbolOptions, useBinder } from "@alloy-js/core";
+import {
+  Namekey,
+  NamePolicyGetter,
+  OutputSymbolOptions,
+  useBinder,
+} from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpClassScope } from "../scopes/class.js";
@@ -21,32 +26,32 @@ import { NamespaceSymbol } from "./namespace.js";
  * Create a symbol for a parameter in the current method scope.
  */
 export function createParameterSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CSharpSymbolOptions = {},
 ) {
-  const policy = useCSharpNamePolicy();
-  const name = policy.getName(originalName, "parameter");
   const scope = useCSharpScope();
   if (
     !(scope instanceof CSharpMethodScope) &&
     !(scope instanceof CSharpClassScope)
   ) {
     throw new Error(
-      `Can't create parameter ${name} symbol outside of a method or class scope.`,
+      `Can't create parameter symbol outside of a method or class scope.`,
     );
   }
-  return new CSharpSymbol(name, scope.parameters, options);
+  return new CSharpSymbol(
+    originalName,
+    scope.parameters,
+    withNamePolicy(options, "parameter"),
+  );
 }
 
 export interface CreateTypeParameterSymbolOptions extends CSharpSymbolOptions {
   scope?: CSharpMethodScope | CSharpNamedTypeScope;
 }
 export function createTypeParameterSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CreateTypeParameterSymbolOptions = {},
 ) {
-  const policy = useCSharpNamePolicy();
-  const name = policy.getName(originalName, "type-parameter");
   const scope = options.scope ?? useCSharpScope();
   if (
     !(scope instanceof CSharpMethodScope) &&
@@ -57,14 +62,17 @@ export function createTypeParameterSymbol(
     );
   }
 
-  return new CSharpSymbol(name, scope.typeParameters, options);
+  return new CSharpSymbol(
+    originalName,
+    scope.typeParameters,
+    withNamePolicy(options, "type-parameter"),
+  );
 }
 
 export function createFieldSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CSharpSymbolOptions = {},
 ) {
-  const policy = useCSharpNamePolicy();
   let nameElement: CSharpElements = "class-member-private";
 
   if (
@@ -75,7 +83,6 @@ export function createFieldSymbol(
     nameElement = "class-member-public";
   }
 
-  const name = policy.getName(originalName, nameElement);
   const scope = useNamedTypeScope();
 
   if (
@@ -85,11 +92,15 @@ export function createFieldSymbol(
     throw new Error(`Can't define a field outside of a class or struct.`);
   }
 
-  return new CSharpSymbol(name, scope.members, options);
+  return new CSharpSymbol(
+    originalName,
+    scope.members,
+    withNamePolicy(options, nameElement),
+  );
 }
 
 export function createNamedTypeSymbol(
-  name: string,
+  name: string | Namekey,
   kind: NamedTypeTypeKind,
   options?: OutputSymbolOptions,
 ) {
@@ -111,10 +122,9 @@ export interface CreateMethodSymbolOptions extends CSharpSymbolOptions {
 }
 
 export function createMethodSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CreateMethodSymbolOptions = {},
 ) {
-  const name = useCSharpNamePolicy().getName(originalName, "class-method");
   const scope = useNamedTypeScope();
 
   if (
@@ -122,32 +132,35 @@ export function createMethodSymbol(
     scope.ownerSymbol.typeKind !== "interface" &&
     scope.ownerSymbol.typeKind !== "struct"
   ) {
-    throw new Error(`Can't define a field outside of a class or struct.`);
+    throw new Error(
+      `Can't define a method outside of a class, interface, or struct.`,
+    );
   }
 
   return new MethodSymbol(
-    name,
+    originalName,
     scope.members,
     options.methodKind ?? "ordinary",
-    options,
+    withNamePolicy(options, "class-method"),
   );
 }
 
 export function createPropertySymbol(
-  originalName: string,
+  name: string | Namekey,
   options: CSharpSymbolOptions,
 ) {
-  const name = useCSharpNamePolicy().getName(originalName, "class-property");
   const scope = useNamedTypeScope();
-  return new CSharpSymbol(name, scope.members, options);
+  return new CSharpSymbol(
+    name,
+    scope.members,
+    withNamePolicy(options, "class-property"),
+  );
 }
 
 export function createVariableSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CSharpSymbolOptions = {},
 ) {
-  const policy = useCSharpNamePolicy();
-  const name = policy.getName(originalName, "variable");
   let scope = useCSharpScope();
   if (
     scope instanceof CSharpNamespaceScope &&
@@ -165,8 +178,22 @@ export function createVariableSymbol(
 
   if (!(scope instanceof CSharpLexicalScope)) {
     throw new Error(
-      `Can't create variable ${name} symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
+      `Can't create variable symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
     );
   }
-  return new CSharpSymbol(name, scope.localVariables, options);
+  return new CSharpSymbol(
+    originalName,
+    scope.localVariables,
+    withNamePolicy(options, "variable"),
+  );
+}
+
+function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(
+  options: T,
+  elementType: CSharpElements,
+) {
+  return {
+    ...options,
+    namePolicy: options.namePolicy ?? useCSharpNamePolicy().for(elementType),
+  };
 }

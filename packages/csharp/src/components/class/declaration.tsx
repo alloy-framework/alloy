@@ -5,6 +5,7 @@ import {
   DeclarationProps,
   join,
   Name,
+  Namekey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -42,7 +43,7 @@ export interface ClassDeclarationProps
   extends Omit<DeclarationProps, "nameKind">,
     AccessModifiers,
     ClassModifiers {
-  name: string;
+  name: string | Namekey;
   /** Doc comment */
   doc?: Children;
   refkey?: Refkey;

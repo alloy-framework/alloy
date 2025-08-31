@@ -1,10 +1,37 @@
 import { Ref, ShallowReactive, shallowRef } from "@vue/reactivity";
 import { effect, onCleanup } from "../reactivity.js";
-import type { Children } from "../runtime/component.js";
+import type { Children, Component } from "../runtime/component.js";
 import { OutputSymbol } from "./output-symbol.js";
 import { takeSymbols } from "./symbol-flow.js";
 
-export function createSymbolSlot() {
+export interface SymbolSlot extends Component<{}> {
+  /**
+   * A ref for the set of symbols taken by this slot. Undefined when the Slot component
+   * has not been rendered yet.
+   */
+  ref: Ref<ShallowReactive<Set<OutputSymbol>> | undefined>;
+  /**
+   * A ref for the first symbol taken by this slot. Undefined when the Slot component
+   * has not been rendered yet or has not taken any symbols.
+   */
+  firstSymbol: Ref<OutputSymbol | undefined>;
+
+  /**
+   * Copy any members from taken symbols to the given symbol.
+   */
+  copyMembersTo(baseSymbol: OutputSymbol): void;
+
+  /**
+   * Move any members from transient taken symbols to the given symbol.
+   */
+  moveMembersTo(baseSymbol: OutputSymbol): void;
+}
+/**
+ * Create a component which accepts emitted symbols. The returned component has
+ * a `ref` property which is a ref to a reactive set of all symbols emitted by
+ * children of the component.
+ */
+export function createSymbolSlot(): SymbolSlot {
   const symbolSlotRef: Ref<ShallowReactive<Set<OutputSymbol>> | undefined> =
     shallowRef();
   function SymbolSlot(props: { children: Children }) {
@@ -20,21 +47,15 @@ export function createSymbolSlot() {
 
   SymbolSlot.ref = symbolSlotRef;
 
-  SymbolSlot.instantiateTo = (
-    baseSymbol: OutputSymbol,
-    toSpaceKey: string,
-    fromSpaceKey: string,
-  ) => {
-    effect(() => {
-      if (!symbolSlotRef.value) {
-        return;
-      }
-
-      for (const symbol of symbolSlotRef.value) {
-        symbol.instantiateTo(baseSymbol, toSpaceKey, fromSpaceKey);
-      }
-    });
-  };
+  Object.defineProperty(SymbolSlot, "firstSymbol", {
+    get() {
+      const ref = shallowRef();
+      effect(() => {
+        ref.value = symbolSlotRef.value?.values().next().value;
+      });
+      return ref;
+    },
+  });
 
   SymbolSlot.copyMembersTo = (baseSymbol: OutputSymbol) => {
     effect(() => {
@@ -48,5 +69,18 @@ export function createSymbolSlot() {
     });
   };
 
-  return SymbolSlot;
+  SymbolSlot.moveMembersTo = (baseSymbol: OutputSymbol) => {
+    effect(() => {
+      if (!symbolSlotRef.value) {
+        return;
+      }
+      for (const symbol of symbolSlotRef.value) {
+        if (symbol.isTransient) {
+          symbol.moveMembersTo(baseSymbol);
+        }
+      }
+    });
+  };
+
+  return SymbolSlot as any;
 }

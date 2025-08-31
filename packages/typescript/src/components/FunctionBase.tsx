@@ -6,6 +6,7 @@ import {
   Indent,
   onCleanup,
   Show,
+  SymbolSlot,
   taggedComponent,
   type Children,
 } from "@alloy-js/core";
@@ -76,7 +77,9 @@ export const FunctionParameters = taggedComponent(
       return props.children;
     }
 
-    const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    const parameters = normalizeAndDeclareParameters(
+      props.parameters ?? [],
+    ) as DeclaredParameterDescriptor[];
     if (parameters.length === 0) {
       return null;
     }
@@ -110,7 +113,9 @@ export const FunctionTypeParameters = taggedComponent(
       return props.children;
     }
 
-    const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+    const parameters = normalizeAndDeclareParameters(
+      props.parameters ?? [],
+    ) as DeclaredFunctionTypeParameterDescriptor[];
     if (parameters.length === 0) {
       return null;
     }
@@ -128,11 +133,9 @@ export const FunctionTypeParameters = taggedComponent(
   },
 );
 
-function parameter(param: DeclaredParameterDescriptor) {
-  const SymbolSlot = createSymbolSlot();
-
-  SymbolSlot.instantiateTo(param.symbol, "static", "instance");
-
+function parameter(
+  param: DeclaredParameterDescriptor | DeclaredFunctionTypeParameterDescriptor,
+) {
   return (
     <group>
       <Show when={param.rest}>...</Show>
@@ -141,14 +144,14 @@ function parameter(param: DeclaredParameterDescriptor) {
       <Show when={!!param.type}>
         <indent>
           :{" "}
-          <SymbolSlot>
+          <param.TypeSlot>
             <TypeRefContext>{param.type}</TypeRefContext>
-          </SymbolSlot>
+          </param.TypeSlot>
         </indent>
       </Show>
-      <Show when={!!param.default}>
+      <Show when={!!(param as any).default}>
         {" = "}
-        <SymbolSlot>{param.default!}</SymbolSlot>
+        <param.TypeSlot>{(param as any).default!}</param.TypeSlot>
       </Show>
     </group>
   );
@@ -157,10 +160,12 @@ function parameter(param: DeclaredParameterDescriptor) {
 interface DeclaredParameterDescriptor
   extends Omit<ParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
+  TypeSlot: SymbolSlot;
 }
 interface DeclaredFunctionTypeParameterDescriptor
   extends Omit<FunctionTypeParameterDescriptor, "name"> {
   symbol: TSOutputSymbol;
+  TypeSlot: SymbolSlot;
 }
 
 interface DeclaredTypeParameterDescriptor
@@ -199,10 +204,10 @@ function normalizeAndDeclareParameters(
   if (typeof parameters[0] === "string") {
     return (parameters as string[]).map((paramName) => {
       const name = namePolicy.getName(paramName, "parameter");
+      const TypeSlot = createSymbolSlot();
+      const symbol = createValueSymbol(name, { type: TypeSlot.firstSymbol });
 
-      const symbol = createValueSymbol(name);
-
-      return { refkeys: symbol.refkeys, symbol };
+      return { refkeys: symbol.refkeys, symbol, TypeSlot };
     });
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
@@ -210,19 +215,21 @@ function normalizeAndDeclareParameters(
         (param.nullish ?? param.optional) ?
           TSSymbolFlags.Nullish
         : TSSymbolFlags.None;
-
+      const TypeSlot = createSymbolSlot();
       const symbol = createValueSymbol(
         namePolicy.getName(param.name, "parameter"),
         {
           refkeys: param.refkey,
           tsFlags: flags | nullishFlag,
           metadata: param.metadata,
+          type: TypeSlot.firstSymbol,
         },
       );
 
       return {
         ...param,
         symbol,
+        TypeSlot,
       };
     });
   }
@@ -261,7 +268,9 @@ export const TypeParameters = taggedComponent(
         <group>
           <Indent softline>
             <For each={typeParameters} comma line>
-              {(param) => typeParameter(param)}
+              {(param) =>
+                typeParameter(param as DeclaredTypeParameterDescriptor)
+              }
             </For>
             <ifBreak>,</ifBreak>
           </Indent>

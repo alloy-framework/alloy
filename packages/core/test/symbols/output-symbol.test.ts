@@ -1,13 +1,13 @@
 import { reactive, watch } from "@vue/reactivity";
 import { describe, expect, it, vi } from "vitest";
+import { namekey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
-import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
-import { createScope, createSymbol } from "./utils.js";
+import { binder, createScope, createSymbol } from "./utils.js";
 
 describe("OutputSymbol reactivity", () => {
   it("keeps symbol names up-to-date", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
 
     flushJobs();
     expect(scope.symbolNames.has("sym")).toBe(true);
@@ -19,9 +19,9 @@ describe("OutputSymbol reactivity", () => {
 
   it("resolves symbol conflicts", () => {
     const scope = createScope("scope");
-    const s1 = createSymbol("sym", scope);
-    const s2 = createSymbol("sym", scope);
-    const s3 = createSymbol("sym", scope);
+    const [s1] = createSymbol("sym", scope);
+    const [s2] = createSymbol("sym", scope);
+    const [s3] = createSymbol("sym", scope);
 
     flushJobs();
 
@@ -32,7 +32,7 @@ describe("OutputSymbol reactivity", () => {
 
   it("is reactive on name, space, and scope", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
 
     const nameSpy = vi.fn();
     watch(() => symbol.name, nameSpy);
@@ -49,7 +49,7 @@ describe("OutputSymbol reactivity", () => {
 
   it("doesn't get wrapped in a reactive proxy", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
 
     const rSymbol = reactive(symbol);
     expect(rSymbol).toBe(symbol);
@@ -59,7 +59,7 @@ describe("OutputSymbol reactivity", () => {
 describe("OutputSymbol#metadata", () => {
   it("is reactive", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope, {
+    const [symbol] = createSymbol("sym", scope, {
       metadata: { foo: "bar" },
     });
 
@@ -74,7 +74,7 @@ describe("OutputSymbol#metadata", () => {
 describe("OutputSymbol#scope", () => {
   it("adds to parent scope", () => {
     const scope = createScope("parent");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
     expect(scope.symbols.has(symbol)).toBe(true);
   });
 });
@@ -82,7 +82,7 @@ describe("OutputSymbol#scope", () => {
 describe("Symbol#delete", () => {
   it("deletes from parent scope", () => {
     const scope = createScope("parent");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
     expect(scope.symbols.has(symbol)).toBe(true);
     symbol.delete();
     expect(scope.symbols.has(symbol)).toBe(false);
@@ -92,7 +92,7 @@ describe("Symbol#delete", () => {
 describe("OutputSymbol#copy", () => {
   it("copies name, flags", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope, {
+    const [symbol] = createSymbol("sym", scope, {
       transient: true,
     });
 
@@ -104,7 +104,7 @@ describe("OutputSymbol#copy", () => {
 
   it("reactively copies name from the original symbol", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
 
     const copy = symbol.copy();
     expect(copy.name).toEqual("sym");
@@ -119,7 +119,7 @@ describe("OutputSymbol#copy", () => {
 
   it("copies member symbols", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
+    const [symbol] = createSymbol("sym", scope);
     createSymbol("static-member", symbol.staticMembers);
     createSymbol("instance-member", symbol.instanceMembers);
 
@@ -136,8 +136,8 @@ describe("OutputSymbol#copy", () => {
 
   it("copies member symbols reactively", () => {
     const scope = createScope("scope");
-    const symbol = createSymbol("sym", scope);
-    const staticMember = createSymbol("static-member", symbol.staticMembers);
+    const [symbol] = createSymbol("sym", scope);
+    const [staticMember] = createSymbol("static-member", symbol.staticMembers);
     createSymbol("instance-member", symbol.instanceMembers);
 
     const copy = symbol.copy();
@@ -146,7 +146,7 @@ describe("OutputSymbol#copy", () => {
     expect(copy.staticMembers.size).toBe(1);
     const staticMemberCopy = [...copy.staticMembers][0];
 
-    const newStaticMember = createSymbol(
+    const [newStaticMember] = createSymbol(
       "static-member-2",
       symbol.staticMembers,
     );
@@ -166,87 +166,71 @@ describe("OutputSymbol#copy", () => {
   });
 });
 
-describe("OutputSymbol#instantiateTo", () => {
-  it("copies instance members to static member scope", () => {
+describe("Output symbol name", () => {
+  it("intializes with a namekey", () => {
+    const nk = namekey("foo");
     const scope = createScope("scope");
-    const classSym = createSymbol("Class", scope);
-    createSymbol("instance-member", classSym.instanceMembers);
-    createSymbol("static-member", classSym.staticMembers);
-
-    const targetSym = createSymbol("Target", scope);
-    classSym.instantiateTo(targetSym);
-
-    expect(targetSym.staticMembers.size).toEqual(1);
-    const staticNames = targetSym.staticMembers.symbolNames;
-    expect(staticNames.size).toEqual(1);
-    expect(staticNames.has("instance-member")).toBe(true);
+    const [symbol] = createSymbol(nk, scope);
+    expect(symbol.name).toBe("foo");
+    expect(binder.getSymbolForRefkey(nk).value).toBe(symbol);
   });
 
-  it("is reactive to new instance members", () => {
+  it("applies name policy", () => {
     const scope = createScope("scope");
-    const classSym = createSymbol("Class", scope);
-    createSymbol("instance-member", classSym.instanceMembers);
-    const targetSym = createSymbol("Target", scope);
-    classSym.instantiateTo(targetSym);
-    expect(targetSym.staticMembers.size).toEqual(1);
-    createSymbol("new-instance-member", classSym.instanceMembers);
-    flushJobs();
-    expect(
-      targetSym.staticMembers.symbolNames.has("new-instance-member"),
-    ).toBeTruthy();
+    const [symbol] = createSymbol("foo", scope, {
+      namePolicy: (name) => `_${name}_`,
+    });
+    expect(symbol.name).toBe("_foo_");
   });
 
-  it("copies static members of instance members", () => {
+  it("ignores name policy with namekey option", () => {
+    const nk = namekey("foo", { ignoreNamePolicy: true });
     const scope = createScope("scope");
-    const classSym = createSymbol("Class", scope);
-    const instanceMemberSym = createSymbol(
-      "instance-member",
-      classSym.instanceMembers,
-    );
-    createSymbol("static-of-instance", instanceMemberSym.staticMembers);
-    const targetSym = createSymbol("Target", scope);
-    classSym.instantiateTo(targetSym);
-
-    expect(
-      targetSym.staticMembers.symbolNames.has("instance-member"),
-    ).toBeTruthy();
-
-    const instantiatedSS = [...targetSym.staticMembers][0] as BasicSymbol;
-    expect(
-      instantiatedSS.staticMembers.symbolNames.has("static-of-instance"),
-    ).toBeTruthy();
-
-    // check reactivity
-    const newSym = new BasicSymbol(
-      "new-static-of-instance",
-      instanceMemberSym.staticMembers,
-    );
-
-    flushJobs();
-    expect(
-      instantiatedSS.staticMembers.symbolNames.has("new-static-of-instance"),
-    ).toBeTruthy();
-
-    newSym.delete();
-    flushJobs();
-
-    expect(
-      instantiatedSS.staticMembers.symbolNames.has("static-member-2"),
-    ).toBeFalsy();
+    const [symbol] = createSymbol(nk, scope, {
+      namePolicy: (name) => `_${name}_`,
+    });
+    expect(symbol.name).toBe("foo");
+    expect(symbol.ignoreNamePolicy).toBe(true);
   });
 
-  it("is idempotent", () => {
+  it("ignores name policy with symbol option", () => {
     const scope = createScope("scope");
-    const source = createSymbol("sym", scope);
-    createSymbol("instance-member", source.instanceMembers);
+    const [symbol] = createSymbol("foo", scope, {
+      ignoreNamePolicy: true,
+      namePolicy: (name) => `_${name}_`,
+    });
+    expect(symbol.name).toBe("foo");
+    expect(symbol.ignoreNamePolicy).toBe(true);
+  });
 
-    const target = createSymbol("target", scope);
+  it("handles name conflicts with a default name conflict policy", async () => {
+    const scope = createScope("scope");
+    const [symbol1] = createSymbol("foo", scope);
+    const [symbol2] = createSymbol("foo", scope);
+    await flushJobs();
+    expect(symbol1.name).toBe("foo");
+    expect(symbol2.name).toBe("foo_2");
+  });
 
-    source.instantiateTo(target);
-    source.instantiateTo(target);
+  it("ignores name conflicts with namekey option", () => {
+    const nk1 = namekey("foo", { ignoreNameConflict: true });
+    const nk2 = namekey("foo", { ignoreNameConflict: true });
+    const scope = createScope("scope");
+    const [symbol1] = createSymbol(nk1, scope);
+    const [symbol2] = createSymbol(nk2, scope);
+    expect(symbol1.name).toBe("foo");
+    expect(symbol2.name).toBe("foo");
+  });
 
-    expect(target.staticMembers).toBeDefined();
-    expect(target.staticMembers.symbolNames.size).toEqual(1);
-    expect(target.staticMembers.symbolNames.has("instance-member")).toBe(true);
+  it("ignores name conflicts with symbol option", () => {
+    const scope = createScope("scope");
+    const [symbol1] = createSymbol("foo", scope, {
+      ignoreNameConflict: true,
+    });
+    const [symbol2] = createSymbol("foo", scope, {
+      ignoreNameConflict: true,
+    });
+    expect(symbol1.name).toBe("foo");
+    expect(symbol2.name).toBe("foo");
   });
 });

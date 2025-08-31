@@ -124,6 +124,6 @@ export function instantiateTakenMembersTo(
   fromSpaceKey: string,
 ) {
   takeSymbols((symbol) => {
-    symbol.instantiateTo(baseSymbol, toSpaceKey, fromSpaceKey);
+    baseSymbol.type = symbol;
   });
 }

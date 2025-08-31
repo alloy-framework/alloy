@@ -124,11 +124,20 @@ export function refkey(...args: unknown[]): Refkey {
  * Create a namekey with the given name. The namekey is a unique refkey that
  * represents a single symbol with the given name and the provided
  * naming-related options.
+ *
+ * @example
+ * ```tsx
+ * const myClass = namekey("MyClass");
+ *
+ * return <>
+ *   <ClassDeclaration name={myClass} />
+ *   {myClass}
+ * </>
+ * ```
+ *
+ * Renders a class and a reference to that class.
  */
-export function namekey<TOptions extends NamekeyOptions = NamekeyOptions>(
-  name: string,
-  options: TOptions = {} as TOptions,
-): Namekey {
+export function namekey(name: string, options: NamekeyOptions = {}): Namekey {
   return {
     key: getObjectKey({}),
     name,

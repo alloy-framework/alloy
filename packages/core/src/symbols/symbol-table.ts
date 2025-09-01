@@ -1,34 +1,64 @@
-import type { NameConflictResolver } from "../binder.js";
+import type { Binder, NameConflictResolver } from "../binder.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
+import { Refkey } from "../refkey.js";
 import { queueJob } from "../scheduler.js";
 import {
-  formatScopeName,
   formatSymbolName,
+  formatSymbolTableName,
   trace,
   TracePhase,
 } from "../tracer.js";
-import type { OutputScope } from "./output-scope.js";
+import { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
-export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
-  private _namesToDeconflict: Set<string> = new Set();
-  private _nameConflictResolver?: NameConflictResolver;
-  private _deconflictNames = () => {
-    for (const name of this._namesToDeconflict) {
+export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
+  #namesToDeconflict: Set<string> = new Set();
+  #nameConflictResolver?: NameConflictResolver;
+  #deconflictNames = () => {
+    for (const name of this.#namesToDeconflict) {
       const conflictedSymbols = [...this].filter(
-        (sym) => sym.originalName === name,
+        (sym) => sym.originalName === name && !sym.ignoreNameConflict,
       );
-      if (this._nameConflictResolver) {
-        this._nameConflictResolver(name, conflictedSymbols);
+      if (this.#nameConflictResolver) {
+        this.#nameConflictResolver(name, conflictedSymbols);
       } else {
         defaultConflictHandler(name, conflictedSymbols);
       }
-      this._namesToDeconflict.delete(name);
+      this.#namesToDeconflict.delete(name);
     }
   };
-  public scope;
+
+  #binder: Binder | undefined;
+
+  get binder() {
+    return this.#binder;
+  }
+
+  #key: string;
+
+  /**
+   * The key of this symbol table, e.g. "static" or "instance".
+   */
+  get key() {
+    return this.#key;
+  }
+
+  #symbolsByRefkey: ReadonlyMap<Refkey, OutputSymbol>;
+  /**
+   * The symbols defined within this scope, indexed by refkey.
+   */
+  get symbolsByRefkey() {
+    return this.#symbolsByRefkey;
+  }
+
+  #symbolNames: ReadonlyMap<string, OutputSymbol>;
+  get symbolNames() {
+    return this.#symbolNames;
+  }
+
   constructor(
-    scope: OutputScope,
+    key: string,
+    binder?: Binder,
     options: {
       nameConflictResolver?: NameConflictResolver;
     } = {},
@@ -37,26 +67,70 @@ export class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
       onAdd: (symbol) => {
         trace(
           TracePhase.symbol.addToScope,
-          () => `${formatSymbolName(symbol)} -> ${formatScopeName(scope)}`,
+          () =>
+            `${formatSymbolName(symbol)} added to ${formatSymbolTableName(this)}`,
         );
 
-        this._namesToDeconflict.add(symbol.name);
+        this.#namesToDeconflict.add(symbol.name);
 
-        queueJob(this._deconflictNames);
+        queueJob(this.#deconflictNames);
 
         return symbol;
       },
-      onDelete(symbol) {
+      onDelete: (symbol) => {
         trace(
           TracePhase.symbol.removeFromScope,
-          () => `${formatSymbolName(symbol)} -> ${formatScopeName(scope)}`,
+          () =>
+            `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
         );
       },
     });
 
-    this.scope = scope;
+    this.#nameConflictResolver =
+      options.nameConflictResolver ?? binder?.nameConflictResolver;
+    this.#binder = binder;
+    this.#key = key;
+    this.#symbolsByRefkey = this.createIndex((s) => s.refkeys);
+    this.#symbolNames = this.createIndex((s) => {
+      return s.name;
+    });
+  }
 
-    this._nameConflictResolver = options.nameConflictResolver;
+  moveTo(target: SymbolTable): void {
+    trace(
+      TracePhase.scope.moveSymbols,
+      () =>
+        `${formatSymbolTableName(this)} -> ${formatSymbolTableName(target)}`,
+    );
+
+    target.addSubset(this, {
+      onAdd: (symbol) => {
+        symbol.spaces = [target as OutputSpace];
+        return symbol;
+      },
+    });
+  }
+
+  copyTo(
+    target: SymbolTable,
+    options: {
+      createRefkeys?(sourceSymbol: OutputSymbol): Refkey[];
+    } = {},
+  ): void {
+    trace(
+      TracePhase.scope.copySymbols,
+      () =>
+        `${formatSymbolTableName(this)} copied to ${formatSymbolTableName(target)}`,
+    );
+
+    target.addSubset(this, {
+      onAdd: (symbol) => {
+        const copy = symbol.copy();
+        copy.spaces = [target as OutputSpace];
+        copy.refkeys = options.createRefkeys?.(symbol) ?? [];
+        return copy;
+      },
+    });
   }
 }
 

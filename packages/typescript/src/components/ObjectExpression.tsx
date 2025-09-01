@@ -1,21 +1,21 @@
 import {
-  AssignmentContext,
   Block,
   Children,
   computed,
-  createAssignmentContext,
   emitSymbol,
   For,
   Match,
-  MemberScope,
   moveTakenMembersTo,
-  OutputSymbolFlags,
   Refkey,
   Switch,
   takeSymbols,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import {
+  createStaticMemberSymbol,
+  createTransientValueSymbol,
+} from "../symbols/index.js";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.js";
 
@@ -28,12 +28,10 @@ export interface ObjectExpressionProps {
 }
 
 export function ObjectExpression(props: ObjectExpressionProps) {
-  const symbol = new TSOutputSymbol("", {
-    flags:
-      OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
-  });
+  const symbol = createTransientValueSymbol();
 
   emitSymbol(symbol);
+  moveTakenMembersTo(symbol);
 
   const jsValueProperties = computed(() => {
     const jsValue = props.jsValue;
@@ -59,7 +57,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
       </Match>
       <Match else>
         <group>
-          <MemberScope owner={symbol}>
+          <MemberScope ownerSymbol={symbol}>
             <Block>
               <For each={jsValueProperties} comma softline enderPunctuation>
                 {([name, value]) => (
@@ -108,12 +106,12 @@ export function ObjectProperty(props: ObjectPropertyProps) {
 
   let sym = undefined;
   if (props.refkey && props.name) {
-    sym = new TSOutputSymbol(symbolName!, {
+    sym = createStaticMemberSymbol(symbolName!, {
       refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMember,
     });
 
     moveTakenMembersTo(sym);
+    emitSymbol(sym);
   } else {
     // noop
     takeSymbols();
@@ -129,14 +127,9 @@ export function ObjectProperty(props: ObjectPropertyProps) {
     value = props.children;
   }
 
-  const assignmentContext: AssignmentContext | undefined =
-    sym ? createAssignmentContext(sym) : undefined;
   return (
     <>
-      {name}:{" "}
-      <AssignmentContext.Provider value={assignmentContext}>
-        {value}
-      </AssignmentContext.Provider>
+      {name}: {value}
     </>
   );
 }

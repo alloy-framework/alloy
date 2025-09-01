@@ -1,48 +1,33 @@
 import { reactive, watch } from "@vue/reactivity";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Binder, createOutputBinder } from "../../src/binder.js";
+import { describe, expect, it, vi } from "vitest";
 import { Refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
-import { OutputScopeFlags } from "../../src/symbols/flags.js";
-import { OutputScope } from "../../src/symbols/output-scope.js";
-import { OutputSymbol } from "../../src/symbols/output-symbol.js";
+import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
-
-let binder: Binder;
-beforeEach(() => {
-  binder = createOutputBinder();
-});
+import { binder, createScope, createSymbol } from "./utils.js";
 
 describe("OutputScope constructor", () => {
   it("initializes properties correctly with default options", () => {
-    const scope = new OutputScope("testScope", { binder });
+    const scope = createScope("testScope");
     expect(scope.name).toBe("testScope");
     expect(scope.binder).toBe(binder);
     expect(scope.id).toEqual(expect.any(Number));
-    expect(scope.kind).toBe("scope");
-    expect(scope.flags).toBe(OutputScopeFlags.None);
     expect(scope.metadata).toEqual({});
-    expect(scope.parent).toBe(binder.globalScope);
-    expect(scope.owner).toBeUndefined();
     expect(scope.symbols).toBeInstanceOf(SymbolTable);
     expect(scope.symbolNames.size).toBe(0);
     expect(scope.children.size).toBe(0);
   });
 
   it("initializes properties correctly with custom options", () => {
-    const parentScope = new OutputScope("parentScope", { binder });
+    const parentScope = createScope("parentScope");
     const metadata = { foo: "bar" };
 
-    const scope = new OutputScope("testScope", {
+    const scope = new BasicScope("testScope", parentScope, {
       binder,
-      kind: "namespace",
       metadata,
-      parent: parentScope,
     });
 
     expect(scope.name).toBe("testScope");
-    expect(scope.kind).toBe("namespace");
-    expect(scope.flags).toBe(OutputScopeFlags.None);
     expect(scope.metadata.foo).toBe("bar");
     expect(scope.parent).toBe(parentScope);
     expect(parentScope.children.has(scope)).toBe(true);
@@ -51,7 +36,7 @@ describe("OutputScope constructor", () => {
 
 describe("OutputScope reactivity", () => {
   it("is reactive on name", () => {
-    const scope = new OutputScope("initialName", { binder });
+    const scope = createScope("initialName");
     const nameSpy = vi.fn();
     watch(() => scope.name, nameSpy);
 
@@ -61,31 +46,20 @@ describe("OutputScope reactivity", () => {
     expect(scope.name).toBe("newName");
   });
 
-  it("is reactive on flags", () => {
-    const scope = new OutputScope("scope", { binder });
-    const flagsSpy = vi.fn();
-    watch(() => scope.flags, flagsSpy);
-
-    scope.flags = OutputScopeFlags.InstanceMemberScope;
-    flushJobs();
-    expect(flagsSpy).toHaveBeenCalled();
-    expect(scope.flags).toBe(OutputScopeFlags.InstanceMemberScope);
-  });
-
   it("updates symbolNames when symbols are added", () => {
-    const scope = new OutputScope("scope", { binder });
+    const scope = createScope("scope");
     const symbolNamesSpy = vi.fn();
     watch(() => scope.symbolNames.size, symbolNamesSpy);
 
-    new OutputSymbol("symbol1", { binder, scope });
+    createSymbol("symbol1", scope);
     flushJobs();
     expect(symbolNamesSpy).toHaveBeenCalled();
     expect(scope.symbolNames.has("symbol1")).toBe(true);
   });
 
   it("updates symbolNames when a symbol's name changes", () => {
-    const scope = new OutputScope("scope", { binder });
-    const symbol = new OutputSymbol("oldName", { binder, scope });
+    const scope = createScope("scope");
+    const [symbol] = createSymbol("oldName", scope);
     flushJobs();
 
     // Verify initial state
@@ -114,7 +88,7 @@ describe("OutputScope reactivity", () => {
   });
 
   it("doesn't get wrapped in a reactive proxy", () => {
-    const scope = new OutputScope("scope", { binder });
+    const scope = createScope("scope");
 
     const rScope = reactive(scope);
     expect(rScope).toBe(scope);
@@ -123,9 +97,9 @@ describe("OutputScope reactivity", () => {
 
 describe("OutputScope#symbols", () => {
   it("adds symbols to its collection", () => {
-    const scope = new OutputScope("scope", { binder });
-    const sym1 = new OutputSymbol("sym1", { binder, scope });
-    const sym2 = new OutputSymbol("sym2", { binder, scope });
+    const scope = createScope("scope");
+    const [sym1] = createSymbol("sym1", scope);
+    const [sym2] = createSymbol("sym2", scope);
     flushJobs();
 
     expect(scope.symbols.size).toBe(2);
@@ -134,23 +108,25 @@ describe("OutputScope#symbols", () => {
   });
 
   it("resolves symbol name conflicts", () => {
-    const scope = new OutputScope("scope", { binder });
-    const s1 = new OutputSymbol("sym", { binder, scope });
-    const s2 = new OutputSymbol("sym", { binder, scope });
-    const s3 = new OutputSymbol("sym", { binder, scope });
+    const scope = createScope("scope");
+    const [s1] = createSymbol("sym", scope);
+    const [s2] = createSymbol("sym", scope);
+    const [s3] = createSymbol("sym", scope);
+
     flushJobs();
 
     expect(s1.name).toBe("sym");
     expect(s2.name).toBe("sym_2");
     expect(s3.name).toBe("sym_3");
+    flushJobs();
     expect(scope.symbolNames.has("sym")).toBe(true);
     expect(scope.symbolNames.has("sym_2")).toBe(true);
     expect(scope.symbolNames.has("sym_3")).toBe(true);
   });
 
   it("updates when a symbol is deleted", () => {
-    const scope = new OutputScope("scope", { binder });
-    const sym = new OutputSymbol("sym", { binder, scope });
+    const scope = createScope("scope");
+    const [sym] = createSymbol("sym", scope);
     flushJobs();
 
     expect(scope.symbols.size).toBe(1);
@@ -166,15 +142,15 @@ describe("OutputScope#symbols", () => {
   });
 
   it("updates when a symbol changes scope", () => {
-    const scope1 = new OutputScope("scope1", { binder });
-    const scope2 = new OutputScope("scope2", { binder });
-    const sym = new OutputSymbol("sym", { binder, scope: scope1 });
+    const scope1 = createScope("scope1");
+    const scope2 = createScope("scope2");
+    const [sym] = createSymbol("sym", scope1);
     flushJobs();
 
     expect(scope1.symbols.size).toBe(1);
     expect(scope2.symbols.size).toBe(0);
 
-    sym.scope = scope2;
+    sym.spaces = [scope2.symbols];
     flushJobs();
 
     expect(scope1.symbols.size).toBe(0);
@@ -188,7 +164,7 @@ describe("OutputScope#symbols", () => {
 
 describe("OutputScope#symbolsByRefkey", () => {
   it("maps refkeys to symbols", () => {
-    const scope = new OutputScope("scope", { binder });
+    const scope = createScope("scope");
 
     // Use the refkey function to create refkeys
     // This is based on how refkey is being imported in binder.ts
@@ -197,16 +173,12 @@ describe("OutputScope#symbolsByRefkey", () => {
     const key2b = "key2b" as unknown as Refkey;
 
     // Create a symbol with a refkey
-    const sym1 = new OutputSymbol("sym1", {
-      binder,
-      scope,
+    const [sym1] = createSymbol("sym1", scope, {
       refkeys: [key1],
     });
 
     // Create a symbol with multiple refkeys
-    const sym2 = new OutputSymbol("sym2", {
-      binder,
-      scope,
+    const [sym2] = createSymbol("sym2", scope, {
       refkeys: [key2a, key2b],
     });
 
@@ -220,9 +192,9 @@ describe("OutputScope#symbolsByRefkey", () => {
 
 describe("OutputScope#children", () => {
   it("tracks child scopes", () => {
-    const parentScope = new OutputScope("parent", { binder });
-    const child1 = new OutputScope("child1", { binder, parent: parentScope });
-    const child2 = new OutputScope("child2", { binder, parent: parentScope });
+    const parentScope = createScope("parent");
+    const child1 = createScope("child1", parentScope);
+    const child2 = createScope("child2", parentScope);
     flushJobs();
 
     expect(parentScope.children.size).toBe(2);
@@ -232,69 +204,5 @@ describe("OutputScope#children", () => {
     // Check that each child's parent is set correctly
     expect(child1.parent).toBe(parentScope);
     expect(child2.parent).toBe(parentScope);
-  });
-});
-
-describe("OutputScope#clone", () => {
-  let originalScope: OutputScope;
-  const originalMetadata = { data: "original", nested: { value: 1 } };
-
-  beforeEach(() => {
-    const parentScope = new OutputScope("parent", { binder });
-
-    originalScope = new OutputScope("original", {
-      binder: binder,
-      kind: "class",
-      metadata: { ...originalMetadata },
-      parent: parentScope,
-    });
-
-    // Add a symbol and child scope to the original
-    new OutputSymbol("symbolInOriginal", { binder, scope: originalScope });
-    new OutputScope("childOfOriginal", { binder, parent: originalScope });
-    flushJobs();
-  });
-
-  it("clones basic properties", () => {
-    const newScope = new OutputScope("newScope", { binder });
-    const clonedScope = originalScope.clone({ parent: newScope });
-
-    expect(clonedScope.name).toBe(originalScope.name);
-    expect(clonedScope.kind).toBe(originalScope.kind);
-    expect(clonedScope.flags).toBe(originalScope.flags);
-    expect(clonedScope.id).not.toBe(originalScope.id);
-
-    expect(clonedScope.metadata).toEqual(originalScope.metadata);
-
-    expect(clonedScope.symbols.size).toBe(1);
-    expect(clonedScope.children.size).toBe(1);
-  });
-
-  it("can override parent in clone options", () => {
-    const newParent = new OutputScope("newParent", { binder });
-    const clonedScope = originalScope.clone({ parent: newParent });
-    flushJobs();
-
-    expect(clonedScope.parent).toBe(newParent);
-    expect(newParent.children.has(clonedScope)).toBe(true);
-  });
-
-  it("can override owner in clone options", () => {
-    const newOwnerParent = new OutputScope("newOwnerParent", { binder });
-    const newOwner = new OutputSymbol("newOwner", {
-      binder,
-      scope: newOwnerParent,
-    });
-    const clonedScope = originalScope.clone({ owner: newOwner });
-    flushJobs();
-
-    expect(clonedScope.owner).toBe(newOwner);
-  });
-
-  it("allows independent changes to clone properties", () => {
-    const clonedScope = originalScope.clone();
-    clonedScope.name = "clonedName";
-
-    expect(originalScope.name).toBe("original");
   });
 });

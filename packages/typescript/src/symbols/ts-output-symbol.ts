@@ -1,14 +1,15 @@
 import {
-  OutputScopeFlags,
+  OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
+  watch,
 } from "@alloy-js/core";
 import { TSOutputScope } from "./scopes.js";
-import { TSMemberScope } from "./ts-member-scope.js";
+import { TSModuleScope } from "./ts-module-scope.js";
 
 // prettier-ignore
 export enum TSSymbolFlags {
@@ -16,49 +17,83 @@ export enum TSSymbolFlags {
   LocalImportSymbol      = 1 << 0,
   TypeSymbol             = 1 << 1,
   ParameterSymbol        = 1 << 2,
-  PrivateMember          = 1 << 3,
-  PrivateMemberContainer = 1 << 4,
-  Nullish = 1 << 5,
+  Nullish = 1 << 3,
 }
 
 export interface CreateTsSymbolOptions extends OutputSymbolOptions {
-  scope?: TSOutputScope;
-  owner?: TSOutputSymbol;
   export?: boolean;
   default?: boolean;
   tsFlags?: TSSymbolFlags;
+  hasInstanceMembers?: boolean;
 }
 
 export class TSOutputSymbol extends OutputSymbol {
-  constructor(name: string, options: CreateTsSymbolOptions = {}) {
-    super(name, options);
+  static readonly memberSpaces = [
+    "static",
+    "instance",
+    "private-static",
+    "private-instance",
+  ] as const;
+
+  constructor(
+    name: string,
+    spaces: OutputSpace[] | OutputSpace | undefined,
+    options: CreateTsSymbolOptions = {},
+  ) {
+    super(name, spaces, options);
     this.#export = !!options.export;
     this.#default = !!options.default;
     this.#tsFlags = options.tsFlags ?? TSSymbolFlags.None;
-    this.#privateMemberScope = undefined;
-    this.#privateStaticMemberScope = undefined;
-    if (this.#tsFlags & TSSymbolFlags.PrivateMemberContainer) {
-      this.#privateMemberScope = new TSMemberScope("private members", {
-        binder: this.binder,
-        owner: this,
-        flags: OutputScopeFlags.InstanceMemberScope,
-      });
-
-      this.#privateStaticMemberScope = new TSMemberScope(
-        "private static members",
-        {
-          flags: OutputScopeFlags.StaticMemberScope,
-          binder: this.binder,
-          owner: this,
-        },
-      );
+    this.#hasInstanceMembers = !!options.hasInstanceMembers;
+    if (
+      this.ownerSymbol?.isTypeSymbol ||
+      (this.spaces.some((s) => s.key === "types") &&
+        !this.spaces.some((s) => s.key === "values"))
+    ) {
+      // Classes and enums are both types and values. The check above will treat them as values
+      // exclusively so that referencing occurs properly. This should instead use type or value
+      // referencing based on type context.
+      this.#tsFlags |= TSSymbolFlags.TypeSymbol;
     }
-
-    if (options.export && this.scope.kind === "module") {
+    if (options.export && this.scope && this.scope instanceof TSModuleScope) {
       for (const refkey of this.refkeys) {
         this.scope.exportedSymbols.set(refkey, this);
       }
     }
+  }
+
+  get ownerSymbol() {
+    return super.ownerSymbol as TSOutputSymbol | undefined;
+  }
+
+  copy() {
+    const copy = new TSOutputSymbol(this.name, undefined, {
+      binder: this.binder,
+      aliasTarget: this.aliasTarget,
+      default: this.default,
+      export: this.export,
+      tsFlags: this.tsFlags,
+      metadata: this.metadata,
+    });
+
+    this.initializeCopy(copy);
+
+    watch(
+      () => this.default,
+      (def) => (copy.default = def),
+    );
+
+    watch(
+      () => this.export,
+      (exp) => (copy.export = exp),
+    );
+
+    watch(
+      () => this.tsFlags,
+      (flags) => (copy.tsFlags = flags),
+    );
+
+    return copy;
   }
 
   #export: boolean;
@@ -94,6 +129,13 @@ export class TSOutputSymbol extends OutputSymbol {
     track(this, TrackOpTypes.GET, "tsFlags");
     return this.#tsFlags;
   }
+
+  #hasInstanceMembers: boolean = false;
+  get hasInstanceMembers() {
+    track(this, TrackOpTypes.GET, "hasInstanceMembers");
+    return this.#hasInstanceMembers;
+  }
+
   set tsFlags(value: TSSymbolFlags) {
     const oldValue = this.#tsFlags;
     if (oldValue === value) {
@@ -103,37 +145,57 @@ export class TSOutputSymbol extends OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "tsFlags", value, oldValue);
   }
 
-  get scope() {
-    return super.scope as TSOutputScope;
-  }
-  set scope(value: TSOutputScope) {
-    super.scope = value;
+  get scope(): TSOutputScope | undefined {
+    return super.scope as TSOutputScope | undefined;
   }
 
-  get staticMemberScope() {
-    return super.staticMemberScope as TSMemberScope | undefined;
+  get staticMembers() {
+    return this.memberSpaceFor("static")!;
   }
 
-  get instanceMemberScope() {
-    return super.instanceMemberScope as TSMemberScope | undefined;
+  get instanceMembers() {
+    return this.memberSpaceFor("instance")!;
   }
 
-  #privateMemberScope: TSMemberScope | undefined;
-  get privateMemberScope() {
-    return this.#privateMemberScope;
+  get privateInstanceMembers() {
+    return this.memberSpaceFor("private-instance")!;
   }
 
-  #privateStaticMemberScope: TSMemberScope | undefined;
-  get privateStaticMemberScope() {
-    return this.#privateStaticMemberScope;
+  get privateStaticMembers() {
+    return this.memberSpaceFor("private-static")!;
   }
 
-  protected createMemberScope(
-    name: string,
-    options: { owner?: OutputSymbol; flags?: OutputScopeFlags },
-  ): TSMemberScope {
-    return new TSMemberScope(name, {
-      ...options,
-    });
+  get isPrivateMemberSymbol() {
+    return (
+      this.spaces.length > 0 &&
+      this.spaces.filter(
+        (s) => s.key === "private-static" || s.key === "private-instance",
+      ).length > 0
+    );
+  }
+
+  get isPublicMemberSymbol() {
+    return !this.isPrivateMemberSymbol;
+  }
+
+  get isStaticMemberSymbol() {
+    return !this.isInstanceMemberSymbol;
+  }
+
+  get isInstanceMemberSymbol() {
+    return (
+      this.spaces.length > 0 &&
+      this.spaces.filter(
+        (s) => s.key === "instance" || s.key === "private-instance",
+      ).length > 0
+    );
+  }
+
+  get isTypeSymbol() {
+    return !!(this.tsFlags & TSSymbolFlags.TypeSymbol);
+  }
+
+  get isValueSymbol() {
+    return this.spaces.some((s) => s.key === "values");
   }
 }

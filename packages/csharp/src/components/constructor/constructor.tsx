@@ -1,23 +1,13 @@
-import {
-  Block,
-  Declaration,
-  Name,
-  Refkey,
-  refkey,
-  Scope,
-} from "@alloy-js/core";
+import { MethodScope } from "#components/method-scope.jsx";
+import { Block, MemberDeclaration, MemberName, Refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import {
-  CSharpMemberScope,
-  useCSharpMemberScope,
-} from "../../symbols/scopes.js";
+import { useNamedTypeScope } from "../../scopes/contexts.js";
+import { MethodSymbol } from "../../symbols/method.js";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 /**
@@ -35,28 +25,24 @@ export interface ConstructorProps extends AccessModifiers {
 }
 
 export function Constructor(props: ConstructorProps) {
-  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
+  const scope = useNamedTypeScope();
 
-  const name = useCSharpNamePolicy().getName(scope.owner!.name, "class-method");
-  const ctorSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(name),
-  });
+  const name = scope.ownerSymbol.name;
 
-  const ctorDeclScope = new CSharpMemberScope("constructor-decl", {
-    owner: ctorSymbol,
+  const ctorSymbol = new MethodSymbol(name, scope.members, "constructor", {
+    refkeys: props.refkey,
   });
 
   const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
 
   return (
-    <Declaration symbol={ctorSymbol}>
-      <Scope value={ctorDeclScope}>
+    <MemberDeclaration symbol={ctorSymbol}>
+      <MethodScope>
         {modifiers}
-        <Name />
+        <MemberName />
         <Parameters parameters={props.parameters} />
         <Block newline>{props.children}</Block>
-      </Scope>
-    </Declaration>
+      </MethodScope>
+    </MemberDeclaration>
   );
 }

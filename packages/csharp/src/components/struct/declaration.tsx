@@ -7,8 +7,8 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { createNamedTypeScope } from "../../scopes/factories.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
@@ -100,13 +100,11 @@ export interface StructDeclarationProps
 export function StructDeclaration(props: StructDeclarationProps) {
   const name = useCSharpNamePolicy().getName(props.name!, "struct");
 
-  const thisStructSymbol = new CSharpOutputSymbol(name, {
+  const thisStructSymbol = createNamedTypeSymbol(name, "struct", {
     refkeys: props.refkey,
   });
 
-  const thisStructScope = new CSharpMemberScope("struct-decl", {
-    owner: thisStructSymbol,
-  });
+  const thisStructScope = createNamedTypeScope(thisStructSymbol);
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),

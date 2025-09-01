@@ -8,6 +8,8 @@ export interface ReferenceProps {
 // used to resolve refkey references within source files
 export function Reference({ refkey }: ReferenceProps) {
   const reference = ref(refkey);
+  const symbolRef = core.computed(() => reference()[1]);
 
-  return <>{reference}</>;
+  core.emitSymbol(symbolRef);
+  return <>{reference()[0]}</>;
 }

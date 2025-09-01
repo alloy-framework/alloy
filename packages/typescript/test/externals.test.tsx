@@ -1,12 +1,11 @@
 import { Output, render } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
   createPackage,
   FunctionDeclaration,
   PackageDirectory,
   SourceFile,
-  TSOutputSymbol,
 } from "../src/index.js";
 import { assertFileContents } from "./utils.js";
 
@@ -195,42 +194,4 @@ it("can import static members", () => {
       }
     `,
   });
-});
-
-it("can import instance members", () => {
-  const mcpSdk = createPackage({
-    name: "@modelcontextprotocol/sdk",
-    version: "^3.23.0",
-    descriptor: {
-      "./server/index.js": {
-        named: [{ name: "Server", instanceMembers: ["instanceHandler"] }],
-      },
-    },
-  });
-
-  function RunTest() {
-    const sym = new TSOutputSymbol("foo");
-    const binder = sym.binder!;
-
-    expect(binder).toBeDefined();
-
-    const source = binder.getSymbolForRefkey(
-      mcpSdk["./server/index.js"].Server,
-    ).value!;
-    expect(source).toBeDefined();
-    expect(source.instanceMemberScope?.symbols.size).toBe(1);
-
-    source.instantiateTo(sym);
-
-    expect(sym.staticMemberScope?.symbols.size).toBe(1);
-    expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");
-  }
-
-  render(
-    <Output externals={[mcpSdk]}>
-      <SourceFile path="index.ts">
-        <RunTest />
-      </SourceFile>
-    </Output>,
-  );
 });

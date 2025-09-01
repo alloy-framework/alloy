@@ -1,78 +1,91 @@
-import * as core from "@alloy-js/core";
-import { useNamespace } from "./Namespace.jsx";
+import {
+  Children,
+  computed,
+  SourceFile as CoreSourceFile,
+  Scope,
+  Show,
+  useBinder,
+} from "@alloy-js/core";
+import { getGlobalNamespace } from "../contexts/global-namespace.js";
+import { useNamespaceContext } from "../contexts/namespace.js";
+import { CSharpSourceFileScope } from "../scopes/source-file.js";
+import { NamespaceSymbol } from "../symbols/namespace.js";
+import { NamespaceScope, NamespaceScopes } from "./namespace-scopes.jsx";
 import { Reference } from "./Reference.jsx";
 import { UsingDirective } from "./UsingDirective.jsx";
-
-// contains the info for the current source file
-export interface SourceFileContext {
-  // adds a namespace to the array of using statements
-  addUsing(namespace: string): void;
-}
-
-const SourceFileContext = core.createContext<SourceFileContext>();
-
-// returns the current source file
-export function useSourceFile(): SourceFileContext | undefined {
-  return core.useContext(SourceFileContext) as SourceFileContext;
-}
 
 export interface SourceFileProps {
   /** Path of the source file */
   path: string;
 
-  /** A list of namespaces to use */
-  using?: Array<string>;
+  children?: Children;
 
-  children?: core.Children;
+  /**
+   * A list of using directives to explicitly include. Note that providing
+   * explicit usings is not necessary when referencing symbols via refkeys.
+   */
+  using?: string[];
 }
 
 // a C# source file. exists within the context of a namespace
 // contains using statements and declarations
 export function SourceFile(props: SourceFileProps) {
-  const namespaceCtx = useNamespace();
+  const sourceFileScope = new CSharpSourceFileScope(props.path);
 
-  if (!namespaceCtx) {
-    throw new Error("SourceFile must be declared inside a namespace");
-  }
-
-  const using: Array<string> = core.reactive(new Array<string>());
-  if (props.using) {
-    using.push(...props.using);
-  }
-
-  // adds the specified namespace to the array of using statements.
-  // called via SourceFileContext.addUsing when resolving refkeys.
-  function addUsing(namespace: string): void {
-    if (!using.includes(namespace)) {
-      using.push(namespace);
-    }
-  }
-
-  const sourceFileCtx: SourceFileContext = {
-    addUsing,
-  };
-
+  const nsContext = useNamespaceContext();
+  const globalNs = getGlobalNamespace(useBinder());
+  const nsSymbol = nsContext ? nsContext.symbol : globalNs;
+  const nsRef = nsContext ? nsContext.symbol.name : undefined;
+  const usings = computed(() => {
+    return (
+      Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
+    ).concat(props.using ?? []);
+  });
   return (
-    <core.SourceFile
+    <CoreSourceFile
       path={props.path}
       filetype="cs"
       reference={Reference}
       tabWidth={4}
       printWidth={120}
     >
-      <SourceFileContext.Provider value={sourceFileCtx}>
-        <core.Scope name={props.path} kind="source-file">
-          {using.length > 0 && (
-            <>
-              <UsingDirective namespaces={using} />
-              <hbr />
-              <hbr />
-            </>
-          )}
-          namespace {namespaceCtx.name}
-          <core.Block newline>{props.children}</core.Block>
-        </core.Scope>
-      </SourceFileContext.Provider>
-    </core.SourceFile>
+      <Scope value={sourceFileScope}>
+        {(sourceFileScope.usings.size > 0 ||
+          (props.using && props.using.length > 0)) && (
+          <>
+            <UsingDirective namespaces={usings.value} />
+            <hbr />
+            <hbr />
+          </>
+        )}
+        <Show when={!!nsContext && nsSymbol !== globalNs}>
+          <Show when={sourceFileScope.hasBlockNamespace}>
+            namespace {nsRef}
+            {" {"}
+            <hbr />
+            {"    "}
+          </Show>
+
+          <Show when={!sourceFileScope.hasBlockNamespace}>
+            namespace {nsRef};<hbr />
+            <hbr />
+          </Show>
+          <align width={sourceFileScope.hasBlockNamespace ? 4 : 0}>
+            <NamespaceScopes symbol={nsContext!.symbol}>
+              {props.children}
+            </NamespaceScopes>
+          </align>
+          <Show when={sourceFileScope.hasBlockNamespace}>
+            <hbr />
+            {"}"}
+          </Show>
+        </Show>
+        <Show when={!nsContext || nsSymbol === globalNs}>
+          <NamespaceScope symbol={getGlobalNamespace(useBinder())}>
+            {props.children}
+          </NamespaceScope>
+        </Show>
+      </Scope>
+    </CoreSourceFile>
   );
 }

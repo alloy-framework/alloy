@@ -5,6 +5,7 @@ import {
   DeclarationProps,
   join,
   Name,
+  Namekey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -14,9 +15,8 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { createClassScope } from "../../scopes/factories.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
@@ -43,7 +43,7 @@ export interface ClassDeclarationProps
   extends Omit<DeclarationProps, "nameKind">,
     AccessModifiers,
     ClassModifiers {
-  name: string;
+  name: string | Namekey;
   /** Doc comment */
   doc?: Children;
   refkey?: Refkey;
@@ -130,19 +130,10 @@ export interface ClassDeclarationProps
  * ```
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "class");
-
-  const thisClassSymbol = new CSharpOutputSymbol(name, {
+  const thisClassSymbol = createNamedTypeSymbol(props.name, "class", {
     refkeys: props.refkey,
   });
-
-  // this creates a new scope for the class definition.
-  // members will automatically "inherit" this scope so
-  // that refkeys to them will produce the fully-qualified
-  // name e.g. Foo.Bar.
-  const thisClassScope = new CSharpMemberScope("class-decl", {
-    owner: thisClassSymbol,
-  });
+  const thisClassScope = createClassScope(thisClassSymbol);
 
   const bases = [
     ...(props.baseType ? [props.baseType] : []),
@@ -159,24 +150,20 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       <DocWhen doc={props.doc} />
       <AttributeList attributes={props.attributes} endline />
       {modifiers}class <Name />
-      {props.typeParameters && (
-        <TypeParameters parameters={props.typeParameters} />
-      )}
-      {props.primaryConstructor && (
-        <Scope value={thisClassScope}>
+      <Scope value={thisClassScope}>
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        {props.primaryConstructor && (
           <Parameters parameters={props.primaryConstructor} />
-        </Scope>
-      )}
-      {base}
-      {props.typeParameters && (
-        <TypeParameterConstraints parameters={props.typeParameters} />
-      )}
-      {!props.children && ";"}
-      {props.children && (
-        <Block newline>
-          <Scope value={thisClassScope}>{props.children}</Scope>
-        </Block>
-      )}
+        )}
+        {base}
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
+        {!props.children && ";"}
+        {props.children && <Block newline>{props.children}</Block>}
+      </Scope>
     </Declaration>
   );
 }

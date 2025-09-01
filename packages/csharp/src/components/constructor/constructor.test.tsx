@@ -2,7 +2,6 @@ import { refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { Constructor } from "./constructor.jsx";
 
 it("reference constructor parameters in body", () => {
@@ -16,25 +15,20 @@ it("reference constructor parameters in body", () => {
 
   expect(
     <TestNamespace>
-      <SourceFile path="Test.cs">
-        <ClassDeclaration public name="TestClass">
-          <Constructor public parameters={ctorParams}>
-            {paramNameRefkey};<hbr />
-            {paramSizeRefkey};
-          </Constructor>
-        </ClassDeclaration>
-      </SourceFile>
+      <ClassDeclaration public name="TestClass">
+        <Constructor public parameters={ctorParams}>
+          {paramNameRefkey};<hbr />
+          {paramSizeRefkey};
+        </Constructor>
+      </ClassDeclaration>
     </TestNamespace>,
   ).toRenderTo(`
-    namespace TestCode
+    public class TestClass
     {
-        public class TestClass
+        public TestClass(string name, int size)
         {
-            public TestClass(string name, int size)
-            {
-                name;
-                size;
-            }
+            name;
+            size;
         }
     }
   `);

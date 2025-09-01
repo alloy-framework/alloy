@@ -1,16 +1,29 @@
-import { refkey, useContext } from "@alloy-js/core";
+import {
+  OutputScopeOptions,
+  OutputSpace,
+  useBinder,
+  useContext,
+} from "@alloy-js/core";
 import { PythonSourceFileContext } from "./components/SourceFile.js";
 import { PythonElements, usePythonNamePolicy } from "./name-policy.js";
 import {
-  CreatePythonSymbolOptions,
   PythonOutputSymbol,
+  PythonOutputSymbolOptions,
+  usePythonScope,
 } from "./symbols/index.js";
+import { PythonLexicalScope } from "./symbols/python-lexical-scope.js";
 
+interface CreatePythonSymbolOptions extends PythonOutputSymbolOptions {
+  space?: OutputSpace;
+  instance?: boolean;
+}
+/**
+ * Creates a symbol for a python declaration in the current scope.
+ */
 export function createPythonSymbol(
   name: string,
-  options: CreatePythonSymbolOptions,
+  options: CreatePythonSymbolOptions = {},
   kind?: PythonElements,
-  createRefkeyIfNeeded = false,
 ): PythonOutputSymbol {
   let processedName = name;
   const sfContext = useContext(PythonSourceFileContext);
@@ -21,16 +34,42 @@ export function createPythonSymbol(
       processedName = namePolicy.getName(name, kind);
     }
   }
+  const currentScope = usePythonScope();
+  let targetSpace = options.space ?? undefined;
+  if (!options.space && currentScope) {
+    if (currentScope.isMemberScope) {
+      if (options.instance) {
+        targetSpace = currentScope.ownerSymbol!.instanceMembers;
+      } else {
+        targetSpace = currentScope.ownerSymbol!.staticMembers;
+      }
+    } else {
+      if (options.instance) {
+        throw new Error(
+          `Cannot declare instance variable ${name} outside of a member scope`,
+        );
+      }
+      targetSpace = (currentScope as PythonLexicalScope).symbols;
+    }
+  }
 
-  return new PythonOutputSymbol(processedName, {
-    binder: options.binder,
+  const binder = options.binder ?? currentScope?.binder ?? useBinder();
+
+  return new PythonOutputSymbol(processedName, targetSpace, {
+    binder: binder,
     aliasTarget: options.aliasTarget,
-    scope: options.scope,
-    refkeys:
-      options.refkeys ??
-      (createRefkeyIfNeeded ? refkey(processedName) : undefined),
-    flags: options.flags,
+    refkeys: options.refkeys,
     metadata: options.metadata,
     module: sfContext?.module,
+    type: options.type,
   });
+}
+
+export function createLexicalScope(
+  name: string,
+  options: OutputScopeOptions = {},
+) {
+  const parent = usePythonScope();
+
+  return new PythonLexicalScope(name, parent, options);
 }

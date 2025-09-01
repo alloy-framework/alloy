@@ -1,14 +1,13 @@
 import {
   type Binder,
   getSymbolCreatorSymbol,
-  OutputSymbolFlags,
+  OutputMemberSpace,
   type Refkey,
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
 import {
   TSModuleScope,
-  TSOutputScope,
   TSOutputSymbol,
   TSPackageScope,
 } from "./symbols/index.js";
@@ -120,13 +119,12 @@ function assignMembers(
   keys: Record<string, any>,
   isStatic: boolean,
 ) {
-  let scope: TSOutputScope;
+  let space: OutputMemberSpace;
+
   if (isStatic) {
-    ownerSym.flags |= OutputSymbolFlags.StaticMemberContainer;
-    scope = ownerSym.staticMemberScope!;
+    space = ownerSym.staticMembers!;
   } else {
-    ownerSym.flags |= OutputSymbolFlags.InstanceMemberContainer;
-    scope = ownerSym.instanceMemberScope!;
+    space = ownerSym.instanceMembers!;
   }
 
   const namespace = isStatic ? "static" : "instance";
@@ -138,27 +136,12 @@ function assignMembers(
     const memberKey = keys[namespace][memberObj.name];
     if (!memberKey) continue; // Skip if key doesn't exist
 
-    let memberFlags =
-      isStatic ?
-        OutputSymbolFlags.StaticMember
-      : OutputSymbolFlags.InstanceMember;
-    if (memberObj.staticMembers?.length) {
-      memberFlags |= OutputSymbolFlags.StaticMemberContainer;
-    }
-    if (memberObj.instanceMembers?.length) {
-      memberFlags |= OutputSymbolFlags.InstanceMemberContainer;
-    }
-
-    const memberSym = new TSOutputSymbol(memberObj.name, {
-      scope,
+    const memberSym = new TSOutputSymbol(memberObj.name, space, {
       binder,
       refkeys: memberKey,
       export: false,
       default: false,
-      flags: memberFlags,
     });
-
-    scope.symbols.add(memberSym);
 
     // Recursively handle nested static and instance members
     if (memberObj.staticMembers && isStatic) {
@@ -199,17 +182,15 @@ function createSymbols(
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = new TSModuleScope(path, {
+    const moduleScope = new TSModuleScope(path, pkgScope, {
       binder,
-      parent: pkgScope,
     });
 
     pkgScope.exportedSymbols.set(path, moduleScope);
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = new TSOutputSymbol(symbols.default, {
-        scope: moduleScope,
+      const sym = new TSOutputSymbol(symbols.default, moduleScope.values, {
         refkeys: key,
         export: true,
         default: true,
@@ -223,22 +204,12 @@ function createSymbols(
           { name: exportedName }
         : exportedName;
       const key = keys[namedRef.name];
-
-      let flags = OutputSymbolFlags.None;
-      if (namedRef.staticMembers?.length) {
-        flags |= OutputSymbolFlags.StaticMemberContainer;
-      }
-      if (namedRef.instanceMembers?.length) {
-        flags |= OutputSymbolFlags.InstanceMemberContainer;
-      }
-
-      const ownerSym = new TSOutputSymbol(namedRef.name, {
+      const ownerSym = new TSOutputSymbol(namedRef.name, moduleScope.values, {
         binder,
-        scope: moduleScope,
         refkeys: key,
         export: true,
         default: false,
-        flags,
+        hasInstanceMembers: !!namedRef.instanceMembers?.length,
       });
       moduleScope.exportedSymbols.set(key, ownerSym);
 

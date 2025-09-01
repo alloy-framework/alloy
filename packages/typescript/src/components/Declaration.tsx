@@ -1,18 +1,19 @@
 import {
   Children,
   Declaration as CoreDeclaration,
-  MemberScope,
-  OutputSymbolFlags,
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/index.js";
+import {
+  createTypeSymbol,
+  createValueSymbol,
+  TSOutputSymbol,
+} from "../symbols/index.js";
 
 // imports for documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TypeDeclaration } from "./TypeDeclaration.jsx";
 
-import { PrivateScopeContext } from "../context/private-scope.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 
@@ -37,11 +38,6 @@ export interface BaseDeclarationProps {
    * Whether this is the default export of the module.
    */
   default?: boolean;
-
-  /**
-   * Flags for the symbol created by this component.
-   */
-  flags?: OutputSymbolFlags;
 
   children?: Children;
 
@@ -88,10 +84,7 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
  * @remarks
  *
  * This component will wrap its contents in a {@link @alloy-js/core#Declaration} component,
- * so children can make use of declaration context. Additionally, if the
- * provided symbol flags have {@link @alloy-js/core#OutputSymbolFlags.MemberContainer}, this
- * component will create a {@link @alloy-js/core#MemberScope}.
- *
+ * so children can make use of declaration context.
  */
 export function Declaration(props: DeclarationProps) {
   let sym: TSOutputSymbol;
@@ -100,53 +93,29 @@ export function Declaration(props: DeclarationProps) {
     sym = props.symbol;
   } else {
     const namePolicy = useTSNamePolicy();
-
-    let tsFlags: TSSymbolFlags = TSSymbolFlags.None;
-    if (props.kind && props.kind === "type") {
-      tsFlags |= TSSymbolFlags.TypeSymbol;
+    const name = namePolicy.getName(props.name!, props.nameKind!);
+    if (props.kind === "type") {
+      sym = createTypeSymbol(name, {
+        refkeys: props.refkey,
+        export: props.export,
+        default: props.default,
+        metadata: props.metadata,
+      });
+    } else {
+      sym = createValueSymbol(name, {
+        refkeys: props.refkey,
+        export: props.export,
+        default: props.default,
+        metadata: props.metadata,
+      });
     }
-
-    sym = new TSOutputSymbol(namePolicy.getName(props.name!, props.nameKind!), {
-      refkeys: props.refkey,
-      export: props.export,
-      default: props.default,
-      flags: props.flags,
-      tsFlags,
-      metadata: props.metadata,
-    });
-  }
-
-  function withMemberScope(children: Children) {
-    return <MemberScope owner={sym}>{children}</MemberScope>;
-  }
-
-  function withPrivateMemberScope(children: Children) {
-    const context: PrivateScopeContext = {
-      instanceMembers: sym.privateMemberScope!,
-      staticMembers: sym.privateStaticMemberScope!,
-    };
-    return (
-      <PrivateScopeContext.Provider value={context}>
-        {children}
-      </PrivateScopeContext.Provider>
-    );
-  }
-
-  let children: Children = () => props.children;
-
-  if (sym.flags & OutputSymbolFlags.MemberContainer) {
-    children = withMemberScope(children);
-  }
-
-  if (sym.tsFlags & TSSymbolFlags.PrivateMemberContainer) {
-    children = withPrivateMemberScope(children);
   }
 
   return (
     <CoreDeclaration symbol={sym}>
       {props.export ? "export " : ""}
       {props.default ? "default " : ""}
-      {children}
+      {props.children}
     </CoreDeclaration>
   );
 }

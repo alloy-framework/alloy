@@ -2,15 +2,10 @@ import {
   Children,
   Declaration as CoreDeclaration,
   Name,
-  OutputScope,
-  OutputSymbolFlags,
   Show,
   createSymbolSlot,
-  effect,
   emitSymbol,
   memo,
-  useMemberScope,
-  useScope,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
@@ -77,27 +72,23 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
  * ```
  */
 export function VariableDeclaration(props: VariableDeclarationProps) {
-  const instanceVariable = props.instanceVariable ?? false;
   const TypeSymbolSlot = createSymbolSlot();
   const ValueTypeSymbolSlot = createSymbolSlot();
-  const memberScope = useMemberScope();
-  let scope: OutputScope | undefined = undefined;
-  // Only consider the member scope if this is an instance variable
-  if (memberScope !== undefined && instanceVariable) {
-    scope = memberScope.instanceMembers!;
-  } else {
-    scope = useScope();
-  }
 
   const sym = createPythonSymbol(
     props.name,
     {
-      scope: scope,
+      instance: props.instanceVariable,
       refkeys: props.refkey,
+      type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
     },
     "variable",
-    true,
   );
+
+  if (!props.type) {
+    ValueTypeSymbolSlot.moveMembersTo(sym);
+  }
+
   emitSymbol(sym);
   // Handle optional type annotation
   const type = memo(() => {
@@ -107,25 +98,6 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
         : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
       </>
     );
-  });
-
-  effect(() => {
-    if (TypeSymbolSlot.ref.value) {
-      const takenSymbols = TypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        // If the symbol is a type, instantiate it
-        symbol.instantiateTo(sym);
-      }
-    } else if (ValueTypeSymbolSlot.ref.value) {
-      const takenSymbols = ValueTypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        // ignore non-transient symbols (likely not the result of an
-        // expression).
-        if (symbol.flags & OutputSymbolFlags.Transient) {
-          symbol.moveTo(sym);
-        }
-      }
-    }
   });
 
   // If we receive a symbol, resolve it to a name

@@ -1,13 +1,15 @@
-import { Children, Declaration, Name, refkey, Refkey } from "@alloy-js/core";
+import { Children, Declaration, Name, Refkey } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { CSharpElements, useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { useCSharpMemberScope } from "../../symbols/scopes.js";
+import {
+  accessibilityFromProps,
+  nonAccessibilityFromProps,
+} from "../../symbols/csharp.js";
+import { createFieldSymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Field modifiers. */
@@ -35,17 +37,13 @@ export interface FieldProps extends AccessModifiers, FieldModifiers {
 
 /** Render a c# field */
 export function Field(props: FieldProps) {
-  let nameElement: CSharpElements = "class-member-private";
-  if (props.public || props.protected || props.internal) {
-    nameElement = "class-member-public";
-  }
-  const name = useCSharpNamePolicy().getName(props.name, nameElement);
-  const scope = useCSharpMemberScope(["class-decl", "struct-decl"]);
+  const options = {
+    accessibility: accessibilityFromProps(props),
+    refkeys: props.refkey,
+    ...nonAccessibilityFromProps(props),
+  };
 
-  const memberSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
+  const memberSymbol = createFieldSymbol(props.name, options);
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),

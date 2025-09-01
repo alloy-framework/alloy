@@ -1,93 +1,57 @@
-import { Binder } from "../../src/index.browser.js";
-import { Refkey, refkey } from "../../src/refkey.js";
-import {
-  OutputScopeFlags,
-  OutputSymbolFlags,
-} from "../../src/symbols/flags.js";
-import { OutputScope } from "../../src/symbols/output-scope.js";
-import { OutputSymbol } from "../../src/symbols/output-symbol.js";
+import { beforeEach } from "vitest";
+import { Binder, createOutputBinder } from "../../src/binder.js";
+import { OutputSpace } from "../../src/index.js";
+import { Namekey, refkey, Refkey } from "../../src/refkey.js";
+import { BasicScope } from "../../src/symbols/basic-scope.js";
+import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
+import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
+import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
 
 type ScopeRecords = Record<string, ScopeDescriptor>;
 type SymbolRecords = Record<string, SymbolDescriptor>;
 
 interface ScopeDescriptor {
-  flags?: OutputScopeFlags;
   scopes?: ScopeRecords;
   symbols: SymbolRecords;
 }
 
 interface SymbolDescriptor {
   refkey?: Refkey;
-  flags?: OutputSymbolFlags;
   instanceMembers?: SymbolRecords;
   staticMembers?: SymbolRecords;
 }
 
-interface ScopeTreeResult {
-  symbols: Record<string, OutputSymbol>;
-  scopes: Record<string, OutputScope>;
+export let binder: Binder;
+beforeEach(() => {
+  binder = createOutputBinder();
+});
+
+export function createScope(
+  name: string,
+  parent?: BasicScope,
+  options?: OutputScopeOptions,
+) {
+  return new BasicScope(name, parent, {
+    binder,
+    ...options,
+  });
 }
-export function createScopeTree(
-  binder: Binder,
-  tree: ScopeRecords,
-): ScopeTreeResult {
-  const createdItems: ScopeTreeResult = {
-    symbols: {},
-    scopes: {},
-  };
 
-  for (const [name, desc] of Object.entries(tree)) {
-    createScope(name, desc);
-  }
+export function createSymbol(
+  name: string | Namekey,
+  scope: BasicScope | OutputSpace,
+  options?: OutputSymbolOptions,
+): [BasicSymbol, Refkey] {
+  const space = scope instanceof BasicScope ? scope.symbols : scope;
+  const key = refkey();
+  const refkeys = options?.refkeys ? [...[options.refkeys].flat(), key] : [key];
 
-  return createdItems;
-
-  function createScope(
-    name: string,
-    descriptor: ScopeDescriptor,
-    parent = binder.globalScope,
-  ) {
-    const scope = new OutputScope(name, {
+  return [
+    new BasicSymbol(name, space, {
       binder,
-      parent,
-      flags: descriptor.flags,
-    });
-
-    createdItems.scopes[name] = scope;
-
-    for (const [name, desc] of Object.entries(descriptor.symbols)) {
-      createSymbol(name, desc, scope);
-    }
-
-    for (const [name, desc] of Object.entries(descriptor.scopes ?? {})) {
-      createScope(name, desc, scope);
-    }
-  }
-
-  function createSymbol(
-    name: string,
-    descriptor: SymbolDescriptor,
-    parent: OutputScope,
-  ) {
-    const symbol = new OutputSymbol(name, {
-      binder,
-      scope: parent,
-      refkeys: [descriptor.refkey ?? refkey()],
-      flags: descriptor.flags ?? OutputSymbolFlags.None,
-    });
-
-    createdItems.symbols[name] = symbol;
-
-    if (descriptor.instanceMembers) {
-      for (const [name, desc] of Object.entries(descriptor.instanceMembers)) {
-        createSymbol(name, desc, symbol.instanceMemberScope!);
-      }
-    }
-
-    if (descriptor.staticMembers) {
-      for (const [name, desc] of Object.entries(descriptor.staticMembers)) {
-        createSymbol(name, desc, symbol.staticMemberScope!);
-      }
-    }
-  }
+      ...options,
+      refkeys,
+    }),
+    key,
+  ];
 }

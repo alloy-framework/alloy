@@ -4,6 +4,7 @@ import {
   createSymbolSlot,
   For,
   Show,
+  SymbolSlot,
   useContext,
 } from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
@@ -87,15 +88,12 @@ export function CallSignatureParameters(props: CallSignatureParametersProps) {
 }
 
 function parameter(param: DeclaredParameterDescriptor) {
-  const SymbolSlot = createSymbolSlot();
-
-  SymbolSlot.instantiateInto(param.symbol);
-
+  const TypeSlot = param.TypeSlot!; // TypeSlot will always be present when param.type is true.
   return (
     <group>
       {param.symbol.name}
       <Show when={!!param.type}>
-        : <SymbolSlot>{param.type}</SymbolSlot>
+        : <TypeSlot>{param.type}</TypeSlot>
       </Show>
       <Show when={!!param.optional}>
         <Show when={!param.type}>=</Show>
@@ -120,44 +118,38 @@ function parameter(param: DeclaredParameterDescriptor) {
 interface DeclaredParameterDescriptor
   extends Omit<ParameterDescriptor, "name"> {
   symbol: PythonOutputSymbol;
+  TypeSlot?: SymbolSlot;
 }
 
 function normalizeAndDeclareParameters(
   parameters: ParameterDescriptor[] | string[],
 ): DeclaredParameterDescriptor[] {
-  const sfContext = useContext(PythonSourceFileContext);
-  const module = sfContext?.module;
   if (parameters.length === 0) {
     return [];
   }
   if (typeof parameters[0] === "string") {
     return (parameters as string[]).map((paramName) => {
-      const symbol = createPythonSymbol(
-        paramName,
-        {
-          module: module,
-        },
-        "parameter",
-        false,
-      );
+      const symbol = createPythonSymbol(paramName, {}, "parameter");
 
       return { refkeys: symbol.refkeys, symbol };
     });
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
+      const TypeSlot = createSymbolSlot();
+
       const symbol = createPythonSymbol(
         param.name,
         {
           refkeys: param.refkey,
-          module: module,
+          type: TypeSlot.firstSymbol,
         },
         "parameter",
-        false,
       );
 
       return {
         ...param,
         symbol,
+        TypeSlot,
       };
     });
   }

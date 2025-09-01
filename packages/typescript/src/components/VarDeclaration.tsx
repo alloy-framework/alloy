@@ -2,13 +2,12 @@ import {
   Children,
   Declaration as CoreDeclaration,
   createSymbolSlot,
-  effect,
   Name,
-  OutputSymbolFlags,
   Show,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { createValueSymbol } from "../symbols/index.js";
+import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
@@ -25,24 +24,19 @@ export interface VarDeclarationProps extends BaseDeclarationProps {
 export function VarDeclaration(props: VarDeclarationProps) {
   const TypeSymbolSlot = createSymbolSlot();
   const ValueTypeSymbolSlot = createSymbolSlot();
-
-  effect(() => {
-    if (TypeSymbolSlot.ref.value) {
-      const takenSymbols = TypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        symbol.instantiateTo(sym);
-      }
-    } else if (ValueTypeSymbolSlot.ref.value) {
-      const takenSymbols = ValueTypeSymbolSlot.ref.value;
-      for (const symbol of takenSymbols) {
-        // ignore non-transient symbols (likely not the result of an
-        // expression).
-        if (symbol.flags & OutputSymbolFlags.Transient) {
-          symbol.moveTo(sym);
-        }
-      }
-    }
+  const name = useTSNamePolicy().getName(props.name, "variable");
+  const sym = createValueSymbol(name, {
+    refkeys: props.refkey,
+    default: props.default,
+    export: props.export,
+    metadata: props.metadata,
+    tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
+    type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
   });
+
+  if (!props.type) {
+    ValueTypeSymbolSlot.moveMembersTo(sym);
+  }
 
   const keyword =
     props.var ? "var"
@@ -54,14 +48,6 @@ export function VarDeclaration(props: VarDeclarationProps) {
         : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
       </TypeRefContext>
     : undefined;
-  const name = useTSNamePolicy().getName(props.name, "variable");
-  const sym = new TSOutputSymbol(name, {
-    refkeys: props.refkey,
-    default: props.default,
-    export: props.export,
-    metadata: props.metadata,
-    tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
-  });
 
   return (
     <>

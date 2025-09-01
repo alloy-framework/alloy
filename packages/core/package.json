@@ -32,7 +32,9 @@
   },
   "browser": {
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
-    "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts"
+    "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
+    "./dist/src/inspect.js": "./dist/src/inspect.browser.js",
+    "./src/inspect.ts": "./src/inspect.browser.ts"
   },
   "scripts": {
     "generate-docs": "api-extractor run",

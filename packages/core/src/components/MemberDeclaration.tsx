@@ -1,9 +1,10 @@
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { MemberDeclarationContext } from "../context/member-declaration.js";
-import type { Refkey } from "../refkey.js";
+import { useMemberContext } from "../context/member-scope.js";
+import type { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
-import { OutputSymbolFlags } from "../symbols/flags.js";
+import { BasicSymbol } from "../symbols/basic-symbol.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
@@ -14,7 +15,7 @@ export interface MemberDeclarationPropsWithInfo {
   /**
    * The name of this declaration.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The refkey or array refkeys for this declaration.
@@ -87,13 +88,19 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
       );
     }
 
-    declaration = new OutputSymbol(infoProps.name!, {
+    const scopeContext = useMemberContext()!;
+    if (!(scopeContext.ownerSymbol instanceof BasicSymbol)) {
+      throw new Error(
+        "MemberDeclaration component cannot create a symbol in a non-basic scope",
+      );
+    }
+    const space =
+      infoProps.static ?
+        scopeContext.ownerSymbol.staticMembers
+      : scopeContext.ownerSymbol.instanceMembers;
+    declaration = new BasicSymbol(infoProps.name, space, {
       refkeys: infoProps.refkey,
       metadata: infoProps.metadata,
-      flags:
-        infoProps.static ?
-          OutputSymbolFlags.StaticMember
-        : OutputSymbolFlags.InstanceMember,
     });
   }
 

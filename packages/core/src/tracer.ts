@@ -1,10 +1,14 @@
 import { effect, ReactiveEffectRunner } from "@vue/reactivity";
 import { untrack } from "./reactivity.js";
-import type { Refkey } from "./refkey.js";
+import { isMemberRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
-import { OutputScopeFlags, OutputSymbolFlags } from "./symbols/flags.js";
 import { type OutputScope } from "./symbols/output-scope.js";
+import type {
+  OutputDeclarationSpace,
+  OutputMemberSpace,
+} from "./symbols/output-space.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
+import { SymbolTable } from "./symbols/symbol-table.js";
 
 // enable tracing for specific phases using a comma separated list of
 // dotted identifiers, e.g. `scope.update,symbol.create`.
@@ -45,6 +49,11 @@ export const TracePhase = {
     copySymbols: {
       area: "scope",
       subarea: "copySymbols",
+      bg: { r: 0, g: 100, b: 100 },
+    },
+    moveSymbols: {
+      area: "scope",
+      subarea: "moveSymbols",
       bg: { r: 0, g: 100, b: 100 },
     },
   },
@@ -275,24 +284,6 @@ function colorText(text: string, fmt?: TextFormat): string {
 }
 
 /**
- * Format flag values in a concise way, showing only the flags that are set
- * @param flags The numeric flags value to format
- * @param flagEnum The enum containing flag definitions
- * @returns An array of flag names that are set
- */
-function formatFlags<T extends Record<string, string | number>>(
-  flags: number,
-  flagEnum: T,
-): string[] {
-  return Object.entries(flagEnum)
-    .filter(
-      ([name, value]) =>
-        typeof value === "number" && value !== 0 && (flags & value) === value,
-    )
-    .map(([name]) => name);
-}
-
-/**
  * Format a symbol name with its ID in a blue-green color
  * @param symbol The symbol to format
  * @returns A formatted string representation of the symbol name with ID
@@ -307,21 +298,6 @@ export function formatSymbolName(symbol: OutputSymbol): string {
   });
 }
 
-/**
- * Format the symbols in a member scope, showing their names and IDs
- * @param scope The member scope containing the symbols to format
- * @returns A formatted string representation of the member scope symbols
- */
-function formatMemberScopeSymbols(scope: OutputScope): string {
-  if (!scope || scope.symbols.size === 0) {
-    return "none";
-  }
-
-  return Array.from(scope.symbols)
-    .map((symbol) => formatSymbolName(symbol))
-    .join(", ");
-}
-
 export function formatSymbol(symbol: OutputSymbol): string {
   // Base display with name and ID
   let result = formatSymbolName(symbol);
@@ -333,35 +309,19 @@ export function formatSymbol(symbol: OutputSymbol): string {
     details.push(colorText("  !UNBOUND", { fg: { r: 255, g: 0, b: 0 } }));
   }
 
-  // Show only enabled flags
-  const flagsInfo = formatFlags(symbol.flags, OutputSymbolFlags);
-
-  if (flagsInfo.length > 0) {
-    details.push(`  flags: ${flagsInfo.join(", ")}`);
-  }
-
   // Show scope info with formatted name
   if (symbol.scope) {
     details.push(untrack(() => `  scope: ${formatScopeName(symbol.scope)}`));
   }
 
-  // Show member scopes if present
-  if (symbol.instanceMemberScope) {
-    untrack(() => {
-      const memberCount = symbol.instanceMemberScope!.symbols.size;
-      details.push(
-        `  instance members: ${memberCount} - ${formatMemberScopeSymbols(symbol.instanceMemberScope!)}`,
-      );
-    });
+  for (const space of symbol.memberSpaces) {
+    details.push(untrack(() => formatSpaceSymbols(space)));
   }
 
-  if (symbol.staticMemberScope) {
-    untrack(() => {
-      const memberCount = symbol.staticMemberScope!.symbols.size;
-      details.push(
-        `  static members: ${memberCount} - ${formatMemberScopeSymbols(symbol.staticMemberScope!)}`,
-      );
-    });
+  if (symbol.ownerSymbol) {
+    details.push(
+      untrack(() => `  ownerSymbol: ${formatSymbolName(symbol.ownerSymbol!)}`),
+    );
   }
 
   // Show all refkeys with proper formatting
@@ -376,20 +336,37 @@ export function formatSymbol(symbol: OutputSymbol): string {
   return result;
 }
 
-export function formatScopeName(scope: OutputScope): string {
-  let text = colorText(`${scope.name}[${scope.id}]`, {
+export function formatSpaceSymbols(space: SymbolTable) {
+  return `  ${space.key} symbols (${space.size}): ${[...space].map((s) => s.name).join(", ")}`;
+}
+
+export function formatScopeName(scope: OutputScope | undefined): string {
+  if (!scope) {
+    return "no scope";
+  }
+
+  return colorText(`${scope.name}[${scope.id}]`, {
     fg: {
       r: 0,
       g: 150,
       b: 50,
     },
   });
+}
 
-  if (scope.owner) {
-    text += untrack(() => ` of ${formatSymbolName(scope.owner!)}`);
-  }
-
-  return text;
+export function formatSymbolTableName(table: SymbolTable): string {
+  // avoid instance of checks here in order to not create circular module imports.
+  const name =
+    "symbol" in table ?
+      formatSymbolName((table as OutputMemberSpace).symbol)
+    : formatScopeName((table as OutputDeclarationSpace).scope);
+  return colorText(`${name}:${table.key}`, {
+    fg: {
+      r: 0,
+      g: 125,
+      b: 25,
+    },
+  });
 }
 
 /**
@@ -397,7 +374,7 @@ export function formatScopeName(scope: OutputScope): string {
  * @param scope The scope to format
  * @returns A formatted string representation of the scope
  */
-export function formatScope(scope: OutputSymbol["scope"]): string {
+export function formatScope(scope: OutputScope): string {
   if (!scope) {
     return "!Undefined scope!";
   }
@@ -416,32 +393,20 @@ export function formatScope(scope: OutputSymbol["scope"]): string {
   if (!scope.binder) {
     details.push(colorText("  !UNBOUND", { fg: { r: 255, g: 0, b: 0 } }));
   }
-  // Show only enabled flags
-  const flagsInfo = formatFlags(scope.flags, OutputScopeFlags);
-
-  if (flagsInfo.length > 0) {
-    details.push(`  flags: ${flagsInfo.join(", ")}`);
-  }
-
-  // Show symbol count
-  const symbolCount = scope.symbols.size;
-  if (symbolCount > 0) {
-    details.push(`  symbols: ${symbolCount}`);
-  }
 
   // Show parent scope if present
   if (scope.parent) {
     details.push(`  parent: ${formatScopeName(scope.parent)}`);
   }
 
-  // Show owner if present (for member scopes)
-  if (scope.owner) {
-    details.push(`  owner: ${formatSymbolName(scope.owner)}`);
-  }
-
   // Show child scopes if present
   if (scope.children && scope.children.size > 0) {
     details.push(`  children: ${scope.children.size}`);
+  }
+
+  // Show declaration spaces
+  for (const space of scope.spaces) {
+    details.push(`  ${untrack(() => formatSpaceSymbols(space))}`);
   }
 
   if (details.length > 0) {
@@ -464,7 +429,12 @@ export function formatRefkeys(refkeys: Refkey[] | Refkey | undefined) {
 }
 
 function formatRefkey(refkey: Refkey): string {
-  return colorText(`refkey[${refkey.key}]`, {
+  const text =
+    isMemberRefkey(refkey) ?
+      `memberRefkey[${formatRefkey(refkey.base)} -> ${formatRefkey(refkey.member)}]`
+    : `refkey[${refkey.key}]`;
+
+  return colorText(text, {
     fg: {
       r: 150,
       g: 0,

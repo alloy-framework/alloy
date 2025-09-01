@@ -1,6 +1,5 @@
 import { reactive, shallowReactive } from "@alloy-js/core";
-import { createPythonSymbol } from "../symbol-creation.js";
-import { CustomOutputScope } from "./custom-output-scope.js";
+import { PythonLexicalScope } from "./python-lexical-scope.js";
 import { PythonOutputSymbol } from "./python-output-symbol.js";
 
 export class ImportedSymbol {
@@ -21,23 +20,9 @@ export interface ImportRecordProps {
   symbols: Set<ImportedSymbol>;
 }
 
-export type ImportRecords = Map<PythonModuleScope, ImportRecordProps>;
+export class ImportRecords extends Map<PythonModuleScope, ImportRecordProps> {}
 
-export const ImportRecords = Map as {
-  new (): ImportRecords;
-  new (
-    entries?:
-      | readonly (readonly [PythonModuleScope, ImportRecordProps])[]
-      | null,
-  ): ImportRecords;
-  prototype: Map<PythonModuleScope, ImportRecordProps>;
-};
-
-export class PythonModuleScope extends CustomOutputScope {
-  get kind() {
-    return "module" as const;
-  }
-
+export class PythonModuleScope extends PythonLexicalScope {
   #importedSymbols: Map<PythonOutputSymbol, PythonOutputSymbol> =
     shallowReactive(new Map());
   get importedSymbols() {
@@ -55,28 +40,17 @@ export class PythonModuleScope extends CustomOutputScope {
       return existing;
     }
 
-    if (targetModule.kind !== "module") {
-      throw new Error("Cannot import symbol that isn't in module scope");
-    }
-
     if (!this.importedModules.has(targetModule)) {
       this.importedModules.set(targetModule, {
         symbols: new Set<ImportedSymbol>(),
       });
     }
 
-    const localSymbol = createPythonSymbol(
+    const localSymbol = new PythonOutputSymbol(
       targetSymbol.name,
-      {
-        binder: this.binder,
-        scope: this,
-        aliasTarget: targetSymbol,
-      },
-      undefined,
-      false,
+      this.symbols,
+      { binder: this.binder, aliasTarget: targetSymbol },
     );
-
-    targetSymbol.copyTo(localSymbol);
 
     this.importedSymbols.set(targetSymbol, localSymbol);
     this.importedModules.get(targetModule)!.symbols?.add({

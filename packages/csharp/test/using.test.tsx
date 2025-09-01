@@ -16,7 +16,9 @@ it("uses a single namespace", () => {
   expect(findFile(res, "Test1.cs").contents).toBe(coretest.d`
     using Foo;
 
-    namespace TestCode {}
+    namespace TestCode;
+    
+
   `);
 });
 
@@ -33,7 +35,9 @@ it("uses multiple namespaces", () => {
     using Bar.Baz;
     using Foo;
 
-    namespace TestCode {}
+    namespace TestCode;
+
+
   `);
 });
 
@@ -90,29 +94,27 @@ it("adds using statement across namespaces", () => {
 
   assertFileContents(res, {
     "Models.cs": coretest.d`
-      namespace Models
+      namespace Models;
+
+      public class Input;
+      public class Output;
+      public enum TestEnum
       {
-          public class Input;
-          public class Output;
-          public enum TestEnum
-          {
-              One,
-              Two
-          }
+          One,
+          Two
       }
     `,
     "Client.cs": coretest.d`
       using Models;
       using System;
 
-      namespace Client
+      namespace Client;
+      
+      public class Client
       {
-          public class Client
-          {
-              public Output MethodOne(Input bodyParam) {}
-          }
-          TestEnum.Two;
+          public Output MethodOne(Input bodyParam) {}
       }
+      TestEnum.Two;
     `,
   });
 });

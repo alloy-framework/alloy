@@ -5,21 +5,18 @@ export interface UsingDirectiveProps {
   /**
    * Namespace symbols to use to generate using statements.
    */
-  namespaces?: NamespaceSymbol[];
-
-  /**
-   * Explicitly referenced namespaces.
-   */
-  explicitUsings?: string[];
+  namespaces?: (NamespaceSymbol | string)[];
 }
 
 // one ore more C# using directives
 export function UsingDirective(props: UsingDirectiveProps) {
-  const usings: string[] = props.explicitUsings ?? [];
   const sortedNamespaces = core.computed(() => {
     return props
-      .namespaces!.map((ns) => ns.getFullyQualifiedName({ omitGlobal: true }))
-      .concat(usings)
+      .namespaces!.map((ns) =>
+        typeof ns === "string" ? ns : (
+          ns.getFullyQualifiedName({ omitGlobal: true })
+        ),
+      )
       .sort((n1, n2) => n1.localeCompare(n2));
   });
 

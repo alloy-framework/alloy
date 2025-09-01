@@ -8,6 +8,7 @@ import {
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { CSharpSourceFileScope } from "../scopes/source-file.js";
+import { NamespaceSymbol } from "../symbols/namespace.js";
 import { NamespaceScope, NamespaceScopes } from "./namespace-scopes.jsx";
 import { Reference } from "./Reference.jsx";
 import { UsingDirective } from "./UsingDirective.jsx";
@@ -34,7 +35,9 @@ export function SourceFile(props: SourceFileProps) {
   const globalNs = getGlobalNamespace(useBinder());
   const nsSymbol = nsContext ? nsContext.symbol : globalNs;
   const nsRef = nsContext ? nsContext.symbol.name : undefined;
-
+  const usings = (
+    Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
+  ).concat(props.using ?? []);
   return (
     <CoreSourceFile
       path={props.path}
@@ -47,10 +50,7 @@ export function SourceFile(props: SourceFileProps) {
         {(sourceFileScope.usings.size > 0 ||
           (props.using && props.using.length > 0)) && (
           <>
-            <UsingDirective
-              namespaces={Array.from(sourceFileScope.usings)}
-              explicitUsings={props.using}
-            />
+            <UsingDirective namespaces={usings} />
             <hbr />
             <hbr />
           </>

@@ -23,6 +23,10 @@ if (pkg.exports) {
   removeDevExports(pkg.exports);
 }
 
+if (pkg.imports) {
+  removeDevImports(pkg.imports);
+}
+
 // Write the modified package.json back
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf8");
 console.log("Stripped development exports from package.json.");

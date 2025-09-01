@@ -449,6 +449,9 @@ importers:
       '@alloy-js/java':
         specifier: workspace:~
         version: link:../java
+      '@alloy-js/python':
+        specifier: workspace:~
+        version: link:../python
       '@alloy-js/typescript':
         specifier: workspace:~
         version: link:../typescript

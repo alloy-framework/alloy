@@ -62,6 +62,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   );
 }
 
+export interface InitFunctionDeclarationProps
+  extends Omit<
+    FunctionDeclarationProps,
+    "name" | "instanceFunction" | "classFunction"
+  > {}
+
 /**
  * A Python `__init__` function declaration.
  *
@@ -83,12 +89,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
  * an instance function, and forces the name to be `__init__` without applying
  * the name policy.
  */
-export function InitFunctionDeclaration(
-  props: Omit<
-    FunctionDeclarationProps,
-    "name" | "instanceFunction" | "classFunction"
-  >,
-) {
+export function InitFunctionDeclaration(props: InitFunctionDeclarationProps) {
   return (
     <NoNamePolicy>
       <FunctionDeclaration

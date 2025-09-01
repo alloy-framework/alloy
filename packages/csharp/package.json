@@ -14,7 +14,7 @@
   },
   "imports": {
     "#test/*": "./test/*",
-    "#components/*": "./src/components/*"
+    "#components/*": "./dist/src/components/*"
   },
   "scripts": {
     "generate-docs": "api-extractor run",

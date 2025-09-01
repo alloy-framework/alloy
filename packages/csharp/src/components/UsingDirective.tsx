@@ -3,7 +3,7 @@ import { NamespaceSymbol } from "../symbols/namespace.js";
 
 export interface UsingDirectiveProps {
   /**
-   * Namespace symbols to use to generate using statements.
+   * Namespace symbols or namespace names to use to generate using statements.
    */
   namespaces?: (NamespaceSymbol | string)[];
 }

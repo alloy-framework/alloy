@@ -1,5 +1,6 @@
 import {
   Children,
+  computed,
   SourceFile as CoreSourceFile,
   Scope,
   Show,
@@ -35,9 +36,11 @@ export function SourceFile(props: SourceFileProps) {
   const globalNs = getGlobalNamespace(useBinder());
   const nsSymbol = nsContext ? nsContext.symbol : globalNs;
   const nsRef = nsContext ? nsContext.symbol.name : undefined;
-  const usings = (
-    Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
-  ).concat(props.using ?? []);
+  const usings = computed(() => {
+    return (
+      Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
+    ).concat(props.using ?? []);
+  });
   return (
     <CoreSourceFile
       path={props.path}
@@ -50,7 +53,7 @@ export function SourceFile(props: SourceFileProps) {
         {(sourceFileScope.usings.size > 0 ||
           (props.using && props.using.length > 0)) && (
           <>
-            <UsingDirective namespaces={usings} />
+            <UsingDirective namespaces={usings.value} />
             <hbr />
             <hbr />
           </>

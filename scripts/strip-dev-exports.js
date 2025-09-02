@@ -24,7 +24,7 @@ if (pkg.exports) {
 }
 
 if (pkg.imports) {
-  removeDevImports(pkg.imports);
+  removeDevExports(pkg.imports);
 }
 
 // Write the modified package.json back

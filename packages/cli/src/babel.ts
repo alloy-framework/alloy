@@ -6,7 +6,7 @@ import typescriptPreset from "@babel/preset-typescript";
 // @ts-expect-error
 import alloyPreset from "@alloy-js/babel-preset";
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join, relative } from "pathe";
+import { basename, dirname, join, relative } from "pathe";
 
 export interface BuildOptions {
   sourceMaps?: boolean;
@@ -26,14 +26,27 @@ export async function buildAllFiles(
 ) {
   await Promise.all(
     filenames.map(async (file) => {
-      const transform = await buildFile(file, options);
+      const transform = await buildFile(file, {
+        ...options,
+      });
       const relativePath = relative(rootDir, file).replace(/\.tsx?$/, ".js");
       const outPath = join(outDir, relativePath);
       await mkdir(dirname(outPath), { recursive: true });
-      await writeFile(outPath, transform?.code as any);
-      if (transform?.map) {
-        await writeFile(outPath + ".map", JSON.stringify(transform.map));
+      let code = transform?.code as any;
+      const map = transform?.map;
+      if (map) {
+        const mapPath = `${outPath}.map`;
+        map.sources = map.sources.map((source) => {
+          return relative(dirname(mapPath), file);
+        });
+        await writeFile(mapPath, JSON.stringify(map));
+        code = addSourceMappingUrl(code, mapPath);
       }
+      await writeFile(outPath, code);
     }),
   );
+}
+
+function addSourceMappingUrl(code: string, loc: string) {
+  return `${code}\n//# sourceMappingURL=${basename(loc)}`;
 }

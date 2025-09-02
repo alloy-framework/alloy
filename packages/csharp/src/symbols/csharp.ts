@@ -280,6 +280,27 @@ export class CSharpSymbol extends OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "isReadOnly", value, old);
   }
   #isReadOnly: boolean = false;
+
+  #isNullable: boolean | undefined = undefined;
+  get isNullable() {
+    if (this.hasTypeSymbol && this.#isNullable === undefined) {
+      return (this.type! as CSharpSymbol).isNullable;
+    }
+
+    track(this, TrackOpTypes.GET, "isNullable");
+    return !!this.#isNullable;
+  }
+
+  set isNullable(value: boolean) {
+    const old = this.#isNullable;
+    if (old === value) {
+      return;
+    }
+
+    this.#isNullable = value;
+
+    trigger(this, TriggerOpTypes.SET, "isNullable", value, old);
+  }
 }
 
 export function accessibilityFromProps(props: AccessModifiers) {

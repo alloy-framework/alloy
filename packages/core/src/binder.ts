@@ -1,4 +1,5 @@
 import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
+import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { effect } from "./reactivity.js";
@@ -678,6 +679,25 @@ export function resolve<
     refkey,
     options,
   ) as any;
+}
+
+/**
+ * Get a ref to the symbol for the given refkey using the current binder. The
+ * value of the ref will be undefined when no symbol with that refkey has been
+ * created.
+ *
+ * @remarks
+ *
+ * This API may return a ref for undefined, but that does not mean that the symbol is
+ * not found. The symbol you're looking for may not have been declared yet. When the symbol
+ * is declared, the ref will be updated with the symbol.
+ */
+export function symbolForRefkey(refkey: Refkey) {
+  const binder = useBinder();
+  if (!binder) {
+    throw new Error("Can't resolve refkey without a binder");
+  }
+  return binder.getSymbolForRefkey(refkey);
 }
 
 const createSymbolsSymbol: unique symbol = Symbol();

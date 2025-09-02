@@ -414,7 +414,7 @@ export abstract class OutputSymbol {
    *
    * @reactive
    */
-  get type() {
+  get type(): OutputSymbol | undefined {
     track(this, TrackOpTypes.GET, "type");
     return this.#type;
   }

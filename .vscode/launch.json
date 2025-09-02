@@ -25,7 +25,6 @@
       "name": "Launch Sample Emitter",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/samples/client-emitter/dist/src/index.js",
-      "outFiles": ["${workspaceFolder}/**/*.js"],
       "smartStep": true,
       "console": "internalConsole",
       "outputCapture": "std",

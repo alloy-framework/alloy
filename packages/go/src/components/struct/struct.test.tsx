@@ -1,3 +1,4 @@
+import { TypeConstraint } from "#components/interface/declaration.jsx";
 import { List, Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { assertFileContents, TestPackage } from "../../../test/utils.js";
@@ -509,5 +510,128 @@ describe("embedded", () => {
         TestStruct2.TestStruct
       `,
     });
+  });
+});
+
+describe("type parameters", () => {
+  it("single type parameter", () => {
+    const T = refkey("T");
+
+    expect(
+      <TestPackage>
+        <TypeDeclaration
+          name="TestStruct"
+          exported
+          typeParameters={[{ name: "T", constraint: "any", refkey: T }]}
+        >
+          <StructDeclaration>
+            <List>
+              <StructMember exported name="memberOne" type={T} />
+            </List>
+          </StructDeclaration>
+        </TypeDeclaration>
+      </TestPackage>,
+    ).toRenderTo(`
+      package alloy
+
+      type TestStruct[T any] struct {
+        MemberOne T
+      }
+    `);
+  });
+
+  it("multiple type parameters", () => {
+    const TestStructType = refkey("TestStructType");
+    const U = refkey("U");
+
+    expect(
+      <TestPackage>
+        <TypeDeclaration name="TestStructType" exported refkey={TestStructType}>
+          <StructDeclaration>
+            <List>
+              <StructMember exported name="memberOne" type="string" />
+            </List>
+          </StructDeclaration>
+        </TypeDeclaration>
+        <hbr />
+        <TypeDeclaration
+          name="TestStruct"
+          exported
+          typeParameters={[
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+            { name: "U", constraint: TestStructType, refkey: U },
+          ]}
+        >
+          <StructDeclaration>
+            <List>
+              <StructMember exported name="memberOne" type={U} />
+            </List>
+          </StructDeclaration>
+        </TypeDeclaration>
+      </TestPackage>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestStructType struct {
+      MemberOne string
+    }
+    type TestStruct[T string | int, U TestStructType] struct {
+      MemberOne U
+    }
+  `);
+  });
+
+  it("type parameter overflow", () => {
+    expect(
+      <TestPackage>
+        <TypeDeclaration
+          name="TestStruct"
+          exported
+          typeParameters={[
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+            {
+              name: "T",
+              constraint: <TypeConstraint constraints={["string", "int"]} />,
+            },
+          ]}
+        >
+          <StructDeclaration>
+            <List>
+              <StructMember exported name="memberOne" type="string" />
+            </List>
+          </StructDeclaration>
+        </TypeDeclaration>
+      </TestPackage>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestStruct[
+      T string | int,
+      T_2 string | int,
+      T_3 string | int,
+      T_4 string | int,
+      T_5 string | int,
+    ] struct {
+      MemberOne string
+    }
+  `);
   });
 });

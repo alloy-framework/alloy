@@ -1,7 +1,12 @@
 import { LineComment } from "#components/doc/comment.jsx";
 import {
+  TypeParameterProps,
+  TypeParameters,
+} from "#components/parameters/typeparameters.jsx";
+import {
   Block,
   Children,
+  computed,
   Declaration,
   DeclarationContext,
   effect,
@@ -9,9 +14,11 @@ import {
   Namekey,
   Refkey,
   Scope,
+  shallowRef,
   Show,
   takeSymbols,
   useContext,
+  watch,
 } from "@alloy-js/core";
 import { useGoScope } from "../../scopes/contexts.js";
 import { createFunctionScope } from "../../scopes/factories.js";
@@ -44,8 +51,8 @@ export interface FunctionProps {
   /** Go receiver (for methods) */
   receiver?: Children;
 
-  // TODO: implement type parameters
-  // typeParameters?: (TypeParameterProps | string)[];
+  /** Type parameters for generic functions */
+  typeParameters?: TypeParameterProps[];
 
   /**
    * Whether to render the function in a single line.
@@ -87,6 +94,7 @@ export function Function(props: FunctionProps) {
           <>({props.receiver}) </>
         : null}
         <Name />
+        <TypeParameters parameters={props.typeParameters} />
         <Parameters parameters={props.parameters} />{" "}
         {props.returns ?
           <>{props.returns} </>
@@ -107,11 +115,10 @@ export interface FuncReceiverProps {
   name: string | Namekey;
   type: Children;
   refkey?: Refkey;
+  typeParameters?: TypeParameterProps[];
 }
 
 export function FuncReceiver(props: FuncReceiverProps) {
-  // TODO: type parameters
-
   const receiverSymbol = createParameterSymbol(props.name, {
     refkeys: props.refkey,
   });
@@ -120,6 +127,8 @@ export function FuncReceiver(props: FuncReceiverProps) {
   if (!(functionSymbol instanceof FunctionSymbol)) {
     throw new Error("FuncReceiver must be used inside a function.");
   }
+
+  const typeParams = shallowRef(props.typeParameters ?? []);
 
   const taken = takeSymbols();
   effect(() => {
@@ -137,11 +146,27 @@ export function FuncReceiver(props: FuncReceiverProps) {
     }
 
     functionSymbol.spaces = symbol.members;
+    if (!props.typeParameters) {
+      typeParams.value = symbol.typeParameters ?? [];
+    }
+    watch(
+      () => symbol.typeParameters,
+      (newParams) => {
+        if (props.typeParameters) return;
+        typeParams.value = newParams ?? [];
+      },
+    );
+  });
+
+  const typeParamsComponent = computed(() => {
+    if (typeParams.value.length === 0) return null;
+    return <TypeParameters parameters={typeParams.value} />;
   });
 
   return (
     <Declaration symbol={receiverSymbol}>
       <Name /> {props.type}
+      {typeParamsComponent.value}
     </Declaration>
   );
 }

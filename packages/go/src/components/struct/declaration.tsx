@@ -41,8 +41,6 @@ export interface StructDeclarationProps {
    * This is not common in Go, so use with caution.
    */
   singleLine?: boolean;
-  // TODO: add support for type parameters
-  // typeParameters?: (TypeParameterProps | string)[];
 }
 
 /**
@@ -108,9 +106,6 @@ export function StructDeclaration(props: StructDeclarationProps) {
     }
   });
 
-  // {props.typeParameters && (
-  //   <TypeParameters parameters={props.typeParameters} />
-  // )}
   return (
     <>
       struct

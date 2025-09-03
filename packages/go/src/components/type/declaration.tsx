@@ -1,4 +1,3 @@
-import { LineComment } from "#components/doc/comment.jsx";
 import {
   Children,
   ComponentContext,
@@ -18,6 +17,11 @@ import { createNamedTypeScope } from "../../scopes/factories.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import { LineComment } from "../doc/comment.js";
+import {
+  TypeParameterProps,
+  TypeParameters,
+} from "../parameters/typeparameters.js";
 
 export interface TypeDeclarationGroupProps {
   children: Children;
@@ -57,8 +61,8 @@ export interface TypeDeclarationProps {
   alias?: boolean;
   /** Type expression */
   children?: Children;
-  // TODO: implement type parameters only on alias
-  // typeParameters?: (TypeParameterProps | string)[];
+  /** Type parameters */
+  typeParameters?: TypeParameterProps[];
 }
 
 export function TypeDeclaration(props: TypeDeclarationProps) {
@@ -72,6 +76,7 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
       refkeys: props.refkey,
       canExport: isFileScope,
       exported: props.exported,
+      typeParameters: props.typeParameters,
       // TODO: set aliasTarget when alias is true
     });
   const pointerSymbol = symbol.copy();
@@ -87,8 +92,12 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
       </Show>
       <Declaration symbol={symbol}>
         {typeGroup?.active ? "" : "type "}
-        {props.alias ? "= " : ""}
-        <Name /> <Scope value={typeScope}>{props.children}</Scope>
+        <Name />
+        <Scope value={typeScope}>
+          <TypeParameters parameters={props.typeParameters} />
+          {props.alias ? " = " : " "}
+          {props.children}
+        </Scope>
       </Declaration>
     </>
   );

@@ -47,30 +47,28 @@ export function Parameters(props: ParametersProps) {
     }
   }
   return (
-    <>
-      <group>
-        {"("}
-        {props.parameters && (
-          <Indent softline>
-            <For
-              each={params}
-              joiner={
-                <>
-                  {","}
-                  <ifBreak flatContents=" ">
-                    <sbr />
-                  </ifBreak>
-                </>
-              }
-              ender={<ifBreak>,</ifBreak>}
-            >
-              {(param) => <Parameter {...param} />}
-            </For>
-          </Indent>
-        )}
-        <sbr />
-        {")"}
-      </group>
-    </>
+    <group>
+      {"("}
+      {props.parameters && (
+        <Indent softline>
+          <For
+            each={params}
+            joiner={
+              <>
+                {","}
+                <ifBreak flatContents=" ">
+                  <sbr />
+                </ifBreak>
+              </>
+            }
+            ender={<ifBreak>,</ifBreak>}
+          >
+            {(param) => <Parameter {...param} />}
+          </For>
+        </Indent>
+      )}
+      <sbr />
+      {")"}
+    </group>
   );
 }

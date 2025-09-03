@@ -9,7 +9,11 @@ import { GoNamedTypeScope } from "../scopes/named-type.js";
 import { useEnclosingPackageScope } from "../scopes/package.js";
 import { FunctionSymbol } from "./function.js";
 import { GoSymbol, GoSymbolOptions } from "./go.js";
-import { NamedTypeSymbol, NamedTypeTypeKind } from "./named-type.js";
+import {
+  NamedTypeSymbol,
+  NamedTypeSymbolOptions,
+  NamedTypeTypeKind,
+} from "./named-type.js";
 import { PackageSymbol } from "./package.js";
 
 /**
@@ -56,7 +60,7 @@ export function createTypeParameterSymbol(
 
 export function createStructMemberSymbol(
   originalName: string | Namekey,
-  options: GoSymbolOptions = {},
+  options: NamedTypeSymbolOptions = {},
 ) {
   const scope = useNamedTypeScope();
 
@@ -79,7 +83,7 @@ export function createStructMemberSymbol(
 
 export function createInterfaceMemberSymbol(
   originalName: string | Namekey,
-  options: GoSymbolOptions = {},
+  options: NamedTypeSymbolOptions = {},
 ) {
   const scope = useNamedTypeScope();
 
@@ -165,7 +169,7 @@ export function createVariableSymbol(
 export function createTypeSymbol(
   originalName: string | Namekey,
   kind: NamedTypeTypeKind,
-  options: GoSymbolOptions = {},
+  options: NamedTypeSymbolOptions = {},
 ) {
   const scope = useGoScope();
   if (scope instanceof GoLexicalScope) {
@@ -184,7 +188,7 @@ export function createTypeSymbol(
 export function createNestedStructSymbol(
   originalName: string | Namekey,
   kind: NamedTypeTypeKind,
-  options: GoSymbolOptions = {},
+  options: NamedTypeSymbolOptions = {},
 ) {
   const scope = useGoScope();
   if (scope instanceof GoNamedTypeScope) {
@@ -204,7 +208,7 @@ let anonymousTypeID = 0;
 
 export function createAnonymousTypeSymbol(
   kind: NamedTypeTypeKind,
-  options: GoSymbolOptions = {},
+  options: NamedTypeSymbolOptions = {},
 ) {
   const name =
     "anonymous_" + anonymousTypeID++ + "_this_should_not_appear_in_output";

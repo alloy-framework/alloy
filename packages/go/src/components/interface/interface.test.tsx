@@ -9,6 +9,7 @@ import {
   InterfaceDeclaration,
   InterfaceEmbed,
   InterfaceFunction,
+  TypeConstraint,
 } from "./declaration.jsx";
 
 function Wrapper(props: { children: any }) {
@@ -326,5 +327,77 @@ describe("embedded", () => {
         TestInterface2.TestInterface
       `,
     });
+  });
+});
+
+describe("constraints", () => {
+  it("test single constraint", () => {
+    const TestInterface = refkey("TestInterface");
+    expect(
+      <TestPackage>
+        <TypeDeclaration name="TestInterface" exported refkey={TestInterface}>
+          <InterfaceDeclaration>
+            <List>
+              <InterfaceFunction exported name="MemberOne" returns="string" />
+            </List>
+          </InterfaceDeclaration>
+        </TypeDeclaration>
+        <hbr />
+        <TypeDeclaration name="TestInterface2" exported>
+          <InterfaceDeclaration>
+            <List>
+              <TypeConstraint>{TestInterface}</TypeConstraint>
+              <InterfaceFunction exported name="MemberOne" returns="string" />
+            </List>
+          </InterfaceDeclaration>
+        </TypeDeclaration>
+      </TestPackage>,
+    ).toRenderTo(`
+      package alloy
+
+      type TestInterface interface {
+        func MemberOne() string
+      }
+      type TestInterface2 interface {
+        TestInterface
+        func MemberOne() string
+      }
+    `);
+  });
+
+  it("test multiple constraint", () => {
+    const TestInterface = refkey("TestInterface");
+    expect(
+      <TestPackage>
+        <TypeDeclaration name="TestInterface" exported refkey={TestInterface}>
+          <InterfaceDeclaration>
+            <List>
+              <InterfaceFunction exported name="MemberOne" returns="string" />
+            </List>
+          </InterfaceDeclaration>
+        </TypeDeclaration>
+        <hbr />
+        <TypeDeclaration name="TestInterface2" exported>
+          <InterfaceDeclaration>
+            <List>
+              <TypeConstraint>{TestInterface}</TypeConstraint>
+              <TypeConstraint constraints={[TestInterface, "string", "~int"]} />
+              <InterfaceFunction exported name="MemberOne" returns="string" />
+            </List>
+          </InterfaceDeclaration>
+        </TypeDeclaration>
+      </TestPackage>,
+    ).toRenderTo(`
+      package alloy
+
+      type TestInterface interface {
+        func MemberOne() string
+      }
+      type TestInterface2 interface {
+        TestInterface
+        TestInterface | string | ~int
+        func MemberOne() string
+      }
+    `);
   });
 });

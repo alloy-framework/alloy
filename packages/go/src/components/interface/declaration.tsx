@@ -4,6 +4,7 @@ import {
   Declaration,
   DeclarationContext,
   effect,
+  For,
   memo,
   Namekey,
   Refkey,
@@ -40,8 +41,6 @@ export interface InterfaceDeclarationProps {
    * This is not common in Go, so use with caution.
    */
   singleLine?: boolean;
-  // TODO: implement type parameters
-  // typeParameters?: (TypeParameterProps | string)[];
 }
 
 /**
@@ -62,8 +61,6 @@ export interface InterfaceDeclarationProps {
  * ```
  */
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
-  // TODO: implement general interfaces https://go.dev/ref/spec#General_interfaces
-
   const scope = useGoScope();
   let interfaceScope: GoNamedTypeScope | undefined;
   if (
@@ -205,5 +202,34 @@ export function InterfaceEmbed(props: InterfaceEmbedProps) {
       </Show>
       {props.children}
     </Declaration>
+  );
+}
+
+export interface TypeConstraintProps {
+  constraints?: Children[];
+  children?: Children;
+}
+
+export function TypeConstraint(props: TypeConstraintProps) {
+  const constraints: Children[] = [];
+  if (!props.constraints || props.constraints.length === 0) {
+    if (props.children) {
+      constraints.push(props.children);
+    } else {
+      throw new Error("TypeConstraint requires constraints or children.");
+    }
+  } else {
+    if (props.children) {
+      throw new Error(
+        "TypeConstraint cannot have both constraints and children.",
+      );
+    }
+    constraints.push(...props.constraints);
+  }
+
+  return (
+    <For each={constraints} joiner=" | ">
+      {(constraint) => <>{constraint}</>}
+    </For>
   );
 }

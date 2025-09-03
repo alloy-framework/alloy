@@ -6,7 +6,7 @@ import { TypeDeclaration } from "#components/type/declaration.jsx";
 import { TestPackage } from "#test/utils.jsx";
 import { code, Output, refkey, Refkey, render } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { FuncReceiver, Function } from "./function.jsx";
 
 const Wrapper = (props: { children: Children; refkey: Refkey }) => (
@@ -232,25 +232,6 @@ it("use method variadic params", () => {
   `);
 });
 
-// it("works end-to-end cross-package", () => {
-//   const TestType = refkey("TestType");
-//
-//   assertFileContents(res, {
-//     "hello/types.go": `
-//       package hello
-//
-//       type TestType string
-//     `,
-//     "world/test.go": `
-//       package world
-//
-//       import "github.com/alloy-framework/alloy/hello"
-//
-//       var hi hello.TestType = "hello"
-//     `,
-//   });
-// });
-
 it("use method cross-package fail", () => {
   const ReceiverRefkey = refkey("ReceiverRefkey");
 
@@ -284,4 +265,86 @@ it("use method cross-package fail", () => {
   ).toThrowError(
     "Receiver symbol s must be in the same package as the type TestStruct.",
   );
+});
+
+describe("type parameters", () => {
+  it("function type param", () => {
+    const T = refkey("T");
+    expect(
+      <TestPackage>
+        <Function
+          exported
+          name="MethodOne"
+          parameters={[{ name: "arg", type: T }]}
+          typeParameters={[{ name: "T", constraint: "any", refkey: T }]}
+        />
+      </TestPackage>,
+    ).toRenderTo(`
+    package alloy
+
+    func MethodOne[T any](arg T) {}
+  `);
+  });
+
+  it("method auto type param", () => {
+    const ReceiverRefkey = refkey("ReceiverRefkey");
+
+    expect(
+      <TestPackage>
+        <TypeDeclaration
+          refkey={ReceiverRefkey}
+          exported
+          name="TestStruct"
+          typeParameters={[{ name: "T", constraint: "any" }]}
+        >
+          <StructDeclaration />
+          <hbr />
+        </TypeDeclaration>
+        <Function
+          exported
+          name="MethodOne"
+          receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
+        />
+      </TestPackage>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestStruct[T any] struct{}
+    func (s TestStruct[T any]) MethodOne() {}
+  `);
+  });
+
+  it("method type param", () => {
+    const ReceiverRefkey = refkey("ReceiverRefkey");
+
+    expect(
+      <TestPackage>
+        <TypeDeclaration
+          refkey={ReceiverRefkey}
+          exported
+          name="TestStruct"
+          typeParameters={[{ name: "T", constraint: "any" }]}
+        >
+          <StructDeclaration />
+          <hbr />
+        </TypeDeclaration>
+        <Function
+          exported
+          name="MethodOne"
+          receiver={
+            <FuncReceiver
+              name="s"
+              type={ReceiverRefkey}
+              typeParameters={[{ name: "U", constraint: "any" }]}
+            />
+          }
+        />
+      </TestPackage>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestStruct[T any] struct{}
+    func (s TestStruct[U any]) MethodOne() {}
+  `);
+  });
 });

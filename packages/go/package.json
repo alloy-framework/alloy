@@ -14,7 +14,10 @@
   },
   "imports": {
     "#test/*": "./test/*",
-    "#components/*": "./src/components/*"
+    "#components/*": {
+      "development": "./src/components/*",
+      "default": "./dist/src/components/*"
+    }
   },
   "scripts": {
     "generate-docs": "api-extractor run",

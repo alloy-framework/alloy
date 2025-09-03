@@ -130,7 +130,7 @@ export function InterfaceFunction(props: InterfaceFunctionProps) {
   const symbol = createInterfaceMemberSymbol(props.name, {
     refkeys: props.refkey,
     canExport: true,
-    exported: props.exported,
+    isExported: props.exported,
   });
   const functionScope = createFunctionScope();
 
@@ -169,19 +169,19 @@ export function InterfaceEmbed(props: InterfaceEmbedProps) {
   const memberSymbol = createInterfaceMemberSymbol(typeName, {
     refkeys: props.refkey,
     canExport: true,
-    exported: isNameExported(typeName),
+    isExported: isNameExported(typeName),
   });
 
   const taken = takeSymbols();
   effect(() => {
     if (taken.size !== 1) return;
     const symbol = Array.from(taken)[0] as GoSymbol;
-    memberSymbol.exported = symbol.exported;
+    memberSymbol.isExported = symbol.isExported;
     memberSymbol.name = symbol.name;
     watch(
-      () => symbol.exported,
+      () => symbol.isExported,
       () => {
-        memberSymbol.exported = symbol.exported;
+        memberSymbol.isExported = symbol.isExported;
       },
     );
     watch(

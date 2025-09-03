@@ -1,5 +1,3 @@
-import { LineComment } from "#components/doc/comment.jsx";
-import { TypeParameters } from "#components/parameters/typeparameters.jsx";
 import {
   Block,
   Children,
@@ -30,7 +28,9 @@ import {
   NamedTypeSymbol,
   TypeParameterProps,
 } from "../../symbols/named-type.js";
+import { LineComment } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import { TypeParameters } from "../parameters/typeparameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {
@@ -75,7 +75,7 @@ export function Function(props: FunctionProps) {
   const functionSymbol = createFunctionSymbol(props.name, !!props.receiver, {
     refkeys: props.refkey,
     canExport: isFileScope,
-    exported: props.exported,
+    isExported: props.exported,
   });
 
   // scope for function declaration

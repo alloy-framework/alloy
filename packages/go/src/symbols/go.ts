@@ -14,10 +14,27 @@ import {
 import { GoScope } from "../scopes/go.js";
 import { PackageSymbol } from "./package.js";
 
+/**
+ * Options for creating a Go symbol.
+ */
 export interface GoSymbolOptions extends OutputSymbolOptions {
-  pointer?: boolean;
+  /**
+   * Whether this symbol represents a pointer type.
+   */
+  isPointer?: boolean;
+
+  /**
+   * Whether this symbol can be exported. If true, the symbol's name will be
+   * automatically adjusted to match the `isExported` property.
+   */
   canExport?: boolean;
-  exported?: boolean;
+
+  /**
+   * Whether this symbol is exported. If `canExport` is true, and this property
+   * is set, the symbol's name will be capitalized (exported) or lowercased
+   * (unexported) to match this property.
+   */
+  isExported?: boolean;
 }
 
 export type GoSymbolKinds =
@@ -30,22 +47,22 @@ export type GoSymbolKinds =
 function ensureNameExport(
   name: string,
   canExport: boolean | undefined,
-  exported: boolean | undefined,
-  pointer: boolean | undefined,
+  isExported: boolean | undefined,
+  isPointer: boolean | undefined,
 ): string {
-  exported = exported ?? false;
-  const actualExported = canExport ? isNameExported(name) : exported;
-  if (pointer) {
+  isExported = isExported ?? false;
+  const actualExported = canExport ? isNameExported(name) : isExported;
+  if (isPointer) {
     if (name.charAt(0) === "*") {
-      if (actualExported === exported) return name;
-      if (exported) {
+      if (actualExported === isExported) return name;
+      if (isExported) {
         return "*" + name.charAt(1).toUpperCase() + name.slice(2);
       } else {
         return "*" + name.charAt(1).toLowerCase() + name.slice(2);
       }
     } else {
-      if (actualExported === exported) return "*" + name;
-      if (exported) {
+      if (actualExported === isExported) return "*" + name;
+      if (isExported) {
         return "*" + name.charAt(0).toUpperCase() + name.slice(1);
       } else {
         return "*" + name.charAt(0).toLowerCase() + name.slice(1);
@@ -53,15 +70,15 @@ function ensureNameExport(
     }
   } else {
     if (name.charAt(0) === "*") {
-      if (actualExported === exported) return name.slice(1);
-      if (exported) {
+      if (actualExported === isExported) return name.slice(1);
+      if (isExported) {
         return name.charAt(1).toUpperCase() + name.slice(2);
       } else {
         return name.charAt(1).toLowerCase() + name.slice(2);
       }
     } else {
-      if (actualExported === exported) return name;
-      if (exported) {
+      if (actualExported === isExported) return name;
+      if (isExported) {
         return name.charAt(0).toUpperCase() + name.slice(1);
       } else {
         return name.charAt(0).toLowerCase() + name.slice(1);
@@ -96,27 +113,27 @@ export class GoSymbol extends OutputSymbol {
     name = ensureNameExport(
       typeof name === "string" ? name : name.name,
       options.canExport,
-      options.exported,
-      options.pointer,
+      options.isExported,
+      options.isPointer,
     );
     super(name, spaces, options);
-    this.#pointer = options.pointer ?? false;
+    this.#isPointer = options.isPointer ?? false;
     this.#canExport = options.canExport ?? false;
-    this.#exported = options.exported ?? false;
+    this.#isExported = options.isExported ?? false;
     watch(
       [
         () => this.name,
         () => this.canExport,
-        () => this.exported,
-        () => this.pointer,
+        () => this.isExported,
+        () => this.isPointer,
       ],
       () => {
         const oldName = this.name;
         const newName = ensureNameExport(
           this.name,
           this.canExport,
-          this.exported,
-          this.pointer,
+          this.isExported,
+          this.isPointer,
         );
         if (oldName !== newName) {
           this.name = newName;
@@ -125,21 +142,28 @@ export class GoSymbol extends OutputSymbol {
     );
   }
 
-  #pointer: boolean = false;
-  get pointer() {
-    track(this, TrackOpTypes.GET, "pointer");
-    return this.#pointer;
+  #isPointer: boolean = false;
+  /**
+   * Whether this symbol represents a pointer type.
+   */
+  get isPointer() {
+    track(this, TrackOpTypes.GET, "isPointer");
+    return this.#isPointer;
   }
-  set pointer(value: boolean) {
-    const old = this.#pointer;
+  set isPointer(value: boolean) {
+    const old = this.#isPointer;
     if (old === value) {
       return;
     }
-    this.#pointer = value;
-    trigger(this, TriggerOpTypes.SET, "pointer", value, old);
+    this.#isPointer = value;
+    trigger(this, TriggerOpTypes.SET, "isPointer", value, old);
   }
 
   #canExport: boolean;
+  /**
+   * Whether this symbol can be exported. If true, the symbol's name will be
+   * automatically adjusted to match the `isExported` property.
+   */
   get canExport() {
     track(this, TrackOpTypes.GET, "canExport");
     return this.#canExport;
@@ -153,18 +177,23 @@ export class GoSymbol extends OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "canExport", value, old);
   }
 
-  #exported: boolean;
-  get exported(): boolean {
-    track(this, TrackOpTypes.GET, "exported");
-    return this.#exported;
+  #isExported: boolean;
+  /**
+   * Whether this symbol is exported. If `canExport` is true, and this property
+   * is set, the symbol's name will be capitalized (exported) or lowercased
+   * (unexported) to match this property.
+   */
+  get isExported(): boolean {
+    track(this, TrackOpTypes.GET, "isExported");
+    return this.#isExported;
   }
-  set exported(value: boolean) {
-    const old = this.#exported;
+  set isExported(value: boolean) {
+    const old = this.#isExported;
     if (old === value) {
       return;
     }
-    this.#exported = value;
-    trigger(this, TriggerOpTypes.SET, "exported", value, old);
+    this.#isExported = value;
+    trigger(this, TriggerOpTypes.SET, "isExported", value, old);
   }
 
   get enclosingPackage(): PackageSymbol | undefined {
@@ -177,7 +206,7 @@ export class GoSymbol extends OutputSymbol {
     const firstSpace = this.spaces[0];
 
     if (firstSpace instanceof OutputMemberSpace) {
-      // this symbol is a member of something, so get the enclosing namespace from
+      // this symbol is a member of something, so get the enclosing package from
       // the symbol.
 
       if (firstSpace.symbol.constructor.name === "PackageSymbol") {
@@ -197,24 +226,30 @@ export class GoSymbol extends OutputSymbol {
   protected getGoCopyOptions(): GoSymbolOptions {
     return {
       ...this.getCopyOptions(),
-      pointer: this.#pointer,
+      isPointer: this.#isPointer,
       canExport: this.#canExport,
-      exported: this.#exported,
+      isExported: this.#isExported,
     };
   }
 
   protected initializeGoCopy(copy: GoSymbol) {
     this.initializeCopy(copy);
     watch(
-      () => this.exported,
+      () => this.isExported,
       (newExported) => {
-        copy.exported = newExported;
+        copy.isExported = newExported;
       },
     );
     watch(
-      () => this.pointer,
+      () => this.canExport,
+      (newCanExport) => {
+        copy.canExport = newCanExport;
+      },
+    );
+    watch(
+      () => this.isPointer,
       (newPointer) => {
-        copy.pointer = newPointer;
+        copy.isPointer = newPointer;
       },
     );
   }

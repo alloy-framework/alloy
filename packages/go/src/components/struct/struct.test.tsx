@@ -1,10 +1,10 @@
-import { TypeConstraint } from "#components/interface/declaration.jsx";
 import { List, Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { assertFileContents, TestPackage } from "../../../test/utils.js";
 import { ModuleDirectory } from "../ModuleDirectory.js";
 import { SourceDirectory } from "../SourceDirectory.js";
 import { SourceFile } from "../SourceFile.js";
+import { TypeConstraint } from "../interface/declaration.jsx";
 import { Pointer } from "../pointer/pointer.js";
 import { TypeDeclaration } from "../type/declaration.js";
 import {

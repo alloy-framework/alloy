@@ -2,12 +2,9 @@ import {
   Children,
   ComponentContext,
   createContext,
+  createSymbolSlot,
   effect,
   emitSymbol,
-  OutputSymbol,
-  Ref,
-  ref,
-  takeSymbols,
 } from "@alloy-js/core";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
 
@@ -21,14 +18,12 @@ const PointerContext: ComponentContext<never> = createContext();
  * A Go pointer type that wraps the given type.
  */
 export function Pointer(props: PointerProps) {
-  const symbols = ref<Set<OutputSymbol>>(new Set()) as Ref<
-    Set<OutputSymbol>,
-    Set<OutputSymbol>
-  >;
+  const SymbolSlot = createSymbolSlot();
 
   effect(() => {
-    if (symbols.value.size !== 1) return;
-    const symbol = Array.from(symbols.value)[0];
+    const symbols = SymbolSlot.ref.value;
+    if (symbols?.size !== 1) return;
+    const symbol = Array.from(symbols)[0];
     if (!(symbol instanceof NamedTypeSymbol)) return;
     const pointerSymbol = symbol.pointerSymbol;
     if (!pointerSymbol) return;
@@ -37,16 +32,7 @@ export function Pointer(props: PointerProps) {
 
   return (
     <PointerContext.Provider>
-      <PointerInner symbols={symbols}>*{props.children}</PointerInner>
+      <SymbolSlot>*{props.children}</SymbolSlot>
     </PointerContext.Provider>
   );
-}
-
-function PointerInner(props: {
-  symbols: Ref<Set<OutputSymbol>, Set<OutputSymbol>>;
-  children: Children;
-}) {
-  const taken = takeSymbols();
-  effect(() => (props.symbols.value = taken));
-  return props.children;
 }

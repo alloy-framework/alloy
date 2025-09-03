@@ -1,9 +1,9 @@
-import { ModuleDirectory } from "#components/ModuleDirectory.jsx";
-import { SourceDirectory } from "#components/SourceDirectory.jsx";
-import { SourceFile } from "#components/SourceFile.jsx";
 import { List, Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { assertFileContents, TestPackage } from "../../../test/utils.js";
+import { ModuleDirectory } from "../ModuleDirectory.jsx";
+import { SourceDirectory } from "../SourceDirectory.jsx";
+import { SourceFile } from "../SourceFile.jsx";
 import { TypeDeclaration } from "../type/declaration.js";
 import {
   InterfaceDeclaration,

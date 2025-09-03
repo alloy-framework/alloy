@@ -39,7 +39,7 @@ export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
     const pkgScope = closestPackageScope(pathDown)!;
     if (pkgScope) {
       // we need to import the package
-      if (!lexicalDeclaration.exported) {
+      if (!lexicalDeclaration.isExported) {
         throw new Error(
           `Can't reference non-exported symbol ${lexicalDeclaration.name} from another package.`,
         );

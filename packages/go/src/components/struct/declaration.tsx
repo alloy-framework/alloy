@@ -130,7 +130,7 @@ export function StructMember(props: StructMemberProps) {
   const symbol = createStructMemberSymbol(props.name, {
     refkeys: props.refkey,
     canExport: true,
-    exported: props.exported,
+    isExported: props.exported,
   });
 
   const tagString = computed(() => {
@@ -179,7 +179,7 @@ export function StructEmbed(props: StructEmbedProps) {
   const memberSymbol = createStructMemberSymbol(typeName, {
     refkeys: props.refkey,
     canExport: true,
-    exported: isNameExported(typeName),
+    isExported: isNameExported(typeName),
   });
 
   const taken = takeSymbols();
@@ -187,12 +187,12 @@ export function StructEmbed(props: StructEmbedProps) {
     if (taken.size !== 1) return;
     untrack(() => {
       const symbol = Array.from(taken)[0] as GoSymbol;
-      memberSymbol.exported = symbol.exported;
+      memberSymbol.isExported = symbol.isExported;
       memberSymbol.name = symbol.name;
       watch(
-        () => symbol.exported,
+        () => symbol.isExported,
         () => {
-          memberSymbol.exported = symbol.exported;
+          memberSymbol.isExported = symbol.isExported;
         },
       );
       watch(

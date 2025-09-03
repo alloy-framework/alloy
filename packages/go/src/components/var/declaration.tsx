@@ -1,4 +1,3 @@
-import { LineComment } from "#components/doc/comment.jsx";
 import {
   Children,
   ComponentContext,
@@ -17,6 +16,7 @@ import {
 import { useGoScope } from "../../scopes/contexts.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createVariableSymbol } from "../../symbols/factories.js";
+import { LineComment } from "../doc/comment.jsx";
 
 export interface VarDeclarationProps {
   /** Variable name */
@@ -71,7 +71,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const symbol = createVariableSymbol(props.name, {
     refkeys: props.refkey,
     canExport: isFileScope,
-    exported: props.exported,
+    isExported: props.exported,
   });
   const content = memo(() => {
     const keyword = props.const ? "const" : "var";

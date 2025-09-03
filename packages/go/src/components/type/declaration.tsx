@@ -75,12 +75,12 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
     createTypeSymbol(props.name, "type", {
       refkeys: props.refkey,
       canExport: isFileScope,
-      exported: props.exported,
+      isExported: props.exported,
       typeParameters: props.typeParameters,
       // TODO: set aliasTarget when alias is true
     });
   const pointerSymbol = symbol.copy();
-  pointerSymbol.pointer = true;
+  pointerSymbol.isPointer = true;
   symbol.pointerSymbol = pointerSymbol;
   const typeScope = createNamedTypeScope(symbol);
 

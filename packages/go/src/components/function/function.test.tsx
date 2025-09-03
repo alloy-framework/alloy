@@ -1,13 +1,13 @@
-import { ModuleDirectory } from "#components/ModuleDirectory.jsx";
-import { SourceDirectory } from "#components/SourceDirectory.jsx";
-import { SourceFile } from "#components/SourceFile.jsx";
-import { StructDeclaration } from "#components/struct/declaration.jsx";
-import { TypeDeclaration } from "#components/type/declaration.jsx";
-import { TestPackage } from "#test/utils.jsx";
 import { code, Output, refkey, Refkey, render } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
-import { FuncReceiver, Function } from "./function.jsx";
+import { TestPackage } from "../../../test/utils.js";
+import { ModuleDirectory } from "../ModuleDirectory.js";
+import { SourceDirectory } from "../SourceDirectory.js";
+import { SourceFile } from "../SourceFile.js";
+import { StructDeclaration } from "../struct/declaration.js";
+import { TypeDeclaration } from "../type/declaration.js";
+import { FuncReceiver, Function } from "./function.js";
 
 const Wrapper = (props: { children: Children; refkey: Refkey }) => (
   <TestPackage>

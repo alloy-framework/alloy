@@ -133,6 +133,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
   const thisClassSymbol = createNamedTypeSymbol(props.name, "class", {
     refkeys: props.refkey,
   });
+
   const thisClassScope = createClassScope(thisClassSymbol);
 
   const bases = [

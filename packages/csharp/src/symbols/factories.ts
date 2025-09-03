@@ -1,6 +1,7 @@
 import {
   Namekey,
   NamePolicyGetter,
+  onCleanup,
   OutputSymbolOptions,
   useBinder,
 } from "@alloy-js/core";
@@ -99,13 +100,22 @@ export function createFieldSymbol(
   );
 }
 
+function withCleanup<T extends CSharpSymbol>(sym: T): T {
+  onCleanup(() => {
+    sym.delete();
+  });
+  return sym;
+}
+
 export function createNamedTypeSymbol(
   name: string | Namekey,
   kind: NamedTypeTypeKind,
   options?: OutputSymbolOptions,
 ) {
   const scope = useNamedTypeScope();
-  return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options);
+  return withCleanup(
+    new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options),
+  );
 }
 
 export function createNamespaceSymbol(name: string) {
@@ -114,7 +124,7 @@ export function createNamespaceSymbol(name: string) {
   if (nsSymbol.members.symbolNames.has(name)) {
     return nsSymbol.members.symbolNames.get(name)! as NamespaceSymbol;
   }
-  return new NamespaceSymbol(name, nsSymbol);
+  return withCleanup(new NamespaceSymbol(name, nsSymbol));
 }
 
 export interface CreateMethodSymbolOptions extends CSharpSymbolOptions {
@@ -137,11 +147,13 @@ export function createMethodSymbol(
     );
   }
 
-  return new MethodSymbol(
-    originalName,
-    scope.members,
-    options.methodKind ?? "ordinary",
-    withNamePolicy(options, "class-method"),
+  return withCleanup(
+    new MethodSymbol(
+      originalName,
+      scope.members,
+      options.methodKind ?? "ordinary",
+      withNamePolicy(options, "class-method"),
+    ),
   );
 }
 
@@ -150,10 +162,12 @@ export function createPropertySymbol(
   options: CSharpSymbolOptions,
 ) {
   const scope = useNamedTypeScope();
-  return new CSharpSymbol(
-    name,
-    scope.members,
-    withNamePolicy(options, "class-property"),
+  return withCleanup(
+    new CSharpSymbol(
+      name,
+      scope.members,
+      withNamePolicy(options, "class-property"),
+    ),
   );
 }
 
@@ -181,10 +195,12 @@ export function createVariableSymbol(
       `Can't create variable symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
     );
   }
-  return new CSharpSymbol(
-    originalName,
-    scope.localVariables,
-    withNamePolicy(options, "variable"),
+  return withCleanup(
+    new CSharpSymbol(
+      originalName,
+      scope.localVariables,
+      withNamePolicy(options, "variable"),
+    ),
   );
 }
 

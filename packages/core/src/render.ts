@@ -208,13 +208,6 @@ export function sourceFilesForTree(
 ): OutputDirectory {
   let rootDirectory: OutputDirectory | undefined = undefined;
 
-  // when passing Output, the first render tree child is the Output component.
-  const rootRenderOptions =
-    Array.isArray(tree) ?
-      (getContextForRenderNode(tree[0] as RenderedTextTree)?.meta
-        ?.printOptions ?? {})
-    : {};
-
   collectSourceFiles(undefined, tree);
 
   if (!rootDirectory) {
@@ -265,17 +258,9 @@ export function sourceFilesForTree(
         filetype: context.meta?.sourceFile.filetype,
         contents: printTree(root, {
           printWidth:
-            options?.printWidth ??
-            context.meta?.printOptions?.printWidth ??
-            rootRenderOptions.printWidth,
-          tabWidth:
-            options?.tabWidth ??
-            context.meta?.printOptions?.tabWidth ??
-            rootRenderOptions.tabWidth,
-          useTabs:
-            options?.useTabs ??
-            context.meta?.printOptions?.useTabs ??
-            rootRenderOptions.useTabs,
+            options?.printWidth ?? context.meta?.printOptions?.printWidth,
+          tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
+          useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
         }),
       };
 

@@ -98,12 +98,6 @@ function validateRender(
 
 function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
   const files: Record<string, string> = {};
-  // when passing Output, the first render tree child is the Output component.
-  const rootRenderOptions =
-    Array.isArray(tree) ?
-      (getContextForRenderNode(tree[0] as RenderedTextTree)?.meta
-        ?.printOptions ?? {})
-    : {};
 
   collectSourceFiles(tree);
   // If we found no source files, we return the tree as a string.
@@ -121,17 +115,9 @@ function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
     if (context?.meta?.sourceFile) {
       files[context.meta.sourceFile.path] = printTree(root, {
         printWidth:
-          options?.printWidth ??
-          context.meta?.printOptions?.printWidth ??
-          rootRenderOptions.printWidth,
-        tabWidth:
-          options?.tabWidth ??
-          context.meta?.printOptions?.tabWidth ??
-          rootRenderOptions.tabWidth,
-        useTabs:
-          options?.useTabs ??
-          context.meta?.printOptions?.useTabs ??
-          rootRenderOptions.useTabs,
+          options?.printWidth ?? context.meta?.printOptions?.printWidth,
+        tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
+        useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
       });
     } else {
       visitChildren();

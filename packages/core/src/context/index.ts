@@ -1,6 +1,7 @@
 export * from "./assignment.js";
 export * from "./binder.js";
 export * from "./declaration.js";
+export * from "./format-options.js";
 export * from "./member-declaration.js";
 export * from "./member-scope.js";
 export * from "./name-policy.js";

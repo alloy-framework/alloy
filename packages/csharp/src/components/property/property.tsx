@@ -2,9 +2,11 @@ import {
   Block,
   Children,
   code,
+  createSymbolSlot,
   List,
   MemberDeclaration,
   MemberName,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import {
@@ -48,7 +50,7 @@ const getModifiers = makeModifiers<PropertyModifiers>([
 
 /** Properties for {@link Property} component */
 export interface PropertyProps extends AccessModifiers, PropertyModifiers {
-  name: string;
+  name: Namekey | string;
   refkey?: Refkey;
 
   /** Property type */
@@ -115,8 +117,12 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
  * ```
  */
 export function Property(props: PropertyProps) {
+  const TypeSlot = createSymbolSlot();
+
   const propertySymbol = createPropertySymbol(props.name, {
     refkeys: props.refkey,
+    isNullable: props.nullable,
+    type: TypeSlot.firstSymbol,
   });
 
   const modifiers = computeModifiersPrefix([
@@ -135,7 +141,7 @@ export function Property(props: PropertyProps) {
       <DocWhen doc={props.doc} />
       <AttributeList attributes={props.attributes} endline />
       {modifiers}
-      {props.type}
+      <TypeSlot>{props.type}</TypeSlot>
       {props.nullable && "?"} <MemberName />{" "}
       <Block newline inline>
         <List joiner=" ">

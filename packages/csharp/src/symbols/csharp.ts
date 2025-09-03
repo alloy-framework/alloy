@@ -33,6 +33,10 @@ export interface CSharpSymbolOptions extends OutputSymbolOptions {
   isSealed?: boolean;
   isExtern?: boolean;
   isReadOnly?: boolean;
+  /**
+   * Whether the value held by this symbol could be null.
+   */
+  isNullable?: boolean;
 }
 
 export type CSharpSymbolKinds =
@@ -72,6 +76,7 @@ export class CSharpSymbol extends OutputSymbol {
     this.#isSealed = options.isSealed ?? false;
     this.#isExtern = options.isExtern ?? false;
     this.#isReadOnly = options.isReadOnly ?? false;
+    this.#isNullable = options.isNullable; // undefined means unset, here.
   }
 
   get enclosingNamespace(): NamespaceSymbol | undefined {
@@ -280,6 +285,33 @@ export class CSharpSymbol extends OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "isReadOnly", value, old);
   }
   #isReadOnly: boolean = false;
+
+  #isNullable: boolean | undefined = undefined;
+
+  /**
+   * Whether this symbol might contain null. True if this symbol has a
+   * `typeSymbol` and that symbol is nullable, or else when this symbol has the
+   * `nullable` option set.
+   */
+  get isNullable() {
+    if (this.hasTypeSymbol && this.#isNullable === undefined) {
+      return (this.type! as CSharpSymbol).isNullable;
+    }
+
+    track(this, TrackOpTypes.GET, "isNullable");
+    return !!this.#isNullable;
+  }
+
+  set isNullable(value: boolean) {
+    const old = this.#isNullable;
+    if (old === value) {
+      return;
+    }
+
+    this.#isNullable = value;
+
+    trigger(this, TriggerOpTypes.SET, "isNullable", value, old);
+  }
 }
 
 export function accessibilityFromProps(props: AccessModifiers) {

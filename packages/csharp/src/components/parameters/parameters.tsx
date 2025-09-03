@@ -6,7 +6,6 @@ import {
   For,
   Indent,
   Namekey,
-  OutputSymbol,
   Refkey,
 } from "@alloy-js/core";
 import { createParameterSymbol } from "../../symbols/factories.js";
@@ -19,8 +18,8 @@ export interface ParameterProps {
   optional?: boolean;
   /** Default value for the parameter */
   default?: Children;
+
   refkey?: Refkey;
-  symbol?: OutputSymbol;
 }
 
 /** Define a parameter to be used in class or interface method. */
@@ -30,6 +29,7 @@ export function Parameter(props: ParameterProps) {
   const memberSymbol = createParameterSymbol(props.name, {
     refkeys: props.refkey,
     type: TypeSlot.firstSymbol,
+    isNullable: props.optional,
   });
 
   return (

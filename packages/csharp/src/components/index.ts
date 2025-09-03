@@ -10,6 +10,7 @@ export * from "./field/field.jsx";
 export * from "./interface/declaration.js";
 export * from "./interface/method.js";
 export * from "./interface/property.js";
+export * from "./invocation-expression/invocation-expression.jsx";
 export * from "./lexical-scope.jsx";
 export * from "./method-scope.jsx";
 export * from "./method/method.jsx";

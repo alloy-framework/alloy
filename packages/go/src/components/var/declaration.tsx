@@ -40,7 +40,7 @@ export interface VarDeclarationGroupProps {
   children: Children;
 }
 
-interface VarDeclarationGroupContext {
+export interface VarDeclarationGroupContext {
   const: boolean;
   active: boolean;
 }

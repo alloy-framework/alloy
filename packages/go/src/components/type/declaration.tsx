@@ -16,18 +16,18 @@ import { useGoScope } from "../../scopes/contexts.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
-import { LineComment } from "../doc/comment.js";
 import {
+  NamedTypeSymbol,
   TypeParameterProps,
-  TypeParameters,
-} from "../parameters/typeparameters.js";
+} from "../../symbols/named-type.js";
+import { LineComment } from "../doc/comment.js";
+import { TypeParameters } from "../parameters/typeparameters.js";
 
 export interface TypeDeclarationGroupProps {
   children: Children;
 }
 
-interface TypeDeclarationGroupContext {
+export interface TypeDeclarationGroupContext {
   active: boolean;
 }
 

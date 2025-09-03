@@ -1,8 +1,5 @@
 import { LineComment } from "#components/doc/comment.jsx";
-import {
-  TypeParameterProps,
-  TypeParameters,
-} from "#components/parameters/typeparameters.jsx";
+import { TypeParameters } from "#components/parameters/typeparameters.jsx";
 import {
   Block,
   Children,
@@ -29,7 +26,10 @@ import {
 } from "../../symbols/factories.js";
 import { FunctionSymbol } from "../../symbols/function.js";
 import { GoSymbol } from "../../symbols/go.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import {
+  NamedTypeSymbol,
+  TypeParameterProps,
+} from "../../symbols/named-type.js";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 // properties for creating a function

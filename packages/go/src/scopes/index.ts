@@ -3,6 +3,7 @@ export * from "./factories.js";
 export * from "./function.js";
 export * from "./go.js";
 export * from "./lexical.js";
+export * from "./module.js";
 export * from "./named-type.js";
 export * from "./package.js";
 export * from "./source-file.js";

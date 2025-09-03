@@ -1,14 +1,7 @@
-import {
-  memberRefkey,
-  Output,
-  refkey,
-  render,
-  StatementList,
-} from "@alloy-js/core";
+import { memberRefkey, Output, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { assertFileContents } from "./utils.js";
 
 it("works", () => {
   expect(
@@ -62,7 +55,7 @@ it("instantiates symbols from its type", () => {
   const v1Rk = refkey();
   const v2Rk = refkey();
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="inst.ts">
         <StatementList>
@@ -93,9 +86,14 @@ it("instantiates symbols from its type", () => {
         </ts.ClassDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
+    "decl.ts": `
+      interface Foo {
+        instanceProp: 42;
+      }class Bar {
+        instanceProp = 42;
+      }
+    `,
     "inst.ts": `
       import type { Bar, Foo } from "./decl.js";
 

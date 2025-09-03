@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputSpace,
   OutputSymbolOptions,
   track,
@@ -29,7 +30,7 @@ export class NamedTypeSymbol extends GoSymbol {
   public static readonly memberSpaces = ["members"];
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     kind: NamedTypeTypeKind,
     options?: OutputSymbolOptions,

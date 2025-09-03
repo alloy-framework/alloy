@@ -5,6 +5,7 @@ import {
   DeclarationContext,
   effect,
   memo,
+  Namekey,
   Refkey,
   Scope,
   Show,
@@ -119,7 +120,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
 }
 
 export interface InterfaceFunctionProps {
-  name: string;
+  name: string | Namekey;
   exported?: boolean;
   parameters?: ParameterProps[];
   returns?: Children;

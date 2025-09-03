@@ -1,4 +1,4 @@
-import { OutputSpace } from "@alloy-js/core";
+import { Namekey, OutputSpace } from "@alloy-js/core";
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 
 /**
@@ -8,7 +8,7 @@ export class FunctionSymbol extends GoSymbol {
   public readonly symbolKind = "function";
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace | undefined,
     options: GoSymbolOptions = {},
   ) {

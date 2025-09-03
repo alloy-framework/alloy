@@ -7,6 +7,7 @@ import {
   Indent,
   List,
   Name,
+  Namekey,
   Refkey,
   Scope,
   Show,
@@ -43,7 +44,7 @@ export function TypeDeclarationGroup(props: TypeDeclarationGroupProps) {
 
 export interface TypeDeclarationProps {
   /** Type name */
-  name: string;
+  name: string | Namekey;
   /** Type refkey */
   refkey?: Refkey;
   /** Type symbol */

@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputDeclarationSpace,
   OutputMemberSpace,
   OutputSpace,
@@ -88,12 +89,12 @@ export function isNameExported(name: string): boolean {
  */
 export class GoSymbol extends OutputSymbol {
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: GoSymbolOptions = {},
   ) {
     name = ensureNameExport(
-      name,
+      typeof name === "string" ? name : name.name,
       options.canExport,
       options.exported,
       options.pointer,
@@ -103,27 +104,24 @@ export class GoSymbol extends OutputSymbol {
     this.#canExport = options.canExport ?? false;
     this.#exported = options.exported ?? false;
     watch(
-      [() => this.canExport, () => this.exported, () => this.pointer],
+      [
+        () => this.name,
+        () => this.canExport,
+        () => this.exported,
+        () => this.pointer,
+      ],
       () => {
-        this.name = ensureNameExport(
+        const oldName = this.name;
+        const newName = ensureNameExport(
           this.name,
           this.canExport,
           this.exported,
           this.pointer,
         );
+        if (oldName !== newName) {
+          this.name = newName;
+        }
       },
-    );
-  }
-
-  get name() {
-    return super.name;
-  }
-  set name(value: string) {
-    super.name = ensureNameExport(
-      value,
-      this.canExport,
-      this.exported,
-      this.pointer,
     );
   }
 

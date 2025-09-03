@@ -1,6 +1,6 @@
-import { OutputSymbolOptions } from "@alloy-js/core";
+import { Namekey, NamePolicyGetter } from "@alloy-js/core";
 import { join } from "pathe";
-import { useGoNamePolicy } from "../name-policy.js";
+import { GoElements, useGoNamePolicy } from "../name-policy.js";
 import { useGoScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { GoFunctionScope } from "../scopes/function.js";
 import { GoLexicalScope } from "../scopes/lexical.js";
@@ -16,29 +16,27 @@ import { PackageSymbol } from "./package.js";
  * Create a symbol for a parameter in the current func scope.
  */
 export function createParameterSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "parameter");
   const scope = useGoScope();
   if (!(scope instanceof GoFunctionScope)) {
-    throw new Error(
-      `Can't create parameter ${name} symbol outside of a func scope.`,
-    );
+    throw new Error(`Can't create parameter symbol outside of a func scope.`);
   }
-  return new GoSymbol(name, scope.parameters, options);
+  return new GoSymbol(
+    originalName,
+    scope.parameters,
+    withNamePolicy(options, "parameter"),
+  );
 }
 
 export interface CreateTypeParameterSymbolOptions extends GoSymbolOptions {
   scope?: GoFunctionScope | GoNamedTypeScope;
 }
 export function createTypeParameterSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: CreateTypeParameterSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "type-parameter");
   const scope = options.scope ?? useGoScope();
   if (
     !(scope instanceof GoFunctionScope) &&
@@ -49,15 +47,17 @@ export function createTypeParameterSymbol(
     );
   }
 
-  return new GoSymbol(name, scope.typeParameters, options);
+  return new GoSymbol(
+    originalName,
+    scope.typeParameters,
+    withNamePolicy(options, "type-parameter"),
+  );
 }
 
 export function createStructMemberSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "struct-member");
   const scope = useNamedTypeScope();
 
   if (
@@ -69,15 +69,18 @@ export function createStructMemberSymbol(
     );
   }
 
-  return new NamedTypeSymbol(name, scope.members, "struct-member", options);
+  return new NamedTypeSymbol(
+    originalName,
+    scope.members,
+    "struct-member",
+    withNamePolicy(options, "struct-member"),
+  );
 }
 
 export function createInterfaceMemberSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "interface-member");
   const scope = useNamedTypeScope();
 
   if (scope.ownerSymbol.typeKind !== "interface") {
@@ -86,16 +89,12 @@ export function createInterfaceMemberSymbol(
     );
   }
 
-  return new NamedTypeSymbol(name, scope.members, "interface-member", options);
-}
-
-export function createNamedTypeSymbol(
-  name: string,
-  kind: NamedTypeTypeKind,
-  options?: OutputSymbolOptions,
-) {
-  const scope = useNamedTypeScope();
-  return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options);
+  return new NamedTypeSymbol(
+    originalName,
+    scope.members,
+    "interface-member",
+    withNamePolicy(options, "interface-member"),
+  );
 }
 
 export function createPackageSymbol(name: string, path?: string) {
@@ -115,70 +114,86 @@ export function createPackageSymbol(name: string, path?: string) {
 }
 
 export function createFunctionSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   isMethod: boolean,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "function");
   const scope = useGoScope();
   if (!isMethod && scope instanceof GoLexicalScope) {
-    return new FunctionSymbol(name, scope.types, options);
+    return new FunctionSymbol(
+      originalName,
+      scope.types,
+      withNamePolicy(options, "function"),
+    );
   }
-  return new FunctionSymbol(name, undefined, options);
+  return new FunctionSymbol(
+    originalName,
+    undefined,
+    withNamePolicy(options, "function"),
+  );
 }
 
 export function createPropertySymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: GoSymbolOptions,
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "struct-member");
   const scope = useNamedTypeScope();
-  return new GoSymbol(name, scope.members, options);
+  return new GoSymbol(
+    originalName,
+    scope.members,
+    withNamePolicy(options, "struct-member"),
+  );
 }
 
 export function createVariableSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "variable");
   const scope = useGoScope();
   if (!(scope instanceof GoLexicalScope)) {
     throw new Error(
-      `Can't create variable ${name} symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
+      `Can't create variable symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
     );
   }
-  return new GoSymbol(name, scope.values, options);
+  return new GoSymbol(
+    originalName,
+    scope.values,
+    withNamePolicy(options, "variable"),
+  );
 }
 
 export function createTypeSymbol(
-  originalName: string,
+  originalName: string | Namekey,
   kind: NamedTypeTypeKind,
   options: GoSymbolOptions = {},
 ) {
-  const policy = useGoNamePolicy();
-  const name = policy.getName(originalName, "type");
   const scope = useGoScope();
   if (scope instanceof GoLexicalScope) {
-    return new NamedTypeSymbol(name, scope.types, kind, options);
+    return new NamedTypeSymbol(
+      originalName,
+      scope.types,
+      kind,
+      withNamePolicy(options, "type"),
+    );
   }
   throw new Error(
-    `Can't create type ${name} symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
+    `Can't create type symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
   );
 }
 
 export function createNestedStructSymbol(
-  name: string,
+  originalName: string | Namekey,
   kind: NamedTypeTypeKind,
   options: GoSymbolOptions = {},
 ) {
   const scope = useGoScope();
   if (scope instanceof GoNamedTypeScope) {
-    return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, {
-      ...options,
-    });
+    return new NamedTypeSymbol(
+      originalName,
+      scope.ownerSymbol.members,
+      kind,
+      withNamePolicy(options, "struct-member"),
+    );
   }
   throw new Error(
     `Can't create named anonymous type symbol outside of a NamedType scope, got a ${scope.constructor.name}.`,
@@ -195,15 +210,21 @@ export function createAnonymousTypeSymbol(
     "anonymous_" + anonymousTypeID++ + "_this_should_not_appear_in_output";
   const scope = useGoScope();
   if (scope instanceof GoLexicalScope) {
-    return new NamedTypeSymbol(name, scope.types, kind, {
-      ...options,
-    });
+    return new NamedTypeSymbol(name, scope.types, kind, options);
   } else if (scope instanceof GoNamedTypeScope) {
-    return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, {
-      ...options,
-    });
+    return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options);
   }
   throw new Error(
     `Can't create anonymous type symbol outside of a lexical or NamedType scope, got a ${scope.constructor.name}.`,
   );
+}
+
+function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(
+  options: T,
+  elementType: GoElements,
+): GoSymbolOptions {
+  return {
+    ...options,
+    namePolicy: options.namePolicy ?? useGoNamePolicy().for(elementType),
+  };
 }

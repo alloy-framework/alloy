@@ -9,6 +9,7 @@ import {
   List,
   memo,
   Name,
+  Namekey,
   Refkey,
   Show,
   useContext,
@@ -19,7 +20,7 @@ import { createVariableSymbol } from "../../symbols/factories.js";
 
 export interface VarDeclarationProps {
   /** Variable name */
-  name: string;
+  name: string | Namekey;
   /** Type of the variable declaration */
   type?: Children;
   /** Variable refkey */

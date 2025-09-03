@@ -1,9 +1,17 @@
-import { Children, Declaration, For, Indent, Refkey } from "@alloy-js/core";
+import {
+  Children,
+  createSymbolSlot,
+  Declaration,
+  For,
+  Indent,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
 import { createParameterSymbol } from "../../symbols/factories.js";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
-  name: string;
+  name: string | Namekey;
   type: Children;
   variadic?: boolean;
   refkey?: Refkey;
@@ -11,14 +19,17 @@ export interface ParameterProps {
 
 /** Define a parameter to be used in functions. */
 export function Parameter(props: ParameterProps) {
+  const TypeSlot = createSymbolSlot();
+
   const memberSymbol = createParameterSymbol(props.name, {
     refkeys: props.refkey,
+    type: TypeSlot.firstSymbol,
   });
 
   return (
     <Declaration symbol={memberSymbol}>
       <Name /> {props.variadic ? "..." : null}
-      {props.type}
+      <TypeSlot>{props.type}</TypeSlot>
     </Declaration>
   );
 }

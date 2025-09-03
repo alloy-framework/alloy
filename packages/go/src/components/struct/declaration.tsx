@@ -6,10 +6,12 @@ import {
   DeclarationContext,
   effect,
   memo,
+  Namekey,
   Refkey,
   Scope,
   Show,
   takeSymbols,
+  untrack,
   useContext,
   watch,
 } from "@alloy-js/core";
@@ -120,7 +122,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
 }
 
 export interface StructMemberProps {
-  name: string;
+  name: string | Namekey;
   type: Children;
   exported?: boolean;
   refkey?: Refkey;
@@ -188,24 +190,26 @@ export function StructEmbed(props: StructEmbedProps) {
   const taken = takeSymbols();
   effect(() => {
     if (taken.size !== 1) return;
-    const symbol = Array.from(taken)[0] as GoSymbol;
-    memberSymbol.exported = symbol.exported;
-    memberSymbol.name = symbol.name;
-    watch(
-      () => symbol.exported,
-      () => {
-        memberSymbol.exported = symbol.exported;
-      },
-    );
-    watch(
-      () => symbol.name,
-      () => {
-        memberSymbol.name = symbol.name;
-      },
-    );
-    const namedTypeScope = useNamedTypeScope();
-    // TODO: (somehow mark it as "promoted" such that it cannot) be constructed directly
-    symbol.copyMembersTo(namedTypeScope.ownerSymbol);
+    untrack(() => {
+      const symbol = Array.from(taken)[0] as GoSymbol;
+      memberSymbol.exported = symbol.exported;
+      memberSymbol.name = symbol.name;
+      watch(
+        () => symbol.exported,
+        () => {
+          memberSymbol.exported = symbol.exported;
+        },
+      );
+      watch(
+        () => symbol.name,
+        () => {
+          memberSymbol.name = symbol.name;
+        },
+      );
+      const namedTypeScope = useNamedTypeScope();
+      // TODO: (somehow mark it as "promoted" such that it cannot) be constructed directly
+      symbol.copyMembersTo(namedTypeScope.ownerSymbol);
+    });
   });
 
   return (

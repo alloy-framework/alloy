@@ -6,6 +6,7 @@ import {
   DeclarationContext,
   effect,
   Name,
+  Namekey,
   Refkey,
   Scope,
   Show,
@@ -26,7 +27,7 @@ import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {
-  name: string;
+  name: string | Namekey;
   parameters?: Array<ParameterProps>;
   returns?: Children;
 
@@ -103,7 +104,7 @@ export function Function(props: FunctionProps) {
 }
 
 export interface FuncReceiverProps {
-  name: string;
+  name: string | Namekey;
   type: Children;
   refkey?: Refkey;
 }

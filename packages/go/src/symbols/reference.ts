@@ -1,4 +1,4 @@
-import { memo, Refkey, resolve } from "@alloy-js/core";
+import { memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
 import { GoScope } from "../scopes/go.js";
 import { GoPackageScope } from "../scopes/package.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -19,7 +19,7 @@ function closestPackageScope(scopes: GoScope[]): GoPackageScope | undefined {
 // e.g. if refkey is for bar in enum type foo, and
 // foo is in the same namespace as the refkey, then
 // the result would be foo.bar.
-export function ref(refkey: Refkey): () => [string, GoSymbol | undefined] {
+export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
   const refSfScope = useSourceFileScope()!;
   const resolveResult = resolve<GoScope, GoSymbol>(refkey as Refkey);
 
@@ -56,6 +56,6 @@ export function ref(refkey: Refkey): () => [string, GoSymbol | undefined] {
       parts.push(member.name);
     }
 
-    return [parts.join("."), lexicalDeclaration];
+    return [parts.join("."), result.symbol];
   });
 }

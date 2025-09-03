@@ -1,5 +1,6 @@
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
+import { Property } from "#components/property/property.jsx";
 import { List, memberRefkey, namekey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { expect, it } from "vitest";
@@ -67,5 +68,50 @@ it("members can be referenced", () => {
             return param1.TestMethod();
         }
     }
+  `);
+});
+
+it("members can be referenced when the parameter is nullable", () => {
+  const propTypeKey = namekey("PropType");
+  const propTypePropKey = namekey("Field");
+  const classKey = namekey("TestType");
+  const propKey = namekey("TestProp");
+  const param1Key = namekey("param1");
+
+  expect(
+    <TestNamespace>
+      <List>
+        <ClassDeclaration name={propTypeKey}>
+          <Property name={propTypePropKey} type={"string"} nullable />
+        </ClassDeclaration>
+        <ClassDeclaration name={classKey}>
+          <Property name={propKey} type={propTypeKey} nullable />
+        </ClassDeclaration>
+        <ClassDeclaration name="Test">
+          <Method
+            name="Test"
+            parameters={[{ name: param1Key, type: classKey, optional: true }]}
+          >
+            return {memberRefkey(param1Key, propKey, propTypePropKey)};
+          </Method>
+        </ClassDeclaration>
+      </List>
+    </TestNamespace>,
+  ).toRenderTo(`
+      class PropType
+      {
+          string? Field {  }
+      }
+      class TestType
+      {
+          PropType? TestProp {  }
+      }
+      class Test
+      {
+          void Test(TestType? param1)
+          {
+              return param1?.TestProp?.Field;
+          }
+      }
   `);
 });

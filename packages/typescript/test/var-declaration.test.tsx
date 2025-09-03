@@ -23,7 +23,7 @@ it("works", () => {
 it("works end-to-end", () => {
   const TestType = refkey("TestType");
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="types.ts">
         <ts.TypeDeclaration name="TestType" refkey={TestType}>
@@ -42,9 +42,7 @@ it("works end-to-end", () => {
         ;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "types.ts": `
       type TestType = "hello" | "goodbye";
     `,
@@ -114,7 +112,7 @@ it("instantiates symbols from type even when an expression is passed", () => {
   const classMemberRk = refkey();
   const v1Rk = refkey();
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="inst.ts">
         <StatementList>
@@ -136,9 +134,12 @@ it("instantiates symbols from type even when an expression is passed", () => {
         </ts.ClassDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
+    "decl.ts": `
+      class Bar {
+        instanceProp = 42;
+      }
+    `,
     "inst.ts": `
       import type { Bar } from "./decl.js";
 

@@ -2,12 +2,10 @@ import {
   Children,
   CommonFormatOptions,
   computed,
-  ContentOutputFile,
   FormatOptions,
   Indent,
   Output,
   Prose,
-  render,
   renderTree,
   SourceFile,
   useContext,
@@ -15,7 +13,6 @@ import {
 import { describe, expect, it } from "vitest";
 import { SourceDirectoryContext } from "../../src/context/source-directory.js";
 import "../../testing/extend-expect.js";
-import { d } from "../../testing/render.js";
 
 it("tracks its content", () => {
   let context;
@@ -47,34 +44,32 @@ it("has reactive context", () => {
     );
   }
 
-  const tree = render(
+  expect(
     <Output>
       <SourceFile path="hi.txt" filetype="text">
         hello!
       </SourceFile>
       <TrackContents />
     </Output>,
-  );
-
-  expect((tree.contents[1] as ContentOutputFile).contents).toEqual(
-    "hi.txt contents.txt",
-  );
+  ).toRenderTo({
+    "hi.txt": "hello!",
+    "contents.txt": "hi.txt contents.txt",
+  });
 });
 
-it("Includes header", () => {
+it("includes header", () => {
   const header = <># This is a header</>;
-  const tree = render(
+
+  expect(
     <Output>
       <SourceFile path="hi.txt" filetype="text" header={header}>
         hello!
       </SourceFile>
     </Output>,
-  );
-
-  expect((tree.contents[0] as ContentOutputFile).contents).toEqual(d`
+  ).toRenderTo(`
     # This is a header
     hello!
-    `);
+  `);
 });
 
 describe("format options", () => {

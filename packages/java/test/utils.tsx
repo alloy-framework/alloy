@@ -33,7 +33,7 @@ export function testRender(
     <Output>
       <jv.PackageDirectory package="me.test.code">{c}</jv.PackageDirectory>
     </Output>,
-    options,
+    { insertFinalNewLine: false, ...options },
   );
 }
 

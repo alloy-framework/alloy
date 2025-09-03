@@ -1,17 +1,14 @@
-import { Output, render } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { it } from "vitest";
+import { expect, it } from "vitest";
 import { PackageJsonFile } from "../src/components/PackageJson.jsx";
-import { assertFileContents } from "./utils.js";
 
 it("creates a simple package.json", () => {
-  const res = render(
+  expect(
     <Output>
       <PackageJsonFile name="test" version="1.0.0" />
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "package.json": `
         {
           "name": "test",
@@ -23,7 +20,7 @@ it("creates a simple package.json", () => {
 });
 
 it("makes a complex package.json", () => {
-  const res = render(
+  expect(
     <Output>
       <PackageJsonFile
         name="test"
@@ -56,9 +53,7 @@ it("makes a complex package.json", () => {
         }}
       />
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "package.json": `
       {
         "name": "test",

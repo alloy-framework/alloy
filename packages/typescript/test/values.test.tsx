@@ -5,7 +5,6 @@ import {
   printTree,
   reactive,
   refkey,
-  render,
   renderTree,
   StatementList,
 } from "@alloy-js/core";
@@ -14,7 +13,6 @@ import { describe, expect, it } from "vitest";
 
 import { d } from "@alloy-js/core/testing";
 import * as ts from "../src/index.js";
-import { assertFileContents } from "./utils.jsx";
 
 it("renders an object", () => {
   expect(<ts.ObjectExpression />).toRenderTo("{}");
@@ -281,8 +279,12 @@ describe("symbols", () => {
         </ts.PackageDirectory>
       </Output>
     );
-    const res = render(decl);
-    assertFileContents(res, {
+    expect(decl).toRenderTo({
+      "sp/package.json": expect.anything(),
+      "dp/tsconfig.json": expect.anything(),
+      "dp/package.json": expect.anything(),
+      "sp/tsconfig.json": expect.anything(),
+      "sp/foo.ts": expect.anything(),
       "dp/bar.ts": `
         import { refme } from "SourcePackage";
 
@@ -293,7 +295,7 @@ describe("symbols", () => {
 
   it("uses name policy", () => {
     const key1 = refkey();
-    const res = render(
+    expect(
       <Output namePolicy={ts.createTSNamePolicy()}>
         <ts.SourceFile path="test.ts">
           <ts.VarDeclaration const name="dispatcher">
@@ -311,9 +313,7 @@ describe("symbols", () => {
           <ts.FunctionCallExpression target={key1} args={["data"]} />
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "test.ts": `
         const dispatcher = {
           fooBar: null,

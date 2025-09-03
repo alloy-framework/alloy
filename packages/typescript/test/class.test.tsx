@@ -1,9 +1,9 @@
-import { List, Output, refkey, render, StatementList } from "@alloy-js/core";
+import { List, Output, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
-import { findFile, toSourceText } from "./utils.js";
+import { toSourceText } from "./utils.js";
 
 it("declares classes", () => {
   const res = toSourceText(<ts.ClassDeclaration name="Foo" />);
@@ -200,7 +200,7 @@ describe("instance members", () => {
   it("doesn't conflict with imports from other files", () => {
     const rk1 = refkey();
     const rk2 = refkey();
-    const tree = render(
+    expect(
       <Output
         nameConflictResolver={() => {
           // do nothing
@@ -226,18 +226,22 @@ describe("instance members", () => {
           </ts.ClassDeclaration>
         </ts.SourceFile>
       </Output>,
-    );
+    ).toRenderTo({
+      "decl.ts": `
+        export const one = 1;
+        export const two = 2;
+      `,
+      "ref.ts": `
+        import { one, two } from "./decl.js";
 
-    expect(findFile(tree, "ref.ts").contents).toEqual(d`
-      import { one, two } from "./decl.js";
-
-      class Foo {
-        one = one;
-        two() {
-          two
-        };
-      }
-    `);
+        class Foo {
+          one = one;
+          two() {
+            two
+          };
+        }
+      `,
+    });
   });
 });
 

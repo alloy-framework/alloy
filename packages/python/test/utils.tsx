@@ -82,8 +82,10 @@ export function toSourceTextMultiple(
     printOptions = {
       printWidth: 80,
       tabWidth: 4,
+      insertFinalNewLine: false,
     };
   } else {
+    printOptions.insertFinalNewLine = false;
     printOptions.tabWidth = 4;
   }
   const content = (

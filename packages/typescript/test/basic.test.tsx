@@ -1,10 +1,8 @@
-import { List, Output, refkey, render, SourceFile } from "@alloy-js/core";
+import { List, Output, refkey, SourceFile } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { findFile } from "./utils.js";
 
 it("works", () => {
   const fnSpec = {
@@ -15,7 +13,7 @@ it("works", () => {
   const greetKey = refkey(fnSpec, "greet");
   const farewellKey = refkey(fnSpec, "farewell");
 
-  const res = render(
+  expect(
     <Output>
       <SourceFile path="readme.md" filetype="markdown">
         This is a sample output project.
@@ -55,29 +53,22 @@ it("works", () => {
         </List>
       </ts.SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "readme.md").contents).toEqual(d`
-    This is a sample output project.
-  `);
-
-  expect(findFile(res, "index.ts").contents).toEqual(d`
-    console.log("Hello world!");
-  `);
-
-  expect(findFile(res, "test1.ts").contents).toEqual(d`
-    function sayHello(str: string) {
-      return "Hello " + str;
-    }
-    function sayGoodbye(str: string) {
-      return "Goodbye " + str;
-    }
-  `);
-
-  expect(findFile(res, "test2.ts").contents).toEqual(d`
-    import { sayGoodbye, sayHello } from "./test1.js";
-    
-    console.log(sayHello("world"));
-    console.log(sayGoodbye("world"));
-  `);
+  ).toRenderTo({
+    "readme.md": `This is a sample output project.`,
+    "index.ts": `console.log("Hello world!");`,
+    "test1.ts": `
+      function sayHello(str: string) {
+        return "Hello " + str;
+      }
+      function sayGoodbye(str: string) {
+        return "Goodbye " + str;
+      }
+    `,
+    "test2.ts": `
+      import { sayGoodbye, sayHello } from "./test1.js";
+      
+      console.log(sayHello("world"));
+      console.log(sayGoodbye("world"));
+    `,
+  });
 });

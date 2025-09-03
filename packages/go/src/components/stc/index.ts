@@ -1,0 +1,27 @@
+import * as core from "@alloy-js/core";
+import * as base from "../index.js";
+
+export const LineComment = core.stc(base.LineComment);
+export const BlockComment = core.stc(base.BlockComment);
+export const Function = core.stc(base.Function);
+export const FuncReceiver = core.stc(base.FuncReceiver);
+export const InterfaceDeclaration = core.stc(base.InterfaceDeclaration);
+export const InterfaceFunction = core.stc(base.InterfaceFunction);
+export const InterfaceEmbed = core.stc(base.InterfaceEmbed);
+export const Parameter = core.stc(base.Parameter);
+export const Parameters = core.stc(base.Parameters);
+export const Pointer = core.stc(base.Pointer);
+export const StructDeclaration = core.stc(base.StructDeclaration);
+export const StructMember = core.stc(base.StructMember);
+export const StructEmbed = core.stc(base.StructEmbed);
+export const TypeDeclarationGroup = core.stc(base.TypeDeclarationGroup);
+export const TypeDeclaration = core.stc(base.TypeDeclaration);
+export const VarDeclarationGroup = core.stc(base.VarDeclarationGroup);
+export const VarDeclaration = core.stc(base.VarDeclaration);
+export const ImportStatements = core.stc(base.ImportStatements);
+export const SingleImportStatement = core.stc(base.SingleImportStatement);
+export const ModuleDirectory = core.stc(base.ModuleDirectory);
+export const Name = core.stc(base.Name);
+export const Reference = core.stc(base.Reference);
+export const SourceDirectory = core.stc(base.SourceDirectory);
+export const SourceFile = core.stc(base.SourceFile);

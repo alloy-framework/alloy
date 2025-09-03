@@ -468,6 +468,40 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
 
+  packages/go:
+    dependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../core
+      change-case:
+        specifier: 'catalog:'
+        version: 5.4.4
+      pathe:
+        specifier: 'catalog:'
+        version: 2.0.3
+    devDependencies:
+      '@alloy-js/cli':
+        specifier: workspace:~
+        version: link:../cli
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
+      '@microsoft/api-extractor':
+        specifier: 'catalog:'
+        version: 7.52.9(@types/node@24.1.0)
+      '@rollup/plugin-typescript':
+        specifier: 'catalog:'
+        version: 12.1.4(rollup@4.46.2)(tslib@2.8.1)(typescript@5.8.3)
+      concurrently:
+        specifier: 'catalog:'
+        version: 9.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.1.0)(tsx@4.20.3)(yaml@2.8.0)
+
   packages/java:
     dependencies:
       '@alloy-js/core':

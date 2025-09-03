@@ -21,9 +21,7 @@ export function Pointer(props: PointerProps) {
   const SymbolSlot = createSymbolSlot();
 
   effect(() => {
-    const symbols = SymbolSlot.ref.value;
-    if (symbols?.size !== 1) return;
-    const symbol = Array.from(symbols)[0];
+    const symbol = SymbolSlot.firstSymbol.value;
     if (!(symbol instanceof NamedTypeSymbol)) return;
     const pointerSymbol = symbol.pointerSymbol;
     if (!pointerSymbol) return;

@@ -19,7 +19,7 @@ import { Attribute } from "../attributes/attributes.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { SourceFile } from "../SourceFile.jsx";
+import { SourceFile } from "../source-file/source-file.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { ClassDeclaration } from "./declaration.jsx";
 

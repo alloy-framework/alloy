@@ -4,9 +4,9 @@ import {
   SymbolCreator,
 } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
+import { FormatOptions } from "../context/format-options.js";
 import { NamePolicyContext } from "../context/name-policy.js";
 import { NamePolicy } from "../name-policy.js";
-import { getContext } from "../reactivity.js";
 import { PrintTreeOptions } from "../render.js";
 import type { Children } from "../runtime/component.js";
 import { SourceDirectory } from "./SourceDirectory.js";
@@ -50,14 +50,6 @@ export function Output(props: OutputProps) {
     nameConflictResolver: props.nameConflictResolver,
   });
 
-  const nodeContext = getContext()!;
-  nodeContext.meta ??= {};
-  nodeContext.meta.printOptions = {
-    printWidth: props.printWidth,
-    tabWidth: props.tabWidth,
-    useTabs: props.useTabs,
-  };
-
   const dir = (
     <SourceDirectory path={basePath}>{props.children}</SourceDirectory>
   );
@@ -70,11 +62,19 @@ export function Output(props: OutputProps) {
 
   return (
     <BinderContext.Provider value={binder}>
-      {props.namePolicy ?
-        <NamePolicyContext.Provider value={props.namePolicy}>
-          {dir}
-        </NamePolicyContext.Provider>
-      : dir}
+      <FormatOptions
+        value={{
+          printWidth: props.printWidth,
+          tabWidth: props.tabWidth,
+          useTabs: props.useTabs,
+        }}
+      >
+        {props.namePolicy ?
+          <NamePolicyContext.Provider value={props.namePolicy}>
+            {dir}
+          </NamePolicyContext.Provider>
+        : dir}
+      </FormatOptions>
     </BinderContext.Provider>
   );
 }

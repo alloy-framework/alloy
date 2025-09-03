@@ -3,7 +3,7 @@ import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { ClassDeclaration } from "./class/declaration.jsx";
 import { Namespace } from "./namespace.jsx";
-import { SourceFile } from "./SourceFile.jsx";
+import { SourceFile } from "./source-file/source-file.jsx";
 
 it("defines multiple namespaces and source files with unique content", () => {
   const tree = (

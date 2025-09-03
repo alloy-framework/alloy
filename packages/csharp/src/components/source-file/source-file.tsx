@@ -1,3 +1,6 @@
+import { NamespaceScopes } from "#components/namespace-scopes.jsx";
+import { Reference } from "#components/Reference.jsx";
+import { UsingDirective } from "#components/UsingDirective.jsx";
 import {
   Block,
   Children,
@@ -6,18 +9,19 @@ import {
   Scope,
   useBinder,
 } from "@alloy-js/core";
-import { getGlobalNamespace } from "../contexts/global-namespace.js";
-import { useNamespaceContext } from "../contexts/namespace.js";
-import { CSharpSourceFileScope } from "../scopes/source-file.js";
-import { NamespaceSymbol } from "../symbols/namespace.js";
-import { NamespaceScopes } from "./namespace-scopes.jsx";
-import { Reference } from "./Reference.jsx";
-import { UsingDirective } from "./UsingDirective.jsx";
+import {
+  CSharpFormatOptions,
+  useCsharpFormatOptions,
+} from "../../contexts/format-options.js";
+import { getGlobalNamespace } from "../../contexts/global-namespace.js";
+import { useNamespaceContext } from "../../contexts/namespace.js";
+import { CSharpSourceFileScope } from "../../scopes/source-file.js";
+import { NamespaceSymbol } from "../../symbols/namespace.js";
 
 /**
  * Props for {@link SourceFile} component
  */
-export interface SourceFileProps {
+export interface SourceFileProps extends CSharpFormatOptions {
   /** Path of the source file */
   path: string;
 
@@ -48,13 +52,19 @@ export function SourceFile(props: SourceFileProps) {
   const content = computed(() => (
     <NamespaceScopes symbol={nsSymbol}>{props.children}</NamespaceScopes>
   ));
+
+  const opts = useCsharpFormatOptions({
+    printWidth: props.printWidth,
+    tabWidth: props.tabWidth,
+    useTabs: props.useTabs,
+  });
+
   return (
     <CoreSourceFile
       path={props.path}
       filetype="cs"
       reference={Reference}
-      tabWidth={4}
-      printWidth={120}
+      {...opts}
     >
       <Scope value={sourceFileScope}>
         {(sourceFileScope.usings.size > 0 ||

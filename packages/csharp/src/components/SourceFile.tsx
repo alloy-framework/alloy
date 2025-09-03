@@ -1,23 +1,27 @@
 import {
+  Block,
   Children,
   computed,
   SourceFile as CoreSourceFile,
   Scope,
-  Show,
   useBinder,
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { CSharpSourceFileScope } from "../scopes/source-file.js";
 import { NamespaceSymbol } from "../symbols/namespace.js";
-import { NamespaceScope, NamespaceScopes } from "./namespace-scopes.jsx";
+import { NamespaceScopes } from "./namespace-scopes.jsx";
 import { Reference } from "./Reference.jsx";
 import { UsingDirective } from "./UsingDirective.jsx";
 
+/**
+ * Props for {@link SourceFile} component
+ */
 export interface SourceFileProps {
   /** Path of the source file */
   path: string;
 
+  /** Source file content */
   children?: Children;
 
   /**
@@ -27,8 +31,7 @@ export interface SourceFileProps {
   using?: string[];
 }
 
-// a C# source file. exists within the context of a namespace
-// contains using statements and declarations
+/** A C# source file exists within the context of a namespace contains using statements and declarations */
 export function SourceFile(props: SourceFileProps) {
   const sourceFileScope = new CSharpSourceFileScope(props.path);
 
@@ -41,6 +44,10 @@ export function SourceFile(props: SourceFileProps) {
       Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
     ).concat(props.using ?? []);
   });
+
+  const content = computed(() => (
+    <NamespaceScopes symbol={nsSymbol}>{props.children}</NamespaceScopes>
+  ));
   return (
     <CoreSourceFile
       path={props.path}
@@ -58,33 +65,23 @@ export function SourceFile(props: SourceFileProps) {
             <hbr />
           </>
         )}
-        <Show when={!!nsContext && nsSymbol !== globalNs}>
-          <Show when={sourceFileScope.hasBlockNamespace}>
+        {nsSymbol === globalNs ?
+          content
+        : <>
             namespace {nsRef}
-            {" {"}
-            <hbr />
-            {"    "}
-          </Show>
-
-          <Show when={!sourceFileScope.hasBlockNamespace}>
-            namespace {nsRef};<hbr />
-            <hbr />
-          </Show>
-          <align width={sourceFileScope.hasBlockNamespace ? 4 : 0}>
-            <NamespaceScopes symbol={nsContext!.symbol}>
-              {props.children}
-            </NamespaceScopes>
-          </align>
-          <Show when={sourceFileScope.hasBlockNamespace}>
-            <hbr />
-            {"}"}
-          </Show>
-        </Show>
-        <Show when={!nsContext || nsSymbol === globalNs}>
-          <NamespaceScope symbol={getGlobalNamespace(useBinder())}>
-            {props.children}
-          </NamespaceScope>
-        </Show>
+            {sourceFileScope.hasBlockNamespace ?
+              <>
+                {" "}
+                <Block>{content}</Block>
+              </>
+            : <>
+                ;<hbr />
+                <hbr />
+                {content}
+              </>
+            }
+          </>
+        }
       </Scope>
     </CoreSourceFile>
   );

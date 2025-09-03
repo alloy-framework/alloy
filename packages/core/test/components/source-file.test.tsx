@@ -2,10 +2,12 @@ import {
   Children,
   CommonFormatOptions,
   computed,
+  ContentOutputFile,
   FormatOptions,
   Indent,
   Output,
   Prose,
+  render,
   renderTree,
   SourceFile,
   useContext,
@@ -13,6 +15,7 @@ import {
 import { describe, expect, it } from "vitest";
 import { SourceDirectoryContext } from "../../src/context/source-directory.js";
 import "../../testing/extend-expect.js";
+import { d } from "../../testing/render.js";
 
 it("tracks its content", () => {
   let context;
@@ -133,5 +136,36 @@ describe("format options", () => {
       hello
          indented 3 spaces
     `);
+  });
+
+  describe("trailing line", () => {
+    function testRender(comp: any) {
+      const tree = render(<Output>{comp}</Output>);
+      return (tree.contents[0] as ContentOutputFile).contents;
+    }
+
+    it("add trailing new line by default", () => {
+      expect(
+        testRender(
+          <SourceFile filetype="text" path="abc.txt">
+            end with new line
+          </SourceFile>,
+        ),
+      ).toEqual(d`
+        end with new line
+        
+      `);
+    });
+    it("add trailing new line by default", () => {
+      expect(
+        testRender(
+          <SourceFile filetype="text" path="abc.txt" insertFinalNewLine={false}>
+            end with no line
+          </SourceFile>,
+        ),
+      ).toEqual(d`
+        end with no line
+      `);
+    });
   });
 });

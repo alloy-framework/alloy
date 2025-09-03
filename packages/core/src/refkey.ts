@@ -167,10 +167,28 @@ export function namekey(name: string, options: NamekeyOptions = {}): Namekey {
  * instantiated variable refkey and the refkey of the inner member
  * `refkey(rk1, rk3)`.
  */
-export function memberRefkey(base: Refkey, member: Refkey): MemberRefkey {
+export function memberRefkey(
+  base: Refkey,
+  ...members: [Refkey, ...Refkey[]]
+): MemberRefkey {
+  if (members.length < 1) {
+    throw new Error("memberRefkey needs at least one member");
+  }
+
+  if (members.length === 1) {
+    return {
+      base,
+      member: members[0],
+      [RefkeySym]: true,
+    };
+  }
+
   return {
-    base,
-    member,
+    base: memberRefkey(
+      base,
+      ...(members.slice(0, -1) as [Refkey, ...Refkey[]]),
+    ),
+    member: members.at(-1)!,
     [RefkeySym]: true,
   };
 }

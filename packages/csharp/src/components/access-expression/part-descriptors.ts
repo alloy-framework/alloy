@@ -23,19 +23,37 @@ export interface PartDescriptorWithId extends PartDescriptorBase {
   typeArgs?: Children[];
 }
 
+export function isIdPart(part: PartDescriptor): part is PartDescriptorWithId {
+  return "id" in part && part.id !== undefined;
+}
+
 export interface PartDescriptorWithIndex extends PartDescriptorBase {
   /**
    * The index of the access expression part. Will use element access.
    */
-  index: Children;
+  indexerArgs: Children[];
   conditional: boolean;
+}
+
+export function isIndexPart(
+  part: PartDescriptor,
+): part is PartDescriptorWithIndex {
+  return "indexerArgs" in part && part.indexerArgs !== undefined;
 }
 
 export interface PartDescriptorWithArgs extends PartDescriptorBase {
   args: Children[];
 }
 
-export interface PartDescriptorBase {}
+export function isArgsPart(
+  part: PartDescriptor,
+): part is PartDescriptorWithArgs {
+  return "args" in part && part.args !== undefined;
+}
+
+export interface PartDescriptorBase {
+  nullable: boolean;
+}
 
 export type PartDescriptor =
   | PartDescriptorWithId
@@ -103,27 +121,36 @@ function createPartDescriptorFromProps(
 
   const part: ToRefs<PartDescriptor> = {
     id: computed(() => {
-      if (partProps.args) {
+      if (partProps.args || partProps.index || partProps.indexerArgs) {
         return undefined;
       } else if (partProps.children !== undefined) {
         return partProps.children;
       } else if (first && partProps.refkey) {
         return partProps.refkey;
       } else if (partProps.id !== undefined) {
-        return isNumericIdentifier(partProps.id) ?
-            partProps.id
-          : escapeId(partProps.id);
-      } else if (partProps.index !== undefined) {
-        return partProps.index;
+        return partProps.id;
       } else if (symbolSource.value) {
         return escapeId(symbolSource.value.name);
       } else {
         return "<unresolved symbol>";
       }
     }),
-    index: ref<any>(partProps.index),
+    indexerArgs: computed(() => {
+      if (partProps.indexerArgs) {
+        return partProps.indexerArgs;
+      }
+
+      if (partProps.index !== undefined) {
+        return [partProps.index];
+      }
+
+      return [];
+    }),
     conditional: computed(() => {
-      if (partProps.conditional) {
+      return !!partProps.conditional;
+    }),
+    nullable: computed(() => {
+      if (partProps.nullable) {
         return true;
       }
 
@@ -133,7 +160,7 @@ function createPartDescriptorFromProps(
 
       return false;
     }),
-    args: ref<any>(partProps.args),
+    args: ref<any>(partProps.args === true ? [] : partProps.args),
     typeArgs: ref<any>(partProps.typeArgs),
   };
 
@@ -145,12 +172,4 @@ function createPartDescriptorFromProps(
  */
 function escapeId(id: string) {
   return id.replace(/"/g, '\\"');
-}
-
-/**
- * Check if the given id is a numeric identifier.
- *
- */
-function isNumericIdentifier(id: Children) {
-  return typeof id === "number";
 }

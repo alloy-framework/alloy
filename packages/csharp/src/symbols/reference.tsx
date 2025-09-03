@@ -1,4 +1,5 @@
-import { memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
+import { AccessExpression } from "#components/access-expression/access-expression.jsx";
+import { Children, memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -9,10 +10,11 @@ import { NamespaceSymbol } from "./namespace.js";
 // e.g. if refkey is for bar in enum type foo, and
 // foo is in the same namespace as the refkey, then
 // the result would be foo.bar.
-export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
+export function ref(
+  refkey: Refkey,
+): () => [Children, OutputSymbol | undefined] {
   const refSfScope = useSourceFileScope()!;
   const resolveResult = resolve<CSharpScope, CSharpSymbol>(refkey as Refkey);
-
   return memo(() => {
     if (resolveResult.value === undefined) {
       return ["<Unresolved Symbol>", undefined];
@@ -22,7 +24,6 @@ export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
     const { commonScope, pathDown, memberPath } = result;
     let { lexicalDeclaration } = result;
 
-    const parts = [];
     if (!commonScope) {
       // this shouldn't be possible in csharp.
       return ["<Unresolved Symbol>", undefined];
@@ -47,16 +48,17 @@ export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
       refSfScope.addUsing(nsToUse!);
     }
 
+    const parts = [];
+
     for (const nsScope of pathDown) {
-      parts.push(nsScope.ownerSymbol!.name);
+      parts.push(<AccessExpression.Part symbol={nsScope.ownerSymbol!} />);
     }
 
-    parts.push(lexicalDeclaration.name);
-
+    parts.push(<AccessExpression.Part symbol={lexicalDeclaration} />);
     for (const member of memberPath) {
-      parts.push(member.name);
+      parts.push(<AccessExpression.Part symbol={member} />);
     }
 
-    return [parts.join("."), result.symbol];
+    return [<AccessExpression children={parts} />, result.symbol];
   });
 }

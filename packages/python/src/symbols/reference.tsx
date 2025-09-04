@@ -1,5 +1,6 @@
 import {
   Children,
+  getRefkeyString,
   memo,
   Refkey,
   resolve,
@@ -24,7 +25,7 @@ export function ref(
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return ["<Unresolved Symbol>", undefined];
+      return [`<Unresolved Symbol: ${getRefkeyString(refkey)}>`, undefined];
     }
 
     const { commonScope, lexicalDeclaration, symbol, pathDown, memberPath } =

@@ -192,3 +192,15 @@ export function memberRefkey(
     [RefkeySym]: true,
   };
 }
+
+export function getRefkeyString(refkey: Refkey): string {
+  if ("name" in refkey) {
+    return refkey.name;
+  }
+
+  if ("key" in refkey) {
+    return refkey.key;
+  }
+
+  return `${getRefkeyString(refkey.base)}.${getRefkeyString(refkey.member)}`;
+}

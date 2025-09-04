@@ -24,5 +24,5 @@ export * from "./Reference.js";
 export * from "./source-file/source-file.jsx";
 export * from "./struct/declaration.jsx";
 export type { TypeParameterProps } from "./type-parameters/type-parameter.jsx";
-export * from "./using/using-directive.jsx";
+export * from "./using/using.jsx";
 export * from "./var/declaration.jsx";

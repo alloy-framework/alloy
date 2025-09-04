@@ -1,6 +1,6 @@
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
 import { Reference } from "#components/Reference.jsx";
-import { UsingDirective } from "#components/using/using-directive.jsx";
+import { Usings } from "#components/using/using.jsx";
 import {
   Block,
   Children,
@@ -70,7 +70,7 @@ export function SourceFile(props: SourceFileProps) {
         {(sourceFileScope.usings.size > 0 ||
           (props.using && props.using.length > 0)) && (
           <>
-            <UsingDirective namespaces={usings.value} />
+            <Usings namespaces={usings.value} />
             <hbr />
             <hbr />
           </>

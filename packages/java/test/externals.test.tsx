@@ -1,9 +1,7 @@
-import { Output, render, StatementList } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { Output, StatementList } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { createLibrary } from "../src/index.js";
-import { findFile } from "./utils.js";
 
 it("uses import from external library", () => {
   const testLib = createLibrary({
@@ -16,7 +14,7 @@ it("uses import from external library", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib]}>
       <jv.PackageDirectory package="me.test.code">
         <jv.SourceFile path="TestImport.java">
@@ -36,9 +34,7 @@ it("uses import from external library", () => {
         </jv.SourceFile>
       </jv.PackageDirectory>
     </Output>,
-  );
-
-  expect(findFile(res, "TestImport.java").contents).toBe(d`
+  ).toRenderTo(`
     package me.test.code;
 
     import me.test.testlib.models.TestModel;

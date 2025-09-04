@@ -1,14 +1,7 @@
-import {
-  memberRefkey,
-  Output,
-  refkey,
-  render,
-  StatementList,
-} from "@alloy-js/core";
+import { memberRefkey, Output, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { assertFileContents } from "./utils.js";
 
 it("works", () => {
   expect(
@@ -23,7 +16,7 @@ it("works", () => {
 it("works end-to-end", () => {
   const TestType = refkey("TestType");
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="types.ts">
         <ts.TypeDeclaration name="TestType" refkey={TestType}>
@@ -42,9 +35,7 @@ it("works end-to-end", () => {
         ;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "types.ts": `
       type TestType = "hello" | "goodbye";
     `,
@@ -64,7 +55,7 @@ it("instantiates symbols from its type", () => {
   const v1Rk = refkey();
   const v2Rk = refkey();
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="inst.ts">
         <StatementList>
@@ -95,9 +86,14 @@ it("instantiates symbols from its type", () => {
         </ts.ClassDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
+    "decl.ts": `
+      interface Foo {
+        instanceProp: 42;
+      }class Bar {
+        instanceProp = 42;
+      }
+    `,
     "inst.ts": `
       import type { Bar, Foo } from "./decl.js";
 
@@ -114,7 +110,7 @@ it("instantiates symbols from type even when an expression is passed", () => {
   const classMemberRk = refkey();
   const v1Rk = refkey();
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="inst.ts">
         <StatementList>
@@ -136,9 +132,12 @@ it("instantiates symbols from type even when an expression is passed", () => {
         </ts.ClassDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
+    "decl.ts": `
+      class Bar {
+        instanceProp = 42;
+      }
+    `,
     "inst.ts": `
       import type { Bar } from "./decl.js";
 

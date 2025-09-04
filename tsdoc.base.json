@@ -4,6 +4,10 @@
     {
       "tagName": "@reactive",
       "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@default",
+      "syntaxKind": "block"
     }
   ]
 }

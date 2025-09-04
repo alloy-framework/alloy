@@ -2,7 +2,7 @@ import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as csharp from "../src/index.js";
-import { assertFileContents, findFile } from "./utils.jsx";
+import { findFile } from "./utils.jsx";
 
 it("uses a single namespace", () => {
   const res = core.render(
@@ -53,7 +53,7 @@ it("adds using statement across namespaces", () => {
     },
   ];
 
-  const res = core.render(
+  expect(
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
       <csharp.Namespace name="Models">
         <csharp.SourceFile path="Models.cs">
@@ -90,9 +90,7 @@ it("adds using statement across namespaces", () => {
         </csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "Models.cs": coretest.d`
       namespace Models;
 

@@ -467,6 +467,7 @@ it("formats based on the output component props", () => {
     4
     5
     6
+    
   `);
 });
 
@@ -489,5 +490,6 @@ it("formats based on the source file component props", () => {
     4
     5
     6
+
   `);
 });

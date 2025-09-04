@@ -1,5 +1,4 @@
-import { Output, render } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { Output } from "@alloy-js/core";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
 import {
@@ -9,7 +8,7 @@ import {
   TSSymbolFlags,
 } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
-import { findFile } from "./utils.jsx";
+
 it("handles custom name conflict resolver based on metadata", () => {
   function resolver(name: string, symbols: TSOutputSymbol[]) {
     const goodNamedSymbols = symbols.filter(
@@ -79,7 +78,7 @@ it("handles custom name conflict resolver based on metadata", () => {
     { name: "foo", metadata: { sourceLocation: "header" } },
   ];
 
-  const res = render(
+  expect(
     <Output nameConflictResolver={resolver}>
       <SourceFile path="test.ts">
         <FunctionDeclaration
@@ -89,9 +88,7 @@ it("handles custom name conflict resolver based on metadata", () => {
         />
       </SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "test.ts").contents).toBe(d`
+  ).toRenderTo(`
     export function conflicty(
       foo,
       foo1,

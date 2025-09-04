@@ -1,15 +1,14 @@
-import { Output, refkey, render, StatementList } from "@alloy-js/core";
+import { Output, refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
-import { it } from "vitest";
+import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { assertFileContents } from "./utils.jsx";
 
 it("should instantiate classes", () => {
   const varRk = refkey();
   const classRk = refkey();
   const memberRk = refkey();
 
-  const tree = render(
+  expect(
     <Output>
       <ts.SourceFile path="inst.ts">
         <StatementList>
@@ -28,9 +27,7 @@ it("should instantiate classes", () => {
         </ts.ClassDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(tree, {
+  ).toRenderTo({
     "inst.ts": d`
       import { Foo } from "./decl.js";
 

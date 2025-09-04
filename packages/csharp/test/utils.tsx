@@ -19,6 +19,7 @@ export function toSourceText(c: core.Children): string {
         <csharp.SourceFile path="Test.cs">{c}</csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const file = findFile(res, "Test.cs");

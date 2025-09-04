@@ -79,7 +79,7 @@ export function Declaration(props: DeclarationProps) {
     const scope = useScope();
     if (!(scope instanceof BasicScope)) {
       throw new Error(
-        "Declaration component cannot create a symbol in a non-basic scope",
+        `Declaration component cannot create a symbol in a non-basic scope: ${scope.constructor.name}`,
       );
     }
 

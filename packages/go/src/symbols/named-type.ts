@@ -105,20 +105,6 @@ export class NamedTypeSymbol extends GoSymbol {
     return copy;
   }
 
-  #pointerSymbol?: GoSymbol;
-  get pointerSymbol() {
-    track(this, TrackOpTypes.GET, "pointerSymbol");
-    return this.#pointerSymbol;
-  }
-  set pointerSymbol(value: GoSymbol | undefined) {
-    const old = this.#pointerSymbol;
-    if (old === value) {
-      return;
-    }
-    this.#pointerSymbol = value;
-    trigger(this, TriggerOpTypes.SET, "pointerSymbol", value, old);
-  }
-
   get members() {
     return this.memberSpaceFor("members")!;
   }

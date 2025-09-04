@@ -79,9 +79,6 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
       typeParameters: props.typeParameters,
       // TODO: set aliasTarget when alias is true
     });
-  const pointerSymbol = symbol.copy();
-  pointerSymbol.isPointer = true;
-  symbol.pointerSymbol = pointerSymbol;
   const typeScope = createNamedTypeScope(symbol);
 
   return (

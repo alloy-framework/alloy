@@ -40,6 +40,12 @@ expect.extend({
   },
 });
 
+function isAsymmetricMatcher(value: any): value is {
+  asymmetricMatch: (other: any) => boolean;
+} {
+  return value.$$typeof === Symbol.for("jest.asymmetricMatcher");
+}
+
 function validateRender(
   actual: string | Record<string, string>,
   expectedRaw: string | Record<string, string>,
@@ -73,12 +79,18 @@ function validateRender(
     const expected = expectedRaw;
     const dedentExpected: Record<string, string> = {};
     for (const [key, value] of Object.entries(expected)) {
-      dedentExpected[key] = dedent(value);
+      if (isAsymmetricMatcher(value)) {
+        dedentExpected[key] = value;
+      } else {
+        dedentExpected[key] = dedent(value);
+      }
     }
     const pass =
       Object.keys(actual).length === Object.keys(expected).length &&
       Object.entries(actual).every(([key, value]) => {
-        return dedentExpected[key] === value;
+        return isAsymmetricMatcher(dedentExpected[key]) ?
+            dedentExpected[key].asymmetricMatch(value)
+          : dedentExpected[key] === value;
       });
     return {
       pass,

@@ -47,34 +47,32 @@ it("has reactive context", () => {
     );
   }
 
-  const tree = render(
+  expect(
     <Output>
       <SourceFile path="hi.txt" filetype="text">
         hello!
       </SourceFile>
       <TrackContents />
     </Output>,
-  );
-
-  expect((tree.contents[1] as ContentOutputFile).contents).toEqual(
-    "hi.txt contents.txt",
-  );
+  ).toRenderTo({
+    "hi.txt": "hello!",
+    "contents.txt": "hi.txt contents.txt",
+  });
 });
 
-it("Includes header", () => {
+it("includes header", () => {
   const header = <># This is a header</>;
-  const tree = render(
+
+  expect(
     <Output>
       <SourceFile path="hi.txt" filetype="text" header={header}>
         hello!
       </SourceFile>
     </Output>,
-  );
-
-  expect((tree.contents[0] as ContentOutputFile).contents).toEqual(d`
+  ).toRenderTo(`
     # This is a header
     hello!
-    `);
+  `);
 });
 
 describe("format options", () => {
@@ -138,5 +136,36 @@ describe("format options", () => {
       hello
          indented 3 spaces
     `);
+  });
+
+  describe("trailing line", () => {
+    function testRender(comp: any) {
+      const tree = render(<Output>{comp}</Output>);
+      return (tree.contents[0] as ContentOutputFile).contents;
+    }
+
+    it("add trailing new line by default", () => {
+      expect(
+        testRender(
+          <SourceFile filetype="text" path="abc.txt">
+            end with new line
+          </SourceFile>,
+        ),
+      ).toEqual(d`
+        end with new line
+        
+      `);
+    });
+    it("add trailing new line by default", () => {
+      expect(
+        testRender(
+          <SourceFile filetype="text" path="abc.txt" insertFinalNewLine={false}>
+            end with no line
+          </SourceFile>,
+        ),
+      ).toEqual(d`
+        end with no line
+      `);
+    });
   });
 });

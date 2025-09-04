@@ -18,7 +18,7 @@ export function toSourceText(c: Children, options?: PrintTreeOptions): string {
         <jv.SourceFile path="Test.java">{c}</jv.SourceFile>
       </jv.PackageDirectory>
     </Output>,
-    options,
+    { insertFinalNewLine: false, ...options },
   );
 
   const file = findFile(res, "Test.java");
@@ -33,7 +33,7 @@ export function testRender(
     <Output>
       <jv.PackageDirectory package="me.test.code">{c}</jv.PackageDirectory>
     </Output>,
-    options,
+    { insertFinalNewLine: false, ...options },
   );
 }
 

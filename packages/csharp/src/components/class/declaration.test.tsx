@@ -9,11 +9,10 @@ import {
   NamePolicyContext,
   Output,
   refkey,
-  render,
 } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { findFile, TestNamespace, toSourceText } from "../../../test/utils.jsx";
+import { TestNamespace, toSourceText } from "../../../test/utils.jsx";
 import { createCSharpNamePolicy } from "../../name-policy.js";
 import { Attribute } from "../attributes/attributes.jsx";
 import { Field } from "../field/field.jsx";
@@ -181,7 +180,7 @@ it("uses refkeys for members, params, and return type", () => {
     },
   ];
 
-  const res = render(
+  expect(
     <Output namePolicy={createCSharpNamePolicy()}>
       <SourceFile path="Test.cs">
         <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
@@ -213,9 +212,7 @@ it("uses refkeys for members, params, and return type", () => {
         </ClassDeclaration>
       </SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "Test.cs").contents).toBe(coretest.d`
+  ).toRenderTo(`
     public enum TestEnum
     {
         One,

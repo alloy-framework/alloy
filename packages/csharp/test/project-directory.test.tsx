@@ -22,6 +22,7 @@ it("defines a project directory file with multiple source files", () => {
         </csharp.Namespace>
       </csharp.ProjectDirectory>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const projDir = res.contents[0] as core.OutputDirectory;
@@ -80,6 +81,7 @@ it("defines a project directory file with multiple source files and a custom TFM
         </csharp.Namespace>
       </csharp.ProjectDirectory>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const projDir = res.contents[0] as core.OutputDirectory;

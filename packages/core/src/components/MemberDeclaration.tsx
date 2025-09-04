@@ -91,7 +91,7 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
     const scopeContext = useMemberContext()!;
     if (!(scopeContext.ownerSymbol instanceof BasicSymbol)) {
       throw new Error(
-        "MemberDeclaration component cannot create a symbol in a non-basic scope",
+        `MemberDeclaration component cannot create a symbol in a non-basic scope: ${scopeContext.ownerSymbol.constructor.name}`,
       );
     }
     const space =

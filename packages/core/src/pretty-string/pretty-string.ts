@@ -13,15 +13,30 @@ export function pret(
   return new PrettyString(result);
 }
 
-pret.black = (x: string) => new PrettyStringColored(x, "black");
-pret.red = (x: string) => new PrettyStringColored(x, "red");
-pret.green = (x: string) => new PrettyStringColored(x, "green");
-pret.yellow = (x: string) => new PrettyStringColored(x, "yellow");
-pret.blue = (x: string) => new PrettyStringColored(x, "blue");
-pret.magenta = (x: string) => new PrettyStringColored(x, "magenta");
-pret.cyan = (x: string) => new PrettyStringColored(x, "cyan");
-pret.white = (x: string) => new PrettyStringColored(x, "white");
-pret.gray = (x: string) => new PrettyStringColored(x, "gray");
+pret.black = (x: PrettyStringSegment) => new PrettyStringColored(x, "black");
+pret.red = (x: PrettyStringSegment) => new PrettyStringColored(x, "red");
+pret.green = (x: PrettyStringSegment) => new PrettyStringColored(x, "green");
+pret.yellow = (x: PrettyStringSegment) => new PrettyStringColored(x, "yellow");
+pret.blue = (x: PrettyStringSegment) => new PrettyStringColored(x, "blue");
+pret.magenta = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "magenta");
+pret.cyan = (x: PrettyStringSegment) => new PrettyStringColored(x, "cyan");
+pret.white = (x: PrettyStringSegment) => new PrettyStringColored(x, "white");
+pret.gray = (x: PrettyStringSegment) => new PrettyStringColored(x, "gray");
+
+pret.bgBlack = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "bgBlack");
+pret.bgRed = (x: PrettyStringSegment) => new PrettyStringColored(x, "bgRed");
+pret.bgGreen = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "bgGreen");
+pret.bgYellow = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "bgYellow");
+pret.bgBlue = (x: PrettyStringSegment) => new PrettyStringColored(x, "bgBlue");
+pret.bgMagenta = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "bgMagenta");
+pret.bgCyan = (x: PrettyStringSegment) => new PrettyStringColored(x, "bgCyan");
+pret.bgWhite = (x: PrettyStringSegment) =>
+  new PrettyStringColored(x, "bgWhite");
 
 const ansiColors = {
   reset: ["\x1b[0m", "\x1b[0m"],
@@ -53,21 +68,21 @@ const ansiColors = {
 
 export type PrettyStringSegment = string | PrettyStringColored | PrettyString;
 export class PrettyStringColored {
-  #value: string;
+  #value: PrettyStringSegment;
   #color: string;
 
-  constructor(value: string, color: string) {
+  constructor(value: PrettyStringSegment, color: string) {
     this.#value = value;
     this.#color = color;
   }
 
-  toString() {
-    return this.#value;
+  toString(): string {
+    return this.#value.toString();
   }
 
-  toAnsi() {
+  toAnsi(): string {
     const [start, end] = ansiColors[this.#color];
-    return `${start}${this.#value}${end}`;
+    return `${start}${typeof this.#value === "string" ? this.#value : this.#value.toAnsi()}${end}`;
   }
 }
 

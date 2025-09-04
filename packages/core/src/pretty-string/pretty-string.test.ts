@@ -29,11 +29,11 @@ it("interpolate pretty segment", () => {
   });
 });
 
-it("interpolate another pretty string", () => {
+it("interpolate another pretty string with more formatting", () => {
   const a = pret`foo ${pret.red("bar")} baz`;
-  const result = pret`Hi, ${a}`;
+  const result = pret`Hi, ${pret.bgGreen(a)}`;
   expectRender(result, {
     toString: "Hi, foo bar baz",
-    toAnsi: "Hi, foo \x1b[31mbar\x1b[39m baz",
+    toAnsi: "Hi, \x1b[42mfoo \x1b[31mbar\x1b[39m baz\x1b[49m",
   });
 });

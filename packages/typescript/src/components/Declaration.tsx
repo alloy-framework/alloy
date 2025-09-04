@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
@@ -17,12 +18,44 @@ import { TypeDeclaration } from "./TypeDeclaration.jsx";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 
-export interface BaseDeclarationProps {
+export interface DeclarationPropsBase {
+  children?: Children;
+
+  /**
+   * Documentation for this declaration
+   */
+  doc?: Children;
+}
+
+export interface DeclarationPropsWithSymbol extends DeclarationPropsBase {
+  /**
+   * The symbol to use for this declaration.
+   */
+  symbol: TSOutputSymbol;
+}
+
+export interface DeclarationPropsWithInfo extends DeclarationPropsBase {
+  /**
+   * The name policy kind to apply to the declaration.
+   */
+  nameKind: TypeScriptElements;
+
   /**
    * The base name of this declaration. May change depending on naming policy
    * and any conflicts.
    */
-  name: string;
+  name: string | Namekey;
+
+  /**
+   * Whether this is a declaration of a type (e.g. interface, type alias) or a
+   * value (e.g. var, const, let).
+   */
+  kind?: "type" | "value";
+
+  /**
+   * Arbitrary metadata about this declaration.
+   */
+  metadata?: Record<string, unknown>;
 
   /**
    * The refkey or array of refkeys for this declaration.
@@ -38,42 +71,16 @@ export interface BaseDeclarationProps {
    * Whether this is the default export of the module.
    */
   default?: boolean;
-
-  children?: Children;
-
-  /**
-   * Whether this is a declaration of a type (e.g. interface, type alias) or a
-   * value (e.g. var, const, let).
-   */
-  kind?: "type" | "value";
-
-  /**
-   * Arbitrary metadata about this declaration.
-   */
-  metadata?: Record<string, unknown>;
-
-  /**
-   * Documentation for this declaration
-   */
-  doc?: Children;
 }
 
-export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
-  /**
-   * The name of this declaration.
-   */
-  name?: string;
+/**
+ * The base props for declaration components.
+ */
+export type CommonDeclarationProps = Omit<DeclarationPropsWithInfo, "nameKind">;
 
-  /**
-   * The name policy kind to apply to the declaration.
-   */
-  nameKind?: TypeScriptElements;
-
-  /**
-   * The symbol to use for this declaration.
-   */
-  symbol?: TSOutputSymbol;
-}
+export type DeclarationProps =
+  | DeclarationPropsWithSymbol
+  | DeclarationPropsWithInfo;
 
 /**
  * Create a TypeScript declaration. Generally, this component shouldn't be used
@@ -89,32 +96,32 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
 export function Declaration(props: DeclarationProps) {
   let sym: TSOutputSymbol;
 
-  if (props.symbol) {
+  if ("symbol" in props) {
     sym = props.symbol;
   } else {
-    const namePolicy = useTSNamePolicy();
-    const name = namePolicy.getName(props.name!, props.nameKind!);
     if (props.kind === "type") {
-      sym = createTypeSymbol(name, {
+      sym = createTypeSymbol(props.name!, {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
         metadata: props.metadata,
+        namePolicy: useTSNamePolicy().for(props.nameKind!),
       });
     } else {
-      sym = createValueSymbol(name, {
+      sym = createValueSymbol(props.name!, {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
         metadata: props.metadata,
+        namePolicy: useTSNamePolicy().for(props.nameKind!),
       });
     }
   }
 
   return (
     <CoreDeclaration symbol={sym}>
-      {props.export ? "export " : ""}
-      {props.default ? "default " : ""}
+      {sym.export ? "export " : ""}
+      {sym.default ? "default " : ""}
       {props.children}
     </CoreDeclaration>
   );

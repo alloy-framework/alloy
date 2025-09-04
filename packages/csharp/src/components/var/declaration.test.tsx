@@ -1,4 +1,4 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { VarDeclaration } from "./declaration.jsx";
@@ -43,6 +43,21 @@ it("links refkey", () => {
         <VarDeclaration name="testVar" refkey={key}>
           42
         </VarDeclaration>
+        <VarDeclaration name="testVar2">{key}</VarDeclaration>
+      </List>
+    </TestNamespace>,
+  ).toRenderTo(`
+      var testVar = 42;
+      var testVar2 = testVar;
+  `);
+});
+
+it("links namekey", () => {
+  const key = namekey("test-var");
+  expect(
+    <TestNamespace>
+      <List>
+        <VarDeclaration name={key}>42</VarDeclaration>
         <VarDeclaration name="testVar2">{key}</VarDeclaration>
       </List>
     </TestNamespace>,

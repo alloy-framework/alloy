@@ -1,4 +1,4 @@
-import type { Children, Refkey } from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 
 /**
  * Common properties for ParameterDescriptor and FunctionTypeParameterDescriptor.
@@ -7,7 +7,7 @@ export interface ParameterDescriptorBase {
   /**
    * The name of the parameter.
    */
-  readonly name: string;
+  readonly name: string | Namekey;
 
   /**
    * The type of the parameter.
@@ -75,7 +75,7 @@ export interface TypeParameterDescriptor {
   /**
    * The name of the type parameter.
    */
-  readonly name: string;
+  readonly name: string | Namekey;
 
   /**
    * The extends constraint for the type parameter.

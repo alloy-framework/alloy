@@ -1,9 +1,9 @@
 import { Name, Show } from "@alloy-js/core";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
-export interface TypeDeclarationProps extends BaseDeclarationProps {}
+export interface TypeDeclarationProps extends CommonDeclarationProps {}
 
 export const TypeDeclaration = ensureTypeRefContext(
   (props: TypeDeclarationProps) => {

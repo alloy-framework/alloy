@@ -1,4 +1,10 @@
-import { memberRefkey, Output, refkey, StatementList } from "@alloy-js/core";
+import {
+  memberRefkey,
+  namekey,
+  Output,
+  refkey,
+  StatementList,
+} from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
@@ -11,6 +17,16 @@ it("works", () => {
       </ts.SourceFile>
     </Output>,
   ).toRenderTo("const hi = 12;");
+});
+
+it("takes namekeys", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="test.js">
+        <ts.VarDeclaration name={namekey("foo")} initializer="12" />;
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo("const foo = 12;");
 });
 
 it("works end-to-end", () => {

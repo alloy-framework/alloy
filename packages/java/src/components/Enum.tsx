@@ -1,21 +1,19 @@
 import { Block, Children, List } from "@alloy-js/core";
 import { useJavaNamePolicy } from "../name-policy.js";
 import { ArgumentList } from "./ArgumentList.jsx";
-import { Declaration, DeclarationProps } from "./Declaration.js";
+import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import { ImplementsClause } from "./ImplementsClause.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 import { ModifierProps, Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 
-export interface EnumProps extends DeclarationProps, ModifierProps {
+export interface EnumProps extends CommonDeclarationProps, ModifierProps {
   implements?: Children[];
 }
 
 export function Enum(props: EnumProps) {
-  const name = useJavaNamePolicy().getName(props.name, "enum");
-
   return (
-    <Declaration {...props} name={name}>
+    <Declaration {...props} name={props.name} nameKind="enum">
       <group>
         <Modifiers {...props} />
         enum <Name />

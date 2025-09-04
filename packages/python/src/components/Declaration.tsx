@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { PythonElements } from "../name-policy.js";
@@ -12,7 +13,7 @@ export interface BaseDeclarationProps {
    * The base name of this declaration. May change depending on naming policy
    * and any conflicts.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The refkey or array of refkeys for this declaration.
@@ -31,7 +32,7 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
   /**
    * The name of this declaration.
    */
-  name?: string;
+  name?: string | Namekey;
 
   /**
    * The name policy kind to apply to the declaration.
@@ -49,9 +50,7 @@ export interface DeclarationProps extends Omit<BaseDeclarationProps, "name"> {
  *
  * @remarks
  * This component is used to create a declaration with a symbol that can be
- * referenced in the code. It can also be used to create a member scope for
- * member containers.
- *
+ * referenced in the code.
  */
 export function Declaration(props: DeclarationProps) {
   let sym: PythonOutputSymbol;

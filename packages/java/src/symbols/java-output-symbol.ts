@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
@@ -25,7 +26,7 @@ export class JavaOutputSymbol extends OutputSymbol {
   #package?: string;
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: JavaOutputSymbolOptions = {},
   ) {

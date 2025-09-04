@@ -4,6 +4,7 @@ import {
   List,
   MemberDeclaration,
   MemberName,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import {
@@ -27,7 +28,7 @@ const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 export interface InterfacePropertyProps
   extends AccessModifiers,
     InterfacePropertyModifiers {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
 
   /** Property type */

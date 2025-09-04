@@ -1,3 +1,4 @@
+import { TestNamespace } from "#test/utils.jsx";
 import { Output } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
@@ -49,4 +50,16 @@ it("defines multiple namespaces and source files with unique content", () => {
       public class Model4;
     `,
   });
+});
+
+it("uses a name policy", () => {
+  expect(
+    <TestNamespace>
+      <Namespace name="my-namespace" />
+    </TestNamespace>,
+  ).toRenderTo(`
+    namespace MyNamespace {
+
+    }
+  `);
 });

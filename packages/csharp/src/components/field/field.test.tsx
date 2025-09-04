@@ -1,4 +1,4 @@
-import { List } from "@alloy-js/core";
+import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
@@ -26,6 +26,19 @@ it("declares multiple fields", () => {
     {
         public string MemberOne;
         public int MemberTwo;
+    }
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <Wrapper>
+      <Field name={namekey("my-field")} type="string" public />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        public string MyField;
     }
   `);
 });

@@ -118,13 +118,21 @@ export function createNamedTypeSymbol(
   );
 }
 
-export function createNamespaceSymbol(name: string) {
+export function createNamespaceSymbol(
+  name: string | Namekey,
+  options: CSharpSymbolOptions = {},
+) {
   const scope = useEnclosingNamespaceScope();
   const nsSymbol = scope?.ownerSymbol ?? getGlobalNamespace(useBinder());
-  if (nsSymbol.members.symbolNames.has(name)) {
-    return nsSymbol.members.symbolNames.get(name)! as NamespaceSymbol;
+  const namePolicy =
+    options.namePolicy ?? useCSharpNamePolicy().for("namespace");
+  const expectedName = namePolicy(typeof name === "string" ? name : name.name);
+  if (nsSymbol.members.symbolNames.has(expectedName)) {
+    return nsSymbol.members.symbolNames.get(expectedName)! as NamespaceSymbol;
   }
-  return withCleanup(new NamespaceSymbol(name, nsSymbol));
+  return withCleanup(
+    new NamespaceSymbol(name, nsSymbol, withNamePolicy(options, "namespace")),
+  );
 }
 
 export interface CreateMethodSymbolOptions extends CSharpSymbolOptions {

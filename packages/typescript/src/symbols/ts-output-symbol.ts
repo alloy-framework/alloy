@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
@@ -36,7 +37,7 @@ export class TSOutputSymbol extends OutputSymbol {
   ] as const;
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: CreateTsSymbolOptions = {},
   ) {

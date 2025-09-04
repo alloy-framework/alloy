@@ -35,7 +35,7 @@ export interface StructDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     StructModifiers {
-  name: string;
+  name: string | core.Namekey;
 
   /** Doc comment */
   doc?: core.Children;
@@ -98,10 +98,9 @@ export interface StructDeclarationProps
  * ```
  */
 export function StructDeclaration(props: StructDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "struct");
-
-  const thisStructSymbol = createNamedTypeSymbol(name, "struct", {
+  const thisStructSymbol = createNamedTypeSymbol(props.name, "struct", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("struct"),
   });
 
   const thisStructScope = createNamedTypeScope(thisStructSymbol);

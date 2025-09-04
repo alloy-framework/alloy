@@ -254,4 +254,11 @@ export abstract class OutputScope {
       () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
     );
   }
+
+  toString() {
+    const ownerSymbol = this.ownerSymbol ? ` for ${this.ownerSymbol}` : "";
+    return untrack(
+      () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
+    );
+  }
 }

@@ -10,5 +10,5 @@ export const EnumMember = core.stc(base.EnumMember);
 export const Parameter = core.stc(base.Parameter);
 export const Parameters = core.stc(base.Parameters);
 export const ProjectDirectory = core.stc(base.ProjectDirectory);
-export const UsingDirective = core.stc(base.UsingDirective);
+export const UsingDirective = core.stc(base.Usings);
 export const StructDeclaration = core.stc(base.StructDeclaration);

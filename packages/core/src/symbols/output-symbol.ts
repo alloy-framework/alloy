@@ -630,6 +630,10 @@ export abstract class OutputSymbol {
   }
 
   [inspect.custom]() {
+    return this.toString();
+  }
+
+  toString() {
     return untrack(() => `${this.constructor.name} "${this.name}"[${this.id}]`);
   }
 }

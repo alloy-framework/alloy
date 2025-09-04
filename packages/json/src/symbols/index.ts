@@ -1,9 +1,9 @@
 import {
-  getRefkeyString,
   memo,
   OutputScope,
   Refkey,
   resolve,
+  unresolvedRefkey,
 } from "@alloy-js/core";
 import { dirname, relative } from "pathe";
 import { useJsonFileContext } from "../context/JsonFileContext.js";
@@ -13,14 +13,14 @@ export * from "./json-symbol.js";
 export function ref(refkey: Refkey) {
   const sourceFile = useJsonFileContext();
   if (!sourceFile) {
-    return `<Unresolved Symbol: ${getRefkeyString(refkey)}>`;
+    return unresolvedRefkey(refkey);
   }
 
   const resolveResult = resolve<OutputScope, JsonOutputSymbol>(refkey);
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return `<Unresolved Symbol: ${getRefkeyString(refkey)}>`;
+      return unresolvedRefkey(refkey);
     }
     const {
       pathDown,

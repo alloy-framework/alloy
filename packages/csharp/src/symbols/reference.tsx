@@ -1,12 +1,5 @@
 import { AccessExpression } from "#components/access-expression/access-expression.jsx";
-import {
-  Children,
-  getRefkeyString,
-  memo,
-  OutputSymbol,
-  Refkey,
-  resolve,
-} from "@alloy-js/core";
+import { Children, memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -24,7 +17,7 @@ export function ref(
   const resolveResult = resolve<CSharpScope, CSharpSymbol>(refkey as Refkey);
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return [`<Unresolved Symbol: ${getRefkeyString(refkey)}>`, undefined];
+      return [`unresolvedRefkey(refkey)`, undefined];
     }
 
     const result = resolveResult.value;
@@ -33,7 +26,7 @@ export function ref(
 
     if (!commonScope) {
       // this shouldn't be possible in csharp.
-      return [`<Unresolved Symbol: ${getRefkeyString(refkey)}>`, undefined];
+      return [`unresolvedRefkey(refkey)`, undefined];
     }
 
     if (

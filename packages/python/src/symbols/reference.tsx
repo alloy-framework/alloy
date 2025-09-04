@@ -1,9 +1,9 @@
 import {
   Children,
-  getRefkeyString,
   memo,
   Refkey,
   resolve,
+  unresolvedRefkey,
   untrack,
   useContext,
 } from "@alloy-js/core";
@@ -25,7 +25,7 @@ export function ref(
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return [`<Unresolved Symbol: ${getRefkeyString(refkey)}>`, undefined];
+      return [unresolvedRefkey(refkey), undefined];
     }
 
     const { commonScope, lexicalDeclaration, symbol, pathDown, memberPath } =

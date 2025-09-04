@@ -410,10 +410,11 @@ it("handles conflicts with local declarations", () => {
         <ts.FunctionDeclaration export name="test" />
       </ts.SourceFile>
     </Output>,
+    // cspell:ignore stest2
   ).toRenderTo({
     "src/test1.ts": `
       export function test() {}
-      const v = <Unresolved Symbol>;
+      const v = <Unresolved Symbol: stest2>;
     `,
     "test2.ts": `
       import { test as test_1 } from "./src/test1.js";

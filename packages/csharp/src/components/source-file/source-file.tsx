@@ -1,6 +1,6 @@
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
 import { Reference } from "#components/Reference.jsx";
-import { UsingDirective } from "#components/UsingDirective.jsx";
+import { UsingDirective } from "#components/using/using-directive.jsx";
 import {
   Block,
   Children,

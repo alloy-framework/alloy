@@ -1,5 +1,5 @@
-import * as core from "@alloy-js/core";
-import { NamespaceSymbol } from "../symbols/namespace.js";
+import { computed, For } from "@alloy-js/core";
+import { NamespaceSymbol } from "../../symbols/namespace.js";
 
 export interface UsingDirectiveProps {
   /**
@@ -10,7 +10,7 @@ export interface UsingDirectiveProps {
 
 // one ore more C# using directives
 export function UsingDirective(props: UsingDirectiveProps) {
-  const sortedNamespaces = core.computed(() => {
+  const sortedNamespaces = computed(() => {
     return props
       .namespaces!.map((ns) =>
         typeof ns === "string" ? ns : (
@@ -21,8 +21,6 @@ export function UsingDirective(props: UsingDirectiveProps) {
   });
 
   return (
-    <core.For each={sortedNamespaces}>
-      {(namespace) => `using ${namespace};`}
-    </core.For>
+    <For each={sortedNamespaces}>{(namespace) => `using ${namespace};`}</For>
   );
 }

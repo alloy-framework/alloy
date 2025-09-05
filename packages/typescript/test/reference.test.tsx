@@ -11,7 +11,7 @@ it("using refkey that is missing declration show info about it", () => {
       <ts.SourceFile path="test1.ts">{key}</ts.SourceFile>
     </Output>,
     // cspell:ignore sfoo
-  ).toRenderTo(`<Unresolved Symbol: sfoo>`);
+  ).toRenderTo(`<Unresolved Symbol: refkey[sfoo]>`);
 });
 
 it("works with back references", () => {

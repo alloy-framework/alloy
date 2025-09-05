@@ -414,7 +414,7 @@ it("handles conflicts with local declarations", () => {
   ).toRenderTo({
     "src/test1.ts": `
       export function test() {}
-      const v = <Unresolved Symbol: stest2>;
+      const v = <Unresolved Symbol: refkey[stest2]>;
     `,
     "test2.ts": `
       import { test as test_1 } from "./src/test1.js";

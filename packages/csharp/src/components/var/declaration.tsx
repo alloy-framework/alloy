@@ -19,6 +19,9 @@ export interface VarDeclarationProps
   refkey?: Refkey;
   /** Variable value */
   children?: Children;
+
+  /** Constant variable. Add the const modifier. */
+  const?: boolean;
 }
 
 /**
@@ -46,8 +49,12 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const sym = createVariableSymbol(props.name, {
     refkeys: props.refkey,
   });
+  if (props.const && !props.type) {
+    throw new Error("Implicitly-typed variables cannot be constant");
+  }
   return (
     <Declaration symbol={sym}>
+      {props.const ? "const " : ""}
       {props.type ?? "var"} <Name /> = {props.children};
     </Declaration>
   );

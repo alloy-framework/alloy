@@ -1,4 +1,4 @@
-import { Namespace } from "#components/namespace.jsx";
+import { Namespace } from "#components/namespace/namespace.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
 import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";

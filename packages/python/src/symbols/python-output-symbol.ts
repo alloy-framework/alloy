@@ -1,4 +1,9 @@
-import { OutputSpace, OutputSymbol, OutputSymbolOptions } from "@alloy-js/core";
+import {
+  Namekey,
+  OutputSpace,
+  OutputSymbol,
+  OutputSymbolOptions,
+} from "@alloy-js/core";
 
 export interface PythonOutputSymbolOptions extends OutputSymbolOptions {
   module?: string;
@@ -16,7 +21,7 @@ export class PythonOutputSymbol extends OutputSymbol {
   static readonly memberSpaces = ["static", "instance"] as const;
 
   constructor(
-    name: string,
+    name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: PythonOutputSymbolOptions,
   ) {

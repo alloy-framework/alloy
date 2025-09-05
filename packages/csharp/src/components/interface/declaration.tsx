@@ -26,7 +26,7 @@ export interface InterfaceDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     InterfaceModifiers {
-  name: string;
+  name: string | core.Namekey;
 
   /** Doc comment */
   doc?: core.Children;
@@ -86,10 +86,9 @@ export interface InterfaceDeclarationProps
  * ```
  */
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "interface");
-
-  const symbol = createNamedTypeSymbol(name, "interface", {
+  const symbol = createNamedTypeSymbol(props.name!, "interface", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("interface"),
   });
 
   // this creates a new scope for the interface definition.

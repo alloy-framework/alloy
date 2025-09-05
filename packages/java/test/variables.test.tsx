@@ -1,4 +1,4 @@
-import { code, refkey } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -7,6 +7,26 @@ import { assertFileContents, testRender, toSourceText } from "./utils.js";
 it("works", () => {
   const res = toSourceText(
     <jv.Declaration name="Test">
+      {code`
+        class Test {
+          ${(<jv.Variable public static final type="String" name="myVar" value={<jv.Value value="Test" />} />)};
+        }
+      `}
+    </jv.Declaration>,
+  );
+
+  expect(res).toBe(d`
+    package me.test.code;
+    
+    class Test {
+      public static final String myVar = "Test";
+    }
+  `);
+});
+
+it("takes a namekey", () => {
+  const res = toSourceText(
+    <jv.Declaration name={namekey("Test")}>
       {code`
         class Test {
           ${(<jv.Variable public static final type="String" name="myVar" value={<jv.Value value="Test" />} />)};

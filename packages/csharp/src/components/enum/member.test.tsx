@@ -1,4 +1,5 @@
-import { toSourceText } from "#test/utils.jsx";
+import { TestNamespace, toSourceText } from "#test/utils.jsx";
+import { namekey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { EnumDeclaration } from "./declaration.jsx";
@@ -20,5 +21,25 @@ it("declares enum with members", () => {
         One,
         Two
     }
+  `);
+});
+
+it("takes a namekey", () => {
+  const memberKey = namekey("MyMember");
+  const tree = (
+    <TestNamespace>
+      <EnumDeclaration name="Foo">
+        <EnumMember name={memberKey} />
+      </EnumDeclaration>
+      <hbr />
+      {memberKey};
+    </TestNamespace>
+  );
+  expect(tree).toRenderTo(`
+    enum Foo
+    {
+        MyMember
+    }
+    Foo.MyMember;
   `);
 });

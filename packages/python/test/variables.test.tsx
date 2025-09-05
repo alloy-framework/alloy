@@ -1,4 +1,4 @@
-import { code, refkey } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -12,6 +12,17 @@ describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
+    ]);
+    expect(res).toBe(`my_var: int = 42`);
+  });
+
+  it("takes a namekey", () => {
+    const res = toSourceText([
+      <py.VariableDeclaration
+        name={namekey("my-var")}
+        type="int"
+        initializer={42}
+      />,
     ]);
     expect(res).toBe(`my_var: int = 42`);
   });

@@ -1,4 +1,4 @@
-import { List, Output, refkey, StatementList } from "@alloy-js/core";
+import { List, namekey, Output, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
@@ -24,6 +24,24 @@ it("creates extends", () => {
 
   expect(res).toEqual(d`
     class Foo extends string {}
+  `);
+});
+
+it("takes namekeys for all elements", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration name={namekey("foo")}>
+      <StatementList>
+        <ts.ClassField name={namekey("myField")} />
+        <ts.ClassMethod name={namekey("myMethod")} />
+      </StatementList>
+    </ts.ClassDeclaration>,
+  );
+
+  expect(res).toRenderTo(`
+    class foo {
+      myField;
+      myMethod() {};
+    }
   `);
 });
 

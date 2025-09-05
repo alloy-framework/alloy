@@ -1,5 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
+import { namekey } from "../../../../core/src/refkey.js";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
@@ -144,6 +145,18 @@ it("specify doc comment", () => {
   `);
 });
 
+it("takes a namekey", () => {
+  expect(
+    <Wrapper>
+      <InterfaceProperty name={namekey("my-property")} type="string" get />
+    </Wrapper>,
+  ).toRenderTo(`
+    public interface TestInterface
+    {
+        string MyProperty { get; }
+    }
+  `);
+});
 it("specify attributes", () => {
   expect(
     <Wrapper>

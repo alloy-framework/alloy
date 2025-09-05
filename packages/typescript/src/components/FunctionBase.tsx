@@ -216,15 +216,13 @@ function normalizeAndDeclareParameters(
           TSSymbolFlags.Nullish
         : TSSymbolFlags.None;
       const TypeSlot = createSymbolSlot();
-      const symbol = createValueSymbol(
-        namePolicy.getName(param.name, "parameter"),
-        {
-          refkeys: param.refkey,
-          tsFlags: flags | nullishFlag,
-          metadata: param.metadata,
-          type: TypeSlot.firstSymbol,
-        },
-      );
+      const symbol = createValueSymbol(param.name, {
+        refkeys: param.refkey,
+        tsFlags: flags | nullishFlag,
+        metadata: param.metadata,
+        type: TypeSlot.firstSymbol,
+        namePolicy: namePolicy.for("parameter"),
+      });
 
       return {
         ...param,

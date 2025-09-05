@@ -17,7 +17,7 @@ export function ref(
   const resolveResult = resolve<CSharpScope, CSharpSymbol>(refkey as Refkey);
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return ["<Unresolved Symbol>", undefined];
+      return [`unresolvedRefkey(refkey)`, undefined];
     }
 
     const result = resolveResult.value;
@@ -26,7 +26,7 @@ export function ref(
 
     if (!commonScope) {
       // this shouldn't be possible in csharp.
-      return ["<Unresolved Symbol>", undefined];
+      return [`unresolvedRefkey(refkey)`, undefined];
     }
 
     if (

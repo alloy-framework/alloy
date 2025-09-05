@@ -192,3 +192,16 @@ export function memberRefkey(
     [RefkeySym]: true,
   };
 }
+
+export function inspectRefkey(refkey: Refkey): string {
+  const text =
+    isMemberRefkey(refkey) ?
+      `memberRefkey[${inspectRefkey(refkey.base)} -> ${inspectRefkey(refkey.member)}]`
+    : `refkey[${refkey.key}]`;
+
+  return text;
+}
+
+export function unresolvedRefkey(refkey: Refkey): string {
+  return `<Unresolved Symbol: ${inspectRefkey(refkey)}>`;
+}

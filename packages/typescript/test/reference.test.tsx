@@ -4,6 +4,16 @@ import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 
+it("using refkey that is missing declration show info about it", () => {
+  const key = refkey("foo");
+  expect(
+    <Output>
+      <ts.SourceFile path="test1.ts">{key}</ts.SourceFile>
+    </Output>,
+    // cspell:ignore sfoo
+  ).toRenderTo(`<Unresolved Symbol: refkey[sfoo]>`);
+});
+
 it("works with back references", () => {
   expect(
     <Output>

@@ -6,6 +6,7 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
+import { useNamespaceContext } from "../contexts/namespace.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpClassScope } from "../scopes/class.js";
 import { useCSharpScope, useNamedTypeScope } from "../scopes/contexts.js";
@@ -13,10 +14,7 @@ import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpLexicalScope } from "../scopes/lexical.js";
 import { CSharpMethodScope } from "../scopes/method.js";
 import { CSharpNamedTypeScope } from "../scopes/named-type.js";
-import {
-  CSharpNamespaceScope,
-  useEnclosingNamespaceScope,
-} from "../scopes/namespace.js";
+import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { CSharpSourceFileScope } from "../scopes/source-file.js";
 import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 import { MethodKinds, MethodSymbol } from "./method.js";
@@ -122,9 +120,8 @@ export function createNamespaceSymbol(
   name: string | Namekey | (string | Namekey)[],
   options: CSharpSymbolOptions = {},
 ): NamespaceSymbol {
-  const scope = useEnclosingNamespaceScope();
-  const parentSymbol = scope?.ownerSymbol ?? getGlobalNamespace(useBinder());
-  console.log("Creating in ", parentSymbol.name);
+  const scope = useNamespaceContext();
+  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
   const names = Array.isArray(name) ? name : [name];
   let current = parentSymbol;
   for (const name of names) {

@@ -52,7 +52,7 @@ it("defines multiple namespaces and source files with unique content", () => {
   });
 });
 
-it.only("nest namespaces", () => {
+it("nest namespaces", () => {
   const tree = (
     <Output>
       <Namespace name={["Namespace1"]}>

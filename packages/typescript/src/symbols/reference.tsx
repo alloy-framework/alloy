@@ -5,6 +5,7 @@ import {
   memo,
   Refkey,
   resolve,
+  unresolvedRefkey,
   untrack,
   useContext,
 } from "@alloy-js/core";
@@ -20,6 +21,7 @@ import { TSPackageScope } from "./ts-package-scope.js";
 export interface RefOptions {
   type?: boolean;
 }
+
 export function ref(
   refkey: Refkey,
   options?: RefOptions,
@@ -32,7 +34,7 @@ export function ref(
 
   return memo(() => {
     if (resolveResult.value === undefined) {
-      return ["<Unresolved Symbol>", undefined];
+      return [unresolvedRefkey(refkey), undefined];
     }
 
     const { symbol, pathDown, memberPath, lexicalDeclaration, commonScope } =

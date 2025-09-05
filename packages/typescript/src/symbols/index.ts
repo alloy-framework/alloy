@@ -1,4 +1,4 @@
-import { OutputScopeOptions } from "@alloy-js/core";
+import { Namekey, OutputScopeOptions } from "@alloy-js/core";
 import { useLexicalScope, useMemberOwner } from "../utils.js";
 import { useTSScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
@@ -14,7 +14,7 @@ export * from "./ts-output-symbol.js";
 export * from "./ts-package-scope.js";
 
 export function createTypeAndValueSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const scope = useLexicalScope();
@@ -22,7 +22,10 @@ export function createTypeAndValueSymbol(
   return new TSOutputSymbol(name, spaces, options);
 }
 
-export function createTypeSymbol(name: string, options: CreateTsSymbolOptions) {
+export function createTypeSymbol(
+  name: string | Namekey,
+  options: CreateTsSymbolOptions,
+) {
   const scope = useLexicalScope();
   if (scope && !scope.types) {
     throw new Error(
@@ -34,7 +37,7 @@ export function createTypeSymbol(name: string, options: CreateTsSymbolOptions) {
 }
 
 export function createValueSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const scope = useLexicalScope();
@@ -54,7 +57,7 @@ export function createTransientValueSymbol() {
 }
 
 export function createStaticMemberSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
@@ -62,7 +65,7 @@ export function createStaticMemberSymbol(
 }
 
 export function createInstanceMemberSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
@@ -70,7 +73,7 @@ export function createInstanceMemberSymbol(
 }
 
 export function createPrivateStaticMemberSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
@@ -78,7 +81,7 @@ export function createPrivateStaticMemberSymbol(
 }
 
 export function createPrivateInstanceMemberSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
@@ -86,7 +89,7 @@ export function createPrivateInstanceMemberSymbol(
 }
 
 export function createMemberSymbol(
-  name: string,
+  name: string | Namekey,
   locationOptions: { jsPrivate?: boolean; static?: boolean },
   options: CreateTsSymbolOptions = {},
 ) {

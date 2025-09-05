@@ -1,10 +1,10 @@
-import { emitSymbol, Name, Show } from "@alloy-js/core";
+import { emitSymbol, Name, namekey, Show } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { PythonBlock } from "./PythonBlock.jsx";
-import { LexicalScope, NoNamePolicy } from "./index.js";
+import { LexicalScope } from "./index.js";
 
 export interface FunctionDeclarationProps
   extends BaseDeclarationProps,
@@ -91,13 +91,11 @@ export interface InitFunctionDeclarationProps
  */
 export function InitFunctionDeclaration(props: InitFunctionDeclarationProps) {
   return (
-    <NoNamePolicy>
-      <FunctionDeclaration
-        {...props}
-        name="__init__"
-        instanceFunction={true}
-        classFunction={false}
-      />
-    </NoNamePolicy>
+    <FunctionDeclaration
+      {...props}
+      name={namekey("__init__", { ignoreNamePolicy: true })}
+      instanceFunction={true}
+      classFunction={false}
+    />
   );
 }

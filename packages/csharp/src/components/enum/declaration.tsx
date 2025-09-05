@@ -3,6 +3,7 @@ import {
   Children,
   Declaration,
   MemberScope,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import {
@@ -17,7 +18,7 @@ import { Name } from "../Name.jsx";
 
 // properties for creating an enum
 export interface EnumDeclarationProps extends AccessModifiers {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey | Refkey[];
   children?: Children;
 }
@@ -43,9 +44,9 @@ export interface EnumDeclarationProps extends AccessModifiers {
  * ```
  */
 export function EnumDeclaration(props: EnumDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "enum");
-  const symbol = createNamedTypeSymbol(name, "enum", {
+  const symbol = createNamedTypeSymbol(props.name, "enum", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("enum"),
   });
   const scope = createNamedTypeScope(symbol);
 

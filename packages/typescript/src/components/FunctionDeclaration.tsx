@@ -9,7 +9,7 @@ import {
 } from "@alloy-js/core";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import {
   FunctionBody,
   FunctionParameters,
@@ -21,7 +21,7 @@ import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface FunctionDeclarationProps
-  extends BaseDeclarationProps,
+  extends CommonDeclarationProps,
     CallSignatureProps {
   async?: boolean;
   children?: Children;
@@ -77,7 +77,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       </Show>
       <Declaration {...props} nameKind="function">
         {asyncKwd}function <Name />
-        <LexicalScope name={props.name}>
+        <LexicalScope>
           <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
           {sBody}
         </LexicalScope>

@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -16,6 +16,18 @@ describe("Function Declaration", () => {
           pass
 
         
+    `);
+  });
+
+  it("takes a namekey", () => {
+    const result = toSourceText([
+      <py.FunctionDeclaration name={namekey("foo-bar")} />,
+    ]);
+    expect(result).toRenderTo(d`
+      def foo_bar():
+          pass
+
+
     `);
   });
 

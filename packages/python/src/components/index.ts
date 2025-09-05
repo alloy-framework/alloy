@@ -11,7 +11,6 @@ export * from "./ImportStatement.js";
 export * from "./LexicalScope.js";
 export * from "./MemberExpression.js";
 export * from "./MemberScope.jsx";
-export * from "./NoNamePolicy.js";
 export * from "./PyDoc.js";
 export * from "./PythonBlock.js";
 export * from "./Reference.js";

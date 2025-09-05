@@ -1,4 +1,4 @@
-import { Block } from "@alloy-js/core";
+import { Block, Namekey, Refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamespaceContext } from "../contexts/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -6,12 +6,15 @@ import { createNamespaceSymbol } from "../symbols/factories.js";
 import { NamespaceScope } from "./namespace-scopes.jsx";
 
 export interface NamespaceProps {
-  name: string;
+  name: string | Namekey;
+  refkey?: Refkey | Refkey[];
   children?: Children;
 }
 
 export function Namespace(props: NamespaceProps) {
-  const namespaceSymbol = createNamespaceSymbol(props.name);
+  const namespaceSymbol = createNamespaceSymbol(props.name, {
+    refkeys: props.refkey,
+  });
   const sfScope = useSourceFileScope();
 
   if (!sfScope) {

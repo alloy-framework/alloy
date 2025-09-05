@@ -1,16 +1,25 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
+import { JavaElements, useJavaNamePolicy } from "../name-policy.js";
 import { JavaOutputSymbol } from "../symbols/java-output-symbol.js";
 import { useLexicalScope } from "../utils.js";
 
-export interface DeclarationProps {
+export interface CommonDeclarationProps {
   // Name of declaration, should be fully qualified name, e.g me.example.code.Main
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   children?: Children;
+}
+
+export interface DeclarationProps extends CommonDeclarationProps {
+  /**
+   * The name policy kind to apply to the declaration.
+   */
+  nameKind?: JavaElements;
 }
 
 /**
@@ -25,6 +34,7 @@ export function Declaration(props: DeclarationProps) {
 
   const sym = new JavaOutputSymbol(props.name, scope.symbols, {
     refkeys: props.refkey,
+    namePolicy: useJavaNamePolicy().for(props.nameKind),
   });
   return <CoreDeclaration symbol={sym}>{props.children}</CoreDeclaration>;
 }

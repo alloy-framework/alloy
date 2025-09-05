@@ -1,4 +1,4 @@
-import { Children, code, refkey } from "@alloy-js/core";
+import { Children, code, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Property } from "../property/property.jsx";
@@ -16,6 +16,16 @@ it("declares record with no members", () => {
     </TestNamespace>,
   ).toRenderTo(`
       record TestRecord;
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <RecordDeclaration name={namekey("my-record")} />
+    </TestNamespace>,
+  ).toRenderTo(`
+      record MyRecord;
   `);
 });
 

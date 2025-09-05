@@ -1,5 +1,5 @@
 import { ClassDeclaration } from "#components/class/declaration.jsx";
-import { Namespace } from "#components/namespace.jsx";
+import { Namespace } from "#components/namespace/namespace.jsx";
 import { Children, FormatOptions, Indent, Output, Prose } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { CSharpFormatOptions } from "../../contexts/format-options.js";

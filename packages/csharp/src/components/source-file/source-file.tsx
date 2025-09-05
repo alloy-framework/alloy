@@ -1,4 +1,5 @@
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
+import { NamespaceName } from "#components/namespace/namespace-name.jsx";
 import { Reference } from "#components/Reference.jsx";
 import { Usings } from "#components/using/using.jsx";
 import {
@@ -42,7 +43,6 @@ export function SourceFile(props: SourceFileProps) {
   const nsContext = useNamespaceContext();
   const globalNs = getGlobalNamespace(useBinder());
   const nsSymbol = nsContext ? nsContext.symbol : globalNs;
-  const nsRef = nsContext ? nsContext.symbol.name : undefined;
   const usings = computed(() => {
     return (
       Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
@@ -78,7 +78,7 @@ export function SourceFile(props: SourceFileProps) {
         {nsSymbol === globalNs ?
           content
         : <>
-            namespace {nsRef}
+            namespace <NamespaceName symbol={nsSymbol} />
             {sourceFileScope.hasBlockNamespace ?
               <>
                 {" "}

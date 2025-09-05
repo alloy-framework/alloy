@@ -409,10 +409,8 @@ describe("with refkeys", () => {
     expect(toSourceText([template])).toBe(d`
       class Model1:
           foo: str
-
       class Model2:
           bar: str
-
       model1_instance: Model1 = Model1()
       model2_instance: Model2 = Model2()
       model1_instance.foo
@@ -458,11 +456,9 @@ describe("with refkeys", () => {
     expect(toSourceText([template])).toBe(d`
       class Model:
           bar: str
-
       def foo_function(foo: Model = None):
           message = foo.bar
           print(message)
-
     `);
   });
 
@@ -518,13 +514,10 @@ describe("with refkeys", () => {
     ).toBe(d`
        class Bar:
            prop1: str
-
        class Foo:
            test1: Bar = None
            def test_method() -> Bar:
                pass
-
-
        inst = Foo()
        inst.test1.prop1
        inst.test_method()

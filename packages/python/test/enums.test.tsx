@@ -28,8 +28,6 @@ describe("Python Enum", () => {
           RED = 1
           GREEN = 2
           BLUE = 3
-
-        
     `;
     expect(result).toRenderTo(expected);
   });
@@ -56,8 +54,6 @@ describe("Python Enum", () => {
           RED = "1"
           GREEN = 2
           BLUE = "3"
-
-
     `;
     expect(result).toRenderTo(expected);
   });
@@ -85,15 +81,11 @@ describe("Python Enum", () => {
 
       class Dog:
           pass
-
       class Cat:
           pass
-
       class Animal(Enum):
           DOG = Dog
           CAT = Cat
-
-
     `;
     expect(result).toRenderTo(expected);
   });
@@ -117,8 +109,6 @@ describe("Python Enum", () => {
           DOG = auto()
           CAT = auto()
           RABBIT = auto()
-
-
     `;
     expect(result).toRenderTo(expected);
   });
@@ -148,8 +138,6 @@ describe("Python Enum", () => {
           READ = 1
           WRITE = auto()
           EXECUTE = auto()
-
-
     `;
     expect(result).toRenderTo(expected);
   });

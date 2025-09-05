@@ -46,3 +46,34 @@ it("renders properly with newline and no children", () => {
     }
   `);
 });
+
+it("takes a custom closer and opener", () => {
+  const template = (
+    <>
+      <Block opener="[" closer="]">
+        Contents!!!
+      </Block>
+      following content
+    </>
+  );
+  expect(template).toRenderTo(`
+    [
+      Contents!!!
+    ]following content
+  `);
+});
+
+it("takes a false closer", () => {
+  const template = (
+    <>
+      <Block opener="(" closer={false}>
+        Contents!!!
+      </Block>
+      following content
+    </>
+  );
+  expect(template).toRenderTo(`
+    (
+      Contents!!!following content
+  `);
+});

@@ -10,9 +10,10 @@ export interface BlockProps {
   opener?: string;
 
   /**
-   * The closing punctuation of the block. Defaults to "\}".
+   * The closing punctuation of the block. Defaults to "\}". When passed `false`,
+   * no closing punctuation will be added and there will be no trailing newline.
    */
-  closer?: string;
+  closer?: string | boolean;
 
   /**
    * Whether the block starts on a new line. When true, a hardline is added
@@ -41,7 +42,7 @@ export function Block(props: BlockProps) {
       <Indent
         line={props.inline && childCount.value > 0}
         softline={childCount.value === 0}
-        trailingBreak
+        trailingBreak={props.closer !== false}
       >
         {props.children}
       </Indent>

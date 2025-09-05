@@ -1,7 +1,7 @@
 import { List, memberRefkey, namekey, Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { ClassDeclaration } from "./class/declaration.jsx";
-import { Namespace } from "./namespace.jsx";
+import { Namespace } from "./namespace/namespace.jsx";
 import { SourceFile } from "./source-file/source-file.jsx";
 
 it("references types in the same namespace", () => {

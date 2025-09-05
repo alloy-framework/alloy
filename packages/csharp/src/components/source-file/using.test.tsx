@@ -2,7 +2,7 @@ import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { EnumDeclaration } from "#components/enum/declaration.jsx";
 import { EnumMember } from "#components/enum/member.jsx";
 import { Method } from "#components/method/method.jsx";
-import { Namespace } from "#components/namespace.jsx";
+import { Namespace } from "#components/namespace/namespace.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
 import { Output, refkey } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";

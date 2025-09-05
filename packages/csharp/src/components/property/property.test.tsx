@@ -207,3 +207,28 @@ it("specify attributes", () => {
     }
   `);
 });
+
+describe("format", () => {
+  it("split after = if initializer too long", () => {
+    expect(
+      <TestNamespace printWidth={60}>
+        <ClassDeclaration name="Test">
+          <Property
+            public
+            get
+            set
+            name="ThisIsAVeryLongPropertyName"
+            type="string"
+            initializer={`"Some very long initializer value"`}
+          />
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public string ThisIsAVeryLongPropertyName { get; set; } =
+              "Some very long initializer value";
+      }
+  `);
+  });
+});

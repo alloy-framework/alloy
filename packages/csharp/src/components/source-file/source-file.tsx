@@ -42,7 +42,6 @@ export function SourceFile(props: SourceFileProps) {
   const nsContext = useNamespaceContext();
   const globalNs = getGlobalNamespace(useBinder());
   const nsSymbol = nsContext ? nsContext.symbol : globalNs;
-  const nsRef = nsContext ? nsContext.symbol.name : undefined;
   const usings = computed(() => {
     return (
       Array.from(sourceFileScope.usings) as (NamespaceSymbol | string)[]
@@ -78,7 +77,7 @@ export function SourceFile(props: SourceFileProps) {
         {nsSymbol === globalNs ?
           content
         : <>
-            namespace {nsRef}
+            namespace <NamespaceName symbol={nsSymbol} />
             {sourceFileScope.hasBlockNamespace ?
               <>
                 {" "}
@@ -95,4 +94,23 @@ export function SourceFile(props: SourceFileProps) {
       </Scope>
     </CoreSourceFile>
   );
+}
+
+interface NamespaceNameProps {
+  symbol: NamespaceSymbol;
+}
+
+function NamespaceName(props: NamespaceNameProps) {
+  const names = [props.symbol.name];
+
+  let current = props.symbol.ownerSymbol;
+  while (current) {
+    if (!(current instanceof NamespaceSymbol) || current.isGlobal) {
+      break;
+    }
+    names.unshift(current.name);
+    current = current.ownerSymbol;
+  }
+
+  return names.join(".");
 }

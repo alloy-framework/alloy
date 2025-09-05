@@ -6,7 +6,7 @@ import { createNamespaceSymbol } from "../symbols/factories.js";
 import { NamespaceScope } from "./namespace-scopes.jsx";
 
 export interface NamespaceProps {
-  name: string | Namekey;
+  name: string | Namekey | (string | Namekey)[];
   refkey?: Refkey | Refkey[];
   children?: Children;
 }

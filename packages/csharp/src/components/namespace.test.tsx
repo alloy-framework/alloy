@@ -52,6 +52,48 @@ it("defines multiple namespaces and source files with unique content", () => {
   });
 });
 
+it.only("nest namespaces", () => {
+  const tree = (
+    <Output>
+      <Namespace name={["Namespace1"]}>
+        <Namespace name={["Namespace2"]}>
+          <SourceFile path="Model1.cs">
+            <ClassDeclaration public name="Model1" />
+          </SourceFile>
+        </Namespace>
+      </Namespace>
+    </Output>
+  );
+
+  expect(tree).toRenderTo({
+    "Model1.cs": d`
+      namespace Namespace1.Namespace2;
+
+      public class Model1;
+    `,
+  });
+});
+
+it("define nested namespace directly", () => {
+  const tree = (
+    <Output>
+      <Namespace name={["Namespace1", "Namespace2"]}>
+        <SourceFile path="Model1.cs">
+          <ClassDeclaration public name="Model1" />
+        </SourceFile>
+      </Namespace>
+    </Output>
+  );
+
+  expect(tree).toRenderTo({
+    "Model1.cs": d`
+      namespace Namespace1.Namespace2;
+
+      public class Model1;
+    `,
+  });
+});
+
 it("uses a name policy", () => {
   expect(
     <TestNamespace>

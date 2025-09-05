@@ -119,19 +119,39 @@ export function createNamedTypeSymbol(
 }
 
 export function createNamespaceSymbol(
-  name: string | Namekey,
+  name: string | Namekey | (string | Namekey)[],
   options: CSharpSymbolOptions = {},
-) {
+): NamespaceSymbol {
   const scope = useEnclosingNamespaceScope();
-  const nsSymbol = scope?.ownerSymbol ?? getGlobalNamespace(useBinder());
+  const parentSymbol = scope?.ownerSymbol ?? getGlobalNamespace(useBinder());
+  console.log("Creating in ", parentSymbol.name);
+  const names = Array.isArray(name) ? name : [name];
+  let current = parentSymbol;
+  for (const name of names) {
+    current = createNamespaceSymbolInternal(name, current, options);
+  }
+  return current;
+}
+
+function createNamespaceSymbolInternal(
+  name: string | Namekey,
+  parentSymbol: NamespaceSymbol,
+  options: CSharpSymbolOptions = {},
+): NamespaceSymbol {
   const namePolicy =
     options.namePolicy ?? useCSharpNamePolicy().for("namespace");
   const expectedName = namePolicy(typeof name === "string" ? name : name.name);
-  if (nsSymbol.members.symbolNames.has(expectedName)) {
-    return nsSymbol.members.symbolNames.get(expectedName)! as NamespaceSymbol;
+  if (parentSymbol.members.symbolNames.has(expectedName)) {
+    return parentSymbol.members.symbolNames.get(
+      expectedName,
+    )! as NamespaceSymbol;
   }
   return withCleanup(
-    new NamespaceSymbol(name, nsSymbol, withNamePolicy(options, "namespace")),
+    new NamespaceSymbol(
+      name,
+      parentSymbol,
+      withNamePolicy(options, "namespace"),
+    ),
   );
 }
 

@@ -1,7 +1,5 @@
 import {
-  Block,
   Children,
-  code,
   createSymbolSlot,
   List,
   MemberDeclaration,
@@ -142,15 +140,28 @@ export function Property(props: PropertyProps) {
       <AttributeList attributes={props.attributes} endline />
       {modifiers}
       <TypeSlot>{props.type}</TypeSlot>
-      {props.nullable && "?"} <MemberName />{" "}
-      <Block newline inline>
-        <List joiner=" ">
-          {props.get && "get;"}
-          {props.set && "set;"}
-          {props.init && "init;"}
-        </List>
-      </Block>
-      {props.initializer && code` = ${props.initializer};`}
+      {props.nullable && "?"} <MemberName /> {"{ "}
+      <List joiner=" ">
+        {props.get && "get;"}
+        {props.set && "set;"}
+        {props.init && "init;"}
+      </List>
+      {" }"}
+      {props.initializer && (
+        <PropertyInitializer>{props.initializer}</PropertyInitializer>
+      )}
     </MemberDeclaration>
+  );
+}
+
+function PropertyInitializer(props: { children: Children }) {
+  return (
+    <group>
+      {" ="}
+      <indent>
+        <line />
+        {props.children};
+      </indent>
+    </group>
   );
 }

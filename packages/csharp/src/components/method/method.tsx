@@ -154,9 +154,12 @@ export function Method(props: MethodProps) {
 
 const ExpressionBody = (props: { children?: Children }) => {
   return (
-    <>
-      {" => "}
-      {props.children};
-    </>
+    <group>
+      {" =>"}
+      <indent>
+        <line />
+        {props.children};
+      </indent>
+    </group>
   );
 };

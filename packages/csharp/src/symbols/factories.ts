@@ -122,12 +122,24 @@ export function createNamespaceSymbol(
 ): NamespaceSymbol {
   const scope = useNamespaceContext();
   const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
-  const names = Array.isArray(name) ? name : [name];
+  const names = normalizeNamespaceName(name);
   let current = parentSymbol;
   for (const name of names) {
     current = createNamespaceSymbolInternal(name, current, options);
   }
   return current;
+}
+
+function normalizeNamespaceName(
+  name: string | Namekey | (string | Namekey)[],
+): (string | Namekey)[] {
+  if (Array.isArray(name)) {
+    return name;
+  }
+  if (typeof name === "string" && name.includes(".")) {
+    return name.split(".");
+  }
+  return [name];
 }
 
 function createNamespaceSymbolInternal(

@@ -2,9 +2,9 @@ import { TestNamespace } from "#test/utils.jsx";
 import { Output } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { ClassDeclaration } from "./class/declaration.jsx";
+import { ClassDeclaration } from "../class/declaration.jsx";
+import { SourceFile } from "../source-file/source-file.jsx";
 import { Namespace } from "./namespace.jsx";
-import { SourceFile } from "./source-file/source-file.jsx";
 
 it("defines multiple namespaces and source files with unique content", () => {
   const tree = (
@@ -65,19 +65,35 @@ it("nest namespaces", () => {
     </Output>
   );
 
-  expect(tree).toRenderTo({
-    "Model1.cs": d`
-      namespace Namespace1.Namespace2;
+  expect(tree).toRenderTo(`
+    namespace Namespace1.Namespace2;
 
-      public class Model1;
-    `,
-  });
+    public class Model1;
+  `);
 });
 
-it("define nested namespace directly", () => {
+it("define nested namespace directly with array", () => {
   const tree = (
     <Output>
       <Namespace name={["Namespace1", "Namespace2"]}>
+        <SourceFile path="Model1.cs">
+          <ClassDeclaration public name="Model1" />
+        </SourceFile>
+      </Namespace>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(`
+    namespace Namespace1.Namespace2;
+
+    public class Model1;
+  `);
+});
+
+it("define nested namespace directly as dotted notation", () => {
+  const tree = (
+    <Output>
+      <Namespace name="Namespace1.Namespace2">
         <SourceFile path="Model1.cs">
           <ClassDeclaration public name="Model1" />
         </SourceFile>
@@ -102,6 +118,28 @@ it("uses a name policy", () => {
   ).toRenderTo(`
     namespace MyNamespace {
 
+    }
+  `);
+});
+
+it("define nested namespace in sourcefile", () => {
+  const tree = (
+    <Output>
+      <Namespace name="Base">
+        <SourceFile path="Model1.cs">
+          <Namespace name="Namespace1.Namespace2">
+            <ClassDeclaration public name="Model1" />
+          </Namespace>
+        </SourceFile>
+      </Namespace>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(`
+    namespace Base {
+        namespace Namespace1.Namespace2 {
+            public class Model1;
+        }
     }
   `);
 });

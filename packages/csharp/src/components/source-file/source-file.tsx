@@ -1,4 +1,5 @@
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
+import { NamespaceName } from "#components/namespace/namespace-name.jsx";
 import { Reference } from "#components/Reference.jsx";
 import { Usings } from "#components/using/using.jsx";
 import {
@@ -94,23 +95,4 @@ export function SourceFile(props: SourceFileProps) {
       </Scope>
     </CoreSourceFile>
   );
-}
-
-interface NamespaceNameProps {
-  symbol: NamespaceSymbol;
-}
-
-function NamespaceName(props: NamespaceNameProps) {
-  const names = [props.symbol.name];
-
-  let current = props.symbol.ownerSymbol;
-  while (current) {
-    if (!(current instanceof NamespaceSymbol) || current.isGlobal) {
-      break;
-    }
-    names.unshift(current.name);
-    current = current.ownerSymbol;
-  }
-
-  return names.join(".");
 }

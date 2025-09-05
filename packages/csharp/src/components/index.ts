@@ -15,7 +15,7 @@ export * from "./lexical-scope.jsx";
 export * from "./method-scope.jsx";
 export * from "./method/method.jsx";
 export * from "./Name.js";
-export { Namespace, type NamespaceProps } from "./namespace.js";
+export { Namespace, type NamespaceProps } from "./namespace/namespace.jsx";
 export * from "./parameters/parameters.jsx";
 export * from "./ProjectDirectory.js";
 export * from "./property/property.jsx";

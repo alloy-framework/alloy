@@ -1,50 +1,40 @@
 import {
   Children,
   code,
+  createSymbolSlot,
   Declaration,
   For,
   Indent,
-  OutputSymbol,
-  refkey,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { useCSharpScope } from "../../symbols/scopes.js";
+import { createParameterSymbol } from "../../symbols/factories.js";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
-  name: string;
+  name: string | Namekey;
   type: Children;
   /** If the parmaeter is optional(without default value) */
   optional?: boolean;
   /** Default value for the parameter */
   default?: Children;
+
   refkey?: Refkey;
-  symbol?: OutputSymbol;
 }
 
 /** Define a parameter to be used in class or interface method. */
 export function Parameter(props: ParameterProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "parameter");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "constructor-decl" && scope.name !== "method-decl")
-  ) {
-    throw new Error(
-      "can't define a parameter outside of a constructor-decl or method-decl scope",
-    );
-  }
+  const TypeSlot = createSymbolSlot();
 
-  const memberSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
+  const memberSymbol = createParameterSymbol(props.name, {
+    refkeys: props.refkey,
+    type: TypeSlot.firstSymbol,
+    isNullable: props.optional,
   });
 
   return (
     <Declaration symbol={memberSymbol}>
-      {props.type}
+      <TypeSlot>{props.type}</TypeSlot>
       {props.optional ? "?" : ""} <Name />
       {props.default ? code` = ${props.default}` : ""}
     </Declaration>
@@ -61,9 +51,14 @@ export function Parameters(props: ParametersProps) {
     <group>
       {"("}
       {props.parameters && (
-        <Indent softline>
+        <Indent nobreak>
           <For each={props.parameters} joiner={", "}>
-            {(param) => <Parameter {...param} />}
+            {(param) => (
+              <>
+                <softline />
+                <Parameter {...param} />
+              </>
+            )}
           </For>
         </Indent>
       )}

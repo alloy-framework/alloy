@@ -1,4 +1,5 @@
 import {
+  namekey,
   NamePolicyContext,
   Props,
   refkey,
@@ -296,6 +297,34 @@ it("accepts type parameters children", () => {
       member3: V;
       member4: W;
     }
+  `);
+});
+
+it("takes namekeys for all its elements", () => {
+  const ifaceKey = namekey("Foo");
+  const TKey = namekey("T");
+  const memberKey = namekey("member");
+
+  const res = toSourceText(
+    <>
+      <ts.InterfaceDeclaration
+        name={ifaceKey}
+        typeParameters={[{ name: TKey }]}
+      >
+        <ts.InterfaceMember name={memberKey} type={TKey} />;
+      </ts.InterfaceDeclaration>
+      <hbr />
+      {ifaceKey};<hbr />
+      {memberKey};
+    </>,
+  );
+
+  expect(res).toRenderTo(`
+    interface Foo<T> {
+      member: T;
+    }
+    Foo;
+    Foo["member"];
   `);
 });
 

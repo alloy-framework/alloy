@@ -33,6 +33,7 @@ export * from "./reactive-union-set.js";
 export * from "./reactivity.js";
 export * from "./refkey.js";
 export * from "./render.js";
+export * from "./resource.js";
 export * from "./runtime/component.js";
 export * from "./runtime/intrinsic.js";
 export * from "./stc.js";

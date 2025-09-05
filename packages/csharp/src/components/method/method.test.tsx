@@ -23,7 +23,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public class TestClass
         {
-          ${accessModifier} void MethodOne() {}
+            ${accessModifier} void MethodOne() {}
         }
       `);
       },
@@ -41,7 +41,7 @@ describe("modifiers", () => {
         ).toRenderTo(`
         public class TestClass
         {
-          ${methodModifier} void MethodOne() {}
+            ${methodModifier} void MethodOne() {}
         }
       `);
       },
@@ -55,7 +55,7 @@ describe("modifiers", () => {
       ).toRenderTo(`
         public class TestClass
         {
-          abstract void MethodOne();
+            abstract void MethodOne();
         }
       `);
     });
@@ -69,7 +69,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public class TestClass
         {
-          async Task MethodOne() {}
+            async Task MethodOne() {}
         }
       `);
   });
@@ -82,7 +82,7 @@ describe("modifiers", () => {
     ).toRenderTo(`
         public class TestClass
         {
-          public abstract async Task MethodOne();
+            public abstract async Task MethodOne();
         }
       `);
   });
@@ -96,7 +96,7 @@ it("applies PascalCase naming policy", () => {
   ).toRenderTo(`
     public class TestClass
     {
-      void MethodOne() {}
+        void MethodOne() {}
     }
 `);
 });
@@ -120,7 +120,7 @@ it("defines params and return type", () => {
   expect(res).toRenderTo(`
     public class TestClass
     {
-      public string MethodOne(int intParam, string stringParam) {}
+        public string MethodOne(int intParam, string stringParam) {}
     }
   `);
 });
@@ -135,8 +135,8 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     class Test
     {
-      /// This is a test
-      void Method() {}
+        /// This is a test
+        void Method() {}
     }
   `);
 });
@@ -153,8 +153,57 @@ it("use expression body form", () => {
   ).toRenderTo(`
     class Test
     {
-      /// This is a test
-      void Method() => this.MyProperty.Value;
+        /// This is a test
+        void Method() => this.MyProperty.Value;
     }
   `);
+});
+
+describe("format", () => {
+  it("split expression after => if too long", () => {
+    expect(
+      <TestNamespace printWidth={60}>
+        <ClassDeclaration name="Test">
+          <Method public override name="ThisIsAVeryLongMethodName" expression>
+            this.WithAVeryLongPropertyName.AndAnEvenLongerMemberName
+          </Method>
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public override void ThisIsAVeryLongMethodName() =>
+              this.WithAVeryLongPropertyName.AndAnEvenLongerMemberName;
+      }
+  `);
+  });
+
+  it("split parameters first if too long", () => {
+    expect(
+      <TestNamespace printWidth={60}>
+        <ClassDeclaration name="Test">
+          <Method
+            public
+            override
+            name="ThisIsAVeryLongMethodName"
+            expression
+            parameters={[
+              { name: "firstParameter", type: "int" },
+              { name: "secondParameter", type: "string" },
+            ]}
+          >
+            this.Short
+          </Method>
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public override void ThisIsAVeryLongMethodName(
+              int firstParameter,
+              string secondParameter
+          ) => this.Short;
+      }
+  `);
+  });
 });

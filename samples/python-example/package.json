@@ -1,0 +1,44 @@
+{
+  "name": "python-example",
+  "version": "1.0.0",
+  "author": "",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/python": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@typespec/compiler": "^1.0.0",
+    "@typespec/http": "^1.0.1"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@types/node": "catalog:",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "alloy build",
+    "clean": "rimraf dist/ .temp/ alloy-output/",
+    "test": "vitest run",
+    "test:watch": "vitest -w",
+    "watch": "alloy build --watch"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    },
+    "./stc": {
+      "import": "./dist/src/stc.js",
+      "types": "./dist/src/stc.d.ts"
+    }
+  }
+}

@@ -9,7 +9,10 @@ export interface FunctionOptionsProps {
 export function FunctionOptions(props: FunctionOptionsProps) {
   const lastParam = props.fn.parameters.at(-1);
   if (!lastParam || lastParam.name !== "options") return "";
-
+  if (!lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference) {
+    // we couldn't find a reference, so probably the type is more complex than a simple type reference.
+    return "";
+  }
   const optionsType = resolveCodeDestination(
     lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference!,
     undefined,

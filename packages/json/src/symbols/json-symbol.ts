@@ -1,4 +1,5 @@
 import {
+  OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
   track,
@@ -21,6 +22,8 @@ export enum JsonSymbolFlags {
  * `StaticMember` flag.
  */
 export class JsonOutputSymbol extends OutputSymbol {
+  static readonly memberSpaces = ["static"] as const;
+
   #jsonFlags: JsonSymbolFlags;
   get jsonFlags(): JsonSymbolFlags {
     track(this, TrackOpTypes.GET, "jsonFlags");
@@ -37,10 +40,28 @@ export class JsonOutputSymbol extends OutputSymbol {
     trigger(this, TriggerOpTypes.SET, "jsonFlags", value, old);
   }
 
-  constructor(name: string, options: CreateJsonSymbolOptions = {}) {
-    super(name, options);
+  constructor(
+    name: string,
+    spaces: OutputSpace[] | OutputSpace | undefined,
+    options: CreateJsonSymbolOptions = {},
+  ) {
+    super(name, spaces, options);
 
     this.#jsonFlags = options.jsonFlags ?? JsonSymbolFlags.None;
+  }
+
+  copy() {
+    const options = this.getCopyOptions();
+    const copy = new JsonOutputSymbol(this.name, undefined, {
+      ...options,
+      jsonFlags: this.#jsonFlags,
+    });
+    this.initializeCopy(copy);
+    return copy;
+  }
+
+  get staticMembers() {
+    return this.memberSpaceFor("static")!;
   }
 }
 

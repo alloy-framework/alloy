@@ -1,12 +1,11 @@
 import {
-  Block,
   Children,
-  code,
+  createSymbolSlot,
   List,
   MemberDeclaration,
-  refkey,
+  MemberName,
+  Namekey,
   Refkey,
-  Scope,
 } from "@alloy-js/core";
 import {
   AccessModifiers,
@@ -14,9 +13,7 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { createPropertySymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
@@ -51,7 +48,7 @@ const getModifiers = makeModifiers<PropertyModifiers>([
 
 /** Properties for {@link Property} component */
 export interface PropertyProps extends AccessModifiers, PropertyModifiers {
-  name: string;
+  name: Namekey | string;
   refkey?: Refkey;
 
   /** Property type */
@@ -118,27 +115,12 @@ export interface PropertyProps extends AccessModifiers, PropertyModifiers {
  * ```
  */
 export function Property(props: PropertyProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useCSharpScope();
-  if (
-    scope.kind !== "member" ||
-    (scope.name !== "class-decl" &&
-      scope.name !== "record-decl" &&
-      scope.name !== "struct-decl")
-  ) {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
+  const TypeSlot = createSymbolSlot();
 
-  const propertySymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for property declaration
-  const propertyScope = new CSharpMemberScope("property-decl", {
-    owner: propertySymbol,
+  const propertySymbol = createPropertySymbol(props.name, {
+    refkeys: props.refkey,
+    isNullable: props.nullable,
+    type: TypeSlot.firstSymbol,
   });
 
   const modifiers = computeModifiersPrefix([
@@ -154,21 +136,32 @@ export function Property(props: PropertyProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={propertySymbol}>
-      <Scope value={propertyScope}>
-        <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} endline />
-        {modifiers}
-        {props.type}
-        {props.nullable && "?"} {name}{" "}
-        <Block newline inline>
-          <List joiner=" ">
-            {props.get && "get;"}
-            {props.set && "set;"}
-            {props.init && "init;"}
-          </List>
-        </Block>
-        {props.initializer && code` = ${props.initializer};`}
-      </Scope>
+      <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
+      {modifiers}
+      <TypeSlot>{props.type}</TypeSlot>
+      {props.nullable && "?"} <MemberName /> {"{ "}
+      <List joiner=" ">
+        {props.get && "get;"}
+        {props.set && "set;"}
+        {props.init && "init;"}
+      </List>
+      {" }"}
+      {props.initializer && (
+        <PropertyInitializer>{props.initializer}</PropertyInitializer>
+      )}
     </MemberDeclaration>
+  );
+}
+
+function PropertyInitializer(props: { children: Children }) {
+  return (
+    <group>
+      {" ="}
+      <indent>
+        <line />
+        {props.children};
+      </indent>
+    </group>
   );
 }

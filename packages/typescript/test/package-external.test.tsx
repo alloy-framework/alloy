@@ -1,11 +1,9 @@
-import { Output, refkey, render } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { findFile } from "./utils.js";
 
 it("imports external packages", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.PackageDirectory
         name="greeting-lib"
@@ -41,52 +39,51 @@ it("imports external packages", () => {
         </ts.SourceFile>
       </ts.PackageDirectory>
     </Output>,
-  );
-
-  const consumerPkgJson = findFile(res, "consumer/package.json")!;
-  const greetingPkgJson = findFile(res, "greeting-lib/package.json")!;
-  const refFile = findFile(res, "consumer/ref.ts")!;
-
-  expect(consumerPkgJson.contents).toEqual(d`
-    {
-      "name": "consumer",
-      "version": "1.0.0",
-      "type": "module",
-      "dependencies": {
-        "greeting-lib": "1.0.0"
-      },
-      "devDependencies": {
-        "typescript": "^5.5.2"
-      },
-      "exports": {
-        ".": "./dist/ref.js"
+  ).toRenderTo({
+    "consumer/package.json": `
+      {
+        "name": "consumer",
+        "version": "1.0.0",
+        "type": "module",
+        "dependencies": {
+          "greeting-lib": "1.0.0"
+        },
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "exports": {
+          ".": "./dist/ref.js"
+        }
       }
-    }
-  `);
-
-  expect(greetingPkgJson.contents).toEqual(d`
-    {
-      "name": "greeting-lib",
-      "version": "1.0.0",
-      "type": "module",
-      "devDependencies": {
-        "typescript": "^5.5.2"
-      },
-      "exports": {
-        ".": "./dist/index.js"
+    `,
+    "consumer/tsconfig.json": expect.anything(),
+    "greeting-lib/package.json": `
+      {
+        "name": "greeting-lib",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "exports": {
+          ".": "./dist/index.js"
+        }
       }
-    }
-  `);
-
-  expect(refFile.contents).toEqual(d`
-    import { getGreeting } from "greeting-lib";
-    
-    getGreeting();
-  `);
+    `,
+    "greeting-lib/tsconfig.json": expect.anything(),
+    "greeting-lib/index.ts": expect.anything(),
+    "greeting-lib/greetings.ts": expect.anything(),
+    "greeting-lib/logGreetings.ts": expect.anything(),
+    "consumer/ref.ts": `
+      import { getGreeting } from "greeting-lib";
+      
+      getGreeting();
+    `,
+  });
 });
 
 it("combines explicit dependencies with referenced dependencies", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.PackageDirectory
         name="greeting-lib"
@@ -129,31 +126,26 @@ it("combines explicit dependencies with referenced dependencies", () => {
         </ts.SourceFile>
       </ts.PackageDirectory>
     </Output>,
-  );
-
-  const consumerPkgJson = findFile(res, "consumer/package.json")!;
-  const greetingPkgJson = findFile(res, "greeting-lib/package.json")!;
-  const refFile = findFile(res, "consumer/ref.ts")!;
-
-  expect(consumerPkgJson.contents).toEqual(d`
-    {
-      "name": "consumer",
-      "version": "1.0.0",
-      "type": "module",
-      "dependencies": {
-        "foo": "bar",
-        "greeting-lib": "1.0.0"
-      },
-      "devDependencies": {
-        "typescript": "^5.5.2"
-      },
-      "exports": {
-        ".": "./dist/ref.js"
+  ).toRenderTo({
+    "consumer/package.json": `
+      {
+        "name": "consumer",
+        "version": "1.0.0",
+        "type": "module",
+        "dependencies": {
+          "foo": "bar",
+          "greeting-lib": "1.0.0"
+        },
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "exports": {
+          ".": "./dist/ref.js"
+        }
       }
-    }
-  `);
-
-  expect(greetingPkgJson.contents).toEqual(d`
+    `,
+    "consumer/tsconfig.json": expect.anything(),
+    "greeting-lib/package.json": `
     {
       "name": "greeting-lib",
       "version": "1.0.0",
@@ -165,11 +157,15 @@ it("combines explicit dependencies with referenced dependencies", () => {
         ".": "./dist/index.js"
       }
     }
-  `);
-
-  expect(refFile.contents).toEqual(d`
+    `,
+    "greeting-lib/tsconfig.json": expect.anything(),
+    "greeting-lib/index.ts": expect.anything(),
+    "greeting-lib/greetings.ts": expect.anything(),
+    "greeting-lib/logGreetings.ts": expect.anything(),
+    "consumer/ref.ts": `
     import { getGreeting } from "greeting-lib";
     
     getGreeting();
-  `);
+  `,
+  });
 });

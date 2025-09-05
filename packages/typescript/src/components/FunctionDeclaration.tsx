@@ -4,13 +4,12 @@ import {
   findUnkeyedChildren,
   Name,
   Prose,
-  Scope,
   Show,
   type Children,
 } from "@alloy-js/core";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import {
   FunctionBody,
   FunctionParameters,
@@ -19,9 +18,10 @@ import {
 } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface FunctionDeclarationProps
-  extends BaseDeclarationProps,
+  extends CommonDeclarationProps,
     CallSignatureProps {
   async?: boolean;
   children?: Children;
@@ -77,10 +77,10 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       </Show>
       <Declaration {...props} nameKind="function">
         {asyncKwd}function <Name />
-        <Scope name={props.name} kind="function">
+        <LexicalScope>
           <CallSignature {...callSignatureProps} returnType={returnType} />{" "}
           {sBody}
-        </Scope>
+        </LexicalScope>
       </Declaration>
     </>
   );

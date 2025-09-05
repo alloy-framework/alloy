@@ -3,12 +3,15 @@ import * as coretest from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as csharp from "../src/index.js";
 
-export function TestNamespace(props: {
+export interface TestNamespaceProps extends csharp.CSharpFormatOptions {
   children: core.Children;
-}): core.Children {
+}
+export function TestNamespace(props: TestNamespaceProps): core.Children {
   return (
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.Namespace name="TestCode">{props.children}</csharp.Namespace>
+      <csharp.SourceFile path="Test.cs" {...props}>
+        {props.children}
+      </csharp.SourceFile>
     </core.Output>
   );
 }
@@ -19,6 +22,7 @@ export function toSourceText(c: core.Children): string {
         <csharp.SourceFile path="Test.cs">{c}</csharp.SourceFile>
       </csharp.Namespace>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const file = findFile(res, "Test.cs");

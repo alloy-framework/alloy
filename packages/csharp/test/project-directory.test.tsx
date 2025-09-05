@@ -22,6 +22,7 @@ it("defines a project directory file with multiple source files", () => {
         </csharp.Namespace>
       </csharp.ProjectDirectory>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const projDir = res.contents[0] as core.OutputDirectory;
@@ -46,19 +47,17 @@ it("defines a project directory file with multiple source files", () => {
   expect(srcDir.contents[0].path).equals("~/projects/TestProject/src/Test1.cs");
   expect((srcDir.contents[0] as core.ContentOutputFile).contents)
     .toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass1;
-    }
+    namespace TestCode;
+    
+    public class TestClass1;
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
   expect((srcDir.contents[1] as core.ContentOutputFile).contents)
     .toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass2;
-    }
+    namespace TestCode;
+    
+    public class TestClass2;
   `);
 });
 
@@ -82,6 +81,7 @@ it("defines a project directory file with multiple source files and a custom TFM
         </csharp.Namespace>
       </csharp.ProjectDirectory>
     </core.Output>,
+    { insertFinalNewLine: false },
   );
 
   const projDir = res.contents[0] as core.OutputDirectory;
@@ -106,18 +106,16 @@ it("defines a project directory file with multiple source files and a custom TFM
   expect(srcDir.contents[0].path).equals("~/projects/TestProject/src/Test1.cs");
   expect((srcDir.contents[0] as core.ContentOutputFile).contents)
     .toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass1;
-    }
+    namespace TestCode;
+    
+    public class TestClass1;
   `);
 
   expect(srcDir.contents[1].path).equals("~/projects/TestProject/src/Test2.cs");
   expect((srcDir.contents[1] as core.ContentOutputFile).contents)
     .toBe(coretest.d`
-    namespace TestCode
-    {
-        public class TestClass2;
-    }
+    namespace TestCode;
+    
+    public class TestClass2;
   `);
 });

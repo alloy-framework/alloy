@@ -1,18 +1,27 @@
-import { Children, DeclarationProps, Name, Refkey } from "@alloy-js/core";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { Declaration } from "../Declaration.jsx";
+import {
+  Children,
+  Declaration,
+  DeclarationProps,
+  Name,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
+import { createVariableSymbol } from "../../symbols/factories.js";
 
 /** Props for {@link VarDeclaration} component */
 export interface VarDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
   /** Variable name */
-  name: string;
+  name: string | Namekey;
   /** Type of the variable declaration. If not specified, defaults to "var" */
   type?: Children;
   /** Variable refkey */
   refkey?: Refkey;
   /** Variable value */
   children?: Children;
+
+  /** Constant variable. Add the const modifier. */
+  const?: boolean;
 }
 
 /**
@@ -37,10 +46,15 @@ export interface VarDeclarationProps
  * ```
  */
 export function VarDeclaration(props: VarDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "variable");
-
+  const sym = createVariableSymbol(props.name, {
+    refkeys: props.refkey,
+  });
+  if (props.const && !props.type) {
+    throw new Error("Implicitly-typed variables cannot be constant");
+  }
   return (
-    <Declaration name={name} refkey={props.refkey}>
+    <Declaration symbol={sym}>
+      {props.const ? "const " : ""}
       {props.type ?? "var"} <Name /> = {props.children};
     </Declaration>
   );

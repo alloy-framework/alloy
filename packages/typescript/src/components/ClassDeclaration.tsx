@@ -3,28 +3,30 @@ import {
   Children,
   MemberDeclaration,
   Name,
-  OutputSymbolFlags,
+  Namekey,
   Prose,
   Refkey,
-  Scope,
   Show,
   splitProps,
-  useMemberScope,
 } from "@alloy-js/core";
 
-import { usePrivateScope } from "../context/private-scope.js";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputScope } from "../symbols/scopes.js";
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import {
+  createMemberSymbol,
+  createTypeAndValueSymbol,
+} from "../symbols/index.js";
+import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
+import { CommonDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
+import { LexicalScope } from "./LexicalScope.jsx";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
-export interface ClassDeclarationProps extends BaseDeclarationProps {
+export interface ClassDeclarationProps extends CommonDeclarationProps {
   extends?: Children;
 }
 
@@ -62,19 +64,14 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
  * ```
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
-  const namePolicy = useTSNamePolicy();
   const extendsPart = props.extends && <> extends {props.extends}</>;
-
-  const sym = new TSOutputSymbol(namePolicy.getName(props.name!, "class"), {
+  const sym = createTypeAndValueSymbol(props.name, {
     refkeys: props.refkey,
     export: props.export,
     default: props.default,
-    flags:
-      (props.flags ?? OutputSymbolFlags.None) |
-      (OutputSymbolFlags.MemberContainer |
-        OutputSymbolFlags.StaticMemberContainer),
-    tsFlags: TSSymbolFlags.PrivateMemberContainer,
     metadata: props.metadata,
+    hasInstanceMembers: true,
+    namePolicy: useTSNamePolicy().for("class"),
   });
 
   return (
@@ -84,15 +81,17 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
         <hbr />
       </Show>
       <Declaration symbol={sym} export={props.export} default={props.default}>
-        class <Name />
-        {extendsPart} <Block>{props.children}</Block>
+        <MemberScope ownerSymbol={sym}>
+          class <Name />
+          {extendsPart} <Block>{props.children}</Block>
+        </MemberScope>
       </Declaration>
     </>
   );
 }
 
 export interface ClassMemberProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   public?: boolean;
   private?: boolean;
@@ -105,42 +104,15 @@ export interface ClassMemberProps {
 }
 
 export function ClassMember(props: ClassMemberProps) {
-  const namer = useTSNamePolicy();
-  const name = namer.getName(props.name, "class-member-data");
-
-  let flags = OutputSymbolFlags.None;
-
-  if (props.static) {
-    flags |= OutputSymbolFlags.StaticMember;
-  } else {
-    flags |= OutputSymbolFlags.InstanceMember;
-  }
-
-  let scope: TSOutputScope;
-  if (props.jsPrivate) {
-    const memberScope = usePrivateScope()!;
-    scope =
-      props.static ? memberScope.staticMembers : memberScope.instanceMembers;
-  } else {
-    const memberScope = useMemberScope();
-    scope = (
-      props.static ?
-        memberScope.staticMembers!
-      : memberScope.instanceMembers!) as TSOutputScope;
-  }
-
-  let tsFlags =
-    props.jsPrivate ? TSSymbolFlags.PrivateMember : TSSymbolFlags.None;
-
+  let tsFlags = TSSymbolFlags.None;
   if (props.nullish) {
     tsFlags |= TSSymbolFlags.Nullish;
   }
 
-  const sym = new TSOutputSymbol(name, {
-    scope,
+  const sym = createMemberSymbol(props.name, props, {
     refkeys: props.refkey,
-    flags,
     tsFlags,
+    namePolicy: useTSNamePolicy().for("class-member-data"),
   });
 
   return (
@@ -208,9 +180,9 @@ export function ClassMethod(props: ClassMethodProps) {
       <ClassMember {...rest}>
         {props.async && "async "}
         <PropertyName />
-        <Scope name={props.name} kind="function">
+        <LexicalScope>
           <CallSignature {...callProps} /> <Block>{props.children}</Block>
-        </Scope>
+        </LexicalScope>
       </ClassMember>
     </>
   );

@@ -6,10 +6,14 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { createClassScope } from "../../scopes/factories.js";
+import {
+  createNamedTypeSymbol,
+  createTypeParameterSymbol,
+} from "../../symbols/factories.js";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
+import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 export interface RecordModifiers {
   readonly partial?: boolean;
@@ -22,12 +26,30 @@ export interface RecordDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     RecordModifiers {
-  name: string;
+  name: string | core.Namekey;
 
   /** Doc comment */
   doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Set the primary constructor parameters
+   * @example
+   * ```tsx
+   *  <ClassDeclaration name="MyClass" primaryConstructor={[
+   *    {name: "value", type: "int"}
+   *  ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * public class MyClass(int value)
+   * {
+   *
+   * }
+   * ```
+   */
+  primaryConstructor?: ParameterProps[];
 }
 
 /**
@@ -51,19 +73,14 @@ export interface RecordDeclarationProps
  * ```
  */
 export function RecordDeclaration(props: RecordDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "record");
-
-  const thisRecordSymbol = new CSharpOutputSymbol(name, {
+  // records don't have their own type kind but instead use class or struct
+  // depending on what kind of record we have.
+  const thisRecordSymbol = createNamedTypeSymbol(props.name, "record", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("record"),
   });
 
-  // this creates a new scope for the record definition.
-  // members will automatically "inherit" this scope so
-  // that refkeys to them will produce the fully-qualified
-  // name e.g. Foo.Bar.
-  const thisRecordScope = new CSharpMemberScope("record-decl", {
-    owner: thisRecordSymbol,
-  });
+  const thisRecordScope = createClassScope(thisRecordSymbol);
 
   let typeParams: core.Children;
   if (props.typeParameters) {
@@ -74,7 +91,7 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
       );
       // create a symbol for each type param so its
       // refkey resolves to the type param's name
-      new CSharpOutputSymbol(entry[0], {
+      createTypeParameterSymbol(entry[0], {
         scope: thisRecordScope,
         refkeys: entry[1],
       });
@@ -99,6 +116,11 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
       <DocWhen doc={props.doc} />
       {modifiers}record <Name />
       {typeParams}
+      {props.primaryConstructor && (
+        <core.Scope value={thisRecordScope}>
+          <Parameters parameters={props.primaryConstructor} />
+        </core.Scope>
+      )}
       {props.children ?
         <core.Block newline>
           <core.Scope value={thisRecordScope}>{props.children}</core.Scope>

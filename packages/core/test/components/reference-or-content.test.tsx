@@ -20,7 +20,7 @@ function TestWrapper(props: { children: Children }) {
 
   function Reference(props: { refkey: Refkey }) {
     const result = resolve(props.refkey);
-    return result.value.targetDeclaration.name;
+    return result.value.symbol.name;
   }
 
   return (
@@ -111,7 +111,7 @@ it("resolve ref via source file reference", () => {
 
   const Reference = vi.fn((props: { refkey: Refkey }) => {
     const result = resolve(props.refkey);
-    return `ViaRef.${result.value.targetDeclaration.name}`;
+    return `ViaRef.${result.value.symbol.name}`;
   });
 
   const template = (

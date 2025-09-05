@@ -25,7 +25,6 @@
       "name": "Launch Sample Emitter",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/samples/client-emitter/dist/src/index.js",
-      "outFiles": ["${workspaceFolder}/**/*.js"],
       "smartStep": true,
       "console": "internalConsole",
       "outputCapture": "std",
@@ -67,6 +66,13 @@
       "env": {
         "FORCE_COLOR": "3"
       }
+    },
+    {
+      "name": "Attach to nodejs",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     }
   ]
 }

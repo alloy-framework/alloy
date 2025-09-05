@@ -1,4 +1,4 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
@@ -6,7 +6,6 @@ import { Constructor } from "../constructor/constructor.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { StructDeclaration } from "./declaration.jsx";
 
@@ -17,6 +16,16 @@ it("declares struct with no members", () => {
     </TestNamespace>,
   ).toRenderTo(`
       struct Test;
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration name={namekey("my-struct")} />
+    </TestNamespace>,
+  ).toRenderTo(`
+      struct MyStruct;
   `);
 });
 
@@ -78,23 +87,18 @@ describe("with type parameters", () => {
 
     expect(
       <TestNamespace>
-        <SourceFile path="Test.cs">
-          <StructDeclaration public name="Test" typeParameters={typeParameters}>
-            <List>
-              <Property name="PropA" type={typeParameters[0].refkey} get set />
-              <Property name="PropB" type={typeParameters[1].refkey} get set />
-            </List>
-          </StructDeclaration>
-        </SourceFile>
+        <StructDeclaration public name="Test" typeParameters={typeParameters}>
+          <List>
+            <Property name="PropA" type={typeParameters[0].refkey} get set />
+            <Property name="PropB" type={typeParameters[1].refkey} get set />
+          </List>
+        </StructDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode
+      public struct Test<T, U>
       {
-          public struct Test<T, U>
-          {
-              T PropA { get; set; }
-              U PropB { get; set; }
-          }
+          T PropA { get; set; }
+          U PropB { get; set; }
       }
     `);
   });
@@ -119,10 +123,10 @@ describe("with type parameters", () => {
       </TestNamespace>,
     ).toRenderTo(`
       public struct Test<T, U>
-        where T : IFoo
-        where U : IBar
+          where T : IFoo
+          where U : IBar
       {
-        // Body
+          // Body
       }
     `);
   });
@@ -149,7 +153,7 @@ it("define methods", () => {
   ).toRenderTo(`
     struct Test
     {
-      void MethodOne() {}
+        void MethodOne() {}
     }
   `);
 });
@@ -164,7 +168,7 @@ it("define constructor", () => {
   ).toRenderTo(`
     struct Test
     {
-      public Test() {}
+        public Test() {}
     }
   `);
 });
@@ -182,8 +186,8 @@ it("defines fields", () => {
   ).toRenderTo(`
     public struct TestClass
     {
-      public string MemberOne;
-      public int MemberTwo;
+        public string MemberOne;
+        public int MemberTwo;
     }
   `);
 });

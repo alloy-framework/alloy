@@ -1,7 +1,7 @@
 {
   "name": "@alloy-js/csharp",
-  "version": "0.19.0",
-  "description": "",
+  "version": "0.20.0",
+  "description": "Alloy components for CSharp language.",
   "exports": {
     ".": {
       "development": "./src/index.ts",
@@ -10,6 +10,13 @@
     "./stc": {
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"
+    }
+  },
+  "imports": {
+    "#test/*": "./test/*",
+    "#components/*": {
+      "development": "./src/components/*",
+      "default": "./dist/src/components/*"
     }
   },
   "scripts": {

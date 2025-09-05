@@ -2,7 +2,8 @@ import {
   Block,
   Children,
   MemberDeclaration,
-  refkey,
+  MemberName,
+  Namekey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -12,9 +13,8 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { createMethodScope } from "../../scopes/factories.js";
+import { createMethodSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
@@ -33,7 +33,7 @@ const getMethodModifier = makeModifiers<InterfaceMethodModifiers>(["new"]);
 export interface InterfaceMethodProps
   extends AccessModifiers,
     InterfaceMethodModifiers {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;
@@ -76,23 +76,11 @@ export interface InterfaceMethodProps
 
 // a C# interface method
 export function InterfaceMethod(props: InterfaceMethodProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-method");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
-
-  const methodSymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
+  const methodSymbol = createMethodSymbol(props.name, {
+    refkeys: props.refkey,
   });
 
-  // scope for method declaration
-  const methodScope = new CSharpMemberScope("method-decl", {
-    owner: methodSymbol,
-  });
+  const methodScope = createMethodScope();
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
@@ -105,7 +93,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         <DocWhen doc={props.doc} />
         <AttributeList attributes={props.attributes} endline />
         {modifiers}
-        {props.returns ?? "void"} {name}
+        {props.returns ?? "void"} <MemberName />
         {props.typeParameters && (
           <TypeParameters parameters={props.typeParameters} />
         )}

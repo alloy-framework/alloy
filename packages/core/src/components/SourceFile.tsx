@@ -1,5 +1,6 @@
 import { join } from "pathe";
 import { useContext } from "../context.js";
+import { useFormatOptions } from "../context/format-options.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
 import { getContext } from "../reactivity.js";
@@ -44,11 +45,12 @@ export function SourceFile(props: SourceFileProps) {
   const nodeContext = getContext()!;
   nodeContext.meta ??= {};
   nodeContext.meta.sourceFile = context;
-  nodeContext.meta.printOptions = {
+  nodeContext.meta.printOptions = useFormatOptions({
     printWidth: props.printWidth,
     tabWidth: props.tabWidth,
     useTabs: props.useTabs,
-  };
+    insertFinalNewLine: props.insertFinalNewLine,
+  });
 
   return (
     <SourceFileContext.Provider value={context}>

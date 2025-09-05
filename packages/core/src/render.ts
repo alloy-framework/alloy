@@ -210,13 +210,6 @@ export function sourceFilesForTree(
 ): OutputDirectory {
   let rootDirectory: OutputDirectory | undefined = undefined;
 
-  // when passing Output, the first render tree child is the Output component.
-  const rootRenderOptions =
-    Array.isArray(tree) ?
-      (getContextForRenderNode(tree[0] as RenderedTextTree)?.meta
-        ?.printOptions ?? {})
-    : {};
-
   collectSourceFiles(undefined, tree);
 
   if (!rootDirectory) {
@@ -267,17 +260,13 @@ export function sourceFilesForTree(
         filetype: context.meta?.sourceFile.filetype,
         contents: printTree(root, {
           printWidth:
-            options?.printWidth ??
-            context.meta?.printOptions?.printWidth ??
-            rootRenderOptions.printWidth,
-          tabWidth:
-            options?.tabWidth ??
-            context.meta?.printOptions?.tabWidth ??
-            rootRenderOptions.tabWidth,
-          useTabs:
-            options?.useTabs ??
-            context.meta?.printOptions?.useTabs ??
-            rootRenderOptions.useTabs,
+            options?.printWidth ?? context.meta?.printOptions?.printWidth,
+          tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
+          useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
+          insertFinalNewLine:
+            options?.insertFinalNewLine ??
+            context.meta?.printOptions?.insertFinalNewLine ??
+            true,
         }),
       };
 
@@ -497,12 +486,15 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           TracePhase.render.appendChild,
           () => "Component: " + debugPrintChild(child),
         );
+        const context = getContext();
+        if (context) context.componentOwner = child;
         const componentRoot: RenderedTextTree = [];
         pushStack(child.component, child.props);
         renderWorker(componentRoot, untrack(child));
         popStack();
         node.push(componentRoot);
         cache.set(child, componentRoot);
+
         trace(
           TracePhase.render.appendChild,
           () => "Component done: " + debugPrintChild(child),
@@ -609,6 +601,12 @@ export interface PrintTreeOptions {
    * The number of spaces to use for indentation. Defaults to 2 spaces.
    */
   tabWidth?: number;
+
+  /**
+   * If files should end with a final new line.
+   * @default true
+   */
+  insertFinalNewLine?: boolean;
 }
 
 const defaultPrintTreeOptions: PrintTreeOptions = {
@@ -628,8 +626,14 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
   flushJobs();
 
   const d = printTreeWorker(tree);
-  return doc.printer.printDocToString(d, options as doc.printer.Options)
-    .formatted;
+  const result = doc.printer.printDocToString(
+    d,
+    options as doc.printer.Options,
+  ).formatted;
+
+  return options.insertFinalNewLine && !result.endsWith("\n") ?
+      `${result}\n`
+    : result;
 }
 
 function printTreeWorker(tree: RenderedTextTree): Doc {

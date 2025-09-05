@@ -1,4 +1,4 @@
-import { Output, render } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -6,9 +6,7 @@ import {
   FunctionDeclaration,
   PackageDirectory,
   SourceFile,
-  TSOutputSymbol,
 } from "../src/index.js";
-import { assertFileContents } from "./utils.js";
 
 it("can import builtins", () => {
   const testLib = createPackage({
@@ -25,7 +23,7 @@ it("can import builtins", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <PackageDirectory path="." name="test" version="1.0.0">
         <SourceFile path="index.ts">
@@ -34,9 +32,7 @@ it("can import builtins", () => {
         </SourceFile>
       </PackageDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "package.json": `
       {
         "name": "test",
@@ -50,6 +46,7 @@ it("can import builtins", () => {
         }
       }
     `,
+    "tsconfig.json": expect.anything(),
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -75,16 +72,14 @@ it("can import builtins without a package", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <SourceFile path="index.ts">
         {testLib["./subpath"].nice};<hbr />
         await {fs["./promises"].readFile}();
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -110,7 +105,7 @@ it("can import builtins without a package", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
@@ -121,9 +116,7 @@ it("can import builtins without a package", () => {
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -160,7 +153,7 @@ it("can import static members", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[mcpSdk]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
@@ -180,9 +173,7 @@ it("can import static members", () => {
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
 
@@ -195,42 +186,4 @@ it("can import static members", () => {
       }
     `,
   });
-});
-
-it("can import instance members", () => {
-  const mcpSdk = createPackage({
-    name: "@modelcontextprotocol/sdk",
-    version: "^3.23.0",
-    descriptor: {
-      "./server/index.js": {
-        named: [{ name: "Server", instanceMembers: ["instanceHandler"] }],
-      },
-    },
-  });
-
-  function RunTest() {
-    const sym = new TSOutputSymbol("foo");
-    const binder = sym.binder!;
-
-    expect(binder).toBeDefined();
-
-    const source = binder.getSymbolForRefkey(
-      mcpSdk["./server/index.js"].Server,
-    ).value!;
-    expect(source).toBeDefined();
-    expect(source.instanceMemberScope?.symbols.size).toBe(1);
-
-    source.instantiateTo(sym);
-
-    expect(sym.staticMemberScope?.symbols.size).toBe(1);
-    expect([...sym.staticMemberScope!.symbols][0].name).toBe("instanceHandler");
-  }
-
-  render(
-    <Output externals={[mcpSdk]}>
-      <SourceFile path="index.ts">
-        <RunTest />
-      </SourceFile>
-    </Output>,
-  );
 });

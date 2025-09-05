@@ -1,26 +1,15 @@
 import { expect, it } from "vitest";
 import { Output } from "../../src/components/Output.jsx";
-import {
-  Declaration,
-  ref,
-  renderTree,
-  Scope,
-  useBinder,
-} from "../../src/index.js";
+import { Declaration, ref, renderTree, Scope } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
-import { createTap } from "../../src/tap.js";
+import { BasicScope } from "../../src/symbols/basic-scope.js";
 
 it("creates and cleans up a symbol", () => {
-  const GetBinder = createTap(() => {
-    return useBinder();
-  });
-
-  const binderRef = GetBinder.ref;
   const doDecl = ref(true);
+  const scope = new BasicScope("test", undefined);
   const template = (
     <Output>
-      <GetBinder />
-      <Scope name="foo">
+      <Scope value={scope}>
         {doDecl.value ?
           <Declaration name="foo"></Declaration>
         : ""}
@@ -30,10 +19,8 @@ it("creates and cleans up a symbol", () => {
 
   renderTree(template);
 
-  const binder = binderRef.value!;
-  const subScope = [...binder.globalScope.children][0];
-  expect(subScope.symbols.size).toBe(1);
+  expect(scope.symbols.size).toBe(1);
   doDecl.value = false;
   flushJobs();
-  expect(subScope.symbols.size).toBe(0);
+  expect(scope.symbols.size).toBe(0);
 });

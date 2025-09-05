@@ -1,5 +1,5 @@
-import { Output, refkey, render, StatementList } from "@alloy-js/core";
-import { it } from "vitest";
+import { Output, refkey, StatementList } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import {
   FunctionCallExpression,
   FunctionDeclaration,
@@ -7,11 +7,10 @@ import {
   SourceFile,
   VarDeclaration,
 } from "../../typescript/src/index.js";
-import { assertFileContents } from "./utils.js";
 
 it("can declare and call a function with parameters", () => {
   const functionRefkey = refkey();
-  const res = render(
+  expect(
     <Output>
       <PackageDirectory path="." name="test" version="1.0.0">
         <SourceFile path="index.ts">
@@ -53,9 +52,7 @@ it("can declare and call a function with parameters", () => {
         </SourceFile>
       </PackageDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
         const foo = "Foo";
         function bar(foo?: string, baz?: number) {
@@ -69,5 +66,7 @@ it("can declare and call a function with parameters", () => {
         bar("Hey there!");
         bar("Hello World", 12345);
       `,
+    "package.json": expect.anything(),
+    "tsconfig.json": expect.anything(),
   });
 });

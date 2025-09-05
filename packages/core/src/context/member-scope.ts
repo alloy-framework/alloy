@@ -3,19 +3,19 @@ import {
   createNamedContext,
   useContext,
 } from "../context.js";
-import type { OutputScope } from "../symbols/output-scope.js";
+import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
- * The member scope context provides the instance and static member scopes that
- * are used for member declarations and instance member resolution.
+ * The member context provides the symbol upon which new member symbols
+ * should be created.
  */
-export interface MemberScopeContext {
-  staticMembers?: OutputScope;
-  instanceMembers?: OutputScope;
+export interface MemberContext {
+  ownerSymbol: OutputSymbol;
 }
-export const MemberScopeContext: ComponentContext<MemberScopeContext> =
-  createNamedContext("MemberScope");
 
-export function useMemberScope() {
-  return useContext(MemberScopeContext)!;
+export const MemberContext: ComponentContext<MemberContext> =
+  createNamedContext("MemberContext");
+
+export function useMemberContext() {
+  return useContext(MemberContext);
 }

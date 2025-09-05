@@ -1,14 +1,14 @@
 import {
   Children,
+  emitSymbol,
   For,
   Indent,
   List,
   MemberDeclaration,
   MemberScope,
+  moveTakenMembersTo,
   onCleanup,
-  OutputSymbolFlags,
   Refkey,
-  useMemberDeclaration,
   useMemberScope,
 } from "@alloy-js/core";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
@@ -55,19 +55,15 @@ export type JsonArrayProps =
  * @see {@link @alloy-js/core#(MemberScopeContext:variable)}
  */
 export function JsonArray(props: JsonArrayProps) {
-  const memberSymbol = useMemberDeclaration();
-  if (!memberSymbol) {
-    throw new Error("Missing assignment symbol.");
-  }
-  memberSymbol.flags |= OutputSymbolFlags.StaticMemberContainer;
-
-  if (props.refkey) {
-    memberSymbol.refkeys = [props.refkey].flat();
-  }
+  const arraySym = new JsonOutputSymbol("array symbol", undefined, {
+    transient: true,
+    refkeys: props.refkey ? [props.refkey].flat() : undefined,
+  });
+  emitSymbol(arraySym);
 
   if (!("jsValue" in props)) {
     return (
-      <MemberScope owner={memberSymbol}>
+      <MemberScope ownerSymbol={arraySym} name="array scope">
         <group>
           [
           <Indent softline trailingBreak>
@@ -84,7 +80,7 @@ export function JsonArray(props: JsonArrayProps) {
   const jsValue = props.jsValue ?? [];
 
   return (
-    <MemberScope owner={memberSymbol}>
+    <MemberScope ownerSymbol={arraySym}>
       <group>
         [
         <Indent softline trailingBreak>
@@ -126,20 +122,10 @@ export type JsonArrayElementProps =
  */
 export function JsonArrayElement(props: JsonArrayElementProps) {
   const memberScope = useMemberScope();
-  if (!memberScope) {
-    throw new Error("Missing member scope.");
-  }
-
-  if (!memberScope.staticMembers) {
-    throw new Error("Missing static members scope.");
-  }
-
-  const name = String(memberScope.staticMembers.symbols.size);
-
-  const sym = new JsonOutputSymbol(name, {
-    flags: OutputSymbolFlags.StaticMember,
-  });
-
+  const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
+  const name = String(ownerSymbol.staticMembers.size);
+  const sym = new JsonOutputSymbol(name, ownerSymbol.staticMembers);
+  moveTakenMembersTo(sym);
   onCleanup(() => {
     sym.delete();
   });

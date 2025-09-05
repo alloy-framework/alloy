@@ -10,6 +10,9 @@ export const NamePolicyContext: ComponentContext<NamePolicy<string>> =
     getName(name) {
       return name;
     },
+    for(element) {
+      return (name) => name;
+    },
   });
 
 export function useNamePolicy() {

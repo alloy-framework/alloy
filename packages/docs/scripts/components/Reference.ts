@@ -22,7 +22,7 @@ export function Reference(props: ReferenceProps) {
     if (resolution.value === undefined) {
       return props.linkText ?? "[unresolved link]";
     } else {
-      const targetSym = resolution.value.targetDeclaration;
+      const targetSym = resolution.value.symbol;
       // initial ../ because the url always contains a trailing slash.
       return `<a href="../${relative(currentDir, targetSym.path).toLowerCase().replace(".mdx", "/")}">${props.linkText ?? targetSym.name}</a>`;
     }

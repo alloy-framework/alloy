@@ -1,6 +1,6 @@
-import { Children, OutputSymbolFlags, Refkey, Show } from "@alloy-js/core";
+import { Children, Namekey, Refkey, Show } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { createStaticMemberSymbol } from "../symbols/index.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
@@ -12,7 +12,7 @@ export interface EnumMemberProps {
    * If a naming policy is provided in context, the policy name "enum-member" is
    * used.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * Refkey for the enum member symbol. If the refkey is not provided, a symbol
@@ -46,16 +46,11 @@ export interface EnumMemberProps {
  */
 export function EnumMember(props: EnumMemberProps) {
   const namer = useTSNamePolicy();
-  const name = namer.getName(props.name, "enum-member");
-  let sym: TSOutputSymbol | undefined = undefined;
-  if (props.refkey) {
-    sym = new TSOutputSymbol(name, {
-      refkeys: props.refkey,
-      flags: OutputSymbolFlags.StaticMember,
-      metadata: props.metadata,
-    });
-  }
-  const actualName = sym ? sym.name : name;
+  const sym = createStaticMemberSymbol(props.name, {
+    refkeys: props.refkey,
+    metadata: props.metadata,
+    namePolicy: namer.for("enum-member"),
+  });
   const valueCode =
     props.jsValue !== undefined ?
       <ValueExpression jsValue={props.jsValue} />
@@ -67,7 +62,7 @@ export function EnumMember(props: EnumMemberProps) {
         <JSDoc children={props.doc} />
         <hbr />
       </Show>
-      <PropertyName name={actualName} />
+      <PropertyName name={sym.name} />
       <Show when={valueCode !== undefined}> = {valueCode}</Show>
     </>
   );

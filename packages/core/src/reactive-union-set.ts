@@ -8,7 +8,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { effect } from "./reactivity.js";
+import { effect, untrack } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {
   onAdd?: OnReactiveSetAddCallback<T>;
@@ -133,7 +133,7 @@ export class ReactiveUnionSet<T> extends Set<T> {
     effect(() => {
       for (const [prevSourceValue, prevTargetValue] of prevValues) {
         if (!subset.has(prevSourceValue)) {
-          onDelete?.(prevSourceValue);
+          untrack(() => onDelete?.(prevSourceValue));
           prevValues.delete(prevSourceValue);
           this.delete(prevTargetValue);
         }
@@ -142,7 +142,7 @@ export class ReactiveUnionSet<T> extends Set<T> {
       for (const value of subset) {
         if (!prevValues.has(value)) {
           if (onAdd) {
-            const added = onAdd(value);
+            const added = untrack(() => onAdd(value));
             prevValues.set(value, added);
           } else {
             this.add(value);
@@ -207,22 +207,28 @@ export class ReactiveUnionSet<T> extends Set<T> {
 
     return shallowReadonly(set);
   }
+
   createIndex<U>(mapper: (value: T) => U | U[]): ReadonlyMap<U, T> {
     const index = shallowReactive(new Map<U, T>());
     this._indexes.push({
       add: (value: T) => {
         effect((oldValue) => {
-          for (const id of [oldValue].flat()) {
-            index.delete(id as U);
+          if (oldValue) {
+            for (const id of [oldValue].flat()) {
+              index.delete(id as U);
+            }
           }
 
-          const mappedValue = mapper(value);
+          // we filter to avoid overwriting existing values (first wins)
+          const mappedValues = [mapper(value)]
+            .flat()
+            .filter((v) => untrack(() => !index.has(v as U)));
 
-          for (const id of [mappedValue].flat()) {
+          for (const id of mappedValues) {
             index.set(id as U, value as any);
           }
 
-          return mappedValue;
+          return mappedValues;
         });
       },
       delete: (value: T) => {

@@ -3,9 +3,9 @@ import {
   Children,
   List,
   MemberDeclaration,
-  refkey,
+  MemberName,
+  Namekey,
   Refkey,
-  Scope,
 } from "@alloy-js/core";
 import {
   AccessModifiers,
@@ -13,9 +13,7 @@ import {
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
-import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope, useCSharpScope } from "../../symbols/scopes.js";
+import { createPropertySymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
@@ -30,7 +28,7 @@ const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 export interface InterfacePropertyProps
   extends AccessModifiers,
     InterfacePropertyModifiers {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
 
   /** Property type */
@@ -84,22 +82,8 @@ export interface InterfacePropertyProps
  * ```
  */
 export function InterfaceProperty(props: InterfacePropertyProps) {
-  const name = useCSharpNamePolicy().getName(props.name, "class-property");
-  const scope = useCSharpScope();
-  if (scope.kind !== "member" || scope.name !== "interface-decl") {
-    throw new Error(
-      "can't define an interface method outside of an interface scope",
-    );
-  }
-
-  const propertySymbol = new CSharpOutputSymbol(name, {
-    scope,
-    refkeys: props.refkey ?? refkey(props.name),
-  });
-
-  // scope for property declaration
-  const propertyScope = new CSharpMemberScope("property-decl", {
-    owner: propertySymbol,
+  const propertySymbol = createPropertySymbol(props.name, {
+    refkeys: props.refkey,
   });
 
   const modifiers = computeModifiersPrefix([
@@ -109,19 +93,17 @@ export function InterfaceProperty(props: InterfacePropertyProps) {
   // note that scope wraps the method decl so that the params get the correct scope
   return (
     <MemberDeclaration symbol={propertySymbol}>
-      <Scope value={propertyScope}>
-        <DocWhen doc={props.doc} />
-        <AttributeList attributes={props.attributes} endline />
-        {modifiers}
-        {props.type}
-        {props.nullable && "?"} {name}{" "}
-        <Block newline inline>
-          <List joiner=" ">
-            {props.get && "get;"}
-            {props.set && "set;"}
-          </List>
-        </Block>
-      </Scope>
+      <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
+      {modifiers}
+      {props.type}
+      {props.nullable && "?"} <MemberName />{" "}
+      <Block newline inline>
+        <List joiner=" ">
+          {props.get && "get;"}
+          {props.set && "set;"}
+        </List>
+      </Block>
     </MemberDeclaration>
   );
 }

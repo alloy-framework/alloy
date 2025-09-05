@@ -1,9 +1,12 @@
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
+import { useScope } from "../context/scope.js";
 import { onCleanup } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
+import { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
+import { BasicScope } from "../symbols/basic-scope.js";
+import { BasicSymbol } from "../symbols/basic-symbol.js";
 import { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
@@ -27,7 +30,7 @@ export interface DeclarationPropsWithInfo {
   /**
    * The name of this declaration.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The unique key or array of unique keys for this declaration.
@@ -73,7 +76,14 @@ export function Declaration(props: DeclarationProps) {
   if ("symbol" in props) {
     declaration = props.symbol;
   } else {
-    declaration = new OutputSymbol(props.name, {
+    const scope = useScope();
+    if (!(scope instanceof BasicScope)) {
+      throw new Error(
+        `Declaration component cannot create a symbol in a non-basic scope: ${scope}`,
+      );
+    }
+
+    declaration = new BasicSymbol(props.name, scope.symbols, {
       binder,
       refkeys: [props.refkey ?? []].flat(),
       metadata: props.metadata,

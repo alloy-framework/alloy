@@ -1,14 +1,14 @@
 import { markRaw } from "@vue/reactivity";
 
-const objectIds = new WeakMap<WeakKey, Refkey>();
+const objectIds = new WeakMap<WeakKey, string>();
 let objId = 0;
 
-function getObjectKey(value: WeakKey) {
+function getObjectKey(value: WeakKey): string {
   if (objectIds.has(value)) {
     return objectIds.get(value)!;
   }
 
-  const key = createRefkey(`o${objId++}`);
+  const key = `o${objId++}`;
   objectIds.set(value, key);
 
   return key;
@@ -16,10 +16,34 @@ function getObjectKey(value: WeakKey) {
 
 const RefkeySym: unique symbol = Symbol();
 
-export type Refkey = { key: string; [RefkeySym]: true };
+export type RefkeyBase = {
+  [RefkeySym]: true;
+};
 
-function createRefkey(key: string): Refkey {
-  const refkey: Refkey = {
+export type Refkey = SymbolRefkey | MemberRefkey | Namekey;
+
+export interface SymbolRefkey extends RefkeyBase {
+  key: string;
+}
+
+export interface NamekeyOptions {
+  ignoreNamePolicy?: boolean;
+  ignoreNameConflict?: boolean;
+}
+
+export interface Namekey<TOptions extends NamekeyOptions = NamekeyOptions>
+  extends SymbolRefkey {
+  name: string;
+  options: TOptions;
+}
+
+export interface MemberRefkey extends RefkeyBase {
+  base: Refkey;
+  member: Refkey;
+}
+
+function createSymbolRefkey(key: string): SymbolRefkey {
+  const refkey: SymbolRefkey = {
     key,
     [RefkeySym]: true,
   };
@@ -37,13 +61,34 @@ export function isRefkey(value: unknown): value is Refkey {
   );
 }
 
-function getKey(value: unknown): Refkey {
-  if (isRefkey(value)) {
-    return value;
+export function isSymbolRefkey(value: unknown): value is SymbolRefkey {
+  return isRefkey(value) && Object.hasOwn(value, "key");
+}
+
+export function isMemberRefkey(value: unknown): value is MemberRefkey {
+  return (
+    isRefkey(value) &&
+    Object.hasOwn(value, "base") &&
+    Object.hasOwn(value, "member")
+  );
+}
+
+export function isNamekey(value: unknown): value is Namekey {
+  return isRefkey(value) && Object.hasOwn(value, "name");
+}
+
+/**
+ * This gets the key for a symbol refkey based on the value provided. Refkey values
+ * return the key of that refkey, objects get a unique key for that specific object,
+ * and otherwise the key is based on the value.
+ */
+function getKey(value: unknown): SymbolRefkey["key"] {
+  if (isSymbolRefkey(value)) {
+    return value.key;
   } else if (typeof value === "object" && value !== null) {
     return getObjectKey(value);
   } else {
-    return createRefkey(`s${String(value)}`);
+    return `s${String(value)}`;
   }
 }
 
@@ -65,16 +110,41 @@ const knownRefkeys = new Map<string, Refkey>();
 export function refkey(...args: unknown[]): Refkey {
   const keys = args.length === 0 ? [getKey({})] : args.map((v) => getKey(v));
 
-  const compositeKey = keys.map((v) => v.key).join("\u2063");
+  const compositeKey = keys.join("\u2063");
   if (knownRefkeys.has(compositeKey)) {
     return knownRefkeys.get(compositeKey)!;
   }
 
-  const key = createRefkey(compositeKey);
+  const key = createSymbolRefkey(compositeKey);
   knownRefkeys.set(compositeKey, key);
   return key;
 }
 
+/**
+ * Create a namekey with the given name. The namekey is a unique refkey that
+ * represents a single symbol with the given name and the provided
+ * naming-related options.
+ *
+ * @example
+ * ```tsx
+ * const myClass = namekey("MyClass");
+ *
+ * return <>
+ *   <ClassDeclaration name={myClass} />
+ *   {myClass}
+ * </>
+ * ```
+ *
+ * Renders a class and a reference to that class.
+ */
+export function namekey(name: string, options: NamekeyOptions = {}): Namekey {
+  return {
+    key: getObjectKey({}),
+    name,
+    options,
+    [RefkeySym]: true,
+  };
+}
 /**
  * Create a refkey for an instantiation of a symbol.
  *
@@ -97,6 +167,41 @@ export function refkey(...args: unknown[]): Refkey {
  * instantiated variable refkey and the refkey of the inner member
  * `refkey(rk1, rk3)`.
  */
-export function memberRefkey(base: Refkey, member: Refkey): Refkey {
-  return refkey(base, member);
+export function memberRefkey(
+  base: Refkey,
+  ...members: [Refkey, ...Refkey[]]
+): MemberRefkey {
+  if (members.length < 1) {
+    throw new Error("memberRefkey needs at least one member");
+  }
+
+  if (members.length === 1) {
+    return {
+      base,
+      member: members[0],
+      [RefkeySym]: true,
+    };
+  }
+
+  return {
+    base: memberRefkey(
+      base,
+      ...(members.slice(0, -1) as [Refkey, ...Refkey[]]),
+    ),
+    member: members.at(-1)!,
+    [RefkeySym]: true,
+  };
+}
+
+export function inspectRefkey(refkey: Refkey): string {
+  const text =
+    isMemberRefkey(refkey) ?
+      `memberRefkey[${inspectRefkey(refkey.base)} -> ${inspectRefkey(refkey.member)}]`
+    : `refkey[${refkey.key}]`;
+
+  return text;
+}
+
+export function unresolvedRefkey(refkey: Refkey): string {
+  return `<Unresolved Symbol: ${inspectRefkey(refkey)}>`;
 }

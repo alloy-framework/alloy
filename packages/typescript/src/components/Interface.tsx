@@ -7,25 +7,25 @@ import {
   emitSymbol,
   findKeyedChild,
   findUnkeyedChildren,
-  MemberScope,
   Name,
-  OutputSymbolFlags,
+  Namekey,
   Refkey,
   Show,
   takeSymbols,
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
-import { JSDoc } from "./JSDoc.jsx";
-
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import { useTSLexicalScope, useTSMemberScope } from "../symbols/scopes.js";
 import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import { TypeParameters } from "./FunctionBase.jsx";
+import { JSDoc } from "./JSDoc.jsx";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";
+import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
-export interface InterfaceDeclarationProps extends BaseDeclarationProps {
+export interface InterfaceDeclarationProps extends CommonDeclarationProps {
   extends?: Children;
 
   /**
@@ -43,8 +43,8 @@ const _InterfaceDeclaration = ensureTypeRefContext(
         const takenSymbols = ExprSlot.ref.value;
         for (const symbol of takenSymbols) {
           // ignore non-transient symbols (likely not the result of an expression).
-          if (symbol.flags & OutputSymbolFlags.Transient) {
-            symbol.moveTo(sym);
+          if (symbol.isTransient) {
+            symbol.moveMembersTo(sym);
           }
         }
       }
@@ -65,16 +65,16 @@ const _InterfaceDeclaration = ensureTypeRefContext(
       : <TypeParameters parameters={props.typeParameters} />;
 
     const extendsPart = props.extends ? <> extends {props.extends}</> : "";
-    const flags = OutputSymbolFlags.StaticMemberContainer;
-
-    const name = useTSNamePolicy().getName(props.name, "interface");
     const filteredChildren = findUnkeyedChildren(children);
-    const sym = new TSOutputSymbol(name, {
+    const currentScope = useTSLexicalScope();
+
+    const sym = new TSOutputSymbol(props.name, currentScope.types, {
       refkeys: props.refkey,
       default: props.default,
       export: props.export,
       metadata: props.metadata,
       tsFlags: TSSymbolFlags.TypeSymbol,
+      namePolicy: useTSNamePolicy().for("interface"),
     });
     return (
       <>
@@ -82,13 +82,7 @@ const _InterfaceDeclaration = ensureTypeRefContext(
           <JSDoc children={props.doc} />
           <hbr />
         </Show>
-        <Declaration
-          {...props}
-          nameKind="interface"
-          flags={flags}
-          kind="type"
-          symbol={sym}
-        >
+        <Declaration {...props} nameKind="interface" kind="type" symbol={sym}>
           interface <Name />
           {sTypeParameters}
           {extendsPart}{" "}
@@ -122,16 +116,15 @@ export interface InterfaceExpressionProps {
 
 export const InterfaceExpression = ensureTypeRefContext(
   (props: InterfaceExpressionProps) => {
-    const symbol = new TSOutputSymbol("", {
-      flags:
-        OutputSymbolFlags.StaticMemberContainer | OutputSymbolFlags.Transient,
+    const symbol = new TSOutputSymbol("", undefined, {
+      transient: true,
     });
 
     emitSymbol(symbol);
 
     return (
       <group>
-        <MemberScope owner={symbol}>
+        <MemberScope ownerSymbol={symbol}>
           <Block>{props.children}</Block>
         </MemberScope>
       </group>
@@ -139,17 +132,26 @@ export const InterfaceExpression = ensureTypeRefContext(
   },
 );
 
-export interface InterfaceMemberProps {
-  name?: string;
-  indexer?: Children;
+export interface InterfaceMemberPropsBase {
   type?: Children;
   children?: Children;
-  optional?: boolean;
-  nullish?: boolean;
   readonly?: boolean;
   doc?: Children;
   refkey?: Refkey | Refkey[];
 }
+export interface InterfacePropertyMemberProps extends InterfaceMemberPropsBase {
+  name: string | Namekey;
+  optional?: boolean;
+  nullish?: boolean;
+}
+
+export interface InterfaceIndexerMemberProps extends InterfaceMemberPropsBase {
+  indexer: Children;
+}
+
+export type InterfaceMemberProps =
+  | InterfacePropertyMemberProps
+  | InterfaceIndexerMemberProps;
 
 /**
  * Create a TypeScript interface member.
@@ -162,54 +164,51 @@ export interface InterfaceMemberProps {
  */
 export function InterfaceMember(props: InterfaceMemberProps) {
   const type = props.type ?? props.children;
-  const optionality = props.optional ? "?" : "";
   const readonly = props.readonly ? "readonly " : "";
 
-  if (props.indexer) {
+  if ("indexer" in props) {
     return (
       <>
-        {readonly}[{props.indexer}]: {type}
-      </>
-    );
-  } else {
-    const namer = useTSNamePolicy();
-    const name = namer.getName(props.name!, "interface-member");
-    let sym = undefined;
-    if (props.name) {
-      sym = new TSOutputSymbol(name, {
-        refkeys: props.refkey,
-        flags: OutputSymbolFlags.StaticMember,
-        tsFlags:
-          TSSymbolFlags.TypeSymbol |
-          ((props.nullish ?? props.optional) ?
-            TSSymbolFlags.Nullish
-          : TSSymbolFlags.None),
-      });
-
-      const taken = takeSymbols();
-
-      effect(() => {
-        if (taken.size > 1) return;
-        const symbol = Array.from(taken)[0];
-        if (symbol?.flags & OutputSymbolFlags.Transient) {
-          symbol.moveTo(sym!);
-        }
-      });
-    } else {
-      // noop
-      takeSymbols();
-    }
-
-    return (
-      <MemberDeclaration symbol={sym}>
         <Show when={Boolean(props.doc)}>
           <JSDoc children={props.doc} />
           <hbr />
         </Show>
-        {readonly}
-        <PropertyName />
-        {optionality}: {type}
-      </MemberDeclaration>
+        {readonly}[{props.indexer}]: {type}
+      </>
     );
   }
+
+  const optionality = props.optional ? "?" : "";
+  const scope = useTSMemberScope();
+  const sym = new TSOutputSymbol(props.name, scope.ownerSymbol.staticMembers, {
+    refkeys: props.refkey,
+    tsFlags:
+      TSSymbolFlags.TypeSymbol |
+      ((props.nullish ?? props.optional) ?
+        TSSymbolFlags.Nullish
+      : TSSymbolFlags.None),
+    namePolicy: useTSNamePolicy().for("interface-member"),
+  });
+
+  const taken = takeSymbols();
+
+  effect(() => {
+    if (taken.size > 1) return;
+    const symbol = Array.from(taken)[0];
+    if (symbol?.isTransient) {
+      symbol.moveMembersTo(sym!);
+    }
+  });
+
+  return (
+    <MemberDeclaration symbol={sym}>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      {readonly}
+      <PropertyName />
+      {optionality}: {type}
+    </MemberDeclaration>
+  );
 }

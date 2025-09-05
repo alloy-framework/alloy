@@ -1,3 +1,4 @@
+import { namekey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { TypeParameters } from "./type-parameters.jsx";
@@ -15,16 +16,16 @@ it("render very long", () => {
     <TestNamespace>
       <TypeParameters
         parameters={[
-          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesA",
-          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesB",
+          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongA",
+          "SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongB",
         ]}
       />
     </TestNamespace>,
   ).toRenderTo(
     `
     <
-      SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesA,
-      SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesB>
+        SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongA,
+        SomeVeryVeryLongParamThatMightGetSplitOverMultipleLinesLongLongLongLongLongB>
     `,
   );
 });
@@ -43,4 +44,12 @@ it("declare type parameters using parameters", () => {
       <TypeParameters parameters={[{ name: "A" }, { name: "B" }]} />
     </TestNamespace>,
   ).toRenderTo(`<A, B>`);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <TypeParameters parameters={[{ name: namekey("my-param") }]} />
+    </TestNamespace>,
+  ).toRenderTo(`<MyParam>`);
 });

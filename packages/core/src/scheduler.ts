@@ -47,7 +47,7 @@ export function flushJobs() {
   // If there are no pending promises, we're done
   if (pendingPromises.size > 0) {
     throw new Error(
-      "Asynchronous jobs were found but render was called synchronously. Use `asyncRender` instead.",
+      "Asynchronous jobs were found but render was called synchronously. Use `renderAsync` instead.",
     );
   }
 }

@@ -1,4 +1,5 @@
 import {
+  effect,
   reactive,
   ReactiveFlags,
   shallowReactive,
@@ -6,33 +7,35 @@ import {
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
-  watch,
 } from "@vue/reactivity";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
-import { useScope } from "../context/scope.js";
-import type { ReactiveUnionSetOptions } from "../reactive-union-set.js";
-import type { Refkey } from "../refkey.js";
-import {
-  formatScope,
-  formatScopeName,
-  trace,
-  traceEffect,
-  TracePhase,
-} from "../tracer.js";
-import { OutputScopeFlags } from "./flags.js";
-import type { OutputSymbol } from "./output-symbol.js";
-import { SymbolTable } from "./symbol-table.js";
+import { inspect } from "../inspect.js";
+import { untrack } from "../reactivity.js";
+import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
+import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
+import { OutputSymbol } from "./output-symbol.js";
 
 let scopeCount = 0;
 
 export interface OutputScopeOptions {
-  flags?: OutputScopeFlags;
-  kind?: string;
+  /**
+   * Arbitrary metadata that is associated with this scope.
+   */
   metadata?: Record<string, unknown>;
-  parent?: OutputScope;
-  owner?: OutputSymbol;
+
+  /**
+   * The binder instance this scope belongs to. If not provided, it will
+   * attempt to find the current binder from context.
+   */
   binder?: Binder;
+
+  /**
+   * The owner symbol of this scope. When provided, this scope becomes a member
+   * scope, which exposes the symbols on its owner symbol instead of having its
+   * own declaration spaces.
+   */
+  ownerSymbol?: OutputSymbol;
 }
 
 /**
@@ -53,16 +56,20 @@ export interface OutputScopeOptions {
  * Scopes are reactive values, which allows you to observe changes to the scope
  * within a reactive context.
  */
-export class OutputScope {
-  // my kingdom for decorators
+export abstract class OutputScope {
+  static readonly declarationSpaces: Readonly<string[]> = [] as const;
+
   #name: string;
   /**
    * The name of the scope.
+   *
+   * @reactive
    */
   get name() {
     track(this, TrackOpTypes.GET, "name");
     return this.#name;
   }
+
   set name(name: string) {
     const old = this.#name;
     this.#name = name;
@@ -72,85 +79,66 @@ export class OutputScope {
   #id: number;
   /**
    * The unique id of this scope.
+   *
+   * @readonly
    */
   get id() {
     return this.#id;
   }
 
-  #kind: string;
-
-  /**
-   * The kind of scope. Subtypes will likely provide a set of known scope kinds.
-   * The kind is not used by the binder itself.
-   */
-  get kind() {
-    return this.#kind;
-  }
-
-  #flags: OutputScopeFlags;
-  /**
-   * The flags that describe this scope.
-   */
-  get flags() {
-    track(this, TrackOpTypes.GET, "flags");
-    return this.#flags;
-  }
-  set flags(flags: OutputScopeFlags) {
-    const old = this.#flags;
-    this.#flags = flags;
-    trigger(this, TriggerOpTypes.SET, "flags", flags, old);
-  }
-
   // read only
   #metadata: Record<string, unknown>;
+  /**
+   * Arbitrary metadata associated with this scope. This property is not
+   * reactive but the metadata object is a reactive object.
+   *
+   * @readonly
+   */
   get metadata() {
     return this.#metadata;
   }
 
   #parent?: OutputScope;
+
   /**
-   * The container of this scope. This is only defined for scopes which don't
-   * have the {@link OutputScopeFlags.StaticMemberScope} or
-   * {@link OutputScopeFlags.InstanceMemberScope} flag.
+   * The parent scope of this scope. Undefined if this is a root scope.
+   *
+   * @reactive
    */
   get parent() {
+    track(this, TrackOpTypes.GET, "parent");
     return this.#parent;
   }
 
-  #owner?: OutputSymbol;
-  /**
-   * The symbol that owns this scope. This is only defined for scopes that have
-   * the {@link OutputScopeFlags.StaticMemberScope} or
-   * {@link OutputScopeFlags.InstanceMemberScope} flag.
-   */
-  get owner() {
-    return this.#owner;
+  set parent(scope: OutputScope | undefined) {
+    const old = this.#parent;
+
+    if (old) {
+      old.children.delete(this);
+    }
+
+    if (scope) {
+      scope.children.add(this);
+    }
+
+    trigger(this, TriggerOpTypes.SET, "parent", scope, old);
+    this.#parent = scope;
   }
 
-  #symbols: SymbolTable;
-  /**
-   * The symbols defined within this scope.
-   */
-  get symbols() {
-    return this.#symbols;
-  }
+  #spaces: Record<string, OutputDeclarationSpace>;
 
-  #symbolsByRefkey: ReadonlyMap<Refkey, OutputSymbol>;
   /**
-   * The symbols defined within this scope, indexed by refkey.
+   * Get the declaration space for the given key.
    */
-  get symbolsByRefkey() {
-    return this.#symbolsByRefkey;
-  }
-
-  #symbolNames: ReadonlySet<string>;
-  get symbolNames() {
-    return this.#symbolNames;
+  spaceFor(key: string): OutputSpace | undefined {
+    return this.#spaces[key];
   }
 
   #children: Set<OutputScope>;
   /**
    * The scopes nested within this scope.
+   *
+   * @readonly
    */
   get children() {
     return this.#children;
@@ -159,6 +147,8 @@ export class OutputScope {
   #binder: Binder | undefined;
   /**
    * The binder that created this scope.
+   *
+   * @readonly
    */
   get binder() {
     return this.#binder;
@@ -166,42 +156,33 @@ export class OutputScope {
 
   [ReactiveFlags.SKIP] = this;
 
-  constructor(name: string, options: OutputScopeOptions = {}) {
+  constructor(
+    name: string,
+    parentScope: OutputScope | undefined,
+    options: OutputScopeOptions = {},
+  ) {
     this.#name = name;
     this.#id = scopeCount++;
-    this.#flags = options.flags ?? OutputScopeFlags.None;
-    this.#kind = options.kind ?? "scope";
     this.#metadata = reactive(options.metadata ?? {});
     this.#binder = options.binder ?? useBinder();
-    this.#owner = options.owner;
     this.#children = shallowReactive(new Set());
-
-    if (this.#flags & OutputScopeFlags.MemberScope) {
-      if (!this.#owner) {
-        throw new Error("Member scopes must have an owner");
-      }
-    } else {
-      if (!this.#parent) {
-        this.#parent =
-          options.parent ?? useScope() ?? this.#binder?.globalScope;
-      }
-      if (this.#parent) {
-        // not global scope
-        this.#parent.children.add(this);
-      }
-    }
-
-    this.#symbols = new SymbolTable(this, {
-      nameConflictResolver: this.#binder?.nameConflictResolver,
-    });
-    this.#symbolsByRefkey = this.#symbols.createIndex((s) => s.refkeys);
-    this.#symbolNames = this.#symbols.createDerivedSet((s) => {
-      return s.name;
+    this.#parent = parentScope;
+    effect(() => {
+      this.#setOwnerSymbol(options.ownerSymbol?.movedTo ?? options.ownerSymbol);
     });
 
     if (this.#parent) {
       this.#parent.children.add(this);
     }
+
+    const constructor = this.constructor as typeof OutputScope;
+
+    this.#spaces = Object.fromEntries(
+      constructor.declarationSpaces.map((spaceKey) => [
+        spaceKey,
+        new OutputDeclarationSpace(this, spaceKey, this.#binder),
+      ]),
+    );
 
     this.#binder?.notifyScopeCreated(this);
 
@@ -211,86 +192,73 @@ export class OutputScope {
     });
   }
 
-  moveSymbolsFrom(
-    source: OutputScope,
-    options?: ReactiveUnionSetOptions<OutputSymbol>,
-  ) {
-    trace(
-      TracePhase.scope.copySymbols,
-      () =>
-        `Moving symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
-    );
-    this.#symbols.addSubset(source.#symbols, {
-      onAdd: (symbol) => {
-        if (options?.onAdd) {
-          return options.onAdd(symbol);
-        }
-        symbol.scope = this;
-        return symbol;
-      },
-      onDelete: (symbol) => {
-        if (options?.onDelete) {
-          options.onDelete(symbol);
-        }
-      },
-    });
+  /**
+   * Get all the declaration spaces in this scope.
+   *
+   * @readonly
+   */
+  get spaces() {
+    return Object.values(this.#spaces);
   }
 
-  copySymbolsFrom(
-    source: OutputScope,
-    options?: ReactiveUnionSetOptions<OutputSymbol>,
-  ) {
-    trace(
-      TracePhase.scope.copySymbols,
-      () =>
-        `Copying symbols from ${formatScopeName(source)} to ${formatScopeName(this)}`,
-    );
-    this.#symbols.addSubset(source.#symbols, {
-      onAdd: (symbol) => {
-        if (options?.onAdd) {
-          return options.onAdd(symbol);
-        }
-        return symbol.copyToScope(this);
-      },
-      onDelete: (symbol) => {
-        if (options?.onDelete) {
-          options.onDelete(symbol);
-        }
-      },
-    });
+  #ownerSymbol: OutputSymbol | undefined;
+  /**
+   * The symbol whose members are in scope. When an owner symbol is present,
+   * this scope is considered a member scope, and does not provide its own
+   * declaration spaces.
+   *
+   * @readonly
+   * @reactive
+   */
+  get ownerSymbol() {
+    track(this, TrackOpTypes.GET, "ownerSymbol");
+    return this.#ownerSymbol;
   }
 
-  clone(options: { parent?: OutputScope; owner?: OutputSymbol } = {}) {
-    if (this.#flags & OutputScopeFlags.MemberScope && !options.owner) {
-      throw new Error("Member scope clones must specify an owner symbol");
-    } else if (this.#flags & ~OutputScopeFlags.MemberScope && !options.parent) {
-      throw new Error("Non-member scope clones must specify a parent scope");
-    }
-    const clone = new OutputScope(this.#name, {
-      binder: this.#binder,
-      flags: this.#flags,
-      kind: this.#kind,
-      metadata: this.#metadata,
-      parent: options.parent,
-      owner: options.owner,
-    });
+  #setOwnerSymbol(value: OutputSymbol | undefined) {
+    const old = this.#ownerSymbol;
+    this.#ownerSymbol = value;
+    trigger(this, TriggerOpTypes.SET, "ownerSymbol", value, old);
+  }
 
-    watch(
-      () => this.name,
-      (newName) => (clone.name = newName),
-    );
-    watch(
-      () => this.flags,
-      (newFlags) => (clone.flags = newFlags),
-    );
-    // todo: this should be reactive, but cloning non-member scopes
-    // seems like a very rare thing.
-    for (const child of this.#children) {
-      clone.children.add(child.clone());
+  /**
+   * Whether this scope is a transient scope. Transient scopes are used for
+   * temporary values that are to be combined with other non-transient symbols.
+   * Scopes are transient when their owner symbol is transient.
+   *
+   * @readonly
+   */
+  get isTransient() {
+    if (!this.ownerSymbol) {
+      return false;
     }
 
-    clone.copySymbolsFrom(this);
+    return this.ownerSymbol.isTransient;
+  }
+  /**
+   * Check if this is scope is a member scope. Member scopes have no member
+   * spaces of their own, but instead put members of their owner symbol in
+   * scope.
+   *
+   * @readonly
+   * @reactive
+   */
+  get isMemberScope() {
+    return !!this.ownerSymbol;
+  }
 
-    return clone;
+  [inspect.custom]() {
+    const ownerSymbol =
+      this.ownerSymbol ? ` for ${inspect(this.ownerSymbol)}` : "";
+    return untrack(
+      () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
+    );
+  }
+
+  toString() {
+    const ownerSymbol = this.ownerSymbol ? ` for ${this.ownerSymbol}` : "";
+    return untrack(
+      () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
+    );
   }
 }

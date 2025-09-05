@@ -39,7 +39,9 @@ async function build() {
   });
   const emitResult = program.emit();
   const start = new Date().getTime();
-  await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir);
+  await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
+    sourceMaps: opts.options.sourceMap,
+  });
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
     .concat(emitResult.diagnostics);

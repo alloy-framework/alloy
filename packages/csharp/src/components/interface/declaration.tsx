@@ -6,8 +6,8 @@ import {
   makeModifiers,
 } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
-import { CSharpOutputSymbol } from "../../symbols/csharp-output-symbol.js";
-import { CSharpMemberScope } from "../../symbols/scopes.js";
+import { createNamedTypeScope } from "../../scopes/factories.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
@@ -26,7 +26,7 @@ export interface InterfaceDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     InterfaceModifiers {
-  name: string;
+  name: string | core.Namekey;
 
   /** Doc comment */
   doc?: core.Children;
@@ -86,40 +86,37 @@ export interface InterfaceDeclarationProps
  * ```
  */
 export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "interface");
-
-  const thisInterfaceSymbol = new CSharpOutputSymbol(name, {
+  const symbol = createNamedTypeSymbol(props.name!, "interface", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("interface"),
   });
 
   // this creates a new scope for the interface definition.
   // members will automatically "inherit" this scope so
   // that refkeys to them will produce the fully-qualified
   // name e.g. Foo.Bar.
-  const thisInterfaceScope = new CSharpMemberScope("interface-decl", {
-    owner: thisInterfaceSymbol,
-  });
+  const thisInterfaceScope = createNamedTypeScope(symbol);
 
   const modifiers = computeModifiersPrefix([
     getAccessModifier(props),
     getInterfaceModifiers(props),
   ]);
   return (
-    <core.Declaration symbol={thisInterfaceSymbol}>
+    <core.Declaration symbol={symbol}>
       <DocWhen doc={props.doc} />
       <AttributeList attributes={props.attributes} endline />
       {modifiers}interface <Name />
-      {props.typeParameters && (
-        <TypeParameters parameters={props.typeParameters} />
-      )}
-      {props.typeParameters && (
-        <TypeParameterConstraints parameters={props.typeParameters} />
-      )}
-      {props.children ?
-        <core.Block newline>
-          <core.Scope value={thisInterfaceScope}>{props.children}</core.Scope>
-        </core.Block>
-      : ";"}
+      <core.Scope value={thisInterfaceScope}>
+        {props.typeParameters && (
+          <TypeParameters parameters={props.typeParameters} />
+        )}
+        {props.typeParameters && (
+          <TypeParameterConstraints parameters={props.typeParameters} />
+        )}
+        {props.children ?
+          <core.Block newline>{props.children}</core.Block>
+        : ";"}
+      </core.Scope>
     </core.Declaration>
   );
 }

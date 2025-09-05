@@ -40,6 +40,12 @@ expect.extend({
   },
 });
 
+function isAsymmetricMatcher(value: any): value is {
+  asymmetricMatch: (other: any) => boolean;
+} {
+  return value.$$typeof === Symbol.for("jest.asymmetricMatcher");
+}
+
 function validateRender(
   actual: string | Record<string, string>,
   expectedRaw: string | Record<string, string>,
@@ -73,12 +79,18 @@ function validateRender(
     const expected = expectedRaw;
     const dedentExpected: Record<string, string> = {};
     for (const [key, value] of Object.entries(expected)) {
-      dedentExpected[key] = dedent(value);
+      if (isAsymmetricMatcher(value)) {
+        dedentExpected[key] = value;
+      } else {
+        dedentExpected[key] = dedent(value);
+      }
     }
     const pass =
       Object.keys(actual).length === Object.keys(expected).length &&
       Object.entries(actual).every(([key, value]) => {
-        return dedentExpected[key] === value;
+        return isAsymmetricMatcher(dedentExpected[key]) ?
+            dedentExpected[key].asymmetricMatch(value)
+          : dedentExpected[key] === value;
       });
     return {
       pass,
@@ -98,12 +110,6 @@ function validateRender(
 
 function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
   const files: Record<string, string> = {};
-  // when passing Output, the first render tree child is the Output component.
-  const rootRenderOptions =
-    Array.isArray(tree) ?
-      (getContextForRenderNode(tree[0] as RenderedTextTree)?.meta
-        ?.printOptions ?? {})
-    : {};
 
   collectSourceFiles(tree);
   // If we found no source files, we return the tree as a string.
@@ -121,17 +127,9 @@ function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
     if (context?.meta?.sourceFile) {
       files[context.meta.sourceFile.path] = printTree(root, {
         printWidth:
-          options?.printWidth ??
-          context.meta?.printOptions?.printWidth ??
-          rootRenderOptions.printWidth,
-        tabWidth:
-          options?.tabWidth ??
-          context.meta?.printOptions?.tabWidth ??
-          rootRenderOptions.tabWidth,
-        useTabs:
-          options?.useTabs ??
-          context.meta?.printOptions?.useTabs ??
-          rootRenderOptions.useTabs,
+          options?.printWidth ?? context.meta?.printOptions?.printWidth,
+        tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
+        useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
       });
     } else {
       visitChildren();

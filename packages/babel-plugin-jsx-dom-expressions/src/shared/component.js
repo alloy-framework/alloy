@@ -255,17 +255,19 @@ function transformComponentChildren(children, config) {
         componentChild: true,
         lastElement: true
       });
-      dynamic = dynamic || child.dynamic;
-      if (
-        config.generate === "ssr" &&
-        filteredChildren.length > 1 &&
-        child.dynamic &&
-        t.isFunction(child.exprs[0])
-      ) {
-        child.exprs[0] = child.exprs[0].body;
+      if (child) {
+        dynamic = dynamic || child.dynamic;
+        if (
+          config.generate === "ssr" &&
+          filteredChildren.length > 1 &&
+          child.dynamic &&
+          t.isFunction(child.exprs[0])
+        ) {
+          child.exprs[0] = child.exprs[0].body;
+        }
+        pathNodes.push(path.node);
+        memo.push(getCreateTemplate(config, path, child)(path, child, filteredChildren.length > 1));
       }
-      pathNodes.push(path.node);
-      memo.push(getCreateTemplate(config, path, child)(path, child, filteredChildren.length > 1));
     }
     return memo;
   }, []);

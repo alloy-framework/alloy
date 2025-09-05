@@ -1,8 +1,7 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
-import { SourceFile } from "../SourceFile.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceProperty } from "./property.jsx";
@@ -60,6 +59,16 @@ it("specify doc comment", () => {
   `);
 });
 
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name={namekey("my-interface")} />
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface MyInterface;
+  `);
+});
+
 describe("with type parameters", () => {
   it("reference parameters", () => {
     const typeParameters: TypeParameterProps[] = [
@@ -75,37 +84,32 @@ describe("with type parameters", () => {
 
     expect(
       <TestNamespace>
-        <SourceFile path="Test.cs">
-          <InterfaceDeclaration
-            public
-            name="Test"
-            typeParameters={typeParameters}
-          >
-            <List>
-              <InterfaceProperty
-                name="PropA"
-                type={typeParameters[0].refkey}
-                get
-                set
-              />
-              <InterfaceProperty
-                name="PropB"
-                type={typeParameters[1].refkey}
-                get
-                set
-              />
-            </List>
-          </InterfaceDeclaration>
-        </SourceFile>
+        <InterfaceDeclaration
+          public
+          name="Test"
+          typeParameters={typeParameters}
+        >
+          <List>
+            <InterfaceProperty
+              name="PropA"
+              type={typeParameters[0].refkey}
+              get
+              set
+            />
+            <InterfaceProperty
+              name="PropB"
+              type={typeParameters[1].refkey}
+              get
+              set
+            />
+          </List>
+        </InterfaceDeclaration>
       </TestNamespace>,
     ).toRenderTo(`
-      namespace TestCode
+      public interface Test<T, U>
       {
-          public interface Test<T, U>
-          {
-              T PropA { get; set; }
-              U PropB { get; set; }
-          }
+          T PropA { get; set; }
+          U PropB { get; set; }
       }
     `);
   });
@@ -134,10 +138,10 @@ describe("with type parameters", () => {
       </TestNamespace>,
     ).toRenderTo(`
       public interface Test<T, U>
-        where T : IFoo
-        where U : IBar
+          where T : IFoo
+          where U : IBar
       {
-        // Body
+          // Body
       }
     `);
   });

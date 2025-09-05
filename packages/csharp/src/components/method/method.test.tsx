@@ -158,3 +158,52 @@ it("use expression body form", () => {
     }
   `);
 });
+
+describe("format", () => {
+  it("split expression after => if too long", () => {
+    expect(
+      <TestNamespace printWidth={60}>
+        <ClassDeclaration name="Test">
+          <Method public override name="ThisIsAVeryLongMethodName" expression>
+            this.WithAVeryLongPropertyName.AndAnEvenLongerMemberName
+          </Method>
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public override void ThisIsAVeryLongMethodName() =>
+              this.WithAVeryLongPropertyName.AndAnEvenLongerMemberName;
+      }
+  `);
+  });
+
+  it("split parameters first if too long", () => {
+    expect(
+      <TestNamespace printWidth={60}>
+        <ClassDeclaration name="Test">
+          <Method
+            public
+            override
+            name="ThisIsAVeryLongMethodName"
+            expression
+            parameters={[
+              { name: "firstParameter", type: "int" },
+              { name: "secondParameter", type: "string" },
+            ]}
+          >
+            this.Short
+          </Method>
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public override void ThisIsAVeryLongMethodName(
+              int firstParameter,
+              string secondParameter
+          ) => this.Short;
+      }
+  `);
+  });
+});

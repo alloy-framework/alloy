@@ -51,9 +51,14 @@ export function Parameters(props: ParametersProps) {
     <group>
       {"("}
       {props.parameters && (
-        <Indent softline>
+        <Indent nobreak>
           <For each={props.parameters} joiner={", "}>
-            {(param) => <Parameter {...param} />}
+            {(param) => (
+              <>
+                <softline />
+                <Parameter {...param} />
+              </>
+            )}
           </For>
         </Indent>
       )}

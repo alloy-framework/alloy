@@ -3,12 +3,15 @@ import * as coretest from "@alloy-js/core/testing";
 import { expect } from "vitest";
 import * as csharp from "../src/index.js";
 
-export function TestNamespace(props: {
+export interface TestNamespaceProps extends csharp.CSharpFormatOptions {
   children: core.Children;
-}): core.Children {
+}
+export function TestNamespace(props: TestNamespaceProps): core.Children {
   return (
     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-      <csharp.SourceFile path="Test.cs">{props.children}</csharp.SourceFile>
+      <csharp.SourceFile path="Test.cs" {...props}>
+        {props.children}
+      </csharp.SourceFile>
     </core.Output>
   );
 }

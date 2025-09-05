@@ -1,6 +1,7 @@
 import {
   List,
   memberRefkey,
+  namekey,
   Props,
   refkey,
   StatementList,
@@ -96,7 +97,21 @@ it("supports type parameters by descriptor object", () => {
     function foo<a extends any, b extends any>() {}
   `);
 });
+it("supports type parameters with namekeys", () => {
+  const decl = (
+    <FunctionDeclaration
+      name="foo"
+      typeParameters={[
+        { name: namekey("a"), extends: "any" },
+        { name: namekey("b"), extends: "any" },
+      ]}
+    ></FunctionDeclaration>
+  );
 
+  expect(toSourceText(decl)).toBe(d`
+    function foo<a extends any, b extends any>() {}
+  `);
+});
 it("supports type parameters by descriptor array", () => {
   const decl = (
     <FunctionDeclaration

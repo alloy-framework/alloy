@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -7,6 +7,18 @@ import { assertFileContents, testRender, toSourceText } from "./utils.js";
 it("works", () => {
   const res = toSourceText(
     <jv.Interface public name="TestInterface"></jv.Interface>,
+  );
+
+  expect(res).toBe(d`
+    package me.test.code;
+
+    public interface TestInterface {}
+  `);
+});
+
+it("takes a namekey", () => {
+  const res = toSourceText(
+    <jv.Interface public name={namekey("TestInterface")}></jv.Interface>,
   );
 
   expect(res).toBe(d`

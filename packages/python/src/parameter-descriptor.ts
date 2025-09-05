@@ -1,4 +1,4 @@
-import type { Children, Refkey } from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 
 /**
  * Information for a Python function parameter.
@@ -7,7 +7,7 @@ export interface ParameterDescriptor {
   /**
    * The name of the parameter.
    */
-  readonly name: string;
+  readonly name: string | Namekey;
 
   /**
    * The type of the parameter.

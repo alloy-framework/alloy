@@ -1,4 +1,4 @@
-import { refkey } from "@alloy-js/core";
+import { namekey, refkey } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
@@ -184,6 +184,19 @@ it("specify attributes", () => {
     {
         [Test]
         void Test();
+    }
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <Wrapper>
+      <InterfaceMethod name={namekey("my-method")} />
+    </Wrapper>,
+  ).toRenderTo(`
+    public interface TestInterface
+    {
+        void MyMethod();
     }
   `);
 });

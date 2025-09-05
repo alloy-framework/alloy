@@ -3,6 +3,7 @@ import {
   Declaration,
   DeclarationProps,
   Name,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { createVariableSymbol } from "../../symbols/factories.js";
@@ -11,7 +12,7 @@ import { createVariableSymbol } from "../../symbols/factories.js";
 export interface VarDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
   /** Variable name */
-  name: string;
+  name: string | Namekey;
   /** Type of the variable declaration. If not specified, defaults to "var" */
   type?: Children;
   /** Variable refkey */

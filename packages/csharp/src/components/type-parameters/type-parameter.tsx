@@ -2,6 +2,7 @@ import {
   Children,
   MemberDeclaration,
   MemberName,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { createTypeParameterSymbol } from "../../symbols/factories.js";
@@ -13,7 +14,7 @@ export interface TypeParameterProps {
   /**
    * The name of the type parameter.
    */
-  readonly name: string;
+  readonly name: string | Namekey;
 
   /**
    * The parameter constraint

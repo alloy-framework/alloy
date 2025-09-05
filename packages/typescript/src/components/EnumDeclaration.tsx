@@ -8,11 +8,11 @@ import {
 } from "@alloy-js/core";
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTypeAndValueSymbol } from "../symbols/index.js";
-import { BaseDeclarationProps } from "./Declaration.js";
+import { CommonDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { MemberScope } from "./MemberScope.jsx";
-export interface EnumDeclarationProps extends BaseDeclarationProps {
+export interface EnumDeclarationProps extends CommonDeclarationProps {
   /**
    * A JS object representing the enum member names and values.
    */
@@ -23,12 +23,12 @@ export interface EnumDeclarationProps extends BaseDeclarationProps {
  * A TypeScript enum declaration.
  */
 export function EnumDeclaration(props: EnumDeclarationProps) {
-  const name = useTSNamePolicy().getName(props.name, "enum");
-  const sym = createTypeAndValueSymbol(name, {
+  const sym = createTypeAndValueSymbol(props.name, {
     refkeys: props.refkey,
     default: props.default,
     export: props.export,
     metadata: props.metadata,
+    namePolicy: useTSNamePolicy().for("enum"),
   });
 
   const valueEntries = computed(() => Object.entries(props.jsValue ?? {}));

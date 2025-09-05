@@ -1,12 +1,13 @@
 import {
   childrenArray,
   findKeyedChild,
+  MemberName,
+  Namekey,
   Prose,
   Refkey,
   Show,
   type Children,
 } from "@alloy-js/core";
-import { useTSNamePolicy } from "../name-policy.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import {
@@ -23,7 +24,7 @@ import { MemberDeclaration } from "./MemberDeclaration.jsx";
 /** Props for {@link (InterfaceMethod:namespace)} component */
 export interface InterfaceMethodProps extends CallSignatureProps {
   /** Interface member name */
-  readonly name: string;
+  readonly name: string | Namekey;
   /** If the method is async. It will change the returnType from `T` to `Promise<T>` */
   readonly async?: boolean;
   /** Documentation for this method. */
@@ -69,8 +70,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
     parametersChildren,
     typeParametersChildren,
   });
-  const namer = useTSNamePolicy();
-  const name = namer.getName(props.name!, "interface-member");
+
   return (
     <>
       <Show when={Boolean(props.doc)}>
@@ -82,9 +82,14 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         </JSDoc>
         <hbr />
       </Show>
-      <MemberDeclaration static {...props} refkey={props.refkey}>
-        {name}
-        <LexicalScope name={props.name}>
+      <MemberDeclaration
+        static
+        {...props}
+        refkey={props.refkey}
+        nameKind="interface-member"
+      >
+        <MemberName />
+        <LexicalScope>
           <CallSignature {...callSignatureProps} returnType={returnType} />
         </LexicalScope>
       </MemberDeclaration>

@@ -1,4 +1,4 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
@@ -56,6 +56,16 @@ it("specify doc comment", () => {
   ).toRenderTo(`
     /// This is a test
     interface TestInterface;
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <InterfaceDeclaration name={namekey("my-interface")} />
+    </TestNamespace>,
+  ).toRenderTo(`
+    interface MyInterface;
   `);
 });
 

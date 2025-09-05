@@ -1,6 +1,7 @@
 import {
   MemberDeclaration as CoreMemberDeclaration,
-  MemberDeclarationPropsWithInfo,
+  MemberDeclarationPropsWithInfo as CoreMemberDeclarationPropsWithInfo,
+  MemberDeclarationPropsWithSymbol as CoreMemberDeclarationPropsWithSymbol,
 } from "@alloy-js/core";
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
 import {
@@ -9,49 +10,44 @@ import {
   TSSymbolFlags,
 } from "../symbols/index.js";
 
-export interface MemberDeclarationProps
-  extends Omit<MemberDeclarationPropsWithInfo, "name"> {
-  /**
-   * The name of this member declaration.
-   */
-  name?: string;
-
-  /** Name that shouldn't go through the name policy resolver again.  */
-  exactName?: string;
-
+export interface MemberDeclarationPropsWithInfo
+  extends CoreMemberDeclarationPropsWithInfo {
   /**
    * The name policy kind to apply to the memberdeclaration.
    */
-  nameKind?: TypeScriptElements;
-
-  /**
-   * The symbol to use for this memberdeclaration.
-   */
-  symbol?: TSOutputSymbol;
+  nameKind: TypeScriptElements;
   /**
    * Whether this member can be null or undefined.
    */
   nullish?: boolean;
 }
 
+export interface MemberDeclarationPropsWithSymbol
+  extends CoreMemberDeclarationPropsWithSymbol {
+  /**
+   * The symbol for the member declaration.
+   */
+  symbol: TSOutputSymbol;
+}
+
+export type MemberDeclarationProps =
+  | MemberDeclarationPropsWithInfo
+  | MemberDeclarationPropsWithSymbol;
+
 export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
   let sym: TSOutputSymbol;
 
-  if (props.symbol) {
+  if ("symbol" in props) {
     sym = props.symbol;
   } else {
-    const namePolicy = useTSNamePolicy();
-
     const tsFlags: TSSymbolFlags =
       props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None;
 
-    const name =
-      props.exactName ?? namePolicy.getName(props.name!, props.nameKind!);
-
-    sym = createStaticMemberSymbol(name, {
+    sym = createStaticMemberSymbol(props.name!, {
       refkeys: props.refkey,
       tsFlags,
       metadata: props.metadata,
+      namePolicy: useTSNamePolicy().for(props.nameKind!),
     });
   }
 

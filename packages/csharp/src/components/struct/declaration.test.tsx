@@ -1,4 +1,4 @@
-import { List, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
@@ -16,6 +16,16 @@ it("declares struct with no members", () => {
     </TestNamespace>,
   ).toRenderTo(`
       struct Test;
+  `);
+});
+
+it("takes a namekey", () => {
+  expect(
+    <TestNamespace>
+      <StructDeclaration name={namekey("my-struct")} />
+    </TestNamespace>,
+  ).toRenderTo(`
+      struct MyStruct;
   `);
 });
 

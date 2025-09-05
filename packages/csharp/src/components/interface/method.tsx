@@ -3,6 +3,7 @@ import {
   Children,
   MemberDeclaration,
   MemberName,
+  Namekey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -32,7 +33,7 @@ const getMethodModifier = makeModifiers<InterfaceMethodModifiers>(["new"]);
 export interface InterfaceMethodProps
   extends AccessModifiers,
     InterfaceMethodModifiers {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   children?: Children;
   parameters?: Array<ParameterProps>;

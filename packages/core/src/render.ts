@@ -20,7 +20,9 @@ import {
   Children,
   Component,
   isComponentCreator,
+  isRenderableObject,
   Props,
+  RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs, flushJobsAsync } from "./scheduler.js";
@@ -548,6 +550,9 @@ function normalizeChild(child: Child): NormalizedChildren {
 
       return sfContext.reference({ refkey: child });
     };
+  } else if (isRenderableObject(child)) {
+    // For custom renderable objects, we will just normalize them to a bound function.
+    return child[RENDERABLE].bind(child);
   } else if (isCustomContext(child)) {
     return child;
   } else if (isIntrinsicElement(child)) {
@@ -573,6 +578,8 @@ function debugPrintChild(child: Children): string {
     return "$ref";
   } else if (isIntrinsicElement(child)) {
     return `<${child.name}>`;
+  } else if (isRenderableObject(child)) {
+    return `CustomChildElement(${JSON.stringify(child)})`;
   } else {
     return JSON.stringify(child);
   }

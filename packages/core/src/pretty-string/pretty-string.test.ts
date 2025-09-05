@@ -37,3 +37,11 @@ it("interpolate another pretty string with more formatting", () => {
     toAnsi: "Hi, \x1b[42mfoo \x1b[31mbar\x1b[39m baz\x1b[49m",
   });
 });
+
+it("use full rgb", () => {
+  const result = pret`foo ${pret.rgb(123, 45, 67, "bar")} baz`;
+  expectRender(result, {
+    toString: "foo bar baz",
+    toAnsi: "foo \x1b[38;2;123;45;67mbar\x1b[39m baz",
+  });
+});

@@ -38,6 +38,9 @@ pret.bgCyan = (x: PrettyStringSegment) => new PrettyStringColored(x, "bgCyan");
 pret.bgWhite = (x: PrettyStringSegment) =>
   new PrettyStringColored(x, "bgWhite");
 
+pret.rgb = (r: number, g: number, b: number, x: PrettyStringSegment) =>
+  new PrettyStringColored(x, { kind: "rgb", r, g, b });
+
 const ansiColors = {
   reset: ["\x1b[0m", "\x1b[0m"],
   bold: ["\x1b[1m", "\x1b[22m"],
@@ -67,11 +70,21 @@ const ansiColors = {
 } as Record<string, [string, string]>;
 
 export type PrettyStringSegment = string | PrettyStringColored | PrettyString;
+
+export interface RgbColor {
+  kind: "rgb";
+  r: number;
+  g: number;
+  b: number;
+}
+
+export type ColorCodes = keyof typeof ansiColors;
+export type Color = ColorCodes | RgbColor;
 export class PrettyStringColored {
   #value: PrettyStringSegment;
-  #color: string;
+  #color: Color;
 
-  constructor(value: PrettyStringSegment, color: string) {
+  constructor(value: PrettyStringSegment, color: Color) {
     this.#value = value;
     this.#color = color;
   }
@@ -81,7 +94,13 @@ export class PrettyStringColored {
   }
 
   toAnsi(): string {
-    const [start, end] = ansiColors[this.#color];
+    if (typeof this.#color === "string") {
+      const [start, end] = ansiColors[this.#color];
+      return `${start}${typeof this.#value === "string" ? this.#value : this.#value.toAnsi()}${end}`;
+    }
+    const { r, g, b } = this.#color;
+    const start = `\x1b[38;2;${r};${g};${b}m`;
+    const end = `\x1b[39m`;
     return `${start}${typeof this.#value === "string" ? this.#value : this.#value.toAnsi()}${end}`;
   }
 }

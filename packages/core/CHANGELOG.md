@@ -1,5 +1,17 @@
 # Changelog - @alloy-js/core
 
+## 0.21.0
+
+### Bug Fixes
+
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+### Features
+
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Name policy's element can now be undefined, which leaves the name as-is.
+- [#245](https://github.com/alloy-framework/alloy/pull/245) Adds a new type of Alloy child, CustomChildElement, that is based on the presence of a symbol property.
+
+
 ## 0.20.0
 
 ### Bug Fixes

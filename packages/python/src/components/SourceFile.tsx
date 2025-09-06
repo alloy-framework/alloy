@@ -2,7 +2,6 @@ import {
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
-  List,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -84,9 +83,7 @@ export function SourceFile(props: SourceFileProps) {
         <hbr />
       </Show>
       <PythonSourceFileContext.Provider value={sfContext}>
-        <Scope value={scope}>
-          <List doubleHardline>{props.children}</List>
-        </Scope>
+        <Scope value={scope}>{props.children}</Scope>
       </PythonSourceFileContext.Provider>
     </CoreSourceFile>
   );

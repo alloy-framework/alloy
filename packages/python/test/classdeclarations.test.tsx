@@ -14,8 +14,6 @@ describe("Python Class", () => {
     expect(result).toRenderTo(d`
       class Foo:
           pass
-
-
     `);
   });
 
@@ -26,8 +24,6 @@ describe("Python Class", () => {
     expect(result).toRenderTo(d`
       class Foo:
           pass
-
-
     `);
   });
 
@@ -38,8 +34,6 @@ describe("Python Class", () => {
     expect(result).toRenderTo(d`
       class Bar:
           print('hi')
-
-
     `);
   });
 
@@ -57,14 +51,10 @@ describe("Python Class", () => {
     const expected = d`
       class Base1:
           pass
-
       class Base2:
           pass
-
       class Baz(Base1, Base2):
           pass
-
-        
     `;
     expect(result).toRenderTo(expected);
   });
@@ -75,11 +65,9 @@ describe("Python Class", () => {
         print('hello')
       </py.ClassDeclaration>,
     ]);
-    expect(result).toRenderTo(d`
+    expect(result).toRenderTo(`
       class Qux(Base):
           print('hello')
-
-
     `);
   });
 
@@ -102,24 +90,18 @@ describe("Python Class", () => {
     const mod1Expected = d`
       class A:
           pass
-
-
     `;
     const mod2Expected = d`
       from mod1 import A
 
       class B(A):
           pass
-
-
     `;
     const mod3Expected = d`
       from folder.mod2 import B
 
       class C(B):
           pass
-
-
     `;
     assertFileContents(result, { "mod1.py": mod1Expected });
     assertFileContents(result, { "folder/mod2.py": mod2Expected });
@@ -141,12 +123,9 @@ describe("Python Class", () => {
     const expected = d`
       class A:
           pass
-
       class B:
           bar: A
           foo: str
-
-
     `;
     expect(result).toRenderTo(expected);
   });
@@ -184,10 +163,8 @@ describe("Python Class", () => {
     const expected = d`
       class A:
           foo: str
-
       class B:
           foo: str
-
       A.foo
       B.foo
     `;
@@ -229,14 +206,11 @@ describe("Python Class - VariableDeclaration", () => {
     const expected = d`
       class Base:
           pass
-
       class A:
           just_name = None
           name_and_type: number = None
           name_type_and_value: number = 12
           class_based: Base = None
-
-
     `;
     expect(result).toRenderTo(expected);
   });
@@ -293,8 +267,6 @@ describe("Python Class - VariableDeclaration", () => {
             instance_prop = 42
             def instance_method(self) -> int:
                 pass
-
-
       `,
     });
   });
@@ -351,14 +323,10 @@ describe("Python Class - FunctionDeclaration", () => {
           b: int = None
           def my_method(self, a: int, b: int) -> int:
               return a + b
-
           def my_class_method(cls) -> int:
               pass
-
           def my_standalone_function() -> int:
               pass
-
-      
       MyClass.my_class_method
       MyClass.my_standalone_function
     `;

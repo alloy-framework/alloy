@@ -14,7 +14,7 @@ import {
   root,
   untrack,
 } from "./reactivity.js";
-import { isRefkey } from "./refkey.js";
+import { isJson, isRefkey, Json } from "./refkey.js";
 import {
   Child,
   Children,
@@ -515,6 +515,24 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         cache.set(child, newNodes);
         return newNodes;
       });
+    } else if (isJson(child)) {
+      node.push(
+        JSON.stringify(
+          child.value,
+          (key, value) => {
+            if (typeof value === "function") {
+              const componentRoot: RenderedTextTree = [];
+              pushStack(value.component, value.props);
+              renderWorker(componentRoot, untrack(value));
+              popStack();
+              return JSON.parse(componentRoot.toString());
+            } else {
+              return value;
+            }
+          },
+          2,
+        ),
+      );
     } else {
       throw new Error("Unexpected child type");
     }
@@ -526,6 +544,7 @@ type NormalizedChild =
   | string
   | (() => Child | Children)
   | CustomContext
+  | Json
   | IntrinsicElement;
 
 function normalizeChild(child: Child): NormalizedChildren {
@@ -556,6 +575,8 @@ function normalizeChild(child: Child): NormalizedChildren {
   } else if (isCustomContext(child)) {
     return child;
   } else if (isIntrinsicElement(child)) {
+    return child;
+  } else if (isJson(child)) {
     return child;
   } else {
     return String(child);

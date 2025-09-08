@@ -20,16 +20,19 @@ it("correct formatting of source file", () => {
   const result = toSourceText([
     <py.ClassDeclaration name="someClass">
       <py.StatementList>
-        <py.FunctionDeclaration name="someMethod" returnType="str">
+        <py.FunctionDeclaration
+          name="someMethod"
+          returnType={{ children: "str" }}
+        >
           <py.StatementList>
             <py.VariableDeclaration
               name="x"
-              type="int"
+              type={{ children: "int" }}
               initializer={<py.Atom jsValue={42} />}
             />
             <py.VariableDeclaration
               name="y"
-              type="int"
+              type={{ children: "int" }}
               initializer={<py.Atom jsValue={42} />}
             />
             <py.FunctionCallExpression target="foo" args={["a", "b"]} />
@@ -40,20 +43,23 @@ it("correct formatting of source file", () => {
             </py.MemberExpression>
             <py.VariableDeclaration
               name="z"
-              type="int"
+              type={{ children: "int" }}
               initializer={<py.Atom jsValue={42} />}
             />
           </py.StatementList>
         </py.FunctionDeclaration>
         <py.VariableDeclaration
           name="someVar"
-          type="int"
+          type={{ children: "int" }}
           initializer={<py.Atom jsValue={42} />}
         />
-        <py.FunctionDeclaration name="someOtherMethod" returnType="str" />
+        <py.FunctionDeclaration
+          name="someOtherMethod"
+          returnType={{ children: "str" }}
+        />
         <py.VariableDeclaration
           name="someOtherVar"
-          type="int"
+          type={{ children: "int" }}
           initializer={<py.Atom jsValue={42} />}
         />
       </py.StatementList>
@@ -62,12 +68,12 @@ it("correct formatting of source file", () => {
       <py.StatementList>
         <py.VariableDeclaration
           name="x"
-          type="int"
+          type={{ children: "int" }}
           initializer={<py.Atom jsValue={42} />}
         />
         <py.VariableDeclaration
           name="y"
-          type="int"
+          type={{ children: "int" }}
           initializer={<py.Atom jsValue={42} />}
         />
         <py.FunctionCallExpression target="foo" args={["a", "b"]} />
@@ -78,14 +84,17 @@ it("correct formatting of source file", () => {
         </py.MemberExpression>
         <py.VariableDeclaration
           name="z"
-          type="int"
+          type={{ children: "int" }}
           initializer={<py.Atom jsValue={42} />}
         />
       </py.StatementList>
     </py.FunctionDeclaration>,
     <py.ClassDeclaration name="someOtherClass">
       <py.StatementList>
-        <py.FunctionDeclaration name="someMethod" returnType="str" />
+        <py.FunctionDeclaration
+          name="someMethod"
+          returnType={{ children: "str" }}
+        />
       </py.StatementList>
     </py.ClassDeclaration>,
     <py.MemberExpression>

@@ -120,8 +120,16 @@ describe("Python Class", () => {
         <py.ClassDeclaration name="A" refkey={refkey("A")} />
         <py.ClassDeclaration name="B">
           <py.StatementList>
-            <py.VariableDeclaration name="bar" type={refkey("A")} omitNone />
-            <py.VariableDeclaration name="foo" type="str" omitNone />
+            <py.VariableDeclaration
+              name="bar"
+              type={{ children: refkey("A") }}
+              omitNone
+            />
+            <py.VariableDeclaration
+              name="foo"
+              type={{ children: "str" }}
+              omitNone
+            />
           </py.StatementList>
         </py.ClassDeclaration>
       </py.StatementList>,
@@ -149,7 +157,7 @@ describe("Python Class", () => {
           <py.StatementList>
             <py.VariableDeclaration
               name="foo"
-              type="str"
+              type={{ children: "str" }}
               refkey={fooKey}
               omitNone
             />
@@ -159,7 +167,7 @@ describe("Python Class", () => {
           <py.StatementList>
             <py.VariableDeclaration
               name="foo"
-              type="str"
+              type={{ children: "str" }}
               refkey={barKey}
               omitNone
             />
@@ -195,20 +203,20 @@ describe("Python Class - VariableDeclaration", () => {
           <py.StatementList>
             <py.VariableDeclaration instanceVariable name="just_name" />
             <py.VariableDeclaration
-              instanceVariable
               name="name_and_type"
-              type="number"
+              type={{ children: "number" }}
+              instanceVariable
             />
             <py.VariableDeclaration
               instanceVariable
               name="name_type_and_value"
-              type="number"
+              type={{ children: "number" }}
               initializer={12}
             />
             <py.VariableDeclaration
               instanceVariable
               name="class_based"
-              type={refkey("Base")}
+              type={{ children: refkey("Base") }}
             />
           </py.StatementList>
         </py.ClassDeclaration>
@@ -241,7 +249,7 @@ describe("Python Class - VariableDeclaration", () => {
           <py.VariableDeclaration
             name="one"
             refkey={v1Rk}
-            type={classRk}
+            type={{ children: classRk }}
             initializer={<py.ClassInstantiation target={classRk} />}
           />
           <>{memberRefkey(v1Rk, classMemberRk)}</>
@@ -261,7 +269,7 @@ describe("Python Class - VariableDeclaration", () => {
               name="instanceMethod"
               instanceFunction
               refkey={classMethodRk}
-              returnType="int"
+              returnType={{ children: "int" }}
             />
           </py.StatementList>
         </py.ClassDeclaration>
@@ -298,15 +306,23 @@ describe("Python Class - FunctionDeclaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass" bases={["BaseClass"]}>
           <py.StatementList>
-            <py.VariableDeclaration name="a" type="int" instanceVariable />
-            <py.VariableDeclaration name="b" type="int" instanceVariable />
+            <py.VariableDeclaration
+              name="a"
+              type={{ children: "int" }}
+              instanceVariable
+            />
+            <py.VariableDeclaration
+              name="b"
+              type={{ children: "int" }}
+              instanceVariable
+            />
             <py.FunctionDeclaration
               name="my_method"
               parameters={[
-                { name: "a", type: "int" },
-                { name: "b", type: "int" },
+                { name: "a", type: { children: "int" } },
+                { name: "b", type: { children: "int" } },
               ]}
-              returnType="int"
+              returnType={{ children: "int" }}
               instanceFunction
               refkey={methodRefkey}
             >
@@ -315,14 +331,14 @@ describe("Python Class - FunctionDeclaration", () => {
             <py.FunctionDeclaration
               name="my_class_method"
               classFunction
-              returnType="int"
+              returnType={{ children: "int" }}
               refkey={classMethodRefkey}
             >
               pass
             </py.FunctionDeclaration>
             <py.FunctionDeclaration
               name="my_standalone_function"
-              returnType="int"
+              returnType={{ children: "int" }}
               refkey={staticMethodRefkey}
             >
               pass

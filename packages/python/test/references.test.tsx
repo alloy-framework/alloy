@@ -13,7 +13,7 @@ describe("Reference", () => {
       <py.SourceFile path="services.py">
         <py.VariableDeclaration
           name="current_user"
-          type={<py.Reference refkey={rk1} />}
+          type={{ children: rk1 }}
           initializer={
             <py.ClassInstantiation target="User" args={['"Marvin"']} />
           }

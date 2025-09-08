@@ -3,7 +3,14 @@ import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { effect } from "./reactivity.js";
-import { isMemberRefkey, MemberRefkey, refkey, Refkey } from "./refkey.js";
+import {
+  isMemberRefkey,
+  MemberRefkey,
+  refkey,
+  Refkey,
+  Refkeyable,
+  toRefkey,
+} from "./refkey.js";
 import { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import {
@@ -49,7 +56,7 @@ export interface Binder {
    * ref is undefined if the symbol has not been created yet.
    */
   getSymbolForRefkey<TSymbol extends OutputSymbol>(
-    refkey: Refkey,
+    refkey: Refkeyable,
   ): Ref<TSymbol | undefined>;
 
   /**
@@ -392,8 +399,10 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function getSymbolForRefkey<TSymbol extends OutputSymbol = OutputSymbol>(
-    refkey: Refkey,
+    refkeyable: Refkeyable,
   ) {
+    const refkey = toRefkey(refkeyable);
+
     if (waitingDeclarations.has(refkey)) {
       return waitingDeclarations.get(refkey)! as ShallowRef<TSymbol>;
     }
@@ -711,7 +720,7 @@ export function resolve<
  * not found. The symbol you're looking for may not have been declared yet. When the symbol
  * is declared, the ref will be updated with the symbol.
  */
-export function symbolForRefkey(refkey: Refkey) {
+export function symbolForRefkey(refkey: Refkeyable) {
   const binder = useBinder();
   if (!binder) {
     throw new Error("Can't resolve refkey without a binder");

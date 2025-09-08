@@ -5,7 +5,7 @@ import {
   computed,
   For,
   isComponentCreator,
-  Refkey,
+  Refkeyable,
   Show,
   takeSymbols,
 } from "@alloy-js/core";
@@ -92,7 +92,7 @@ export interface AccessExpressionPartProps {
    * A refkey for the symbol whose name becomes this part's identifier. When a refkey is provided for the first
    * part, it will be fully resolved. Otherwise, just the symbol's name is used.
    */
-  refkey?: Refkey;
+  refkey?: Refkeyable;
 
   /**
    * The symbol whose name becomes this part's identifier.

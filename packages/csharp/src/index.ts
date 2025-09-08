@@ -1,3 +1,4 @@
+export * from "./access.jsx";
 export * from "./components/index.js";
 export * from "./contexts/format-options.js";
 export * from "./modifiers.js";

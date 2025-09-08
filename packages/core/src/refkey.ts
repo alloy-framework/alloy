@@ -1,5 +1,4 @@
 import { markRaw } from "@vue/reactivity";
-import { OutputSymbol } from "./index.browser.js";
 
 const objectIds = new WeakMap<WeakKey, string>();
 let objId = 0;
@@ -233,21 +232,4 @@ export function inspectRefkey(refkey: Refkey): string {
 
 export function unresolvedRefkey(refkey: Refkey): string {
   return `<Unresolved Symbol: ${inspectRefkey(refkey)}>`;
-}
-
-export const TO_SYMBOL: unique symbol = Symbol("Alloy.TO_SYMBOL");
-export const CREATE_MEMBERS: unique symbol = Symbol("Alloy.CREATE_MEMBERS");
-
-export interface LibrarySymbolReference extends RefkeyableObject {
-  [TO_SYMBOL](): OutputSymbol;
-}
-
-export function isLibrarySymbolReference(
-  value: unknown,
-): value is LibrarySymbolReference {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    Object.hasOwn(value, TO_SYMBOL)
-  );
 }

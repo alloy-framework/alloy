@@ -1,3 +1,4 @@
+export * from "./access-expression/access-expression.jsx";
 export * from "./attributes/attributes.jsx";
 export * from "./class/declaration.jsx";
 export * from "./constructor/constructor.jsx";

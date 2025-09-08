@@ -58,8 +58,10 @@ export function VarDeclaration(props: VarDeclarationProps) {
       <CoreDeclaration symbol={sym}>
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}
-        {keyword} <Name />
-        {type} ={" "}
+        <Show when={!props.default}>
+          {keyword} <Name />
+          {type} ={" "}
+        </Show>
         <ValueTypeSymbolSlot>
           {props.initializer ?? props.children}
         </ValueTypeSymbolSlot>

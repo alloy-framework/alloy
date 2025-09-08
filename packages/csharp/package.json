@@ -17,6 +17,14 @@
     "#components/*": {
       "development": "./src/components/*",
       "default": "./dist/src/components/*"
+    },
+    "#createLibrary": {
+      "development": "./src/create-library.ts",
+      "default": "./dist/src/create-library.js"
+    },
+    "#builtins": {
+      "development": "./src/builtins.ts",
+      "default": "./dist/src/builtins.js"
     }
   },
   "scripts": {
@@ -40,11 +48,13 @@
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "concurrently": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "yaml": "^2.8.0"
   },
   "type": "module"
 }

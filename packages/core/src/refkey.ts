@@ -1,4 +1,5 @@
 import { markRaw } from "@vue/reactivity";
+import { OutputSymbol } from "./index.browser.js";
 
 const objectIds = new WeakMap<WeakKey, string>();
 let objId = 0;
@@ -14,15 +15,20 @@ function getObjectKey(value: WeakKey): string {
   return key;
 }
 
-const RefkeySym: unique symbol = Symbol();
+export const REFKEYABLE: unique symbol = Symbol("Alloy.REFKEYABLE");
 
-export type RefkeyBase = {
-  [RefkeySym]: true;
+export type RefkeyableObject = {
+  [REFKEYABLE](): Refkey;
 };
 
+export function toRefkey(refkey: Refkeyable) {
+  return refkey[REFKEYABLE]();
+}
+
+export type Refkeyable = RefkeyableObject | Refkey;
 export type Refkey = SymbolRefkey | MemberRefkey | Namekey;
 
-export interface SymbolRefkey extends RefkeyBase {
+export interface SymbolRefkey extends RefkeyableObject {
   key: string;
 }
 
@@ -37,15 +43,17 @@ export interface Namekey<TOptions extends NamekeyOptions = NamekeyOptions>
   options: TOptions;
 }
 
-export interface MemberRefkey extends RefkeyBase {
+export interface MemberRefkey extends RefkeyableObject {
   base: Refkey;
-  member: Refkey;
+  member: Refkey | string;
 }
 
 function createSymbolRefkey(key: string): SymbolRefkey {
   const refkey: SymbolRefkey = {
     key,
-    [RefkeySym]: true,
+    [REFKEYABLE]() {
+      return this;
+    },
   };
 
   markRaw(refkey);
@@ -53,11 +61,16 @@ function createSymbolRefkey(key: string): SymbolRefkey {
   return refkey;
 }
 
-export function isRefkey(value: unknown): value is Refkey {
+export function isRefkeyable(value: unknown): value is RefkeyableObject {
   return (
     typeof value === "object" &&
     value !== null &&
-    Object.hasOwn(value, RefkeySym)
+    Object.hasOwn(value, REFKEYABLE)
+  );
+}
+export function isRefkey(value: unknown): value is Refkey {
+  return (
+    isRefkeyable(value) && (value as RefkeyableObject)[REFKEYABLE]() === value
   );
 }
 
@@ -66,11 +79,7 @@ export function isSymbolRefkey(value: unknown): value is SymbolRefkey {
 }
 
 export function isMemberRefkey(value: unknown): value is MemberRefkey {
-  return (
-    isRefkey(value) &&
-    Object.hasOwn(value, "base") &&
-    Object.hasOwn(value, "member")
-  );
+  return isRefkey(value) && Object.hasOwn(value, "base");
 }
 
 export function isNamekey(value: unknown): value is Namekey {
@@ -82,9 +91,14 @@ export function isNamekey(value: unknown): value is Namekey {
  * return the key of that refkey, objects get a unique key for that specific object,
  * and otherwise the key is based on the value.
  */
-function getKey(value: unknown): SymbolRefkey["key"] {
-  if (isSymbolRefkey(value)) {
-    return value.key;
+function getKey(value: unknown): string {
+  if (isRefkeyable(value)) {
+    const refkey = toRefkey(value);
+    if (isSymbolRefkey(refkey)) {
+      return refkey.key;
+    } else {
+      return getObjectKey(value);
+    }
   } else if (typeof value === "object" && value !== null) {
     return getObjectKey(value);
   } else {
@@ -142,7 +156,9 @@ export function namekey(name: string, options: NamekeyOptions = {}): Namekey {
     key: getObjectKey({}),
     name,
     options,
-    [RefkeySym]: true,
+    [REFKEYABLE]() {
+      return this;
+    },
   };
 }
 /**
@@ -168,8 +184,8 @@ export function namekey(name: string, options: NamekeyOptions = {}): Namekey {
  * `refkey(rk1, rk3)`.
  */
 export function memberRefkey(
-  base: Refkey,
-  ...members: [Refkey, ...Refkey[]]
+  base: Refkeyable,
+  ...members: [Refkeyable | string, ...(Refkeyable | string)[]]
 ): MemberRefkey {
   if (members.length < 1) {
     throw new Error("memberRefkey needs at least one member");
@@ -177,31 +193,61 @@ export function memberRefkey(
 
   if (members.length === 1) {
     return {
-      base,
-      member: members[0],
-      [RefkeySym]: true,
+      base: toRefkey(base),
+      member:
+        typeof members[0] === "string" ? members[0] : toRefkey(members[0]),
+      [REFKEYABLE]() {
+        return this;
+      },
     };
   }
+
+  const lastMember = members.at(-1)!;
 
   return {
     base: memberRefkey(
       base,
-      ...(members.slice(0, -1) as [Refkey, ...Refkey[]]),
+      ...(members.slice(0, -1) as [Refkeyable, ...Refkeyable[]]),
     ),
-    member: members.at(-1)!,
-    [RefkeySym]: true,
+    member: typeof lastMember === "string" ? lastMember : toRefkey(lastMember),
+    [REFKEYABLE]() {
+      return this;
+    },
   };
 }
 
 export function inspectRefkey(refkey: Refkey): string {
+  const unwrapped = refkey[REFKEYABLE]();
+
   const text =
-    isMemberRefkey(refkey) ?
-      `memberRefkey[${inspectRefkey(refkey.base)} -> ${inspectRefkey(refkey.member)}]`
-    : `refkey[${refkey.key}]`;
+    isMemberRefkey(unwrapped) ?
+      `memberRefkey[${inspectRefkey(unwrapped.base)} -> ${
+        typeof unwrapped.member === "string" ?
+          unwrapped.member
+        : inspectRefkey(unwrapped.member)
+      }]`
+    : `refkey[${unwrapped.key}]`;
 
   return text;
 }
 
 export function unresolvedRefkey(refkey: Refkey): string {
   return `<Unresolved Symbol: ${inspectRefkey(refkey)}>`;
+}
+
+export const TO_SYMBOL: unique symbol = Symbol("Alloy.TO_SYMBOL");
+export const CREATE_MEMBERS: unique symbol = Symbol("Alloy.CREATE_MEMBERS");
+
+export interface LibrarySymbolReference extends RefkeyableObject {
+  [TO_SYMBOL](): OutputSymbol;
+}
+
+export function isLibrarySymbolReference(
+  value: unknown,
+): value is LibrarySymbolReference {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Object.hasOwn(value, TO_SYMBOL)
+  );
 }

@@ -1,5 +1,6 @@
 import {
   Children,
+  createSymbolSlot,
   Declaration,
   DeclarationProps,
   Name,
@@ -46,16 +47,22 @@ export interface VarDeclarationProps
  * ```
  */
 export function VarDeclaration(props: VarDeclarationProps) {
+  const TypeSlot = createSymbolSlot();
+  const ValueSlot = createSymbolSlot();
+
   const sym = createVariableSymbol(props.name, {
     refkeys: props.refkey,
+    type: props.type ? TypeSlot.firstSymbol : ValueSlot.firstSymbol,
   });
+
   if (props.const && !props.type) {
     throw new Error("Implicitly-typed variables cannot be constant");
   }
   return (
     <Declaration symbol={sym}>
       {props.const ? "const " : ""}
-      {props.type ?? "var"} <Name /> = {props.children};
+      <TypeSlot>{props.type ?? "var"}</TypeSlot> <Name /> ={" "}
+      <ValueSlot>{props.children}</ValueSlot>;
     </Declaration>
   );
 }

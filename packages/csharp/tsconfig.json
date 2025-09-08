@@ -6,10 +6,19 @@
     "outDir": "dist",
     "types": ["@alloy-js/core/testing/matchers"],
     "paths": {
-      "#components/*": ["./src/components/*"]
+      "#components/*": ["./src/components/*"],
+      "#createLibrary": ["./src/create-library.ts"],
+      "#builtins": ["./src/builtins.ts"]
     }
   },
   "references": [{ "path": "../core" }],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

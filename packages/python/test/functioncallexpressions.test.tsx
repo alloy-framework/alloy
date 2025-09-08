@@ -52,17 +52,17 @@ describe("FunctionCallExpression", () => {
       <py.StatementList>
         <py.FunctionDeclaration
           name="runFunc"
-          returnType="str"
+          returnType={{ children: "str" }}
           refkey={methodRef}
           parameters={[
-            { name: "name", type: "str" },
-            { name: "number", type: "int" },
-            { name: "flag", type: "bool" },
+            { name: "name", type: { children: "str" } },
+            { name: "number", type: { children: "int" } },
+            { name: "flag", type: { children: "bool" } },
           ]}
         />
         <py.VariableDeclaration
           name="result"
-          type="str"
+          type={{ children: "str" }}
           initializer={
             <py.FunctionCallExpression
               target={methodRef}

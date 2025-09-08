@@ -46,8 +46,8 @@ it("uses import from external library in multiple functions", () => {
   const functionDeclarations = [
     <py.FunctionDeclaration
       name={"getUser"}
-      parameters={[{ name: "userId", type: "int" }]}
-      returnType={py.requestsModule["models"]["Response"]}
+      parameters={[{ name: "userId", type: { children: "int" } }]}
+      returnType={{ children: py.requestsModule["models"]["Response"] }}
     >
       <py.StatementList>
         <py.VariableDeclaration
@@ -66,8 +66,8 @@ it("uses import from external library in multiple functions", () => {
     </py.FunctionDeclaration>,
     <py.FunctionDeclaration
       name={"createUser"}
-      parameters={[{ name: "userName", type: "string" }]}
-      returnType={py.requestsModule["models"]["Response"]}
+      parameters={[{ name: "userName", type: { children: "string" } }]}
+      returnType={{ children: py.requestsModule["models"]["Response"] }}
     >
       <py.StatementList>
         <py.VariableDeclaration
@@ -119,9 +119,9 @@ it("uses import from external library in multiple class methods", () => {
           refkey={refkey("some_var")}
         />
         <py.FunctionDeclaration
-          name="getUser"
-          parameters={[{ name: "userId", type: "int" }]}
-          returnType={py.requestsModule["models"]["Response"]}
+          name={"getUser"}
+          parameters={[{ name: "userId", type: { children: "int" } }]}
+          returnType={{ children: py.requestsModule["models"]["Response"] }}
           instanceFunction
         >
           <py.StatementList>
@@ -141,8 +141,8 @@ it("uses import from external library in multiple class methods", () => {
         </py.FunctionDeclaration>
         <py.FunctionDeclaration
           name={"createUser"}
-          parameters={[{ name: "userName", type: "string" }]}
-          returnType={py.requestsModule["models"]["Response"]}
+          parameters={[{ name: "userName", type: { children: "string" } }]}
+          returnType={{ children: py.requestsModule["models"]["Response"] }}
           instanceFunction
         >
           <py.StatementList>

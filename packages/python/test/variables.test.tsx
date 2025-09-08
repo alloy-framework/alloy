@@ -1,4 +1,4 @@
-import { code, refkey } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -11,14 +11,22 @@ import {
 describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText([
-      <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
+      <py.VariableDeclaration
+        name="myVar"
+        type={{ children: "int" }}
+        initializer={42}
+      />,
     ]);
     expect(res).toBe(`my_var: int = 42`);
   });
 
   it("declares a python variable without value", () => {
     const res = toSourceText([
-      <py.VariableDeclaration name="myVar" type="int" omitNone />,
+      <py.VariableDeclaration
+        name="myVar"
+        type={{ children: "int" }}
+        omitNone
+      />,
     ]);
     expect(res).toBe(`my_var: int`);
   });
@@ -49,7 +57,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name="numbers"
-        type="list[int]"
+        type={{ children: "list[int]" }}
         initializer={<py.Atom jsValue={[1, 2, 3]} />}
       />,
     ]);
@@ -68,7 +76,11 @@ describe("Python Variable", () => {
 
   it("declares a python variable with omitNone", () => {
     const res = toSourceText([
-      <py.VariableDeclaration name="omitNoneVar" type="int" omitNone={true} />,
+      <py.VariableDeclaration
+        name="omitNoneVar"
+        type={{ children: "int" }}
+        omitNone={true}
+      />,
     ]);
     expect(res).toBe(`omit_none_var: int`);
   });
@@ -96,13 +108,12 @@ describe("Python Variable", () => {
   });
 
   it("declares a python variable with an optional type", () => {
-    const elements = [code`int`];
-    const typing = (
-      <py.UnionTypeExpression optional>{elements}</py.UnionTypeExpression>
-    );
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration name="my_var" type={typing} />
+        <py.VariableDeclaration
+          name="my_var"
+          type={{ children: [{ children: "int" }, { children: "None" }] }}
+        />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`
@@ -110,13 +121,13 @@ describe("Python Variable", () => {
   });
 
   it("declares a python variable with an optional type omitting none", () => {
-    const elements = [code`int`];
-    const typing = (
-      <py.UnionTypeExpression optional>{elements}</py.UnionTypeExpression>
-    );
     const res = toSourceText([
       <py.StatementList>
-        <py.VariableDeclaration name="my_var" type={typing} omitNone />
+        <py.VariableDeclaration
+          name="my_var"
+          type={{ children: [{ children: "int" }, { children: "None" }] }}
+          omitNone
+        />
       </py.StatementList>,
     ]);
     expect(res).toBe(d`
@@ -130,7 +141,11 @@ describe("Python Variable", () => {
         <py.ClassDeclaration name="MyClass" refkey={classKey} />
         <py.VariableDeclaration
           name="my_var"
-          type={<py.Reference refkey={classKey} />}
+          type={
+            {
+              children: <py.Reference refkey={classKey} />,
+            } as py.SingleTypeExpressionProps
+          }
         />
       </py.StatementList>,
     ]);
@@ -150,7 +165,11 @@ describe("Python Variable", () => {
       <py.SourceFile path="usage.py">
         <py.VariableDeclaration
           name="my_var"
-          type={<py.Reference refkey={classKey} />}
+          type={
+            {
+              children: <py.Reference refkey={classKey} />,
+            } as py.SingleTypeExpressionProps
+          }
         />
       </py.SourceFile>,
     ]);

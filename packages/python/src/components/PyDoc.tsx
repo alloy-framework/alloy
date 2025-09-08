@@ -1,20 +1,23 @@
 import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { Atom } from "./index.js";
+import { resolveTypeExpression } from "../utils.js";
+import { Atom, type TypeExpressionProps } from "./index.js";
 
 interface GoogleStyleDocParamTypeProps {
-  type?: Children;
-  optional?: boolean;
+  type?: TypeExpressionProps;
+  default?: boolean;
 }
 
 function GoogleStyleDocParamType(props: GoogleStyleDocParamTypeProps) {
+  const resolvedType =
+    props.type ? resolveTypeExpression(props.type) : undefined;
   return (
     <>
       <Show when={Boolean(props.type)}>
         {" ("}
-        {props.type}
-        <Show when={props.optional}>{", optional"}</Show>
+        {resolvedType}
+        <Show when={props.default}>{", optional"}</Show>
         {")"}
       </Show>
     </>
@@ -31,7 +34,7 @@ function GoogleStyleDocParamName(props: GoogleStyleDocParamNameProps) {
 
 interface GoogleStyleDocParamDescriptionProps {
   children?: Children;
-  defaultValue?: Children;
+  default?: Children;
 }
 
 function GoogleStyleDocParamDescription(
@@ -41,11 +44,13 @@ function GoogleStyleDocParamDescription(
     <Show when={Boolean(props.children)}>
       {": "}
       <align width={4}>
-        <Prose>{props.children}</Prose>
-        <Show when={Boolean(props.defaultValue)}>
-          {" "}
-          Defaults to <Atom jsValue={props.defaultValue}></Atom>.
-        </Show>
+        <Prose>
+          {props.children}
+          <Show when={Boolean(props.default)}>
+            <br />
+            Defaults to <Atom jsValue={props.default} />.
+          </Show>
+        </Prose>
       </align>
     </Show>
   );
@@ -53,10 +58,9 @@ function GoogleStyleDocParamDescription(
 
 export interface GoogleStyleDocParamProps {
   name: Children;
-  type?: Children;
+  type?: TypeExpressionProps;
   children?: Children;
-  optional?: boolean;
-  defaultValue?: Children;
+  default?: Children;
 }
 
 /**
@@ -66,10 +70,13 @@ export function GoogleStyleDocParam(props: GoogleStyleDocParamProps) {
   return (
     <>
       <GoogleStyleDocParamName name={props.name} />
-      <GoogleStyleDocParamType type={props.type} optional={props.optional} />
+      <GoogleStyleDocParamType
+        type={props.type}
+        default={Boolean(props.default)}
+      />
       <GoogleStyleDocParamDescription
         children={props.children}
-        defaultValue={props.defaultValue}
+        default={props.default}
       />
     </>
   );
@@ -93,7 +100,7 @@ export function GoogleStyleDocParams(props: GoogleStyleDocParamsProps) {
             <GoogleStyleDocParam
               name={param.name}
               type={param.type}
-              optional={param.optional}
+              default={param.default}
             >
               {param.doc}
             </GoogleStyleDocParam>

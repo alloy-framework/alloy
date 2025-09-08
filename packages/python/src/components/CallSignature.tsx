@@ -1,5 +1,4 @@
 import {
-  Children,
   computed,
   createSymbolSlot,
   For,
@@ -10,8 +9,10 @@ import {
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
+import { resolveTypeExpression } from "../utils.js";
 import { Atom } from "./Atom.jsx";
 import { PythonSourceFileContext } from "./SourceFile.jsx";
+import { type TypeExpressionProps } from "./index.js";
 
 export interface CallSignatureParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
@@ -88,25 +89,17 @@ export function CallSignatureParameters(props: CallSignatureParametersProps) {
 }
 
 function parameter(param: DeclaredParameterDescriptor) {
+  const type = param.type ? resolveTypeExpression(param.type) : undefined;
   const TypeSlot = param.TypeSlot!; // TypeSlot will always be present when param.type is true.
   return (
     <group>
       {param.symbol.name}
-      <Show when={!!param.type}>
-        : <TypeSlot>{param.type}</TypeSlot>
+      <Show when={!!type}>
+        : <TypeSlot>{type}</TypeSlot>
       </Show>
-      <Show when={!!param.optional}>
-        <Show when={!param.type}>=</Show>
-        <Show when={!!param.type}> = </Show>
-        <>
-          {param.default ?
-            <Atom jsValue={param.default} />
-          : "None"}
-        </>
-      </Show>
-      <Show when={!param.optional && param.default !== undefined}>
-        <Show when={!param.type}>=</Show>
-        <Show when={!!param.type}> = </Show>
+      <Show when={param.default !== undefined}>
+        <Show when={!type}>=</Show>
+        <Show when={!!type}> = </Show>
         <>
           <Atom jsValue={param.default} />
         </>
@@ -161,7 +154,7 @@ export interface CallSignatureProps {
    * which don't have a type or a default value. Otherwise, it's an array of
    * {@link ParameterDescriptor}s.
    */
-  parameters?: ParameterDescriptor[] | string[];
+  parameters?: ParameterDescriptor[];
 
   /**
    * The type parameters of the call signature, e.g. for a generic function.
@@ -192,7 +185,7 @@ export interface CallSignatureProps {
   /**
    * The return type of the function.
    */
-  returnType?: Children;
+  returnType?: TypeExpressionProps;
 }
 /**
  * A Python call signature, e.g. the part after the `def` keyword and the name in a
@@ -201,8 +194,8 @@ export interface CallSignatureProps {
  * @example
  * ```tsx
  * <CallSignature
- *   parameters={[{ name: "a", type: "int" }, { name: "b", type: "str" }]}
- *   returnType="int"
+ *   parameters={[{ name: "a", type: { children: "int" } }, { name: "b", type: { children: "str" } }]}
+ *   returnType={{ children: "int" }}
  * />
  * ```
  * renders to
@@ -227,11 +220,13 @@ export function CallSignature(props: CallSignatureProps) {
   );
   const typeParams =
     props.typeParameters ? `[${props.typeParameters.join(", ")}]` : "";
+  const resolvedReturnType =
+    props.returnType ? resolveTypeExpression(props.returnType) : undefined;
   const sReturnType =
-    props.returnType ?
+    resolvedReturnType ?
       <>
         {" -> "}
-        {props.returnType}
+        {resolvedReturnType}
       </>
     : undefined;
 

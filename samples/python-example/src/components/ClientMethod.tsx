@@ -23,9 +23,9 @@ export function ClientMethod(props: ClientMethodProps) {
   if (endpointParam) {
     parameters.push({
       name: endpointParam,
-      type: castOpenAPITypeToPython("string"),
+      type: { children: castOpenAPITypeToPython("string") },
       refkey: refkey(op, endpointParam),
-    });
+    } as py.ParameterDescriptor);
   }
 
   let requestReturnType: Children;
@@ -33,16 +33,15 @@ export function ClientMethod(props: ClientMethodProps) {
     requestReturnType = resolveRestAPIReference(op.requestBody, apiContext);
     parameters.push({
       name: "body",
-      type: requestReturnType,
+      type: { children: requestReturnType },
       refkey: refkey(op, "requestBody"),
-    });
+    } as py.ParameterDescriptor);
   }
 
   // get the return type based on the spec's responseBody.
-  let responseReturnType: Children = resolveRestAPIReference(
-    op.responseBody,
-    apiContext,
-  );
+  let responseReturnType = {
+    children: resolveRestAPIReference(op.responseBody, apiContext),
+  } as py.SingleTypeExpressionProps;
   let responseReturnTypeString: string = `${resolveRestAPIReferenceToString(op.responseBody, apiContext)}: ${op.responseDoc}`;
 
   // get the url endpoint, constructed from possible path parameters
@@ -94,10 +93,7 @@ export function ClientMethod(props: ClientMethodProps) {
   const functionDoc = (
     <py.FunctionDoc
       description={[<Prose>{op.doc}</Prose>]}
-      parameters={parameters.map((param) => ({
-        name: param.name,
-        type: param.type,
-      }))}
+      parameters={parameters}
       returns={responseReturnTypeString}
       style="google"
     />

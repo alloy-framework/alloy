@@ -19,8 +19,8 @@ export interface FunctionDeclarationProps
  * ```tsx
  * <FunctionDeclaration
  *  name="my_function"
- *  returnType="int"
- *  parameters=[{name: "a", type: "int"},{name: "b", type: "str"}]>
+ *  returnType={{ children:"int" }}
+ *  parameters=[{name: "a", type: { children:"int" }},{name: "b", type: { children:"str" }}]>
  *   return a + b
  * </FunctionDeclaration>
  * ```
@@ -48,10 +48,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       <Declaration {...props} nameKind="function" symbol={sym}>
         {asyncKwd}def <Name />
         <LexicalScope name={sym.name}>
-          <CallSignature
-            {...callSignatureProps}
-            returnType={props.returnType}
-          />
+          <CallSignature {...callSignatureProps} />
           <PythonBlock opener=":">
             <Show when={Boolean(props.doc)}>{props.doc}</Show>
             {props.children ?? "pass"}

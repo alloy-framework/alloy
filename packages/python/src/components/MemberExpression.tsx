@@ -397,11 +397,6 @@ function isSubscriptionDescriptor(
   return "type" in part && part.type === MEMBER_ACCESS_TYPES.SUBSCRIPTION;
 }
 
-function getNameForRefkey(refkey: Children): Children {
-  const parsedValue = getSymbolForRefkey(refkey as Refkey).value;
-  return parsedValue !== undefined ? parsedValue.name : refkey;
-}
-
 export interface SubscriptionProps {
   /**
    * Single key for subscription access (obj[key] or obj[0]).

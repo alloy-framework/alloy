@@ -2,9 +2,54 @@ import Generic from "../Generic/index.js";
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const ObjectModel = createLibrary("System.Collections.ObjectModel", {
+type ObjectModelLibrary = LibrarySymbolReference & {
+  Collection: LibrarySymbolReference & {
+    Collection: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    ClearItems: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    InsertItem: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    RemoveItem: LibrarySymbolReference;
+    SetItem: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Items: LibrarySymbolReference
+  };
+  ReadOnlyCollection: LibrarySymbolReference & {
+    ReadOnlyCollection: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    Empty: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Items: LibrarySymbolReference
+  };
+  ReadOnlyDictionary: LibrarySymbolReference & {
+    KeyCollection: LibrarySymbolReference & {
+      Contains: LibrarySymbolReference;
+      CopyTo: LibrarySymbolReference;
+      GetEnumerator: LibrarySymbolReference;
+      Count: LibrarySymbolReference
+    };
+    ValueCollection: LibrarySymbolReference & {
+      CopyTo: LibrarySymbolReference;
+      GetEnumerator: LibrarySymbolReference;
+      Count: LibrarySymbolReference
+    }
+  }
+};
+const ObjectModel: ObjectModelLibrary = createLibrary("System.Collections.ObjectModel", {
   Collection: {
     kind: "class",
     members: {

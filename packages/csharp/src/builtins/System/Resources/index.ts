@@ -2,9 +2,61 @@ import System from "../index.js";
 import Reflection from "../Reflection/index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Resources = createLibrary("System.Resources", {
+type ResourcesLibrary = LibrarySymbolReference & {
+  IResourceReader: LibrarySymbolReference & {
+    Close: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference
+  };
+  MissingSatelliteAssemblyException: LibrarySymbolReference & {
+    MissingSatelliteAssemblyException: LibrarySymbolReference;
+    CultureName: LibrarySymbolReference
+  };
+  ResourceManager: LibrarySymbolReference & {
+    HeaderVersionNumber: LibrarySymbolReference;
+    MagicNumber: LibrarySymbolReference;
+    MainAssembly: LibrarySymbolReference;
+    ResourceManager: LibrarySymbolReference;
+    CreateFileBasedResourceManager: LibrarySymbolReference;
+    GetNeutralResourcesLanguage: LibrarySymbolReference;
+    GetObject: LibrarySymbolReference;
+    GetResourceFileName: LibrarySymbolReference;
+    GetResourceSet: LibrarySymbolReference;
+    GetSatelliteContractVersion: LibrarySymbolReference;
+    GetStream: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    InternalGetResourceSet: LibrarySymbolReference;
+    ReleaseAllResources: LibrarySymbolReference;
+    BaseName: LibrarySymbolReference;
+    FallbackLocation: LibrarySymbolReference;
+    IgnoreCase: LibrarySymbolReference;
+    ResourceSetType: LibrarySymbolReference
+  };
+  ResourceReader: LibrarySymbolReference & {
+    ResourceReader: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetResourceData: LibrarySymbolReference
+  };
+  ResourceSet: LibrarySymbolReference & {
+    ResourceSet: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    GetDefaultReader: LibrarySymbolReference;
+    GetDefaultWriter: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetObject: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    ReadResources: LibrarySymbolReference
+  };
+  UltimateResourceFallbackLocation: LibrarySymbolReference & {
+    MainAssembly: LibrarySymbolReference;
+    Satellite: LibrarySymbolReference
+  }
+};
+const Resources: ResourcesLibrary = createLibrary("System.Resources", {
   IResourceReader: {
     kind: "interface",
     members: {

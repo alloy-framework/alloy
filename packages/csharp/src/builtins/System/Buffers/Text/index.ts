@@ -1,7 +1,34 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Text = createLibrary("System.Buffers.Text", {
+type TextLibrary = LibrarySymbolReference & {
+  Base64: LibrarySymbolReference & {
+    DecodeFromUtf8: LibrarySymbolReference;
+    DecodeFromUtf8InPlace: LibrarySymbolReference;
+    EncodeToUtf8: LibrarySymbolReference;
+    EncodeToUtf8InPlace: LibrarySymbolReference;
+    GetMaxDecodedFromUtf8Length: LibrarySymbolReference;
+    GetMaxEncodedToUtf8Length: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference
+  };
+  Base64Url: LibrarySymbolReference & {
+    DecodeFromChars: LibrarySymbolReference;
+    DecodeFromUtf8: LibrarySymbolReference;
+    DecodeFromUtf8InPlace: LibrarySymbolReference;
+    EncodeToChars: LibrarySymbolReference;
+    EncodeToString: LibrarySymbolReference;
+    EncodeToUtf8: LibrarySymbolReference;
+    GetEncodedLength: LibrarySymbolReference;
+    GetMaxDecodedLength: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference;
+    TryDecodeFromChars: LibrarySymbolReference;
+    TryDecodeFromUtf8: LibrarySymbolReference;
+    TryEncodeToChars: LibrarySymbolReference;
+    TryEncodeToUtf8: LibrarySymbolReference;
+    TryEncodeToUtf8InPlace: LibrarySymbolReference
+  }
+};
+const Text: TextLibrary = createLibrary("System.Buffers.Text", {
   Base64: {
     kind: "class",
     members: {

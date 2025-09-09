@@ -1,7 +1,32 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const ConstrainedExecution = createLibrary("System.Runtime.ConstrainedExecution", {
+type ConstrainedExecutionLibrary = LibrarySymbolReference & {
+  Cer: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    MayFail: LibrarySymbolReference;
+    Success: LibrarySymbolReference
+  };
+  Consistency: LibrarySymbolReference & {
+    MayCorruptProcess: LibrarySymbolReference;
+    MayCorruptAppDomain: LibrarySymbolReference;
+    MayCorruptInstance: LibrarySymbolReference;
+    WillNotCorruptState: LibrarySymbolReference
+  };
+  CriticalFinalizerObject: LibrarySymbolReference & {
+    CriticalFinalizerObject: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference
+  };
+  PrePrepareMethodAttribute: LibrarySymbolReference & {
+    PrePrepareMethodAttribute: LibrarySymbolReference
+  };
+  ReliabilityContractAttribute: LibrarySymbolReference & {
+    ReliabilityContractAttribute: LibrarySymbolReference;
+    Cer: LibrarySymbolReference;
+    ConsistencyGuarantee: LibrarySymbolReference
+  }
+};
+const ConstrainedExecution: ConstrainedExecutionLibrary = createLibrary("System.Runtime.ConstrainedExecution", {
   Cer: {
     kind: "enum",
     members: {

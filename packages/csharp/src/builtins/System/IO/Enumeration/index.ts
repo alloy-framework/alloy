@@ -2,9 +2,58 @@ import System from "../../index.js";
 import IO from "../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Enumeration = createLibrary("System.IO.Enumeration", {
+type EnumerationLibrary = LibrarySymbolReference & {
+  FileSystemEntry: LibrarySymbolReference & {
+    ToFileSystemInfo: LibrarySymbolReference;
+    ToFullPath: LibrarySymbolReference;
+    ToSpecifiedFullPath: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    CreationTimeUtc: LibrarySymbolReference;
+    Directory: LibrarySymbolReference;
+    FileName: LibrarySymbolReference;
+    IsDirectory: LibrarySymbolReference;
+    IsHidden: LibrarySymbolReference;
+    LastAccessTimeUtc: LibrarySymbolReference;
+    LastWriteTimeUtc: LibrarySymbolReference;
+    Length: LibrarySymbolReference;
+    OriginalRootDirectory: LibrarySymbolReference;
+    RootDirectory: LibrarySymbolReference
+  };
+  FileSystemEnumerable: LibrarySymbolReference & {
+    FindPredicate: LibrarySymbolReference & {
+      FindPredicate: LibrarySymbolReference;
+      Invoke: LibrarySymbolReference;
+      BeginInvoke: LibrarySymbolReference;
+      EndInvoke: LibrarySymbolReference
+    };
+    FindTransform: LibrarySymbolReference & {
+      FindTransform: LibrarySymbolReference;
+      Invoke: LibrarySymbolReference;
+      BeginInvoke: LibrarySymbolReference;
+      EndInvoke: LibrarySymbolReference
+    }
+  };
+  FileSystemEnumerator: LibrarySymbolReference & {
+    FileSystemEnumerator: LibrarySymbolReference;
+    ContinueOnError: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    OnDirectoryFinished: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    ShouldIncludeEntry: LibrarySymbolReference;
+    ShouldRecurseIntoEntry: LibrarySymbolReference;
+    TransformEntry: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
+  FileSystemName: LibrarySymbolReference & {
+    MatchesSimpleExpression: LibrarySymbolReference;
+    MatchesWin32Expression: LibrarySymbolReference;
+    TranslateWin32Expression: LibrarySymbolReference
+  }
+};
+const Enumeration: EnumerationLibrary = createLibrary("System.IO.Enumeration", {
   FileSystemEntry: {
     kind: "struct",
     members: {

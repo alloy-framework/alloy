@@ -1,9 +1,160 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const CodeAnalysis = createLibrary("System.Diagnostics.CodeAnalysis", {
+type CodeAnalysisLibrary = LibrarySymbolReference & {
+  AllowNullAttribute: LibrarySymbolReference & {
+    AllowNullAttribute: LibrarySymbolReference
+  };
+  ConstantExpectedAttribute: LibrarySymbolReference & {
+    ConstantExpectedAttribute: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference
+  };
+  DisallowNullAttribute: LibrarySymbolReference & {
+    DisallowNullAttribute: LibrarySymbolReference
+  };
+  DoesNotReturnAttribute: LibrarySymbolReference & {
+    DoesNotReturnAttribute: LibrarySymbolReference
+  };
+  DoesNotReturnIfAttribute: LibrarySymbolReference & {
+    DoesNotReturnIfAttribute: LibrarySymbolReference;
+    ParameterValue: LibrarySymbolReference
+  };
+  DynamicDependencyAttribute: LibrarySymbolReference & {
+    DynamicDependencyAttribute: LibrarySymbolReference;
+    AssemblyName: LibrarySymbolReference;
+    Condition: LibrarySymbolReference;
+    MemberSignature: LibrarySymbolReference;
+    MemberTypes: LibrarySymbolReference;
+    Type: LibrarySymbolReference;
+    TypeName: LibrarySymbolReference
+  };
+  DynamicallyAccessedMemberTypes: LibrarySymbolReference & {
+    All: LibrarySymbolReference;
+    None: LibrarySymbolReference;
+    PublicParameterlessConstructor: LibrarySymbolReference;
+    PublicConstructors: LibrarySymbolReference;
+    NonPublicConstructors: LibrarySymbolReference;
+    PublicMethods: LibrarySymbolReference;
+    NonPublicMethods: LibrarySymbolReference;
+    PublicFields: LibrarySymbolReference;
+    NonPublicFields: LibrarySymbolReference;
+    PublicNestedTypes: LibrarySymbolReference;
+    NonPublicNestedTypes: LibrarySymbolReference;
+    PublicProperties: LibrarySymbolReference;
+    NonPublicProperties: LibrarySymbolReference;
+    PublicEvents: LibrarySymbolReference;
+    NonPublicEvents: LibrarySymbolReference;
+    Interfaces: LibrarySymbolReference
+  };
+  DynamicallyAccessedMembersAttribute: LibrarySymbolReference & {
+    DynamicallyAccessedMembersAttribute: LibrarySymbolReference;
+    MemberTypes: LibrarySymbolReference
+  };
+  ExcludeFromCodeCoverageAttribute: LibrarySymbolReference & {
+    ExcludeFromCodeCoverageAttribute: LibrarySymbolReference;
+    Justification: LibrarySymbolReference
+  };
+  ExperimentalAttribute: LibrarySymbolReference & {
+    ExperimentalAttribute: LibrarySymbolReference;
+    DiagnosticId: LibrarySymbolReference;
+    UrlFormat: LibrarySymbolReference
+  };
+  FeatureGuardAttribute: LibrarySymbolReference & {
+    FeatureGuardAttribute: LibrarySymbolReference;
+    FeatureType: LibrarySymbolReference
+  };
+  FeatureSwitchDefinitionAttribute: LibrarySymbolReference & {
+    FeatureSwitchDefinitionAttribute: LibrarySymbolReference;
+    SwitchName: LibrarySymbolReference
+  };
+  MaybeNullAttribute: LibrarySymbolReference & {
+    MaybeNullAttribute: LibrarySymbolReference
+  };
+  MaybeNullWhenAttribute: LibrarySymbolReference & {
+    MaybeNullWhenAttribute: LibrarySymbolReference;
+    ReturnValue: LibrarySymbolReference
+  };
+  MemberNotNullAttribute: LibrarySymbolReference & {
+    MemberNotNullAttribute: LibrarySymbolReference;
+    Members: LibrarySymbolReference
+  };
+  MemberNotNullWhenAttribute: LibrarySymbolReference & {
+    MemberNotNullWhenAttribute: LibrarySymbolReference;
+    Members: LibrarySymbolReference;
+    ReturnValue: LibrarySymbolReference
+  };
+  NotNullAttribute: LibrarySymbolReference & {
+    NotNullAttribute: LibrarySymbolReference
+  };
+  NotNullIfNotNullAttribute: LibrarySymbolReference & {
+    NotNullIfNotNullAttribute: LibrarySymbolReference;
+    ParameterName: LibrarySymbolReference
+  };
+  NotNullWhenAttribute: LibrarySymbolReference & {
+    NotNullWhenAttribute: LibrarySymbolReference;
+    ReturnValue: LibrarySymbolReference
+  };
+  RequiresAssemblyFilesAttribute: LibrarySymbolReference & {
+    RequiresAssemblyFilesAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  RequiresDynamicCodeAttribute: LibrarySymbolReference & {
+    RequiresDynamicCodeAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  RequiresUnreferencedCodeAttribute: LibrarySymbolReference & {
+    RequiresUnreferencedCodeAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  SetsRequiredMembersAttribute: LibrarySymbolReference & {
+    SetsRequiredMembersAttribute: LibrarySymbolReference
+  };
+  StringSyntaxAttribute: LibrarySymbolReference & {
+    CompositeFormat: LibrarySymbolReference;
+    DateOnlyFormat: LibrarySymbolReference;
+    DateTimeFormat: LibrarySymbolReference;
+    EnumFormat: LibrarySymbolReference;
+    GuidFormat: LibrarySymbolReference;
+    Json: LibrarySymbolReference;
+    NumericFormat: LibrarySymbolReference;
+    Regex: LibrarySymbolReference;
+    TimeOnlyFormat: LibrarySymbolReference;
+    TimeSpanFormat: LibrarySymbolReference;
+    Uri: LibrarySymbolReference;
+    Xml: LibrarySymbolReference;
+    StringSyntaxAttribute: LibrarySymbolReference;
+    Arguments: LibrarySymbolReference;
+    Syntax: LibrarySymbolReference
+  };
+  SuppressMessageAttribute: LibrarySymbolReference & {
+    SuppressMessageAttribute: LibrarySymbolReference;
+    Category: LibrarySymbolReference;
+    CheckId: LibrarySymbolReference;
+    Justification: LibrarySymbolReference;
+    MessageId: LibrarySymbolReference;
+    Scope: LibrarySymbolReference;
+    Target: LibrarySymbolReference
+  };
+  UnconditionalSuppressMessageAttribute: LibrarySymbolReference & {
+    UnconditionalSuppressMessageAttribute: LibrarySymbolReference;
+    Category: LibrarySymbolReference;
+    CheckId: LibrarySymbolReference;
+    Justification: LibrarySymbolReference;
+    MessageId: LibrarySymbolReference;
+    Scope: LibrarySymbolReference;
+    Target: LibrarySymbolReference
+  };
+  UnscopedRefAttribute: LibrarySymbolReference & {
+    UnscopedRefAttribute: LibrarySymbolReference
+  }
+};
+const CodeAnalysis: CodeAnalysisLibrary = createLibrary("System.Diagnostics.CodeAnalysis", {
   AllowNullAttribute: {
     kind: "class",
     members: {

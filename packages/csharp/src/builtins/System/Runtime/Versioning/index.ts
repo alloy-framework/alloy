@@ -1,9 +1,86 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Versioning = createLibrary("System.Runtime.Versioning", {
+type VersioningLibrary = LibrarySymbolReference & {
+  ComponentGuaranteesAttribute: LibrarySymbolReference & {
+    ComponentGuaranteesAttribute: LibrarySymbolReference;
+    Guarantees: LibrarySymbolReference
+  };
+  ComponentGuaranteesOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Exchange: LibrarySymbolReference;
+    Stable: LibrarySymbolReference;
+    SideBySide: LibrarySymbolReference
+  };
+  FrameworkName: LibrarySymbolReference & {
+    FrameworkName: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    FullName: LibrarySymbolReference;
+    Identifier: LibrarySymbolReference;
+    Profile: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  OSPlatformAttribute: LibrarySymbolReference & {
+    PlatformName: LibrarySymbolReference
+  };
+  ObsoletedOSPlatformAttribute: LibrarySymbolReference & {
+    ObsoletedOSPlatformAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  RequiresPreviewFeaturesAttribute: LibrarySymbolReference & {
+    RequiresPreviewFeaturesAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  ResourceConsumptionAttribute: LibrarySymbolReference & {
+    ResourceConsumptionAttribute: LibrarySymbolReference;
+    ConsumptionScope: LibrarySymbolReference;
+    ResourceScope: LibrarySymbolReference
+  };
+  ResourceExposureAttribute: LibrarySymbolReference & {
+    ResourceExposureAttribute: LibrarySymbolReference;
+    ResourceExposureLevel: LibrarySymbolReference
+  };
+  ResourceScope: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Machine: LibrarySymbolReference;
+    Process: LibrarySymbolReference;
+    AppDomain: LibrarySymbolReference;
+    Library: LibrarySymbolReference;
+    Private: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference
+  };
+  SupportedOSPlatformAttribute: LibrarySymbolReference & {
+    SupportedOSPlatformAttribute: LibrarySymbolReference
+  };
+  SupportedOSPlatformGuardAttribute: LibrarySymbolReference & {
+    SupportedOSPlatformGuardAttribute: LibrarySymbolReference
+  };
+  TargetFrameworkAttribute: LibrarySymbolReference & {
+    TargetFrameworkAttribute: LibrarySymbolReference;
+    FrameworkDisplayName: LibrarySymbolReference;
+    FrameworkName: LibrarySymbolReference
+  };
+  TargetPlatformAttribute: LibrarySymbolReference & {
+    TargetPlatformAttribute: LibrarySymbolReference
+  };
+  UnsupportedOSPlatformAttribute: LibrarySymbolReference & {
+    UnsupportedOSPlatformAttribute: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  UnsupportedOSPlatformGuardAttribute: LibrarySymbolReference & {
+    UnsupportedOSPlatformGuardAttribute: LibrarySymbolReference
+  };
+  VersioningHelper: LibrarySymbolReference & {
+    MakeVersionSafeName: LibrarySymbolReference
+  }
+};
+const Versioning: VersioningLibrary = createLibrary("System.Runtime.Versioning", {
   ComponentGuaranteesAttribute: {
     kind: "class",
     members: {

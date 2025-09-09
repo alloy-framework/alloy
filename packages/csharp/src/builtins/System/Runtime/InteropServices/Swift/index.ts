@@ -1,9 +1,23 @@
 import System from "../../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Swift = createLibrary("System.Runtime.InteropServices.Swift", {
+type SwiftLibrary = LibrarySymbolReference & {
+  SwiftError: LibrarySymbolReference & {
+    SwiftError: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  SwiftIndirectResult: LibrarySymbolReference & {
+    SwiftIndirectResult: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  SwiftSelf: LibrarySymbolReference & {
+    SwiftSelf: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  }
+};
+const Swift: SwiftLibrary = createLibrary("System.Runtime.InteropServices.Swift", {
   SwiftError: {
     kind: "struct",
     members: {

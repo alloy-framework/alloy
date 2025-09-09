@@ -1,9 +1,29 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const ComponentModel = createLibrary("System.ComponentModel", {
+type ComponentModelLibrary = LibrarySymbolReference & {
+  DefaultValueAttribute: LibrarySymbolReference & {
+    DefaultValueAttribute: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    SetValue: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  EditorBrowsableAttribute: LibrarySymbolReference & {
+    EditorBrowsableAttribute: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    State: LibrarySymbolReference
+  };
+  EditorBrowsableState: LibrarySymbolReference & {
+    Always: LibrarySymbolReference;
+    Never: LibrarySymbolReference;
+    Advanced: LibrarySymbolReference
+  }
+};
+const ComponentModel: ComponentModelLibrary = createLibrary("System.ComponentModel", {
   DefaultValueAttribute: {
     kind: "class",
     members: {

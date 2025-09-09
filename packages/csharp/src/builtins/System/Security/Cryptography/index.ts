@@ -1,7 +1,12 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Cryptography = createLibrary("System.Security.Cryptography", {
+type CryptographyLibrary = LibrarySymbolReference & {
+  CryptographicException: LibrarySymbolReference & {
+    CryptographicException: LibrarySymbolReference
+  }
+};
+const Cryptography: CryptographyLibrary = createLibrary("System.Security.Cryptography", {
   CryptographicException: {
     kind: "class",
     members: {

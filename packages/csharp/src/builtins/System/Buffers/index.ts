@@ -1,9 +1,61 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Text } from "./Text/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Text } from "./Text/index.js";
 
-const Buffers = createLibrary("System.Buffers", {
+type BuffersLibrary = LibrarySymbolReference & {
+  ArrayPool: LibrarySymbolReference & {
+    ArrayPool: LibrarySymbolReference;
+    Create: LibrarySymbolReference;
+    Rent: LibrarySymbolReference;
+    Return: LibrarySymbolReference;
+    Shared: LibrarySymbolReference
+  };
+  IMemoryOwner: LibrarySymbolReference & {
+    Memory: LibrarySymbolReference
+  };
+  IPinnable: LibrarySymbolReference & {
+    Pin: LibrarySymbolReference;
+    Unpin: LibrarySymbolReference
+  };
+  MemoryHandle: LibrarySymbolReference & {
+    MemoryHandle: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Pointer: LibrarySymbolReference
+  };
+  MemoryManager: LibrarySymbolReference & {
+    MemoryManager: LibrarySymbolReference;
+    CreateMemory: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    GetSpan: LibrarySymbolReference;
+    Pin: LibrarySymbolReference;
+    TryGetArray: LibrarySymbolReference;
+    Unpin: LibrarySymbolReference;
+    Memory: LibrarySymbolReference
+  };
+  OperationStatus: LibrarySymbolReference & {
+    Done: LibrarySymbolReference;
+    DestinationTooSmall: LibrarySymbolReference;
+    NeedMoreData: LibrarySymbolReference;
+    InvalidData: LibrarySymbolReference
+  };
+  ReadOnlySpanAction: LibrarySymbolReference & {
+    ReadOnlySpanAction: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  SearchValues: LibrarySymbolReference & {
+    Contains: LibrarySymbolReference
+  };
+  SpanAction: LibrarySymbolReference & {
+    SpanAction: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  }
+};
+const Buffers: BuffersLibrary = createLibrary("System.Buffers", {
   ArrayPool: {
     kind: "class",
     members: {

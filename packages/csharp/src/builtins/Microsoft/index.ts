@@ -1,5 +1,8 @@
 import { createLibrary } from "#createLibrary";
-export { default as Win32 } from "./Win32/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Win32 } from "./Win32/index.js";
 
-const Microsoft = createLibrary("Microsoft", {});
+type MicrosoftLibrary = LibrarySymbolReference & {
+
+};
+const Microsoft: MicrosoftLibrary = createLibrary("Microsoft", {});
 export default Microsoft

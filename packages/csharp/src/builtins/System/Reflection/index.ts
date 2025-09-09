@@ -5,9 +5,923 @@ import System from "../index.js";
 import Security from "../Security/index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Reflection = createLibrary("System.Reflection", {
+type ReflectionLibrary = LibrarySymbolReference & {
+  AmbiguousMatchException: LibrarySymbolReference & {
+    AmbiguousMatchException: LibrarySymbolReference
+  };
+  Assembly: LibrarySymbolReference & {
+    Assembly: LibrarySymbolReference;
+    CreateInstance: LibrarySymbolReference;
+    CreateQualifiedName: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetAssembly: LibrarySymbolReference;
+    GetCallingAssembly: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetCustomAttributesData: LibrarySymbolReference;
+    GetEntryAssembly: LibrarySymbolReference;
+    GetExecutingAssembly: LibrarySymbolReference;
+    GetExportedTypes: LibrarySymbolReference;
+    GetFile: LibrarySymbolReference;
+    GetFiles: LibrarySymbolReference;
+    GetForwardedTypes: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetLoadedModules: LibrarySymbolReference;
+    GetManifestResourceInfo: LibrarySymbolReference;
+    GetManifestResourceNames: LibrarySymbolReference;
+    GetManifestResourceStream: LibrarySymbolReference;
+    GetModule: LibrarySymbolReference;
+    GetModules: LibrarySymbolReference;
+    GetName: LibrarySymbolReference;
+    GetReferencedAssemblies: LibrarySymbolReference;
+    GetSatelliteAssembly: LibrarySymbolReference;
+    GetType: LibrarySymbolReference;
+    GetTypes: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    Load: LibrarySymbolReference;
+    LoadFile: LibrarySymbolReference;
+    LoadFrom: LibrarySymbolReference;
+    LoadModule: LibrarySymbolReference;
+    LoadWithPartialName: LibrarySymbolReference;
+    ReflectionOnlyLoad: LibrarySymbolReference;
+    ReflectionOnlyLoadFrom: LibrarySymbolReference;
+    SetEntryAssembly: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    UnsafeLoadFrom: LibrarySymbolReference;
+    CodeBase: LibrarySymbolReference;
+    CustomAttributes: LibrarySymbolReference;
+    DefinedTypes: LibrarySymbolReference;
+    EntryPoint: LibrarySymbolReference;
+    EscapedCodeBase: LibrarySymbolReference;
+    ExportedTypes: LibrarySymbolReference;
+    FullName: LibrarySymbolReference;
+    GlobalAssemblyCache: LibrarySymbolReference;
+    HostContext: LibrarySymbolReference;
+    ImageRuntimeVersion: LibrarySymbolReference;
+    IsCollectible: LibrarySymbolReference;
+    IsDynamic: LibrarySymbolReference;
+    IsFullyTrusted: LibrarySymbolReference;
+    Location: LibrarySymbolReference;
+    ManifestModule: LibrarySymbolReference;
+    Modules: LibrarySymbolReference;
+    ReflectionOnly: LibrarySymbolReference;
+    SecurityRuleSet: LibrarySymbolReference
+  };
+  AssemblyAlgorithmIdAttribute: LibrarySymbolReference & {
+    AssemblyAlgorithmIdAttribute: LibrarySymbolReference;
+    AlgorithmId: LibrarySymbolReference
+  };
+  AssemblyCompanyAttribute: LibrarySymbolReference & {
+    AssemblyCompanyAttribute: LibrarySymbolReference;
+    Company: LibrarySymbolReference
+  };
+  AssemblyConfigurationAttribute: LibrarySymbolReference & {
+    AssemblyConfigurationAttribute: LibrarySymbolReference;
+    Configuration: LibrarySymbolReference
+  };
+  AssemblyContentType: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    WindowsRuntime: LibrarySymbolReference
+  };
+  AssemblyCopyrightAttribute: LibrarySymbolReference & {
+    AssemblyCopyrightAttribute: LibrarySymbolReference;
+    Copyright: LibrarySymbolReference
+  };
+  AssemblyCultureAttribute: LibrarySymbolReference & {
+    AssemblyCultureAttribute: LibrarySymbolReference;
+    Culture: LibrarySymbolReference
+  };
+  AssemblyDefaultAliasAttribute: LibrarySymbolReference & {
+    AssemblyDefaultAliasAttribute: LibrarySymbolReference;
+    DefaultAlias: LibrarySymbolReference
+  };
+  AssemblyDelaySignAttribute: LibrarySymbolReference & {
+    AssemblyDelaySignAttribute: LibrarySymbolReference;
+    DelaySign: LibrarySymbolReference
+  };
+  AssemblyDescriptionAttribute: LibrarySymbolReference & {
+    AssemblyDescriptionAttribute: LibrarySymbolReference;
+    Description: LibrarySymbolReference
+  };
+  AssemblyFileVersionAttribute: LibrarySymbolReference & {
+    AssemblyFileVersionAttribute: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  AssemblyFlagsAttribute: LibrarySymbolReference & {
+    AssemblyFlagsAttribute: LibrarySymbolReference;
+    AssemblyFlags: LibrarySymbolReference;
+    Flags: LibrarySymbolReference
+  };
+  AssemblyInformationalVersionAttribute: LibrarySymbolReference & {
+    AssemblyInformationalVersionAttribute: LibrarySymbolReference;
+    InformationalVersion: LibrarySymbolReference
+  };
+  AssemblyKeyFileAttribute: LibrarySymbolReference & {
+    AssemblyKeyFileAttribute: LibrarySymbolReference;
+    KeyFile: LibrarySymbolReference
+  };
+  AssemblyKeyNameAttribute: LibrarySymbolReference & {
+    AssemblyKeyNameAttribute: LibrarySymbolReference;
+    KeyName: LibrarySymbolReference
+  };
+  AssemblyMetadataAttribute: LibrarySymbolReference & {
+    AssemblyMetadataAttribute: LibrarySymbolReference;
+    Key: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  AssemblyName: LibrarySymbolReference & {
+    AssemblyName: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    GetAssemblyName: LibrarySymbolReference;
+    GetPublicKey: LibrarySymbolReference;
+    GetPublicKeyToken: LibrarySymbolReference;
+    OnDeserialization: LibrarySymbolReference;
+    ReferenceMatchesDefinition: LibrarySymbolReference;
+    SetPublicKey: LibrarySymbolReference;
+    SetPublicKeyToken: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    CodeBase: LibrarySymbolReference;
+    ContentType: LibrarySymbolReference;
+    CultureInfo: LibrarySymbolReference;
+    CultureName: LibrarySymbolReference;
+    EscapedCodeBase: LibrarySymbolReference;
+    Flags: LibrarySymbolReference;
+    FullName: LibrarySymbolReference;
+    HashAlgorithm: LibrarySymbolReference;
+    KeyPair: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ProcessorArchitecture: LibrarySymbolReference;
+    Version: LibrarySymbolReference;
+    VersionCompatibility: LibrarySymbolReference
+  };
+  AssemblyNameFlags: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    PublicKey: LibrarySymbolReference;
+    Retargetable: LibrarySymbolReference;
+    EnableJITcompileOptimizer: LibrarySymbolReference;
+    EnableJITcompileTracking: LibrarySymbolReference
+  };
+  AssemblyNameProxy: LibrarySymbolReference & {
+    AssemblyNameProxy: LibrarySymbolReference;
+    GetAssemblyName: LibrarySymbolReference
+  };
+  AssemblyProductAttribute: LibrarySymbolReference & {
+    AssemblyProductAttribute: LibrarySymbolReference;
+    Product: LibrarySymbolReference
+  };
+  AssemblySignatureKeyAttribute: LibrarySymbolReference & {
+    AssemblySignatureKeyAttribute: LibrarySymbolReference;
+    Countersignature: LibrarySymbolReference;
+    PublicKey: LibrarySymbolReference
+  };
+  AssemblyTitleAttribute: LibrarySymbolReference & {
+    AssemblyTitleAttribute: LibrarySymbolReference;
+    Title: LibrarySymbolReference
+  };
+  AssemblyTrademarkAttribute: LibrarySymbolReference & {
+    AssemblyTrademarkAttribute: LibrarySymbolReference;
+    Trademark: LibrarySymbolReference
+  };
+  AssemblyVersionAttribute: LibrarySymbolReference & {
+    AssemblyVersionAttribute: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  Binder: LibrarySymbolReference & {
+    Binder: LibrarySymbolReference;
+    BindToField: LibrarySymbolReference;
+    BindToMethod: LibrarySymbolReference;
+    ChangeType: LibrarySymbolReference;
+    ReorderArgumentArray: LibrarySymbolReference;
+    SelectMethod: LibrarySymbolReference;
+    SelectProperty: LibrarySymbolReference
+  };
+  BindingFlags: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    IgnoreCase: LibrarySymbolReference;
+    DeclaredOnly: LibrarySymbolReference;
+    Instance: LibrarySymbolReference;
+    Static: LibrarySymbolReference;
+    Public: LibrarySymbolReference;
+    NonPublic: LibrarySymbolReference;
+    FlattenHierarchy: LibrarySymbolReference;
+    InvokeMethod: LibrarySymbolReference;
+    CreateInstance: LibrarySymbolReference;
+    GetField: LibrarySymbolReference;
+    SetField: LibrarySymbolReference;
+    GetProperty: LibrarySymbolReference;
+    SetProperty: LibrarySymbolReference;
+    PutDispProperty: LibrarySymbolReference;
+    PutRefDispProperty: LibrarySymbolReference;
+    ExactBinding: LibrarySymbolReference;
+    SuppressChangeType: LibrarySymbolReference;
+    OptionalParamBinding: LibrarySymbolReference;
+    IgnoreReturn: LibrarySymbolReference;
+    DoNotWrapExceptions: LibrarySymbolReference
+  };
+  CallingConventions: LibrarySymbolReference & {
+    Standard: LibrarySymbolReference;
+    VarArgs: LibrarySymbolReference;
+    Any: LibrarySymbolReference;
+    HasThis: LibrarySymbolReference;
+    ExplicitThis: LibrarySymbolReference
+  };
+  ConstructorInfo: LibrarySymbolReference & {
+    ConstructorName: LibrarySymbolReference;
+    TypeConstructorName: LibrarySymbolReference;
+    ConstructorInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference
+  };
+  ConstructorInvoker: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference
+  };
+  CustomAttributeData: LibrarySymbolReference & {
+    CustomAttributeData: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    AttributeType: LibrarySymbolReference;
+    Constructor: LibrarySymbolReference;
+    ConstructorArguments: LibrarySymbolReference;
+    NamedArguments: LibrarySymbolReference
+  };
+  CustomAttributeExtensions: LibrarySymbolReference & {
+    GetCustomAttribute: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference
+  };
+  CustomAttributeFormatException: LibrarySymbolReference & {
+    CustomAttributeFormatException: LibrarySymbolReference
+  };
+  CustomAttributeNamedArgument: LibrarySymbolReference & {
+    CustomAttributeNamedArgument: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    IsField: LibrarySymbolReference;
+    MemberInfo: LibrarySymbolReference;
+    MemberName: LibrarySymbolReference;
+    TypedValue: LibrarySymbolReference
+  };
+  CustomAttributeTypedArgument: LibrarySymbolReference & {
+    CustomAttributeTypedArgument: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ArgumentType: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  DefaultMemberAttribute: LibrarySymbolReference & {
+    DefaultMemberAttribute: LibrarySymbolReference;
+    MemberName: LibrarySymbolReference
+  };
+  EventAttributes: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    SpecialName: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference;
+    RTSpecialName: LibrarySymbolReference
+  };
+  EventInfo: LibrarySymbolReference & {
+    EventInfo: LibrarySymbolReference;
+    AddEventHandler: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetAddMethod: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetOtherMethods: LibrarySymbolReference;
+    GetRaiseMethod: LibrarySymbolReference;
+    GetRemoveMethod: LibrarySymbolReference;
+    RemoveEventHandler: LibrarySymbolReference;
+    AddMethod: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    EventHandlerType: LibrarySymbolReference;
+    IsMulticast: LibrarySymbolReference;
+    IsSpecialName: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference;
+    RaiseMethod: LibrarySymbolReference;
+    RemoveMethod: LibrarySymbolReference
+  };
+  ExceptionHandlingClause: LibrarySymbolReference & {
+    ExceptionHandlingClause: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    CatchType: LibrarySymbolReference;
+    FilterOffset: LibrarySymbolReference;
+    Flags: LibrarySymbolReference;
+    HandlerLength: LibrarySymbolReference;
+    HandlerOffset: LibrarySymbolReference;
+    TryLength: LibrarySymbolReference;
+    TryOffset: LibrarySymbolReference
+  };
+  ExceptionHandlingClauseOptions: LibrarySymbolReference & {
+    Clause: LibrarySymbolReference;
+    Filter: LibrarySymbolReference;
+    Finally: LibrarySymbolReference;
+    Fault: LibrarySymbolReference
+  };
+  FieldAttributes: LibrarySymbolReference & {
+    PrivateScope: LibrarySymbolReference;
+    Private: LibrarySymbolReference;
+    FamANDAssem: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference;
+    Family: LibrarySymbolReference;
+    FamORAssem: LibrarySymbolReference;
+    Public: LibrarySymbolReference;
+    FieldAccessMask: LibrarySymbolReference;
+    Static: LibrarySymbolReference;
+    InitOnly: LibrarySymbolReference;
+    Literal: LibrarySymbolReference;
+    NotSerialized: LibrarySymbolReference;
+    HasFieldRVA: LibrarySymbolReference;
+    SpecialName: LibrarySymbolReference;
+    RTSpecialName: LibrarySymbolReference;
+    HasFieldMarshal: LibrarySymbolReference;
+    PinvokeImpl: LibrarySymbolReference;
+    HasDefault: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference
+  };
+  FieldInfo: LibrarySymbolReference & {
+    FieldInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetFieldFromHandle: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetModifiedFieldType: LibrarySymbolReference;
+    GetOptionalCustomModifiers: LibrarySymbolReference;
+    GetRawConstantValue: LibrarySymbolReference;
+    GetRequiredCustomModifiers: LibrarySymbolReference;
+    GetValue: LibrarySymbolReference;
+    GetValueDirect: LibrarySymbolReference;
+    SetValue: LibrarySymbolReference;
+    SetValueDirect: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    FieldHandle: LibrarySymbolReference;
+    FieldType: LibrarySymbolReference;
+    IsAssembly: LibrarySymbolReference;
+    IsFamily: LibrarySymbolReference;
+    IsFamilyAndAssembly: LibrarySymbolReference;
+    IsFamilyOrAssembly: LibrarySymbolReference;
+    IsInitOnly: LibrarySymbolReference;
+    IsLiteral: LibrarySymbolReference;
+    IsNotSerialized: LibrarySymbolReference;
+    IsPinvokeImpl: LibrarySymbolReference;
+    IsPrivate: LibrarySymbolReference;
+    IsPublic: LibrarySymbolReference;
+    IsSecurityCritical: LibrarySymbolReference;
+    IsSecuritySafeCritical: LibrarySymbolReference;
+    IsSecurityTransparent: LibrarySymbolReference;
+    IsSpecialName: LibrarySymbolReference;
+    IsStatic: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference
+  };
+  GenericParameterAttributes: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Covariant: LibrarySymbolReference;
+    Contravariant: LibrarySymbolReference;
+    VarianceMask: LibrarySymbolReference;
+    ReferenceTypeConstraint: LibrarySymbolReference;
+    NotNullableValueTypeConstraint: LibrarySymbolReference;
+    DefaultConstructorConstraint: LibrarySymbolReference;
+    SpecialConstraintMask: LibrarySymbolReference;
+    AllowByRefLike: LibrarySymbolReference
+  };
+  ICustomAttributeProvider: LibrarySymbolReference & {
+    GetCustomAttributes: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference
+  };
+  IReflect: LibrarySymbolReference & {
+    GetField: LibrarySymbolReference;
+    GetFields: LibrarySymbolReference;
+    GetMember: LibrarySymbolReference;
+    GetMembers: LibrarySymbolReference;
+    GetMethod: LibrarySymbolReference;
+    GetMethods: LibrarySymbolReference;
+    GetProperties: LibrarySymbolReference;
+    GetProperty: LibrarySymbolReference;
+    InvokeMember: LibrarySymbolReference;
+    UnderlyingSystemType: LibrarySymbolReference
+  };
+  IReflectableType: LibrarySymbolReference & {
+    GetTypeInfo: LibrarySymbolReference
+  };
+  ImageFileMachine: LibrarySymbolReference & {
+    I386: LibrarySymbolReference;
+    ARM: LibrarySymbolReference;
+    IA64: LibrarySymbolReference;
+    AMD64: LibrarySymbolReference
+  };
+  InterfaceMapping: LibrarySymbolReference & {
+    InterfaceMethods: LibrarySymbolReference;
+    InterfaceType: LibrarySymbolReference;
+    TargetMethods: LibrarySymbolReference;
+    TargetType: LibrarySymbolReference
+  };
+  InvalidFilterCriteriaException: LibrarySymbolReference & {
+    InvalidFilterCriteriaException: LibrarySymbolReference
+  };
+  LocalVariableInfo: LibrarySymbolReference & {
+    LocalVariableInfo: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    IsPinned: LibrarySymbolReference;
+    LocalIndex: LibrarySymbolReference;
+    LocalType: LibrarySymbolReference
+  };
+  ManifestResourceInfo: LibrarySymbolReference & {
+    ManifestResourceInfo: LibrarySymbolReference;
+    FileName: LibrarySymbolReference;
+    ReferencedAssembly: LibrarySymbolReference;
+    ResourceLocation: LibrarySymbolReference
+  };
+  MemberFilter: LibrarySymbolReference & {
+    MemberFilter: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  MemberInfo: LibrarySymbolReference & {
+    MemberInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetCustomAttributesData: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    HasSameMetadataDefinitionAs: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    CustomAttributes: LibrarySymbolReference;
+    DeclaringType: LibrarySymbolReference;
+    IsCollectible: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference;
+    MetadataToken: LibrarySymbolReference;
+    Module: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ReflectedType: LibrarySymbolReference
+  };
+  MemberTypes: LibrarySymbolReference & {
+    Constructor: LibrarySymbolReference;
+    Event: LibrarySymbolReference;
+    Field: LibrarySymbolReference;
+    Method: LibrarySymbolReference;
+    Property: LibrarySymbolReference;
+    TypeInfo: LibrarySymbolReference;
+    Custom: LibrarySymbolReference;
+    NestedType: LibrarySymbolReference;
+    All: LibrarySymbolReference
+  };
+  MethodAttributes: LibrarySymbolReference & {
+    PrivateScope: LibrarySymbolReference;
+    ReuseSlot: LibrarySymbolReference;
+    Private: LibrarySymbolReference;
+    FamANDAssem: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference;
+    Family: LibrarySymbolReference;
+    FamORAssem: LibrarySymbolReference;
+    Public: LibrarySymbolReference;
+    MemberAccessMask: LibrarySymbolReference;
+    UnmanagedExport: LibrarySymbolReference;
+    Static: LibrarySymbolReference;
+    Final: LibrarySymbolReference;
+    Virtual: LibrarySymbolReference;
+    HideBySig: LibrarySymbolReference;
+    NewSlot: LibrarySymbolReference;
+    VtableLayoutMask: LibrarySymbolReference;
+    CheckAccessOnOverride: LibrarySymbolReference;
+    Abstract: LibrarySymbolReference;
+    SpecialName: LibrarySymbolReference;
+    RTSpecialName: LibrarySymbolReference;
+    PinvokeImpl: LibrarySymbolReference;
+    HasSecurity: LibrarySymbolReference;
+    RequireSecObject: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference
+  };
+  MethodBase: LibrarySymbolReference & {
+    MethodBase: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetCurrentMethod: LibrarySymbolReference;
+    GetGenericArguments: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMethodBody: LibrarySymbolReference;
+    GetMethodFromHandle: LibrarySymbolReference;
+    GetMethodImplementationFlags: LibrarySymbolReference;
+    GetParameters: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    CallingConvention: LibrarySymbolReference;
+    ContainsGenericParameters: LibrarySymbolReference;
+    IsAbstract: LibrarySymbolReference;
+    IsAssembly: LibrarySymbolReference;
+    IsConstructedGenericMethod: LibrarySymbolReference;
+    IsConstructor: LibrarySymbolReference;
+    IsFamily: LibrarySymbolReference;
+    IsFamilyAndAssembly: LibrarySymbolReference;
+    IsFamilyOrAssembly: LibrarySymbolReference;
+    IsFinal: LibrarySymbolReference;
+    IsGenericMethod: LibrarySymbolReference;
+    IsGenericMethodDefinition: LibrarySymbolReference;
+    IsHideBySig: LibrarySymbolReference;
+    IsPrivate: LibrarySymbolReference;
+    IsPublic: LibrarySymbolReference;
+    IsSecurityCritical: LibrarySymbolReference;
+    IsSecuritySafeCritical: LibrarySymbolReference;
+    IsSecurityTransparent: LibrarySymbolReference;
+    IsSpecialName: LibrarySymbolReference;
+    IsStatic: LibrarySymbolReference;
+    IsVirtual: LibrarySymbolReference;
+    MethodHandle: LibrarySymbolReference;
+    MethodImplementationFlags: LibrarySymbolReference
+  };
+  MethodBody: LibrarySymbolReference & {
+    MethodBody: LibrarySymbolReference;
+    GetILAsByteArray: LibrarySymbolReference;
+    ExceptionHandlingClauses: LibrarySymbolReference;
+    InitLocals: LibrarySymbolReference;
+    LocalSignatureMetadataToken: LibrarySymbolReference;
+    LocalVariables: LibrarySymbolReference;
+    MaxStackSize: LibrarySymbolReference
+  };
+  MethodImplAttributes: LibrarySymbolReference & {
+    IL: LibrarySymbolReference;
+    Managed: LibrarySymbolReference;
+    Native: LibrarySymbolReference;
+    OPTIL: LibrarySymbolReference;
+    CodeTypeMask: LibrarySymbolReference;
+    Runtime: LibrarySymbolReference;
+    ManagedMask: LibrarySymbolReference;
+    Unmanaged: LibrarySymbolReference;
+    NoInlining: LibrarySymbolReference;
+    ForwardRef: LibrarySymbolReference;
+    Synchronized: LibrarySymbolReference;
+    NoOptimization: LibrarySymbolReference;
+    PreserveSig: LibrarySymbolReference;
+    AggressiveInlining: LibrarySymbolReference;
+    AggressiveOptimization: LibrarySymbolReference;
+    InternalCall: LibrarySymbolReference;
+    MaxMethodImplVal: LibrarySymbolReference
+  };
+  MethodInfo: LibrarySymbolReference & {
+    MethodInfo: LibrarySymbolReference;
+    CreateDelegate: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetBaseDefinition: LibrarySymbolReference;
+    GetGenericArguments: LibrarySymbolReference;
+    GetGenericMethodDefinition: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    MakeGenericMethod: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference;
+    ReturnParameter: LibrarySymbolReference;
+    ReturnType: LibrarySymbolReference;
+    ReturnTypeCustomAttributes: LibrarySymbolReference
+  };
+  MethodInvoker: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference
+  };
+  Missing: LibrarySymbolReference & {
+    Value: LibrarySymbolReference
+  };
+  Module: LibrarySymbolReference & {
+    FilterTypeName: LibrarySymbolReference;
+    FilterTypeNameIgnoreCase: LibrarySymbolReference;
+    Module: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FindTypes: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetCustomAttributesData: LibrarySymbolReference;
+    GetField: LibrarySymbolReference;
+    GetFields: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMethod: LibrarySymbolReference;
+    GetMethodImpl: LibrarySymbolReference;
+    GetMethods: LibrarySymbolReference;
+    GetPEKind: LibrarySymbolReference;
+    GetType: LibrarySymbolReference;
+    GetTypes: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    IsResource: LibrarySymbolReference;
+    ResolveField: LibrarySymbolReference;
+    ResolveMember: LibrarySymbolReference;
+    ResolveMethod: LibrarySymbolReference;
+    ResolveSignature: LibrarySymbolReference;
+    ResolveString: LibrarySymbolReference;
+    ResolveType: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference;
+    CustomAttributes: LibrarySymbolReference;
+    FullyQualifiedName: LibrarySymbolReference;
+    MDStreamVersion: LibrarySymbolReference;
+    MetadataToken: LibrarySymbolReference;
+    ModuleHandle: LibrarySymbolReference;
+    ModuleVersionId: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ScopeName: LibrarySymbolReference
+  };
+  ModuleResolveEventHandler: LibrarySymbolReference & {
+    ModuleResolveEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  NullabilityInfo: LibrarySymbolReference & {
+    ElementType: LibrarySymbolReference;
+    GenericTypeArguments: LibrarySymbolReference;
+    ReadState: LibrarySymbolReference;
+    Type: LibrarySymbolReference;
+    WriteState: LibrarySymbolReference
+  };
+  NullabilityInfoContext: LibrarySymbolReference & {
+    NullabilityInfoContext: LibrarySymbolReference;
+    Create: LibrarySymbolReference
+  };
+  NullabilityState: LibrarySymbolReference & {
+    Unknown: LibrarySymbolReference;
+    NotNull: LibrarySymbolReference;
+    Nullable: LibrarySymbolReference
+  };
+  ObfuscateAssemblyAttribute: LibrarySymbolReference & {
+    ObfuscateAssemblyAttribute: LibrarySymbolReference;
+    AssemblyIsPrivate: LibrarySymbolReference;
+    StripAfterObfuscation: LibrarySymbolReference
+  };
+  ObfuscationAttribute: LibrarySymbolReference & {
+    ObfuscationAttribute: LibrarySymbolReference;
+    ApplyToMembers: LibrarySymbolReference;
+    Exclude: LibrarySymbolReference;
+    Feature: LibrarySymbolReference;
+    StripAfterObfuscation: LibrarySymbolReference
+  };
+  ParameterAttributes: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    In: LibrarySymbolReference;
+    Out: LibrarySymbolReference;
+    Lcid: LibrarySymbolReference;
+    Retval: LibrarySymbolReference;
+    Optional: LibrarySymbolReference;
+    HasDefault: LibrarySymbolReference;
+    HasFieldMarshal: LibrarySymbolReference;
+    Reserved3: LibrarySymbolReference;
+    Reserved4: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference
+  };
+  ParameterInfo: LibrarySymbolReference & {
+    AttrsImpl: LibrarySymbolReference;
+    ClassImpl: LibrarySymbolReference;
+    DefaultValueImpl: LibrarySymbolReference;
+    MemberImpl: LibrarySymbolReference;
+    NameImpl: LibrarySymbolReference;
+    PositionImpl: LibrarySymbolReference;
+    ParameterInfo: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetCustomAttributesData: LibrarySymbolReference;
+    GetModifiedParameterType: LibrarySymbolReference;
+    GetOptionalCustomModifiers: LibrarySymbolReference;
+    GetRequiredCustomModifiers: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    CustomAttributes: LibrarySymbolReference;
+    DefaultValue: LibrarySymbolReference;
+    HasDefaultValue: LibrarySymbolReference;
+    IsIn: LibrarySymbolReference;
+    IsLcid: LibrarySymbolReference;
+    IsOptional: LibrarySymbolReference;
+    IsOut: LibrarySymbolReference;
+    IsRetval: LibrarySymbolReference;
+    Member: LibrarySymbolReference;
+    MetadataToken: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ParameterType: LibrarySymbolReference;
+    Position: LibrarySymbolReference;
+    RawDefaultValue: LibrarySymbolReference
+  };
+  ParameterModifier: LibrarySymbolReference & {
+    ParameterModifier: LibrarySymbolReference;
+    Item: LibrarySymbolReference
+  };
+  Pointer: LibrarySymbolReference & {
+    Box: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Unbox: LibrarySymbolReference
+  };
+  PortableExecutableKinds: LibrarySymbolReference & {
+    NotAPortableExecutableImage: LibrarySymbolReference;
+    ILOnly: LibrarySymbolReference;
+    Required32Bit: LibrarySymbolReference;
+    PE32Plus: LibrarySymbolReference;
+    Unmanaged32Bit: LibrarySymbolReference;
+    Preferred32Bit: LibrarySymbolReference
+  };
+  ProcessorArchitecture: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    MSIL: LibrarySymbolReference;
+    X86: LibrarySymbolReference;
+    IA64: LibrarySymbolReference;
+    Amd64: LibrarySymbolReference;
+    Arm: LibrarySymbolReference
+  };
+  PropertyAttributes: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    SpecialName: LibrarySymbolReference;
+    RTSpecialName: LibrarySymbolReference;
+    HasDefault: LibrarySymbolReference;
+    Reserved2: LibrarySymbolReference;
+    Reserved3: LibrarySymbolReference;
+    Reserved4: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference
+  };
+  PropertyInfo: LibrarySymbolReference & {
+    PropertyInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetAccessors: LibrarySymbolReference;
+    GetConstantValue: LibrarySymbolReference;
+    GetGetMethod: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetIndexParameters: LibrarySymbolReference;
+    GetModifiedPropertyType: LibrarySymbolReference;
+    GetOptionalCustomModifiers: LibrarySymbolReference;
+    GetRawConstantValue: LibrarySymbolReference;
+    GetRequiredCustomModifiers: LibrarySymbolReference;
+    GetSetMethod: LibrarySymbolReference;
+    GetValue: LibrarySymbolReference;
+    SetValue: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    CanRead: LibrarySymbolReference;
+    CanWrite: LibrarySymbolReference;
+    GetMethod: LibrarySymbolReference;
+    IsSpecialName: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference;
+    PropertyType: LibrarySymbolReference;
+    SetMethod: LibrarySymbolReference
+  };
+  ReflectionContext: LibrarySymbolReference & {
+    ReflectionContext: LibrarySymbolReference;
+    GetTypeForObject: LibrarySymbolReference;
+    MapAssembly: LibrarySymbolReference;
+    MapType: LibrarySymbolReference
+  };
+  ReflectionTypeLoadException: LibrarySymbolReference & {
+    ReflectionTypeLoadException: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    LoaderExceptions: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Types: LibrarySymbolReference
+  };
+  ResourceAttributes: LibrarySymbolReference & {
+    Public: LibrarySymbolReference;
+    Private: LibrarySymbolReference
+  };
+  ResourceLocation: LibrarySymbolReference & {
+    Embedded: LibrarySymbolReference;
+    ContainedInAnotherAssembly: LibrarySymbolReference;
+    ContainedInManifestFile: LibrarySymbolReference
+  };
+  RuntimeReflectionExtensions: LibrarySymbolReference & {
+    GetMethodInfo: LibrarySymbolReference;
+    GetRuntimeBaseDefinition: LibrarySymbolReference;
+    GetRuntimeEvent: LibrarySymbolReference;
+    GetRuntimeEvents: LibrarySymbolReference;
+    GetRuntimeField: LibrarySymbolReference;
+    GetRuntimeFields: LibrarySymbolReference;
+    GetRuntimeInterfaceMap: LibrarySymbolReference;
+    GetRuntimeMethod: LibrarySymbolReference;
+    GetRuntimeMethods: LibrarySymbolReference;
+    GetRuntimeProperties: LibrarySymbolReference;
+    GetRuntimeProperty: LibrarySymbolReference
+  };
+  StrongNameKeyPair: LibrarySymbolReference & {
+    StrongNameKeyPair: LibrarySymbolReference;
+    PublicKey: LibrarySymbolReference
+  };
+  TargetException: LibrarySymbolReference & {
+    TargetException: LibrarySymbolReference
+  };
+  TargetInvocationException: LibrarySymbolReference & {
+    TargetInvocationException: LibrarySymbolReference
+  };
+  TargetParameterCountException: LibrarySymbolReference & {
+    TargetParameterCountException: LibrarySymbolReference
+  };
+  TypeAttributes: LibrarySymbolReference & {
+    AnsiClass: LibrarySymbolReference;
+    AutoLayout: LibrarySymbolReference;
+    Class: LibrarySymbolReference;
+    NotPublic: LibrarySymbolReference;
+    Public: LibrarySymbolReference;
+    NestedPublic: LibrarySymbolReference;
+    NestedPrivate: LibrarySymbolReference;
+    NestedFamily: LibrarySymbolReference;
+    NestedAssembly: LibrarySymbolReference;
+    NestedFamANDAssem: LibrarySymbolReference;
+    NestedFamORAssem: LibrarySymbolReference;
+    VisibilityMask: LibrarySymbolReference;
+    SequentialLayout: LibrarySymbolReference;
+    ExplicitLayout: LibrarySymbolReference;
+    LayoutMask: LibrarySymbolReference;
+    ClassSemanticsMask: LibrarySymbolReference;
+    Interface: LibrarySymbolReference;
+    Abstract: LibrarySymbolReference;
+    Sealed: LibrarySymbolReference;
+    SpecialName: LibrarySymbolReference;
+    RTSpecialName: LibrarySymbolReference;
+    Import: LibrarySymbolReference;
+    Serializable: LibrarySymbolReference;
+    WindowsRuntime: LibrarySymbolReference;
+    UnicodeClass: LibrarySymbolReference;
+    AutoClass: LibrarySymbolReference;
+    CustomFormatClass: LibrarySymbolReference;
+    StringFormatMask: LibrarySymbolReference;
+    HasSecurity: LibrarySymbolReference;
+    ReservedMask: LibrarySymbolReference;
+    BeforeFieldInit: LibrarySymbolReference;
+    CustomFormatMask: LibrarySymbolReference
+  };
+  TypeDelegator: LibrarySymbolReference & {
+    typeImpl: LibrarySymbolReference;
+    TypeDelegator: LibrarySymbolReference;
+    GetAttributeFlagsImpl: LibrarySymbolReference;
+    GetConstructorImpl: LibrarySymbolReference;
+    GetConstructors: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetElementType: LibrarySymbolReference;
+    GetEvent: LibrarySymbolReference;
+    GetEvents: LibrarySymbolReference;
+    GetField: LibrarySymbolReference;
+    GetFields: LibrarySymbolReference;
+    GetFunctionPointerCallingConventions: LibrarySymbolReference;
+    GetFunctionPointerParameterTypes: LibrarySymbolReference;
+    GetFunctionPointerReturnType: LibrarySymbolReference;
+    GetInterface: LibrarySymbolReference;
+    GetInterfaceMap: LibrarySymbolReference;
+    GetInterfaces: LibrarySymbolReference;
+    GetMember: LibrarySymbolReference;
+    GetMembers: LibrarySymbolReference;
+    GetMemberWithSameMetadataDefinitionAs: LibrarySymbolReference;
+    GetMethodImpl: LibrarySymbolReference;
+    GetMethods: LibrarySymbolReference;
+    GetNestedType: LibrarySymbolReference;
+    GetNestedTypes: LibrarySymbolReference;
+    GetProperties: LibrarySymbolReference;
+    GetPropertyImpl: LibrarySymbolReference;
+    HasElementTypeImpl: LibrarySymbolReference;
+    InvokeMember: LibrarySymbolReference;
+    IsArrayImpl: LibrarySymbolReference;
+    IsAssignableFrom: LibrarySymbolReference;
+    IsByRefImpl: LibrarySymbolReference;
+    IsCOMObjectImpl: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    IsPointerImpl: LibrarySymbolReference;
+    IsPrimitiveImpl: LibrarySymbolReference;
+    IsValueTypeImpl: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference;
+    AssemblyQualifiedName: LibrarySymbolReference;
+    BaseType: LibrarySymbolReference;
+    FullName: LibrarySymbolReference;
+    GUID: LibrarySymbolReference;
+    IsByRefLike: LibrarySymbolReference;
+    IsCollectible: LibrarySymbolReference;
+    IsConstructedGenericType: LibrarySymbolReference;
+    IsFunctionPointer: LibrarySymbolReference;
+    IsGenericMethodParameter: LibrarySymbolReference;
+    IsGenericTypeParameter: LibrarySymbolReference;
+    IsSZArray: LibrarySymbolReference;
+    IsTypeDefinition: LibrarySymbolReference;
+    IsUnmanagedFunctionPointer: LibrarySymbolReference;
+    IsVariableBoundArray: LibrarySymbolReference;
+    MetadataToken: LibrarySymbolReference;
+    Module: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    Namespace: LibrarySymbolReference;
+    TypeHandle: LibrarySymbolReference;
+    UnderlyingSystemType: LibrarySymbolReference
+  };
+  TypeFilter: LibrarySymbolReference & {
+    TypeFilter: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  TypeInfo: LibrarySymbolReference & {
+    TypeInfo: LibrarySymbolReference;
+    AsType: LibrarySymbolReference;
+    GetDeclaredEvent: LibrarySymbolReference;
+    GetDeclaredField: LibrarySymbolReference;
+    GetDeclaredMethod: LibrarySymbolReference;
+    GetDeclaredMethods: LibrarySymbolReference;
+    GetDeclaredNestedType: LibrarySymbolReference;
+    GetDeclaredProperty: LibrarySymbolReference;
+    IsAssignableFrom: LibrarySymbolReference;
+    DeclaredConstructors: LibrarySymbolReference;
+    DeclaredEvents: LibrarySymbolReference;
+    DeclaredFields: LibrarySymbolReference;
+    DeclaredMembers: LibrarySymbolReference;
+    DeclaredMethods: LibrarySymbolReference;
+    DeclaredNestedTypes: LibrarySymbolReference;
+    DeclaredProperties: LibrarySymbolReference;
+    GenericTypeParameters: LibrarySymbolReference;
+    ImplementedInterfaces: LibrarySymbolReference
+  }
+};
+const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
   AmbiguousMatchException: {
     kind: "class",
     members: {

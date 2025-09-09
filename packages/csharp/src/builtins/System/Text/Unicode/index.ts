@@ -1,7 +1,15 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Unicode = createLibrary("System.Text.Unicode", {
+type UnicodeLibrary = LibrarySymbolReference & {
+  Utf8: LibrarySymbolReference & {
+    FromUtf16: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference;
+    ToUtf16: LibrarySymbolReference;
+    TryWrite: LibrarySymbolReference
+  }
+};
+const Unicode: UnicodeLibrary = createLibrary("System.Text.Unicode", {
   Utf8: {
     kind: "class",
     members: {

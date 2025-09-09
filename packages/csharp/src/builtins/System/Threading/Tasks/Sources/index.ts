@@ -1,9 +1,37 @@
 import System from "../../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Sources = createLibrary("System.Threading.Tasks.Sources", {
+type SourcesLibrary = LibrarySymbolReference & {
+  IValueTaskSource: LibrarySymbolReference & {
+    GetResult: LibrarySymbolReference;
+    GetStatus: LibrarySymbolReference;
+    OnCompleted: LibrarySymbolReference
+  };
+  ManualResetValueTaskSourceCore: LibrarySymbolReference & {
+    GetResult: LibrarySymbolReference;
+    GetStatus: LibrarySymbolReference;
+    OnCompleted: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    RunContinuationsAsynchronously: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  ValueTaskSourceOnCompletedFlags: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    UseSchedulingContext: LibrarySymbolReference;
+    FlowExecutionContext: LibrarySymbolReference
+  };
+  ValueTaskSourceStatus: LibrarySymbolReference & {
+    Pending: LibrarySymbolReference;
+    Succeeded: LibrarySymbolReference;
+    Faulted: LibrarySymbolReference;
+    Canceled: LibrarySymbolReference
+  }
+};
+const Sources: SourcesLibrary = createLibrary("System.Threading.Tasks.Sources", {
   IValueTaskSource: {
     kind: "interface",
     members: {

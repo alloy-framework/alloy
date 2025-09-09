@@ -6,7 +6,7 @@ import Security from "./Security/index.js";
 import Threading from "./Threading/index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Buffers } from "./Buffers/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Buffers } from "./Buffers/index.js";
 export { default as CodeDom } from "./CodeDom/index.js";
 export { default as Collections } from "./Collections/index.js";
 export { default as ComponentModel } from "./ComponentModel/index.js";
@@ -23,7 +23,2739 @@ export { default as Security } from "./Security/index.js";
 export { default as Text } from "./Text/index.js";
 export { default as Threading } from "./Threading/index.js";
 
-const System = createLibrary("System", {
+type SystemLibrary = LibrarySymbolReference & {
+  AccessViolationException: LibrarySymbolReference & {
+    AccessViolationException: LibrarySymbolReference
+  };
+  Action: LibrarySymbolReference & {
+    Action: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  Activator: LibrarySymbolReference & {
+    CreateInstance: LibrarySymbolReference;
+    CreateInstanceFrom: LibrarySymbolReference
+  };
+  AggregateException: LibrarySymbolReference & {
+    AggregateException: LibrarySymbolReference;
+    Flatten: LibrarySymbolReference;
+    GetBaseException: LibrarySymbolReference;
+    Handle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    InnerExceptions: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  AppContext: LibrarySymbolReference & {
+    GetData: LibrarySymbolReference;
+    SetData: LibrarySymbolReference;
+    SetSwitch: LibrarySymbolReference;
+    TryGetSwitch: LibrarySymbolReference;
+    BaseDirectory: LibrarySymbolReference;
+    TargetFrameworkName: LibrarySymbolReference
+  };
+  AppDomain: LibrarySymbolReference & {
+    AppendPrivatePath: LibrarySymbolReference;
+    ApplyPolicy: LibrarySymbolReference;
+    ClearPrivatePath: LibrarySymbolReference;
+    ClearShadowCopyPath: LibrarySymbolReference;
+    CreateDomain: LibrarySymbolReference;
+    CreateInstance: LibrarySymbolReference;
+    CreateInstanceAndUnwrap: LibrarySymbolReference;
+    CreateInstanceFrom: LibrarySymbolReference;
+    CreateInstanceFromAndUnwrap: LibrarySymbolReference;
+    ExecuteAssembly: LibrarySymbolReference;
+    ExecuteAssemblyByName: LibrarySymbolReference;
+    GetAssemblies: LibrarySymbolReference;
+    GetCurrentThreadId: LibrarySymbolReference;
+    GetData: LibrarySymbolReference;
+    IsCompatibilitySwitchSet: LibrarySymbolReference;
+    IsDefaultAppDomain: LibrarySymbolReference;
+    IsFinalizingForUnload: LibrarySymbolReference;
+    Load: LibrarySymbolReference;
+    ReflectionOnlyGetAssemblies: LibrarySymbolReference;
+    SetCachePath: LibrarySymbolReference;
+    SetData: LibrarySymbolReference;
+    SetDynamicBase: LibrarySymbolReference;
+    SetPrincipalPolicy: LibrarySymbolReference;
+    SetShadowCopyFiles: LibrarySymbolReference;
+    SetShadowCopyPath: LibrarySymbolReference;
+    SetThreadPrincipal: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Unload: LibrarySymbolReference;
+    BaseDirectory: LibrarySymbolReference;
+    CurrentDomain: LibrarySymbolReference;
+    DynamicDirectory: LibrarySymbolReference;
+    FriendlyName: LibrarySymbolReference;
+    Id: LibrarySymbolReference;
+    IsFullyTrusted: LibrarySymbolReference;
+    IsHomogenous: LibrarySymbolReference;
+    MonitoringIsEnabled: LibrarySymbolReference;
+    MonitoringSurvivedMemorySize: LibrarySymbolReference;
+    MonitoringSurvivedProcessMemorySize: LibrarySymbolReference;
+    MonitoringTotalAllocatedMemorySize: LibrarySymbolReference;
+    MonitoringTotalProcessorTime: LibrarySymbolReference;
+    PermissionSet: LibrarySymbolReference;
+    RelativeSearchPath: LibrarySymbolReference;
+    SetupInformation: LibrarySymbolReference;
+    ShadowCopyFiles: LibrarySymbolReference
+  };
+  AppDomainSetup: LibrarySymbolReference & {
+    ApplicationBase: LibrarySymbolReference;
+    TargetFrameworkName: LibrarySymbolReference
+  };
+  AppDomainUnloadedException: LibrarySymbolReference & {
+    AppDomainUnloadedException: LibrarySymbolReference
+  };
+  ApplicationException: LibrarySymbolReference & {
+    ApplicationException: LibrarySymbolReference
+  };
+  ApplicationId: LibrarySymbolReference & {
+    ApplicationId: LibrarySymbolReference;
+    Copy: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Culture: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ProcessorArchitecture: LibrarySymbolReference;
+    PublicKeyToken: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  ArgIterator: LibrarySymbolReference & {
+    ArgIterator: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetNextArg: LibrarySymbolReference;
+    GetNextArgType: LibrarySymbolReference;
+    GetRemainingCount: LibrarySymbolReference
+  };
+  ArgumentException: LibrarySymbolReference & {
+    ArgumentException: LibrarySymbolReference;
+    ThrowIfNullOrEmpty: LibrarySymbolReference;
+    ThrowIfNullOrWhiteSpace: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    ParamName: LibrarySymbolReference
+  };
+  ArgumentNullException: LibrarySymbolReference & {
+    ArgumentNullException: LibrarySymbolReference;
+    ThrowIfNull: LibrarySymbolReference
+  };
+  ArgumentOutOfRangeException: LibrarySymbolReference & {
+    ArgumentOutOfRangeException: LibrarySymbolReference;
+    ActualValue: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  ArithmeticException: LibrarySymbolReference & {
+    ArithmeticException: LibrarySymbolReference
+  };
+  Array: LibrarySymbolReference & {
+    BinarySearch: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    ConstrainedCopy: LibrarySymbolReference;
+    Copy: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    CreateInstance: LibrarySymbolReference;
+    CreateInstanceFromArrayType: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetLength: LibrarySymbolReference;
+    GetLongLength: LibrarySymbolReference;
+    GetLowerBound: LibrarySymbolReference;
+    GetUpperBound: LibrarySymbolReference;
+    GetValue: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Initialize: LibrarySymbolReference;
+    LastIndexOf: LibrarySymbolReference;
+    Reverse: LibrarySymbolReference;
+    SetValue: LibrarySymbolReference;
+    Sort: LibrarySymbolReference;
+    IsFixedSize: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsSynchronized: LibrarySymbolReference;
+    Length: LibrarySymbolReference;
+    LongLength: LibrarySymbolReference;
+    MaxLength: LibrarySymbolReference;
+    Rank: LibrarySymbolReference;
+    SyncRoot: LibrarySymbolReference
+  };
+  ArraySegment: LibrarySymbolReference & {
+    Enumerator: LibrarySymbolReference & {
+      Dispose: LibrarySymbolReference;
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  ArrayTypeMismatchException: LibrarySymbolReference & {
+    ArrayTypeMismatchException: LibrarySymbolReference
+  };
+  AssemblyLoadEventArgs: LibrarySymbolReference & {
+    AssemblyLoadEventArgs: LibrarySymbolReference;
+    LoadedAssembly: LibrarySymbolReference
+  };
+  AssemblyLoadEventHandler: LibrarySymbolReference & {
+    AssemblyLoadEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  AsyncCallback: LibrarySymbolReference & {
+    AsyncCallback: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  Attribute: LibrarySymbolReference & {
+    Attribute: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetCustomAttribute: LibrarySymbolReference;
+    GetCustomAttributes: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsDefaultAttribute: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    Match: LibrarySymbolReference;
+    TypeId: LibrarySymbolReference
+  };
+  AttributeTargets: LibrarySymbolReference & {
+    Assembly: LibrarySymbolReference;
+    Module: LibrarySymbolReference;
+    Class: LibrarySymbolReference;
+    Struct: LibrarySymbolReference;
+    Enum: LibrarySymbolReference;
+    Constructor: LibrarySymbolReference;
+    Method: LibrarySymbolReference;
+    Property: LibrarySymbolReference;
+    Field: LibrarySymbolReference;
+    Event: LibrarySymbolReference;
+    Interface: LibrarySymbolReference;
+    Parameter: LibrarySymbolReference;
+    Delegate: LibrarySymbolReference;
+    ReturnValue: LibrarySymbolReference;
+    GenericParameter: LibrarySymbolReference;
+    All: LibrarySymbolReference
+  };
+  AttributeUsageAttribute: LibrarySymbolReference & {
+    AttributeUsageAttribute: LibrarySymbolReference;
+    AllowMultiple: LibrarySymbolReference;
+    Inherited: LibrarySymbolReference;
+    ValidOn: LibrarySymbolReference
+  };
+  BadImageFormatException: LibrarySymbolReference & {
+    BadImageFormatException: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    FileName: LibrarySymbolReference;
+    FusionLog: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  Base64FormattingOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    InsertLineBreaks: LibrarySymbolReference
+  };
+  BitConverter: LibrarySymbolReference & {
+    IsLittleEndian: LibrarySymbolReference;
+    DoubleToInt64Bits: LibrarySymbolReference;
+    DoubleToUInt64Bits: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    HalfToInt16Bits: LibrarySymbolReference;
+    HalfToUInt16Bits: LibrarySymbolReference;
+    Int16BitsToHalf: LibrarySymbolReference;
+    Int32BitsToSingle: LibrarySymbolReference;
+    Int64BitsToDouble: LibrarySymbolReference;
+    SingleToInt32Bits: LibrarySymbolReference;
+    SingleToUInt32Bits: LibrarySymbolReference;
+    ToBoolean: LibrarySymbolReference;
+    ToChar: LibrarySymbolReference;
+    ToDouble: LibrarySymbolReference;
+    ToHalf: LibrarySymbolReference;
+    ToInt128: LibrarySymbolReference;
+    ToInt16: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToSingle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUInt128: LibrarySymbolReference;
+    ToUInt16: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference;
+    TryWriteBytes: LibrarySymbolReference;
+    UInt16BitsToHalf: LibrarySymbolReference;
+    UInt32BitsToSingle: LibrarySymbolReference;
+    UInt64BitsToDouble: LibrarySymbolReference
+  };
+  Boolean: LibrarySymbolReference & {
+    FalseString: LibrarySymbolReference;
+    TrueString: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Buffer: LibrarySymbolReference & {
+    BlockCopy: LibrarySymbolReference;
+    ByteLength: LibrarySymbolReference;
+    GetByte: LibrarySymbolReference;
+    MemoryCopy: LibrarySymbolReference;
+    SetByte: LibrarySymbolReference
+  };
+  Byte: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  CLSCompliantAttribute: LibrarySymbolReference & {
+    CLSCompliantAttribute: LibrarySymbolReference;
+    IsCompliant: LibrarySymbolReference
+  };
+  CannotUnloadAppDomainException: LibrarySymbolReference & {
+    CannotUnloadAppDomainException: LibrarySymbolReference
+  };
+  Char: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    ConvertFromUtf32: LibrarySymbolReference;
+    ConvertToUtf32: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetNumericValue: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    GetUnicodeCategory: LibrarySymbolReference;
+    IsAscii: LibrarySymbolReference;
+    IsAsciiDigit: LibrarySymbolReference;
+    IsAsciiHexDigit: LibrarySymbolReference;
+    IsAsciiHexDigitLower: LibrarySymbolReference;
+    IsAsciiHexDigitUpper: LibrarySymbolReference;
+    IsAsciiLetter: LibrarySymbolReference;
+    IsAsciiLetterLower: LibrarySymbolReference;
+    IsAsciiLetterOrDigit: LibrarySymbolReference;
+    IsAsciiLetterUpper: LibrarySymbolReference;
+    IsBetween: LibrarySymbolReference;
+    IsControl: LibrarySymbolReference;
+    IsDigit: LibrarySymbolReference;
+    IsHighSurrogate: LibrarySymbolReference;
+    IsLetter: LibrarySymbolReference;
+    IsLetterOrDigit: LibrarySymbolReference;
+    IsLower: LibrarySymbolReference;
+    IsLowSurrogate: LibrarySymbolReference;
+    IsNumber: LibrarySymbolReference;
+    IsPunctuation: LibrarySymbolReference;
+    IsSeparator: LibrarySymbolReference;
+    IsSurrogate: LibrarySymbolReference;
+    IsSurrogatePair: LibrarySymbolReference;
+    IsSymbol: LibrarySymbolReference;
+    IsUpper: LibrarySymbolReference;
+    IsWhiteSpace: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ToLower: LibrarySymbolReference;
+    ToLowerInvariant: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUpper: LibrarySymbolReference;
+    ToUpperInvariant: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  CharEnumerator: LibrarySymbolReference & {
+    Clone: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
+  Comparison: LibrarySymbolReference & {
+    Comparison: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  ContextBoundObject: LibrarySymbolReference & {
+    ContextBoundObject: LibrarySymbolReference
+  };
+  ContextMarshalException: LibrarySymbolReference & {
+    ContextMarshalException: LibrarySymbolReference
+  };
+  ContextStaticAttribute: LibrarySymbolReference & {
+    ContextStaticAttribute: LibrarySymbolReference
+  };
+  Convert: LibrarySymbolReference & {
+    DBNull: LibrarySymbolReference;
+    ChangeType: LibrarySymbolReference;
+    FromBase64CharArray: LibrarySymbolReference;
+    FromBase64String: LibrarySymbolReference;
+    FromHexString: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsDBNull: LibrarySymbolReference;
+    ToBase64CharArray: LibrarySymbolReference;
+    ToBase64String: LibrarySymbolReference;
+    ToBoolean: LibrarySymbolReference;
+    ToByte: LibrarySymbolReference;
+    ToChar: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToDecimal: LibrarySymbolReference;
+    ToDouble: LibrarySymbolReference;
+    ToHexString: LibrarySymbolReference;
+    ToHexStringLower: LibrarySymbolReference;
+    ToInt16: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToSByte: LibrarySymbolReference;
+    ToSingle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUInt16: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference;
+    TryFromBase64Chars: LibrarySymbolReference;
+    TryFromBase64String: LibrarySymbolReference;
+    TryToBase64Chars: LibrarySymbolReference;
+    TryToHexString: LibrarySymbolReference;
+    TryToHexStringLower: LibrarySymbolReference
+  };
+  Converter: LibrarySymbolReference & {
+    Converter: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  DBNull: LibrarySymbolReference & {
+    Value: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference
+  };
+  DateOnly: LibrarySymbolReference & {
+    DateOnly: LibrarySymbolReference;
+    AddDays: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromDateTime: LibrarySymbolReference;
+    FromDayNumber: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToLongDateString: LibrarySymbolReference;
+    ToShortDateString: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    Day: LibrarySymbolReference;
+    DayNumber: LibrarySymbolReference;
+    DayOfWeek: LibrarySymbolReference;
+    DayOfYear: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Month: LibrarySymbolReference;
+    Year: LibrarySymbolReference
+  };
+  DateTime: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    UnixEpoch: LibrarySymbolReference;
+    DateTime: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    AddDays: LibrarySymbolReference;
+    AddHours: LibrarySymbolReference;
+    AddMicroseconds: LibrarySymbolReference;
+    AddMilliseconds: LibrarySymbolReference;
+    AddMinutes: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddSeconds: LibrarySymbolReference;
+    AddTicks: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DaysInMonth: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromBinary: LibrarySymbolReference;
+    FromFileTime: LibrarySymbolReference;
+    FromFileTimeUtc: LibrarySymbolReference;
+    FromOADate: LibrarySymbolReference;
+    GetDateTimeFormats: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsDaylightSavingTime: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    SpecifyKind: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToBinary: LibrarySymbolReference;
+    ToFileTime: LibrarySymbolReference;
+    ToFileTimeUtc: LibrarySymbolReference;
+    ToLocalTime: LibrarySymbolReference;
+    ToLongDateString: LibrarySymbolReference;
+    ToLongTimeString: LibrarySymbolReference;
+    ToOADate: LibrarySymbolReference;
+    ToShortDateString: LibrarySymbolReference;
+    ToShortTimeString: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUniversalTime: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    Date: LibrarySymbolReference;
+    Day: LibrarySymbolReference;
+    DayOfWeek: LibrarySymbolReference;
+    DayOfYear: LibrarySymbolReference;
+    Hour: LibrarySymbolReference;
+    Kind: LibrarySymbolReference;
+    Microsecond: LibrarySymbolReference;
+    Millisecond: LibrarySymbolReference;
+    Minute: LibrarySymbolReference;
+    Month: LibrarySymbolReference;
+    Nanosecond: LibrarySymbolReference;
+    Now: LibrarySymbolReference;
+    Second: LibrarySymbolReference;
+    Ticks: LibrarySymbolReference;
+    TimeOfDay: LibrarySymbolReference;
+    Today: LibrarySymbolReference;
+    UtcNow: LibrarySymbolReference;
+    Year: LibrarySymbolReference
+  };
+  DateTimeKind: LibrarySymbolReference & {
+    Unspecified: LibrarySymbolReference;
+    Utc: LibrarySymbolReference;
+    Local: LibrarySymbolReference
+  };
+  DateTimeOffset: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    UnixEpoch: LibrarySymbolReference;
+    DateTimeOffset: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    AddDays: LibrarySymbolReference;
+    AddHours: LibrarySymbolReference;
+    AddMicroseconds: LibrarySymbolReference;
+    AddMilliseconds: LibrarySymbolReference;
+    AddMinutes: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddSeconds: LibrarySymbolReference;
+    AddTicks: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    EqualsExact: LibrarySymbolReference;
+    FromFileTime: LibrarySymbolReference;
+    FromUnixTimeMilliseconds: LibrarySymbolReference;
+    FromUnixTimeSeconds: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToFileTime: LibrarySymbolReference;
+    ToLocalTime: LibrarySymbolReference;
+    ToOffset: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUniversalTime: LibrarySymbolReference;
+    ToUnixTimeMilliseconds: LibrarySymbolReference;
+    ToUnixTimeSeconds: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    Date: LibrarySymbolReference;
+    DateTime: LibrarySymbolReference;
+    Day: LibrarySymbolReference;
+    DayOfWeek: LibrarySymbolReference;
+    DayOfYear: LibrarySymbolReference;
+    Hour: LibrarySymbolReference;
+    LocalDateTime: LibrarySymbolReference;
+    Microsecond: LibrarySymbolReference;
+    Millisecond: LibrarySymbolReference;
+    Minute: LibrarySymbolReference;
+    Month: LibrarySymbolReference;
+    Nanosecond: LibrarySymbolReference;
+    Now: LibrarySymbolReference;
+    Offset: LibrarySymbolReference;
+    Second: LibrarySymbolReference;
+    Ticks: LibrarySymbolReference;
+    TimeOfDay: LibrarySymbolReference;
+    TotalOffsetMinutes: LibrarySymbolReference;
+    UtcDateTime: LibrarySymbolReference;
+    UtcNow: LibrarySymbolReference;
+    UtcTicks: LibrarySymbolReference;
+    Year: LibrarySymbolReference
+  };
+  DayOfWeek: LibrarySymbolReference & {
+    Sunday: LibrarySymbolReference;
+    Monday: LibrarySymbolReference;
+    Tuesday: LibrarySymbolReference;
+    Wednesday: LibrarySymbolReference;
+    Thursday: LibrarySymbolReference;
+    Friday: LibrarySymbolReference;
+    Saturday: LibrarySymbolReference
+  };
+  Decimal: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinusOne: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    One: LibrarySymbolReference;
+    Zero: LibrarySymbolReference;
+    Decimal: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Divide: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FromOACurrency: LibrarySymbolReference;
+    GetBits: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsCanonical: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Multiply: LibrarySymbolReference;
+    Negate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    Remainder: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToByte: LibrarySymbolReference;
+    ToDouble: LibrarySymbolReference;
+    ToInt16: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToOACurrency: LibrarySymbolReference;
+    ToSByte: LibrarySymbolReference;
+    ToSingle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUInt16: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryGetBits: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    Scale: LibrarySymbolReference
+  };
+  Delegate: LibrarySymbolReference & {
+    InvocationListEnumerator: LibrarySymbolReference & {
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  DivideByZeroException: LibrarySymbolReference & {
+    DivideByZeroException: LibrarySymbolReference
+  };
+  Double: LibrarySymbolReference & {
+    E: LibrarySymbolReference;
+    Epsilon: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    NaN: LibrarySymbolReference;
+    NegativeInfinity: LibrarySymbolReference;
+    NegativeZero: LibrarySymbolReference;
+    Pi: LibrarySymbolReference;
+    PositiveInfinity: LibrarySymbolReference;
+    Tau: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Acos: LibrarySymbolReference;
+    Acosh: LibrarySymbolReference;
+    AcosPi: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    AsinPi: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    Atan2: LibrarySymbolReference;
+    Atan2Pi: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    AtanPi: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    Cbrt: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    CosPi: LibrarySymbolReference;
+    DegreesToRadians: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Exp: LibrarySymbolReference;
+    Exp10: LibrarySymbolReference;
+    Exp10M1: LibrarySymbolReference;
+    Exp2: LibrarySymbolReference;
+    Exp2M1: LibrarySymbolReference;
+    ExpM1: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    Hypot: LibrarySymbolReference;
+    Ieee754Remainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsFinite: LibrarySymbolReference;
+    IsInfinity: LibrarySymbolReference;
+    IsInteger: LibrarySymbolReference;
+    IsNaN: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsNegativeInfinity: LibrarySymbolReference;
+    IsNormal: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPositiveInfinity: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    IsRealNumber: LibrarySymbolReference;
+    IsSubnormal: LibrarySymbolReference;
+    Lerp: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log10P1: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Log2P1: LibrarySymbolReference;
+    LogP1: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    MaxMagnitudeNumber: LibrarySymbolReference;
+    MaxNumber: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    MinMagnitudeNumber: LibrarySymbolReference;
+    MinNumber: LibrarySymbolReference;
+    MultiplyAddEstimate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    Pow: LibrarySymbolReference;
+    RadiansToDegrees: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    RootN: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    SinCosPi: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    SinPi: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference;
+    TanPi: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  DuplicateWaitObjectException: LibrarySymbolReference & {
+    DuplicateWaitObjectException: LibrarySymbolReference
+  };
+  EntryPointNotFoundException: LibrarySymbolReference & {
+    EntryPointNotFoundException: LibrarySymbolReference
+  };
+  Enum: LibrarySymbolReference & {
+    Enum: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Format: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetName: LibrarySymbolReference;
+    GetNames: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    GetUnderlyingType: LibrarySymbolReference;
+    GetValues: LibrarySymbolReference;
+    GetValuesAsUnderlyingType: LibrarySymbolReference;
+    HasFlag: LibrarySymbolReference;
+    IsDefined: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ToObject: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Environment: LibrarySymbolReference & {
+    ProcessCpuUsage: LibrarySymbolReference & {
+      UserTime: LibrarySymbolReference;
+      PrivilegedTime: LibrarySymbolReference;
+      TotalTime: LibrarySymbolReference
+    };
+    SpecialFolder: LibrarySymbolReference & {
+      Desktop: LibrarySymbolReference;
+      Programs: LibrarySymbolReference;
+      MyDocuments: LibrarySymbolReference;
+      Personal: LibrarySymbolReference;
+      Favorites: LibrarySymbolReference;
+      Startup: LibrarySymbolReference;
+      Recent: LibrarySymbolReference;
+      SendTo: LibrarySymbolReference;
+      StartMenu: LibrarySymbolReference;
+      MyMusic: LibrarySymbolReference;
+      MyVideos: LibrarySymbolReference;
+      DesktopDirectory: LibrarySymbolReference;
+      MyComputer: LibrarySymbolReference;
+      NetworkShortcuts: LibrarySymbolReference;
+      Fonts: LibrarySymbolReference;
+      Templates: LibrarySymbolReference;
+      CommonStartMenu: LibrarySymbolReference;
+      CommonPrograms: LibrarySymbolReference;
+      CommonStartup: LibrarySymbolReference;
+      CommonDesktopDirectory: LibrarySymbolReference;
+      ApplicationData: LibrarySymbolReference;
+      PrinterShortcuts: LibrarySymbolReference;
+      LocalApplicationData: LibrarySymbolReference;
+      InternetCache: LibrarySymbolReference;
+      Cookies: LibrarySymbolReference;
+      History: LibrarySymbolReference;
+      CommonApplicationData: LibrarySymbolReference;
+      Windows: LibrarySymbolReference;
+      System: LibrarySymbolReference;
+      ProgramFiles: LibrarySymbolReference;
+      MyPictures: LibrarySymbolReference;
+      UserProfile: LibrarySymbolReference;
+      SystemX86: LibrarySymbolReference;
+      ProgramFilesX86: LibrarySymbolReference;
+      CommonProgramFiles: LibrarySymbolReference;
+      CommonProgramFilesX86: LibrarySymbolReference;
+      CommonTemplates: LibrarySymbolReference;
+      CommonDocuments: LibrarySymbolReference;
+      CommonAdminTools: LibrarySymbolReference;
+      AdminTools: LibrarySymbolReference;
+      CommonMusic: LibrarySymbolReference;
+      CommonPictures: LibrarySymbolReference;
+      CommonVideos: LibrarySymbolReference;
+      Resources: LibrarySymbolReference;
+      LocalizedResources: LibrarySymbolReference;
+      CommonOemLinks: LibrarySymbolReference;
+      CDBurning: LibrarySymbolReference
+    };
+    SpecialFolderOption: LibrarySymbolReference & {
+      None: LibrarySymbolReference;
+      DoNotVerify: LibrarySymbolReference;
+      Create: LibrarySymbolReference
+    }
+  };
+  EnvironmentVariableTarget: LibrarySymbolReference & {
+    Process: LibrarySymbolReference;
+    User: LibrarySymbolReference;
+    Machine: LibrarySymbolReference
+  };
+  EventArgs: LibrarySymbolReference & {
+    Empty: LibrarySymbolReference;
+    EventArgs: LibrarySymbolReference
+  };
+  EventHandler: LibrarySymbolReference & {
+    EventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  Exception: LibrarySymbolReference & {
+    Exception: LibrarySymbolReference;
+    GetBaseException: LibrarySymbolReference;
+    GetType: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Data: LibrarySymbolReference;
+    HelpLink: LibrarySymbolReference;
+    HResult: LibrarySymbolReference;
+    InnerException: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    Source: LibrarySymbolReference;
+    StackTrace: LibrarySymbolReference;
+    TargetSite: LibrarySymbolReference
+  };
+  ExecutionEngineException: LibrarySymbolReference & {
+    ExecutionEngineException: LibrarySymbolReference
+  };
+  FieldAccessException: LibrarySymbolReference & {
+    FieldAccessException: LibrarySymbolReference
+  };
+  FileStyleUriParser: LibrarySymbolReference & {
+    FileStyleUriParser: LibrarySymbolReference
+  };
+  FlagsAttribute: LibrarySymbolReference & {
+    FlagsAttribute: LibrarySymbolReference
+  };
+  FormatException: LibrarySymbolReference & {
+    FormatException: LibrarySymbolReference
+  };
+  FormattableString: LibrarySymbolReference & {
+    FormattableString: LibrarySymbolReference;
+    CurrentCulture: LibrarySymbolReference;
+    GetArgument: LibrarySymbolReference;
+    GetArguments: LibrarySymbolReference;
+    Invariant: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ArgumentCount: LibrarySymbolReference;
+    Format: LibrarySymbolReference
+  };
+  FtpStyleUriParser: LibrarySymbolReference & {
+    FtpStyleUriParser: LibrarySymbolReference
+  };
+  Func: LibrarySymbolReference & {
+    Func: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  GC: LibrarySymbolReference & {
+    AddMemoryPressure: LibrarySymbolReference;
+    CancelFullGCNotification: LibrarySymbolReference;
+    Collect: LibrarySymbolReference;
+    CollectionCount: LibrarySymbolReference;
+    EndNoGCRegion: LibrarySymbolReference;
+    GetAllocatedBytesForCurrentThread: LibrarySymbolReference;
+    GetConfigurationVariables: LibrarySymbolReference;
+    GetGCMemoryInfo: LibrarySymbolReference;
+    GetGeneration: LibrarySymbolReference;
+    GetTotalAllocatedBytes: LibrarySymbolReference;
+    GetTotalMemory: LibrarySymbolReference;
+    GetTotalPauseDuration: LibrarySymbolReference;
+    KeepAlive: LibrarySymbolReference;
+    RefreshMemoryLimit: LibrarySymbolReference;
+    RegisterForFullGCNotification: LibrarySymbolReference;
+    RegisterNoGCRegionCallback: LibrarySymbolReference;
+    RemoveMemoryPressure: LibrarySymbolReference;
+    ReRegisterForFinalize: LibrarySymbolReference;
+    SuppressFinalize: LibrarySymbolReference;
+    TryStartNoGCRegion: LibrarySymbolReference;
+    WaitForFullGCApproach: LibrarySymbolReference;
+    WaitForFullGCComplete: LibrarySymbolReference;
+    WaitForPendingFinalizers: LibrarySymbolReference;
+    MaxGeneration: LibrarySymbolReference
+  };
+  GCCollectionMode: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    Forced: LibrarySymbolReference;
+    Optimized: LibrarySymbolReference;
+    Aggressive: LibrarySymbolReference
+  };
+  GCGenerationInfo: LibrarySymbolReference & {
+    FragmentationAfterBytes: LibrarySymbolReference;
+    FragmentationBeforeBytes: LibrarySymbolReference;
+    SizeAfterBytes: LibrarySymbolReference;
+    SizeBeforeBytes: LibrarySymbolReference
+  };
+  GCKind: LibrarySymbolReference & {
+    Any: LibrarySymbolReference;
+    Ephemeral: LibrarySymbolReference;
+    FullBlocking: LibrarySymbolReference;
+    Background: LibrarySymbolReference
+  };
+  GCMemoryInfo: LibrarySymbolReference & {
+    Compacted: LibrarySymbolReference;
+    Concurrent: LibrarySymbolReference;
+    FinalizationPendingCount: LibrarySymbolReference;
+    FragmentedBytes: LibrarySymbolReference;
+    Generation: LibrarySymbolReference;
+    GenerationInfo: LibrarySymbolReference;
+    HeapSizeBytes: LibrarySymbolReference;
+    HighMemoryLoadThresholdBytes: LibrarySymbolReference;
+    Index: LibrarySymbolReference;
+    MemoryLoadBytes: LibrarySymbolReference;
+    PauseDurations: LibrarySymbolReference;
+    PauseTimePercentage: LibrarySymbolReference;
+    PinnedObjectsCount: LibrarySymbolReference;
+    PromotedBytes: LibrarySymbolReference;
+    TotalAvailableMemoryBytes: LibrarySymbolReference;
+    TotalCommittedBytes: LibrarySymbolReference
+  };
+  GCNotificationStatus: LibrarySymbolReference & {
+    Succeeded: LibrarySymbolReference;
+    Failed: LibrarySymbolReference;
+    Canceled: LibrarySymbolReference;
+    Timeout: LibrarySymbolReference;
+    NotApplicable: LibrarySymbolReference
+  };
+  GenericUriParser: LibrarySymbolReference & {
+    GenericUriParser: LibrarySymbolReference
+  };
+  GenericUriParserOptions: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    GenericAuthority: LibrarySymbolReference;
+    AllowEmptyAuthority: LibrarySymbolReference;
+    NoUserInfo: LibrarySymbolReference;
+    NoPort: LibrarySymbolReference;
+    NoQuery: LibrarySymbolReference;
+    NoFragment: LibrarySymbolReference;
+    DontConvertPathBackslashes: LibrarySymbolReference;
+    DontCompressPath: LibrarySymbolReference;
+    DontUnescapePathDotsAndSlashes: LibrarySymbolReference;
+    Idn: LibrarySymbolReference;
+    IriParsing: LibrarySymbolReference
+  };
+  GopherStyleUriParser: LibrarySymbolReference & {
+    GopherStyleUriParser: LibrarySymbolReference
+  };
+  Guid: LibrarySymbolReference & {
+    Empty: LibrarySymbolReference;
+    Guid: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CreateVersion7: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    NewGuid: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    ToByteArray: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    TryWriteBytes: LibrarySymbolReference;
+    AllBitsSet: LibrarySymbolReference;
+    Variant: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  Half: LibrarySymbolReference & {
+    Abs: LibrarySymbolReference;
+    Acos: LibrarySymbolReference;
+    Acosh: LibrarySymbolReference;
+    AcosPi: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    AsinPi: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    Atan2: LibrarySymbolReference;
+    Atan2Pi: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    AtanPi: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    Cbrt: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    CosPi: LibrarySymbolReference;
+    DegreesToRadians: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Exp: LibrarySymbolReference;
+    Exp10: LibrarySymbolReference;
+    Exp10M1: LibrarySymbolReference;
+    Exp2: LibrarySymbolReference;
+    Exp2M1: LibrarySymbolReference;
+    ExpM1: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Hypot: LibrarySymbolReference;
+    Ieee754Remainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsFinite: LibrarySymbolReference;
+    IsInfinity: LibrarySymbolReference;
+    IsInteger: LibrarySymbolReference;
+    IsNaN: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsNegativeInfinity: LibrarySymbolReference;
+    IsNormal: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPositiveInfinity: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    IsRealNumber: LibrarySymbolReference;
+    IsSubnormal: LibrarySymbolReference;
+    Lerp: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log10P1: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Log2P1: LibrarySymbolReference;
+    LogP1: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    MaxMagnitudeNumber: LibrarySymbolReference;
+    MaxNumber: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    MinMagnitudeNumber: LibrarySymbolReference;
+    MinNumber: LibrarySymbolReference;
+    MultiplyAddEstimate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    Pow: LibrarySymbolReference;
+    RadiansToDegrees: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    RootN: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    SinCosPi: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    SinPi: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference;
+    TanPi: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    E: LibrarySymbolReference;
+    Epsilon: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    MultiplicativeIdentity: LibrarySymbolReference;
+    NaN: LibrarySymbolReference;
+    NegativeInfinity: LibrarySymbolReference;
+    NegativeOne: LibrarySymbolReference;
+    NegativeZero: LibrarySymbolReference;
+    One: LibrarySymbolReference;
+    Pi: LibrarySymbolReference;
+    PositiveInfinity: LibrarySymbolReference;
+    Tau: LibrarySymbolReference;
+    Zero: LibrarySymbolReference
+  };
+  HashCode: LibrarySymbolReference & {
+    AddBytes: LibrarySymbolReference;
+    ToHashCode: LibrarySymbolReference
+  };
+  HttpStyleUriParser: LibrarySymbolReference & {
+    HttpStyleUriParser: LibrarySymbolReference
+  };
+  IAsyncDisposable: LibrarySymbolReference & {
+    DisposeAsync: LibrarySymbolReference
+  };
+  IAsyncResult: LibrarySymbolReference & {
+    AsyncState: LibrarySymbolReference;
+    AsyncWaitHandle: LibrarySymbolReference;
+    CompletedSynchronously: LibrarySymbolReference;
+    IsCompleted: LibrarySymbolReference
+  };
+  ICloneable: LibrarySymbolReference & {
+    Clone: LibrarySymbolReference
+  };
+  IComparable: LibrarySymbolReference & {
+    CompareTo: LibrarySymbolReference
+  };
+  IConvertible: LibrarySymbolReference & {
+    GetTypeCode: LibrarySymbolReference;
+    ToBoolean: LibrarySymbolReference;
+    ToByte: LibrarySymbolReference;
+    ToChar: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToDecimal: LibrarySymbolReference;
+    ToDouble: LibrarySymbolReference;
+    ToInt16: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToSByte: LibrarySymbolReference;
+    ToSingle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToType: LibrarySymbolReference;
+    ToUInt16: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference
+  };
+  ICustomFormatter: LibrarySymbolReference & {
+    Format: LibrarySymbolReference
+  };
+  IDisposable: LibrarySymbolReference & {
+    Dispose: LibrarySymbolReference
+  };
+  IEquatable: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference
+  };
+  IFormatProvider: LibrarySymbolReference & {
+    GetFormat: LibrarySymbolReference
+  };
+  IFormattable: LibrarySymbolReference & {
+    ToString: LibrarySymbolReference
+  };
+  IObservable: LibrarySymbolReference & {
+    Subscribe: LibrarySymbolReference
+  };
+  IObserver: LibrarySymbolReference & {
+    OnCompleted: LibrarySymbolReference;
+    OnError: LibrarySymbolReference;
+    OnNext: LibrarySymbolReference
+  };
+  IParsable: LibrarySymbolReference & {
+    Parse: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  IProgress: LibrarySymbolReference & {
+    Report: LibrarySymbolReference
+  };
+  ISpanFormattable: LibrarySymbolReference & {
+    TryFormat: LibrarySymbolReference
+  };
+  ISpanParsable: LibrarySymbolReference & {
+    Parse: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  IUtf8SpanFormattable: LibrarySymbolReference & {
+    TryFormat: LibrarySymbolReference
+  };
+  IUtf8SpanParsable: LibrarySymbolReference & {
+    Parse: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Index: LibrarySymbolReference & {
+    Index: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromEnd: LibrarySymbolReference;
+    FromStart: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetOffset: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    IsFromEnd: LibrarySymbolReference;
+    Start: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  IndexOutOfRangeException: LibrarySymbolReference & {
+    IndexOutOfRangeException: LibrarySymbolReference
+  };
+  InsufficientExecutionStackException: LibrarySymbolReference & {
+    InsufficientExecutionStackException: LibrarySymbolReference
+  };
+  InsufficientMemoryException: LibrarySymbolReference & {
+    InsufficientMemoryException: LibrarySymbolReference
+  };
+  Int128: LibrarySymbolReference & {
+    Int128: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    NegativeOne: LibrarySymbolReference;
+    One: LibrarySymbolReference;
+    Zero: LibrarySymbolReference
+  };
+  Int16: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Int32: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    BigMul: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Int64: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    BigMul: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  IntPtr: LibrarySymbolReference & {
+    Zero: LibrarySymbolReference;
+    IntPtr: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToPointer: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Size: LibrarySymbolReference
+  };
+  InvalidCastException: LibrarySymbolReference & {
+    InvalidCastException: LibrarySymbolReference
+  };
+  InvalidOperationException: LibrarySymbolReference & {
+    InvalidOperationException: LibrarySymbolReference
+  };
+  InvalidProgramException: LibrarySymbolReference & {
+    InvalidProgramException: LibrarySymbolReference
+  };
+  InvalidTimeZoneException: LibrarySymbolReference & {
+    InvalidTimeZoneException: LibrarySymbolReference
+  };
+  Lazy: LibrarySymbolReference & {
+    Lazy: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    IsValueCreated: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  LdapStyleUriParser: LibrarySymbolReference & {
+    LdapStyleUriParser: LibrarySymbolReference
+  };
+  LoaderOptimization: LibrarySymbolReference & {
+    NotSpecified: LibrarySymbolReference;
+    SingleDomain: LibrarySymbolReference;
+    MultiDomain: LibrarySymbolReference;
+    DomainMask: LibrarySymbolReference;
+    MultiDomainHost: LibrarySymbolReference;
+    DisallowBindings: LibrarySymbolReference
+  };
+  LoaderOptimizationAttribute: LibrarySymbolReference & {
+    LoaderOptimizationAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  MTAThreadAttribute: LibrarySymbolReference & {
+    MTAThreadAttribute: LibrarySymbolReference
+  };
+  MarshalByRefObject: LibrarySymbolReference & {
+    MarshalByRefObject: LibrarySymbolReference;
+    GetLifetimeService: LibrarySymbolReference;
+    InitializeLifetimeService: LibrarySymbolReference;
+    MemberwiseClone: LibrarySymbolReference
+  };
+  Math: LibrarySymbolReference & {
+    E: LibrarySymbolReference;
+    PI: LibrarySymbolReference;
+    Tau: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Acos: LibrarySymbolReference;
+    Acosh: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    Atan2: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    BigMul: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    Cbrt: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Exp: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    IEEERemainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Pow: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference
+  };
+  MathF: LibrarySymbolReference & {
+    E: LibrarySymbolReference;
+    PI: LibrarySymbolReference;
+    Tau: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Acos: LibrarySymbolReference;
+    Acosh: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    Atan2: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    Cbrt: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    Exp: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    IEEERemainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Pow: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference
+  };
+  MemberAccessException: LibrarySymbolReference & {
+    MemberAccessException: LibrarySymbolReference
+  };
+  Memory: LibrarySymbolReference & {
+    Memory: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Pin: LibrarySymbolReference;
+    Slice: LibrarySymbolReference;
+    ToArray: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryCopyTo: LibrarySymbolReference;
+    Empty: LibrarySymbolReference;
+    IsEmpty: LibrarySymbolReference;
+    Length: LibrarySymbolReference;
+    Span: LibrarySymbolReference
+  };
+  MethodAccessException: LibrarySymbolReference & {
+    MethodAccessException: LibrarySymbolReference
+  };
+  MidpointRounding: LibrarySymbolReference & {
+    ToEven: LibrarySymbolReference;
+    AwayFromZero: LibrarySymbolReference;
+    ToZero: LibrarySymbolReference;
+    ToNegativeInfinity: LibrarySymbolReference;
+    ToPositiveInfinity: LibrarySymbolReference
+  };
+  MissingFieldException: LibrarySymbolReference & {
+    MissingFieldException: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  MissingMemberException: LibrarySymbolReference & {
+    ClassName: LibrarySymbolReference;
+    MemberName: LibrarySymbolReference;
+    Signature: LibrarySymbolReference;
+    MissingMemberException: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  MissingMethodException: LibrarySymbolReference & {
+    MissingMethodException: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  ModuleHandle: LibrarySymbolReference & {
+    EmptyHandle: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetRuntimeFieldHandleFromMetadataToken: LibrarySymbolReference;
+    GetRuntimeMethodHandleFromMetadataToken: LibrarySymbolReference;
+    GetRuntimeTypeHandleFromMetadataToken: LibrarySymbolReference;
+    ResolveFieldHandle: LibrarySymbolReference;
+    ResolveMethodHandle: LibrarySymbolReference;
+    ResolveTypeHandle: LibrarySymbolReference;
+    MDStreamVersion: LibrarySymbolReference
+  };
+  MulticastDelegate: LibrarySymbolReference & {
+    MulticastDelegate: LibrarySymbolReference;
+    CombineImpl: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetInvocationList: LibrarySymbolReference;
+    GetMethodImpl: LibrarySymbolReference;
+    RemoveImpl: LibrarySymbolReference
+  };
+  MulticastNotSupportedException: LibrarySymbolReference & {
+    MulticastNotSupportedException: LibrarySymbolReference
+  };
+  NetPipeStyleUriParser: LibrarySymbolReference & {
+    NetPipeStyleUriParser: LibrarySymbolReference
+  };
+  NetTcpStyleUriParser: LibrarySymbolReference & {
+    NetTcpStyleUriParser: LibrarySymbolReference
+  };
+  NewsStyleUriParser: LibrarySymbolReference & {
+    NewsStyleUriParser: LibrarySymbolReference
+  };
+  NotFiniteNumberException: LibrarySymbolReference & {
+    NotFiniteNumberException: LibrarySymbolReference;
+    OffendingNumber: LibrarySymbolReference
+  };
+  NotImplementedException: LibrarySymbolReference & {
+    NotImplementedException: LibrarySymbolReference
+  };
+  NotSupportedException: LibrarySymbolReference & {
+    NotSupportedException: LibrarySymbolReference
+  };
+  NullReferenceException: LibrarySymbolReference & {
+    NullReferenceException: LibrarySymbolReference
+  };
+  Nullable: LibrarySymbolReference & {
+    Nullable: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetValueOrDefault: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    HasValue: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  Object: LibrarySymbolReference & {
+    Object: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetType: LibrarySymbolReference;
+    MemberwiseClone: LibrarySymbolReference;
+    ReferenceEquals: LibrarySymbolReference;
+    ToString: LibrarySymbolReference
+  };
+  ObjectDisposedException: LibrarySymbolReference & {
+    ObjectDisposedException: LibrarySymbolReference;
+    ThrowIf: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    ObjectName: LibrarySymbolReference
+  };
+  ObsoleteAttribute: LibrarySymbolReference & {
+    ObsoleteAttribute: LibrarySymbolReference;
+    DiagnosticId: LibrarySymbolReference;
+    IsError: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    UrlFormat: LibrarySymbolReference
+  };
+  OperatingSystem: LibrarySymbolReference & {
+    OperatingSystem: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    IsAndroid: LibrarySymbolReference;
+    IsAndroidVersionAtLeast: LibrarySymbolReference;
+    IsBrowser: LibrarySymbolReference;
+    IsFreeBSD: LibrarySymbolReference;
+    IsFreeBSDVersionAtLeast: LibrarySymbolReference;
+    IsIOS: LibrarySymbolReference;
+    IsIOSVersionAtLeast: LibrarySymbolReference;
+    IsLinux: LibrarySymbolReference;
+    IsMacCatalyst: LibrarySymbolReference;
+    IsMacCatalystVersionAtLeast: LibrarySymbolReference;
+    IsMacOS: LibrarySymbolReference;
+    IsMacOSVersionAtLeast: LibrarySymbolReference;
+    IsOSPlatform: LibrarySymbolReference;
+    IsOSPlatformVersionAtLeast: LibrarySymbolReference;
+    IsTvOS: LibrarySymbolReference;
+    IsTvOSVersionAtLeast: LibrarySymbolReference;
+    IsWasi: LibrarySymbolReference;
+    IsWatchOS: LibrarySymbolReference;
+    IsWatchOSVersionAtLeast: LibrarySymbolReference;
+    IsWindows: LibrarySymbolReference;
+    IsWindowsVersionAtLeast: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Platform: LibrarySymbolReference;
+    ServicePack: LibrarySymbolReference;
+    Version: LibrarySymbolReference;
+    VersionString: LibrarySymbolReference
+  };
+  OperationCanceledException: LibrarySymbolReference & {
+    OperationCanceledException: LibrarySymbolReference;
+    CancellationToken: LibrarySymbolReference
+  };
+  OutOfMemoryException: LibrarySymbolReference & {
+    OutOfMemoryException: LibrarySymbolReference
+  };
+  OverflowException: LibrarySymbolReference & {
+    OverflowException: LibrarySymbolReference
+  };
+  ParamArrayAttribute: LibrarySymbolReference & {
+    ParamArrayAttribute: LibrarySymbolReference
+  };
+  PlatformID: LibrarySymbolReference & {
+    Win32NT: LibrarySymbolReference;
+    Unix: LibrarySymbolReference;
+    Other: LibrarySymbolReference
+  };
+  PlatformNotSupportedException: LibrarySymbolReference & {
+    PlatformNotSupportedException: LibrarySymbolReference
+  };
+  Predicate: LibrarySymbolReference & {
+    Predicate: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  Progress: LibrarySymbolReference & {
+    Progress: LibrarySymbolReference;
+    OnReport: LibrarySymbolReference
+  };
+  Random: LibrarySymbolReference & {
+    Random: LibrarySymbolReference;
+    Next: LibrarySymbolReference;
+    NextBytes: LibrarySymbolReference;
+    NextDouble: LibrarySymbolReference;
+    NextInt64: LibrarySymbolReference;
+    NextSingle: LibrarySymbolReference;
+    Sample: LibrarySymbolReference;
+    Shared: LibrarySymbolReference
+  };
+  Range: LibrarySymbolReference & {
+    Range: LibrarySymbolReference;
+    EndAt: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetOffsetAndLength: LibrarySymbolReference;
+    StartAt: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    All: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    Start: LibrarySymbolReference
+  };
+  RankException: LibrarySymbolReference & {
+    RankException: LibrarySymbolReference
+  };
+  ReadOnlyMemory: LibrarySymbolReference & {
+    ReadOnlyMemory: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Pin: LibrarySymbolReference;
+    Slice: LibrarySymbolReference;
+    ToArray: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryCopyTo: LibrarySymbolReference;
+    Empty: LibrarySymbolReference;
+    IsEmpty: LibrarySymbolReference;
+    Length: LibrarySymbolReference;
+    Span: LibrarySymbolReference
+  };
+  ReadOnlySpan: LibrarySymbolReference & {
+    Enumerator: LibrarySymbolReference & {
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  ResolveEventArgs: LibrarySymbolReference & {
+    ResolveEventArgs: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    RequestingAssembly: LibrarySymbolReference
+  };
+  ResolveEventHandler: LibrarySymbolReference & {
+    ResolveEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  RuntimeArgumentHandle: LibrarySymbolReference & {
+
+  };
+  RuntimeFieldHandle: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    FromIntPtr: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToIntPtr: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  RuntimeMethodHandle: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    FromIntPtr: LibrarySymbolReference;
+    GetFunctionPointer: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToIntPtr: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  RuntimeTypeHandle: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    FromIntPtr: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetModuleHandle: LibrarySymbolReference;
+    ToIntPtr: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  SByte: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  STAThreadAttribute: LibrarySymbolReference & {
+    STAThreadAttribute: LibrarySymbolReference
+  };
+  Single: LibrarySymbolReference & {
+    E: LibrarySymbolReference;
+    Epsilon: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    NaN: LibrarySymbolReference;
+    NegativeInfinity: LibrarySymbolReference;
+    NegativeZero: LibrarySymbolReference;
+    Pi: LibrarySymbolReference;
+    PositiveInfinity: LibrarySymbolReference;
+    Tau: LibrarySymbolReference;
+    Abs: LibrarySymbolReference;
+    Acos: LibrarySymbolReference;
+    Acosh: LibrarySymbolReference;
+    AcosPi: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    AsinPi: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    Atan2: LibrarySymbolReference;
+    Atan2Pi: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    AtanPi: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    Cbrt: LibrarySymbolReference;
+    Ceiling: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    CosPi: LibrarySymbolReference;
+    DegreesToRadians: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Exp: LibrarySymbolReference;
+    Exp10: LibrarySymbolReference;
+    Exp10M1: LibrarySymbolReference;
+    Exp2: LibrarySymbolReference;
+    Exp2M1: LibrarySymbolReference;
+    ExpM1: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    Hypot: LibrarySymbolReference;
+    Ieee754Remainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsFinite: LibrarySymbolReference;
+    IsInfinity: LibrarySymbolReference;
+    IsInteger: LibrarySymbolReference;
+    IsNaN: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsNegativeInfinity: LibrarySymbolReference;
+    IsNormal: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPositiveInfinity: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    IsRealNumber: LibrarySymbolReference;
+    IsSubnormal: LibrarySymbolReference;
+    Lerp: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log10P1: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Log2P1: LibrarySymbolReference;
+    LogP1: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    MaxMagnitudeNumber: LibrarySymbolReference;
+    MaxNumber: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    MinMagnitudeNumber: LibrarySymbolReference;
+    MinNumber: LibrarySymbolReference;
+    MultiplyAddEstimate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    Pow: LibrarySymbolReference;
+    RadiansToDegrees: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    RootN: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    SinCosPi: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    SinPi: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference;
+    TanPi: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  Span: LibrarySymbolReference & {
+    Enumerator: LibrarySymbolReference & {
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  StackOverflowException: LibrarySymbolReference & {
+    StackOverflowException: LibrarySymbolReference
+  };
+  String: LibrarySymbolReference & {
+    Empty: LibrarySymbolReference;
+    String: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    CompareOrdinal: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Concat: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    Create: LibrarySymbolReference;
+    EndsWith: LibrarySymbolReference;
+    EnumerateRunes: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Format: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    IndexOfAny: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    Intern: LibrarySymbolReference;
+    IsInterned: LibrarySymbolReference;
+    IsNormalized: LibrarySymbolReference;
+    IsNullOrEmpty: LibrarySymbolReference;
+    IsNullOrWhiteSpace: LibrarySymbolReference;
+    Join: LibrarySymbolReference;
+    LastIndexOf: LibrarySymbolReference;
+    LastIndexOfAny: LibrarySymbolReference;
+    Normalize: LibrarySymbolReference;
+    PadLeft: LibrarySymbolReference;
+    PadRight: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    Replace: LibrarySymbolReference;
+    ReplaceLineEndings: LibrarySymbolReference;
+    Split: LibrarySymbolReference;
+    StartsWith: LibrarySymbolReference;
+    Substring: LibrarySymbolReference;
+    ToCharArray: LibrarySymbolReference;
+    ToLower: LibrarySymbolReference;
+    ToLowerInvariant: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUpper: LibrarySymbolReference;
+    ToUpperInvariant: LibrarySymbolReference;
+    Trim: LibrarySymbolReference;
+    TrimEnd: LibrarySymbolReference;
+    TrimStart: LibrarySymbolReference;
+    TryCopyTo: LibrarySymbolReference;
+    Chars: LibrarySymbolReference;
+    Length: LibrarySymbolReference
+  };
+  StringComparer: LibrarySymbolReference & {
+    StringComparer: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    Create: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromComparison: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsWellKnownCultureAwareComparer: LibrarySymbolReference;
+    IsWellKnownOrdinalComparer: LibrarySymbolReference;
+    CurrentCulture: LibrarySymbolReference;
+    CurrentCultureIgnoreCase: LibrarySymbolReference;
+    InvariantCulture: LibrarySymbolReference;
+    InvariantCultureIgnoreCase: LibrarySymbolReference;
+    Ordinal: LibrarySymbolReference;
+    OrdinalIgnoreCase: LibrarySymbolReference
+  };
+  StringComparison: LibrarySymbolReference & {
+    CurrentCulture: LibrarySymbolReference;
+    CurrentCultureIgnoreCase: LibrarySymbolReference;
+    InvariantCulture: LibrarySymbolReference;
+    InvariantCultureIgnoreCase: LibrarySymbolReference;
+    Ordinal: LibrarySymbolReference;
+    OrdinalIgnoreCase: LibrarySymbolReference
+  };
+  StringNormalizationExtensions: LibrarySymbolReference & {
+    IsNormalized: LibrarySymbolReference;
+    Normalize: LibrarySymbolReference
+  };
+  StringSplitOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    RemoveEmptyEntries: LibrarySymbolReference;
+    TrimEntries: LibrarySymbolReference
+  };
+  SystemException: LibrarySymbolReference & {
+    SystemException: LibrarySymbolReference
+  };
+  ThreadStaticAttribute: LibrarySymbolReference & {
+    ThreadStaticAttribute: LibrarySymbolReference
+  };
+  TimeOnly: LibrarySymbolReference & {
+    TimeOnly: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    AddHours: LibrarySymbolReference;
+    AddMinutes: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromDateTime: LibrarySymbolReference;
+    FromTimeSpan: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsBetween: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    ToLongTimeString: LibrarySymbolReference;
+    ToShortTimeString: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToTimeSpan: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    Hour: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    Microsecond: LibrarySymbolReference;
+    Millisecond: LibrarySymbolReference;
+    Minute: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Nanosecond: LibrarySymbolReference;
+    Second: LibrarySymbolReference;
+    Ticks: LibrarySymbolReference
+  };
+  TimeProvider: LibrarySymbolReference & {
+    TimeProvider: LibrarySymbolReference;
+    CreateTimer: LibrarySymbolReference;
+    GetElapsedTime: LibrarySymbolReference;
+    GetLocalNow: LibrarySymbolReference;
+    GetTimestamp: LibrarySymbolReference;
+    GetUtcNow: LibrarySymbolReference;
+    LocalTimeZone: LibrarySymbolReference;
+    System: LibrarySymbolReference;
+    TimestampFrequency: LibrarySymbolReference
+  };
+  TimeSpan: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    NanosecondsPerTick: LibrarySymbolReference;
+    TicksPerDay: LibrarySymbolReference;
+    TicksPerHour: LibrarySymbolReference;
+    TicksPerMicrosecond: LibrarySymbolReference;
+    TicksPerMillisecond: LibrarySymbolReference;
+    TicksPerMinute: LibrarySymbolReference;
+    TicksPerSecond: LibrarySymbolReference;
+    MicrosecondsPerMillisecond: LibrarySymbolReference;
+    MicrosecondsPerSecond: LibrarySymbolReference;
+    MicrosecondsPerMinute: LibrarySymbolReference;
+    MicrosecondsPerHour: LibrarySymbolReference;
+    MicrosecondsPerDay: LibrarySymbolReference;
+    MillisecondsPerSecond: LibrarySymbolReference;
+    MillisecondsPerMinute: LibrarySymbolReference;
+    MillisecondsPerHour: LibrarySymbolReference;
+    MillisecondsPerDay: LibrarySymbolReference;
+    SecondsPerMinute: LibrarySymbolReference;
+    SecondsPerHour: LibrarySymbolReference;
+    SecondsPerDay: LibrarySymbolReference;
+    MinutesPerHour: LibrarySymbolReference;
+    MinutesPerDay: LibrarySymbolReference;
+    HoursPerDay: LibrarySymbolReference;
+    Zero: LibrarySymbolReference;
+    TimeSpan: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Divide: LibrarySymbolReference;
+    Duration: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromDays: LibrarySymbolReference;
+    FromHours: LibrarySymbolReference;
+    FromMinutes: LibrarySymbolReference;
+    FromSeconds: LibrarySymbolReference;
+    FromMilliseconds: LibrarySymbolReference;
+    FromMicroseconds: LibrarySymbolReference;
+    FromTicks: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Multiply: LibrarySymbolReference;
+    Negate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ParseExact: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    TryParseExact: LibrarySymbolReference;
+    Days: LibrarySymbolReference;
+    Hours: LibrarySymbolReference;
+    Microseconds: LibrarySymbolReference;
+    Milliseconds: LibrarySymbolReference;
+    Minutes: LibrarySymbolReference;
+    Nanoseconds: LibrarySymbolReference;
+    Seconds: LibrarySymbolReference;
+    Ticks: LibrarySymbolReference;
+    TotalDays: LibrarySymbolReference;
+    TotalHours: LibrarySymbolReference;
+    TotalMicroseconds: LibrarySymbolReference;
+    TotalMilliseconds: LibrarySymbolReference;
+    TotalMinutes: LibrarySymbolReference;
+    TotalNanoseconds: LibrarySymbolReference;
+    TotalSeconds: LibrarySymbolReference
+  };
+  TimeZone: LibrarySymbolReference & {
+    TimeZone: LibrarySymbolReference;
+    GetDaylightChanges: LibrarySymbolReference;
+    GetUtcOffset: LibrarySymbolReference;
+    IsDaylightSavingTime: LibrarySymbolReference;
+    ToLocalTime: LibrarySymbolReference;
+    ToUniversalTime: LibrarySymbolReference;
+    CurrentTimeZone: LibrarySymbolReference;
+    DaylightName: LibrarySymbolReference;
+    StandardName: LibrarySymbolReference
+  };
+  TimeZoneInfo: LibrarySymbolReference & {
+    AdjustmentRule: LibrarySymbolReference & {
+      CreateAdjustmentRule: LibrarySymbolReference;
+      Equals: LibrarySymbolReference;
+      GetHashCode: LibrarySymbolReference;
+      BaseUtcOffsetDelta: LibrarySymbolReference;
+      DateEnd: LibrarySymbolReference;
+      DateStart: LibrarySymbolReference;
+      DaylightDelta: LibrarySymbolReference;
+      DaylightTransitionEnd: LibrarySymbolReference;
+      DaylightTransitionStart: LibrarySymbolReference
+    };
+    TransitionTime: LibrarySymbolReference & {
+      CreateFixedDateRule: LibrarySymbolReference;
+      CreateFloatingDateRule: LibrarySymbolReference;
+      Equals: LibrarySymbolReference;
+      GetHashCode: LibrarySymbolReference;
+      Day: LibrarySymbolReference;
+      DayOfWeek: LibrarySymbolReference;
+      IsFixedDateRule: LibrarySymbolReference;
+      Month: LibrarySymbolReference;
+      TimeOfDay: LibrarySymbolReference;
+      Week: LibrarySymbolReference
+    }
+  };
+  TimeZoneNotFoundException: LibrarySymbolReference & {
+    TimeZoneNotFoundException: LibrarySymbolReference
+  };
+  TimeoutException: LibrarySymbolReference & {
+    TimeoutException: LibrarySymbolReference
+  };
+  Tuple: LibrarySymbolReference & {
+    Tuple: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Item1: LibrarySymbolReference
+  };
+  TupleExtensions: LibrarySymbolReference & {
+
+  };
+  Type: LibrarySymbolReference & {
+    Delimiter: LibrarySymbolReference;
+    EmptyTypes: LibrarySymbolReference;
+    FilterAttribute: LibrarySymbolReference;
+    FilterName: LibrarySymbolReference;
+    FilterNameIgnoreCase: LibrarySymbolReference;
+    Missing: LibrarySymbolReference;
+    Type: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FindInterfaces: LibrarySymbolReference;
+    FindMembers: LibrarySymbolReference;
+    GetArrayRank: LibrarySymbolReference;
+    GetAttributeFlagsImpl: LibrarySymbolReference;
+    GetConstructor: LibrarySymbolReference;
+    GetConstructorImpl: LibrarySymbolReference;
+    GetConstructors: LibrarySymbolReference;
+    GetDefaultMembers: LibrarySymbolReference;
+    GetElementType: LibrarySymbolReference;
+    GetEnumName: LibrarySymbolReference;
+    GetEnumNames: LibrarySymbolReference;
+    GetEnumUnderlyingType: LibrarySymbolReference;
+    GetEnumValues: LibrarySymbolReference;
+    GetEnumValuesAsUnderlyingType: LibrarySymbolReference;
+    GetEvent: LibrarySymbolReference;
+    GetEvents: LibrarySymbolReference;
+    GetField: LibrarySymbolReference;
+    GetFields: LibrarySymbolReference;
+    GetFunctionPointerCallingConventions: LibrarySymbolReference;
+    GetFunctionPointerParameterTypes: LibrarySymbolReference;
+    GetFunctionPointerReturnType: LibrarySymbolReference;
+    GetGenericArguments: LibrarySymbolReference;
+    GetGenericParameterConstraints: LibrarySymbolReference;
+    GetGenericTypeDefinition: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetInterface: LibrarySymbolReference;
+    GetInterfaceMap: LibrarySymbolReference;
+    GetInterfaces: LibrarySymbolReference;
+    GetMember: LibrarySymbolReference;
+    GetMembers: LibrarySymbolReference;
+    GetMemberWithSameMetadataDefinitionAs: LibrarySymbolReference;
+    GetMethod: LibrarySymbolReference;
+    GetMethodImpl: LibrarySymbolReference;
+    GetMethods: LibrarySymbolReference;
+    GetNestedType: LibrarySymbolReference;
+    GetNestedTypes: LibrarySymbolReference;
+    GetOptionalCustomModifiers: LibrarySymbolReference;
+    GetProperties: LibrarySymbolReference;
+    GetProperty: LibrarySymbolReference;
+    GetPropertyImpl: LibrarySymbolReference;
+    GetRequiredCustomModifiers: LibrarySymbolReference;
+    GetType: LibrarySymbolReference;
+    GetTypeArray: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    GetTypeCodeImpl: LibrarySymbolReference;
+    GetTypeFromCLSID: LibrarySymbolReference;
+    GetTypeFromHandle: LibrarySymbolReference;
+    GetTypeFromProgID: LibrarySymbolReference;
+    GetTypeHandle: LibrarySymbolReference;
+    HasElementTypeImpl: LibrarySymbolReference;
+    InvokeMember: LibrarySymbolReference;
+    IsArrayImpl: LibrarySymbolReference;
+    IsAssignableFrom: LibrarySymbolReference;
+    IsAssignableTo: LibrarySymbolReference;
+    IsByRefImpl: LibrarySymbolReference;
+    IsCOMObjectImpl: LibrarySymbolReference;
+    IsContextfulImpl: LibrarySymbolReference;
+    IsEnumDefined: LibrarySymbolReference;
+    IsEquivalentTo: LibrarySymbolReference;
+    IsInstanceOfType: LibrarySymbolReference;
+    IsMarshalByRefImpl: LibrarySymbolReference;
+    IsPointerImpl: LibrarySymbolReference;
+    IsPrimitiveImpl: LibrarySymbolReference;
+    IsSubclassOf: LibrarySymbolReference;
+    IsValueTypeImpl: LibrarySymbolReference;
+    MakeArrayType: LibrarySymbolReference;
+    MakeByRefType: LibrarySymbolReference;
+    MakeGenericMethodParameter: LibrarySymbolReference;
+    MakeGenericSignatureType: LibrarySymbolReference;
+    MakeGenericType: LibrarySymbolReference;
+    MakePointerType: LibrarySymbolReference;
+    ReflectionOnlyGetType: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Assembly: LibrarySymbolReference;
+    AssemblyQualifiedName: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    BaseType: LibrarySymbolReference;
+    ContainsGenericParameters: LibrarySymbolReference;
+    DeclaringMethod: LibrarySymbolReference;
+    DeclaringType: LibrarySymbolReference;
+    DefaultBinder: LibrarySymbolReference;
+    FullName: LibrarySymbolReference;
+    GenericParameterAttributes: LibrarySymbolReference;
+    GenericParameterPosition: LibrarySymbolReference;
+    GenericTypeArguments: LibrarySymbolReference;
+    GUID: LibrarySymbolReference;
+    HasElementType: LibrarySymbolReference;
+    IsAbstract: LibrarySymbolReference;
+    IsAnsiClass: LibrarySymbolReference;
+    IsArray: LibrarySymbolReference;
+    IsAutoClass: LibrarySymbolReference;
+    IsAutoLayout: LibrarySymbolReference;
+    IsByRef: LibrarySymbolReference;
+    IsByRefLike: LibrarySymbolReference;
+    IsClass: LibrarySymbolReference;
+    IsCOMObject: LibrarySymbolReference;
+    IsConstructedGenericType: LibrarySymbolReference;
+    IsContextful: LibrarySymbolReference;
+    IsEnum: LibrarySymbolReference;
+    IsExplicitLayout: LibrarySymbolReference;
+    IsFunctionPointer: LibrarySymbolReference;
+    IsGenericMethodParameter: LibrarySymbolReference;
+    IsGenericParameter: LibrarySymbolReference;
+    IsGenericType: LibrarySymbolReference;
+    IsGenericTypeDefinition: LibrarySymbolReference;
+    IsGenericTypeParameter: LibrarySymbolReference;
+    IsImport: LibrarySymbolReference;
+    IsInterface: LibrarySymbolReference;
+    IsLayoutSequential: LibrarySymbolReference;
+    IsMarshalByRef: LibrarySymbolReference;
+    IsNested: LibrarySymbolReference;
+    IsNestedAssembly: LibrarySymbolReference;
+    IsNestedFamANDAssem: LibrarySymbolReference;
+    IsNestedFamily: LibrarySymbolReference;
+    IsNestedFamORAssem: LibrarySymbolReference;
+    IsNestedPrivate: LibrarySymbolReference;
+    IsNestedPublic: LibrarySymbolReference;
+    IsNotPublic: LibrarySymbolReference;
+    IsPointer: LibrarySymbolReference;
+    IsPrimitive: LibrarySymbolReference;
+    IsPublic: LibrarySymbolReference;
+    IsSealed: LibrarySymbolReference;
+    IsSecurityCritical: LibrarySymbolReference;
+    IsSecuritySafeCritical: LibrarySymbolReference;
+    IsSecurityTransparent: LibrarySymbolReference;
+    IsSerializable: LibrarySymbolReference;
+    IsSignatureType: LibrarySymbolReference;
+    IsSpecialName: LibrarySymbolReference;
+    IsSZArray: LibrarySymbolReference;
+    IsTypeDefinition: LibrarySymbolReference;
+    IsUnicodeClass: LibrarySymbolReference;
+    IsUnmanagedFunctionPointer: LibrarySymbolReference;
+    IsValueType: LibrarySymbolReference;
+    IsVariableBoundArray: LibrarySymbolReference;
+    IsVisible: LibrarySymbolReference;
+    MemberType: LibrarySymbolReference;
+    Module: LibrarySymbolReference;
+    Namespace: LibrarySymbolReference;
+    ReflectedType: LibrarySymbolReference;
+    StructLayoutAttribute: LibrarySymbolReference;
+    TypeHandle: LibrarySymbolReference;
+    TypeInitializer: LibrarySymbolReference;
+    UnderlyingSystemType: LibrarySymbolReference
+  };
+  TypeAccessException: LibrarySymbolReference & {
+    TypeAccessException: LibrarySymbolReference
+  };
+  TypeCode: LibrarySymbolReference & {
+    Empty: LibrarySymbolReference;
+    Object: LibrarySymbolReference;
+    DBNull: LibrarySymbolReference;
+    Boolean: LibrarySymbolReference;
+    Char: LibrarySymbolReference;
+    SByte: LibrarySymbolReference;
+    Byte: LibrarySymbolReference;
+    Int16: LibrarySymbolReference;
+    UInt16: LibrarySymbolReference;
+    Int32: LibrarySymbolReference;
+    UInt32: LibrarySymbolReference;
+    Int64: LibrarySymbolReference;
+    UInt64: LibrarySymbolReference;
+    Single: LibrarySymbolReference;
+    Double: LibrarySymbolReference;
+    Decimal: LibrarySymbolReference;
+    DateTime: LibrarySymbolReference;
+    String: LibrarySymbolReference
+  };
+  TypeInitializationException: LibrarySymbolReference & {
+    TypeInitializationException: LibrarySymbolReference;
+    TypeName: LibrarySymbolReference
+  };
+  TypeLoadException: LibrarySymbolReference & {
+    TypeLoadException: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    TypeName: LibrarySymbolReference
+  };
+  TypeUnloadedException: LibrarySymbolReference & {
+    TypeUnloadedException: LibrarySymbolReference
+  };
+  TypedReference: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTargetType: LibrarySymbolReference;
+    MakeTypedReference: LibrarySymbolReference;
+    SetTypedReference: LibrarySymbolReference;
+    TargetTypeToken: LibrarySymbolReference;
+    ToObject: LibrarySymbolReference
+  };
+  UInt128: LibrarySymbolReference & {
+    UInt128: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    One: LibrarySymbolReference;
+    Zero: LibrarySymbolReference
+  };
+  UInt16: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  UInt32: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    BigMul: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  UInt64: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    BigMul: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetTypeCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference
+  };
+  UIntPtr: LibrarySymbolReference & {
+    Zero: LibrarySymbolReference;
+    UIntPtr: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Clamp: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DivRem: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    Sign: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    ToPointer: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference;
+    Size: LibrarySymbolReference
+  };
+  UnauthorizedAccessException: LibrarySymbolReference & {
+    UnauthorizedAccessException: LibrarySymbolReference
+  };
+  UnhandledExceptionEventArgs: LibrarySymbolReference & {
+    UnhandledExceptionEventArgs: LibrarySymbolReference;
+    ExceptionObject: LibrarySymbolReference;
+    IsTerminating: LibrarySymbolReference
+  };
+  UnhandledExceptionEventHandler: LibrarySymbolReference & {
+    UnhandledExceptionEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  Uri: LibrarySymbolReference & {
+    SchemeDelimiter: LibrarySymbolReference;
+    UriSchemeFile: LibrarySymbolReference;
+    UriSchemeFtp: LibrarySymbolReference;
+    UriSchemeFtps: LibrarySymbolReference;
+    UriSchemeGopher: LibrarySymbolReference;
+    UriSchemeHttp: LibrarySymbolReference;
+    UriSchemeHttps: LibrarySymbolReference;
+    UriSchemeMailto: LibrarySymbolReference;
+    UriSchemeNetPipe: LibrarySymbolReference;
+    UriSchemeNetTcp: LibrarySymbolReference;
+    UriSchemeNews: LibrarySymbolReference;
+    UriSchemeNntp: LibrarySymbolReference;
+    UriSchemeSftp: LibrarySymbolReference;
+    UriSchemeSsh: LibrarySymbolReference;
+    UriSchemeTelnet: LibrarySymbolReference;
+    UriSchemeWs: LibrarySymbolReference;
+    UriSchemeWss: LibrarySymbolReference;
+    Uri: LibrarySymbolReference;
+    Canonicalize: LibrarySymbolReference;
+    CheckHostName: LibrarySymbolReference;
+    CheckSchemeName: LibrarySymbolReference;
+    CheckSecurity: LibrarySymbolReference;
+    Compare: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Escape: LibrarySymbolReference;
+    EscapeDataString: LibrarySymbolReference;
+    TryEscapeDataString: LibrarySymbolReference;
+    EscapeString: LibrarySymbolReference;
+    EscapeUriString: LibrarySymbolReference;
+    FromHex: LibrarySymbolReference;
+    GetComponents: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetLeftPart: LibrarySymbolReference;
+    GetObjectData: LibrarySymbolReference;
+    HexEscape: LibrarySymbolReference;
+    HexUnescape: LibrarySymbolReference;
+    IsBadFileSystemCharacter: LibrarySymbolReference;
+    IsBaseOf: LibrarySymbolReference;
+    IsExcludedCharacter: LibrarySymbolReference;
+    IsHexDigit: LibrarySymbolReference;
+    IsHexEncoding: LibrarySymbolReference;
+    IsReservedCharacter: LibrarySymbolReference;
+    IsWellFormedOriginalString: LibrarySymbolReference;
+    IsWellFormedUriString: LibrarySymbolReference;
+    MakeRelative: LibrarySymbolReference;
+    MakeRelativeUri: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryCreate: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    Unescape: LibrarySymbolReference;
+    UnescapeDataString: LibrarySymbolReference;
+    TryUnescapeDataString: LibrarySymbolReference;
+    AbsolutePath: LibrarySymbolReference;
+    AbsoluteUri: LibrarySymbolReference;
+    Authority: LibrarySymbolReference;
+    DnsSafeHost: LibrarySymbolReference;
+    Fragment: LibrarySymbolReference;
+    Host: LibrarySymbolReference;
+    HostNameType: LibrarySymbolReference;
+    IdnHost: LibrarySymbolReference;
+    IsAbsoluteUri: LibrarySymbolReference;
+    IsDefaultPort: LibrarySymbolReference;
+    IsFile: LibrarySymbolReference;
+    IsLoopback: LibrarySymbolReference;
+    IsUnc: LibrarySymbolReference;
+    LocalPath: LibrarySymbolReference;
+    OriginalString: LibrarySymbolReference;
+    PathAndQuery: LibrarySymbolReference;
+    Port: LibrarySymbolReference;
+    Query: LibrarySymbolReference;
+    Scheme: LibrarySymbolReference;
+    Segments: LibrarySymbolReference;
+    UserEscaped: LibrarySymbolReference;
+    UserInfo: LibrarySymbolReference
+  };
+  UriBuilder: LibrarySymbolReference & {
+    UriBuilder: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Fragment: LibrarySymbolReference;
+    Host: LibrarySymbolReference;
+    Password: LibrarySymbolReference;
+    Path: LibrarySymbolReference;
+    Port: LibrarySymbolReference;
+    Query: LibrarySymbolReference;
+    Scheme: LibrarySymbolReference;
+    Uri: LibrarySymbolReference;
+    UserName: LibrarySymbolReference
+  };
+  UriComponents: LibrarySymbolReference & {
+    SerializationInfoString: LibrarySymbolReference;
+    Scheme: LibrarySymbolReference;
+    UserInfo: LibrarySymbolReference;
+    Host: LibrarySymbolReference;
+    Port: LibrarySymbolReference;
+    SchemeAndServer: LibrarySymbolReference;
+    Path: LibrarySymbolReference;
+    Query: LibrarySymbolReference;
+    PathAndQuery: LibrarySymbolReference;
+    HttpRequestUrl: LibrarySymbolReference;
+    Fragment: LibrarySymbolReference;
+    AbsoluteUri: LibrarySymbolReference;
+    StrongPort: LibrarySymbolReference;
+    HostAndPort: LibrarySymbolReference;
+    StrongAuthority: LibrarySymbolReference;
+    NormalizedHost: LibrarySymbolReference;
+    KeepDelimiter: LibrarySymbolReference
+  };
+  UriCreationOptions: LibrarySymbolReference & {
+    DangerousDisablePathAndQueryCanonicalization: LibrarySymbolReference
+  };
+  UriFormat: LibrarySymbolReference & {
+    UriEscaped: LibrarySymbolReference;
+    Unescaped: LibrarySymbolReference;
+    SafeUnescaped: LibrarySymbolReference
+  };
+  UriFormatException: LibrarySymbolReference & {
+    UriFormatException: LibrarySymbolReference
+  };
+  UriHostNameType: LibrarySymbolReference & {
+    Unknown: LibrarySymbolReference;
+    Basic: LibrarySymbolReference;
+    Dns: LibrarySymbolReference;
+    IPv4: LibrarySymbolReference;
+    IPv6: LibrarySymbolReference
+  };
+  UriKind: LibrarySymbolReference & {
+    RelativeOrAbsolute: LibrarySymbolReference;
+    Absolute: LibrarySymbolReference;
+    Relative: LibrarySymbolReference
+  };
+  UriParser: LibrarySymbolReference & {
+    UriParser: LibrarySymbolReference;
+    GetComponents: LibrarySymbolReference;
+    InitializeAndValidate: LibrarySymbolReference;
+    IsBaseOf: LibrarySymbolReference;
+    IsKnownScheme: LibrarySymbolReference;
+    IsWellFormedOriginalString: LibrarySymbolReference;
+    OnNewUri: LibrarySymbolReference;
+    OnRegister: LibrarySymbolReference;
+    Register: LibrarySymbolReference;
+    Resolve: LibrarySymbolReference
+  };
+  UriPartial: LibrarySymbolReference & {
+    Scheme: LibrarySymbolReference;
+    Authority: LibrarySymbolReference;
+    Path: LibrarySymbolReference;
+    Query: LibrarySymbolReference
+  };
+  ValueTuple: LibrarySymbolReference & {
+    Item1: LibrarySymbolReference;
+    ValueTuple: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference
+  };
+  ValueType: LibrarySymbolReference & {
+    ValueType: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference
+  };
+  Version: LibrarySymbolReference & {
+    Version: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    TryFormat: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    Build: LibrarySymbolReference;
+    Major: LibrarySymbolReference;
+    MajorRevision: LibrarySymbolReference;
+    Minor: LibrarySymbolReference;
+    MinorRevision: LibrarySymbolReference;
+    Revision: LibrarySymbolReference
+  };
+  Void: LibrarySymbolReference & {
+
+  };
+  WeakReference: LibrarySymbolReference & {
+    WeakReference: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference;
+    SetTarget: LibrarySymbolReference;
+    TryGetTarget: LibrarySymbolReference
+  }
+};
+const System: SystemLibrary = createLibrary("System", {
   AccessViolationException: {
     kind: "class",
     members: {

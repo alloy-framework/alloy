@@ -1,9 +1,123 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Serialization = createLibrary("System.Runtime.Serialization", {
+type SerializationLibrary = LibrarySymbolReference & {
+  IDeserializationCallback: LibrarySymbolReference & {
+    OnDeserialization: LibrarySymbolReference
+  };
+  IFormatterConverter: LibrarySymbolReference & {
+    Convert: LibrarySymbolReference;
+    ToBoolean: LibrarySymbolReference;
+    ToByte: LibrarySymbolReference;
+    ToChar: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToDecimal: LibrarySymbolReference;
+    ToDouble: LibrarySymbolReference;
+    ToInt16: LibrarySymbolReference;
+    ToInt32: LibrarySymbolReference;
+    ToInt64: LibrarySymbolReference;
+    ToSByte: LibrarySymbolReference;
+    ToSingle: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUInt16: LibrarySymbolReference;
+    ToUInt32: LibrarySymbolReference;
+    ToUInt64: LibrarySymbolReference
+  };
+  IObjectReference: LibrarySymbolReference & {
+    GetRealObject: LibrarySymbolReference
+  };
+  ISafeSerializationData: LibrarySymbolReference & {
+    CompleteDeserialization: LibrarySymbolReference
+  };
+  ISerializable: LibrarySymbolReference & {
+    GetObjectData: LibrarySymbolReference
+  };
+  OnDeserializedAttribute: LibrarySymbolReference & {
+    OnDeserializedAttribute: LibrarySymbolReference
+  };
+  OnDeserializingAttribute: LibrarySymbolReference & {
+    OnDeserializingAttribute: LibrarySymbolReference
+  };
+  OnSerializedAttribute: LibrarySymbolReference & {
+    OnSerializedAttribute: LibrarySymbolReference
+  };
+  OnSerializingAttribute: LibrarySymbolReference & {
+    OnSerializingAttribute: LibrarySymbolReference
+  };
+  OptionalFieldAttribute: LibrarySymbolReference & {
+    OptionalFieldAttribute: LibrarySymbolReference;
+    VersionAdded: LibrarySymbolReference
+  };
+  SafeSerializationEventArgs: LibrarySymbolReference & {
+    AddSerializedState: LibrarySymbolReference;
+    StreamingContext: LibrarySymbolReference
+  };
+  SerializationEntry: LibrarySymbolReference & {
+    Name: LibrarySymbolReference;
+    ObjectType: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  SerializationException: LibrarySymbolReference & {
+    SerializationException: LibrarySymbolReference
+  };
+  SerializationInfo: LibrarySymbolReference & {
+    SerializationInfo: LibrarySymbolReference;
+    AddValue: LibrarySymbolReference;
+    GetBoolean: LibrarySymbolReference;
+    GetByte: LibrarySymbolReference;
+    GetChar: LibrarySymbolReference;
+    GetDateTime: LibrarySymbolReference;
+    GetDecimal: LibrarySymbolReference;
+    GetDouble: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetInt16: LibrarySymbolReference;
+    GetInt32: LibrarySymbolReference;
+    GetInt64: LibrarySymbolReference;
+    GetSByte: LibrarySymbolReference;
+    GetSingle: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    GetUInt16: LibrarySymbolReference;
+    GetUInt32: LibrarySymbolReference;
+    GetUInt64: LibrarySymbolReference;
+    GetValue: LibrarySymbolReference;
+    SetType: LibrarySymbolReference;
+    AssemblyName: LibrarySymbolReference;
+    FullTypeName: LibrarySymbolReference;
+    IsAssemblyNameSetExplicit: LibrarySymbolReference;
+    IsFullTypeNameSetExplicit: LibrarySymbolReference;
+    MemberCount: LibrarySymbolReference;
+    ObjectType: LibrarySymbolReference
+  };
+  SerializationInfoEnumerator: LibrarySymbolReference & {
+    MoveNext: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Current: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    ObjectType: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  StreamingContext: LibrarySymbolReference & {
+    StreamingContext: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Context: LibrarySymbolReference;
+    State: LibrarySymbolReference
+  };
+  StreamingContextStates: LibrarySymbolReference & {
+    CrossProcess: LibrarySymbolReference;
+    CrossMachine: LibrarySymbolReference;
+    File: LibrarySymbolReference;
+    Persistence: LibrarySymbolReference;
+    Remoting: LibrarySymbolReference;
+    Other: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    CrossAppDomain: LibrarySymbolReference;
+    All: LibrarySymbolReference
+  }
+};
+const Serialization: SerializationLibrary = createLibrary("System.Runtime.Serialization", {
   IDeserializationCallback: {
     kind: "interface",
     members: {

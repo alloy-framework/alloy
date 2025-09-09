@@ -1,9 +1,25 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const ExceptionServices = createLibrary("System.Runtime.ExceptionServices", {
+type ExceptionServicesLibrary = LibrarySymbolReference & {
+  ExceptionDispatchInfo: LibrarySymbolReference & {
+    Capture: LibrarySymbolReference;
+    SetCurrentStackTrace: LibrarySymbolReference;
+    SetRemoteStackTrace: LibrarySymbolReference;
+    Throw: LibrarySymbolReference;
+    SourceException: LibrarySymbolReference
+  };
+  FirstChanceExceptionEventArgs: LibrarySymbolReference & {
+    FirstChanceExceptionEventArgs: LibrarySymbolReference;
+    Exception: LibrarySymbolReference
+  };
+  HandleProcessCorruptedStateExceptionsAttribute: LibrarySymbolReference & {
+    HandleProcessCorruptedStateExceptionsAttribute: LibrarySymbolReference
+  }
+};
+const ExceptionServices: ExceptionServicesLibrary = createLibrary("System.Runtime.ExceptionServices", {
   ExceptionDispatchInfo: {
     kind: "class",
     members: {

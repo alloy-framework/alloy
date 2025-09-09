@@ -1,7 +1,22 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Assemblies = createLibrary("System.Configuration.Assemblies", {
+type AssembliesLibrary = LibrarySymbolReference & {
+  AssemblyHashAlgorithm: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    MD5: LibrarySymbolReference;
+    SHA1: LibrarySymbolReference;
+    SHA256: LibrarySymbolReference;
+    SHA384: LibrarySymbolReference;
+    SHA512: LibrarySymbolReference
+  };
+  AssemblyVersionCompatibility: LibrarySymbolReference & {
+    SameMachine: LibrarySymbolReference;
+    SameProcess: LibrarySymbolReference;
+    SameDomain: LibrarySymbolReference
+  }
+};
+const Assemblies: AssembliesLibrary = createLibrary("System.Configuration.Assemblies", {
   AssemblyHashAlgorithm: {
     kind: "enum",
     members: {

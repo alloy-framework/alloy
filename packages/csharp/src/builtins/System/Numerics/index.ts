@@ -1,9 +1,239 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
+type NumericsLibrary = LibrarySymbolReference & {
+  BitOperations: LibrarySymbolReference & {
+    Crc32C: LibrarySymbolReference;
+    IsPow2: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    RoundUpToPowerOf2: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference
+  };
+  IAdditionOperators: LibrarySymbolReference & {
 
-const Numerics = createLibrary("System.Numerics", {
+  };
+  IAdditiveIdentity: LibrarySymbolReference & {
+    AdditiveIdentity: LibrarySymbolReference
+  };
+  IBinaryFloatingPointIeee754: LibrarySymbolReference & {
+
+  };
+  IBinaryInteger: LibrarySymbolReference & {
+    DivRem: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetShortestBitLength: LibrarySymbolReference;
+    LeadingZeroCount: LibrarySymbolReference;
+    PopCount: LibrarySymbolReference;
+    ReadBigEndian: LibrarySymbolReference;
+    ReadLittleEndian: LibrarySymbolReference;
+    RotateLeft: LibrarySymbolReference;
+    RotateRight: LibrarySymbolReference;
+    TrailingZeroCount: LibrarySymbolReference;
+    TryReadBigEndian: LibrarySymbolReference;
+    TryReadLittleEndian: LibrarySymbolReference;
+    TryWriteBigEndian: LibrarySymbolReference;
+    TryWriteLittleEndian: LibrarySymbolReference;
+    WriteBigEndian: LibrarySymbolReference;
+    WriteLittleEndian: LibrarySymbolReference
+  };
+  IBinaryNumber: LibrarySymbolReference & {
+    IsPow2: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    AllBitsSet: LibrarySymbolReference
+  };
+  IBitwiseOperators: LibrarySymbolReference & {
+
+  };
+  IComparisonOperators: LibrarySymbolReference & {
+
+  };
+  IDecrementOperators: LibrarySymbolReference & {
+
+  };
+  IDivisionOperators: LibrarySymbolReference & {
+
+  };
+  IEqualityOperators: LibrarySymbolReference & {
+
+  };
+  IExponentialFunctions: LibrarySymbolReference & {
+    Exp: LibrarySymbolReference;
+    Exp10: LibrarySymbolReference;
+    Exp10M1: LibrarySymbolReference;
+    Exp2: LibrarySymbolReference;
+    Exp2M1: LibrarySymbolReference;
+    ExpM1: LibrarySymbolReference
+  };
+  IFloatingPoint: LibrarySymbolReference & {
+    Ceiling: LibrarySymbolReference;
+    Floor: LibrarySymbolReference;
+    GetExponentByteCount: LibrarySymbolReference;
+    GetExponentShortestBitLength: LibrarySymbolReference;
+    GetSignificandBitLength: LibrarySymbolReference;
+    GetSignificandByteCount: LibrarySymbolReference;
+    Round: LibrarySymbolReference;
+    Truncate: LibrarySymbolReference;
+    TryWriteExponentBigEndian: LibrarySymbolReference;
+    TryWriteExponentLittleEndian: LibrarySymbolReference;
+    TryWriteSignificandBigEndian: LibrarySymbolReference;
+    TryWriteSignificandLittleEndian: LibrarySymbolReference;
+    WriteExponentBigEndian: LibrarySymbolReference;
+    WriteExponentLittleEndian: LibrarySymbolReference;
+    WriteSignificandBigEndian: LibrarySymbolReference;
+    WriteSignificandLittleEndian: LibrarySymbolReference
+  };
+  IFloatingPointConstants: LibrarySymbolReference & {
+    E: LibrarySymbolReference;
+    Pi: LibrarySymbolReference;
+    Tau: LibrarySymbolReference
+  };
+  IFloatingPointIeee754: LibrarySymbolReference & {
+    Atan2: LibrarySymbolReference;
+    Atan2Pi: LibrarySymbolReference;
+    BitDecrement: LibrarySymbolReference;
+    BitIncrement: LibrarySymbolReference;
+    FusedMultiplyAdd: LibrarySymbolReference;
+    Ieee754Remainder: LibrarySymbolReference;
+    ILogB: LibrarySymbolReference;
+    Lerp: LibrarySymbolReference;
+    ReciprocalEstimate: LibrarySymbolReference;
+    ReciprocalSqrtEstimate: LibrarySymbolReference;
+    ScaleB: LibrarySymbolReference;
+    Epsilon: LibrarySymbolReference;
+    NaN: LibrarySymbolReference;
+    NegativeInfinity: LibrarySymbolReference;
+    NegativeZero: LibrarySymbolReference;
+    PositiveInfinity: LibrarySymbolReference
+  };
+  IHyperbolicFunctions: LibrarySymbolReference & {
+    Acosh: LibrarySymbolReference;
+    Asinh: LibrarySymbolReference;
+    Atanh: LibrarySymbolReference;
+    Cosh: LibrarySymbolReference;
+    Sinh: LibrarySymbolReference;
+    Tanh: LibrarySymbolReference
+  };
+  IIncrementOperators: LibrarySymbolReference & {
+
+  };
+  ILogarithmicFunctions: LibrarySymbolReference & {
+    Log: LibrarySymbolReference;
+    Log10: LibrarySymbolReference;
+    Log10P1: LibrarySymbolReference;
+    Log2: LibrarySymbolReference;
+    Log2P1: LibrarySymbolReference;
+    LogP1: LibrarySymbolReference
+  };
+  IMinMaxValue: LibrarySymbolReference & {
+    MaxValue: LibrarySymbolReference;
+    MinValue: LibrarySymbolReference
+  };
+  IModulusOperators: LibrarySymbolReference & {
+
+  };
+  IMultiplicativeIdentity: LibrarySymbolReference & {
+    MultiplicativeIdentity: LibrarySymbolReference
+  };
+  IMultiplyOperators: LibrarySymbolReference & {
+
+  };
+  INumber: LibrarySymbolReference & {
+    Clamp: LibrarySymbolReference;
+    CopySign: LibrarySymbolReference;
+    Max: LibrarySymbolReference;
+    MaxNumber: LibrarySymbolReference;
+    Min: LibrarySymbolReference;
+    MinNumber: LibrarySymbolReference;
+    Sign: LibrarySymbolReference
+  };
+  INumberBase: LibrarySymbolReference & {
+    Abs: LibrarySymbolReference;
+    IsCanonical: LibrarySymbolReference;
+    IsComplexNumber: LibrarySymbolReference;
+    IsEvenInteger: LibrarySymbolReference;
+    IsFinite: LibrarySymbolReference;
+    IsImaginaryNumber: LibrarySymbolReference;
+    IsInfinity: LibrarySymbolReference;
+    IsInteger: LibrarySymbolReference;
+    IsNaN: LibrarySymbolReference;
+    IsNegative: LibrarySymbolReference;
+    IsNegativeInfinity: LibrarySymbolReference;
+    IsNormal: LibrarySymbolReference;
+    IsOddInteger: LibrarySymbolReference;
+    IsPositive: LibrarySymbolReference;
+    IsPositiveInfinity: LibrarySymbolReference;
+    IsRealNumber: LibrarySymbolReference;
+    IsSubnormal: LibrarySymbolReference;
+    IsZero: LibrarySymbolReference;
+    MaxMagnitude: LibrarySymbolReference;
+    MaxMagnitudeNumber: LibrarySymbolReference;
+    MinMagnitude: LibrarySymbolReference;
+    MinMagnitudeNumber: LibrarySymbolReference;
+    MultiplyAddEstimate: LibrarySymbolReference;
+    Parse: LibrarySymbolReference;
+    TryParse: LibrarySymbolReference;
+    One: LibrarySymbolReference;
+    Radix: LibrarySymbolReference;
+    Zero: LibrarySymbolReference
+  };
+  IPowerFunctions: LibrarySymbolReference & {
+    Pow: LibrarySymbolReference
+  };
+  IRootFunctions: LibrarySymbolReference & {
+    Cbrt: LibrarySymbolReference;
+    Hypot: LibrarySymbolReference;
+    RootN: LibrarySymbolReference;
+    Sqrt: LibrarySymbolReference
+  };
+  IShiftOperators: LibrarySymbolReference & {
+
+  };
+  ISignedNumber: LibrarySymbolReference & {
+    NegativeOne: LibrarySymbolReference
+  };
+  ISubtractionOperators: LibrarySymbolReference & {
+
+  };
+  ITrigonometricFunctions: LibrarySymbolReference & {
+    Acos: LibrarySymbolReference;
+    AcosPi: LibrarySymbolReference;
+    Asin: LibrarySymbolReference;
+    AsinPi: LibrarySymbolReference;
+    Atan: LibrarySymbolReference;
+    AtanPi: LibrarySymbolReference;
+    Cos: LibrarySymbolReference;
+    CosPi: LibrarySymbolReference;
+    DegreesToRadians: LibrarySymbolReference;
+    RadiansToDegrees: LibrarySymbolReference;
+    Sin: LibrarySymbolReference;
+    SinCos: LibrarySymbolReference;
+    SinCosPi: LibrarySymbolReference;
+    SinPi: LibrarySymbolReference;
+    Tan: LibrarySymbolReference;
+    TanPi: LibrarySymbolReference
+  };
+  IUnaryNegationOperators: LibrarySymbolReference & {
+
+  };
+  IUnaryPlusOperators: LibrarySymbolReference & {
+
+  };
+  IUnsignedNumber: LibrarySymbolReference & {
+
+  };
+  TotalOrderIeee754Comparer: LibrarySymbolReference & {
+    Compare: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference
+  }
+};
+const Numerics: NumericsLibrary = createLibrary("System.Numerics", {
   BitOperations: {
     kind: "class",
     members: {

@@ -1,9 +1,104 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Generic = createLibrary("System.Collections.Generic", {
+type GenericLibrary = LibrarySymbolReference & {
+  IAlternateEqualityComparer: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Create: LibrarySymbolReference
+  };
+  IAsyncEnumerable: LibrarySymbolReference & {
+    GetAsyncEnumerator: LibrarySymbolReference
+  };
+  IAsyncEnumerator: LibrarySymbolReference & {
+    MoveNextAsync: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
+  ICollection: LibrarySymbolReference & {
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference
+  };
+  IComparer: LibrarySymbolReference & {
+    Compare: LibrarySymbolReference
+  };
+  IDictionary: LibrarySymbolReference & {
+    Add: LibrarySymbolReference;
+    ContainsKey: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    TryGetValue: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Keys: LibrarySymbolReference;
+    Values: LibrarySymbolReference
+  };
+  IEnumerable: LibrarySymbolReference & {
+    GetEnumerator: LibrarySymbolReference
+  };
+  IEnumerator: LibrarySymbolReference & {
+    Current: LibrarySymbolReference
+  };
+  IEqualityComparer: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference
+  };
+  IList: LibrarySymbolReference & {
+    IndexOf: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    Item: LibrarySymbolReference
+  };
+  IReadOnlyCollection: LibrarySymbolReference & {
+    Count: LibrarySymbolReference
+  };
+  IReadOnlyDictionary: LibrarySymbolReference & {
+    ContainsKey: LibrarySymbolReference;
+    TryGetValue: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Keys: LibrarySymbolReference;
+    Values: LibrarySymbolReference
+  };
+  IReadOnlyList: LibrarySymbolReference & {
+    Item: LibrarySymbolReference
+  };
+  IReadOnlySet: LibrarySymbolReference & {
+    Contains: LibrarySymbolReference;
+    IsProperSubsetOf: LibrarySymbolReference;
+    IsProperSupersetOf: LibrarySymbolReference;
+    IsSubsetOf: LibrarySymbolReference;
+    IsSupersetOf: LibrarySymbolReference;
+    Overlaps: LibrarySymbolReference;
+    SetEquals: LibrarySymbolReference
+  };
+  ISet: LibrarySymbolReference & {
+    Add: LibrarySymbolReference;
+    ExceptWith: LibrarySymbolReference;
+    IntersectWith: LibrarySymbolReference;
+    IsProperSubsetOf: LibrarySymbolReference;
+    IsProperSupersetOf: LibrarySymbolReference;
+    IsSubsetOf: LibrarySymbolReference;
+    IsSupersetOf: LibrarySymbolReference;
+    Overlaps: LibrarySymbolReference;
+    SetEquals: LibrarySymbolReference;
+    SymmetricExceptWith: LibrarySymbolReference;
+    UnionWith: LibrarySymbolReference
+  };
+  KeyNotFoundException: LibrarySymbolReference & {
+    KeyNotFoundException: LibrarySymbolReference
+  };
+  KeyValuePair: LibrarySymbolReference & {
+    KeyValuePair: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Key: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  }
+};
+const Generic: GenericLibrary = createLibrary("System.Collections.Generic", {
   IAlternateEqualityComparer: {
     kind: "interface",
     members: {

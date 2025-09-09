@@ -3,11 +3,145 @@ import System from "../index.js";
 import Reflection from "../Reflection/index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Cryptography } from "./Cryptography/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Cryptography } from "./Cryptography/index.js";
 export { default as Permissions } from "./Permissions/index.js";
 export { default as Principal } from "./Principal/index.js";
 
-const Security = createLibrary("System.Security", {
+type SecurityLibrary = LibrarySymbolReference & {
+  AllowPartiallyTrustedCallersAttribute: LibrarySymbolReference & {
+    AllowPartiallyTrustedCallersAttribute: LibrarySymbolReference;
+    PartialTrustVisibilityLevel: LibrarySymbolReference
+  };
+  IPermission: LibrarySymbolReference & {
+    Copy: LibrarySymbolReference;
+    Demand: LibrarySymbolReference;
+    Intersect: LibrarySymbolReference;
+    IsSubsetOf: LibrarySymbolReference;
+    Union: LibrarySymbolReference
+  };
+  ISecurityEncodable: LibrarySymbolReference & {
+    FromXml: LibrarySymbolReference;
+    ToXml: LibrarySymbolReference
+  };
+  IStackWalk: LibrarySymbolReference & {
+    Assert: LibrarySymbolReference;
+    Demand: LibrarySymbolReference;
+    Deny: LibrarySymbolReference;
+    PermitOnly: LibrarySymbolReference
+  };
+  PartialTrustVisibilityLevel: LibrarySymbolReference & {
+    VisibleToAllHosts: LibrarySymbolReference;
+    NotVisibleByDefault: LibrarySymbolReference
+  };
+  PermissionSet: LibrarySymbolReference & {
+    PermissionSet: LibrarySymbolReference;
+    AddPermission: LibrarySymbolReference;
+    AddPermissionImpl: LibrarySymbolReference;
+    Assert: LibrarySymbolReference;
+    ContainsNonCodeAccessPermissions: LibrarySymbolReference;
+    ConvertPermissionSet: LibrarySymbolReference;
+    Copy: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    Demand: LibrarySymbolReference;
+    Deny: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    FromXml: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetEnumeratorImpl: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetPermission: LibrarySymbolReference;
+    GetPermissionImpl: LibrarySymbolReference;
+    Intersect: LibrarySymbolReference;
+    IsEmpty: LibrarySymbolReference;
+    IsSubsetOf: LibrarySymbolReference;
+    IsUnrestricted: LibrarySymbolReference;
+    PermitOnly: LibrarySymbolReference;
+    RemovePermission: LibrarySymbolReference;
+    RemovePermissionImpl: LibrarySymbolReference;
+    RevertAssert: LibrarySymbolReference;
+    SetPermission: LibrarySymbolReference;
+    SetPermissionImpl: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToXml: LibrarySymbolReference;
+    Union: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsSynchronized: LibrarySymbolReference;
+    SyncRoot: LibrarySymbolReference
+  };
+  SecurityCriticalAttribute: LibrarySymbolReference & {
+    SecurityCriticalAttribute: LibrarySymbolReference;
+    Scope: LibrarySymbolReference
+  };
+  SecurityCriticalScope: LibrarySymbolReference & {
+    Explicit: LibrarySymbolReference;
+    Everything: LibrarySymbolReference
+  };
+  SecurityElement: LibrarySymbolReference & {
+    SecurityElement: LibrarySymbolReference;
+    AddAttribute: LibrarySymbolReference;
+    AddChild: LibrarySymbolReference;
+    Attribute: LibrarySymbolReference;
+    Copy: LibrarySymbolReference;
+    Equal: LibrarySymbolReference;
+    Escape: LibrarySymbolReference;
+    FromString: LibrarySymbolReference;
+    IsValidAttributeName: LibrarySymbolReference;
+    IsValidAttributeValue: LibrarySymbolReference;
+    IsValidTag: LibrarySymbolReference;
+    IsValidText: LibrarySymbolReference;
+    SearchForChildByTag: LibrarySymbolReference;
+    SearchForTextOfTag: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    Children: LibrarySymbolReference;
+    Tag: LibrarySymbolReference;
+    Text: LibrarySymbolReference
+  };
+  SecurityException: LibrarySymbolReference & {
+    SecurityException: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Demanded: LibrarySymbolReference;
+    DenySetInstance: LibrarySymbolReference;
+    FailedAssemblyInfo: LibrarySymbolReference;
+    GrantedSet: LibrarySymbolReference;
+    Method: LibrarySymbolReference;
+    PermissionState: LibrarySymbolReference;
+    PermissionType: LibrarySymbolReference;
+    PermitOnlySetInstance: LibrarySymbolReference;
+    RefusedSet: LibrarySymbolReference;
+    Url: LibrarySymbolReference
+  };
+  SecurityRuleSet: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Level1: LibrarySymbolReference;
+    Level2: LibrarySymbolReference
+  };
+  SecurityRulesAttribute: LibrarySymbolReference & {
+    SecurityRulesAttribute: LibrarySymbolReference;
+    RuleSet: LibrarySymbolReference;
+    SkipVerificationInFullTrust: LibrarySymbolReference
+  };
+  SecuritySafeCriticalAttribute: LibrarySymbolReference & {
+    SecuritySafeCriticalAttribute: LibrarySymbolReference
+  };
+  SecurityTransparentAttribute: LibrarySymbolReference & {
+    SecurityTransparentAttribute: LibrarySymbolReference
+  };
+  SecurityTreatAsSafeAttribute: LibrarySymbolReference & {
+    SecurityTreatAsSafeAttribute: LibrarySymbolReference
+  };
+  SuppressUnmanagedCodeSecurityAttribute: LibrarySymbolReference & {
+    SuppressUnmanagedCodeSecurityAttribute: LibrarySymbolReference
+  };
+  UnverifiableCodeAttribute: LibrarySymbolReference & {
+    UnverifiableCodeAttribute: LibrarySymbolReference
+  };
+  VerificationException: LibrarySymbolReference & {
+    VerificationException: LibrarySymbolReference
+  }
+};
+const Security: SecurityLibrary = createLibrary("System.Security", {
   AllowPartiallyTrustedCallersAttribute: {
     kind: "class",
     members: {

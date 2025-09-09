@@ -1,7 +1,13 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Remoting = createLibrary("System.Runtime.Remoting", {
+type RemotingLibrary = LibrarySymbolReference & {
+  ObjectHandle: LibrarySymbolReference & {
+    ObjectHandle: LibrarySymbolReference;
+    Unwrap: LibrarySymbolReference
+  }
+};
+const Remoting: RemotingLibrary = createLibrary("System.Runtime.Remoting", {
   ObjectHandle: {
     kind: "class",
     members: {

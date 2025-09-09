@@ -3,9 +3,36 @@ import IO from "../../IO/index.js";
 import Text from "../../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Compiler = createLibrary("System.CodeDom.Compiler", {
+type CompilerLibrary = LibrarySymbolReference & {
+  GeneratedCodeAttribute: LibrarySymbolReference & {
+    GeneratedCodeAttribute: LibrarySymbolReference;
+    Tool: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  IndentedTextWriter: LibrarySymbolReference & {
+    DefaultTabString: LibrarySymbolReference;
+    IndentedTextWriter: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    DisposeAsync: LibrarySymbolReference;
+    Flush: LibrarySymbolReference;
+    FlushAsync: LibrarySymbolReference;
+    OutputTabs: LibrarySymbolReference;
+    OutputTabsAsync: LibrarySymbolReference;
+    Write: LibrarySymbolReference;
+    WriteAsync: LibrarySymbolReference;
+    WriteLine: LibrarySymbolReference;
+    WriteLineAsync: LibrarySymbolReference;
+    WriteLineNoTabs: LibrarySymbolReference;
+    WriteLineNoTabsAsync: LibrarySymbolReference;
+    Encoding: LibrarySymbolReference;
+    Indent: LibrarySymbolReference;
+    InnerWriter: LibrarySymbolReference;
+    NewLine: LibrarySymbolReference
+  }
+};
+const Compiler: CompilerLibrary = createLibrary("System.CodeDom.Compiler", {
   GeneratedCodeAttribute: {
     kind: "class",
     members: {

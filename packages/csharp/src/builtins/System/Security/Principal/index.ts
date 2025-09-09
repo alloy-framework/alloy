@@ -1,9 +1,32 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Principal = createLibrary("System.Security.Principal", {
+type PrincipalLibrary = LibrarySymbolReference & {
+  IIdentity: LibrarySymbolReference & {
+    AuthenticationType: LibrarySymbolReference;
+    IsAuthenticated: LibrarySymbolReference;
+    Name: LibrarySymbolReference
+  };
+  IPrincipal: LibrarySymbolReference & {
+    IsInRole: LibrarySymbolReference;
+    Identity: LibrarySymbolReference
+  };
+  PrincipalPolicy: LibrarySymbolReference & {
+    UnauthenticatedPrincipal: LibrarySymbolReference;
+    NoPrincipal: LibrarySymbolReference;
+    WindowsPrincipal: LibrarySymbolReference
+  };
+  TokenImpersonationLevel: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Anonymous: LibrarySymbolReference;
+    Identification: LibrarySymbolReference;
+    Impersonation: LibrarySymbolReference;
+    Delegation: LibrarySymbolReference
+  }
+};
+const Principal: PrincipalLibrary = createLibrary("System.Security.Principal", {
   IIdentity: {
     kind: "interface",
     members: {

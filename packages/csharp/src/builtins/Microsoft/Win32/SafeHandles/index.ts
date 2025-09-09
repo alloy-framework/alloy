@@ -1,9 +1,37 @@
 import System from "../../../System/index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const SafeHandles = createLibrary("Microsoft.Win32.SafeHandles", {
+type SafeHandlesLibrary = LibrarySymbolReference & {
+  CriticalHandleMinusOneIsInvalid: LibrarySymbolReference & {
+    CriticalHandleMinusOneIsInvalid: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  CriticalHandleZeroOrMinusOneIsInvalid: LibrarySymbolReference & {
+    CriticalHandleZeroOrMinusOneIsInvalid: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  SafeFileHandle: LibrarySymbolReference & {
+    SafeFileHandle: LibrarySymbolReference;
+    ReleaseHandle: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference;
+    IsAsync: LibrarySymbolReference
+  };
+  SafeHandleMinusOneIsInvalid: LibrarySymbolReference & {
+    SafeHandleMinusOneIsInvalid: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  SafeHandleZeroOrMinusOneIsInvalid: LibrarySymbolReference & {
+    SafeHandleZeroOrMinusOneIsInvalid: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  SafeWaitHandle: LibrarySymbolReference & {
+    SafeWaitHandle: LibrarySymbolReference;
+    ReleaseHandle: LibrarySymbolReference
+  }
+};
+const SafeHandles: SafeHandlesLibrary = createLibrary("Microsoft.Win32.SafeHandles", {
   CriticalHandleMinusOneIsInvalid: {
     kind: "class",
     members: {

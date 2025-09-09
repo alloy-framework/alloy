@@ -1,7 +1,17 @@
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Net = createLibrary("System.Net", {
+type NetLibrary = LibrarySymbolReference & {
+  WebUtility: LibrarySymbolReference & {
+    HtmlDecode: LibrarySymbolReference;
+    HtmlEncode: LibrarySymbolReference;
+    UrlDecode: LibrarySymbolReference;
+    UrlDecodeToBytes: LibrarySymbolReference;
+    UrlEncode: LibrarySymbolReference;
+    UrlEncodeToBytes: LibrarySymbolReference
+  }
+};
+const Net: NetLibrary = createLibrary("System.Net", {
   WebUtility: {
     kind: "class",
     members: {

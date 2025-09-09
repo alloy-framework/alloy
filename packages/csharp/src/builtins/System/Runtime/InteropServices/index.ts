@@ -1,10 +1,169 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Marshalling } from "./Marshalling/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Marshalling } from "./Marshalling/index.js";
 export { default as Swift } from "./Swift/index.js";
 
-const InteropServices = createLibrary("System.Runtime.InteropServices", {
+type InteropServicesLibrary = LibrarySymbolReference & {
+  Architecture: LibrarySymbolReference & {
+    X86: LibrarySymbolReference;
+    X64: LibrarySymbolReference;
+    Arm: LibrarySymbolReference;
+    Arm64: LibrarySymbolReference;
+    Wasm: LibrarySymbolReference;
+    S390x: LibrarySymbolReference;
+    LoongArch64: LibrarySymbolReference;
+    Armv6: LibrarySymbolReference;
+    Ppc64le: LibrarySymbolReference;
+    RiscV64: LibrarySymbolReference
+  };
+  CharSet: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Ansi: LibrarySymbolReference;
+    Unicode: LibrarySymbolReference;
+    Auto: LibrarySymbolReference
+  };
+  ComVisibleAttribute: LibrarySymbolReference & {
+    ComVisibleAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  CriticalHandle: LibrarySymbolReference & {
+    handle: LibrarySymbolReference;
+    CriticalHandle: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference;
+    ReleaseHandle: LibrarySymbolReference;
+    SetHandle: LibrarySymbolReference;
+    SetHandleAsInvalid: LibrarySymbolReference;
+    IsClosed: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  ExternalException: LibrarySymbolReference & {
+    ExternalException: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ErrorCode: LibrarySymbolReference
+  };
+  FieldOffsetAttribute: LibrarySymbolReference & {
+    FieldOffsetAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  GCHandle: LibrarySymbolReference & {
+    AddrOfPinnedObject: LibrarySymbolReference;
+    Alloc: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    Free: LibrarySymbolReference;
+    FromIntPtr: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToIntPtr: LibrarySymbolReference;
+    IsAllocated: LibrarySymbolReference;
+    Target: LibrarySymbolReference
+  };
+  GCHandleType: LibrarySymbolReference & {
+    Weak: LibrarySymbolReference;
+    WeakTrackResurrection: LibrarySymbolReference;
+    Normal: LibrarySymbolReference;
+    Pinned: LibrarySymbolReference
+  };
+  InAttribute: LibrarySymbolReference & {
+    InAttribute: LibrarySymbolReference
+  };
+  LayoutKind: LibrarySymbolReference & {
+    Sequential: LibrarySymbolReference;
+    Explicit: LibrarySymbolReference;
+    Auto: LibrarySymbolReference
+  };
+  MemoryMarshal: LibrarySymbolReference & {
+    CreateReadOnlySpanFromNullTerminated: LibrarySymbolReference;
+    GetArrayDataReference: LibrarySymbolReference;
+    TryGetString: LibrarySymbolReference
+  };
+  OSPlatform: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    FreeBSD: LibrarySymbolReference;
+    Linux: LibrarySymbolReference;
+    OSX: LibrarySymbolReference;
+    Windows: LibrarySymbolReference
+  };
+  OutAttribute: LibrarySymbolReference & {
+    OutAttribute: LibrarySymbolReference
+  };
+  RuntimeInformation: LibrarySymbolReference & {
+    IsOSPlatform: LibrarySymbolReference;
+    FrameworkDescription: LibrarySymbolReference;
+    OSArchitecture: LibrarySymbolReference;
+    OSDescription: LibrarySymbolReference;
+    ProcessArchitecture: LibrarySymbolReference;
+    RuntimeIdentifier: LibrarySymbolReference
+  };
+  SafeBuffer: LibrarySymbolReference & {
+    SafeBuffer: LibrarySymbolReference;
+    AcquirePointer: LibrarySymbolReference;
+    Initialize: LibrarySymbolReference;
+    ReleasePointer: LibrarySymbolReference;
+    ByteLength: LibrarySymbolReference
+  };
+  SafeHandle: LibrarySymbolReference & {
+    handle: LibrarySymbolReference;
+    SafeHandle: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    DangerousAddRef: LibrarySymbolReference;
+    DangerousGetHandle: LibrarySymbolReference;
+    DangerousRelease: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference;
+    ReleaseHandle: LibrarySymbolReference;
+    SetHandle: LibrarySymbolReference;
+    SetHandleAsInvalid: LibrarySymbolReference;
+    IsClosed: LibrarySymbolReference;
+    IsInvalid: LibrarySymbolReference
+  };
+  StructLayoutAttribute: LibrarySymbolReference & {
+    CharSet: LibrarySymbolReference;
+    Pack: LibrarySymbolReference;
+    Size: LibrarySymbolReference;
+    StructLayoutAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  SuppressGCTransitionAttribute: LibrarySymbolReference & {
+    SuppressGCTransitionAttribute: LibrarySymbolReference
+  };
+  UnmanagedType: LibrarySymbolReference & {
+    Bool: LibrarySymbolReference;
+    I1: LibrarySymbolReference;
+    U1: LibrarySymbolReference;
+    I2: LibrarySymbolReference;
+    U2: LibrarySymbolReference;
+    I4: LibrarySymbolReference;
+    U4: LibrarySymbolReference;
+    I8: LibrarySymbolReference;
+    U8: LibrarySymbolReference;
+    R4: LibrarySymbolReference;
+    R8: LibrarySymbolReference;
+    BStr: LibrarySymbolReference;
+    LPStr: LibrarySymbolReference;
+    LPWStr: LibrarySymbolReference;
+    LPTStr: LibrarySymbolReference;
+    ByValTStr: LibrarySymbolReference;
+    IUnknown: LibrarySymbolReference;
+    Interface: LibrarySymbolReference;
+    ByValArray: LibrarySymbolReference;
+    SysInt: LibrarySymbolReference;
+    SysUInt: LibrarySymbolReference;
+    FunctionPtr: LibrarySymbolReference;
+    LPArray: LibrarySymbolReference;
+    LPStruct: LibrarySymbolReference;
+    CustomMarshaler: LibrarySymbolReference;
+    Error: LibrarySymbolReference;
+    IInspectable: LibrarySymbolReference;
+    HString: LibrarySymbolReference;
+    LPUTF8Str: LibrarySymbolReference
+  }
+};
+const InteropServices: InteropServicesLibrary = createLibrary("System.Runtime.InteropServices", {
   Architecture: {
     kind: "enum",
     members: {

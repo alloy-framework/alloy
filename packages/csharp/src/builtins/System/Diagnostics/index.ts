@@ -1,9 +1,119 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as CodeAnalysis } from "./CodeAnalysis/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as CodeAnalysis } from "./CodeAnalysis/index.js";
 
-const Diagnostics = createLibrary("System.Diagnostics", {
+type DiagnosticsLibrary = LibrarySymbolReference & {
+  ConditionalAttribute: LibrarySymbolReference & {
+    ConditionalAttribute: LibrarySymbolReference;
+    ConditionString: LibrarySymbolReference
+  };
+  Debug: LibrarySymbolReference & {
+    Assert: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Fail: LibrarySymbolReference;
+    Flush: LibrarySymbolReference;
+    Indent: LibrarySymbolReference;
+    Print: LibrarySymbolReference;
+    Unindent: LibrarySymbolReference;
+    Write: LibrarySymbolReference;
+    WriteIf: LibrarySymbolReference;
+    WriteLine: LibrarySymbolReference;
+    WriteLineIf: LibrarySymbolReference;
+    AutoFlush: LibrarySymbolReference;
+    IndentLevel: LibrarySymbolReference;
+    IndentSize: LibrarySymbolReference
+  };
+  DebuggableAttribute: LibrarySymbolReference & {
+    DebuggingModes: LibrarySymbolReference & {
+      None: LibrarySymbolReference;
+      Default: LibrarySymbolReference;
+      IgnoreSymbolStoreSequencePoints: LibrarySymbolReference;
+      EnableEditAndContinue: LibrarySymbolReference;
+      DisableOptimizations: LibrarySymbolReference
+    }
+  };
+  Debugger: LibrarySymbolReference & {
+    DefaultCategory: LibrarySymbolReference;
+    Break: LibrarySymbolReference;
+    BreakForUserUnhandledException: LibrarySymbolReference;
+    IsLogging: LibrarySymbolReference;
+    Launch: LibrarySymbolReference;
+    Log: LibrarySymbolReference;
+    NotifyOfCrossThreadDependency: LibrarySymbolReference;
+    IsAttached: LibrarySymbolReference
+  };
+  DebuggerBrowsableAttribute: LibrarySymbolReference & {
+    DebuggerBrowsableAttribute: LibrarySymbolReference;
+    State: LibrarySymbolReference
+  };
+  DebuggerBrowsableState: LibrarySymbolReference & {
+    Never: LibrarySymbolReference;
+    Collapsed: LibrarySymbolReference;
+    RootHidden: LibrarySymbolReference
+  };
+  DebuggerDisableUserUnhandledExceptionsAttribute: LibrarySymbolReference & {
+    DebuggerDisableUserUnhandledExceptionsAttribute: LibrarySymbolReference
+  };
+  DebuggerDisplayAttribute: LibrarySymbolReference & {
+    DebuggerDisplayAttribute: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    Target: LibrarySymbolReference;
+    TargetTypeName: LibrarySymbolReference;
+    Type: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  DebuggerHiddenAttribute: LibrarySymbolReference & {
+    DebuggerHiddenAttribute: LibrarySymbolReference
+  };
+  DebuggerNonUserCodeAttribute: LibrarySymbolReference & {
+    DebuggerNonUserCodeAttribute: LibrarySymbolReference
+  };
+  DebuggerStepThroughAttribute: LibrarySymbolReference & {
+    DebuggerStepThroughAttribute: LibrarySymbolReference
+  };
+  DebuggerStepperBoundaryAttribute: LibrarySymbolReference & {
+    DebuggerStepperBoundaryAttribute: LibrarySymbolReference
+  };
+  DebuggerTypeProxyAttribute: LibrarySymbolReference & {
+    DebuggerTypeProxyAttribute: LibrarySymbolReference;
+    ProxyTypeName: LibrarySymbolReference;
+    Target: LibrarySymbolReference;
+    TargetTypeName: LibrarySymbolReference
+  };
+  DebuggerVisualizerAttribute: LibrarySymbolReference & {
+    DebuggerVisualizerAttribute: LibrarySymbolReference;
+    Description: LibrarySymbolReference;
+    Target: LibrarySymbolReference;
+    TargetTypeName: LibrarySymbolReference;
+    VisualizerObjectSourceTypeName: LibrarySymbolReference;
+    VisualizerTypeName: LibrarySymbolReference
+  };
+  StackTraceHiddenAttribute: LibrarySymbolReference & {
+    StackTraceHiddenAttribute: LibrarySymbolReference
+  };
+  Stopwatch: LibrarySymbolReference & {
+    Frequency: LibrarySymbolReference;
+    IsHighResolution: LibrarySymbolReference;
+    Stopwatch: LibrarySymbolReference;
+    GetElapsedTime: LibrarySymbolReference;
+    GetTimestamp: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Restart: LibrarySymbolReference;
+    Start: LibrarySymbolReference;
+    StartNew: LibrarySymbolReference;
+    Stop: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Elapsed: LibrarySymbolReference;
+    ElapsedMilliseconds: LibrarySymbolReference;
+    ElapsedTicks: LibrarySymbolReference;
+    IsRunning: LibrarySymbolReference
+  };
+  UnreachableException: LibrarySymbolReference & {
+    UnreachableException: LibrarySymbolReference
+  }
+};
+const Diagnostics: DiagnosticsLibrary = createLibrary("System.Diagnostics", {
   ConditionalAttribute: {
     kind: "class",
     members: {

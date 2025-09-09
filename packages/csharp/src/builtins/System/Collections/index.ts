@@ -1,10 +1,146 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Generic } from "./Generic/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Generic } from "./Generic/index.js";
 export { default as ObjectModel } from "./ObjectModel/index.js";
 
-const Collections = createLibrary("System.Collections", {
+type CollectionsLibrary = LibrarySymbolReference & {
+  ArrayList: LibrarySymbolReference & {
+    ArrayList: LibrarySymbolReference;
+    Adapter: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    AddRange: LibrarySymbolReference;
+    BinarySearch: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    FixedSize: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetRange: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    InsertRange: LibrarySymbolReference;
+    LastIndexOf: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    RemoveRange: LibrarySymbolReference;
+    Repeat: LibrarySymbolReference;
+    Reverse: LibrarySymbolReference;
+    SetRange: LibrarySymbolReference;
+    Sort: LibrarySymbolReference;
+    Synchronized: LibrarySymbolReference;
+    ToArray: LibrarySymbolReference;
+    TrimToSize: LibrarySymbolReference;
+    Capacity: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    IsFixedSize: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsSynchronized: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    SyncRoot: LibrarySymbolReference
+  };
+  Comparer: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    DefaultInvariant: LibrarySymbolReference;
+    Comparer: LibrarySymbolReference;
+    Compare: LibrarySymbolReference
+  };
+  DictionaryEntry: LibrarySymbolReference & {
+    DictionaryEntry: LibrarySymbolReference;
+    Key: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  Hashtable: LibrarySymbolReference & {
+    Hashtable: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    ContainsKey: LibrarySymbolReference;
+    ContainsValue: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    GetHash: LibrarySymbolReference;
+    KeyEquals: LibrarySymbolReference;
+    OnDeserialization: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    Synchronized: LibrarySymbolReference;
+    comparer: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    EqualityComparer: LibrarySymbolReference;
+    hcp: LibrarySymbolReference;
+    IsFixedSize: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsSynchronized: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Keys: LibrarySymbolReference;
+    SyncRoot: LibrarySymbolReference;
+    Values: LibrarySymbolReference
+  };
+  ICollection: LibrarySymbolReference & {
+    CopyTo: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    IsSynchronized: LibrarySymbolReference;
+    SyncRoot: LibrarySymbolReference
+  };
+  IComparer: LibrarySymbolReference & {
+    Compare: LibrarySymbolReference
+  };
+  IDictionary: LibrarySymbolReference & {
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    IsFixedSize: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    Item: LibrarySymbolReference;
+    Keys: LibrarySymbolReference;
+    Values: LibrarySymbolReference
+  };
+  IDictionaryEnumerator: LibrarySymbolReference & {
+    Entry: LibrarySymbolReference;
+    Key: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  IEnumerable: LibrarySymbolReference & {
+    GetEnumerator: LibrarySymbolReference
+  };
+  IEnumerator: LibrarySymbolReference & {
+    MoveNext: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
+  IEqualityComparer: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference
+  };
+  IHashCodeProvider: LibrarySymbolReference & {
+    GetHashCode: LibrarySymbolReference
+  };
+  IList: LibrarySymbolReference & {
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    IsFixedSize: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    Item: LibrarySymbolReference
+  };
+  IStructuralComparable: LibrarySymbolReference & {
+    CompareTo: LibrarySymbolReference
+  };
+  IStructuralEquatable: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference
+  }
+};
+const Collections: CollectionsLibrary = createLibrary("System.Collections", {
   ArrayList: {
     kind: "class",
     members: {

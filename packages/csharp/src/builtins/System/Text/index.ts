@@ -1,9 +1,272 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Unicode } from "./Unicode/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Unicode } from "./Unicode/index.js";
 
-const Text = createLibrary("System.Text", {
+type TextLibrary = LibrarySymbolReference & {
+  Ascii: LibrarySymbolReference & {
+    Equals: LibrarySymbolReference;
+    EqualsIgnoreCase: LibrarySymbolReference;
+    FromUtf16: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference;
+    ToLower: LibrarySymbolReference;
+    ToLowerInPlace: LibrarySymbolReference;
+    ToUpper: LibrarySymbolReference;
+    ToUpperInPlace: LibrarySymbolReference;
+    ToUtf16: LibrarySymbolReference;
+    Trim: LibrarySymbolReference;
+    TrimEnd: LibrarySymbolReference;
+    TrimStart: LibrarySymbolReference
+  };
+  CompositeFormat: LibrarySymbolReference & {
+    Parse: LibrarySymbolReference;
+    Format: LibrarySymbolReference;
+    MinimumArgumentCount: LibrarySymbolReference
+  };
+  Decoder: LibrarySymbolReference & {
+    Decoder: LibrarySymbolReference;
+    Convert: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    FallbackBuffer: LibrarySymbolReference
+  };
+  DecoderExceptionFallback: LibrarySymbolReference & {
+    DecoderExceptionFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference
+  };
+  DecoderExceptionFallbackBuffer: LibrarySymbolReference & {
+    DecoderExceptionFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  DecoderFallback: LibrarySymbolReference & {
+    DecoderFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    ExceptionFallback: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference;
+    ReplacementFallback: LibrarySymbolReference
+  };
+  DecoderFallbackBuffer: LibrarySymbolReference & {
+    DecoderFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  DecoderFallbackException: LibrarySymbolReference & {
+    DecoderFallbackException: LibrarySymbolReference;
+    BytesUnknown: LibrarySymbolReference;
+    Index: LibrarySymbolReference
+  };
+  DecoderReplacementFallback: LibrarySymbolReference & {
+    DecoderReplacementFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    DefaultString: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference
+  };
+  DecoderReplacementFallbackBuffer: LibrarySymbolReference & {
+    DecoderReplacementFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  Encoder: LibrarySymbolReference & {
+    Encoder: LibrarySymbolReference;
+    Convert: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    FallbackBuffer: LibrarySymbolReference
+  };
+  EncoderExceptionFallback: LibrarySymbolReference & {
+    EncoderExceptionFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference
+  };
+  EncoderExceptionFallbackBuffer: LibrarySymbolReference & {
+    EncoderExceptionFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  EncoderFallback: LibrarySymbolReference & {
+    EncoderFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    ExceptionFallback: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference;
+    ReplacementFallback: LibrarySymbolReference
+  };
+  EncoderFallbackBuffer: LibrarySymbolReference & {
+    EncoderFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  EncoderFallbackException: LibrarySymbolReference & {
+    EncoderFallbackException: LibrarySymbolReference;
+    IsUnknownSurrogate: LibrarySymbolReference;
+    CharUnknown: LibrarySymbolReference;
+    CharUnknownHigh: LibrarySymbolReference;
+    CharUnknownLow: LibrarySymbolReference;
+    Index: LibrarySymbolReference
+  };
+  EncoderReplacementFallback: LibrarySymbolReference & {
+    EncoderReplacementFallback: LibrarySymbolReference;
+    CreateFallbackBuffer: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    DefaultString: LibrarySymbolReference;
+    MaxCharCount: LibrarySymbolReference
+  };
+  EncoderReplacementFallbackBuffer: LibrarySymbolReference & {
+    EncoderReplacementFallbackBuffer: LibrarySymbolReference;
+    Fallback: LibrarySymbolReference;
+    GetNextChar: LibrarySymbolReference;
+    MovePrevious: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Remaining: LibrarySymbolReference
+  };
+  Encoding: LibrarySymbolReference & {
+    Encoding: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    Convert: LibrarySymbolReference;
+    CreateTranscodingStream: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetEncoding: LibrarySymbolReference;
+    GetEncodings: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetPreamble: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    IsAlwaysNormalized: LibrarySymbolReference;
+    RegisterProvider: LibrarySymbolReference;
+    TryGetBytes: LibrarySymbolReference;
+    TryGetChars: LibrarySymbolReference;
+    ASCII: LibrarySymbolReference;
+    BigEndianUnicode: LibrarySymbolReference;
+    BodyName: LibrarySymbolReference;
+    CodePage: LibrarySymbolReference;
+    DecoderFallback: LibrarySymbolReference;
+    Default: LibrarySymbolReference;
+    EncoderFallback: LibrarySymbolReference;
+    EncodingName: LibrarySymbolReference;
+    HeaderName: LibrarySymbolReference;
+    IsBrowserDisplay: LibrarySymbolReference;
+    IsBrowserSave: LibrarySymbolReference;
+    IsMailNewsDisplay: LibrarySymbolReference;
+    IsMailNewsSave: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsSingleByte: LibrarySymbolReference;
+    Latin1: LibrarySymbolReference;
+    Preamble: LibrarySymbolReference;
+    Unicode: LibrarySymbolReference;
+    UTF32: LibrarySymbolReference;
+    UTF7: LibrarySymbolReference;
+    UTF8: LibrarySymbolReference;
+    WebName: LibrarySymbolReference;
+    WindowsCodePage: LibrarySymbolReference
+  };
+  EncodingInfo: LibrarySymbolReference & {
+    EncodingInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetEncoding: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    CodePage: LibrarySymbolReference;
+    DisplayName: LibrarySymbolReference;
+    Name: LibrarySymbolReference
+  };
+  EncodingProvider: LibrarySymbolReference & {
+    EncodingProvider: LibrarySymbolReference;
+    GetEncoding: LibrarySymbolReference;
+    GetEncodings: LibrarySymbolReference
+  };
+  NormalizationForm: LibrarySymbolReference & {
+    FormC: LibrarySymbolReference;
+    FormD: LibrarySymbolReference;
+    FormKC: LibrarySymbolReference;
+    FormKD: LibrarySymbolReference
+  };
+  Rune: LibrarySymbolReference & {
+    Rune: LibrarySymbolReference;
+    CompareTo: LibrarySymbolReference;
+    DecodeFromUtf16: LibrarySymbolReference;
+    DecodeFromUtf8: LibrarySymbolReference;
+    DecodeLastFromUtf16: LibrarySymbolReference;
+    DecodeLastFromUtf8: LibrarySymbolReference;
+    EncodeToUtf16: LibrarySymbolReference;
+    EncodeToUtf8: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetNumericValue: LibrarySymbolReference;
+    GetRuneAt: LibrarySymbolReference;
+    GetUnicodeCategory: LibrarySymbolReference;
+    IsControl: LibrarySymbolReference;
+    IsDigit: LibrarySymbolReference;
+    IsLetter: LibrarySymbolReference;
+    IsLetterOrDigit: LibrarySymbolReference;
+    IsLower: LibrarySymbolReference;
+    IsNumber: LibrarySymbolReference;
+    IsPunctuation: LibrarySymbolReference;
+    IsSeparator: LibrarySymbolReference;
+    IsSymbol: LibrarySymbolReference;
+    IsUpper: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference;
+    IsWhiteSpace: LibrarySymbolReference;
+    ToLower: LibrarySymbolReference;
+    ToLowerInvariant: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToUpper: LibrarySymbolReference;
+    ToUpperInvariant: LibrarySymbolReference;
+    TryCreate: LibrarySymbolReference;
+    TryEncodeToUtf16: LibrarySymbolReference;
+    TryEncodeToUtf8: LibrarySymbolReference;
+    TryGetRuneAt: LibrarySymbolReference;
+    IsAscii: LibrarySymbolReference;
+    IsBmp: LibrarySymbolReference;
+    Plane: LibrarySymbolReference;
+    ReplacementChar: LibrarySymbolReference;
+    Utf16SequenceLength: LibrarySymbolReference;
+    Utf8SequenceLength: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  StringBuilder: LibrarySymbolReference & {
+    ChunkEnumerator: LibrarySymbolReference & {
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  StringRuneEnumerator: LibrarySymbolReference & {
+    GetEnumerator: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  }
+};
+const Text: TextLibrary = createLibrary("System.Text", {
   Ascii: {
     kind: "class",
     members: {

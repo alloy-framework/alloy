@@ -2,9 +2,96 @@ import SafeHandles from "../../Microsoft/Win32/SafeHandles/index.js";
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Tasks } from "./Tasks/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Tasks } from "./Tasks/index.js";
 
-const Threading = createLibrary("System.Threading", {
+type ThreadingLibrary = LibrarySymbolReference & {
+  CancellationToken: LibrarySymbolReference & {
+    CancellationToken: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Register: LibrarySymbolReference;
+    ThrowIfCancellationRequested: LibrarySymbolReference;
+    UnsafeRegister: LibrarySymbolReference;
+    CanBeCanceled: LibrarySymbolReference;
+    IsCancellationRequested: LibrarySymbolReference;
+    None: LibrarySymbolReference;
+    WaitHandle: LibrarySymbolReference
+  };
+  CancellationTokenRegistration: LibrarySymbolReference & {
+    Dispose: LibrarySymbolReference;
+    DisposeAsync: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Unregister: LibrarySymbolReference;
+    Token: LibrarySymbolReference
+  };
+  CancellationTokenSource: LibrarySymbolReference & {
+    CancellationTokenSource: LibrarySymbolReference;
+    Cancel: LibrarySymbolReference;
+    CancelAfter: LibrarySymbolReference;
+    CancelAsync: LibrarySymbolReference;
+    CreateLinkedTokenSource: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    TryReset: LibrarySymbolReference;
+    IsCancellationRequested: LibrarySymbolReference;
+    Token: LibrarySymbolReference
+  };
+  ITimer: LibrarySymbolReference & {
+    Change: LibrarySymbolReference
+  };
+  LazyThreadSafetyMode: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    PublicationOnly: LibrarySymbolReference;
+    ExecutionAndPublication: LibrarySymbolReference
+  };
+  Lock: LibrarySymbolReference & {
+    Scope: LibrarySymbolReference & {
+      Dispose: LibrarySymbolReference
+    }
+  };
+  PeriodicTimer: LibrarySymbolReference & {
+    PeriodicTimer: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference;
+    WaitForNextTickAsync: LibrarySymbolReference;
+    Period: LibrarySymbolReference
+  };
+  Timeout: LibrarySymbolReference & {
+    Infinite: LibrarySymbolReference;
+    InfiniteTimeSpan: LibrarySymbolReference
+  };
+  Timer: LibrarySymbolReference & {
+    Timer: LibrarySymbolReference;
+    Change: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    DisposeAsync: LibrarySymbolReference;
+    ActiveCount: LibrarySymbolReference
+  };
+  TimerCallback: LibrarySymbolReference & {
+    TimerCallback: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  WaitHandle: LibrarySymbolReference & {
+    InvalidHandle: LibrarySymbolReference;
+    WaitTimeout: LibrarySymbolReference;
+    WaitHandle: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    SignalAndWait: LibrarySymbolReference;
+    WaitAll: LibrarySymbolReference;
+    WaitAny: LibrarySymbolReference;
+    WaitOne: LibrarySymbolReference;
+    Handle: LibrarySymbolReference;
+    SafeWaitHandle: LibrarySymbolReference
+  };
+  WaitHandleExtensions: LibrarySymbolReference & {
+    GetSafeWaitHandle: LibrarySymbolReference;
+    SetSafeWaitHandle: LibrarySymbolReference
+  }
+};
+const Threading: ThreadingLibrary = createLibrary("System.Threading", {
   CancellationToken: {
     kind: "struct",
     members: {

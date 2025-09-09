@@ -2,9 +2,144 @@ import System from "../../index.js";
 import Threading from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as Sources } from "./Sources/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Sources } from "./Sources/index.js";
 
-const Tasks = createLibrary("System.Threading.Tasks", {
+type TasksLibrary = LibrarySymbolReference & {
+  ConcurrentExclusiveSchedulerPair: LibrarySymbolReference & {
+    ConcurrentExclusiveSchedulerPair: LibrarySymbolReference;
+    Complete: LibrarySymbolReference;
+    Completion: LibrarySymbolReference;
+    ConcurrentScheduler: LibrarySymbolReference;
+    ExclusiveScheduler: LibrarySymbolReference
+  };
+  ConfigureAwaitOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    ContinueOnCapturedContext: LibrarySymbolReference;
+    SuppressThrowing: LibrarySymbolReference;
+    ForceYielding: LibrarySymbolReference
+  };
+  Task: LibrarySymbolReference & {
+    Task: LibrarySymbolReference;
+    ConfigureAwait: LibrarySymbolReference;
+    ContinueWith: LibrarySymbolReference;
+    GetAwaiter: LibrarySymbolReference;
+    WaitAsync: LibrarySymbolReference;
+    Factory: LibrarySymbolReference;
+    Result: LibrarySymbolReference
+  };
+  TaskAsyncEnumerableExtensions: LibrarySymbolReference & {
+    ConfigureAwait: LibrarySymbolReference
+  };
+  TaskCanceledException: LibrarySymbolReference & {
+    TaskCanceledException: LibrarySymbolReference;
+    Task: LibrarySymbolReference
+  };
+  TaskCompletionSource: LibrarySymbolReference & {
+    TaskCompletionSource: LibrarySymbolReference;
+    SetCanceled: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetFromTask: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    TrySetCanceled: LibrarySymbolReference;
+    TrySetException: LibrarySymbolReference;
+    TrySetFromTask: LibrarySymbolReference;
+    TrySetResult: LibrarySymbolReference;
+    Task: LibrarySymbolReference
+  };
+  TaskContinuationOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    PreferFairness: LibrarySymbolReference;
+    LongRunning: LibrarySymbolReference;
+    AttachedToParent: LibrarySymbolReference;
+    DenyChildAttach: LibrarySymbolReference;
+    HideScheduler: LibrarySymbolReference;
+    LazyCancellation: LibrarySymbolReference;
+    RunContinuationsAsynchronously: LibrarySymbolReference;
+    NotOnRanToCompletion: LibrarySymbolReference;
+    NotOnFaulted: LibrarySymbolReference;
+    OnlyOnCanceled: LibrarySymbolReference;
+    NotOnCanceled: LibrarySymbolReference;
+    OnlyOnFaulted: LibrarySymbolReference;
+    OnlyOnRanToCompletion: LibrarySymbolReference;
+    ExecuteSynchronously: LibrarySymbolReference
+  };
+  TaskCreationOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    PreferFairness: LibrarySymbolReference;
+    LongRunning: LibrarySymbolReference;
+    AttachedToParent: LibrarySymbolReference;
+    DenyChildAttach: LibrarySymbolReference;
+    HideScheduler: LibrarySymbolReference;
+    RunContinuationsAsynchronously: LibrarySymbolReference
+  };
+  TaskExtensions: LibrarySymbolReference & {
+    Unwrap: LibrarySymbolReference
+  };
+  TaskFactory: LibrarySymbolReference & {
+    TaskFactory: LibrarySymbolReference;
+    ContinueWhenAll: LibrarySymbolReference;
+    ContinueWhenAny: LibrarySymbolReference;
+    FromAsync: LibrarySymbolReference;
+    StartNew: LibrarySymbolReference;
+    CancellationToken: LibrarySymbolReference;
+    ContinuationOptions: LibrarySymbolReference;
+    CreationOptions: LibrarySymbolReference;
+    Scheduler: LibrarySymbolReference
+  };
+  TaskScheduler: LibrarySymbolReference & {
+    TaskScheduler: LibrarySymbolReference;
+    FromCurrentSynchronizationContext: LibrarySymbolReference;
+    GetScheduledTasks: LibrarySymbolReference;
+    QueueTask: LibrarySymbolReference;
+    TryDequeue: LibrarySymbolReference;
+    TryExecuteTask: LibrarySymbolReference;
+    TryExecuteTaskInline: LibrarySymbolReference;
+    Current: LibrarySymbolReference;
+    Default: LibrarySymbolReference;
+    Id: LibrarySymbolReference;
+    MaximumConcurrencyLevel: LibrarySymbolReference
+  };
+  TaskSchedulerException: LibrarySymbolReference & {
+    TaskSchedulerException: LibrarySymbolReference
+  };
+  TaskStatus: LibrarySymbolReference & {
+    Created: LibrarySymbolReference;
+    WaitingForActivation: LibrarySymbolReference;
+    WaitingToRun: LibrarySymbolReference;
+    Running: LibrarySymbolReference;
+    WaitingForChildrenToComplete: LibrarySymbolReference;
+    RanToCompletion: LibrarySymbolReference;
+    Canceled: LibrarySymbolReference;
+    Faulted: LibrarySymbolReference
+  };
+  TaskToAsyncResult: LibrarySymbolReference & {
+    Begin: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    Unwrap: LibrarySymbolReference
+  };
+  UnobservedTaskExceptionEventArgs: LibrarySymbolReference & {
+    UnobservedTaskExceptionEventArgs: LibrarySymbolReference;
+    SetObserved: LibrarySymbolReference;
+    Exception: LibrarySymbolReference;
+    Observed: LibrarySymbolReference
+  };
+  ValueTask: LibrarySymbolReference & {
+    ValueTask: LibrarySymbolReference;
+    AsTask: LibrarySymbolReference;
+    ConfigureAwait: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetAwaiter: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Preserve: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    IsCanceled: LibrarySymbolReference;
+    IsCompleted: LibrarySymbolReference;
+    IsCompletedSuccessfully: LibrarySymbolReference;
+    IsFaulted: LibrarySymbolReference;
+    Result: LibrarySymbolReference
+  }
+};
+const Tasks: TasksLibrary = createLibrary("System.Threading.Tasks", {
   ConcurrentExclusiveSchedulerPair: {
     kind: "class",
     members: {

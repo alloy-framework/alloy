@@ -1,9 +1,91 @@
 import System from "../../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
+type MarshallingLibrary = LibrarySymbolReference & {
+  ContiguousCollectionMarshallerAttribute: LibrarySymbolReference & {
+    ContiguousCollectionMarshallerAttribute: LibrarySymbolReference
+  };
+  CustomMarshallerAttribute: LibrarySymbolReference & {
+    GenericPlaceholder: LibrarySymbolReference & {
 
-const Marshalling = createLibrary("System.Runtime.InteropServices.Marshalling", {
+    }
+  };
+  MarshalMode: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    ManagedToUnmanagedIn: LibrarySymbolReference;
+    ManagedToUnmanagedRef: LibrarySymbolReference;
+    ManagedToUnmanagedOut: LibrarySymbolReference;
+    UnmanagedToManagedIn: LibrarySymbolReference;
+    UnmanagedToManagedRef: LibrarySymbolReference;
+    UnmanagedToManagedOut: LibrarySymbolReference;
+    ElementIn: LibrarySymbolReference;
+    ElementRef: LibrarySymbolReference;
+    ElementOut: LibrarySymbolReference
+  };
+  NativeMarshallingAttribute: LibrarySymbolReference & {
+    NativeMarshallingAttribute: LibrarySymbolReference;
+    NativeType: LibrarySymbolReference
+  };
+  ReadOnlySpanMarshaller: LibrarySymbolReference & {
+    ManagedToUnmanagedIn: LibrarySymbolReference & {
+      Free: LibrarySymbolReference;
+      FromManaged: LibrarySymbolReference;
+      GetManagedValuesSource: LibrarySymbolReference;
+      GetPinnableReference: LibrarySymbolReference;
+      GetUnmanagedValuesDestination: LibrarySymbolReference;
+      ToUnmanaged: LibrarySymbolReference;
+      BufferSize: LibrarySymbolReference
+    };
+    ManagedToUnmanagedOut: LibrarySymbolReference & {
+      FromUnmanaged: LibrarySymbolReference;
+      ToManaged: LibrarySymbolReference;
+      GetUnmanagedValuesSource: LibrarySymbolReference;
+      GetManagedValuesDestination: LibrarySymbolReference;
+      Free: LibrarySymbolReference
+    };
+    UnmanagedToManagedOut: LibrarySymbolReference & {
+      AllocateContainerForUnmanagedElements: LibrarySymbolReference;
+      GetManagedValuesSource: LibrarySymbolReference;
+      GetUnmanagedValuesDestination: LibrarySymbolReference
+    }
+  };
+  SafeHandleMarshaller: LibrarySymbolReference & {
+    ManagedToUnmanagedIn: LibrarySymbolReference & {
+      Free: LibrarySymbolReference;
+      FromManaged: LibrarySymbolReference;
+      ToUnmanaged: LibrarySymbolReference
+    };
+    ManagedToUnmanagedOut: LibrarySymbolReference & {
+      ManagedToUnmanagedOut: LibrarySymbolReference;
+      Free: LibrarySymbolReference;
+      FromUnmanaged: LibrarySymbolReference;
+      ToManaged: LibrarySymbolReference
+    };
+    ManagedToUnmanagedRef: LibrarySymbolReference & {
+      ManagedToUnmanagedRef: LibrarySymbolReference;
+      Free: LibrarySymbolReference;
+      FromManaged: LibrarySymbolReference;
+      FromUnmanaged: LibrarySymbolReference;
+      OnInvoked: LibrarySymbolReference;
+      ToManagedFinally: LibrarySymbolReference;
+      ToUnmanaged: LibrarySymbolReference
+    }
+  };
+  SpanMarshaller: LibrarySymbolReference & {
+    ManagedToUnmanagedIn: LibrarySymbolReference & {
+      Free: LibrarySymbolReference;
+      FromManaged: LibrarySymbolReference;
+      GetManagedValuesSource: LibrarySymbolReference;
+      GetPinnableReference: LibrarySymbolReference;
+      GetUnmanagedValuesDestination: LibrarySymbolReference;
+      ToUnmanaged: LibrarySymbolReference;
+      BufferSize: LibrarySymbolReference
+    }
+  }
+};
+const Marshalling: MarshallingLibrary = createLibrary("System.Runtime.InteropServices.Marshalling", {
   ContiguousCollectionMarshallerAttribute: {
     kind: "class",
     members: {

@@ -5,7 +5,7 @@ import {
 import { Children, isRefkeyable, Refkeyable, RENDERABLE } from "@alloy-js/core";
 import { CSharpSymbol } from "./symbols/csharp.js";
 
-class AccessExpressionBuilder {
+export class AccessExpressionBuilder {
   private _parts: AccessExpressionPartProps[] = [];
 
   member(
@@ -68,5 +68,3 @@ export function access(
   const builder = new AccessExpressionBuilder();
   return builder.member(base, options);
 }
-
-access("example");

@@ -1,7 +1,7 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-export { default as CompilerServices } from "./CompilerServices/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as CompilerServices } from "./CompilerServices/index.js";
 export { default as ConstrainedExecution } from "./ConstrainedExecution/index.js";
 export { default as ExceptionServices } from "./ExceptionServices/index.js";
 export { default as InteropServices } from "./InteropServices/index.js";
@@ -9,7 +9,61 @@ export { default as Remoting } from "./Remoting/index.js";
 export { default as Serialization } from "./Serialization/index.js";
 export { default as Versioning } from "./Versioning/index.js";
 
-const Runtime = createLibrary("System.Runtime", {
+type RuntimeLibrary = LibrarySymbolReference & {
+  AmbiguousImplementationException: LibrarySymbolReference & {
+    AmbiguousImplementationException: LibrarySymbolReference
+  };
+  AssemblyTargetedPatchBandAttribute: LibrarySymbolReference & {
+    AssemblyTargetedPatchBandAttribute: LibrarySymbolReference;
+    TargetedPatchBand: LibrarySymbolReference
+  };
+  ControlledExecution: LibrarySymbolReference & {
+    Run: LibrarySymbolReference
+  };
+  DependentHandle: LibrarySymbolReference & {
+    DependentHandle: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Dependent: LibrarySymbolReference;
+    IsAllocated: LibrarySymbolReference;
+    Target: LibrarySymbolReference;
+    TargetAndDependent: LibrarySymbolReference
+  };
+  GCLargeObjectHeapCompactionMode: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    CompactOnce: LibrarySymbolReference
+  };
+  GCLatencyMode: LibrarySymbolReference & {
+    Batch: LibrarySymbolReference;
+    Interactive: LibrarySymbolReference;
+    LowLatency: LibrarySymbolReference;
+    SustainedLowLatency: LibrarySymbolReference;
+    NoGCRegion: LibrarySymbolReference
+  };
+  GCSettings: LibrarySymbolReference & {
+    IsServerGC: LibrarySymbolReference;
+    LargeObjectHeapCompactionMode: LibrarySymbolReference;
+    LatencyMode: LibrarySymbolReference
+  };
+  JitInfo: LibrarySymbolReference & {
+    GetCompilationTime: LibrarySymbolReference;
+    GetCompiledILBytes: LibrarySymbolReference;
+    GetCompiledMethodCount: LibrarySymbolReference
+  };
+  MemoryFailPoint: LibrarySymbolReference & {
+    MemoryFailPoint: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Finalize: LibrarySymbolReference
+  };
+  ProfileOptimization: LibrarySymbolReference & {
+    SetProfileRoot: LibrarySymbolReference;
+    StartProfile: LibrarySymbolReference
+  };
+  TargetedPatchingOptOutAttribute: LibrarySymbolReference & {
+    TargetedPatchingOptOutAttribute: LibrarySymbolReference;
+    Reason: LibrarySymbolReference
+  }
+};
+const Runtime: RuntimeLibrary = createLibrary("System.Runtime", {
   AmbiguousImplementationException: {
     kind: "class",
     members: {

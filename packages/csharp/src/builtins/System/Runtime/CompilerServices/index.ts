@@ -3,9 +3,405 @@ import System from "../../index.js";
 import Tasks from "../../Threading/Tasks/index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
+type CompilerServicesLibrary = LibrarySymbolReference & {
+  AccessedThroughPropertyAttribute: LibrarySymbolReference & {
+    AccessedThroughPropertyAttribute: LibrarySymbolReference;
+    PropertyName: LibrarySymbolReference
+  };
+  AsyncIteratorMethodBuilder: LibrarySymbolReference & {
+    Complete: LibrarySymbolReference;
+    Create: LibrarySymbolReference
+  };
+  AsyncIteratorStateMachineAttribute: LibrarySymbolReference & {
+    AsyncIteratorStateMachineAttribute: LibrarySymbolReference
+  };
+  AsyncMethodBuilderAttribute: LibrarySymbolReference & {
+    AsyncMethodBuilderAttribute: LibrarySymbolReference;
+    BuilderType: LibrarySymbolReference
+  };
+  AsyncStateMachineAttribute: LibrarySymbolReference & {
+    AsyncStateMachineAttribute: LibrarySymbolReference
+  };
+  AsyncTaskMethodBuilder: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    SetStateMachine: LibrarySymbolReference;
+    Task: LibrarySymbolReference
+  };
+  AsyncValueTaskMethodBuilder: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    SetStateMachine: LibrarySymbolReference;
+    Task: LibrarySymbolReference
+  };
+  AsyncVoidMethodBuilder: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    SetStateMachine: LibrarySymbolReference
+  };
+  CallConvCdecl: LibrarySymbolReference & {
+    CallConvCdecl: LibrarySymbolReference
+  };
+  CallConvFastcall: LibrarySymbolReference & {
+    CallConvFastcall: LibrarySymbolReference
+  };
+  CallConvMemberFunction: LibrarySymbolReference & {
+    CallConvMemberFunction: LibrarySymbolReference
+  };
+  CallConvStdcall: LibrarySymbolReference & {
+    CallConvStdcall: LibrarySymbolReference
+  };
+  CallConvSuppressGCTransition: LibrarySymbolReference & {
+    CallConvSuppressGCTransition: LibrarySymbolReference
+  };
+  CallConvSwift: LibrarySymbolReference & {
+    CallConvSwift: LibrarySymbolReference
+  };
+  CallConvThiscall: LibrarySymbolReference & {
+    CallConvThiscall: LibrarySymbolReference
+  };
+  CallerArgumentExpressionAttribute: LibrarySymbolReference & {
+    CallerArgumentExpressionAttribute: LibrarySymbolReference;
+    ParameterName: LibrarySymbolReference
+  };
+  CallerFilePathAttribute: LibrarySymbolReference & {
+    CallerFilePathAttribute: LibrarySymbolReference
+  };
+  CallerLineNumberAttribute: LibrarySymbolReference & {
+    CallerLineNumberAttribute: LibrarySymbolReference
+  };
+  CallerMemberNameAttribute: LibrarySymbolReference & {
+    CallerMemberNameAttribute: LibrarySymbolReference
+  };
+  CollectionBuilderAttribute: LibrarySymbolReference & {
+    CollectionBuilderAttribute: LibrarySymbolReference;
+    BuilderType: LibrarySymbolReference;
+    MethodName: LibrarySymbolReference
+  };
+  CompilationRelaxations: LibrarySymbolReference & {
+    NoStringInterning: LibrarySymbolReference
+  };
+  CompilationRelaxationsAttribute: LibrarySymbolReference & {
+    CompilationRelaxationsAttribute: LibrarySymbolReference;
+    CompilationRelaxations: LibrarySymbolReference
+  };
+  CompilerFeatureRequiredAttribute: LibrarySymbolReference & {
+    RefStructs: LibrarySymbolReference;
+    RequiredMembers: LibrarySymbolReference;
+    CompilerFeatureRequiredAttribute: LibrarySymbolReference;
+    FeatureName: LibrarySymbolReference;
+    IsOptional: LibrarySymbolReference
+  };
+  CompilerGeneratedAttribute: LibrarySymbolReference & {
+    CompilerGeneratedAttribute: LibrarySymbolReference
+  };
+  CompilerGlobalScopeAttribute: LibrarySymbolReference & {
+    CompilerGlobalScopeAttribute: LibrarySymbolReference
+  };
+  ConditionalWeakTable: LibrarySymbolReference & {
+    CreateValueCallback: LibrarySymbolReference & {
+      CreateValueCallback: LibrarySymbolReference;
+      Invoke: LibrarySymbolReference;
+      BeginInvoke: LibrarySymbolReference;
+      EndInvoke: LibrarySymbolReference
+    }
+  };
+  ConfiguredAsyncDisposable: LibrarySymbolReference & {
+    DisposeAsync: LibrarySymbolReference
+  };
+  ConfiguredCancelableAsyncEnumerable: LibrarySymbolReference & {
+    Enumerator: LibrarySymbolReference & {
+      DisposeAsync: LibrarySymbolReference;
+      MoveNextAsync: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
+  };
+  ConfiguredTaskAwaitable: LibrarySymbolReference & {
+    ConfiguredTaskAwaiter: LibrarySymbolReference & {
+      GetResult: LibrarySymbolReference;
+      OnCompleted: LibrarySymbolReference;
+      UnsafeOnCompleted: LibrarySymbolReference;
+      IsCompleted: LibrarySymbolReference
+    }
+  };
+  ConfiguredValueTaskAwaitable: LibrarySymbolReference & {
+    ConfiguredValueTaskAwaiter: LibrarySymbolReference & {
+      GetResult: LibrarySymbolReference;
+      OnCompleted: LibrarySymbolReference;
+      UnsafeOnCompleted: LibrarySymbolReference;
+      IsCompleted: LibrarySymbolReference
+    }
+  };
+  CustomConstantAttribute: LibrarySymbolReference & {
+    CustomConstantAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  DateTimeConstantAttribute: LibrarySymbolReference & {
+    DateTimeConstantAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  DecimalConstantAttribute: LibrarySymbolReference & {
+    DecimalConstantAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  DefaultDependencyAttribute: LibrarySymbolReference & {
+    DefaultDependencyAttribute: LibrarySymbolReference;
+    LoadHint: LibrarySymbolReference
+  };
+  DefaultInterpolatedStringHandler: LibrarySymbolReference & {
+    DefaultInterpolatedStringHandler: LibrarySymbolReference;
+    AppendFormatted: LibrarySymbolReference;
+    AppendLiteral: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToStringAndClear: LibrarySymbolReference
+  };
+  DependencyAttribute: LibrarySymbolReference & {
+    DependencyAttribute: LibrarySymbolReference;
+    DependentAssembly: LibrarySymbolReference;
+    LoadHint: LibrarySymbolReference
+  };
+  DisablePrivateReflectionAttribute: LibrarySymbolReference & {
+    DisablePrivateReflectionAttribute: LibrarySymbolReference
+  };
+  DisableRuntimeMarshallingAttribute: LibrarySymbolReference & {
+    DisableRuntimeMarshallingAttribute: LibrarySymbolReference
+  };
+  DiscardableAttribute: LibrarySymbolReference & {
+    DiscardableAttribute: LibrarySymbolReference
+  };
+  EnumeratorCancellationAttribute: LibrarySymbolReference & {
+    EnumeratorCancellationAttribute: LibrarySymbolReference
+  };
+  ExtensionAttribute: LibrarySymbolReference & {
+    ExtensionAttribute: LibrarySymbolReference
+  };
+  FixedAddressValueTypeAttribute: LibrarySymbolReference & {
+    FixedAddressValueTypeAttribute: LibrarySymbolReference
+  };
+  FixedBufferAttribute: LibrarySymbolReference & {
+    FixedBufferAttribute: LibrarySymbolReference;
+    ElementType: LibrarySymbolReference;
+    Length: LibrarySymbolReference
+  };
+  FormattableStringFactory: LibrarySymbolReference & {
+    Create: LibrarySymbolReference
+  };
+  IAsyncStateMachine: LibrarySymbolReference & {
+    MoveNext: LibrarySymbolReference;
+    SetStateMachine: LibrarySymbolReference
+  };
+  ICriticalNotifyCompletion: LibrarySymbolReference & {
+    UnsafeOnCompleted: LibrarySymbolReference
+  };
+  INotifyCompletion: LibrarySymbolReference & {
+    OnCompleted: LibrarySymbolReference
+  };
+  IStrongBox: LibrarySymbolReference & {
+    Value: LibrarySymbolReference
+  };
+  ITuple: LibrarySymbolReference & {
+    Item: LibrarySymbolReference;
+    Length: LibrarySymbolReference
+  };
+  IndexerNameAttribute: LibrarySymbolReference & {
+    IndexerNameAttribute: LibrarySymbolReference
+  };
+  InlineArrayAttribute: LibrarySymbolReference & {
+    InlineArrayAttribute: LibrarySymbolReference;
+    Length: LibrarySymbolReference
+  };
+  InternalsVisibleToAttribute: LibrarySymbolReference & {
+    InternalsVisibleToAttribute: LibrarySymbolReference;
+    AllInternalsVisible: LibrarySymbolReference;
+    AssemblyName: LibrarySymbolReference
+  };
+  InterpolatedStringHandlerArgumentAttribute: LibrarySymbolReference & {
+    InterpolatedStringHandlerArgumentAttribute: LibrarySymbolReference;
+    Arguments: LibrarySymbolReference
+  };
+  InterpolatedStringHandlerAttribute: LibrarySymbolReference & {
+    InterpolatedStringHandlerAttribute: LibrarySymbolReference
+  };
+  IsConst: LibrarySymbolReference & {
 
-const CompilerServices = createLibrary("System.Runtime.CompilerServices", {
+  };
+  IsVolatile: LibrarySymbolReference & {
+
+  };
+  IteratorStateMachineAttribute: LibrarySymbolReference & {
+    IteratorStateMachineAttribute: LibrarySymbolReference
+  };
+  LoadHint: LibrarySymbolReference & {
+    Default: LibrarySymbolReference;
+    Always: LibrarySymbolReference;
+    Sometimes: LibrarySymbolReference
+  };
+  MethodCodeType: LibrarySymbolReference & {
+    IL: LibrarySymbolReference;
+    Native: LibrarySymbolReference;
+    OPTIL: LibrarySymbolReference;
+    Runtime: LibrarySymbolReference
+  };
+  MethodImplAttribute: LibrarySymbolReference & {
+    MethodCodeType: LibrarySymbolReference;
+    MethodImplAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
+  MethodImplOptions: LibrarySymbolReference & {
+    Unmanaged: LibrarySymbolReference;
+    NoInlining: LibrarySymbolReference;
+    ForwardRef: LibrarySymbolReference;
+    Synchronized: LibrarySymbolReference;
+    NoOptimization: LibrarySymbolReference;
+    PreserveSig: LibrarySymbolReference;
+    AggressiveInlining: LibrarySymbolReference;
+    AggressiveOptimization: LibrarySymbolReference;
+    InternalCall: LibrarySymbolReference
+  };
+  ModuleInitializerAttribute: LibrarySymbolReference & {
+    ModuleInitializerAttribute: LibrarySymbolReference
+  };
+  OverloadResolutionPriorityAttribute: LibrarySymbolReference & {
+    OverloadResolutionPriorityAttribute: LibrarySymbolReference;
+    Priority: LibrarySymbolReference
+  };
+  ParamCollectionAttribute: LibrarySymbolReference & {
+    ParamCollectionAttribute: LibrarySymbolReference
+  };
+  PoolingAsyncValueTaskMethodBuilder: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    SetException: LibrarySymbolReference;
+    SetResult: LibrarySymbolReference;
+    SetStateMachine: LibrarySymbolReference;
+    Task: LibrarySymbolReference
+  };
+  PreserveBaseOverridesAttribute: LibrarySymbolReference & {
+    PreserveBaseOverridesAttribute: LibrarySymbolReference
+  };
+  ReferenceAssemblyAttribute: LibrarySymbolReference & {
+    ReferenceAssemblyAttribute: LibrarySymbolReference;
+    Description: LibrarySymbolReference
+  };
+  RuntimeCompatibilityAttribute: LibrarySymbolReference & {
+    RuntimeCompatibilityAttribute: LibrarySymbolReference;
+    WrapNonExceptionThrows: LibrarySymbolReference
+  };
+  RuntimeFeature: LibrarySymbolReference & {
+    ByRefFields: LibrarySymbolReference;
+    ByRefLikeGenerics: LibrarySymbolReference;
+    CovariantReturnsOfClasses: LibrarySymbolReference;
+    DefaultImplementationsOfInterfaces: LibrarySymbolReference;
+    NumericIntPtr: LibrarySymbolReference;
+    PortablePdb: LibrarySymbolReference;
+    UnmanagedSignatureCallingConvention: LibrarySymbolReference;
+    VirtualStaticsInInterfaces: LibrarySymbolReference;
+    IsSupported: LibrarySymbolReference;
+    IsDynamicCodeCompiled: LibrarySymbolReference;
+    IsDynamicCodeSupported: LibrarySymbolReference
+  };
+  RuntimeHelpers: LibrarySymbolReference & {
+    CleanupCode: LibrarySymbolReference & {
+      CleanupCode: LibrarySymbolReference;
+      Invoke: LibrarySymbolReference;
+      BeginInvoke: LibrarySymbolReference;
+      EndInvoke: LibrarySymbolReference
+    };
+    TryCode: LibrarySymbolReference & {
+      TryCode: LibrarySymbolReference;
+      Invoke: LibrarySymbolReference;
+      BeginInvoke: LibrarySymbolReference;
+      EndInvoke: LibrarySymbolReference
+    }
+  };
+  RuntimeWrappedException: LibrarySymbolReference & {
+    RuntimeWrappedException: LibrarySymbolReference;
+    WrappedException: LibrarySymbolReference
+  };
+  SkipLocalsInitAttribute: LibrarySymbolReference & {
+    SkipLocalsInitAttribute: LibrarySymbolReference
+  };
+  SpecialNameAttribute: LibrarySymbolReference & {
+    SpecialNameAttribute: LibrarySymbolReference
+  };
+  StateMachineAttribute: LibrarySymbolReference & {
+    StateMachineAttribute: LibrarySymbolReference;
+    StateMachineType: LibrarySymbolReference
+  };
+  StringFreezingAttribute: LibrarySymbolReference & {
+    StringFreezingAttribute: LibrarySymbolReference
+  };
+  StrongBox: LibrarySymbolReference & {
+    Value: LibrarySymbolReference;
+    StrongBox: LibrarySymbolReference
+  };
+  SuppressIldasmAttribute: LibrarySymbolReference & {
+    SuppressIldasmAttribute: LibrarySymbolReference
+  };
+  SwitchExpressionException: LibrarySymbolReference & {
+    SwitchExpressionException: LibrarySymbolReference;
+    Message: LibrarySymbolReference;
+    UnmatchedValue: LibrarySymbolReference
+  };
+  TaskAwaiter: LibrarySymbolReference & {
+    GetResult: LibrarySymbolReference;
+    OnCompleted: LibrarySymbolReference;
+    UnsafeOnCompleted: LibrarySymbolReference;
+    IsCompleted: LibrarySymbolReference
+  };
+  TupleElementNamesAttribute: LibrarySymbolReference & {
+    TupleElementNamesAttribute: LibrarySymbolReference;
+    TransformNames: LibrarySymbolReference
+  };
+  TypeForwardedFromAttribute: LibrarySymbolReference & {
+    TypeForwardedFromAttribute: LibrarySymbolReference;
+    AssemblyFullName: LibrarySymbolReference
+  };
+  TypeForwardedToAttribute: LibrarySymbolReference & {
+    TypeForwardedToAttribute: LibrarySymbolReference;
+    Destination: LibrarySymbolReference
+  };
+  Unsafe: LibrarySymbolReference & {
+    CopyBlock: LibrarySymbolReference;
+    CopyBlockUnaligned: LibrarySymbolReference;
+    InitBlock: LibrarySymbolReference;
+    InitBlockUnaligned: LibrarySymbolReference
+  };
+  UnsafeAccessorAttribute: LibrarySymbolReference & {
+    UnsafeAccessorAttribute: LibrarySymbolReference;
+    Kind: LibrarySymbolReference;
+    Name: LibrarySymbolReference
+  };
+  UnsafeAccessorKind: LibrarySymbolReference & {
+    Constructor: LibrarySymbolReference;
+    Method: LibrarySymbolReference;
+    StaticMethod: LibrarySymbolReference;
+    Field: LibrarySymbolReference;
+    StaticField: LibrarySymbolReference
+  };
+  UnsafeValueTypeAttribute: LibrarySymbolReference & {
+    UnsafeValueTypeAttribute: LibrarySymbolReference
+  };
+  ValueTaskAwaiter: LibrarySymbolReference & {
+    GetResult: LibrarySymbolReference;
+    OnCompleted: LibrarySymbolReference;
+    UnsafeOnCompleted: LibrarySymbolReference;
+    IsCompleted: LibrarySymbolReference
+  };
+  YieldAwaitable: LibrarySymbolReference & {
+    YieldAwaiter: LibrarySymbolReference & {
+      GetResult: LibrarySymbolReference;
+      OnCompleted: LibrarySymbolReference;
+      UnsafeOnCompleted: LibrarySymbolReference;
+      IsCompleted: LibrarySymbolReference
+    }
+  }
+};
+const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.CompilerServices", {
   AccessedThroughPropertyAttribute: {
     kind: "class",
     members: {

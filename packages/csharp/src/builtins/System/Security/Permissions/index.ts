@@ -1,9 +1,72 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Permissions = createLibrary("System.Security.Permissions", {
+type PermissionsLibrary = LibrarySymbolReference & {
+  CodeAccessSecurityAttribute: LibrarySymbolReference & {
+    CodeAccessSecurityAttribute: LibrarySymbolReference
+  };
+  PermissionState: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Unrestricted: LibrarySymbolReference
+  };
+  SecurityAction: LibrarySymbolReference & {
+    Demand: LibrarySymbolReference;
+    Assert: LibrarySymbolReference;
+    Deny: LibrarySymbolReference;
+    PermitOnly: LibrarySymbolReference;
+    LinkDemand: LibrarySymbolReference;
+    InheritanceDemand: LibrarySymbolReference;
+    RequestMinimum: LibrarySymbolReference;
+    RequestOptional: LibrarySymbolReference;
+    RequestRefuse: LibrarySymbolReference
+  };
+  SecurityAttribute: LibrarySymbolReference & {
+    SecurityAttribute: LibrarySymbolReference;
+    CreatePermission: LibrarySymbolReference;
+    Action: LibrarySymbolReference;
+    Unrestricted: LibrarySymbolReference
+  };
+  SecurityPermissionAttribute: LibrarySymbolReference & {
+    SecurityPermissionAttribute: LibrarySymbolReference;
+    CreatePermission: LibrarySymbolReference;
+    Assertion: LibrarySymbolReference;
+    BindingRedirects: LibrarySymbolReference;
+    ControlAppDomain: LibrarySymbolReference;
+    ControlDomainPolicy: LibrarySymbolReference;
+    ControlEvidence: LibrarySymbolReference;
+    ControlPolicy: LibrarySymbolReference;
+    ControlPrincipal: LibrarySymbolReference;
+    ControlThread: LibrarySymbolReference;
+    Execution: LibrarySymbolReference;
+    Flags: LibrarySymbolReference;
+    Infrastructure: LibrarySymbolReference;
+    RemotingConfiguration: LibrarySymbolReference;
+    SerializationFormatter: LibrarySymbolReference;
+    SkipVerification: LibrarySymbolReference;
+    UnmanagedCode: LibrarySymbolReference
+  };
+  SecurityPermissionFlag: LibrarySymbolReference & {
+    NoFlags: LibrarySymbolReference;
+    Assertion: LibrarySymbolReference;
+    UnmanagedCode: LibrarySymbolReference;
+    SkipVerification: LibrarySymbolReference;
+    Execution: LibrarySymbolReference;
+    ControlThread: LibrarySymbolReference;
+    ControlEvidence: LibrarySymbolReference;
+    ControlPolicy: LibrarySymbolReference;
+    SerializationFormatter: LibrarySymbolReference;
+    ControlDomainPolicy: LibrarySymbolReference;
+    ControlPrincipal: LibrarySymbolReference;
+    ControlAppDomain: LibrarySymbolReference;
+    RemotingConfiguration: LibrarySymbolReference;
+    Infrastructure: LibrarySymbolReference;
+    BindingRedirects: LibrarySymbolReference;
+    AllFlags: LibrarySymbolReference
+  }
+};
+const Permissions: PermissionsLibrary = createLibrary("System.Security.Permissions", {
   CodeAccessSecurityAttribute: {
     kind: "class",
     members: {

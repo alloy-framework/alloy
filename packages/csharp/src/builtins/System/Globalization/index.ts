@@ -1,9 +1,742 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
+import { LibrarySymbolReference } from "@alloy-js/core";
 
-
-const Globalization = createLibrary("System.Globalization", {
+type GlobalizationLibrary = LibrarySymbolReference & {
+  Calendar: LibrarySymbolReference & {
+    CurrentEra: LibrarySymbolReference;
+    Calendar: LibrarySymbolReference;
+    AddDays: LibrarySymbolReference;
+    AddHours: LibrarySymbolReference;
+    AddMilliseconds: LibrarySymbolReference;
+    AddMinutes: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddSeconds: LibrarySymbolReference;
+    AddWeeks: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetHour: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMilliseconds: LibrarySymbolReference;
+    GetMinute: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetSecond: LibrarySymbolReference;
+    GetWeekOfYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  CalendarAlgorithmType: LibrarySymbolReference & {
+    Unknown: LibrarySymbolReference;
+    SolarCalendar: LibrarySymbolReference;
+    LunarCalendar: LibrarySymbolReference;
+    LunisolarCalendar: LibrarySymbolReference
+  };
+  CalendarWeekRule: LibrarySymbolReference & {
+    FirstDay: LibrarySymbolReference;
+    FirstFullWeek: LibrarySymbolReference;
+    FirstFourDayWeek: LibrarySymbolReference
+  };
+  CharUnicodeInfo: LibrarySymbolReference & {
+    GetDecimalDigitValue: LibrarySymbolReference;
+    GetDigitValue: LibrarySymbolReference;
+    GetNumericValue: LibrarySymbolReference;
+    GetUnicodeCategory: LibrarySymbolReference
+  };
+  ChineseLunisolarCalendar: LibrarySymbolReference & {
+    ChineseEra: LibrarySymbolReference;
+    ChineseLunisolarCalendar: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference
+  };
+  CompareInfo: LibrarySymbolReference & {
+    Compare: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetCompareInfo: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetSortKey: LibrarySymbolReference;
+    GetSortKeyLength: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    IsPrefix: LibrarySymbolReference;
+    IsSortable: LibrarySymbolReference;
+    IsSuffix: LibrarySymbolReference;
+    LastIndexOf: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    LCID: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    Version: LibrarySymbolReference
+  };
+  CompareOptions: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    IgnoreCase: LibrarySymbolReference;
+    IgnoreNonSpace: LibrarySymbolReference;
+    IgnoreSymbols: LibrarySymbolReference;
+    IgnoreKanaType: LibrarySymbolReference;
+    IgnoreWidth: LibrarySymbolReference;
+    OrdinalIgnoreCase: LibrarySymbolReference;
+    StringSort: LibrarySymbolReference;
+    Ordinal: LibrarySymbolReference
+  };
+  CultureInfo: LibrarySymbolReference & {
+    CultureInfo: LibrarySymbolReference;
+    ClearCachedData: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    CreateSpecificCulture: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetConsoleFallbackUICulture: LibrarySymbolReference;
+    GetCultureInfo: LibrarySymbolReference;
+    GetCultureInfoByIetfLanguageTag: LibrarySymbolReference;
+    GetCultures: LibrarySymbolReference;
+    GetFormat: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    Calendar: LibrarySymbolReference;
+    CompareInfo: LibrarySymbolReference;
+    CultureTypes: LibrarySymbolReference;
+    CurrentCulture: LibrarySymbolReference;
+    CurrentUICulture: LibrarySymbolReference;
+    DateTimeFormat: LibrarySymbolReference;
+    DefaultThreadCurrentCulture: LibrarySymbolReference;
+    DefaultThreadCurrentUICulture: LibrarySymbolReference;
+    DisplayName: LibrarySymbolReference;
+    EnglishName: LibrarySymbolReference;
+    IetfLanguageTag: LibrarySymbolReference;
+    InstalledUICulture: LibrarySymbolReference;
+    InvariantCulture: LibrarySymbolReference;
+    IsNeutralCulture: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    KeyboardLayoutId: LibrarySymbolReference;
+    LCID: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    NativeName: LibrarySymbolReference;
+    NumberFormat: LibrarySymbolReference;
+    OptionalCalendars: LibrarySymbolReference;
+    Parent: LibrarySymbolReference;
+    TextInfo: LibrarySymbolReference;
+    ThreeLetterISOLanguageName: LibrarySymbolReference;
+    ThreeLetterWindowsLanguageName: LibrarySymbolReference;
+    TwoLetterISOLanguageName: LibrarySymbolReference;
+    UseUserOverride: LibrarySymbolReference
+  };
+  CultureNotFoundException: LibrarySymbolReference & {
+    CultureNotFoundException: LibrarySymbolReference;
+    InvalidCultureId: LibrarySymbolReference;
+    InvalidCultureName: LibrarySymbolReference;
+    Message: LibrarySymbolReference
+  };
+  CultureTypes: LibrarySymbolReference & {
+    NeutralCultures: LibrarySymbolReference;
+    SpecificCultures: LibrarySymbolReference;
+    InstalledWin32Cultures: LibrarySymbolReference;
+    AllCultures: LibrarySymbolReference;
+    UserCustomCulture: LibrarySymbolReference;
+    ReplacementCultures: LibrarySymbolReference;
+    WindowsOnlyCultures: LibrarySymbolReference;
+    FrameworkCultures: LibrarySymbolReference
+  };
+  DateTimeFormatInfo: LibrarySymbolReference & {
+    DateTimeFormatInfo: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    GetAbbreviatedDayName: LibrarySymbolReference;
+    GetAbbreviatedEraName: LibrarySymbolReference;
+    GetAbbreviatedMonthName: LibrarySymbolReference;
+    GetAllDateTimePatterns: LibrarySymbolReference;
+    GetDayName: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetEraName: LibrarySymbolReference;
+    GetFormat: LibrarySymbolReference;
+    GetInstance: LibrarySymbolReference;
+    GetMonthName: LibrarySymbolReference;
+    GetShortestDayName: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    SetAllDateTimePatterns: LibrarySymbolReference;
+    AbbreviatedDayNames: LibrarySymbolReference;
+    AbbreviatedMonthGenitiveNames: LibrarySymbolReference;
+    AbbreviatedMonthNames: LibrarySymbolReference;
+    AMDesignator: LibrarySymbolReference;
+    Calendar: LibrarySymbolReference;
+    CalendarWeekRule: LibrarySymbolReference;
+    CurrentInfo: LibrarySymbolReference;
+    DateSeparator: LibrarySymbolReference;
+    DayNames: LibrarySymbolReference;
+    FirstDayOfWeek: LibrarySymbolReference;
+    FullDateTimePattern: LibrarySymbolReference;
+    InvariantInfo: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    LongDatePattern: LibrarySymbolReference;
+    LongTimePattern: LibrarySymbolReference;
+    MonthDayPattern: LibrarySymbolReference;
+    MonthGenitiveNames: LibrarySymbolReference;
+    MonthNames: LibrarySymbolReference;
+    NativeCalendarName: LibrarySymbolReference;
+    PMDesignator: LibrarySymbolReference;
+    RFC1123Pattern: LibrarySymbolReference;
+    ShortDatePattern: LibrarySymbolReference;
+    ShortestDayNames: LibrarySymbolReference;
+    ShortTimePattern: LibrarySymbolReference;
+    SortableDateTimePattern: LibrarySymbolReference;
+    TimeSeparator: LibrarySymbolReference;
+    UniversalSortableDateTimePattern: LibrarySymbolReference;
+    YearMonthPattern: LibrarySymbolReference
+  };
+  DateTimeStyles: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    AllowLeadingWhite: LibrarySymbolReference;
+    AllowTrailingWhite: LibrarySymbolReference;
+    AllowInnerWhite: LibrarySymbolReference;
+    AllowWhiteSpaces: LibrarySymbolReference;
+    NoCurrentDateDefault: LibrarySymbolReference;
+    AdjustToUniversal: LibrarySymbolReference;
+    AssumeLocal: LibrarySymbolReference;
+    AssumeUniversal: LibrarySymbolReference;
+    RoundtripKind: LibrarySymbolReference
+  };
+  DaylightTime: LibrarySymbolReference & {
+    DaylightTime: LibrarySymbolReference;
+    Delta: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    Start: LibrarySymbolReference
+  };
+  DigitShapes: LibrarySymbolReference & {
+    Context: LibrarySymbolReference;
+    None: LibrarySymbolReference;
+    NativeNational: LibrarySymbolReference
+  };
+  EastAsianLunisolarCalendar: LibrarySymbolReference & {
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetCelestialStem: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetSexagenaryYear: LibrarySymbolReference;
+    GetTerrestrialBranch: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  GlobalizationExtensions: LibrarySymbolReference & {
+    GetStringComparer: LibrarySymbolReference
+  };
+  GregorianCalendar: LibrarySymbolReference & {
+    ADEra: LibrarySymbolReference;
+    GregorianCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    CalendarType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  GregorianCalendarTypes: LibrarySymbolReference & {
+    Localized: LibrarySymbolReference;
+    USEnglish: LibrarySymbolReference;
+    MiddleEastFrench: LibrarySymbolReference;
+    Arabic: LibrarySymbolReference;
+    TransliteratedEnglish: LibrarySymbolReference;
+    TransliteratedFrench: LibrarySymbolReference
+  };
+  HebrewCalendar: LibrarySymbolReference & {
+    HebrewEra: LibrarySymbolReference;
+    HebrewCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  HijriCalendar: LibrarySymbolReference & {
+    HijriEra: LibrarySymbolReference;
+    HijriCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    HijriAdjustment: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  ISOWeek: LibrarySymbolReference & {
+    GetWeekOfYear: LibrarySymbolReference;
+    GetWeeksInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    GetYearEnd: LibrarySymbolReference;
+    GetYearStart: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference
+  };
+  IdnMapping: LibrarySymbolReference & {
+    IdnMapping: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetAscii: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetUnicode: LibrarySymbolReference;
+    AllowUnassigned: LibrarySymbolReference;
+    UseStd3AsciiRules: LibrarySymbolReference
+  };
+  JapaneseCalendar: LibrarySymbolReference & {
+    JapaneseCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetWeekOfYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  JapaneseLunisolarCalendar: LibrarySymbolReference & {
+    JapaneseEra: LibrarySymbolReference;
+    JapaneseLunisolarCalendar: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference
+  };
+  JulianCalendar: LibrarySymbolReference & {
+    JulianEra: LibrarySymbolReference;
+    JulianCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  KoreanCalendar: LibrarySymbolReference & {
+    KoreanEra: LibrarySymbolReference;
+    KoreanCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetWeekOfYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  KoreanLunisolarCalendar: LibrarySymbolReference & {
+    GregorianEra: LibrarySymbolReference;
+    KoreanLunisolarCalendar: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference
+  };
+  NumberFormatInfo: LibrarySymbolReference & {
+    NumberFormatInfo: LibrarySymbolReference;
+    Clone: LibrarySymbolReference;
+    GetFormat: LibrarySymbolReference;
+    GetInstance: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    CurrencyDecimalDigits: LibrarySymbolReference;
+    CurrencyDecimalSeparator: LibrarySymbolReference;
+    CurrencyGroupSeparator: LibrarySymbolReference;
+    CurrencyGroupSizes: LibrarySymbolReference;
+    CurrencyNegativePattern: LibrarySymbolReference;
+    CurrencyPositivePattern: LibrarySymbolReference;
+    CurrencySymbol: LibrarySymbolReference;
+    CurrentInfo: LibrarySymbolReference;
+    DigitSubstitution: LibrarySymbolReference;
+    InvariantInfo: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    NaNSymbol: LibrarySymbolReference;
+    NativeDigits: LibrarySymbolReference;
+    NegativeInfinitySymbol: LibrarySymbolReference;
+    NegativeSign: LibrarySymbolReference;
+    NumberDecimalDigits: LibrarySymbolReference;
+    NumberDecimalSeparator: LibrarySymbolReference;
+    NumberGroupSeparator: LibrarySymbolReference;
+    NumberGroupSizes: LibrarySymbolReference;
+    NumberNegativePattern: LibrarySymbolReference;
+    PercentDecimalDigits: LibrarySymbolReference;
+    PercentDecimalSeparator: LibrarySymbolReference;
+    PercentGroupSeparator: LibrarySymbolReference;
+    PercentGroupSizes: LibrarySymbolReference;
+    PercentNegativePattern: LibrarySymbolReference;
+    PercentPositivePattern: LibrarySymbolReference;
+    PercentSymbol: LibrarySymbolReference;
+    PerMilleSymbol: LibrarySymbolReference;
+    PositiveInfinitySymbol: LibrarySymbolReference;
+    PositiveSign: LibrarySymbolReference
+  };
+  NumberStyles: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    AllowLeadingWhite: LibrarySymbolReference;
+    AllowTrailingWhite: LibrarySymbolReference;
+    AllowLeadingSign: LibrarySymbolReference;
+    Integer: LibrarySymbolReference;
+    AllowTrailingSign: LibrarySymbolReference;
+    AllowParentheses: LibrarySymbolReference;
+    AllowDecimalPoint: LibrarySymbolReference;
+    AllowThousands: LibrarySymbolReference;
+    Number: LibrarySymbolReference;
+    AllowExponent: LibrarySymbolReference;
+    Float: LibrarySymbolReference;
+    AllowCurrencySymbol: LibrarySymbolReference;
+    Currency: LibrarySymbolReference;
+    Any: LibrarySymbolReference;
+    AllowHexSpecifier: LibrarySymbolReference;
+    HexNumber: LibrarySymbolReference;
+    AllowBinarySpecifier: LibrarySymbolReference;
+    BinaryNumber: LibrarySymbolReference
+  };
+  PersianCalendar: LibrarySymbolReference & {
+    PersianEra: LibrarySymbolReference;
+    PersianCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  RegionInfo: LibrarySymbolReference & {
+    RegionInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    CurrencyEnglishName: LibrarySymbolReference;
+    CurrencyNativeName: LibrarySymbolReference;
+    CurrencySymbol: LibrarySymbolReference;
+    CurrentRegion: LibrarySymbolReference;
+    DisplayName: LibrarySymbolReference;
+    EnglishName: LibrarySymbolReference;
+    GeoId: LibrarySymbolReference;
+    IsMetric: LibrarySymbolReference;
+    ISOCurrencySymbol: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    NativeName: LibrarySymbolReference;
+    ThreeLetterISORegionName: LibrarySymbolReference;
+    ThreeLetterWindowsRegionName: LibrarySymbolReference;
+    TwoLetterISORegionName: LibrarySymbolReference
+  };
+  SortKey: LibrarySymbolReference & {
+    Compare: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    KeyData: LibrarySymbolReference;
+    OriginalString: LibrarySymbolReference
+  };
+  SortVersion: LibrarySymbolReference & {
+    SortVersion: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    FullVersion: LibrarySymbolReference;
+    SortId: LibrarySymbolReference
+  };
+  StringInfo: LibrarySymbolReference & {
+    StringInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetNextTextElement: LibrarySymbolReference;
+    GetNextTextElementLength: LibrarySymbolReference;
+    GetTextElementEnumerator: LibrarySymbolReference;
+    ParseCombiningCharacters: LibrarySymbolReference;
+    SubstringByTextElements: LibrarySymbolReference;
+    LengthInTextElements: LibrarySymbolReference;
+    String: LibrarySymbolReference
+  };
+  TaiwanCalendar: LibrarySymbolReference & {
+    TaiwanCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetWeekOfYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  TaiwanLunisolarCalendar: LibrarySymbolReference & {
+    TaiwanLunisolarCalendar: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference
+  };
+  TextElementEnumerator: LibrarySymbolReference & {
+    GetTextElement: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    Reset: LibrarySymbolReference;
+    Current: LibrarySymbolReference;
+    ElementIndex: LibrarySymbolReference
+  };
+  TextInfo: LibrarySymbolReference & {
+    Clone: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    ReadOnly: LibrarySymbolReference;
+    ToLower: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    ToTitleCase: LibrarySymbolReference;
+    ToUpper: LibrarySymbolReference;
+    ANSICodePage: LibrarySymbolReference;
+    CultureName: LibrarySymbolReference;
+    EBCDICCodePage: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    IsRightToLeft: LibrarySymbolReference;
+    LCID: LibrarySymbolReference;
+    ListSeparator: LibrarySymbolReference;
+    MacCodePage: LibrarySymbolReference;
+    OEMCodePage: LibrarySymbolReference
+  };
+  ThaiBuddhistCalendar: LibrarySymbolReference & {
+    ThaiBuddhistEra: LibrarySymbolReference;
+    ThaiBuddhistCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetWeekOfYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  TimeSpanStyles: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    AssumeNegative: LibrarySymbolReference
+  };
+  UmAlQuraCalendar: LibrarySymbolReference & {
+    UmAlQuraEra: LibrarySymbolReference;
+    UmAlQuraCalendar: LibrarySymbolReference;
+    AddMonths: LibrarySymbolReference;
+    AddYears: LibrarySymbolReference;
+    GetDayOfMonth: LibrarySymbolReference;
+    GetDayOfWeek: LibrarySymbolReference;
+    GetDayOfYear: LibrarySymbolReference;
+    GetDaysInMonth: LibrarySymbolReference;
+    GetDaysInYear: LibrarySymbolReference;
+    GetEra: LibrarySymbolReference;
+    GetLeapMonth: LibrarySymbolReference;
+    GetMonth: LibrarySymbolReference;
+    GetMonthsInYear: LibrarySymbolReference;
+    GetYear: LibrarySymbolReference;
+    IsLeapDay: LibrarySymbolReference;
+    IsLeapMonth: LibrarySymbolReference;
+    IsLeapYear: LibrarySymbolReference;
+    ToDateTime: LibrarySymbolReference;
+    ToFourDigitYear: LibrarySymbolReference;
+    AlgorithmType: LibrarySymbolReference;
+    DaysInYearBeforeMinSupportedYear: LibrarySymbolReference;
+    Eras: LibrarySymbolReference;
+    MaxSupportedDateTime: LibrarySymbolReference;
+    MinSupportedDateTime: LibrarySymbolReference;
+    TwoDigitYearMax: LibrarySymbolReference
+  };
+  UnicodeCategory: LibrarySymbolReference & {
+    UppercaseLetter: LibrarySymbolReference;
+    LowercaseLetter: LibrarySymbolReference;
+    TitlecaseLetter: LibrarySymbolReference;
+    ModifierLetter: LibrarySymbolReference;
+    OtherLetter: LibrarySymbolReference;
+    NonSpacingMark: LibrarySymbolReference;
+    SpacingCombiningMark: LibrarySymbolReference;
+    EnclosingMark: LibrarySymbolReference;
+    DecimalDigitNumber: LibrarySymbolReference;
+    LetterNumber: LibrarySymbolReference;
+    OtherNumber: LibrarySymbolReference;
+    SpaceSeparator: LibrarySymbolReference;
+    LineSeparator: LibrarySymbolReference;
+    ParagraphSeparator: LibrarySymbolReference;
+    Control: LibrarySymbolReference;
+    Format: LibrarySymbolReference;
+    Surrogate: LibrarySymbolReference;
+    PrivateUse: LibrarySymbolReference;
+    ConnectorPunctuation: LibrarySymbolReference;
+    DashPunctuation: LibrarySymbolReference;
+    OpenPunctuation: LibrarySymbolReference;
+    ClosePunctuation: LibrarySymbolReference;
+    InitialQuotePunctuation: LibrarySymbolReference;
+    FinalQuotePunctuation: LibrarySymbolReference;
+    OtherPunctuation: LibrarySymbolReference;
+    MathSymbol: LibrarySymbolReference;
+    CurrencySymbol: LibrarySymbolReference;
+    ModifierSymbol: LibrarySymbolReference;
+    OtherSymbol: LibrarySymbolReference;
+    OtherNotAssigned: LibrarySymbolReference
+  }
+};
+const Globalization: GlobalizationLibrary = createLibrary("System.Globalization", {
   Calendar: {
     kind: "class",
     members: {

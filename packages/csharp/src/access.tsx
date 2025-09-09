@@ -1,8 +1,8 @@
+import { Children, isRefkeyable, Refkeyable, RENDERABLE } from "@alloy-js/core";
 import {
   AccessExpression,
   AccessExpressionPartProps,
-} from "#components/access-expression/access-expression.jsx";
-import { Children, isRefkeyable, Refkeyable, RENDERABLE } from "@alloy-js/core";
+} from "./components/access-expression/access-expression.jsx";
 import { CSharpSymbol } from "./symbols/csharp.js";
 
 export class AccessExpressionBuilder {

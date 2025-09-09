@@ -7,9 +7,16 @@ export function useGlobalNamespace() {
 }
 
 const globalNamespaces = new WeakMap<Binder, NamespaceSymbol>();
-const defaultGlobalNamespace = new NamespaceSymbol("global", undefined, {
+let defaultGlobalNamespace = new NamespaceSymbol("global", undefined, {
   isGlobal: true,
 });
+
+export function resetGlobalNamespace() {
+  defaultGlobalNamespace = new NamespaceSymbol("global", undefined, {
+    isGlobal: true,
+  });
+}
+
 export function getGlobalNamespace(binder: Binder | undefined) {
   if (!binder) {
     return defaultGlobalNamespace;

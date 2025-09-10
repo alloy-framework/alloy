@@ -60,7 +60,7 @@ export interface ClassDeclarationProps extends CommonDeclarationProps {
  *
  * {staticMember}; // Animal.something
  * <MemberReference path={[myPetRefkey, instanceMember]} /> // myPet.name
- * {member(myPetRefkey, instanceMember)} // other option?
+ * {memberRefkey(myPetRefkey, instanceMember)}
  * ```
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {

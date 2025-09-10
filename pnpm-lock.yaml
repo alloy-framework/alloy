@@ -400,6 +400,9 @@ importers:
       '@alloy-js/rollup-plugin':
         specifier: workspace:~
         version: link:../rollup-plugin
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../typescript
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.52.9(@types/node@24.1.0)
@@ -415,6 +418,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.1.0)(tsx@4.20.3)(yaml@2.8.0)
+      yaml:
+        specifier: ^2.8.0
+        version: 2.8.0
 
   packages/docs:
     dependencies:

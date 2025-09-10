@@ -14,7 +14,7 @@ import {
   root,
   untrack,
 } from "./reactivity.js";
-import { isRefkey } from "./refkey.js";
+import { isRefkeyable, toRefkey } from "./refkey.js";
 import {
   Child,
   Children,
@@ -541,14 +541,15 @@ function normalizeChild(child: Child): NormalizedChildren {
     return "";
   } else if (isRef(child)) {
     return () => child.value as () => Child;
-  } else if (isRefkey(child)) {
+  } else if (isRefkeyable(child)) {
+    const refkey = toRefkey(child);
     return () => {
       const sfContext = useContext(SourceFileContext);
       if (!sfContext || !sfContext.reference) {
         throw new Error("Can only emit references inside of source files");
       }
 
-      return sfContext.reference({ refkey: child });
+      return sfContext.reference({ refkey });
     };
   } else if (isRenderableObject(child)) {
     // For custom renderable objects, we will just normalize them to a bound function.

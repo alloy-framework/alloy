@@ -1,3 +1,4 @@
+import { Attribute } from "#components/attributes/attributes.jsx";
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
 import { Property } from "#components/property/property.jsx";
@@ -113,5 +114,37 @@ it("members can be referenced when the parameter is nullable", () => {
               return param1?.TestProp?.Field;
           }
       }
+  `);
+});
+
+it("can attach attributes", () => {
+  expect(
+    <Wrapper>
+      <Method
+        name="MethodOne"
+        parameters={[
+          {
+            name: "param1",
+            type: "T1",
+            attributes: [<Attribute name="Test" />],
+          },
+          {
+            name: "param2",
+            type: "T2",
+            attributes: [<Attribute name="Test2" args={["arg1", "arg2"]} />],
+          },
+        ]}
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        void MethodOne(
+            [Test]
+            T1 param1,
+            [Test2(arg1, arg2)]
+            T2 param2
+        ) {}
+    }
   `);
 });

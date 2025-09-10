@@ -9,6 +9,7 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { createParameterSymbol } from "../../symbols/factories.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
@@ -20,6 +21,21 @@ export interface ParameterProps {
   default?: Children;
 
   refkey?: Refkey;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <Parameter name="foo" type="string" attributes={[
+   *  <Attribute name="Test" />
+   * ]}>
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test] string foo
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 /** Define a parameter to be used in class or interface method. */
@@ -34,6 +50,7 @@ export function Parameter(props: ParameterProps) {
 
   return (
     <Declaration symbol={memberSymbol}>
+      <AttributeList attributes={props.attributes} endline />
       <TypeSlot>{props.type}</TypeSlot>
       {props.optional ? "?" : ""} <Name />
       {props.default ? code` = ${props.default}` : ""}

@@ -1,9 +1,9 @@
 import { Descriptor, NamespaceDescriptor } from "#createLibrary";
 import { refkey } from "@alloy-js/core";
 import { ArrowFunction } from "@alloy-js/typescript";
+import { load as parseYaml } from "js-yaml";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { parse as parseYaml } from "yaml";
 
 interface DocfxItem {
   uid: string;
@@ -109,21 +109,33 @@ function normalizeTypeName(name: string): string {
 // Remove generic arity markers (`1, `2, etc.) and DocFX placeholder type parameter lists like {{T}}, {{TKey},{TValue}}
 function cleanDocfxType(typeName: string | undefined): string | undefined {
   if (!typeName) return typeName;
-  let cleaned = typeName;
-  // Strip generic arity markers following identifiers
-  cleaned = cleaned.replace(/`\d+/g, "");
-  // Remove placeholder generic parameter blocks of the form {{...}}
-  cleaned = cleaned.replace(/\{?\{[^}]*\}\}?/g, "");
-  // Collapse any duplicate commas/spaces introduced
-  cleaned = cleaned.replace(/\s+/g, "");
-  cleaned = cleaned.replace(/,+/g, ",");
-  cleaned = cleaned.replace(/,+$/g, "");
+  // Trim and strip generic arity markers like `1, `2 etc.
+  let cleaned = typeName.trim().replace(/`\d+/g, "");
+  // Iteratively remove innermost DocFX generic braces blocks { ... }. This naturally
+  // collapses nested constructs (e.g. Func{IEnumerable{T},T} -> Func).
+  // Example: System.Func{System.Collections.Generic.IEnumerable{System.String},System.String}
+  // Pass 1 removes {System.String}; pass 2 removes outer {IEnumerable,System.String}; etc.
+  while (/\{[^{}]*\}/.test(cleaned)) {
+    cleaned = cleaned.replace(/\{[^{}]*\}/g, "");
+  }
+  // Remove any left-over double-brace placeholder patterns (rare): {{T}}
+  cleaned = cleaned.replace(/\{\{[^}]*\}\}/g, "");
+  // Collapse duplicate dots potentially created by removal (Dictionary..KeyCollection)
+  cleaned = cleaned.replace(/\.+/g, ".");
+  // Normalize spacing & commas
+  cleaned = cleaned.replace(/\s+/g, "").replace(/,+/g, ",").replace(/,$/, "");
+  // remove pointers
+  cleaned = cleaned.replace(/\*/, "");
   return cleaned;
 }
 
 function TypeReference(props: { type: string | undefined }) {
   const type = cleanDocfxType(props.type);
   if (!type) return "undefined";
+  if (type.endsWith("VarEnum")) {
+    // for some reason this type isn't showing up in assemblies.
+    return "undefined";
+  }
   if (type.endsWith("[]")) {
     return <ArrowFunction>return {refkey("System")}.Array;</ArrowFunction>;
   }

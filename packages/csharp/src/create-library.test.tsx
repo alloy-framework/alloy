@@ -191,12 +191,3 @@ it("has built-ins available", () => {
     var directoryName = info.DirectoryName?.Length;
   `);
 });
-
-/**
-        <VarDeclaration name={info}>
-          new {IO.FileInfo}("test.txt")
-        </VarDeclaration>
-        <VarDeclaration name="directoryName">
-          {access(info, "DirectoryName", "Length")}
-        </VarDeclaration>
- */

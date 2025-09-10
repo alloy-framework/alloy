@@ -26,6 +26,12 @@ type TextLibrary = LibrarySymbolReference & {
     TryEncodeToChars: LibrarySymbolReference;
     TryEncodeToUtf8: LibrarySymbolReference;
     TryEncodeToUtf8InPlace: LibrarySymbolReference
+  };
+  Utf8Formatter: LibrarySymbolReference & {
+    TryFormat: LibrarySymbolReference
+  };
+  Utf8Parser: LibrarySymbolReference & {
+    TryParse: LibrarySymbolReference
   }
 };
 const Text: TextLibrary = createLibrary("System.Buffers.Text", {
@@ -139,6 +145,28 @@ const Text: TextLibrary = createLibrary("System.Buffers.Text", {
         isStatic: true,
       },
       TryEncodeToUtf8InPlace: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  Utf8Formatter: {
+    kind: "class",
+    members: {
+      TryFormat: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  Utf8Parser: {
+    kind: "class",
+    members: {
+      TryParse: {
         kind: "method",
         methodKind: "ordinary",
         isStatic: true,

@@ -3,8 +3,12 @@ import System from "../index.js";
 import Reflection from "../Reflection/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Cryptography } from "./Cryptography/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as AccessControl } from "./AccessControl/index.js";
+export { default as Authentication } from "./Authentication/index.js";
+export { default as Claims } from "./Claims/index.js";
+export { default as Cryptography } from "./Cryptography/index.js";
 export { default as Permissions } from "./Permissions/index.js";
+export { default as Policy } from "./Policy/index.js";
 export { default as Principal } from "./Principal/index.js";
 
 type SecurityLibrary = LibrarySymbolReference & {
@@ -68,6 +72,25 @@ type SecurityLibrary = LibrarySymbolReference & {
     IsReadOnly: LibrarySymbolReference;
     IsSynchronized: LibrarySymbolReference;
     SyncRoot: LibrarySymbolReference
+  };
+  SecureString: LibrarySymbolReference & {
+    SecureString: LibrarySymbolReference;
+    AppendChar: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Copy: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    InsertAt: LibrarySymbolReference;
+    IsReadOnly: LibrarySymbolReference;
+    MakeReadOnly: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    SetAt: LibrarySymbolReference;
+    Length: LibrarySymbolReference
+  };
+  SecureStringMarshal: LibrarySymbolReference & {
+    SecureStringToCoTaskMemAnsi: LibrarySymbolReference;
+    SecureStringToCoTaskMemUnicode: LibrarySymbolReference;
+    SecureStringToGlobalAllocAnsi: LibrarySymbolReference;
+    SecureStringToGlobalAllocUnicode: LibrarySymbolReference
   };
   SecurityCriticalAttribute: LibrarySymbolReference & {
     SecurityCriticalAttribute: LibrarySymbolReference;
@@ -400,6 +423,84 @@ const Security: SecurityLibrary = createLibrary("System.Security", {
         isVirtual: true,
       },
     },
+  },
+  SecureString: {
+    kind: "class",
+    members: {
+      SecureString: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      AppendChar: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Clear: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Copy: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Dispose: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      InsertAt: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsReadOnly: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      MakeReadOnly: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      RemoveAt: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      SetAt: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Length: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+    },
+    isSealed: true,
+  },
+  SecureStringMarshal: {
+    kind: "class",
+    members: {
+      SecureStringToCoTaskMemAnsi: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SecureStringToCoTaskMemUnicode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SecureStringToGlobalAllocAnsi: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SecureStringToGlobalAllocUnicode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   SecurityCriticalAttribute: {
     kind: "class",

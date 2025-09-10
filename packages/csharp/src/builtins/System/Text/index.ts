@@ -1,9 +1,27 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Unicode } from "./Unicode/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Encodings } from "./Encodings/index.js";
+export { default as Json } from "./Json/index.js";
+export { default as RegularExpressions } from "./RegularExpressions/index.js";
+export { default as Unicode } from "./Unicode/index.js";
 
 type TextLibrary = LibrarySymbolReference & {
+  ASCIIEncoding: LibrarySymbolReference & {
+    ASCIIEncoding: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    TryGetBytes: LibrarySymbolReference;
+    TryGetChars: LibrarySymbolReference;
+    IsSingleByte: LibrarySymbolReference
+  };
   Ascii: LibrarySymbolReference & {
     Equals: LibrarySymbolReference;
     EqualsIgnoreCase: LibrarySymbolReference;
@@ -17,6 +35,11 @@ type TextLibrary = LibrarySymbolReference & {
     Trim: LibrarySymbolReference;
     TrimEnd: LibrarySymbolReference;
     TrimStart: LibrarySymbolReference
+  };
+  CodePagesEncodingProvider: LibrarySymbolReference & {
+    GetEncoding: LibrarySymbolReference;
+    GetEncodings: LibrarySymbolReference;
+    Instance: LibrarySymbolReference
   };
   CompositeFormat: LibrarySymbolReference & {
     Parse: LibrarySymbolReference;
@@ -191,6 +214,12 @@ type TextLibrary = LibrarySymbolReference & {
     WebName: LibrarySymbolReference;
     WindowsCodePage: LibrarySymbolReference
   };
+  EncodingExtensions: LibrarySymbolReference & {
+    Convert: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetString: LibrarySymbolReference
+  };
   EncodingInfo: LibrarySymbolReference & {
     EncodingInfo: LibrarySymbolReference;
     Equals: LibrarySymbolReference;
@@ -254,6 +283,16 @@ type TextLibrary = LibrarySymbolReference & {
     Utf8SequenceLength: LibrarySymbolReference;
     Value: LibrarySymbolReference
   };
+  SpanLineEnumerator: LibrarySymbolReference & {
+    GetEnumerator: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
+  SpanRuneEnumerator: LibrarySymbolReference & {
+    GetEnumerator: LibrarySymbolReference;
+    MoveNext: LibrarySymbolReference;
+    Current: LibrarySymbolReference
+  };
   StringBuilder: LibrarySymbolReference & {
     ChunkEnumerator: LibrarySymbolReference & {
       MoveNext: LibrarySymbolReference;
@@ -264,9 +303,145 @@ type TextLibrary = LibrarySymbolReference & {
     GetEnumerator: LibrarySymbolReference;
     MoveNext: LibrarySymbolReference;
     Current: LibrarySymbolReference
+  };
+  UTF32Encoding: LibrarySymbolReference & {
+    UTF32Encoding: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetPreamble: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    Preamble: LibrarySymbolReference
+  };
+  UTF7Encoding: LibrarySymbolReference & {
+    UTF7Encoding: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetString: LibrarySymbolReference
+  };
+  UTF8Encoding: LibrarySymbolReference & {
+    UTF8Encoding: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetPreamble: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    TryGetBytes: LibrarySymbolReference;
+    TryGetChars: LibrarySymbolReference;
+    Preamble: LibrarySymbolReference
+  };
+  UnicodeEncoding: LibrarySymbolReference & {
+    CharSize: LibrarySymbolReference;
+    UnicodeEncoding: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetByteCount: LibrarySymbolReference;
+    GetBytes: LibrarySymbolReference;
+    GetCharCount: LibrarySymbolReference;
+    GetChars: LibrarySymbolReference;
+    GetDecoder: LibrarySymbolReference;
+    GetEncoder: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    GetMaxByteCount: LibrarySymbolReference;
+    GetMaxCharCount: LibrarySymbolReference;
+    GetPreamble: LibrarySymbolReference;
+    GetString: LibrarySymbolReference;
+    Preamble: LibrarySymbolReference
   }
 };
 const Text: TextLibrary = createLibrary("System.Text", {
+  ASCIIEncoding: {
+    kind: "class",
+    members: {
+      ASCIIEncoding: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      GetByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetDecoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      TryGetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      TryGetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      IsSingleByte: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isOverride: true,
+      },
+    },
+  },
   Ascii: {
     kind: "class",
     members: {
@@ -332,6 +507,29 @@ const Text: TextLibrary = createLibrary("System.Text", {
       },
     },
     isStatic: true,
+  },
+  CodePagesEncodingProvider: {
+    kind: "class",
+    members: {
+      GetEncoding: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncodings: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Instance: {
+        kind: "property",
+        type: () => {
+          return Text.EncodingProvider;
+        },
+        isStatic: true,
+      },
+    },
+    isSealed: true,
   },
   CompositeFormat: {
     kind: "class",
@@ -1196,6 +1394,32 @@ const Text: TextLibrary = createLibrary("System.Text", {
     },
     isAbstract: true,
   },
+  EncodingExtensions: {
+    kind: "class",
+    members: {
+      Convert: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
   EncodingInfo: {
     kind: "class",
     members: {
@@ -1499,6 +1723,44 @@ const Text: TextLibrary = createLibrary("System.Text", {
       },
     },
   },
+  SpanLineEnumerator: {
+    kind: "struct",
+    members: {
+      GetEnumerator: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      MoveNext: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Current: {
+        kind: "property",
+        type: () => {
+          return System.ReadOnlySpan;
+        },
+      },
+    },
+  },
+  SpanRuneEnumerator: {
+    kind: "struct",
+    members: {
+      GetEnumerator: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      MoveNext: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Current: {
+        kind: "property",
+        type: () => {
+          return Text.Rune;
+        },
+      },
+    },
+  },
   StringBuilder: {
     kind: "class",
     members: {
@@ -1535,6 +1797,315 @@ const Text: TextLibrary = createLibrary("System.Text", {
         type: () => {
           return Text.Rune;
         },
+      },
+    },
+  },
+  UTF32Encoding: {
+    kind: "class",
+    members: {
+      UTF32Encoding: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetDecoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetHashCode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetPreamble: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Preamble: {
+        kind: "property",
+        type: () => {
+          return System.ReadOnlySpan;
+        },
+        isOverride: true,
+      },
+    },
+    isSealed: true,
+  },
+  UTF7Encoding: {
+    kind: "class",
+    members: {
+      UTF7Encoding: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetDecoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetHashCode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+    },
+  },
+  UTF8Encoding: {
+    kind: "class",
+    members: {
+      UTF8Encoding: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetDecoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetHashCode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetPreamble: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      TryGetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      TryGetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Preamble: {
+        kind: "property",
+        type: () => {
+          return System.ReadOnlySpan;
+        },
+        isOverride: true,
+      },
+    },
+  },
+  UnicodeEncoding: {
+    kind: "class",
+    members: {
+      CharSize: {
+        kind: "field",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      UnicodeEncoding: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetBytes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetChars: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetDecoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetEncoder: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetHashCode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxByteCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetMaxCharCount: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetPreamble: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      GetString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Preamble: {
+        kind: "property",
+        type: () => {
+          return System.ReadOnlySpan;
+        },
+        isOverride: true,
       },
     },
   },

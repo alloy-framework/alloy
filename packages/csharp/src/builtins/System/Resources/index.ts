@@ -9,6 +9,11 @@ type ResourcesLibrary = LibrarySymbolReference & {
     Close: LibrarySymbolReference;
     GetEnumerator: LibrarySymbolReference
   };
+  IResourceWriter: LibrarySymbolReference & {
+    AddResource: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Generate: LibrarySymbolReference
+  };
   MissingSatelliteAssemblyException: LibrarySymbolReference & {
     MissingSatelliteAssemblyException: LibrarySymbolReference;
     CultureName: LibrarySymbolReference
@@ -51,6 +56,15 @@ type ResourcesLibrary = LibrarySymbolReference & {
     GetString: LibrarySymbolReference;
     ReadResources: LibrarySymbolReference
   };
+  ResourceWriter: LibrarySymbolReference & {
+    ResourceWriter: LibrarySymbolReference;
+    AddResource: LibrarySymbolReference;
+    AddResourceData: LibrarySymbolReference;
+    Close: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Generate: LibrarySymbolReference;
+    TypeNameConverter: LibrarySymbolReference
+  };
   UltimateResourceFallbackLocation: LibrarySymbolReference & {
     MainAssembly: LibrarySymbolReference;
     Satellite: LibrarySymbolReference
@@ -65,6 +79,23 @@ const Resources: ResourcesLibrary = createLibrary("System.Resources", {
         methodKind: "ordinary",
       },
       GetEnumerator: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+    },
+  },
+  IResourceWriter: {
+    kind: "interface",
+    members: {
+      AddResource: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Close: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Generate: {
         kind: "method",
         methodKind: "ordinary",
       },
@@ -267,6 +298,43 @@ const Resources: ResourcesLibrary = createLibrary("System.Resources", {
         isVirtual: true,
       },
     },
+  },
+  ResourceWriter: {
+    kind: "class",
+    members: {
+      ResourceWriter: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      AddResource: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      AddResourceData: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Close: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Dispose: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Generate: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      TypeNameConverter: {
+        kind: "property",
+        type: () => {
+          return System.Func;
+        },
+        isNullable: true,
+      },
+    },
+    isSealed: true,
   },
   UltimateResourceFallbackLocation: {
     kind: "enum",

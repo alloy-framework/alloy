@@ -1,5 +1,6 @@
 import Generic from "../../Collections/Generic/index.js";
 import System from "../../index.js";
+import Expressions from "../../Linq/Expressions/index.js";
 import Tasks from "../../Threading/Tasks/index.js";
 
 import { createLibrary } from "#createLibrary";
@@ -65,6 +66,19 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   CallConvThiscall: LibrarySymbolReference & {
     CallConvThiscall: LibrarySymbolReference
   };
+  CallSite: LibrarySymbolReference & {
+    Target: LibrarySymbolReference;
+    Create: LibrarySymbolReference;
+    Update: LibrarySymbolReference
+  };
+  CallSiteBinder: LibrarySymbolReference & {
+    CallSiteBinder: LibrarySymbolReference;
+    Bind: LibrarySymbolReference;
+    UpdateLabel: LibrarySymbolReference
+  };
+  CallSiteHelpers: LibrarySymbolReference & {
+    IsInternalFrame: LibrarySymbolReference
+  };
   CallerArgumentExpressionAttribute: LibrarySymbolReference & {
     CallerArgumentExpressionAttribute: LibrarySymbolReference;
     ParameterName: LibrarySymbolReference
@@ -103,6 +117,9 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   CompilerGlobalScopeAttribute: LibrarySymbolReference & {
     CompilerGlobalScopeAttribute: LibrarySymbolReference
   };
+  CompilerMarshalOverride: LibrarySymbolReference & {
+
+  };
   ConditionalWeakTable: LibrarySymbolReference & {
     CreateValueCallback: LibrarySymbolReference & {
       CreateValueCallback: LibrarySymbolReference;
@@ -137,6 +154,16 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
       IsCompleted: LibrarySymbolReference
     }
   };
+  ContractHelper: LibrarySymbolReference & {
+    RaiseContractFailedEvent: LibrarySymbolReference;
+    TriggerFailure: LibrarySymbolReference
+  };
+  CppInlineNamespaceAttribute: LibrarySymbolReference & {
+    CppInlineNamespaceAttribute: LibrarySymbolReference
+  };
+  CreateNewOnMetadataUpdateAttribute: LibrarySymbolReference & {
+    CreateNewOnMetadataUpdateAttribute: LibrarySymbolReference
+  };
   CustomConstantAttribute: LibrarySymbolReference & {
     CustomConstantAttribute: LibrarySymbolReference;
     Value: LibrarySymbolReference
@@ -144,6 +171,11 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   DateTimeConstantAttribute: LibrarySymbolReference & {
     DateTimeConstantAttribute: LibrarySymbolReference;
     Value: LibrarySymbolReference
+  };
+  DebugInfoGenerator: LibrarySymbolReference & {
+    DebugInfoGenerator: LibrarySymbolReference;
+    CreatePdbGenerator: LibrarySymbolReference;
+    MarkSequencePoint: LibrarySymbolReference
   };
   DecimalConstantAttribute: LibrarySymbolReference & {
     DecimalConstantAttribute: LibrarySymbolReference;
@@ -174,6 +206,10 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   DiscardableAttribute: LibrarySymbolReference & {
     DiscardableAttribute: LibrarySymbolReference
   };
+  DynamicAttribute: LibrarySymbolReference & {
+    DynamicAttribute: LibrarySymbolReference;
+    TransformFlags: LibrarySymbolReference
+  };
   EnumeratorCancellationAttribute: LibrarySymbolReference & {
     EnumeratorCancellationAttribute: LibrarySymbolReference
   };
@@ -191,6 +227,9 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   FormattableStringFactory: LibrarySymbolReference & {
     Create: LibrarySymbolReference
   };
+  HasCopySemanticsAttribute: LibrarySymbolReference & {
+    HasCopySemanticsAttribute: LibrarySymbolReference
+  };
   IAsyncStateMachine: LibrarySymbolReference & {
     MoveNext: LibrarySymbolReference;
     SetStateMachine: LibrarySymbolReference
@@ -198,8 +237,16 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   ICriticalNotifyCompletion: LibrarySymbolReference & {
     UnsafeOnCompleted: LibrarySymbolReference
   };
+  IDispatchConstantAttribute: LibrarySymbolReference & {
+    IDispatchConstantAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
+  };
   INotifyCompletion: LibrarySymbolReference & {
     OnCompleted: LibrarySymbolReference
+  };
+  IRuntimeVariables: LibrarySymbolReference & {
+    Count: LibrarySymbolReference;
+    Item: LibrarySymbolReference
   };
   IStrongBox: LibrarySymbolReference & {
     Value: LibrarySymbolReference
@@ -207,6 +254,10 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   ITuple: LibrarySymbolReference & {
     Item: LibrarySymbolReference;
     Length: LibrarySymbolReference
+  };
+  IUnknownConstantAttribute: LibrarySymbolReference & {
+    IUnknownConstantAttribute: LibrarySymbolReference;
+    Value: LibrarySymbolReference
   };
   IndexerNameAttribute: LibrarySymbolReference & {
     IndexerNameAttribute: LibrarySymbolReference
@@ -227,7 +278,37 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   InterpolatedStringHandlerAttribute: LibrarySymbolReference & {
     InterpolatedStringHandlerAttribute: LibrarySymbolReference
   };
+  IsBoxed: LibrarySymbolReference & {
+
+  };
+  IsByValue: LibrarySymbolReference & {
+
+  };
   IsConst: LibrarySymbolReference & {
+
+  };
+  IsCopyConstructed: LibrarySymbolReference & {
+
+  };
+  IsExplicitlyDereferenced: LibrarySymbolReference & {
+
+  };
+  IsImplicitlyDereferenced: LibrarySymbolReference & {
+
+  };
+  IsJitIntrinsic: LibrarySymbolReference & {
+
+  };
+  IsLong: LibrarySymbolReference & {
+
+  };
+  IsPinned: LibrarySymbolReference & {
+
+  };
+  IsSignUnspecifiedByte: LibrarySymbolReference & {
+
+  };
+  IsUdtReturn: LibrarySymbolReference & {
 
   };
   IsVolatile: LibrarySymbolReference & {
@@ -240,6 +321,10 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
     Default: LibrarySymbolReference;
     Always: LibrarySymbolReference;
     Sometimes: LibrarySymbolReference
+  };
+  MetadataUpdateOriginalTypeAttribute: LibrarySymbolReference & {
+    MetadataUpdateOriginalTypeAttribute: LibrarySymbolReference;
+    OriginalType: LibrarySymbolReference
   };
   MethodCodeType: LibrarySymbolReference & {
     IL: LibrarySymbolReference;
@@ -266,6 +351,9 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   ModuleInitializerAttribute: LibrarySymbolReference & {
     ModuleInitializerAttribute: LibrarySymbolReference
   };
+  NativeCppClassAttribute: LibrarySymbolReference & {
+    NativeCppClassAttribute: LibrarySymbolReference
+  };
   OverloadResolutionPriorityAttribute: LibrarySymbolReference & {
     OverloadResolutionPriorityAttribute: LibrarySymbolReference;
     Priority: LibrarySymbolReference
@@ -283,9 +371,31 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   PreserveBaseOverridesAttribute: LibrarySymbolReference & {
     PreserveBaseOverridesAttribute: LibrarySymbolReference
   };
+  ReadOnlyCollectionBuilder: LibrarySymbolReference & {
+    ReadOnlyCollectionBuilder: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    CopyTo: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    IndexOf: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    RemoveAt: LibrarySymbolReference;
+    Reverse: LibrarySymbolReference;
+    ToArray: LibrarySymbolReference;
+    ToReadOnlyCollection: LibrarySymbolReference;
+    Capacity: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    Item: LibrarySymbolReference
+  };
   ReferenceAssemblyAttribute: LibrarySymbolReference & {
     ReferenceAssemblyAttribute: LibrarySymbolReference;
     Description: LibrarySymbolReference
+  };
+  RequiredAttributeAttribute: LibrarySymbolReference & {
+    RequiredAttributeAttribute: LibrarySymbolReference;
+    RequiredContract: LibrarySymbolReference
   };
   RuntimeCompatibilityAttribute: LibrarySymbolReference & {
     RuntimeCompatibilityAttribute: LibrarySymbolReference;
@@ -321,6 +431,9 @@ type CompilerServicesLibrary = LibrarySymbolReference & {
   RuntimeWrappedException: LibrarySymbolReference & {
     RuntimeWrappedException: LibrarySymbolReference;
     WrappedException: LibrarySymbolReference
+  };
+  ScopelessEnumAttribute: LibrarySymbolReference & {
+    ScopelessEnumAttribute: LibrarySymbolReference
   };
   SkipLocalsInitAttribute: LibrarySymbolReference & {
     SkipLocalsInitAttribute: LibrarySymbolReference
@@ -609,6 +722,57 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
   },
+  CallSite: {
+    kind: "class",
+    members: {
+      Target: {
+        kind: "field",
+        type: undefined,
+      },
+      Create: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Update: {
+        kind: "property",
+        type: undefined,
+      },
+    },
+  },
+  CallSiteBinder: {
+    kind: "class",
+    members: {
+      CallSiteBinder: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Bind: {
+        kind: "method",
+        methodKind: "ordinary",
+        isAbstract: true,
+      },
+      UpdateLabel: {
+        kind: "property",
+        type: () => {
+          return Expressions.LabelTarget;
+        },
+        isStatic: true,
+      },
+    },
+    isAbstract: true,
+  },
+  CallSiteHelpers: {
+    kind: "class",
+    members: {
+      IsInternalFrame: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
   CallerArgumentExpressionAttribute: {
     kind: "class",
     members: {
@@ -756,6 +920,11 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
   },
+  CompilerMarshalOverride: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
   ConditionalWeakTable: {
     kind: "class",
     members: {
@@ -872,6 +1041,42 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
   },
+  ContractHelper: {
+    kind: "class",
+    members: {
+      RaiseContractFailedEvent: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      TriggerFailure: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  CppInlineNamespaceAttribute: {
+    kind: "class",
+    members: {
+      CppInlineNamespaceAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+    isSealed: true,
+  },
+  CreateNewOnMetadataUpdateAttribute: {
+    kind: "class",
+    members: {
+      CreateNewOnMetadataUpdateAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+    isSealed: true,
+  },
   CustomConstantAttribute: {
     kind: "class",
     members: {
@@ -906,6 +1111,26 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
     isSealed: true,
+  },
+  DebugInfoGenerator: {
+    kind: "class",
+    members: {
+      DebugInfoGenerator: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      CreatePdbGenerator: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      MarkSequencePoint: {
+        kind: "method",
+        methodKind: "ordinary",
+        isAbstract: true,
+      },
+    },
+    isAbstract: true,
   },
   DecimalConstantAttribute: {
     kind: "class",
@@ -1016,6 +1241,22 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
   },
+  DynamicAttribute: {
+    kind: "class",
+    members: {
+      DynamicAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      TransformFlags: {
+        kind: "property",
+        type: () => {
+          return Generic.IList;
+        },
+      },
+    },
+    isSealed: true,
+  },
   EnumeratorCancellationAttribute: {
     kind: "class",
     members: {
@@ -1079,6 +1320,16 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
     },
     isStatic: true,
   },
+  HasCopySemanticsAttribute: {
+    kind: "class",
+    members: {
+      HasCopySemanticsAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+    isSealed: true,
+  },
   IAsyncStateMachine: {
     kind: "interface",
     members: {
@@ -1101,12 +1352,46 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
       },
     },
   },
+  IDispatchConstantAttribute: {
+    kind: "class",
+    members: {
+      IDispatchConstantAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Value: {
+        kind: "property",
+        type: () => {
+          return System.Object;
+        },
+        isOverride: true,
+      },
+    },
+    isSealed: true,
+  },
   INotifyCompletion: {
     kind: "interface",
     members: {
       OnCompleted: {
         kind: "method",
         methodKind: "ordinary",
+      },
+    },
+  },
+  IRuntimeVariables: {
+    kind: "interface",
+    members: {
+      Count: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      Item: {
+        kind: "property",
+        type: () => {
+          return System.Object;
+        },
       },
     },
   },
@@ -1138,6 +1423,23 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
         },
       },
     },
+  },
+  IUnknownConstantAttribute: {
+    kind: "class",
+    members: {
+      IUnknownConstantAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Value: {
+        kind: "property",
+        type: () => {
+          return System.Object;
+        },
+        isOverride: true,
+      },
+    },
+    isSealed: true,
   },
   IndexerNameAttribute: {
     kind: "class",
@@ -1213,7 +1515,57 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
     },
     isSealed: true,
   },
+  IsBoxed: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsByValue: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
   IsConst: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsCopyConstructed: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsExplicitlyDereferenced: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsImplicitlyDereferenced: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsJitIntrinsic: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsLong: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsPinned: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsSignUnspecifiedByte: {
+    kind: "class",
+    members: {},
+    isStatic: true,
+  },
+  IsUdtReturn: {
     kind: "class",
     members: {},
     isStatic: true,
@@ -1252,6 +1604,21 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
         kind: "field",
         type: () => {
           return CompilerServices.LoadHint;
+        },
+      },
+    },
+  },
+  MetadataUpdateOriginalTypeAttribute: {
+    kind: "class",
+    members: {
+      MetadataUpdateOriginalTypeAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      OriginalType: {
+        kind: "property",
+        type: () => {
+          return System.Type;
         },
       },
     },
@@ -1376,6 +1743,16 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
     },
     isSealed: true,
   },
+  NativeCppClassAttribute: {
+    kind: "class",
+    members: {
+      NativeCppClassAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+    isSealed: true,
+  },
   OverloadResolutionPriorityAttribute: {
     kind: "class",
     members: {
@@ -1440,6 +1817,80 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
     },
     isSealed: true,
   },
+  ReadOnlyCollectionBuilder: {
+    kind: "class",
+    members: {
+      ReadOnlyCollectionBuilder: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Add: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Clear: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Contains: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      CopyTo: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      GetEnumerator: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IndexOf: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Insert: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Remove: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      RemoveAt: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Reverse: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ToArray: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ToReadOnlyCollection: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Capacity: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      Count: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      Item: {
+        kind: "property",
+        type: undefined,
+      },
+    },
+    isSealed: true,
+  },
   ReferenceAssemblyAttribute: {
     kind: "class",
     members: {
@@ -1453,6 +1904,22 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
           return System.String;
         },
         isNullable: true,
+      },
+    },
+    isSealed: true,
+  },
+  RequiredAttributeAttribute: {
+    kind: "class",
+    members: {
+      RequiredAttributeAttribute: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      RequiredContract: {
+        kind: "property",
+        type: () => {
+          return System.Type;
+        },
       },
     },
     isSealed: true,
@@ -1611,6 +2078,16 @@ const CompilerServices: CompilerServicesLibrary = createLibrary("System.Runtime.
         type: () => {
           return System.Object;
         },
+      },
+    },
+    isSealed: true,
+  },
+  ScopelessEnumAttribute: {
+    kind: "class",
+    members: {
+      ScopelessEnumAttribute: {
+        kind: "method",
+        methodKind: "constructor",
       },
     },
     isSealed: true,

@@ -5,6 +5,8 @@ import { LibrarySymbolReference } from "@alloy-js/core";export { default as Comp
 export { default as ConstrainedExecution } from "./ConstrainedExecution/index.js";
 export { default as ExceptionServices } from "./ExceptionServices/index.js";
 export { default as InteropServices } from "./InteropServices/index.js";
+export { default as Intrinsics } from "./Intrinsics/index.js";
+export { default as Loader } from "./Loader/index.js";
 export { default as Remoting } from "./Remoting/index.js";
 export { default as Serialization } from "./Serialization/index.js";
 export { default as Versioning } from "./Versioning/index.js";

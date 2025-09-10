@@ -55,10 +55,11 @@
     "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
+    "@types/js-yaml": "^4.0.9",
     "concurrently": "catalog:",
+    "js-yaml": "^4.1.0",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "yaml": "^2.8.0"
+    "vitest": "catalog:"
   },
   "type": "module"
 }

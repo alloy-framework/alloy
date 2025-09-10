@@ -1,8 +1,4 @@
 import {
-  AttributeList,
-  AttributesProp,
-} from "#components/attributes/attributes.jsx";
-import {
   Children,
   code,
   createSymbolSlot,
@@ -13,6 +9,7 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { createParameterSymbol } from "../../symbols/factories.js";
+import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {

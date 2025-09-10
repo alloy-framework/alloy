@@ -94,6 +94,11 @@ export interface OutputSymbolOptions {
    * also ignoring name conflict resolution.
    */
   ignoreNameConflict?: boolean;
+
+  /**
+   * Provide a function which lazy-initializes members when an enumeration of members are needed.
+   */
+  lazyMemberInitializer?: () => void;
 }
 
 let symbolCount = 0;
@@ -459,6 +464,40 @@ export abstract class OutputSymbol {
     return this.#namePolicy;
   }
 
+  #lazyMemberInitializer: (() => void) | undefined;
+  #lazyMembersInitialized: boolean = false;
+
+  #initializeMembers() {
+    if (this.#lazyMemberInitializer && !this.#lazyMembersInitialized) {
+      this.#lazyMemberInitializer();
+    }
+    this.#lazyMembersInitialized = true;
+  }
+
+  /**
+   * Get a member symbol by name from this symbol's member spaces. Checks member
+   * spaces in order until it finds a member with that name.
+   */
+  resolveMemberByName(name: string): OutputSymbol | undefined {
+    this.#initializeMembers();
+
+    if (this.isTyped) {
+      if (!this.hasTypeSymbol) {
+        return undefined;
+      }
+
+      return this.type!.resolveMemberByName(name);
+    }
+    for (const space of this.memberSpaces) {
+      const member = space.symbolNames.get(name);
+      if (member) {
+        return member;
+      }
+    }
+
+    return undefined;
+  }
+
   // Tell \@vue/reactivity that this symbol should never be wrapped in a reactive
   // proxy.
   [ReactiveFlags.SKIP] = true;
@@ -502,6 +541,7 @@ export abstract class OutputSymbol {
     this.#isTransient = !!options.transient;
     this.#isTyped = !!options.type;
     this.type = options.type;
+    this.#lazyMemberInitializer = options.lazyMemberInitializer;
 
     this.#handleNewSpaces(this.#spaces);
     const constructor = this.constructor as typeof OutputSymbol;

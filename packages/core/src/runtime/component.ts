@@ -1,6 +1,6 @@
 import { Ref } from "@vue/reactivity";
 import { CustomContext } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
+import { Refkey, RefkeyableObject } from "../refkey.js";
 import { IntrinsicElement } from "./intrinsic.js";
 
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");
@@ -35,6 +35,7 @@ export function isRenderableObject(item: unknown): item is RenderableObject {
 
 export type Child =
   | RenderableObject
+  | RefkeyableObject
   | string
   | boolean
   | number

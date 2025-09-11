@@ -1,5 +1,29 @@
 # Changelog - @alloy-js/csharp
 
+## 0.21.0
+
+### Bug Fixes
+
+- [#287](https://github.com/alloy-framework/alloy/pull/287) Fix allow defining nested namespace
+- [#286](https://github.com/alloy-framework/alloy/pull/286) Improve formatting of CSharp components
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+### Features
+
+- [#295](https://github.com/alloy-framework/alloy/pull/295) VarDeclaration now uses symbol information.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added `createLibrary` function for defining symbols from external libraries.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added `access` builder for building member expressions.
+- [#288](https://github.com/alloy-framework/alloy/pull/288) Add `const` variable declaration support
+- [#289](https://github.com/alloy-framework/alloy/pull/289) Add support for `if` `else` statements
+- [#297](https://github.com/alloy-framework/alloy/pull/297) ΩSupport attributes on parameters
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
+  takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
+
+### Breaking Changes
+
+- [#283](https://github.com/alloy-framework/alloy/pull/283) Rename `UsingDirective` -> `Usings`
+
+
 ## 0.20.0
 
 ### Bug Fixes

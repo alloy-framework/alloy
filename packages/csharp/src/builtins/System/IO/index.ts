@@ -1,9 +1,16 @@
 import SafeHandles from "../../Microsoft/Win32/SafeHandles/index.js";
+import ObjectModel from "../Collections/ObjectModel/index.js";
+import ComponentModel from "../ComponentModel/index.js";
 import System from "../index.js";
 import Text from "../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Enumeration } from "./Enumeration/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Compression } from "./Compression/index.js";
+export { default as Enumeration } from "./Enumeration/index.js";
+export { default as IsolatedStorage } from "./IsolatedStorage/index.js";
+export { default as MemoryMappedFiles } from "./MemoryMappedFiles/index.js";
+export { default as Pipelines } from "./Pipelines/index.js";
+export { default as Pipes } from "./Pipes/index.js";
 
 type IOLibrary = LibrarySymbolReference & {
   BinaryReader: LibrarySymbolReference & {
@@ -128,6 +135,32 @@ type IOLibrary = LibrarySymbolReference & {
   DirectoryNotFoundException: LibrarySymbolReference & {
     DirectoryNotFoundException: LibrarySymbolReference
   };
+  DriveInfo: LibrarySymbolReference & {
+    DriveInfo: LibrarySymbolReference;
+    GetDrives: LibrarySymbolReference;
+    ToString: LibrarySymbolReference;
+    AvailableFreeSpace: LibrarySymbolReference;
+    DriveFormat: LibrarySymbolReference;
+    DriveType: LibrarySymbolReference;
+    IsReady: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    RootDirectory: LibrarySymbolReference;
+    TotalFreeSpace: LibrarySymbolReference;
+    TotalSize: LibrarySymbolReference;
+    VolumeLabel: LibrarySymbolReference
+  };
+  DriveNotFoundException: LibrarySymbolReference & {
+    DriveNotFoundException: LibrarySymbolReference
+  };
+  DriveType: LibrarySymbolReference & {
+    Unknown: LibrarySymbolReference;
+    NoRootDirectory: LibrarySymbolReference;
+    Removable: LibrarySymbolReference;
+    Fixed: LibrarySymbolReference;
+    Network: LibrarySymbolReference;
+    CDRom: LibrarySymbolReference;
+    Ram: LibrarySymbolReference
+  };
   EndOfStreamException: LibrarySymbolReference & {
     EndOfStreamException: LibrarySymbolReference
   };
@@ -141,6 +174,16 @@ type IOLibrary = LibrarySymbolReference & {
     MaxRecursionDepth: LibrarySymbolReference;
     RecurseSubdirectories: LibrarySymbolReference;
     ReturnSpecialDirectories: LibrarySymbolReference
+  };
+  ErrorEventArgs: LibrarySymbolReference & {
+    ErrorEventArgs: LibrarySymbolReference;
+    GetException: LibrarySymbolReference
+  };
+  ErrorEventHandler: LibrarySymbolReference & {
+    ErrorEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
   };
   File: LibrarySymbolReference & {
     AppendAllBytes: LibrarySymbolReference;
@@ -325,6 +368,24 @@ type IOLibrary = LibrarySymbolReference & {
     Share: LibrarySymbolReference;
     UnixCreateMode: LibrarySymbolReference
   };
+  FileSystemAclExtensions: LibrarySymbolReference & {
+    Create: LibrarySymbolReference;
+    CreateDirectory: LibrarySymbolReference;
+    GetAccessControl: LibrarySymbolReference;
+    SetAccessControl: LibrarySymbolReference
+  };
+  FileSystemEventArgs: LibrarySymbolReference & {
+    FileSystemEventArgs: LibrarySymbolReference;
+    ChangeType: LibrarySymbolReference;
+    FullPath: LibrarySymbolReference;
+    Name: LibrarySymbolReference
+  };
+  FileSystemEventHandler: LibrarySymbolReference & {
+    FileSystemEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
   FileSystemInfo: LibrarySymbolReference & {
     FullPath: LibrarySymbolReference;
     OriginalPath: LibrarySymbolReference;
@@ -348,12 +409,36 @@ type IOLibrary = LibrarySymbolReference & {
     Name: LibrarySymbolReference;
     UnixFileMode: LibrarySymbolReference
   };
+  FileSystemWatcher: LibrarySymbolReference & {
+    FileSystemWatcher: LibrarySymbolReference;
+    BeginInit: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    EndInit: LibrarySymbolReference;
+    OnChanged: LibrarySymbolReference;
+    OnCreated: LibrarySymbolReference;
+    OnDeleted: LibrarySymbolReference;
+    OnError: LibrarySymbolReference;
+    OnRenamed: LibrarySymbolReference;
+    WaitForChanged: LibrarySymbolReference;
+    EnableRaisingEvents: LibrarySymbolReference;
+    Filter: LibrarySymbolReference;
+    Filters: LibrarySymbolReference;
+    IncludeSubdirectories: LibrarySymbolReference;
+    InternalBufferSize: LibrarySymbolReference;
+    NotifyFilter: LibrarySymbolReference;
+    Path: LibrarySymbolReference;
+    Site: LibrarySymbolReference;
+    SynchronizingObject: LibrarySymbolReference
+  };
   HandleInheritability: LibrarySymbolReference & {
     None: LibrarySymbolReference;
     Inheritable: LibrarySymbolReference
   };
   IOException: LibrarySymbolReference & {
     IOException: LibrarySymbolReference
+  };
+  InternalBufferOverflowException: LibrarySymbolReference & {
+    InternalBufferOverflowException: LibrarySymbolReference
   };
   InvalidDataException: LibrarySymbolReference & {
     InvalidDataException: LibrarySymbolReference
@@ -397,6 +482,16 @@ type IOLibrary = LibrarySymbolReference & {
     Length: LibrarySymbolReference;
     Position: LibrarySymbolReference
   };
+  NotifyFilters: LibrarySymbolReference & {
+    FileName: LibrarySymbolReference;
+    DirectoryName: LibrarySymbolReference;
+    Attributes: LibrarySymbolReference;
+    Size: LibrarySymbolReference;
+    LastWrite: LibrarySymbolReference;
+    LastAccess: LibrarySymbolReference;
+    CreationTime: LibrarySymbolReference;
+    Security: LibrarySymbolReference
+  };
   Path: LibrarySymbolReference & {
     AltDirectorySeparatorChar: LibrarySymbolReference;
     DirectorySeparatorChar: LibrarySymbolReference;
@@ -437,6 +532,17 @@ type IOLibrary = LibrarySymbolReference & {
     SetLength: LibrarySymbolReference;
     Write: LibrarySymbolReference;
     WriteAsync: LibrarySymbolReference
+  };
+  RenamedEventArgs: LibrarySymbolReference & {
+    RenamedEventArgs: LibrarySymbolReference;
+    OldFullPath: LibrarySymbolReference;
+    OldName: LibrarySymbolReference
+  };
+  RenamedEventHandler: LibrarySymbolReference & {
+    RenamedEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
   };
   SearchOption: LibrarySymbolReference & {
     TopDirectoryOnly: LibrarySymbolReference;
@@ -599,6 +705,29 @@ type IOLibrary = LibrarySymbolReference & {
     SetGroup: LibrarySymbolReference;
     SetUser: LibrarySymbolReference
   };
+  UnmanagedMemoryAccessor: LibrarySymbolReference & {
+    UnmanagedMemoryAccessor: LibrarySymbolReference;
+    Dispose: LibrarySymbolReference;
+    Initialize: LibrarySymbolReference;
+    ReadBoolean: LibrarySymbolReference;
+    ReadByte: LibrarySymbolReference;
+    ReadChar: LibrarySymbolReference;
+    ReadDecimal: LibrarySymbolReference;
+    ReadDouble: LibrarySymbolReference;
+    ReadInt16: LibrarySymbolReference;
+    ReadInt32: LibrarySymbolReference;
+    ReadInt64: LibrarySymbolReference;
+    ReadSByte: LibrarySymbolReference;
+    ReadSingle: LibrarySymbolReference;
+    ReadUInt16: LibrarySymbolReference;
+    ReadUInt32: LibrarySymbolReference;
+    ReadUInt64: LibrarySymbolReference;
+    Write: LibrarySymbolReference;
+    CanRead: LibrarySymbolReference;
+    CanWrite: LibrarySymbolReference;
+    Capacity: LibrarySymbolReference;
+    IsOpen: LibrarySymbolReference
+  };
   UnmanagedMemoryStream: LibrarySymbolReference & {
     UnmanagedMemoryStream: LibrarySymbolReference;
     Dispose: LibrarySymbolReference;
@@ -620,6 +749,19 @@ type IOLibrary = LibrarySymbolReference & {
     Length: LibrarySymbolReference;
     Position: LibrarySymbolReference;
     PositionPointer: LibrarySymbolReference
+  };
+  WaitForChangedResult: LibrarySymbolReference & {
+    ChangeType: LibrarySymbolReference;
+    Name: LibrarySymbolReference;
+    OldName: LibrarySymbolReference;
+    TimedOut: LibrarySymbolReference
+  };
+  WatcherChangeTypes: LibrarySymbolReference & {
+    Created: LibrarySymbolReference;
+    Deleted: LibrarySymbolReference;
+    Changed: LibrarySymbolReference;
+    Renamed: LibrarySymbolReference;
+    All: LibrarySymbolReference
   }
 };
 const IO: IOLibrary = createLibrary("System.IO", {
@@ -1213,6 +1355,136 @@ const IO: IOLibrary = createLibrary("System.IO", {
       },
     },
   },
+  DriveInfo: {
+    kind: "class",
+    members: {
+      DriveInfo: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      GetDrives: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      ToString: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      AvailableFreeSpace: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+      },
+      DriveFormat: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      DriveType: {
+        kind: "property",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      IsReady: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      Name: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      RootDirectory: {
+        kind: "property",
+        type: () => {
+          return IO.DirectoryInfo;
+        },
+      },
+      TotalFreeSpace: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+      },
+      TotalSize: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+      },
+      VolumeLabel: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+    },
+    isSealed: true,
+  },
+  DriveNotFoundException: {
+    kind: "class",
+    members: {
+      DriveNotFoundException: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+  },
+  DriveType: {
+    kind: "enum",
+    members: {
+      Unknown: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      NoRootDirectory: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      Removable: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      Fixed: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      Network: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      CDRom: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+      Ram: {
+        kind: "field",
+        type: () => {
+          return IO.DriveType;
+        },
+      },
+    },
+  },
   EndOfStreamException: {
     kind: "class",
     members: {
@@ -1276,6 +1548,44 @@ const IO: IOLibrary = createLibrary("System.IO", {
         type: () => {
           return System.Boolean;
         },
+      },
+    },
+  },
+  ErrorEventArgs: {
+    kind: "class",
+    members: {
+      ErrorEventArgs: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      GetException: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+    },
+  },
+  ErrorEventHandler: {
+    kind: "generic",
+    members: {
+      ErrorEventHandler: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      BeginInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      EndInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
       },
     },
   },
@@ -2210,6 +2520,84 @@ const IO: IOLibrary = createLibrary("System.IO", {
     },
     isSealed: true,
   },
+  FileSystemAclExtensions: {
+    kind: "class",
+    members: {
+      Create: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      CreateDirectory: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetAccessControl: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetAccessControl: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  FileSystemEventArgs: {
+    kind: "class",
+    members: {
+      FileSystemEventArgs: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      ChangeType: {
+        kind: "property",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+      },
+      FullPath: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      Name: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+        isNullable: true,
+      },
+    },
+  },
+  FileSystemEventHandler: {
+    kind: "generic",
+    members: {
+      FileSystemEventHandler: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      BeginInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      EndInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+    },
+  },
   FileSystemInfo: {
     kind: "class",
     members: {
@@ -2336,6 +2724,108 @@ const IO: IOLibrary = createLibrary("System.IO", {
     },
     isAbstract: true,
   },
+  FileSystemWatcher: {
+    kind: "class",
+    members: {
+      FileSystemWatcher: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      BeginInit: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Dispose: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      EndInit: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      OnChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      OnCreated: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      OnDeleted: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      OnError: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      OnRenamed: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      WaitForChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      EnableRaisingEvents: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      Filter: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      Filters: {
+        kind: "property",
+        type: () => {
+          return ObjectModel.Collection;
+        },
+      },
+      IncludeSubdirectories: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      InternalBufferSize: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      NotifyFilter: {
+        kind: "property",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      Path: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      Site: {
+        kind: "property",
+        type: () => {
+          return ComponentModel.ISite;
+        },
+        isOverride: true,
+      },
+      SynchronizingObject: {
+        kind: "property",
+        type: () => {
+          return ComponentModel.ISynchronizeInvoke;
+        },
+        isNullable: true,
+      },
+    },
+  },
   HandleInheritability: {
     kind: "enum",
     members: {
@@ -2357,6 +2847,15 @@ const IO: IOLibrary = createLibrary("System.IO", {
     kind: "class",
     members: {
       IOException: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+  },
+  InternalBufferOverflowException: {
+    kind: "class",
+    members: {
+      InternalBufferOverflowException: {
         kind: "method",
         methodKind: "constructor",
       },
@@ -2568,6 +3067,59 @@ const IO: IOLibrary = createLibrary("System.IO", {
       },
     },
   },
+  NotifyFilters: {
+    kind: "enum",
+    members: {
+      FileName: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      DirectoryName: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      Attributes: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      Size: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      LastWrite: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      LastAccess: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      CreationTime: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+      Security: {
+        kind: "field",
+        type: () => {
+          return IO.NotifyFilters;
+        },
+      },
+    },
+  },
   Path: {
     kind: "class",
     members: {
@@ -2773,6 +3325,52 @@ const IO: IOLibrary = createLibrary("System.IO", {
       },
     },
     isStatic: true,
+  },
+  RenamedEventArgs: {
+    kind: "class",
+    members: {
+      RenamedEventArgs: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      OldFullPath: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+      },
+      OldName: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+        isNullable: true,
+      },
+    },
+  },
+  RenamedEventHandler: {
+    kind: "generic",
+    members: {
+      RenamedEventHandler: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      BeginInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      EndInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+    },
   },
   SearchOption: {
     kind: "enum",
@@ -3582,6 +4180,103 @@ const IO: IOLibrary = createLibrary("System.IO", {
       },
     },
   },
+  UnmanagedMemoryAccessor: {
+    kind: "class",
+    members: {
+      UnmanagedMemoryAccessor: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Dispose: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Initialize: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadBoolean: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadByte: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadChar: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadDecimal: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadDouble: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadInt16: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadInt32: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadInt64: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadSByte: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadSingle: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadUInt16: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadUInt32: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ReadUInt64: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Write: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      CanRead: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      CanWrite: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      Capacity: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+      },
+      IsOpen: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+    },
+  },
   UnmanagedMemoryStream: {
     kind: "class",
     members: {
@@ -3693,6 +4388,76 @@ const IO: IOLibrary = createLibrary("System.IO", {
         kind: "property",
         type: () => {
           return System.Byte;
+        },
+      },
+    },
+  },
+  WaitForChangedResult: {
+    kind: "struct",
+    members: {
+      ChangeType: {
+        kind: "property",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+        isReadOnly: true,
+      },
+      Name: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+        isNullable: true,
+        isReadOnly: true,
+      },
+      OldName: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+        isNullable: true,
+        isReadOnly: true,
+      },
+      TimedOut: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isReadOnly: true,
+      },
+    },
+  },
+  WatcherChangeTypes: {
+    kind: "enum",
+    members: {
+      Created: {
+        kind: "field",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+      },
+      Deleted: {
+        kind: "field",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+      },
+      Changed: {
+        kind: "field",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+      },
+      Renamed: {
+        kind: "field",
+        type: () => {
+          return IO.WatcherChangeTypes;
+        },
+      },
+      All: {
+        kind: "field",
+        type: () => {
+          return IO.WatcherChangeTypes;
         },
       },
     },

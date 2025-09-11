@@ -10,6 +10,7 @@
 
 import { Output, renderAsync, writeOutput } from "@alloy-js/core";
 
+import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { NamespaceDirectory } from "./components/namespace-directory.jsx";
 import { walk } from "./process-docfx.jsx";
@@ -24,7 +25,7 @@ const OUTPUT_PATH = outParam ? resolve(outParam) : undefined; // reserved for fu
 
 console.log("Reading yaml files...");
 const rootNamespace = walk(API_DIR);
-
+writeFileSync("docs.json", JSON.stringify(rootNamespace));
 console.log("Writing library definitions...");
 await writeOutput(
   await renderAsync(

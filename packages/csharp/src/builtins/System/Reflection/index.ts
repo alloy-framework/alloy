@@ -5,7 +5,9 @@ import System from "../index.js";
 import Security from "../Security/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Emit } from "./Emit/index.js";
+export { default as Metadata } from "./Metadata/index.js";
+export { default as PortableExecutable } from "./PortableExecutable/index.js";
 
 type ReflectionLibrary = LibrarySymbolReference & {
   AmbiguousMatchException: LibrarySymbolReference & {
@@ -104,14 +106,35 @@ type ReflectionLibrary = LibrarySymbolReference & {
     AssemblyDescriptionAttribute: LibrarySymbolReference;
     Description: LibrarySymbolReference
   };
+  AssemblyExtensions: LibrarySymbolReference & {
+    GetExportedTypes: LibrarySymbolReference;
+    GetModules: LibrarySymbolReference;
+    GetTypes: LibrarySymbolReference
+  };
   AssemblyFileVersionAttribute: LibrarySymbolReference & {
     AssemblyFileVersionAttribute: LibrarySymbolReference;
     Version: LibrarySymbolReference
+  };
+  AssemblyFlags: LibrarySymbolReference & {
+    PublicKey: LibrarySymbolReference;
+    Retargetable: LibrarySymbolReference;
+    WindowsRuntime: LibrarySymbolReference;
+    ContentTypeMask: LibrarySymbolReference;
+    DisableJitCompileOptimizer: LibrarySymbolReference;
+    EnableJitCompileTracking: LibrarySymbolReference
   };
   AssemblyFlagsAttribute: LibrarySymbolReference & {
     AssemblyFlagsAttribute: LibrarySymbolReference;
     AssemblyFlags: LibrarySymbolReference;
     Flags: LibrarySymbolReference
+  };
+  AssemblyHashAlgorithm: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    MD5: LibrarySymbolReference;
+    Sha1: LibrarySymbolReference;
+    Sha256: LibrarySymbolReference;
+    Sha384: LibrarySymbolReference;
+    Sha512: LibrarySymbolReference
   };
   AssemblyInformationalVersionAttribute: LibrarySymbolReference & {
     AssemblyInformationalVersionAttribute: LibrarySymbolReference;
@@ -276,9 +299,26 @@ type ReflectionLibrary = LibrarySymbolReference & {
     ArgumentType: LibrarySymbolReference;
     Value: LibrarySymbolReference
   };
+  DeclarativeSecurityAction: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Demand: LibrarySymbolReference;
+    Assert: LibrarySymbolReference;
+    Deny: LibrarySymbolReference;
+    PermitOnly: LibrarySymbolReference;
+    LinkDemand: LibrarySymbolReference;
+    InheritanceDemand: LibrarySymbolReference;
+    RequestMinimum: LibrarySymbolReference;
+    RequestOptional: LibrarySymbolReference;
+    RequestRefuse: LibrarySymbolReference
+  };
   DefaultMemberAttribute: LibrarySymbolReference & {
     DefaultMemberAttribute: LibrarySymbolReference;
     MemberName: LibrarySymbolReference
+  };
+  DispatchProxy: LibrarySymbolReference & {
+    DispatchProxy: LibrarySymbolReference;
+    Create: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference
   };
   EventAttributes: LibrarySymbolReference & {
     None: LibrarySymbolReference;
@@ -304,6 +344,11 @@ type ReflectionLibrary = LibrarySymbolReference & {
     MemberType: LibrarySymbolReference;
     RaiseMethod: LibrarySymbolReference;
     RemoveMethod: LibrarySymbolReference
+  };
+  EventInfoExtensions: LibrarySymbolReference & {
+    GetAddMethod: LibrarySymbolReference;
+    GetRaiseMethod: LibrarySymbolReference;
+    GetRemoveMethod: LibrarySymbolReference
   };
   ExceptionHandlingClause: LibrarySymbolReference & {
     ExceptionHandlingClause: LibrarySymbolReference;
@@ -391,6 +436,9 @@ type ReflectionLibrary = LibrarySymbolReference & {
     GetCustomAttributes: LibrarySymbolReference;
     IsDefined: LibrarySymbolReference
   };
+  ICustomTypeProvider: LibrarySymbolReference & {
+    GetCustomType: LibrarySymbolReference
+  };
   IReflect: LibrarySymbolReference & {
     GetField: LibrarySymbolReference;
     GetFields: LibrarySymbolReference;
@@ -428,6 +476,11 @@ type ReflectionLibrary = LibrarySymbolReference & {
     LocalIndex: LibrarySymbolReference;
     LocalType: LibrarySymbolReference
   };
+  ManifestResourceAttributes: LibrarySymbolReference & {
+    Public: LibrarySymbolReference;
+    Private: LibrarySymbolReference;
+    VisibilityMask: LibrarySymbolReference
+  };
   ManifestResourceInfo: LibrarySymbolReference & {
     ManifestResourceInfo: LibrarySymbolReference;
     FileName: LibrarySymbolReference;
@@ -456,6 +509,10 @@ type ReflectionLibrary = LibrarySymbolReference & {
     Module: LibrarySymbolReference;
     Name: LibrarySymbolReference;
     ReflectedType: LibrarySymbolReference
+  };
+  MemberInfoExtensions: LibrarySymbolReference & {
+    GetMetadataToken: LibrarySymbolReference;
+    HasMetadataToken: LibrarySymbolReference
   };
   MemberTypes: LibrarySymbolReference & {
     Constructor: LibrarySymbolReference;
@@ -558,6 +615,27 @@ type ReflectionLibrary = LibrarySymbolReference & {
     InternalCall: LibrarySymbolReference;
     MaxMethodImplVal: LibrarySymbolReference
   };
+  MethodImportAttributes: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    ExactSpelling: LibrarySymbolReference;
+    CharSetAnsi: LibrarySymbolReference;
+    CharSetUnicode: LibrarySymbolReference;
+    CharSetAuto: LibrarySymbolReference;
+    CharSetMask: LibrarySymbolReference;
+    BestFitMappingEnable: LibrarySymbolReference;
+    BestFitMappingDisable: LibrarySymbolReference;
+    BestFitMappingMask: LibrarySymbolReference;
+    SetLastError: LibrarySymbolReference;
+    CallingConventionWinApi: LibrarySymbolReference;
+    CallingConventionCDecl: LibrarySymbolReference;
+    CallingConventionStdCall: LibrarySymbolReference;
+    CallingConventionThisCall: LibrarySymbolReference;
+    CallingConventionFastCall: LibrarySymbolReference;
+    CallingConventionMask: LibrarySymbolReference;
+    ThrowOnUnmappableCharEnable: LibrarySymbolReference;
+    ThrowOnUnmappableCharDisable: LibrarySymbolReference;
+    ThrowOnUnmappableCharMask: LibrarySymbolReference
+  };
   MethodInfo: LibrarySymbolReference & {
     MethodInfo: LibrarySymbolReference;
     CreateDelegate: LibrarySymbolReference;
@@ -572,9 +650,20 @@ type ReflectionLibrary = LibrarySymbolReference & {
     ReturnType: LibrarySymbolReference;
     ReturnTypeCustomAttributes: LibrarySymbolReference
   };
+  MethodInfoExtensions: LibrarySymbolReference & {
+    GetBaseDefinition: LibrarySymbolReference
+  };
   MethodInvoker: LibrarySymbolReference & {
     Create: LibrarySymbolReference;
     Invoke: LibrarySymbolReference
+  };
+  MethodSemanticsAttributes: LibrarySymbolReference & {
+    Setter: LibrarySymbolReference;
+    Getter: LibrarySymbolReference;
+    Other: LibrarySymbolReference;
+    Adder: LibrarySymbolReference;
+    Remover: LibrarySymbolReference;
+    Raiser: LibrarySymbolReference
   };
   Missing: LibrarySymbolReference & {
     Value: LibrarySymbolReference
@@ -614,6 +703,10 @@ type ReflectionLibrary = LibrarySymbolReference & {
     ModuleVersionId: LibrarySymbolReference;
     Name: LibrarySymbolReference;
     ScopeName: LibrarySymbolReference
+  };
+  ModuleExtensions: LibrarySymbolReference & {
+    GetModuleVersionId: LibrarySymbolReference;
+    HasModuleVersionId: LibrarySymbolReference
   };
   ModuleResolveEventHandler: LibrarySymbolReference & {
     ModuleResolveEventHandler: LibrarySymbolReference;
@@ -752,6 +845,11 @@ type ReflectionLibrary = LibrarySymbolReference & {
     MemberType: LibrarySymbolReference;
     PropertyType: LibrarySymbolReference;
     SetMethod: LibrarySymbolReference
+  };
+  PropertyInfoExtensions: LibrarySymbolReference & {
+    GetAccessors: LibrarySymbolReference;
+    GetGetMethod: LibrarySymbolReference;
+    GetSetMethod: LibrarySymbolReference
   };
   ReflectionContext: LibrarySymbolReference & {
     ReflectionContext: LibrarySymbolReference;
@@ -893,6 +991,27 @@ type ReflectionLibrary = LibrarySymbolReference & {
     Namespace: LibrarySymbolReference;
     TypeHandle: LibrarySymbolReference;
     UnderlyingSystemType: LibrarySymbolReference
+  };
+  TypeExtensions: LibrarySymbolReference & {
+    GetConstructor: LibrarySymbolReference;
+    GetConstructors: LibrarySymbolReference;
+    GetDefaultMembers: LibrarySymbolReference;
+    GetEvent: LibrarySymbolReference;
+    GetEvents: LibrarySymbolReference;
+    GetField: LibrarySymbolReference;
+    GetFields: LibrarySymbolReference;
+    GetGenericArguments: LibrarySymbolReference;
+    GetInterfaces: LibrarySymbolReference;
+    GetMember: LibrarySymbolReference;
+    GetMembers: LibrarySymbolReference;
+    GetMethod: LibrarySymbolReference;
+    GetMethods: LibrarySymbolReference;
+    GetNestedType: LibrarySymbolReference;
+    GetNestedTypes: LibrarySymbolReference;
+    GetProperties: LibrarySymbolReference;
+    GetProperty: LibrarySymbolReference;
+    IsAssignableFrom: LibrarySymbolReference;
+    IsInstanceOfType: LibrarySymbolReference
   };
   TypeFilter: LibrarySymbolReference & {
     TypeFilter: LibrarySymbolReference;
@@ -1390,6 +1509,27 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
     },
     isSealed: true,
   },
+  AssemblyExtensions: {
+    kind: "class",
+    members: {
+      GetExportedTypes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetModules: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetTypes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
   AssemblyFileVersionAttribute: {
     kind: "class",
     members: {
@@ -1405,6 +1545,47 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isSealed: true,
+  },
+  AssemblyFlags: {
+    kind: "enum",
+    members: {
+      PublicKey: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+      Retargetable: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+      WindowsRuntime: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+      ContentTypeMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+      DisableJitCompileOptimizer: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+      EnableJitCompileTracking: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyFlags;
+        },
+      },
+    },
   },
   AssemblyFlagsAttribute: {
     kind: "class",
@@ -1427,6 +1608,47 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isSealed: true,
+  },
+  AssemblyHashAlgorithm: {
+    kind: "enum",
+    members: {
+      None: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+      MD5: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+      Sha1: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+      Sha256: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+      Sha384: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+      Sha512: {
+        kind: "field",
+        type: () => {
+          return Reflection.AssemblyHashAlgorithm;
+        },
+      },
+    },
   },
   AssemblyInformationalVersionAttribute: {
     kind: "class",
@@ -2202,6 +2424,71 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
   },
+  DeclarativeSecurityAction: {
+    kind: "enum",
+    members: {
+      None: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      Demand: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      Assert: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      Deny: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      PermitOnly: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      LinkDemand: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      InheritanceDemand: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      RequestMinimum: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      RequestOptional: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+      RequestRefuse: {
+        kind: "field",
+        type: () => {
+          return Reflection.DeclarativeSecurityAction;
+        },
+      },
+    },
+  },
   DefaultMemberAttribute: {
     kind: "class",
     members: {
@@ -2217,6 +2504,26 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isSealed: true,
+  },
+  DispatchProxy: {
+    kind: "class",
+    members: {
+      DispatchProxy: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Create: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isAbstract: true,
+      },
+    },
+    isAbstract: true,
   },
   EventAttributes: {
     kind: "enum",
@@ -2351,6 +2658,27 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isAbstract: true,
+  },
+  EventInfoExtensions: {
+    kind: "class",
+    members: {
+      GetAddMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetRaiseMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetRemoveMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   ExceptionHandlingClause: {
     kind: "class",
@@ -2821,6 +3149,15 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
   },
+  ICustomTypeProvider: {
+    kind: "interface",
+    members: {
+      GetCustomType: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+    },
+  },
   IReflect: {
     kind: "interface",
     members: {
@@ -2979,6 +3316,29 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
   },
+  ManifestResourceAttributes: {
+    kind: "enum",
+    members: {
+      Public: {
+        kind: "field",
+        type: () => {
+          return Reflection.ManifestResourceAttributes;
+        },
+      },
+      Private: {
+        kind: "field",
+        type: () => {
+          return Reflection.ManifestResourceAttributes;
+        },
+      },
+      VisibilityMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.ManifestResourceAttributes;
+        },
+      },
+    },
+  },
   ManifestResourceInfo: {
     kind: "class",
     members: {
@@ -3132,6 +3492,22 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isAbstract: true,
+  },
+  MemberInfoExtensions: {
+    kind: "class",
+    members: {
+      GetMetadataToken: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      HasMetadataToken: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   MemberTypes: {
     kind: "enum",
@@ -3706,6 +4082,125 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
   },
+  MethodImportAttributes: {
+    kind: "enum",
+    members: {
+      None: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      ExactSpelling: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CharSetAnsi: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CharSetUnicode: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CharSetAuto: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CharSetMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      BestFitMappingEnable: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      BestFitMappingDisable: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      BestFitMappingMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      SetLastError: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionWinApi: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionCDecl: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionStdCall: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionThisCall: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionFastCall: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      CallingConventionMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      ThrowOnUnmappableCharEnable: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      ThrowOnUnmappableCharDisable: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+      ThrowOnUnmappableCharMask: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodImportAttributes;
+        },
+      },
+    },
+  },
   MethodInfo: {
     kind: "class",
     members: {
@@ -3779,6 +4274,17 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
     },
     isAbstract: true,
   },
+  MethodInfoExtensions: {
+    kind: "class",
+    members: {
+      GetBaseDefinition: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
   MethodInvoker: {
     kind: "class",
     members: {
@@ -3793,6 +4299,47 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isSealed: true,
+  },
+  MethodSemanticsAttributes: {
+    kind: "enum",
+    members: {
+      Setter: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+      Getter: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+      Other: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+      Adder: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+      Remover: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+      Raiser: {
+        kind: "field",
+        type: () => {
+          return Reflection.MethodSemanticsAttributes;
+        },
+      },
+    },
   },
   Missing: {
     kind: "class",
@@ -3997,6 +4544,22 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isAbstract: true,
+  },
+  ModuleExtensions: {
+    kind: "class",
+    members: {
+      GetModuleVersionId: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      HasModuleVersionId: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   ModuleResolveEventHandler: {
     kind: "generic",
@@ -4712,6 +5275,27 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
       },
     },
     isAbstract: true,
+  },
+  PropertyInfoExtensions: {
+    kind: "class",
+    members: {
+      GetAccessors: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetGetMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetSetMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   ReflectionContext: {
     kind: "class",
@@ -5449,6 +6033,107 @@ const Reflection: ReflectionLibrary = createLibrary("System.Reflection", {
         isOverride: true,
       },
     },
+  },
+  TypeExtensions: {
+    kind: "class",
+    members: {
+      GetConstructor: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetConstructors: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetDefaultMembers: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetEvent: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetEvents: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetField: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetFields: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetGenericArguments: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetInterfaces: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetMember: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetMembers: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetMethod: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetMethods: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetNestedType: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetNestedTypes: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetProperties: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetProperty: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      IsAssignableFrom: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      IsInstanceOfType: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
   },
   TypeFilter: {
     kind: "generic",

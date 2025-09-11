@@ -24,7 +24,7 @@ export interface PythonBlockProps {
  */
 export function PythonBlock(props: PythonBlockProps) {
   return (
-    <Block opener={props.opener ?? ""} closer="">
+    <Block opener={props.opener ?? ""} closer={false}>
       {props.children}
     </Block>
   );

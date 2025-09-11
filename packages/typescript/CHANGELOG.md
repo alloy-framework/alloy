@@ -1,5 +1,23 @@
 # Changelog - @alloy-js/typescript
 
+## 0.21.0
+
+### Bug Fixes
+
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Fix rendering of variable declarations that are default exports.
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+### Features
+
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
+  takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
+
+### Breaking Changes
+
+- [#284](https://github.com/alloy-framework/alloy/pull/284) BaseDeclarationProps has been renamed to CommonDeclarationProps and no longer allows passing a symbol. The props for the `<Declaration>` component have been split into `WithInfo` and `WithSymbol` variants with required name and symbol info respectively.
+- [#284](https://github.com/alloy-framework/alloy/pull/284) `MemberDeclarationProps` is now a union of `WithInfo` and `WithSymbol` variants with required name and symbol metadata respectively.
+
+
 ## 0.20.0
 
 ### Breaking Changes

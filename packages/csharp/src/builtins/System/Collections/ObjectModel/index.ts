@@ -24,6 +24,34 @@ type ObjectModelLibrary = LibrarySymbolReference & {
     Item: LibrarySymbolReference;
     Items: LibrarySymbolReference
   };
+  KeyedCollection: LibrarySymbolReference & {
+    KeyedCollection: LibrarySymbolReference;
+    ChangeItemKey: LibrarySymbolReference;
+    ClearItems: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    GetKeyForItem: LibrarySymbolReference;
+    InsertItem: LibrarySymbolReference;
+    Remove: LibrarySymbolReference;
+    RemoveItem: LibrarySymbolReference;
+    SetItem: LibrarySymbolReference;
+    TryGetValue: LibrarySymbolReference;
+    Comparer: LibrarySymbolReference;
+    Dictionary: LibrarySymbolReference;
+    Item: LibrarySymbolReference
+  };
+  ObservableCollection: LibrarySymbolReference & {
+    ObservableCollection: LibrarySymbolReference;
+    BlockReentrancy: LibrarySymbolReference;
+    CheckReentrancy: LibrarySymbolReference;
+    ClearItems: LibrarySymbolReference;
+    InsertItem: LibrarySymbolReference;
+    Move: LibrarySymbolReference;
+    MoveItem: LibrarySymbolReference;
+    OnCollectionChanged: LibrarySymbolReference;
+    OnPropertyChanged: LibrarySymbolReference;
+    RemoveItem: LibrarySymbolReference;
+    SetItem: LibrarySymbolReference
+  };
   ReadOnlyCollection: LibrarySymbolReference & {
     ReadOnlyCollection: LibrarySymbolReference;
     Contains: LibrarySymbolReference;
@@ -47,6 +75,26 @@ type ObjectModelLibrary = LibrarySymbolReference & {
       GetEnumerator: LibrarySymbolReference;
       Count: LibrarySymbolReference
     }
+  };
+  ReadOnlyObservableCollection: LibrarySymbolReference & {
+    ReadOnlyObservableCollection: LibrarySymbolReference;
+    OnCollectionChanged: LibrarySymbolReference;
+    OnPropertyChanged: LibrarySymbolReference;
+    Empty: LibrarySymbolReference
+  };
+  ReadOnlySet: LibrarySymbolReference & {
+    ReadOnlySet: LibrarySymbolReference;
+    Contains: LibrarySymbolReference;
+    GetEnumerator: LibrarySymbolReference;
+    IsProperSubsetOf: LibrarySymbolReference;
+    IsProperSupersetOf: LibrarySymbolReference;
+    IsSubsetOf: LibrarySymbolReference;
+    IsSupersetOf: LibrarySymbolReference;
+    Overlaps: LibrarySymbolReference;
+    SetEquals: LibrarySymbolReference;
+    Count: LibrarySymbolReference;
+    Empty: LibrarySymbolReference;
+    Set: LibrarySymbolReference
   }
 };
 const ObjectModel: ObjectModelLibrary = createLibrary("System.Collections.ObjectModel", {
@@ -128,6 +176,129 @@ const ObjectModel: ObjectModelLibrary = createLibrary("System.Collections.Object
         type: () => {
           return Generic.IList;
         },
+      },
+    },
+  },
+  KeyedCollection: {
+    kind: "class",
+    members: {
+      KeyedCollection: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      ChangeItemKey: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ClearItems: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Contains: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      GetKeyForItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isAbstract: true,
+      },
+      InsertItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Remove: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      RemoveItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      SetItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      TryGetValue: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Comparer: {
+        kind: "property",
+        type: () => {
+          return Generic.IEqualityComparer;
+        },
+      },
+      Dictionary: {
+        kind: "property",
+        type: () => {
+          return Generic.IDictionary;
+        },
+      },
+      Item: {
+        kind: "property",
+        type: undefined,
+      },
+    },
+    isAbstract: true,
+  },
+  ObservableCollection: {
+    kind: "class",
+    members: {
+      ObservableCollection: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      BlockReentrancy: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      CheckReentrancy: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      ClearItems: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      InsertItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Move: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      MoveItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      OnCollectionChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      OnPropertyChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      RemoveItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      SetItem: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
       },
     },
   },
@@ -225,6 +396,92 @@ const ObjectModel: ObjectModelLibrary = createLibrary("System.Collections.Object
           },
         },
         isSealed: true,
+      },
+    },
+  },
+  ReadOnlyObservableCollection: {
+    kind: "class",
+    members: {
+      ReadOnlyObservableCollection: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      OnCollectionChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      OnPropertyChanged: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      Empty: {
+        kind: "property",
+        type: () => {
+          return ObjectModel.ReadOnlyObservableCollection;
+        },
+        isStatic: true,
+      },
+    },
+  },
+  ReadOnlySet: {
+    kind: "class",
+    members: {
+      ReadOnlySet: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Contains: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      GetEnumerator: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsProperSubsetOf: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsProperSupersetOf: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsSubsetOf: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsSupersetOf: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Overlaps: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      SetEquals: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Count: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      Empty: {
+        kind: "property",
+        type: () => {
+          return ObjectModel.ReadOnlySet;
+        },
+        isStatic: true,
+      },
+      Set: {
+        kind: "property",
+        type: () => {
+          return Generic.ISet;
+        },
       },
     },
   },

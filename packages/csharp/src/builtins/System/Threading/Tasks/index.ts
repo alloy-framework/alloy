@@ -2,7 +2,8 @@ import System from "../../index.js";
 import Threading from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Sources } from "./Sources/index.js";
+import { LibrarySymbolReference } from "@alloy-js/core";export { default as Dataflow } from "./Dataflow/index.js";
+export { default as Sources } from "./Sources/index.js";
 
 type TasksLibrary = LibrarySymbolReference & {
   ConcurrentExclusiveSchedulerPair: LibrarySymbolReference & {
@@ -17,6 +18,28 @@ type TasksLibrary = LibrarySymbolReference & {
     ContinueOnCapturedContext: LibrarySymbolReference;
     SuppressThrowing: LibrarySymbolReference;
     ForceYielding: LibrarySymbolReference
+  };
+  Parallel: LibrarySymbolReference & {
+    For: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference
+  };
+  ParallelLoopResult: LibrarySymbolReference & {
+    IsCompleted: LibrarySymbolReference;
+    LowestBreakIteration: LibrarySymbolReference
+  };
+  ParallelLoopState: LibrarySymbolReference & {
+    Break: LibrarySymbolReference;
+    Stop: LibrarySymbolReference;
+    IsExceptional: LibrarySymbolReference;
+    IsStopped: LibrarySymbolReference;
+    LowestBreakIteration: LibrarySymbolReference;
+    ShouldExitCurrentIteration: LibrarySymbolReference
+  };
+  ParallelOptions: LibrarySymbolReference & {
+    ParallelOptions: LibrarySymbolReference;
+    CancellationToken: LibrarySymbolReference;
+    MaxDegreeOfParallelism: LibrarySymbolReference;
+    TaskScheduler: LibrarySymbolReference
   };
   Task: LibrarySymbolReference & {
     Task: LibrarySymbolReference;
@@ -196,6 +219,105 @@ const Tasks: TasksLibrary = createLibrary("System.Threading.Tasks", {
         kind: "field",
         type: () => {
           return Tasks.ConfigureAwaitOptions;
+        },
+      },
+    },
+  },
+  Parallel: {
+    kind: "class",
+    members: {
+      For: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  ParallelLoopResult: {
+    kind: "struct",
+    members: {
+      IsCompleted: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      LowestBreakIteration: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+        isNullable: true,
+      },
+    },
+  },
+  ParallelLoopState: {
+    kind: "class",
+    members: {
+      Break: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      Stop: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      IsExceptional: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      IsStopped: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      LowestBreakIteration: {
+        kind: "property",
+        type: () => {
+          return System.Int64;
+        },
+        isNullable: true,
+      },
+      ShouldExitCurrentIteration: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+    },
+  },
+  ParallelOptions: {
+    kind: "class",
+    members: {
+      ParallelOptions: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      CancellationToken: {
+        kind: "property",
+        type: () => {
+          return Threading.CancellationToken;
+        },
+      },
+      MaxDegreeOfParallelism: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+      },
+      TaskScheduler: {
+        kind: "property",
+        type: () => {
+          return Tasks.TaskScheduler;
         },
       },
     },

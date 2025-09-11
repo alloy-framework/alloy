@@ -1,8 +1,10 @@
 import Collections from "./Collections/index.js";
 import ObjectModel from "./Collections/ObjectModel/index.js";
+import IO from "./IO/index.js";
 import Reflection from "./Reflection/index.js";
 import InteropServices from "./Runtime/InteropServices/index.js";
 import Security from "./Security/index.js";
+import Text from "./Text/index.js";
 import Threading from "./Threading/index.js";
 
 import { createLibrary } from "#createLibrary";
@@ -11,9 +13,14 @@ export { default as CodeDom } from "./CodeDom/index.js";
 export { default as Collections } from "./Collections/index.js";
 export { default as ComponentModel } from "./ComponentModel/index.js";
 export { default as Configuration } from "./Configuration/index.js";
+export { default as Data } from "./Data/index.js";
 export { default as Diagnostics } from "./Diagnostics/index.js";
+export { default as Drawing } from "./Drawing/index.js";
+export { default as Dynamic } from "./Dynamic/index.js";
+export { default as Formats } from "./Formats/index.js";
 export { default as Globalization } from "./Globalization/index.js";
 export { default as IO } from "./IO/index.js";
+export { default as Linq } from "./Linq/index.js";
 export { default as Net } from "./Net/index.js";
 export { default as Numerics } from "./Numerics/index.js";
 export { default as Reflection } from "./Reflection/index.js";
@@ -22,6 +29,11 @@ export { default as Runtime } from "./Runtime/index.js";
 export { default as Security } from "./Security/index.js";
 export { default as Text } from "./Text/index.js";
 export { default as Threading } from "./Threading/index.js";
+export { default as Timers } from "./Timers/index.js";
+export { default as Transactions } from "./Transactions/index.js";
+export { default as Web } from "./Web/index.js";
+export { default as Windows } from "./Windows/index.js";
+export { default as Xml } from "./Xml/index.js";
 
 type SystemLibrary = LibrarySymbolReference & {
   AccessViolationException: LibrarySymbolReference & {
@@ -392,6 +404,248 @@ type SystemLibrary = LibrarySymbolReference & {
     BeginInvoke: LibrarySymbolReference;
     EndInvoke: LibrarySymbolReference
   };
+  Console: LibrarySymbolReference & {
+    Beep: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    GetCursorPosition: LibrarySymbolReference;
+    MoveBufferArea: LibrarySymbolReference;
+    OpenStandardError: LibrarySymbolReference;
+    OpenStandardInput: LibrarySymbolReference;
+    OpenStandardOutput: LibrarySymbolReference;
+    Read: LibrarySymbolReference;
+    ReadKey: LibrarySymbolReference;
+    ReadLine: LibrarySymbolReference;
+    ResetColor: LibrarySymbolReference;
+    SetBufferSize: LibrarySymbolReference;
+    SetCursorPosition: LibrarySymbolReference;
+    SetError: LibrarySymbolReference;
+    SetIn: LibrarySymbolReference;
+    SetOut: LibrarySymbolReference;
+    SetWindowPosition: LibrarySymbolReference;
+    SetWindowSize: LibrarySymbolReference;
+    Write: LibrarySymbolReference;
+    WriteLine: LibrarySymbolReference;
+    BackgroundColor: LibrarySymbolReference;
+    BufferHeight: LibrarySymbolReference;
+    BufferWidth: LibrarySymbolReference;
+    CapsLock: LibrarySymbolReference;
+    CursorLeft: LibrarySymbolReference;
+    CursorSize: LibrarySymbolReference;
+    CursorTop: LibrarySymbolReference;
+    CursorVisible: LibrarySymbolReference;
+    Error: LibrarySymbolReference;
+    ForegroundColor: LibrarySymbolReference;
+    In: LibrarySymbolReference;
+    InputEncoding: LibrarySymbolReference;
+    IsErrorRedirected: LibrarySymbolReference;
+    IsInputRedirected: LibrarySymbolReference;
+    IsOutputRedirected: LibrarySymbolReference;
+    KeyAvailable: LibrarySymbolReference;
+    LargestWindowHeight: LibrarySymbolReference;
+    LargestWindowWidth: LibrarySymbolReference;
+    NumberLock: LibrarySymbolReference;
+    Out: LibrarySymbolReference;
+    OutputEncoding: LibrarySymbolReference;
+    Title: LibrarySymbolReference;
+    TreatControlCAsInput: LibrarySymbolReference;
+    WindowHeight: LibrarySymbolReference;
+    WindowLeft: LibrarySymbolReference;
+    WindowTop: LibrarySymbolReference;
+    WindowWidth: LibrarySymbolReference
+  };
+  ConsoleCancelEventArgs: LibrarySymbolReference & {
+    Cancel: LibrarySymbolReference;
+    SpecialKey: LibrarySymbolReference
+  };
+  ConsoleCancelEventHandler: LibrarySymbolReference & {
+    ConsoleCancelEventHandler: LibrarySymbolReference;
+    Invoke: LibrarySymbolReference;
+    BeginInvoke: LibrarySymbolReference;
+    EndInvoke: LibrarySymbolReference
+  };
+  ConsoleColor: LibrarySymbolReference & {
+    Black: LibrarySymbolReference;
+    DarkBlue: LibrarySymbolReference;
+    DarkGreen: LibrarySymbolReference;
+    DarkCyan: LibrarySymbolReference;
+    DarkRed: LibrarySymbolReference;
+    DarkMagenta: LibrarySymbolReference;
+    DarkYellow: LibrarySymbolReference;
+    Gray: LibrarySymbolReference;
+    DarkGray: LibrarySymbolReference;
+    Blue: LibrarySymbolReference;
+    Green: LibrarySymbolReference;
+    Cyan: LibrarySymbolReference;
+    Red: LibrarySymbolReference;
+    Magenta: LibrarySymbolReference;
+    Yellow: LibrarySymbolReference;
+    White: LibrarySymbolReference
+  };
+  ConsoleKey: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Backspace: LibrarySymbolReference;
+    Tab: LibrarySymbolReference;
+    Clear: LibrarySymbolReference;
+    Enter: LibrarySymbolReference;
+    Pause: LibrarySymbolReference;
+    Escape: LibrarySymbolReference;
+    Spacebar: LibrarySymbolReference;
+    PageUp: LibrarySymbolReference;
+    PageDown: LibrarySymbolReference;
+    End: LibrarySymbolReference;
+    Home: LibrarySymbolReference;
+    LeftArrow: LibrarySymbolReference;
+    UpArrow: LibrarySymbolReference;
+    RightArrow: LibrarySymbolReference;
+    DownArrow: LibrarySymbolReference;
+    Select: LibrarySymbolReference;
+    Print: LibrarySymbolReference;
+    Execute: LibrarySymbolReference;
+    PrintScreen: LibrarySymbolReference;
+    Insert: LibrarySymbolReference;
+    Delete: LibrarySymbolReference;
+    Help: LibrarySymbolReference;
+    D0: LibrarySymbolReference;
+    D1: LibrarySymbolReference;
+    D2: LibrarySymbolReference;
+    D3: LibrarySymbolReference;
+    D4: LibrarySymbolReference;
+    D5: LibrarySymbolReference;
+    D6: LibrarySymbolReference;
+    D7: LibrarySymbolReference;
+    D8: LibrarySymbolReference;
+    D9: LibrarySymbolReference;
+    A: LibrarySymbolReference;
+    B: LibrarySymbolReference;
+    C: LibrarySymbolReference;
+    D: LibrarySymbolReference;
+    E: LibrarySymbolReference;
+    F: LibrarySymbolReference;
+    G: LibrarySymbolReference;
+    H: LibrarySymbolReference;
+    I: LibrarySymbolReference;
+    J: LibrarySymbolReference;
+    K: LibrarySymbolReference;
+    L: LibrarySymbolReference;
+    M: LibrarySymbolReference;
+    N: LibrarySymbolReference;
+    O: LibrarySymbolReference;
+    P: LibrarySymbolReference;
+    Q: LibrarySymbolReference;
+    R: LibrarySymbolReference;
+    S: LibrarySymbolReference;
+    T: LibrarySymbolReference;
+    U: LibrarySymbolReference;
+    V: LibrarySymbolReference;
+    W: LibrarySymbolReference;
+    X: LibrarySymbolReference;
+    Y: LibrarySymbolReference;
+    Z: LibrarySymbolReference;
+    LeftWindows: LibrarySymbolReference;
+    RightWindows: LibrarySymbolReference;
+    Applications: LibrarySymbolReference;
+    Sleep: LibrarySymbolReference;
+    NumPad0: LibrarySymbolReference;
+    NumPad1: LibrarySymbolReference;
+    NumPad2: LibrarySymbolReference;
+    NumPad3: LibrarySymbolReference;
+    NumPad4: LibrarySymbolReference;
+    NumPad5: LibrarySymbolReference;
+    NumPad6: LibrarySymbolReference;
+    NumPad7: LibrarySymbolReference;
+    NumPad8: LibrarySymbolReference;
+    NumPad9: LibrarySymbolReference;
+    Multiply: LibrarySymbolReference;
+    Add: LibrarySymbolReference;
+    Separator: LibrarySymbolReference;
+    Subtract: LibrarySymbolReference;
+    Decimal: LibrarySymbolReference;
+    Divide: LibrarySymbolReference;
+    F1: LibrarySymbolReference;
+    F2: LibrarySymbolReference;
+    F3: LibrarySymbolReference;
+    F4: LibrarySymbolReference;
+    F5: LibrarySymbolReference;
+    F6: LibrarySymbolReference;
+    F7: LibrarySymbolReference;
+    F8: LibrarySymbolReference;
+    F9: LibrarySymbolReference;
+    F10: LibrarySymbolReference;
+    F11: LibrarySymbolReference;
+    F12: LibrarySymbolReference;
+    F13: LibrarySymbolReference;
+    F14: LibrarySymbolReference;
+    F15: LibrarySymbolReference;
+    F16: LibrarySymbolReference;
+    F17: LibrarySymbolReference;
+    F18: LibrarySymbolReference;
+    F19: LibrarySymbolReference;
+    F20: LibrarySymbolReference;
+    F21: LibrarySymbolReference;
+    F22: LibrarySymbolReference;
+    F23: LibrarySymbolReference;
+    F24: LibrarySymbolReference;
+    BrowserBack: LibrarySymbolReference;
+    BrowserForward: LibrarySymbolReference;
+    BrowserRefresh: LibrarySymbolReference;
+    BrowserStop: LibrarySymbolReference;
+    BrowserSearch: LibrarySymbolReference;
+    BrowserFavorites: LibrarySymbolReference;
+    BrowserHome: LibrarySymbolReference;
+    VolumeMute: LibrarySymbolReference;
+    VolumeDown: LibrarySymbolReference;
+    VolumeUp: LibrarySymbolReference;
+    MediaNext: LibrarySymbolReference;
+    MediaPrevious: LibrarySymbolReference;
+    MediaStop: LibrarySymbolReference;
+    MediaPlay: LibrarySymbolReference;
+    LaunchMail: LibrarySymbolReference;
+    LaunchMediaSelect: LibrarySymbolReference;
+    LaunchApp1: LibrarySymbolReference;
+    LaunchApp2: LibrarySymbolReference;
+    Oem1: LibrarySymbolReference;
+    OemPlus: LibrarySymbolReference;
+    OemComma: LibrarySymbolReference;
+    OemMinus: LibrarySymbolReference;
+    OemPeriod: LibrarySymbolReference;
+    Oem2: LibrarySymbolReference;
+    Oem3: LibrarySymbolReference;
+    Oem4: LibrarySymbolReference;
+    Oem5: LibrarySymbolReference;
+    Oem6: LibrarySymbolReference;
+    Oem7: LibrarySymbolReference;
+    Oem8: LibrarySymbolReference;
+    Oem102: LibrarySymbolReference;
+    Process: LibrarySymbolReference;
+    Packet: LibrarySymbolReference;
+    Attention: LibrarySymbolReference;
+    CrSel: LibrarySymbolReference;
+    ExSel: LibrarySymbolReference;
+    EraseEndOfFile: LibrarySymbolReference;
+    Play: LibrarySymbolReference;
+    Zoom: LibrarySymbolReference;
+    NoName: LibrarySymbolReference;
+    Pa1: LibrarySymbolReference;
+    OemClear: LibrarySymbolReference
+  };
+  ConsoleKeyInfo: LibrarySymbolReference & {
+    ConsoleKeyInfo: LibrarySymbolReference;
+    Equals: LibrarySymbolReference;
+    GetHashCode: LibrarySymbolReference;
+    Key: LibrarySymbolReference;
+    KeyChar: LibrarySymbolReference;
+    Modifiers: LibrarySymbolReference
+  };
+  ConsoleModifiers: LibrarySymbolReference & {
+    None: LibrarySymbolReference;
+    Alt: LibrarySymbolReference;
+    Shift: LibrarySymbolReference;
+    Control: LibrarySymbolReference
+  };
+  ConsoleSpecialKey: LibrarySymbolReference & {
+    ControlC: LibrarySymbolReference;
+    ControlBreak: LibrarySymbolReference
+  };
   ContextBoundObject: LibrarySymbolReference & {
     ContextBoundObject: LibrarySymbolReference
   };
@@ -444,6 +698,9 @@ type SystemLibrary = LibrarySymbolReference & {
     Value: LibrarySymbolReference;
     GetTypeCode: LibrarySymbolReference;
     ToString: LibrarySymbolReference
+  };
+  DataMisalignedException: LibrarySymbolReference & {
+    DataMisalignedException: LibrarySymbolReference
   };
   DateOnly: LibrarySymbolReference & {
     DateOnly: LibrarySymbolReference;
@@ -675,6 +932,9 @@ type SystemLibrary = LibrarySymbolReference & {
   };
   DivideByZeroException: LibrarySymbolReference & {
     DivideByZeroException: LibrarySymbolReference
+  };
+  DllNotFoundException: LibrarySymbolReference & {
+    DllNotFoundException: LibrarySymbolReference
   };
   Double: LibrarySymbolReference & {
     E: LibrarySymbolReference;
@@ -1210,6 +1470,9 @@ type SystemLibrary = LibrarySymbolReference & {
   IProgress: LibrarySymbolReference & {
     Report: LibrarySymbolReference
   };
+  IServiceProvider: LibrarySymbolReference & {
+    GetService: LibrarySymbolReference
+  };
   ISpanFormattable: LibrarySymbolReference & {
     TryFormat: LibrarySymbolReference
   };
@@ -1451,6 +1714,9 @@ type SystemLibrary = LibrarySymbolReference & {
     LoaderOptimizationAttribute: LibrarySymbolReference;
     Value: LibrarySymbolReference
   };
+  LocalDataStoreSlot: LibrarySymbolReference & {
+    Finalize: LibrarySymbolReference
+  };
   MTAThreadAttribute: LibrarySymbolReference & {
     MTAThreadAttribute: LibrarySymbolReference
   };
@@ -1569,6 +1835,13 @@ type SystemLibrary = LibrarySymbolReference & {
     IsEmpty: LibrarySymbolReference;
     Length: LibrarySymbolReference;
     Span: LibrarySymbolReference
+  };
+  MemoryExtensions: LibrarySymbolReference & {
+    SpanSplitEnumerator: LibrarySymbolReference & {
+      GetEnumerator: LibrarySymbolReference;
+      MoveNext: LibrarySymbolReference;
+      Current: LibrarySymbolReference
+    }
   };
   MethodAccessException: LibrarySymbolReference & {
     MethodAccessException: LibrarySymbolReference
@@ -1850,6 +2123,10 @@ type SystemLibrary = LibrarySymbolReference & {
   };
   STAThreadAttribute: LibrarySymbolReference & {
     STAThreadAttribute: LibrarySymbolReference
+  };
+  SequencePosition: LibrarySymbolReference & {
+    SequencePosition: LibrarySymbolReference;
+    Equals: LibrarySymbolReference
   };
   Single: LibrarySymbolReference & {
     E: LibrarySymbolReference;
@@ -2713,6 +2990,14 @@ type SystemLibrary = LibrarySymbolReference & {
     Authority: LibrarySymbolReference;
     Path: LibrarySymbolReference;
     Query: LibrarySymbolReference
+  };
+  UriTypeConverter: LibrarySymbolReference & {
+    UriTypeConverter: LibrarySymbolReference;
+    CanConvertFrom: LibrarySymbolReference;
+    CanConvertTo: LibrarySymbolReference;
+    ConvertFrom: LibrarySymbolReference;
+    ConvertTo: LibrarySymbolReference;
+    IsValid: LibrarySymbolReference
   };
   ValueTuple: LibrarySymbolReference & {
     Item1: LibrarySymbolReference;
@@ -4452,6 +4737,1401 @@ const System: SystemLibrary = createLibrary("System", {
       },
     },
   },
+  Console: {
+    kind: "class",
+    members: {
+      Beep: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Clear: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      GetCursorPosition: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      MoveBufferArea: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      OpenStandardError: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      OpenStandardInput: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      OpenStandardOutput: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Read: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      ReadKey: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      ReadLine: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      ResetColor: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetBufferSize: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetCursorPosition: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetError: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetIn: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetOut: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetWindowPosition: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      SetWindowSize: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      Write: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      WriteLine: {
+        kind: "method",
+        methodKind: "ordinary",
+        isStatic: true,
+      },
+      BackgroundColor: {
+        kind: "property",
+        type: () => {
+          return System.ConsoleColor;
+        },
+        isStatic: true,
+      },
+      BufferHeight: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      BufferWidth: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      CapsLock: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      CursorLeft: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      CursorSize: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      CursorTop: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      CursorVisible: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      Error: {
+        kind: "property",
+        type: () => {
+          return IO.TextWriter;
+        },
+        isStatic: true,
+      },
+      ForegroundColor: {
+        kind: "property",
+        type: () => {
+          return System.ConsoleColor;
+        },
+        isStatic: true,
+      },
+      In: {
+        kind: "property",
+        type: () => {
+          return IO.TextReader;
+        },
+        isStatic: true,
+      },
+      InputEncoding: {
+        kind: "property",
+        type: () => {
+          return Text.Encoding;
+        },
+        isStatic: true,
+      },
+      IsErrorRedirected: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      IsInputRedirected: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      IsOutputRedirected: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      KeyAvailable: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      LargestWindowHeight: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      LargestWindowWidth: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      NumberLock: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      Out: {
+        kind: "property",
+        type: () => {
+          return IO.TextWriter;
+        },
+        isStatic: true,
+      },
+      OutputEncoding: {
+        kind: "property",
+        type: () => {
+          return Text.Encoding;
+        },
+        isStatic: true,
+      },
+      Title: {
+        kind: "property",
+        type: () => {
+          return System.String;
+        },
+        isStatic: true,
+      },
+      TreatControlCAsInput: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+        isStatic: true,
+      },
+      WindowHeight: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      WindowLeft: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      WindowTop: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+      WindowWidth: {
+        kind: "property",
+        type: () => {
+          return System.Int32;
+        },
+        isStatic: true,
+      },
+    },
+    isStatic: true,
+  },
+  ConsoleCancelEventArgs: {
+    kind: "class",
+    members: {
+      Cancel: {
+        kind: "property",
+        type: () => {
+          return System.Boolean;
+        },
+      },
+      SpecialKey: {
+        kind: "property",
+        type: () => {
+          return System.ConsoleSpecialKey;
+        },
+      },
+    },
+    isSealed: true,
+  },
+  ConsoleCancelEventHandler: {
+    kind: "generic",
+    members: {
+      ConsoleCancelEventHandler: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Invoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      BeginInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+      EndInvoke: {
+        kind: "method",
+        methodKind: "ordinary",
+        isVirtual: true,
+      },
+    },
+  },
+  ConsoleColor: {
+    kind: "enum",
+    members: {
+      Black: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkBlue: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkGreen: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkCyan: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkRed: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkMagenta: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkYellow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Gray: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      DarkGray: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Blue: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Green: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Cyan: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Red: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Magenta: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      Yellow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+      White: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleColor;
+        },
+      },
+    },
+  },
+  ConsoleKey: {
+    kind: "enum",
+    members: {
+      None: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Backspace: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Tab: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Clear: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Enter: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Pause: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Escape: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Spacebar: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      PageUp: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      PageDown: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      End: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Home: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LeftArrow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      UpArrow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      RightArrow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      DownArrow: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Select: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Print: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Execute: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      PrintScreen: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Insert: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Delete: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Help: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D0: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D2: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D3: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D4: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D5: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D6: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D7: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D8: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D9: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      A: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      B: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      C: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      D: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      E: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      G: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      H: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      I: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      J: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      K: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      L: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      M: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      N: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      O: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      P: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Q: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      R: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      S: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      T: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      U: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      V: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      W: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      X: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Y: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Z: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LeftWindows: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      RightWindows: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Applications: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Sleep: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad0: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad2: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad3: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad4: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad5: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad6: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad7: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad8: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NumPad9: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Multiply: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Add: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Separator: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Subtract: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Decimal: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Divide: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F2: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F3: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F4: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F5: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F6: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F7: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F8: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F9: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F10: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F11: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F12: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F13: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F14: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F15: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F16: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F17: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F18: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F19: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F20: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F21: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F22: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F23: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      F24: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserBack: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserForward: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserRefresh: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserStop: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserSearch: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserFavorites: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      BrowserHome: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      VolumeMute: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      VolumeDown: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      VolumeUp: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      MediaNext: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      MediaPrevious: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      MediaStop: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      MediaPlay: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LaunchMail: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LaunchMediaSelect: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LaunchApp1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      LaunchApp2: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      OemPlus: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      OemComma: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      OemMinus: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      OemPeriod: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem2: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem3: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem4: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem5: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem6: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem7: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem8: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Oem102: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Process: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Packet: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Attention: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      CrSel: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      ExSel: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      EraseEndOfFile: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Play: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Zoom: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      NoName: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      Pa1: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      OemClear: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+    },
+  },
+  ConsoleKeyInfo: {
+    kind: "struct",
+    members: {
+      ConsoleKeyInfo: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+      GetHashCode: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      Key: {
+        kind: "property",
+        type: () => {
+          return System.ConsoleKey;
+        },
+      },
+      KeyChar: {
+        kind: "property",
+        type: () => {
+          return System.Char;
+        },
+      },
+      Modifiers: {
+        kind: "property",
+        type: () => {
+          return System.ConsoleModifiers;
+        },
+      },
+    },
+  },
+  ConsoleModifiers: {
+    kind: "enum",
+    members: {
+      None: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleModifiers;
+        },
+      },
+      Alt: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleModifiers;
+        },
+      },
+      Shift: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleModifiers;
+        },
+      },
+      Control: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleModifiers;
+        },
+      },
+    },
+  },
+  ConsoleSpecialKey: {
+    kind: "enum",
+    members: {
+      ControlC: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleSpecialKey;
+        },
+      },
+      ControlBreak: {
+        kind: "field",
+        type: () => {
+          return System.ConsoleSpecialKey;
+        },
+      },
+    },
+  },
   ContextBoundObject: {
     kind: "class",
     members: {
@@ -4687,6 +6367,16 @@ const System: SystemLibrary = createLibrary("System", {
         kind: "method",
         methodKind: "ordinary",
         isOverride: true,
+      },
+    },
+    isSealed: true,
+  },
+  DataMisalignedException: {
+    kind: "class",
+    members: {
+      DataMisalignedException: {
+        kind: "method",
+        methodKind: "constructor",
       },
     },
     isSealed: true,
@@ -5822,6 +7512,15 @@ const System: SystemLibrary = createLibrary("System", {
     kind: "class",
     members: {
       DivideByZeroException: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+    },
+  },
+  DllNotFoundException: {
+    kind: "class",
+    members: {
+      DllNotFoundException: {
         kind: "method",
         methodKind: "constructor",
       },
@@ -8380,6 +10079,15 @@ const System: SystemLibrary = createLibrary("System", {
       },
     },
   },
+  IServiceProvider: {
+    kind: "interface",
+    members: {
+      GetService: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+    },
+  },
   ISpanFormattable: {
     kind: "interface",
     members: {
@@ -9489,6 +11197,16 @@ const System: SystemLibrary = createLibrary("System", {
     },
     isSealed: true,
   },
+  LocalDataStoreSlot: {
+    kind: "class",
+    members: {
+      Finalize: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+    },
+    isSealed: true,
+  },
   MTAThreadAttribute: {
     kind: "class",
     members: {
@@ -10053,6 +11771,31 @@ const System: SystemLibrary = createLibrary("System", {
         kind: "property",
         type: () => {
           return System.Span;
+        },
+      },
+    },
+  },
+  MemoryExtensions: {
+    kind: "class",
+    members: {
+      SpanSplitEnumerator: {
+        kind: "struct",
+        members: {
+          GetEnumerator: {
+            kind: "method",
+            methodKind: "ordinary",
+          },
+          MoveNext: {
+            kind: "method",
+            methodKind: "ordinary",
+          },
+          Current: {
+            kind: "property",
+            type: () => {
+              return System.Range;
+            },
+            isReadOnly: true,
+          },
         },
       },
     },
@@ -11261,6 +13004,19 @@ const System: SystemLibrary = createLibrary("System", {
       },
     },
     isSealed: true,
+  },
+  SequencePosition: {
+    kind: "struct",
+    members: {
+      SequencePosition: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      Equals: {
+        kind: "method",
+        methodKind: "ordinary",
+      },
+    },
   },
   Single: {
     kind: "struct",
@@ -15630,6 +17386,40 @@ const System: SystemLibrary = createLibrary("System", {
         type: () => {
           return System.UriPartial;
         },
+      },
+    },
+  },
+  UriTypeConverter: {
+    kind: "class",
+    members: {
+      UriTypeConverter: {
+        kind: "method",
+        methodKind: "constructor",
+      },
+      CanConvertFrom: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      CanConvertTo: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      ConvertFrom: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      ConvertTo: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
+      },
+      IsValid: {
+        kind: "method",
+        methodKind: "ordinary",
+        isOverride: true,
       },
     },
   },

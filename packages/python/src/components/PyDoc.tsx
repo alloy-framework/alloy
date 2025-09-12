@@ -336,3 +336,15 @@ export function SimpleInlineComment(props: SimpleInlineCommentProps) {
     </>
   );
 }
+
+export interface SimpleInlineCommentProps {
+  children: Children;
+}
+
+export function SimpleInlineMemberComment(props: SimpleInlineCommentProps) {
+  return (
+    <>
+      {"  "}#: <Prose>{props.children}</Prose>
+    </>
+  );
+}

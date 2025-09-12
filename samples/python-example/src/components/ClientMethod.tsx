@@ -100,11 +100,10 @@ export function ClientMethod(props: ClientMethodProps) {
   );
 
   return (
-    <py.FunctionDeclaration
+    <py.MethodDeclaration
       name={op.name}
       parameters={parameters}
       returnType={responseReturnType}
-      instanceFunction={true}
       doc={functionDoc}
       refkey={refkey(op.name)}
     >
@@ -114,6 +113,6 @@ export function ClientMethod(props: ClientMethodProps) {
           return ${returnCode}
         `}
       </py.StatementList>
-    </py.FunctionDeclaration>
+    </py.MethodDeclaration>
   );
 }

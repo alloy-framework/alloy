@@ -4,22 +4,18 @@ import {
   For,
   Show,
   SymbolSlot,
-  useContext,
 } from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { resolveTypeExpression } from "../utils.js";
 import { Atom } from "./Atom.jsx";
-import { PythonSourceFileContext } from "./SourceFile.jsx";
 import { type TypeExpressionProps } from "./index.js";
 
 export interface CallSignatureParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
   readonly args?: boolean;
   readonly kwargs?: boolean;
-  readonly instanceFunction?: boolean;
-  readonly classFunction?: boolean;
 }
 
 /**
@@ -36,33 +32,10 @@ export interface CallSignatureParametersProps {
  * ```
  */
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
-  // Validate that only one of instanceFunction or classFunction is true
-  if (props.instanceFunction && props.classFunction) {
-    throw new Error("Cannot be both an instance function and a class function");
-  }
-
-  const sfContext = useContext(PythonSourceFileContext);
-  const module = sfContext?.module;
   const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
 
   const parameterList = computed(() => {
     const params = [];
-
-    // Add self/cls parameter if instance or class function
-    if (props.instanceFunction) {
-      params.push(
-        parameter({
-          symbol: createPythonSymbol("self", { module: module }),
-        }),
-      );
-    } else if (props.classFunction) {
-      params.push(
-        parameter({
-          symbol: createPythonSymbol("cls", { module: module }),
-        }),
-      );
-    }
-
     // Add regular parameters
     parameters.forEach((param) => {
       params.push(parameter(param));
@@ -173,16 +146,6 @@ export interface CallSignatureProps {
   kwargs?: boolean;
 
   /**
-   * Indicates that this is an instance function.
-   */
-  instanceFunction?: boolean; // true if this is an instance function
-
-  /**
-   * Indicates that this is a class function.
-   */
-  classFunction?: boolean; // true if this is a class function
-
-  /**
    * The return type of the function.
    */
   returnType?: TypeExpressionProps;
@@ -214,8 +177,6 @@ export function CallSignature(props: CallSignatureProps) {
       parameters={props.parameters}
       args={props.args}
       kwargs={props.kwargs}
-      instanceFunction={props.instanceFunction}
-      classFunction={props.classFunction}
     />
   );
   const typeParams =

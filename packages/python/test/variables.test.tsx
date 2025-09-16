@@ -31,6 +31,17 @@ describe("Python Variable", () => {
     expect(res).toBe(`my_var: int = 42`);
   });
 
+  it("takes a namekey", () => {
+    const res = toSourceText([
+      <py.VariableDeclaration
+        name={namekey("my-var")}
+        type="int"
+        initializer={42}
+      />,
+    ]);
+    expect(res).toBe(`my_var: int = 42`);
+  });
+
   it("declares a python variable without value", () => {
     const res = toSourceText([
       <py.VariableDeclaration

@@ -1,5 +1,5 @@
 import { List, namekey, refkey } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { VarDeclaration } from "./declaration.jsx";
 
@@ -65,4 +65,18 @@ it("links namekey", () => {
       var testVar = 42;
       var testVar2 = testVar;
   `);
+});
+
+describe("modifiers", () => {
+  it.each(["const", "using"])("%s", (mod) => {
+    expect(
+      <TestNamespace>
+        <VarDeclaration {...{ [mod]: true }} name="test" type="object">
+          a
+        </VarDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+        ${mod} object test = a;
+    `);
+  });
 });

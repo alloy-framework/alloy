@@ -7,7 +7,7 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
-import { makeModifiers } from "../../modifiers.js";
+import { computeModifiersPrefix, makeModifiers } from "../../modifiers.js";
 import { createVariableSymbol } from "../../symbols/factories.js";
 
 /** Props for {@link VarDeclaration} component */
@@ -69,8 +69,9 @@ export function VarDeclaration(props: VarDeclarationProps) {
   }
   return (
     <Declaration symbol={sym}>
-      {getModifiers(props)} <TypeSlot>{props.type ?? "var"}</TypeSlot> <Name />{" "}
-      = <ValueSlot>{props.children}</ValueSlot>;
+      {computeModifiersPrefix([getModifiers(props)])}
+      <TypeSlot>{props.type ?? "var"}</TypeSlot> <Name /> ={" "}
+      <ValueSlot>{props.children}</ValueSlot>;
     </Declaration>
   );
 }

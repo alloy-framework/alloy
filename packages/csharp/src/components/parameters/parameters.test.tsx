@@ -158,17 +158,17 @@ it("can add modifiers: in | out | ref", () => {
           {
             name: "param1",
             type: "T1",
-            modifiers: "ref",
+            modifier: "ref",
           },
           {
             name: "param2",
             type: "T2",
-            modifiers: "in",
+            modifier: "in",
           },
           {
             name: "param3",
             type: "T3",
-            modifiers: "out",
+            modifier: "out",
           },
         ]}
       />

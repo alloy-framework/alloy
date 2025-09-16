@@ -96,16 +96,15 @@ export type LibraryFrom<T> = {
 } & LibrarySymbolReference;
 
 interface InternalContext {
-  binder(): Binder;
-  ownerSymbol(): NamedTypeSymbol;
+  ownerSymbol(binder: Binder | undefined): NamedTypeSymbol;
 }
 
 export function createLibrary<T extends Record<string, Descriptor>>(
   rootNs: string,
   props: T,
 ): LibraryFrom<T> {
-  let binder: Binder | undefined = undefined;
-  let ownerSymbol: NamespaceSymbol | undefined = undefined;
+  const ownerSymbolPerBinder = new WeakMap<Binder, NamespaceSymbol>();
+
   const namespaceNames = rootNs.split(".");
 
   return createSymbolEntry(
@@ -115,33 +114,24 @@ export function createLibrary<T extends Record<string, Descriptor>>(
       members: props,
     },
     {
-      binder() {
-        if (!binder) {
-          binder = useBinder();
-        }
-        return binder!;
-      },
-      ownerSymbol() {
-        if (ownerSymbol) {
-          return ownerSymbol;
-        }
-
-        const binder = this.binder();
-        ownerSymbol = getGlobalNamespace(binder);
-        for (const name of namespaceNames.slice(0, -1)) {
-          if (ownerSymbol!.members.symbolNames.has(name)) {
-            ownerSymbol = ownerSymbol!.members.symbolNames.get(
-              name,
-            )! as NamespaceSymbol;
-          } else {
-            ownerSymbol = new NamespaceSymbol(name, ownerSymbol!, {
-              binder,
-              refkeys: refkey(),
-            });
+      ownerSymbol(binder: Binder | undefined) {
+        return mapGet(ownerSymbolPerBinder, binder, () => {
+          let ownerSymbol = getGlobalNamespace(binder);
+          for (const name of namespaceNames.slice(0, -1)) {
+            if (ownerSymbol!.members.symbolNames.has(name)) {
+              ownerSymbol = ownerSymbol!.members.symbolNames.get(
+                name,
+              )! as NamespaceSymbol;
+            } else {
+              ownerSymbol = new NamespaceSymbol(name, ownerSymbol!, {
+                binder,
+                refkeys: refkey(),
+              });
+            }
           }
-        }
 
-        return ownerSymbol;
+          return ownerSymbol;
+        });
       },
     },
   ) as LibraryFrom<T>;
@@ -152,24 +142,26 @@ function createSymbolEntry(
   descriptor: Descriptor,
   context: InternalContext,
 ): LibrarySymbolReference {
-  let symbol: CSharpSymbol | undefined = undefined;
+  const symbols = new WeakMap<Binder, CSharpSymbol>();
 
-  function getSymbol() {
-    if (symbol) return symbol;
-
-    symbol = createSymbolFromDescriptor(
-      name,
-      descriptor,
-      context,
-      initializeMembers,
+  function getSymbol(binder: Binder | undefined) {
+    // We cache symbols per binder to ensure we only create one symbol. We also
+    // track an unbound symbol for cases where there is no binder (mostly
+    // tests).
+    return mapGet(symbols, binder, () =>
+      createSymbolFromDescriptor(
+        name,
+        binder,
+        descriptor,
+        context,
+        initializeMembers,
+      ),
     );
-    return symbol;
   }
 
   const newContext: InternalContext = {
-    binder: context.binder,
-    ownerSymbol() {
-      return getSymbol() as NamedTypeSymbol;
+    ownerSymbol(binder) {
+      return getSymbol(binder) as NamedTypeSymbol;
     },
   };
 
@@ -182,10 +174,10 @@ function createSymbolEntry(
 
   const obj: LibrarySymbolReference & Record<string, unknown> = {
     [REFKEYABLE]() {
-      return getSymbol().refkeys[0];
+      return getSymbol(useBinder()).refkeys[0];
     },
     [TO_SYMBOL]() {
-      return getSymbol();
+      return getSymbol(useBinder());
     },
   };
 
@@ -209,12 +201,12 @@ function createSymbolEntry(
 
 function createSymbolFromDescriptor(
   name: string,
+  binder: Binder | undefined,
   descriptor: Descriptor,
   context: InternalContext,
   lazyMemberInitializer: () => void,
 ): CSharpSymbol {
-  const ownerSymbol = context.ownerSymbol();
-  const binder = context.binder();
+  const ownerSymbol = context.ownerSymbol(binder);
 
   switch (descriptor.kind) {
     case "namespace":
@@ -267,4 +259,38 @@ function createSymbolFromDescriptor(
     default:
       throw "Unsupported";
   }
+}
+
+const defaultsPerMap = new WeakMap<object, unknown>();
+
+function mapGet<T extends WeakKey, V>(
+  map: WeakMap<T, V>,
+  key: T | undefined,
+): V | undefined;
+function mapGet<T extends WeakKey, V>(
+  map: WeakMap<T, V>,
+  key: T | undefined,
+  init: () => V,
+): V;
+function mapGet<T extends WeakKey, V>(
+  map: WeakMap<T, V>,
+  key: T | undefined,
+  init?: () => V,
+): V | undefined {
+  if (key === undefined) {
+    // Use a per-map default store when callers request a value for an undefined key.
+    let value = defaultsPerMap.get(map as unknown as object) as V | undefined;
+    if (value === undefined && init) {
+      value = init();
+      defaultsPerMap.set(map as unknown as object, value);
+    }
+    return value;
+  }
+
+  let value = map.get(key);
+  if (value === undefined && init) {
+    value = init();
+    map.set(key, value);
+  }
+  return value;
 }

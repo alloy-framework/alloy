@@ -1,11 +1,4 @@
-import {
-  code,
-  List,
-  Output,
-  refkey,
-  render,
-  StatementList,
-} from "@alloy-js/core";
+import { code, List, Output, refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { InterfaceMember, ObjectExpression } from "../src/components/index.js";
@@ -20,7 +13,7 @@ import {
   ParameterDescriptor,
   SourceFile,
 } from "../src/index.js";
-import { assertFileContents, toSourceText } from "./utils.js";
+import { toSourceText } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
@@ -498,7 +491,7 @@ describe("with refkeys", () => {
 
   it("creates a full reference to the first refkey", () => {
     const rk1 = refkey();
-    const res = render(
+    expect(
       <Output>
         <SourceFile path="source.ts">
           <VarDeclaration name="importMe">
@@ -520,15 +513,14 @@ describe("with refkeys", () => {
           </StatementList>
         </SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "index.ts": d`
         import { importMe } from "./source.js";
 
         importMe.prop.foo;
         importMe.prop.foo;
       `,
+      "source.ts": expect.anything(),
     });
   });
 });

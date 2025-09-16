@@ -17,7 +17,8 @@ export type CSharpElements =
   | "class-method"
   | "class-property"
   | "parameter"
-  | "type-parameter";
+  | "type-parameter"
+  | "namespace";
 
 // creates the C# naming policy
 export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
@@ -33,6 +34,7 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
       case "class-method":
       case "type-parameter":
       case "class-property":
+      case "namespace":
         return changecase.pascalCase(name);
       case "constant":
         return changecase.constantCase(name);

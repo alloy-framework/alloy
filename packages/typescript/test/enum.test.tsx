@@ -1,4 +1,4 @@
-import { Output, refkey } from "@alloy-js/core";
+import { namekey, Output, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 
@@ -145,6 +145,26 @@ it("uses the naming policy", () => {
     enum MyEnum {
       FooProp = 1,
       BarProp = 2,
+    }
+  `);
+});
+
+it("takes a namekey for all its elements", () => {
+  const enumKey = namekey("my-enum");
+  const memberKey = namekey("member-one");
+  expect(
+    <Output>
+      <ts.SourceFile path="foo.ts">
+        <ts.EnumDeclaration name={enumKey}>
+          <ts.CommaList>
+            <ts.EnumMember name={memberKey} />
+          </ts.CommaList>
+        </ts.EnumDeclaration>
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    enum my-enum {
+      "member-one",
     }
   `);
 });

@@ -26,7 +26,7 @@ export interface RecordDeclarationProps
   extends Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     RecordModifiers {
-  name: string;
+  name: string | core.Namekey;
 
   /** Doc comment */
   doc?: core.Children;
@@ -73,12 +73,11 @@ export interface RecordDeclarationProps
  * ```
  */
 export function RecordDeclaration(props: RecordDeclarationProps) {
-  const name = useCSharpNamePolicy().getName(props.name!, "record");
-
   // records don't have their own type kind but instead use class or struct
   // depending on what kind of record we have.
-  const thisRecordSymbol = createNamedTypeSymbol(name, "record", {
+  const thisRecordSymbol = createNamedTypeSymbol(props.name, "record", {
     refkeys: props.refkey,
+    namePolicy: useCSharpNamePolicy().for("record"),
   });
 
   const thisRecordScope = createClassScope(thisRecordSymbol);

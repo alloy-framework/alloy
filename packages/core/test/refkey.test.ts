@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { refkey } from "../src/refkey.js";
+import { refkey, REFKEYABLE, Refkeyable } from "../src/refkey.js";
 
 it("is stable when called with same values", () => {
   const obj = {};
@@ -29,4 +29,15 @@ it("can be called with no args and returns a fresh key", () => {
   const key1 = refkey();
   const key2 = refkey();
   expect(key1).not.toBe(key2);
+});
+
+it("unwraps refkeyables", () => {
+  const obj = {};
+  const rk1 = refkey(obj);
+  const refkeyable: Refkeyable = {
+    [REFKEYABLE]() {
+      return rk1;
+    },
+  };
+  expect(refkey(refkeyable)).toBe(rk1);
 });

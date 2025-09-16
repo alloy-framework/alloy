@@ -447,6 +447,47 @@ describe("resolving type members by refkey", () => {
     expect(result.memberPath).toEqual([staticProp]);
   });
 
+  it("string member", () => {
+    const globalScope = createScope("global");
+    const [typeSymbol, typeKey] = createSymbol("MyType", globalScope);
+    const [staticProp] = createSymbol("staticProp", typeSymbol.staticMembers);
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(typeKey, "staticProp"),
+    ).value!;
+
+    expect(result.symbol).toBe(staticProp);
+    expect(result.lexicalDeclaration).toBe(typeSymbol);
+    expect(result.memberPath).toEqual([staticProp]);
+  });
+
+  it("string member when member symbol changes", async () => {
+    const globalScope = createScope("global");
+    const [typeSymbol, typeKey] = createSymbol("MyType", globalScope);
+    const [staticProp] = createSymbol("staticProp", typeSymbol.staticMembers);
+
+    // resolve a member of type
+    const result = binder.resolveDeclarationByKey(
+      globalScope,
+      memberRefkey(typeKey, "staticProp"),
+    );
+
+    expect(result.value!.symbol).toBe(staticProp);
+    expect(result.value!.lexicalDeclaration).toBe(typeSymbol);
+    expect(result.value!.memberPath).toEqual([staticProp]);
+
+    staticProp.delete();
+
+    expect(result.value).toBe(undefined);
+
+    const [staticProp2] = createSymbol("staticProp", typeSymbol.staticMembers);
+    expect(result.value!.symbol).toBe(staticProp2);
+    expect(result.value!.lexicalDeclaration).toBe(typeSymbol);
+    expect(result.value!.memberPath).toEqual([staticProp2]);
+  });
+
   it("nested member", () => {
     const globalScope = createScope("global");
     const [typeSymbol, typeKey] = createSymbol("MyType", globalScope);
@@ -472,7 +513,7 @@ describe("resolving type members by refkey", () => {
     // resolve from a member refkey
     const result2 = binder.resolveDeclarationByKey(
       globalScope,
-      memberRefkey(memberRefkey(typeKey, staticPropKey), nestedKey),
+      memberRefkey(typeKey, staticPropKey, nestedKey),
     ).value!;
 
     expect(result2.symbol).toBe(nestedProp);

@@ -1,12 +1,11 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { it } from "vitest";
+import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { PackageDirectory } from "../src/components/PackageDirectory.js";
-import { assertFileContents } from "./utils.js";
 
 it("exports source files", () => {
-  const res = render(
+  expect(
     <Output>
       <PackageDirectory name="greeting-js" path="." version="1.0.0">
         <ts.SourceFile path="greeting.ts">
@@ -35,9 +34,7 @@ it("exports source files", () => {
         <ts.BarrelFile export="." />
       </PackageDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "greeting.ts": `
       function getGreeting() {
         return "Hello world!";
@@ -69,11 +66,12 @@ it("exports source files", () => {
         }
       }
     `,
+    "tsconfig.json": expect.anything(),
   });
 });
 
 it("combines ref'd exports with explicit exports", () => {
-  const res = render(
+  expect(
     <Output>
       <PackageDirectory
         name="greeting-js"
@@ -94,9 +92,7 @@ it("combines ref'd exports with explicit exports", () => {
         </ts.SourceFile>
       </PackageDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       export function printGreeting() {
         console.log(greeting);
@@ -116,5 +112,6 @@ it("combines ref'd exports with explicit exports", () => {
         }
       }
     `,
+    "tsconfig.json": expect.anything(),
   });
 });

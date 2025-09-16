@@ -1,8 +1,7 @@
-import { Output, render } from "@alloy-js/core";
-import { it } from "vitest";
+import { Output } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import { ProjectDirectory } from "../src/components/index.js";
 import { MavenProjectConfig } from "../src/index.js";
-import { assertFileContents } from "./utils.jsx";
 
 it("generates barebones pom.xml file", () => {
   const projectConfig: MavenProjectConfig = {
@@ -12,16 +11,14 @@ it("generates barebones pom.xml file", () => {
     javaVersion: 8,
   };
 
-  const res = render(
+  expect(
     <Output>
       <ProjectDirectory
         name="TestMavenProject"
         mavenProjectConfig={projectConfig}
       ></ProjectDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "pom.xml": `
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -122,16 +119,14 @@ it("generates complex configuration", () => {
     },
   };
 
-  const res = render(
+  expect(
     <Output>
       <ProjectDirectory
         name="TestMavenProject"
         mavenProjectConfig={projectConfig}
       ></ProjectDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "pom.xml": `
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="http://maven.apache.org/POM/4.0.0"

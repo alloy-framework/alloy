@@ -1,4 +1,4 @@
-import { memberRefkey, refkey } from "@alloy-js/core";
+import { memberRefkey, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -11,6 +11,18 @@ import {
 describe("Python Class", () => {
   it("renders a class with no body as 'pass'", () => {
     const result = toSourceText([<py.ClassDeclaration name="Foo" />]);
+    expect(result).toRenderTo(d`
+      class Foo:
+          pass
+
+
+    `);
+  });
+
+  it("takes a namekey", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration name={namekey("Foo")} />,
+    ]);
     expect(result).toRenderTo(d`
       class Foo:
           pass

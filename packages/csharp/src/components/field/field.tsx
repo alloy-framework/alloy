@@ -1,4 +1,4 @@
-import { Children, Declaration, Name, Refkey } from "@alloy-js/core";
+import { Children, Declaration, Name, Namekey, Refkey } from "@alloy-js/core";
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -28,7 +28,7 @@ const getModifiers = makeModifiers<FieldModifiers>([
 ]);
 
 export interface FieldProps extends AccessModifiers, FieldModifiers {
-  name: string;
+  name: string | Namekey;
   type: Children;
   refkey?: Refkey;
   /** Doc comment */

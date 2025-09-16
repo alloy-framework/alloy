@@ -14,13 +14,15 @@ import {
   root,
   untrack,
 } from "./reactivity.js";
-import { isRefkey } from "./refkey.js";
+import { isRefkeyable, toRefkey } from "./refkey.js";
 import {
   Child,
   Children,
   Component,
   isComponentCreator,
+  isRenderableObject,
   Props,
+  RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs, flushJobsAsync } from "./scheduler.js";
@@ -261,6 +263,10 @@ export function sourceFilesForTree(
             options?.printWidth ?? context.meta?.printOptions?.printWidth,
           tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
           useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
+          insertFinalNewLine:
+            options?.insertFinalNewLine ??
+            context.meta?.printOptions?.insertFinalNewLine ??
+            true,
         }),
       };
 
@@ -535,15 +541,19 @@ function normalizeChild(child: Child): NormalizedChildren {
     return "";
   } else if (isRef(child)) {
     return () => child.value as () => Child;
-  } else if (isRefkey(child)) {
+  } else if (isRefkeyable(child)) {
+    const refkey = toRefkey(child);
     return () => {
       const sfContext = useContext(SourceFileContext);
       if (!sfContext || !sfContext.reference) {
         throw new Error("Can only emit references inside of source files");
       }
 
-      return sfContext.reference({ refkey: child });
+      return sfContext.reference({ refkey });
     };
+  } else if (isRenderableObject(child)) {
+    // For custom renderable objects, we will just normalize them to a bound function.
+    return child[RENDERABLE].bind(child);
   } else if (isCustomContext(child)) {
     return child;
   } else if (isIntrinsicElement(child)) {
@@ -569,6 +579,8 @@ function debugPrintChild(child: Children): string {
     return "$ref";
   } else if (isIntrinsicElement(child)) {
     return `<${child.name}>`;
+  } else if (isRenderableObject(child)) {
+    return `CustomChildElement(${JSON.stringify(child)})`;
   } else {
     return JSON.stringify(child);
   }
@@ -590,6 +602,12 @@ export interface PrintTreeOptions {
    * The number of spaces to use for indentation. Defaults to 2 spaces.
    */
   tabWidth?: number;
+
+  /**
+   * If files should end with a final new line.
+   * @default true
+   */
+  insertFinalNewLine?: boolean;
 }
 
 const defaultPrintTreeOptions: PrintTreeOptions = {
@@ -609,8 +627,14 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
   flushJobs();
 
   const d = printTreeWorker(tree);
-  return doc.printer.printDocToString(d, options as doc.printer.Options)
-    .formatted;
+  const result = doc.printer.printDocToString(
+    d,
+    options as doc.printer.Options,
+  ).formatted;
+
+  return options.insertFinalNewLine && !result.endsWith("\n") ?
+      `${result}\n`
+    : result;
 }
 
 function printTreeWorker(tree: RenderedTextTree): Doc {

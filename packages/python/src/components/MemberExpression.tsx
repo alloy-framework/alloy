@@ -1,10 +1,10 @@
 import {
   Children,
   childrenArray,
-  code,
   computed,
   For,
   isComponentCreator,
+  List,
   OutputSymbol,
   reactive,
   ref,
@@ -397,11 +397,6 @@ function isSubscriptionDescriptor(
   return "type" in part && part.type === MEMBER_ACCESS_TYPES.SUBSCRIPTION;
 }
 
-function getNameForRefkey(refkey: Children): Children {
-  const parsedValue = getSymbolForRefkey(refkey as Refkey).value;
-  return parsedValue !== undefined ? parsedValue.name : refkey;
-}
-
 export interface SubscriptionProps {
   /**
    * Single key for subscription access (obj[key] or obj[0]).
@@ -429,28 +424,20 @@ export interface SubscriptionProps {
 function getSubscriptionValue(partProps: SubscriptionProps): Children {
   // Handle tuple keys: obj[a, b] → (a, b)
   if (partProps.keys?.length) {
-    const parsedKeys = partProps.keys.map((key) =>
-      getNameForRefkey(key as Refkey),
-    );
-    return code`${parsedKeys.join(", ")}`;
+    return <List comma line children={partProps.keys} />;
   }
 
   // Handle slice: obj[start:stop:step]
   if (partProps.slice && Object.keys(partProps.slice).length > 0) {
     const { start, stop, step } = partProps.slice;
-    const parts = [
-      start ? getNameForRefkey(start as Refkey) : "",
-      ":",
-      stop ? getNameForRefkey(stop as Refkey) : "",
-    ];
+    const parts = [start ? start : "", ":", stop ? stop : ""];
 
     if (step) {
-      parts.push(":", getNameForRefkey(step as Refkey));
+      parts.push(":", step);
     }
 
-    return code`${parts.join("")}`;
+    return parts;
   }
 
-  // Handle single key: obj[key]
-  return getNameForRefkey(partProps.key as Refkey);
+  return partProps.key;
 }

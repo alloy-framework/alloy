@@ -3,6 +3,7 @@ import {
   Children,
   MemberDeclaration,
   Name,
+  Namekey,
   Prose,
   Refkey,
   Show,
@@ -17,7 +18,7 @@ import {
 import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.jsx";
+import { CommonDeclarationProps, Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
@@ -25,7 +26,7 @@ import { MemberScope } from "./MemberScope.jsx";
 import { PropertyName } from "./PropertyName.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
-export interface ClassDeclarationProps extends BaseDeclarationProps {
+export interface ClassDeclarationProps extends CommonDeclarationProps {
   extends?: Children;
 }
 
@@ -59,20 +60,18 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
  *
  * {staticMember}; // Animal.something
  * <MemberReference path={[myPetRefkey, instanceMember]} /> // myPet.name
- * {member(myPetRefkey, instanceMember)} // other option?
+ * {memberRefkey(myPetRefkey, instanceMember)}
  * ```
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
-  const namePolicy = useTSNamePolicy();
-  const name = namePolicy.getName(props.name!, "class");
-
   const extendsPart = props.extends && <> extends {props.extends}</>;
-  const sym = createTypeAndValueSymbol(name, {
+  const sym = createTypeAndValueSymbol(props.name, {
     refkeys: props.refkey,
     export: props.export,
     default: props.default,
     metadata: props.metadata,
     hasInstanceMembers: true,
+    namePolicy: useTSNamePolicy().for("class"),
   });
 
   return (
@@ -92,7 +91,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
 }
 
 export interface ClassMemberProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   public?: boolean;
   private?: boolean;
@@ -105,17 +104,15 @@ export interface ClassMemberProps {
 }
 
 export function ClassMember(props: ClassMemberProps) {
-  const namer = useTSNamePolicy();
-  const name = namer.getName(props.name, "class-member-data");
-
   let tsFlags = TSSymbolFlags.None;
   if (props.nullish) {
     tsFlags |= TSSymbolFlags.Nullish;
   }
 
-  const sym = createMemberSymbol(name, props, {
+  const sym = createMemberSymbol(props.name, props, {
     refkeys: props.refkey,
     tsFlags,
+    namePolicy: useTSNamePolicy().for("class-member-data"),
   });
 
   return (
@@ -183,7 +180,7 @@ export function ClassMethod(props: ClassMethodProps) {
       <ClassMember {...rest}>
         {props.async && "async "}
         <PropertyName />
-        <LexicalScope name={props.name}>
+        <LexicalScope>
           <CallSignature {...callProps} /> <Block>{props.children}</Block>
         </LexicalScope>
       </ClassMember>

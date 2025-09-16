@@ -1,8 +1,7 @@
-import { Output, refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { List, memberRefkey, namekey, Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { ClassDeclaration } from "./class/declaration.jsx";
-import { Namespace } from "./namespace.jsx";
+import { Namespace } from "./namespace/namespace.jsx";
 import { SourceFile } from "./source-file/source-file.jsx";
 
 it("references types in the same namespace", () => {
@@ -20,7 +19,7 @@ it("references types in the same namespace", () => {
     </Output>
   );
 
-  expect(tree).toRenderTo(d`
+  expect(tree).toRenderTo(`
     namespace Test;
 
     class TestClass;
@@ -43,7 +42,7 @@ it("references types in a parent namespace", () => {
     </Output>
   );
 
-  expect(tree).toRenderTo(d`
+  expect(tree).toRenderTo(`
     namespace Test {
         class TestClass;
         namespace Nested {
@@ -69,7 +68,7 @@ it("references types in a child namespace", () => {
     </Output>
   );
 
-  expect(tree).toRenderTo(d`
+  expect(tree).toRenderTo(`
     namespace Test {
         Nested.TestClass;
         namespace Nested {
@@ -94,7 +93,7 @@ it("references types in a different top-level namespace declared in the same fil
     </Output>
   );
 
-  expect(tree).toRenderTo(d`
+  expect(tree).toRenderTo(`
     using TestCode2;
 
     namespace TestCode1 {
@@ -123,17 +122,43 @@ it("references types in a different top-level namespace declared in a different 
   );
 
   expect(tree).toRenderTo({
-    "test.cs": d`
+    "test.cs": `
       using TestCode2;
 
       namespace TestCode1 {
           TestClass;
       }
     `,
-    "other.cs": d`
+    "other.cs": `
         namespace TestCode2 {
             class TestClass;
         }
       `,
   });
+});
+
+it("can be referenced by refkey", () => {
+  const classRef = namekey("TestClass");
+  const nsRef = namekey("TestCode2");
+  const tree = (
+    <Output>
+      <SourceFile path="other.cs">
+        <List>
+          <Namespace name={nsRef}>
+            <ClassDeclaration name={classRef} />
+          </Namespace>
+          <>{memberRefkey(nsRef, classRef)};</>
+        </List>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(`
+    using TestCode2;
+
+    namespace TestCode2 {
+        class TestClass;
+    }
+    TestClass;
+  `);
 });

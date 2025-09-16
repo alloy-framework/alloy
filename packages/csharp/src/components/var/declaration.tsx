@@ -1,8 +1,10 @@
 import {
   Children,
+  createSymbolSlot,
   Declaration,
   DeclarationProps,
   Name,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { createVariableSymbol } from "../../symbols/factories.js";
@@ -11,13 +13,16 @@ import { createVariableSymbol } from "../../symbols/factories.js";
 export interface VarDeclarationProps
   extends Omit<DeclarationProps, "nameKind"> {
   /** Variable name */
-  name: string;
+  name: string | Namekey;
   /** Type of the variable declaration. If not specified, defaults to "var" */
   type?: Children;
   /** Variable refkey */
   refkey?: Refkey;
   /** Variable value */
   children?: Children;
+
+  /** Constant variable. Add the const modifier. */
+  const?: boolean;
 }
 
 /**
@@ -42,12 +47,22 @@ export interface VarDeclarationProps
  * ```
  */
 export function VarDeclaration(props: VarDeclarationProps) {
+  const TypeSlot = createSymbolSlot();
+  const ValueSlot = createSymbolSlot();
+
   const sym = createVariableSymbol(props.name, {
     refkeys: props.refkey,
+    type: props.type ? TypeSlot.firstSymbol : ValueSlot.firstSymbol,
   });
+
+  if (props.const && !props.type) {
+    throw new Error("Implicitly-typed variables cannot be constant");
+  }
   return (
     <Declaration symbol={sym}>
-      {props.type ?? "var"} <Name /> = {props.children};
+      {props.const ? "const " : ""}
+      <TypeSlot>{props.type ?? "var"}</TypeSlot> <Name /> ={" "}
+      <ValueSlot>{props.children}</ValueSlot>;
     </Declaration>
   );
 }

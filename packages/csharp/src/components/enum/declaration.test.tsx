@@ -1,4 +1,5 @@
-import { toSourceText } from "#test/utils.jsx";
+import { TestNamespace, toSourceText } from "#test/utils.jsx";
+import { namekey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { EnumDeclaration } from "./declaration.jsx";
@@ -30,5 +31,17 @@ it("applies naming policy to enum and members", () => {
         One,
         Two
     }
+  `);
+});
+
+it("takes a namekey", () => {
+  const key = namekey("my-enum");
+  const tree = (
+    <TestNamespace>
+      <EnumDeclaration name={key} />
+    </TestNamespace>
+  );
+  expect(tree).toRenderTo(`
+    enum MyEnum;
   `);
 });

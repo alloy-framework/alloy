@@ -1,17 +1,15 @@
-import { Output, refkey, render, StatementList } from "@alloy-js/core";
+import { Output, refkey, StatementList } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
-import { findFile } from "./utils.jsx";
 
 it("applies to functions and variables", () => {
   const ref1 = refkey({});
   const ref2 = refkey({});
 
   const namePolicy = createTSNamePolicy();
-  const res = render(
+  expect(
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="foo-bar" refkey={ref1} />
@@ -25,9 +23,7 @@ it("applies to functions and variables", () => {
         </StatementList>
       </ts.SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "test.ts").contents).toEqual(d`
+  ).toRenderTo(`
     function fooBar() {}
     const oneTwo = "hello";
     fooBar;
@@ -40,7 +36,7 @@ it("keeps _ and $ prefix", () => {
   const ref2 = refkey({});
 
   const namePolicy = createTSNamePolicy();
-  const res = render(
+  expect(
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration name="_foo-bar" refkey={ref1} />
@@ -54,9 +50,7 @@ it("keeps _ and $ prefix", () => {
         </StatementList>
       </ts.SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "test.ts").contents).toEqual(d`
+  ).toRenderTo(`
     function _fooBar() {}
     const $oneTwo = "hello";
     _fooBar;
@@ -69,7 +63,7 @@ it("appends _ to reserved words", () => {
   const ref2 = refkey({});
 
   const namePolicy = createTSNamePolicy();
-  const res = render(
+  expect(
     <Output namePolicy={namePolicy}>
       <ts.SourceFile path="test.ts">
         <ts.FunctionDeclaration
@@ -87,9 +81,7 @@ it("appends _ to reserved words", () => {
         </StatementList>
       </ts.SourceFile>
     </Output>,
-  );
-
-  expect(findFile(res, "test.ts").contents).toEqual(d`
+  ).toRenderTo(`
     function default_(await_: any) {}
     const super_ = "hello";
     default_;

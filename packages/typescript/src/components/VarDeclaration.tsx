@@ -8,11 +8,11 @@ import {
 import { useTSNamePolicy } from "../name-policy.js";
 import { createValueSymbol } from "../symbols/index.js";
 import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
-import { BaseDeclarationProps } from "./Declaration.js";
+import { CommonDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
-export interface VarDeclarationProps extends BaseDeclarationProps {
+export interface VarDeclarationProps extends CommonDeclarationProps {
   const?: boolean;
   let?: boolean;
   var?: boolean;
@@ -24,14 +24,14 @@ export interface VarDeclarationProps extends BaseDeclarationProps {
 export function VarDeclaration(props: VarDeclarationProps) {
   const TypeSymbolSlot = createSymbolSlot();
   const ValueTypeSymbolSlot = createSymbolSlot();
-  const name = useTSNamePolicy().getName(props.name, "variable");
-  const sym = createValueSymbol(name, {
+  const sym = createValueSymbol(props.name, {
     refkeys: props.refkey,
     default: props.default,
     export: props.export,
     metadata: props.metadata,
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
     type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
+    namePolicy: useTSNamePolicy().for("variable"),
   });
 
   if (!props.type) {
@@ -58,8 +58,10 @@ export function VarDeclaration(props: VarDeclarationProps) {
       <CoreDeclaration symbol={sym}>
         {props.export ? "export " : ""}
         {props.default ? "default " : ""}
-        {keyword} <Name />
-        {type} ={" "}
+        <Show when={!props.default}>
+          {keyword} <Name />
+          {type} ={" "}
+        </Show>
         <ValueTypeSymbolSlot>
           {props.initializer ?? props.children}
         </ValueTypeSymbolSlot>

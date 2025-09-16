@@ -1,6 +1,6 @@
 import { effect, ReactiveEffectRunner } from "@vue/reactivity";
 import { untrack } from "./reactivity.js";
-import { isMemberRefkey, type Refkey } from "./refkey.js";
+import { inspectRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
 import { type OutputScope } from "./symbols/output-scope.js";
 import type {
@@ -429,10 +429,7 @@ export function formatRefkeys(refkeys: Refkey[] | Refkey | undefined) {
 }
 
 function formatRefkey(refkey: Refkey): string {
-  const text =
-    isMemberRefkey(refkey) ?
-      `memberRefkey[${formatRefkey(refkey.base)} -> ${formatRefkey(refkey.member)}]`
-    : `refkey[${refkey.key}]`;
+  const text = inspectRefkey(refkey);
 
   return colorText(text, {
     fg: {

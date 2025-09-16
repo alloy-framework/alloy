@@ -1,6 +1,6 @@
 import { reactive, watch } from "@vue/reactivity";
 import { describe, expect, it, vi } from "vitest";
-import { Refkey } from "../../src/refkey.js";
+import { refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { SymbolTable } from "../../src/symbols/symbol-table.js";
@@ -168,9 +168,9 @@ describe("OutputScope#symbolsByRefkey", () => {
 
     // Use the refkey function to create refkeys
     // This is based on how refkey is being imported in binder.ts
-    const key1 = "key1" as unknown as Refkey;
-    const key2a = "key2a" as unknown as Refkey;
-    const key2b = "key2b" as unknown as Refkey;
+    const key1 = refkey();
+    const key2a = refkey();
+    const key2b = refkey();
 
     // Create a symbol with a refkey
     const [sym1] = createSymbol("sym1", scope, {

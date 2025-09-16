@@ -1,21 +1,7 @@
 import { createNamedContext, useContext } from "../context.js";
+import { PrintTreeOptions } from "../render.js";
 
-export interface CommonFormatOptions {
-  /**
-   * The number of characters the printer will wrap on.
-   */
-  printWidth?: number;
-
-  /**
-   * Whether to use tabs instead of spaces for indentation.
-   */
-  useTabs?: boolean;
-
-  /**
-   * The number of spaces to use for indentation.
-   */
-  tabWidth?: number;
-}
+export interface CommonFormatOptions extends PrintTreeOptions {}
 
 export const { Provider: FormatOptions, useFormatOptions } =
   createFormatOptionsContextFor<CommonFormatOptions>("*");

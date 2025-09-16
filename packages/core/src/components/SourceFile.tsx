@@ -49,6 +49,7 @@ export function SourceFile(props: SourceFileProps) {
     printWidth: props.printWidth,
     tabWidth: props.tabWidth,
     useTabs: props.useTabs,
+    insertFinalNewLine: props.insertFinalNewLine,
   });
 
   return (

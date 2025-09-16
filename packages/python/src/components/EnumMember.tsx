@@ -1,4 +1,4 @@
-import { Children, Refkey, Show } from "@alloy-js/core";
+import { Children, Namekey, Refkey, Show } from "@alloy-js/core";
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
@@ -9,7 +9,7 @@ export interface EnumMemberProps {
   /**
    * The name of the enum member.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * Refkey for the enum member symbol. If the refkey is not provided, a symbol

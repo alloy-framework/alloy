@@ -4,19 +4,17 @@ import {
   SourceDirectory,
   StatementList,
   refkey,
-  render,
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { TypeRefContext } from "../src/context/type-ref-context.js";
 import { createPackage } from "../src/create-package.js";
 import { tsNameConflictResolver } from "../src/name-conflict-resolver.js";
-import { assertFileContents } from "./utils.js";
 
 it("works with default imports", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration
@@ -31,9 +29,7 @@ it("works with default imports", () => {
         const v = <Reference refkey={refkey("test")} />;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       export default function asdf() {}
     `,
@@ -46,7 +42,7 @@ it("works with default imports", () => {
 });
 
 it("works with named imports", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration export name="test" refkey={refkey("test")} />
@@ -56,9 +52,7 @@ it("works with named imports", () => {
         const v = <Reference refkey={refkey("test")} />;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       export function test() {}
     `,
@@ -71,7 +65,7 @@ it("works with named imports", () => {
 });
 
 it("sort named imports", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
         <List>
@@ -95,20 +89,22 @@ it("sort named imports", () => {
         </List>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test2.ts": `
       import { a, B } from "./test1.js";
 
       const b = B;
       const a = a;
     `,
+    "test1.ts": `
+      export class B {}
+      export function a() {}
+    `,
   });
 });
 
 it("sort statements by import paths", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="a.ts">
         <ts.ClassDeclaration export default name="A" refkey={refkey("A")} />
@@ -128,9 +124,7 @@ it("sort statements by import paths", () => {
         </List>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test2.ts": `
       import A from "./a.js";
       import B from "./b.js";
@@ -138,11 +132,13 @@ it("sort statements by import paths", () => {
       const b = B;
       const a = A;
     `,
+    "a.ts": "export default class A {}",
+    "b.ts": "export default class B {}",
   });
 });
 
 it("works with default and named imports", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration
@@ -160,9 +156,7 @@ it("works with default and named imports", () => {
         const v2 = <Reference refkey={refkey("test2")} />;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       export default function test1() {}
       export function test2() {}
@@ -177,7 +171,7 @@ it("works with default and named imports", () => {
 });
 
 it("works with default and named imports and name conflicts", () => {
-  const res = render(
+  expect(
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration
@@ -221,9 +215,7 @@ it("works with default and named imports and name conflicts", () => {
         </StatementList>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       export default function test1() {}
       export function test2() {}
@@ -253,7 +245,7 @@ it("works with importing the same name many times from different files with the 
   const rk3 = refkey();
   const rk3i = refkey();
 
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
         <ts.VarDeclaration export name="conflict" refkey={rk1}>
@@ -281,9 +273,7 @@ it("works with importing the same name many times from different files with the 
         </StatementList>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test-import.ts": `
       import { conflict, type MyInterface } from "./test1.js";
       import { conflict as conflict_2, type MyInterface as MyInterface_2 } from "./test2.js";
@@ -293,10 +283,13 @@ it("works with importing the same name many times from different files with the 
       const two: MyInterface_2 = conflict_2;
       const three: MyInterface_3 = conflict_3;
     `,
+    "test1.ts": `export const conflict = "hi"export interface MyInterface {}`,
+    "test2.ts": `const conflict = "hi"export interface MyInterface {}`,
+    "test3.ts": `const conflict = "hi"export interface MyInterface {}`,
   });
 });
 it("works with default and named imports and name conflicts and references in nested scopes", () => {
-  const res = render(
+  expect(
     <Output nameConflictResolver={tsNameConflictResolver}>
       <ts.SourceFile path="test1.ts">
         <ts.FunctionDeclaration
@@ -345,9 +338,7 @@ it("works with default and named imports and name conflicts and references in ne
         </ts.FunctionDeclaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       export default function test1() {}
       export function test2() {}
@@ -372,7 +363,7 @@ it("works with default and named imports and name conflicts and references in ne
 });
 
 it("works with imports from different directories", () => {
-  const res = render(
+  expect(
     <Output>
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
@@ -387,9 +378,7 @@ it("works with imports from different directories", () => {
         <ts.FunctionDeclaration export name="test2" refkey={refkey("test2")} />
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "src/test1.ts": `
       import { test2 } from "../test2.js";
 
@@ -406,7 +395,7 @@ it("works with imports from different directories", () => {
 });
 
 it("handles conflicts with local declarations", () => {
-  const res = render(
+  expect(
     <Output nameConflictResolver={tsNameConflictResolver}>
       <SourceDirectory path="src">
         <ts.SourceFile path="test1.ts">
@@ -421,9 +410,12 @@ it("handles conflicts with local declarations", () => {
         <ts.FunctionDeclaration export name="test" />
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+    // cspell:ignore stest2
+  ).toRenderTo({
+    "src/test1.ts": `
+      export function test() {}
+      const v = <Unresolved Symbol: refkey[stest2]>;
+    `,
     "test2.ts": `
       import { test as test_1 } from "./src/test1.js";
 
@@ -455,7 +447,7 @@ describe("type imports", () => {
 
   it("adds type keyword only to type imports", () => {
     const { component, TypeA, ClassA } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -469,21 +461,20 @@ describe("type imports", () => {
           </List>
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
-      import { ClassA, type TypeA } from "./test1.js";
+        import { ClassA, type TypeA } from "./test1.js";
 
-      type A = TypeA
-      class B extends ClassA {}
+        type A = TypeA
+        class B extends ClassA {}
     `,
     });
   });
 
   it("add type keyword for whole import if all are types", () => {
     const { component, TypeA, TypeB } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -497,9 +488,8 @@ describe("type imports", () => {
           </List>
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
       import type { TypeA, TypeB } from "./test1.js";
 
@@ -510,7 +500,7 @@ describe("type imports", () => {
   });
   it("reference same type multiple times", () => {
     const { component, TypeA } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -524,9 +514,8 @@ describe("type imports", () => {
           </List>
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
       import type { TypeA } from "./test1.js";
 
@@ -538,7 +527,7 @@ describe("type imports", () => {
 
   it("same reference used as both type and non type doesn't include type", () => {
     const { component, ClassA } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -552,9 +541,8 @@ describe("type imports", () => {
           </List>
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
       import { ClassA } from "./test1.js";
 
@@ -566,7 +554,7 @@ describe("type imports", () => {
 
   it("value reference from another file doesn't affect a type only reference", () => {
     const { component, ClassA } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -576,9 +564,8 @@ describe("type imports", () => {
           class B extends <Reference refkey={ClassA} /> {"{}"}
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
       import type { ClassA } from "./test1.js";
 
@@ -594,7 +581,7 @@ describe("type imports", () => {
 
   it("infer if a type reference from the typescript context", () => {
     const { component, TypeA } = mkTestFile("test1.ts");
-    const res = render(
+    expect(
       <Output>
         {component}
         <ts.SourceFile path="test2.ts">
@@ -610,9 +597,8 @@ describe("type imports", () => {
           </TypeRefContext.Provider>
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
+      "test1.ts": expect.anything(),
       "test2.ts": `
       import type { TypeA } from "./test1.js";
 
@@ -633,15 +619,13 @@ describe("type imports", () => {
       },
     });
 
-    const res = render(
+    expect(
       <Output externals={[pkg1]}>
         <ts.SourceFile path="test2.ts">
           type A = <Reference refkey={pkg1.Foo} type />
         </ts.SourceFile>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "test2.ts": `
       import type { Foo } from "test";
 

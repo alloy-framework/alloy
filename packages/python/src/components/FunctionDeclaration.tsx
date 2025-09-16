@@ -7,8 +7,11 @@ import {
   emitSymbol,
   findKeyedChild,
   findUnkeyedChildren,
+  isNamekey,
   List,
   Name,
+  Namekey,
+  namekey,
   Refkey,
   Show,
   taggedComponent,
@@ -23,12 +26,7 @@ import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { PythonBlock } from "./PythonBlock.jsx";
-import {
-  Atom,
-  LexicalScope,
-  NoNamePolicy,
-  TypeExpressionProps,
-} from "./index.js";
+import { Atom, LexicalScope, TypeExpressionProps } from "./index.js";
 
 const setterTag = Symbol();
 const deleterTag = Symbol();
@@ -42,11 +40,12 @@ const PropertyContext = createContext<TypeExpressionProps | undefined>();
  * Validates that the current scope is a member scope (inside a class).
  * Throws an error if not in a member scope.
  */
-function validateMemberScope(name: string, type: string = "Method") {
+function validateMemberScope(name: string | Namekey, type: string = "Method") {
   const currentScope = usePythonScope();
   if (!currentScope?.isMemberScope) {
+    const displayName = typeof name === "string" ? name : name.name;
     throw new Error(
-      `${type} "${name}" must be declared inside a class (member scope)`,
+      `${type} "${displayName}" must be declared inside a class (member scope)`,
     );
   }
 }
@@ -606,11 +605,11 @@ export interface DunderMethodDeclarationProps
  * within a class.
  */
 export function DunderMethodDeclaration(props: DunderMethodDeclarationProps) {
-  return (
-    <NoNamePolicy>
-      <MethodDeclaration {...props} />
-    </NoNamePolicy>
-  );
+  const finalName =
+    isNamekey(props.name) ?
+      props.name
+    : namekey(props.name as string, { ignoreNamePolicy: true });
+  return <MethodDeclaration {...props} name={finalName} />;
 }
 
 export interface ConstructorDeclarationProps
@@ -645,8 +644,10 @@ export function ConstructorDeclaration(props: ConstructorDeclarationProps) {
   // __new__ is a special method, as, despite having cls as the first parameter,
   // it isn't decorated with @classmethod.
   return (
-    <NoNamePolicy>
-      <MethodDeclarationBase {...props} name="__new__" functionType={"class"} />
-    </NoNamePolicy>
+    <MethodDeclarationBase
+      {...props}
+      name={namekey("__new__", { ignoreNamePolicy: true })}
+      functionType={"class"}
+    />
   );
 }

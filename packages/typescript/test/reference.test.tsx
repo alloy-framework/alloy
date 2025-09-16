@@ -1,15 +1,24 @@
-import { Output, refkey, render } from "@alloy-js/core";
+import { Output, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { it } from "vitest";
+import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
-import { assertFileContents } from "./utils.js";
+
+it("using refkey that is missing declration show info about it", () => {
+  const key = refkey("foo");
+  expect(
+    <Output>
+      <ts.SourceFile path="test1.ts">{key}</ts.SourceFile>
+    </Output>,
+    // cspell:ignore sfoo
+  ).toRenderTo(`<Unresolved Symbol: refkey[sfoo]>`);
+});
 
 it("works with back references", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test1.ts">
-        <ts.Declaration name="foo" refkey={refkey("foo")}>
+        <ts.Declaration name="foo" nameKind="variable" refkey={refkey("foo")}>
           const foo = 1;
         </ts.Declaration>
       </ts.SourceFile>
@@ -18,9 +27,7 @@ it("works with back references", () => {
         const v = <Reference refkey={refkey("foo")} />;
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       const foo = 1;
     `,
@@ -33,20 +40,18 @@ it("works with back references", () => {
 });
 
 it("works with forward references", () => {
-  const res = render(
+  expect(
     <Output>
       <ts.SourceFile path="test2.ts">
         const v = <Reference refkey={refkey("foo")} />;
       </ts.SourceFile>
       <ts.SourceFile path="test1.ts">
-        <ts.Declaration name="foo" refkey={refkey("foo")}>
+        <ts.Declaration nameKind="variable" name="foo" refkey={refkey("foo")}>
           const foo = 1;
         </ts.Declaration>
       </ts.SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "test1.ts": `
       const foo = 1;
     `,

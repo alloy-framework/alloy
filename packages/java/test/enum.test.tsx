@@ -1,4 +1,4 @@
-import { code, refkey } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
@@ -10,6 +10,18 @@ it("works", () => {
   expect(res).toBe(d`
     package me.test.code;
 
+    public enum TestEnum {}
+  `);
+});
+
+it("takes a namekey", () => {
+  const res = toSourceText(
+    <jv.Enum public name={namekey("TestEnum")}></jv.Enum>,
+  );
+
+  expect(res).toBe(d`
+    package me.test.code;
+    
     public enum TestEnum {}
   `);
 });

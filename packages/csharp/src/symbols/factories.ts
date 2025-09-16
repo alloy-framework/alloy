@@ -6,6 +6,7 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
+import { useNamespaceContext } from "../contexts/namespace.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpClassScope } from "../scopes/class.js";
 import { useCSharpScope, useNamedTypeScope } from "../scopes/contexts.js";
@@ -13,10 +14,7 @@ import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpLexicalScope } from "../scopes/lexical.js";
 import { CSharpMethodScope } from "../scopes/method.js";
 import { CSharpNamedTypeScope } from "../scopes/named-type.js";
-import {
-  CSharpNamespaceScope,
-  useEnclosingNamespaceScope,
-} from "../scopes/namespace.js";
+import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { CSharpSourceFileScope } from "../scopes/source-file.js";
 import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 import { MethodKinds, MethodSymbol } from "./method.js";
@@ -118,13 +116,52 @@ export function createNamedTypeSymbol(
   );
 }
 
-export function createNamespaceSymbol(name: string) {
-  const scope = useEnclosingNamespaceScope();
-  const nsSymbol = scope?.ownerSymbol ?? getGlobalNamespace(useBinder());
-  if (nsSymbol.members.symbolNames.has(name)) {
-    return nsSymbol.members.symbolNames.get(name)! as NamespaceSymbol;
+export function createNamespaceSymbol(
+  name: string | Namekey | (string | Namekey)[],
+  options: CSharpSymbolOptions = {},
+): NamespaceSymbol {
+  const scope = useNamespaceContext();
+  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
+  const names = normalizeNamespaceName(name);
+  let current = parentSymbol;
+  for (const name of names) {
+    current = createNamespaceSymbolInternal(name, current, options);
   }
-  return withCleanup(new NamespaceSymbol(name, nsSymbol));
+  return current;
+}
+
+function normalizeNamespaceName(
+  name: string | Namekey | (string | Namekey)[],
+): (string | Namekey)[] {
+  if (Array.isArray(name)) {
+    return name;
+  }
+  if (typeof name === "string" && name.includes(".")) {
+    return name.split(".");
+  }
+  return [name];
+}
+
+function createNamespaceSymbolInternal(
+  name: string | Namekey,
+  parentSymbol: NamespaceSymbol,
+  options: CSharpSymbolOptions = {},
+): NamespaceSymbol {
+  const namePolicy =
+    options.namePolicy ?? useCSharpNamePolicy().for("namespace");
+  const expectedName = namePolicy(typeof name === "string" ? name : name.name);
+  if (parentSymbol.members.symbolNames.has(expectedName)) {
+    return parentSymbol.members.symbolNames.get(
+      expectedName,
+    )! as NamespaceSymbol;
+  }
+  return withCleanup(
+    new NamespaceSymbol(
+      name,
+      parentSymbol,
+      withNamePolicy(options, "namespace"),
+    ),
+  );
 }
 
 export interface CreateMethodSymbolOptions extends CSharpSymbolOptions {

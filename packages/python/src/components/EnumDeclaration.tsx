@@ -7,7 +7,7 @@ import {
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps } from "./Declaration.js";
-import { EnumMember } from "./EnumMember.js";
+import { EnumMember, EnumMemberProps } from "./EnumMember.js";
 import { SimpleCommentBlock } from "./index.js";
 import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
@@ -21,12 +21,7 @@ export interface EnumPropsBase extends BaseDeclarationProps {
   /**
    * Members of the enum as an array of objects.
    */
-  members?: Array<{
-    name: string;
-    value?: Children;
-    jsValue?: string | number;
-    doc?: string;
-  }>;
+  members?: Array<EnumMemberProps>;
   /**
    * Optional docstring for the enum.
    */
@@ -199,13 +194,7 @@ export function ClassEnumDeclaration(props: ClassEnumProps) {
     },
     "enum",
   );
-  let memberList: Array<{
-    name: string;
-    value?: Children;
-    jsValue?: string | number;
-    auto?: boolean;
-    doc?: string;
-  }> = (props.members ?? []).map((m) =>
+  let memberList: Array<EnumMemberProps> = (props.members ?? []).map((m) =>
     m.value === undefined ? { ...m, auto: false } : m,
   );
   if (props.auto) {

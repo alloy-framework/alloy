@@ -1,5 +1,5 @@
-import { Output, render } from "@alloy-js/core";
-import { it } from "vitest";
+import { Output } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
   createPackage,
@@ -7,7 +7,6 @@ import {
   PackageDirectory,
   SourceFile,
 } from "../src/index.js";
-import { assertFileContents } from "./utils.js";
 
 it("can import builtins", () => {
   const testLib = createPackage({
@@ -24,7 +23,7 @@ it("can import builtins", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <PackageDirectory path="." name="test" version="1.0.0">
         <SourceFile path="index.ts">
@@ -33,9 +32,7 @@ it("can import builtins", () => {
         </SourceFile>
       </PackageDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "package.json": `
       {
         "name": "test",
@@ -49,6 +46,7 @@ it("can import builtins", () => {
         }
       }
     `,
+    "tsconfig.json": expect.anything(),
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -74,16 +72,14 @@ it("can import builtins without a package", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <SourceFile path="index.ts">
         {testLib["./subpath"].nice};<hbr />
         await {fs["./promises"].readFile}();
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -109,7 +105,7 @@ it("can import builtins without a package", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[testLib, fs]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
@@ -120,9 +116,7 @@ it("can import builtins without a package", () => {
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { readFile } from "node:fs/promises";
       import { nice } from "testLib/subpath";
@@ -159,7 +153,7 @@ it("can import static members", () => {
     },
   });
 
-  const res = render(
+  expect(
     <Output externals={[mcpSdk]}>
       <SourceFile path="index.ts">
         <FunctionDeclaration name="foo">
@@ -179,9 +173,7 @@ it("can import static members", () => {
         </FunctionDeclaration>
       </SourceFile>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "index.ts": `
       import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
 

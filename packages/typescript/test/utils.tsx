@@ -24,7 +24,7 @@ export function toSourceText(c: Children, options?: PrintTreeOptions): string {
     <Output>
       <ts.SourceFile path="test.ts">{c}</ts.SourceFile>
     </Output>,
-    options,
+    { insertFinalNewLine: false, ...options },
   );
 
   return findFile(res, "test.ts").contents;

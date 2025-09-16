@@ -1,4 +1,5 @@
 import {
+  Namekey,
   OutputScopeOptions,
   OutputSpace,
   useBinder,
@@ -37,19 +38,11 @@ export function findExistingSymbol(
  * Creates a symbol for a python declaration in the current scope.
  */
 export function createPythonSymbol(
-  name: string,
+  name: string | Namekey,
   options: CreatePythonSymbolOptions = {},
   kind?: PythonElements,
 ): PythonOutputSymbol {
-  let processedName = name;
   const sfContext = useContext(PythonSourceFileContext);
-  // Only apply the name policy if a kind is provided and name policy context is available
-  if (kind) {
-    const namePolicy = usePythonNamePolicy();
-    if (namePolicy) {
-      processedName = namePolicy.getName(name, kind);
-    }
-  }
   const currentScope = usePythonScope();
   let targetSpace = options.space ?? undefined;
   if (!options.space && currentScope) {
@@ -71,7 +64,7 @@ export function createPythonSymbol(
 
   const binder = options.binder ?? currentScope?.binder ?? useBinder();
 
-  return new PythonOutputSymbol(processedName, targetSpace, {
+  return new PythonOutputSymbol(name, targetSpace, {
     binder: binder,
     aliasTarget: options.aliasTarget,
     refkeys: options.refkeys,
@@ -79,6 +72,7 @@ export function createPythonSymbol(
     module: sfContext?.module,
     type: options.type,
     ignoreNameConflict: options.ignoreNameConflict,
+    namePolicy: usePythonNamePolicy().for(kind),
   });
 }
 

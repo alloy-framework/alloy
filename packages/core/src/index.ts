@@ -27,6 +27,7 @@ export * from "./code.js";
 export * from "./components/index.js";
 export * from "./context.js";
 export * from "./context/index.js";
+export * from "./library-symbol-reference.js";
 export * from "./name-policy.js";
 export * from "./props-combinators.js";
 export * from "./reactive-union-set.js";

@@ -81,7 +81,7 @@ export const Attribute = taggedComponent(
   (props: AttributeProps) => {
     return (
       <group>
-        [{props.name}
+        [{normalizeAttributeName(props.name)}
         {props.args && props.args.length > 0 && (
           <>
             (
@@ -98,3 +98,10 @@ export const Attribute = taggedComponent(
     );
   },
 );
+
+function normalizeAttributeName(name: Children) {
+  if (typeof name === "string" && name.endsWith("Attribute")) {
+    return name.substring(0, name.length - "Attribute".length);
+  }
+  return name;
+}

@@ -22,6 +22,8 @@ export interface ParameterProps {
 
   refkey?: Refkey;
 
+  modifiers?: "in" | "out" | "ref";
+
   /**
    * Define attributes to attach
    * @example
@@ -51,6 +53,7 @@ export function Parameter(props: ParameterProps) {
   return (
     <Declaration symbol={memberSymbol}>
       <AttributeList attributes={props.attributes} endline />
+      {props.modifiers && <>{props.modifiers} </>}
       <TypeSlot>{props.type}</TypeSlot>
       {props.optional ? "?" : ""} <Name />
       {props.default ? code` = ${props.default}` : ""}

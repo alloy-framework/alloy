@@ -148,3 +148,35 @@ it("can attach attributes", () => {
     }
   `);
 });
+
+it("can add modifiers: in | out | ref", () => {
+  expect(
+    <Wrapper>
+      <Method
+        name="MethodOne"
+        parameters={[
+          {
+            name: "param1",
+            type: "T1",
+            modifiers: "ref",
+          },
+          {
+            name: "param2",
+            type: "T2",
+            modifiers: "in",
+          },
+          {
+            name: "param3",
+            type: "T3",
+            modifiers: "out",
+          },
+        ]}
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        void MethodOne(ref T1 param1, in T2 param2, out T3 param3) {}
+    }
+  `);
+});

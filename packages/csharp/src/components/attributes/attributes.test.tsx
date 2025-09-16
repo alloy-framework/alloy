@@ -7,6 +7,12 @@ it("define attribute", () => {
   `);
 });
 
+it("define attribute", () => {
+  expect(<Attribute name="TestAttribute" />).toRenderTo(`
+      [Test]
+  `);
+});
+
 it("define attribute with single arg", () => {
   expect(<Attribute name="Test" args={[`"abc"`]} />).toRenderTo(`
       [Test("abc")]

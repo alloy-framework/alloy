@@ -7,11 +7,13 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+import { computeModifiersPrefix, makeModifiers } from "../../modifiers.js";
 import { createVariableSymbol } from "../../symbols/factories.js";
 
 /** Props for {@link VarDeclaration} component */
 export interface VarDeclarationProps
-  extends Omit<DeclarationProps, "nameKind"> {
+  extends Omit<DeclarationProps, "nameKind">,
+    VarModifiers {
   /** Variable name */
   name: string | Namekey;
   /** Type of the variable declaration. If not specified, defaults to "var" */
@@ -20,10 +22,17 @@ export interface VarDeclarationProps
   refkey?: Refkey;
   /** Variable value */
   children?: Children;
-
-  /** Constant variable. Add the const modifier. */
-  const?: boolean;
 }
+
+export interface VarModifiers {
+  /** Constant variable. Add the const modifier. */
+  readonly const?: boolean;
+
+  /** Disposable variable. Add the using modifier. */
+  readonly using?: boolean;
+}
+
+const getModifiers = makeModifiers<VarModifiers>(["const", "using"]);
 
 /**
  * Render a variable declaration
@@ -60,7 +69,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
   }
   return (
     <Declaration symbol={sym}>
-      {props.const ? "const " : ""}
+      {computeModifiersPrefix([getModifiers(props)])}
       <TypeSlot>{props.type ?? "var"}</TypeSlot> <Name /> ={" "}
       <ValueSlot>{props.children}</ValueSlot>;
     </Declaration>

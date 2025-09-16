@@ -35,7 +35,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name={namekey("my-var")}
-        type="int"
+        type={{ children: "int" }}
         initializer={42}
       />,
     ]);

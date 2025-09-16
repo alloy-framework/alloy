@@ -12,8 +12,8 @@
       "import": "./dist/src/components/stc/index.js"
     },
     "./global/*": {
-      "development": "./src/builtins/*.ts",
-      "import": "./dist/src/builtins/*.js"
+      "development": "./src/builtins/*/index.ts",
+      "import": "./dist/src/builtins/*/index.js"
     }
   },
   "imports": {

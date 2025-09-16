@@ -44,6 +44,10 @@ export interface SourceFileProps {
    * Comment to add to the header, which will be rendered as a comment in the file.
    */
   headerComment?: string;
+  /**
+   * Documentation for this module, which will be rendered as a module-level docstring.
+   */
+  doc?: Children;
 }
 
 /**
@@ -60,6 +64,26 @@ export interface SourceFileProps {
  * renders to
  * ```py
  * def test():
+ *   pass
+ * ```
+ *
+ * @example
+ * With module documentation:
+ * ```tsx
+ * <SourceFile
+ *   path="utils.py"
+ *   doc={<ModuleDoc description={[<Prose>Utility functions for data processing.</Prose>]} />}
+ * >
+ *   <FunctionDeclaration name="process_data" />
+ * </SourceFile>
+ * ```
+ * renders to
+ * ```py
+ * """
+ * Utility functions for data processing.
+ * """
+ *
+ * def process_data():
  *   pass
  * ```
  */
@@ -80,6 +104,11 @@ export function SourceFile(props: SourceFileProps) {
     <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
       <Show when={scope.importedModules.size > 0}>
         <ImportStatements records={scope.importedModules} />
+        <hbr />
+        <hbr />
+      </Show>
+      <Show when={props.doc !== undefined}>
+        {props.doc}
         <hbr />
         <hbr />
       </Show>

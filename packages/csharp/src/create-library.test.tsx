@@ -191,3 +191,23 @@ it("has built-ins available", () => {
     var directoryName = info.DirectoryName?.Length;
   `);
 });
+
+it("can render multiple times", () => {
+  const System = createLibrary("System", {
+    String: {
+      kind: "class",
+      members: {},
+    },
+  });
+  expect(<TestNamespace>{System.String}</TestNamespace>).toRenderTo(`
+    using System;
+
+    String
+  `);
+
+  expect(<TestNamespace>{System.String}</TestNamespace>).toRenderTo(`
+    using System;
+
+    String
+  `);
+});

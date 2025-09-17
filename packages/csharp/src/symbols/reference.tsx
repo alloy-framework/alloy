@@ -83,7 +83,10 @@ export function ref(
 
 /**
  * Normalize attribute name by removing the "Attribute" suffix if present.
- * @example `TestAttribute` -> `Test`
+ * @example
+ * ```ts
+ * normalizeAttributeName("TestAttribute") // returns "Test"
+ * ```
  */
 export function normalizeAttributeName(name: string) {
   if (name !== undefined && name.endsWith("Attribute")) {

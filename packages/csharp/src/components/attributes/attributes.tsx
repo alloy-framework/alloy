@@ -53,7 +53,7 @@ function renderAttribute(attr: string | AttributeProps | Children): Children {
 
 export interface AttributeProps {
   /** Attribute name */
-  name: string | Refkey | RefkeyableObject;
+  name: string | Refkeyable
 
   /** Argument */
   args?: Children[];

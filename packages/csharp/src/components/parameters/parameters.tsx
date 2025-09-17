@@ -81,7 +81,10 @@ export function Parameter(props: ParameterProps) {
       }'`,
     );
   }
-  const modifier = modifiers.length === 1 ? modifiers[0] + " " : "";
+  const modifier =
+    modifiers.length === 0 ? ""
+    : modifiers[0] === "refReadonly" ? "ref readonly "
+    : modifiers[0] + " ";
   return (
     <Declaration symbol={memberSymbol}>
       <AttributeList attributes={props.attributes} endline />

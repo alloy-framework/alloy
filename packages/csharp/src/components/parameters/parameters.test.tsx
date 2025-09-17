@@ -170,13 +170,18 @@ it("can add modifiers: in | out | ref", () => {
             type: "T3",
             out: true,
           },
+          {
+            name: "param4",
+            type: "T4",
+            refReadonly: true,
+          },
         ]}
       />
     </Wrapper>,
   ).toRenderTo(`
     public class TestClass
     {
-        void MethodOne(ref T1 param1, in T2 param2, out T3 param3) {}
+        void MethodOne(ref T1 param1, in T2 param2, out T3 param3, ref readonly T4 param4) {}
     }
   `);
 });

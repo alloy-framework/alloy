@@ -3,7 +3,6 @@ import {
   findKeyedChildren,
   For,
   Indent,
-  Namekey,
   taggedComponent,
 } from "@alloy-js/core";
 
@@ -55,7 +54,7 @@ function renderAttribute(attr: string | AttributeProps | Children): Children {
 
 export interface AttributeProps {
   /** Attribute name */
-  name: string | Namekey;
+  name: Children;
 
   /** Argument */
   args?: Children[];
@@ -100,10 +99,9 @@ export const Attribute = taggedComponent(
   },
 );
 
-function normalizeAttributeName(name: string | Namekey) {
-  const attrName = typeof name === "string" ? name : name.name;
-  if (attrName.endsWith("Attribute")) {
-    return attrName.substring(0, attrName.length - "Attribute".length);
+function normalizeAttributeName(name: Children) {
+  if (typeof name === "string" && name.endsWith("Attribute")) {
+    return name.substring(0, name.length - "Attribute".length);
   }
-  return attrName;
+  return name;
 }

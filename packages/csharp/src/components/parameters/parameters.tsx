@@ -22,7 +22,26 @@ export interface ParameterProps {
 
   refkey?: Refkey;
 
-  modifier?: "in" | "out" | "ref";
+  /**
+   * Parameter modifier: The argument must be initialized before calling the method. The method can't assign a new value to the parameter. The compiler might create a temporary variable to hold a copy of the argument to in parameters.
+   * @see https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters#in-parameter-modifier
+   * */
+  in?: boolean;
+  /**
+   * Parameter modifier: The calling method isn't required to initialize the argument before calling the method. The method must assign a value to the parameter.
+   * @see https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters#out-parameter-modifier
+   * */
+  out?: boolean;
+  /**
+   * Parameter modifier: The argument must be initialized before calling the method. The method can assign a new value to the parameter, but isn't required to do so.
+   * @see https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters#ref-parameter-modifier
+   */
+  ref?: boolean;
+  /**
+   * Parameter modifier: The argument must be initialized before calling the method. The method can't assign a new value to the parameter.
+   * @see https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters#ref-readonly-modifier
+   */
+  refReadonly?: boolean;
 
   /**
    * Define attributes to attach
@@ -50,10 +69,23 @@ export function Parameter(props: ParameterProps) {
     isNullable: props.optional,
   });
 
+  // Only one of in, out, ref, ref readonly can be specified
+  const modifiers: (keyof ParameterProps)[] = (
+    ["in", "out", "ref", "refReadonly"] as (keyof ParameterProps)[]
+  ).filter((k) => props[k]);
+
+  if (modifiers.length > 1) {
+    throw new Error(
+      `Only one of 'in', 'out', 'ref', 'ref readonly' can be specified for parameter '${
+        typeof props.name === "string" ? props.name : props.name.name
+      }'`,
+    );
+  }
+  const modifier = modifiers.length === 1 ? modifiers[0] + " " : "";
   return (
     <Declaration symbol={memberSymbol}>
       <AttributeList attributes={props.attributes} endline />
-      {props.modifier && <>{props.modifier} </>}
+      <>{modifier}</>
       <TypeSlot>{props.type}</TypeSlot>
       {props.optional ? "?" : ""} <Name />
       {props.default ? code` = ${props.default}` : ""}

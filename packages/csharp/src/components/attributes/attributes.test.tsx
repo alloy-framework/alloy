@@ -7,7 +7,7 @@ it("define attribute", () => {
   `);
 });
 
-it("define attribute", () => {
+it("define attribute whose name ending with 'Attribute'", () => {
   expect(<Attribute name="TestAttribute" />).toRenderTo(`
       [Test]
   `);

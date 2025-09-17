@@ -7,6 +7,7 @@ import {
   resolve,
   unresolvedRefkey,
 } from "@alloy-js/core";
+import { useReferenceContext } from "../contexts/reference-context.js";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -56,12 +57,19 @@ export function ref(
     }
 
     const parts = [];
+    const referenceContext = useReferenceContext();
 
     for (const nsScope of pathDown) {
       parts.push(<AccessExpression.Part symbol={nsScope.ownerSymbol!} />);
     }
 
-    parts.push(<AccessExpression.Part symbol={lexicalDeclaration} />);
+    parts.push(
+      <AccessExpression.Part
+        symbol={lexicalDeclaration}
+        attribute={referenceContext === "attribute"}
+      />,
+    );
+
     for (const member of memberPath) {
       parts.push(<AccessExpression.Part symbol={member} />);
     }

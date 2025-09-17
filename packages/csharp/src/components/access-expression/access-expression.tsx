@@ -122,6 +122,12 @@ export interface AccessExpressionPartProps {
    * you provide a symbol or refkey and the symbol's nullable flag is set.
    */
   nullable?: boolean;
+
+  /**
+   * Wether this part is an attribute reference (used in an attribute context).
+   * In that case the "Attribute" suffix is trimmed from the name if present.
+   */
+  attribute?: boolean;
 }
 
 AccessExpression.Part = function (props: AccessExpressionPartProps) {

@@ -128,9 +128,12 @@ function createPartDescriptorFromProps(
       } else if (first && partProps.refkey) {
         return partProps.refkey;
       } else if (partProps.id !== undefined) {
-        return partProps.id;
+        return normalizeIfAttribute(partProps.id, partProps.attribute);
       } else if (symbolSource.value) {
-        return escapeId(symbolSource.value.name);
+        return normalizeIfAttribute(
+          escapeId(symbolSource.value.name),
+          partProps.attribute,
+        );
       } else {
         return "<unresolved symbol>";
       }
@@ -172,4 +175,25 @@ function createPartDescriptorFromProps(
  */
 function escapeId(id: string) {
   return id.replace(/"/g, '\\"');
+}
+
+function normalizeIfAttribute(id: string, isAttribute?: boolean) {
+  if (isAttribute) {
+    return normalizeAttributeName(id);
+  }
+  return id;
+}
+
+/**
+ * Normalize attribute name by removing the "Attribute" suffix if present.
+ * @example
+ * ```ts
+ * normalizeAttributeName("TestAttribute") // returns "Test"
+ * ```
+ */
+export function normalizeAttributeName(name: string) {
+  if (name !== undefined && name.endsWith("Attribute")) {
+    return name.substring(0, name.length - "Attribute".length);
+  }
+  return name;
 }

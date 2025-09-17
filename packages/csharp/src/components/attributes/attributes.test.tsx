@@ -1,5 +1,8 @@
-import { namekey } from "@alloy-js/core";
-import { expect, it } from "vitest";
+import { ClassDeclaration } from "#components/class/declaration.jsx";
+import { createLibrary } from "#createLibrary";
+import { TestNamespace } from "#test/utils.jsx";
+import { List, namekey } from "@alloy-js/core";
+import { describe, expect, it } from "vitest";
 import { Attribute, AttributeList } from "./attributes.jsx";
 
 it("define attribute", () => {
@@ -8,13 +11,42 @@ it("define attribute", () => {
   `);
 });
 
-it("define attribute whose name ending with 'Attribute'", () => {
-  expect(<Attribute name="TestAttribute" />).toRenderTo(`
+describe("Attribute suffix trimming", () => {
+  it("define attribute whose name ending with 'Attribute'", () => {
+    expect(<Attribute name="TestAttribute" />).toRenderTo(`
       [Test]
-  `);
-  expect(<Attribute name={namekey("TestAttribute")} />).toRenderTo(`
+    `);
+  });
+
+  it("when using namekey", () => {
+    const key = namekey("TestAttribute");
+    expect(
+      <TestNamespace>
+        <List>
+          <Attribute name={key} />
+          <ClassDeclaration name={key} />
+        </List>
+      </TestNamespace>,
+    ).toRenderTo(`
       [Test]
-  `);
+      class TestAttribute;
+    `);
+  });
+
+  it("when referenced from library", () => {
+    const TestLib = createLibrary("TestLib", {
+      TestAttribute: { kind: "method", methodKind: "ordinary" },
+    });
+    expect(
+      <TestNamespace>
+        <Attribute name={TestLib.TestAttribute} />
+      </TestNamespace>,
+    ).toRenderTo(`
+      using TestLib;
+      
+      [Test]
+    `);
+  });
 });
 
 it("define attribute with single arg", () => {

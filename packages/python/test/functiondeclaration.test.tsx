@@ -34,7 +34,7 @@ describe("Function Declaration", () => {
 
   it("renders a function with no body as 'pass' with return type", () => {
     const result = toSourceText([
-      <py.FunctionDeclaration name="foo" returnType={{ children: "int" }} />,
+      <py.FunctionDeclaration name="foo" returnType={"int"} />,
     ]);
     expect(result).toRenderTo(d`
       def foo() -> int:
@@ -50,13 +50,13 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.FunctionDeclaration
           name="foo"
-          returnType={{ children: "int" }}
+          returnType={"int"}
           refkey={refkeyFoo}
         />
-        <py.FunctionDeclaration name="bar" returnType={{ children: "int" }}>
+        <py.FunctionDeclaration name="bar" returnType={"int"}>
           <py.VariableDeclaration
             name="result"
-            type={{ children: "int" }}
+            type={"int"}
             initializer={
               <py.FunctionCallExpression target={refkeyFoo} args={[]} />
             }
@@ -96,9 +96,9 @@ describe("Function Declaration", () => {
       <py.FunctionDeclaration
         name="baz"
         parameters={[
-          { name: "x", type: { children: "int" } },
+          { name: "x", type: "int" },
           { name: "y", default: 0 },
-          { name: "z", type: { children: "int" }, default: 42 },
+          { name: "z", type: "int", default: 42 },
         ]}
         args={true}
         kwargs={true}
@@ -146,11 +146,7 @@ describe("Function Declaration", () => {
   it("can be an async function with returnType", () => {
     expect(
       toSourceText([
-        <py.FunctionDeclaration
-          async
-          name="foo"
-          returnType={{ children: "Foo" }}
-        />,
+        <py.FunctionDeclaration async name="foo" returnType={"Foo"} />,
       ]),
     ).toBe(d`
       async def foo() -> Foo:
@@ -164,11 +160,7 @@ describe("Function Declaration", () => {
       toSourceText([
         <py.StatementList>
           <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
-          <py.FunctionDeclaration
-            async
-            name="foo"
-            returnType={{ children: refkey("Foo") }}
-          />
+          <py.FunctionDeclaration async name="foo" returnType={refkey("Foo")} />
         </py.StatementList>,
       ]),
     ).toBe(d`
@@ -189,7 +181,7 @@ describe("Function Declaration", () => {
           <py.FunctionDeclaration
             async
             name="foo"
-            returnType={{ children: code`list[${refkey("Foo")}]` }}
+            returnType={code`list[${refkey("Foo")}]`}
           />
         </py.StatementList>,
       ]),
@@ -208,11 +200,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.MethodDeclaration
-              async
-              name="my_method"
-              returnType={{ children: "str" }}
-            >
+            <py.MethodDeclaration async name="my_method" returnType={"str"}>
               return "async result"
             </py.MethodDeclaration>
           </py.StatementList>
@@ -237,7 +225,7 @@ describe("Function Declaration", () => {
             <py.ClassMethodDeclaration
               async
               name="create_async"
-              returnType={{ children: "MyClass" }}
+              returnType={"MyClass"}
             >
               return cls()
             </py.ClassMethodDeclaration>
@@ -261,11 +249,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.StaticMethodDeclaration
-              async
-              name="utility"
-              returnType={{ children: "str" }}
-            >
+            <py.StaticMethodDeclaration async name="utility" returnType={"str"}>
               return "utility result"
             </py.StaticMethodDeclaration>
           </py.StatementList>
@@ -291,7 +275,7 @@ describe("Function Declaration", () => {
             <py.DunderMethodDeclaration
               async
               name="__aenter__"
-              returnType={{ children: "MyClass" }}
+              returnType={"MyClass"}
             >
               return self
             </py.DunderMethodDeclaration>
@@ -314,10 +298,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.ConstructorDeclaration
-              async
-              returnType={{ children: "MyClass" }}
-            >
+            <py.ConstructorDeclaration async returnType={"MyClass"}>
               return super().__new__(cls)
             </py.ConstructorDeclaration>
           </py.StatementList>
@@ -368,7 +349,7 @@ describe("Function Declaration", () => {
     `);
   });
   it("renders method with parameters", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.ClassDeclaration name="MyClass">
         <py.MethodDeclaration name="foo" parameters={parameters}>
@@ -386,7 +367,7 @@ describe("Function Declaration", () => {
     `);
   });
   it("renders class method with parameters", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.ClassDeclaration name="MyClass">
         <py.ClassMethodDeclaration name="foo" parameters={parameters}>
@@ -405,7 +386,7 @@ describe("Function Declaration", () => {
     `);
   });
   it("renders static method with parameters", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.ClassDeclaration name="MyClass">
         <py.StaticMethodDeclaration name="foo" parameters={parameters}>
@@ -424,7 +405,7 @@ describe("Function Declaration", () => {
     `);
   });
   it("renders abstract methods", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
@@ -506,7 +487,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration name="x" type={{ children: "int" }}>
+            <py.PropertyDeclaration name="x" type={"int"}>
               something
               <py.PropertyDeclaration.Setter>
                 something else
@@ -562,20 +543,14 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration
-              name="x"
-              type={{ children: "int" }}
-              doc={propertyDoc}
-            >
+            <py.PropertyDeclaration name="x" type={"int"} doc={propertyDoc}>
               something
               <py.PropertyDeclaration.Setter
-                type={{
-                  children: [
-                    { children: "int" },
-                    { children: "float" },
-                    { children: "str" },
-                  ],
-                }}
+                type={
+                  <py.UnionTypeExpression>
+                    {["int", "float", "str"]}
+                  </py.UnionTypeExpression>
+                }
                 doc={setterDoc}
               >
                 self._string = str(value)
@@ -660,13 +635,9 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration
-              name="value"
-              type={{ children: "int" }}
-              abstract
-            >
+            <py.PropertyDeclaration name="value" type={"int"} abstract>
               return self._value
-              <py.PropertyDeclaration.Setter type={{ children: "int" }}>
+              <py.PropertyDeclaration.Setter type={"int"}>
                 self._value = value
               </py.PropertyDeclaration.Setter>
               <py.PropertyDeclaration.Deleter>
@@ -701,7 +672,7 @@ describe("Function Declaration", () => {
     `);
   });
   it("renders dunder methods with parameters", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.ClassDeclaration name="MyClass">
         <py.StatementList>
@@ -748,9 +719,9 @@ describe("Function Declaration", () => {
   });
 
   it("renders nested functions", () => {
-    const parameters = [{ name: "x", type: { children: "int" } }];
-    const parameters_nested = [{ name: "y", type: { children: "int" } }];
-    const parameters_nested_nested = [{ name: "z", type: { children: "int" } }];
+    const parameters = [{ name: "x", type: "int" }];
+    const parameters_nested = [{ name: "y", type: "int" }];
+    const parameters_nested_nested = [{ name: "z", type: "int" }];
     const fooRef = refkey();
     const barRef = refkey();
     const foobarRef = refkey();
@@ -812,16 +783,16 @@ describe("Function Declaration", () => {
           parameters={[
             {
               name: "x",
-              type: { children: refkey("A") },
+              type: refkey("A"),
             },
             {
               name: "y",
-              type: { children: refkey("B") },
+              type: refkey("B"),
             },
           ]}
           args={true}
           kwargs={true}
-          returnType={{ children: refkey("Foo") }}
+          returnType={refkey("Foo")}
         />
       </py.SourceFile>,
     ]);

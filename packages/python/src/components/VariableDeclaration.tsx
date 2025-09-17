@@ -8,7 +8,6 @@ import {
   memo,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { resolveTypeExpression } from "../utils.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
 import { SimpleCommentBlock, type TypeExpressionProps } from "./index.js";
@@ -45,7 +44,7 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
  * ```tsx
  * <VariableDeclaration
  *   name="myVar"
- *   type={{ children:"int" }}
+ *   type={"int"}
  *   initializer={42}  // Initial value
  * />
  * <VariableDeclaration
@@ -92,15 +91,12 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
 
   emitSymbol(sym);
 
-  const resolvedType =
-    props.type ? resolveTypeExpression(props.type) : undefined;
-
   // Handle optional type annotation
   const type = memo(() => {
     if (!props.type || props.callStatementVar) return undefined;
     return (
       <>
-        : <TypeSymbolSlot>{resolvedType}</TypeSymbolSlot>
+        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
       </>
     );
   });

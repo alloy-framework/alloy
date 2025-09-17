@@ -245,7 +245,7 @@ describe("New Documentation Components", () => {
         attributes={[
           {
             name: "module_level_variable1",
-            type: { children: "int" },
+            type: "int",
             children: "Module level variables may be documented.",
           },
         ]}
@@ -349,7 +349,7 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "n",
-            type: { children: "int" },
+            type: "int",
             doc: "The upper limit of the range to generate, from 0 to n - 1.",
           },
         ]}
@@ -403,12 +403,12 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "msg",
-            type: { children: "str" },
+            type: "str",
             doc: "Human readable string describing the exception.",
           },
           {
             name: "code",
-            type: { children: "int" },
+            type: "int",
             default: undefined,
             doc: "Error code.",
           },
@@ -416,12 +416,12 @@ describe("New Documentation Components", () => {
         attributes={[
           {
             name: "msg",
-            type: { children: "str" },
+            type: "str",
             children: "Human readable string describing the exception.",
           },
           {
             name: "code",
-            type: { children: "int" },
+            type: "int",
             children: "Exception error code.",
           },
         ]}
@@ -644,18 +644,18 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "start",
-            type: { children: "int" },
+            type: "int",
             default: "0",
             doc: "Starting value for the sequence.",
           },
           {
             name: "stop",
-            type: { children: "int" },
+            type: "int",
             doc: "Ending value for the sequence (exclusive).",
           },
           {
             name: "step",
-            type: { children: "int" },
+            type: "int",
             default: "1",
             doc: "Step size between values.",
           },
@@ -708,18 +708,18 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "message",
-            type: { children: "str" },
+            type: "str",
             doc: "Human readable error message describing the authentication failure.",
           },
           {
             name: "error_code",
-            type: { children: "int" },
+            type: "int",
             default: "401",
             doc: "HTTP error code associated with the authentication failure.",
           },
           {
             name: "retry_after",
-            type: { children: "int" },
+            type: "int",
             default: undefined,
             doc: "Number of seconds to wait before retrying authentication.",
           },
@@ -727,17 +727,17 @@ describe("New Documentation Components", () => {
         attributes={[
           {
             name: "message",
-            type: { children: "str" },
+            type: "str",
             children: "The error message.",
           },
           {
             name: "error_code",
-            type: { children: "int" },
+            type: "int",
             children: "HTTP status code.",
           },
           {
             name: "retry_after",
-            type: { children: "int" },
+            type: "int",
             children: "Retry delay in seconds, if applicable.",
           },
         ]}
@@ -789,7 +789,7 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "data",
-            type: { children: "bytes" },
+            type: "bytes",
             doc: "Raw data to process.",
           },
         ]}
@@ -851,7 +851,7 @@ describe("New Documentation Components", () => {
   it("AttributeDoc standalone usage", () => {
     const res = toSourceText([
       <py.PyDoc>
-        <py.AttributeDoc name="connection_timeout" type={{ children: "float" }}>
+        <py.AttributeDoc name="connection_timeout" type={"float"}>
           Maximum time in seconds to wait for a connection to be established.
         </py.AttributeDoc>
       </py.PyDoc>,
@@ -885,7 +885,7 @@ describe("New Documentation Components", () => {
         parameters={[
           {
             name: "n",
-            type: { children: "int" },
+            type: "int",
             doc: "The upper limit of the range to generate, from 0 to n - 1.",
           },
         ]}
@@ -938,12 +938,12 @@ describe("Full example", () => {
         attributes={[
           {
             name: "attr1",
-            type: { children: "str" },
+            type: "str",
             children: "Description of attr1.",
           },
           {
             name: "attr2",
-            type: { children: "int" },
+            type: "int",
             children: "Description of attr2.",
           },
         ]}
@@ -954,13 +954,13 @@ describe("Full example", () => {
         parameters={[
           {
             name: "somebody",
-            type: { children: "str" },
+            type: "str",
             default: "John Doe",
             doc: "Somebody's name. This can be any string representing a person, whether it's a first name, full name, nickname, or even a codename (e.g., 'Agent X'). It's used primarily for display purposes, logging, or greeting messages and is not required to be unique or validated unless specified by the caller.",
           },
           {
             name: "somebody2",
-            type: { children: "str" },
+            type: "str",
             doc: "Somebody's name. This can be any string representing a person, whether it's a first name, full name, nickname, or even a codename (e.g., 'Agent X'). It's used primarily for display purposes, logging, or greeting messages and is not required to be unique or validated unless specified by the caller.",
           },
         ]}
@@ -973,13 +973,10 @@ describe("Full example", () => {
         <py.ClassDeclaration name="A" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
-            <py.VariableDeclaration
-              name="name_and_type"
-              type={{ children: "int" }}
-            />
+            <py.VariableDeclaration name="name_and_type" type={"int"} />
             <py.VariableDeclaration
               name="name_type_and_value"
-              type={{ children: "int" }}
+              type={"int"}
               initializer={12}
             />
           </py.StatementList>
@@ -1062,13 +1059,13 @@ describe("Full example", () => {
         parameters={[
           {
             name: "somebody",
-            type: { children: "str" } as py.SingleTypeExpressionProps,
+            type: "str",
             default: "John Doe",
             doc: "Somebody's name. This can be any string representing a person, whether it's a first name, full name, nickname, or even a codename (e.g., 'Agent X'). It's used primarily for display purposes, logging, or greeting messages and is not required to be unique or validated unless specified by the caller.",
           },
           {
             name: "somebody2",
-            type: { children: "str" } as py.SingleTypeExpressionProps,
+            type: "str",
             doc: "Somebody's name. This can be any string representing a person, whether it's a first name, full name, nickname, or even a codename (e.g., 'Agent X'). It's used primarily for display purposes, logging, or greeting messages and is not required to be unique or validated unless specified by the caller.",
           },
         ]}
@@ -1084,13 +1081,10 @@ describe("Full example", () => {
         <py.FunctionDeclaration name="some_function" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
-            <py.VariableDeclaration
-              name="name_and_type"
-              type={{ children: "number" } as py.SingleTypeExpressionProps}
-            />
+            <py.VariableDeclaration name="name_and_type" type={"number"} />
             <py.VariableDeclaration
               name="name_type_and_value"
-              type={{ children: "number" } as py.SingleTypeExpressionProps}
+              type={"number"}
               initializer={12}
             />
           </py.StatementList>
@@ -1208,12 +1202,12 @@ describe("Full example", () => {
         attributes={[
           {
             name: "DEFAULT_TIMEOUT",
-            type: { children: "int" },
+            type: "int",
             children: "Default timeout value in seconds.",
           },
           {
             name: "MAX_RETRIES",
-            type: { children: "int" },
+            type: "int",
             children: "Maximum number of retry attempts.",
           },
         ]}
@@ -1279,7 +1273,7 @@ describe("Full example", () => {
         parameters={[
           {
             name: "n",
-            type: { children: "int" },
+            type: "int",
             doc: "Number of fibonacci numbers to generate.",
           },
         ]}
@@ -1326,12 +1320,12 @@ describe("Full example", () => {
         attributes={[
           {
             name: "field_name",
-            type: { children: "str" },
+            type: "str",
             children: "Name of the field that failed validation.",
           },
           {
             name: "error_code",
-            type: { children: "int" },
+            type: "int",
             children: "Numeric error code for the validation failure.",
           },
         ]}
@@ -1346,14 +1340,8 @@ describe("Full example", () => {
         doc={exceptionDoc}
       >
         <py.StatementList>
-          <py.VariableDeclaration
-            name="field_name"
-            type={{ children: "str" }}
-          />
-          <py.VariableDeclaration
-            name="error_code"
-            type={{ children: "int" }}
-          />
+          <py.VariableDeclaration name="field_name" type={"str"} />
+          <py.VariableDeclaration name="error_code" type={"int"} />
         </py.StatementList>
       </py.ClassDeclaration>,
     ]);
@@ -1393,11 +1381,7 @@ describe("Full example", () => {
 
     const result = toSourceText([
       <py.ClassDeclaration name="Person">
-        <py.PropertyDeclaration
-          name="full_name"
-          doc={propertyDoc}
-          type={{ children: "str" }}
-        >
+        <py.PropertyDeclaration name="full_name" doc={propertyDoc} type={"str"}>
           return "John Doe"
         </py.PropertyDeclaration>
       </py.ClassDeclaration>,
@@ -1434,12 +1418,12 @@ describe("Full example", () => {
         parameters={[
           {
             name: "data",
-            type: { children: "dict" },
+            type: "dict",
             doc: "The data dictionary to validate.",
           },
           {
             name: "strict",
-            type: { children: "bool" },
+            type: "bool",
             default: "True",
             doc: "Whether to enforce strict validation rules.",
           },
@@ -1457,10 +1441,10 @@ describe("Full example", () => {
           name="validate"
           doc={methodDoc}
           parameters={[
-            { name: "data", type: { children: "dict" } },
-            { name: "strict", type: { children: "bool" }, default: true },
+            { name: "data", type: "dict" },
+            { name: "strict", type: "bool", default: true },
           ]}
-          returnType={{ children: "bool" }}
+          returnType={"bool"}
         >
           return self.validate(data, strict)
         </py.MethodDeclaration>

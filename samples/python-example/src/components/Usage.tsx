@@ -15,7 +15,7 @@ export function Usage() {
         />
         <py.VariableDeclaration
           name={"client"}
-          type={{ children: refkey("PetstoreClient") }}
+          type={refkey("PetstoreClient")}
           initializer={classInstantiation}
           refkey={vRkey}
         />

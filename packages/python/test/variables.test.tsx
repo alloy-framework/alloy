@@ -11,9 +11,16 @@ import {
 describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText([
+      <py.VariableDeclaration name="myVar" type={"int"} initializer={42} />,
+    ]);
+    expect(res).toBe(`my_var: int = 42`);
+  });
+
+  it("takes a namekey", () => {
+    const res = toSourceText([
       <py.VariableDeclaration
-        name="myVar"
-        type={{ children: "int" }}
+        name={namekey("my-var")}
+        type={"int"}
         initializer={42}
       />,
     ]);
@@ -24,18 +31,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name={namekey("my-var")}
-        type={{ children: "int" }}
-        initializer={42}
-      />,
-    ]);
-    expect(res).toBe(`my_var: int = 42`);
-  });
-
-  it("takes a namekey", () => {
-    const res = toSourceText([
-      <py.VariableDeclaration
-        name={namekey("my-var")}
-        type={{ children: "int" }}
+        type={"int"}
         initializer={42}
       />,
     ]);
@@ -44,11 +40,7 @@ describe("Python Variable", () => {
 
   it("declares a python variable without value", () => {
     const res = toSourceText([
-      <py.VariableDeclaration
-        name="myVar"
-        type={{ children: "int" }}
-        omitNone
-      />,
+      <py.VariableDeclaration name="myVar" type={"int"} omitNone />,
     ]);
     expect(res).toBe(`my_var: int`);
   });
@@ -79,7 +71,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name="numbers"
-        type={{ children: "list[int]" }}
+        type={<py.TypeReference name="list" typeArgs={["int"]} />}
         initializer={<py.Atom jsValue={[1, 2, 3]} />}
       />,
     ]);
@@ -100,7 +92,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name="omitNoneVar"
-        type={{ children: "int" }}
+        type={"int"}
         omitNone={true}
       />,
     ]);
@@ -134,7 +126,9 @@ describe("Python Variable", () => {
       <py.StatementList>
         <py.VariableDeclaration
           name="my_var"
-          type={{ children: [{ children: "int" }, { children: "None" }] }}
+          type={
+            <py.UnionTypeExpression>{["int", "None"]}</py.UnionTypeExpression>
+          }
         />
       </py.StatementList>,
     ]);
@@ -147,7 +141,9 @@ describe("Python Variable", () => {
       <py.StatementList>
         <py.VariableDeclaration
           name="my_var"
-          type={{ children: [{ children: "int" }, { children: "None" }] }}
+          type={
+            <py.UnionTypeExpression>{["int", "None"]}</py.UnionTypeExpression>
+          }
           omitNone
         />
       </py.StatementList>,
@@ -163,11 +159,7 @@ describe("Python Variable", () => {
         <py.ClassDeclaration name="MyClass" refkey={classKey} />
         <py.VariableDeclaration
           name="my_var"
-          type={
-            {
-              children: <py.Reference refkey={classKey} />,
-            } as py.SingleTypeExpressionProps
-          }
+          type={<py.Reference refkey={classKey} />}
         />
       </py.StatementList>,
     ]);
@@ -185,14 +177,7 @@ describe("Python Variable", () => {
         <py.ClassDeclaration name="MyClass" refkey={classKey} />
       </py.SourceFile>,
       <py.SourceFile path="usage.py">
-        <py.VariableDeclaration
-          name="my_var"
-          type={
-            {
-              children: <py.Reference refkey={classKey} />,
-            } as py.SingleTypeExpressionProps
-          }
-        />
+        <py.VariableDeclaration name="my_var" type={classKey} />
       </py.SourceFile>,
     ]);
     assertFileContents(res, {

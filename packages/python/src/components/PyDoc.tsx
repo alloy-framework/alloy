@@ -1,7 +1,6 @@
 import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { resolveTypeExpression } from "../utils.js";
 import { Atom, type TypeExpressionProps } from "./index.js";
 
 export interface FunctionDocProps {
@@ -887,13 +886,11 @@ interface GoogleStyleDocParamTypeProps {
 }
 
 function GoogleStyleDocParamType(props: GoogleStyleDocParamTypeProps) {
-  const resolvedType =
-    props.type ? resolveTypeExpression(props.type) : undefined;
   return (
     <>
       <Show when={Boolean(props.type)}>
         {" ("}
-        {resolvedType}
+        {props.type}
         <Show when={props.default}>{", optional"}</Show>
         {")"}
       </Show>

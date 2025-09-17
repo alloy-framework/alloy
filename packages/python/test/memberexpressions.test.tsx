@@ -365,7 +365,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="foo"
             refkey={classMethod1Ref}
-            type={{ children: "str" }}
+            type={"str"}
             omitNone={true}
             instanceVariable={true}
           />
@@ -374,7 +374,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="bar"
             refkey={classMethod2Ref}
-            type={{ children: "str" }}
+            type={"str"}
             omitNone={true}
             instanceVariable={true}
           />
@@ -382,7 +382,7 @@ describe("with refkeys", () => {
         <py.VariableDeclaration
           name="model1_instance"
           refkey={v1Rk}
-          type={{ children: model1Ref }}
+          type={model1Ref}
           initializer={
             <py.MemberExpression>
               <py.MemberExpression.Part refkey={model1Ref} />
@@ -393,7 +393,7 @@ describe("with refkeys", () => {
         <py.VariableDeclaration
           name="model2_instance"
           refkey={v2Rk}
-          type={{ children: model2Ref }}
+          type={model2Ref}
           initializer={
             <py.MemberExpression>
               <py.MemberExpression.Part refkey={model2Ref} />
@@ -428,7 +428,7 @@ describe("with refkeys", () => {
         name: "foo",
         default: null,
         refkey: fooRef,
-        type: { children: modelRef },
+        type: modelRef,
       },
     ];
     const messageRef = refkey();
@@ -438,7 +438,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="bar"
             refkey={refkey()}
-            type={{ children: "str" }}
+            type={"str"}
             omitNone={true}
           />
         </ClassDeclaration>
@@ -485,7 +485,7 @@ describe("with refkeys", () => {
             <VariableDeclaration
               name="prop1"
               refkey={interfaceMemberRefkey}
-              type={{ children: "str" }}
+              type={"str"}
               omitNone={true}
             />
           </ClassDeclaration>
@@ -493,14 +493,14 @@ describe("with refkeys", () => {
             <VariableDeclaration
               name="test1"
               refkey={classMemberRefkey}
-              type={{ children: interfaceRefkey }}
+              type={interfaceRefkey}
             />
             <br />
             <FunctionDeclaration
               name="testMethod"
               parameters={[]}
               refkey={classMethodRefkey}
-              returnType={{ children: interfaceRefkey }}
+              returnType={interfaceRefkey}
             />
           </ClassDeclaration>
           <py.VariableDeclaration

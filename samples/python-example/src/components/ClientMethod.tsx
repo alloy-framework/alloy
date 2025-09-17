@@ -23,7 +23,7 @@ export function ClientMethod(props: ClientMethodProps) {
   if (endpointParam) {
     parameters.push({
       name: endpointParam,
-      type: { children: castOpenAPITypeToPython("string") },
+      type: castOpenAPITypeToPython("string"),
       refkey: refkey(op, endpointParam),
     } as py.ParameterDescriptor);
   }
@@ -33,15 +33,16 @@ export function ClientMethod(props: ClientMethodProps) {
     requestReturnType = resolveRestAPIReference(op.requestBody, apiContext);
     parameters.push({
       name: "body",
-      type: { children: requestReturnType },
+      type: requestReturnType,
       refkey: refkey(op, "requestBody"),
     } as py.ParameterDescriptor);
   }
 
   // get the return type based on the spec's responseBody.
-  let responseReturnType = {
-    children: resolveRestAPIReference(op.responseBody, apiContext),
-  } as py.SingleTypeExpressionProps;
+  let responseReturnType = resolveRestAPIReference(
+    op.responseBody,
+    apiContext,
+  ) as py.TypeExpressionProps;
   let responseReturnTypeString: string = `${resolveRestAPIReferenceToString(op.responseBody, apiContext)}: ${op.responseDoc}`;
 
   // get the url endpoint, constructed from possible path parameters

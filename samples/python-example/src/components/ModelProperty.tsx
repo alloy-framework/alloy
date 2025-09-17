@@ -24,18 +24,12 @@ export function ModelProperty(props: ModelPropertyProps) {
     memberType = castOpenAPITypeToPython(apiType);
   }
 
-  let finalMemberType = {
-    children: memberType,
-  } as py.SingleTypeExpressionProps;
+  let finalMemberType: py.TypeExpressionProps = memberType;
   if (props.property.array) {
-    finalMemberType = {
-      children: code`list[${memberType}]`,
-    } as py.SingleTypeExpressionProps;
+    finalMemberType = code`list[${memberType}]`;
   }
   if (props.property.optional) {
-    finalMemberType = {
-      children: `${memberType} | None`,
-    } as py.SingleTypeExpressionProps;
+    finalMemberType = `${memberType} | None`;
   }
 
   return (

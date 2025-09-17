@@ -150,7 +150,7 @@ export interface MethodDeclarationBaseProps extends FunctionDeclarationProps {
  * ```tsx
  * <FunctionDeclaration
  *   name="my_function"
- *   returnType={{ children: "int" }}
+ *   returnType={"int"}
  *   parameters={[{ name: "a", type: { children: "int" } }, { name: "b", type: { children: "str" } }]}
  * >
  *   return a + b
@@ -210,7 +210,7 @@ function MethodDeclarationBase(
  * ```tsx
  * <MethodDeclaration
  *   name="my_method"
- *   returnType={{ children: "int" }}
+ *   returnType={"int"}
  *   parameters={[{ name: "value", type: { children: "str" } }]}
  * >
  *   return len(value)
@@ -227,7 +227,7 @@ function MethodDeclarationBase(
  * <MethodDeclaration
  *   name="abstract_method"
  *   abstract={true}
- *   returnType={{ children: "str" }}
+ *   returnType={"str"}
  * />
  * ```
  * This will generate:
@@ -481,7 +481,7 @@ function PropertyMethodBase(props: PropertyMethodBaseProps) {
         name={declarationContext.name}
         functionType="instance"
         parameters={parameters}
-        returnType={{ children: <Atom jsValue={null} /> }}
+        returnType={<Atom jsValue={null} />}
         sym={declarationContext}
       >
         {children}
@@ -521,7 +521,7 @@ PropertyDeclaration.Deleter = taggedComponent(
  * ```tsx
  * <ClassMethodDeclaration
  *   name="create_instance"
- *   returnType={{ children: "MyClass" }}
+ *   returnType={"MyClass"}
  *   parameters={[{ name: "value", type: { children: "str" } }]}
  * >
  *   return cls(value)
@@ -555,7 +555,7 @@ export function ClassMethodDeclaration(props: MethodDeclarationBaseProps) {
  * ```tsx
  * <StaticMethodDeclaration
  *   name="create_instance"
- *   returnType={{ children: "str" }}
+ *   returnType={"str"}
  *   parameters={[{ name: "value", type: { children: "str" } }]}
  * >
  *   return value

@@ -43,7 +43,7 @@ it("renders a function with parameters", () => {
   const result = toSourceText([
     <py.FunctionDeclaration
       name="quirklyNamed-Function"
-      parameters={[{ name: "a-parameter", type: { children: "int" } }]}
+      parameters={[{ name: "a-parameter", type: "int" }]}
       args={true}
       kwargs={true}
     >
@@ -64,10 +64,10 @@ it("correct formatting of call signature parameters names", () => {
   const result = toSourceText([
     <py.CallSignatureParameters
       parameters={[
-        { name: "this-is-a-number", type: { children: "int" } },
+        { name: "this-is-a-number", type: "int" },
         {
           name: "andThisIsADict",
-          type: { children: "dict" },
+          type: "dict",
         },
       ]}
     />,
@@ -102,11 +102,7 @@ it("correct formatting of call statement vars", () => {
 
 it("correct formatting of variable name", () => {
   const res = toSourceText([
-    <py.VariableDeclaration
-      name="myVar"
-      type={{ children: "int" }}
-      initializer={42}
-    />,
+    <py.VariableDeclaration name="myVar" type={"int"} initializer={42} />,
   ]);
   expect(res).toBe(`my_var: int = 42`);
 });

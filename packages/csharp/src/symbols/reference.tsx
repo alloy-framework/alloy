@@ -7,6 +7,7 @@ import {
   resolve,
   unresolvedRefkey,
 } from "@alloy-js/core";
+import { useReferenceContext } from "../contexts/reference-context.js";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -56,16 +57,37 @@ export function ref(
     }
 
     const parts = [];
+    const referenceContext = useReferenceContext();
 
     for (const nsScope of pathDown) {
       parts.push(<AccessExpression.Part symbol={nsScope.ownerSymbol!} />);
     }
 
-    parts.push(<AccessExpression.Part symbol={lexicalDeclaration} />);
+    if (referenceContext === "attribute") {
+      parts.push(
+        <AccessExpression.Part
+          id={normalizeAttributeName(lexicalDeclaration.name)}
+        />,
+      );
+    } else {
+      parts.push(<AccessExpression.Part symbol={lexicalDeclaration} />);
+    }
+
     for (const member of memberPath) {
       parts.push(<AccessExpression.Part symbol={member} />);
     }
 
     return [<AccessExpression children={parts} />, result.symbol];
   });
+}
+
+/**
+ * Normalize attribute name by removing the "Attribute" suffix if present.
+ * @example `TestAttribute` -> `Test`
+ */
+export function normalizeAttributeName(name: string) {
+  if (name !== undefined && name.endsWith("Attribute")) {
+    return name.substring(0, name.length - "Attribute".length);
+  }
+  return name;
 }

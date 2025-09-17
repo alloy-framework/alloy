@@ -4,13 +4,11 @@ import {
   For,
   Indent,
   Refkey,
+  RefkeyableObject,
   taggedComponent,
 } from "@alloy-js/core";
-
-export interface AttributeItem {
-  name: string;
-  args?: string[];
-}
+import { ReferenceContext } from "../../contexts/reference-context.js";
+import { normalizeAttributeName } from "../../symbols/reference.jsx";
 
 export type AttributesProp = Array<string | AttributeProps | Children>;
 
@@ -55,7 +53,7 @@ function renderAttribute(attr: string | AttributeProps | Children): Children {
 
 export interface AttributeProps {
   /** Attribute name */
-  name: string | Refkey;
+  name: string | Refkey | RefkeyableObject;
 
   /** Argument */
   args?: Children[];
@@ -82,7 +80,8 @@ export const Attribute = taggedComponent(
   (props: AttributeProps) => {
     return (
       <group>
-        [{normalizeAttributeName(props.name)}
+        [
+        <AttributeName name={props.name} />
         {props.args && props.args.length > 0 && (
           <>
             (
@@ -100,14 +99,10 @@ export const Attribute = taggedComponent(
   },
 );
 
-function normalizeAttributeName(name: string | Refkey) {
-  const nameStr =
-    typeof name === "string" ? name
-    : typeof name === "object" && "name" in name ? name.name
-    : undefined;
-
-  if (nameStr !== undefined && nameStr.endsWith("Attribute")) {
-    return nameStr.substring(0, nameStr.length - "Attribute".length);
-  }
-  return name;
+function AttributeName(props: Pick<AttributeProps, "name">) {
+  return typeof props.name === "string" ?
+      normalizeAttributeName(props.name)
+    : <ReferenceContext.Provider value={"attribute"}>
+        {props.name}
+      </ReferenceContext.Provider>;
 }

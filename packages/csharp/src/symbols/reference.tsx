@@ -63,15 +63,12 @@ export function ref(
       parts.push(<AccessExpression.Part symbol={nsScope.ownerSymbol!} />);
     }
 
-    if (referenceContext === "attribute") {
-      parts.push(
-        <AccessExpression.Part
-          id={normalizeAttributeName(lexicalDeclaration.name)}
-        />,
-      );
-    } else {
-      parts.push(<AccessExpression.Part symbol={lexicalDeclaration} />);
-    }
+    parts.push(
+      <AccessExpression.Part
+        symbol={lexicalDeclaration}
+        attribute={referenceContext === "attribute"}
+      />,
+    );
 
     for (const member of memberPath) {
       parts.push(<AccessExpression.Part symbol={member} />);
@@ -79,18 +76,4 @@ export function ref(
 
     return [<AccessExpression children={parts} />, result.symbol];
   });
-}
-
-/**
- * Normalize attribute name by removing the "Attribute" suffix if present.
- * @example
- * ```ts
- * normalizeAttributeName("TestAttribute") // returns "Test"
- * ```
- */
-export function normalizeAttributeName(name: string) {
-  if (name !== undefined && name.endsWith("Attribute")) {
-    return name.substring(0, name.length - "Attribute".length);
-  }
-  return name;
 }

@@ -1,14 +1,13 @@
+import { normalizeAttributeName } from "#components/access-expression/part-descriptors.js";
 import {
   Children,
   findKeyedChildren,
   For,
   Indent,
-  Refkey,
-  RefkeyableObject,
+  Refkeyable,
   taggedComponent,
 } from "@alloy-js/core";
 import { ReferenceContext } from "../../contexts/reference-context.js";
-import { normalizeAttributeName } from "../../symbols/reference.jsx";
 
 export type AttributesProp = Array<string | AttributeProps | Children>;
 
@@ -53,7 +52,7 @@ function renderAttribute(attr: string | AttributeProps | Children): Children {
 
 export interface AttributeProps {
   /** Attribute name */
-  name: string | Refkeyable
+  name: string | Refkeyable;
 
   /** Argument */
   args?: Children[];

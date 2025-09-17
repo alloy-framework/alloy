@@ -104,19 +104,11 @@ describe("Imports being used", () => {
     const rk3 = refkey();
     const result = toSourceTextMultiple([
       <py.SourceFile path="test_1.py">
-        <py.VariableDeclaration name="conflict" refkey={rk1} />
-      </py.SourceFile>,
-      <py.SourceFile path="test_3.py">
-        <py.VariableDeclaration name="conflict" refkey={rk3} />
-      </py.SourceFile>,
-      <py.SourceFile path="test_2.py">
-        <py.VariableDeclaration name="conflict" refkey={rk2} />
+        <py.ClassDeclaration name="testing" refkey={rk1} />
       </py.SourceFile>,
       <py.SourceFile path="test.py">
         <py.StatementList>
-          <py.VariableDeclaration name="one" initializer={rk1} />
-          <py.VariableDeclaration name="three" initializer={rk3} />
-          <py.VariableDeclaration name="two" initializer={rk2} />
+          <py.VariableDeclaration name="one" type={rk1} />
         </py.StatementList>
       </py.SourceFile>,
     ]);

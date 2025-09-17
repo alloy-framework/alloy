@@ -1,0 +1,32 @@
+{
+  "name": "performance",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "alloy build",
+    "bench": "pnpm run build && node dist/src/index.js"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/csharp": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/node": "catalog:",
+    "cli-table3": "catalog:",
+    "concurrently": "catalog:",
+    "listr2": "^9.0.3",
+    "typescript": "catalog:"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "type": "module",
+  "dependencies": {
+    "picocolors": "catalog:"
+  }
+}

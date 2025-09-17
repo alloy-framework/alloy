@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - samples/*
+  - test/*
 
 catalog:
   "@babel/cli": ^7.24.7

@@ -102,7 +102,7 @@ it("correct formatting of call statement vars", () => {
 
 it("correct formatting of variable name", () => {
   const res = toSourceText([
-    <py.VariableDeclaration name="myVar" type={"int"} initializer={42} />,
+    <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
   ]);
   expect(res).toBe(`my_var: int = 42`);
 });

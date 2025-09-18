@@ -11,7 +11,7 @@ import {
 describe("Python Variable", () => {
   it("declares a python variable", () => {
     const res = toSourceText([
-      <py.VariableDeclaration name="myVar" type={"int"} initializer={42} />,
+      <py.VariableDeclaration name="myVar" type="int" initializer={42} />,
     ]);
     expect(res).toBe(`my_var: int = 42`);
   });
@@ -20,7 +20,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name={namekey("my-var")}
-        type={"int"}
+        type="int"
         initializer={42}
       />,
     ]);
@@ -31,7 +31,7 @@ describe("Python Variable", () => {
     const res = toSourceText([
       <py.VariableDeclaration
         name={namekey("my-var")}
-        type={"int"}
+        type="int"
         initializer={42}
       />,
     ]);
@@ -40,7 +40,7 @@ describe("Python Variable", () => {
 
   it("declares a python variable without value", () => {
     const res = toSourceText([
-      <py.VariableDeclaration name="myVar" type={"int"} omitNone />,
+      <py.VariableDeclaration name="myVar" type="int" omitNone />,
     ]);
     expect(res).toBe(`my_var: int`);
   });
@@ -90,11 +90,7 @@ describe("Python Variable", () => {
 
   it("declares a python variable with omitNone", () => {
     const res = toSourceText([
-      <py.VariableDeclaration
-        name="omitNoneVar"
-        type={"int"}
-        omitNone={true}
-      />,
+      <py.VariableDeclaration name="omitNoneVar" type="int" omitNone={true} />,
     ]);
     expect(res).toBe(`omit_none_var: int`);
   });

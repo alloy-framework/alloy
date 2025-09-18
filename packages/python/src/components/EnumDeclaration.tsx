@@ -8,8 +8,8 @@ import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember, EnumMemberProps } from "./EnumMember.js";
-import { SimpleCommentBlock } from "./index.js";
 import { MemberScope } from "./MemberScope.jsx";
+import { SimpleCommentBlock } from "./PyDoc.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface EnumPropsBase extends BaseDeclarationProps {

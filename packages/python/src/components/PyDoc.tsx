@@ -1,7 +1,7 @@
 import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { Atom, type TypeExpressionProps } from "./index.js";
+import { Atom } from "./Atom.jsx";
 
 export interface FunctionDocProps {
   description: Children[];
@@ -174,7 +174,7 @@ export function ExceptionDoc(props: ExceptionDocProps) {
 
 export interface AttributeDocProps {
   name: Children;
-  type?: TypeExpressionProps;
+  type?: Children;
   children?: Children;
   style?: "google";
 }
@@ -638,7 +638,7 @@ function GoogleStyleDocParams(props: GoogleStyleDocParamsProps) {
 
 interface GoogleStyleDocParamProps {
   name: Children;
-  type?: TypeExpressionProps;
+  type?: Children;
   children?: Children;
   default?: Children;
 }
@@ -712,7 +712,7 @@ function GoogleStyleDocYields(props: GoogleStyleDocYieldsProps) {
 
 export interface GoogleStyleDocAttributeProps {
   name: Children;
-  type?: TypeExpressionProps;
+  type?: Children;
   children?: Children;
 }
 
@@ -881,7 +881,7 @@ function GoogleStyleDocOverrides(props: GoogleStyleDocOverridesProps) {
 }
 
 interface GoogleStyleDocParamTypeProps {
-  type?: TypeExpressionProps;
+  type?: Children;
   default?: boolean;
 }
 

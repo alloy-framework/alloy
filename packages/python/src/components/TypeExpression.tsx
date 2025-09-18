@@ -81,5 +81,3 @@ export function UnionTypeExpression(props: UnionTypeExpressionProps) {
     </group>
   );
 }
-
-export type TypeExpressionProps = Children;

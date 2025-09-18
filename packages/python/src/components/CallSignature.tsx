@@ -1,4 +1,5 @@
 import {
+  Children,
   computed,
   createSymbolSlot,
   For,
@@ -9,7 +10,6 @@ import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
-import { type TypeExpressionProps } from "./index.js";
 
 export interface CallSignatureParametersProps {
   readonly parameters?: ParameterDescriptor[] | string[];
@@ -146,7 +146,7 @@ export interface CallSignatureProps {
   /**
    * The return type of the function.
    */
-  returnType?: TypeExpressionProps;
+  returnType?: Children;
 }
 /**
  * A Python call signature, e.g. the part after the `def` keyword and the name in a
@@ -156,7 +156,7 @@ export interface CallSignatureProps {
  * ```tsx
  * <CallSignature
  *   parameters={[{ name: "a", type: "int" }, { name: "b", type: "str" }]}
- *   returnType={"int"}
+ *   returnType="int"
  * />
  * ```
  * renders to

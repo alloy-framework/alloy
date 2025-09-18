@@ -3,7 +3,7 @@ import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
-import { SimpleInlineMemberComment } from "./index.js";
+import { SimpleInlineMemberComment } from "./PyDoc.jsx";
 
 export interface EnumMemberProps {
   /**

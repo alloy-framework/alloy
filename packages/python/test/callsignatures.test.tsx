@@ -134,7 +134,7 @@ describe("Call Signature", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[{ name: "a" }, { name: "b" }]}
-        returnType={"int"}
+        returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`
@@ -197,7 +197,7 @@ describe("Call Signature - Parameter Descriptors", () => {
             type: "str",
           },
         ]}
-        returnType={"int"}
+        returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`
@@ -238,7 +238,7 @@ describe("Call Signature - Parameter Descriptors", () => {
         ]}
         args
         kwargs
-        returnType={"int"}
+        returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`
@@ -260,7 +260,7 @@ describe("Call Signature - Parameter Descriptors", () => {
             default: "default_value",
           },
         ]}
-        returnType={"int"}
+        returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`

@@ -10,7 +10,7 @@ import {
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
-import { SimpleCommentBlock, type TypeExpressionProps } from "./index.js";
+import { SimpleCommentBlock } from "./PyDoc.jsx";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
@@ -20,7 +20,7 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
    * The type of the variable. Used only for type annotation. Optional.
    */
-  type?: TypeExpressionProps;
+  type?: Children;
   /**
    * Indicates if we should omit the None assignment. Optional.
    */
@@ -44,7 +44,7 @@ export interface VariableDeclarationProps extends BaseDeclarationProps {
  * ```tsx
  * <VariableDeclaration
  *   name="myVar"
- *   type={"int"}
+ *   type="int"
  *   initializer={42}  // Initial value
  * />
  * <VariableDeclaration

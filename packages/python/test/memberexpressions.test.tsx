@@ -365,7 +365,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="foo"
             refkey={classMethod1Ref}
-            type={"str"}
+            type="str"
             omitNone={true}
             instanceVariable={true}
           />
@@ -374,7 +374,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="bar"
             refkey={classMethod2Ref}
-            type={"str"}
+            type="str"
             omitNone={true}
             instanceVariable={true}
           />
@@ -438,7 +438,7 @@ describe("with refkeys", () => {
           <VariableDeclaration
             name="bar"
             refkey={refkey()}
-            type={"str"}
+            type="str"
             omitNone={true}
           />
         </ClassDeclaration>
@@ -485,7 +485,7 @@ describe("with refkeys", () => {
             <VariableDeclaration
               name="prop1"
               refkey={interfaceMemberRefkey}
-              type={"str"}
+              type="str"
               omitNone={true}
             />
           </ClassDeclaration>

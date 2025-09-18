@@ -17,9 +17,9 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
  * @example
  * ```tsx
  * <ClassDeclaration name="MyClass" bases={["BaseClass"]}>
- *   <VariableDeclaration name="a" type={"int"} />
- *   <VariableDeclaration name="b" type={"str"} />
- *   <py.FunctionDeclaration name="my_method" parameters={[{ name: "a", type: "int" }, { name: "b", type: "str" }]} returnType={"int"}>
+ *   <VariableDeclaration name="a" type="int" />
+ *   <VariableDeclaration name="b" type="str" />
+ *   <py.FunctionDeclaration name="my_method" parameters={[{ name: "a", type: "int" }, { name: "b", type: "str" }]} returnType="int">
  *     return a + b
  *   </py.FunctionDeclaration>
  * </ClassDeclaration>

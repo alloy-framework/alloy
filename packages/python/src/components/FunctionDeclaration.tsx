@@ -23,10 +23,11 @@ import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { usePythonScope } from "../symbols/scopes.js";
 import { getCallSignatureProps } from "../utils.js";
+import { Atom } from "./Atom.jsx";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { LexicalScope } from "./LexicalScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
-import { Atom, LexicalScope, TypeExpressionProps } from "./index.js";
 
 const setterTag = Symbol();
 const deleterTag = Symbol();
@@ -34,7 +35,7 @@ const deleterTag = Symbol();
 /**
  * Context to provide property type information within a PropertyDeclaration
  */
-const PropertyContext = createContext<TypeExpressionProps | undefined>();
+const PropertyContext = createContext<Children | undefined>();
 
 /**
  * Validates that the current scope is a member scope (inside a class).
@@ -150,7 +151,7 @@ export interface MethodDeclarationBaseProps extends FunctionDeclarationProps {
  * ```tsx
  * <FunctionDeclaration
  *   name="my_function"
- *   returnType={"int"}
+ *   returnType="int"
  *   parameters={[{ name: "a", type: { children: "int" } }, { name: "b", type: { children: "str" } }]}
  * >
  *   return a + b
@@ -210,7 +211,7 @@ function MethodDeclarationBase(
  * ```tsx
  * <MethodDeclaration
  *   name="my_method"
- *   returnType={"int"}
+ *   returnType="int"
  *   parameters={[{ name: "value", type: { children: "str" } }]}
  * >
  *   return len(value)
@@ -227,7 +228,7 @@ function MethodDeclarationBase(
  * <MethodDeclaration
  *   name="abstract_method"
  *   abstract={true}
- *   returnType={"str"}
+ *   returnType="str"
  * />
  * ```
  * This will generate:
@@ -246,7 +247,7 @@ function MethodDeclarationBase(
 export function MethodDeclaration(props: MethodDeclarationBaseProps) {
   return (
     <>
-      <MethodDeclarationBase functionType={"instance"} {...props} />
+      <MethodDeclarationBase functionType="instance" {...props} />
     </>
   );
 }
@@ -260,7 +261,7 @@ export interface PropertyDeclarationProps {
   /**
    * The type of the property.
    */
-  type?: TypeExpressionProps;
+  type?: Children;
 
   /**
    * The children of the property.
@@ -493,7 +494,7 @@ function PropertyMethodBase(props: PropertyMethodBaseProps) {
 PropertyDeclaration.Setter = taggedComponent(
   setterTag,
   function PropertySetter(
-    props: PropertyMethodDeclarationProps & { type?: TypeExpressionProps },
+    props: PropertyMethodDeclarationProps & { type?: Children },
   ) {
     return (
       <PropertyMethodBase
@@ -543,7 +544,7 @@ export function ClassMethodDeclaration(props: MethodDeclarationBaseProps) {
     <>
       {"@classmethod"}
       <hbr />
-      <MethodDeclarationBase functionType={"class"} {...props} />
+      <MethodDeclarationBase functionType="class" {...props} />
     </>
   );
 }
@@ -555,7 +556,7 @@ export function ClassMethodDeclaration(props: MethodDeclarationBaseProps) {
  * ```tsx
  * <StaticMethodDeclaration
  *   name="create_instance"
- *   returnType={"str"}
+ *   returnType="str"
  *   parameters={[{ name: "value", type: { children: "str" } }]}
  * >
  *   return value
@@ -577,7 +578,7 @@ export function StaticMethodDeclaration(props: MethodDeclarationBaseProps) {
     <>
       {"@staticmethod"}
       <hbr />
-      <MethodDeclarationBase functionType={"static"} {...props} />
+      <MethodDeclarationBase functionType="static" {...props} />
     </>
   );
 }
@@ -647,7 +648,7 @@ export function ConstructorDeclaration(props: ConstructorDeclarationProps) {
     <MethodDeclarationBase
       {...props}
       name={namekey("__new__", { ignoreNamePolicy: true })}
-      functionType={"class"}
+      functionType="class"
     />
   );
 }

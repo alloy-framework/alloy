@@ -851,7 +851,7 @@ describe("New Documentation Components", () => {
   it("AttributeDoc standalone usage", () => {
     const res = toSourceText([
       <py.PyDoc>
-        <py.AttributeDoc name="connection_timeout" type={"float"}>
+        <py.AttributeDoc name="connection_timeout" type="float">
           Maximum time in seconds to wait for a connection to be established.
         </py.AttributeDoc>
       </py.PyDoc>,
@@ -973,10 +973,10 @@ describe("Full example", () => {
         <py.ClassDeclaration name="A" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
-            <py.VariableDeclaration name="name_and_type" type={"int"} />
+            <py.VariableDeclaration name="name_and_type" type="int" />
             <py.VariableDeclaration
               name="name_type_and_value"
-              type={"int"}
+              type="int"
               initializer={12}
             />
           </py.StatementList>
@@ -1081,10 +1081,10 @@ describe("Full example", () => {
         <py.FunctionDeclaration name="some_function" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
-            <py.VariableDeclaration name="name_and_type" type={"number"} />
+            <py.VariableDeclaration name="name_and_type" type="number" />
             <py.VariableDeclaration
               name="name_type_and_value"
-              type={"number"}
+              type="number"
               initializer={12}
             />
           </py.StatementList>
@@ -1340,8 +1340,8 @@ describe("Full example", () => {
         doc={exceptionDoc}
       >
         <py.StatementList>
-          <py.VariableDeclaration name="field_name" type={"str"} />
-          <py.VariableDeclaration name="error_code" type={"int"} />
+          <py.VariableDeclaration name="field_name" type="str" />
+          <py.VariableDeclaration name="error_code" type="int" />
         </py.StatementList>
       </py.ClassDeclaration>,
     ]);
@@ -1381,7 +1381,7 @@ describe("Full example", () => {
 
     const result = toSourceText([
       <py.ClassDeclaration name="Person">
-        <py.PropertyDeclaration name="full_name" doc={propertyDoc} type={"str"}>
+        <py.PropertyDeclaration name="full_name" doc={propertyDoc} type="str">
           return "John Doe"
         </py.PropertyDeclaration>
       </py.ClassDeclaration>,
@@ -1444,7 +1444,7 @@ describe("Full example", () => {
             { name: "data", type: "dict" },
             { name: "strict", type: "bool", default: true },
           ]}
-          returnType={"bool"}
+          returnType="bool"
         >
           return self.validate(data, strict)
         </py.MethodDeclaration>

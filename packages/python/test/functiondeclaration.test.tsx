@@ -34,7 +34,7 @@ describe("Function Declaration", () => {
 
   it("renders a function with no body as 'pass' with return type", () => {
     const result = toSourceText([
-      <py.FunctionDeclaration name="foo" returnType={"int"} />,
+      <py.FunctionDeclaration name="foo" returnType="int" />,
     ]);
     expect(result).toRenderTo(d`
       def foo() -> int:
@@ -50,13 +50,13 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.FunctionDeclaration
           name="foo"
-          returnType={"int"}
+          returnType="int"
           refkey={refkeyFoo}
         />
-        <py.FunctionDeclaration name="bar" returnType={"int"}>
+        <py.FunctionDeclaration name="bar" returnType="int">
           <py.VariableDeclaration
             name="result"
-            type={"int"}
+            type="int"
             initializer={
               <py.FunctionCallExpression target={refkeyFoo} args={[]} />
             }
@@ -200,7 +200,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.MethodDeclaration async name="my_method" returnType={"str"}>
+            <py.MethodDeclaration async name="my_method" returnType="str">
               return "async result"
             </py.MethodDeclaration>
           </py.StatementList>
@@ -249,7 +249,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.StaticMethodDeclaration async name="utility" returnType={"str"}>
+            <py.StaticMethodDeclaration async name="utility" returnType="str">
               return "utility result"
             </py.StaticMethodDeclaration>
           </py.StatementList>
@@ -487,7 +487,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration name="x" type={"int"}>
+            <py.PropertyDeclaration name="x" type="int">
               something
               <py.PropertyDeclaration.Setter>
                 something else
@@ -543,7 +543,7 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration name="x" type={"int"} doc={propertyDoc}>
+            <py.PropertyDeclaration name="x" type="int" doc={propertyDoc}>
               something
               <py.PropertyDeclaration.Setter
                 type={
@@ -635,9 +635,9 @@ describe("Function Declaration", () => {
       <py.StatementList>
         <py.ClassDeclaration name="MyClass">
           <py.StatementList>
-            <py.PropertyDeclaration name="value" type={"int"} abstract>
+            <py.PropertyDeclaration name="value" type="int" abstract>
               return self._value
-              <py.PropertyDeclaration.Setter type={"int"}>
+              <py.PropertyDeclaration.Setter type="int">
                 self._value = value
               </py.PropertyDeclaration.Setter>
               <py.PropertyDeclaration.Deleter>

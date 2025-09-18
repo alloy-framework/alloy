@@ -9,11 +9,9 @@ import {
 } from "@alloy-js/core";
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { PythonSourceFileContext } from "../components/SourceFile.jsx";
-import {
-  PythonModuleScope,
-  PythonOutputScope,
-  PythonOutputSymbol,
-} from "./index.js";
+import { PythonModuleScope } from "./python-module-scope.js";
+import { PythonOutputSymbol } from "./python-output-symbol.js";
+import { PythonOutputScope } from "./scopes.js";
 
 export function ref(
   refkey: Refkey,

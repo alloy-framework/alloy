@@ -374,7 +374,6 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
     },
     "function",
   );
-  emitSymbol(sym);
   return (
     <>
       <DeclarationContext.Provider value={sym}>

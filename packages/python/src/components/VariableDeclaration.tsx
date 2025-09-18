@@ -4,7 +4,6 @@ import {
   Name,
   Show,
   createSymbolSlot,
-  emitSymbol,
   memo,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
@@ -88,8 +87,6 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   if (!props.type) {
     ValueTypeSymbolSlot.moveMembersTo(sym);
   }
-
-  emitSymbol(sym);
 
   // Handle optional type annotation
   const type = memo(() => {

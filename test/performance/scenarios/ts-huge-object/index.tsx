@@ -47,6 +47,5 @@ export async function runTest(): Promise<any> {
   );
 
   const result = await sourceFilesForTree(tree);
-  debugger;
   return [tree, result, binder!];
 }

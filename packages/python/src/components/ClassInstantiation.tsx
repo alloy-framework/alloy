@@ -1,4 +1,8 @@
-import { instantiateTakenMembersTo, useContext } from "@alloy-js/core";
+import {
+  emitSymbol,
+  instantiateTakenMembersTo,
+  useContext,
+} from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import {
   FunctionCallExpression,
@@ -35,6 +39,7 @@ export function ClassInstantiation(props: ClassInstantiationProps) {
     module: module,
   });
   instantiateTakenMembersTo(sym, "static", "instance");
+  emitSymbol(sym);
   return (
     <>
       <FunctionCallExpression {...props} />

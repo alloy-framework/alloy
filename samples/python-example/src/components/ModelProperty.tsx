@@ -1,4 +1,4 @@
-import { code } from "@alloy-js/core";
+import { Children, code } from "@alloy-js/core";
 import * as py from "@alloy-js/python";
 import { useApi } from "../context/api.js";
 import { RestApiModelProperty } from "../schema.js";
@@ -24,7 +24,7 @@ export function ModelProperty(props: ModelPropertyProps) {
     memberType = castOpenAPITypeToPython(apiType);
   }
 
-  let finalMemberType: py.TypeExpressionProps = memberType;
+  let finalMemberType: Children = memberType;
   if (props.property.array) {
     finalMemberType = code`list[${memberType}]`;
   }

@@ -42,7 +42,7 @@ export function ClientMethod(props: ClientMethodProps) {
   let responseReturnType = resolveRestAPIReference(
     op.responseBody,
     apiContext,
-  ) as py.TypeExpressionProps;
+  ) as Children;
   let responseReturnTypeString: string = `${resolveRestAPIReferenceToString(op.responseBody, apiContext)}: ${op.responseDoc}`;
 
   // get the url endpoint, constructed from possible path parameters

@@ -4,7 +4,6 @@ import {
   code,
   createContext,
   DeclarationContext,
-  emitSymbol,
   findKeyedChild,
   findUnkeyedChildren,
   isNamekey,
@@ -106,11 +105,6 @@ function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
       },
       "function",
     );
-
-  // Only emit symbol if we created it (not if using existing one)
-  if (!props.sym) {
-    emitSymbol(sym);
-  }
 
   return (
     <>

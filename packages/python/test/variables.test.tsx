@@ -148,7 +148,6 @@ describe("Python Variable", () => {
     expect(res).toBe(d`
       class MyClass:
           pass
-
       my_var: MyClass = None`);
   });
 
@@ -169,7 +168,6 @@ describe("Python Variable", () => {
       "classes.py": `
         class MyClass:
             pass
-
       `,
       "usage.py": `
         from classes import MyClass

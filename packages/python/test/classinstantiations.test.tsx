@@ -24,7 +24,6 @@ it("declaration of class instance with variables", () => {
   const expected = d`
     class OneClass:
         pass
-
     OneClass("A name", 42, True)
   `;
   expect(result).toRenderTo(expected);
@@ -147,11 +146,9 @@ it("incorrect Class instantiation works", () => {
   const expected = d`
     MyClass(
         class NestedClass:
-            pass
-        ,
+            pass,
         def my_func():
-            pass
-        ,
+            pass,
         x = None
     )
   `;

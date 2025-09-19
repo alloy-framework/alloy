@@ -24,7 +24,6 @@ describe("Reference", () => {
       "models.py": `
         class User:
             pass
-
         `,
       "services.py": `
         from models import User

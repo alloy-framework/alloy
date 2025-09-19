@@ -16,3 +16,5 @@ packages/csharp/src/builtins
 
 .chronus/changes/
 CHANGELOG.md
+
+*.generated.*

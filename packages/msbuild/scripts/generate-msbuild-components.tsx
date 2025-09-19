@@ -24,7 +24,9 @@ const OUTPUT_PATH = resolve(import.meta.dirname, "../../src/components");
 await writeOutput(
   await renderAsync(
     <Output basePath={OUTPUT_PATH}>
-      <SourceFile path="index.tsx">
+      å
+      <SourceFile path="elements.generated.tsx">
+        {code`import "@alloy-js/core";\n`}
         {code`import { makeTag } from "./utils/make-tag.js";\n\n`}
         <For each={schemas} doubleHardline>
           {(schema) => <XmlComponent schema={schema} />}

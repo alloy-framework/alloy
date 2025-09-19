@@ -18,6 +18,22 @@ interface CreatePythonSymbolOptions extends PythonOutputSymbolOptions {
   space?: OutputSpace;
   instance?: boolean;
 }
+
+/**
+ * Attempts to find an existing symbol by name in the target space.
+ */
+export function findExistingSymbol(
+  name: string,
+  targetSpace?: OutputSpace,
+): PythonOutputSymbol | undefined {
+  if (!targetSpace) {
+    return undefined;
+  }
+
+  const existingSymbol = targetSpace.symbolNames.get(name);
+  return existingSymbol as PythonOutputSymbol | undefined;
+}
+
 /**
  * Creates a symbol for a python declaration in the current scope.
  */
@@ -55,6 +71,7 @@ export function createPythonSymbol(
     metadata: options.metadata,
     module: sfContext?.module,
     type: options.type,
+    ignoreNameConflict: options.ignoreNameConflict,
     namePolicy: usePythonNamePolicy().for(kind),
   });
 }

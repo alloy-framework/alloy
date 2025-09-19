@@ -20,9 +20,8 @@ it("correct formatting of class name", () => {
 it("correct formatting of Enum name and EnumMember names", () => {
   const result = toSourceText(
     [
-      <py.EnumDeclaration
+      <py.FunctionalEnumDeclaration
         name="priority"
-        style="functional"
         members={[
           { name: "high", value: 1 },
           { name: "Medium", value: 2 },

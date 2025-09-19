@@ -4,6 +4,13 @@ import { createModule } from "../create-module.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type dummy = SymbolCreator;
 
+export const abcModule = createModule({
+  name: "abc",
+  descriptor: {
+    ".": ["abstractmethod"],
+  },
+});
+
 export const enumModule = createModule({
   name: "enum",
   descriptor: {

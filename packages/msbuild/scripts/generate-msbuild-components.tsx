@@ -1,8 +1,16 @@
-import { For, List, Output, renderAsync, writeOutput } from "@alloy-js/core";
+import {
+  code,
+  For,
+  List,
+  Output,
+  renderAsync,
+  writeOutput,
+} from "@alloy-js/core";
 import {
   InterfaceDeclaration,
   InterfaceMember,
   SourceFile,
+  VarDeclaration,
 } from "@alloy-js/typescript";
 import { resolve } from "pathe";
 import { resolveSchemas, XmlAttribute, XmlSchema } from "./collect-schemas.js";
@@ -17,7 +25,10 @@ await writeOutput(
   await renderAsync(
     <Output basePath={OUTPUT_PATH}>
       <SourceFile path="index.tsx">
-        <For each={schemas}>{(schema) => <XmlComponent schema={schema} />}</For>
+        {code`import { makeTag } from "./utils/make-tag.js";`}
+        <For each={schemas} doubleHardline>
+          {(schema) => <XmlComponent schema={schema} />}
+        </For>
       </SourceFile>
     </Output>,
   ),
@@ -39,10 +50,23 @@ function XmlComponent(props: { schema: XmlSchema }) {
           )}
         </For>
       </InterfaceDeclaration>
+      <XmlComponentFunction schema={props.schema} />
     </List>
   );
 }
 
+function XmlComponentFunction(props: { schema: XmlSchema }) {
+  return (
+    <VarDeclaration
+      export
+      const
+      name={props.schema.tagName}
+      doc={props.schema.description}
+    >
+      {code`makeTag<${props.schema.tagName}Props>("${props.schema.tagName}")`}
+    </VarDeclaration>
+  );
+}
 function XmlComponentPropsAttribute(props: {
   attrName: string;
   attr: XmlAttribute;
@@ -52,6 +76,7 @@ function XmlComponentPropsAttribute(props: {
       name={props.attrName}
       type={mapXsdTypeToTs(props.attr.type)}
       doc={props.attr.description}
+      optional={props.attr.use !== "required"}
     />
   );
 }

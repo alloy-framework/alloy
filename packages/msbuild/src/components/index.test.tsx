@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ItemGroup, PropertyGroup } from "./msbuild.jsx";
+import { ItemGroup, PackageReference, PropertyGroup } from "./index.jsx";
 
 describe("ItemGroup", () => {
   it("renders with children", () => {
@@ -24,4 +24,11 @@ describe("PropertyGroup", () => {
         <PropertyGroup Label="MyLabel">Content</PropertyGroup>
     `);
   });
+});
+
+it("renders package reference", () => {
+  expect(<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />)
+    .toRenderTo(`
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    `);
 });

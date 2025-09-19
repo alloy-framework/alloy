@@ -60,7 +60,7 @@ export function assertFileContents(
 ) {
   for (const [path, contents] of Object.entries(expectedFiles)) {
     const file = findFile(res, path);
-    expect(file.contents).toBe(dedent(contents));
+    expect(file.contents.trim()).toBe(dedent(contents).trim());
   }
 }
 

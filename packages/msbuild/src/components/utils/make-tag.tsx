@@ -1,4 +1,4 @@
-import { Children, For, Indent, splitProps } from "@alloy-js/core";
+import { Children, For, Indent, List, splitProps } from "@alloy-js/core";
 
 export function makeTag<T>(tag: string) {
   return (props: { children?: Children } & T) => {
@@ -11,13 +11,12 @@ export function makeTag<T>(tag: string) {
         {children.children ?
           <>
             {`>`}
-            <Indent softline>
-              {children.children}
-              {`</${tag}>`}
+            <Indent softline trailingBreak>
+              <List children={children.children} />
             </Indent>
+            {`</${tag}>`}
           </>
         : ` />`}
-        <softline />
       </group>
     );
   };

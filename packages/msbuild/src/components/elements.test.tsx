@@ -1,5 +1,12 @@
 import { expect, it } from "vitest";
-import { ItemGroup, PackageReference, PropertyGroup } from "./index.jsx";
+import {
+  ItemGroup,
+  OutputType,
+  PackageReference,
+  Project,
+  PropertyGroup,
+  TargetFramework,
+} from "./index.jsx";
 
 it("renders ItemGroup", () => {
   expect(<ItemGroup Label="MyLabel">Content</ItemGroup>).toRenderTo(`
@@ -18,4 +25,28 @@ it("renders package reference", () => {
     .toRenderTo(`
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     `);
+});
+
+it("generate a csproj file", () => {
+  expect(
+    <Project Sdk="Microsoft.NET.Sdk">
+      <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      </ItemGroup>
+    </Project>,
+  ).toRenderTo(`
+    <Project Sdk="Microsoft.NET.Sdk">
+      <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      </ItemGroup>
+    </Project>
+  `);
 });

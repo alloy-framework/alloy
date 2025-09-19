@@ -20,3 +20,17 @@ it("renders with attribute and children", () => {
         <ItemGroup Label="MyLabel" />
     `);
 });
+
+it("renders nested", () => {
+  expect(
+    <ItemGroup Label="MyLabel">
+      <ItemGroup Label="Nested1" />
+      <ItemGroup Label="Nested2" />
+    </ItemGroup>,
+  ).toRenderTo(`
+      <ItemGroup Label="MyLabel">
+        <ItemGroup Label="Nested1" />
+        <ItemGroup Label="Nested2" />
+      </ItemGroup>
+  `);
+});

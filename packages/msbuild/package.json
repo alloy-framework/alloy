@@ -1,0 +1,67 @@
+{
+  "name": "@alloy-js/msbuild",
+  "version": "0.20.0",
+  "description": "Alloy components for msbuild files.",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./stc": {
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
+    },
+    "./global/*": {
+      "development": "./src/builtins/*/index.ts",
+      "import": "./dist/src/builtins/*/index.js"
+    }
+  },
+  "imports": {
+    "#test/*": "./test/*",
+    "#components/*": {
+      "development": "./src/components/*",
+      "default": "./dist/src/components/*"
+    },
+    "#createLibrary": {
+      "development": "./src/create-library.ts",
+      "default": "./dist/src/create-library.js"
+    },
+    "#builtins": {
+      "development": "./src/builtins.ts",
+      "default": "./dist/src/builtins.js"
+    }
+  },
+  "scripts": {
+    "generate-docs": "api-extractor run",
+    "build": "alloy build && pnpm run generate-docs",
+    "clean": "rimraf dist/ .temp/",
+    "test:watch": "vitest -w",
+    "watch": "alloy build --watch",
+    "test": "vitest run",
+    "generate:components": "node ./dist/scripts/generate-msbuild-components.js",
+    "prepack": "node ../../scripts/strip-dev-exports.js"
+  },
+  "keywords": [],
+  "author": "jhendrix@microsoft.com",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "change-case": "catalog:",
+    "marked": "catalog:",
+    "pathe": "catalog:"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
+    "@microsoft/api-extractor": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/js-yaml": "^4.0.9",
+    "concurrently": "catalog:",
+    "fast-xml-parser": "catalog:",
+    "js-yaml": "^4.1.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module"
+}

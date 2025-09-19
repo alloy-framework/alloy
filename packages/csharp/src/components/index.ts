@@ -20,7 +20,6 @@ export * from "./method/method.jsx";
 export * from "./Name.js";
 export { Namespace, type NamespaceProps } from "./namespace/namespace.jsx";
 export * from "./parameters/parameters.jsx";
-export * from "./ProjectDirectory.js";
 export * from "./property/property.jsx";
 export * from "./record/declaration.js";
 export * from "./Reference.js";

@@ -247,7 +247,7 @@ function collectFromComplexType(
   }
 }
 
-function extractAttributesFromElement(
+function extractAttributesAndBaseFromElement(
   el: any,
   types: Record<string, any>,
 ): { attributes: Record<string, XmlAttribute>; base?: string } {
@@ -333,7 +333,14 @@ export async function resolveSchemas(
   const visited = await collectSchemas(entryUrl);
   const { elements, types } = buildMaps(visited);
 
+  const usedComplexTypes = new Set<any>();
+
   const out = new Map<string, XmlSchema>();
+
+  function collectFromComplexTypeInternal(ct: any, elementName?: string) {
+    usedComplexTypes.add(ct);
+    collectFromComplexType(ct, types, out, elementName);
+  }
 
   // add global elements
   for (const el of elements) {
@@ -341,7 +348,7 @@ export async function resolveSchemas(
     const name = localName(rawName);
     if (!name) continue;
 
-    const attrRes = extractAttributesFromElement(el, types);
+    const attrRes = extractAttributesAndBaseFromElement(el, types);
     const schema: XmlSchema = {
       tagName: name,
       description: extractDocumentation(el),
@@ -349,6 +356,7 @@ export async function resolveSchemas(
     };
     if (attrRes.base) {
       schema.base = attrRes.base;
+      usedComplexTypes.add(types[attrRes.base]);
     }
     out.set(name, schema);
     // if element references a type, traverse to find nested elements
@@ -356,17 +364,18 @@ export async function resolveSchemas(
     if (typeName) {
       const tName = String(typeName).split(":").pop() as string;
       if (tName && !tName.startsWith("xs:") && types[tName]) {
-        collectFromComplexType(types[tName], types, out);
+        collectFromComplexTypeInternal(types[tName]);
       }
     }
     if (el.complexType) {
-      collectFromComplexType(el.complexType, types, out);
+      collectFromComplexTypeInternal(el.complexType);
     }
   }
 
   // also include elements discovered as children
   // collect top-level complexTypes as internal schemas when they are not exposed as global elements
   for (const [typeName, ct] of Object.entries(types)) {
+    if (!usedComplexTypes.has(ct)) continue;
     if (out.has(typeName)) continue;
     out.set(typeName, {
       tagName: typeName,
@@ -375,7 +384,7 @@ export async function resolveSchemas(
       internal: true,
     });
     // populate attributes and nested elements for this type
-    collectFromComplexType(ct, types, out, typeName);
+    collectFromComplexTypeInternal(ct, typeName);
   }
 
   const result = Array.from(out.values()).sort((a, b) =>

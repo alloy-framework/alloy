@@ -22,19 +22,10 @@ export interface _StoreManifestSchemaDirProps {
 export interface AccelerateBuildsInVisualStudioProps {
 
 }
-export interface AdditionalDependenciesProps {
-
-}
 export interface AdditionalFileItemNamesProps {
 
 }
 export interface AdditionalIncludeDirectoriesProps {
-
-}
-export interface AdditionalLibraryDirectoriesProps {
-
-}
-export interface AdditionalManifestDependenciesProps {
 
 }
 export interface AdditionalManifestFilesProps {
@@ -46,9 +37,6 @@ export interface AdditionalOptionsProps {
 export interface AdditionalUsingDirectoriesProps {
 
 }
-export interface AddModuleNamesToAssemblyProps {
-
-}
 export interface ALProps extends TaskTypeProps {
   AlgorithmId: unknown
   BaseAddress: unknown
@@ -56,18 +44,18 @@ export interface ALProps extends TaskTypeProps {
   Configuration: unknown
   Copyright: unknown
   Culture: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   Description: unknown
   EmbedResources: unknown
   EnvironmentVariables: unknown
   EvidenceFile: unknown
   FileVersion: unknown
   Flags: unknown
-  GenerateFullPaths: unknown
+  GenerateFullPaths: boolean
   KeyContainer: unknown
   KeyFile: unknown
   LinkResources: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   MainEntryPoint: unknown
   OutputAssembly: unknown
   Platform: unknown
@@ -88,9 +76,6 @@ export interface ALProps extends TaskTypeProps {
   Version: unknown
   Win32Icon: unknown
   Win32Resource: unknown
-}
-export interface AllowIsolationProps {
-
 }
 /**
  * Flag indicating whether to allow local network loopback.
@@ -798,16 +783,16 @@ export interface ArtifactsPathProps {
 
 }
 export interface AspNetCompilerProps extends TaskTypeProps {
-  AllowPartiallyTrustedCallers: unknown
-  Clean: unknown
-  Debug: unknown
-  DelaySign: unknown
+  AllowPartiallyTrustedCallers: boolean
+  Clean: boolean
+  Debug: boolean
+  DelaySign: boolean
   EnvironmentVariables: unknown
-  FixedNames: unknown
-  Force: unknown
+  FixedNames: boolean
+  Force: boolean
   KeyContainer: unknown
   KeyFile: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   MetabasePath: unknown
   PhysicalPath: unknown
   StandardErrorImportance: unknown
@@ -817,7 +802,7 @@ export interface AspNetCompilerProps extends TaskTypeProps {
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  Updateable: unknown
+  Updateable: boolean
   VirtualPath: unknown
 }
 export interface AspNetConfigurationProps {
@@ -835,9 +820,6 @@ export interface AspNetCoreHostingModelProps {
 export interface AspNetCoreModuleNameProps {
 
 }
-export interface AssemblyDebugProps {
-
-}
 export interface AssemblyIdentityProps {
 
 }
@@ -845,9 +827,6 @@ export interface AssemblyKeyContainerNameProps {
 
 }
 export interface AssemblyKeyProviderNameProps {
-
-}
-export interface AssemblyLinkResourceProps {
 
 }
 /**
@@ -931,7 +910,7 @@ export interface AssignProjectConfigurationProps extends TaskTypeProps {
   CurrentProjectPlatform: unknown
   DefaultToVcxPlatformMapping: unknown
   ProjectReferences: unknown
-  ResolveConfigurationPlatformUsingMappings: unknown
+  ResolveConfigurationPlatformUsingMappings: boolean
   SolutionConfigurationContents: unknown
   UnassignedProjects: unknown
   VcxToDefaultPlatformMapping: unknown
@@ -966,23 +945,23 @@ export interface AutorunEnabledProps {
 }
 export interface AxImpProps extends TaskTypeProps {
   ActiveXControlName: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   EnvironmentVariables: unknown
-  GenerateSource: unknown
+  GenerateSource: boolean
   KeyContainer: unknown
   KeyFile: unknown
-  LogStandardErrorAsError: unknown
-  NoLogo: unknown
+  LogStandardErrorAsError: boolean
+  NoLogo: boolean
   OutputAssembly: unknown
   RuntimeCallableWrapperAssembly: unknown
   SdkToolsPath: unknown
-  Silent: unknown
+  Silent: boolean
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  Verbose: unknown
+  Verbose: boolean
 }
 export interface BaseAddressProps {
 
@@ -1055,16 +1034,16 @@ export interface BSCMakeProps extends TaskTypeProps {
   AdditionalOptions: unknown
   EnvironmentVariables: unknown
   ExcludedInputPaths: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
   OutputFile: unknown
   PathOverride: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  SuppressStartupBanner: unknown
+  SuppressStartupBanner: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -1073,30 +1052,21 @@ export interface BSCMakeProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
 }
 export interface CallingConventionProps {
 
 }
 export interface CallTargetProps extends TaskTypeProps {
-  RunEachTargetSeparately: unknown
+  RunEachTargetSeparately: boolean
   Targets: unknown
-  UseResultsCache: unknown
+  UseResultsCache: boolean
 }
 export interface CharacterSetProps {
 
 }
 export interface CheckForOverflowUnderflowProps {
 
-}
-/**
- * Groups When and Otherwise elements
- */
-interface ChooseTypeProps {
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface CLProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
@@ -1107,68 +1077,68 @@ export interface CLProps extends TaskTypeProps {
   AssemblerListingLocation: unknown
   AssemblerOutput: unknown
   BasicRuntimeChecks: unknown
-  BrowseInformation: unknown
+  BrowseInformation: boolean
   BrowseInformationFile: unknown
-  BufferSecurityCheck: unknown
+  BufferSecurityCheck: boolean
   CallingConvention: unknown
   CompileAs: unknown
   CompileAsManaged: unknown
-  CreateHotpatchableImage: unknown
+  CreateHotpatchableImage: boolean
   DebugInformationFormat: unknown
-  DisableLanguageExtensions: unknown
+  DisableLanguageExtensions: boolean
   DisableSpecificWarnings: unknown
   EnableEnhancedInstructionSet: unknown
-  EnableFiberSafeOptimizations: unknown
-  EnablePREfast: unknown
+  EnableFiberSafeOptimizations: boolean
+  EnablePREfast: boolean
   EnvironmentVariables: unknown
   ErrorReporting: unknown
   ExceptionHandling: unknown
   ExcludedInputPaths: unknown
-  ExpandAttributedSource: unknown
+  ExpandAttributedSource: boolean
   FavorSizeOrSpeed: unknown
-  FloatingPointExceptions: unknown
+  FloatingPointExceptions: boolean
   FloatingPointModel: unknown
-  ForceConformanceInForLoopScope: unknown
+  ForceConformanceInForLoopScope: boolean
   ForcedIncludeFiles: unknown
   ForcedUsingFiles: unknown
-  FunctionLevelLinking: unknown
-  GenerateXMLDocumentationFiles: unknown
-  IgnoreStandardIncludePath: unknown
+  FunctionLevelLinking: boolean
+  GenerateXMLDocumentationFiles: boolean
+  IgnoreStandardIncludePath: boolean
   InlineFunctionExpansion: unknown
-  IntrinsicFunctions: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuild: unknown
-  MinimalRebuildFromTracking: unknown
-  MultiProcessorCompilation: unknown
+  IntrinsicFunctions: boolean
+  LogStandardErrorAsError: boolean
+  MinimalRebuild: boolean
+  MinimalRebuildFromTracking: boolean
+  MultiProcessorCompilation: boolean
   ObjectFileName: unknown
   ObjectFiles: unknown
-  OmitDefaultLibName: unknown
-  OmitFramePointers: unknown
-  OpenMPSupport: unknown
+  OmitDefaultLibName: boolean
+  OmitFramePointers: boolean
+  OpenMPSupport: boolean
   Optimization: unknown
   PathOverride: unknown
   PrecompiledHeader: unknown
   PrecompiledHeaderFile: unknown
   PrecompiledHeaderOutputFile: unknown
-  PreprocessKeepComments: unknown
+  PreprocessKeepComments: boolean
   PreprocessorDefinitions: unknown
   PreprocessOutput: unknown
-  PreprocessSuppressLineNumbers: unknown
-  PreprocessToFile: unknown
+  PreprocessSuppressLineNumbers: boolean
+  PreprocessToFile: boolean
   ProcessorNumber: unknown
   ProgramDataBaseFileName: unknown
   RuntimeLibrary: unknown
-  RuntimeTypeInfo: unknown
-  ShowIncludes: unknown
-  SkippedExecution: unknown
-  SmallerTypeCheck: unknown
+  RuntimeTypeInfo: boolean
+  ShowIncludes: boolean
+  SkippedExecution: boolean
+  SmallerTypeCheck: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  StringPooling: unknown
+  StringPooling: boolean
   StructMemberAlignment: unknown
-  SuppressStartupBanner: unknown
+  SuppressStartupBanner: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -1177,16 +1147,16 @@ export interface CLProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
   TreatSpecificWarningsAsErrors: unknown
-  TreatWarningAsError: unknown
-  TreatWChar_tAsBuiltInType: unknown
-  UndefineAllPreprocessorDefinitions: unknown
+  TreatWarningAsError: boolean
+  TreatWChar_tAsBuiltInType: boolean
+  UndefineAllPreprocessorDefinitions: boolean
   UndefinePreprocessorDefinitions: unknown
-  UseFullPaths: unknown
-  UseUnicodeForAssemblerListing: unknown
+  UseFullPaths: boolean
+  UseUnicodeForAssemblerListing: boolean
   WarningLevel: unknown
-  WholeProgramOptimization: unknown
+  WholeProgramOptimization: boolean
   XMLDocumentationFileName: unknown
 }
 export interface ClCompileProps extends SimpleItemTypeProps {
@@ -1198,54 +1168,42 @@ export interface ClientStubFileProps {
 export interface ClIncludeProps extends SimpleItemTypeProps {
 
 }
-export interface CLRImageTypeProps {
-
-}
 export interface CLRSupportProps {
-
-}
-export interface CLRSupportLastErrorProps {
-
-}
-export interface CLRThreadAttributeProps {
-
-}
-export interface CLRUnmanagedCodeCheckProps {
 
 }
 export interface CodeAnalysisProps extends TaskTypeProps {
   AlternativeToolName: unknown
   AnalysisTimeout: unknown
-  ApplyLogFileXsl: unknown
+  ApplyLogFileXsl: boolean
   Assemblies: unknown
   ConsoleXsl: unknown
   Culture: unknown
   DependentAssemblyPaths: unknown
   Dictionaries: unknown
   FilesWritten: unknown
-  ForceOutput: unknown
-  GenerateSuccessFile: unknown
-  IgnoreInvalidTargets: unknown
-  IgnoreGeneratedCode: unknown
+  ForceOutput: boolean
+  GenerateSuccessFile: boolean
+  IgnoreInvalidTargets: boolean
+  IgnoreGeneratedCode: boolean
   Imports: unknown
   LogFile: unknown
   LogFileXsl: unknown
-  OutputToConsole: unknown
-  OverrideRuleVisibilities: unknown
+  OutputToConsole: boolean
+  OverrideRuleVisibilities: boolean
   PlatformPath: unknown
   Project: unknown
-  Quiet: unknown
+  Quiet: boolean
   References: unknown
   RuleAssemblies: unknown
   Rules: unknown
   SaveMessagesToReport: unknown
-  SearchGlobalAssemblyCache: unknown
-  Summary: unknown
-  SuccessFile: unknown
+  SearchGlobalAssemblyCache: boolean
+  Summary: boolean
+  SuccessFile: boolean
   Timeout: unknown
-  TreatWarningsAsErrors: unknown
+  TreatWarningsAsErrors: boolean
   ToolPath: unknown
-  UpdateProject: unknown
+  UpdateProject: boolean
 }
 /**
  * Additional options to pass to the Code Analysis command line tool.
@@ -1561,12 +1519,12 @@ export interface ConvertToAbsolutePathProps extends TaskTypeProps {
 export interface CopyProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
-  OverwriteReadOnlyFiles: unknown
+  OverwriteReadOnlyFiles: boolean
   Retries: unknown
   RetryDelayMilliseconds: unknown
-  SkipUnchangedFiles: unknown
-  UseHardlinksIfPossible: unknown
-  UseSymboliclinksIfPossible: unknown
+  SkipUnchangedFiles: boolean
+  UseHardlinksIfPossible: boolean
+  UseSymboliclinksIfPossible: boolean
   SourceFiles: unknown
 }
 /**
@@ -1607,7 +1565,7 @@ export interface CopyWinmdArtifactsOutputGroupOutputsProps extends SimpleItemTyp
 }
 export interface CPPCleanProps extends TaskTypeProps {
   DeletedFiles: unknown
-  DoDelete: unknown
+  DoDelete: boolean
   FilePatternsToDeleteOnClean: unknown
   FilesExcludedFromClean: unknown
   FoldersToClean: unknown
@@ -1621,7 +1579,7 @@ export interface CreateAppStoreContainerProps extends TaskTypeProps {
   OutputPath: unknown
 }
 export interface CreateCSharpManifestResourceNameProps extends TaskTypeProps {
-  PrependCultureAsDirectory: unknown
+  PrependCultureAsDirectory: boolean
   ResourceFiles: unknown
   ResourceFilesWithManifestResourceNames: unknown
   RootNamespace: unknown
@@ -1632,14 +1590,11 @@ export interface CreateDesktopShortcutProps {
 export interface CreateHotpatchableImageProps {
 
 }
-export interface CreateHotPatchableImageProps {
-
-}
 export interface CreateItemProps extends TaskTypeProps {
   AdditionalMetadata: unknown
   Exclude: unknown
   Include: unknown
-  PreserveExistingMetadata: unknown
+  PreserveExistingMetadata: boolean
 }
 export interface CreatePriConfigXmlForFullIndexProps extends CreatePriConfigXmlTaskTypeProps {
   LayoutResfilesPath: unknown
@@ -1657,7 +1612,7 @@ export interface CreatePriConfigXmlTaskProps extends TaskTypeProps {
   PriInitialPath: unknown
   DefaultResourceLanguage: unknown
   DefaultResourceQualifiers: unknown
-  ConvertDotsToSlashes: unknown
+  ConvertDotsToSlashes: boolean
   IntermediateExtension: unknown
   PriConfigXmlPackagingSnippetPath: unknown
   PriConfigXmlDefaultSnippetPath: unknown
@@ -1669,7 +1624,7 @@ interface CreatePriConfigXmlTaskTypeProps extends TaskTypeProps {
   PriInitialPath: unknown
   DefaultResourceLanguage: unknown
   DefaultResourceQualifiers: unknown
-  ConvertDotsToSlashes: unknown
+  ConvertDotsToSlashes: boolean
   IntermediateExtension: unknown
   PriConfigXmlPackagingSnippetPath: unknown
   PriConfigXmlDefaultSnippetPath: unknown
@@ -1682,15 +1637,15 @@ interface CreatePriConfigXmlTaskTypeProps extends TaskTypeProps {
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
+  Runtime: unknown /* msb:runtime */
 }
 interface CreatePriConfigXmlWithPackagingElementTaskTypeProps extends TaskTypeProps {
   AppxBundleAutoResourcePackageQualifiers: unknown
@@ -1698,7 +1653,7 @@ interface CreatePriConfigXmlWithPackagingElementTaskTypeProps extends TaskTypePr
   PriInitialPath: unknown
   DefaultResourceLanguage: unknown
   DefaultResourceQualifiers: unknown
-  ConvertDotsToSlashes: unknown
+  ConvertDotsToSlashes: boolean
   IntermediateExtension: unknown
   PriConfigXmlPackagingSnippetPath: unknown
   PriConfigXmlDefaultSnippetPath: unknown
@@ -1711,15 +1666,15 @@ interface CreatePriConfigXmlWithPackagingElementTaskTypeProps extends TaskTypePr
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
+  Runtime: unknown /* msb:runtime */
 }
 export interface CreatePriFilesForPortableLibrariesProps extends TaskTypeProps {
   ContentToIndex: unknown
@@ -1739,7 +1694,7 @@ export interface CreatePropertyProps extends TaskTypeProps {
   Value: unknown
 }
 export interface CreateVisualBasicManifestResourceNameProps extends TaskTypeProps {
-  PrependCultureAsDirectory: unknown
+  PrependCultureAsDirectory: boolean
   ResourceFiles: unknown
   ResourceFilesWithManifestResourceNames: unknown
   RootNamespace: unknown
@@ -1753,32 +1708,32 @@ export interface CreateWebPageOnPublishProps {
 export interface CscProps extends TaskTypeProps {
   AdditionalLibPaths: unknown
   AddModules: unknown
-  AllowUnsafeBlocks: unknown
+  AllowUnsafeBlocks: boolean
   BaseAddress: unknown
-  CheckForOverflowUnderflow: unknown
+  CheckForOverflowUnderflow: boolean
   CodePage: unknown
   DebugType: unknown
   DefineConstants: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   DisabledWarnings: unknown
   DocumentationFile: unknown
-  EmitDebugInformation: unknown
+  EmitDebugInformation: boolean
   EnvironmentVariables: unknown
   ErrorReport: unknown
   FileAlignment: unknown
-  GenerateFullPaths: unknown
+  GenerateFullPaths: boolean
   KeyContainer: unknown
   KeyFile: unknown
   LangVersion: unknown
   LinkResources: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   MainEntryPoint: unknown
   ModuleAssemblyName: unknown
-  NoConfig: unknown
-  NoLogo: unknown
-  NoStandardLib: unknown
-  NoWin32Manifest: unknown
-  Optimize: unknown
+  NoConfig: boolean
+  NoLogo: boolean
+  NoStandardLib: boolean
+  NoWin32Manifest: boolean
+  Optimize: boolean
   OutputAssembly: unknown
   PdbFile: unknown
   Platform: unknown
@@ -1792,9 +1747,9 @@ export interface CscProps extends TaskTypeProps {
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  TreatWarningsAsErrors: unknown
-  UseHostCompilerIfAvailable: unknown
-  Utf8Output: unknown
+  TreatWarningsAsErrors: boolean
+  UseHostCompilerIfAvailable: boolean
+  Utf8Output: boolean
   WarningLevel: unknown
   WarningsAsErrors: unknown
   WarningsNotAsErrors: unknown
@@ -1816,9 +1771,6 @@ export interface CurrentSolutionConfigurationContentsProps {
   Label: string
 }
 export interface CustomBuildStepProps extends SimpleItemTypeProps {
-
-}
-export interface DataExecutionPreventionProps {
 
 }
 export interface DebugInformationFormatProps {
@@ -1872,16 +1824,13 @@ export interface DefineDebugProps {
 export interface DefineTraceProps {
 
 }
-export interface DelayLoadDLLsProps {
-
-}
 export interface DelaySignProps {
 
 }
 export interface DeleteProps extends TaskTypeProps {
   DeletedFiles: unknown
   Files: unknown
-  TreatErrorsAsWarnings: unknown
+  TreatErrorsAsWarnings: boolean
 }
 export interface DependencyInformationFileProps {
 
@@ -1957,9 +1906,6 @@ export interface DownloadFileProps extends TaskTypeProps {
   SourceUrl: unknown
   Timeout: unknown
 }
-export interface DriverProps {
-
-}
 /**
  * Resources to be embedded in the generated assembly
  */
@@ -1969,9 +1915,6 @@ export interface EmbeddedResourceProps extends SimpleItemTypeProps {
    */
   Include: string
   CopyToOutputDirectory: unknown
-}
-export interface EmbedManagedResourceFileProps {
-
 }
 export interface EmbedManifestProps {
 
@@ -1998,9 +1941,6 @@ export interface EnableAspireTestingProps {
 
 }
 export interface EnableASPXDebuggingProps {
-
-}
-export interface EnableCOMDATFoldingProps {
 
 }
 export interface EnableCustomCultureProps {
@@ -2120,9 +2060,6 @@ export interface EnableSigningChecksProps {
 export interface EnableSQLServerDebuggingProps {
 
 }
-export interface EnableUACProps {
-
-}
 export interface EnableUnmanagedDebuggingProps {
 
 }
@@ -2142,9 +2079,6 @@ export interface EntryPointExeProps {
  * Windows Application Packaging project-specific: Relative path to entry point project file.
  */
 export interface EntryPointProjectUniqueNameProps {
-
-}
-export interface EntryPointSymbolProps {
 
 }
 export interface ErrorProps extends TaskTypeProps {
@@ -2191,9 +2125,9 @@ export interface ExecProps extends TaskTypeProps {
   CustomErrorRegularExpression: unknown
   CustomWarningRegularExpression: unknown
   EnvironmentVariables: unknown
-  IgnoreExitCode: unknown
-  IgnoreStandardErrorWarningFormat: unknown
-  LogStandardErrorAsError: unknown
+  IgnoreExitCode: boolean
+  IgnoreStandardErrorWarningFormat: boolean
+  LogStandardErrorAsError: boolean
   Outputs: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
@@ -2266,22 +2200,19 @@ export interface FindAppConfigFileProps extends TaskTypeProps {
   TargetPath: unknown
 }
 export interface FindInListProps extends TaskTypeProps {
-  CaseSensitive: unknown
-  FindLastMatch: unknown
+  CaseSensitive: boolean
+  FindLastMatch: boolean
   ItemFound: unknown
   ItemSpecToFind: unknown
   List: unknown
-  MatchFileNameOnly: unknown
+  MatchFileNameOnly: boolean
 }
 export interface FindUnderPathProps extends TaskTypeProps {
   Files: unknown
   InPath: unknown
   OutOfPath: unknown
   Path: unknown
-  UpdateToAbsolutePaths: unknown
-}
-export interface FixedBaseAddressProps {
-
+  UpdateToAbsolutePaths: boolean
 }
 export interface FloatingPointExceptionsProps {
 
@@ -2324,12 +2255,6 @@ export interface ForcedIncludeFilesProps {
 export interface ForcedUsingFilesProps {
 
 }
-export interface ForceFileOutputProps {
-
-}
-export interface ForceSymbolReferencesProps {
-
-}
 export interface FormatUrlProps extends TaskTypeProps {
   InputUrl: unknown
   OutputUrl: unknown
@@ -2365,9 +2290,6 @@ export interface FrameworkReferenceProps extends SimpleItemTypeProps {
 export interface FunctionLevelLinkingProps {
 
 }
-export interface FunctionOrderProps {
-
-}
 export interface GenerateApplicationManifestProps extends TaskTypeProps {
   AssemblyName: unknown
   AssemblyVersion: unknown
@@ -2379,11 +2301,11 @@ export interface GenerateApplicationManifestProps extends TaskTypeProps {
   ErrorReportUrl: unknown
   FileAssociations: unknown
   Files: unknown
-  HostInBrowser: unknown
+  HostInBrowser: boolean
   IconFile: unknown
   InputManifest: unknown
   IsolatedComReferences: unknown
-  LauncherBasedDeployment: unknown
+  LauncherBasedDeployment: boolean
   ManifestType: unknown
   MaxTargetPath: unknown
   OSVersion: unknown
@@ -2391,7 +2313,7 @@ export interface GenerateApplicationManifestProps extends TaskTypeProps {
   Platform: unknown
   Product: unknown
   Publisher: unknown
-  RequiresMinimumFramework35SP1: unknown
+  RequiresMinimumFramework35SP1: boolean
   SuiteName: unknown
   SupportUrl: unknown
   TargetCulture: unknown
@@ -2400,7 +2322,7 @@ export interface GenerateApplicationManifestProps extends TaskTypeProps {
   TargetFrameworkSubset: unknown
   TargetFrameworkVersion: unknown
   TrustInfoFile: unknown
-  UseApplicationTrust: unknown
+  UseApplicationTrust: boolean
 }
 export interface GenerateAppxManifestProps extends TaskTypeProps {
   ApplicationExecutableName: unknown
@@ -2418,12 +2340,12 @@ export interface GenerateAppxManifestProps extends TaskTypeProps {
   SDKWinmdFiles: unknown
   OSMinVersion: unknown
   OSMaxVersionTested: unknown
-  OSMinVersionReplaceManifestVersion: unknown
-  OSMaxVersionTestedReplaceManifestVersion: unknown
-  EnableSigningChecks: unknown
+  OSMinVersionReplaceManifestVersion: boolean
+  OSMaxVersionTestedReplaceManifestVersion: boolean
+  EnableSigningChecks: boolean
   ManifestMetadata: unknown
   TargetPlatformIdentifier: unknown
-  PackageSigningEnabled: unknown
+  PackageSigningEnabled: boolean
 }
 /**
  * Flag indicating whether to generate app package during the build.
@@ -2461,20 +2383,20 @@ export interface GenerateAppxSymbolPackageProps extends TaskTypeProps {
 export interface GenerateBootstrapperProps extends TaskTypeProps {
   ApplicationFile: unknown
   ApplicationName: unknown
-  ApplicationRequiresElevation: unknown
+  ApplicationRequiresElevation: boolean
   ApplicationUrl: unknown
   BootstrapperComponentFiles: unknown
   BootstrapperItems: unknown
   BootstrapperKeyFile: unknown
   ComponentsLocation: unknown
   ComponentsUrl: unknown
-  CopyComponents: unknown
+  CopyComponents: boolean
   Culture: unknown
   FallbackCulture: unknown
   OutputPath: unknown
   Path: unknown
   SupportUrl: unknown
-  Validate: unknown
+  Validate: boolean
 }
 export interface GenerateCatalogFilesProps {
 
@@ -2485,22 +2407,19 @@ export interface GenerateCategoryTagsProps {
 export interface GenerateClientFilesProps {
 
 }
-export interface GenerateDebugInformationProps {
-
-}
 export interface GenerateDeploymentManifestProps extends TaskTypeProps {
   AssemblyName: unknown
   AssemblyVersion: unknown
-  CreateDesktopShortcut: unknown
+  CreateDesktopShortcut: boolean
   DeploymentUrl: unknown
   Description: unknown
-  DisallowUrlActivation: unknown
+  DisallowUrlActivation: boolean
   EntryPoint: unknown
   ErrorReportUrl: unknown
   InputManifest: unknown
-  Install: unknown
-  LauncherBasedDeployment: unknown
-  MapFileExtensions: unknown
+  Install: boolean
+  LauncherBasedDeployment: boolean
+  MapFileExtensions: boolean
   MaxTargetPath: unknown
   MinimumRequiredVersion: unknown
   OutputManifest: unknown
@@ -2512,8 +2431,8 @@ export interface GenerateDeploymentManifestProps extends TaskTypeProps {
   TargetCulture: unknown
   TargetFrameworkMoniker: unknown
   TargetFrameworkVersion: unknown
-  TrustUrlParameters: unknown
-  UpdateEnabled: unknown
+  TrustUrlParameters: boolean
+  UpdateEnabled: boolean
   UpdateInterval: unknown
   UpdateMode: unknown
   UpdateUnit: unknown
@@ -2533,9 +2452,6 @@ export interface GenerateLibraryLayoutProps {
 
 }
 export interface GenerateManifestsProps {
-
-}
-export interface GenerateMapFileProps {
 
 }
 /**
@@ -2582,11 +2498,11 @@ export interface GenerateProjectPriFileProps extends ToolTaskTypeProps {
 export interface GenerateResourceProps extends TaskTypeProps {
   AdditionalInputs: unknown
   ExcludedInputPaths: unknown
-  ExecuteAsTool: unknown
-  MinimalRebuildFromTracking: unknown
-  NeverLockTypeAssemblies: unknown
+  ExecuteAsTool: boolean
+  MinimalRebuildFromTracking: boolean
+  NeverLockTypeAssemblies: boolean
   OutputResources: unknown
-  PublicClass: unknown
+  PublicClass: boolean
   References: unknown
   SdkToolsPath: unknown
   Sources: unknown
@@ -2597,9 +2513,9 @@ export interface GenerateResourceProps extends TaskTypeProps {
   StronglyTypedManifestPrefix: unknown
   StronglyTypedNamespace: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
-  UseSourcePath: unknown
-  ExtractResWFiles: unknown
+  TrackFileAccess: boolean
+  UseSourcePath: boolean
+  ExtractResWFiles: boolean
   OutputDirectory: unknown
   MSBuildRuntime: unknown
   MSBuildArchitecture: unknown
@@ -2635,32 +2551,6 @@ export interface GenerateTrustInfoProps extends TaskTypeProps {
 }
 export interface GenerateTypeLibraryProps {
 
-}
-interface GenericItemTypeProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 interface GenericPropertyTypeProps {
   /**
@@ -2748,34 +2638,16 @@ export interface GetWindowsDesktopSdkDirProps extends TaskTypeProps {
 export interface HeaderFileNameProps {
 
 }
-export interface HeapCommitSizeProps {
-
-}
-export interface HeapReserveSizeProps {
-
-}
 export interface HighEntropyVAProps {
 
 }
 export interface HostInBrowserProps {
 
 }
-export interface IgnoreAllDefaultLibrariesProps {
-
-}
-export interface IgnoreEmbeddedIDLProps {
-
-}
 export interface IgnoreImportLibraryProps {
 
 }
-export interface IgnoreSpecificDefaultLibrariesProps {
-
-}
 export interface IgnoreStandardIncludePathProps {
-
-}
-export interface ImageHasSafeExceptionHandlersProps {
 
 }
 /**
@@ -2789,7 +2661,7 @@ export interface ImplicitUsingsProps {
  */
 export interface ImportProps {
   /**
-   * Optional expression evaluated to determine whether the import should occur
+   * Optional expression evaluated to determine whether the items should be evaluated
    */
   Condition: string
   /**
@@ -2812,67 +2684,6 @@ export interface ImportProps {
    * Optional expression. Used to identify or order system and user elements
    */
   Label: string
-  /**
-   * Project file to import
-   */
-  Project: unknown
-  /**
-   * Name of the SDK which contains the project file to import
-   */
-  Sdk: string
-  /**
-   * Optional expression used to specify the version of the SDK referenced by this import
-   */
-  Version: string
-  /**
-   * Optional expression used to specify the minimum SDK version required by the referring import
-   */
-  MinimumVersion: string
-}
-/**
- * Groups import definitions
- */
-interface ImportGroupTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the ImportGroup should be used
-   */
-  Condition: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-export interface ImportLibraryProps {
-
-}
-/**
- * Declares that the contents of another project file should be inserted at this location
- */
-interface ImportTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the import should occur
-   */
-  Condition: string
-  /**
-   * Project file to import
-   */
-  Project: unknown
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-  /**
-   * Name of the SDK which contains the project file to import
-   */
-  Sdk: string
-  /**
-   * Optional expression used to specify the version of the SDK referenced by this import
-   */
-  Version: string
-  /**
-   * Optional expression used to specify the minimum SDK version required by the referring import
-   */
-  MinimumVersion: string
 }
 /**
  * Flag indicating whether to include primary build outputs into the app package payload.
@@ -3073,48 +2884,13 @@ export interface ItemProps {
    */
   Label: string
 }
-/**
- * Groups item metadata definitions
- */
-interface ItemDefinitionGroupTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the ItemDefinitionGroup should be used
-   */
-  Condition: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-/**
- * Groups item list definitions
- */
-interface ItemGroupTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the ItemGroup should be used
-   */
-  Condition: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
 export interface JCPAProps {
-
-}
-export interface KeyContainerProps {
-
-}
-export interface KeyFileProps {
 
 }
 export interface KeywordProps {
 
 }
 export interface LangVersionProps {
-
-}
-export interface LargeAddressAwareProps {
 
 }
 /**
@@ -3126,8 +2902,8 @@ export interface LayoutDirProps {
 export interface LCProps extends TaskTypeProps {
   EnvironmentVariables: unknown
   LicenseTarget: unknown
-  LogStandardErrorAsError: unknown
-  NoLogo: unknown
+  LogStandardErrorAsError: boolean
+  NoLogo: boolean
   OutputDirectory: unknown
   OutputLicense: unknown
   ReferencedAssemblies: unknown
@@ -3151,24 +2927,24 @@ export interface LIBProps extends TaskTypeProps {
   ExcludedInputPaths: unknown
   ExportNamedFunctions: unknown
   ForceSymbolReferences: unknown
-  IgnoreAllDefaultLibraries: unknown
+  IgnoreAllDefaultLibraries: boolean
   IgnoreSpecificDefaultLibraries: unknown
-  LinkLibraryDependencies: unknown
-  LinkTimeCodeGeneration: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
+  LinkLibraryDependencies: boolean
+  LinkTimeCodeGeneration: boolean
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
   MinimumRequiredVersion: unknown
   ModuleDefinitionFile: unknown
   OutputFile: unknown
   PathOverride: unknown
   RemoveObjects: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
   SubSystem: unknown
-  SuppressStartupBanner: unknown
+  SuppressStartupBanner: boolean
   TargetMachine: unknown
   Timeout: unknown
   TLogReadFiles: unknown
@@ -3178,12 +2954,12 @@ export interface LIBProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
-  TreatLibWarningAsErrors: unknown
-  UseUnicodeResponseFiles: unknown
-  Verbose: unknown
+  TrackFileAccess: boolean
+  TreatLibWarningAsErrors: boolean
+  UseUnicodeResponseFiles: boolean
+  Verbose: boolean
 }
-export interface LinkProps extends SimpleItemTypeProps {
+export interface LinkProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalDependencies: unknown
@@ -3191,77 +2967,77 @@ export interface LinkProps extends SimpleItemTypeProps {
   AdditionalManifestDependencies: unknown
   AdditionalOptions: unknown
   AddModuleNamesToAssembly: unknown
-  AllowIsolation: unknown
-  AssemblyDebug: unknown
+  AllowIsolation: boolean
+  AssemblyDebug: boolean
   AssemblyLinkResource: unknown
   BaseAddress: unknown
   CLRImageType: unknown
   CLRSupportLastError: unknown
   CLRThreadAttribute: unknown
-  CLRUnmanagedCodeCheck: unknown
+  CLRUnmanagedCodeCheck: boolean
   CreateHotPatchableImage: unknown
-  DataExecutionPrevention: unknown
+  DataExecutionPrevention: boolean
   DelayLoadDLLs: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   Driver: unknown
   EmbedManagedResourceFile: unknown
-  EnableCOMDATFolding: unknown
-  EnableUAC: unknown
+  EnableCOMDATFolding: boolean
+  EnableUAC: boolean
   EntryPointSymbol: unknown
   EnvironmentVariables: unknown
   ExcludedInputPaths: unknown
-  FixedBaseAddress: unknown
+  FixedBaseAddress: boolean
   ForceFileOutput: unknown
   ForceSymbolReferences: unknown
   FunctionOrder: unknown
-  GenerateDebugInformation: unknown
-  GenerateManifest: unknown
-  GenerateMapFile: unknown
+  GenerateDebugInformation: boolean
+  GenerateManifest: boolean
+  GenerateMapFile: boolean
   HeapCommitSize: unknown
   HeapReserveSize: unknown
-  IgnoreAllDefaultLibraries: unknown
-  IgnoreEmbeddedIDL: unknown
-  IgnoreImportLibrary: unknown
+  IgnoreAllDefaultLibraries: boolean
+  IgnoreEmbeddedIDL: boolean
+  IgnoreImportLibrary: boolean
   IgnoreSpecificDefaultLibraries: unknown
-  ImageHasSafeExceptionHandlers: unknown
+  ImageHasSafeExceptionHandlers: boolean
   ImportLibrary: unknown
   KeyContainer: unknown
   KeyFile: unknown
-  LargeAddressAware: unknown
-  LinkDLL: unknown
+  LargeAddressAware: boolean
+  LinkDLL: boolean
   LinkErrorReporting: unknown
-  LinkIncremental: unknown
-  LinkLibraryDependencies: unknown
-  LinkStatus: unknown
+  LinkIncremental: boolean
+  LinkLibraryDependencies: boolean
+  LinkStatus: boolean
   LinkTimeCodeGeneration: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   ManifestFile: unknown
-  MapExports: unknown
+  MapExports: boolean
   MapFileName: unknown
   MergedIDLBaseFileName: unknown
   MergeSections: unknown
   MidlCommandFile: unknown
-  MinimalRebuildFromTracking: unknown
+  MinimalRebuildFromTracking: boolean
   MinimumRequiredVersion: unknown
   ModuleDefinitionFile: unknown
   MSDOSStubFileName: unknown
-  NoEntryPoint: unknown
+  NoEntryPoint: boolean
   ObjectFiles: unknown
-  OptimizeReferences: unknown
+  OptimizeReferences: boolean
   OutputFile: unknown
   PathOverride: unknown
-  PerUserRedirection: unknown
+  PerUserRedirection: boolean
   PreprocessOutput: unknown
-  PreventDllBinding: unknown
-  Profile: unknown
+  PreventDllBinding: boolean
+  Profile: boolean
   ProfileGuidedDatabase: unknown
   ProgramDatabaseFile: unknown
-  RandomizedBaseAddress: unknown
-  RegisterOutput: unknown
+  RandomizedBaseAddress: boolean
+  RegisterOutput: boolean
   SectionAlignment: unknown
-  SetChecksum: unknown
+  SetChecksum: boolean
   ShowProgress: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Sources: unknown
   SourcesCompiled: unknown
   SpecifySectionAttributes: unknown
@@ -3271,13 +3047,13 @@ export interface LinkProps extends SimpleItemTypeProps {
   StandardOutputImportance: unknown
   StripPrivateSymbols: unknown
   SubSystem: unknown
-  SupportNobindOfDelayLoadedDLL: unknown
-  SupportUnloadOfDelayLoadedDLL: unknown
-  SuppressStartupBanner: unknown
-  SwapRunFromCD: unknown
-  SwapRunFromNET: unknown
+  SupportNobindOfDelayLoadedDLL: boolean
+  SupportUnloadOfDelayLoadedDLL: boolean
+  SuppressStartupBanner: boolean
+  SwapRunFromCD: boolean
+  SwapRunFromNET: boolean
   TargetMachine: unknown
-  TerminalServerAware: unknown
+  TerminalServerAware: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -3286,76 +3062,17 @@ export interface LinkProps extends SimpleItemTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
-  TreatLinkerWarningAsErrors: unknown
-  TurnOffAssemblyGeneration: unknown
+  TrackFileAccess: boolean
+  TreatLinkerWarningAsErrors: boolean
+  TurnOffAssemblyGeneration: boolean
   TypeLibraryFile: unknown
   TypeLibraryResourceID: unknown
   UACExecutionLevel: unknown
-  UACUIAccess: unknown
-  UseLibraryDependencyInputs: unknown
+  UACUIAccess: boolean
+  UseLibraryDependencyInputs: boolean
   Version: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-export interface LinkErrorReportingProps {
-
 }
 export interface LinkIncrementalProps {
-
-}
-interface LinkItemProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-export interface LinkStatusProps {
-
-}
-export interface LinkTimeCodeGenerationProps {
 
 }
 export interface LocaleIDProps {
@@ -3371,58 +3088,27 @@ export interface MakeAppxExeFullPathProps {
 
 }
 export interface MakeAppxPackProps extends MakeAppxWithOutputTypeProps {
-  ResourcePack: unknown
-  ValidateResourcesReferencedByManifest: unknown
+  ResourcePack: boolean
+  ValidateResourcesReferencedByManifest: boolean
   HashAlgorithmId: unknown
   AppxManifest: unknown
   FileMap: unknown
-}
-interface MakeAppxTypeProps extends TaskTypeProps {
-  MakeAppxExeFullPath: unknown
-  Parameters: unknown
-  ExitCode: unknown
-  YieldDuringToolExecution: unknown
-  UseCommandProcessor: unknown
-  EchoOff: unknown
-  ToolExe: unknown
-  ToolPath: unknown
-  EnvironmentVariables: unknown
-  Timeout: unknown
-  StandardErrorImportance: unknown
-  StandardOutputImportance: unknown
-  LogStandardErrorAsError: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 interface MakeAppxWithOutputTypeProps extends TaskTypeProps {
   Output: unknown
   MakeAppxExeFullPath: unknown
   Parameters: unknown
   ExitCode: unknown
-  YieldDuringToolExecution: unknown
-  UseCommandProcessor: unknown
-  EchoOff: unknown
+  YieldDuringToolExecution: boolean
+  UseCommandProcessor: boolean
+  EchoOff: boolean
   ToolExe: unknown
   ToolPath: unknown
   EnvironmentVariables: unknown
   Timeout: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -3430,15 +3116,15 @@ interface MakeAppxWithOutputTypeProps extends TaskTypeProps {
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
+  Runtime: unknown /* msb:runtime */
 }
 export interface MakeDirProps extends TaskTypeProps {
   Directories: unknown
@@ -3467,26 +3153,14 @@ export interface ManifestFromManagedAssemblyProps {
 export interface ManifestKeyFileProps {
 
 }
-export interface MapExportsProps {
-
-}
 /**
  * boolean
  */
 export interface MapFileExtensionsProps {
 
 }
-export interface MapFileNameProps {
-
-}
-export interface MergedIDLBaseFileNameProps {
-
-}
-export interface MergeSectionsProps {
-
-}
 export interface MessageProps extends TaskTypeProps {
-  Importance: unknown
+  Importance: unknown /* msb:importance */
   Text: unknown
 }
 export interface MidlProps extends SimpleItemTypeProps {
@@ -3497,44 +3171,44 @@ export interface MIDLProps extends TaskTypeProps {
   ActiveToolSwitchesValues: unknown
   AdditionalIncludeDirectories: unknown
   AdditionalOptions: unknown
-  ApplicationConfigurationMode: unknown
+  ApplicationConfigurationMode: boolean
   ClientStubFile: unknown
   CPreprocessOptions: unknown
   DefaultCharType: unknown
   DllDataFileName: unknown
   EnableErrorChecks: unknown
   EnvironmentVariables: unknown
-  ErrorCheckAllocations: unknown
-  ErrorCheckBounds: unknown
-  ErrorCheckEnumRange: unknown
-  ErrorCheckRefPointers: unknown
-  ErrorCheckStubData: unknown
+  ErrorCheckAllocations: boolean
+  ErrorCheckBounds: boolean
+  ErrorCheckEnumRange: boolean
+  ErrorCheckRefPointers: boolean
+  ErrorCheckStubData: boolean
   ExcludedInputPaths: unknown
   GenerateClientFiles: unknown
   GenerateServerFiles: unknown
-  GenerateStublessProxies: unknown
-  GenerateTypeLibrary: unknown
+  GenerateStublessProxies: boolean
+  GenerateTypeLibrary: boolean
   HeaderFileName: unknown
-  IgnoreStandardIncludePath: unknown
+  IgnoreStandardIncludePath: boolean
   InterfaceIdentifierFileName: unknown
   LocaleID: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
-  MkTypLibCompatible: unknown
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
+  MkTypLibCompatible: boolean
   OutputDirectory: unknown
   PathOverride: unknown
   PreprocessorDefinitions: unknown
   ProxyFileName: unknown
   RedirectOutputAndErrors: unknown
   ServerStubFile: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Source: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
   StructMemberAlignment: unknown
-  SuppressCompilerWarnings: unknown
-  SuppressStartupBanner: unknown
+  SuppressCompilerWarnings: boolean
+  SuppressStartupBanner: boolean
   TargetEnvironment: unknown
   Timeout: unknown
   TLogReadFiles: unknown
@@ -3544,16 +3218,13 @@ export interface MIDLProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
   TypeLibFormat: unknown
   TypeLibraryName: unknown
   UndefinePreprocessorDefinitions: unknown
-  ValidateAllParameters: unknown
-  WarnAsError: unknown
+  ValidateAllParameters: boolean
+  WarnAsError: boolean
   WarningLevel: unknown
-}
-export interface MidlCommandFileProps {
-
 }
 export interface MinimalRebuildProps {
 
@@ -3570,29 +3241,26 @@ export interface MinimumVisualStudioVersionProps {
 export interface MkTypLibCompatibleProps {
 
 }
-export interface ModuleDefinitionFileProps {
-
-}
 export interface MoveProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
-  OverwriteReadOnlyFiles: unknown
+  OverwriteReadOnlyFiles: boolean
   SourceFiles: unknown
 }
 export interface MSBuildProps extends TaskTypeProps {
-  BuildInParallel: unknown
+  BuildInParallel: boolean
   Projects: unknown
   Properties: unknown
-  RebaseOutputs: unknown
-  RunEachTargetSeparately: unknown
-  SkipNonexistentProjects: unknown
-  SkipNonexistentTargets: unknown
-  StopOnFirstFailure: unknown
+  RebaseOutputs: boolean
+  RunEachTargetSeparately: boolean
+  SkipNonexistentProjects: boolean
+  SkipNonexistentTargets: boolean
+  StopOnFirstFailure: boolean
   TargetAndPropertyListSeparators: unknown
   Targets: unknown
   ToolsVersion: unknown
-  UnloadProjectsOnCompletion: unknown
-  UseResultsCache: unknown
+  UnloadProjectsOnCompletion: boolean
+  UseResultsCache: boolean
 }
 export interface MSBuildAllProjectsProps {
 
@@ -3615,9 +3283,6 @@ export interface MSBuildWarningsAsErrorsProps {
 export interface MSBuildWarningsAsMessagesProps {
 
 }
-export interface MSDOSStubFileNameProps {
-
-}
 export interface MtProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
@@ -3625,28 +3290,28 @@ export interface MtProps extends TaskTypeProps {
   AdditionalOptions: unknown
   AssemblyIdentity: unknown
   ComponentFileName: unknown
-  EmbedManifest: unknown
+  EmbedManifest: boolean
   EnvironmentVariables: unknown
   ExcludedInputPaths: unknown
-  GenerateCatalogFiles: unknown
-  GenerateCategoryTags: unknown
+  GenerateCatalogFiles: boolean
+  GenerateCategoryTags: boolean
   InputResourceManifests: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   ManifestFromManagedAssembly: unknown
-  MinimalRebuildFromTracking: unknown
+  MinimalRebuildFromTracking: boolean
   OutputManifestFile: unknown
   OutputResourceManifests: unknown
   PathOverride: unknown
   RegistrarScriptFile: unknown
   ReplacementsFile: unknown
   ResourceOutputFileName: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  SuppressDependencyElement: unknown
-  SuppressStartupBanner: unknown
+  SuppressDependencyElement: boolean
+  SuppressStartupBanner: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -3655,11 +3320,11 @@ export interface MtProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
   TypeLibraryFile: unknown
-  UpdateFileHashes: unknown
+  UpdateFileHashes: boolean
   UpdateFileHashesSearchPath: unknown
-  VerboseOutput: unknown
+  VerboseOutput: boolean
 }
 export interface MultiProcessorCompilationProps {
 
@@ -3712,45 +3377,11 @@ export interface NoWarnProps {
 export interface NullableProps {
 
 }
-export interface NullTerminateStringsProps {
-
-}
 export interface OldToolsVersionProps {
 
 }
 export interface OmitDefaultLibNameProps {
 
-}
-export interface OnErrorProps {
-  /**
-   * Optional expression evaluated to determine whether the targets should be executed
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of targets to execute
-   */
-  ExecuteTargets: unknown
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-/**
- * Specifies targets to execute in the event of a recoverable error
- */
-interface OnErrorTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the targets should be executed
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of targets to execute
-   */
-  ExecuteTargets: unknown
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * boolean
@@ -3768,9 +3399,6 @@ export interface OptimizationProps {
  * Should compiler optimize output (boolean)
  */
 export interface OptimizeProps {
-
-}
-export interface OptimizeReferencesProps {
 
 }
 /**
@@ -3800,15 +3428,6 @@ export interface OptionStrictProps {
 export interface OSVersionProps {
 
 }
-export interface OtherwiseProps {
-
-}
-/**
- * Groups PropertyGroup and/or ItemGroup elements that are used if no Conditions on sibling When elements evaluate to true
- */
-interface OtherwiseTypeProps {
-
-}
 export interface OutDirProps {
 
 }
@@ -3819,24 +3438,21 @@ export interface OutputProps {
   /**
    * Task parameter to gather. Matches the name of a .NET Property on the task class that has an [Output] attribute
    */
-  TaskParameter: unknown
+  TaskParameter: unknown /* msb:non_empty_string */
   /**
    * Optional name of an item list to put the gathered outputs into. Either ItemName or PropertyName must be specified
    */
-  ItemName: unknown
+  ItemName: unknown /* msb:non_empty_string */
   /**
    * Optional name of a property to put the gathered output into. Either PropertyName or ItemName must be specified
    */
-  PropertyName: unknown
+  PropertyName: unknown /* msb:non_empty_string */
   /**
    * Optional expression evaluated to determine whether the output should be gathered
    */
   Condition: string
 }
 export interface OutputDirectoryProps {
-
-}
-export interface OutputFileProps {
 
 }
 export interface OutputManifestFileProps {
@@ -4009,15 +3625,6 @@ export interface PageProps extends SimpleItemTypeProps {
   Include: string
   CopyToOutputDirectory: unknown
 }
-export interface ParameterGroupProps {
-
-}
-/**
- * Groups parameters that are part of an inline task definition.
- */
-interface ParameterGroupTypeProps {
-
-}
 export interface ParsePlatformSpecificBundleArtifactsListsProps extends TaskTypeProps {
   Files: unknown
   Artifacts: unknown
@@ -4067,112 +3674,14 @@ export interface PlatformVersionDescriptionProps extends SimpleItemTypeProps {
 /**
  * Command line to be run at the end of build
  */
-export interface PostBuildEventProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-interface PostBuildEventItemProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface PostBuildEventProps {
+
 }
 /**
  * Command line to be run at the start of build
  */
-export interface PreBuildEventProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
-interface PreBuildEventItemProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface PreBuildEventProps {
+
 }
 export interface PrecompiledHeaderProps {
 
@@ -4198,9 +3707,6 @@ export interface PreprocessorDefinitionsProps {
 export interface PreserveCompilationContextProps {
 
 }
-export interface PreventDllBindingProps {
-
-}
 /**
  * String resources to be indexed in app package's resource index.
  */
@@ -4220,15 +3726,6 @@ export interface ProductNameProps {
 
 }
 export interface ProductVersionProps {
-
-}
-export interface ProfileProps {
-
-}
-export interface ProfileGuidedDatabaseProps {
-
-}
-export interface ProgramDatabaseFileProps {
 
 }
 /**
@@ -4265,12 +3762,6 @@ export interface ProjectCapabilityProps {
 
 }
 export interface ProjectConfigurationProps extends SimpleItemTypeProps {
-
-}
-/**
- * Optional section used by MSBuild hosts, that may contain arbitrary XML content that is ignored by MSBuild itself
- */
-interface ProjectExtensionsTypeProps {
 
 }
 export interface ProjectGuidProps {
@@ -4315,19 +3806,6 @@ export interface ProjectTypeGuidsProps {
 export interface PropertyProps {
 
 }
-/**
- * Groups property definitions
- */
-interface PropertyGroupTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the PropertyGroup should be used
-   */
-  Condition: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
 export interface ProxyFileNameProps {
 
 }
@@ -4364,9 +3842,6 @@ export interface PublishTrimmedProps {
 export interface PublishUrlProps {
 
 }
-export interface RandomizedBaseAddressProps {
-
-}
 /**
  * Indicates whether Razor files should be compiled at build time.
  */
@@ -4399,15 +3874,15 @@ export interface RCProps extends TaskTypeProps {
   Culture: unknown
   EnvironmentVariables: unknown
   ExcludedInputPaths: unknown
-  IgnoreStandardIncludePath: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
-  NullTerminateStrings: unknown
+  IgnoreStandardIncludePath: boolean
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
+  NullTerminateStrings: boolean
   PathOverride: unknown
   PreprocessorDefinitions: unknown
   ResourceOutputFileName: unknown
-  ShowProgress: unknown
-  SkippedExecution: unknown
+  ShowProgress: boolean
+  SkippedExecution: boolean
   Source: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
@@ -4420,7 +3895,7 @@ export interface RCProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
   UndefinePreprocessorDefinitions: unknown
 }
 export interface ReadLinesFromFileProps extends TaskTypeProps {
@@ -4451,13 +3926,10 @@ export interface ReferencePathProps {
 export interface RegisterAssemblyProps extends TaskTypeProps {
   Assemblies: unknown
   AssemblyListFile: unknown
-  CreateCodeBase: unknown
+  CreateCodeBase: boolean
   TypeLibFiles: unknown
 }
 export interface RegisterForComInteropProps {
-
-}
-export interface RegisterOutputProps {
 
 }
 export interface RegistrarScriptFileProps {
@@ -4485,7 +3957,7 @@ export interface RemoveDuplicatePriFilesProps extends TaskTypeProps {
 }
 export interface RemoveDuplicatesProps extends TaskTypeProps {
   Filtered: unknown
-  HadAnyDuplicates: unknown
+  HadAnyDuplicates: boolean
   Inputs: unknown
 }
 export interface RemoveDuplicateSDKReferencesProps extends TaskTypeProps {
@@ -4515,14 +3987,14 @@ export interface RepositoryUrlProps {
 }
 export interface RequiresFramework35SP1AssemblyProps extends TaskTypeProps {
   Assemblies: unknown
-  CreateDesktopShortcut: unknown
+  CreateDesktopShortcut: boolean
   DeploymentManifestEntryPoint: unknown
   EntryPoint: unknown
   ErrorReportUrl: unknown
   Files: unknown
   ReferencedAssemblies: unknown
-  RequiresMinimumFramework35SP1: unknown
-  SigningManifests: unknown
+  RequiresMinimumFramework35SP1: boolean
+  SigningManifests: boolean
   SuiteName: unknown
   TargetFrameworkVersion: unknown
 }
@@ -4539,24 +4011,24 @@ export interface ResolveAssemblyReferenceProps extends TaskTypeProps {
   AppConfigFile: unknown
   Assemblies: unknown
   AssemblyFiles: unknown
-  AutoUnify: unknown
+  AutoUnify: boolean
   CandidateAssemblyFiles: unknown
   FilesWritten: unknown
-  FindDependencies: unknown
-  FindRelatedFiles: unknown
-  FindSatellites: unknown
-  FindSerializationAssemblies: unknown
+  FindDependencies: boolean
+  FindRelatedFiles: boolean
+  FindSatellites: boolean
+  FindSerializationAssemblies: boolean
   FullFrameworkAssemblyTables: unknown
   FullFrameworkFolders: unknown
   FullTargetFrameworkSubsetNames: unknown
-  IgnoreDefaultInstalledAssemblySubsetTables: unknown
-  IgnoreDefaultInstalledAssemblyTables: unknown
+  IgnoreDefaultInstalledAssemblySubsetTables: boolean
+  IgnoreDefaultInstalledAssemblyTables: boolean
   InstalledAssemblySubsetTables: unknown
   InstalledAssemblyTables: unknown
   ProfileName: unknown
   PublicKeysRestrictedForGlobalLocation: unknown
   SearchPaths: unknown
-  Silent: unknown
+  Silent: boolean
   StateFile: unknown
   TargetedRuntimeVersion: unknown
   TargetFrameworkDirectories: unknown
@@ -4567,12 +4039,12 @@ export interface ResolveAssemblyReferenceProps extends TaskTypeProps {
   TargetProcessorArchitecture: unknown
 }
 export interface ResolveComReferenceProps extends TaskTypeProps {
-  DelaySign: unknown
-  ExecuteAsTool: unknown
-  IncludeVersionInInteropName: unknown
+  DelaySign: boolean
+  ExecuteAsTool: boolean
+  IncludeVersionInInteropName: boolean
   KeyContainer: unknown
   KeyFile: unknown
-  NoClassMembers: unknown
+  NoClassMembers: boolean
   ResolvedAssemblyReferences: unknown
   ResolvedFiles: unknown
   ResolvedModules: unknown
@@ -4593,8 +4065,8 @@ export interface ResolveKeySourceProps extends TaskTypeProps {
   ResolvedKeyContainer: unknown
   ResolvedKeyFile: unknown
   ResolvedThumbprint: unknown
-  ShowImportDialogDespitePreviousFailures: unknown
-  SuppressAutoClosePasswordPrompt: unknown
+  ShowImportDialogDespitePreviousFailures: boolean
+  SuppressAutoClosePasswordPrompt: boolean
 }
 export interface ResolveManifestFilesProps extends TaskTypeProps {
   DeploymentManifestEntryPoint: unknown
@@ -4609,7 +4081,7 @@ export interface ResolveManifestFilesProps extends TaskTypeProps {
   OutputFiles: unknown
   PublishFiles: unknown
   SatelliteAssemblies: unknown
-  SigningManifests: unknown
+  SigningManifests: boolean
   TargetCulture: unknown
   TargetFrameworkVersion: unknown
 }
@@ -4640,30 +4112,7 @@ export interface ResourceProps extends SimpleItemTypeProps {
   CopyToOutputDirectory: unknown
 }
 export interface ResourceCompileProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+
 }
 export interface ResourceOutputFileNameProps {
 
@@ -4778,9 +4227,6 @@ export interface SDKReferenceProps extends SimpleItemTypeProps {
    */
   Include: string
 }
-export interface SectionAlignmentProps {
-
-}
 export interface SecureScopingProps {
 
 }
@@ -4820,33 +4266,30 @@ export interface ServiceProps {
   Label: string
 }
 export interface SetEnvProps extends TaskTypeProps {
-  Prefix: unknown
+  Prefix: boolean
   Target: unknown
   Value: unknown
 }
 export interface SGenProps extends TaskTypeProps {
   BuildAssemblyName: unknown
   BuildAssemblyPath: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   EnvironmentVariables: unknown
   KeyContainer: unknown
   KeyFile: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   References: unknown
   SdkToolsPath: unknown
   SerializationAssembly: unknown
-  ShouldGenerateSerializer: unknown
+  ShouldGenerateSerializer: boolean
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  UseProxyTypes: unknown
+  UseProxyTypes: boolean
 }
 export interface ShowIncludesProps {
-
-}
-export interface ShowProgressProps {
 
 }
 export interface SignAppxPackageProps extends TaskTypeProps {
@@ -4859,8 +4302,8 @@ export interface SignAppxPackageProps extends TaskTypeProps {
   TargetPlatformSdkRootOverride: unknown
   SignAppxPackageExeFullPath: unknown
   MSBuildArchitecture: unknown
-  EnableSigningChecks: unknown
-  ExportCertificate: unknown
+  EnableSigningChecks: boolean
+  ExportCertificate: boolean
   ResolvedThumbprint: unknown
   AppxPackagePublicKeyFile: unknown
 }
@@ -4925,15 +4368,6 @@ export interface SolutionNameProps {
 export interface SolutionPathProps {
 
 }
-export interface SpecifySectionAttributesProps {
-
-}
-export interface StackCommitSizeProps {
-
-}
-export interface StackReserveSizeProps {
-
-}
 export interface StartActionProps {
 
 }
@@ -4993,16 +4427,7 @@ export interface StripPrivateSymbolsProps extends ToolTaskTypeProps {
 export interface StructMemberAlignmentProps {
 
 }
-export interface SubSystemProps {
-
-}
 export interface SuiteNameProps {
-
-}
-export interface SupportNobindOfDelayLoadedDLLProps {
-
-}
-export interface SupportUnloadOfDelayLoadedDLLProps {
 
 }
 export interface SupportUrlProps {
@@ -5018,12 +4443,6 @@ export interface SuppressStartupBannerProps {
 
 }
 export interface SuppressXamlWarningsProps {
-
-}
-export interface SwapRunFromCDProps {
-
-}
-export interface SwapRunFromNETProps {
 
 }
 export interface TargetCultureProps {
@@ -5053,9 +4472,6 @@ export interface TargetFrameworksProps {
 export interface TargetFrameworkVersionProps {
 
 }
-export interface TargetMachineProps {
-
-}
 export interface TargetNameProps {
 
 }
@@ -5080,51 +4496,6 @@ export interface TargetPlatformSdkRootOverrideProps {
 export interface TargetPlatformVersionProps {
 
 }
-/**
- * Groups tasks into a section of the build process
- */
-interface TargetTypeProps {
-  /**
-   * Name of the target
-   */
-  Name: unknown
-  /**
-   * Optional semi-colon separated list of targets that should be run before this target
-   */
-  DependsOnTargets: string
-  /**
-   * Optional semi-colon separated list of files that form inputs into this target. Their timestamps will be compared with the timestamps of files in Outputs to determine whether the Target is up to date
-   */
-  Inputs: string
-  /**
-   * Optional semi-colon separated list of files that form outputs into this target. Their timestamps will be compared with the timestamps of files in Inputs to determine whether the Target is up to date
-   */
-  Outputs: string
-  /**
-   * Optional expression evaluated to determine whether the Target and the targets it depends on should be run
-   */
-  Condition: string
-  /**
-   * Optional expression evaluated to determine whether duplicate items in the Target's Returns should be removed before returning them. The default is not to eliminate duplicates.
-   */
-  KeepDuplicateOutputs: string
-  /**
-   * Optional expression evaluated to determine which items generated by the target should be returned by the target. If there are no Returns attributes on Targets in the file, the Outputs attributes are used instead for this purpose.
-   */
-  Returns: string
-  /**
-   * Optional semi-colon separated list of targets that this target should run before.
-   */
-  BeforeTargets: string
-  /**
-   * Optional semi-colon separated list of targets that this target should run after.
-   */
-  AfterTargets: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
-}
 export interface TargetZoneProps {
 
 }
@@ -5136,19 +4507,15 @@ export interface TaskProps {
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
-  /**
-   * Whether the body should have properties expanded before use. Defaults to false.
-   */
-  Evaluate: unknown
+  Runtime: unknown /* msb:runtime */
 }
 interface TaskTypeProps {
   /**
@@ -5158,22 +4525,19 @@ interface TaskTypeProps {
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
+  Runtime: unknown /* msb:runtime */
 }
 export interface TelemetryProps extends TaskTypeProps {
   EventName: unknown
   EventData: unknown
-}
-export interface TerminalServerAwareProps {
-
 }
 /**
  * Controls the set of extensions that are enabled. Note that 'AllMicrosoft' enables all extensions, even those with a restrictive license.
@@ -5220,17 +4584,17 @@ export interface TitleProps {
 export interface TlbImpProps extends TaskTypeProps {
   AssemblyNamespace: unknown
   AssemblyVersion: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   EnvironmentVariables: unknown
   KeyContainer: unknown
   KeyFile: unknown
-  LogStandardErrorAsError: unknown
-  NoLogo: unknown
+  LogStandardErrorAsError: boolean
+  NoLogo: boolean
   OutputAssembly: unknown
-  PreventClassMembers: unknown
-  SafeArrayAsSystemArray: unknown
+  PreventClassMembers: boolean
+  SafeArrayAsSystemArray: boolean
   SdkToolsPath: unknown
-  Silent: unknown
+  Silent: boolean
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
   Timeout: unknown
@@ -5238,7 +4602,7 @@ export interface TlbImpProps extends TaskTypeProps {
   ToolPath: unknown
   Transform: unknown
   TypeLibName: unknown
-  Verbose: unknown
+  Verbose: boolean
 }
 /**
  * Specifies the command that will invoke the tool after it's installed.
@@ -5248,16 +4612,16 @@ export interface ToolCommandNameProps {
 }
 interface ToolTaskTypeProps extends TaskTypeProps {
   ExitCode: unknown
-  YieldDuringToolExecution: unknown
-  UseCommandProcessor: unknown
-  EchoOff: unknown
+  YieldDuringToolExecution: boolean
+  UseCommandProcessor: boolean
+  EchoOff: boolean
   ToolExe: unknown
   ToolPath: unknown
   EnvironmentVariables: unknown
   Timeout: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -5265,25 +4629,22 @@ interface ToolTaskTypeProps extends TaskTypeProps {
   /**
    * Optional boolean indicating whether a recoverable task error should be ignored. Default false
    */
-  ContinueOnError: unknown
+  ContinueOnError: boolean
   /**
    * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
    */
-  Architecture: unknown
+  Architecture: unknown /* msb:architecture */
   /**
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
-  Runtime: unknown
+  Runtime: unknown /* msb:runtime */
 }
 export interface TouchProps extends TaskTypeProps {
-  AlwaysCreate: unknown
+  AlwaysCreate: boolean
   Files: unknown
-  ForceTouch: unknown
+  ForceTouch: boolean
   Time: unknown
   TouchedFiles: unknown
-}
-export interface TreatLinkerWarningAsErrorsProps {
-
 }
 export interface TreatSpecificWarningsAsErrorsProps {
 
@@ -5321,15 +4682,6 @@ export interface TypeLibraryFileProps {
 export interface TypeLibraryNameProps {
 
 }
-export interface TypeLibraryResourceIDProps {
-
-}
-export interface UACExecutionLevelProps {
-
-}
-export interface UACUIAccessProps {
-
-}
 /**
  * Configures the created packages. Possible values are: StoreAndSideload (produces the appxupload and the sideloaded packages), StoreUpload (produces only the appxupload package), and SideloadOnly(produces only the packages for sideloading).
  */
@@ -5350,8 +4702,8 @@ export interface UnregisterAssemblyProps extends TaskTypeProps {
 export interface UnzipProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
-  OverwriteReadOnlyFiles: unknown
-  SkipUnchangedFiles: unknown
+  OverwriteReadOnlyFiles: boolean
+  SkipUnchangedFiles: boolean
   SourceFiles: unknown
   UnzippedFiles: unknown
 }
@@ -5533,49 +4885,7 @@ export interface UsingProps extends SimpleItemTypeProps {
   /**
    * Determines whether the identifier should be registered as a static import.
    */
-  Static: unknown
-}
-/**
- * Contains the inline task implementation. Content is opaque to MSBuild.
- */
-interface UsingTaskBodyTypeProps {
-  /**
-   * Whether the body should have properties expanded before use. Defaults to false.
-   */
-  Evaluate: unknown
-}
-/**
- * Defines the assembly containing a task's implementation, or contains the implementation itself.
- */
-interface UsingTaskTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the declaration should be evaluated
-   */
-  Condition: string
-  /**
-   * Optional name of assembly containing the task. Either AssemblyName or AssemblyFile must be used
-   */
-  AssemblyName: unknown
-  /**
-   * Optional path to assembly containing the task. Either AssemblyName or AssemblyFile must be used
-   */
-  AssemblyFile: unknown
-  /**
-   * Name of task class in the assembly
-   */
-  TaskName: unknown
-  /**
-   * Name of the task factory class in the assembly
-   */
-  TaskFactory: unknown
-  /**
-   * Defines the architecture of the task host that this task should be run in.  Currently supported values:  x86, x64, CurrentArchitecture, and * (any).  If Architecture is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the architecture of the parent MSBuild process
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime version of the task host that this task should be run in.  Currently supported values:  CLR2, CLR4, NET, CurrentRuntime, and * (any).  If Runtime is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the runtime of the parent MSBuild process
-   */
-  Runtime: unknown
+  Static: boolean
 }
 export interface UTF8OutputProps {
 
@@ -5594,19 +4904,19 @@ export interface ValidateAppxManifestProps extends TaskTypeProps {
   OSMaxVersionTested: unknown
   PlatformVersionDescriptions: unknown
   ResolvedSDKReferences: unknown
-  StrictManifestValidationEnabled: unknown
-  ValidateWinmds: unknown
+  StrictManifestValidationEnabled: boolean
+  ValidateWinmds: boolean
   NonFrameworkSdkReferences: unknown
   WinmdFiles: unknown
   SDKWinmdFiles: unknown
   ManagedWinmdInprocImplementation: unknown
-  ValidateManifest: unknown
+  ValidateManifest: boolean
   Resources: unknown
 }
 export interface ValidateAppxManifestItemsProps extends TaskTypeProps {
   AppxManifestItems: unknown
   CustomAppxManifestItems: unknown
-  AppxPackageProject: unknown
+  AppxPackageProject: boolean
   IdentityName: unknown
   IdentityVersion: unknown
 }
@@ -5620,7 +4930,7 @@ export interface ValidateAppxPackageProps extends TaskTypeProps {
   QueryNamespace81Prefix: unknown
   ManifestImageFileNameQueries: unknown
   ResolvedSDKReferences: unknown
-  AllowDebugFrameworkReferencesInManifest: unknown
+  AllowDebugFrameworkReferencesInManifest: boolean
   ProjectDir: unknown
   IndexedPayloadFiles: unknown
   MakePriExtensionPath: unknown
@@ -5637,39 +4947,39 @@ export interface VbcProps extends TaskTypeProps {
   CodePage: unknown
   DebugType: unknown
   DefineConstants: unknown
-  DelaySign: unknown
+  DelaySign: boolean
   DisabledWarnings: unknown
   DocumentationFile: unknown
-  EmitDebugInformation: unknown
+  EmitDebugInformation: boolean
   EnvironmentVariables: unknown
   ErrorReport: unknown
   FileAlignment: unknown
-  GenerateDocumentation: unknown
+  GenerateDocumentation: boolean
   Imports: unknown
   KeyContainer: unknown
   KeyFile: unknown
   LangVersion: unknown
   VBRuntime: unknown
   LinkResources: unknown
-  LogStandardErrorAsError: unknown
+  LogStandardErrorAsError: boolean
   MainEntryPoint: unknown
   ModuleAssemblyName: unknown
-  NoConfig: unknown
-  NoLogo: unknown
-  NoStandardLib: unknown
-  NoVBRuntimeReference: unknown
-  NoWarnings: unknown
-  NoWin32Manifest: unknown
-  Optimize: unknown
+  NoConfig: boolean
+  NoLogo: boolean
+  NoStandardLib: boolean
+  NoVBRuntimeReference: boolean
+  NoWarnings: boolean
+  NoWin32Manifest: boolean
+  Optimize: boolean
   OptionCompare: unknown
-  OptionExplicit: unknown
-  OptionInfer: unknown
-  OptionStrict: unknown
+  OptionExplicit: boolean
+  OptionInfer: boolean
+  OptionStrict: boolean
   OptionStrictType: unknown
   OutputAssembly: unknown
   Platform: unknown
   References: unknown
-  RemoveIntegerChecks: unknown
+  RemoveIntegerChecks: boolean
   Resources: unknown
   ResponseFiles: unknown
   RootNamespace: unknown
@@ -5677,14 +4987,14 @@ export interface VbcProps extends TaskTypeProps {
   Sources: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  TargetCompactFramework: unknown
+  TargetCompactFramework: boolean
   TargetType: unknown
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  TreatWarningsAsErrors: unknown
-  UseHostCompilerIfAvailable: unknown
-  Utf8Output: unknown
+  TreatWarningsAsErrors: boolean
+  UseHostCompilerIfAvailable: boolean
+  Utf8Output: boolean
   Verbosity: unknown
   WarningsAsErrors: unknown
   WarningsNotAsErrors: unknown
@@ -5699,17 +5009,17 @@ export interface VCBuildProps extends TaskTypeProps {
   AdditionalLibPaths: unknown
   AdditionalLinkLibraryPaths: unknown
   AdditionalOptions: unknown
-  Clean: unknown
+  Clean: boolean
   Configuration: unknown
   Override: unknown
   Platform: unknown
   Projects: unknown
-  Rebuild: unknown
+  Rebuild: boolean
   SolutionFile: unknown
   Timeout: unknown
   ToolPath: unknown
-  UseEnvironment: unknown
-  UserEnvironment: unknown
+  UseEnvironment: boolean
+  UserEnvironment: boolean
 }
 export interface VCMessageProps extends TaskTypeProps {
   Code: unknown
@@ -5826,21 +5136,6 @@ export interface WebReferenceUrlProps extends SimpleItemTypeProps {
    */
   Include: string
 }
-export interface WhenProps {
-  /**
-   * Optional expression evaluated to determine whether the child PropertyGroups and/or ItemGroups should be used
-   */
-  Condition: string
-}
-/**
- * Groups PropertyGroup and/or ItemGroup elements
- */
-interface WhenTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the child PropertyGroups and/or ItemGroups should be used
-   */
-  Condition: string
-}
 export interface WholeProgramOptimizationProps {
 
 }
@@ -5857,8 +5152,8 @@ export interface WriteLinesToFileProps extends TaskTypeProps {
   Encoding: unknown
   File: unknown
   Lines: unknown
-  Overwrite: unknown
-  WriteOnlyWhenDifferent: unknown
+  Overwrite: boolean
+  WriteOnlyWhenDifferent: boolean
 }
 export interface WsdlXsdCodeGenCollectionTypesProps {
 
@@ -5919,21 +5214,21 @@ export interface XDCMakeProps extends TaskTypeProps {
   ActiveToolSwitchesValues: unknown
   AdditionalDocumentFile: unknown
   AdditionalOptions: unknown
-  DocumentLibraryDependencies: unknown
+  DocumentLibraryDependencies: boolean
   EnvironmentVariables: unknown
   ExcludedInputPaths: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
   OutputFile: unknown
   PathOverride: unknown
   ProjectName: unknown
-  SkippedExecution: unknown
-  SlashOld: unknown
+  SkippedExecution: boolean
+  SlashOld: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  SuppressStartupBanner: unknown
+  SuppressStartupBanner: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -5942,7 +5237,7 @@ export interface XDCMakeProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
 }
 export interface XSDProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
@@ -5952,16 +5247,16 @@ export interface XSDProps extends TaskTypeProps {
   ExcludedInputPaths: unknown
   GenerateFromSchema: unknown
   Language: unknown
-  LogStandardErrorAsError: unknown
-  MinimalRebuildFromTracking: unknown
+  LogStandardErrorAsError: boolean
+  MinimalRebuildFromTracking: boolean
   Namespace: unknown
   PathOverride: unknown
-  SkippedExecution: unknown
+  SkippedExecution: boolean
   Sources: unknown
   SourcesCompiled: unknown
   StandardErrorImportance: unknown
   StandardOutputImportance: unknown
-  SuppressStartupBanner: unknown
+  SuppressStartupBanner: boolean
   Timeout: unknown
   TLogReadFiles: unknown
   TLogWriteFiles: unknown
@@ -5970,7 +5265,7 @@ export interface XSDProps extends TaskTypeProps {
   TrackedInputFilesToIgnore: unknown
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
-  TrackFileAccess: unknown
+  TrackFileAccess: boolean
 }
 export interface XslTransformationProps extends TaskTypeProps {
   OutputPaths: unknown
@@ -5987,6 +5282,6 @@ export interface ZipDirectoryProps extends TaskTypeProps {
    */
   CompressionLevel: unknown
   DestinationFile: unknown
-  Overwrite: unknown
+  Overwrite: boolean
   SourceDirectory: unknown
 }

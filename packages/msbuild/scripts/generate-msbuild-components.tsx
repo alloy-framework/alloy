@@ -59,12 +59,17 @@ function XmlComponentPropsAttribute(props: {
 function mapXsdTypeToTs(type: string | undefined) {
   switch (type) {
     case "xs:string":
+    case "msb:string":
       return "string";
     case "xs:int":
+    case "msb:int":
       return "number";
     case "xs:boolean":
+    case "msb:boolean":
       return "boolean";
-    default:
+    case undefined:
       return "unknown";
+    default:
+      return `unknown /* ${type} */`;
   }
 }

@@ -29,6 +29,7 @@ catalog:
   cli-table3: ^0.6.5
   concurrently: ^9.2.0
   eslint: ^9.32.0
+  fast-xml-parser: ^5.2.5
   html-entities: 2.6.0
   marked: ^16.1.1
   pathe: ^2.0.3

@@ -7,5 +7,6 @@ dictionaries:
 words:
   - arrayify
   - cref
+  - msbuild
 useGitignore: true
 enableGlobDot: true

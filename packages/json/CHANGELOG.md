@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/json
 
+## 0.21.0
+
+### Bug Fixes
+
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+
 ## 0.20.0
 
 ### Breaking Changes

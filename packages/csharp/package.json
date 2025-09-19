@@ -45,6 +45,7 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
+    "@alloy-js/msbuild": "workspace:~",
     "change-case": "catalog:",
     "marked": "catalog:",
     "pathe": "catalog:"

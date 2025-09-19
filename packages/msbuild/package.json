@@ -3,17 +3,9 @@
   "version": "0.20.0",
   "description": "Alloy components for msbuild files.",
   "exports": {
-    ".": {
-      "development": "./src/index.ts",
-      "import": "./dist/src/index.js"
-    },
-    "./stc": {
-      "development": "./src/components/stc/index.ts",
-      "import": "./dist/src/components/stc/index.js"
-    },
-    "./global/*": {
-      "development": "./src/builtins/*/index.ts",
-      "import": "./dist/src/builtins/*/index.js"
+    "./components": {
+      "development": "./src/components/index.tsx",
+      "import": "./dist/src/components/index.js"
     }
   },
   "imports": {

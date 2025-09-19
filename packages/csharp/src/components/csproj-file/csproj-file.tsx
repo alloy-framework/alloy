@@ -1,4 +1,5 @@
 import { Children, SourceFile } from "@alloy-js/core";
+import { Project } from "@alloy-js/msbuild/components";
 
 export type CSharpProjectSdk =
   | "Microsoft.NET.Sdk"
@@ -25,9 +26,7 @@ export interface CsprojProps {
 export function CsprojFile(props: CsprojProps) {
   return (
     <SourceFile path={props.path} filetype="xml" tabWidth={4}>
-      {`<Project Sdk="${props.sdk ?? "Microsoft.NET.Sdk"}">`}
-      <indent>{props.children}</indent>
-      {`</Project>`}
+      <Project Sdk={props.sdk ?? "Microsoft.NET.Sdk"}>{props.children}</Project>
     </SourceFile>
   );
 }

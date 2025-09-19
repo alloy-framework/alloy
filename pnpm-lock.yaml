@@ -387,6 +387,9 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
+      '@alloy-js/msbuild':
+        specifier: workspace:~
+        version: link:../msbuild
       change-case:
         specifier: 'catalog:'
         version: 5.4.4

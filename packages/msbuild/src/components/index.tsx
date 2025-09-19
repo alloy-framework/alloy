@@ -1,132 +1,17 @@
-export interface _AppxBundleResourceFileMapsIntermediateProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface _AppxBundleResourceFileMapsIntermediateProps extends SimpleItemTypeProps {
+
 }
-export interface _GetResolvedSDKReferencesOutputProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface _GetResolvedSDKReferencesOutputProps extends SimpleItemTypeProps {
+
 }
-export interface _PackagingOutputsUnexpandedProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface _PackagingOutputsUnexpandedProps extends SimpleItemTypeProps {
+
 }
-export interface _ProjectArchitectureFromPayloadProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface _ProjectArchitectureFromPayloadProps extends SimpleItemTypeProps {
+
 }
-export interface _ProjectArchitectureItemProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface _ProjectArchitectureItemProps extends SimpleItemTypeProps {
+
 }
 export interface _StoreManifestSchemaDirProps {
 
@@ -137,10 +22,19 @@ export interface _StoreManifestSchemaDirProps {
 export interface AccelerateBuildsInVisualStudioProps {
 
 }
+export interface AdditionalDependenciesProps {
+
+}
 export interface AdditionalFileItemNamesProps {
 
 }
 export interface AdditionalIncludeDirectoriesProps {
+
+}
+export interface AdditionalLibraryDirectoriesProps {
+
+}
+export interface AdditionalManifestDependenciesProps {
 
 }
 export interface AdditionalManifestFilesProps {
@@ -152,7 +46,10 @@ export interface AdditionalOptionsProps {
 export interface AdditionalUsingDirectoriesProps {
 
 }
-export interface ALProps {
+export interface AddModuleNamesToAssemblyProps {
+
+}
+export interface ALProps extends TaskTypeProps {
   AlgorithmId: unknown
   BaseAddress: unknown
   CompanyName: unknown
@@ -191,22 +88,9 @@ export interface ALProps {
   Version: unknown
   Win32Icon: unknown
   Win32Resource: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
+}
+export interface AllowIsolationProps {
+
 }
 /**
  * Flag indicating whether to allow local network loopback.
@@ -232,31 +116,11 @@ export interface AnalysisModeProps {
 /**
  * An assembly containing diagnostic analyzers
  */
-export interface AnalyzerProps {
+export interface AnalyzerProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Relative or absolute path to the assembly (required)
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Used by Xamarin.Android projects. A boolean value that indicates whether the project is for an Android Application (True) or for an Android Library Project (False or not present).
@@ -339,32 +203,8 @@ export interface ApplicationDefaultFontProps {
 /**
  * XAML file that contains the application definition, only one can be defined
  */
-export interface ApplicationDefinitionProps {
+export interface ApplicationDefinitionProps extends SimpleItemTypeProps {
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Customizes the application DPI awareness mode. Applies only to Windows Forms projects.
@@ -594,31 +434,8 @@ export interface AppxHarvestWinmdRegistrationProps {
 /**
  * Hash algorithm URI.
  */
-export interface AppxHashUriProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxHashUriProps extends SimpleItemTypeProps {
+
 }
 /**
  * Full path to the folder where package layout will be prepared when producing an app bundle.
@@ -635,31 +452,8 @@ export interface AppxLayoutFolderNameProps {
 /**
  * app manifest template
  */
-export interface AppxManifestProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxManifestProps extends SimpleItemTypeProps {
+
 }
 /**
  * XPath queries used to extract file names from the app manifest.
@@ -693,89 +487,20 @@ export interface AppxManifestFileNameQueryProps {
 /**
  * XPath queries used to define image files in the app manifest and restrictions on them.
  */
-export interface AppxManifestImageFileNameQueryProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxManifestImageFileNameQueryProps extends SimpleItemTypeProps {
+
 }
 /**
  * App manifest metadata item. Can be a literal, or it can be a path to a binary to extract version from.
  */
-export interface AppxManifestMetadataProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxManifestMetadataProps extends SimpleItemTypeProps {
+
 }
 /**
  * App manifest schema file.
  */
-export interface AppxManifestSchemaProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxManifestSchemaProps extends SimpleItemTypeProps {
+
 }
 /**
  * Full path to packaging build tasks assembly.
@@ -867,31 +592,8 @@ export interface AppxPackageNameProps {
 export interface AppxPackageOutputProps {
 
 }
-export interface AppxPackagePayloadProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface AppxPackagePayloadProps extends SimpleItemTypeProps {
+
 }
 /**
  * Full path to the app package recipe.
@@ -1095,7 +797,7 @@ export interface AppxWinMdCacheEnabledProps {
 export interface ArtifactsPathProps {
 
 }
-export interface AspNetCompilerProps {
+export interface AspNetCompilerProps extends TaskTypeProps {
   AllowPartiallyTrustedCallers: unknown
   Clean: unknown
   Debug: unknown
@@ -1117,22 +819,6 @@ export interface AspNetCompilerProps {
   ToolPath: unknown
   Updateable: unknown
   VirtualPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface AspNetConfigurationProps {
 
@@ -1149,6 +835,9 @@ export interface AspNetCoreHostingModelProps {
 export interface AspNetCoreModuleNameProps {
 
 }
+export interface AssemblyDebugProps {
+
+}
 export interface AssemblyIdentityProps {
 
 }
@@ -1156,6 +845,9 @@ export interface AssemblyKeyContainerNameProps {
 
 }
 export interface AssemblyKeyProviderNameProps {
+
+}
+export interface AssemblyLinkResourceProps {
 
 }
 /**
@@ -1230,26 +922,10 @@ export interface AssemblyVersionProps {
 export interface AssetTargetFallbackProps {
 
 }
-export interface AssignCultureProps {
+export interface AssignCultureProps extends TaskTypeProps {
   Files: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface AssignProjectConfigurationProps {
+export interface AssignProjectConfigurationProps extends TaskTypeProps {
   AssignedProjects: unknown
   CurrentProjectConfiguration: unknown
   CurrentProjectPlatform: unknown
@@ -1259,42 +935,10 @@ export interface AssignProjectConfigurationProps {
   SolutionConfigurationContents: unknown
   UnassignedProjects: unknown
   VcxToDefaultPlatformMapping: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface AssignTargetPathProps {
+export interface AssignTargetPathProps extends TaskTypeProps {
   Files: unknown
   RootFolder: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * A comma-separated list of NuGet packages authors
@@ -1320,7 +964,7 @@ export interface AutoIncrementPackageRevisionProps {
 export interface AutorunEnabledProps {
 
 }
-export interface AxImpProps {
+export interface AxImpProps extends TaskTypeProps {
   ActiveXControlName: unknown
   DelaySign: unknown
   EnvironmentVariables: unknown
@@ -1339,22 +983,6 @@ export interface AxImpProps {
   ToolExe: unknown
   ToolPath: unknown
   Verbose: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface BaseAddressProps {
 
@@ -1412,62 +1040,16 @@ export interface BootstrapperComponentsUrlProps {
 export interface BootstrapperEnabledProps {
 
 }
-export interface BootstrapperFileProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface BootstrapperFileProps extends SimpleItemTypeProps {
+
 }
 export interface BrowseInformationProps {
 
 }
-export interface BscmakeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface BscmakeProps extends SimpleItemTypeProps {
+
 }
-export interface BSCMakeProps {
+export interface BSCMakeProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalOptions: unknown
@@ -1492,46 +1074,14 @@ export interface BSCMakeProps {
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
   TrackFileAccess: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface CallingConventionProps {
 
 }
-export interface CallTargetProps {
+export interface CallTargetProps extends TaskTypeProps {
   RunEachTargetSeparately: unknown
   Targets: unknown
   UseResultsCache: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface CharacterSetProps {
 
@@ -1539,7 +1089,16 @@ export interface CharacterSetProps {
 export interface CheckForOverflowUnderflowProps {
 
 }
-export interface CLProps {
+/**
+ * Groups When and Otherwise elements
+ */
+interface ChooseTypeProps {
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+export interface CLProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalIncludeDirectories: unknown
@@ -1629,82 +1188,32 @@ export interface CLProps {
   WarningLevel: unknown
   WholeProgramOptimization: unknown
   XMLDocumentationFileName: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ClCompileProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ClCompileProps extends SimpleItemTypeProps {
+
 }
 export interface ClientStubFileProps {
 
 }
-export interface ClIncludeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ClIncludeProps extends SimpleItemTypeProps {
+
+}
+export interface CLRImageTypeProps {
+
 }
 export interface CLRSupportProps {
 
 }
-export interface CodeAnalysisProps {
+export interface CLRSupportLastErrorProps {
+
+}
+export interface CLRThreadAttributeProps {
+
+}
+export interface CLRUnmanagedCodeCheckProps {
+
+}
+export interface CodeAnalysisProps extends TaskTypeProps {
   AlternativeToolName: unknown
   AnalysisTimeout: unknown
   ApplyLogFileXsl: unknown
@@ -1737,22 +1246,6 @@ export interface CodeAnalysisProps {
   TreatWarningsAsErrors: unknown
   ToolPath: unknown
   UpdateProject: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Additional options to pass to the Code Analysis command line tool.
@@ -1781,60 +1274,20 @@ export interface CodeAnalysisCultureProps {
 /**
  * Additional reference assembly paths to pass to the Code Analysis command line tool.
  */
-export interface CodeAnalysisDependentAssemblyPathsProps {
+export interface CodeAnalysisDependentAssemblyPathsProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * A fully qualified path to a directory containing reference assemblies to be used by Code Analysis.
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Code Analysis custom dictionaries.
  */
-export interface CodeAnalysisDictionaryProps {
+export interface CodeAnalysisDictionaryProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semicolon-separated list of Code Analysis custom dictionaries. Wildcards are allowed.
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Indicates whether Code Analysis should fail if a rule or rule set is missing. The default is false.
@@ -1881,31 +1334,11 @@ export interface CodeAnalysisIgnoreInvalidTargetsProps {
 /**
  * Code Analysis projects (*.fxcop) or reports to import.
  */
-export interface CodeAnalysisImportProps {
+export interface CodeAnalysisImportProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semicolon-separated list of Code Analysis projects (*.fxcop) or reports to import. Wildcards are allowed.
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Path to the assembly to be analyzed by Code Analysis. The default is '$(OutDir)$(TargetName)$(TargetExt)'.
@@ -2048,78 +1481,16 @@ export interface CodeAnalysisVerboseProps {
 export interface CodePageProps {
 
 }
-export interface CombinePathProps {
+export interface CombinePathProps extends TaskTypeProps {
   BasePath: unknown
   CombinedPaths: unknown
   Paths: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface COMFileReferenceProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface COMFileReferenceProps extends SimpleItemTypeProps {
+
 }
-export interface ComFilesOutputGroupOutputsProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ComFilesOutputGroupOutputsProps extends SimpleItemTypeProps {
+
 }
 export interface CommandProps {
 
@@ -2133,32 +1504,12 @@ export interface CompanyProps {
 /**
  * Source files for compiler
  */
-export interface CompileProps {
+export interface CompileProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semi-colon separated list of source files (wildcards are allowed)
    */
   Include: string
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface CompileAsManagedProps {
 
@@ -2175,31 +1526,11 @@ export interface ComponentFileNameProps {
 /**
  * Reference to a COM component
  */
-export interface COMReferenceProps {
+export interface COMReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * COM component name
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface ConfigurationProps {
 
@@ -2216,54 +1547,18 @@ export interface ConfigurationTypeProps {
 /**
  * Files that are not compiled, but may be embedded or published
  */
-export interface ContentProps {
+export interface ContentProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semi-colon separated list of content files (wildcards are allowed)
    */
   Include: string
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
-export interface ConvertToAbsolutePathProps {
+export interface ConvertToAbsolutePathProps extends TaskTypeProps {
   AbsolutePaths: unknown
   Paths: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface CopyProps {
+export interface CopyProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
   OverwriteReadOnlyFiles: unknown
@@ -2273,22 +1568,6 @@ export interface CopyProps {
   UseHardlinksIfPossible: unknown
   UseSymboliclinksIfPossible: unknown
   SourceFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Value indicating whether symbol files will be copied from NuGet packages by the compiler
@@ -2302,31 +1581,8 @@ export interface CopyDebugSymbolFilesFromPackagesProps {
 export interface CopyDocumentationFilesFromPackagesProps {
 
 }
-export interface CopyLocalFilesOutputGroupOutputProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface CopyLocalFilesOutputGroupOutputProps extends SimpleItemTypeProps {
+
 }
 /**
  * Set to true to copy RazorGenerate items (.cshtml) to the publish directory. Typically Razor files are not needed for a published application if they participate in compilation at build-time or publish-time. By default, the Razor SDK will suppress the copying of RazorGenerate items to the publish directory.
@@ -2346,100 +1602,29 @@ export interface CopyRefAssembliesToPublishDirectoryProps {
 export interface CopyrightProps {
 
 }
-export interface CopyWinmdArtifactsOutputGroupOutputsProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface CopyWinmdArtifactsOutputGroupOutputsProps extends SimpleItemTypeProps {
+
 }
-export interface CPPCleanProps {
+export interface CPPCleanProps extends TaskTypeProps {
   DeletedFiles: unknown
   DoDelete: unknown
   FilePatternsToDeleteOnClean: unknown
   FilesExcludedFromClean: unknown
   FoldersToClean: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface CPreprocessOptionsProps {
 
 }
-export interface CreateAppStoreContainerProps {
+export interface CreateAppStoreContainerProps extends TaskTypeProps {
   Items: unknown
   ProjectName: unknown
   OutputPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface CreateCSharpManifestResourceNameProps {
+export interface CreateCSharpManifestResourceNameProps extends TaskTypeProps {
   PrependCultureAsDirectory: unknown
   ResourceFiles: unknown
   ResourceFilesWithManifestResourceNames: unknown
   RootNamespace: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface CreateDesktopShortcutProps {
 
@@ -2447,40 +1632,39 @@ export interface CreateDesktopShortcutProps {
 export interface CreateHotpatchableImageProps {
 
 }
-export interface CreateItemProps {
+export interface CreateHotPatchableImageProps {
+
+}
+export interface CreateItemProps extends TaskTypeProps {
   AdditionalMetadata: unknown
   Exclude: unknown
   Include: unknown
   PreserveExistingMetadata: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface CreatePriConfigXmlForFullIndexProps {
+export interface CreatePriConfigXmlForFullIndexProps extends CreatePriConfigXmlTaskTypeProps {
   LayoutResfilesPath: unknown
   ResourcesResfilesPath: unknown
   PriResfilesPath: unknown
 }
-export interface CreatePriConfigXmlForMainPackageFileMapProps {
+export interface CreatePriConfigXmlForMainPackageFileMapProps extends CreatePriConfigXmlTaskTypeProps {
   AppxBundleAutoResourcePackageQualifiers: unknown
 }
-export interface CreatePriConfigXmlForSplittingProps {
+export interface CreatePriConfigXmlForSplittingProps extends CreatePriConfigXmlWithPackagingElementTaskTypeProps {
   ResourcesPriFilePath: unknown
 }
-export interface CreatePriConfigXmlTaskProps {
+export interface CreatePriConfigXmlTaskProps extends TaskTypeProps {
+  PriConfigXmlPath: unknown
+  PriInitialPath: unknown
+  DefaultResourceLanguage: unknown
+  DefaultResourceQualifiers: unknown
+  ConvertDotsToSlashes: unknown
+  IntermediateExtension: unknown
+  PriConfigXmlPackagingSnippetPath: unknown
+  PriConfigXmlDefaultSnippetPath: unknown
+  TargetPlatformIdentifier: unknown
+  TargetPlatformVersion: unknown
+}
+interface CreatePriConfigXmlTaskTypeProps extends TaskTypeProps {
   PriConfigXmlPath: unknown
   PriInitialPath: unknown
   DefaultResourceLanguage: unknown
@@ -2508,17 +1692,16 @@ export interface CreatePriConfigXmlTaskProps {
    */
   Runtime: unknown
 }
-export interface CreatePriFilesForPortableLibrariesProps {
-  ContentToIndex: unknown
-  MakePriExeFullPath: unknown
-  MakePriExtensionPath: unknown
-  IntermediateDirectory: unknown
+interface CreatePriConfigXmlWithPackagingElementTaskTypeProps extends TaskTypeProps {
+  AppxBundleAutoResourcePackageQualifiers: unknown
+  PriConfigXmlPath: unknown
+  PriInitialPath: unknown
   DefaultResourceLanguage: unknown
   DefaultResourceQualifiers: unknown
-  IntermediateFileWrites: unknown
-  CreatedPriFiles: unknown
+  ConvertDotsToSlashes: unknown
   IntermediateExtension: unknown
-  AdditionalMakepriExeParameters: unknown
+  PriConfigXmlPackagingSnippetPath: unknown
+  PriConfigXmlDefaultSnippetPath: unknown
   TargetPlatformIdentifier: unknown
   TargetPlatformVersion: unknown
   /**
@@ -2538,46 +1721,28 @@ export interface CreatePriFilesForPortableLibrariesProps {
    */
   Runtime: unknown
 }
-export interface CreatePropertyProps {
-  Value: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
+export interface CreatePriFilesForPortableLibrariesProps extends TaskTypeProps {
+  ContentToIndex: unknown
+  MakePriExeFullPath: unknown
+  MakePriExtensionPath: unknown
+  IntermediateDirectory: unknown
+  DefaultResourceLanguage: unknown
+  DefaultResourceQualifiers: unknown
+  IntermediateFileWrites: unknown
+  CreatedPriFiles: unknown
+  IntermediateExtension: unknown
+  AdditionalMakepriExeParameters: unknown
+  TargetPlatformIdentifier: unknown
+  TargetPlatformVersion: unknown
 }
-export interface CreateVisualBasicManifestResourceNameProps {
+export interface CreatePropertyProps extends TaskTypeProps {
+  Value: unknown
+}
+export interface CreateVisualBasicManifestResourceNameProps extends TaskTypeProps {
   PrependCultureAsDirectory: unknown
   ResourceFiles: unknown
   ResourceFilesWithManifestResourceNames: unknown
   RootNamespace: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * boolean
@@ -2585,7 +1750,7 @@ export interface CreateVisualBasicManifestResourceNameProps {
 export interface CreateWebPageOnPublishProps {
 
 }
-export interface CscProps {
+export interface CscProps extends TaskTypeProps {
   AdditionalLibPaths: unknown
   AddModules: unknown
   AllowUnsafeBlocks: unknown
@@ -2636,22 +1801,6 @@ export interface CscProps {
   Win32Icon: unknown
   Win32Manifest: unknown
   Win32Resource: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface CultureProps {
 
@@ -2666,31 +1815,11 @@ export interface CurrentSolutionConfigurationContentsProps {
    */
   Label: string
 }
-export interface CustomBuildStepProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface CustomBuildStepProps extends SimpleItemTypeProps {
+
+}
+export interface DataExecutionPreventionProps {
+
 }
 export interface DebugInformationFormatProps {
 
@@ -2743,29 +1872,16 @@ export interface DefineDebugProps {
 export interface DefineTraceProps {
 
 }
+export interface DelayLoadDLLsProps {
+
+}
 export interface DelaySignProps {
 
 }
-export interface DeleteProps {
+export interface DeleteProps extends TaskTypeProps {
   DeletedFiles: unknown
   Files: unknown
   TreatErrorsAsWarnings: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface DependencyInformationFileProps {
 
@@ -2821,37 +1937,17 @@ export interface DocumentationFileProps {
 /**
  * The CLI tool that the user wants restored in the context of the project
  */
-export interface DotNetCliToolReferenceProps {
+export interface DotNetCliToolReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Package name of the tool. This may differ from its associated reference package name.
    */
   Include: string
   /**
    * Version of dependency
    */
   Version: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
-export interface DownloadFileProps {
+export interface DownloadFileProps extends TaskTypeProps {
   DestinationFileName: unknown
   DestinationFolder: unknown
   DownloadedFile: unknown
@@ -2860,52 +1956,22 @@ export interface DownloadFileProps {
   SkipUnchangedFiles: unknown
   SourceUrl: unknown
   Timeout: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
+}
+export interface DriverProps {
+
 }
 /**
  * Resources to be embedded in the generated assembly
  */
-export interface EmbeddedResourceProps {
+export interface EmbeddedResourceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semi-colon separated list of resource files (wildcards are allowed)
    */
   Include: string
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+}
+export interface EmbedManagedResourceFileProps {
+
 }
 export interface EmbedManifestProps {
 
@@ -2932,6 +1998,9 @@ export interface EnableAspireTestingProps {
 
 }
 export interface EnableASPXDebuggingProps {
+
+}
+export interface EnableCOMDATFoldingProps {
 
 }
 export interface EnableCustomCultureProps {
@@ -3051,6 +2120,9 @@ export interface EnableSigningChecksProps {
 export interface EnableSQLServerDebuggingProps {
 
 }
+export interface EnableUACProps {
+
+}
 export interface EnableUnmanagedDebuggingProps {
 
 }
@@ -3072,27 +2144,14 @@ export interface EntryPointExeProps {
 export interface EntryPointProjectUniqueNameProps {
 
 }
-export interface ErrorProps {
+export interface EntryPointSymbolProps {
+
+}
+export interface ErrorProps extends TaskTypeProps {
   Code: unknown
   File: unknown
   HelpKeyword: unknown
   Text: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface ErrorCheckAllocationsProps {
 
@@ -3127,7 +2186,7 @@ export interface ExcludeDeploymentUrlProps {
 export interface ExcludedPermissionsProps {
 
 }
-export interface ExecProps {
+export interface ExecProps extends TaskTypeProps {
   Command: unknown
   CustomErrorRegularExpression: unknown
   CustomWarningRegularExpression: unknown
@@ -3144,44 +2203,12 @@ export interface ExecProps {
   ToolExe: unknown
   ToolPath: unknown
   WorkingDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ExpandPayloadDirectoriesProps {
+export interface ExpandPayloadDirectoriesProps extends TaskTypeProps {
   Inputs: unknown
   Expanded: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ExpandPriContentProps {
+export interface ExpandPriContentProps extends ToolTaskTypeProps {
   Inputs: unknown
   Expanded: unknown
   IntermediateFileWrites: unknown
@@ -3190,26 +2217,10 @@ export interface ExpandPriContentProps {
   MakePriExeFullPath: unknown
   MakePriExtensionPath: unknown
 }
-export interface ExtractHashAlgorithmIdProps {
+export interface ExtractHashAlgorithmIdProps extends TaskTypeProps {
   StoreAssociationFile: unknown
   HashUris: unknown
   HashAlgorithmId: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface FallbackCultureProps {
 
@@ -3217,31 +2228,8 @@ export interface FallbackCultureProps {
 export interface FileAlignmentProps {
 
 }
-export interface FileAssociationProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface FileAssociationProps extends SimpleItemTypeProps {
+
 }
 export interface FileUpgradeFlagsProps {
 
@@ -3252,28 +2240,12 @@ export interface FileUpgradeFlagsProps {
 export interface FileVersionProps {
 
 }
-export interface FilterOutUnusedLanguagesResourceFileMapsProps {
+export interface FilterOutUnusedLanguagesResourceFileMapsProps extends TaskTypeProps {
   FileMaps: unknown
   FileNamePrefix: unknown
   MapSuffix: unknown
   Languages: unknown
   FilteredFileMaps: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Path to the final app manifest.
@@ -3287,74 +2259,29 @@ export interface FinalAppxManifestNameProps {
 export interface FinalAppxPackageRecipeProps {
 
 }
-export interface FindAppConfigFileProps {
+export interface FindAppConfigFileProps extends TaskTypeProps {
   AppConfigFile: unknown
   PrimaryList: unknown
   SecondaryList: unknown
   TargetPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface FindInListProps {
+export interface FindInListProps extends TaskTypeProps {
   CaseSensitive: unknown
   FindLastMatch: unknown
   ItemFound: unknown
   ItemSpecToFind: unknown
   List: unknown
   MatchFileNameOnly: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface FindUnderPathProps {
+export interface FindUnderPathProps extends TaskTypeProps {
   Files: unknown
   InPath: unknown
   OutOfPath: unknown
   Path: unknown
   UpdateToAbsolutePaths: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
+}
+export interface FixedBaseAddressProps {
+
 }
 export interface FloatingPointExceptionsProps {
 
@@ -3397,47 +2324,21 @@ export interface ForcedIncludeFilesProps {
 export interface ForcedUsingFilesProps {
 
 }
-export interface FormatUrlProps {
+export interface ForceFileOutputProps {
+
+}
+export interface ForceSymbolReferencesProps {
+
+}
+export interface FormatUrlProps extends TaskTypeProps {
   InputUrl: unknown
   OutputUrl: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface FormatVersionProps {
+export interface FormatVersionProps extends TaskTypeProps {
   FormatType: unknown
   OutputVersion: unknown
   Revision: unknown
   Version: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface FormFactorIDProps {
 
@@ -3451,7 +2352,7 @@ export interface FrameworkPathOverrideProps {
 /**
  * Reference to a shared framework.
  */
-export interface FrameworkReferenceProps {
+export interface FrameworkReferenceProps extends SimpleItemTypeProps {
   /**
    * Controls whether the runtime assets of this shared framework can be trimmed by the IL Linker (if PublishTrimmed is true).
    */
@@ -3460,35 +2361,14 @@ export interface FrameworkReferenceProps {
    * Controls whether the app will target the latest patch of the runtime.  Defaults to true for self-contained apps, false otherwise.
    */
   TargetLatestRuntimePatch: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface FunctionLevelLinkingProps {
 
 }
-export interface GenerateApplicationManifestProps {
+export interface FunctionOrderProps {
+
+}
+export interface GenerateApplicationManifestProps extends TaskTypeProps {
   AssemblyName: unknown
   AssemblyVersion: unknown
   ClrVersion: unknown
@@ -3521,24 +2401,8 @@ export interface GenerateApplicationManifestProps {
   TargetFrameworkVersion: unknown
   TrustInfoFile: unknown
   UseApplicationTrust: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface GenerateAppxManifestProps {
+export interface GenerateAppxManifestProps extends TaskTypeProps {
   ApplicationExecutableName: unknown
   AppxManifestInput: unknown
   CertificateThumbprint: unknown
@@ -3560,22 +2424,6 @@ export interface GenerateAppxManifestProps {
   ManifestMetadata: unknown
   TargetPlatformIdentifier: unknown
   PackageSigningEnabled: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Flag indicating whether to generate app package during the build.
@@ -3583,7 +2431,7 @@ export interface GenerateAppxManifestProps {
 export interface GenerateAppxPackageOnBuildProps {
 
 }
-export interface GenerateAppxPackageRecipeProps {
+export interface GenerateAppxPackageRecipeProps extends TaskTypeProps {
   AppxManifestXml: unknown
   SourceAppxManifest: unknown
   SolutionConfiguration: unknown
@@ -3601,48 +2449,16 @@ export interface GenerateAppxPackageRecipeProps {
   TargetPlatformIdentifier: unknown
   IndexedPayloadFiles: unknown
   MakePriExtensionPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface GenerateAppxSymbolPackageProps {
+export interface GenerateAppxSymbolPackageProps extends TaskTypeProps {
   PdbCopyExeFullPath: unknown
   PdbFiles: unknown
   StrippedDirectory: unknown
   AppxSymbolPackageOutput: unknown
   ProjectName: unknown
   StrippedPdbs: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface GenerateBootstrapperProps {
+export interface GenerateBootstrapperProps extends TaskTypeProps {
   ApplicationFile: unknown
   ApplicationName: unknown
   ApplicationRequiresElevation: unknown
@@ -3659,22 +2475,6 @@ export interface GenerateBootstrapperProps {
   Path: unknown
   SupportUrl: unknown
   Validate: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface GenerateCatalogFilesProps {
 
@@ -3685,7 +2485,10 @@ export interface GenerateCategoryTagsProps {
 export interface GenerateClientFilesProps {
 
 }
-export interface GenerateDeploymentManifestProps {
+export interface GenerateDebugInformationProps {
+
+}
+export interface GenerateDeploymentManifestProps extends TaskTypeProps {
   AssemblyName: unknown
   AssemblyVersion: unknown
   CreateDesktopShortcut: unknown
@@ -3714,22 +2517,6 @@ export interface GenerateDeploymentManifestProps {
   UpdateInterval: unknown
   UpdateMode: unknown
   UpdateUnit: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Value indicating whether a documentation file will be generated by the compiler
@@ -3737,31 +2524,18 @@ export interface GenerateDeploymentManifestProps {
 export interface GenerateDocumentationFileProps {
 
 }
-export interface GenerateLauncherProps {
+export interface GenerateLauncherProps extends TaskTypeProps {
   EntryPoint: unknown
   OutputPath: unknown
   VisualStudioVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface GenerateLibraryLayoutProps {
 
 }
 export interface GenerateManifestsProps {
+
+}
+export interface GenerateMapFileProps {
 
 }
 /**
@@ -3770,7 +2544,7 @@ export interface GenerateManifestsProps {
 export interface GeneratePackageOnBuildProps {
 
 }
-export interface GeneratePriConfigurationFilesProps {
+export interface GeneratePriConfigurationFilesProps extends TaskTypeProps {
   LayoutResfilesPath: unknown
   ResourcesResfilesPath: unknown
   PriResfilesPath: unknown
@@ -3778,22 +2552,6 @@ export interface GeneratePriConfigurationFilesProps {
   PRIResourceFiles: unknown
   PriFiles: unknown
   IntermediateExtension: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Set this property to 'false' to disable the automatic generation of entry point for VSTest.
@@ -3801,27 +2559,11 @@ export interface GeneratePriConfigurationFilesProps {
 export interface GenerateProgramFileProps {
 
 }
-export interface GenerateProjectArchitecturesFileProps {
+export interface GenerateProjectArchitecturesFileProps extends TaskTypeProps {
   ProjectArchitectures: unknown
   ProjectArchitecturesFilePath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface GenerateProjectPriFileProps {
+export interface GenerateProjectPriFileProps extends ToolTaskTypeProps {
   MakePriExeFullPath: unknown
   PriConfigXmlPath: unknown
   IndexFilesForQualifiersCollection: unknown
@@ -3837,7 +2579,7 @@ export interface GenerateProjectPriFileProps {
   MultipleQualifiersPerDimensionFoundPath: unknown
   IntermediateExtension: unknown
 }
-export interface GenerateResourceProps {
+export interface GenerateResourceProps extends TaskTypeProps {
   AdditionalInputs: unknown
   ExcludedInputPaths: unknown
   ExecuteAsTool: unknown
@@ -3861,22 +2603,6 @@ export interface GenerateResourceProps {
   OutputDirectory: unknown
   MSBuildRuntime: unknown
   MSBuildArchitecture: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Set this property to 'false' to disable auto registration of extensions through the 'AddSelfRegisteredExtensions'.
@@ -3899,339 +2625,18 @@ export interface GenerateStublessProxiesProps {
 export interface GenerateTestingPlatformEntryPointProps {
 
 }
-export interface GenerateTrustInfoProps {
+export interface GenerateTrustInfoProps extends TaskTypeProps {
   ApplicationDependencies: unknown
   BaseManifest: unknown
   ExcludedPermissions: unknown
   TargetFrameworkMoniker: unknown
   TargetZone: unknown
   TrustInfoFile: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface GenerateTypeLibraryProps {
 
 }
-export interface GetAppxBundlePlatformsProps {
-  Input: unknown
-  PackageArchitecture: unknown
-  Platforms: unknown
-  Last: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetAssemblyIdentityProps {
-  Assemblies: unknown
-  AssemblyFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetDefaultResourceLanguageProps {
-  DefaultLanguage: unknown
-  SourceAppxManifest: unknown
-  DefaultResourceLanguage: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetFileHashProps {
-  Files: unknown
-  Algorithm: unknown
-  MetadataName: unknown
-  HashEncoding: unknown
-  Hash: unknown
-  Items: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetFrameworkPathProps {
-  Path: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetFrameworkSdkPackagesProps {
-  FrameworkSdkReferences: unknown
-  FrameworkSdkPackages: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetFrameworkSdkPathProps {
-  Path: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetOutputFileNameProps {
-  OutputExtension: unknown
-  OutputFile: unknown
-  OutputPath: unknown
-  SourceFile: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetPackageArchitectureProps {
-  Platform: unknown
-  ProjectArchitecture: unknown
-  RecursiveProjectArchitecture: unknown
-  PackageArchitecture: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetReferenceAssemblyPathsProps {
-  RootPath: unknown
-  TargetFrameworkMoniker: unknown
-  TargetFrameworkMonikerDisplayName: unknown
-  BypassFrameworkInstallChecks: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetSdkPropertyValueProps {
-  TargetPlatformIdentifier: unknown
-  TargetPlatformVersion: unknown
-  TargetPlatformSdkRootOverride: unknown
-  PropertyName: unknown
-  PropertyValue: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetSdkToolFullPathProps {
-  ToolName: unknown
-  ToolFullPath: unknown
-  TargetPlatformIdentifier: unknown
-  TargetPlatformVersion: unknown
-  TargetPlatformSdkRootOverride: unknown
-  MSBuildArchitecture: unknown
-  ActualToolFullPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface GetWindowsDesktopSdkDirProps {
-  TargetPlatformIdentifier: unknown
-  TargetPlatformVersion: unknown
-  TargetPlatformSdkRootOverride: unknown
-  WindowsDesktopSdkDir: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
-}
-export interface HeaderFileNameProps {
-
-}
-export interface HighEntropyVAProps {
-
-}
-export interface HostInBrowserProps {
-
-}
-export interface IgnoreImportLibraryProps {
-
-}
-export interface IgnoreStandardIncludePathProps {
-
-}
-/**
- * Enable implicit global usings for the C# project. Possible values are enable, true, and disable.
- */
-export interface ImplicitUsingsProps {
-
-}
-/**
- * Assemblies whose namespaces should be imported by the Visual Basic compiler
- */
-export interface ImportProps {
+interface GenericItemTypeProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -4256,6 +2661,218 @@ export interface ImportProps {
    * Optional expression. Used to identify or order system and user elements
    */
   Label: string
+}
+interface GenericPropertyTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the property should be evaluated
+   */
+  Condition: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+export interface GetAppxBundlePlatformsProps extends TaskTypeProps {
+  Input: unknown
+  PackageArchitecture: unknown
+  Platforms: unknown
+  Last: unknown
+}
+export interface GetAssemblyIdentityProps extends TaskTypeProps {
+  Assemblies: unknown
+  AssemblyFiles: unknown
+}
+export interface GetDefaultResourceLanguageProps extends TaskTypeProps {
+  DefaultLanguage: unknown
+  SourceAppxManifest: unknown
+  DefaultResourceLanguage: unknown
+}
+export interface GetFileHashProps extends TaskTypeProps {
+  Files: unknown
+  Algorithm: unknown
+  MetadataName: unknown
+  HashEncoding: unknown
+  Hash: unknown
+  Items: unknown
+}
+export interface GetFrameworkPathProps extends TaskTypeProps {
+  Path: unknown
+}
+export interface GetFrameworkSdkPackagesProps extends TaskTypeProps {
+  FrameworkSdkReferences: unknown
+  FrameworkSdkPackages: unknown
+}
+export interface GetFrameworkSdkPathProps extends TaskTypeProps {
+  Path: unknown
+}
+export interface GetOutputFileNameProps extends TaskTypeProps {
+  OutputExtension: unknown
+  OutputFile: unknown
+  OutputPath: unknown
+  SourceFile: unknown
+}
+export interface GetPackageArchitectureProps extends TaskTypeProps {
+  Platform: unknown
+  ProjectArchitecture: unknown
+  RecursiveProjectArchitecture: unknown
+  PackageArchitecture: unknown
+}
+export interface GetReferenceAssemblyPathsProps extends TaskTypeProps {
+  RootPath: unknown
+  TargetFrameworkMoniker: unknown
+  TargetFrameworkMonikerDisplayName: unknown
+  BypassFrameworkInstallChecks: unknown
+}
+export interface GetSdkPropertyValueProps extends TaskTypeProps {
+  TargetPlatformIdentifier: unknown
+  TargetPlatformVersion: unknown
+  TargetPlatformSdkRootOverride: unknown
+  PropertyName: unknown
+  PropertyValue: unknown
+}
+export interface GetSdkToolFullPathProps extends TaskTypeProps {
+  ToolName: unknown
+  ToolFullPath: unknown
+  TargetPlatformIdentifier: unknown
+  TargetPlatformVersion: unknown
+  TargetPlatformSdkRootOverride: unknown
+  MSBuildArchitecture: unknown
+  ActualToolFullPath: unknown
+}
+export interface GetWindowsDesktopSdkDirProps extends TaskTypeProps {
+  TargetPlatformIdentifier: unknown
+  TargetPlatformVersion: unknown
+  TargetPlatformSdkRootOverride: unknown
+  WindowsDesktopSdkDir: unknown
+}
+export interface HeaderFileNameProps {
+
+}
+export interface HeapCommitSizeProps {
+
+}
+export interface HeapReserveSizeProps {
+
+}
+export interface HighEntropyVAProps {
+
+}
+export interface HostInBrowserProps {
+
+}
+export interface IgnoreAllDefaultLibrariesProps {
+
+}
+export interface IgnoreEmbeddedIDLProps {
+
+}
+export interface IgnoreImportLibraryProps {
+
+}
+export interface IgnoreSpecificDefaultLibrariesProps {
+
+}
+export interface IgnoreStandardIncludePathProps {
+
+}
+export interface ImageHasSafeExceptionHandlersProps {
+
+}
+/**
+ * Enable implicit global usings for the C# project. Possible values are enable, true, and disable.
+ */
+export interface ImplicitUsingsProps {
+
+}
+/**
+ * Assemblies whose namespaces should be imported by the Visual Basic compiler
+ */
+export interface ImportProps {
+  /**
+   * Optional expression evaluated to determine whether the import should occur
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+  /**
+   * Project file to import
+   */
+  Project: unknown
+  /**
+   * Name of the SDK which contains the project file to import
+   */
+  Sdk: string
+  /**
+   * Optional expression used to specify the version of the SDK referenced by this import
+   */
+  Version: string
+  /**
+   * Optional expression used to specify the minimum SDK version required by the referring import
+   */
+  MinimumVersion: string
+}
+/**
+ * Groups import definitions
+ */
+interface ImportGroupTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the ImportGroup should be used
+   */
+  Condition: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+export interface ImportLibraryProps {
+
+}
+/**
+ * Declares that the contents of another project file should be inserted at this location
+ */
+interface ImportTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the import should occur
+   */
+  Condition: string
+  /**
+   * Project file to import
+   */
+  Project: unknown
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+  /**
+   * Name of the SDK which contains the project file to import
+   */
+  Sdk: string
+  /**
+   * Optional expression used to specify the version of the SDK referenced by this import
+   */
+  Version: string
+  /**
+   * Optional expression used to specify the minimum SDK version required by the referring import
+   */
+  MinimumVersion: string
 }
 /**
  * Flag indicating whether to include primary build outputs into the app package payload.
@@ -4383,35 +3000,15 @@ export interface InterfaceIdentifierFileNameProps {
 /**
  * Specifies that internal types and members are visible to the specified friend assemblies.
  */
-export interface InternalsVisibleToProps {
+export interface InternalsVisibleToProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * The name of the friend assembly to make internal types and members visible to.
    */
   Include: string
   /**
    * Optional public key associated with the strong name signature of the friend assembly.
    */
   Key: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface IntrinsicFunctionsProps {
 
@@ -4428,25 +3025,9 @@ export interface InvariantGlobalizationProps {
 export interface IsAotCompatibleProps {
 
 }
-export interface IsAssemblyProps {
+export interface IsAssemblyProps extends TaskTypeProps {
   Assemblies: unknown
   AssemblyFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface IsCodeSharingProjectProps {
 
@@ -4492,7 +3073,39 @@ export interface ItemProps {
    */
   Label: string
 }
+/**
+ * Groups item metadata definitions
+ */
+interface ItemDefinitionGroupTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the ItemDefinitionGroup should be used
+   */
+  Condition: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+/**
+ * Groups item list definitions
+ */
+interface ItemGroupTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the ItemGroup should be used
+   */
+  Condition: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
 export interface JCPAProps {
+
+}
+export interface KeyContainerProps {
+
+}
+export interface KeyFileProps {
 
 }
 export interface KeywordProps {
@@ -4501,13 +3114,16 @@ export interface KeywordProps {
 export interface LangVersionProps {
 
 }
+export interface LargeAddressAwareProps {
+
+}
 /**
  * Full path to a folder with package layout.
  */
 export interface LayoutDirProps {
 
 }
-export interface LCProps {
+export interface LCProps extends TaskTypeProps {
   EnvironmentVariables: unknown
   LicenseTarget: unknown
   LogStandardErrorAsError: unknown
@@ -4522,24 +3138,8 @@ export interface LCProps {
   Timeout: unknown
   ToolExe: unknown
   ToolPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface LIBProps {
+export interface LIBProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalDependencies: unknown
@@ -4582,24 +3182,8 @@ export interface LIBProps {
   TreatLibWarningAsErrors: unknown
   UseUnicodeResponseFiles: unknown
   Verbose: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface LinkProps {
+export interface LinkProps extends SimpleItemTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalDependencies: unknown
@@ -4712,29 +3296,72 @@ export interface LinkProps {
   UseLibraryDependencyInputs: unknown
   Version: unknown
   /**
-   * Optional expression evaluated to determine whether the task should be executed
+   * Optional expression evaluated to determine whether the items should be evaluated
    */
   Condition: string
   /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
    */
-  ContinueOnError: unknown
+  Include: string
   /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
    */
-  Architecture: unknown
+  Exclude: string
   /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
    */
-  Runtime: unknown
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+export interface LinkErrorReportingProps {
+
 }
 export interface LinkIncrementalProps {
+
+}
+interface LinkItemProps extends SimpleItemTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the items should be evaluated
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+export interface LinkStatusProps {
+
+}
+export interface LinkTimeCodeGenerationProps {
 
 }
 export interface LocaleIDProps {
 
 }
-export interface MakeAppxBundleProps {
+export interface MakeAppxBundleProps extends MakeAppxWithOutputTypeProps {
   BundleDir: unknown
 }
 /**
@@ -4743,15 +3370,27 @@ export interface MakeAppxBundleProps {
 export interface MakeAppxExeFullPathProps {
 
 }
-export interface MakeAppxPackProps {
+export interface MakeAppxPackProps extends MakeAppxWithOutputTypeProps {
   ResourcePack: unknown
   ValidateResourcesReferencedByManifest: unknown
   HashAlgorithmId: unknown
   AppxManifest: unknown
   FileMap: unknown
 }
-export interface MakeDirProps {
-  Directories: unknown
+interface MakeAppxTypeProps extends TaskTypeProps {
+  MakeAppxExeFullPath: unknown
+  Parameters: unknown
+  ExitCode: unknown
+  YieldDuringToolExecution: unknown
+  UseCommandProcessor: unknown
+  EchoOff: unknown
+  ToolExe: unknown
+  ToolPath: unknown
+  EnvironmentVariables: unknown
+  Timeout: unknown
+  StandardErrorImportance: unknown
+  StandardOutputImportance: unknown
+  LogStandardErrorAsError: unknown
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -4768,6 +3407,41 @@ export interface MakeDirProps {
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
   Runtime: unknown
+}
+interface MakeAppxWithOutputTypeProps extends TaskTypeProps {
+  Output: unknown
+  MakeAppxExeFullPath: unknown
+  Parameters: unknown
+  ExitCode: unknown
+  YieldDuringToolExecution: unknown
+  UseCommandProcessor: unknown
+  EchoOff: unknown
+  ToolExe: unknown
+  ToolPath: unknown
+  EnvironmentVariables: unknown
+  Timeout: unknown
+  StandardErrorImportance: unknown
+  StandardOutputImportance: unknown
+  LogStandardErrorAsError: unknown
+  /**
+   * Optional expression evaluated to determine whether the task should be executed
+   */
+  Condition: string
+  /**
+   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
+   */
+  ContinueOnError: unknown
+  /**
+   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
+   */
+  Architecture: unknown
+  /**
+   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
+   */
+  Runtime: unknown
+}
+export interface MakeDirProps extends TaskTypeProps {
+  Directories: unknown
 }
 /**
  * Full path to makepri.exe utility.
@@ -4781,31 +3455,8 @@ export interface MakePriExeFullPathProps {
 export interface ManagedWinmdInprocImplementationProps {
 
 }
-export interface ManifestProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ManifestProps extends SimpleItemTypeProps {
+
 }
 export interface ManifestCertificateThumbprintProps {
 
@@ -4816,59 +3467,32 @@ export interface ManifestFromManagedAssemblyProps {
 export interface ManifestKeyFileProps {
 
 }
+export interface MapExportsProps {
+
+}
 /**
  * boolean
  */
 export interface MapFileExtensionsProps {
 
 }
-export interface MessageProps {
+export interface MapFileNameProps {
+
+}
+export interface MergedIDLBaseFileNameProps {
+
+}
+export interface MergeSectionsProps {
+
+}
+export interface MessageProps extends TaskTypeProps {
   Importance: unknown
   Text: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface MidlProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface MidlProps extends SimpleItemTypeProps {
+
 }
-export interface MIDLProps {
+export interface MIDLProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalIncludeDirectories: unknown
@@ -4927,22 +3551,9 @@ export interface MIDLProps {
   ValidateAllParameters: unknown
   WarnAsError: unknown
   WarningLevel: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
+}
+export interface MidlCommandFileProps {
+
 }
 export interface MinimalRebuildProps {
 
@@ -4959,29 +3570,16 @@ export interface MinimumVisualStudioVersionProps {
 export interface MkTypLibCompatibleProps {
 
 }
-export interface MoveProps {
+export interface ModuleDefinitionFileProps {
+
+}
+export interface MoveProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
   OverwriteReadOnlyFiles: unknown
   SourceFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface MSBuildProps {
+export interface MSBuildProps extends TaskTypeProps {
   BuildInParallel: unknown
   Projects: unknown
   Properties: unknown
@@ -4995,22 +3593,6 @@ export interface MSBuildProps {
   ToolsVersion: unknown
   UnloadProjectsOnCompletion: unknown
   UseResultsCache: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface MSBuildAllProjectsProps {
 
@@ -5033,7 +3615,10 @@ export interface MSBuildWarningsAsErrorsProps {
 export interface MSBuildWarningsAsMessagesProps {
 
 }
-export interface MtProps {
+export interface MSDOSStubFileNameProps {
+
+}
+export interface MtProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalManifestFiles: unknown
@@ -5075,22 +3660,6 @@ export interface MtProps {
   UpdateFileHashes: unknown
   UpdateFileHashesSearchPath: unknown
   VerboseOutput: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface MultiProcessorCompilationProps {
 
@@ -5101,31 +3670,11 @@ export interface MyTypeProps {
 /**
  * Reference to a native manifest file, or to a file that contains a native manifest
  */
-export interface NativeReferenceProps {
+export interface NativeReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Reference full name
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * The locale ID for the NuGet package
@@ -5139,31 +3688,8 @@ export interface NoConfigProps {
 /**
  * Files that should have no role in the build process
  */
-export interface NoneProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface NoneProps extends SimpleItemTypeProps {
+
 }
 export interface NoStandardLibrariesProps {
 
@@ -5186,11 +3712,45 @@ export interface NoWarnProps {
 export interface NullableProps {
 
 }
+export interface NullTerminateStringsProps {
+
+}
 export interface OldToolsVersionProps {
 
 }
 export interface OmitDefaultLibNameProps {
 
+}
+export interface OnErrorProps {
+  /**
+   * Optional expression evaluated to determine whether the targets should be executed
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of targets to execute
+   */
+  ExecuteTargets: unknown
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+/**
+ * Specifies targets to execute in the event of a recoverable error
+ */
+interface OnErrorTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the targets should be executed
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of targets to execute
+   */
+  ExecuteTargets: unknown
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
 }
 /**
  * boolean
@@ -5208,6 +3768,9 @@ export interface OptimizationProps {
  * Should compiler optimize output (boolean)
  */
 export interface OptimizeProps {
+
+}
+export interface OptimizeReferencesProps {
 
 }
 /**
@@ -5237,10 +3800,43 @@ export interface OptionStrictProps {
 export interface OSVersionProps {
 
 }
+export interface OtherwiseProps {
+
+}
+/**
+ * Groups PropertyGroup and/or ItemGroup elements that are used if no Conditions on sibling When elements evaluate to true
+ */
+interface OtherwiseTypeProps {
+
+}
 export interface OutDirProps {
 
 }
+/**
+ * Optional element specifying a specific task output to be gathered
+ */
+export interface OutputProps {
+  /**
+   * Task parameter to gather. Matches the name of a .NET Property on the task class that has an [Output] attribute
+   */
+  TaskParameter: unknown
+  /**
+   * Optional name of an item list to put the gathered outputs into. Either ItemName or PropertyName must be specified
+   */
+  ItemName: unknown
+  /**
+   * Optional name of a property to put the gathered output into. Either PropertyName or ItemName must be specified
+   */
+  PropertyName: unknown
+  /**
+   * Optional expression evaluated to determine whether the output should be gathered
+   */
+  Condition: string
+}
 export interface OutputDirectoryProps {
+
+}
+export interface OutputFileProps {
 
 }
 export interface OutputManifestFileProps {
@@ -5315,9 +3911,9 @@ export interface PackageProjectUrlProps {
 /**
  * Reference to a package
  */
-export interface PackageReferenceProps {
+export interface PackageReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Name of the package
    */
   Include: string
   /**
@@ -5348,26 +3944,6 @@ export interface PackageReferenceProps {
    * When using Central Package Management (CPM), overrides the centrally defined version for this package.  If the project is not using CPM, this attribute has no effect.
    */
   VersionOverride: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * A description of the changes made in this release of the NuGet package, often used in UI like the Updates tab of the Visual Studio Package Manager in place of the package description
@@ -5426,52 +4002,25 @@ export interface PackAsToolProps {
 /**
  * XAML files that are converted to binary and compiled into the assembly
  */
-export interface PageProps {
+export interface PageProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semi-colon separated list of XAML files (wildcards are allowed)
    */
   Include: string
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
-export interface ParsePlatformSpecificBundleArtifactsListsProps {
+export interface ParameterGroupProps {
+
+}
+/**
+ * Groups parameters that are part of an inline task definition.
+ */
+interface ParameterGroupTypeProps {
+
+}
+export interface ParsePlatformSpecificBundleArtifactsListsProps extends TaskTypeProps {
   Files: unknown
   Artifacts: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Full path to pdbcopy.exe utility.
@@ -5512,7 +4061,39 @@ export interface PlatformToolsetProps {
 /**
  * Platform version description. Used to map between internal OS version and marketing OS version.
  */
-export interface PlatformVersionDescriptionProps {
+export interface PlatformVersionDescriptionProps extends SimpleItemTypeProps {
+
+}
+/**
+ * Command line to be run at the end of build
+ */
+export interface PostBuildEventProps extends SimpleItemTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the items should be evaluated
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+interface PostBuildEventItemProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -5539,16 +4120,59 @@ export interface PlatformVersionDescriptionProps {
   Label: string
 }
 /**
- * Command line to be run at the end of build
- */
-export interface PostBuildEventProps {
-
-}
-/**
  * Command line to be run at the start of build
  */
-export interface PreBuildEventProps {
-
+export interface PreBuildEventProps extends SimpleItemTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the items should be evaluated
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
+interface PreBuildEventItemProps extends SimpleItemTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the items should be evaluated
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
 }
 export interface PrecompiledHeaderProps {
 
@@ -5562,31 +4186,8 @@ export interface Prefer32BitProps {
 export interface PreferNativeArm64Props {
 
 }
-export interface PreLinkEventProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface PreLinkEventProps extends SimpleItemTypeProps {
+
 }
 export interface PreprocessorDefinitionsProps {
 
@@ -5597,34 +4198,14 @@ export interface PreprocessorDefinitionsProps {
 export interface PreserveCompilationContextProps {
 
 }
+export interface PreventDllBindingProps {
+
+}
 /**
  * String resources to be indexed in app package's resource index.
  */
-export interface PRIResourceProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface PRIResourceProps extends SimpleItemTypeProps {
+
 }
 export interface ProduceReferenceAssemblyProps {
 
@@ -5639,6 +4220,15 @@ export interface ProductNameProps {
 
 }
 export interface ProductVersionProps {
+
+}
+export interface ProfileProps {
+
+}
+export interface ProfileGuidedDatabaseProps {
+
+}
+export interface ProgramDatabaseFileProps {
 
 }
 /**
@@ -5674,60 +4264,20 @@ export interface ProjectProps {
 export interface ProjectCapabilityProps {
 
 }
-export interface ProjectConfigurationProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ProjectConfigurationProps extends SimpleItemTypeProps {
+
+}
+/**
+ * Optional section used by MSBuild hosts, that may contain arbitrary XML content that is ignored by MSBuild itself
+ */
+interface ProjectExtensionsTypeProps {
+
 }
 export interface ProjectGuidProps {
 
 }
-export interface ProjectPriFileProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface ProjectPriFileProps extends SimpleItemTypeProps {
+
 }
 /**
  * File name to use for project-specific resource index file (PRI).
@@ -5750,31 +4300,11 @@ export interface ProjectPriIndexNameProps {
 /**
  * Reference to another project
  */
-export interface ProjectReferenceProps {
+export interface ProjectReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Path to project file
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface ProjectTypeProps {
 
@@ -5784,6 +4314,19 @@ export interface ProjectTypeGuidsProps {
 }
 export interface PropertyProps {
 
+}
+/**
+ * Groups property definitions
+ */
+interface PropertyGroupTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the PropertyGroup should be used
+   */
+  Condition: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
 }
 export interface ProxyFileNameProps {
 
@@ -5797,31 +4340,8 @@ export interface PublishAotProps {
 export interface PublisherNameProps {
 
 }
-export interface PublishFileProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface PublishFileProps extends SimpleItemTypeProps {
+
 }
 /**
  * Indicates whether the project should produce ReadyToRun images during publish.
@@ -5842,6 +4362,9 @@ export interface PublishTrimmedProps {
 
 }
 export interface PublishUrlProps {
+
+}
+export interface RandomizedBaseAddressProps {
 
 }
 /**
@@ -5868,7 +4391,7 @@ export interface RazorOutputPathProps {
 export interface RazorTargetNameProps {
 
 }
-export interface RCProps {
+export interface RCProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalIncludeDirectories: unknown
@@ -5899,42 +4422,10 @@ export interface RCProps {
   TrackerLogDirectory: unknown
   TrackFileAccess: unknown
   UndefinePreprocessorDefinitions: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ReadLinesFromFileProps {
+export interface ReadLinesFromFileProps extends TaskTypeProps {
   File: unknown
   Lines: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface RecursePathProps {
 
@@ -5945,31 +4436,11 @@ export interface RedirectOutputAndErrorsProps {
 /**
  * Reference to an assembly
  */
-export interface ReferenceProps {
+export interface ReferenceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Assembly name or filename
    */
   Include: string
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Semi-colon separated list of folders to search during reference resolution
@@ -5977,29 +4448,16 @@ export interface ReferenceProps {
 export interface ReferencePathProps {
 
 }
-export interface RegisterAssemblyProps {
+export interface RegisterAssemblyProps extends TaskTypeProps {
   Assemblies: unknown
   AssemblyListFile: unknown
   CreateCodeBase: unknown
   TypeLibFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface RegisterForComInteropProps {
+
+}
+export interface RegisterOutputProps {
 
 }
 export interface RegistrarScriptFileProps {
@@ -6011,108 +4469,28 @@ export interface RemoteDebugEnabledProps {
 export interface RemoteDebugMachineProps {
 
 }
-export interface RemoveDirProps {
+export interface RemoveDirProps extends TaskTypeProps {
   Directories: unknown
   RemovedDirectories: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface RemoveDuplicatePayloadProps {
+export interface RemoveDuplicatePayloadProps extends TaskTypeProps {
   Inputs: unknown
   Platform: unknown
   Filtered: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface RemoveDuplicatePriFilesProps {
+export interface RemoveDuplicatePriFilesProps extends TaskTypeProps {
   Inputs: unknown
   Platform: unknown
   Filtered: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface RemoveDuplicatesProps {
+export interface RemoveDuplicatesProps extends TaskTypeProps {
   Filtered: unknown
   HadAnyDuplicates: unknown
   Inputs: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface RemoveDuplicateSDKReferencesProps {
+export interface RemoveDuplicateSDKReferencesProps extends TaskTypeProps {
   Inputs: unknown
   Filtered: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface RemoveIntegerChecksProps {
 
@@ -6135,7 +4513,7 @@ export interface RepositoryTypeProps {
 export interface RepositoryUrlProps {
 
 }
-export interface RequiresFramework35SP1AssemblyProps {
+export interface RequiresFramework35SP1AssemblyProps extends TaskTypeProps {
   Assemblies: unknown
   CreateDesktopShortcut: unknown
   DeploymentManifestEntryPoint: unknown
@@ -6147,22 +4525,6 @@ export interface RequiresFramework35SP1AssemblyProps {
   SigningManifests: unknown
   SuiteName: unknown
   TargetFrameworkVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Full path to a folder containing resgen tool.
@@ -6170,7 +4532,7 @@ export interface RequiresFramework35SP1AssemblyProps {
 export interface ResgenToolPathProps {
 
 }
-export interface ResolveAssemblyReferenceProps {
+export interface ResolveAssemblyReferenceProps extends TaskTypeProps {
   AllowedAssemblyExtensions: unknown
   AllowedGlobalAssemblyNamePrefix: unknown
   AllowedRelatedFileExtensions: unknown
@@ -6203,24 +4565,8 @@ export interface ResolveAssemblyReferenceProps {
   TargetFrameworkSubsets: unknown
   TargetFrameworkVersion: unknown
   TargetProcessorArchitecture: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ResolveComReferenceProps {
+export interface ResolveComReferenceProps extends TaskTypeProps {
   DelaySign: unknown
   ExecuteAsTool: unknown
   IncludeVersionInInteropName: unknown
@@ -6237,24 +4583,8 @@ export interface ResolveComReferenceProps {
   TypeLibFiles: unknown
   TypeLibNames: unknown
   WrapperOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ResolveKeySourceProps {
+export interface ResolveKeySourceProps extends TaskTypeProps {
   AutoClosePasswordPromptShow: unknown
   AutoClosePasswordPromptTimeout: unknown
   CertificateFile: unknown
@@ -6265,24 +4595,8 @@ export interface ResolveKeySourceProps {
   ResolvedThumbprint: unknown
   ShowImportDialogDespitePreviousFailures: unknown
   SuppressAutoClosePasswordPrompt: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ResolveManifestFilesProps {
+export interface ResolveManifestFilesProps extends TaskTypeProps {
   DeploymentManifestEntryPoint: unknown
   EntryPoint: unknown
   ExtraFiles: unknown
@@ -6298,24 +4612,8 @@ export interface ResolveManifestFilesProps {
   SigningManifests: unknown
   TargetCulture: unknown
   TargetFrameworkVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ResolveNativeReferenceProps {
+export interface ResolveNativeReferenceProps extends TaskTypeProps {
   AdditionalSearchPaths: unknown
   ContainedComComponents: unknown
   ContainedLooseEtcFiles: unknown
@@ -6324,76 +4622,24 @@ export interface ResolveNativeReferenceProps {
   ContainedTypeLibraries: unknown
   ContainingReferenceFiles: unknown
   NativeReferences: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ResolveNonMSBuildProjectOutputProps {
+export interface ResolveNonMSBuildProjectOutputProps extends TaskTypeProps {
   PreresolvedProjectOutputs: unknown
   ProjectReferences: unknown
   ResolvedOutputPaths: unknown
   UnresolvedProjectReferences: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * File that is compiled into the assembly
  */
-export interface ResourceProps {
+export interface ResourceProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * Semi-colon separated list of files (wildcards are allowed)
    */
   Include: string
   CopyToOutputDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
-export interface ResourceCompileProps {
+export interface ResourceCompileProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -6494,21 +4740,15 @@ export interface SccProjectNameProps {
 export interface SccProviderProps {
 
 }
-export interface SchemaVersionProps {
-
-}
-/**
- * Reference to an extension SDK
- */
-export interface SDKReferenceProps {
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
+interface SchemaItemTypeProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
   Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
   /**
    * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
    */
@@ -6525,6 +4765,21 @@ export interface SDKReferenceProps {
    * Optional expression. Used to identify or order system and user elements
    */
   Label: string
+}
+export interface SchemaVersionProps {
+
+}
+/**
+ * Reference to an extension SDK
+ */
+export interface SDKReferenceProps extends SimpleItemTypeProps {
+  /**
+   * Name and version moniker representing an extension SDK
+   */
+  Include: string
+}
+export interface SectionAlignmentProps {
+
 }
 export interface SecureScopingProps {
 
@@ -6564,28 +4819,12 @@ export interface ServiceProps {
    */
   Label: string
 }
-export interface SetEnvProps {
+export interface SetEnvProps extends TaskTypeProps {
   Prefix: unknown
   Target: unknown
   Value: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface SGenProps {
+export interface SGenProps extends TaskTypeProps {
   BuildAssemblyName: unknown
   BuildAssemblyPath: unknown
   DelaySign: unknown
@@ -6603,27 +4842,14 @@ export interface SGenProps {
   ToolExe: unknown
   ToolPath: unknown
   UseProxyTypes: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface ShowIncludesProps {
 
 }
-export interface SignAppxPackageProps {
+export interface ShowProgressProps {
+
+}
+export interface SignAppxPackageProps extends TaskTypeProps {
   AppxPackageToSign: unknown
   CertificateThumbprint: unknown
   CertificateFile: unknown
@@ -6637,22 +4863,6 @@ export interface SignAppxPackageProps {
   ExportCertificate: unknown
   ResolvedThumbprint: unknown
   AppxPackagePublicKeyFile: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Full path to signtool.exe utility.
@@ -6663,32 +4873,42 @@ export interface SignAppxPackageExeFullPathProps {
 export interface SignAssemblyProps {
 
 }
-export interface SignFileProps {
+export interface SignFileProps extends TaskTypeProps {
   CertificateThumbprint: unknown
   SigningTarget: unknown
   TimestampUrl: unknown
   TargetFrameworkIdentifier: unknown
   TargetFrameworkVersion: unknown
   DisallowMansignTimestampFallback: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface SignManifestsProps {
 
+}
+interface SimpleItemTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the items should be evaluated
+   */
+  Condition: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   */
+  Include: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   */
+  Exclude: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   */
+  Remove: string
+  /**
+   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   */
+  Update: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
 }
 export interface SolutionDirProps {
 
@@ -6703,6 +4923,15 @@ export interface SolutionNameProps {
 
 }
 export interface SolutionPathProps {
+
+}
+export interface SpecifySectionAttributesProps {
+
+}
+export interface StackCommitSizeProps {
+
+}
+export interface StackReserveSizeProps {
 
 }
 export interface StartActionProps {
@@ -6735,31 +4964,8 @@ export interface StartWorkingDirectoryProps {
 /**
  * A file containing app store association data.
  */
-export interface StoreAssociationFileProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface StoreAssociationFileProps extends SimpleItemTypeProps {
+
 }
 /**
  * Name of the store manifest file.
@@ -6770,36 +4976,16 @@ export interface StoreManifestNameProps {
 /**
  * Store manifest schema file.
  */
-export interface StoreManifestSchemaProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface StoreManifestSchemaProps extends SimpleItemTypeProps {
+
 }
 export interface StringPoolingProps {
 
 }
-export interface StripPrivateSymbolsProps {
+interface StringPropertyTypeProps {
+
+}
+export interface StripPrivateSymbolsProps extends ToolTaskTypeProps {
   PdbCopyToolPath: unknown
   InputPdb: unknown
   StrippedPdb: unknown
@@ -6807,7 +4993,16 @@ export interface StripPrivateSymbolsProps {
 export interface StructMemberAlignmentProps {
 
 }
+export interface SubSystemProps {
+
+}
 export interface SuiteNameProps {
+
+}
+export interface SupportNobindOfDelayLoadedDLLProps {
+
+}
+export interface SupportUnloadOfDelayLoadedDLLProps {
 
 }
 export interface SupportUrlProps {
@@ -6823,6 +5018,12 @@ export interface SuppressStartupBannerProps {
 
 }
 export interface SuppressXamlWarningsProps {
+
+}
+export interface SwapRunFromCDProps {
+
+}
+export interface SwapRunFromNETProps {
 
 }
 export interface TargetCultureProps {
@@ -6852,6 +5053,9 @@ export interface TargetFrameworksProps {
 export interface TargetFrameworkVersionProps {
 
 }
+export interface TargetMachineProps {
+
+}
 export interface TargetNameProps {
 
 }
@@ -6876,6 +5080,51 @@ export interface TargetPlatformSdkRootOverrideProps {
 export interface TargetPlatformVersionProps {
 
 }
+/**
+ * Groups tasks into a section of the build process
+ */
+interface TargetTypeProps {
+  /**
+   * Name of the target
+   */
+  Name: unknown
+  /**
+   * Optional semi-colon separated list of targets that should be run before this target
+   */
+  DependsOnTargets: string
+  /**
+   * Optional semi-colon separated list of files that form inputs into this target. Their timestamps will be compared with the timestamps of files in Outputs to determine whether the Target is up to date
+   */
+  Inputs: string
+  /**
+   * Optional semi-colon separated list of files that form outputs into this target. Their timestamps will be compared with the timestamps of files in Inputs to determine whether the Target is up to date
+   */
+  Outputs: string
+  /**
+   * Optional expression evaluated to determine whether the Target and the targets it depends on should be run
+   */
+  Condition: string
+  /**
+   * Optional expression evaluated to determine whether duplicate items in the Target's Returns should be removed before returning them. The default is not to eliminate duplicates.
+   */
+  KeepDuplicateOutputs: string
+  /**
+   * Optional expression evaluated to determine which items generated by the target should be returned by the target. If there are no Returns attributes on Targets in the file, the Outputs attributes are used instead for this purpose.
+   */
+  Returns: string
+  /**
+   * Optional semi-colon separated list of targets that this target should run before.
+   */
+  BeforeTargets: string
+  /**
+   * Optional semi-colon separated list of targets that this target should run after.
+   */
+  AfterTargets: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label: string
+}
 export interface TargetZoneProps {
 
 }
@@ -6896,10 +5145,12 @@ export interface TaskProps {
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
   Runtime: unknown
+  /**
+   * Whether the body should have properties expanded before use. Defaults to false.
+   */
+  Evaluate: unknown
 }
-export interface TelemetryProps {
-  EventName: unknown
-  EventData: unknown
+interface TaskTypeProps {
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -6916,6 +5167,13 @@ export interface TelemetryProps {
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
   Runtime: unknown
+}
+export interface TelemetryProps extends TaskTypeProps {
+  EventName: unknown
+  EventData: unknown
+}
+export interface TerminalServerAwareProps {
+
 }
 /**
  * Controls the set of extensions that are enabled. Note that 'AllMicrosoft' enables all extensions, even those with a restrictive license.
@@ -6959,7 +5217,7 @@ export interface TieredCompilationProps {
 export interface TitleProps {
 
 }
-export interface TlbImpProps {
+export interface TlbImpProps extends TaskTypeProps {
   AssemblyNamespace: unknown
   AssemblyVersion: unknown
   DelaySign: unknown
@@ -6981,22 +5239,6 @@ export interface TlbImpProps {
   Transform: unknown
   TypeLibName: unknown
   Verbose: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Specifies the command that will invoke the tool after it's installed.
@@ -7004,12 +5246,18 @@ export interface TlbImpProps {
 export interface ToolCommandNameProps {
 
 }
-export interface TouchProps {
-  AlwaysCreate: unknown
-  Files: unknown
-  ForceTouch: unknown
-  Time: unknown
-  TouchedFiles: unknown
+interface ToolTaskTypeProps extends TaskTypeProps {
+  ExitCode: unknown
+  YieldDuringToolExecution: unknown
+  UseCommandProcessor: unknown
+  EchoOff: unknown
+  ToolExe: unknown
+  ToolPath: unknown
+  EnvironmentVariables: unknown
+  Timeout: unknown
+  StandardErrorImportance: unknown
+  StandardOutputImportance: unknown
+  LogStandardErrorAsError: unknown
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -7026,6 +5274,16 @@ export interface TouchProps {
    * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
    */
   Runtime: unknown
+}
+export interface TouchProps extends TaskTypeProps {
+  AlwaysCreate: unknown
+  Files: unknown
+  ForceTouch: unknown
+  Time: unknown
+  TouchedFiles: unknown
+}
+export interface TreatLinkerWarningAsErrorsProps {
+
 }
 export interface TreatSpecificWarningsAsErrorsProps {
 
@@ -7063,6 +5321,15 @@ export interface TypeLibraryFileProps {
 export interface TypeLibraryNameProps {
 
 }
+export interface TypeLibraryResourceIDProps {
+
+}
+export interface UACExecutionLevelProps {
+
+}
+export interface UACUIAccessProps {
+
+}
 /**
  * Configures the created packages. Possible values are: StoreAndSideload (produces the appxupload and the sideloaded packages), StoreUpload (produces only the appxupload package), and SideloadOnly(produces only the packages for sideloading).
  */
@@ -7075,70 +5342,22 @@ export interface UICultureProps {
 export interface UndefinePreprocessorDefinitionsProps {
 
 }
-export interface UnregisterAssemblyProps {
+export interface UnregisterAssemblyProps extends TaskTypeProps {
   Assemblies: unknown
   AssemblyListFile: unknown
   TypeLibFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface UnzipProps {
+export interface UnzipProps extends TaskTypeProps {
   DestinationFiles: unknown
   DestinationFolder: unknown
   OverwriteReadOnlyFiles: unknown
   SkipUnchangedFiles: unknown
   SourceFiles: unknown
   UnzippedFiles: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface UpdateAppxManifestForBundleProps {
+export interface UpdateAppxManifestForBundleProps extends TaskTypeProps {
   FinalAppxManifest: unknown
   AppxManifestForBundle: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * boolean
@@ -7158,51 +5377,19 @@ export interface UpdateIntervalProps {
 export interface UpdateIntervalUnitsProps {
 
 }
-export interface UpdateMainPackageFileMapProps {
+export interface UpdateMainPackageFileMapProps extends TaskTypeProps {
   Input: unknown
   Output: unknown
   SplitResourcesPriPath: unknown
   DefaultResourceLanguage: unknown
   DefaultResourceQualifiers: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface UpdateManifestProps {
+export interface UpdateManifestProps extends TaskTypeProps {
   ApplicationManifest: unknown
   TargetFrameworkVersion: unknown
   ApplicationPath: unknown
   InputManifest: unknown
   OutputManifest: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Foreground or Background
@@ -7231,7 +5418,7 @@ export interface UpgradeBackupLocationProps {
 /**
  * Defines an item to be considered an output of the project for the fast up-to-date check, with optional corresponding input via 'Original' metadata. When 'Original' metadata is specified, the input and output are considered in isolation. Useful when a single file will be copied (and potentially transformed in doing so) during build.
  */
-export interface UpToDateCheckBuiltProps {
+export interface UpToDateCheckBuiltProps extends SimpleItemTypeProps {
   /**
    * Optional group(s) of inputs and outputs that should be considered in isolation during build. Useful when a build involves multiple discrete compilation/transpilation steps. Semicolon-delimited when multiple sets are required.
    */
@@ -7244,35 +5431,11 @@ export interface UpToDateCheckBuiltProps {
    * Optional location of the input item that produces this output. Useful when a file is copied (and potentially transformed in doing so) during build. If multiple inputs and/or outputs are involved, use 'Set' metadata instead.
    */
   Original: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Defines an item to be considered an input to the project for the fast up-to-date check.
  */
-export interface UpToDateCheckInputProps {
+export interface UpToDateCheckInputProps extends SimpleItemTypeProps {
   /**
    * Optional group(s) of inputs and outputs that should be considered in isolation during build. Useful when a build involves multiple discrete compilation/transpilation steps. Semicolon-delimited when multiple sets are required.
    */
@@ -7281,35 +5444,11 @@ export interface UpToDateCheckInputProps {
    * Optional identifier for this item that allows it to be omitted from the fast up-to-date check via a global property.
    */
   Kind: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 /**
  * Defines an item to be considered an output of the project for the fast up-to-date check.
  */
-export interface UpToDateCheckOutputProps {
+export interface UpToDateCheckOutputProps extends SimpleItemTypeProps {
   /**
    * Optional group(s) of inputs and outputs that should be considered in isolation during build. Useful when a build involves multiple discrete compilation/transpilation steps. Semicolon-delimited when multiple sets are required.
    */
@@ -7318,30 +5457,6 @@ export interface UpToDateCheckOutputProps {
    * Optional identifier for this item that allows it to be omitted from the fast up-to-date check via a global property.
    */
   Kind: unknown
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
 }
 export interface UseAppConfigForCompilerProps {
 
@@ -7406,9 +5521,9 @@ export interface UseWPFProps {
 /**
  * A C# global using to add to the project.
  */
-export interface UsingProps {
+export interface UsingProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * The namespace or type identifier to add, e.g. Microsoft.AspNetCore
    */
   Include: string
   /**
@@ -7419,26 +5534,48 @@ export interface UsingProps {
    * Determines whether the identifier should be registered as a static import.
    */
   Static: unknown
+}
+/**
+ * Contains the inline task implementation. Content is opaque to MSBuild.
+ */
+interface UsingTaskBodyTypeProps {
   /**
-   * Optional expression evaluated to determine whether the items should be evaluated
+   * Whether the body should have properties expanded before use. Defaults to false.
+   */
+  Evaluate: unknown
+}
+/**
+ * Defines the assembly containing a task's implementation, or contains the implementation itself.
+ */
+interface UsingTaskTypeProps {
+  /**
+   * Optional expression evaluated to determine whether the declaration should be evaluated
    */
   Condition: string
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   * Optional name of assembly containing the task. Either AssemblyName or AssemblyFile must be used
    */
-  Exclude: string
+  AssemblyName: unknown
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
+   * Optional path to assembly containing the task. Either AssemblyName or AssemblyFile must be used
    */
-  Remove: string
+  AssemblyFile: unknown
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
+   * Name of task class in the assembly
    */
-  Update: string
+  TaskName: unknown
   /**
-   * Optional expression. Used to identify or order system and user elements
+   * Name of the task factory class in the assembly
    */
-  Label: string
+  TaskFactory: unknown
+  /**
+   * Defines the architecture of the task host that this task should be run in.  Currently supported values:  x86, x64, CurrentArchitecture, and * (any).  If Architecture is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the architecture of the parent MSBuild process
+   */
+  Architecture: unknown
+  /**
+   * Defines the .NET runtime version of the task host that this task should be run in.  Currently supported values:  CLR2, CLR4, NET, CurrentRuntime, and * (any).  If Runtime is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the runtime of the parent MSBuild process
+   */
+  Runtime: unknown
 }
 export interface UTF8OutputProps {
 
@@ -7446,7 +5583,7 @@ export interface UTF8OutputProps {
 export interface ValidateAllParametersProps {
 
 }
-export interface ValidateAppxManifestProps {
+export interface ValidateAppxManifestProps extends TaskTypeProps {
   Input: unknown
   SourceAppxManifest: unknown
   AppxManifestSchema: unknown
@@ -7465,47 +5602,15 @@ export interface ValidateAppxManifestProps {
   ManagedWinmdInprocImplementation: unknown
   ValidateManifest: unknown
   Resources: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ValidateAppxManifestItemsProps {
+export interface ValidateAppxManifestItemsProps extends TaskTypeProps {
   AppxManifestItems: unknown
   CustomAppxManifestItems: unknown
   AppxPackageProject: unknown
   IdentityName: unknown
   IdentityVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ValidateAppxPackageProps {
+export interface ValidateAppxPackageProps extends TaskTypeProps {
   SourceAppxManifest: unknown
   AppxManifest: unknown
   StoreAssociationFile: unknown
@@ -7520,44 +5625,12 @@ export interface ValidateAppxPackageProps {
   IndexedPayloadFiles: unknown
   MakePriExtensionPath: unknown
   OSMinVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ValidateStoreManifestProps {
+export interface ValidateStoreManifestProps extends TaskTypeProps {
   Input: unknown
   StoreManifestSchema: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface VbcProps {
+export interface VbcProps extends TaskTypeProps {
   AdditionalLibPaths: unknown
   AddModules: unknown
   BaseAddress: unknown
@@ -7618,27 +5691,11 @@ export interface VbcProps {
   Win32Icon: unknown
   Win32Manifest: unknown
   Win32Resource: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface VBRuntimeProps {
 
 }
-export interface VCBuildProps {
+export interface VCBuildProps extends TaskTypeProps {
   AdditionalLibPaths: unknown
   AdditionalLinkLibraryPaths: unknown
   AdditionalOptions: unknown
@@ -7653,43 +5710,11 @@ export interface VCBuildProps {
   ToolPath: unknown
   UseEnvironment: unknown
   UserEnvironment: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface VCMessageProps {
+export interface VCMessageProps extends TaskTypeProps {
   Code: unknown
   Type: unknown
   Arguments: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface VCTargetsPathProps {
 
@@ -7697,27 +5722,11 @@ export interface VCTargetsPathProps {
 export interface VerboseOutputProps {
 
 }
-export interface VerifyFileHashProps {
+export interface VerifyFileHashProps extends TaskTypeProps {
   File: unknown
   Hash: unknown
   HashEncoding: unknown
   Algorithm: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * Numeric value of the version in the format major.minor.patch (e.g. 2.4.0)
@@ -7755,27 +5764,11 @@ export interface WapProjPathProps {
 export interface WarnAsErrorProps {
 
 }
-export interface WarningProps {
+export interface WarningProps extends TaskTypeProps {
   Code: unknown
   File: unknown
   HelpKeyword: unknown
   Text: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 /**
  * integer between 0 and 5 inclusive
@@ -7827,31 +5820,26 @@ export interface WebReferencesProps {
 /**
  * Represents a reference to a web service
  */
-export interface WebReferenceUrlProps {
+export interface WebReferenceUrlProps extends SimpleItemTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
+   * URL to web service
    */
   Include: string
+}
+export interface WhenProps {
   /**
-   * Optional expression evaluated to determine whether the items should be evaluated
+   * Optional expression evaluated to determine whether the child PropertyGroups and/or ItemGroups should be used
    */
   Condition: string
+}
+/**
+ * Groups PropertyGroup and/or ItemGroup elements
+ */
+interface WhenTypeProps {
   /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
+   * Optional expression evaluated to determine whether the child PropertyGroups and/or ItemGroups should be used
    */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+  Condition: string
 }
 export interface WholeProgramOptimizationProps {
 
@@ -7859,50 +5847,18 @@ export interface WholeProgramOptimizationProps {
 export interface Win32ResourceFileProps {
 
 }
-export interface WriteCodeFragmentProps {
+export interface WriteCodeFragmentProps extends TaskTypeProps {
   AssemblyAttributes: unknown
   Language: unknown
   OutputDirectory: unknown
   OutputFile: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface WriteLinesToFileProps {
+export interface WriteLinesToFileProps extends TaskTypeProps {
   Encoding: unknown
   File: unknown
   Lines: unknown
   Overwrite: unknown
   WriteOnlyWhenDifferent: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
 export interface WsdlXsdCodeGenCollectionTypesProps {
 
@@ -7955,33 +5911,10 @@ export interface XamlRootsLogProps {
 export interface XamlSavedStateFilePathProps {
 
 }
-export interface XdcmakeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label: string
+export interface XdcmakeProps extends SimpleItemTypeProps {
+
 }
-export interface XDCMakeProps {
+export interface XDCMakeProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalDocumentFile: unknown
@@ -8010,24 +5943,8 @@ export interface XDCMakeProps {
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
   TrackFileAccess: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface XSDProps {
+export interface XSDProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes: unknown
   ActiveToolSwitchesValues: unknown
   AdditionalOptions: unknown
@@ -8054,24 +5971,8 @@ export interface XSDProps {
   TrackedOutputFilesToIgnore: unknown
   TrackerLogDirectory: unknown
   TrackFileAccess: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface XslTransformationProps {
+export interface XslTransformationProps extends TaskTypeProps {
   OutputPaths: unknown
   Parameters: unknown
   XmlContent: unknown
@@ -8079,24 +5980,8 @@ export interface XslTransformationProps {
   XslCompiledDllPath: unknown
   XslContent: unknown
   XslInputPath: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }
-export interface ZipDirectoryProps {
+export interface ZipDirectoryProps extends TaskTypeProps {
   /**
    * Specify the compression level to apply. Possible values are Optimal, Fastest, NoCompression and SmallestSize. In the .NET Framework version of MSBuild, the SmallestSize option is unavailable. Using it will on .NET Framework will log warning MSB3945 and use the default compression level instead.
    */
@@ -8104,20 +5989,4 @@ export interface ZipDirectoryProps {
   DestinationFile: unknown
   Overwrite: unknown
   SourceDirectory: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError: unknown
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture: unknown
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime: unknown
 }

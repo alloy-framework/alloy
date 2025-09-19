@@ -4,6 +4,8 @@ export interface XmlSchema {
   tagName: string;
   description?: string;
   attributes: Record<string, XmlAttribute>;
+  base?: string;
+  internal?: boolean; // mark schemas created from top-level complexTypes
 }
 
 export interface XmlAttribute {
@@ -32,6 +34,12 @@ function toArray<T>(v: any): T[] {
 
 function getAttr(obj: any, name: string): any {
   return obj ? obj[`@_${name}`] : undefined;
+}
+
+// normalize a possibly-prefixed XML name (e.g. "msb:Foo" -> "Foo")
+function localName(v: any): string | undefined {
+  if (v == null) return undefined;
+  return String(v).split(":").pop();
 }
 
 function extractDocumentation(node: any): string | undefined {
@@ -101,7 +109,8 @@ function buildMaps(visited: Map<string, any>) {
     for (const el of toArray(schema.element)) elements.push(el);
     for (const ct of toArray(schema.complexType)) {
       const name = getAttr(ct, "name");
-      if (name) types[name] = ct;
+      const ln = localName(name);
+      if (ln) types[ln] = ct;
     }
     // global attribute groups or attributes could be handled here if needed
   }
@@ -120,9 +129,9 @@ function collectFromComplexType(
   function gatherAttributesFromCT(
     curr: any,
     seen = new Set(),
-  ): Record<string, XmlAttribute> {
+  ): { attrs: Record<string, XmlAttribute>; base?: string } {
     const res: Record<string, XmlAttribute> = {};
-    if (!curr || seen.has(curr)) return res;
+    if (!curr || seen.has(curr)) return { attrs: res };
     seen.add(curr);
     // direct attributes
     for (const a of toArray(curr.attribute)) {
@@ -144,6 +153,7 @@ function collectFromComplexType(
         complexContent.Extension ||
         complexContent.Extension);
     const extNode = extension || curr.extension || curr.Extension;
+    let foundBase: string | undefined;
     if (extNode) {
       for (const a of toArray(extNode.attribute)) {
         const name = getAttr(a, "name");
@@ -155,15 +165,11 @@ function collectFromComplexType(
           use: getAttr(a, "use"),
         };
       }
-      // if extension declares a base, try to resolve attributes from base type
+      // if extension declares a base, capture the base name but do NOT merge its attributes
       const base = getAttr(extNode, "base");
       if (base) {
-        // base may be namespaced like msb:SimpleItemType, take last segment
         const baseName = String(base).split(":").pop() as string;
-        if (baseName && types[baseName]) {
-          const fromBase = gatherAttributesFromCT(types[baseName], seen);
-          Object.assign(res, fromBase);
-        }
+        if (baseName) foundBase = baseName;
       }
     }
 
@@ -171,26 +177,25 @@ function collectFromComplexType(
     const directBase = getAttr(curr, "base");
     if (directBase) {
       const baseName = String(directBase).split(":").pop() as string;
-      if (baseName && types[baseName]) {
-        const fromBase = gatherAttributesFromCT(types[baseName], seen);
-        Object.assign(res, fromBase);
-      }
+      if (baseName) foundBase = foundBase || baseName;
     }
 
-    return res;
+    return { attrs: res, base: foundBase };
   }
 
   // attach attributes to the element entry if an elementName was provided
   if (elementName) {
     const elEntry = out.get(elementName);
     if (elEntry) {
-      const gathered = gatherAttributesFromCT(ct);
-      elEntry.attributes = Object.assign(
-        {},
-        elEntry.attributes || {},
-        gathered,
-      );
+      const { attrs, base } = gatherAttributesFromCT(ct);
+      elEntry.attributes = Object.assign({}, elEntry.attributes || {}, attrs);
+      if (base) elEntry.base = base;
       out.set(elementName, elEntry);
+
+      // also traverse base type for nested element discovery (but don't merge its attributes)
+      if (base && types[base]) {
+        collectFromComplexType(types[base], types, out, elementName);
+      }
     }
   }
 
@@ -211,7 +216,8 @@ function collectFromComplexType(
   if (seq) {
     const children = toArray(seq.element) as any[];
     for (const child of children) {
-      const childName = getAttr(child, "name") || getAttr(child, "ref");
+      const rawChildName = getAttr(child, "name") || getAttr(child, "ref");
+      const childName = localName(rawChildName);
       if (!childName) continue;
       if (!out.has(childName)) {
         out.set(childName, {
@@ -244,15 +250,18 @@ function collectFromComplexType(
 function extractAttributesFromElement(
   el: any,
   types: Record<string, any>,
-): Record<string, XmlAttribute> {
+): { attributes: Record<string, XmlAttribute>; base?: string } {
   const attrs: Record<string, XmlAttribute> = {};
+  let foundBase: string | undefined;
 
   // helper re-used from collectFromComplexType to gather attributes
-  function gatherFrom(ct: any) {
-    if (!ct) return {};
-    // reuse logic by creating a temporary map and calling collectFromComplexType to attach to a temp element
-    // but to avoid duplication, replicate the essential gatherAttributesFromCT logic here
+  function gatherFrom(ct: any): {
+    res: Record<string, XmlAttribute>;
+    base?: string;
+  } {
+    if (!ct) return { res: {} };
     const res: Record<string, XmlAttribute> = {};
+
     // direct attributes on anonymous complexType
     for (const a of toArray(ct.attribute)) {
       const name = getAttr(a, "name");
@@ -284,28 +293,25 @@ function extractAttributesFromElement(
       const base = getAttr(extNode, "base");
       if (base) {
         const baseName = String(base).split(":").pop() as string;
-        if (baseName && types[baseName]) {
-          // add attributes from base type
-          for (const a of toArray(types[baseName].attribute)) {
-            const name = getAttr(a, "name");
-            if (!name) continue;
-            res[name] = {
-              name,
-              type: getAttr(a, "type"),
-              description: extractDocumentation(a),
-              use: getAttr(a, "use"),
-            };
-          }
-        }
+        if (baseName) return { res, base: baseName };
       }
     }
 
-    return res;
+    // also consider if this complexType itself references a named base directly via 'base' (rare)
+    const directBase = getAttr(ct, "base");
+    if (directBase) {
+      const baseName = String(directBase).split(":").pop() as string;
+      if (baseName) return { res, base: baseName };
+    }
+
+    return { res };
   }
 
   // attributes directly on element's anonymous complexType
   if (el.complexType) {
-    Object.assign(attrs, gatherFrom(el.complexType));
+    const g = gatherFrom(el.complexType);
+    Object.assign(attrs, g.res);
+    if (g.base) foundBase = g.base;
   }
 
   // attributes coming from a referenced type (named complexType)
@@ -313,10 +319,12 @@ function extractAttributesFromElement(
   if (typeName) {
     const tName = String(typeName).split(":").pop() as string;
     if (tName && !tName.startsWith("xs:") && types[tName]) {
-      Object.assign(attrs, gatherFrom(types[tName]));
+      const g = gatherFrom(types[tName]);
+      Object.assign(attrs, g.res);
+      if (g.base) foundBase = foundBase || g.base;
     }
   }
-  return attrs;
+  return { attributes: attrs, base: foundBase };
 }
 
 export async function resolveSchemas(
@@ -329,26 +337,27 @@ export async function resolveSchemas(
 
   // add global elements
   for (const el of elements) {
-    const name = getAttr(el, "name");
+    const rawName = getAttr(el, "name");
+    const name = localName(rawName);
     if (!name) continue;
 
-    if (name === "PackageReference") {
-      console.log(
-        "Found PackageReference",
-        el,
-        extractAttributesFromElement(el, types),
-      );
-    }
+    const attrRes = extractAttributesFromElement(el, types);
     const schema: XmlSchema = {
       tagName: name,
       description: extractDocumentation(el),
-      attributes: extractAttributesFromElement(el, types),
+      attributes: attrRes.attributes,
     };
+    if (attrRes.base) {
+      schema.base = attrRes.base;
+    }
     out.set(name, schema);
     // if element references a type, traverse to find nested elements
     const typeName = getAttr(el, "type");
-    if (typeName && !typeName.startsWith("xs:") && types[typeName]) {
-      collectFromComplexType(types[typeName], types, out);
+    if (typeName) {
+      const tName = String(typeName).split(":").pop() as string;
+      if (tName && !tName.startsWith("xs:") && types[tName]) {
+        collectFromComplexType(types[tName], types, out);
+      }
     }
     if (el.complexType) {
       collectFromComplexType(el.complexType, types, out);
@@ -356,6 +365,19 @@ export async function resolveSchemas(
   }
 
   // also include elements discovered as children
+  // collect top-level complexTypes as internal schemas when they are not exposed as global elements
+  for (const [typeName, ct] of Object.entries(types)) {
+    if (out.has(typeName)) continue;
+    out.set(typeName, {
+      tagName: typeName,
+      description: extractDocumentation(ct),
+      attributes: {},
+      internal: true,
+    });
+    // populate attributes and nested elements for this type
+    collectFromComplexType(ct, types, out, typeName);
+  }
+
   const result = Array.from(out.values()).sort((a, b) =>
     a.tagName.localeCompare(b.tagName),
   );

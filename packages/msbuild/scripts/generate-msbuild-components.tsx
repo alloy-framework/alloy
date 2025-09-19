@@ -11,14 +11,6 @@ console.log("Fetching and parsing XSDs...");
 const schemas = await resolveSchemas();
 console.log(`Generating for ${schemas.length} schemas`);
 
-for (const schema of schemas) {
-  if (
-    Object.keys(schema.attributes).length !== 0 &&
-    schema.tagName !== "Project"
-  ) {
-    console.log(`HAs ${schema.tagName} ( attributes)`, schema);
-  }
-}
 const OUTPUT_PATH = resolve(import.meta.dirname, "../../src/components");
 
 await writeOutput(
@@ -34,11 +26,12 @@ console.log(`Wrote output to ${OUTPUT_PATH}`);
 
 function XmlComponent(props: { schema: XmlSchema }) {
   return (
-    <List>
+    <List doubleHardline>
       <InterfaceDeclaration
-        export
+        export={!props.schema.internal}
         name={props.schema.tagName + "Props"}
         doc={props.schema.description}
+        extends={props.schema.base && props.schema.base + "Props"}
       >
         <For each={Object.entries(props.schema.attributes)}>
           {([attrName, attr]) => (

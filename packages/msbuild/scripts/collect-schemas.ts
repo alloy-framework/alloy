@@ -102,6 +102,7 @@ async function collectSchemas(entryUrl: string): Promise<Map<string, any>> {
 function buildMaps(visited: Map<string, any>) {
   const elements: any[] = [];
   const types: Record<string, any> = {};
+  const groups: Record<string, any> = {};
 
   for (const parsed of visited.values()) {
     const schema = parsed.schema || parsed.Schema;
@@ -112,14 +113,21 @@ function buildMaps(visited: Map<string, any>) {
       const ln = localName(name);
       if (ln) types[ln] = ct;
     }
+    // collect global group definitions
+    for (const g of toArray(schema.group)) {
+      const name = getAttr(g, "name");
+      const ln = localName(name);
+      if (ln) groups[ln] = g;
+    }
     // global attribute groups or attributes could be handled here if needed
   }
-  return { elements, types };
+  return { elements, types, groups };
 }
 
 function collectFromComplexType(
   ct: any,
   types: Record<string, any>,
+  groups: Record<string, any>,
   out: Map<string, XmlSchema>,
   elementName?: string,
 ) {
@@ -165,12 +173,6 @@ function collectFromComplexType(
           use: getAttr(a, "use"),
         };
       }
-      // if extension declares a base, capture the base name but do NOT merge its attributes
-      const base = getAttr(extNode, "base");
-      if (base) {
-        const baseName = String(base).split(":").pop() as string;
-        if (baseName) foundBase = baseName;
-      }
     }
 
     // also consider if this complexType itself references a named base directly via 'base' (rare)
@@ -194,7 +196,7 @@ function collectFromComplexType(
 
       // also traverse base type for nested element discovery (but don't merge its attributes)
       if (base && types[base]) {
-        collectFromComplexType(types[base], types, out, elementName);
+        collectFromComplexType(types[base], types, groups, out, elementName);
       }
     }
   }
@@ -214,6 +216,7 @@ function collectFromComplexType(
     seqCandidate.Choice ||
     seqCandidate.sequence;
   if (seq) {
+    // process direct element children
     const children = toArray(seq.element) as any[];
     for (const child of children) {
       const rawChildName = getAttr(child, "name") || getAttr(child, "ref");
@@ -231,7 +234,7 @@ function collectFromComplexType(
       if (childType) {
         const tName = String(childType).split(":").pop() as string;
         if (tName && !tName.startsWith("xs:") && types[tName]) {
-          collectFromComplexType(types[tName], types, out, childName);
+          collectFromComplexType(types[tName], types, groups, out, childName);
         }
       }
       // if child has anonymous complexType
@@ -239,9 +242,54 @@ function collectFromComplexType(
         collectFromComplexType(
           (child as any).complexType,
           types,
+          groups,
           out,
           childName,
         );
+      }
+    }
+    // process group references inside the sequence/choice
+    for (const gref of toArray(seq.group)) {
+      const ref = getAttr(gref, "ref");
+      const gname = localName(ref);
+      if (!gname) continue;
+      const groupDef = groups[gname];
+      if (!groupDef) continue;
+      // group may contain a choice/sequence with element children
+      const groupSeq =
+        groupDef.choice ||
+        groupDef.sequence ||
+        groupDef.Choice ||
+        groupDef.Sequence;
+      if (!groupSeq) continue;
+      for (const ge of toArray(groupSeq.element)) {
+        const rawChildName = getAttr(ge, "name") || getAttr(ge, "ref");
+        const childName = localName(rawChildName);
+        if (!childName) continue;
+        if (!out.has(childName)) {
+          out.set(childName, {
+            tagName: childName,
+            description: extractDocumentation(ge),
+            attributes: {},
+          });
+        }
+        // recursively handle types/anonymous complex types on group elements
+        const childType = getAttr(ge, "type");
+        if (childType) {
+          const tName = String(childType).split(":").pop() as string;
+          if (tName && !tName.startsWith("xs:") && types[tName]) {
+            collectFromComplexType(types[tName], types, groups, out, childName);
+          }
+        }
+        if ((ge as any).complexType) {
+          collectFromComplexType(
+            (ge as any).complexType,
+            types,
+            groups,
+            out,
+            childName,
+          );
+        }
       }
     }
   }
@@ -318,10 +366,12 @@ function extractAttributesAndBaseFromElement(
   const typeName = getAttr(el, "type");
   if (typeName) {
     const tName = String(typeName).split(":").pop() as string;
+    // Do NOT merge attributes from a referenced named type. Instead treat the named
+    // type as the base for this element. Its attributes will be discovered when the
+    // type is traversed for nested elements; merging would duplicate or incorrectly
+    // attach properties defined on the base type directly to this element.
     if (tName && !tName.startsWith("xs:") && types[tName]) {
-      const g = gatherFrom(types[tName]);
-      Object.assign(attrs, g.res);
-      if (g.base) foundBase = foundBase || g.base;
+      foundBase = foundBase || tName;
     }
   }
   return { attributes: attrs, base: foundBase };
@@ -331,7 +381,7 @@ export async function resolveSchemas(
   entryUrl = ENTRY_URL,
 ): Promise<XmlSchema[]> {
   const visited = await collectSchemas(entryUrl);
-  const { elements, types } = buildMaps(visited);
+  const { elements, types, groups } = buildMaps(visited);
 
   const usedComplexTypes = new Set<any>();
 
@@ -339,7 +389,7 @@ export async function resolveSchemas(
 
   function collectFromComplexTypeInternal(ct: any, elementName?: string) {
     usedComplexTypes.add(ct);
-    collectFromComplexType(ct, types, out, elementName);
+    collectFromComplexType(ct, types, groups, out, elementName);
   }
 
   // add global elements
@@ -364,11 +414,11 @@ export async function resolveSchemas(
     if (typeName) {
       const tName = String(typeName).split(":").pop() as string;
       if (tName && !tName.startsWith("xs:") && types[tName]) {
-        collectFromComplexTypeInternal(types[tName]);
+        collectFromComplexTypeInternal(types[tName], name);
       }
     }
     if (el.complexType) {
-      collectFromComplexTypeInternal(el.complexType);
+      collectFromComplexTypeInternal(el.complexType, name);
     }
   }
 

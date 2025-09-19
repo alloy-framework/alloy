@@ -1,4 +1,5 @@
-import { makeTag } from "./utils/make-tag.js";export interface _AppxBundleResourceFileMapsIntermediateProps extends SimpleItemTypeProps {
+import { makeTag } from "./utils/make-tag.js";
+export interface _AppxBundleResourceFileMapsIntermediateProps extends SimpleItemTypeProps {
 
 }
 
@@ -28,7 +29,7 @@ export interface _ProjectArchitectureItemProps extends SimpleItemTypeProps {
 
 export const _ProjectArchitectureItem = makeTag<_ProjectArchitectureItemProps>("_ProjectArchitectureItem")
 
-export interface _StoreManifestSchemaDirProps {
+export interface _StoreManifestSchemaDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -46,7 +47,13 @@ export interface AccelerateBuildsInVisualStudioProps {
  */
 export const AccelerateBuildsInVisualStudio = makeTag<AccelerateBuildsInVisualStudioProps>("AccelerateBuildsInVisualStudio")
 
-export interface AdditionalFileItemNamesProps {
+export interface AdditionalDependenciesProps {
+
+}
+
+export const AdditionalDependencies = makeTag<AdditionalDependenciesProps>("AdditionalDependencies")
+
+export interface AdditionalFileItemNamesProps extends StringPropertyTypeProps {
 
 }
 
@@ -57,6 +64,18 @@ export interface AdditionalIncludeDirectoriesProps {
 }
 
 export const AdditionalIncludeDirectories = makeTag<AdditionalIncludeDirectoriesProps>("AdditionalIncludeDirectories")
+
+export interface AdditionalLibraryDirectoriesProps {
+
+}
+
+export const AdditionalLibraryDirectories = makeTag<AdditionalLibraryDirectoriesProps>("AdditionalLibraryDirectories")
+
+export interface AdditionalManifestDependenciesProps {
+
+}
+
+export const AdditionalManifestDependencies = makeTag<AdditionalManifestDependenciesProps>("AdditionalManifestDependencies")
 
 export interface AdditionalManifestFilesProps {
 
@@ -75,6 +94,12 @@ export interface AdditionalUsingDirectoriesProps {
 }
 
 export const AdditionalUsingDirectories = makeTag<AdditionalUsingDirectoriesProps>("AdditionalUsingDirectories")
+
+export interface AddModuleNamesToAssemblyProps {
+
+}
+
+export const AddModuleNamesToAssembly = makeTag<AddModuleNamesToAssemblyProps>("AddModuleNamesToAssembly")
 
 export interface ALProps extends TaskTypeProps {
   AlgorithmId?: unknown
@@ -119,10 +144,16 @@ export interface ALProps extends TaskTypeProps {
 
 export const AL = makeTag<ALProps>("AL")
 
+export interface AllowIsolationProps {
+
+}
+
+export const AllowIsolation = makeTag<AllowIsolationProps>("AllowIsolation")
+
 /**
  * Flag indicating whether to allow local network loopback.
  */
-export interface AllowLocalNetworkLoopbackProps {
+export interface AllowLocalNetworkLoopbackProps extends StringPropertyTypeProps {
 
 }
 
@@ -131,7 +162,7 @@ export interface AllowLocalNetworkLoopbackProps {
  */
 export const AllowLocalNetworkLoopback = makeTag<AllowLocalNetworkLoopbackProps>("AllowLocalNetworkLoopback")
 
-export interface AllowUnsafeBlocksProps {
+export interface AllowUnsafeBlocksProps extends StringPropertyTypeProps {
 
 }
 
@@ -227,7 +258,7 @@ export const AndroidLinkMode = makeTag<AndroidLinkModeProps>("AndroidLinkMode")
 /**
  * Used by Xamarin.Android projects. Specifies a semicolon-delimited (;) list of assembly names, without file extensions, of assemblies that should not be linked.
  */
-export interface AndroidLinkSkipProps {
+export interface AndroidLinkSkipProps extends StringPropertyTypeProps {
 
 }
 
@@ -275,7 +306,7 @@ export const AndroidResource = makeTag<AndroidResourceProps>("AndroidResource")
 /**
  * Used by Xamarin.Android projects. A string property that contains a semicolon (;)-delimited list of ABIs which should be included into the application.
  */
-export interface AndroidSupportedAbisProps {
+export interface AndroidSupportedAbisProps extends StringPropertyTypeProps {
 
 }
 
@@ -296,7 +327,7 @@ export interface AotAssembliesProps {
  */
 export const AotAssemblies = makeTag<AotAssembliesProps>("AotAssemblies")
 
-export interface AppConfigForCompilerProps {
+export interface AppConfigForCompilerProps extends StringPropertyTypeProps {
 
 }
 
@@ -305,7 +336,7 @@ export const AppConfigForCompiler = makeTag<AppConfigForCompilerProps>("AppConfi
 /**
  * Name of folder for Application Designer
  */
-export interface AppDesignerFolderProps {
+export interface AppDesignerFolderProps extends StringPropertyTypeProps {
 
 }
 
@@ -323,7 +354,7 @@ export const ApplicationConfigurationMode = makeTag<ApplicationConfigurationMode
 /**
  * Customizes the application default font. The format equivalent to the output of FontConverter.ConvertToInvariantString(). Applies only to Windows Forms projects.
  */
-export interface ApplicationDefaultFontProps {
+export interface ApplicationDefaultFontProps extends StringPropertyTypeProps {
 
 }
 
@@ -356,7 +387,7 @@ export interface ApplicationHighDpiModeProps {
  */
 export const ApplicationHighDpiMode = makeTag<ApplicationHighDpiModeProps>("ApplicationHighDpiMode")
 
-export interface ApplicationIconProps {
+export interface ApplicationIconProps extends StringPropertyTypeProps {
 
 }
 
@@ -365,7 +396,7 @@ export const ApplicationIcon = makeTag<ApplicationIconProps>("ApplicationIcon")
 /**
  * integer
  */
-export interface ApplicationRevisionProps {
+export interface ApplicationRevisionProps extends StringPropertyTypeProps {
 
 }
 
@@ -389,7 +420,7 @@ export const ApplicationUseCompatibleTextRendering = makeTag<ApplicationUseCompa
 /**
  * Matches the expression "\d\.\d\.\d\.(\d|\*)"
  */
-export interface ApplicationVersionProps {
+export interface ApplicationVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -413,7 +444,7 @@ export const ApplicationVisualStyles = makeTag<ApplicationVisualStylesProps>("Ap
 /**
  * Flag indicating whether to auto-increment package revision.
  */
-export interface AppxAutoIncrementPackageRevisionProps {
+export interface AppxAutoIncrementPackageRevisionProps extends StringPropertyTypeProps {
 
 }
 
@@ -425,7 +456,7 @@ export const AppxAutoIncrementPackageRevision = makeTag<AppxAutoIncrementPackage
 /**
  * Flag indicating whether packaging targets will produce an app bundle.
  */
-export interface AppxBundleProps {
+export interface AppxBundleProps extends StringPropertyTypeProps {
 
 }
 
@@ -437,7 +468,7 @@ export const AppxBundle = makeTag<AppxBundleProps>("AppxBundle")
 /**
  * '|'-delimited list of resource qualifiers which will be used for automatic resource pack splitting.
  */
-export interface AppxBundleAutoResourcePackageQualifiersProps {
+export interface AppxBundleAutoResourcePackageQualifiersProps extends StringPropertyTypeProps {
 
 }
 
@@ -449,7 +480,7 @@ export const AppxBundleAutoResourcePackageQualifiers = makeTag<AppxBundleAutoRes
 /**
  * Full path to a folder where app bundle will be produced.
  */
-export interface AppxBundleDirProps {
+export interface AppxBundleDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -461,7 +492,7 @@ export const AppxBundleDir = makeTag<AppxBundleDirProps>("AppxBundleDir")
 /**
  * Suffix to append to app bundle folder.
  */
-export interface AppxBundleFolderSuffixProps {
+export interface AppxBundleFolderSuffixProps extends StringPropertyTypeProps {
 
 }
 
@@ -473,7 +504,7 @@ export const AppxBundleFolderSuffix = makeTag<AppxBundleFolderSuffixProps>("Appx
 /**
  * Full path to a log file containing a list of generated files during generation of main package file map.
  */
-export interface AppxBundleMainPackageFileMapGeneratedFilesListPathProps {
+export interface AppxBundleMainPackageFileMapGeneratedFilesListPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -485,7 +516,7 @@ export const AppxBundleMainPackageFileMapGeneratedFilesListPath = makeTag<AppxBu
 /**
  * Full path to an intermediate main package file map.
  */
-export interface AppxBundleMainPackageFileMapIntermediatePathProps {
+export interface AppxBundleMainPackageFileMapIntermediatePathProps extends StringPropertyTypeProps {
 
 }
 
@@ -497,7 +528,7 @@ export const AppxBundleMainPackageFileMapIntermediatePath = makeTag<AppxBundleMa
 /**
  * Prefix used for intermediate main package resources .pri and .map.txt files.
  */
-export interface AppxBundleMainPackageFileMapIntermediatePrefixProps {
+export interface AppxBundleMainPackageFileMapIntermediatePrefixProps extends StringPropertyTypeProps {
 
 }
 
@@ -509,7 +540,7 @@ export const AppxBundleMainPackageFileMapIntermediatePrefix = makeTag<AppxBundle
 /**
  * Full path to an intermediate main package .pri file.
  */
-export interface AppxBundleMainPackageFileMapIntermediatePriPathProps {
+export interface AppxBundleMainPackageFileMapIntermediatePriPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -521,7 +552,7 @@ export const AppxBundleMainPackageFileMapIntermediatePriPath = makeTag<AppxBundl
 /**
  * Full path to a main package file map.
  */
-export interface AppxBundleMainPackageFileMapPathProps {
+export interface AppxBundleMainPackageFileMapPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -533,7 +564,7 @@ export const AppxBundleMainPackageFileMapPath = makeTag<AppxBundleMainPackageFil
 /**
  * Prefix used for main package resources .pri and .map.txt files.
  */
-export interface AppxBundleMainPackageFileMapPrefixProps {
+export interface AppxBundleMainPackageFileMapPrefixProps extends StringPropertyTypeProps {
 
 }
 
@@ -545,7 +576,7 @@ export const AppxBundleMainPackageFileMapPrefix = makeTag<AppxBundleMainPackageF
 /**
  * Suffix used before extension of resource map files.
  */
-export interface AppxBundleMainPackageFileMapSuffixProps {
+export interface AppxBundleMainPackageFileMapSuffixProps extends StringPropertyTypeProps {
 
 }
 
@@ -557,7 +588,7 @@ export const AppxBundleMainPackageFileMapSuffix = makeTag<AppxBundleMainPackageF
 /**
  * '|'-delimited list of platforms which will be included in an app bundle.
  */
-export interface AppxBundlePlatformsProps {
+export interface AppxBundlePlatformsProps extends StringPropertyTypeProps {
 
 }
 
@@ -569,7 +600,7 @@ export const AppxBundlePlatforms = makeTag<AppxBundlePlatformsProps>("AppxBundle
 /**
  * Full path to the priconfig.xml file used for generating main package file map.
  */
-export interface AppxBundlePriConfigXmlForMainPackageFileMapFileNameProps {
+export interface AppxBundlePriConfigXmlForMainPackageFileMapFileNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -581,7 +612,7 @@ export const AppxBundlePriConfigXmlForMainPackageFileMapFileName = makeTag<AppxB
 /**
  * Full path to the priconfig.xml file used for splitting resource packs.
  */
-export interface AppxBundlePriConfigXmlForSplittingFileNameProps {
+export interface AppxBundlePriConfigXmlForSplittingFileNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -593,7 +624,7 @@ export const AppxBundlePriConfigXmlForSplittingFileName = makeTag<AppxBundlePriC
 /**
  * A platform which will be used to produce an app bundle.
  */
-export interface AppxBundleProducingPlatformProps {
+export interface AppxBundleProducingPlatformProps extends StringPropertyTypeProps {
 
 }
 
@@ -605,7 +636,7 @@ export const AppxBundleProducingPlatform = makeTag<AppxBundleProducingPlatformPr
 /**
  * A platform which will be used to produce resource packs for an app bundle.
  */
-export interface AppxBundleResourcePacksProducingPlatformProps {
+export interface AppxBundleResourcePacksProducingPlatformProps extends StringPropertyTypeProps {
 
 }
 
@@ -617,7 +648,7 @@ export const AppxBundleResourcePacksProducingPlatform = makeTag<AppxBundleResour
 /**
  * Full path to a log file containing a list of generated files during resource splitting.
  */
-export interface AppxBundleSplitResourcesGeneratedFilesListPathProps {
+export interface AppxBundleSplitResourcesGeneratedFilesListPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -629,7 +660,7 @@ export const AppxBundleSplitResourcesGeneratedFilesListPath = makeTag<AppxBundle
 /**
  * Full path to split resources .pri file.
  */
-export interface AppxBundleSplitResourcesPriPathProps {
+export interface AppxBundleSplitResourcesPriPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -641,7 +672,7 @@ export const AppxBundleSplitResourcesPriPath = makeTag<AppxBundleSplitResourcesP
 /**
  * Prefix used for split resources .pri and .map.txt files.
  */
-export interface AppxBundleSplitResourcesPriPrefixProps {
+export interface AppxBundleSplitResourcesPriPrefixProps extends StringPropertyTypeProps {
 
 }
 
@@ -653,7 +684,7 @@ export const AppxBundleSplitResourcesPriPrefix = makeTag<AppxBundleSplitResource
 /**
  * Full path to a log file containing a detected qualifiers during resource splitting.
  */
-export interface AppxBundleSplitResourcesQualifiersPathProps {
+export interface AppxBundleSplitResourcesQualifiersPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -665,7 +696,7 @@ export const AppxBundleSplitResourcesQualifiersPath = makeTag<AppxBundleSplitRes
 /**
  * Flag indicating whether CopyLocal files group should include XML files.
  */
-export interface AppxCopyLocalFilesOutputGroupIncludeXmlFilesProps {
+export interface AppxCopyLocalFilesOutputGroupIncludeXmlFilesProps extends StringPropertyTypeProps {
 
 }
 
@@ -677,7 +708,7 @@ export const AppxCopyLocalFilesOutputGroupIncludeXmlFiles = makeTag<AppxCopyLoca
 /**
  * Additional parameters to pass to makepri.exe when generating PRI file for a portable library.
  */
-export interface AppxCreatePriFilesForPortableLibrariesAdditionalMakepriExeParametersProps {
+export interface AppxCreatePriFilesForPortableLibrariesAdditionalMakepriExeParametersProps extends StringPropertyTypeProps {
 
 }
 
@@ -689,7 +720,7 @@ export const AppxCreatePriFilesForPortableLibrariesAdditionalMakepriExeParameter
 /**
  * Default hash algorithm ID, used for signing an app package.
  */
-export interface AppxDefaultHashAlgorithmIdProps {
+export interface AppxDefaultHashAlgorithmIdProps extends StringPropertyTypeProps {
 
 }
 
@@ -701,7 +732,7 @@ export const AppxDefaultHashAlgorithmId = makeTag<AppxDefaultHashAlgorithmIdProp
 /**
  * '|'-delimited list of key=value pairs representing default resource qualifiers.
  */
-export interface AppxDefaultResourceQualifiersProps {
+export interface AppxDefaultResourceQualifiersProps extends StringPropertyTypeProps {
 
 }
 
@@ -713,7 +744,7 @@ export const AppxDefaultResourceQualifiers = makeTag<AppxDefaultResourceQualifie
 /**
  * Flag to exclude XAML files when XBF is present.
  */
-export interface AppxExcludeXamlFromLibraryLayoutsWhenXbfIsPresentProps {
+export interface AppxExcludeXamlFromLibraryLayoutsWhenXbfIsPresentProps extends StringPropertyTypeProps {
 
 }
 
@@ -725,7 +756,7 @@ export const AppxExcludeXamlFromLibraryLayoutsWhenXbfIsPresent = makeTag<AppxExc
 /**
  * Flag to exclude XBF files when XAML is present.
  */
-export interface AppxExcludeXbfFromSdkPayloadWhenXamlIsPresentProps {
+export interface AppxExcludeXbfFromSdkPayloadWhenXamlIsPresentProps extends StringPropertyTypeProps {
 
 }
 
@@ -737,7 +768,7 @@ export const AppxExcludeXbfFromSdkPayloadWhenXamlIsPresent = makeTag<AppxExclude
 /**
  * Additional parameters to pass to makepri.exe when extracting payload file names.
  */
-export interface AppxExpandPriContentAdditionalMakepriExeParametersProps {
+export interface AppxExpandPriContentAdditionalMakepriExeParametersProps extends StringPropertyTypeProps {
 
 }
 
@@ -749,7 +780,7 @@ export const AppxExpandPriContentAdditionalMakepriExeParameters = makeTag<AppxEx
 /**
  * Flag indicating whether to filter out unused language resource file maps.
  */
-export interface AppxFilterOutUnusedLanguagesResourceFileMapsProps {
+export interface AppxFilterOutUnusedLanguagesResourceFileMapsProps extends StringPropertyTypeProps {
 
 }
 
@@ -761,7 +792,7 @@ export const AppxFilterOutUnusedLanguagesResourceFileMaps = makeTag<AppxFilterOu
 /**
  * Flag indicating whether to generate resource index files (PRI files) during packaging.
  */
-export interface AppxGeneratePriEnabledProps {
+export interface AppxGeneratePriEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -773,7 +804,7 @@ export const AppxGeneratePriEnabled = makeTag<AppxGeneratePriEnabledProps>("Appx
 /**
  * Additional parameters to pass to makepri.exe when generating project PRI file.
  */
-export interface AppxGenerateProjectPriFileAdditionalMakepriExeParametersProps {
+export interface AppxGenerateProjectPriFileAdditionalMakepriExeParametersProps extends StringPropertyTypeProps {
 
 }
 
@@ -785,7 +816,7 @@ export const AppxGenerateProjectPriFileAdditionalMakepriExeParameters = makeTag<
 /**
  * Flag indicating whether to enable harvesting of WinMD registration information.
  */
-export interface AppxHarvestWinmdRegistrationProps {
+export interface AppxHarvestWinmdRegistrationProps extends StringPropertyTypeProps {
 
 }
 
@@ -809,7 +840,7 @@ export const AppxHashUri = makeTag<AppxHashUriProps>("AppxHashUri")
 /**
  * Full path to the folder where package layout will be prepared when producing an app bundle.
  */
-export interface AppxLayoutDirProps {
+export interface AppxLayoutDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -821,7 +852,7 @@ export const AppxLayoutDir = makeTag<AppxLayoutDirProps>("AppxLayoutDir")
 /**
  * Name of the folder where package layout will be prepared when producing an app bundle.
  */
-export interface AppxLayoutFolderNameProps {
+export interface AppxLayoutFolderNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -845,7 +876,7 @@ export const AppxManifest = makeTag<AppxManifestProps>("AppxManifest")
 /**
  * XPath queries used to extract file names from the app manifest.
  */
-export interface AppxManifestFileNameQueryProps {
+export interface AppxManifestFileNameQueryProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -904,7 +935,7 @@ export const AppxManifestMetadata = makeTag<AppxManifestMetadataProps>("AppxMani
 /**
  * App manifest schema file.
  */
-export interface AppxManifestSchemaProps extends SimpleItemTypeProps {
+export interface AppxManifestSchemaProps extends SchemaItemTypeProps {
 
 }
 
@@ -916,7 +947,7 @@ export const AppxManifestSchema = makeTag<AppxManifestSchemaProps>("AppxManifest
 /**
  * Full path to packaging build tasks assembly.
  */
-export interface AppxMSBuildTaskAssemblyProps {
+export interface AppxMSBuildTaskAssemblyProps extends StringPropertyTypeProps {
 
 }
 
@@ -928,7 +959,7 @@ export const AppxMSBuildTaskAssembly = makeTag<AppxMSBuildTaskAssemblyProps>("Ap
 /**
  * Full path to a folder containing packaging build targets and tasks assembly.
  */
-export interface AppxMSBuildToolsPathProps {
+export interface AppxMSBuildToolsPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -940,7 +971,7 @@ export const AppxMSBuildToolsPath = makeTag<AppxMSBuildToolsPathProps>("AppxMSBu
 /**
  * Targeted maximum OS version tested.
  */
-export interface AppxOSMaxVersionTestedProps {
+export interface AppxOSMaxVersionTestedProps extends StringPropertyTypeProps {
 
 }
 
@@ -952,7 +983,7 @@ export const AppxOSMaxVersionTested = makeTag<AppxOSMaxVersionTestedProps>("Appx
 /**
  * Flag indicating whether maximum OS version tested in app manifest should be replaced.
  */
-export interface AppxOSMaxVersionTestedReplaceManifestVersionProps {
+export interface AppxOSMaxVersionTestedReplaceManifestVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -964,7 +995,7 @@ export const AppxOSMaxVersionTestedReplaceManifestVersion = makeTag<AppxOSMaxVer
 /**
  * Targeted minimum OS version.
  */
-export interface AppxOSMinVersionProps {
+export interface AppxOSMinVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -976,7 +1007,7 @@ export const AppxOSMinVersion = makeTag<AppxOSMinVersionProps>("AppxOSMinVersion
 /**
  * Flag indicating whether minimum OS version in app manifest should be replaced.
  */
-export interface AppxOSMinVersionReplaceManifestVersionProps {
+export interface AppxOSMinVersionReplaceManifestVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -988,7 +1019,7 @@ export const AppxOSMinVersionReplaceManifestVersion = makeTag<AppxOSMinVersionRe
 /**
  * Flag marking current project as capable of being packaged as an app package.
  */
-export interface AppxPackageProps {
+export interface AppxPackageProps extends StringPropertyTypeProps {
 
 }
 
@@ -1000,7 +1031,7 @@ export const AppxPackage = makeTag<AppxPackageProps>("AppxPackage")
 /**
  * Flag indicating whether to allow inclusion of debug framework references in an app manifest.
  */
-export interface AppxPackageAllowDebugFrameworkReferencesInManifestProps {
+export interface AppxPackageAllowDebugFrameworkReferencesInManifestProps extends StringPropertyTypeProps {
 
 }
 
@@ -1012,7 +1043,7 @@ export const AppxPackageAllowDebugFrameworkReferencesInManifest = makeTag<AppxPa
 /**
  * Additional qualifier to append to AppxPackageDir.
  */
-export interface AppxPackageArtifactsDirProps {
+export interface AppxPackageArtifactsDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -1024,7 +1055,7 @@ export const AppxPackageArtifactsDir = makeTag<AppxPackageArtifactsDirProps>("Ap
 /**
  * Full path to a folder where app packages will be saved.
  */
-export interface AppxPackageDirProps {
+export interface AppxPackageDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -1036,7 +1067,7 @@ export const AppxPackageDir = makeTag<AppxPackageDirProps>("AppxPackageDir")
 /**
  * Name of the folder where app packages are produced.
  */
-export interface AppxPackageDirNameProps {
+export interface AppxPackageDirNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -1048,7 +1079,7 @@ export const AppxPackageDirName = makeTag<AppxPackageDirNameProps>("AppxPackageD
 /**
  * Full path to app package file map.
  */
-export interface AppxPackageFileMapProps {
+export interface AppxPackageFileMapProps extends StringPropertyTypeProps {
 
 }
 
@@ -1060,7 +1091,7 @@ export const AppxPackageFileMap = makeTag<AppxPackageFileMapProps>("AppxPackageF
 /**
  * Flag indicating whether to include private symbols in symbol packages.
  */
-export interface AppxPackageIncludePrivateSymbolsProps {
+export interface AppxPackageIncludePrivateSymbolsProps extends StringPropertyTypeProps {
 
 }
 
@@ -1072,7 +1103,7 @@ export const AppxPackageIncludePrivateSymbols = makeTag<AppxPackageIncludePrivat
 /**
  * Name of the app package to generate.
  */
-export interface AppxPackageNameProps {
+export interface AppxPackageNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -1084,7 +1115,7 @@ export const AppxPackageName = makeTag<AppxPackageNameProps>("AppxPackageName")
 /**
  * Full path to the app package file.
  */
-export interface AppxPackageOutputProps {
+export interface AppxPackageOutputProps extends StringPropertyTypeProps {
 
 }
 
@@ -1102,7 +1133,7 @@ export const AppxPackagePayload = makeTag<AppxPackagePayloadProps>("AppxPackageP
 /**
  * Full path to the app package recipe.
  */
-export interface AppxPackageRecipeProps {
+export interface AppxPackageRecipeProps extends StringPropertyTypeProps {
 
 }
 
@@ -1114,7 +1145,7 @@ export const AppxPackageRecipe = makeTag<AppxPackageRecipeProps>("AppxPackageRec
 /**
  * Flag indicating whether to enable signing of app packages.
  */
-export interface AppxPackageSigningEnabledProps {
+export interface AppxPackageSigningEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1126,7 +1157,7 @@ export const AppxPackageSigningEnabled = makeTag<AppxPackageSigningEnabledProps>
 /**
  * Digest algorithm used by the RFC 3161 timestamp server.
  */
-export interface AppxPackageSigningTimestampDigestAlgorithmProps {
+export interface AppxPackageSigningTimestampDigestAlgorithmProps extends StringPropertyTypeProps {
 
 }
 
@@ -1138,7 +1169,7 @@ export const AppxPackageSigningTimestampDigestAlgorithm = makeTag<AppxPackageSig
 /**
  * RFC 3161 timestamp server's URL.
  */
-export interface AppxPackageSigningTimestampServerUrlProps {
+export interface AppxPackageSigningTimestampServerUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -1150,7 +1181,7 @@ export const AppxPackageSigningTimestampServerUrl = makeTag<AppxPackageSigningTi
 /**
  * Name of the folder where test app packages will be copied
  */
-export interface AppxPackageTestDirProps {
+export interface AppxPackageTestDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -1162,7 +1193,7 @@ export const AppxPackageTestDir = makeTag<AppxPackageTestDirProps>("AppxPackageT
 /**
  * Flag indicating whether to enable validation of app packages.
  */
-export interface AppxPackageValidationEnabledProps {
+export interface AppxPackageValidationEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1174,7 +1205,7 @@ export const AppxPackageValidationEnabled = makeTag<AppxPackageValidationEnabled
 /**
  * Full path to the packaging info file which will contain paths to produced packages.
  */
-export interface AppxPackagingInfoFileProps {
+export interface AppxPackagingInfoFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -1186,7 +1217,7 @@ export const AppxPackagingInfoFile = makeTag<AppxPackagingInfoFileProps>("AppxPa
 /**
  * Flag indicating whether to enable prepending initial path when indexing RESW and RESJSON files in class libraries.
  */
-export interface AppxPrependPriInitialPathProps {
+export interface AppxPrependPriInitialPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1198,7 +1229,7 @@ export const AppxPrependPriInitialPath = makeTag<AppxPrependPriInitialPathProps>
 /**
  * Path to an XML file containing default element for priconfi.xml file.
  */
-export interface AppxPriConfigXmlDefaultSnippetPathProps {
+export interface AppxPriConfigXmlDefaultSnippetPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1210,7 +1241,7 @@ export const AppxPriConfigXmlDefaultSnippetPath = makeTag<AppxPriConfigXmlDefaul
 /**
  * Path to an XML file containing packaging element for priconfi.xml file.
  */
-export interface AppxPriConfigXmlPackagingSnippetPathProps {
+export interface AppxPriConfigXmlPackagingSnippetPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1222,7 +1253,7 @@ export const AppxPriConfigXmlPackagingSnippetPath = makeTag<AppxPriConfigXmlPack
 /**
  * Initial path when indexing RESW and RESJSON files in class libraries.
  */
-export interface AppxPriInitialPathProps {
+export interface AppxPriInitialPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1234,7 +1265,7 @@ export const AppxPriInitialPath = makeTag<AppxPriInitialPathProps>("AppxPriIniti
 /**
  * Reserved file name which cannot appear in the app package.
  */
-export interface AppxReservedFileNameProps {
+export interface AppxReservedFileNameProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -1269,7 +1300,7 @@ export const AppxReservedFileName = makeTag<AppxReservedFileNameProps>("AppxRese
 /**
  * Flag indicating whether to skip unchanged files when copying files during creation of app packages.
  */
-export interface AppxSkipUnchangedFilesProps {
+export interface AppxSkipUnchangedFilesProps extends StringPropertyTypeProps {
 
 }
 
@@ -1281,7 +1312,7 @@ export const AppxSkipUnchangedFiles = makeTag<AppxSkipUnchangedFilesProps>("Appx
 /**
  * Name of the app store container to generate.
  */
-export interface AppxStoreContainerProps {
+export interface AppxStoreContainerProps extends StringPropertyTypeProps {
 
 }
 
@@ -1293,7 +1324,7 @@ export const AppxStoreContainer = makeTag<AppxStoreContainerProps>("AppxStoreCon
 /**
  * Flag indicating whether to enable strict manifest validation.
  */
-export interface AppxStrictManifestValidationEnabledProps {
+export interface AppxStrictManifestValidationEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1305,7 +1336,7 @@ export const AppxStrictManifestValidationEnabled = makeTag<AppxStrictManifestVal
 /**
  * Flag indicating whether to generate a symbol package when an app package is created.
  */
-export interface AppxSymbolPackageEnabledProps {
+export interface AppxSymbolPackageEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1317,7 +1348,7 @@ export const AppxSymbolPackageEnabled = makeTag<AppxSymbolPackageEnabledProps>("
 /**
  * Full path to the app symbol package file.
  */
-export interface AppxSymbolPackageOutputProps {
+export interface AppxSymbolPackageOutputProps extends StringPropertyTypeProps {
 
 }
 
@@ -1329,7 +1360,7 @@ export const AppxSymbolPackageOutput = makeTag<AppxSymbolPackageOutputProps>("Ap
 /**
  * Full path to a directory where stripped PDBs will be stored.
  */
-export interface AppxSymbolStrippedDirProps {
+export interface AppxSymbolStrippedDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -1341,7 +1372,7 @@ export const AppxSymbolStrippedDir = makeTag<AppxSymbolStrippedDirProps>("AppxSy
 /**
  * Name of any file which is present on the machine and should not be part of the app payload.
  */
-export interface AppxSystemBinaryProps {
+export interface AppxSystemBinaryProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -1376,7 +1407,7 @@ export const AppxSystemBinary = makeTag<AppxSystemBinaryProps>("AppxSystemBinary
 /**
  * Flag indicating whether to create test layout when an app package is created.
  */
-export interface AppxTestLayoutEnabledProps {
+export interface AppxTestLayoutEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1388,7 +1419,7 @@ export const AppxTestLayoutEnabled = makeTag<AppxTestLayoutEnabledProps>("AppxTe
 /**
  * Flag indicating whether to use hard links if possible when copying files during creation of app packages.
  */
-export interface AppxUseHardlinksIfPossibleProps {
+export interface AppxUseHardlinksIfPossibleProps extends StringPropertyTypeProps {
 
 }
 
@@ -1400,7 +1431,7 @@ export const AppxUseHardlinksIfPossible = makeTag<AppxUseHardlinksIfPossibleProp
 /**
  * Flag indicating whether to validate app manifest.
  */
-export interface AppxValidateAppxManifestProps {
+export interface AppxValidateAppxManifestProps extends StringPropertyTypeProps {
 
 }
 
@@ -1412,7 +1443,7 @@ export const AppxValidateAppxManifest = makeTag<AppxValidateAppxManifestProps>("
 /**
  * Flag indicating whether to validate store manifest.
  */
-export interface AppxValidateStoreManifestProps {
+export interface AppxValidateStoreManifestProps extends StringPropertyTypeProps {
 
 }
 
@@ -1424,7 +1455,7 @@ export const AppxValidateStoreManifest = makeTag<AppxValidateStoreManifestProps>
 /**
  * Path to the folder where harvested WinMD registration information will be cached.
  */
-export interface AppxWinMdCacheDirProps {
+export interface AppxWinMdCacheDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -1436,7 +1467,7 @@ export const AppxWinMdCacheDir = makeTag<AppxWinMdCacheDirProps>("AppxWinMdCache
 /**
  * Flag indicating whether to cache the harvested WinMD registration information.
  */
-export interface AppxWinMdCacheEnabledProps {
+export interface AppxWinMdCacheEnabledProps extends StringPropertyTypeProps {
 
 }
 
@@ -1448,7 +1479,7 @@ export const AppxWinMdCacheEnabled = makeTag<AppxWinMdCacheEnabledProps>("AppxWi
 /**
  * The path to use for the centralized outputs - if set, UseArtifactsOutput will be defaulted to true. Project outputs will be placed under this path grouped by kind, then by project. See https://learn.microsoft.com/en-us/dotnet/core/sdk/artifacts-output for complete details.
  */
-export interface ArtifactsPathProps {
+export interface ArtifactsPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1483,7 +1514,7 @@ export interface AspNetCompilerProps extends TaskTypeProps {
 
 export const AspNetCompiler = makeTag<AspNetCompilerProps>("AspNetCompiler")
 
-export interface AspNetConfigurationProps {
+export interface AspNetConfigurationProps extends StringPropertyTypeProps {
 
 }
 
@@ -1492,7 +1523,7 @@ export const AspNetConfiguration = makeTag<AspNetConfigurationProps>("AspNetConf
 /**
  * Indicates whether to run an ASP.NET Core application using IIS in-process or out-of-process.
  */
-export interface AspNetCoreHostingModelProps {
+export interface AspNetCoreHostingModelProps extends StringPropertyTypeProps {
 
 }
 
@@ -1504,7 +1535,7 @@ export const AspNetCoreHostingModel = makeTag<AspNetCoreHostingModelProps>("AspN
 /**
  * Indicates which AspNetCoreModule version to use. Versions include V1 and V2.
  */
-export interface AspNetCoreModuleNameProps {
+export interface AspNetCoreModuleNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -1513,28 +1544,40 @@ export interface AspNetCoreModuleNameProps {
  */
 export const AspNetCoreModuleName = makeTag<AspNetCoreModuleNameProps>("AspNetCoreModuleName")
 
+export interface AssemblyDebugProps {
+
+}
+
+export const AssemblyDebug = makeTag<AssemblyDebugProps>("AssemblyDebug")
+
 export interface AssemblyIdentityProps {
 
 }
 
 export const AssemblyIdentity = makeTag<AssemblyIdentityProps>("AssemblyIdentity")
 
-export interface AssemblyKeyContainerNameProps {
+export interface AssemblyKeyContainerNameProps extends StringPropertyTypeProps {
 
 }
 
 export const AssemblyKeyContainerName = makeTag<AssemblyKeyContainerNameProps>("AssemblyKeyContainerName")
 
-export interface AssemblyKeyProviderNameProps {
+export interface AssemblyKeyProviderNameProps extends StringPropertyTypeProps {
 
 }
 
 export const AssemblyKeyProviderName = makeTag<AssemblyKeyProviderNameProps>("AssemblyKeyProviderName")
 
+export interface AssemblyLinkResourceProps {
+
+}
+
+export const AssemblyLinkResource = makeTag<AssemblyLinkResourceProps>("AssemblyLinkResource")
+
 /**
  * Name of output assembly
  */
-export interface AssemblyNameProps {
+export interface AssemblyNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -1543,19 +1586,19 @@ export interface AssemblyNameProps {
  */
 export const AssemblyName = makeTag<AssemblyNameProps>("AssemblyName")
 
-export interface AssemblyOriginatorKeyFileProps {
+export interface AssemblyOriginatorKeyFileProps extends StringPropertyTypeProps {
 
 }
 
 export const AssemblyOriginatorKeyFile = makeTag<AssemblyOriginatorKeyFileProps>("AssemblyOriginatorKeyFile")
 
-export interface AssemblyOriginatorKeyFileTypeProps {
+export interface AssemblyOriginatorKeyFileTypeProps extends StringPropertyTypeProps {
 
 }
 
 export const AssemblyOriginatorKeyFileType = makeTag<AssemblyOriginatorKeyFileTypeProps>("AssemblyOriginatorKeyFileType")
 
-export interface AssemblyOriginatorKeyModeProps {
+export interface AssemblyOriginatorKeyModeProps extends StringPropertyTypeProps {
 
 }
 
@@ -1624,7 +1667,7 @@ export const AssemblySearchPath_UseTargetFrameworkDirectory = makeTag<AssemblySe
 /**
  * Semicolon-delimited ordered list of paths to search when the ResolveAssemblyReference task looks for an assembly. Some non-path locations like the Global Assembly Cache can also be searched using curly braces: {GAC}.
  */
-export interface AssemblySearchPathsProps {
+export interface AssemblySearchPathsProps extends StringPropertyTypeProps {
 
 }
 
@@ -1636,7 +1679,7 @@ export const AssemblySearchPaths = makeTag<AssemblySearchPathsProps>("AssemblySe
 /**
  * Description for the assembly manifest
  */
-export interface AssemblyTitleProps {
+export interface AssemblyTitleProps extends StringPropertyTypeProps {
 
 }
 
@@ -1645,7 +1688,7 @@ export interface AssemblyTitleProps {
  */
 export const AssemblyTitle = makeTag<AssemblyTitleProps>("AssemblyTitle")
 
-export interface AssemblyTypeProps {
+export interface AssemblyTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -1654,7 +1697,7 @@ export const AssemblyType = makeTag<AssemblyTypeProps>("AssemblyType")
 /**
  * Numeric value of the version for the assembly manifest in the format major.minor.patch (e.g. 2.4.0)
  */
-export interface AssemblyVersionProps {
+export interface AssemblyVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -1666,7 +1709,7 @@ export const AssemblyVersion = makeTag<AssemblyVersionProps>("AssemblyVersion")
 /**
  * Can be set to one or more target framework monikers. When determining package compatibility, if the package does not have compatible assets for the project's real target framework, compatibility will be rechecked using each target framework from the AssetTargetFramework project of the referencing project.
  */
-export interface AssetTargetFallbackProps {
+export interface AssetTargetFallbackProps extends StringPropertyTypeProps {
 
 }
 
@@ -1705,7 +1748,7 @@ export const AssignTargetPath = makeTag<AssignTargetPathProps>("AssignTargetPath
 /**
  * A comma-separated list of NuGet packages authors
  */
-export interface AuthorsProps {
+export interface AuthorsProps extends StringPropertyTypeProps {
 
 }
 
@@ -1717,7 +1760,7 @@ export const Authors = makeTag<AuthorsProps>("Authors")
 /**
  * Indicates whether BindingRedirect elements should be automatically generated for referenced assemblies.
  */
-export interface AutoGenerateBindingRedirectsProps {
+export interface AutoGenerateBindingRedirectsProps extends StringPropertyTypeProps {
 
 }
 
@@ -1729,7 +1772,7 @@ export const AutoGenerateBindingRedirects = makeTag<AutoGenerateBindingRedirects
 /**
  * Flag indicating whether to enable auto increment of an app package revision.
  */
-export interface AutoIncrementPackageRevisionProps {
+export interface AutoIncrementPackageRevisionProps extends StringPropertyTypeProps {
 
 }
 
@@ -1773,7 +1816,7 @@ export interface AxImpProps extends TaskTypeProps {
 
 export const AxImp = makeTag<AxImpProps>("AxImp")
 
-export interface BaseAddressProps {
+export interface BaseAddressProps extends StringPropertyTypeProps {
 
 }
 
@@ -1782,7 +1825,7 @@ export const BaseAddress = makeTag<BaseAddressProps>("BaseAddress")
 /**
  * The base application manifest for the build. Contains ClickOnce security information.
  */
-export interface BaseApplicationManifestProps {
+export interface BaseApplicationManifestProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -1817,7 +1860,7 @@ export const BaseApplicationManifest = makeTag<BaseApplicationManifestProps>("Ba
 /**
  * Base path of output folder, where all configuration-specific output folders will be created. Default value is bin\.
  */
-export interface BaseOutputPathProps {
+export interface BaseOutputPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -1835,7 +1878,7 @@ export const BasicRuntimeChecks = makeTag<BasicRuntimeChecksProps>("BasicRuntime
 /**
  * HomeSite, Relative, or Absolute
  */
-export interface BootstrapperComponentsLocationProps {
+export interface BootstrapperComponentsLocationProps extends StringPropertyTypeProps {
 
 }
 
@@ -1844,7 +1887,7 @@ export interface BootstrapperComponentsLocationProps {
  */
 export const BootstrapperComponentsLocation = makeTag<BootstrapperComponentsLocationProps>("BootstrapperComponentsLocation")
 
-export interface BootstrapperComponentsUrlProps {
+export interface BootstrapperComponentsUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -1923,17 +1966,26 @@ export interface CallTargetProps extends TaskTypeProps {
 
 export const CallTarget = makeTag<CallTargetProps>("CallTarget")
 
-export interface CharacterSetProps {
+export interface CharacterSetProps extends StringPropertyTypeProps {
 
 }
 
 export const CharacterSet = makeTag<CharacterSetProps>("CharacterSet")
 
-export interface CheckForOverflowUnderflowProps {
+export interface CheckForOverflowUnderflowProps extends StringPropertyTypeProps {
 
 }
 
 export const CheckForOverflowUnderflow = makeTag<CheckForOverflowUnderflowProps>("CheckForOverflowUnderflow")
+
+export interface ChooseProps {
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const Choose = makeTag<ChooseProps>("Choose")
 
 export interface CLProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes?: unknown
@@ -2047,11 +2099,35 @@ export interface ClIncludeProps extends SimpleItemTypeProps {
 
 export const ClInclude = makeTag<ClIncludeProps>("ClInclude")
 
-export interface CLRSupportProps {
+export interface CLRImageTypeProps {
+
+}
+
+export const CLRImageType = makeTag<CLRImageTypeProps>("CLRImageType")
+
+export interface CLRSupportProps extends StringPropertyTypeProps {
 
 }
 
 export const CLRSupport = makeTag<CLRSupportProps>("CLRSupport")
+
+export interface CLRSupportLastErrorProps {
+
+}
+
+export const CLRSupportLastError = makeTag<CLRSupportLastErrorProps>("CLRSupportLastError")
+
+export interface CLRThreadAttributeProps {
+
+}
+
+export const CLRThreadAttribute = makeTag<CLRThreadAttributeProps>("CLRThreadAttribute")
+
+export interface CLRUnmanagedCodeCheckProps {
+
+}
+
+export const CLRUnmanagedCodeCheck = makeTag<CLRUnmanagedCodeCheckProps>("CLRUnmanagedCodeCheck")
 
 export interface CodeAnalysisProps extends TaskTypeProps {
   AlternativeToolName?: unknown
@@ -2093,7 +2169,7 @@ export const CodeAnalysis = makeTag<CodeAnalysisProps>("CodeAnalysis")
 /**
  * Additional options to pass to the Code Analysis command line tool.
  */
-export interface CodeAnalysisAdditionalOptionsProps {
+export interface CodeAnalysisAdditionalOptionsProps extends StringPropertyTypeProps {
 
 }
 
@@ -2117,7 +2193,7 @@ export const CodeAnalysisApplyLogFileXsl = makeTag<CodeAnalysisApplyLogFileXslPr
 /**
  * Path to the XSL style sheet that will be applied to the Code Analysis console output. The default is an empty string (''), which causes Code Analysis to use its default console output.
  */
-export interface CodeAnalysisConsoleXslProps {
+export interface CodeAnalysisConsoleXslProps extends StringPropertyTypeProps {
 
 }
 
@@ -2129,7 +2205,7 @@ export const CodeAnalysisConsoleXsl = makeTag<CodeAnalysisConsoleXslProps>("Code
 /**
  * Culture to use for Code Analysis spelling rules, for example, 'en-US' or 'en-AU'. The default is the current user interface language for Windows.
  */
-export interface CodeAnalysisCultureProps {
+export interface CodeAnalysisCultureProps extends StringPropertyTypeProps {
 
 }
 
@@ -2270,7 +2346,7 @@ export const CodeAnalysisImport = makeTag<CodeAnalysisImportProps>("CodeAnalysis
 /**
  * Path to the assembly to be analyzed by Code Analysis. The default is '$(OutDir)$(TargetName)$(TargetExt)'.
  */
-export interface CodeAnalysisInputAssemblyProps {
+export interface CodeAnalysisInputAssemblyProps extends StringPropertyTypeProps {
 
 }
 
@@ -2282,7 +2358,7 @@ export const CodeAnalysisInputAssembly = makeTag<CodeAnalysisInputAssemblyProps>
 /**
  * Path to the output file for the Code Analysis report. The default is '$(CodeAnalysisInputAssembly).CodeAnalysisLog.xml'.
  */
-export interface CodeAnalysisLogFileProps {
+export interface CodeAnalysisLogFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -2294,7 +2370,7 @@ export const CodeAnalysisLogFile = makeTag<CodeAnalysisLogFileProps>("CodeAnalys
 /**
  * Path to the XSL style sheet to reference in the Code Analysis output report. This report is specified in $(CodeAnalysisLogFile). The default is an empty string ('').
  */
-export interface CodeAnalysisLogFileXslProps {
+export interface CodeAnalysisLogFileXslProps extends StringPropertyTypeProps {
 
 }
 
@@ -2306,7 +2382,7 @@ export const CodeAnalysisLogFileXsl = makeTag<CodeAnalysisLogFileXslProps>("Code
 /**
  * Name of the file, without the path, where Code Analysis project-level suppressions are stored. The default is 'GlobalSuppressions$(DefaultLanguageSourceExtension)'.
  */
-export interface CodeAnalysisModuleSuppressionsFileProps {
+export interface CodeAnalysisModuleSuppressionsFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -2342,7 +2418,7 @@ export const CodeAnalysisOverrideRuleVisibilities = makeTag<CodeAnalysisOverride
 /**
  * Path to the Code Analysis installation folder. The default is '$(VSINSTALLDIR)\Team Tools\Static Analysis Tools\FxCop'.
  */
-export interface CodeAnalysisPathProps {
+export interface CodeAnalysisPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -2354,7 +2430,7 @@ export const CodeAnalysisPath = makeTag<CodeAnalysisPathProps>("CodeAnalysisPath
 /**
  * Path to the .NET Framework folder that contains platform assemblies, such as mscorlib.dll and System.dll. The default is an empty string ('').
  */
-export interface CodeAnalysisPlatformPathProps {
+export interface CodeAnalysisPlatformPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -2366,7 +2442,7 @@ export const CodeAnalysisPlatformPath = makeTag<CodeAnalysisPlatformPathProps>("
 /**
  * Path to the Code Analysis project (*.fxcop) to load. The default is an empty string ('').
  */
-export interface CodeAnalysisProjectProps {
+export interface CodeAnalysisProjectProps extends StringPropertyTypeProps {
 
 }
 
@@ -2390,7 +2466,7 @@ export const CodeAnalysisQuiet = makeTag<CodeAnalysisQuietProps>("CodeAnalysisQu
 /**
  * Semicolon-separated list of paths either to Code Analysis rule assemblies or to folders that contain Code Analysis rule assemblies. The paths are in the form '[+|-][!][file|folder]', where '+' enables all rules in rule assembly, '-' disables all rules in rule assembly, and '!' causes all rules in rule assembly to be treated as errors. For example '+D:\Projects\Rules\NamingRules.dll;+!D:\Projects\Rules\SecurityRules.dll'. The default is '$(CodeAnalysisPath)\Rules'.
  */
-export interface CodeAnalysisRuleAssembliesProps {
+export interface CodeAnalysisRuleAssembliesProps extends StringPropertyTypeProps {
 
 }
 
@@ -2402,7 +2478,7 @@ export const CodeAnalysisRuleAssemblies = makeTag<CodeAnalysisRuleAssembliesProp
 /**
  * Semicolon-separated list of directories in which to search for rules when resolving a rule set. The default is '$(CodeAnalysisPath)\Rules' unless the CodeAnalysisIgnoreBuiltInRules property is set to true.
  */
-export interface CodeAnalysisRuleDirectoriesProps {
+export interface CodeAnalysisRuleDirectoriesProps extends StringPropertyTypeProps {
 
 }
 
@@ -2414,7 +2490,7 @@ export const CodeAnalysisRuleDirectories = makeTag<CodeAnalysisRuleDirectoriesPr
 /**
  * Semicolon-separated list of Code Analysis rules. The rules are in the form '[+|-][!]Category#CheckId', where '+' enables the rule, '-' disables the rule, and '!' causes the rule to be treated as an error. For example, '-Microsoft.Naming#CA1700;+!Microsoft.Naming#CA1701'. The default is an empty string ('') which enables all rules.
  */
-export interface CodeAnalysisRulesProps {
+export interface CodeAnalysisRulesProps extends StringPropertyTypeProps {
 
 }
 
@@ -2426,7 +2502,7 @@ export const CodeAnalysisRules = makeTag<CodeAnalysisRulesProps>("CodeAnalysisRu
 /**
  * A .ruleset file which contains a list of rules to run during analysis. The string can be a full path, a path relative to the project file, or a file name. If a file name is specified, the CodeAnalysisRuleSetDirectories property will be searched to find the file. The default is an empty string ('').
  */
-export interface CodeAnalysisRuleSetProps {
+export interface CodeAnalysisRuleSetProps extends StringPropertyTypeProps {
 
 }
 
@@ -2438,7 +2514,7 @@ export const CodeAnalysisRuleSet = makeTag<CodeAnalysisRuleSetProps>("CodeAnalys
 /**
  * Semicolon-separated list of directories in which to search for rule sets. The default is '$(VSINSTALLDIR)\Team Tools\Static Analysis Tools\Rule Sets' unless the CodeAnalysisIgnoreBuiltInRuleSets property is set to true.
  */
-export interface CodeAnalysisRuleSetDirectoriesProps {
+export interface CodeAnalysisRuleSetDirectoriesProps extends StringPropertyTypeProps {
 
 }
 
@@ -2450,7 +2526,7 @@ export const CodeAnalysisRuleSetDirectories = makeTag<CodeAnalysisRuleSetDirecto
 /**
  * Comma-separated list of the type ('Active', 'Excluded', or 'Absent') of warnings and errors to save to the output report file. The default is 'Active'.
  */
-export interface CodeAnalysisSaveMessagesToReportProps {
+export interface CodeAnalysisSaveMessagesToReportProps extends StringPropertyTypeProps {
 
 }
 
@@ -2486,7 +2562,7 @@ export const CodeAnalysisSummary = makeTag<CodeAnalysisSummaryProps>("CodeAnalys
 /**
  * The time, in seconds, that Code Analysis should wait for analysis of a single item to complete before it aborts analysis. Specify 0 to cause Code Analysis to wait indefinitely. The default is 120.
  */
-export interface CodeAnalysisTimeoutProps {
+export interface CodeAnalysisTimeoutProps extends StringPropertyTypeProps {
 
 }
 
@@ -2543,7 +2619,7 @@ export interface CodeAnalysisVerboseProps {
  */
 export const CodeAnalysisVerbose = makeTag<CodeAnalysisVerboseProps>("CodeAnalysisVerbose")
 
-export interface CodePageProps {
+export interface CodePageProps extends StringPropertyTypeProps {
 
 }
 
@@ -2578,7 +2654,7 @@ export const Command = makeTag<CommandProps>("Command")
 /**
  * Company name for the assembly manifest
  */
-export interface CompanyProps {
+export interface CompanyProps extends StringPropertyTypeProps {
 
 }
 
@@ -2612,7 +2688,7 @@ export const CompileAsManaged = makeTag<CompileAsManagedProps>("CompileAsManaged
 /**
  * Controls where source generated files are saved.
  */
-export interface CompilerGeneratedFilesOutputPathProps {
+export interface CompilerGeneratedFilesOutputPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -2642,25 +2718,25 @@ export interface COMReferenceProps extends SimpleItemTypeProps {
  */
 export const COMReference = makeTag<COMReferenceProps>("COMReference")
 
-export interface ConfigurationProps {
+export interface ConfigurationProps extends StringPropertyTypeProps {
 
 }
 
 export const Configuration = makeTag<ConfigurationProps>("Configuration")
 
-export interface ConfigurationNameProps {
+export interface ConfigurationNameProps extends StringPropertyTypeProps {
 
 }
 
 export const ConfigurationName = makeTag<ConfigurationNameProps>("ConfigurationName")
 
-export interface ConfigurationOverrideFileProps {
+export interface ConfigurationOverrideFileProps extends StringPropertyTypeProps {
 
 }
 
 export const ConfigurationOverrideFile = makeTag<ConfigurationOverrideFileProps>("ConfigurationOverrideFile")
 
-export interface ConfigurationTypeProps {
+export interface ConfigurationTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -2760,7 +2836,7 @@ export const CopyRefAssembliesToPublishDirectory = makeTag<CopyRefAssembliesToPu
 /**
  * Copyright details for the NuGet package
  */
-export interface CopyrightProps {
+export interface CopyrightProps extends StringPropertyTypeProps {
 
 }
 
@@ -2820,6 +2896,12 @@ export interface CreateHotpatchableImageProps {
 
 export const CreateHotpatchableImage = makeTag<CreateHotpatchableImageProps>("CreateHotpatchableImage")
 
+export interface CreateHotPatchableImageProps {
+
+}
+
+export const CreateHotPatchableImage = makeTag<CreateHotPatchableImageProps>("CreateHotPatchableImage")
+
 export interface CreateItemProps extends TaskTypeProps {
   AdditionalMetadata?: unknown
   Exclude?: unknown
@@ -2837,7 +2919,7 @@ export interface CreatePriConfigXmlForFullIndexProps extends CreatePriConfigXmlT
 
 export const CreatePriConfigXmlForFullIndex = makeTag<CreatePriConfigXmlForFullIndexProps>("CreatePriConfigXmlForFullIndex")
 
-export interface CreatePriConfigXmlForMainPackageFileMapProps extends CreatePriConfigXmlTaskTypeProps {
+export interface CreatePriConfigXmlForMainPackageFileMapProps extends CreatePriConfigXmlWithPackagingElementTaskTypeProps {
   AppxBundleAutoResourcePackageQualifiers: unknown
 }
 
@@ -2849,7 +2931,7 @@ export interface CreatePriConfigXmlForSplittingProps extends CreatePriConfigXmlW
 
 export const CreatePriConfigXmlForSplitting = makeTag<CreatePriConfigXmlForSplittingProps>("CreatePriConfigXmlForSplitting")
 
-export interface CreatePriConfigXmlTaskProps extends TaskTypeProps {
+export interface CreatePriConfigXmlTaskProps extends CreatePriConfigXmlTaskTypeProps {
   PriConfigXmlPath: unknown
   PriInitialPath?: unknown
   DefaultResourceLanguage: unknown
@@ -2864,7 +2946,7 @@ export interface CreatePriConfigXmlTaskProps extends TaskTypeProps {
 
 export const CreatePriConfigXmlTask = makeTag<CreatePriConfigXmlTaskProps>("CreatePriConfigXmlTask")
 
-interface CreatePriConfigXmlTaskTypeProps extends TaskTypeProps {
+interface CreatePriConfigXmlTaskTypeProps {
   PriConfigXmlPath: unknown
   PriInitialPath?: unknown
   DefaultResourceLanguage: unknown
@@ -2875,54 +2957,12 @@ interface CreatePriConfigXmlTaskTypeProps extends TaskTypeProps {
   PriConfigXmlDefaultSnippetPath?: unknown
   TargetPlatformIdentifier: unknown
   TargetPlatformVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition?: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError?: boolean
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture?: unknown /* msb:architecture */
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime?: unknown /* msb:runtime */
 }
 
 export const CreatePriConfigXmlTaskType = makeTag<CreatePriConfigXmlTaskTypeProps>("CreatePriConfigXmlTaskType")
 
-interface CreatePriConfigXmlWithPackagingElementTaskTypeProps extends TaskTypeProps {
+interface CreatePriConfigXmlWithPackagingElementTaskTypeProps {
   AppxBundleAutoResourcePackageQualifiers: unknown
-  PriConfigXmlPath: unknown
-  PriInitialPath?: unknown
-  DefaultResourceLanguage: unknown
-  DefaultResourceQualifiers: unknown
-  ConvertDotsToSlashes?: boolean
-  IntermediateExtension: unknown
-  PriConfigXmlPackagingSnippetPath?: unknown
-  PriConfigXmlDefaultSnippetPath?: unknown
-  TargetPlatformIdentifier: unknown
-  TargetPlatformVersion: unknown
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition?: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError?: boolean
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture?: unknown /* msb:architecture */
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime?: unknown /* msb:runtime */
 }
 
 export const CreatePriConfigXmlWithPackagingElementTaskType = makeTag<CreatePriConfigXmlWithPackagingElementTaskTypeProps>("CreatePriConfigXmlWithPackagingElementTaskType")
@@ -3032,7 +3072,7 @@ export interface CultureProps {
 
 export const Culture = makeTag<CultureProps>("Culture")
 
-export interface CurrentSolutionConfigurationContentsProps {
+export interface CurrentSolutionConfigurationContentsProps extends GenericPropertyTypeProps {
   /**
    * Optional expression evaluated to determine whether the property should be evaluated
    */
@@ -3051,13 +3091,19 @@ export interface CustomBuildStepProps extends SimpleItemTypeProps {
 
 export const CustomBuildStep = makeTag<CustomBuildStepProps>("CustomBuildStep")
 
+export interface DataExecutionPreventionProps {
+
+}
+
+export const DataExecutionPrevention = makeTag<DataExecutionPreventionProps>("DataExecutionPrevention")
+
 export interface DebugInformationFormatProps {
 
 }
 
 export const DebugInformationFormat = makeTag<DebugInformationFormatProps>("DebugInformationFormat")
 
-export interface DebugSecurityZoneURLProps {
+export interface DebugSecurityZoneURLProps extends StringPropertyTypeProps {
 
 }
 
@@ -3093,13 +3139,13 @@ export interface DefaultCharTypeProps {
 
 export const DefaultCharType = makeTag<DefaultCharTypeProps>("DefaultCharType")
 
-export interface DefaultClientScriptProps {
+export interface DefaultClientScriptProps extends StringPropertyTypeProps {
 
 }
 
 export const DefaultClientScript = makeTag<DefaultClientScriptProps>("DefaultClientScript")
 
-export interface DefaultHTMLPageLayoutProps {
+export interface DefaultHTMLPageLayoutProps extends StringPropertyTypeProps {
 
 }
 
@@ -3108,7 +3154,7 @@ export const DefaultHTMLPageLayout = makeTag<DefaultHTMLPageLayoutProps>("Defaul
 /**
  * Default resource language.
  */
-export interface DefaultLanguageProps {
+export interface DefaultLanguageProps extends StringPropertyTypeProps {
 
 }
 
@@ -3117,13 +3163,13 @@ export interface DefaultLanguageProps {
  */
 export const DefaultLanguage = makeTag<DefaultLanguageProps>("DefaultLanguage")
 
-export interface DefaultTargetSchemaProps {
+export interface DefaultTargetSchemaProps extends StringPropertyTypeProps {
 
 }
 
 export const DefaultTargetSchema = makeTag<DefaultTargetSchemaProps>("DefaultTargetSchema")
 
-export interface DefineConstantsProps {
+export interface DefineConstantsProps extends StringPropertyTypeProps {
 
 }
 
@@ -3153,7 +3199,13 @@ export interface DefineTraceProps {
  */
 export const DefineTrace = makeTag<DefineTraceProps>("DefineTrace")
 
-export interface DelaySignProps {
+export interface DelayLoadDLLsProps {
+
+}
+
+export const DelayLoadDLLs = makeTag<DelayLoadDLLsProps>("DelayLoadDLLs")
+
+export interface DelaySignProps extends StringPropertyTypeProps {
 
 }
 
@@ -3173,7 +3225,7 @@ export interface DependencyInformationFileProps {
 
 export const DependencyInformationFile = makeTag<DependencyInformationFileProps>("DependencyInformationFile")
 
-export interface DeployDirSuffixProps {
+export interface DeployDirSuffixProps extends StringPropertyTypeProps {
 
 }
 
@@ -3182,7 +3234,7 @@ export const DeployDirSuffix = makeTag<DeployDirSuffixProps>("DeployDirSuffix")
 /**
  * A long description of the NuGet package for UI display
  */
-export interface DescriptionProps {
+export interface DescriptionProps extends StringPropertyTypeProps {
 
 }
 
@@ -3203,7 +3255,7 @@ export interface DisableFastUpToDateCheckProps {
  */
 export const DisableFastUpToDateCheck = makeTag<DisableFastUpToDateCheckProps>("DisableFastUpToDateCheck")
 
-export interface DisableLangXtnsProps {
+export interface DisableLangXtnsProps extends StringPropertyTypeProps {
 
 }
 
@@ -3263,7 +3315,7 @@ export interface DllDataFileNameProps {
 
 export const DllDataFileName = makeTag<DllDataFileNameProps>("DllDataFileName")
 
-export interface DocumentationFileProps {
+export interface DocumentationFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -3301,6 +3353,12 @@ export interface DownloadFileProps extends TaskTypeProps {
 
 export const DownloadFile = makeTag<DownloadFileProps>("DownloadFile")
 
+export interface DriverProps {
+
+}
+
+export const Driver = makeTag<DriverProps>("Driver")
+
 /**
  * Resources to be embedded in the generated assembly
  */
@@ -3317,7 +3375,13 @@ export interface EmbeddedResourceProps extends SimpleItemTypeProps {
  */
 export const EmbeddedResource = makeTag<EmbeddedResourceProps>("EmbeddedResource")
 
-export interface EmbedManifestProps {
+export interface EmbedManagedResourceFileProps {
+
+}
+
+export const EmbedManagedResourceFile = makeTag<EmbedManagedResourceFileProps>("EmbedManagedResourceFile")
+
+export interface EmbedManifestProps extends StringPropertyTypeProps {
 
 }
 
@@ -3347,7 +3411,7 @@ export interface EmitCompilerGeneratedFilesProps {
  */
 export const EmitCompilerGeneratedFiles = makeTag<EmitCompilerGeneratedFilesProps>("EmitCompilerGeneratedFiles")
 
-export interface EnableASPDebuggingProps {
+export interface EnableASPDebuggingProps extends StringPropertyTypeProps {
 
 }
 
@@ -3365,11 +3429,17 @@ export interface EnableAspireTestingProps {
  */
 export const EnableAspireTesting = makeTag<EnableAspireTestingProps>("EnableAspireTesting")
 
-export interface EnableASPXDebuggingProps {
+export interface EnableASPXDebuggingProps extends StringPropertyTypeProps {
 
 }
 
 export const EnableASPXDebugging = makeTag<EnableASPXDebuggingProps>("EnableASPXDebugging")
+
+export interface EnableCOMDATFoldingProps {
+
+}
+
+export const EnableCOMDATFolding = makeTag<EnableCOMDATFoldingProps>("EnableCOMDATFolding")
 
 export interface EnableCustomCultureProps {
 
@@ -3452,7 +3522,7 @@ export const EnableDefaultRazorGenerateItems = makeTag<EnableDefaultRazorGenerat
 /**
  * Enable Store Submission from the packaging wizard.
  */
-export interface EnableDirectStoreSubmissionProps {
+export interface EnableDirectStoreSubmissionProps extends StringPropertyTypeProps {
 
 }
 
@@ -3581,7 +3651,7 @@ export interface EnablePlaywrightProps {
  */
 export const EnablePlaywright = makeTag<EnablePlaywrightProps>("EnablePlaywright")
 
-export interface EnableSecurityDebuggingProps {
+export interface EnableSecurityDebuggingProps extends StringPropertyTypeProps {
 
 }
 
@@ -3590,7 +3660,7 @@ export const EnableSecurityDebugging = makeTag<EnableSecurityDebuggingProps>("En
 /**
  * Flag indicating whether to enable signing checks during app package generation.
  */
-export interface EnableSigningChecksProps {
+export interface EnableSigningChecksProps extends StringPropertyTypeProps {
 
 }
 
@@ -3599,13 +3669,19 @@ export interface EnableSigningChecksProps {
  */
 export const EnableSigningChecks = makeTag<EnableSigningChecksProps>("EnableSigningChecks")
 
-export interface EnableSQLServerDebuggingProps {
+export interface EnableSQLServerDebuggingProps extends StringPropertyTypeProps {
 
 }
 
 export const EnableSQLServerDebugging = makeTag<EnableSQLServerDebuggingProps>("EnableSQLServerDebugging")
 
-export interface EnableUnmanagedDebuggingProps {
+export interface EnableUACProps {
+
+}
+
+export const EnableUAC = makeTag<EnableUACProps>("EnableUAC")
+
+export interface EnableUnmanagedDebuggingProps extends StringPropertyTypeProps {
 
 }
 
@@ -3626,7 +3702,7 @@ export const EnforceCodeStyleInBuild = makeTag<EnforceCodeStyleInBuildProps>("En
 /**
  * Windows Application Packaging project-specific: Enables the packaging of an executable without having the source code available.
  */
-export interface EntryPointExeProps {
+export interface EntryPointExeProps extends StringPropertyTypeProps {
 
 }
 
@@ -3638,7 +3714,7 @@ export const EntryPointExe = makeTag<EntryPointExeProps>("EntryPointExe")
 /**
  * Windows Application Packaging project-specific: Relative path to entry point project file.
  */
-export interface EntryPointProjectUniqueNameProps {
+export interface EntryPointProjectUniqueNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -3646,6 +3722,12 @@ export interface EntryPointProjectUniqueNameProps {
  * Windows Application Packaging project-specific: Relative path to entry point project file.
  */
 export const EntryPointProjectUniqueName = makeTag<EntryPointProjectUniqueNameProps>("EntryPointProjectUniqueName")
+
+export interface EntryPointSymbolProps {
+
+}
+
+export const EntryPointSymbol = makeTag<EntryPointSymbolProps>("EntryPointSymbol")
 
 export interface ErrorProps extends TaskTypeProps {
   Code?: unknown
@@ -3686,13 +3768,13 @@ export interface ErrorCheckStubDataProps {
 
 export const ErrorCheckStubData = makeTag<ErrorCheckStubDataProps>("ErrorCheckStubData")
 
-export interface ErrorLogProps {
+export interface ErrorLogProps extends StringPropertyTypeProps {
 
 }
 
 export const ErrorLog = makeTag<ErrorLogProps>("ErrorLog")
 
-export interface ErrorReportProps {
+export interface ErrorReportProps extends StringPropertyTypeProps {
 
 }
 
@@ -3704,7 +3786,7 @@ export interface ErrorReportingProps {
 
 export const ErrorReporting = makeTag<ErrorReportingProps>("ErrorReporting")
 
-export interface ErrorReportUrlProps {
+export interface ErrorReportUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -3716,7 +3798,7 @@ export interface ExcludeDeploymentUrlProps {
 
 export const ExcludeDeploymentUrl = makeTag<ExcludeDeploymentUrlProps>("ExcludeDeploymentUrl")
 
-export interface ExcludedPermissionsProps {
+export interface ExcludedPermissionsProps extends StringPropertyTypeProps {
 
 }
 
@@ -3770,13 +3852,13 @@ export interface ExtractHashAlgorithmIdProps extends TaskTypeProps {
 
 export const ExtractHashAlgorithmId = makeTag<ExtractHashAlgorithmIdProps>("ExtractHashAlgorithmId")
 
-export interface FallbackCultureProps {
+export interface FallbackCultureProps extends StringPropertyTypeProps {
 
 }
 
 export const FallbackCulture = makeTag<FallbackCultureProps>("FallbackCulture")
 
-export interface FileAlignmentProps {
+export interface FileAlignmentProps extends StringPropertyTypeProps {
 
 }
 
@@ -3788,7 +3870,7 @@ export interface FileAssociationProps extends SimpleItemTypeProps {
 
 export const FileAssociation = makeTag<FileAssociationProps>("FileAssociation")
 
-export interface FileUpgradeFlagsProps {
+export interface FileUpgradeFlagsProps extends StringPropertyTypeProps {
 
 }
 
@@ -3797,7 +3879,7 @@ export const FileUpgradeFlags = makeTag<FileUpgradeFlagsProps>("FileUpgradeFlags
 /**
  * Numeric value of the version for the assembly manifest in the format major.minor.build.revision (e.g. 2.4.0.1)
  */
-export interface FileVersionProps {
+export interface FileVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -3819,7 +3901,7 @@ export const FilterOutUnusedLanguagesResourceFileMaps = makeTag<FilterOutUnusedL
 /**
  * Path to the final app manifest.
  */
-export interface FinalAppxManifestNameProps {
+export interface FinalAppxManifestNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -3831,7 +3913,7 @@ export const FinalAppxManifestName = makeTag<FinalAppxManifestNameProps>("FinalA
 /**
  * Full path to the final app package recipe.
  */
-export interface FinalAppxPackageRecipeProps {
+export interface FinalAppxPackageRecipeProps extends StringPropertyTypeProps {
 
 }
 
@@ -3870,6 +3952,12 @@ export interface FindUnderPathProps extends TaskTypeProps {
 
 export const FindUnderPath = makeTag<FindUnderPathProps>("FindUnderPath")
 
+export interface FixedBaseAddressProps {
+
+}
+
+export const FixedBaseAddress = makeTag<FixedBaseAddressProps>("FixedBaseAddress")
+
 export interface FloatingPointExceptionsProps {
 
 }
@@ -3885,7 +3973,7 @@ export const FloatingPointModel = makeTag<FloatingPointModelProps>("FloatingPoin
 /**
  * Used by Visual Studio to identify an empty folder.
  */
-export interface FolderProps {
+export interface FolderProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -3929,6 +4017,18 @@ export interface ForcedUsingFilesProps {
 
 export const ForcedUsingFiles = makeTag<ForcedUsingFilesProps>("ForcedUsingFiles")
 
+export interface ForceFileOutputProps {
+
+}
+
+export const ForceFileOutput = makeTag<ForceFileOutputProps>("ForceFileOutput")
+
+export interface ForceSymbolReferencesProps {
+
+}
+
+export const ForceSymbolReferences = makeTag<ForceSymbolReferencesProps>("ForceSymbolReferences")
+
 export interface FormatUrlProps extends TaskTypeProps {
   InputUrl?: unknown
   OutputUrl?: unknown
@@ -3945,7 +4045,7 @@ export interface FormatVersionProps extends TaskTypeProps {
 
 export const FormatVersion = makeTag<FormatVersionProps>("FormatVersion")
 
-export interface FormFactorIDProps {
+export interface FormFactorIDProps extends StringPropertyTypeProps {
 
 }
 
@@ -3954,7 +4054,7 @@ export const FormFactorID = makeTag<FormFactorIDProps>("FormFactorID")
 /**
  * Sets the /sdkpath switch for a VB project to the specified value
  */
-export interface FrameworkPathOverrideProps {
+export interface FrameworkPathOverrideProps extends StringPropertyTypeProps {
 
 }
 
@@ -3987,6 +4087,12 @@ export interface FunctionLevelLinkingProps {
 }
 
 export const FunctionLevelLinking = makeTag<FunctionLevelLinkingProps>("FunctionLevelLinking")
+
+export interface FunctionOrderProps {
+
+}
+
+export const FunctionOrder = makeTag<FunctionOrderProps>("FunctionOrder")
 
 export interface GenerateApplicationManifestProps extends TaskTypeProps {
   AssemblyName?: unknown
@@ -4054,7 +4160,7 @@ export const GenerateAppxManifest = makeTag<GenerateAppxManifestProps>("Generate
 /**
  * Flag indicating whether to generate app package during the build.
  */
-export interface GenerateAppxPackageOnBuildProps {
+export interface GenerateAppxPackageOnBuildProps extends StringPropertyTypeProps {
 
 }
 
@@ -4135,6 +4241,12 @@ export interface GenerateClientFilesProps {
 
 export const GenerateClientFiles = makeTag<GenerateClientFilesProps>("GenerateClientFiles")
 
+export interface GenerateDebugInformationProps {
+
+}
+
+export const GenerateDebugInformation = makeTag<GenerateDebugInformationProps>("GenerateDebugInformation")
+
 export interface GenerateDeploymentManifestProps extends TaskTypeProps {
   AssemblyName?: unknown
   AssemblyVersion?: unknown
@@ -4194,11 +4306,17 @@ export interface GenerateLibraryLayoutProps {
 
 export const GenerateLibraryLayout = makeTag<GenerateLibraryLayoutProps>("GenerateLibraryLayout")
 
-export interface GenerateManifestsProps {
+export interface GenerateManifestsProps extends StringPropertyTypeProps {
 
 }
 
 export const GenerateManifests = makeTag<GenerateManifestsProps>("GenerateManifests")
+
+export interface GenerateMapFileProps {
+
+}
+
+export const GenerateMapFile = makeTag<GenerateMapFileProps>("GenerateMapFile")
 
 /**
  * Value indicating whether a NuGet package will be generated when the project is built
@@ -4302,7 +4420,7 @@ export interface GenerateSelfRegisteredExtensionsProps {
  */
 export const GenerateSelfRegisteredExtensions = makeTag<GenerateSelfRegisteredExtensionsProps>("GenerateSelfRegisteredExtensions")
 
-export interface GenerateSerializationAssembliesProps {
+export interface GenerateSerializationAssembliesProps extends StringPropertyTypeProps {
 
 }
 
@@ -4480,6 +4598,18 @@ export interface HeaderFileNameProps {
 
 export const HeaderFileName = makeTag<HeaderFileNameProps>("HeaderFileName")
 
+export interface HeapCommitSizeProps {
+
+}
+
+export const HeapCommitSize = makeTag<HeapCommitSizeProps>("HeapCommitSize")
+
+export interface HeapReserveSizeProps {
+
+}
+
+export const HeapReserveSize = makeTag<HeapReserveSizeProps>("HeapReserveSize")
+
 export interface HighEntropyVAProps {
 
 }
@@ -4492,17 +4622,41 @@ export interface HostInBrowserProps {
 
 export const HostInBrowser = makeTag<HostInBrowserProps>("HostInBrowser")
 
+export interface IgnoreAllDefaultLibrariesProps {
+
+}
+
+export const IgnoreAllDefaultLibraries = makeTag<IgnoreAllDefaultLibrariesProps>("IgnoreAllDefaultLibraries")
+
+export interface IgnoreEmbeddedIDLProps {
+
+}
+
+export const IgnoreEmbeddedIDL = makeTag<IgnoreEmbeddedIDLProps>("IgnoreEmbeddedIDL")
+
 export interface IgnoreImportLibraryProps {
 
 }
 
 export const IgnoreImportLibrary = makeTag<IgnoreImportLibraryProps>("IgnoreImportLibrary")
 
+export interface IgnoreSpecificDefaultLibrariesProps {
+
+}
+
+export const IgnoreSpecificDefaultLibraries = makeTag<IgnoreSpecificDefaultLibrariesProps>("IgnoreSpecificDefaultLibraries")
+
 export interface IgnoreStandardIncludePathProps {
 
 }
 
 export const IgnoreStandardIncludePath = makeTag<IgnoreStandardIncludePathProps>("IgnoreStandardIncludePath")
+
+export interface ImageHasSafeExceptionHandlersProps {
+
+}
+
+export const ImageHasSafeExceptionHandlers = makeTag<ImageHasSafeExceptionHandlersProps>("ImageHasSafeExceptionHandlers")
 
 /**
  * Enable implicit global usings for the C# project. Possible values are enable, true, and disable.
@@ -4519,9 +4673,9 @@ export const ImplicitUsings = makeTag<ImplicitUsingsProps>("ImplicitUsings")
 /**
  * Assemblies whose namespaces should be imported by the Visual Basic compiler
  */
-export interface ImportProps {
+export interface ImportProps extends SimpleItemTypeProps {
   /**
-   * Optional expression evaluated to determine whether the items should be evaluated
+   * Optional expression evaluated to determine whether the import should occur
    */
   Condition?: string
   /**
@@ -4544,6 +4698,22 @@ export interface ImportProps {
    * Optional expression. Used to identify or order system and user elements
    */
   Label?: string
+  /**
+   * Project file to import
+   */
+  Project: unknown /* msb:non_empty_string */
+  /**
+   * Name of the SDK which contains the project file to import
+   */
+  Sdk?: string
+  /**
+   * Optional expression used to specify the version of the SDK referenced by this import
+   */
+  Version?: string
+  /**
+   * Optional expression used to specify the minimum SDK version required by the referring import
+   */
+  MinimumVersion?: string
 }
 
 /**
@@ -4551,10 +4721,29 @@ export interface ImportProps {
  */
 export const Import = makeTag<ImportProps>("Import")
 
+export interface ImportGroupProps {
+  /**
+   * Optional expression evaluated to determine whether the ImportGroup should be used
+   */
+  Condition?: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const ImportGroup = makeTag<ImportGroupProps>("ImportGroup")
+
+export interface ImportLibraryProps {
+
+}
+
+export const ImportLibrary = makeTag<ImportLibraryProps>("ImportLibrary")
+
 /**
  * Flag indicating whether to include primary build outputs into the app package payload.
  */
-export interface IncludeBuiltProjectOutputGroupProps {
+export interface IncludeBuiltProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4566,7 +4755,7 @@ export const IncludeBuiltProjectOutputGroup = makeTag<IncludeBuiltProjectOutputG
 /**
  * Flag indicating whether to include COM files into the app package payload.
  */
-export interface IncludeComFilesOutputGroupProps {
+export interface IncludeComFilesOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4578,7 +4767,7 @@ export const IncludeComFilesOutputGroup = makeTag<IncludeComFilesOutputGroupProp
 /**
  * Flag indicating whether to include content files into the app package payload.
  */
-export interface IncludeContentFilesProjectOutputGroupProps {
+export interface IncludeContentFilesProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4590,7 +4779,7 @@ export const IncludeContentFilesProjectOutputGroup = makeTag<IncludeContentFiles
 /**
  * Flag indicating whether to include files marked as 'Copy local' into the app package payload.
  */
-export interface IncludeCopyLocalFilesOutputGroupProps {
+export interface IncludeCopyLocalFilesOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4602,7 +4791,7 @@ export const IncludeCopyLocalFilesOutputGroup = makeTag<IncludeCopyLocalFilesOut
 /**
  * Flag indicating whether to include WinMD artifacts into the app package payload.
  */
-export interface IncludeCopyWinmdArtifactsOutputGroupProps {
+export interface IncludeCopyWinmdArtifactsOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4614,7 +4803,7 @@ export const IncludeCopyWinmdArtifactsOutputGroup = makeTag<IncludeCopyWinmdArti
 /**
  * Flag indicating whether to include custom output group into the app package payload.
  */
-export interface IncludeCustomOutputGroupForPackagingProps {
+export interface IncludeCustomOutputGroupForPackagingProps extends StringPropertyTypeProps {
 
 }
 
@@ -4626,7 +4815,7 @@ export const IncludeCustomOutputGroupForPackaging = makeTag<IncludeCustomOutputG
 /**
  * Flag indicating whether to include debug symbols into the app package payload.
  */
-export interface IncludeDebugSymbolsProjectOutputGroupProps {
+export interface IncludeDebugSymbolsProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4638,7 +4827,7 @@ export const IncludeDebugSymbolsProjectOutputGroup = makeTag<IncludeDebugSymbols
 /**
  * Flag indicating whether to include documentation into the app package payload.
  */
-export interface IncludeDocumentationProjectOutputGroupProps {
+export interface IncludeDocumentationProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4650,7 +4839,7 @@ export const IncludeDocumentationProjectOutputGroup = makeTag<IncludeDocumentati
 /**
  * Flag indicating whether to include resolved SDK references into the app package payload.
  */
-export interface IncludeGetResolvedSDKReferencesProps {
+export interface IncludeGetResolvedSDKReferencesProps extends StringPropertyTypeProps {
 
 }
 
@@ -4662,7 +4851,7 @@ export const IncludeGetResolvedSDKReferences = makeTag<IncludeGetResolvedSDKRefe
 /**
  * Flag indicating whether to include resource index (PRI) files into the app package payload.
  */
-export interface IncludePriFilesOutputGroupProps {
+export interface IncludePriFilesOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4686,7 +4875,7 @@ export const IncludeRazorContentInPack = makeTag<IncludeRazorContentInPackProps>
 /**
  * Flag indicating whether to include satellite DLLs into the app package payload.
  */
-export interface IncludeSatelliteDllsProjectOutputGroupProps {
+export interface IncludeSatelliteDllsProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4698,7 +4887,7 @@ export const IncludeSatelliteDllsProjectOutputGroup = makeTag<IncludeSatelliteDl
 /**
  * Flag indicating whether to include SDK redist into the app package payload.
  */
-export interface IncludeSDKRedistOutputGroupProps {
+export interface IncludeSDKRedistOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4710,7 +4899,7 @@ export const IncludeSDKRedistOutputGroup = makeTag<IncludeSDKRedistOutputGroupPr
 /**
  * Flag indicating whether to include SGen files into the app package payload.
  */
-export interface IncludeSGenFilesOutputGroupProps {
+export interface IncludeSGenFilesOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4722,7 +4911,7 @@ export const IncludeSGenFilesOutputGroup = makeTag<IncludeSGenFilesOutputGroupPr
 /**
  * Flag indicating whether to include source files into the app package payload.
  */
-export interface IncludeSourceFilesProjectOutputGroupProps {
+export interface IncludeSourceFilesProjectOutputGroupProps extends StringPropertyTypeProps {
 
 }
 
@@ -4734,7 +4923,7 @@ export const IncludeSourceFilesProjectOutputGroup = makeTag<IncludeSourceFilesPr
 /**
  * Product version of the assembly for UI display (e.g. 1.0 Beta)
  */
-export interface InformationalVersionProps {
+export interface InformationalVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -4758,7 +4947,7 @@ export const Inputs = makeTag<InputsProps>("Inputs")
 /**
  * Flag indicating whether to insert reverse resource map during resource index generation.
  */
-export interface InsertReverseMapProps {
+export interface InsertReverseMapProps extends StringPropertyTypeProps {
 
 }
 
@@ -4767,7 +4956,7 @@ export interface InsertReverseMapProps {
  */
 export const InsertReverseMap = makeTag<InsertReverseMapProps>("InsertReverseMap")
 
-export interface InstallProps {
+export interface InstallProps extends StringPropertyTypeProps {
 
 }
 
@@ -4776,7 +4965,7 @@ export const Install = makeTag<InstallProps>("Install")
 /**
  * Web, Unc, or Disk
  */
-export interface InstallFromProps {
+export interface InstallFromProps extends StringPropertyTypeProps {
 
 }
 
@@ -4785,7 +4974,7 @@ export interface InstallFromProps {
  */
 export const InstallFrom = makeTag<InstallFromProps>("InstallFrom")
 
-export interface InstallUrlProps {
+export interface InstallUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -4889,7 +5078,7 @@ export interface IsWebBootstrapperProps {
 
 export const IsWebBootstrapper = makeTag<IsWebBootstrapperProps>("IsWebBootstrapper")
 
-export interface ItemProps {
+export interface ItemProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -4918,28 +5107,72 @@ export interface ItemProps {
 
 export const Item = makeTag<ItemProps>("Item")
 
-export interface JCPAProps {
+export interface ItemDefinitionGroupProps {
+  /**
+   * Optional expression evaluated to determine whether the ItemDefinitionGroup should be used
+   */
+  Condition?: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const ItemDefinitionGroup = makeTag<ItemDefinitionGroupProps>("ItemDefinitionGroup")
+
+export interface ItemGroupProps {
+  /**
+   * Optional expression evaluated to determine whether the ItemGroup should be used
+   */
+  Condition?: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const ItemGroup = makeTag<ItemGroupProps>("ItemGroup")
+
+export interface JCPAProps extends StringPropertyTypeProps {
 
 }
 
 export const JCPA = makeTag<JCPAProps>("JCPA")
 
-export interface KeywordProps {
+export interface KeyContainerProps {
+
+}
+
+export const KeyContainer = makeTag<KeyContainerProps>("KeyContainer")
+
+export interface KeyFileProps {
+
+}
+
+export const KeyFile = makeTag<KeyFileProps>("KeyFile")
+
+export interface KeywordProps extends StringPropertyTypeProps {
 
 }
 
 export const Keyword = makeTag<KeywordProps>("Keyword")
 
-export interface LangVersionProps {
+export interface LangVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const LangVersion = makeTag<LangVersionProps>("LangVersion")
 
+export interface LargeAddressAwareProps {
+
+}
+
+export const LargeAddressAware = makeTag<LargeAddressAwareProps>("LargeAddressAware")
+
 /**
  * Full path to a folder with package layout.
  */
-export interface LayoutDirProps {
+export interface LayoutDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -5130,11 +5363,29 @@ export interface LinkProps extends TaskTypeProps {
 
 export const Link = makeTag<LinkProps>("Link")
 
+export interface LinkErrorReportingProps {
+
+}
+
+export const LinkErrorReporting = makeTag<LinkErrorReportingProps>("LinkErrorReporting")
+
 export interface LinkIncrementalProps {
 
 }
 
 export const LinkIncremental = makeTag<LinkIncrementalProps>("LinkIncremental")
+
+export interface LinkStatusProps {
+
+}
+
+export const LinkStatus = makeTag<LinkStatusProps>("LinkStatus")
+
+export interface LinkTimeCodeGenerationProps {
+
+}
+
+export const LinkTimeCodeGeneration = makeTag<LinkTimeCodeGenerationProps>("LinkTimeCodeGeneration")
 
 export interface LocaleIDProps {
 
@@ -5151,7 +5402,7 @@ export const MakeAppxBundle = makeTag<MakeAppxBundleProps>("MakeAppxBundle")
 /**
  * Full path to makeappx.exe utility.
  */
-export interface MakeAppxExeFullPathProps {
+export interface MakeAppxExeFullPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -5170,37 +5421,8 @@ export interface MakeAppxPackProps extends MakeAppxWithOutputTypeProps {
 
 export const MakeAppxPack = makeTag<MakeAppxPackProps>("MakeAppxPack")
 
-interface MakeAppxWithOutputTypeProps extends TaskTypeProps {
+interface MakeAppxWithOutputTypeProps {
   Output: unknown
-  MakeAppxExeFullPath: unknown
-  Parameters?: unknown
-  ExitCode?: unknown
-  YieldDuringToolExecution?: boolean
-  UseCommandProcessor?: boolean
-  EchoOff?: boolean
-  ToolExe?: unknown
-  ToolPath?: unknown
-  EnvironmentVariables?: unknown
-  Timeout?: unknown
-  StandardErrorImportance?: unknown
-  StandardOutputImportance?: unknown
-  LogStandardErrorAsError?: boolean
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition?: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError?: boolean
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture?: unknown /* msb:architecture */
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime?: unknown /* msb:runtime */
 }
 
 export const MakeAppxWithOutputType = makeTag<MakeAppxWithOutputTypeProps>("MakeAppxWithOutputType")
@@ -5214,7 +5436,7 @@ export const MakeDir = makeTag<MakeDirProps>("MakeDir")
 /**
  * Full path to makepri.exe utility.
  */
-export interface MakePriExeFullPathProps {
+export interface MakePriExeFullPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -5226,7 +5448,7 @@ export const MakePriExeFullPath = makeTag<MakePriExeFullPathProps>("MakePriExeFu
 /**
  * Name of the binary containing managed WinMD in-proc implementation.
  */
-export interface ManagedWinmdInprocImplementationProps {
+export interface ManagedWinmdInprocImplementationProps extends StringPropertyTypeProps {
 
 }
 
@@ -5241,7 +5463,7 @@ export interface ManifestProps extends SimpleItemTypeProps {
 
 export const Manifest = makeTag<ManifestProps>("Manifest")
 
-export interface ManifestCertificateThumbprintProps {
+export interface ManifestCertificateThumbprintProps extends StringPropertyTypeProps {
 
 }
 
@@ -5253,11 +5475,17 @@ export interface ManifestFromManagedAssemblyProps {
 
 export const ManifestFromManagedAssembly = makeTag<ManifestFromManagedAssemblyProps>("ManifestFromManagedAssembly")
 
-export interface ManifestKeyFileProps {
+export interface ManifestKeyFileProps extends StringPropertyTypeProps {
 
 }
 
 export const ManifestKeyFile = makeTag<ManifestKeyFileProps>("ManifestKeyFile")
+
+export interface MapExportsProps {
+
+}
+
+export const MapExports = makeTag<MapExportsProps>("MapExports")
 
 /**
  * boolean
@@ -5270,6 +5498,24 @@ export interface MapFileExtensionsProps {
  * boolean
  */
 export const MapFileExtensions = makeTag<MapFileExtensionsProps>("MapFileExtensions")
+
+export interface MapFileNameProps {
+
+}
+
+export const MapFileName = makeTag<MapFileNameProps>("MapFileName")
+
+export interface MergedIDLBaseFileNameProps {
+
+}
+
+export const MergedIDLBaseFileName = makeTag<MergedIDLBaseFileNameProps>("MergedIDLBaseFileName")
+
+export interface MergeSectionsProps {
+
+}
+
+export const MergeSections = makeTag<MergeSectionsProps>("MergeSections")
 
 export interface MessageProps extends TaskTypeProps {
   Importance?: unknown /* msb:importance */
@@ -5347,6 +5593,12 @@ export interface MIDLProps extends TaskTypeProps {
 
 export const MIDL = makeTag<MIDLProps>("MIDL")
 
+export interface MidlCommandFileProps {
+
+}
+
+export const MidlCommandFile = makeTag<MidlCommandFileProps>("MidlCommandFile")
+
 export interface MinimalRebuildProps {
 
 }
@@ -5356,7 +5608,7 @@ export const MinimalRebuild = makeTag<MinimalRebuildProps>("MinimalRebuild")
 /**
  * Matches the expression "\d\.\d\.\d\.\d"
  */
-export interface MinimumRequiredVersionProps {
+export interface MinimumRequiredVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5365,7 +5617,7 @@ export interface MinimumRequiredVersionProps {
  */
 export const MinimumRequiredVersion = makeTag<MinimumRequiredVersionProps>("MinimumRequiredVersion")
 
-export interface MinimumVisualStudioVersionProps {
+export interface MinimumVisualStudioVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5376,6 +5628,12 @@ export interface MkTypLibCompatibleProps {
 }
 
 export const MkTypLibCompatible = makeTag<MkTypLibCompatibleProps>("MkTypLibCompatible")
+
+export interface ModuleDefinitionFileProps {
+
+}
+
+export const ModuleDefinitionFile = makeTag<ModuleDefinitionFileProps>("ModuleDefinitionFile")
 
 export interface MoveProps extends TaskTypeProps {
   DestinationFiles?: unknown
@@ -5404,7 +5662,7 @@ export interface MSBuildProps extends TaskTypeProps {
 
 export const MSBuild = makeTag<MSBuildProps>("MSBuild")
 
-export interface MSBuildAllProjectsProps {
+export interface MSBuildAllProjectsProps extends StringPropertyTypeProps {
 
 }
 
@@ -5413,7 +5671,7 @@ export const MSBuildAllProjects = makeTag<MSBuildAllProjectsProps>("MSBuildAllPr
 /**
  * Indicates whether to treat all warnings as errors when building a project.
  */
-export interface MSBuildTreatWarningsAsErrorsProps {
+export interface MSBuildTreatWarningsAsErrorsProps extends StringPropertyTypeProps {
 
 }
 
@@ -5425,7 +5683,7 @@ export const MSBuildTreatWarningsAsErrors = makeTag<MSBuildTreatWarningsAsErrors
 /**
  * Indicates a semicolon delimited list of warnings to treat as errors when building a project.
  */
-export interface MSBuildWarningsAsErrorsProps {
+export interface MSBuildWarningsAsErrorsProps extends StringPropertyTypeProps {
 
 }
 
@@ -5437,7 +5695,7 @@ export const MSBuildWarningsAsErrors = makeTag<MSBuildWarningsAsErrorsProps>("MS
 /**
  * Indicates a semicolon delimited list of warnings to treat as low importance messages when building a project.
  */
-export interface MSBuildWarningsAsMessagesProps {
+export interface MSBuildWarningsAsMessagesProps extends StringPropertyTypeProps {
 
 }
 
@@ -5445,6 +5703,12 @@ export interface MSBuildWarningsAsMessagesProps {
  * Indicates a semicolon delimited list of warnings to treat as low importance messages when building a project.
  */
 export const MSBuildWarningsAsMessages = makeTag<MSBuildWarningsAsMessagesProps>("MSBuildWarningsAsMessages")
+
+export interface MSDOSStubFileNameProps {
+
+}
+
+export const MSDOSStubFileName = makeTag<MSDOSStubFileNameProps>("MSDOSStubFileName")
 
 export interface MtProps extends TaskTypeProps {
   AcceptableNonZeroExitCodes?: unknown
@@ -5498,7 +5762,7 @@ export interface MultiProcessorCompilationProps {
 
 export const MultiProcessorCompilation = makeTag<MultiProcessorCompilationProps>("MultiProcessorCompilation")
 
-export interface MyTypeProps {
+export interface MyTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -5522,7 +5786,7 @@ export const NativeReference = makeTag<NativeReferenceProps>("NativeReference")
 /**
  * The locale ID for the NuGet package
  */
-export interface NeutralLanguageProps {
+export interface NeutralLanguageProps extends StringPropertyTypeProps {
 
 }
 
@@ -5531,7 +5795,7 @@ export interface NeutralLanguageProps {
  */
 export const NeutralLanguage = makeTag<NeutralLanguageProps>("NeutralLanguage")
 
-export interface NoConfigProps {
+export interface NoConfigProps extends StringPropertyTypeProps {
 
 }
 
@@ -5549,7 +5813,7 @@ export interface NoneProps extends SimpleItemTypeProps {
  */
 export const None = makeTag<NoneProps>("None")
 
-export interface NoStandardLibrariesProps {
+export interface NoStandardLibrariesProps extends StringPropertyTypeProps {
 
 }
 
@@ -5570,7 +5834,7 @@ export const NoStdLib = makeTag<NoStdLibProps>("NoStdLib")
 /**
  * Comma separated list of disabled warnings
  */
-export interface NoWarnProps {
+export interface NoWarnProps extends StringPropertyTypeProps {
 
 }
 
@@ -5591,7 +5855,13 @@ export interface NullableProps {
  */
 export const Nullable = makeTag<NullableProps>("Nullable")
 
-export interface OldToolsVersionProps {
+export interface NullTerminateStringsProps {
+
+}
+
+export const NullTerminateStrings = makeTag<NullTerminateStringsProps>("NullTerminateStrings")
+
+export interface OldToolsVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5602,6 +5872,23 @@ export interface OmitDefaultLibNameProps {
 }
 
 export const OmitDefaultLibName = makeTag<OmitDefaultLibNameProps>("OmitDefaultLibName")
+
+export interface OnErrorProps {
+  /**
+   * Optional expression evaluated to determine whether the targets should be executed
+   */
+  Condition?: string
+  /**
+   * Semi-colon separated list of targets to execute
+   */
+  ExecuteTargets: unknown /* msb:non_empty_string */
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const OnError = makeTag<OnErrorProps>("OnError")
 
 /**
  * boolean
@@ -5639,10 +5926,16 @@ export interface OptimizeProps {
  */
 export const Optimize = makeTag<OptimizeProps>("Optimize")
 
+export interface OptimizeReferencesProps {
+
+}
+
+export const OptimizeReferences = makeTag<OptimizeReferencesProps>("OptimizeReferences")
+
 /**
  * Option Compare setting (Text or Binary)
  */
-export interface OptionCompareProps {
+export interface OptionCompareProps extends StringPropertyTypeProps {
 
 }
 
@@ -5654,7 +5947,7 @@ export const OptionCompare = makeTag<OptionCompareProps>("OptionCompare")
 /**
  * Should Option Explicit be set (On or Off)
  */
-export interface OptionExplicitProps {
+export interface OptionExplicitProps extends StringPropertyTypeProps {
 
 }
 
@@ -5666,7 +5959,7 @@ export const OptionExplicit = makeTag<OptionExplicitProps>("OptionExplicit")
 /**
  * Should Option Infer be set (On or Off)
  */
-export interface OptionInferProps {
+export interface OptionInferProps extends StringPropertyTypeProps {
 
 }
 
@@ -5678,7 +5971,7 @@ export const OptionInfer = makeTag<OptionInferProps>("OptionInfer")
 /**
  * Should Option Strict be set (On or Off)
  */
-export interface OptionStrictProps {
+export interface OptionStrictProps extends StringPropertyTypeProps {
 
 }
 
@@ -5687,13 +5980,19 @@ export interface OptionStrictProps {
  */
 export const OptionStrict = makeTag<OptionStrictProps>("OptionStrict")
 
-export interface OSVersionProps {
+export interface OSVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const OSVersion = makeTag<OSVersionProps>("OSVersion")
 
-export interface OutDirProps {
+export interface OtherwiseProps {
+
+}
+
+export const Otherwise = makeTag<OtherwiseProps>("Otherwise")
+
+export interface OutDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -5732,6 +6031,12 @@ export interface OutputDirectoryProps {
 
 export const OutputDirectory = makeTag<OutputDirectoryProps>("OutputDirectory")
 
+export interface OutputFileProps {
+
+}
+
+export const OutputFile = makeTag<OutputFileProps>("OutputFile")
+
 export interface OutputManifestFileProps {
 
 }
@@ -5741,7 +6046,7 @@ export const OutputManifestFile = makeTag<OutputManifestFileProps>("OutputManife
 /**
  * Path to output folder, with trailing slash
  */
-export interface OutputPathProps {
+export interface OutputPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -5765,7 +6070,7 @@ export const Outputs = makeTag<OutputsProps>("Outputs")
 /**
  * Type of output to generate (WinExe, Exe, or Library)
  */
-export interface OutputTypeProps {
+export interface OutputTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -5777,7 +6082,7 @@ export const OutputType = makeTag<OutputTypeProps>("OutputType")
 /**
  * Overwrite Store Submission that has been queued by a previous build.
  */
-export interface OverwritePendingSubmissionProps {
+export interface OverwritePendingSubmissionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5789,7 +6094,7 @@ export const OverwritePendingSubmission = makeTag<OverwritePendingSubmissionProp
 /**
  * App package certificate key file.
  */
-export interface PackageCertificateKeyFileProps {
+export interface PackageCertificateKeyFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -5801,7 +6106,7 @@ export const PackageCertificateKeyFile = makeTag<PackageCertificateKeyFileProps>
 /**
  * The URL for a 64x64 image with transparent background to use as the icon for the NuGet package in UI display
  */
-export interface PackageIconUrlProps {
+export interface PackageIconUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -5813,7 +6118,7 @@ export const PackageIconUrl = makeTag<PackageIconUrlProps>("PackageIconUrl")
 /**
  * The case-insensitive NuGet package identifier, which must be unique across nuget.org or whatever gallery the NuGet package will reside in. IDs may not contain spaces or characters that are not valid for a URL, and generally follow .NET namespace rules.
  */
-export interface PackageIdProps {
+export interface PackageIdProps extends StringPropertyTypeProps {
 
 }
 
@@ -5825,7 +6130,7 @@ export const PackageId = makeTag<PackageIdProps>("PackageId")
 /**
  * The project license's SPDX identifier. Only OSI and FSF approved licenses can use an identifier. Other licenses should use PackageLicenseFile.
  */
-export interface PackageLicenseExpressionProps {
+export interface PackageLicenseExpressionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5837,7 +6142,7 @@ export const PackageLicenseExpression = makeTag<PackageLicenseExpressionProps>("
 /**
  * A path to the package's license file. Should only be used when the package doesn't use an OSI or FSF approved license.
  */
-export interface PackageLicenseFileProps {
+export interface PackageLicenseFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -5861,7 +6166,7 @@ export const PackageOutputPath = makeTag<PackageOutputPathProps>("PackageOutputP
 /**
  * The URL for the NuGet package's home page, often shown in UI displays as well as nuget.org
  */
-export interface PackageProjectUrlProps {
+export interface PackageProjectUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -5916,7 +6221,7 @@ export const PackageReference = makeTag<PackageReferenceProps>("PackageReference
 /**
  * A description of the changes made in this release of the NuGet package, often used in UI like the Updates tab of the Visual Studio Package Manager in place of the package description
  */
-export interface PackageReleaseNotesProps {
+export interface PackageReleaseNotesProps extends StringPropertyTypeProps {
 
 }
 
@@ -5940,7 +6245,7 @@ export const PackageRequireLicenseAcceptance = makeTag<PackageRequireLicenseAcce
 /**
  * A space-delimited list of tags and keywords that describe the NuGet package and aid discoverability of NuGet packages through search and filtering mechanisms
  */
-export interface PackageTagsProps {
+export interface PackageTagsProps extends StringPropertyTypeProps {
 
 }
 
@@ -5964,7 +6269,7 @@ export const PackageTargetFallback = makeTag<PackageTargetFallbackProps>("Packag
 /**
  * Indicates what the intended package use is, e.g. .NET CLI global tool, standard dependency, etc.
  */
-export interface PackageTypeProps {
+export interface PackageTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -5976,7 +6281,7 @@ export const PackageType = makeTag<PackageTypeProps>("PackageType")
 /**
  * Numeric value of the NuGet package version in the format major.minor.patch pattern (e.g. 1.0.1). Version numbers may include a pre-release suffix (e.g. 1.0.1-beta)
  */
-export interface PackageVersionProps {
+export interface PackageVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -5988,7 +6293,7 @@ export const PackageVersion = makeTag<PackageVersionProps>("PackageVersion")
 /**
  * Full path to a text file containing packaging directory writes log.
  */
-export interface PackagingDirectoryWritesLogPathProps {
+export interface PackagingDirectoryWritesLogPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6000,7 +6305,7 @@ export const PackagingDirectoryWritesLogPath = makeTag<PackagingDirectoryWritesL
 /**
  * Full path to a text file containing packaging file writes log.
  */
-export interface PackagingFileWritesLogPathProps {
+export interface PackagingFileWritesLogPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6037,6 +6342,12 @@ export interface PageProps extends SimpleItemTypeProps {
  */
 export const Page = makeTag<PageProps>("Page")
 
+export interface ParameterGroupProps {
+
+}
+
+export const ParameterGroup = makeTag<ParameterGroupProps>("ParameterGroup")
+
 export interface ParsePlatformSpecificBundleArtifactsListsProps extends TaskTypeProps {
   Files: unknown
   Artifacts?: unknown
@@ -6047,7 +6358,7 @@ export const ParsePlatformSpecificBundleArtifactsLists = makeTag<ParsePlatformSp
 /**
  * Full path to pdbcopy.exe utility.
  */
-export interface PdbCopyExeFullPathProps {
+export interface PdbCopyExeFullPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6056,25 +6367,25 @@ export interface PdbCopyExeFullPathProps {
  */
 export const PdbCopyExeFullPath = makeTag<PdbCopyExeFullPathProps>("PdbCopyExeFullPath")
 
-export interface PlatformProps {
+export interface PlatformProps extends StringPropertyTypeProps {
 
 }
 
 export const Platform = makeTag<PlatformProps>("Platform")
 
-export interface PlatformFamilyNameProps {
+export interface PlatformFamilyNameProps extends StringPropertyTypeProps {
 
 }
 
 export const PlatformFamilyName = makeTag<PlatformFamilyNameProps>("PlatformFamilyName")
 
-export interface PlatformIDProps {
+export interface PlatformIDProps extends StringPropertyTypeProps {
 
 }
 
 export const PlatformID = makeTag<PlatformIDProps>("PlatformID")
 
-export interface PlatformNameProps {
+export interface PlatformNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6083,7 +6394,7 @@ export const PlatformName = makeTag<PlatformNameProps>("PlatformName")
 /**
  * Full path to a folder where platform-specific bundle artifact list files are stored.
  */
-export interface PlatformSpecificBundleArtifactsListDirProps {
+export interface PlatformSpecificBundleArtifactsListDirProps extends StringPropertyTypeProps {
 
 }
 
@@ -6095,7 +6406,7 @@ export const PlatformSpecificBundleArtifactsListDir = makeTag<PlatformSpecificBu
 /**
  * Name of the folder where platform-specific bundle artifact lists are stored.
  */
-export interface PlatformSpecificBundleArtifactsListDirNameProps {
+export interface PlatformSpecificBundleArtifactsListDirNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6104,13 +6415,13 @@ export interface PlatformSpecificBundleArtifactsListDirNameProps {
  */
 export const PlatformSpecificBundleArtifactsListDirName = makeTag<PlatformSpecificBundleArtifactsListDirNameProps>("PlatformSpecificBundleArtifactsListDirName")
 
-export interface PlatformTargetProps {
+export interface PlatformTargetProps extends StringPropertyTypeProps {
 
 }
 
 export const PlatformTarget = makeTag<PlatformTargetProps>("PlatformTarget")
 
-export interface PlatformToolsetProps {
+export interface PlatformToolsetProps extends StringPropertyTypeProps {
 
 }
 
@@ -6131,7 +6442,7 @@ export const PlatformVersionDescription = makeTag<PlatformVersionDescriptionProp
 /**
  * Command line to be run at the end of build
  */
-export interface PostBuildEventProps {
+export interface PostBuildEventProps extends StringPropertyTypeProps {
 
 }
 
@@ -6143,7 +6454,7 @@ export const PostBuildEvent = makeTag<PostBuildEventProps>("PostBuildEvent")
 /**
  * Command line to be run at the start of build
  */
-export interface PreBuildEventProps {
+export interface PreBuildEventProps extends StringPropertyTypeProps {
 
 }
 
@@ -6200,6 +6511,12 @@ export interface PreserveCompilationContextProps {
  */
 export const PreserveCompilationContext = makeTag<PreserveCompilationContextProps>("PreserveCompilationContext")
 
+export interface PreventDllBindingProps {
+
+}
+
+export const PreventDllBinding = makeTag<PreventDllBindingProps>("PreventDllBinding")
+
 /**
  * String resources to be indexed in app package's resource index.
  */
@@ -6221,7 +6538,7 @@ export const ProduceReferenceAssembly = makeTag<ProduceReferenceAssemblyProps>("
 /**
  * Product name information for the assembly manifest
  */
-export interface ProductProps {
+export interface ProductProps extends StringPropertyTypeProps {
 
 }
 
@@ -6230,17 +6547,35 @@ export interface ProductProps {
  */
 export const Product = makeTag<ProductProps>("Product")
 
-export interface ProductNameProps {
+export interface ProductNameProps extends StringPropertyTypeProps {
 
 }
 
 export const ProductName = makeTag<ProductNameProps>("ProductName")
 
-export interface ProductVersionProps {
+export interface ProductVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const ProductVersion = makeTag<ProductVersionProps>("ProductVersion")
+
+export interface ProfileProps {
+
+}
+
+export const Profile = makeTag<ProfileProps>("Profile")
+
+export interface ProfileGuidedDatabaseProps {
+
+}
+
+export const ProfileGuidedDatabase = makeTag<ProfileGuidedDatabaseProps>("ProfileGuidedDatabase")
+
+export interface ProgramDatabaseFileProps {
+
+}
+
+export const ProgramDatabaseFile = makeTag<ProgramDatabaseFileProps>("ProgramDatabaseFile")
 
 /**
  * ProGuard configuration files to be used within a Xamarin.Android project.
@@ -6299,7 +6634,13 @@ export interface ProjectConfigurationProps extends SimpleItemTypeProps {
 
 export const ProjectConfiguration = makeTag<ProjectConfigurationProps>("ProjectConfiguration")
 
-export interface ProjectGuidProps {
+export interface ProjectExtensionsProps {
+
+}
+
+export const ProjectExtensions = makeTag<ProjectExtensionsProps>("ProjectExtensions")
+
+export interface ProjectGuidProps extends StringPropertyTypeProps {
 
 }
 
@@ -6314,7 +6655,7 @@ export const ProjectPriFile = makeTag<ProjectPriFileProps>("ProjectPriFile")
 /**
  * File name to use for project-specific resource index file (PRI).
  */
-export interface ProjectPriFileNameProps {
+export interface ProjectPriFileNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6326,7 +6667,7 @@ export const ProjectPriFileName = makeTag<ProjectPriFileNameProps>("ProjectPriFi
 /**
  * Full path to project-specific resource index file (PRI).
  */
-export interface ProjectPriFullPathProps {
+export interface ProjectPriFullPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6338,7 +6679,7 @@ export const ProjectPriFullPath = makeTag<ProjectPriFullPathProps>("ProjectPriFu
 /**
  * Name of the resource index used in the generated .pri file.
  */
-export interface ProjectPriIndexNameProps {
+export interface ProjectPriIndexNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6362,13 +6703,13 @@ export interface ProjectReferenceProps extends SimpleItemTypeProps {
  */
 export const ProjectReference = makeTag<ProjectReferenceProps>("ProjectReference")
 
-export interface ProjectTypeProps {
+export interface ProjectTypeProps extends StringPropertyTypeProps {
 
 }
 
 export const ProjectType = makeTag<ProjectTypeProps>("ProjectType")
 
-export interface ProjectTypeGuidsProps {
+export interface ProjectTypeGuidsProps extends StringPropertyTypeProps {
 
 }
 
@@ -6379,6 +6720,19 @@ export interface PropertyProps {
 }
 
 export const Property = makeTag<PropertyProps>("Property")
+
+export interface PropertyGroupProps {
+  /**
+   * Optional expression evaluated to determine whether the PropertyGroup should be used
+   */
+  Condition?: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const PropertyGroup = makeTag<PropertyGroupProps>("PropertyGroup")
 
 export interface ProxyFileNameProps {
 
@@ -6398,7 +6752,7 @@ export interface PublishAotProps {
  */
 export const PublishAot = makeTag<PublishAotProps>("PublishAot")
 
-export interface PublisherNameProps {
+export interface PublisherNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6446,11 +6800,17 @@ export interface PublishTrimmedProps {
  */
 export const PublishTrimmed = makeTag<PublishTrimmedProps>("PublishTrimmed")
 
-export interface PublishUrlProps {
+export interface PublishUrlProps extends StringPropertyTypeProps {
 
 }
 
 export const PublishUrl = makeTag<PublishUrlProps>("PublishUrl")
+
+export interface RandomizedBaseAddressProps {
+
+}
+
+export const RandomizedBaseAddress = makeTag<RandomizedBaseAddressProps>("RandomizedBaseAddress")
 
 /**
  * Indicates whether Razor files should be compiled at build time.
@@ -6479,7 +6839,7 @@ export const RazorCompileOnPublish = makeTag<RazorCompileOnPublishProps>("RazorC
 /**
  * Directory for Razor output.
  */
-export interface RazorOutputPathProps {
+export interface RazorOutputPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6491,7 +6851,7 @@ export const RazorOutputPath = makeTag<RazorOutputPathProps>("RazorOutputPath")
 /**
  * File name (without extension) of the assembly produced by Razor.
  */
-export interface RazorTargetNameProps {
+export interface RazorTargetNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -6542,7 +6902,7 @@ export interface ReadLinesFromFileProps extends TaskTypeProps {
 
 export const ReadLinesFromFile = makeTag<ReadLinesFromFileProps>("ReadLinesFromFile")
 
-export interface RecursePathProps {
+export interface RecursePathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6572,7 +6932,7 @@ export const Reference = makeTag<ReferenceProps>("Reference")
 /**
  * Semi-colon separated list of folders to search during reference resolution
  */
-export interface ReferencePathProps {
+export interface ReferencePathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6590,11 +6950,17 @@ export interface RegisterAssemblyProps extends TaskTypeProps {
 
 export const RegisterAssembly = makeTag<RegisterAssemblyProps>("RegisterAssembly")
 
-export interface RegisterForComInteropProps {
+export interface RegisterForComInteropProps extends StringPropertyTypeProps {
 
 }
 
 export const RegisterForComInterop = makeTag<RegisterForComInteropProps>("RegisterForComInterop")
+
+export interface RegisterOutputProps {
+
+}
+
+export const RegisterOutput = makeTag<RegisterOutputProps>("RegisterOutput")
 
 export interface RegistrarScriptFileProps {
 
@@ -6602,13 +6968,13 @@ export interface RegistrarScriptFileProps {
 
 export const RegistrarScriptFile = makeTag<RegistrarScriptFileProps>("RegistrarScriptFile")
 
-export interface RemoteDebugEnabledProps {
+export interface RemoteDebugEnabledProps extends StringPropertyTypeProps {
 
 }
 
 export const RemoteDebugEnabled = makeTag<RemoteDebugEnabledProps>("RemoteDebugEnabled")
 
-export interface RemoteDebugMachineProps {
+export interface RemoteDebugMachineProps extends StringPropertyTypeProps {
 
 }
 
@@ -6652,7 +7018,7 @@ export interface RemoveDuplicateSDKReferencesProps extends TaskTypeProps {
 
 export const RemoveDuplicateSDKReferences = makeTag<RemoveDuplicateSDKReferencesProps>("RemoveDuplicateSDKReferences")
 
-export interface RemoveIntegerChecksProps {
+export interface RemoveIntegerChecksProps extends StringPropertyTypeProps {
 
 }
 
@@ -6664,7 +7030,7 @@ export interface ReplacementsFileProps {
 
 export const ReplacementsFile = makeTag<ReplacementsFileProps>("ReplacementsFile")
 
-export interface ReportAnalyzerProps {
+export interface ReportAnalyzerProps extends StringPropertyTypeProps {
 
 }
 
@@ -6673,7 +7039,7 @@ export const ReportAnalyzer = makeTag<ReportAnalyzerProps>("ReportAnalyzer")
 /**
  * The type of the repository where the project is stored (e.g. git)
  */
-export interface RepositoryTypeProps {
+export interface RepositoryTypeProps extends StringPropertyTypeProps {
 
 }
 
@@ -6685,7 +7051,7 @@ export const RepositoryType = makeTag<RepositoryTypeProps>("RepositoryType")
 /**
  * The URL for the repository where the project is stored
  */
-export interface RepositoryUrlProps {
+export interface RepositoryUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -6713,7 +7079,7 @@ export const RequiresFramework35SP1Assembly = makeTag<RequiresFramework35SP1Asse
 /**
  * Full path to a folder containing resgen tool.
  */
-export interface ResgenToolPathProps {
+export interface ResgenToolPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -6865,7 +7231,7 @@ export interface ResourceOutputFileNameProps {
 
 export const ResourceOutputFileName = makeTag<ResourceOutputFileNameProps>("ResourceOutputFileName")
 
-export interface ResponseFileProps {
+export interface ResponseFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -6874,7 +7240,7 @@ export const ResponseFile = makeTag<ResponseFileProps>("ResponseFile")
 /**
  * The feeds that NuGet will use for restoring packages for this project.
  */
-export interface RestoreSourcesProps {
+export interface RestoreSourcesProps extends StringPropertyTypeProps {
 
 }
 
@@ -6883,7 +7249,7 @@ export interface RestoreSourcesProps {
  */
 export const RestoreSources = makeTag<RestoreSourcesProps>("RestoreSources")
 
-export interface RootNamespaceProps {
+export interface RootNamespaceProps extends StringPropertyTypeProps {
 
 }
 
@@ -6928,7 +7294,7 @@ export const RunAnalyzersDuringLiveAnalysis = makeTag<RunAnalyzersDuringLiveAnal
 /**
  * Indicates whether to run Code Analysis during the build.
  */
-export interface RunCodeAnalysisProps {
+export interface RunCodeAnalysisProps extends StringPropertyTypeProps {
 
 }
 
@@ -6937,7 +7303,7 @@ export interface RunCodeAnalysisProps {
  */
 export const RunCodeAnalysis = makeTag<RunCodeAnalysisProps>("RunCodeAnalysis")
 
-export interface RunPostBuildEventProps {
+export interface RunPostBuildEventProps extends StringPropertyTypeProps {
 
 }
 
@@ -6946,7 +7312,7 @@ export const RunPostBuildEvent = makeTag<RunPostBuildEventProps>("RunPostBuildEv
 /**
  * Runtime identifier supported by the project (e.g. win-x64)
  */
-export interface RuntimeIdentifierProps {
+export interface RuntimeIdentifierProps extends StringPropertyTypeProps {
 
 }
 
@@ -6958,7 +7324,7 @@ export const RuntimeIdentifier = makeTag<RuntimeIdentifierProps>("RuntimeIdentif
 /**
  * Semi-colon separated list of runtime identifiers supported by the project (e.g. win-x64;osx-x64;linux-x64)
  */
-export interface RuntimeIdentifiersProps {
+export interface RuntimeIdentifiersProps extends StringPropertyTypeProps {
 
 }
 
@@ -6982,7 +7348,7 @@ export const RuntimeTypeInfo = makeTag<RuntimeTypeInfoProps>("RuntimeTypeInfo")
 /**
  * Semi-colon separated list of culture names to preserve satellite resource assemblies during build and publish. Names must be a valid culture name (like en-US;it; or fr). If left empty, all satellite resource assemblies will be preserved. Defaults to empty.
  */
-export interface SatelliteResourceLanguagesProps {
+export interface SatelliteResourceLanguagesProps extends StringPropertyTypeProps {
 
 }
 
@@ -6991,54 +7357,31 @@ export interface SatelliteResourceLanguagesProps {
  */
 export const SatelliteResourceLanguages = makeTag<SatelliteResourceLanguagesProps>("SatelliteResourceLanguages")
 
-export interface SccLocalPathProps {
+export interface SccLocalPathProps extends StringPropertyTypeProps {
 
 }
 
 export const SccLocalPath = makeTag<SccLocalPathProps>("SccLocalPath")
 
-export interface SccProjectNameProps {
+export interface SccProjectNameProps extends StringPropertyTypeProps {
 
 }
 
 export const SccProjectName = makeTag<SccProjectNameProps>("SccProjectName")
 
-export interface SccProviderProps {
+export interface SccProviderProps extends StringPropertyTypeProps {
 
 }
 
 export const SccProvider = makeTag<SccProviderProps>("SccProvider")
 
-interface SchemaItemTypeProps extends SimpleItemTypeProps {
-  /**
-   * Optional expression evaluated to determine whether the items should be evaluated
-   */
-  Condition?: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to include in this item list
-   */
-  Include?: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to exclude from the Include list
-   */
-  Exclude?: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to remove from the existing list contents
-   */
-  Remove?: string
-  /**
-   * Semi-colon separated list of files (wildcards are allowed) or other item names to be updated with the metadata from contained in this xml element
-   */
-  Update?: string
-  /**
-   * Optional expression. Used to identify or order system and user elements
-   */
-  Label?: string
+interface SchemaItemTypeProps {
+
 }
 
 export const SchemaItemType = makeTag<SchemaItemTypeProps>("SchemaItemType")
 
-export interface SchemaVersionProps {
+export interface SchemaVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -7059,7 +7402,13 @@ export interface SDKReferenceProps extends SimpleItemTypeProps {
  */
 export const SDKReference = makeTag<SDKReferenceProps>("SDKReference")
 
-export interface SecureScopingProps {
+export interface SectionAlignmentProps {
+
+}
+
+export const SectionAlignment = makeTag<SectionAlignmentProps>("SectionAlignment")
+
+export interface SecureScopingProps extends StringPropertyTypeProps {
 
 }
 
@@ -7083,7 +7432,7 @@ export interface ServerStubFileProps {
 
 export const ServerStubFile = makeTag<ServerStubFileProps>("ServerStubFile")
 
-export interface ServiceProps {
+export interface ServiceProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -7148,6 +7497,12 @@ export interface ShowIncludesProps {
 
 export const ShowIncludes = makeTag<ShowIncludesProps>("ShowIncludes")
 
+export interface ShowProgressProps {
+
+}
+
+export const ShowProgress = makeTag<ShowProgressProps>("ShowProgress")
+
 export interface SignAppxPackageProps extends TaskTypeProps {
   AppxPackageToSign: unknown
   CertificateThumbprint?: unknown
@@ -7169,7 +7524,7 @@ export const SignAppxPackage = makeTag<SignAppxPackageProps>("SignAppxPackage")
 /**
  * Full path to signtool.exe utility.
  */
-export interface SignAppxPackageExeFullPathProps {
+export interface SignAppxPackageExeFullPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -7178,7 +7533,7 @@ export interface SignAppxPackageExeFullPathProps {
  */
 export const SignAppxPackageExeFullPath = makeTag<SignAppxPackageExeFullPathProps>("SignAppxPackageExeFullPath")
 
-export interface SignAssemblyProps {
+export interface SignAssemblyProps extends StringPropertyTypeProps {
 
 }
 
@@ -7195,7 +7550,7 @@ export interface SignFileProps extends TaskTypeProps {
 
 export const SignFile = makeTag<SignFileProps>("SignFile")
 
-export interface SignManifestsProps {
+export interface SignManifestsProps extends StringPropertyTypeProps {
 
 }
 
@@ -7230,55 +7585,73 @@ interface SimpleItemTypeProps {
 
 export const SimpleItemType = makeTag<SimpleItemTypeProps>("SimpleItemType")
 
-export interface SolutionDirProps {
+export interface SolutionDirProps extends StringPropertyTypeProps {
 
 }
 
 export const SolutionDir = makeTag<SolutionDirProps>("SolutionDir")
 
-export interface SolutionExtProps {
+export interface SolutionExtProps extends StringPropertyTypeProps {
 
 }
 
 export const SolutionExt = makeTag<SolutionExtProps>("SolutionExt")
 
-export interface SolutionFileNameProps {
+export interface SolutionFileNameProps extends StringPropertyTypeProps {
 
 }
 
 export const SolutionFileName = makeTag<SolutionFileNameProps>("SolutionFileName")
 
-export interface SolutionNameProps {
+export interface SolutionNameProps extends StringPropertyTypeProps {
 
 }
 
 export const SolutionName = makeTag<SolutionNameProps>("SolutionName")
 
-export interface SolutionPathProps {
+export interface SolutionPathProps extends StringPropertyTypeProps {
 
 }
 
 export const SolutionPath = makeTag<SolutionPathProps>("SolutionPath")
 
-export interface StartActionProps {
+export interface SpecifySectionAttributesProps {
+
+}
+
+export const SpecifySectionAttributes = makeTag<SpecifySectionAttributesProps>("SpecifySectionAttributes")
+
+export interface StackCommitSizeProps {
+
+}
+
+export const StackCommitSize = makeTag<StackCommitSizeProps>("StackCommitSize")
+
+export interface StackReserveSizeProps {
+
+}
+
+export const StackReserveSize = makeTag<StackReserveSizeProps>("StackReserveSize")
+
+export interface StartActionProps extends StringPropertyTypeProps {
 
 }
 
 export const StartAction = makeTag<StartActionProps>("StartAction")
 
-export interface StartArgumentsProps {
+export interface StartArgumentsProps extends StringPropertyTypeProps {
 
 }
 
 export const StartArguments = makeTag<StartArgumentsProps>("StartArguments")
 
-export interface StartPageProps {
+export interface StartPageProps extends StringPropertyTypeProps {
 
 }
 
 export const StartPage = makeTag<StartPageProps>("StartPage")
 
-export interface StartProgramProps {
+export interface StartProgramProps extends StringPropertyTypeProps {
 
 }
 
@@ -7287,7 +7660,7 @@ export const StartProgram = makeTag<StartProgramProps>("StartProgram")
 /**
  * Type that contains the main entry point
  */
-export interface StartupObjectProps {
+export interface StartupObjectProps extends StringPropertyTypeProps {
 
 }
 
@@ -7296,19 +7669,19 @@ export interface StartupObjectProps {
  */
 export const StartupObject = makeTag<StartupObjectProps>("StartupObject")
 
-export interface StartURLProps {
+export interface StartURLProps extends StringPropertyTypeProps {
 
 }
 
 export const StartURL = makeTag<StartURLProps>("StartURL")
 
-export interface StartWithIEProps {
+export interface StartWithIEProps extends StringPropertyTypeProps {
 
 }
 
 export const StartWithIE = makeTag<StartWithIEProps>("StartWithIE")
 
-export interface StartWorkingDirectoryProps {
+export interface StartWorkingDirectoryProps extends StringPropertyTypeProps {
 
 }
 
@@ -7329,7 +7702,7 @@ export const StoreAssociationFile = makeTag<StoreAssociationFileProps>("StoreAss
 /**
  * Name of the store manifest file.
  */
-export interface StoreManifestNameProps {
+export interface StoreManifestNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -7341,7 +7714,7 @@ export const StoreManifestName = makeTag<StoreManifestNameProps>("StoreManifestN
 /**
  * Store manifest schema file.
  */
-export interface StoreManifestSchemaProps extends SimpleItemTypeProps {
+export interface StoreManifestSchemaProps extends SchemaItemTypeProps {
 
 }
 
@@ -7376,13 +7749,31 @@ export interface StructMemberAlignmentProps {
 
 export const StructMemberAlignment = makeTag<StructMemberAlignmentProps>("StructMemberAlignment")
 
-export interface SuiteNameProps {
+export interface SubSystemProps {
+
+}
+
+export const SubSystem = makeTag<SubSystemProps>("SubSystem")
+
+export interface SuiteNameProps extends StringPropertyTypeProps {
 
 }
 
 export const SuiteName = makeTag<SuiteNameProps>("SuiteName")
 
-export interface SupportUrlProps {
+export interface SupportNobindOfDelayLoadedDLLProps {
+
+}
+
+export const SupportNobindOfDelayLoadedDLL = makeTag<SupportNobindOfDelayLoadedDLLProps>("SupportNobindOfDelayLoadedDLL")
+
+export interface SupportUnloadOfDelayLoadedDLLProps {
+
+}
+
+export const SupportUnloadOfDelayLoadedDLL = makeTag<SupportUnloadOfDelayLoadedDLLProps>("SupportUnloadOfDelayLoadedDLL")
+
+export interface SupportUrlProps extends StringPropertyTypeProps {
 
 }
 
@@ -7406,13 +7797,70 @@ export interface SuppressStartupBannerProps {
 
 export const SuppressStartupBanner = makeTag<SuppressStartupBannerProps>("SuppressStartupBanner")
 
-export interface SuppressXamlWarningsProps {
+export interface SuppressXamlWarningsProps extends StringPropertyTypeProps {
 
 }
 
 export const SuppressXamlWarnings = makeTag<SuppressXamlWarningsProps>("SuppressXamlWarnings")
 
-export interface TargetCultureProps {
+export interface SwapRunFromCDProps {
+
+}
+
+export const SwapRunFromCD = makeTag<SwapRunFromCDProps>("SwapRunFromCD")
+
+export interface SwapRunFromNETProps {
+
+}
+
+export const SwapRunFromNET = makeTag<SwapRunFromNETProps>("SwapRunFromNET")
+
+export interface TargetProps {
+  /**
+   * Name of the target
+   */
+  Name: unknown /* msb:non_empty_string */
+  /**
+   * Optional semi-colon separated list of targets that should be run before this target
+   */
+  DependsOnTargets?: string
+  /**
+   * Optional semi-colon separated list of files that form inputs into this target. Their timestamps will be compared with the timestamps of files in Outputs to determine whether the Target is up to date
+   */
+  Inputs?: string
+  /**
+   * Optional semi-colon separated list of files that form outputs into this target. Their timestamps will be compared with the timestamps of files in Inputs to determine whether the Target is up to date
+   */
+  Outputs?: string
+  /**
+   * Optional expression evaluated to determine whether the Target and the targets it depends on should be run
+   */
+  Condition?: string
+  /**
+   * Optional expression evaluated to determine whether duplicate items in the Target's Returns should be removed before returning them. The default is not to eliminate duplicates.
+   */
+  KeepDuplicateOutputs?: string
+  /**
+   * Optional expression evaluated to determine which items generated by the target should be returned by the target. If there are no Returns attributes on Targets in the file, the Outputs attributes are used instead for this purpose.
+   */
+  Returns?: string
+  /**
+   * Optional semi-colon separated list of targets that this target should run before.
+   */
+  BeforeTargets?: string
+  /**
+   * Optional semi-colon separated list of targets that this target should run after.
+   */
+  AfterTargets?: string
+  /**
+   * Optional expression. Used to identify or order system and user elements
+   */
+  Label?: string
+}
+
+export const Target = makeTag<TargetProps>("Target")
+
+export interface TargetCultureProps extends StringPropertyTypeProps {
 
 }
 
@@ -7424,7 +7872,7 @@ export interface TargetEnvironmentProps {
 
 export const TargetEnvironment = makeTag<TargetEnvironmentProps>("TargetEnvironment")
 
-export interface TargetExtProps {
+export interface TargetExtProps extends StringPropertyTypeProps {
 
 }
 
@@ -7433,7 +7881,7 @@ export const TargetExt = makeTag<TargetExtProps>("TargetExt")
 /**
  * Framework that this project targets. Must be a Target Framework Moniker (e.g. net8.0)
  */
-export interface TargetFrameworkProps {
+export interface TargetFrameworkProps extends StringPropertyTypeProps {
 
 }
 
@@ -7442,7 +7890,7 @@ export interface TargetFrameworkProps {
  */
 export const TargetFramework = makeTag<TargetFrameworkProps>("TargetFramework")
 
-export interface TargetFrameworkProfileProps {
+export interface TargetFrameworkProfileProps extends StringPropertyTypeProps {
 
 }
 
@@ -7451,7 +7899,7 @@ export const TargetFrameworkProfile = makeTag<TargetFrameworkProfileProps>("Targ
 /**
  * Semi-colon separated list of frameworks that this project targets. Must be a Target Framework Moniker (e.g. net8.0;net461)
  */
-export interface TargetFrameworksProps {
+export interface TargetFrameworksProps extends StringPropertyTypeProps {
 
 }
 
@@ -7460,13 +7908,19 @@ export interface TargetFrameworksProps {
  */
 export const TargetFrameworks = makeTag<TargetFrameworksProps>("TargetFrameworks")
 
-export interface TargetFrameworkVersionProps {
+export interface TargetFrameworkVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const TargetFrameworkVersion = makeTag<TargetFrameworkVersionProps>("TargetFrameworkVersion")
 
-export interface TargetNameProps {
+export interface TargetMachineProps {
+
+}
+
+export const TargetMachine = makeTag<TargetMachineProps>("TargetMachine")
+
+export interface TargetNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -7484,13 +7938,13 @@ export interface TargetPlatformProps {
  */
 export const TargetPlatform = makeTag<TargetPlatformProps>("TargetPlatform")
 
-export interface TargetPlatformIdentifierProps {
+export interface TargetPlatformIdentifierProps extends StringPropertyTypeProps {
 
 }
 
 export const TargetPlatformIdentifier = makeTag<TargetPlatformIdentifierProps>("TargetPlatformIdentifier")
 
-export interface TargetPlatformMinVersionProps {
+export interface TargetPlatformMinVersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -7499,7 +7953,7 @@ export const TargetPlatformMinVersion = makeTag<TargetPlatformMinVersionProps>("
 /**
  * Full path to platform SDK root.
  */
-export interface TargetPlatformSdkRootOverrideProps {
+export interface TargetPlatformSdkRootOverrideProps extends StringPropertyTypeProps {
 
 }
 
@@ -7508,19 +7962,19 @@ export interface TargetPlatformSdkRootOverrideProps {
  */
 export const TargetPlatformSdkRootOverride = makeTag<TargetPlatformSdkRootOverrideProps>("TargetPlatformSdkRootOverride")
 
-export interface TargetPlatformVersionProps {
+export interface TargetPlatformVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const TargetPlatformVersion = makeTag<TargetPlatformVersionProps>("TargetPlatformVersion")
 
-export interface TargetZoneProps {
+export interface TargetZoneProps extends StringPropertyTypeProps {
 
 }
 
 export const TargetZone = makeTag<TargetZoneProps>("TargetZone")
 
-export interface TaskProps {
+export interface TaskProps extends TaskTypeProps {
   /**
    * Optional expression evaluated to determine whether the task should be executed
    */
@@ -7569,6 +8023,12 @@ export interface TelemetryProps extends TaskTypeProps {
 
 export const Telemetry = makeTag<TelemetryProps>("Telemetry")
 
+export interface TerminalServerAwareProps {
+
+}
+
+export const TerminalServerAware = makeTag<TerminalServerAwareProps>("TerminalServerAware")
+
 /**
  * Controls the set of extensions that are enabled. Note that 'AllMicrosoft' enables all extensions, even those with a restrictive license.
  */
@@ -7596,7 +8056,7 @@ export const TestingPlatformCaptureOutput = makeTag<TestingPlatformCaptureOutput
 /**
  * The command-line arguments to pass for the test executable. This is not supported by VSTest.
  */
-export interface TestingPlatformCommandLineArgumentsProps {
+export interface TestingPlatformCommandLineArgumentsProps extends StringPropertyTypeProps {
 
 }
 
@@ -7644,7 +8104,7 @@ export const TieredCompilation = makeTag<TieredCompilationProps>("TieredCompilat
 /**
  * A human-friendly title of the package, typically used in UI displays as on nuget.org and the Package Manager in Visual Studio. If not specified, the package ID is used instead.
  */
-export interface TitleProps {
+export interface TitleProps extends StringPropertyTypeProps {
 
 }
 
@@ -7682,7 +8142,7 @@ export const TlbImp = makeTag<TlbImpProps>("TlbImp")
 /**
  * Specifies the command that will invoke the tool after it's installed.
  */
-export interface ToolCommandNameProps {
+export interface ToolCommandNameProps extends StringPropertyTypeProps {
 
 }
 
@@ -7691,7 +8151,7 @@ export interface ToolCommandNameProps {
  */
 export const ToolCommandName = makeTag<ToolCommandNameProps>("ToolCommandName")
 
-interface ToolTaskTypeProps extends TaskTypeProps {
+interface ToolTaskTypeProps {
   ExitCode?: unknown
   YieldDuringToolExecution?: boolean
   UseCommandProcessor?: boolean
@@ -7703,22 +8163,6 @@ interface ToolTaskTypeProps extends TaskTypeProps {
   StandardErrorImportance?: unknown
   StandardOutputImportance?: unknown
   LogStandardErrorAsError?: boolean
-  /**
-   * Optional expression evaluated to determine whether the task should be executed
-   */
-  Condition?: string
-  /**
-   * Optional boolean indicating whether a recoverable task error should be ignored. Default false
-   */
-  ContinueOnError?: boolean
-  /**
-   * Defines the bitness of the task if it must be run specifically in a 32bit or 64bit process. If not specified, it will run with the bitness of the build process.  If there are multiple tasks defined in UsingTask with the same name but with different Architecture attribute values, the value of the Architecture attribute specified here will be used to match and select the correct task
-   */
-  Architecture?: unknown /* msb:architecture */
-  /**
-   * Defines the .NET runtime of the task. This must be specified if the task must run on a specific version of the .NET runtime. If not specified, the task will run on the runtime being used by the build process. If there are multiple tasks defined in UsingTask with the same name but with different Runtime attribute values, the value of the Runtime attribute specified here will be used to match and select the correct task
-   */
-  Runtime?: unknown /* msb:runtime */
 }
 
 export const ToolTaskType = makeTag<ToolTaskTypeProps>("ToolTaskType")
@@ -7733,13 +8177,19 @@ export interface TouchProps extends TaskTypeProps {
 
 export const Touch = makeTag<TouchProps>("Touch")
 
+export interface TreatLinkerWarningAsErrorsProps {
+
+}
+
+export const TreatLinkerWarningAsErrors = makeTag<TreatLinkerWarningAsErrorsProps>("TreatLinkerWarningAsErrors")
+
 export interface TreatSpecificWarningsAsErrorsProps {
 
 }
 
 export const TreatSpecificWarningsAsErrors = makeTag<TreatSpecificWarningsAsErrorsProps>("TreatSpecificWarningsAsErrors")
 
-export interface TreatWarningsAsErrorsProps {
+export interface TreatWarningsAsErrorsProps extends StringPropertyTypeProps {
 
 }
 
@@ -7748,7 +8198,7 @@ export const TreatWarningsAsErrors = makeTag<TreatWarningsAsErrorsProps>("TreatW
 /**
  * Assemblies that should not be trimmed (specify the assembly name without extension).
  */
-export interface TrimmerRootAssemblyProps {
+export interface TrimmerRootAssemblyProps extends StringPropertyTypeProps {
 
 }
 
@@ -7760,7 +8210,7 @@ export const TrimmerRootAssembly = makeTag<TrimmerRootAssemblyProps>("TrimmerRoo
 /**
  * XML files that specify assemblies, types, and their members that should not be trimmed.
  */
-export interface TrimmerRootDescriptorProps {
+export interface TrimmerRootDescriptorProps extends StringPropertyTypeProps {
 
 }
 
@@ -7781,7 +8231,7 @@ export interface TrustUrlParametersProps {
  */
 export const TrustUrlParameters = makeTag<TrustUrlParametersProps>("TrustUrlParameters")
 
-export interface TypeComplianceDiagnosticsProps {
+export interface TypeComplianceDiagnosticsProps extends StringPropertyTypeProps {
 
 }
 
@@ -7805,10 +8255,28 @@ export interface TypeLibraryNameProps {
 
 export const TypeLibraryName = makeTag<TypeLibraryNameProps>("TypeLibraryName")
 
+export interface TypeLibraryResourceIDProps {
+
+}
+
+export const TypeLibraryResourceID = makeTag<TypeLibraryResourceIDProps>("TypeLibraryResourceID")
+
+export interface UACExecutionLevelProps {
+
+}
+
+export const UACExecutionLevel = makeTag<UACExecutionLevelProps>("UACExecutionLevel")
+
+export interface UACUIAccessProps {
+
+}
+
+export const UACUIAccess = makeTag<UACUIAccessProps>("UACUIAccess")
+
 /**
  * Configures the created packages. Possible values are: StoreAndSideload (produces the appxupload and the sideloaded packages), StoreUpload (produces only the appxupload package), and SideloadOnly(produces only the packages for sideloading).
  */
-export interface UapAppxPackageBuildModeProps {
+export interface UapAppxPackageBuildModeProps extends StringPropertyTypeProps {
 
 }
 
@@ -7817,7 +8285,7 @@ export interface UapAppxPackageBuildModeProps {
  */
 export const UapAppxPackageBuildMode = makeTag<UapAppxPackageBuildModeProps>("UapAppxPackageBuildMode")
 
-export interface UICultureProps {
+export interface UICultureProps extends StringPropertyTypeProps {
 
 }
 
@@ -7873,7 +8341,7 @@ export interface UpdateFileHashesSearchPathProps {
 
 export const UpdateFileHashesSearchPath = makeTag<UpdateFileHashesSearchPathProps>("UpdateFileHashesSearchPath")
 
-export interface UpdateIntervalProps {
+export interface UpdateIntervalProps extends StringPropertyTypeProps {
 
 }
 
@@ -7882,7 +8350,7 @@ export const UpdateInterval = makeTag<UpdateIntervalProps>("UpdateInterval")
 /**
  * Hours, Days, or Weeks
  */
-export interface UpdateIntervalUnitsProps {
+export interface UpdateIntervalUnitsProps extends StringPropertyTypeProps {
 
 }
 
@@ -7914,7 +8382,7 @@ export const UpdateManifest = makeTag<UpdateManifestProps>("UpdateManifest")
 /**
  * Foreground or Background
  */
-export interface UpdateModeProps {
+export interface UpdateModeProps extends StringPropertyTypeProps {
 
 }
 
@@ -7947,13 +8415,13 @@ export interface UpdateRequiredProps {
  */
 export const UpdateRequired = makeTag<UpdateRequiredProps>("UpdateRequired")
 
-export interface UpdateUrlProps {
+export interface UpdateUrlProps extends StringPropertyTypeProps {
 
 }
 
 export const UpdateUrl = makeTag<UpdateUrlProps>("UpdateUrl")
 
-export interface UpgradeBackupLocationProps {
+export interface UpgradeBackupLocationProps extends StringPropertyTypeProps {
 
 }
 
@@ -8026,7 +8494,7 @@ export interface UseAppConfigForCompilerProps {
 
 export const UseAppConfigForCompiler = makeTag<UseAppConfigForCompilerProps>("UseAppConfigForCompiler")
 
-export interface UseApplicationTrustProps {
+export interface UseApplicationTrustProps extends StringPropertyTypeProps {
 
 }
 
@@ -8059,7 +8527,7 @@ export const UseFullPaths = makeTag<UseFullPathsProps>("UseFullPaths")
 /**
  * Flag indicating whether to enable incremental registration of the app layout.
  */
-export interface UseIncrementalAppxRegistrationProps {
+export interface UseIncrementalAppxRegistrationProps extends StringPropertyTypeProps {
 
 }
 
@@ -8068,13 +8536,13 @@ export interface UseIncrementalAppxRegistrationProps {
  */
 export const UseIncrementalAppxRegistration = makeTag<UseIncrementalAppxRegistrationProps>("UseIncrementalAppxRegistration")
 
-export interface UseOfAtlProps {
+export interface UseOfAtlProps extends StringPropertyTypeProps {
 
 }
 
 export const UseOfAtl = makeTag<UseOfAtlProps>("UseOfAtl")
 
-export interface UseOfMfcProps {
+export interface UseOfMfcProps extends StringPropertyTypeProps {
 
 }
 
@@ -8095,7 +8563,7 @@ export const UseRazorBuildServer = makeTag<UseRazorBuildServerProps>("UseRazorBu
 /**
  * The ID that will be used to locate the file storing secret configuration values for this project at development time.
  */
-export interface UserSecretsIdProps {
+export interface UserSecretsIdProps extends StringPropertyTypeProps {
 
 }
 
@@ -8110,7 +8578,7 @@ export interface UseUnicodeForAssemblerListingProps {
 
 export const UseUnicodeForAssemblerListing = makeTag<UseUnicodeForAssemblerListingProps>("UseUnicodeForAssemblerListing")
 
-export interface UseVSHostingProcessProps {
+export interface UseVSHostingProcessProps extends StringPropertyTypeProps {
 
 }
 
@@ -8163,7 +8631,40 @@ export interface UsingProps extends SimpleItemTypeProps {
  */
 export const Using = makeTag<UsingProps>("Using")
 
-export interface UTF8OutputProps {
+export interface UsingTaskProps {
+  /**
+   * Optional expression evaluated to determine whether the declaration should be evaluated
+   */
+  Condition?: string
+  /**
+   * Optional name of assembly containing the task. Either AssemblyName or AssemblyFile must be used
+   */
+  AssemblyName?: unknown /* msb:non_empty_string */
+  /**
+   * Optional path to assembly containing the task. Either AssemblyName or AssemblyFile must be used
+   */
+  AssemblyFile?: unknown /* msb:non_empty_string */
+  /**
+   * Name of task class in the assembly
+   */
+  TaskName: unknown /* msb:non_empty_string */
+  /**
+   * Name of the task factory class in the assembly
+   */
+  TaskFactory?: unknown /* msb:non_empty_string */
+  /**
+   * Defines the architecture of the task host that this task should be run in.  Currently supported values:  x86, x64, CurrentArchitecture, and * (any).  If Architecture is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the architecture of the parent MSBuild process
+   */
+  Architecture?: unknown /* msb:architecture */
+  /**
+   * Defines the .NET runtime version of the task host that this task should be run in.  Currently supported values:  CLR2, CLR4, NET, CurrentRuntime, and * (any).  If Runtime is not specified, either the task will be run within the MSBuild process, or the task host will be launched using the runtime of the parent MSBuild process
+   */
+  Runtime?: unknown /* msb:runtime */
+}
+
+export const UsingTask = makeTag<UsingTaskProps>("UsingTask")
+
+export interface UTF8OutputProps extends StringPropertyTypeProps {
 
 }
 
@@ -8299,7 +8800,7 @@ export interface VbcProps extends TaskTypeProps {
 
 export const Vbc = makeTag<VbcProps>("Vbc")
 
-export interface VBRuntimeProps {
+export interface VBRuntimeProps extends StringPropertyTypeProps {
 
 }
 
@@ -8332,7 +8833,7 @@ export interface VCMessageProps extends TaskTypeProps {
 
 export const VCMessage = makeTag<VCMessageProps>("VCMessage")
 
-export interface VCTargetsPathProps {
+export interface VCTargetsPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -8356,7 +8857,7 @@ export const VerifyFileHash = makeTag<VerifyFileHashProps>("VerifyFileHash")
 /**
  * Numeric value of the version in the format major.minor.patch (e.g. 2.4.0)
  */
-export interface VersionProps {
+export interface VersionProps extends StringPropertyTypeProps {
 
 }
 
@@ -8368,7 +8869,7 @@ export const Version = makeTag<VersionProps>("Version")
 /**
  * When Version is not specified, VersionPrefix represents the first fragment of the version string (e.g. 1.0.0). The syntax is VersionPrefix[-VersionSuffix].
  */
-export interface VersionPrefixProps {
+export interface VersionPrefixProps extends StringPropertyTypeProps {
 
 }
 
@@ -8380,7 +8881,7 @@ export const VersionPrefix = makeTag<VersionPrefixProps>("VersionPrefix")
 /**
  * When Version is not specified, VersionSuffix represents the second fragment of the version string (e.g. beta). The syntax is VersionPrefix[-VersionSuffix].
  */
-export interface VersionSuffixProps {
+export interface VersionSuffixProps extends StringPropertyTypeProps {
 
 }
 
@@ -8389,19 +8890,19 @@ export interface VersionSuffixProps {
  */
 export const VersionSuffix = makeTag<VersionSuffixProps>("VersionSuffix")
 
-export interface VisualStudioVersionProps {
+export interface VisualStudioVersionProps extends StringPropertyTypeProps {
 
 }
 
 export const VisualStudioVersion = makeTag<VisualStudioVersionProps>("VisualStudioVersion")
 
-export interface VSINSTALLDIRProps {
+export interface VSINSTALLDIRProps extends StringPropertyTypeProps {
 
 }
 
 export const VSINSTALLDIR = makeTag<VSINSTALLDIRProps>("VSINSTALLDIR")
 
-export interface VSTO_TrustAssembliesLocationProps {
+export interface VSTO_TrustAssembliesLocationProps extends StringPropertyTypeProps {
 
 }
 
@@ -8410,7 +8911,7 @@ export const VSTO_TrustAssembliesLocation = makeTag<VSTO_TrustAssembliesLocation
 /**
  * Windows Application Packaging project-specific: Path to Windows Application Packaging project root folder.
  */
-export interface WapProjPathProps {
+export interface WapProjPathProps extends StringPropertyTypeProps {
 
 }
 
@@ -8437,7 +8938,7 @@ export const Warning = makeTag<WarningProps>("Warning")
 /**
  * integer between 0 and 5 inclusive
  */
-export interface WarningLevelProps {
+export interface WarningLevelProps extends StringPropertyTypeProps {
 
 }
 
@@ -8449,7 +8950,7 @@ export const WarningLevel = makeTag<WarningLevelProps>("WarningLevel")
 /**
  * Comma separated list of warning numbers to treat as errors
  */
-export interface WarningsAsErrorsProps {
+export interface WarningsAsErrorsProps extends StringPropertyTypeProps {
 
 }
 
@@ -8464,7 +8965,7 @@ export interface WcfConfigValidationEnabledProps {
 
 export const WcfConfigValidationEnabled = makeTag<WcfConfigValidationEnabledProps>("WcfConfigValidationEnabled")
 
-export interface WebPageProps {
+export interface WebPageProps extends StringPropertyTypeProps {
 
 }
 
@@ -8473,7 +8974,7 @@ export const WebPage = makeTag<WebPageProps>("WebPage")
 /**
  * Name of Web References folder to display in user interface
  */
-export interface WebReferencesProps {
+export interface WebReferencesProps extends SimpleItemTypeProps {
   /**
    * Optional expression evaluated to determine whether the items should be evaluated
    */
@@ -8520,13 +9021,22 @@ export interface WebReferenceUrlProps extends SimpleItemTypeProps {
  */
 export const WebReferenceUrl = makeTag<WebReferenceUrlProps>("WebReferenceUrl")
 
-export interface WholeProgramOptimizationProps {
+export interface WhenProps {
+  /**
+   * Optional expression evaluated to determine whether the child PropertyGroups and/or ItemGroups should be used
+   */
+  Condition: string
+}
+
+export const When = makeTag<WhenProps>("When")
+
+export interface WholeProgramOptimizationProps extends StringPropertyTypeProps {
 
 }
 
 export const WholeProgramOptimization = makeTag<WholeProgramOptimizationProps>("WholeProgramOptimization")
 
-export interface Win32ResourceFileProps {
+export interface Win32ResourceFileProps extends StringPropertyTypeProps {
 
 }
 
@@ -8551,7 +9061,7 @@ export interface WriteLinesToFileProps extends TaskTypeProps {
 
 export const WriteLinesToFile = makeTag<WriteLinesToFileProps>("WriteLinesToFile")
 
-export interface WsdlXsdCodeGenCollectionTypesProps {
+export interface WsdlXsdCodeGenCollectionTypesProps extends StringPropertyTypeProps {
 
 }
 
@@ -8605,7 +9115,7 @@ export interface WsdlXsdCodeGenImportXmlTypesProps {
 
 export const WsdlXsdCodeGenImportXmlTypes = makeTag<WsdlXsdCodeGenImportXmlTypesProps>("WsdlXsdCodeGenImportXmlTypes")
 
-export interface WsdlXsdCodeGenNamespaceMappingsProps {
+export interface WsdlXsdCodeGenNamespaceMappingsProps extends StringPropertyTypeProps {
 
 }
 
@@ -8641,13 +9151,13 @@ export interface WsdlXsdCodeGenWrappedProps {
 
 export const WsdlXsdCodeGenWrapped = makeTag<WsdlXsdCodeGenWrappedProps>("WsdlXsdCodeGenWrapped")
 
-export interface XamlRootsLogProps {
+export interface XamlRootsLogProps extends StringPropertyTypeProps {
 
 }
 
 export const XamlRootsLog = makeTag<XamlRootsLogProps>("XamlRootsLog")
 
-export interface XamlSavedStateFilePathProps {
+export interface XamlSavedStateFilePathProps extends StringPropertyTypeProps {
 
 }
 

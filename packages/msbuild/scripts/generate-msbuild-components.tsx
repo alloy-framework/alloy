@@ -25,7 +25,7 @@ await writeOutput(
   await renderAsync(
     <Output basePath={OUTPUT_PATH}>
       <SourceFile path="index.tsx">
-        {code`import { makeTag } from "./utils/make-tag.js";`}
+        {code`import { makeTag } from "./utils/make-tag.js";\n\n`}
         <For each={schemas} doubleHardline>
           {(schema) => <XmlComponent schema={schema} />}
         </For>

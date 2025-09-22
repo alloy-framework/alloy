@@ -1,3 +1,4 @@
+import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -22,11 +23,12 @@ export interface StaticMethodDeclarationProps extends CommonFunctionProps {
 }
 
 export function StaticMethodDeclaration(props: StaticMethodDeclarationProps) {
+  const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
   return (
     <>
       {"@staticmethod"}
       <hbr />
-      <MethodDeclarationBase functionType="static" {...props} />
+      <MethodDeclarationBase functionType="static" {...props} sym={sym} />
     </>
   );
 }

@@ -1,6 +1,5 @@
-import { Namekey, code } from "@alloy-js/core";
+import { code } from "@alloy-js/core";
 import { abcModule } from "../builtins/python.js";
-import { usePythonScope } from "../symbols/scopes.js";
 import {
   BaseFunctionDeclaration,
   BaseFunctionDeclarationProps,
@@ -13,23 +12,6 @@ import {
 export interface MethodDeclarationBaseProps extends CommonFunctionProps {
   /** Indicates that the method is abstract. */
   abstract?: boolean;
-}
-
-/**
- * Validates that the current scope is a member scope (inside a class).
- * Throws an error if used outside of a class body.
- */
-export function validateMemberScope(
-  name: string | Namekey,
-  type: string = "Method",
-) {
-  const currentScope = usePythonScope();
-  if (!currentScope?.isMemberScope) {
-    const displayName = typeof name === "string" ? name : name.name;
-    throw new Error(
-      `${type} "${displayName}" must be declared inside a class (member scope)`,
-    );
-  }
 }
 
 /**
@@ -55,10 +37,6 @@ export function MethodDeclarationBase(
   props: MethodDeclarationBaseProps &
     Pick<BaseFunctionDeclarationProps, "functionType" | "sym">,
 ) {
-  if (!props.sym) {
-    validateMemberScope(props.name);
-  }
-
   const abstractMethod =
     props.abstract ?
       <>

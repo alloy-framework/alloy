@@ -1,3 +1,4 @@
+import { createFunctionSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { BaseFunctionDeclaration } from "./FunctionBase.js";
 
@@ -31,5 +32,6 @@ export interface FunctionDeclarationProps extends CommonFunctionProps {}
  * handles symbol creation and emission.
  */
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
-  return <BaseFunctionDeclaration {...props} />;
+  const sym = createFunctionSymbol(props.name, { refkeys: props.refkey });
+  return <BaseFunctionDeclaration {...props} sym={sym} />;
 }

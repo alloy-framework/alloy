@@ -1,4 +1,5 @@
 import { namekey } from "@alloy-js/core";
+import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -23,11 +24,14 @@ export interface ConstructorDeclarationProps
 }
 
 export function ConstructorDeclaration(props: ConstructorDeclarationProps) {
+  const name = namekey("__new__", { ignoreNamePolicy: true });
+  const sym = createMethodSymbol(name, { refkeys: props.refkey });
   return (
     <MethodDeclarationBase
       {...props}
-      name={namekey("__new__", { ignoreNamePolicy: true })}
+      name={name}
       functionType="class"
+      sym={sym}
     />
   );
 }

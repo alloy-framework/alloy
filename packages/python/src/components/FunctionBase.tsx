@@ -1,7 +1,5 @@
 import { Name, Show } from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";
-import { createPythonSymbol } from "../symbol-creation.js";
-import { usePythonScope } from "../symbols/scopes.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
@@ -34,8 +32,8 @@ export interface CommonFunctionProps
 export interface BaseFunctionDeclarationProps extends CommonFunctionProps {
   /** Indicates the type of function. */
   functionType?: "instance" | "class" | "static";
-  /** Optional existing symbol to use instead of creating a new one. */
-  sym?: PythonOutputSymbol;
+  /** Pre-created symbol to render. Must be provided by caller. */
+  sym: PythonOutputSymbol;
 }
 
 /**
@@ -68,18 +66,7 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
     default:
       parameters = props.parameters;
   }
-  const currentScope = usePythonScope();
-  const sym: PythonOutputSymbol =
-    props.sym ??
-    createPythonSymbol(
-      props.name,
-      {
-        instance:
-          props.functionType !== undefined && currentScope?.isMemberScope,
-        refkeys: props.refkey,
-      },
-      "function",
-    );
+  const sym: PythonOutputSymbol = props.sym;
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -22,11 +23,12 @@ export interface ClassMethodDeclarationProps extends CommonFunctionProps {
 }
 
 export function ClassMethodDeclaration(props: ClassMethodDeclarationProps) {
+  const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
   return (
     <>
       {"@classmethod"}
       <hbr />
-      <MethodDeclarationBase functionType="class" {...props} />
+      <MethodDeclarationBase functionType="class" {...props} sym={sym} />
     </>
   );
 }

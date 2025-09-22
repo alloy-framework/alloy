@@ -1,3 +1,4 @@
+import { createMethodSymbol } from "../symbols/factories.js";
 import type { MethodDeclarationBaseProps } from "./MethodBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -21,5 +22,6 @@ import { MethodDeclarationBase } from "./MethodBase.js";
  * that the declaration appears within a class body.
  */
 export function MethodDeclaration(props: MethodDeclarationBaseProps) {
-  return <MethodDeclarationBase functionType="instance" {...props} />;
+  const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
+  return <MethodDeclarationBase functionType="instance" {...props} sym={sym} />;
 }

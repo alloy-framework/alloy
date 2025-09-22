@@ -14,10 +14,10 @@ import {
 } from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { createPythonSymbol } from "../symbol-creation.js";
+import { createMethodSymbol } from "../symbols/factories.js";
 import { Atom } from "./Atom.jsx";
 import { CommonFunctionProps } from "./FunctionBase.js";
-import { MethodDeclarationBase, validateMemberScope } from "./MethodBase.js";
+import { MethodDeclarationBase } from "./MethodBase.js";
 
 const setterTag = Symbol();
 const deleterTag = Symbol();
@@ -109,16 +109,9 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
     findUnkeyedChildren(children),
   );
 
-  validateMemberScope(props.name, "PropertyDeclaration");
-
-  const sym: PythonOutputSymbol = createPythonSymbol(
-    props.name,
-    {
-      instance: true,
-      refkeys: props.refkey,
-    },
-    "function",
-  );
+  const sym: PythonOutputSymbol = createMethodSymbol(props.name, {
+    refkeys: props.refkey,
+  });
   return (
     <>
       <DeclarationContext.Provider value={sym}>
@@ -160,9 +153,7 @@ export interface PropertyMethodDeclarationProps
 }
 
 function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
-  const declarationContext = useContext(
-    DeclarationContext,
-  ) as PythonOutputSymbol;
+  const propertySymbol = useContext(DeclarationContext) as PythonOutputSymbol;
   const propertyType = useContext(PropertyContext);
 
   return (
@@ -171,10 +162,10 @@ function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
       <hbr />
       <MethodDeclarationBase
         {...props}
-        name={declarationContext.name}
+        name={propertySymbol.name}
         functionType="instance"
         returnType={propertyType}
-        sym={declarationContext}
+        sym={propertySymbol}
       >
         {props.children}
       </MethodDeclarationBase>
@@ -189,22 +180,20 @@ interface PropertyMethodBaseProps
 }
 
 function PropertyMethodBase(props: PropertyMethodBaseProps) {
-  const declarationContext = useContext(
-    DeclarationContext,
-  ) as PythonOutputSymbol;
+  const propertySymbol = useContext(DeclarationContext) as PythonOutputSymbol;
   const { decoratorType, parameters, children, ...restProps } = props;
 
   return (
     <>
-      {code`@${declarationContext.name}.${decoratorType}`}
+      {code`@${propertySymbol.name}.${decoratorType}`}
       <hbr />
       <MethodDeclarationBase
         {...restProps}
-        name={declarationContext.name}
+        name={propertySymbol.name}
         functionType="instance"
         parameters={parameters}
         returnType={<Atom jsValue={null} />}
-        sym={declarationContext}
+        sym={propertySymbol}
       >
         {children}
       </MethodDeclarationBase>

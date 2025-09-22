@@ -12,10 +12,9 @@ import { createCSharpTestWrapper } from "./create-wrapper.jsx";
 it("should render defkey inline", async () => {
   const { Wrapper, defkey } = createCSharpTestWrapper();
 
-  expect(<Wrapper>return {defkey("myResult")};</Wrapper>).toRenderTo(d`
-
-return myResult;
-`);
+  expect(<Wrapper>return {defkey("myResult")};</Wrapper>).toRenderTo(
+    `return myResult;`,
+  );
 });
 
 it("emits a single declaration per unique name", () => {
@@ -28,9 +27,7 @@ it("emits a single declaration per unique name", () => {
     <Wrapper>
       return {a} {b};
     </Wrapper>,
-  ).toRenderTo(d`
-return MyType MyType;
-`); // Ensure only one 'class/struct/interface' (whatever default is) declaration appears above if that's the behavior.
+  ).toRenderTo(`return MyType MyType;`); // Ensure only one 'class/struct/interface' (whatever default is) declaration appears above if that's the behavior.
 });
 
 it("reuses declarations across multiple usage sites", () => {
@@ -58,14 +55,11 @@ it("reuses declarations across multiple usage sites", () => {
       </ClassDeclaration>
     </Wrapper>,
   ).toRenderTo(d`
-
-
-abstract class A
-{
-    abstract Result a(Thing x);
-    abstract Result b(Thing y);
-}
-`);
+    abstract class A
+    {
+        abstract Result a(Thing x);
+        abstract Result b(Thing y);
+    }`);
 });
 
 it("reuses declarations across multiple defkeys", () => {
@@ -91,14 +85,11 @@ it("reuses declarations across multiple defkeys", () => {
       </ClassDeclaration>
     </Wrapper>,
   ).toRenderTo(d`
-
-
-abstract class A
-{
-    abstract Result a(Thing x);
-    abstract Result b(Thing y);
-}
-`);
+    abstract class A
+    {
+        abstract Result a(Thing x);
+        abstract Result b(Thing y);
+    }`);
 });
 
 it("should render defkey in nested component", async () => {
@@ -115,12 +106,10 @@ it("should render defkey in nested component", async () => {
       </ClassDeclaration>
     </Wrapper>,
   ).toRenderTo(d`
-
-class MyClass
-{
-    MyType foo() {}
-}
-`);
+    class MyClass
+    {
+        MyType foo() {}
+    }`);
 });
 
 it("should render defkey in class property", async () => {
@@ -133,11 +122,10 @@ it("should render defkey in class property", async () => {
       </ClassDeclaration>
     </Wrapper>,
   ).toRenderTo(d`
- class TestClass
- {
-     MyType MyProperty { get; set; }
- }
-`);
+    class TestClass
+    {
+        MyType MyProperty { get; set; }
+    }`);
 });
 
 it("should render defkey in struct property", async () => {
@@ -150,9 +138,8 @@ it("should render defkey in struct property", async () => {
       </StructDeclaration>
     </Wrapper>,
   ).toRenderTo(d`
- struct TestStruct
- {
-     MyType MyProperty { get; set; }
- }
-`);
+    struct TestStruct
+    {
+        MyType MyProperty { get; set; }
+    }`);
 });

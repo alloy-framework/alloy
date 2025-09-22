@@ -27,7 +27,7 @@ export function createCSharpTestWrapper() {
   const createdSymbols = new Map<Namekey, CSharpSymbol>();
 
   function defkey(name: string): Namekey {
-    let existing = seen.get(name);
+    const existing = seen.get(name);
     if (existing) {
       return existing;
     }
@@ -45,7 +45,7 @@ export function createCSharpTestWrapper() {
     return (
       <Output>
         <SourceFile path="test.cs">
-          <For each={[...seen.values()]}>
+          <For each={[...seen.values()]} joiner="">
             {(nk) => <Declaration symbol={createSymbol(nk)} />}
           </For>
           {props.children}

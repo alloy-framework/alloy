@@ -1,28 +1,11 @@
+import type { CommonFunctionProps } from "./FunctionBase.js";
 import { BaseFunctionDeclaration } from "./FunctionBase.js";
-import type { CallSignatureProps } from "./CallSignature.jsx";
-import type { BaseDeclarationProps } from "./Declaration.js";
 
-/**
- * Shared base interface for common function properties.
- * Useful for creating custom function-like components.
- */
-export interface CommonFunctionProps
-  extends BaseDeclarationProps,
-    CallSignatureProps {
-  /**
-   * Indicates that the function is async.
-   */
-  async?: boolean;
-}
-
-export type BaseFunctionDeclarationProps = import("./FunctionBase.js").BaseFunctionDeclarationProps;
+// Types are sourced from FunctionBase to avoid duplicate exports
 
 // Clean public interface extending common properties
 export interface FunctionDeclarationProps extends CommonFunctionProps {}
 
-/**
- * Base props interface for all method declarations.
- */
 /**
  * A Python function declaration.
  *
@@ -50,4 +33,3 @@ export interface FunctionDeclarationProps extends CommonFunctionProps {}
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   return <BaseFunctionDeclaration {...props} />;
 }
-

@@ -8,6 +8,14 @@ import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { LexicalScope } from "./LexicalScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
+/**
+ * Shared base interface for function-like components.
+ *
+ * @remarks
+ * This interface is consumed by public components like `FunctionDeclaration`,
+ * `MethodDeclaration`, and property method helpers. It combines declaration
+ * metadata with call signature shape.
+ */
 export interface CommonFunctionProps
   extends BaseDeclarationProps,
     CallSignatureProps {
@@ -15,6 +23,14 @@ export interface CommonFunctionProps
   async?: boolean;
 }
 
+/**
+ * Props for `BaseFunctionDeclaration`.
+ *
+ * @remarks
+ * This low-level component powers function/method-like declarations by
+ * handling symbol creation, parameter injection for instance/class methods,
+ * and common rendering concerns. Intended primarily for internal reuse.
+ */
 export interface BaseFunctionDeclarationProps extends CommonFunctionProps {
   /** Indicates the type of function. */
   functionType?: "instance" | "class" | "static";
@@ -25,6 +41,19 @@ export interface BaseFunctionDeclarationProps extends CommonFunctionProps {
 /**
  * Base function declaration that handles instance/class/static parameter injection
  * and symbol creation. Exported for internal reuse by method-like components.
+ *
+ * @example
+ * ```tsx
+ * // Not typically used directly. Prefer higher-level components.
+ * <BaseFunctionDeclaration name="helper" parameters={[{ name: "x" }]}>
+ *   return x
+ * </BaseFunctionDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * def helper(x):
+ *     return x
+ * ```
  */
 export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
   const asyncKwd = props.async ? "async " : "";
@@ -70,5 +99,3 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
     </>
   );
 }
-
-

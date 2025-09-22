@@ -16,9 +16,8 @@ import { PythonOutputSymbol } from "../index.js";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
-import { MethodDeclarationBase } from "./MethodBase.js";
 import { CommonFunctionProps } from "./FunctionBase.js";
-import { validateMemberScope } from "./MethodBase.js";
+import { MethodDeclarationBase, validateMemberScope } from "./MethodBase.js";
 
 const setterTag = Symbol();
 const deleterTag = Symbol();
@@ -26,6 +25,54 @@ const deleterTag = Symbol();
 /** Context to provide property type information within a PropertyDeclaration */
 const PropertyContext = createContext<Children | undefined>();
 
+/**
+ * Declares a Python property with optional getter, setter, and deleter methods.
+ *
+ * @example
+ * ```tsx
+ * <py.PropertyDeclaration name="name" type={{ children: "str" }}>
+ *   return self._name
+ * </py.PropertyDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @property
+ * def name(self) -> str:
+ *     return self._name
+ * ```
+ *
+ * @example Setter and deleter
+ * ```tsx
+ * <py.PropertyDeclaration name="value" type={{ children: "int" }}>
+ *   return self._value
+ *   <py.PropertyDeclaration.Setter type={{ children: "int" }}>
+ *     self._value = value
+ *   </py.PropertyDeclaration.Setter>
+ *   <py.PropertyDeclaration.Deleter>
+ *     del self._value
+ *   </py.PropertyDeclaration.Deleter>
+ * </py.PropertyDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @property
+ * def value(self) -> int:
+ *     return self._value
+ *
+ * @value.setter
+ * def value(self, value: int) -> None:
+ *     self._value = value
+ *
+ * @value.deleter
+ * def value(self) -> None:
+ *     del self._value
+ * ```
+ *
+ * @remarks
+ * The property must be declared within a class. The getter method is
+ * automatically generated using the `@property` decorator. Use the nested
+ * `Setter` and `Deleter` components to add mutators.
+ */
 export interface PropertyDeclarationProps {
   name: string;
   type?: Children;
@@ -77,7 +124,10 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
       <DeclarationContext.Provider value={sym}>
         <PropertyContext.Provider value={props.type}>
           <List hardline enderPunctuation>
-            <PropertyMethodDeclaration abstract={props.abstract} doc={props.doc}>
+            <PropertyMethodDeclaration
+              abstract={props.abstract}
+              doc={props.doc}
+            >
               {unkeyedChildren}
             </PropertyMethodDeclaration>
             <Show when={Boolean(setterComponent)}>
@@ -162,6 +212,25 @@ function PropertyMethodBase(props: PropertyMethodBaseProps) {
   );
 }
 
+/**
+ * Adds a setter to a `PropertyDeclaration`.
+ *
+ * @example
+ * ```tsx
+ * <py.PropertyDeclaration name="value" type={{ children: "int" }}>
+ *   return self._value
+ *   <py.PropertyDeclaration.Setter type={{ children: "int" }}>
+ *     self._value = value
+ *   </py.PropertyDeclaration.Setter>
+ * </py.PropertyDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @value.setter
+ * def value(self, value: int) -> None:
+ *     self._value = value
+ * ```
+ */
 PropertyDeclaration.Setter = taggedComponent(
   setterTag,
   function PropertySetter(
@@ -177,6 +246,25 @@ PropertyDeclaration.Setter = taggedComponent(
   },
 );
 
+/**
+ * Adds a deleter to a `PropertyDeclaration`.
+ *
+ * @example
+ * ```tsx
+ * <py.PropertyDeclaration name="value" type={{ children: "int" }}>
+ *   return self._value
+ *   <py.PropertyDeclaration.Deleter>
+ *     del self._value
+ *   </py.PropertyDeclaration.Deleter>
+ * </py.PropertyDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @value.deleter
+ * def value(self) -> None:
+ *     del self._value
+ * ```
+ */
 PropertyDeclaration.Deleter = taggedComponent(
   deleterTag,
   function PropertyDeleter(
@@ -185,5 +273,3 @@ PropertyDeclaration.Deleter = taggedComponent(
     return <PropertyMethodBase decoratorType="deleter" {...props} />;
   },
 );
-
-

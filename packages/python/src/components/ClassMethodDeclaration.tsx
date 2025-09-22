@@ -1,6 +1,22 @@
+import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
-import { CommonFunctionProps } from "./FunctionBase.js";
 
+/**
+ * A Python class method declaration component.
+ *
+ * @example
+ * ```tsx
+ * <py.ClassMethodDeclaration name="create" parameters={[{ name: "value", type: "str" }]}>
+ *   return cls(value)
+ * </py.ClassMethodDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @classmethod
+ * def create(cls, value: str) -> None:
+ *     return cls(value)
+ * ```
+ */
 export interface ClassMethodDeclarationProps extends CommonFunctionProps {
   abstract?: boolean;
 }
@@ -14,5 +30,3 @@ export function ClassMethodDeclaration(props: ClassMethodDeclarationProps) {
     </>
   );
 }
-
-

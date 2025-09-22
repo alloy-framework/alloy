@@ -95,10 +95,14 @@ function propHelp(prop: ApiPropertySignature) {
   } else if (prop.propertyTypeExcerpt.text === "number") {
     return `${prop.name}={number}`;
   } else {
-    return `${prop.name}={${prop.propertyTypeExcerpt.text}}`;
+    return `${prop.name}={${escapeForTemplateLiteral(prop.propertyTypeExcerpt.text)}}`;
   }
 }
 
 function stcPropHelp(prop: ApiPropertySignature) {
-  return `${prop.name}: ${prop.propertyTypeExcerpt?.text}`;
+  return `${prop.name}: ${prop.propertyTypeExcerpt && escapeForTemplateLiteral(prop.propertyTypeExcerpt.text)}`;
+}
+
+function escapeForTemplateLiteral(text: string) {
+  return text.replaceAll("`", "\\`").replaceAll("${", "\\${");
 }

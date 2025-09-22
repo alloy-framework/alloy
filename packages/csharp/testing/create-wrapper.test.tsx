@@ -68,6 +68,39 @@ abstract class A
 `);
 });
 
+it("reuses declarations across multiple defkeys", () => {
+  const { Wrapper, defkey } = createCSharpTestWrapper();
+
+  expect(
+    <Wrapper>
+      <ClassDeclaration abstract name="A">
+        <List>
+          <Method
+            abstract
+            name="a"
+            returns={defkey("Result")}
+            parameters={[{ name: "x", type: defkey("Thing") }]}
+          />
+          <Method
+            abstract
+            name="b"
+            returns={defkey("Result")}
+            parameters={[{ name: "y", type: defkey("Thing") }]}
+          />
+        </List>
+      </ClassDeclaration>
+    </Wrapper>,
+  ).toRenderTo(d`
+
+
+abstract class A
+{
+    abstract Result a(Thing x);
+    abstract Result b(Thing y);
+}
+`);
+});
+
 it("should render defkey in nested component", async () => {
   function TestComponent(props: { returnTypeRef: Refkey }) {
     return <Method name="foo" returns={props.returnTypeRef} />;

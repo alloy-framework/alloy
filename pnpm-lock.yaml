@@ -78,6 +78,9 @@ catalogs:
     eslint:
       specifier: ^9.32.0
       version: 9.32.0
+    fast-xml-parser:
+      specifier: ^5.2.5
+      version: 5.2.5
     html-entities:
       specifier: 2.6.0
       version: 2.6.0
@@ -384,6 +387,9 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
+      '@alloy-js/msbuild':
+        specifier: workspace:~
+        version: link:../msbuild
       change-case:
         specifier: 'catalog:'
         version: 5.4.4
@@ -560,6 +566,55 @@ importers:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.52.9(@types/node@24.1.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+      vitest:
+        specifier: 'catalog:'
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.1.0)(tsx@4.20.3)(yaml@2.8.0)
+
+  packages/msbuild:
+    dependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../core
+      change-case:
+        specifier: 'catalog:'
+        version: 5.4.4
+      marked:
+        specifier: 'catalog:'
+        version: 16.1.1
+      pathe:
+        specifier: 'catalog:'
+        version: 2.0.3
+    devDependencies:
+      '@alloy-js/cli':
+        specifier: workspace:~
+        version: link:../cli
+      '@alloy-js/rollup-plugin':
+        specifier: workspace:~
+        version: link:../rollup-plugin
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../typescript
+      '@microsoft/api-extractor':
+        specifier: 'catalog:'
+        version: 7.52.9(@types/node@24.1.0)
+      '@rollup/plugin-typescript':
+        specifier: 'catalog:'
+        version: 12.1.4(rollup@4.46.2)(tslib@2.8.1)(typescript@5.8.3)
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
+      concurrently:
+        specifier: 'catalog:'
+        version: 9.2.0
+      fast-xml-parser:
+        specifier: 'catalog:'
+        version: 5.2.5
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
@@ -3080,6 +3135,10 @@ packages:
   fast-uri@3.0.6:
     resolution: {integrity: sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==}
 
+  fast-xml-parser@5.2.5:
+    resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
+    hasBin: true
+
   fastq@1.19.1:
     resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
 
@@ -4513,6 +4572,9 @@ packages:
 
   strip-literal@3.0.0:
     resolution: {integrity: sha512-TcccoMhJOM3OebGhSBEmp3UZ2SfDMZUEBdRA/9ynfLi8yYajyWX3JiXArcJt4Umh4vISpspkQIY8ZZoCqjbviA==}
+
+  strnum@2.1.1:
+    resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
 
   style-to-js@1.1.17:
     resolution: {integrity: sha512-xQcBGDxJb6jjFCTzvQtfiPn6YvvP2O8U1MDIPNfJQlWMYfktPy+iGsHE7cssjs7y84d9fQaK4UF3RIJaAHSoYA==}
@@ -7820,6 +7882,10 @@ snapshots:
 
   fast-uri@3.0.6: {}
 
+  fast-xml-parser@5.2.5:
+    dependencies:
+      strnum: 2.1.1
+
   fastq@1.19.1:
     dependencies:
       reusify: 1.1.0
@@ -9797,6 +9863,8 @@ snapshots:
   strip-literal@3.0.0:
     dependencies:
       js-tokens: 9.0.1
+
+  strnum@2.1.1: {}
 
   style-to-js@1.1.17:
     dependencies:

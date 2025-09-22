@@ -4,7 +4,6 @@ import { TestNamespace } from "#test/utils.jsx";
 import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { Attribute, AttributeList } from "./attributes.jsx";
-
 it("define attribute", () => {
   expect(<Attribute name="Test" />).toRenderTo(`
       [Test]

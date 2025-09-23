@@ -23,10 +23,13 @@ export function makeTag<T>(tag: string) {
 }
 
 function Attributes(props: { attributes: Record<string, unknown> }) {
+  const attributes = Object.entries(props.attributes).filter(
+    ([K, v]) => v !== undefined,
+  );
   return (
     <>
-      {Object.entries(props.attributes).length === 0 ? "" : " "}
-      <For each={Object.entries(props.attributes)} line>
+      {attributes.length === 0 ? "" : " "}
+      <For each={attributes} line>
         {([key, value]) => `${key}="${value}"`}
       </For>
     </>

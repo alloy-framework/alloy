@@ -68,7 +68,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
                 <>
                   {jsValueProperties.value.length > 0 && (
                     <>
-                      ,<sbr />
+                      <sbr />
                     </>
                   )}
                   {props.children}

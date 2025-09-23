@@ -60,7 +60,10 @@ export function VarDeclaration(props: VarDeclarationProps) {
         {props.default ? "default " : ""}
         <Show when={!props.default}>
           {keyword} <Name />
-          {type} ={" "}
+          {type}
+          <Show when={Boolean(props.initializer || props.children)}>
+            {" = "}
+          </Show>
         </Show>
         <ValueTypeSymbolSlot>
           {props.initializer ?? props.children}

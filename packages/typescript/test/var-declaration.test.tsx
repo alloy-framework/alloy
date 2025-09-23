@@ -19,6 +19,16 @@ it("works", () => {
   ).toRenderTo("const hi = 12;");
 });
 
+it("allows omitting the initializer", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="test.js">
+        <ts.VarDeclaration let name="hi" />;
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo("let hi;");
+});
+
 it("takes namekeys", () => {
   expect(
     <Output>

@@ -17,6 +17,8 @@
     "src/**/*.tsx",
     "test/**/*.ts",
     "test/**/*.tsx",
+    "testing/**/*.ts",
+    "testing/**/*.tsx",
     "scripts/**/*.ts",
     "scripts/**/*.tsx"
   ],

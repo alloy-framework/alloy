@@ -12,6 +12,12 @@
       "import": "./dist/src/components/stc/index.js"
     }
   },
+  "imports": {
+    "#components/*": {
+      "development": "./src/components/*",
+      "default": "./dist/src/components/*"
+    }
+  },
   "scripts": {
     "generate-docs": "api-extractor run",
     "build": "alloy build && pnpm run generate-docs",

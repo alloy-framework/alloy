@@ -34,3 +34,9 @@ it("renders nested", () => {
       </ItemGroup>
   `);
 });
+
+it("doesn't render attribute if passing undefined to it", () => {
+  expect(<ItemGroup Label={undefined} />).toRenderTo(`
+        <ItemGroup />
+    `);
+});

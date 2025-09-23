@@ -35,6 +35,7 @@ versionPolicies:
       - "@alloy-js/create"
       - "@alloy-js/cli"
       - "@alloy-js/markdown"
+      - "@alloy-js/msbuild"
 
 changedFiles:
   - "!**/*.md"

@@ -25,7 +25,7 @@ export interface CsprojProps {
 /** Create a .csproj file */
 export function CsprojFile(props: CsprojProps) {
   return (
-    <SourceFile path={props.path} filetype="xml" tabWidth={4}>
+    <SourceFile path={props.path} filetype="xml" tabWidth={2}>
       <Project Sdk={props.sdk ?? "Microsoft.NET.Sdk"}>{props.children}</Project>
     </SourceFile>
   );

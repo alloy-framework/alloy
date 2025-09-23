@@ -1161,6 +1161,11 @@ describe("Full example", () => {
   });
 
   it("classic enum with explicit values", () => {
+    const doc = (
+      <py.ClassDoc
+        description={[<Prose>An enum representing colors.</Prose>]}
+      />
+    );
     const result = toSourceText(
       [
         <py.ClassEnumDeclaration
@@ -1171,7 +1176,7 @@ describe("Full example", () => {
             { name: "GREEN", value: "2", doc: "The color green." },
             { name: "BLUE", value: "3", doc: "The color blue." },
           ]}
-          doc="An enum representing colors."
+          doc={doc}
         />,
       ],
       { externals: [enumModule] },
@@ -1179,8 +1184,11 @@ describe("Full example", () => {
     const expected = d`
       from enum import IntEnum
 
-      # An enum representing colors.
       class Color(IntEnum):
+          """
+          An enum representing colors.
+          """
+
           RED = 1  #: The color red.
           GREEN = 2  #: The color green.
           BLUE = 3  #: The color blue.

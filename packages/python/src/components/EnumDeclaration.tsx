@@ -9,7 +9,6 @@ import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember, EnumMemberProps } from "./EnumMember.js";
 import { MemberScope } from "./MemberScope.jsx";
-import { SimpleCommentBlock } from "./PyDoc.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
 export interface EnumPropsBase extends BaseDeclarationProps {
@@ -204,13 +203,13 @@ export function ClassEnumDeclaration(props: ClassEnumProps) {
   }
   return (
     <CoreDeclaration symbol={sym}>
-      <Show when={Boolean(props.doc)}>
-        <SimpleCommentBlock children={props.doc} />
-        <hbr />
-      </Show>
       class {sym.name}({enumModule["."][baseType]})
       <MemberScope ownerSymbol={sym}>
         <PythonBlock opener=":">
+          <Show when={Boolean(props.doc)}>
+            {props.doc}
+            <hbr />
+          </Show>
           <For each={memberList} hardline>
             {(member) => (
               <EnumMember

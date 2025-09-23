@@ -46,3 +46,18 @@ it("spread property", () => {
   }
   `);
 });
+
+it("Works with both children and jsvalue", () => {
+  const comp = (
+    <ObjectExpression jsValue={{ a: 1, b: 2 }}>
+      <ObjectProperty name="c" value={3} />
+    </ObjectExpression>
+  );
+  expect(toSourceText(comp)).toBe(d`
+  {
+    a: 1,
+    b: 2,
+    c: 3
+  }
+  `);
+});

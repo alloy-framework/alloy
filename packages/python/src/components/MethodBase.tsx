@@ -1,4 +1,3 @@
-import { code } from "@alloy-js/core";
 import { abcModule } from "../builtins/python.js";
 import {
   BaseFunctionDeclaration,
@@ -40,7 +39,7 @@ export function MethodDeclarationBase(
   const abstractMethod =
     props.abstract ?
       <>
-        {code`@${abcModule["."].abstractmethod}`}
+        @{abcModule["."].abstractmethod}
         <hbr />
       </>
     : undefined;

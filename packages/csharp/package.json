@@ -14,6 +14,10 @@
     "./global/*": {
       "development": "./src/builtins/*/index.ts",
       "import": "./dist/src/builtins/*/index.js"
+    },
+    "./testing/*": {
+      "development": "./testing/index.ts",
+      "import": "./dist/testing/index.js"
     }
   },
   "imports": {

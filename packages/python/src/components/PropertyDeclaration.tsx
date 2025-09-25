@@ -176,7 +176,7 @@ function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
 interface PropertyMethodBaseProps
   extends Omit<PropertyMethodDeclarationProps, "name"> {
   decoratorType: "setter" | "deleter";
-  parameters?: ParameterDescriptor[];
+  parameters?: (ParameterDescriptor | string)[];
 }
 
 function PropertyMethodBase(props: PropertyMethodBaseProps) {

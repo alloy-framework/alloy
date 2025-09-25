@@ -29,3 +29,9 @@ export interface ParameterDescriptor {
    */
   readonly default?: Children;
 }
+
+export function isParameterDescriptor(
+  param: unknown,
+): param is ParameterDescriptor {
+  return typeof param === "object" && param !== null && "name" in param;
+}

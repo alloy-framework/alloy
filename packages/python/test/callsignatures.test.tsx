@@ -99,9 +99,23 @@ describe("Call Signature Parameters", () => {
 });
 
 describe("Call Signature", () => {
-  it("renders a simple call signature", () => {
+  it("renders a call signature with strings", () => {
+    const result = toSourceText([<py.CallSignature parameters={["a", "b"]} />]);
+    expect(result).toRenderTo(d`
+      (a, b)
+    `);
+  });
+  it("renders a call signature with parameter descriptors", () => {
     const result = toSourceText([
       <py.CallSignature parameters={[{ name: "a" }, { name: "b" }]} />,
+    ]);
+    expect(result).toRenderTo(d`
+      (a, b)
+    `);
+  });
+  it("renders a call signature with mixed strings and parameter descriptors", () => {
+    const result = toSourceText([
+      <py.CallSignature parameters={["a", { name: "b" }]} />,
     ]);
     expect(result).toRenderTo(d`
       (a, b)

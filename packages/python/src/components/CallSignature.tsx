@@ -6,13 +6,16 @@ import {
   Show,
   SymbolSlot,
 } from "@alloy-js/core";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+import {
+  isParameterDescriptor,
+  ParameterDescriptor,
+} from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
 
 export interface CallSignatureParametersProps {
-  readonly parameters?: ParameterDescriptor[] | string[];
+  readonly parameters?: (ParameterDescriptor | string)[];
   readonly args?: boolean;
   readonly kwargs?: boolean;
 }
@@ -86,19 +89,10 @@ interface DeclaredParameterDescriptor
 }
 
 function normalizeAndDeclareParameters(
-  parameters: ParameterDescriptor[] | string[],
+  parameters: (ParameterDescriptor | string)[],
 ): DeclaredParameterDescriptor[] {
-  if (parameters.length === 0) {
-    return [];
-  }
-  if (typeof parameters[0] === "string") {
-    return (parameters as string[]).map((paramName) => {
-      const symbol = createPythonSymbol(paramName, {}, "parameter");
-
-      return { refkeys: symbol.refkeys, symbol };
-    });
-  } else {
-    return (parameters as ParameterDescriptor[]).map((param) => {
+  return parameters.map((param) => {
+    if (isParameterDescriptor(param)) {
       const TypeSlot = createSymbolSlot();
 
       const symbol = createPythonSymbol(
@@ -115,17 +109,19 @@ function normalizeAndDeclareParameters(
         symbol,
         TypeSlot,
       };
-    });
-  }
+    } else {
+      const symbol = createPythonSymbol(param, {}, "parameter");
+      return { refkeys: symbol.refkeys, symbol };
+    }
+  });
 }
 
 export interface CallSignatureProps {
   /**
-   * The parameters to the call signature. Can be an array of strings for parameters
-   * which don't have a type or a default value. Otherwise, it's an array of
-   * {@link ParameterDescriptor}s.
+   * The parameters to the call signature. Can be an array of strings (for parameters
+   * which don't have a type or a default value) or {@link ParameterDescriptor}s.
    */
-  parameters?: ParameterDescriptor[];
+  parameters?: (ParameterDescriptor | string)[];
 
   /**
    * The type parameters of the call signature, e.g. for a generic function.

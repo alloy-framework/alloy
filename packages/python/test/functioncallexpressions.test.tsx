@@ -39,7 +39,6 @@ describe("FunctionCallExpression", () => {
     const expected = d`
       def run_func():
           pass
-      
       run_func("A name", 42, True)
     `;
     expect(result).toRenderTo(expected);
@@ -79,7 +78,6 @@ describe("FunctionCallExpression", () => {
     const expected = d`
       def run_func(name: str, number: int, flag: bool) -> str:
           pass
-      
       result: str = run_func("A name", 42, True)
     `;
     expect(result).toRenderTo(expected);

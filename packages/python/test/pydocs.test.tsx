@@ -377,8 +377,6 @@ describe("Full example", () => {
               just_name = None
               name_and_type: number = None
               name_type_and_value: number = 12
-
-
           `,
     );
   });
@@ -469,8 +467,6 @@ describe("Full example", () => {
               just_name = None
               name_and_type: number = None
               name_type_and_value: number = 12
-
-
           `,
     );
   });
@@ -520,8 +516,6 @@ describe("Full example", () => {
           RED = 1  # The color red.
           GREEN = 2  # The color green.
           BLUE = 3  # The color blue.
-
-
     `;
     expect(result).toRenderTo(expected);
   });

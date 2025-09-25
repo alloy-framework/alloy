@@ -98,12 +98,9 @@ it("uses import from external library in multiple functions", () => {
         response = get(1)
         return response.json()
 
-
     def create_user(user_name: string) -> Response:
         response = post(1)
         return response.json()
-
-
   `;
   expect(result).toRenderTo(expected);
 });
@@ -177,13 +174,9 @@ it("uses import from external library in multiple class methods", () => {
         def get_user(self, user_id: int) -> Response:
             response = get(self.some_var)
             return response.json()
-
         def create_user(self, user_name: string) -> Response:
             response = post(self.some_var)
             return response.json()
-
-
-
   `;
   expect(result).toRenderTo(expected);
 });

@@ -11,8 +11,6 @@ it("correct formatting of class name", () => {
   const expected = d`
     class AReallyWeirdClassName:
         pass
-
-      
   `;
   expect(result).toRenderTo(expected);
 });
@@ -55,8 +53,6 @@ it("renders a function with parameters", () => {
     d`
       def quirkly_named_function(a_parameter: int, *args, **kwargs):
           print(x, y)
-
-        
     `,
   );
 });

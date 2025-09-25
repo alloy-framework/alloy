@@ -1,4 +1,4 @@
-import { namekey, refkey } from "@alloy-js/core";
+import { List, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -14,8 +14,6 @@ describe("Function Declaration", () => {
     expect(result).toRenderTo(d`
       def foo():
           pass
-
-        
     `);
   });
 
@@ -26,8 +24,6 @@ describe("Function Declaration", () => {
     expect(result).toRenderTo(d`
       def foo_bar():
           pass
-
-
     `);
   });
 
@@ -38,8 +34,6 @@ describe("Function Declaration", () => {
     expect(result).toRenderTo(d`
       def foo() -> int:
           pass
-
-
     `);
   });
 
@@ -66,11 +60,8 @@ describe("Function Declaration", () => {
     expect(result).toRenderTo(d`
       def foo() -> int:
           pass
-
       def bar() -> int:
           result: int = foo()
-
-
     `);
   });
 
@@ -86,9 +77,6 @@ describe("Function Declaration", () => {
       class MyClass:
           def bar(self):
               print('hi')
-
-
-              
     `);
   });
 
@@ -111,8 +99,6 @@ describe("Function Declaration", () => {
       d`
         def baz(x: int, y=0, z: int = 42, *args, **kwargs):
             print(x, y)
-
-
       `,
     );
   });
@@ -127,9 +113,6 @@ describe("Function Declaration", () => {
       class MyClass:
           def __init__(self, x):
               pass
-
-      
-      
     `);
   });
 
@@ -137,7 +120,6 @@ describe("Function Declaration", () => {
     expect(toSourceText([<py.FunctionDeclaration async name="foo" />])).toBe(d`
       async def foo():
           pass
-
     `);
   });
 
@@ -149,7 +131,6 @@ describe("Function Declaration", () => {
     ).toBe(d`
       async def foo() -> Foo:
           pass
-
     `);
   });
 
@@ -168,10 +149,8 @@ describe("Function Declaration", () => {
     ).toBe(d`
       class Foo:
           pass
-
       async def foo() -> Foo:
           pass
-
     `);
   });
 
@@ -185,7 +164,6 @@ describe("Function Declaration", () => {
     expect(toSourceText([decl])).toBe(d`
       def foo(a, b):
           return a + b
-
     `);
   });
   it("supports type parameters", () => {
@@ -202,7 +180,6 @@ describe("Function Declaration", () => {
     expect(toSourceText([decl])).toBe(d`
       def foo[T, U](a, b):
           return a + b
-
     `);
   });
   it("renders function with parameters", () => {
@@ -223,8 +200,6 @@ describe("Function Declaration", () => {
       class MyClass:
           def foo(self, x: int):
               self.attribute = "value"
-
-
     `);
   });
   it("renders __init__ function with parameters", () => {
@@ -241,8 +216,6 @@ describe("Function Declaration", () => {
       class MyClass:
           def __init__(self, x: int):
               self.attribute = "value"
-
-
     `);
   });
 
@@ -259,29 +232,37 @@ describe("Function Declaration", () => {
         parameters={parameters}
         refkey={fooRef}
       >
-        <py.FunctionDeclaration
-          name="bar"
-          parameters={parameters_nested}
-          refkey={barRef}
-        >
+        <List>
           <py.FunctionDeclaration
-            name="foobar"
-            parameters={parameters_nested_nested}
-            refkey={foobarRef}
+            name="bar"
+            parameters={parameters_nested}
+            refkey={barRef}
           >
-            return z * 2
+            <List>
+              <py.FunctionDeclaration
+                name="foobar"
+                parameters={parameters_nested_nested}
+                refkey={foobarRef}
+              >
+                return z * 2
+              </py.FunctionDeclaration>
+              <>
+                return{" "}
+                <py.FunctionCallExpression
+                  target={foobarRef}
+                  args={[<py.Atom jsValue={2} />]}
+                />
+              </>
+            </List>
           </py.FunctionDeclaration>
-          return{" "}
-          <py.FunctionCallExpression
-            target={foobarRef}
-            args={[<py.Atom jsValue={2} />]}
-          />
-        </py.FunctionDeclaration>
-        return{" "}
-        <py.FunctionCallExpression
-          target={barRef}
-          args={[<py.Atom jsValue={3} />]}
-        />
+          <>
+            return{" "}
+            <py.FunctionCallExpression
+              target={barRef}
+              args={[<py.Atom jsValue={3} />]}
+            />
+          </>
+        </List>
       </py.FunctionDeclaration>
     );
 
@@ -292,7 +273,6 @@ describe("Function Declaration", () => {
                   return z * 2
               return foobar(2)
           return bar(3)
-
     `);
   });
   it("renders complex typing structure", () => {
@@ -301,8 +281,10 @@ describe("Function Declaration", () => {
         <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
       </py.SourceFile>,
       <py.SourceFile path="mod2.py">
-        <py.ClassDeclaration name="A" refkey={refkey("A")} />
-        <py.ClassDeclaration name="B" refkey={refkey("B")} />
+        <List doubleHardline>
+          <py.ClassDeclaration name="A" refkey={refkey("A")} />
+          <py.ClassDeclaration name="B" refkey={refkey("B")} />
+        </List>
       </py.SourceFile>,
       <py.SourceFile path="usage.py">
         <py.FunctionDeclaration
@@ -323,16 +305,13 @@ describe("Function Declaration", () => {
       "mod1.py": `
             class Foo:
                 pass
-
             `,
       "mod2.py": `
             class A:
                 pass
-
-
+            
             class B:
                 pass
-
             `,
       "usage.py": `
             from mod1 import Foo
@@ -341,7 +320,6 @@ describe("Function Declaration", () => {
 
             async def foo(x: A, y: B, *args, **kwargs) -> Foo:
                 pass
-
             `,
     });
   });

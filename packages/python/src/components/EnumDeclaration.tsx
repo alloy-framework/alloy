@@ -8,11 +8,10 @@ import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps } from "./Declaration.js";
 import { EnumMember, EnumMemberProps } from "./EnumMember.js";
-import { SimpleCommentBlock } from "./index.js";
 import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
-export interface EnumProps extends BaseDeclarationProps {
+export interface EnumPropsBase extends BaseDeclarationProps {
   /**
    * The base type of the enum. One of: 'Enum', 'IntEnum', 'StrEnum', 'Flag', 'IntFlag'.
    * Defaults to 'Enum'.
@@ -23,46 +22,12 @@ export interface EnumProps extends BaseDeclarationProps {
    */
   members?: Array<EnumMemberProps>;
   /**
-   * The enum style: 'classic' (default), 'auto', or 'functional'.
-   */
-  style?: "classic" | "auto" | "functional";
-  /**
    * Optional docstring for the enum.
    */
   doc?: Children;
 }
 
-/**
- * A Python enum declaration, following https://docs.python.org/3.11/library/enum.html.
- *
- * @example
- * ```tsx
- * <EnumDeclaration name="Direction" style="functional">
- *   members={[
- *     { name: "NORTH" },
- *     { name: "SOUTH" },
- *     { name: "EAST" },
- *     { name: "WEST" },
- *   ]}
- * />
- * ```
- * This will generate:
- * ```python
- * from enum import Enum
- * class Direction(Enum):
- *     NORTH = "NORTH"
- *     SOUTH = "SOUTH"
- *     EAST = "EAST"
- *     WEST = "WEST"
- * ```
- */
-export function EnumDeclaration(props: EnumProps) {
-  // Handle enum styles
-  if (props.style === "functional") {
-    return <FunctionalEnumDeclaration {...props} />;
-  }
-  return <ClassEnumDeclaration {...props} />;
-}
+export interface FunctionalEnumProps extends EnumPropsBase {}
 
 /**
  * Create a Python enum using the functional syntax.
@@ -105,7 +70,7 @@ export function EnumDeclaration(props: EnumProps) {
  * Status = Enum('Status', {'PENDING': 1, 'ACTIVE': 2, 'INACTIVE': 3})
  * ```
  */
-export function FunctionalEnumDeclaration(props: EnumProps) {
+export function FunctionalEnumDeclaration(props: FunctionalEnumProps) {
   const sym = createPythonSymbol(
     props.name,
     {
@@ -141,6 +106,13 @@ export function FunctionalEnumDeclaration(props: EnumProps) {
       </CoreDeclaration>
     </>
   );
+}
+
+export interface ClassEnumProps extends EnumPropsBase {
+  /**
+   * Indicates that the enum members should be auto-generated.
+   */
+  auto?: boolean;
 }
 
 /**
@@ -212,7 +184,7 @@ export function FunctionalEnumDeclaration(props: EnumProps) {
  *     BLUE = auto()
  * ```
  */
-export function ClassEnumDeclaration(props: EnumProps) {
+export function ClassEnumDeclaration(props: ClassEnumProps) {
   const baseType = props.baseType || "Enum";
   const sym = createPythonSymbol(
     props.name,
@@ -224,20 +196,20 @@ export function ClassEnumDeclaration(props: EnumProps) {
   let memberList: Array<EnumMemberProps> = (props.members ?? []).map((m) =>
     m.value === undefined ? { ...m, auto: false } : m,
   );
-  if (props.style === "auto") {
+  if (props.auto) {
     memberList = memberList.map((m) =>
       m.value === undefined ? { name: m.name, auto: true } : m,
     );
   }
   return (
     <CoreDeclaration symbol={sym}>
-      <Show when={Boolean(props.doc)}>
-        <SimpleCommentBlock children={props.doc} />
-        <hbr />
-      </Show>
       class {sym.name}({enumModule["."][baseType]})
       <MemberScope ownerSymbol={sym}>
         <PythonBlock opener=":">
+          <Show when={Boolean(props.doc)}>
+            {props.doc}
+            <hbr />
+          </Show>
           <For each={memberList} hardline>
             {(member) => (
               <EnumMember

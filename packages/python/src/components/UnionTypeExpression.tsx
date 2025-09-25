@@ -1,29 +1,18 @@
-import { Children, childrenArray, For, memo } from "@alloy-js/core";
+import { Children, For, childrenArray } from "@alloy-js/core";
 
 export interface UnionTypeExpressionProps {
-  children: Children[];
-  optional?: boolean;
+  children: Children;
 }
 
 export function UnionTypeExpression(props: UnionTypeExpressionProps) {
-  const resolvedChildren = memo(() => {
-    const children = childrenArray(() => props.children, {
-      preserveFragments: true,
-    });
-
-    if (props.optional) {
-      children.push("None");
-    }
-    return children;
-  });
-
+  const items = childrenArray(() => props.children);
   return (
     <group>
       <ifBreak>(</ifBreak>
       <indent>
         <sbr />
         <For
-          each={resolvedChildren}
+          each={items}
           joiner={
             <>
               <br />|{" "}

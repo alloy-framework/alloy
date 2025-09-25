@@ -1,5 +1,4 @@
 import { Children, code, refkey } from "@alloy-js/core";
-import * as py from "@alloy-js/python";
 import { ApiContext } from "./context/api.js";
 import { RestApiModelReference, RestApiNonModelReference } from "./schema.js";
 
@@ -14,12 +13,11 @@ export function resolveRestAPIReference(
   } else {
     if ("ref" in reference && reference.ref) {
       const responseModel = apiContext.resolveReference(reference);
-      const ref = refkey(responseModel);
-      returnType = <py.Reference refkey={ref} />;
+      returnType = refkey(responseModel);
     } else if ("type" in reference && reference.type) {
-      returnType = code`${castOpenAPITypeToPython(reference.type)}`;
+      returnType = castOpenAPITypeToPython(reference.type);
     }
-    if (reference.array && handleArray) {
+    if (reference.array !== undefined && handleArray) {
       returnType = code`list[${returnType}]`;
     }
   }

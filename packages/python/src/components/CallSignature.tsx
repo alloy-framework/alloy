@@ -5,20 +5,19 @@ import {
   For,
   Show,
   SymbolSlot,
-  useContext,
 } from "@alloy-js/core";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+import {
+  isParameterDescriptor,
+  ParameterDescriptor,
+} from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
-import { PythonSourceFileContext } from "./SourceFile.jsx";
 
 export interface CallSignatureParametersProps {
-  readonly parameters?: ParameterDescriptor[] | string[];
+  readonly parameters?: (ParameterDescriptor | string)[];
   readonly args?: boolean;
   readonly kwargs?: boolean;
-  readonly instanceFunction?: boolean;
-  readonly classFunction?: boolean;
 }
 
 /**
@@ -35,33 +34,10 @@ export interface CallSignatureParametersProps {
  * ```
  */
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
-  // Validate that only one of instanceFunction or classFunction is true
-  if (props.instanceFunction && props.classFunction) {
-    throw new Error("Cannot be both an instance function and a class function");
-  }
-
-  const sfContext = useContext(PythonSourceFileContext);
-  const module = sfContext?.module;
   const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
 
   const parameterList = computed(() => {
     const params = [];
-
-    // Add self/cls parameter if instance or class function
-    if (props.instanceFunction) {
-      params.push(
-        parameter({
-          symbol: createPythonSymbol("self", { module: module }),
-        }),
-      );
-    } else if (props.classFunction) {
-      params.push(
-        parameter({
-          symbol: createPythonSymbol("cls", { module: module }),
-        }),
-      );
-    }
-
     // Add regular parameters
     parameters.forEach((param) => {
       params.push(parameter(param));
@@ -95,16 +71,7 @@ function parameter(param: DeclaredParameterDescriptor) {
       <Show when={!!param.type}>
         : <TypeSlot>{param.type}</TypeSlot>
       </Show>
-      <Show when={!!param.optional}>
-        <Show when={!param.type}>=</Show>
-        <Show when={!!param.type}> = </Show>
-        <>
-          {param.default ?
-            <Atom jsValue={param.default} />
-          : "None"}
-        </>
-      </Show>
-      <Show when={!param.optional && param.default !== undefined}>
+      <Show when={param.default !== undefined}>
         <Show when={!param.type}>=</Show>
         <Show when={!!param.type}> = </Show>
         <>
@@ -122,19 +89,10 @@ interface DeclaredParameterDescriptor
 }
 
 function normalizeAndDeclareParameters(
-  parameters: ParameterDescriptor[] | string[],
+  parameters: (ParameterDescriptor | string)[],
 ): DeclaredParameterDescriptor[] {
-  if (parameters.length === 0) {
-    return [];
-  }
-  if (typeof parameters[0] === "string") {
-    return (parameters as string[]).map((paramName) => {
-      const symbol = createPythonSymbol(paramName, {}, "parameter");
-
-      return { refkeys: symbol.refkeys, symbol };
-    });
-  } else {
-    return (parameters as ParameterDescriptor[]).map((param) => {
+  return parameters.map((param) => {
+    if (isParameterDescriptor(param)) {
       const TypeSlot = createSymbolSlot();
 
       const symbol = createPythonSymbol(
@@ -151,17 +109,19 @@ function normalizeAndDeclareParameters(
         symbol,
         TypeSlot,
       };
-    });
-  }
+    } else {
+      const symbol = createPythonSymbol(param, {}, "parameter");
+      return { refkeys: symbol.refkeys, symbol };
+    }
+  });
 }
 
 export interface CallSignatureProps {
   /**
-   * The parameters to the call signature. Can be an array of strings for parameters
-   * which don't have a type or a default value. Otherwise, it's an array of
-   * {@link ParameterDescriptor}s.
+   * The parameters to the call signature. Can be an array of strings (for parameters
+   * which don't have a type or a default value) or {@link ParameterDescriptor}s.
    */
-  parameters?: ParameterDescriptor[] | string[];
+  parameters?: (ParameterDescriptor | string)[];
 
   /**
    * The type parameters of the call signature, e.g. for a generic function.
@@ -178,16 +138,6 @@ export interface CallSignatureProps {
    * Indicates if there are keyword arguments (`**kwargs`) in the function
    */
   kwargs?: boolean;
-
-  /**
-   * Indicates that this is an instance function.
-   */
-  instanceFunction?: boolean; // true if this is an instance function
-
-  /**
-   * Indicates that this is a class function.
-   */
-  classFunction?: boolean; // true if this is a class function
 
   /**
    * The return type of the function.
@@ -221,8 +171,6 @@ export function CallSignature(props: CallSignatureProps) {
       parameters={props.parameters}
       args={props.args}
       kwargs={props.kwargs}
-      instanceFunction={props.instanceFunction}
-      classFunction={props.classFunction}
     />
   );
   const typeParams =

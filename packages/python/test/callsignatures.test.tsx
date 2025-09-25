@@ -26,8 +26,14 @@ describe("Call Signature Parameters", () => {
     const result = toSourceText([
       <py.CallSignatureParameters
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
       />,
     ]);
@@ -39,8 +45,16 @@ describe("Call Signature Parameters", () => {
     const result = toSourceText([
       <py.CallSignatureParameters
         parameters={[
-          { name: "a", type: "int", optional: true },
-          { name: "b", type: "str", optional: true },
+          {
+            name: "a",
+            type: "int",
+            default: null,
+          },
+          {
+            name: "b",
+            type: "str",
+            default: null,
+          },
         ]}
       />,
     ]);
@@ -65,8 +79,16 @@ describe("Call Signature Parameters", () => {
     const result = toSourceText([
       <py.CallSignatureParameters
         parameters={[
-          { name: "a", type: "int", optional: true, default: 5 },
-          { name: "b", type: "str", optional: true, default: "hello" },
+          {
+            name: "a",
+            type: "int",
+            default: 5,
+          },
+          {
+            name: "b",
+            type: "str",
+            default: "hello",
+          },
         ]}
       />,
     ]);
@@ -77,15 +99,35 @@ describe("Call Signature Parameters", () => {
 });
 
 describe("Call Signature", () => {
-  it("renders a simple call signature", () => {
+  it("renders a call signature with strings", () => {
     const result = toSourceText([<py.CallSignature parameters={["a", "b"]} />]);
+    expect(result).toRenderTo(d`
+      (a, b)
+    `);
+  });
+  it("renders a call signature with parameter descriptors", () => {
+    const result = toSourceText([
+      <py.CallSignature parameters={[{ name: "a" }, { name: "b" }]} />,
+    ]);
+    expect(result).toRenderTo(d`
+      (a, b)
+    `);
+  });
+  it("renders a call signature with mixed strings and parameter descriptors", () => {
+    const result = toSourceText([
+      <py.CallSignature parameters={["a", { name: "b" }]} />,
+    ]);
     expect(result).toRenderTo(d`
       (a, b)
     `);
   });
   it("renders a simple call signature with args and kwargs", () => {
     const result = toSourceText([
-      <py.CallSignature parameters={["a", "b"]} args kwargs />,
+      <py.CallSignature
+        parameters={[{ name: "a" }, { name: "b" }]}
+        args
+        kwargs
+      />,
     ]);
     expect(result).toRenderTo(d`
       (a, b, *args, **kwargs)
@@ -93,7 +135,10 @@ describe("Call Signature", () => {
   });
   it("renders a simple call signature with type parameters", () => {
     const result = toSourceText([
-      <py.CallSignature parameters={["a", "b"]} typeParameters={["T", "U"]} />,
+      <py.CallSignature
+        parameters={[{ name: "a" }, { name: "b" }]}
+        typeParameters={["T", "U"]}
+      />,
     ]);
     expect(result).toRenderTo(d`
       [T, U](a, b)
@@ -101,51 +146,13 @@ describe("Call Signature", () => {
   });
   it("renders a simple call signature with return type", () => {
     const result = toSourceText([
-      <py.CallSignature parameters={["a", "b"]} returnType="int" />,
-    ]);
-    expect(result).toRenderTo(d`
-      (a, b) -> int
-    `);
-  });
-  it("renders a simple call signature for a class function", () => {
-    const result = toSourceText([
-      <py.CallSignature parameters={["a", "b"]} classFunction />,
-    ]);
-    expect(result).toRenderTo(d`
-      (cls, a, b)
-    `);
-  });
-  it("renders a simple call signature for an instance function", () => {
-    const result = toSourceText([
-      <py.CallSignature parameters={["a", "b"]} instanceFunction />,
-    ]);
-    expect(result).toRenderTo(d`
-      (self, a, b)
-    `);
-  });
-  it("throws an error for a call signature that's instance and class function at the same time", () => {
-    expect(() =>
-      toSourceText([
-        <py.CallSignature
-          parameters={["a", "b"]}
-          instanceFunction
-          classFunction
-        />,
-      ]),
-    ).toThrowError(/Cannot be both an instance function and a class function/);
-  });
-  it("renders a simple call signature with all properties", () => {
-    const result = toSourceText([
       <py.CallSignature
-        parameters={["a", "b"]}
-        instanceFunction
-        args
-        kwargs
+        parameters={[{ name: "a" }, { name: "b" }]}
         returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`
-      (self, a, b, *args, **kwargs) -> int
+      (a, b) -> int
     `);
   });
 });
@@ -155,8 +162,14 @@ describe("Call Signature - Parameter Descriptors", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
       />,
     ]);
@@ -168,8 +181,14 @@ describe("Call Signature - Parameter Descriptors", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
         args
         kwargs
@@ -183,8 +202,14 @@ describe("Call Signature - Parameter Descriptors", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
         returnType="int"
       />,
@@ -197,45 +222,41 @@ describe("Call Signature - Parameter Descriptors", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
-        classFunction
       />,
     ]);
     expect(result).toRenderTo(d`
-      (cls, a: int, b: str)
-    `);
-  });
-  it("renders a call signature with parameter descriptors for an instance function", () => {
-    const result = toSourceText([
-      <py.CallSignature
-        parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
-        ]}
-        instanceFunction
-      />,
-    ]);
-    expect(result).toRenderTo(d`
-      (self, a: int, b: str)
+      (a: int, b: str)
     `);
   });
   it("renders a call signature with all", () => {
     const result = toSourceText([
       <py.CallSignature
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+          },
         ]}
-        instanceFunction
         args
         kwargs
         returnType="int"
       />,
     ]);
     expect(result).toRenderTo(d`
-      (self, a: int, b: str, *args, **kwargs) -> int
+      (a: int, b: str, *args, **kwargs) -> int
     `);
   });
   it("renders a more complex call signature with parameter descriptors", () => {
@@ -243,8 +264,15 @@ describe("Call Signature - Parameter Descriptors", () => {
       <py.CallSignature
         typeParameters={["T", "U"]}
         parameters={[
-          { name: "a", type: "int" },
-          { name: "b", type: "str", default: "default_value" },
+          {
+            name: "a",
+            type: "int",
+          },
+          {
+            name: "b",
+            type: "str",
+            default: "default_value",
+          },
         ]}
         returnType="int"
       />,

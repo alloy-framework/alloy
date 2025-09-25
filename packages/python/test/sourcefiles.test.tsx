@@ -1,7 +1,12 @@
+import { Prose } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.jsx";
 
 /**
  * toSourceText wraps the children in a SourceFile component
@@ -128,4 +133,98 @@ it("correct formatting of source file", () => {
 
   `;
   expect(result).toRenderTo(expected);
+});
+
+it("renders module documentation correctly", () => {
+  const moduleDoc = (
+    <py.ModuleDoc
+      description={[
+        <Prose>
+          This module provides utility functions for data processing. It
+          includes functions for validation, transformation, and analysis.
+        </Prose>,
+      ]}
+      attributes={[
+        {
+          name: "DEFAULT_TIMEOUT",
+          type: "int",
+          children: "Default timeout value in seconds.",
+        },
+        {
+          name: "MAX_RETRIES",
+          type: "int",
+          children: "Maximum number of retry attempts.",
+        },
+      ]}
+      todo={["Add caching functionality", "Improve error messages"]}
+      style="google"
+    />
+  );
+
+  const content = (
+    <py.SourceFile path="utils.py" doc={moduleDoc}>
+      <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
+      <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
+      <py.FunctionDeclaration name="process_data">pass</py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  const res = toSourceTextMultiple([content]);
+  const file = res.contents.find(
+    (f) => f.kind === "file" && f.path === "utils.py",
+  );
+  expect(file).toBeDefined();
+
+  assertFileContents(res, {
+    "utils.py": d`
+        """
+        This module provides utility functions for data processing. It includes
+        functions for validation, transformation, and analysis.
+
+        Attributes:
+            DEFAULT_TIMEOUT (int): Default timeout value in seconds.
+
+            MAX_RETRIES (int): Maximum number of retry attempts.
+
+        Todo:
+            * Add caching functionality
+            * Improve error messages
+        """
+
+
+        default_timeout = 30
+
+        max_retries = 3
+
+        def process_data():
+            pass
+
+
+        `,
+  });
+});
+
+it("renders source file without documentation correctly", () => {
+  const content = (
+    <py.SourceFile path="simple.py">
+      <py.FunctionDeclaration name="hello_world">
+        print("Hello, World!")
+      </py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  const res = toSourceTextMultiple([content]);
+  const file = res.contents.find(
+    (f) => f.kind === "file" && f.path === "simple.py",
+  );
+  expect(file).toBeDefined();
+
+  assertFileContents(res, {
+    "simple.py": d`
+        def hello_world():
+            print("Hello, World!")
+
+
+        `,
+  });
 });

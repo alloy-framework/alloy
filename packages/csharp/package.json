@@ -15,7 +15,7 @@
       "development": "./src/builtins/*/index.ts",
       "import": "./dist/src/builtins/*/index.js"
     },
-    "./testing/*": {
+    "./testing": {
       "development": "./testing/index.ts",
       "import": "./dist/testing/index.js"
     }

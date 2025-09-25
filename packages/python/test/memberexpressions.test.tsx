@@ -424,7 +424,12 @@ describe("with refkeys", () => {
     const fooRef = refkey();
     const modelRef = refkey();
     const parameters: ParameterDescriptor[] = [
-      { name: "foo", optional: true, refkey: fooRef, type: modelRef },
+      {
+        name: "foo",
+        default: null,
+        refkey: fooRef,
+        type: modelRef,
+      },
     ];
     const messageRef = refkey();
     const template = (
@@ -480,7 +485,7 @@ describe("with refkeys", () => {
             <VariableDeclaration
               name="prop1"
               refkey={interfaceMemberRefkey}
-              type={"str"}
+              type="str"
               omitNone={true}
             />
           </ClassDeclaration>

@@ -207,9 +207,9 @@ describe("Python Class - VariableDeclaration", () => {
           <py.StatementList>
             <py.VariableDeclaration instanceVariable name="just_name" />
             <py.VariableDeclaration
-              instanceVariable
               name="name_and_type"
               type="number"
+              instanceVariable
             />
             <py.VariableDeclaration
               instanceVariable
@@ -269,9 +269,8 @@ describe("Python Class - VariableDeclaration", () => {
               initializer={42}
               instanceVariable
             />
-            <py.FunctionDeclaration
+            <py.MethodDeclaration
               name="instanceMethod"
-              instanceFunction
               refkey={classMethodRk}
               returnType="int"
             />
@@ -312,26 +311,24 @@ describe("Python Class - FunctionDeclaration", () => {
           <py.StatementList>
             <py.VariableDeclaration name="a" type="int" instanceVariable />
             <py.VariableDeclaration name="b" type="int" instanceVariable />
-            <py.FunctionDeclaration
+            <py.MethodDeclaration
               name="my_method"
               parameters={[
                 { name: "a", type: "int" },
                 { name: "b", type: "int" },
               ]}
               returnType="int"
-              instanceFunction
               refkey={methodRefkey}
             >
               return a + b
-            </py.FunctionDeclaration>
-            <py.FunctionDeclaration
+            </py.MethodDeclaration>
+            <py.ClassMethodDeclaration
               name="my_class_method"
-              classFunction
               returnType="int"
               refkey={classMethodRefkey}
             >
               pass
-            </py.FunctionDeclaration>
+            </py.ClassMethodDeclaration>
             <py.FunctionDeclaration
               name="my_standalone_function"
               returnType="int"
@@ -352,6 +349,7 @@ describe("Python Class - FunctionDeclaration", () => {
           def my_method(self, a: int, b: int) -> int:
               return a + b
 
+          @classmethod
           def my_class_method(cls) -> int:
               pass
 

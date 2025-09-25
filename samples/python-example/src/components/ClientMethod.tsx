@@ -25,7 +25,7 @@ export function ClientMethod(props: ClientMethodProps) {
       name: endpointParam,
       type: castOpenAPITypeToPython("string"),
       refkey: refkey(op, endpointParam),
-    });
+    } as py.ParameterDescriptor);
   }
 
   let requestReturnType: Children;
@@ -35,14 +35,14 @@ export function ClientMethod(props: ClientMethodProps) {
       name: "body",
       type: requestReturnType,
       refkey: refkey(op, "requestBody"),
-    });
+    } as py.ParameterDescriptor);
   }
 
   // get the return type based on the spec's responseBody.
-  let responseReturnType: Children = resolveRestAPIReference(
+  let responseReturnType = resolveRestAPIReference(
     op.responseBody,
     apiContext,
-  );
+  ) as Children;
   let responseReturnTypeString: string = `${resolveRestAPIReferenceToString(op.responseBody, apiContext)}: ${op.responseDoc}`;
 
   // get the url endpoint, constructed from possible path parameters
@@ -94,21 +94,17 @@ export function ClientMethod(props: ClientMethodProps) {
   const functionDoc = (
     <py.FunctionDoc
       description={[<Prose>{op.doc}</Prose>]}
-      parameters={parameters.map((param) => ({
-        name: param.name,
-        type: param.type,
-      }))}
+      parameters={parameters}
       returns={responseReturnTypeString}
       style="google"
     />
   );
 
   return (
-    <py.FunctionDeclaration
+    <py.MethodDeclaration
       name={op.name}
       parameters={parameters}
       returnType={responseReturnType}
-      instanceFunction={true}
       doc={functionDoc}
       refkey={refkey(op.name)}
     >
@@ -118,6 +114,6 @@ export function ClientMethod(props: ClientMethodProps) {
           return ${returnCode}
         `}
       </py.StatementList>
-    </py.FunctionDeclaration>
+    </py.MethodDeclaration>
   );
 }

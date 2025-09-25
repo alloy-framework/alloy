@@ -118,11 +118,10 @@ it("uses import from external library in multiple class methods", () => {
           instanceVariable
           refkey={refkey("some_var")}
         />
-        <py.FunctionDeclaration
-          name="getUser"
+        <py.MethodDeclaration
+          name={"getUser"}
           parameters={[{ name: "userId", type: "int" }]}
           returnType={py.requestsModule["models"]["Response"]}
-          instanceFunction
         >
           <py.StatementList>
             <py.VariableDeclaration
@@ -138,12 +137,11 @@ it("uses import from external library in multiple class methods", () => {
               return response.json()
             `}
           </py.StatementList>
-        </py.FunctionDeclaration>
-        <py.FunctionDeclaration
+        </py.MethodDeclaration>
+        <py.MethodDeclaration
           name={"createUser"}
           parameters={[{ name: "userName", type: "string" }]}
           returnType={py.requestsModule["models"]["Response"]}
-          instanceFunction
         >
           <py.StatementList>
             <py.VariableDeclaration
@@ -159,7 +157,7 @@ it("uses import from external library in multiple class methods", () => {
               return response.json()
             `}
           </py.StatementList>
-        </py.FunctionDeclaration>
+        </py.MethodDeclaration>
       </py.StatementList>
     </py.ClassDeclaration>,
   ];

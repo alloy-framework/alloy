@@ -4,13 +4,12 @@ import {
   Name,
   Show,
   createSymbolSlot,
-  emitSymbol,
   memo,
 } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
-import { SimpleCommentBlock } from "./index.js";
+import { SimpleCommentBlock } from "./PyDoc.jsx";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
@@ -89,7 +88,6 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     ValueTypeSymbolSlot.moveMembersTo(sym);
   }
 
-  emitSymbol(sym);
   // Handle optional type annotation
   const type = memo(() => {
     if (!props.type || props.callStatementVar) return undefined;

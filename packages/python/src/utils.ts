@@ -14,8 +14,6 @@ export function getCallSignatureProps(
     "typeParameters",
     "args",
     "kwargs",
-    "instanceFunction",
-    "classFunction",
     "returnType",
   ]);
 

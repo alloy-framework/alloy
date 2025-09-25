@@ -20,11 +20,6 @@ export interface ParameterDescriptor {
   readonly refkey?: Refkey | Refkey[];
 
   /**
-   * Whether the parameter is optional.
-   */
-  readonly optional?: boolean;
-
-  /**
    * Documentation for the parameter.
    */
   readonly doc?: Children;
@@ -33,4 +28,10 @@ export interface ParameterDescriptor {
    * The default value of the parameter.
    */
   readonly default?: Children;
+}
+
+export function isParameterDescriptor(
+  param: unknown,
+): param is ParameterDescriptor {
+  return typeof param === "object" && param !== null && "name" in param;
 }

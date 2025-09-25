@@ -1,7 +1,8 @@
-import { namekey, refkey } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
+import { abcModule } from "../src/index.js";
 import {
   assertFileContents,
   toSourceText,
@@ -74,24 +75,6 @@ describe("Function Declaration", () => {
     `);
   });
 
-  it("renders an instance function with a body", () => {
-    const result = toSourceText([
-      <py.ClassDeclaration name="MyClass">
-        <py.FunctionDeclaration name="bar" instanceFunction={true}>
-          print('hi')
-        </py.FunctionDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-    expect(result).toRenderTo(d`
-      class MyClass:
-          def bar(self):
-              print('hi')
-
-
-              
-    `);
-  });
-
   it("renders a function with parameters", () => {
     const result = toSourceText([
       <py.FunctionDeclaration
@@ -120,7 +103,10 @@ describe("Function Declaration", () => {
   it("renders an __init__ function with no body as 'pass'", () => {
     const result = toSourceText([
       <py.ClassDeclaration name="MyClass">
-        <py.InitFunctionDeclaration parameters={[{ name: "x" }]} />
+        <py.DunderMethodDeclaration
+          name="__init__"
+          parameters={[{ name: "x" }]}
+        />
       </py.ClassDeclaration>,
     ]);
     expect(result).toRenderTo(d`
@@ -144,7 +130,7 @@ describe("Function Declaration", () => {
   it("can be an async function with returnType", () => {
     expect(
       toSourceText([
-        <py.FunctionDeclaration async name="foo" returnType="Foo" />,
+        <py.FunctionDeclaration async name="foo" returnType={"Foo"} />,
       ]),
     ).toBe(d`
       async def foo() -> Foo:
@@ -158,11 +144,7 @@ describe("Function Declaration", () => {
       toSourceText([
         <py.StatementList>
           <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
-          <py.FunctionDeclaration
-            async
-            name="foo"
-            returnType={<py.Reference refkey={refkey("Foo")} />}
-          />
+          <py.FunctionDeclaration async name="foo" returnType={refkey("Foo")} />
         </py.StatementList>,
       ]),
     ).toBe(d`
@@ -175,9 +157,82 @@ describe("Function Declaration", () => {
     `);
   });
 
+  it("can be an async function with returnType element with list of References", () => {
+    expect(
+      toSourceText([
+        <py.StatementList>
+          <py.ClassDeclaration name="Foo" refkey={refkey("Foo")} />
+          <py.FunctionDeclaration
+            async
+            name="foo"
+            returnType={code`list[${refkey("Foo")}]`}
+          />
+        </py.StatementList>,
+      ]),
+    ).toBe(d`
+      class Foo:
+          pass
+
+      async def foo() -> list[Foo]:
+          pass
+
+    `);
+  });
+
+  it("can be an async dunder method", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.DunderMethodDeclaration
+              async
+              name="__aenter__"
+              returnType={"MyClass"}
+            >
+              return self
+            </py.DunderMethodDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(toSourceText([decl])).toBe(d`
+      class MyClass:
+          async def __aenter__(self) -> MyClass:
+              return self
+
+
+    `);
+  });
+
+  it("can be an async constructor", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.ConstructorDeclaration async returnType={"MyClass"}>
+              return super().__new__(cls)
+            </py.ConstructorDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(toSourceText([decl])).toBe(d`
+      class MyClass:
+          async def __new__(cls) -> MyClass:
+              return super().__new__(cls)
+
+
+    `);
+  });
+
   it("supports parameters", () => {
     const decl = (
-      <py.FunctionDeclaration name="foo" parameters={["a", "b"]}>
+      <py.FunctionDeclaration
+        name="foo"
+        parameters={[{ name: "a" }, { name: "b" }]}
+      >
         return a + b
       </py.FunctionDeclaration>
     );
@@ -192,7 +247,7 @@ describe("Function Declaration", () => {
     const decl = (
       <py.FunctionDeclaration
         name="foo"
-        parameters={["a", "b"]}
+        parameters={[{ name: "a" }, { name: "b" }]}
         typeParameters={["T", "U"]}
       >
         return a + b
@@ -205,35 +260,65 @@ describe("Function Declaration", () => {
 
     `);
   });
-  it("renders function with parameters", () => {
+  it("renders abstract methods", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
-      <py.ClassDeclaration name="MyClass">
-        <py.FunctionDeclaration
-          name="foo"
-          instanceFunction
-          parameters={parameters}
-        >
-          self.attribute = "value"
-        </py.FunctionDeclaration>
-      </py.ClassDeclaration>
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.MethodDeclaration
+              name="methoddef"
+              parameters={parameters}
+              abstract
+            />
+            <py.ClassMethodDeclaration
+              name="classdef"
+              parameters={parameters}
+              abstract
+            />
+            <py.StaticMethodDeclaration
+              name="staticdef"
+              parameters={parameters}
+              abstract
+            />
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+      from abc import abstractmethod
+
       class MyClass:
-          def foo(self, x: int):
-              self.attribute = "value"
+          @abstractmethod
+          def methoddef(self, x: int):
+              pass
+
+          @classmethod
+          @abstractmethod
+          def classdef(cls, x: int):
+              pass
+
+          @staticmethod
+          @abstractmethod
+          def staticdef(x: int):
+              pass
 
 
     `);
   });
-  it("renders __init__ function with parameters", () => {
+  it("renders dunder methods with parameters", () => {
     const parameters = [{ name: "x", type: "int" }];
     const decl = (
       <py.ClassDeclaration name="MyClass">
-        <py.InitFunctionDeclaration parameters={parameters}>
-          self.attribute = "value"
-        </py.InitFunctionDeclaration>
+        <py.StatementList>
+          <py.DunderMethodDeclaration name="__init__" parameters={parameters}>
+            self.attribute = "value"
+          </py.DunderMethodDeclaration>
+          <py.DunderMethodDeclaration name="__repr__" parameters={parameters}>
+            return "MyClass"
+          </py.DunderMethodDeclaration>
+        </py.StatementList>
       </py.ClassDeclaration>
     );
 
@@ -241,6 +326,29 @@ describe("Function Declaration", () => {
       class MyClass:
           def __init__(self, x: int):
               self.attribute = "value"
+
+          def __repr__(self, x: int):
+              return "MyClass"
+
+
+    `);
+  });
+
+  it("renders dunder methods __new__", () => {
+    const decl = (
+      <py.ClassDeclaration name="MyClass">
+        <py.StatementList>
+          <py.ConstructorDeclaration args kwargs>
+            pass
+          </py.ConstructorDeclaration>
+        </py.StatementList>
+      </py.ClassDeclaration>
+    );
+
+    expect(toSourceText([decl])).toBe(d`
+      class MyClass:
+          def __new__(cls, *args, **kwargs):
+              pass
 
 
     `);
@@ -309,12 +417,18 @@ describe("Function Declaration", () => {
           async
           name="foo"
           parameters={[
-            { name: "x", type: <py.Reference refkey={refkey("A")} /> },
-            { name: "y", type: <py.Reference refkey={refkey("B")} /> },
+            {
+              name: "x",
+              type: refkey("A"),
+            },
+            {
+              name: "y",
+              type: refkey("B"),
+            },
           ]}
           args={true}
           kwargs={true}
-          returnType={<py.Reference refkey={refkey("Foo")} />}
+          returnType={refkey("Foo")}
         />
       </py.SourceFile>,
     ]);
@@ -344,5 +458,43 @@ describe("Function Declaration", () => {
 
             `,
     });
+  });
+
+  it("throws error when PropertyDeclaration is used outside of a class", () => {
+    expect(() => {
+      toSourceText([<py.PropertyDeclaration name="x" />]);
+    }).toThrow('Method "x" must be declared inside a class (member scope)');
+  });
+
+  it("throws error when MethodDeclaration is used outside of a class", () => {
+    expect(() => {
+      toSourceText([<py.MethodDeclaration name="my_method" />]);
+    }).toThrow(
+      'Method "my_method" must be declared inside a class (member scope)',
+    );
+  });
+
+  it("throws error when ClassMethodDeclaration is used outside of a class", () => {
+    expect(() => {
+      toSourceText([<py.ClassMethodDeclaration name="my_class_method" />]);
+    }).toThrow(
+      'Method "my_class_method" must be declared inside a class (member scope)',
+    );
+  });
+
+  it("throws error when StaticMethodDeclaration is used outside of a class", () => {
+    expect(() => {
+      toSourceText([<py.StaticMethodDeclaration name="my_static_method" />]);
+    }).toThrow(
+      'Method "my_static_method" must be declared inside a class (member scope)',
+    );
+  });
+
+  it("throws error when DunderMethodDeclaration is used outside of a class", () => {
+    expect(() => {
+      toSourceText([<py.DunderMethodDeclaration name="__init__" />]);
+    }).toThrow(
+      'Method "__init__" must be declared inside a class (member scope)',
+    );
   });
 });

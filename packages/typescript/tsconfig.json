@@ -7,6 +7,13 @@
     "types": ["@alloy-js/core/testing/matchers"]
   },
   "references": [{ "path": "../core" }],
-  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    "testing/**/*.ts",
+    "testing/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

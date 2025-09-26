@@ -29,6 +29,7 @@ import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
 import { ParameterProps, Parameters } from "../parameters/parameters.js";
+import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
 
 // properties for creating an interface
 export interface InterfaceDeclarationProps {
@@ -41,6 +42,19 @@ export interface InterfaceDeclarationProps {
    * This is not common in Go, so use with caution.
    */
   singleLine?: boolean;
+}
+
+/**
+ * Wrapper for creating a named interface type declaration.
+ */
+export function InterfaceTypeDeclaration(
+  props: InterfaceDeclarationProps & TypeDeclarationProps,
+) {
+  return (
+    <TypeDeclaration {...props}>
+      <InterfaceDeclaration {...props} />
+    </TypeDeclaration>
+  );
 }
 
 /**

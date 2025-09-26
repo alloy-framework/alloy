@@ -5,14 +5,34 @@ import { useSourceFileScope } from "../scopes/source-file.js";
 import { GoSymbol } from "./go.js";
 import { PackageSymbol } from "./package.js";
 
-function closestPackageScope(scopes: GoScope[]): GoPackageScope | undefined {
+function closestPackageScope(
+  scopes: GoScope[],
+  decl: GoSymbol,
+  memberPath: GoSymbol[],
+): {
+  pkgSymbol: PackageSymbol | undefined;
+  members: GoSymbol[];
+} {
+  const allMembers = [decl, ...memberPath];
+  for (let i = allMembers.length - 1; i >= 0; i--) {
+    const member = allMembers[i];
+    if (member instanceof PackageSymbol) {
+      return { pkgSymbol: member, members: allMembers.slice(i + 1) };
+    }
+  }
   for (let i = scopes.length - 1; i >= 0; i--) {
     const scope = scopes[i];
     if (scope instanceof GoPackageScope) {
-      return scope;
+      return {
+        pkgSymbol: scope.ownerSymbol,
+        members: allMembers,
+      };
     }
   }
-  return undefined;
+  return {
+    pkgSymbol: undefined,
+    members: allMembers,
+  };
 }
 
 // converts a refkey to its fully qualified name
@@ -36,23 +56,27 @@ export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
 
     let localSymbol: GoSymbol | undefined;
 
-    const pkgScope = closestPackageScope(pathDown)!;
-    if (pkgScope) {
+    const { pkgSymbol: pkgSymbol, members: pathFromPkg } = closestPackageScope(
+      pathDown,
+      lexicalDeclaration,
+      memberPath,
+    );
+    if (pkgSymbol) {
       // we need to import the package
-      if (!lexicalDeclaration.isExported) {
-        throw new Error(
-          `Can't reference non-exported symbol ${lexicalDeclaration.name} from another package.`,
-        );
+      for (const pathMember of pathFromPkg) {
+        if (!pathMember.isExported) {
+          throw new Error(
+            `Can't reference non-exported symbol ${pathMember.name} from another package.`,
+          );
+        }
       }
-      const pkgSymbol = pkgScope.ownerSymbol as PackageSymbol;
       localSymbol = refSfScope.addImport(pkgSymbol);
     }
 
     if (localSymbol) {
       parts.push(localSymbol.name);
     }
-    parts.push(lexicalDeclaration.name);
-    for (const member of memberPath) {
+    for (const member of pathFromPkg) {
       parts.push(member.name);
     }
 

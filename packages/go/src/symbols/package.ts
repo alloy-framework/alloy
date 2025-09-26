@@ -8,7 +8,7 @@ export interface PackageSymbolOptions extends OutputSymbolOptions {
 }
 
 /**
- * A symbol for a namespace in Go.
+ * A symbol for a package in Go.
  */
 export class PackageSymbol extends NamedTypeSymbol {
   public readonly symbolKind = "package";

@@ -114,6 +114,62 @@ it("defines multi-line params and return type", () => {
   `);
 });
 
+it("defines single-line return type", () => {
+  const res = (
+    <TestPackage>
+      <Function exported name="MethodOne" returns={["string", "error"]} />
+    </TestPackage>
+  );
+
+  expect(res).toRenderTo(`
+    package alloy
+
+    func MethodOne() (string, error) {}
+  `);
+});
+
+it("defines multi-line return type", () => {
+  const res = (
+    <TestPackage>
+      <Function
+        exported
+        name="MethodOne"
+        returns={[
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "string",
+          "error",
+        ]}
+      />
+    </TestPackage>
+  );
+
+  expect(res).toRenderTo(`
+    package alloy
+
+    func MethodOne() (
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      error,
+    ) {}
+  `);
+});
+
 it("specify doc comment", () => {
   expect(
     <TestPackage>

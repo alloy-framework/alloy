@@ -68,17 +68,18 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const isFileScope = useGoScope() instanceof GoSourceFileScope;
   const declarationGroupContext = useContext(VarDeclarationGroupContext);
   const inDeclarationGroup = !!declarationGroupContext?.active;
+  const isConst = declarationGroupContext?.const ?? props.const;
   const symbol = createVariableSymbol(props.name, {
     refkeys: props.refkey,
     canExport: isFileScope,
     isExported: props.exported,
   });
   const content = memo(() => {
-    const keyword = props.const ? "const" : "var";
+    const keyword = isConst ? "const" : "var";
 
     if (inDeclarationGroup) {
       if (!props.type && !props.children) {
-        if (!props.const) {
+        if (!isConst) {
           throw new Error(
             "Variable declaration must have a type or initializer.",
           );
@@ -111,11 +112,11 @@ export function VarDeclaration(props: VarDeclarationProps) {
         throw new Error(
           "Variable declaration must have a type or initializer.",
         );
-      } else if (!props.children || props.const || props.type || isFileScope) {
+      } else if (!props.children || isConst || props.type || isFileScope) {
         return (
           <>
             {keyword} <Name /> {props.type}
-            {props.type ? " " : ""}
+            {props.type && props.children ? " " : ""}
             {props.children ? "= " : ""}
             {props.children}
           </>

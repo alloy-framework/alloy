@@ -26,9 +26,7 @@ import { GoSymbol, isNameExported } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-// import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
-// import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
-// import { TypeParameters } from "../type-parameters/type-parameters.jsx";
+import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
 
 // properties for creating a struct
 export interface StructDeclarationProps {
@@ -41,6 +39,19 @@ export interface StructDeclarationProps {
    * This is not common in Go, so use with caution.
    */
   singleLine?: boolean;
+}
+
+/**
+ * Wrapper for creating a named struct type declaration.
+ */
+export function StructTypeDeclaration(
+  props: StructDeclarationProps & TypeDeclarationProps,
+) {
+  return (
+    <TypeDeclaration {...props}>
+      <StructDeclaration {...props} />
+    </TypeDeclaration>
+  );
 }
 
 /**

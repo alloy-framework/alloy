@@ -5,6 +5,8 @@ import {
   Declaration,
   DeclarationContext,
   effect,
+  For,
+  Indent,
   Name,
   Namekey,
   Refkey,
@@ -36,7 +38,7 @@ import { TypeParameters } from "../parameters/typeparameters.jsx";
 export interface FunctionProps {
   name: string | Namekey;
   parameters?: Array<ParameterProps>;
-  returns?: Children;
+  returns?: Children | Children[];
 
   refkey?: Refkey;
 
@@ -97,7 +99,31 @@ export function Function(props: FunctionProps) {
         <TypeParameters parameters={props.typeParameters} />
         <Parameters parameters={props.parameters} />{" "}
         {props.returns ?
-          <>{props.returns} </>
+          Array.isArray(props.returns) && props.returns.length > 1 ?
+            <>
+              <group>
+                {"("}
+                <Indent softline>
+                  <For
+                    each={props.returns}
+                    joiner={
+                      <>
+                        {","}
+                        <ifBreak flatContents=" ">
+                          <sbr />
+                        </ifBreak>
+                      </>
+                    }
+                    ender={<ifBreak>,</ifBreak>}
+                  >
+                    {(ret) => ret}
+                  </For>
+                </Indent>
+                <sbr />
+                {")"}
+              </group>{" "}
+            </>
+          : <>{props.returns} </>
         : null}
         {!props.children ?
           "{}"

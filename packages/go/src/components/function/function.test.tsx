@@ -7,7 +7,7 @@ import { SourceDirectory } from "../SourceDirectory.js";
 import { SourceFile } from "../SourceFile.js";
 import { StructDeclaration } from "../struct/declaration.js";
 import { TypeDeclaration } from "../type/declaration.js";
-import { FuncReceiver, Function } from "./function.js";
+import { FunctionDeclaration, FunctionReceiver } from "./function.js";
 
 const Wrapper = (props: { children: Children; refkey: Refkey }) => (
   <TestPackage>
@@ -22,7 +22,7 @@ const Wrapper = (props: { children: Children; refkey: Refkey }) => (
 it("applies PascalCase naming policy when exported", () => {
   expect(
     <TestPackage>
-      <Function name="MethodOne" />
+      <FunctionDeclaration name="MethodOne" />
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -34,7 +34,7 @@ it("applies PascalCase naming policy when exported", () => {
 it("applies camelCase naming policy when not exported", () => {
   expect(
     <TestPackage>
-      <Function name="methodOne" />
+      <FunctionDeclaration name="methodOne" />
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -56,7 +56,11 @@ it("defines single-line params and return type", () => {
   ];
   const res = (
     <TestPackage>
-      <Function name="MethodOne" parameters={params} returns="string" />
+      <FunctionDeclaration
+        name="MethodOne"
+        parameters={params}
+        returns="string"
+      />
     </TestPackage>
   );
 
@@ -88,7 +92,11 @@ it("defines multi-line params and return type", () => {
   ];
   const res = (
     <TestPackage>
-      <Function name="MethodOne" parameters={params} returns="string" />
+      <FunctionDeclaration
+        name="MethodOne"
+        parameters={params}
+        returns="string"
+      />
     </TestPackage>
   );
 
@@ -107,7 +115,7 @@ it("defines multi-line params and return type", () => {
 it("defines single-line return type", () => {
   const res = (
     <TestPackage>
-      <Function name="MethodOne" returns={["string", "error"]} />
+      <FunctionDeclaration name="MethodOne" returns={["string", "error"]} />
     </TestPackage>
   );
 
@@ -121,7 +129,7 @@ it("defines single-line return type", () => {
 it("defines multi-line return type", () => {
   const res = (
     <TestPackage>
-      <Function
+      <FunctionDeclaration
         name="MethodOne"
         returns={[
           "string",
@@ -162,7 +170,7 @@ it("defines multi-line return type", () => {
 it("specify doc comment", () => {
   expect(
     <TestPackage>
-      <Function
+      <FunctionDeclaration
         name="MethodOne"
         doc={
           <>
@@ -185,9 +193,9 @@ it("specify doc comment", () => {
 it("use single-line form", () => {
   expect(
     <TestPackage>
-      <Function name="MethodOne" singleLine>
+      <FunctionDeclaration name="MethodOne" singleLine>
         return nil
-      </Function>
+      </FunctionDeclaration>
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -199,7 +207,7 @@ it("use single-line form", () => {
 it("use children", () => {
   expect(
     <TestPackage>
-      <Function name="MethodOne">return nil</Function>
+      <FunctionDeclaration name="MethodOne">return nil</FunctionDeclaration>
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -213,13 +221,13 @@ it("use children", () => {
 it("use multiple children", () => {
   expect(
     <TestPackage>
-      <Function name="MethodOne">
+      <FunctionDeclaration name="MethodOne">
         {code`
         lineOne()
         lineTwo()
         return nil
         `}
-      </Function>
+      </FunctionDeclaration>
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -237,9 +245,9 @@ it("use method", () => {
 
   expect(
     <Wrapper refkey={ReceiverRefkey}>
-      <Function
+      <FunctionDeclaration
         name="MethodOne"
-        receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
+        receiver={<FunctionReceiver name="s" type={ReceiverRefkey} />}
       />
     </Wrapper>,
   ).toRenderTo(`
@@ -255,9 +263,9 @@ it("use method variadic params", () => {
 
   expect(
     <Wrapper refkey={ReceiverRefkey}>
-      <Function
+      <FunctionDeclaration
         name="MethodOne"
-        receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
+        receiver={<FunctionReceiver name="s" type={ReceiverRefkey} />}
         parameters={[
           { name: "i", type: "int" },
           { name: "args", type: "string", variadic: true },
@@ -288,9 +296,9 @@ it("use method cross-package fail", () => {
           </SourceDirectory>
           <SourceDirectory path="world">
             <SourceFile path="test.go">
-              <Function
+              <FunctionDeclaration
                 name="MethodOne"
-                receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
+                receiver={<FunctionReceiver name="s" type={ReceiverRefkey} />}
               />
             </SourceFile>
           </SourceDirectory>
@@ -307,7 +315,7 @@ describe("type parameters", () => {
     const T = refkey("T");
     expect(
       <TestPackage>
-        <Function
+        <FunctionDeclaration
           name="MethodOne"
           parameters={[{ name: "arg", type: T }]}
           typeParameters={[{ name: "T", constraint: "any", refkey: T }]}
@@ -333,9 +341,9 @@ describe("type parameters", () => {
           <StructDeclaration />
           <hbr />
         </TypeDeclaration>
-        <Function
+        <FunctionDeclaration
           name="MethodOne"
-          receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
+          receiver={<FunctionReceiver name="s" type={ReceiverRefkey} />}
         />
       </TestPackage>,
     ).toRenderTo(`
@@ -359,10 +367,10 @@ describe("type parameters", () => {
           <StructDeclaration />
           <hbr />
         </TypeDeclaration>
-        <Function
+        <FunctionDeclaration
           name="MethodOne"
           receiver={
-            <FuncReceiver
+            <FunctionReceiver
               name="s"
               type={ReceiverRefkey}
               typeParameters={[{ name: "U", constraint: "any" }]}

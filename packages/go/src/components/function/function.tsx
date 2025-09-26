@@ -31,13 +31,16 @@ import {
   TypeParameterProps,
 } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import {
+  FunctionParameterProps,
+  FunctionParameters,
+} from "../parameters/parameters.jsx";
 import { TypeParameters } from "../parameters/typeparameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {
   name: string | Namekey;
-  parameters?: Array<ParameterProps>;
+  parameters?: FunctionParameterProps[];
   returns?: Children;
 
   refkey?: Refkey;
@@ -62,7 +65,7 @@ export interface FunctionProps {
 }
 
 // a Go function
-export function Function(props: FunctionProps) {
+export function FunctionDeclaration(props: FunctionProps) {
   const isFileScope = useGoScope() instanceof GoSourceFileScope;
 
   if (props.receiver && !isFileScope) {
@@ -90,7 +93,7 @@ export function Function(props: FunctionProps) {
         : null}
         <Name />
         <TypeParameters parameters={props.typeParameters} />
-        <Parameters parameters={props.parameters} />{" "}
+        <FunctionParameters parameters={props.parameters} />{" "}
         {props.returns ?
           Array.isArray(props.returns) && props.returns.length > 1 ?
             <>
@@ -137,7 +140,7 @@ export interface FuncReceiverProps {
   typeParameters?: TypeParameterProps[];
 }
 
-export function FuncReceiver(props: FuncReceiverProps) {
+export function FunctionReceiver(props: FuncReceiverProps) {
   const receiverSymbol = createParameterSymbol(props.name, {
     refkeys: props.refkey,
   });

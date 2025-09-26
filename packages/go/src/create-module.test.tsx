@@ -1,4 +1,4 @@
-import { VarDeclaration } from "#components/index.js";
+import { VariableDeclaration } from "./components/index.js";
 import { TestPackage } from "#test/utils.jsx";
 import { namekey, toRefkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
@@ -34,7 +34,7 @@ it("Can reference types which haven't been created yet", () => {
 
   expect(
     <TestPackage>
-      <VarDeclaration name={test} type={std1.SomeType} />
+      <VariableDeclaration name={test} type={std1.SomeType} />
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -58,7 +58,7 @@ it("renders as a refkey", () => {
 
   expect(
     <TestPackage>
-      <VarDeclaration name="test" type={mod.BinaryReader} />
+      <VariableDeclaration name="test" type={mod.BinaryReader} />
     </TestPackage>,
   ).toRenderTo(`
     package alloy

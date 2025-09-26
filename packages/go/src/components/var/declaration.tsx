@@ -18,7 +18,7 @@ import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createVariableSymbol } from "../../symbols/factories.js";
 import { LineComment } from "../doc/comment.jsx";
 
-export interface VarDeclarationProps {
+export interface VariableDeclarationProps {
   /** Variable name */
   name: string | Namekey;
   /** Type of the variable declaration */
@@ -33,24 +33,24 @@ export interface VarDeclarationProps {
   children?: Children;
 }
 
-export interface VarDeclarationGroupProps {
+export interface VariableDeclarationGroupProps {
   const?: boolean;
   children: Children;
 }
 
-export interface VarDeclarationGroupContext {
+export interface VariableDeclarationGroupContext {
   const: boolean;
   active: boolean;
 }
 
-export const VarDeclarationGroupContext: ComponentContext<VarDeclarationGroupContext> =
-  createContext<VarDeclarationGroupContext>();
+export const VariableDeclarationGroupContext: ComponentContext<VariableDeclarationGroupContext> =
+  createContext<VariableDeclarationGroupContext>();
 
-export function VarDeclarationGroup(props: VarDeclarationGroupProps) {
+export function VariableDeclarationGroup(props: VariableDeclarationGroupProps) {
   const keyword = computed(() => (props.const ? "const" : "var"));
 
   return (
-    <VarDeclarationGroupContext.Provider
+    <VariableDeclarationGroupContext.Provider
       value={{ active: true, const: !!props.const }}
     >
       {keyword} (
@@ -58,13 +58,13 @@ export function VarDeclarationGroup(props: VarDeclarationGroupProps) {
         <List hardline>{props.children}</List>
       </Indent>
       )
-    </VarDeclarationGroupContext.Provider>
+    </VariableDeclarationGroupContext.Provider>
   );
 }
 
-export function VarDeclaration(props: VarDeclarationProps) {
+export function VariableDeclaration(props: VariableDeclarationProps) {
   const isFileScope = useGoScope() instanceof GoSourceFileScope;
-  const declarationGroupContext = useContext(VarDeclarationGroupContext);
+  const declarationGroupContext = useContext(VariableDeclarationGroupContext);
   const inDeclarationGroup = !!declarationGroupContext?.active;
   const isConst = declarationGroupContext?.const ?? props.const;
   const symbol = createVariableSymbol(props.name, { refkeys: props.refkey });

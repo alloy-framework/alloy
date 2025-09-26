@@ -30,7 +30,7 @@ const output = render(
           <hbr />
           <go.BlockComment>This is a block comment</go.BlockComment>
           <hbr />
-          <go.Function
+          <go.FunctionDeclaration
             name="Add"
             parameters={[
               { name: aRef, type: "int" },
@@ -41,7 +41,7 @@ const output = render(
             {code`
               return ${aRef} + ${bRef}
             `}
-          </go.Function>
+          </go.FunctionDeclaration>
           <hbr />
           <go.StructTypeDeclaration name={personRef}>
             <List>
@@ -69,10 +69,10 @@ const output = render(
             </List>
           </go.StructTypeDeclaration>
           <hbr />
-          <go.Function
+          <go.FunctionDeclaration
             name={namekey("AgeSum")}
             receiver={
-              <go.FuncReceiver name={employeeRecRef1} type={employeeRef} />
+              <go.FunctionReceiver name={employeeRecRef1} type={employeeRef} />
             }
             parameters={[
               { name: paramRef1, type: "int" },
@@ -83,12 +83,12 @@ const output = render(
             {code`
               return ${employeeRecRef1}.Age + ${paramRef1} + ${paramRef2}
             `}
-          </go.Function>
+          </go.FunctionDeclaration>
           <hbr />
-          <go.Function
+          <go.FunctionDeclaration
             name={namekey("NameSum")}
             receiver={
-              <go.FuncReceiver
+              <go.FunctionReceiver
                 name={employeeRecRef2}
                 type={<go.Pointer>{employeeRef}</go.Pointer>}
               />
@@ -99,9 +99,9 @@ const output = render(
             {code`
               return ${employeeRecRef2}.Name + ${paramRef4}
             `}
-          </go.Function>
+          </go.FunctionDeclaration>
           <hbr />
-          <go.Function
+          <go.FunctionDeclaration
             name={namekey("Generic")}
             typeParameters={[{ name: typeParamRef, constraint: "any" }]}
             parameters={[{ name: paramRef3, type: typeParamRef }]}
@@ -110,45 +110,52 @@ const output = render(
             {code`
               return ${paramRef3}
             `}
-          </go.Function>
+          </go.FunctionDeclaration>
           <hbr />
-          <go.VarDeclarationGroup>
-            <go.VarDeclaration name={namekey("Version")} type="string">
+          <go.VariableDeclarationGroup>
+            <go.VariableDeclaration name={namekey("Version")} type="string">
               "1.0.0"
-            </go.VarDeclaration>
-            <go.VarDeclaration name={aliceRef} type={personRef}>
+            </go.VariableDeclaration>
+            <go.VariableDeclaration name={aliceRef} type={personRef}>
               {code`${personRef}{Name: "Alice", Age: 30}`}
-            </go.VarDeclaration>
-          </go.VarDeclarationGroup>
+            </go.VariableDeclaration>
+          </go.VariableDeclarationGroup>
           <hbr />
-          <go.VarDeclaration name={namekey("Bob")} type={personRef}>
+          <go.VariableDeclaration name={namekey("Bob")} type={personRef}>
             {code`${personRef}{Name: "Bob", Age: 29}`}
-          </go.VarDeclaration>
+          </go.VariableDeclaration>
           <hbr />
-          <go.VarDeclaration name={namekey("Version2")} type="string" const>
+          <go.VariableDeclaration
+            name={namekey("Version2")}
+            type="string"
+            const
+          >
             "1.0.0"
-          </go.VarDeclaration>
+          </go.VariableDeclaration>
           <hbr />
           <go.TypeDeclaration name={variantRef}>uint8</go.TypeDeclaration>
           <hbr />
-          <go.VarDeclarationGroup const>
-            <go.VarDeclaration name={namekey("VariantA")} type={variantRef}>
+          <go.VariableDeclarationGroup const>
+            <go.VariableDeclaration
+              name={namekey("VariantA")}
+              type={variantRef}
+            >
               iota
-            </go.VarDeclaration>
-            <go.VarDeclaration name={namekey("VariantB")} />
-          </go.VarDeclarationGroup>
+            </go.VariableDeclaration>
+            <go.VariableDeclaration name={namekey("VariantB")} />
+          </go.VariableDeclarationGroup>
           <hbr />
         </go.SourceFile>
       </go.SourceDirectory>
       <go.SourceDirectory path="cmd" name="main">
         <go.SourceFile path="main.go">
-          <go.Function name={namekey("main")}>
+          <go.FunctionDeclaration name={namekey("main")}>
             {code`
               ${go.std.fmt.Println}("Hello, World!")
               person := ${aliceRef}
               person.Age += 1
             `}
-          </go.Function>
+          </go.FunctionDeclaration>
         </go.SourceFile>
       </go.SourceDirectory>
     </go.ModuleDirectory>

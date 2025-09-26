@@ -4,7 +4,7 @@ import { expect, it } from "vitest";
 import { ModuleDirectory } from "./ModuleDirectory.jsx";
 import { SourceDirectory } from "./SourceDirectory.jsx";
 import { SourceFile } from "./SourceFile.jsx";
-import { VarDeclaration } from "./var/declaration.jsx";
+import { VariableDeclaration } from "./var/declaration.jsx";
 
 it("defines multiple packages and source files with unique content", () => {
   const tree = (
@@ -12,26 +12,26 @@ it("defines multiple packages and source files with unique content", () => {
       <ModuleDirectory name="github.com/alloy-framework/alloy">
         <SourceDirectory path="package1">
           <SourceFile path="Model1.go">
-            <VarDeclaration name="Model1" type="string">
+            <VariableDeclaration name="Model1" type="string">
               "This is Model1"
-            </VarDeclaration>
+            </VariableDeclaration>
           </SourceFile>
           <SourceFile path="Model2.go">
-            <VarDeclaration name="Model2" type="string">
+            <VariableDeclaration name="Model2" type="string">
               "This is Model2"
-            </VarDeclaration>
+            </VariableDeclaration>
           </SourceFile>
         </SourceDirectory>
         <SourceDirectory path="package2">
           <SourceFile path="Model3.go">
-            <VarDeclaration name="Model3" type="string">
+            <VariableDeclaration name="Model3" type="string">
               "This is Model3"
-            </VarDeclaration>
+            </VariableDeclaration>
           </SourceFile>
           <SourceFile path="Model4.go">
-            <VarDeclaration name="Model4" type="string">
+            <VariableDeclaration name="Model4" type="string">
               "This is Model4"
-            </VarDeclaration>
+            </VariableDeclaration>
           </SourceFile>
         </SourceDirectory>
       </ModuleDirectory>

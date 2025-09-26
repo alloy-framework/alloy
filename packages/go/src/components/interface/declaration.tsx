@@ -28,7 +28,10 @@ import { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-import { ParameterProps, Parameters } from "../parameters/parameters.js";
+import {
+  FunctionParameterProps,
+  FunctionParameters,
+} from "../parameters/parameters.js";
 import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
 
 /**
@@ -142,7 +145,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
 
 export interface InterfaceFunctionProps {
   name: string | Namekey;
-  parameters?: ParameterProps[];
+  parameters?: FunctionParameterProps[];
   returns?: Children;
   refkey?: Refkey;
   /** Doc comment */
@@ -163,7 +166,7 @@ export function InterfaceFunction(props: InterfaceFunctionProps) {
           <hbr />
         </Show>
         func <Name />
-        <Parameters parameters={props.parameters} />
+        <FunctionParameters parameters={props.parameters} />
         {props.returns ?
           <> {props.returns}</>
         : null}

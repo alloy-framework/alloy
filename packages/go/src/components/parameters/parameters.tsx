@@ -10,7 +10,7 @@ import {
 import { createParameterSymbol } from "../../symbols/factories.js";
 import { Name } from "../Name.jsx";
 
-export interface ParameterProps {
+export interface FunctionParameterProps {
   name: string | Namekey;
   type: Children;
   variadic?: boolean;
@@ -18,7 +18,7 @@ export interface ParameterProps {
 }
 
 /** Define a parameter to be used in functions. */
-export function Parameter(props: ParameterProps) {
+export function FunctionParameter(props: FunctionParameterProps) {
   const TypeSlot = createSymbolSlot();
 
   const memberSymbol = createParameterSymbol(props.name, {
@@ -34,12 +34,12 @@ export function Parameter(props: ParameterProps) {
   );
 }
 
-export interface ParametersProps {
-  parameters: ParameterProps[] | undefined;
+export interface FunctionParametersProps {
+  parameters: FunctionParameterProps[] | undefined;
 }
 
 /** Render a collection of parameters */
-export function Parameters(props: ParametersProps) {
+export function FunctionParameters(props: FunctionParametersProps) {
   const params = props.parameters ?? [];
   for (let i = 0; i < (params.length ?? 0); i++) {
     if (i < params.length - 1 && params[i].variadic) {
@@ -63,7 +63,7 @@ export function Parameters(props: ParametersProps) {
             }
             ender={<ifBreak>,</ifBreak>}
           >
-            {(param) => <Parameter {...param} />}
+            {(param) => <FunctionParameter {...param} />}
           </For>
         </Indent>
       )}

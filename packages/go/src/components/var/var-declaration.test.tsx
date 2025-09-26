@@ -10,7 +10,7 @@ it("works variable", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path=".">
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="hi">12</go.VarDeclaration>
+            <go.VariableDeclaration name="hi">12</go.VariableDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>
@@ -28,13 +28,16 @@ it("works variable group", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path=".">
           <go.SourceFile path="test.go">
-            <go.VarDeclarationGroup>
-              <go.VarDeclaration name="hi1">12</go.VarDeclaration>
-              <go.VarDeclaration name="hi2" type="string">
+            <go.VariableDeclarationGroup>
+              <go.VariableDeclaration name="hi1">12</go.VariableDeclaration>
+              <go.VariableDeclaration name="hi2" type="string">
                 12
-              </go.VarDeclaration>
-              <go.VarDeclaration name="hi3" type="string"></go.VarDeclaration>
-            </go.VarDeclarationGroup>
+              </go.VariableDeclaration>
+              <go.VariableDeclaration
+                name="hi3"
+                type="string"
+              ></go.VariableDeclaration>
+            </go.VariableDeclarationGroup>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>
@@ -56,12 +59,12 @@ it("works const group", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path=".">
           <go.SourceFile path="test.go">
-            <go.VarDeclarationGroup const>
-              <go.VarDeclaration name="hi1">12</go.VarDeclaration>
-              <go.VarDeclaration name="hi2" type="string">
+            <go.VariableDeclarationGroup const>
+              <go.VariableDeclaration name="hi1">12</go.VariableDeclaration>
+              <go.VariableDeclaration name="hi2" type="string">
                 12
-              </go.VarDeclaration>
-            </go.VarDeclarationGroup>
+              </go.VariableDeclaration>
+            </go.VariableDeclarationGroup>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>
@@ -89,9 +92,9 @@ it("works end-to-end", () => {
             </go.TypeDeclaration>
           </go.SourceFile>
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="hi" type={TestType}>
+            <go.VariableDeclaration name="hi" type={TestType}>
               "hello"
-            </go.VarDeclaration>
+            </go.VariableDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>
@@ -128,9 +131,9 @@ it("throws end-to-end cross-package with unexported type", () => {
           </go.SourceDirectory>
           <go.SourceDirectory path="world">
             <go.SourceFile path="test.go">
-              <go.VarDeclaration name="hi" type={TestType}>
+              <go.VariableDeclaration name="hi" type={TestType}>
                 "hello"
-              </go.VarDeclaration>
+              </go.VariableDeclaration>
             </go.SourceFile>
           </go.SourceDirectory>
         </go.ModuleDirectory>
@@ -156,9 +159,9 @@ it("works end-to-end cross-package", () => {
         </go.SourceDirectory>
         <go.SourceDirectory path="world">
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="hi" type={TestType}>
+            <go.VariableDeclaration name="hi" type={TestType}>
               "hello"
-            </go.VarDeclaration>
+            </go.VariableDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>
@@ -204,13 +207,13 @@ it("works with conflict resolution", () => {
         </go.SourceDirectory>
         <go.SourceDirectory path="world">
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="hi1" type={TestType1}>
+            <go.VariableDeclaration name="hi1" type={TestType1}>
               "hello"
-            </go.VarDeclaration>
+            </go.VariableDeclaration>
             <hbr />
-            <go.VarDeclaration name="hi2" type={TestType2}>
+            <go.VariableDeclaration name="hi2" type={TestType2}>
               "hello"
-            </go.VarDeclaration>
+            </go.VariableDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
       </go.ModuleDirectory>

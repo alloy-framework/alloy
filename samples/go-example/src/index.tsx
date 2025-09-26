@@ -1,26 +1,26 @@
 import {
   code,
   List,
+  namekey,
   Output,
-  refkey,
   render,
   writeOutput,
 } from "@alloy-js/core";
 import * as go from "@alloy-js/go";
 
-const aRef = refkey("a");
-const bRef = refkey("b");
-const personRef = refkey("Person");
-const employeeRef = refkey("Employee");
-const employeeRecRef1 = refkey("e1");
-const employeeRecRef2 = refkey("e2");
-const paramRef1 = refkey("param1");
-const paramRef2 = refkey("param2");
-const paramRef3 = refkey("param3");
-const paramRef4 = refkey("param4");
-const typeParamRef = refkey("T");
-const variantRef = refkey("Variants");
-const aliceRef = refkey("Alice");
+const aRef = namekey("a");
+const bRef = namekey("b");
+const personRef = namekey("Person");
+const employeeRef = namekey("Employee");
+const employeeRecRef1 = namekey("e");
+const employeeRecRef2 = namekey("e2");
+const paramRef1 = namekey("param");
+const paramRef2 = namekey("param");
+const paramRef3 = namekey("param");
+const paramRef4 = namekey("param");
+const typeParamRef = namekey("T");
+const variantRef = namekey("Variants");
+const aliceRef = namekey("Alice");
 const output = render(
   <Output>
     <go.ModuleDirectory name="github.com/alloy-framework/alloy">
@@ -33,41 +33,35 @@ const output = render(
           <go.Function
             name="Add"
             parameters={[
-              { name: "a", type: "int", refkey: aRef },
-              { name: "b", type: "int", refkey: bRef },
+              { name: aRef, type: "int" },
+              { name: bRef, type: "int" },
             ]}
             returns={"int"}
-            exported
           >
             {code`
               return ${aRef} + ${bRef}
             `}
           </go.Function>
           <hbr />
-          <go.StructTypeDeclaration name="Person" exported refkey={personRef}>
+          <go.StructTypeDeclaration name={personRef}>
             <List>
-              <go.StructMember name="Name" type="string" exported />
-              <go.StructMember name="Age" type="int" exported />
+              <go.StructMember name={namekey("Name")} type="string" />
+              <go.StructMember name={namekey("Age")} type="int" />
             </List>
           </go.StructTypeDeclaration>
           <hbr />
-          <go.StructTypeDeclaration
-            name="Employee"
-            exported
-            refkey={employeeRef}
-          >
+          <go.StructTypeDeclaration name={employeeRef}>
             <List>
               <go.StructEmbed>{personRef}</go.StructEmbed>
-              <go.StructMember name="Company" type="string" exported />
+              <go.StructMember name={namekey("Company")} type="string" />
               <go.StructMember
-                name="Coordinates"
+                name={namekey("Coordinates")}
                 tag={{ json: "coordinates" }}
-                exported
                 type={
                   <go.StructDeclaration>
                     <List>
-                      <go.StructMember name="Lat" type="float64" exported />
-                      <go.StructMember name="Long" type="float64" exported />
+                      <go.StructMember name={namekey("Lat")} type="float64" />
+                      <go.StructMember name={namekey("Long")} type="float64" />
                     </List>
                   </go.StructDeclaration>
                 }
@@ -76,20 +70,15 @@ const output = render(
           </go.StructTypeDeclaration>
           <hbr />
           <go.Function
-            name="AgeSum"
+            name={namekey("AgeSum")}
             receiver={
-              <go.FuncReceiver
-                name="e"
-                type={employeeRef}
-                refkey={employeeRecRef1}
-              />
+              <go.FuncReceiver name={employeeRecRef1} type={employeeRef} />
             }
             parameters={[
-              { name: "param", type: "int", refkey: paramRef1 },
-              { name: "param", type: "int", refkey: paramRef2 },
+              { name: paramRef1, type: "int" },
+              { name: paramRef2, type: "int" },
             ]}
             returns={"int"}
-            exported
           >
             {code`
               return ${employeeRecRef1}.Age + ${paramRef1} + ${paramRef2}
@@ -97,17 +86,15 @@ const output = render(
           </go.Function>
           <hbr />
           <go.Function
-            name="NameSum"
+            name={namekey("NameSum")}
             receiver={
               <go.FuncReceiver
-                name="e"
+                name={employeeRecRef2}
                 type={<go.Pointer>{employeeRef}</go.Pointer>}
-                refkey={employeeRecRef2}
               />
             }
-            parameters={[{ name: "name", type: "string", refkey: paramRef4 }]}
+            parameters={[{ name: paramRef4, type: "string" }]}
             returns={"string"}
-            exported
           >
             {code`
               return ${employeeRecRef2}.Name + ${paramRef4}
@@ -115,15 +102,10 @@ const output = render(
           </go.Function>
           <hbr />
           <go.Function
-            name="Generic"
-            typeParameters={[
-              { name: "T", constraint: "any", refkey: typeParamRef },
-            ]}
-            parameters={[
-              { name: "param", type: typeParamRef, refkey: paramRef3 },
-            ]}
+            name={namekey("Generic")}
+            typeParameters={[{ name: typeParamRef, constraint: "any" }]}
+            parameters={[{ name: paramRef3, type: typeParamRef }]}
             returns={typeParamRef}
-            exported
           >
             {code`
               return ${paramRef3}
@@ -131,43 +113,36 @@ const output = render(
           </go.Function>
           <hbr />
           <go.VarDeclarationGroup>
-            <go.VarDeclaration name="Version" type="string" exported>
+            <go.VarDeclaration name={namekey("Version")} type="string">
               "1.0.0"
             </go.VarDeclaration>
-            <go.VarDeclaration
-              name="Alice"
-              type={personRef}
-              exported
-              refkey={aliceRef}
-            >
+            <go.VarDeclaration name={aliceRef} type={personRef}>
               {code`${personRef}{Name: "Alice", Age: 30}`}
             </go.VarDeclaration>
           </go.VarDeclarationGroup>
           <hbr />
-          <go.VarDeclaration name="Bob" type={personRef} exported>
+          <go.VarDeclaration name={namekey("Bob")} type={personRef}>
             {code`${personRef}{Name: "Bob", Age: 29}`}
           </go.VarDeclaration>
           <hbr />
-          <go.VarDeclaration name="Version2" type="string" exported const>
+          <go.VarDeclaration name={namekey("Version2")} type="string" const>
             "1.0.0"
           </go.VarDeclaration>
           <hbr />
-          <go.TypeDeclaration name="Variants" refkey={variantRef} exported>
-            uint8
-          </go.TypeDeclaration>
+          <go.TypeDeclaration name={variantRef}>uint8</go.TypeDeclaration>
           <hbr />
           <go.VarDeclarationGroup const>
-            <go.VarDeclaration name="VariantA" type={variantRef} exported>
+            <go.VarDeclaration name={namekey("VariantA")} type={variantRef}>
               iota
             </go.VarDeclaration>
-            <go.VarDeclaration name="VariantB" exported />
+            <go.VarDeclaration name={namekey("VariantB")} />
           </go.VarDeclarationGroup>
           <hbr />
         </go.SourceFile>
       </go.SourceDirectory>
       <go.SourceDirectory path="cmd" name="main">
         <go.SourceFile path="main.go">
-          <go.Function name="main">
+          <go.Function name={namekey("main")}>
             {code`
               ${go.std.fmt.Println}("Hello, World!")
               person := ${aliceRef}

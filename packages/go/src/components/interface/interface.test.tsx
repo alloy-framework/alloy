@@ -15,7 +15,7 @@ import {
 function Wrapper(props: { children: any }) {
   return (
     <TestPackage>
-      <TypeDeclaration name="TestInterface" exported>
+      <TypeDeclaration name="TestInterface">
         <InterfaceDeclaration>{props.children}</InterfaceDeclaration>
       </TypeDeclaration>
     </TestPackage>
@@ -25,7 +25,7 @@ function Wrapper(props: { children: any }) {
 it("declares interface with no members", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration name="Test">
+      <TypeDeclaration name="test">
         <InterfaceDeclaration />
       </TypeDeclaration>
     </TestPackage>,
@@ -39,7 +39,7 @@ it("declares interface with no members", () => {
 it("specify doc comment", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration name="Test" doc="This is a test">
+      <TypeDeclaration name="test" doc="This is a test">
         <InterfaceDeclaration />
       </TypeDeclaration>
     </TestPackage>,
@@ -118,11 +118,10 @@ it("specify doc comment", () => {
 it("defines fields", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration exported name="TestInterface">
+      <TypeDeclaration name="TestInterface">
         <InterfaceDeclaration>
           <List>
             <InterfaceFunction
-              exported
               name="FunctionOne"
               parameters={[{ name: "hi", type: "string" }]}
               returns={"string"}
@@ -147,7 +146,7 @@ describe("naming", () => {
     expect(
       <Wrapper>
         <List>
-          <InterfaceFunction exported name="memberOne" returns="string" />
+          <InterfaceFunction name="MemberOne" returns="string" />
         </List>
       </Wrapper>,
     ).toRenderTo(`
@@ -163,7 +162,7 @@ describe("naming", () => {
     expect(
       <Wrapper>
         <List>
-          <InterfaceFunction name="MemberOne" returns="string" />
+          <InterfaceFunction name="memberOne" returns="string" />
         </List>
       </Wrapper>,
     ).toRenderTo(`
@@ -181,21 +180,21 @@ describe("embedded", () => {
     const TestInterfaceEmbed = refkey("TestInterfaceEmbed");
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestInterface" exported>
+        <TypeDeclaration name="TestInterface">
           <InterfaceDeclaration>
             <List>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestInterface2" exported>
+        <TypeDeclaration name="TestInterface2">
           <InterfaceDeclaration>
             <List>
               <InterfaceEmbed refkey={TestInterfaceEmbed}>
                 TestInterface
               </InterfaceEmbed>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
@@ -222,21 +221,21 @@ describe("embedded", () => {
 
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestInterface" refkey={TestInterface} exported>
+        <TypeDeclaration name="TestInterface" refkey={TestInterface}>
           <InterfaceDeclaration>
             <List>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestInterface2" exported>
+        <TypeDeclaration name="TestInterface2">
           <InterfaceDeclaration>
             <List>
               <InterfaceEmbed refkey={TestInterfaceEmbed}>
                 {TestInterface}
               </InterfaceEmbed>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
@@ -267,35 +266,23 @@ describe("embedded", () => {
           <SourceDirectory path=".">
             <SourceDirectory path="hello">
               <SourceFile path="types.go">
-                <TypeDeclaration
-                  name="TestInterface"
-                  refkey={TestInterface}
-                  exported
-                >
+                <TypeDeclaration name="TestInterface" refkey={TestInterface}>
                   <InterfaceDeclaration>
                     <List>
-                      <InterfaceFunction
-                        exported
-                        name="MemberOne"
-                        returns="string"
-                      />
+                      <InterfaceFunction name="MemberOne" returns="string" />
                     </List>
                   </InterfaceDeclaration>
                 </TypeDeclaration>
               </SourceFile>
             </SourceDirectory>
             <SourceFile path="Test.go">
-              <TypeDeclaration name="TestInterface2" exported>
+              <TypeDeclaration name="TestInterface2">
                 <InterfaceDeclaration>
                   <List>
                     <InterfaceEmbed refkey={TestInterfaceEmbed}>
                       {TestInterface}
                     </InterfaceEmbed>
-                    <InterfaceFunction
-                      exported
-                      name="MemberOne"
-                      returns="string"
-                    />
+                    <InterfaceFunction name="MemberOne" returns="string" />
                   </List>
                 </InterfaceDeclaration>
               </TypeDeclaration>
@@ -335,19 +322,19 @@ describe("constraints", () => {
     const TestInterface = refkey("TestInterface");
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestInterface" exported refkey={TestInterface}>
+        <TypeDeclaration name="TestInterface" refkey={TestInterface}>
           <InterfaceDeclaration>
             <List>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestInterface2" exported>
+        <TypeDeclaration name="TestInterface2">
           <InterfaceDeclaration>
             <List>
               <TypeConstraint>{TestInterface}</TypeConstraint>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
@@ -369,20 +356,20 @@ describe("constraints", () => {
     const TestInterface = refkey("TestInterface");
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestInterface" exported refkey={TestInterface}>
+        <TypeDeclaration name="TestInterface" refkey={TestInterface}>
           <InterfaceDeclaration>
             <List>
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestInterface2" exported>
+        <TypeDeclaration name="TestInterface2">
           <InterfaceDeclaration>
             <List>
               <TypeConstraint>{TestInterface}</TypeConstraint>
               <TypeConstraint constraints={[TestInterface, "string", "~int"]} />
-              <InterfaceFunction exported name="MemberOne" returns="string" />
+              <InterfaceFunction name="MemberOne" returns="string" />
             </List>
           </InterfaceDeclaration>
         </TypeDeclaration>

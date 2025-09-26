@@ -64,7 +64,9 @@ export function ref(refkey: Refkey): () => [string, OutputSymbol | undefined] {
     if (pkgSymbol) {
       // we need to import the package
       for (const pathMember of pathFromPkg) {
-        if (!pathMember.isExported) {
+        const memberName = pathMember.name;
+        const firstChar = memberName.charAt(0);
+        if (firstChar.toLowerCase() === firstChar) {
           throw new Error(
             `Can't reference non-exported symbol ${pathMember.name} from another package.`,
           );

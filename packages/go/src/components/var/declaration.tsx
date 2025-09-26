@@ -27,8 +27,6 @@ export interface VarDeclarationProps {
   refkey?: Refkey;
   /** Documentation comment */
   doc?: Children;
-  /** Whether the variable is exported */
-  exported?: boolean;
   /** Whether this is a `const` declaration */
   const?: boolean;
   /** Initializer expression */
@@ -69,11 +67,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
   const declarationGroupContext = useContext(VarDeclarationGroupContext);
   const inDeclarationGroup = !!declarationGroupContext?.active;
   const isConst = declarationGroupContext?.const ?? props.const;
-  const symbol = createVariableSymbol(props.name, {
-    refkeys: props.refkey,
-    canExport: isFileScope,
-    isExported: props.exported,
-  });
+  const symbol = createVariableSymbol(props.name, { refkeys: props.refkey });
   const content = memo(() => {
     const keyword = isConst ? "const" : "var";
 

@@ -76,20 +76,6 @@ it("works const group", () => {
   `);
 });
 
-// it("works local variable", () => {
-//   expect(
-//     <Output>
-//       <go.SourceFile path="test.js">
-//         <go.VarDeclaration name="hi" initializer="12" />
-//       </go.SourceFile>
-//     </Output>,
-//   ).toRenderTo(`
-//     package main
-//
-//     hi := 12
-//   `);
-// });
-
 it("works end-to-end", () => {
   const TestType = refkey("TestType");
 
@@ -98,12 +84,12 @@ it("works end-to-end", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path=".">
           <go.SourceFile path="types.go">
-            <go.TypeDeclaration name="testType" exported refkey={TestType}>
+            <go.TypeDeclaration name="TestType" refkey={TestType}>
               string
             </go.TypeDeclaration>
           </go.SourceFile>
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="Hi" type={TestType}>
+            <go.VarDeclaration name="hi" type={TestType}>
               "hello"
             </go.VarDeclaration>
           </go.SourceFile>
@@ -135,14 +121,14 @@ it("throws end-to-end cross-package with unexported type", () => {
         <go.ModuleDirectory name="github.com/alloy-framework/alloy">
           <go.SourceDirectory path="hello">
             <go.SourceFile path="types.go">
-              <go.TypeDeclaration name="TestType" refkey={TestType}>
+              <go.TypeDeclaration name="testType" refkey={TestType}>
                 string
               </go.TypeDeclaration>
             </go.SourceFile>
           </go.SourceDirectory>
           <go.SourceDirectory path="world">
             <go.SourceFile path="test.go">
-              <go.VarDeclaration name="Hi" type={TestType}>
+              <go.VarDeclaration name="hi" type={TestType}>
                 "hello"
               </go.VarDeclaration>
             </go.SourceFile>
@@ -163,14 +149,14 @@ it("works end-to-end cross-package", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path="hello">
           <go.SourceFile path="types.go">
-            <go.TypeDeclaration name="TestType" exported refkey={TestType}>
+            <go.TypeDeclaration name="TestType" refkey={TestType}>
               string
             </go.TypeDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
         <go.SourceDirectory path="world">
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="Hi" type={TestType}>
+            <go.VarDeclaration name="hi" type={TestType}>
               "hello"
             </go.VarDeclaration>
           </go.SourceFile>
@@ -204,25 +190,25 @@ it("works with conflict resolution", () => {
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path="hello" name="hello">
           <go.SourceFile path="types.go">
-            <go.TypeDeclaration name="TestType" exported refkey={TestType1}>
+            <go.TypeDeclaration name="TestType" refkey={TestType1}>
               string
             </go.TypeDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
         <go.SourceDirectory path="hello2" name="hello">
           <go.SourceFile path="types.go">
-            <go.TypeDeclaration name="TestType" exported refkey={TestType2}>
+            <go.TypeDeclaration name="TestType" refkey={TestType2}>
               string
             </go.TypeDeclaration>
           </go.SourceFile>
         </go.SourceDirectory>
         <go.SourceDirectory path="world">
           <go.SourceFile path="test.go">
-            <go.VarDeclaration name="Hi1" type={TestType1}>
+            <go.VarDeclaration name="hi1" type={TestType1}>
               "hello"
             </go.VarDeclaration>
             <hbr />
-            <go.VarDeclaration name="Hi2" type={TestType2}>
+            <go.VarDeclaration name="hi2" type={TestType2}>
               "hello"
             </go.VarDeclaration>
           </go.SourceFile>
@@ -245,97 +231,3 @@ it("works with conflict resolution", () => {
     `,
   });
 });
-
-// it("instantiates symbols from its type", () => {
-//   const ifaceRk = refkey();
-//   const ifaceMemberRk = refkey();
-//   const classRk = refkey();
-//   const classMemberRk = refkey();
-//   const v1Rk = refkey();
-//   const v2Rk = refkey();
-//
-//   const res = render(
-//     <Output>
-//       <go.SourceFile path="inst.go">
-//         <StatementList>
-//           <go.VarDeclaration export name="one" refkey={v1Rk} type={classRk}>
-//             "test"
-//           </go.VarDeclaration>
-//           <>{memberRefkey(v1Rk, classMemberRk)}</>
-//           <go.VarDeclaration export name="two" refkey={v2Rk} type={ifaceRk}>
-//             "test"
-//           </go.VarDeclaration>
-//           <>{memberRefkey(v2Rk, ifaceMemberRk)}</>
-//         </StatementList>
-//       </go.SourceFile>
-//       <go.SourceFile path="decl.go">
-//         <go.InterfaceDeclaration name="Foo" refkey={ifaceRk}>
-//           <StatementList>
-//             <go.InterfaceMember name="instanceProp" refkey={ifaceMemberRk}>
-//               42
-//             </go.InterfaceMember>
-//           </StatementList>
-//         </go.InterfaceDeclaration>
-//         <go.ClassDeclaration name="Bar" refkey={classRk}>
-//           <StatementList>
-//             <go.ClassField name="instanceProp" refkey={classMemberRk}>
-//               42
-//             </go.ClassField>
-//           </StatementList>
-//         </go.ClassDeclaration>
-//       </go.SourceFile>
-//     </Output>,
-//   );
-//
-//   assertFileContents(res, {
-//     "inst.go": `
-//       import type { Bar, Foo } from "./decl.js";
-//
-//       export const one: Bar = "test";
-//       one.instanceProp;
-//       export const two: Foo = "test";
-//       two.instanceProp;
-//     `,
-//   });
-// });
-//
-// it("instantiates symbols from type even when an expression is passed", () => {
-//   const classRk = refkey();
-//   const classMemberRk = refkey();
-//   const v1Rk = refkey();
-//
-//   const res = render(
-//     <Output>
-//       <go.SourceFile path="inst.go">
-//         <StatementList>
-//           <go.VarDeclaration export name="one" refkey={v1Rk} type={classRk}>
-//             <go.ObjectExpression>
-//               <go.ObjectProperty name="noProp" refkey={refkey()} value="1" />
-//             </go.ObjectExpression>
-//           </go.VarDeclaration>
-//           <>{memberRefkey(v1Rk, classMemberRk)}</>
-//         </StatementList>
-//       </go.SourceFile>
-//       <go.SourceFile path="decl.go">
-//         <go.ClassDeclaration name="Bar" refkey={classRk}>
-//           <StatementList>
-//             <go.ClassField name="instanceProp" refkey={classMemberRk}>
-//               42
-//             </go.ClassField>
-//           </StatementList>
-//         </go.ClassDeclaration>
-//       </go.SourceFile>
-//     </Output>,
-//   );
-//
-//   assertFileContents(res, {
-//     "inst.go": `
-//       import type { Bar } from "./decl.js";
-//
-//       export const one: Bar = {
-//         noProp: 1
-//       };
-//       one.instanceProp;
-//     `,
-//   });
-// });

@@ -12,24 +12,24 @@ it("defines multiple packages and source files with unique content", () => {
       <ModuleDirectory name="github.com/alloy-framework/alloy">
         <SourceDirectory path="package1">
           <SourceFile path="Model1.go">
-            <VarDeclaration name="Model1" exported type="string">
+            <VarDeclaration name="Model1" type="string">
               "This is Model1"
             </VarDeclaration>
           </SourceFile>
           <SourceFile path="Model2.go">
-            <VarDeclaration name="Model2" exported type="string">
+            <VarDeclaration name="Model2" type="string">
               "This is Model2"
             </VarDeclaration>
           </SourceFile>
         </SourceDirectory>
         <SourceDirectory path="package2">
           <SourceFile path="Model3.go">
-            <VarDeclaration name="Model3" exported type="string">
+            <VarDeclaration name="Model3" type="string">
               "This is Model3"
             </VarDeclaration>
           </SourceFile>
           <SourceFile path="Model4.go">
-            <VarDeclaration name="Model4" exported type="string">
+            <VarDeclaration name="Model4" type="string">
               "This is Model4"
             </VarDeclaration>
           </SourceFile>

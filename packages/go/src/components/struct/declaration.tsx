@@ -22,7 +22,7 @@ import {
   createAnonymousTypeSymbol,
   createStructMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol, isNameExported } from "../../symbols/go.js";
+import { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
@@ -130,7 +130,6 @@ export function StructDeclaration(props: StructDeclarationProps) {
 export interface StructMemberProps {
   name: string | Namekey;
   type: Children;
-  exported?: boolean;
   refkey?: Refkey;
   tag?: string | Record<string, string>;
   /** Doc comment */
@@ -140,8 +139,6 @@ export interface StructMemberProps {
 export function StructMember(props: StructMemberProps) {
   const symbol = createStructMemberSymbol(props.name, {
     refkeys: props.refkey,
-    canExport: true,
-    isExported: props.exported,
   });
 
   const tagString = computed(() => {
@@ -189,8 +186,6 @@ export function StructEmbed(props: StructEmbedProps) {
 
   const memberSymbol = createStructMemberSymbol(typeName, {
     refkeys: props.refkey,
-    canExport: true,
-    isExported: isNameExported(typeName),
   });
 
   const taken = takeSymbols();
@@ -198,14 +193,7 @@ export function StructEmbed(props: StructEmbedProps) {
     if (taken.size !== 1) return;
     untrack(() => {
       const symbol = Array.from(taken)[0] as GoSymbol;
-      memberSymbol.isExported = symbol.isExported;
       memberSymbol.name = symbol.name;
-      watch(
-        () => symbol.isExported,
-        () => {
-          memberSymbol.isExported = symbol.isExported;
-        },
-      );
       watch(
         () => symbol.name,
         () => {
@@ -213,7 +201,7 @@ export function StructEmbed(props: StructEmbedProps) {
         },
       );
       const namedTypeScope = useNamedTypeScope();
-      // TODO: (somehow mark it as "promoted" such that it cannot) be constructed directly
+      // TODO: somehow mark it as "promoted" such that it cannot be constructed directly
       symbol.copyMembersTo(namedTypeScope.ownerSymbol);
     });
   });

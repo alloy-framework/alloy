@@ -24,7 +24,7 @@ import {
   createAnonymousTypeSymbol,
   createInterfaceMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol, isNameExported } from "../../symbols/go.js";
+import { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
@@ -63,7 +63,7 @@ export function InterfaceTypeDeclaration(
  * ```tsx
  * <InterfaceDeclaration>
  *   <InterfaceEmbed>{MyOtherInterface}</InterfaceEmbed>
- *   <InterfaceFunction exported name="MyFunc" parameters={params} returns="int" />
+ *   <InterfaceFunction name="MyFunc" parameters={params} returns="int" />
  * </InterfaceDeclaration>
  * ```
  * This will produce:
@@ -132,7 +132,6 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
 
 export interface InterfaceFunctionProps {
   name: string | Namekey;
-  exported?: boolean;
   parameters?: ParameterProps[];
   returns?: Children;
   refkey?: Refkey;
@@ -143,8 +142,6 @@ export interface InterfaceFunctionProps {
 export function InterfaceFunction(props: InterfaceFunctionProps) {
   const symbol = createInterfaceMemberSymbol(props.name, {
     refkeys: props.refkey,
-    canExport: true,
-    isExported: props.exported,
   });
   const functionScope = createFunctionScope();
 
@@ -182,22 +179,13 @@ export function InterfaceEmbed(props: InterfaceEmbedProps) {
 
   const memberSymbol = createInterfaceMemberSymbol(typeName, {
     refkeys: props.refkey,
-    canExport: true,
-    isExported: isNameExported(typeName),
   });
 
   const taken = takeSymbols();
   effect(() => {
     if (taken.size !== 1) return;
     const symbol = Array.from(taken)[0] as GoSymbol;
-    memberSymbol.isExported = symbol.isExported;
     memberSymbol.name = symbol.name;
-    watch(
-      () => symbol.isExported,
-      () => {
-        memberSymbol.isExported = symbol.isExported;
-      },
-    );
     watch(
       () => symbol.name,
       () => {

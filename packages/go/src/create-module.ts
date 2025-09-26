@@ -231,8 +231,6 @@ function createSymbolFromDescriptor(
           binder,
           refkeys: refkey(),
           lazyMemberInitializer,
-          canExport: true,
-          isExported: true,
         },
       );
     case "function":
@@ -244,8 +242,6 @@ function createSymbolFromDescriptor(
       return new FunctionSymbol(namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
-        canExport: true,
-        isExported: true,
       });
     case "field":
       if (!(ownerSymbol instanceof NamedTypeSymbol)) {
@@ -268,8 +264,6 @@ function createSymbolFromDescriptor(
               descriptor.type()[TO_SYMBOL]()
             : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
-          canExport: true,
-          isExported: true,
         },
       );
     case "embed": {
@@ -293,8 +287,6 @@ function createSymbolFromDescriptor(
               descriptor.type()[TO_SYMBOL]()
             : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
-          canExport: true,
-          isExported: true,
         },
       );
       symbol.copyMembersTo(ownerSymbol);
@@ -314,8 +306,6 @@ function createSymbolFromDescriptor(
           : typeof descriptor.type === "function" ?
             descriptor.type()[TO_SYMBOL]()
           : descriptor.type[TO_SYMBOL](),
-        canExport: true,
-        isExported: true,
       });
     default:
       throw "Unsupported";

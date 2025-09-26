@@ -5,11 +5,6 @@ import {
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
-  track,
-  TrackOpTypes,
-  trigger,
-  TriggerOpTypes,
-  watch,
 } from "@alloy-js/core";
 import { GoScope } from "../scopes/go.js";
 import { PackageSymbol } from "./package.js";
@@ -17,20 +12,7 @@ import { PackageSymbol } from "./package.js";
 /**
  * Options for creating a Go symbol.
  */
-export interface GoSymbolOptions extends OutputSymbolOptions {
-  /**
-   * Whether this symbol can be exported. If true, the symbol's name will be
-   * automatically adjusted to match the `isExported` property.
-   */
-  canExport?: boolean;
-
-  /**
-   * Whether this symbol is exported. If `canExport` is true, and this property
-   * is set, the symbol's name will be capitalized (exported) or lowercased
-   * (unexported) to match this property.
-   */
-  isExported?: boolean;
-}
+export interface GoSymbolOptions extends OutputSymbolOptions {}
 
 export type GoSymbolKinds =
   | "symbol"
@@ -38,32 +20,6 @@ export type GoSymbolKinds =
   | "function"
   | "field"
   | "package";
-
-function ensureNameExport(
-  name: string,
-  canExport: boolean | undefined,
-  isExported: boolean | undefined,
-): string {
-  isExported = isExported ?? false;
-  const actualExported = canExport ? isNameExported(name) : isExported;
-  if (actualExported === isExported) return name;
-  if (isExported) {
-    return name.charAt(0).toUpperCase() + name.slice(1);
-  } else {
-    return name.charAt(0).toLowerCase() + name.slice(1);
-  }
-}
-
-export function isNameExported(name: string): boolean {
-  let firstChar = name.charAt(0);
-  if (firstChar === "*") {
-    firstChar = name.charAt(1);
-  }
-  return (
-    firstChar.toLowerCase() !== firstChar &&
-    firstChar.toUpperCase() === firstChar
-  );
-}
 
 /**
  * This is the base type for all symbols in Go.
@@ -77,65 +33,7 @@ export class GoSymbol extends OutputSymbol {
     spaces: OutputSpace[] | OutputSpace | undefined,
     options: GoSymbolOptions = {},
   ) {
-    name = ensureNameExport(
-      typeof name === "string" ? name : name.name,
-      options.canExport,
-      options.isExported,
-    );
     super(name, spaces, options);
-    this.#canExport = options.canExport ?? false;
-    this.#isExported = options.isExported ?? false;
-    watch(
-      [() => this.name, () => this.canExport, () => this.isExported],
-      () => {
-        const oldName = this.name;
-        const newName = ensureNameExport(
-          this.name,
-          this.canExport,
-          this.isExported,
-        );
-        if (oldName !== newName) {
-          this.name = newName;
-        }
-      },
-    );
-  }
-
-  #canExport: boolean;
-  /**
-   * Whether this symbol can be exported. If true, the symbol's name will be
-   * automatically adjusted to match the `isExported` property.
-   */
-  get canExport() {
-    track(this, TrackOpTypes.GET, "canExport");
-    return this.#canExport;
-  }
-  set canExport(value: boolean) {
-    const old = this.#canExport;
-    if (old === value) {
-      return;
-    }
-    this.#canExport = value;
-    trigger(this, TriggerOpTypes.SET, "canExport", value, old);
-  }
-
-  #isExported: boolean;
-  /**
-   * Whether this symbol is exported. If `canExport` is true, and this property
-   * is set, the symbol's name will be capitalized (exported) or lowercased
-   * (unexported) to match this property.
-   */
-  get isExported(): boolean {
-    track(this, TrackOpTypes.GET, "isExported");
-    return this.#isExported;
-  }
-  set isExported(value: boolean) {
-    const old = this.#isExported;
-    if (old === value) {
-      return;
-    }
-    this.#isExported = value;
-    trigger(this, TriggerOpTypes.SET, "isExported", value, old);
   }
 
   get enclosingPackage(): PackageSymbol | undefined {
@@ -168,25 +66,11 @@ export class GoSymbol extends OutputSymbol {
   protected getGoCopyOptions(): GoSymbolOptions {
     return {
       ...this.getCopyOptions(),
-      canExport: this.#canExport,
-      isExported: this.#isExported,
     };
   }
 
   protected initializeGoCopy(copy: GoSymbol) {
     this.initializeCopy(copy);
-    watch(
-      () => this.isExported,
-      (newExported) => {
-        copy.isExported = newExported;
-      },
-    );
-    watch(
-      () => this.canExport,
-      (newCanExport) => {
-        copy.canExport = newCanExport;
-      },
-    );
   }
 
   copy(): OutputSymbol {

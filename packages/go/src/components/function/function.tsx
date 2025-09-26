@@ -38,14 +38,9 @@ import { TypeParameters } from "../parameters/typeparameters.jsx";
 export interface FunctionProps {
   name: string | Namekey;
   parameters?: Array<ParameterProps>;
-  returns?: Children | Children[];
+  returns?: Children;
 
   refkey?: Refkey;
-
-  /**
-   * If true, the function will be exported.
-   */
-  exported?: boolean;
 
   /** Doc comment */
   doc?: Children;
@@ -76,8 +71,6 @@ export function Function(props: FunctionProps) {
 
   const functionSymbol = createFunctionSymbol(props.name, !!props.receiver, {
     refkeys: props.refkey,
-    canExport: isFileScope,
-    isExported: props.exported,
   });
 
   // scope for function declaration

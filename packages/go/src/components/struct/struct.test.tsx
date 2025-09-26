@@ -16,7 +16,7 @@ import {
 function Wrapper(props: { children: any }) {
   return (
     <TestPackage>
-      <TypeDeclaration name="TestStruct" exported>
+      <TypeDeclaration name="TestStruct">
         <StructDeclaration>{props.children}</StructDeclaration>
       </TypeDeclaration>
     </TestPackage>
@@ -26,7 +26,7 @@ function Wrapper(props: { children: any }) {
 it("declares struct with no members", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration name="Test">
+      <TypeDeclaration name="test">
         <StructDeclaration />
       </TypeDeclaration>
     </TestPackage>,
@@ -40,7 +40,7 @@ it("declares struct with no members", () => {
 it("specify doc comment", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration name="Test" doc="This is a test">
+      <TypeDeclaration name="test" doc="This is a test">
         <StructDeclaration />
       </TypeDeclaration>
     </TestPackage>,
@@ -119,11 +119,11 @@ it("specify doc comment", () => {
 it("defines fields", () => {
   expect(
     <TestPackage>
-      <TypeDeclaration exported name="TestStruct">
+      <TypeDeclaration name="TestStruct">
         <StructDeclaration>
           <List>
-            <StructMember exported name="MemberOne" type="string" />
-            <StructMember name="MemberTwo" type="int" />
+            <StructMember name="MemberOne" type="string" />
+            <StructMember name="memberTwo" type="int" />
           </List>
         </StructDeclaration>
       </TypeDeclaration>
@@ -146,30 +146,22 @@ it("nested struct", () => {
 
   expect(
     <TestPackage>
-      <TypeDeclaration exported name="TestStruct">
+      <TypeDeclaration name="TestStruct">
         <StructDeclaration>
           <List>
+            <StructMember name="MemberOne" type="string" refkey={Member1} />
             <StructMember
-              exported
-              name="MemberOne"
-              type="string"
-              refkey={Member1}
-            />
-            <StructMember
-              exported
               name="MemberTwo"
               refkey={Member2}
               type={
                 <StructDeclaration>
                   <List>
                     <StructMember
-                      exported
                       name="MemberOne"
                       type="string"
                       refkey={Member3}
                     />
                     <StructMember
-                      exported
                       name="NestedMemberTwo"
                       type="int"
                       refkey={Member4}
@@ -211,8 +203,8 @@ it("declares multiple fields", () => {
   expect(
     <Wrapper>
       <List>
-        <StructMember exported name="MemberOne" type="string" />
-        <StructMember exported name="MemberTwo" type="int" />
+        <StructMember name="MemberOne" type="string" />
+        <StructMember name="MemberTwo" type="int" />
       </List>
     </Wrapper>,
   ).toRenderTo(`
@@ -230,13 +222,11 @@ it("declares multiple fields with tags", () => {
     <Wrapper>
       <List>
         <StructMember
-          exported
           name="MemberOne"
           type="string"
           tag="this is arbitrary tag #1"
         />
         <StructMember
-          exported
           name="MemberTwo"
           type="int"
           tag="this is arbitrary tag #2"
@@ -258,13 +248,11 @@ it("declares multiple fields with tag object", () => {
     <Wrapper>
       <List>
         <StructMember
-          exported
           name="MemberOne"
           type="string"
           tag={{ json: "member_one,omit_empty" }}
         />
         <StructMember
-          exported
           name="MemberTwo"
           type="int"
           tag={{ xml: "member_two,omit_empty", yaml: "memberTwo" }}
@@ -286,7 +274,7 @@ describe("naming", () => {
     expect(
       <Wrapper>
         <List>
-          <StructMember exported name="memberOne" type="string" />
+          <StructMember name="MemberOne" type="string" />
         </List>
       </Wrapper>,
     ).toRenderTo(`
@@ -302,7 +290,7 @@ describe("naming", () => {
     expect(
       <Wrapper>
         <List>
-          <StructMember name="MemberOne" type="string" />
+          <StructMember name="memberOne" type="string" />
         </List>
       </Wrapper>,
     ).toRenderTo(`
@@ -320,19 +308,19 @@ describe("embedded", () => {
     const TestStructEmbed = refkey("TestStructEmbed");
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestStruct" exported>
+        <TypeDeclaration name="TestStruct">
           <StructDeclaration>
             <List>
-              <StructMember exported name="MemberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestStruct2" exported>
+        <TypeDeclaration name="TestStruct2">
           <StructDeclaration>
             <List>
               <StructEmbed refkey={TestStructEmbed}>TestStruct</StructEmbed>
-              <StructMember exported name="MemberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
@@ -359,19 +347,19 @@ describe("embedded", () => {
 
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestStruct" refkey={TestStruct} exported>
+        <TypeDeclaration name="TestStruct" refkey={TestStruct}>
           <StructDeclaration>
             <List>
-              <StructMember exported name="MemberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
         <hbr />
-        <TypeDeclaration name="TestStruct2" exported>
+        <TypeDeclaration name="TestStruct2">
           <StructDeclaration>
             <List>
               <StructEmbed refkey={TestStructEmbed}>{TestStruct}</StructEmbed>
-              <StructMember exported name="MemberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
@@ -402,23 +390,23 @@ describe("embedded", () => {
           <SourceDirectory path=".">
             <SourceDirectory path="hello">
               <SourceFile path="types.go">
-                <TypeDeclaration name="TestStruct" refkey={TestStruct} exported>
+                <TypeDeclaration name="TestStruct" refkey={TestStruct}>
                   <StructDeclaration>
                     <List>
-                      <StructMember exported name="MemberOne" type="string" />
+                      <StructMember name="MemberOne" type="string" />
                     </List>
                   </StructDeclaration>
                 </TypeDeclaration>
               </SourceFile>
             </SourceDirectory>
             <SourceFile path="Test.go">
-              <TypeDeclaration name="TestStruct2" exported>
+              <TypeDeclaration name="TestStruct2">
                 <StructDeclaration>
                   <List>
                     <StructEmbed refkey={TestStructEmbed}>
                       {TestStruct}
                     </StructEmbed>
-                    <StructMember exported name="MemberOne" type="string" />
+                    <StructMember name="MemberOne" type="string" />
                   </List>
                 </StructDeclaration>
               </TypeDeclaration>
@@ -462,23 +450,23 @@ describe("embedded", () => {
           <SourceDirectory path=".">
             <SourceDirectory path="hello">
               <SourceFile path="types.go">
-                <TypeDeclaration name="TestStruct" refkey={TestStruct} exported>
+                <TypeDeclaration name="TestStruct" refkey={TestStruct}>
                   <StructDeclaration>
                     <List>
-                      <StructMember exported name="MemberOne" type="string" />
+                      <StructMember name="MemberOne" type="string" />
                     </List>
                   </StructDeclaration>
                 </TypeDeclaration>
               </SourceFile>
             </SourceDirectory>
             <SourceFile path="Test.go">
-              <TypeDeclaration name="TestStruct2" exported>
+              <TypeDeclaration name="TestStruct2">
                 <StructDeclaration>
                   <List>
                     <StructEmbed refkey={TestStructEmbed}>
                       <Pointer>{TestStruct}</Pointer>
                     </StructEmbed>
-                    <StructMember exported name="MemberOne" type="string" />
+                    <StructMember name="MemberOne" type="string" />
                   </List>
                 </StructDeclaration>
               </TypeDeclaration>
@@ -521,12 +509,11 @@ describe("type parameters", () => {
       <TestPackage>
         <TypeDeclaration
           name="TestStruct"
-          exported
           typeParameters={[{ name: "T", constraint: "any", refkey: T }]}
         >
           <StructDeclaration>
             <List>
-              <StructMember exported name="memberOne" type={T} />
+              <StructMember name="MemberOne" type={T} />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
@@ -546,17 +533,16 @@ describe("type parameters", () => {
 
     expect(
       <TestPackage>
-        <TypeDeclaration name="TestStructType" exported refkey={TestStructType}>
+        <TypeDeclaration name="TestStructType" refkey={TestStructType}>
           <StructDeclaration>
             <List>
-              <StructMember exported name="memberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
         <hbr />
         <TypeDeclaration
           name="TestStruct"
-          exported
           typeParameters={[
             {
               name: "T",
@@ -567,7 +553,7 @@ describe("type parameters", () => {
         >
           <StructDeclaration>
             <List>
-              <StructMember exported name="memberOne" type={U} />
+              <StructMember name="MemberOne" type={U} />
             </List>
           </StructDeclaration>
         </TypeDeclaration>
@@ -589,7 +575,6 @@ describe("type parameters", () => {
       <TestPackage>
         <TypeDeclaration
           name="TestStruct"
-          exported
           typeParameters={[
             {
               name: "T",
@@ -615,7 +600,7 @@ describe("type parameters", () => {
         >
           <StructDeclaration>
             <List>
-              <StructMember exported name="memberOne" type="string" />
+              <StructMember name="MemberOne" type="string" />
             </List>
           </StructDeclaration>
         </TypeDeclaration>

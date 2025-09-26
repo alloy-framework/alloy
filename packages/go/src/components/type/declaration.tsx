@@ -12,9 +12,7 @@ import {
   Show,
   useContext,
 } from "@alloy-js/core";
-import { useGoScope } from "../../scopes/contexts.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
-import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
 import {
   NamedTypeSymbol,
@@ -55,8 +53,6 @@ export interface TypeDeclarationProps {
   symbol?: NamedTypeSymbol;
   /** Documentation comment */
   doc?: Children;
-  /** Whether the type is exported */
-  exported?: boolean;
   /** Whether the type is an alias */
   alias?: boolean;
   /** Type expression */
@@ -66,16 +62,12 @@ export interface TypeDeclarationProps {
 }
 
 export function TypeDeclaration(props: TypeDeclarationProps) {
-  const isFileScope = useGoScope() instanceof GoSourceFileScope;
-
   const typeGroup = useContext(TypeDeclarationGroupContext);
 
   const symbol =
     props.symbol ??
     createTypeSymbol(props.name, "type", {
       refkeys: props.refkey,
-      canExport: isFileScope,
-      isExported: props.exported,
       typeParameters: props.typeParameters,
       // TODO: set aliasTarget when alias is true
     });

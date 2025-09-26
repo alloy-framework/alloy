@@ -11,7 +11,7 @@ import { FuncReceiver, Function } from "./function.js";
 
 const Wrapper = (props: { children: Children; refkey: Refkey }) => (
   <TestPackage>
-    <TypeDeclaration refkey={props.refkey} exported name="TestStruct">
+    <TypeDeclaration refkey={props.refkey} name="TestStruct">
       <StructDeclaration />
       <hbr />
     </TypeDeclaration>
@@ -22,7 +22,7 @@ const Wrapper = (props: { children: Children; refkey: Refkey }) => (
 it("applies PascalCase naming policy when exported", () => {
   expect(
     <TestPackage>
-      <Function exported name="methodOne" />
+      <Function name="MethodOne" />
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -34,7 +34,7 @@ it("applies PascalCase naming policy when exported", () => {
 it("applies camelCase naming policy when not exported", () => {
   expect(
     <TestPackage>
-      <Function name="MethodOne" />
+      <Function name="methodOne" />
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -56,12 +56,7 @@ it("defines single-line params and return type", () => {
   ];
   const res = (
     <TestPackage>
-      <Function
-        exported
-        name="MethodOne"
-        parameters={params}
-        returns="string"
-      />
+      <Function name="MethodOne" parameters={params} returns="string" />
     </TestPackage>
   );
 
@@ -93,12 +88,7 @@ it("defines multi-line params and return type", () => {
   ];
   const res = (
     <TestPackage>
-      <Function
-        exported
-        name="MethodOne"
-        parameters={params}
-        returns="string"
-      />
+      <Function name="MethodOne" parameters={params} returns="string" />
     </TestPackage>
   );
 
@@ -117,7 +107,7 @@ it("defines multi-line params and return type", () => {
 it("defines single-line return type", () => {
   const res = (
     <TestPackage>
-      <Function exported name="MethodOne" returns={["string", "error"]} />
+      <Function name="MethodOne" returns={["string", "error"]} />
     </TestPackage>
   );
 
@@ -132,7 +122,6 @@ it("defines multi-line return type", () => {
   const res = (
     <TestPackage>
       <Function
-        exported
         name="MethodOne"
         returns={[
           "string",
@@ -174,7 +163,6 @@ it("specify doc comment", () => {
   expect(
     <TestPackage>
       <Function
-        exported
         name="MethodOne"
         doc={
           <>
@@ -197,7 +185,7 @@ it("specify doc comment", () => {
 it("use single-line form", () => {
   expect(
     <TestPackage>
-      <Function exported name="MethodOne" singleLine>
+      <Function name="MethodOne" singleLine>
         return nil
       </Function>
     </TestPackage>,
@@ -211,9 +199,7 @@ it("use single-line form", () => {
 it("use children", () => {
   expect(
     <TestPackage>
-      <Function exported name="MethodOne">
-        return nil
-      </Function>
+      <Function name="MethodOne">return nil</Function>
     </TestPackage>,
   ).toRenderTo(`
     package alloy
@@ -227,7 +213,7 @@ it("use children", () => {
 it("use multiple children", () => {
   expect(
     <TestPackage>
-      <Function exported name="MethodOne">
+      <Function name="MethodOne">
         {code`
         lineOne()
         lineTwo()
@@ -252,7 +238,6 @@ it("use method", () => {
   expect(
     <Wrapper refkey={ReceiverRefkey}>
       <Function
-        exported
         name="MethodOne"
         receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
       />
@@ -271,7 +256,6 @@ it("use method variadic params", () => {
   expect(
     <Wrapper refkey={ReceiverRefkey}>
       <Function
-        exported
         name="MethodOne"
         receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
         parameters={[
@@ -297,11 +281,7 @@ it("use method cross-package fail", () => {
         <ModuleDirectory name="github.com/alloy-framework/alloy">
           <SourceDirectory path="hello">
             <SourceFile path="types.go">
-              <TypeDeclaration
-                refkey={ReceiverRefkey}
-                exported
-                name="TestStruct"
-              >
+              <TypeDeclaration refkey={ReceiverRefkey} name="TestStruct">
                 <StructDeclaration />
               </TypeDeclaration>
             </SourceFile>
@@ -309,7 +289,6 @@ it("use method cross-package fail", () => {
           <SourceDirectory path="world">
             <SourceFile path="test.go">
               <Function
-                exported
                 name="MethodOne"
                 receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
               />
@@ -329,7 +308,6 @@ describe("type parameters", () => {
     expect(
       <TestPackage>
         <Function
-          exported
           name="MethodOne"
           parameters={[{ name: "arg", type: T }]}
           typeParameters={[{ name: "T", constraint: "any", refkey: T }]}
@@ -349,7 +327,6 @@ describe("type parameters", () => {
       <TestPackage>
         <TypeDeclaration
           refkey={ReceiverRefkey}
-          exported
           name="TestStruct"
           typeParameters={[{ name: "T", constraint: "any" }]}
         >
@@ -357,7 +334,6 @@ describe("type parameters", () => {
           <hbr />
         </TypeDeclaration>
         <Function
-          exported
           name="MethodOne"
           receiver={<FuncReceiver name="s" type={ReceiverRefkey} />}
         />
@@ -377,7 +353,6 @@ describe("type parameters", () => {
       <TestPackage>
         <TypeDeclaration
           refkey={ReceiverRefkey}
-          exported
           name="TestStruct"
           typeParameters={[{ name: "T", constraint: "any" }]}
         >
@@ -385,7 +360,6 @@ describe("type parameters", () => {
           <hbr />
         </TypeDeclaration>
         <Function
-          exported
           name="MethodOne"
           receiver={
             <FuncReceiver

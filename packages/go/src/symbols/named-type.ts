@@ -30,7 +30,7 @@ export interface TypeParameterProps {
   /**
    * The name of the type parameter.
    */
-  name: string;
+  name: string | Namekey;
 
   /**
    * The parameter constraint

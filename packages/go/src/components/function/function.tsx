@@ -26,16 +26,16 @@ import {
 } from "../../symbols/factories.js";
 import { FunctionSymbol } from "../../symbols/function.js";
 import { GoSymbol } from "../../symbols/go.js";
-import {
-  NamedTypeSymbol,
-  TypeParameterProps,
-} from "../../symbols/named-type.js";
+import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.jsx";
 import {
   FunctionParameterProps,
   FunctionParameters,
 } from "../parameters/parameters.jsx";
-import { TypeParameters } from "../parameters/typeparameters.jsx";
+import {
+  TypeParameterProps,
+  TypeParameters,
+} from "../parameters/typeparameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {

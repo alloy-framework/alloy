@@ -1,5 +1,4 @@
-import { code, Output, refkey, Refkey, render } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { Children, code, Output, refkey, Refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { TestPackage } from "../../../test/utils.js";
 import { ModuleDirectory } from "../ModuleDirectory.js";

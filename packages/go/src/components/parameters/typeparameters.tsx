@@ -1,6 +1,33 @@
-import { For, Indent, MemberDeclaration, MemberName } from "@alloy-js/core";
+import {
+  Children,
+  For,
+  Indent,
+  MemberDeclaration,
+  MemberName,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
 import { createTypeParameterSymbol } from "../../symbols/factories.js";
-import { TypeParameterProps } from "../../symbols/named-type.js";
+
+/**
+ * Information for a Go generic type parameter.
+ */
+export interface TypeParameterProps {
+  /**
+   * The name of the type parameter.
+   */
+  name: string | Namekey;
+
+  /**
+   * The parameter constraint
+   */
+  constraint: Children;
+
+  /**
+   * A refkey for this type parameter.
+   */
+  refkey?: Refkey;
+}
 
 export function TypeParameter(props: TypeParameterProps) {
   const symbol = createTypeParameterSymbol(props.name, {

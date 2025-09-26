@@ -1,13 +1,12 @@
 import {
-  Children,
   Namekey,
   OutputSpace,
-  Refkey,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
+import { TypeParameterProps } from "../components/parameters/typeparameters.jsx";
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 
 // represents a symbol from a .go file. Struct, interface, etc.
@@ -22,26 +21,6 @@ export type NamedTypeTypeKind =
   | "interface-member"
   | "package";
 export type NamedTypeSymbolKind = "named-type" | "package";
-
-/**
- * Information for a Go generic type parameter.
- */
-export interface TypeParameterProps {
-  /**
-   * The name of the type parameter.
-   */
-  name: string | Namekey;
-
-  /**
-   * The parameter constraint
-   */
-  constraint: Children;
-
-  /**
-   * A refkey for this type parameter.
-   */
-  refkey?: Refkey;
-}
 
 export interface NamedTypeSymbolOptions extends GoSymbolOptions {
   typeParameters?: TypeParameterProps[];

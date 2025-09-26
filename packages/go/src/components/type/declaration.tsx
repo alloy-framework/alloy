@@ -14,12 +14,12 @@ import {
 } from "@alloy-js/core";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
-import {
-  NamedTypeSymbol,
-  TypeParameterProps,
-} from "../../symbols/named-type.js";
+import { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
-import { TypeParameters } from "../parameters/typeparameters.js";
+import {
+  TypeParameterProps,
+  TypeParameters,
+} from "../parameters/typeparameters.jsx";
 
 export interface TypeDeclarationGroupProps {
   children: Children;

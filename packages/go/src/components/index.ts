@@ -5,7 +5,7 @@ export * from "./interface/declaration.js";
 export * from "./ModuleDirectory.js";
 export * from "./Name.js";
 export * from "./parameters/parameters.js";
-export * from "./parameters/typeparameters.js";
+export * from "./parameters/typeparameters.jsx";
 export * from "./pointer/pointer.js";
 export * from "./Reference.js";
 export * from "./SourceDirectory.js";

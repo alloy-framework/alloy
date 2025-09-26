@@ -28,7 +28,11 @@ import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
 import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
 
-// properties for creating a struct
+/**
+ * Properties for creating a struct declaration.
+ * This can be used for both named and anonymous structs.
+ * For named structs, use `StructTypeDeclarationProps` instead.
+ */
 export interface StructDeclarationProps {
   refkey?: Refkey;
   children?: Children;
@@ -42,11 +46,17 @@ export interface StructDeclarationProps {
 }
 
 /**
+ * Properties for creating a named struct type declaration.
+ * This is a combination of `StructDeclarationProps` and `TypeDeclarationProps`.
+ */
+export interface StructTypeDeclarationProps
+  extends StructDeclarationProps,
+    TypeDeclarationProps {}
+
+/**
  * Wrapper for creating a named struct type declaration.
  */
-export function StructTypeDeclaration(
-  props: StructDeclarationProps & TypeDeclarationProps,
-) {
+export function StructTypeDeclaration(props: StructTypeDeclarationProps) {
   return (
     <TypeDeclaration {...props}>
       <StructDeclaration {...props} />

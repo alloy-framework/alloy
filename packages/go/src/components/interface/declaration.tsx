@@ -31,7 +31,11 @@ import { Name } from "../Name.js";
 import { ParameterProps, Parameters } from "../parameters/parameters.js";
 import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
 
-// properties for creating an interface
+/**
+ * Properties for creating an interface declaration.
+ * This can be used for both named and anonymous interfaces.
+ * For named interfaces, use `InterfaceTypeDeclarationProps` instead.
+ */
 export interface InterfaceDeclarationProps {
   refkey?: Refkey;
   children?: Children;
@@ -45,11 +49,17 @@ export interface InterfaceDeclarationProps {
 }
 
 /**
+ * Properties for creating a named interface type declaration.
+ * This is a combination of `InterfaceDeclarationProps` and `TypeDeclarationProps`.
+ */
+export interface InterfaceTypeDeclarationProps
+  extends InterfaceDeclarationProps,
+    TypeDeclarationProps {}
+
+/**
  * Wrapper for creating a named interface type declaration.
  */
-export function InterfaceTypeDeclaration(
-  props: InterfaceDeclarationProps & TypeDeclarationProps,
-) {
+export function InterfaceTypeDeclaration(props: InterfaceTypeDeclarationProps) {
   return (
     <TypeDeclaration {...props}>
       <InterfaceDeclaration {...props} />

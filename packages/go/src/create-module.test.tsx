@@ -1,8 +1,8 @@
-import { VariableDeclaration } from "./components/index.js";
 import { TestPackage } from "#test/utils.jsx";
 import { namekey, toRefkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { fmt } from "./builtins/fmt/fmt.js";
+import { VariableDeclaration } from "./components/index.js";
 import { createModule, StrictDescriptor } from "./create-module.js";
 
 it("Can reference types which haven't been created yet", () => {

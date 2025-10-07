@@ -1,4 +1,4 @@
-import { ReactiveEffectRunner } from "@vue/reactivity";
+import { ReactiveEffect } from "@vue/reactivity";
 
 export interface QueueJob {
   (): any;
@@ -7,12 +7,9 @@ const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
 const pendingPromises = new Set<Promise<any>>();
 
-export function scheduler(
-  jobGetter: () => ReactiveEffectRunner,
-  immediate = false,
-) {
-  return () => {
-    queueJob(jobGetter(), immediate);
+export function scheduler(immediate = false) {
+  return function (this: ReactiveEffect) {
+    queueJob(() => this.run(), immediate);
   };
 }
 export function queueJob(job: QueueJob, immediate = false) {

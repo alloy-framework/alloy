@@ -57,6 +57,22 @@ export function mapJoin<T, U, V>(
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 /**
+ * Map a Map to an array using a mapper and place a joiner between each element.
+ * Defaults to joining with a newline.
+ *
+ * @see {@link join} for joining without mapping.
+ * @param src - Source map.
+ * @param cb - Mapper function.
+ * @param options - Join options.
+ * @returns The mapped and joined array.
+ *
+ */
+export function mapJoin<U, V>(
+  src: () => Set<U>,
+  cb: (value: U, index: number) => V,
+  options?: JoinOptions,
+): () => (V | string | undefined | CustomContext)[];
+/**
  * Map a array or iterator to another array using a mapper and place a joiner
  * between each element. Defaults to joining with a newline.
  *
@@ -72,7 +88,7 @@ export function mapJoin<T, V>(
   options?: JoinOptions,
 ): () => (V | string | undefined | CustomContext)[];
 export function mapJoin<T, U, V>(
-  src: () => Map<T, U> | T[] | Iterable<T>,
+  src: () => Map<T, U> | Set<T> | T[] | Iterable<T>,
   cb: (key: T, valueOrIndex: U | number, index: number) => V,
   rawOptions: JoinOptions = {},
 ): () => Children {
@@ -94,6 +110,7 @@ export function mapJoin<T, U, V>(
     const itemsSourceRaw = toRaw(itemsSource);
     let items =
       Array.isArray(itemsSourceRaw) ? (itemsSource as T[]) : [...itemsSource];
+
     if (options.skipFalsy) {
       items = items.filter(
         (item) =>
@@ -103,8 +120,8 @@ export function mapJoin<T, U, V>(
     // this is important to access here in reactive context so we are
     // notified of new items from reactives.
     const itemsLen = items.length;
-    const compare: any = getCompareFunction(itemsSource);
-    const mapper: any = getMapperFunction(itemsSource);
+    const compare: any = getCompareFunction(itemsSourceRaw);
+    const mapper: any = getMapperFunction(itemsSourceRaw);
 
     return untrack(() => {
       let startIndex = 0;
@@ -160,7 +177,11 @@ export function mapJoin<T, U, V>(
   }
 
   function getMapperFunction(itemsSource: Map<T, U> | T[] | Iterable<T>) {
-    return Array.isArray(itemsSource) || isIterable(itemsSource) ?
+    return (
+        Array.isArray(itemsSource) ||
+          itemsSource instanceof Set ||
+          isIterable(itemsSource)
+      ) ?
         mapArray
       : mapMap;
   }

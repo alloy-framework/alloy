@@ -1,4 +1,4 @@
-import { effect, ReactiveEffectRunner } from "@vue/reactivity";
+import { effect } from "@vue/reactivity";
 import { untrack } from "./reactivity.js";
 import { inspectRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
@@ -210,7 +210,7 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
   let first = true;
   const triggerIds = new Set<number>();
 
-  const runner: ReactiveEffectRunner<void> = effect(
+  effect(
     () => {
       if (first) {
         // just track what we need, don't log.
@@ -222,7 +222,7 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
       triggerIds.clear();
     },
     {
-      scheduler: scheduler(() => runner, true),
+      scheduler: scheduler(true),
       onTrigger(event) {
         const id = triggerCount++;
         if (dids.has(id)) {

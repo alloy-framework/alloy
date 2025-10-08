@@ -32,6 +32,24 @@ describe("mapJoin", () => {
     `);
   });
 
+  it("can map a set", () => {
+    const set = new Set(["hi", "bye"]);
+
+    function Foo(props: { value: string }) {
+      return <>Value: {props.value}</>;
+    }
+
+    const joined = mapJoin(
+      () => set,
+      (value) => <Foo value={value} />,
+    );
+
+    expect(joined()).toRenderTo(`
+      Value: hi
+      Value: bye
+    `);
+  });
+
   it("can map an array", () => {
     const arr = [1, 2];
 

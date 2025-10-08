@@ -335,7 +335,9 @@ describe("type parameters", () => {
         <TypeDeclaration
           refkey={ReceiverRefkey}
           name="TestStruct"
-          typeParameters={[{ name: "T", constraint: "any" }]}
+          typeParameters={[
+            { name: "T", constraint: "interface{ ~string | ~[]byte }" },
+          ]}
         >
           <StructDeclaration />
           <hbr />
@@ -346,11 +348,11 @@ describe("type parameters", () => {
         />
       </TestPackage>,
     ).toRenderTo(`
-    package alloy
+      package alloy
 
-    type TestStruct[T any] struct{}
-    func (s TestStruct[T any]) MethodOne() {}
-  `);
+      type TestStruct[T interface{ ~string | ~[]byte }] struct{}
+      func (s TestStruct[T interface{ ~string | ~[]byte }]) MethodOne() {}
+   `);
   });
 
   it("method type param", () => {

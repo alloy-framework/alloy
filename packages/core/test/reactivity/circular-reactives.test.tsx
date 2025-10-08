@@ -30,3 +30,23 @@ it("it should work with circular reactives", () => {
     item 1
   `);
 });
+
+it("should work with immediately recursive reactives", () => {
+  const items: Set<string> = shallowReactive(new Set());
+  const template = (
+    <>
+      <For each={items.values()}>
+        {(item) => {
+          items.add("item 1");
+          return item;
+        }}
+      </For>
+    </>
+  );
+  const tree = renderTree(template);
+  items.add("item start");
+  expect(printTree(tree)).toBe(d`
+    item start
+    item 1
+  `);
+});

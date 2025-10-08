@@ -481,6 +481,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           throw new Error("Unknown intrinsic element");
       }
     } else if (isComponentCreator(child)) {
+      // todo: remove this effect (only needed for context, not needed for anything else)
       effect(() => {
         trace(
           TracePhase.render.appendChild,
@@ -581,6 +582,8 @@ function debugPrintChild(child: Children): string {
     return `<${child.name}>`;
   } else if (isRenderableObject(child)) {
     return `CustomChildElement(${JSON.stringify(child)})`;
+  } else if (isRefkeyable(child)) {
+    return `refkey`;
   } else {
     return JSON.stringify(child);
   }

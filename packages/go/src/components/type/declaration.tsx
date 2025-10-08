@@ -15,6 +15,7 @@ import {
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import { TypeParameterSymbol } from "../../symbols/type-parameter.js";
 import { LineComment } from "../doc/comment.js";
 import {
   TypeParameterProps,
@@ -64,13 +65,21 @@ export interface TypeDeclarationProps {
 export function TypeDeclaration(props: TypeDeclarationProps) {
   const typeGroup = useContext(TypeDeclarationGroupContext);
 
-  const symbol =
-    props.symbol ??
-    createTypeSymbol(props.name, "type", {
+  let symbol = props.symbol;
+  if (!symbol) {
+    symbol = createTypeSymbol(props.name, "type", {
       refkeys: props.refkey,
-      typeParameters: props.typeParameters,
       // TODO: set aliasTarget when alias is true
     });
+
+    for (const typeParameter of props.typeParameters ?? []) {
+      new TypeParameterSymbol(typeParameter.name, symbol.typeParameters, {
+        refkeys: typeParameter.refkey,
+        constraint: typeParameter.constraint,
+      });
+    }
+  }
+
   const typeScope = createNamedTypeScope(symbol);
 
   return (

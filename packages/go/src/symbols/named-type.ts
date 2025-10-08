@@ -6,7 +6,6 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
-import { TypeParameterProps } from "../components/parameters/typeparameters.jsx";
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 
 // represents a symbol from a .go file. Struct, interface, etc.
@@ -23,7 +22,7 @@ export type NamedTypeTypeKind =
 export type NamedTypeSymbolKind = "named-type" | "package";
 
 export interface NamedTypeSymbolOptions extends GoSymbolOptions {
-  typeParameters?: TypeParameterProps[];
+  typeParameters?: GoSymbol[];
 }
 
 /**
@@ -31,7 +30,7 @@ export interface NamedTypeSymbolOptions extends GoSymbolOptions {
  */
 export class NamedTypeSymbol extends GoSymbol {
   public readonly symbolKind: NamedTypeSymbolKind = "named-type";
-  public static readonly memberSpaces = ["members"];
+  public static readonly memberSpaces = ["members", "typeParameters"];
 
   constructor(
     name: string | Namekey,
@@ -41,7 +40,6 @@ export class NamedTypeSymbol extends GoSymbol {
   ) {
     super(name, spaces, options);
     this.#typeKind = kind;
-    this.#typeParameters = options?.typeParameters;
   }
 
   #typeKind: NamedTypeTypeKind;
@@ -58,18 +56,8 @@ export class NamedTypeSymbol extends GoSymbol {
     trigger(this, TriggerOpTypes.SET, "typeKind", value, old);
   }
 
-  #typeParameters?: TypeParameterProps[];
   get typeParameters() {
-    track(this, TrackOpTypes.GET, "typeParameters");
-    return this.#typeParameters;
-  }
-  set typeParameters(value: TypeParameterProps[] | undefined) {
-    const old = this.#typeParameters;
-    if (old === value) {
-      return;
-    }
-    this.#typeParameters = value;
-    trigger(this, TriggerOpTypes.SET, "typeParameters", value, old);
+    return this.memberSpaceFor("typeParameters")!;
   }
 
   copy() {

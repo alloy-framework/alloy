@@ -43,6 +43,12 @@ describe("Atom", () => {
     );
   });
 
+  it("renders large positive numbers as float when hinted", () => {
+    expect(toSourceText([<py.Atom jsValue={2**64} asFloat />])).toRenderTo(
+      "18446744073709551616.0",
+    );
+  });
+
   it("renders boolean - True", () => {
     expect(toSourceText([<py.Atom jsValue={true} />])).toRenderTo("True");
   });

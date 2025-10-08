@@ -62,7 +62,10 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       <MemberScope ownerSymbol={sym}>
         {basesPart}
         <PythonBlock opener=":">
-          <Show when={Boolean(props.doc)}>{props.doc}</Show>
+          <Show when={Boolean(props.doc)}>
+            {props.doc}
+            <line />
+          </Show>
           {hasChildren ? props.children : "pass"}
         </PythonBlock>
       </MemberScope>

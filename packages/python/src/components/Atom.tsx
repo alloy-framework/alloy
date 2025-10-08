@@ -2,6 +2,7 @@ import { For, Indent, memo } from "@alloy-js/core";
 
 export interface AtomProps {
   jsValue?: unknown;
+  asFloat?: boolean;
 }
 
 /**
@@ -25,6 +26,9 @@ export function Atom(props: AtomProps): any {
     if (typeof jsValue === "undefined") {
       return "None";
     } else if (typeof jsValue === "number") {
+      if (props.asFloat && Number.isInteger(jsValue)) {
+        return jsValue.toFixed(1);
+      }
       return String(jsValue);
     } else if (typeof jsValue === "boolean") {
       return jsValue ? "True" : "False";

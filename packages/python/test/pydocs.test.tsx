@@ -1031,6 +1031,7 @@ describe("Full example", () => {
               Note:
                   Do not include the 'self' parameter in the Args section.
               """
+
               just_name = None
               name_and_type: int = None
               name_type_and_value: int = 12
@@ -1366,6 +1367,7 @@ describe("Full example", () => {
 
                 error_code (int): Numeric error code for the validation failure.
             """
+
             field_name: str = None
             error_code: int = None
 

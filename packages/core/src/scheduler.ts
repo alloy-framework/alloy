@@ -1,7 +1,7 @@
 import { ReactiveEffect } from "@vue/reactivity";
 
 export interface QueueJob {
-  (): any;
+  run(): void;
 }
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
@@ -9,13 +9,17 @@ const pendingPromises = new Set<Promise<any>>();
 
 export function scheduler(immediate = false) {
   return function (this: ReactiveEffect) {
-    queueJob(() => this.run(), immediate);
+    queueJob(this, immediate);
   };
 }
-export function queueJob(job: QueueJob, immediate = false) {
+export function queueJob(job: QueueJob | (() => void), immediate = false) {
   // if we have an immediate job, we don't need to queue the normal job.
   // the set is serving an important purpose here in deduping the effects we run
   // (which in effect coalesces multiple update effects together).
+  if (typeof job === "function") {
+    job = { run: job };
+  }
+
   if (immediate) {
     immediateQueue.add(job);
   } else {
@@ -38,7 +42,7 @@ export function flushJobs() {
   // First, run all synchronous jobs
   let job;
   while ((job = takeJob()) !== null) {
-    job();
+    job.run();
   }
 
   // If there are no pending promises, we're done
@@ -55,7 +59,7 @@ export async function flushJobsAsync() {
     // First, run all synchronous jobs
     let job;
     while ((job = takeJob()) !== null) {
-      job();
+      job.run();
     }
 
     // If there are no pending promises, we're done

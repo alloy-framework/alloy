@@ -15,6 +15,34 @@ describe("Atom", () => {
     expect(toSourceText([<py.Atom jsValue={123} />])).toRenderTo("123");
   });
 
+  it("renders floating point number", () => {
+    expect(toSourceText([<py.Atom jsValue={123.456} />])).toRenderTo("123.456");
+  });
+
+  it("renders floating point number when hinted", () => {
+    expect(toSourceText([<py.Atom jsValue={123.456} asFloat />])).toRenderTo(
+      "123.456",
+    );
+  });
+
+  it("renders floating point number with decimal point zero when hinted", () => {
+    expect(toSourceText([<py.Atom jsValue={123.0} asFloat />])).toRenderTo(
+      "123.0",
+    );
+  });
+
+  it("renders integer as float when hinted", () => {
+    expect(toSourceText([<py.Atom jsValue={123} asFloat />])).toRenderTo(
+      "123.0",
+    );
+  });
+
+  it("renders small positive float when hinted", () => {
+    expect(toSourceText([<py.Atom jsValue={0.07} asFloat />])).toRenderTo(
+      "0.07",
+    );
+  });
+
   it("renders boolean - True", () => {
     expect(toSourceText([<py.Atom jsValue={true} />])).toRenderTo("True");
   });

@@ -143,3 +143,4 @@ packages/docs/src/content/docs/reference
 packages/docs/dist-build
 
 alloy-output/
+.pnpm-store/

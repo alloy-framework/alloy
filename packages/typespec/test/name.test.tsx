@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { Name } from "../src/components/Name.jsx";
+import { Name } from "../src/components/name.jsx";
 import { toSourceText } from "./utils.jsx";
 
 it("Should render valid names correctly", () => {

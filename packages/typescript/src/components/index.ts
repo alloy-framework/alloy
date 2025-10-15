@@ -32,6 +32,7 @@ export * from "./ObjectExpression.js";
 export * from "./PackageDirectory.js";
 export * from "./PackageJson.js";
 export * from "./Reference.js";
+export * from "./SingleLineCommentBlock.jsx";
 export * from "./SourceFile.js";
 export * from "./SwitchStatement.jsx";
 export * from "./TsConfigJson.js";

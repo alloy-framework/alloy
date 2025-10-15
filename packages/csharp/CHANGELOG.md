@@ -1,5 +1,38 @@
 # Changelog - @alloy-js/csharp
 
+## 0.21.0
+
+### Bug Fixes
+
+- [#320](https://github.com/alloy-framework/alloy/pull/320) export "#region" support
+- [#304](https://github.com/alloy-framework/alloy/pull/304) Fix built-ins when multiple binders are used (mostly in tests).
+- [#287](https://github.com/alloy-framework/alloy/pull/287) Fix allow defining nested namespace
+- [#286](https://github.com/alloy-framework/alloy/pull/286) Improve formatting of CSharp components
+- [#314](https://github.com/alloy-framework/alloy/pull/314) Fix broken testing exports
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+### Features
+
+- [#295](https://github.com/alloy-framework/alloy/pull/295) VarDeclaration now uses symbol information.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added `createLibrary` function for defining symbols from external libraries.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added `access` builder for building member expressions.
+- [#288](https://github.com/alloy-framework/alloy/pull/288) Add `const` variable declaration support
+- [#319](https://github.com/alloy-framework/alloy/pull/319) Add `#region` support
+- [#307](https://github.com/alloy-framework/alloy/pull/307) Add `CsprojFile` component, to be used with `@alloy-js/msbuild`
+- [#289](https://github.com/alloy-framework/alloy/pull/289) Add support for `if` `else` statements
+- [#310](https://github.com/alloy-framework/alloy/pull/310) Add C# test wrapper with symbol definition utility
+- [#300](https://github.com/alloy-framework/alloy/pull/300) [c#] Support parameter modifier "in", "out" and "ref".
+  [c#] If AttributeName ends with "Attribute", the "Attribute" will be trimmed.
+- [#297](https://github.com/alloy-framework/alloy/pull/297) ΩSupport attributes on parameters
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
+  takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
+- [#303](https://github.com/alloy-framework/alloy/pull/303) VarDeclaration support `using` modifier
+
+### Breaking Changes
+
+- [#283](https://github.com/alloy-framework/alloy/pull/283) Rename `UsingDirective` -> `Usings`
+
+
 ## 0.20.0
 
 ### Bug Fixes

@@ -7,7 +7,7 @@ export type TypeSpecElements =
     | "decorator"
     | "enum"
     | "interface"
-    | "member"
+    | "model-property"
     | "model"
     | "namespace"
     | "operation"
@@ -19,15 +19,21 @@ export function createTypeSpecNamePolicy(): core.NamePolicy<TypeSpecElements> {
     return core.createNamePolicy<TypeSpecElements>((name, element) => {
         switch (element) {
             case "alias":
-            case "decorator":
             case "enum":
             case "interface":
-            case "member":
+            case "model-property":
             case "model":
+            case "union":
+                const invalidNameRegex =
+                    /(?:^model$)|(?:^enum$)|(?:^never$)|(?:^null$)|(?:^unknown$)|[-./[\]]/;
+                if (invalidNameRegex.test(name)) {
+                    return `\`${name}\``;
+                }
+                return name;
+            case "decorator":
             case "namespace":
             case "operation":
             case "template":
-            case "union":
                 return name;
             default:
                 throw new Error(`Unhandled TypeSpec element: ${element}`);

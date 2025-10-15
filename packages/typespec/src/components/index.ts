@@ -3,6 +3,7 @@ export * from "./decorator.jsx";
 export * from "./enum.jsx";
 export * from "./import.jsx";
 export * from "./interface.jsx";
+export * from "./model-property.jsx";
 export * from "./model.jsx";
 export * from "./name.jsx";
 export * from "./namespace.jsx";

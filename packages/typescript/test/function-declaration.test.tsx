@@ -2,6 +2,7 @@ import {
   List,
   memberRefkey,
   namekey,
+  Output,
   Props,
   refkey,
   StatementList,
@@ -14,6 +15,8 @@ import {
   FunctionDeclaration,
   InterfaceDeclaration,
   InterfaceMember,
+  SourceFile,
+  TypeDeclaration,
   VarDeclaration,
 } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
@@ -384,5 +387,39 @@ describe("symbols", () => {
         console.log(classParam?.classProp);;
       }
     `);
+  });
+});
+
+it("has parameters and return type in type ref context", () => {
+  let i1 = namekey("iface1");
+  let i2 = namekey("iface2");
+  const template = (
+    <Output>
+      <SourceFile path="test1.ts">
+        <TypeDeclaration name={i1}>any</TypeDeclaration>
+        <hbr />
+        <TypeDeclaration name={i2}>any</TypeDeclaration>
+      </SourceFile>
+
+      <SourceFile path="test2.ts">
+        <FunctionDeclaration
+          name="foo"
+          parameters={[{ name: "a", type: i1 }]}
+          returnType={i2}
+        />
+      </SourceFile>
+    </Output>
+  );
+
+  expect(template).toRenderTo({
+    "test1.ts": `
+      type iface1 = any;
+      type iface2 = any;
+    `,
+    "test2.ts": `
+      import type { iface1, iface2 } from "./test1.js";
+
+      function foo(a: iface1): iface2 {}
+    `,
   });
 });

@@ -391,8 +391,8 @@ describe("symbols", () => {
 });
 
 it("has parameters and return type in type ref context", () => {
-  let i1 = namekey("iface1");
-  let i2 = namekey("iface2");
+  const i1 = namekey("iface1");
+  const i2 = namekey("iface2");
   const template = (
     <Output>
       <SourceFile path="test1.ts">

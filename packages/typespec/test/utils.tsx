@@ -9,9 +9,11 @@ import {
   SourceFile,
 } from "@alloy-js/core";
 
+import { createTypeSpecNamePolicy } from "../src/name-policy.js";
+
 export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   const res = render(
-    <Output>
+    <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile filetype="typespec" path="test.tsp">
         {c}
       </SourceFile>

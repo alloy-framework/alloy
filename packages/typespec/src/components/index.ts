@@ -5,7 +5,6 @@ export * from "./import.jsx";
 export * from "./interface.jsx";
 export * from "./model-property.jsx";
 export * from "./model.jsx";
-export * from "./name.jsx";
 export * from "./namespace.jsx";
 export * from "./operation.jsx"
 export * from "./scalar.jsx";

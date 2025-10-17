@@ -65,34 +65,10 @@ export function SourceFile(props: SourceFileProps) {
             filetype=".tsp"
             reference={Reference}
             {...options}
-            >
+        >
              <Scope value={sourceFileScope}>
-        {/* {(sourceFileScope.usings.size > 0 ||
-          (props.using && props.using.length > 0)) && (
-          <>
-            <Usings namespaces={usings.value} />
-            <hbr />
-            <hbr />
-          </>
-        )} */}
-        {namespaceSymbol === globalNamespace ?
-          content
-        : <>
-            namespace <NamespaceName symbol={namespaceSymbol} />
-            {sourceFileScope.hasBlockNamespace ?
-              <>
-                {" "}
-                <Block>{content}</Block>
-              </>
-            : <>
-                ;<hbr />
-                <hbr />
                 {content}
-              </>
-            }
-          </>
-        }
-      </Scope>
+             </Scope>
         </CoreSourceFile>
     );
 }

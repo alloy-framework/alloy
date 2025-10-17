@@ -1,7 +1,7 @@
 import { Namekey, OutputSpace } from "@alloy-js/core";
 import { TypeSpecSymbol, TypeSpecSymbolOptions } from "./typespec.js";
 
-// represents a symbol from a .cs file. Class, enum, interface etc.
+// represents a symbol from a .tsp file. model, enum, interface etc.
 
 export type NamedTypeTypeKind =
   | "model"

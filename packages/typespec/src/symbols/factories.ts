@@ -3,19 +3,16 @@ import { TypeSpecSymbol, TypeSpecSymbolOptions } from "./typespec.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
 import { useNamedTypeScope } from "../scopes/contexts.js";
 
-export function createFieldSymbol(
+export function createPropertySymbol(
     originalName: string | Namekey,
     options: TypeSpecSymbolOptions = {},
 ) {
-    let nameElement: TypeSpecElements = "model";
+    let nameElement: TypeSpecElements = "model-property";
 
     const scope = useNamedTypeScope();
 
-    if (
-    scope.ownerSymbol.typeKind !== "model" 
-    // && scope.ownerSymbol.typeKind !== "struct"
-    ) {
-    throw new Error(`Can't define a field outside of a model or struct.`);
+    if (scope.ownerSymbol.typeKind !== "model" ) {
+      throw new Error(`Can't define a property outside of a model.`);
     }
 
     return new TypeSpecSymbol(

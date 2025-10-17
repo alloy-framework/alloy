@@ -1,5 +1,5 @@
-import { Children, Declaration, Name } from "@alloy-js/core";
-import { createFieldSymbol } from "../symbols/factories.js";
+import { Children, createNamedContext, Declaration, Name } from "@alloy-js/core";
+import { createPropertySymbol } from "../symbols/factories.js";
 
 export interface ModelPropertyProps {
     name: string;
@@ -7,10 +7,12 @@ export interface ModelPropertyProps {
 };
 
 export function ModelProperty(props: ModelPropertyProps) {
-    const symbol = createFieldSymbol(props.name);
-  return (
-    <Declaration symbol={symbol}>
-      <Name>{props.name}</Name>
-    </Declaration>
-  );
+  //   const symbol = createPropertySymbol(props.name);
+
+  // return (
+  //   <Declaration symbol={symbol}>
+  //     <Name />
+  //   </Declaration>
+  // );
+  return <></>;
 }

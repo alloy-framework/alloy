@@ -14,6 +14,8 @@ import { TypeSpecNamespaceScope } from "./namespace.js";
 
 export class TypeSpecSourceFileScope extends TypeSpecLexicalScope {
   #usings = shallowReactive<Set<NamespaceSymbol>>(new Set());
+  // TODO: add import statement support
+  // #imports = shallowReactive<Set<NamespaceSymbol>>(new Set());
 
   constructor(
     name: string,

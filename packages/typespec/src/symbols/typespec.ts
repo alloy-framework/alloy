@@ -20,7 +20,8 @@ export type TypeSpecSymbolKinds =
     | "alias";
 
 export class TypeSpecSymbol extends OutputSymbol {
-
+    public readonly symbolKind: TypeSpecSymbolKinds = "symbol";
+    
     constructor(
         name: string | Namekey,
         spaces: OutputSpace[] | OutputSpace | undefined,

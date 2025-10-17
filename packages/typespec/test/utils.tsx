@@ -9,7 +9,10 @@ import {
   SourceFile,
 } from "@alloy-js/core";
 
+import * as typespec from "../src/index.js";
+
 import { createTypeSpecNamePolicy } from "../src/name-policy.js";
+import { TypeSpecFormatOptions } from "../src/contexts/format-options.js";
 
 export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   // We should use our own version of Output eventually?
@@ -57,15 +60,15 @@ export function findFile(
   }
 }
 
-// export interface TestNamespaceProps extends csharp.CSharpFormatOptions {
-//   children: core.Children;
-// }
-// export function TestNamespace(props: TestNamespaceProps): core.Children {
-//   return (
-//     <core.Output namePolicy={csharp.createCSharpNamePolicy()}>
-//       <csharp.SourceFile path="Test.cs" {...props}>
-//         {props.children}
-//       </csharp.SourceFile>
-//     </core.Output>
-//   );
-// }
+export interface TestNamespaceProps extends TypeSpecFormatOptions {
+  children: Children;
+}
+export function TestNamespace(props: TestNamespaceProps): Children {
+  return (
+    <Output namePolicy={typespec.createTypeSpecNamePolicy()}>
+      <SourceFile path="Test.cs" filetype=".tsp" {...props}>
+        {props.children}
+      </SourceFile>
+    </Output>
+  );
+}

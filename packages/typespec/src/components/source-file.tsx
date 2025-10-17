@@ -2,7 +2,7 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { TypeSpecSourceFileScope } from "../scopes/source-file.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
-import { computed, useBinder, SourceFile as CoreSourceFile } from "@alloy-js/core";
+import { computed, useBinder, SourceFile as CoreSourceFile, Scope, Block } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/namespace.js";
 import { NamespaceScope } from "./namespace-scopes.jsx";
 import { 
@@ -10,6 +10,7 @@ import {
     useTypeSpecFormatOptions 
 } from "../contexts/format-options.js";
 import { Reference } from "./Reference.jsx";
+import { NamespaceName } from "./namespace.jsx";
 
 export interface SourceFileProps {
     path: string;
@@ -65,7 +66,33 @@ export function SourceFile(props: SourceFileProps) {
             reference={Reference}
             {...options}
             >
-                
+             <Scope value={sourceFileScope}>
+        {/* {(sourceFileScope.usings.size > 0 ||
+          (props.using && props.using.length > 0)) && (
+          <>
+            <Usings namespaces={usings.value} />
+            <hbr />
+            <hbr />
+          </>
+        )} */}
+        {namespaceSymbol === globalNamespace ?
+          content
+        : <>
+            namespace <NamespaceName symbol={namespaceSymbol} />
+            {sourceFileScope.hasBlockNamespace ?
+              <>
+                {" "}
+                <Block>{content}</Block>
+              </>
+            : <>
+                ;<hbr />
+                <hbr />
+                {content}
+              </>
+            }
+          </>
+        }
+      </Scope>
         </CoreSourceFile>
     );
 }

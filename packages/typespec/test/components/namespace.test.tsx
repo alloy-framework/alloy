@@ -1,12 +1,14 @@
 import { expect, it } from "vitest";
+import "@alloy-js/core/testing";
 import { Namespace } from "../../src/components/namespace.jsx";
 import { TestNamespace, toSourceText } from "../utils.jsx";
 
 it("Should render valid names correctly", () => {
-  const result = toSourceText(
+  expect(
     <TestNamespace> 
-      <Namespace name={"sub"} />
+      <Namespace name={"sub"}>toast</Namespace>
     </TestNamespace>
-  );
-  expect(result).toBe("namespace sub");
+  ).toRenderTo(`
+    namespace sub { toast } 
+  `);
 });

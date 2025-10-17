@@ -6,21 +6,23 @@ import {
   OutputFile,
   PrintTreeOptions,
   render,
-  SourceFile,
+  SourceFile as CoreSourceFile,
 } from "@alloy-js/core";
+
 
 import * as typespec from "../src/index.js";
 
 import { createTypeSpecNamePolicy } from "../src/name-policy.js";
 import { TypeSpecFormatOptions } from "../src/contexts/format-options.js";
+import { SourceFile } from "../src/index.js";
 
 export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   // We should use our own version of Output eventually?
   const res = render(
     <Output namePolicy={createTypeSpecNamePolicy()}>
-      <SourceFile filetype="typespec" path="test.tsp">
+      <CoreSourceFile filetype="typespec" path="test.tsp">
         {c}
-      </SourceFile>
+      </CoreSourceFile>
     </Output>,
     { insertFinalNewLine: false, ...options },
   );
@@ -66,7 +68,7 @@ export interface TestNamespaceProps extends TypeSpecFormatOptions {
 export function TestNamespace(props: TestNamespaceProps): Children {
   return (
     <Output namePolicy={typespec.createTypeSpecNamePolicy()}>
-      <SourceFile path="Test.cs" filetype=".tsp" {...props}>
+      <SourceFile path="test.tsp" {...props}>
         {props.children}
       </SourceFile>
     </Output>

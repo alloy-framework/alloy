@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { ModelProperty } from "../src/components/model-property.jsx";
-import { toSourceText } from "./utils.jsx";
+import { ModelProperty } from "../../src/components/model-property.jsx";
+import { toSourceText } from "../utils.jsx";
 import * as core from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
-import * as typespec from "../src/index.js";
+import * as typespec from "../../src/index.js";
 
 
 //   const result = toSourceText(<ModelProperty name={invalidName} />);

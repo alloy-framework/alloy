@@ -27,7 +27,7 @@ export interface SourceFileProps {
      * explicit imports is not necessary when referencing symbols via refkeys.
      */
     import?: string[];
-}; 
+};
 
 export function SourceFile(props: SourceFileProps) {
     const sourceFileScope = new TypeSpecSourceFileScope(props.path);
@@ -54,9 +54,9 @@ export function SourceFile(props: SourceFileProps) {
     });
 
     const options = useTypeSpecFormatOptions({
-        printWidth: props.printWidth,
-        tabWidth: props.tabWidth,
-        useTabs: props.useTabs,
+        // printWidth: props.printWidth,
+        // tabWidth: props.tabWidth,
+        // useTabs: props.useTabs,
     });
 
     return (

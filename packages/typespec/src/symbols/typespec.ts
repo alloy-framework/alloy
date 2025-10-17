@@ -16,6 +16,7 @@ export type TypeSpecSymbolKinds =
     | "model"
     | "enum"
     | "interface"
+    | "namespace"
     | "union"
     | "alias";
 

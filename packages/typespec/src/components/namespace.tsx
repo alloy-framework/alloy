@@ -1,8 +1,9 @@
-import { Children, Namekey, Refkey } from "@alloy-js/core";
-import { useNamespaceContext } from "../contexts/namespace.js";
+import { Block, Children, Namekey, Refkey } from "@alloy-js/core";
+import { NamespaceContext, useNamespaceContext } from "../contexts/namespace.js";
 import { NamespaceSymbol } from "../symbols/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
 import { createNamespaceSymbol } from "../symbols/factories.js";
+import { NamespaceScope } from "./namespace-scopes.jsx";
 
 export interface NamespaceProps {
     name: string | Namekey | (string | Namekey)[];
@@ -16,8 +17,28 @@ export function Namespace(props: NamespaceProps) {
     });
     const sourceFileScope = useSourceFileScope();
 
-    
-    return <></>;
+    if(!sourceFileScope) {
+        return (
+            <NamespaceContext.Provider value = {{ symbol: namespaceSymbol }}>
+                {props.children}
+            </NamespaceContext.Provider>
+        );
+    } else {
+        sourceFileScope.hasBlockNamespace = true;
+
+        return (
+            <>
+                namespace <NamespaceName symbol={namespaceSymbol} relative />{" "}
+                <Block>
+                    <NamespaceContext.Provider value = {{ symbol: namespaceSymbol }}>
+                        <NamespaceScope symbol={namespaceSymbol}>
+                            {props.children}
+                        </NamespaceScope>
+                    </NamespaceContext.Provider>
+                </Block> 
+            </>
+        );
+    }
 }
 
 /** @internal */

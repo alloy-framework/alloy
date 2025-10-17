@@ -3,7 +3,7 @@ import { NamespaceSymbol } from "./namespace.js";
 import { TypeSpecScope } from "../scopes/typespec.js";
 
 // Need to think over the options here
-export interface TypeSpecSymbolOptions extends OutputSymbolOptions{
+export interface TypeSpecSymbolOptions extends OutputSymbolOptions {
     /**
      * Whether the value held by this symbol could be null. Specifically `foo?: string;`
      */

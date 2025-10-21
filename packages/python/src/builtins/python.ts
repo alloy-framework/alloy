@@ -11,6 +11,13 @@ export const abcModule = createModule({
   },
 });
 
+export const dataclassesModule = createModule({
+  name: "dataclasses",
+  descriptor: {
+    ".": ["dataclass", "KW_ONLY"],
+  },
+});
+
 export const enumModule = createModule({
   name: "enum",
   descriptor: {

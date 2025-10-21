@@ -1,7 +1,8 @@
-import { List } from "@alloy-js/core";
+import { List, namekey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import {
+  CommaList,
   ObjectExpression,
   ObjectProperty,
   ObjectSpreadProperty,
@@ -59,5 +60,28 @@ it("Works with both children and jsvalue", () => {
     b: 2,
     c: 3
   }
+  `);
+});
+
+it("Handles name conflicts and namekeys", () => {
+  const nk1 = namekey("a");
+  const nk2 = namekey("a");
+  const nk3 = namekey("a", { ignoreNameConflict: true });
+
+  const comp = (
+    <ObjectExpression>
+      <CommaList>
+        <ObjectProperty name={nk1} value={3} />
+        <ObjectProperty name={nk2} value={1} />
+        <ObjectProperty name={nk3} value={1} />
+      </CommaList>
+    </ObjectExpression>
+  );
+  expect(toSourceText(comp)).toBe(d`
+    {
+      a: 3,
+      a_2: 1,
+      a: 1,
+    }
   `);
 });

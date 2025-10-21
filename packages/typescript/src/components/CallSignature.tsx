@@ -4,6 +4,7 @@ import {
   TypeParameterDescriptor,
 } from "../parameter-descriptor.js";
 import { FunctionDeclaration } from "./FunctionDeclaration.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface CallSignatureProps {
   /**
@@ -57,7 +58,10 @@ export function CallSignature(props: CallSignatureProps) {
     <FunctionDeclaration.Parameters parameters={props.parameters} />
   );
 
-  const sReturnType = props.returnType ? <>: {props.returnType}</> : undefined;
+  const sReturnType =
+    props.returnType ?
+      <TypeRefContext>: {props.returnType}</TypeRefContext>
+    : undefined;
 
   return (
     <>

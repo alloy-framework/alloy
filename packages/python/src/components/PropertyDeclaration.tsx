@@ -6,6 +6,7 @@ import {
   Show,
   childrenArray,
   code,
+  computed,
   createContext,
   findKeyedChild,
   findUnkeyedChildren,
@@ -93,7 +94,8 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
     }
   };
 
-  const children = childrenArray(() => props.children);
+  const childrenComputed = computed(() => childrenArray(() => props.children));
+  const children = childrenComputed.value;
   const setterComponent =
     findKeyedChild(children, PropertyDeclaration.Setter.tag) ?? undefined;
   const deleterComponent =

@@ -1,18 +1,18 @@
-import { Children, For, childrenArray } from "@alloy-js/core";
+import { Children, For, childrenArray, computed } from "@alloy-js/core";
 
 export interface UnionTypeExpressionProps {
   children: Children;
 }
 
 export function UnionTypeExpression(props: UnionTypeExpressionProps) {
-  const items = childrenArray(() => props.children);
+  const items = computed(() => childrenArray(() => props.children));
   return (
     <group>
       <ifBreak>(</ifBreak>
       <indent>
         <sbr />
         <For
-          each={items}
+          each={items.value}
           joiner={
             <>
               <br />|{" "}

@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/go
 
+## 0.1.1
+
+No changes, version bump only.
+
 ## 0.1.0
 
 ### Bug Fixes

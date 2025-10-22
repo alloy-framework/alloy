@@ -1,4 +1,11 @@
-import { Children, List, Name, Show, childrenArray } from "@alloy-js/core";
+import {
+  Children,
+  List,
+  Name,
+  Show,
+  childrenArray,
+  computed,
+} from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { MemberScope } from "./MemberScope.jsx";
@@ -53,8 +60,8 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     "class",
   );
 
-  const hasChildren =
-    childrenArray(() => props.children).filter((c) => Boolean(c)).length > 0;
+  const childrenComputed = computed(() => childrenArray(() => props.children));
+  const hasChildren = childrenComputed.value.some(Boolean);
 
   return (
     <Declaration symbol={sym}>
@@ -66,7 +73,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
             {props.doc}
             <line />
           </Show>
-          {hasChildren ? props.children : "pass"}
+          {hasChildren ? childrenComputed.value : "pass"}
         </PythonBlock>
       </MemberScope>
     </Declaration>

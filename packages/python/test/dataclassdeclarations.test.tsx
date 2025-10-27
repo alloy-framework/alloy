@@ -80,10 +80,7 @@ describe("DataclassDeclaration", () => {
     const res = toSourceText(
       [
         <py.SourceFile path="user.py">
-          <py.DataclassDeclaration
-            name="User"
-            decoratorKwargs={{ frozen: true, slots: true, kw_only: true }}
-          >
+          <py.DataclassDeclaration name="User" frozen slots kwOnly>
             <py.VariableDeclaration
               instanceVariable
               omitNone
@@ -115,18 +112,16 @@ describe("DataclassDeclaration", () => {
         <py.SourceFile path="user.py">
           <py.DataclassDeclaration
             name="User"
-            decoratorKwargs={{
-              init: true,
-              repr: false,
-              eq: true,
-              order: false,
-              unsafe_hash: true,
-              frozen: true,
-              match_args: false,
-              kw_only: true,
-              slots: true,
-              weakref_slot: false,
-            }}
+            init
+            repr={false}
+            eq
+            order={false}
+            unsafeHash
+            frozen
+            matchArgs={false}
+            kwOnly
+            slots
+            weakrefSlot={false}
           />
         </py.SourceFile>,
       ],
@@ -151,10 +146,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ weakref_slot: true }}
-            />
+            <py.DataclassDeclaration name="User" weakrefSlot />
           </py.SourceFile>,
         ],
         { externals: [dataclassesModule] },
@@ -168,10 +160,7 @@ describe("DataclassDeclaration", () => {
     const res = toSourceText(
       [
         <py.SourceFile path="user.py">
-          <py.DataclassDeclaration
-            name="User"
-            decoratorKwargs={{ slots: true, weakref_slot: true }}
-          />
+          <py.DataclassDeclaration name="User" slots weakrefSlot />
         </py.SourceFile>,
       ],
       { externals: [dataclassesModule] },
@@ -194,10 +183,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ order: true, eq: false }}
-            />
+            <py.DataclassDeclaration name="User" order eq={false} />
           </py.SourceFile>,
         ],
         { externals: [dataclassesModule] },
@@ -209,10 +195,7 @@ describe("DataclassDeclaration", () => {
     const res = toSourceText(
       [
         <py.SourceFile path="user.py">
-          <py.DataclassDeclaration
-            name="User"
-            decoratorKwargs={{ order: true }}
-          />
+          <py.DataclassDeclaration name="User" order />
         </py.SourceFile>,
       ],
       { externals: [dataclassesModule] },
@@ -235,10 +218,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ order: true }}
-            >
+            <py.DataclassDeclaration name="User" order>
               <py.DunderMethodDeclaration name="__lt__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -255,10 +235,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ order: true }}
-            >
+            <py.DataclassDeclaration name="User" order>
               <py.DunderMethodDeclaration name="__le__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -275,10 +252,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ order: true }}
-            >
+            <py.DataclassDeclaration name="User" order>
               <py.DunderMethodDeclaration name="__gt__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -295,10 +269,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ order: true }}
-            >
+            <py.DataclassDeclaration name="User" order>
               <py.DunderMethodDeclaration name="__ge__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -310,15 +281,32 @@ describe("DataclassDeclaration", () => {
     );
   });
 
+  it("Throws error when order=True and a wrapper defines __lt__", () => {
+    function Wrapper() {
+      return <py.DunderMethodDeclaration name="__lt__" />;
+    }
+    expect(() =>
+      toSourceText(
+        [
+          <py.SourceFile path="user.py">
+            <py.DataclassDeclaration name="User" order>
+              <Wrapper />
+            </py.DataclassDeclaration>
+          </py.SourceFile>,
+        ],
+        { externals: [dataclassesModule] },
+      ),
+    ).toThrowError(
+      /Cannot specify order=True when the class already defines __lt__\(\)/,
+    );
+  });
+
   it("Throws error when unsafe_hash=True and class defines __hash__", () => {
     expect(() =>
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ unsafe_hash: true }}
-            >
+            <py.DataclassDeclaration name="User" unsafeHash>
               <py.DunderMethodDeclaration name="__hash__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -335,10 +323,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ frozen: true }}
-            >
+            <py.DataclassDeclaration name="User" frozen>
               <py.DunderMethodDeclaration name="__setattr__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -355,10 +340,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ frozen: true }}
-            >
+            <py.DataclassDeclaration name="User" frozen>
               <py.DunderMethodDeclaration name="__delattr__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -375,10 +357,7 @@ describe("DataclassDeclaration", () => {
       toSourceText(
         [
           <py.SourceFile path="user.py">
-            <py.DataclassDeclaration
-              name="User"
-              decoratorKwargs={{ slots: true }}
-            >
+            <py.DataclassDeclaration name="User" slots>
               <py.DunderMethodDeclaration name="__slots__" />
             </py.DataclassDeclaration>
           </py.SourceFile>,
@@ -394,10 +373,7 @@ describe("DataclassDeclaration", () => {
     const res = toSourceText(
       [
         <py.SourceFile path="user.py">
-          <py.DataclassDeclaration
-            name="User"
-            decoratorKwargs={{ kw_only: true }}
-          >
+          <py.DataclassDeclaration name="User" kwOnly>
             <py.VariableDeclaration
               instanceVariable
               omitNone
@@ -459,5 +435,124 @@ describe("DataclassDeclaration", () => {
         { externals: [dataclassesModule] },
       ),
     ).toThrowError(/Only one KW_ONLY sentinel is allowed per dataclass body/);
+  });
+
+  it("Will raise arg validation errors first over member conflicts", () => {
+    expect(() =>
+      toSourceText(
+        [
+          <py.SourceFile path="user.py">
+            <py.DataclassDeclaration name="User" order eq={false}>
+              <py.DunderMethodDeclaration name="__lt__" />
+            </py.DataclassDeclaration>
+          </py.SourceFile>,
+        ],
+        { externals: [dataclassesModule] },
+      ),
+    ).toThrowError(/order=True requires eq=True/);
+  });
+
+  it("Does not raise errors for member conflict checks without the equivalent kwargs", () => {
+    expect(() =>
+      toSourceText(
+        [
+          <py.SourceFile path="user.py">
+            <py.DataclassDeclaration name="User">
+              <py.DunderMethodDeclaration name="__lt__" />
+              <py.DunderMethodDeclaration name="__slots__" />
+              <py.DunderMethodDeclaration name="__hash__" />
+              <py.DunderMethodDeclaration name="__setattr__" />
+              <py.DunderMethodDeclaration name="__delattr__" />
+            </py.DataclassDeclaration>
+          </py.SourceFile>,
+        ],
+        { externals: [dataclassesModule] },
+      ),
+    ).not.toThrow();
+  });
+
+  it("Allows unsafe_hash=True when no __hash__ is defined", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="user.py">
+          <py.DataclassDeclaration name="User" unsafeHash />
+        </py.SourceFile>,
+      ],
+      { externals: [dataclassesModule] },
+    );
+    expect(res).toRenderTo(
+      d`
+        from dataclasses import dataclass
+
+        @dataclass(unsafe_hash=True)
+        class User:
+            pass
+
+
+      `,
+    );
+  });
+
+  it("Counts KW_ONLY sentinels through wrappers (symbol-level)", () => {
+    function Wrapper() {
+      return <py.DataclassKWOnly />;
+    }
+    expect(() =>
+      toSourceText(
+        [
+          <py.SourceFile path="user.py">
+            <py.DataclassDeclaration name="User">
+              <py.DataclassKWOnly />
+              <Wrapper />
+            </py.DataclassDeclaration>
+          </py.SourceFile>,
+        ],
+        { externals: [dataclassesModule] },
+      ),
+    ).toThrowError(/Only one KW_ONLY sentinel is allowed per dataclass body/);
+  });
+
+  it("Allows frozen=True when no conflicting dunders exist", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="user.py">
+          <py.DataclassDeclaration name="User" frozen />
+        </py.SourceFile>,
+      ],
+      { externals: [dataclassesModule] },
+    );
+    expect(res).toRenderTo(
+      d`
+        from dataclasses import dataclass
+
+        @dataclass(frozen=True)
+        class User:
+            pass
+
+
+      `,
+    );
+  });
+
+  it("Allows slots=True when no __slots__ is defined", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="user.py">
+          <py.DataclassDeclaration name="User" slots />
+        </py.SourceFile>,
+      ],
+      { externals: [dataclassesModule] },
+    );
+    expect(res).toRenderTo(
+      d`
+        from dataclasses import dataclass
+
+        @dataclass(slots=True)
+        class User:
+            pass
+
+
+      `,
+    );
   });
 });

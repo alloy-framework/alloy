@@ -7,4 +7,7 @@ export default defineConfig({
     sourcemap: "both",
   },
   plugins: [alloyPlugin()],
+  test: {
+    setupFiles: ["./test/vitest.setup.ts"],
+  },
 });

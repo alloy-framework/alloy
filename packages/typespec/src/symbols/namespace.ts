@@ -6,7 +6,7 @@ export interface NamespaceSymbolOptions extends OutputSymbolOptions {
 }
 
 /**
- * A symbol for a namespace in C#.
+ * A symbol for a namespace in TypeSpec.
  */
 export class NamespaceSymbol extends NamedTypeSymbol {
   public readonly symbolKind = "namespace";
@@ -30,7 +30,7 @@ export class NamespaceSymbol extends NamedTypeSymbol {
     return this.#isGlobal;
   }
 
-  getFullyQualifiedName(options: { omitGlobal?: boolean } = {}): string {
+  getFullyQualifiedName(): string {
     const parts = [];
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -43,11 +43,7 @@ export class NamespaceSymbol extends NamedTypeSymbol {
 
     const idPart = parts.join(".");
 
-    if (options.omitGlobal) {
-      return idPart;
-    } else {
-      return `global::${idPart}`;
-    }
+    return idPart;
   }
 
   copy() {

@@ -1,14 +1,15 @@
 import { OutputScope, useScope } from "@alloy-js/core";
 import type { NamespaceSymbol } from "../symbols/namespace.js";
 import { TypeSpecNamedTypeScope } from "./named-type.js";
-import { TypeSpecSourceFileScope } from "./source-file.js";
+import { SourceFileScope } from "./source-file.js";
 
-export class TypeSpecNamespaceScope extends TypeSpecNamedTypeScope {
+export class NamespaceScope extends OutputScope {
   constructor(
     namespaceSymbol: NamespaceSymbol,
-    parentScope?: TypeSpecNamespaceScope | TypeSpecSourceFileScope,
+    parentScope?: NamespaceScope | SourceFileScope,
   ) {
-    super(namespaceSymbol, parentScope, {
+    super(namespaceSymbol.name, parentScope, {
+      ownerSymbol: namespaceSymbol,
       binder: namespaceSymbol.binder,
     });
   }
@@ -23,8 +24,8 @@ export function createTypeSpecNamespaceScope(namespaceSymbol: NamespaceSymbol) {
   if (
     parentScope &&
     !(
-      parentScope instanceof TypeSpecNamespaceScope ||
-      parentScope instanceof TypeSpecSourceFileScope
+      parentScope instanceof NamespaceScope ||
+      parentScope instanceof SourceFileScope
     )
   ) {
     throw new Error(
@@ -32,14 +33,14 @@ export function createTypeSpecNamespaceScope(namespaceSymbol: NamespaceSymbol) {
     );
   }
 
-  const scope = new TypeSpecNamespaceScope(namespaceSymbol, parentScope);
+  const scope = new NamespaceScope(namespaceSymbol, parentScope);
 
   return scope;
 }
 
-export function useEnclosingNamespaceScope(): TypeSpecNamespaceScope | undefined {
+export function useEnclosingNamespaceScope(): NamespaceScope | undefined {
   const currentScope = useScope();
-  if (!(currentScope instanceof TypeSpecNamespaceScope)) {
+  if (!(currentScope instanceof NamespaceScope)) {
     return undefined;
   }
 
@@ -49,7 +50,7 @@ export function useEnclosingNamespaceScope(): TypeSpecNamespaceScope | undefined
 export function useNamespace() {
   let scope: OutputScope | undefined = useScope();
   while (scope) {
-    if (scope instanceof TypeSpecNamespaceScope) {
+    if (scope instanceof NamespaceScope) {
       return scope;
     }
     scope = scope.parent;

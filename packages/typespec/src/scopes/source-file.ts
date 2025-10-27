@@ -2,68 +2,43 @@ import {
   OutputScope,
   OutputScopeOptions,
   shallowReactive,
-  track,
-  TrackOpTypes,
-  trigger,
-  TriggerOpTypes,
-  useScope,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/namespace.js";
-import { TypeSpecLexicalScope } from "./lexical.js";
-import { TypeSpecNamespaceScope } from "./namespace.js";
+import { DirectoryScope } from "./directory.js";
 
-export class TypeSpecSourceFileScope extends TypeSpecLexicalScope {
+export class SourceFileScope extends OutputScope {
   #usings = shallowReactive<Set<NamespaceSymbol>>(new Set());
-  // TODO: add import statement support
-  // #imports = shallowReactive<Set<NamespaceSymbol>>(new Set());
+  // #imports = shallowReactive<Set<string>>(new Set());
 
   constructor(
     name: string,
-    parent?: TypeSpecNamespaceScope,
+    parent: DirectoryScope,
     options?: OutputScopeOptions,
   ) {
     super(name, parent, options);
   }
+
   get usings() {
     return this.#usings;
   }
 
   get parent() {
-    return super.parent! as TypeSpecNamespaceScope;
-  }
-
-  set parent(v: TypeSpecNamespaceScope) {
-    super.parent = v;
+    return super.parent! as DirectoryScope;
   }
 
   addUsing(using: NamespaceSymbol) {
     this.#usings.add(using);
   }
-
-  #hasBlockNamespace: boolean = false;
-  get hasBlockNamespace() {
-    track(this, TrackOpTypes.GET, "hasBlockNamespace");
-    return this.#hasBlockNamespace;
-  }
-
-  set hasBlockNamespace(value: boolean) {
-    const old = this.#hasBlockNamespace;
-    if (this.#hasBlockNamespace === value) {
-      return;
-    }
-    this.#hasBlockNamespace = value;
-    trigger(this, TriggerOpTypes.SET, "hasBlockNamespace", value, old);
-  }
 }
 
 export function useSourceFileScope() {
-  let scope: OutputScope | undefined = useScope();
-  while (scope) {
-    if (scope instanceof TypeSpecSourceFileScope) {
-      return scope;
-    }
-    scope = scope.parent;
-  }
+  // let scope: OutputScope | undefined = useScope();
+  // while (scope) {
+  //   if (scope instanceof TypeSpecSourceFileScope) {
+  //     return scope;
+  //   }
+  //   scope = scope.parent;
+  // }
 
   return undefined;
 }

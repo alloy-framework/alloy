@@ -9,7 +9,7 @@ import {
 } from "@alloy-js/core";
 import { useReferenceContext } from "../contexts/reference-context.js";
 import { TypeSpecScope } from "../scopes/typespec.js";
-import { TypeSpecNamespaceScope } from "../scopes/namespace.js";
+import { NamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
 import { TypeSpecSymbol } from "./typespec.js";
 import { NamespaceSymbol } from "./namespace.js";
@@ -22,7 +22,7 @@ export function ref(
   refkey: Refkey,
 ): () => [Children, OutputSymbol | undefined] {
   const refSfScope = useSourceFileScope()!;
-  const resolveResult = resolve<TypeSpecScope, TypeSpecSymbol>(refkey as Refkey);
+  const resolveResult = resolve<TypeSpecScope, TypeSpecSymbol>(refkey);
   return memo(() => {
     if (resolveResult.value === undefined) {
       return [unresolvedRefkey(refkey), undefined];
@@ -38,7 +38,7 @@ export function ref(
     }
 
     if (
-      commonScope instanceof TypeSpecNamespaceScope &&
+      commonScope instanceof NamespaceScope &&
       commonScope.ownerSymbol.isGlobal &&
       lexicalDeclaration.symbolKind === "namespace" &&
       memberPath.length > 0
@@ -53,7 +53,8 @@ export function ref(
         lexicalDeclaration = memberPath.shift()!;
       }
 
-      refSfScope.addUsing(nsToUse!);
+      // refSfScope.addUsing(nsToUse!);
+      // refSfScope.add
     }
 
     const parts = [];

@@ -4,13 +4,9 @@ import { TypeSpecScope } from "../scopes/typespec.js";
 
 // Need to think over the options here
 export interface TypeSpecSymbolOptions extends OutputSymbolOptions {
-    /**
-     * Whether the value held by this symbol could be null. Specifically `foo?: string;`
-     */
-    // isOptional?: boolean;
 };
 
-export type TypeSpecSymbolKinds = 
+export type TypeSpecSymbolKinds =
     | "symbol"
     | "field"
     | "model"
@@ -23,7 +19,7 @@ export type TypeSpecSymbolKinds =
 
 export class TypeSpecSymbol extends OutputSymbol {
     public readonly symbolKind: TypeSpecSymbolKinds = "symbol";
-    
+
     constructor(
         name: string | Namekey,
         spaces: OutputSpace[] | OutputSpace | undefined,
@@ -67,5 +63,5 @@ export class TypeSpecSymbol extends OutputSymbol {
 
         // return undefined;
     }
-    
+
 }

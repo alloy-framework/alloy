@@ -8,6 +8,7 @@ export * from "./model.jsx";
 export * from "./namespace.jsx";
 export * from "./operation.jsx"
 export * from "./scalar.jsx";
-export * from "./source-file.jsx";
+export * from "./directory/directory.jsx"
+export * from "./source-file/source-file.jsx";
 export * from "./union.jsx";
 export * from "./value.jsx";

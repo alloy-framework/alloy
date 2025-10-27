@@ -9,7 +9,7 @@ export interface NamespaceProps {
     name: string | Namekey | (string | Namekey)[];
     refkey?: Refkey | Refkey[];
     children?: Children;
-}; 
+};
 
 export function Namespace(props: NamespaceProps) {
     const namespaceSymbol = createNamespaceSymbol(props.name, {
@@ -24,7 +24,7 @@ export function Namespace(props: NamespaceProps) {
             </NamespaceContext.Provider>
         );
     } else {
-        sourceFileScope.hasBlockNamespace = true;
+        // sourceFileScope.hasBlockNamespace = true;
 
         return (
             <>
@@ -35,13 +35,12 @@ export function Namespace(props: NamespaceProps) {
                             {props.children}
                         </NamespaceScope>
                     </NamespaceContext.Provider>
-                </Block> 
+                </Block>
             </>
         );
     }
 }
 
-/** @internal */
 export interface NamespaceNameProps {
     symbol: NamespaceSymbol;
 

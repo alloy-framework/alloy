@@ -1,4 +1,4 @@
-import { Prose } from "@alloy-js/core";
+import { Prose, namekey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { dataclassesModule } from "../src/builtins/python.js";
@@ -47,7 +47,12 @@ describe("DataclassDeclaration", () => {
               name="id"
               type="int"
             />
-            <py.DataclassKWOnly />
+            <py.VariableDeclaration
+              instanceVariable
+              name={namekey("_", { ignoreNamePolicy: true })}
+              type={dataclassesModule["."].KW_ONLY}
+              omitNone
+            />
             <py.VariableDeclaration
               instanceVariable
               name="name"
@@ -427,8 +432,18 @@ describe("DataclassDeclaration", () => {
         [
           <py.SourceFile path="user.py">
             <py.DataclassDeclaration name="User">
-              <py.DataclassKWOnly />
-              <py.DataclassKWOnly />
+              <py.VariableDeclaration
+                instanceVariable
+                name={namekey("_", { ignoreNamePolicy: true })}
+                type={dataclassesModule["."].KW_ONLY}
+                omitNone
+              />
+              <py.VariableDeclaration
+                instanceVariable
+                name={namekey("_", { ignoreNamePolicy: true })}
+                type={dataclassesModule["."].KW_ONLY}
+                omitNone
+              />
             </py.DataclassDeclaration>
           </py.SourceFile>,
         ],
@@ -495,14 +510,26 @@ describe("DataclassDeclaration", () => {
 
   it("Counts KW_ONLY sentinels through wrappers (symbol-level)", () => {
     function Wrapper() {
-      return <py.DataclassKWOnly />;
+      return (
+        <py.VariableDeclaration
+          instanceVariable
+          name={namekey("_", { ignoreNamePolicy: true })}
+          type={dataclassesModule["."].KW_ONLY}
+          omitNone
+        />
+      );
     }
     expect(() =>
       toSourceText(
         [
           <py.SourceFile path="user.py">
             <py.DataclassDeclaration name="User">
-              <py.DataclassKWOnly />
+              <py.VariableDeclaration
+                instanceVariable
+                name={namekey("_", { ignoreNamePolicy: true })}
+                type={dataclassesModule["."].KW_ONLY}
+                omitNone
+              />
               <Wrapper />
             </py.DataclassDeclaration>
           </py.SourceFile>,

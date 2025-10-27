@@ -1,18 +1,10 @@
-import {
-  For,
-  Show,
-  childrenArray,
-  computed,
-  namekey,
-  taggedComponent,
-} from "@alloy-js/core";
+import { For, Show, childrenArray, computed } from "@alloy-js/core";
 import { dataclassesModule } from "../builtins/python.js";
 import { usePythonScope } from "../symbols/scopes.js";
 import { Atom } from "./Atom.jsx";
 import type { ClassDeclarationProps } from "./ClassDeclaration.js";
 import { ClassDeclaration } from "./ClassDeclaration.js";
 import { StatementList } from "./StatementList.js";
-import { VariableDeclaration } from "./VariableDeclaration.js";
 
 /**
  * Validate decorator-only rules that do not depend on class members.
@@ -124,7 +116,7 @@ export interface DataclassDeclarationProps
  * ```tsx
  * <py.DataclassDeclaration name="User" kwOnly>
  *   <py.VariableDeclaration instanceVariable omitNone name="id" type="int" />
- *   <py.DataclassKWOnly />
+ *   <py.VariableDeclaration instanceVariable name={namekey("_", { ignoreNamePolicy: true })} type={dataclassesModule["."].KW_ONLY} omitNone />
  *   <py.VariableDeclaration
  *     instanceVariable
  *     name="name"
@@ -218,25 +210,3 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
     </>
   );
 }
-
-/**
- * Emits the `KW_ONLY` sentinel line inside a dataclass body.
- */
-const kwOnlyTag = Symbol();
-// Tagging DataclassKWOnly allows us to use findKeyedChild to accurately detect and
-// count occurrences, ensuring the “only one KW_ONLY” rule is enforced.
-export const DataclassKWOnly = taggedComponent(
-  kwOnlyTag,
-  function DataclassKWOnly() {
-    return (
-      <>
-        <VariableDeclaration
-          instanceVariable
-          name={namekey("_", { ignoreNamePolicy: true })}
-          type={dataclassesModule["."].KW_ONLY}
-          omitNone
-        />
-      </>
-    );
-  },
-);

@@ -91,7 +91,7 @@ it("declares variables", () => {
   });
 });
 
-it.only("declares members", () => {
+it("declares members", () => {
   const publicMember = namekey("publicMember");
   const privateMember = namekey("privateMember");
   const staticMethod = namekey("staticMethod");

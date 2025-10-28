@@ -1,7 +1,7 @@
 import {
   Block,
   Children,
-  computed,
+  createSymbolSlot,
   Declaration,
   DeclarationContext,
   effect,
@@ -9,13 +9,11 @@ import {
   Indent,
   Name,
   Namekey,
+  onCleanup,
   Refkey,
   Scope,
-  shallowRef,
   Show,
-  takeSymbols,
   useContext,
-  watch,
 } from "@alloy-js/core";
 import { useGoScope } from "../../scopes/contexts.js";
 import { createFunctionScope } from "../../scopes/factories.js";
@@ -27,6 +25,7 @@ import {
 import { FunctionSymbol } from "../../symbols/function.js";
 import { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import { TypeParameterSymbol } from "../../symbols/type-parameter.js";
 import { LineComment } from "../doc/comment.jsx";
 import {
   FunctionParameterProps,
@@ -150,45 +149,55 @@ export function FunctionReceiver(props: FuncReceiverProps) {
     throw new Error("FuncReceiver must be used inside a function.");
   }
 
-  const typeParams = shallowRef(props.typeParameters ?? []);
+  const FunctionTypeSlot = createSymbolSlot();
 
-  const taken = takeSymbols();
+  // Add the function symbol to the receiver type's members
   effect(() => {
-    if (taken.size !== 1) return;
-    const symbol = Array.from(taken)[0] as GoSymbol;
-    if (symbol.enclosingPackage !== receiverSymbol.enclosingPackage) {
+    const typeSymbol = FunctionTypeSlot.firstSymbol.value as
+      | GoSymbol
+      | undefined;
+    if (!typeSymbol) {
+      return;
+    }
+    if (typeSymbol.enclosingPackage !== receiverSymbol.enclosingPackage) {
       throw new Error(
-        `Receiver symbol ${receiverSymbol.name} must be in the same package as the type ${symbol.name}.`,
+        `Receiver symbol ${receiverSymbol.name} must be in the same package as the type ${typeSymbol.name}.`,
       );
     }
-    if (!(symbol instanceof NamedTypeSymbol)) {
+    if (!(typeSymbol instanceof NamedTypeSymbol)) {
       throw new Error(
-        `Receiver type must be a named type, got ${symbol.constructor.name}.`,
+        `Receiver type must be a named type, got ${typeSymbol.constructor.name}.`,
       );
     }
 
-    functionSymbol.spaces = symbol.members;
-    if (!props.typeParameters) {
-      typeParams.value = symbol.typeParameters ?? [];
-    }
-    watch(
-      () => symbol.typeParameters,
-      (newParams) => {
-        if (props.typeParameters) return;
-        typeParams.value = newParams ?? [];
-      },
-    );
-  });
+    functionSymbol.receiverSymbol = typeSymbol;
 
-  const typeParamsComponent = computed(() => {
-    if (typeParams.value.length === 0) return null;
-    return <TypeParameters parameters={typeParams.value} />;
+    typeSymbol.members.add(functionSymbol);
+
+    onCleanup(() => {
+      functionSymbol.receiverSymbol = undefined;
+      typeSymbol.members.delete(functionSymbol);
+    });
   });
 
   return (
     <Declaration symbol={receiverSymbol}>
-      <Name /> {props.type}
-      {typeParamsComponent.value}
+      <Name /> <FunctionTypeSlot>{props.type}</FunctionTypeSlot>
+      <Show when={!!props.typeParameters}>
+        <TypeParameters parameters={props.typeParameters} />
+      </Show>
+      <Show when={!props.typeParameters && !!functionSymbol.receiverSymbol}>
+        <TypeParameters
+          parameters={[...functionSymbol.receiverSymbol!.typeParameters].map(
+            (s) => {
+              return {
+                name: s.name,
+                constraint: (s as TypeParameterSymbol).constraint,
+              };
+            },
+          )}
+        />
+      </Show>
     </Declaration>
   );
 }

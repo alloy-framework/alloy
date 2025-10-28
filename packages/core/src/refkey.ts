@@ -1,4 +1,5 @@
 import { markRaw } from "@vue/reactivity";
+import { untrack } from "./reactivity.js";
 
 const objectIds = new WeakMap<WeakKey, string>();
 let objId = 0;
@@ -21,7 +22,7 @@ export type RefkeyableObject = {
 };
 
 export function toRefkey(refkey: Refkeyable) {
-  return refkey[REFKEYABLE]();
+  return untrack(() => refkey[REFKEYABLE]());
 }
 
 export type Refkeyable = RefkeyableObject | Refkey;

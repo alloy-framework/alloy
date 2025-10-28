@@ -156,7 +156,10 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       }
     },
     {
-      scheduler: scheduler(() => runner),
+      // allow recursive effects with 32, 1 and 4 are default flags
+      // @ts-expect-error flags is a vue internal thing
+      flags: 1 | 4 | 32,
+      scheduler: scheduler(),
       onTrack(event) {
         trace(TracePhase.effect.track, () => {
           return `tracking ${event.target}, ${String(event.key)}`;

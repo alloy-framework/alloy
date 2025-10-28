@@ -1,8 +1,7 @@
-import { Children } from "@alloy-js/core";
 import { effect, Ref, shallowRef } from "@vue/reactivity";
 import { Show } from "./components/Show.jsx";
 import { getContext } from "./reactivity.js";
-import { Component } from "./runtime/component.js";
+import { Children, Component } from "./runtime/component.js";
 
 export interface ContentSlot {
   (props: { children: Children }): Children;

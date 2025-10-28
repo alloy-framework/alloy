@@ -1,7 +1,7 @@
-import { createComponent } from "@alloy-js/core/jsx-runtime";
 import { toRef } from "@vue/reactivity";
 import { useScope } from "../context/scope.js";
 import { Namekey } from "../refkey.js";
+import { createComponent } from "../runtime/component.js";
 import { BasicScope } from "./basic-scope.js";
 import { BasicSymbol } from "./basic-symbol.js";
 

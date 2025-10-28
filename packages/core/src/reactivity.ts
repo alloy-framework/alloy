@@ -1,6 +1,9 @@
 import {
+  isRef,
   pauseTracking,
   ReactiveEffectRunner,
+  ref,
+  Ref,
   resetTracking,
   ShallowReactive,
   shallowRef,
@@ -66,6 +69,22 @@ export interface Context {
    * The symbol that this component has taken.
    */
   takenSymbols?: ShallowReactive<Set<OutputSymbol>>;
+
+  /**
+   * The number of child nodes that have content. When zero, this component is
+   * semantically empty.
+   */
+  childrenWithContent: number;
+
+  /**
+   * A ref that indicates whether the component is empty.
+   */
+  isEmpty?: Ref<boolean>;
+
+  /**
+   * Whether this context is a root context
+   */
+  isRoot: boolean;
 }
 
 let globalContext: Context | null = null;
@@ -86,6 +105,9 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     elementCache: new Map(),
     takesSymbols: false,
     takenSymbols: undefined,
+    childrenWithContent: 0,
+    isEmpty: ref(true),
+    isRoot: true,
   };
 
   globalContext = context;
@@ -131,6 +153,8 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     elementCache: new Map(),
     takesSymbols: false,
     takenSymbols: undefined,
+    childrenWithContent: 0,
+    isRoot: false,
   };
 
   const cleanupFn = (final: boolean) => {
@@ -162,19 +186,16 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       scheduler: scheduler(),
       onTrack(event) {
         trace(TracePhase.effect.track, () => {
-          return `tracking ${event.target}, ${String(event.key)}`;
+          return `tracking ${isRef(event.target) ? `Ref:${refId(event.target)}` : event.target}, ${String(event.key)}`;
         });
       },
       onTrigger(event) {
         trace(TracePhase.effect.trigger, () => {
-          return `triggering ${event.target}, ${String(event.key)}`;
+          return `triggering ${isRef(event.target) ? `Ref:${refId(event.target)}` : event.target}, ${String(event.key)}`;
         });
       },
     },
   );
-
-  // allow recursive effects (recursive option does nothing, possible bug)
-  (runner as any).effect.flags |= 1 << 5;
 }
 
 /**
@@ -230,4 +251,16 @@ export function isCustomContext(child: Children): child is CustomContext {
     child !== null &&
     Object.hasOwn(child, CUSTOM_CONTEXT_SYM)
   );
+}
+
+const seenRefs = new WeakMap<Ref<unknown>, number>();
+let refIdCounter = 1;
+
+export function refId(ref: Ref<unknown>): number {
+  let id = seenRefs.get(ref);
+  if (id === undefined) {
+    id = refIdCounter++;
+    seenRefs.set(ref, id);
+  }
+  return id;
 }

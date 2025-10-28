@@ -1,4 +1,4 @@
-import { isRef } from "@vue/reactivity";
+import { isRef, ref } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
@@ -332,11 +332,74 @@ function renderWorker(node: RenderedTextTree, children: Children) {
   }
 }
 
+function contentAdded() {
+  const context: Context = getContext()!;
+  context.childrenWithContent++;
+}
+
+export function notifyContentState() {
+  untrack(() => {
+    const startContext = getContext()!;
+
+    if (startContext.childrenWithContent === 0) {
+      if (startContext.isEmpty!.value === true) {
+        // it was already empty, no work to do.
+        return;
+      }
+
+      if (startContext.isEmpty) {
+        startContext.isEmpty.value = true;
+      }
+
+      // otherwise we need to decrement the content counts up the tree.
+      let current = startContext.owner;
+      while (current) {
+        if (current.childrenWithContent === 0) {
+          break;
+        }
+        current.childrenWithContent--;
+        if (current.isEmpty) {
+          current.isEmpty.value = true;
+        }
+        current = current.owner;
+      }
+    } else {
+      if (startContext.isEmpty!.value === false) {
+        // it was already non-empty, no work to do.
+        return;
+      }
+
+      if (startContext.isEmpty && startContext.isEmpty.value) {
+        startContext.isEmpty.value = false;
+      }
+
+      // otherwise we need to increment the content counts up the tree.
+      let current = startContext.owner;
+      while (current) {
+        current.childrenWithContent++;
+        if (current.childrenWithContent > 1) {
+          // This isn't the first content so we have no work to do
+          break;
+        }
+
+        if (current.isEmpty && current.isEmpty.value) {
+          current.isEmpty.value = false;
+        }
+
+        current = current.owner;
+      }
+    }
+  });
+}
+
 function appendChild(node: RenderedTextTree, rawChild: Child) {
   trace(TracePhase.render.appendChild, () => debugPrintChild(rawChild));
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
+    if (child !== "") {
+      contentAdded();
+    }
     node.push(child);
   } else {
     const cache = getElementCache();
@@ -358,6 +421,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         renderWorker(newNode, children);
         node.push(newNode);
         cache.set(child, newNode);
+        notifyContentState();
       });
     } else if (isIntrinsicElement(child)) {
       trace(
@@ -488,6 +552,9 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           () => "Component: " + debugPrintChild(child),
         );
         const context = getContext();
+        context!.childrenWithContent = 0;
+        context!.isEmpty ??= ref(true);
+
         if (context) context.componentOwner = child;
         const componentRoot: RenderedTextTree = [];
         pushStack(child.component, child.props);
@@ -495,10 +562,14 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         popStack();
         node.push(componentRoot);
         cache.set(child, componentRoot);
-
+        notifyContentState();
         trace(
           TracePhase.render.appendChild,
-          () => "Component done: " + debugPrintChild(child),
+          () =>
+            "Component done: " +
+            debugPrintChild(child) +
+            ", empty: " +
+            context!.isEmpty!.value,
         );
       });
     } else if (typeof child === "function") {
@@ -510,10 +581,16 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         while (typeof res === "function" && !isComponentCreator(res)) {
           res = res();
         }
+        const context = getContext();
+        context!.childrenWithContent = 0;
+        context!.isEmpty ??= ref(true);
+
         const newNodes: RenderedTextTree = [];
         renderWorker(newNodes, res);
         node[index] = newNodes;
         cache.set(child, newNodes);
+
+        notifyContentState();
         return newNodes;
       });
     } else {

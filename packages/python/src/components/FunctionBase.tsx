@@ -1,4 +1,4 @@
-import { Name, Show } from "@alloy-js/core";
+import { createContentSlot, Name, Show } from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
@@ -67,7 +67,7 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
       parameters = props.parameters;
   }
   const sym: PythonOutputSymbol = props.sym;
-
+  const ContentSlot = createContentSlot();
   return (
     <>
       <Declaration {...props} nameKind="function" symbol={sym}>
@@ -79,7 +79,8 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
           />
           <PythonBlock opener=":">
             <Show when={Boolean(props.doc)}>{props.doc}</Show>
-            {props.children ?? "pass"}
+            <ContentSlot.WhenEmpty>pass</ContentSlot.WhenEmpty>
+            <ContentSlot>{props.children}</ContentSlot>
           </PythonBlock>
         </LexicalScope>
       </Declaration>

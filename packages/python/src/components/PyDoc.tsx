@@ -1,5 +1,12 @@
-import { For, Indent, List, Prose, Show, childrenArray } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import {
+  Children,
+  For,
+  Indent,
+  List,
+  Prose,
+  Show,
+  childrenArray,
+} from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Atom } from "./Atom.jsx";
 

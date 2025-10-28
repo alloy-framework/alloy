@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core/jsx-runtime";
+import { Children } from "@alloy-js/core";
 import { effect, Ref, shallowRef } from "@vue/reactivity";
 import { Show } from "./components/Show.jsx";
 import { getContext } from "./reactivity.js";

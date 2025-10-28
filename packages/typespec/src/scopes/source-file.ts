@@ -2,6 +2,7 @@ import {
   OutputScope,
   OutputScopeOptions,
   shallowReactive,
+  useScope,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/namespace.js";
 import { DirectoryScope } from "./directory.js";
@@ -12,7 +13,7 @@ export class SourceFileScope extends OutputScope {
 
   constructor(
     name: string,
-    parent: DirectoryScope,
+    parent: DirectoryScope | undefined,
     options?: OutputScopeOptions,
   ) {
     super(name, parent, options);
@@ -23,7 +24,7 @@ export class SourceFileScope extends OutputScope {
   }
 
   get parent() {
-    return super.parent! as DirectoryScope;
+    return super.parent as DirectoryScope | undefined;
   }
 
   addUsing(using: NamespaceSymbol) {
@@ -32,13 +33,12 @@ export class SourceFileScope extends OutputScope {
 }
 
 export function useSourceFileScope() {
-  // let scope: OutputScope | undefined = useScope();
-  // while (scope) {
-  //   if (scope instanceof TypeSpecSourceFileScope) {
-  //     return scope;
-  //   }
-  //   scope = scope.parent;
-  // }
-
-  return undefined;
+  const scope = useScope();
+  if (scope === undefined) {
+    return scope;
+  }
+  if (!(scope instanceof SourceFileScope)) {
+    throw new Error("Expected a SourceFile scope, got a different kind of scope.");
+  }
+  return scope;
 }

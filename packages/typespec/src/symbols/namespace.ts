@@ -30,6 +30,24 @@ export class NamespaceSymbol extends NamedTypeSymbol {
     return this.#isGlobal;
   }
 
+  getScopedName(parent: NamespaceSymbol): string {
+    const parts = [];
+
+    if (parent.isGlobal) {
+      return this.getFullyQualifiedName();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let current: NamespaceSymbol | undefined = this;
+
+    while (current && !current.isGlobal && current !== parent) {
+      parts.unshift(current.name);
+      current = current.ownerSymbol as NamespaceSymbol | undefined;
+    }
+
+    return parts.join(".");
+  }
+
   getFullyQualifiedName(): string {
     const parts = [];
 

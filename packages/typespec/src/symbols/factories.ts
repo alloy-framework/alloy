@@ -3,9 +3,9 @@ import { TypeSpecSymbol, TypeSpecSymbolOptions } from "./typespec.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
 import { useDirectoryScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { NamespaceSymbol } from "./namespace.js";
-import { useNamespaceContext } from "../contexts/namespace.js";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { DirectoryScope } from "../scopes/directory.js";
+import { useNamespace } from "../scopes/namespace.js";
 
 
 export function createDirectoryScope(path: string) {
@@ -36,8 +36,9 @@ export function createNamespaceSymbol(
   name: string | Namekey | (string | Namekey)[],
   options: TypeSpecSymbolOptions = {},
 ): NamespaceSymbol {
-  const scope = useNamespaceContext();
-  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
+  const parent = useNamespace();
+
+  const parentSymbol = parent?.ownerSymbol ?? getGlobalNamespace(useBinder());
   const names = normalizeNamespaceName(name);
   let current = parentSymbol;
   for (const name of names) {

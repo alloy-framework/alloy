@@ -53,6 +53,9 @@ export function useNamespace() {
     if (scope instanceof NamespaceScope) {
       return scope;
     }
+    if (scope instanceof SourceFileScope) {
+      return undefined;
+    }
     scope = scope.parent;
   }
 

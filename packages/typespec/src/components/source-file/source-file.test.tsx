@@ -18,3 +18,16 @@ it("defines multiple directories with unique source files", () => {
       "dir2/file.tsp": `Content of File2`,
     });
 });
+
+it("declares a file level namespace when one is provided", () => {
+    expect(
+        <Output>
+            <SourceFile namespace="My.Namespace" path="main.tsp">
+            </SourceFile>
+        </Output>
+    ).toRenderTo({
+        "main.tsp": `
+            namespace My.Namespace;
+        `,
+    });
+});

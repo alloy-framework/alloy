@@ -1,5 +1,7 @@
+import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { Block } from "../../src/components/Block.jsx";
+import { printTree, renderTree } from "../../src/render.js";
 import "../../testing/extend-expect.js";
 it("renders properly with no children", () => {
   const template = (
@@ -33,7 +35,7 @@ it("renders properly with newline and no children", () => {
   `);
 });
 
-it("renders properly with newline and no children", () => {
+it("renders properly with newline and children", () => {
   const template = (
     <>
       class<Block newline>contents!!</Block>
@@ -43,6 +45,24 @@ it("renders properly with newline and no children", () => {
     class
     {
       contents!!
+    }
+  `);
+});
+
+it("renders properly when content is added reactively", () => {
+  const contents = ref("");
+  const tree = renderTree(
+    <>
+      class Foo <Block>{contents}</Block>
+    </>,
+  );
+  expect(printTree(tree)).toRenderTo(`
+    class Foo {}
+  `);
+  contents.value = "x = 12;";
+  expect(printTree(tree)).toRenderTo(`
+    class Foo {
+      x = 12;
     }
   `);
 });

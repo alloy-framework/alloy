@@ -1,6 +1,6 @@
 import { computed } from "@vue/reactivity";
+import { createContentSlot } from "../content-slot.jsx";
 import type { Children } from "../runtime/component.js";
-import { childrenArray } from "../utils.jsx";
 import { Indent } from "./Indent.jsx";
 
 export interface BlockProps {
@@ -33,17 +33,29 @@ export interface BlockProps {
  * added after the block, which defaults to `"}"`.
  */
 export function Block(props: BlockProps) {
-  const childCount = computed(() => childrenArray(() => props.children).length);
+  const ContentSlot = createContentSlot();
+  const leadingNewline = computed(() => {
+    if (!props.newline) return false;
+
+    // When inline, we want a newline only when content breaks, otherwise a nothing..
+    if (props.inline) return <sbr />;
+
+    // When not inline, we want a hardline when the slot has contents otherwise a space.
+    if (ContentSlot.hasContent) return <hbr />;
+
+    return " ";
+  });
   return (
     <group>
-      {props.newline && (props.inline ? <softline /> : <br />)}
+      {leadingNewline}
       {props.opener ?? "{"}
       <Indent
-        line={props.inline && childCount.value > 0}
-        softline={childCount.value === 0}
+        hardline={!props.inline && ContentSlot.hasContent}
+        line={props.inline && ContentSlot.hasContent}
+        softline={!props.inline || ContentSlot.isEmpty}
         trailingBreak
       >
-        {props.children}
+        <ContentSlot>{props.children}</ContentSlot>
       </Indent>
       {props.closer ?? "}"}
     </group>

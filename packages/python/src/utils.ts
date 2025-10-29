@@ -1,10 +1,4 @@
-import {
-  Children,
-  ComponentCreator,
-  defaultProps,
-  isComponentCreator,
-  splitProps,
-} from "@alloy-js/core";
+import { defaultProps, splitProps } from "@alloy-js/core";
 import { CallSignatureProps } from "./components/index.js";
 
 /**

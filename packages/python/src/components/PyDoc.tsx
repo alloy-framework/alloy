@@ -268,7 +268,9 @@ export interface PyDocExampleProps {
  */
 export function PyDocExample(props: PyDocExampleProps) {
   const lines = computed(() => {
-    const kids = childrenArray(() => props.children, { preserveFragments: true });
+    const kids = childrenArray(() => props.children, {
+      preserveFragments: true,
+    });
     const out: Children[] = [];
 
     const isBr = (node: any): boolean => {
@@ -350,8 +352,7 @@ export function SimpleCommentBlock(props: SimpleCommentBlockProps) {
 
   return (
     <>
-      #{" "}
-      <align string="# ">{content}</align>
+      # <align string="# ">{content}</align>
     </>
   );
 }

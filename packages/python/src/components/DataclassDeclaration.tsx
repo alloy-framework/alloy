@@ -1,4 +1,4 @@
-import { For, Show, childrenArray, computed } from "@alloy-js/core";
+import { For, Show } from "@alloy-js/core";
 import { snakeCase } from "change-case";
 import { dataclassesModule } from "../builtins/python.js";
 import { usePythonScope } from "../symbols/scopes.js";
@@ -31,8 +31,11 @@ function validateDataclassMemberConflicts(kwargs: DataclassDecoratorKwargs) {
   if (!owner) return;
 
   const hasMemberNamed = (name: string): boolean => {
-    const instanceNames: Set<string> | undefined = (owner.instanceMembers as any)?.symbolNames;
-    const staticNames: Set<string> | undefined = (owner.staticMembers as any)?.symbolNames;
+    const instanceNames: Set<string> | undefined = (
+      owner.instanceMembers as any
+    )?.symbolNames;
+    const staticNames: Set<string> | undefined = (owner.staticMembers as any)
+      ?.symbolNames;
     return Boolean(instanceNames?.has(name) || staticNames?.has(name));
   };
 

@@ -132,7 +132,8 @@ describe("SimpleCommentBlock", () => {
   it("renders simple comment block", () => {
     const res = toSourceText([
       <py.SimpleCommentBlock>
-        This is a simple comment block that spans multiple lines and should be split automatically.
+        This is a simple comment block that spans multiple lines and should be
+        split automatically.
       </py.SimpleCommentBlock>,
     ]);
     expect(res).toRenderTo(

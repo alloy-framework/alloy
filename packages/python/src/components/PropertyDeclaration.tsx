@@ -6,7 +6,6 @@ import {
   Show,
   childrenArray,
   code,
-  computed,
   createContext,
   findKeyedChild,
   findUnkeyedChildren,

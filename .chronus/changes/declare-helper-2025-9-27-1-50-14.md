@@ -4,4 +4,4 @@ packages:
   - "@alloy-js/core"
 ---
 
-Fix immediately recursive reactives.
+Fix a bug where tracing would track additional signals.

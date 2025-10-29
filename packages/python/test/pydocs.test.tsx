@@ -1397,23 +1397,18 @@ describe("Full example", () => {
       </py.ClassDeclaration>,
     ]);
 
-    expect(result).toRenderTo(
-      d`
-        class Person:
-            @property
-            def full_name(self) -> str:
-                """
-                The full name of the person, combining first and last name. This
-                property automatically formats the name with proper capitalization.
-                """
-                return "John Doe"
-
-
-
-
-
-        `,
-    );
+    expect(result).toRenderTo(`
+      class Person:
+          @property
+          def full_name(self) -> str:
+              """
+              The full name of the person, combining first and last name. This
+              property automatically formats the name with proper capitalization.
+              """
+              return "John Doe"
+      
+      
+    `);
   });
 
   it("MethodDoc with FunctionDeclaration (inside class) integration", () => {

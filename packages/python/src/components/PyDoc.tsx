@@ -6,6 +6,8 @@ import {
   Prose,
   Show,
   childrenArray,
+  computed,
+  isKeyedChild,
 } from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Atom } from "./Atom.jsx";
@@ -244,11 +246,12 @@ export interface PyDocProps {
  * linebreaks. This is useful for creating PyDoc comments with multiple paragraphs.
  */
 export function PyDoc(props: PyDocProps) {
+  const children = childrenArray(() => props.children);
   return (
     <>
       {'"""'}
       <hbr />
-      <List doubleHardline>{children(() => props.children)}</List>
+      <List doubleHardline>{children}</List>
       <hbr />
       {'"""'}
       <hbr />
@@ -264,25 +267,48 @@ export interface PyDocExampleProps {
  * Create a PyDoc example, which is prepended by \>\>.
  */
 export function PyDocExample(props: PyDocExampleProps) {
-  const getLines = () => {
-    const childrenList = childrenArray(() => props.children);
-    if (childrenList.length === 1 && typeof childrenList[0] === "string") {
-      // Split, trim each line, and filter out empty lines
-      return childrenList[0]
+  const lines = computed(() => {
+    const kids = childrenArray(() => props.children, { preserveFragments: true });
+    const out: Children[] = [];
+
+    const isBr = (node: any): boolean => {
+      if (node == null) return false;
+      const keyed = isKeyedChild(node as any);
+      const tag = keyed ? (node as any).tag : (node as any)?.tag;
+      const kind = (node as any)?.kind;
+      // Consider only <br /> as a line splitter (not rendered as content).
+      return tag === "br" || kind === "br";
+    };
+
+    // Handles a single string child: split on newlines to produce lines.
+    const splitAndTrim = (s: string): string[] =>
+      s
         .split(/\r?\n/)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
+        .map((x) => x.trim())
+        .filter((x) => x.length > 0);
+
+    if (kids.length === 1 && typeof kids[0] === "string") {
+      return splitAndTrim(kids[0] as string);
     }
-    // For non-string children, filter out empty/whitespace-only strings
-    return childrenList
-      .map((c) => (typeof c === "string" ? c : ""))
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-  };
+
+    // Handles mixed children: each child becomes a line, string children
+    // may include embedded newlines, and <br /> acts as a line split.
+    for (const child of kids) {
+      if (child == null || isBr(child)) continue;
+      if (typeof child === "string") {
+        // String children: split on newlines to produce lines.
+        for (const seg of splitAndTrim(child)) out.push(seg);
+      } else {
+        // Non-string child (component/fragment) are preserved as their own doctest line.
+        out.push(child);
+      }
+    }
+    return out;
+  });
 
   return (
     <>
-      <For each={getLines}>
+      <For each={lines.value}>
         {(line) => (
           <>
             {">> "}
@@ -299,12 +325,33 @@ export interface SimpleCommentBlockProps {
 }
 
 export function SimpleCommentBlock(props: SimpleCommentBlockProps) {
+  const children = childrenArray(() => props.children);
+  let content: Children;
+  if (children.length === 1 && typeof children[0] === "string") {
+    const raw = children[0] as string;
+    if (raw.includes("\n") || raw.includes("\\n")) {
+      const parts = raw.split(/\r?\n|\\n/);
+      content = (
+        <>
+          {parts.map((p, i) => (
+            <>
+              <Prose>{p}</Prose>
+              {i < parts.length - 1 && <hbr />}
+            </>
+          ))}
+        </>
+      );
+    } else {
+      content = <Prose>{props.children}</Prose>;
+    }
+  } else {
+    content = <Prose>{props.children}</Prose>;
+  }
+
   return (
     <>
       #{" "}
-      <align string="# ">
-        <Prose>{props.children}</Prose>
-      </align>
+      <align string="# ">{content}</align>
     </>
   );
 }

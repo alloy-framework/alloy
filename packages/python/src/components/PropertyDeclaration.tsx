@@ -94,8 +94,7 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
     }
   };
 
-  const childrenComputed = computed(() => childrenArray(() => props.children));
-  const children = childrenComputed.value;
+  const children = childrenArray(() => props.children);
   const setterComponent =
     findKeyedChild(children, PropertyDeclaration.Setter.tag) ?? undefined;
   const deleterComponent =

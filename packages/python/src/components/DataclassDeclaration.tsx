@@ -1,4 +1,5 @@
 import { For, Show, childrenArray, computed } from "@alloy-js/core";
+import { snakeCase } from "change-case";
 import { dataclassesModule } from "../builtins/python.js";
 import { usePythonScope } from "../symbols/scopes.js";
 import { Atom } from "./Atom.jsx";
@@ -30,13 +31,9 @@ function validateDataclassMemberConflicts(kwargs: DataclassDecoratorKwargs) {
   if (!owner) return;
 
   const hasMemberNamed = (name: string): boolean => {
-    for (const sym of owner.instanceMembers as Iterable<any>) {
-      if (sym.originalName === name) return true;
-    }
-    for (const sym of owner.staticMembers as Iterable<any>) {
-      if (sym.originalName === name) return true;
-    }
-    return false;
+    const instanceNames: Set<string> | undefined = (owner.instanceMembers as any)?.symbolNames;
+    const staticNames: Set<string> | undefined = (owner.staticMembers as any)?.symbolNames;
+    return Boolean(instanceNames?.has(name) || staticNames?.has(name));
   };
 
   if (kwargs.order === true) {
@@ -100,6 +97,9 @@ export const dataclassDecoratorKeys = [
   "slots",
   "weakrefSlot",
 ] as const;
+export const dataclassDecoratorKeySet = new Set<string>(
+  dataclassDecoratorKeys as unknown as string[],
+);
 export type DataclassDecoratorKey = (typeof dataclassDecoratorKeys)[number];
 export type DataclassDecoratorKwargs = Partial<
   Record<DataclassDecoratorKey, boolean>
@@ -110,7 +110,7 @@ export interface DataclassDeclarationProps
     DataclassDecoratorKwargs {}
 
 /**
- * Renders a Python dataclass. Uses ClassDeclaration component internally.
+ * Renders a Python dataclass.
  *
  * Example:
  * ```tsx
@@ -138,38 +138,20 @@ export interface DataclassDeclarationProps
  * ```
  */
 export function DataclassDeclaration(props: DataclassDeclarationProps) {
-  const decoratorKeys: (keyof DataclassDecoratorKwargs)[] = [
-    ...dataclassDecoratorKeys,
-  ];
-  const validKeySet = new Set<string>(decoratorKeys as unknown as string[]);
   // Collect flags from props in the order they appear (preserves emission order)
-  const orderedKwargs: Array<[keyof DataclassDecoratorKwargs, any]> = [];
+  const decoratorEntries: Array<[string, any]> = [];
+  const kwargs = {} as DataclassDecoratorKwargs;
   for (const key of Object.keys(props)) {
     // Only include known flags; skip undefined values
-    if (validKeySet.has(key)) {
+    if (dataclassDecoratorKeySet.has(key)) {
       const value = (props as any)[key];
-      if (value !== undefined)
-        orderedKwargs.push([key as keyof DataclassDecoratorKwargs, value]);
+      if (value !== undefined) {
+        (kwargs as any)[key] = value;
+        decoratorEntries.push([snakeCase(key), value]);
+      }
     }
   }
-  // Materialize ordered entries into an object for validation/rendering
-  const kwargs = orderedKwargs.reduce((acc, [k, v]) => {
-    (acc as any)[k] = v;
-    return acc;
-  }, {} as DataclassDecoratorKwargs);
-  const hasDecoratorArgs = orderedKwargs.length > 0;
-  const toSnakeCase = (s: string): string =>
-    s
-      .replace(/([a-z\d])([A-Z])/g, "$1_$2")
-      .replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2")
-      .toLowerCase();
-  const decoratorEntries = orderedKwargs.map(([k, v]) => {
-    const pyKey = toSnakeCase(k as unknown as string);
-    return [pyKey, v] as const;
-  });
-  const hasBodyChildren = computed(() =>
-    childrenArray(() => props.children).some(Boolean),
-  );
+  const hasDecoratorArgs = decoratorEntries.length > 0;
 
   if (hasDecoratorArgs) {
     validateDataclassDecoratorArgs(kwargs);
@@ -179,14 +161,6 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
     validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs);
     return null;
   }
-
-  const classBody =
-    hasBodyChildren.value ?
-      <>
-        <StatementList>{props.children}</StatementList>
-        <RunSymbolValidation />
-      </>
-    : undefined;
 
   return (
     <>
@@ -205,7 +179,8 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
       </Show>
       <hbr />
       <ClassDeclaration name={props.name} bases={props.bases} doc={props.doc}>
-        {classBody}
+        <StatementList>{props.children}</StatementList>
+        <RunSymbolValidation />
       </ClassDeclaration>
     </>
   );

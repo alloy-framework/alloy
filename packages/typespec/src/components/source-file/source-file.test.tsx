@@ -1,17 +1,17 @@
 import { expect, it } from "vitest";
 import { Output } from "@alloy-js/core";
 import { SourceFile } from "./source-file.jsx";
-import { Directory } from "#components/directory/directory.jsx";
+import { SourceDirectory } from "@alloy-js/core";
 
 it("defines multiple directories with unique source files", () => {
     expect(
       <Output>
-        <Directory path="dir1">
+        <SourceDirectory path="dir1">
           <SourceFile path="file.tsp">Content of File1</SourceFile>
-        </Directory>
-        <Directory path="dir2">
+        </SourceDirectory>
+        <SourceDirectory path="dir2">
           <SourceFile path="file.tsp">Content of File2</SourceFile>
-        </Directory>
+        </SourceDirectory>
       </Output>,
     ).toRenderTo({
       "dir1/file.tsp": `Content of File1`,
@@ -22,12 +22,9 @@ it("defines multiple directories with unique source files", () => {
 it("declares a file level namespace when one is provided", () => {
     expect(
         <Output>
-            <SourceFile namespace="My.Namespace" path="main.tsp">
-            </SourceFile>
+            <SourceFile namespace="My.Namespace" path="main.tsp" />
         </Output>
     ).toRenderTo({
-        "main.tsp": `
-            namespace My.Namespace;
-        `,
+        "main.tsp": `namespace My.Namespace;`,
     });
 });

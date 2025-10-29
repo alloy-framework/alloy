@@ -7,7 +7,7 @@ import {
   resolve,
   unresolvedRefkey,
 } from "@alloy-js/core";
-import { useReferenceContext } from "../contexts/reference-context.js";
+// import { useReferenceContext } from "../contexts/reference-context.js";
 import { TypeSpecScope } from "../scopes/typespec.js";
 import { NamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
@@ -58,7 +58,7 @@ export function ref(
     }
 
     const parts = [];
-    const referenceContext = useReferenceContext();
+    // const referenceContext = useReferenceContext();
 
     // TODO properly
 

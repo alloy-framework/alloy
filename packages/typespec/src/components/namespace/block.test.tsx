@@ -1,6 +1,5 @@
 import { expect, it } from "vitest";
 import { Output } from "@alloy-js/core";
-import { Directory } from "#components/directory/directory.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
 import { Namespace } from "./block.jsx";
 import { d } from "@alloy-js/core/testing";

@@ -1,18 +1,21 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { SourceFileScope } from "../../scopes/source-file.js";
-import { SourceFile as CoreSourceFile, Scope } from "@alloy-js/core";
+import { Block, computed, SourceFile as CoreSourceFile, Scope, useBinder } from "@alloy-js/core";
 import {
     useTypeSpecFormatOptions
 } from "../../contexts/format-options.js";
 import { Reference } from "../Reference.jsx";
-import { useDirectoryScope } from "../../scopes/contexts.js";
-import { FileLevelNamespace } from "#components/namespace/file-level.jsx";
+import { useNamespaceContext } from "../../contexts/namespace.js";
+import { getGlobalNamespace } from "../../contexts/global-namespace.js";
+import { NamespaceScopes } from "#components/namespace-scopes.jsx";
+import { NamespaceName } from "#components/namespace/namespace-name.jsx";
+import { NamespaceSymbol } from "../../symbols/namespace.js";
 
 export interface SourceFileProps {
     path: string;
 
     /** If present, it defines a file-level namespace (if not present, it uses the global namespace) */
-    namespace?: string;
+    namespace?: NamespaceSymbol;
 
     children?: Children;
 
@@ -30,8 +33,15 @@ export interface SourceFileProps {
 };
 
 export function SourceFile(props: SourceFileProps) {
-    const parent = useDirectoryScope();
-    const sourceFileScope = new SourceFileScope(props.path, parent);
+    const sourceFileScope = new SourceFileScope(props.path);
+
+    const nsContext = useNamespaceContext();
+    const parentNs = props.namespace ?? getGlobalNamespace(useBinder());
+    const nsSymbol = nsContext ? nsContext.symbol : parentNs;
+
+    const content = computed(() => (
+        <NamespaceScopes symbol={nsSymbol}>{props.children}</NamespaceScopes>
+    ));
 
     const options = useTypeSpecFormatOptions();
 
@@ -43,9 +53,24 @@ export function SourceFile(props: SourceFileProps) {
             {...options}
         >
              <Scope value={sourceFileScope}>
-                <FileLevelNamespace name={props.namespace} isGlobal={props.namespace === undefined}>
-                    {props.children}
-                </FileLevelNamespace>
+                {nsSymbol === parentNs ?
+                    content
+                : <>
+                        namespace <NamespaceName symbol={nsSymbol} />
+                        {sourceFileScope.hasBlockNamespace ?
+                        <>
+                            {" "}
+                            <Block>{content}</Block>
+                        </>
+                        :<>
+                            ;<hbr />
+                            <hbr />
+                            {content}
+                        </>    
+                    
+                    }
+                    </>
+                }
              </Scope>
         </CoreSourceFile>
     );

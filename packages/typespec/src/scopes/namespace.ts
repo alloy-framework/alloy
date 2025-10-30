@@ -1,6 +1,5 @@
 import { OutputScope, useScope } from "@alloy-js/core";
 import type { NamespaceSymbol } from "../symbols/namespace.js";
-import { TypeSpecNamedTypeScope } from "./named-type.js";
 import { SourceFileScope } from "./source-file.js";
 
 export class NamespaceScope extends OutputScope {

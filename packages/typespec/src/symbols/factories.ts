@@ -1,17 +1,9 @@
 import { Namekey, NamePolicyGetter, onCleanup, useBinder } from "@alloy-js/core";
 import { TypeSpecSymbol, TypeSpecSymbolOptions } from "./typespec.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
-import { useDirectoryScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { NamespaceSymbol } from "./namespace.js";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
-import { DirectoryScope } from "../scopes/directory.js";
 import { useNamespace } from "../scopes/namespace.js";
-
-
-export function createDirectoryScope(path: string) {
-  const parent = useDirectoryScope();
-  return new DirectoryScope(path, parent);
-}
 
 export function createNamespaceSymbol(
   name: string | Namekey | (string | Namekey)[],

@@ -2,10 +2,15 @@ import {
   OutputScope,
   OutputScopeOptions,
   shallowReactive,
+  track,
+  TrackOpTypes,
+  trigger,
+  TriggerOpTypes,
   useScope,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/namespace.js";
-import { DirectoryScope } from "./directory.js";
+
+import { NamespaceScope } from "./namespace.js";
 
 export class SourceFileScope extends OutputScope {
   #usings = shallowReactive<Set<NamespaceSymbol>>(new Set());
@@ -13,7 +18,7 @@ export class SourceFileScope extends OutputScope {
 
   constructor(
     name: string,
-    parent: DirectoryScope | undefined,
+    parent?: NamespaceScope,
     options?: OutputScopeOptions,
   ) {
     super(name, parent, options);
@@ -24,21 +29,37 @@ export class SourceFileScope extends OutputScope {
   }
 
   get parent() {
-    return super.parent as DirectoryScope | undefined;
+    return super.parent! as NamespaceScope;
   }
 
   addUsing(using: NamespaceSymbol) {
     this.#usings.add(using);
   }
+
+  #hasBlockNamespace: boolean = false;
+  get hasBlockNamespace() {
+    track(this, TrackOpTypes.GET, "hasBlockNamespace");
+    return this.#hasBlockNamespace;
+  }
+
+  set hasBlockNamespace(value: boolean) {
+    const old = this.#hasBlockNamespace;
+    if (this.#hasBlockNamespace === value) {
+      return;
+    }
+    this.#hasBlockNamespace = value;
+    trigger(this, TriggerOpTypes.SET, "hasBlockNamespace", value, old);
+  }
 }
 
 export function useSourceFileScope() {
-  const scope = useScope();
-  if (scope === undefined) {
-    return scope;
+  let scope: OutputScope | undefined = useScope();
+  while (scope) {
+    if (scope instanceof SourceFileScope) {
+      return scope;
+    }
+    scope = scope.parent;
   }
-  if (!(scope instanceof SourceFileScope)) {
-    throw new Error("Expected a SourceFile scope, got a different kind of scope.");
-  }
-  return scope;
+
+  return undefined;
 }

@@ -8,14 +8,8 @@ export interface TypeSpecSymbolOptions extends OutputSymbolOptions {
 
 export type TypeSpecSymbolKinds =
     | "symbol"
-    | "field"
-    | "model"
-    | "enum"
-    | "interface"
     | "namespace"
-    | "named-type"
-    | "union"
-    | "alias";
+    | "named-type";
 
 export class TypeSpecSymbol extends OutputSymbol {
     public readonly symbolKind: TypeSpecSymbolKinds = "symbol";

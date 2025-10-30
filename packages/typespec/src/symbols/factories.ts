@@ -13,25 +13,6 @@ export function createDirectoryScope(path: string) {
   return new DirectoryScope(path, parent);
 }
 
-export function createPropertySymbol(
-  originalName: string | Namekey,
-  options: TypeSpecSymbolOptions = {},
-) {
-  let nameElement: TypeSpecElements = "model-property";
-
-  const scope = useNamedTypeScope();
-
-  if (scope.ownerSymbol.typeKind !== "model") {
-    throw new Error(`Can't define a property outside of a model.`);
-  }
-
-  return new TypeSpecSymbol(
-    originalName,
-    scope.members,
-    withNamePolicy(options, nameElement),
-  );
-}
-
 export function createNamespaceSymbol(
   name: string | Namekey | (string | Namekey)[],
   options: TypeSpecSymbolOptions = {},

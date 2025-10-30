@@ -1,4 +1,4 @@
-import { Block, Children, Namekey, Refkey, Scope, useScope } from "@alloy-js/core";
+import { Block, Children, Namekey, Refkey, Scope } from "@alloy-js/core";
 import { NamespaceScope, useNamespace } from "../../scopes/namespace.js";
 import { createNamespaceSymbol } from "../../symbols/factories.js";
 import { Declaration } from "../../../../core/src/index.browser.js";

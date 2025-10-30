@@ -4,14 +4,14 @@ import { TypeSpecSymbol, TypeSpecSymbolOptions } from "./typespec.js";
 // represents a symbol from a .tsp file. model, enum, interface etc.
 
 export type NamedTypeTypeKind =
-  | "model"
-  | "interface"
-  | "operation"
-  | "enum"
-  | "union"
-  | "alias"
-  | "namespace"
-  | "scalar";
+  // | "model"
+  // | "interface"
+  // | "operation"
+  // | "enum"
+  // | "union"
+  // | "alias"
+  | "scalar"
+  | "namespace";
 
 export type NamedTypeSymbolKind = "named-type" | "namespace";
 

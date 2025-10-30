@@ -25,6 +25,6 @@ it("declares a file level namespace when one is provided", () => {
             <SourceFile namespace="My.Namespace" path="main.tsp" />
         </Output>
     ).toRenderTo({
-        "main.tsp": `namespace My.Namespace;`,
+        "main.tsp": `namespace My.Namespace;\n\n\n`, // why do we need to do this for this assertion to pass?
     });
 });

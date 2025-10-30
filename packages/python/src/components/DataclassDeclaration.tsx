@@ -160,11 +160,6 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
     validateDataclassDecoratorArgs(kwargs);
   }
 
-  function RunSymbolValidation() {
-    validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs);
-    return null;
-  }
-
   return (
     <>
       {"@"}
@@ -183,7 +178,7 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
       <hbr />
       <ClassDeclaration name={props.name} bases={props.bases} doc={props.doc}>
         <StatementList>{props.children}</StatementList>
-        <RunSymbolValidation />
+        {validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs)}
       </ClassDeclaration>
     </>
   );

@@ -36,8 +36,8 @@ export function SourceFile(props: SourceFileProps) {
     const sourceFileScope = new SourceFileScope(props.path);
 
     const nsContext = useNamespaceContext();
-    const parentNs = props.namespace ?? getGlobalNamespace(useBinder());
-    const nsSymbol = nsContext ? nsContext.symbol : parentNs;
+    const globalNs = getGlobalNamespace(useBinder());
+    const nsSymbol = props?.namespace ?? (nsContext ? nsContext.symbol : globalNs);
 
     const content = computed(() => (
         <NamespaceScopes symbol={nsSymbol}>{props.children}</NamespaceScopes>
@@ -53,7 +53,7 @@ export function SourceFile(props: SourceFileProps) {
             {...options}
         >
              <Scope value={sourceFileScope}>
-                {nsSymbol === parentNs ?
+                {nsSymbol === globalNs ?
                     content
                 : <>
                         namespace <NamespaceName symbol={nsSymbol} />

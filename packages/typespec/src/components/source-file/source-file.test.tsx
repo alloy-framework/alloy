@@ -3,6 +3,7 @@ import { Output } from "@alloy-js/core";
 import { SourceFile } from "./source-file.jsx";
 import { SourceDirectory } from "@alloy-js/core";
 import { Namespace } from "#components/namespace/namespace.jsx";
+import { createNamespaceSymbol } from "../../symbols/factories.js";
 
 it("defines multiple directories with unique source files", () => {
     expect(
@@ -21,11 +22,10 @@ it("defines multiple directories with unique source files", () => {
 });
 
 it("declares a file level namespace when one is provided", () => {
+    const parentNamespace = createNamespaceSymbol("My.Namespace");
     expect(
         <Output>
-            <Namespace name="My.Namespace">
-              <SourceFile path="main.tsp" />
-            </Namespace>
+          <SourceFile path="main.tsp" namespace={parentNamespace} />
         </Output>
     ).toRenderTo({
         "main.tsp": `namespace My.Namespace;\n\n\n`, // why do we need to do this for this assertion to pass?

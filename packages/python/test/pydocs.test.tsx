@@ -104,11 +104,7 @@ describe("PyDocExample", () => {
         <py.PyDoc>
           <Prose>This is an example of a docstring with a code sample.</Prose>
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>
         </py.PyDoc>,
       ],
@@ -136,12 +132,14 @@ describe("SimpleCommentBlock", () => {
   it("renders simple comment block", () => {
     const res = toSourceText([
       <py.SimpleCommentBlock>
-        This is a simple comment block that spans multiple lines.
+        This is a simple comment block that spans multiple lines and should be
+        split automatically.
       </py.SimpleCommentBlock>,
     ]);
     expect(res).toRenderTo(
       d`
-          # This is a simple comment block that spans multiple lines.
+          # This is a simple comment block that spans multiple lines and should be split
+          # automatically.
           
           `,
     );
@@ -150,14 +148,13 @@ describe("SimpleCommentBlock", () => {
   it("renders comment block with line breaks", () => {
     const res = toSourceText([
       <py.SimpleCommentBlock>
-        First line of comment.
-        <br />
-        Second line of comment.
+        First line of comment.\nSecond line of comment.
       </py.SimpleCommentBlock>,
     ]);
     expect(res).toRenderTo(
       d`
-          # First line of comment. Second line of comment.
+          # First line of comment.
+          # Second line of comment.
           
           `,
     );
@@ -877,9 +874,7 @@ describe("New Documentation Components", () => {
             Generators have a Yields section instead of a Returns section.
           </Prose>,
           <py.PyDocExample>
-            print([i for i in example_generator(4)])
-            <br />
-            [0, 1, 2, 3]
+            {`print([i for i in example_generator(4)])\n[0, 1, 2, 3]`}
           </py.PyDocExample>,
         ]}
         parameters={[
@@ -928,11 +923,7 @@ describe("Full example", () => {
             We will also render another paragraph after this one.
           </Prose>,
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>,
         ]}
         attributes={[
@@ -1050,11 +1041,7 @@ describe("Full example", () => {
             We will also render another paragraph after this one.
           </Prose>,
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>,
         ]}
         parameters={[

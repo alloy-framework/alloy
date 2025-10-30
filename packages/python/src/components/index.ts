@@ -4,6 +4,7 @@ export * from "./ClassDeclaration.js";
 export * from "./ClassInstantiation.js";
 export * from "./ClassMethodDeclaration.js";
 export * from "./ConstructorDeclaration.js";
+export * from "./DataclassDeclaration.js";
 export * from "./Declaration.js";
 export * from "./DunderMethodDeclaration.js";
 export * from "./EnumDeclaration.js";

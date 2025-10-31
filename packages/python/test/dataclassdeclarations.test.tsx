@@ -3,7 +3,11 @@ import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { dataclassesModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.jsx";
+import {
+  assertFileContents,
+  toSourceText,
+  toSourceTextMultiple,
+} from "./utils.jsx";
 
 describe("DataclassDeclaration", () => {
   it("Creates a dataclass with a class doc", () => {
@@ -609,10 +613,7 @@ describe("DataclassDeclaration", () => {
               name="user"
               type={userRefkey}
               initializer={
-                <py.ClassInstantiation
-                  target="User"
-                  args={['1', '"Alice"']}
-                />
+                <py.ClassInstantiation target="User" args={["1", '"Alice"']} />
               }
             />
             <hbr />

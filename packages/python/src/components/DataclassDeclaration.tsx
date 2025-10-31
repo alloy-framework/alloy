@@ -176,7 +176,12 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
         )
       </Show>
       <hbr />
-      <ClassDeclaration name={props.name} bases={props.bases} doc={props.doc}>
+      <ClassDeclaration
+        name={props.name}
+        bases={props.bases}
+        doc={props.doc}
+        refkey={props.refkey}
+      >
         <StatementList>{props.children}</StatementList>
         {validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs)}
       </ClassDeclaration>

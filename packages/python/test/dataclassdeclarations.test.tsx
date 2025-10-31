@@ -1,9 +1,9 @@
-import { Prose, namekey } from "@alloy-js/core";
+import { Prose, namekey, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { dataclassesModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { assertFileContents, toSourceText, toSourceTextMultiple } from "./utils.jsx";
 
 describe("DataclassDeclaration", () => {
   it("Creates a dataclass with a class doc", () => {
@@ -581,5 +581,65 @@ describe("DataclassDeclaration", () => {
 
       `,
     );
+  });
+
+  it("Forwards refkey prop for symbol resolution in type references", () => {
+    const userRefkey = refkey();
+    const res = toSourceTextMultiple(
+      [
+        <py.SourceFile path="models.py">
+          <py.DataclassDeclaration name="User" refkey={userRefkey}>
+            <py.VariableDeclaration
+              instanceVariable
+              omitNone
+              name="id"
+              type="int"
+            />
+            <py.VariableDeclaration
+              instanceVariable
+              omitNone
+              name="name"
+              type="str"
+            />
+          </py.DataclassDeclaration>
+        </py.SourceFile>,
+        <py.SourceFile path="services.py">
+          <py.FunctionDeclaration name="get_user" returnType={userRefkey}>
+            <py.VariableDeclaration
+              name="user"
+              type={userRefkey}
+              initializer={
+                <py.ClassInstantiation
+                  target="User"
+                  args={['1', '"Alice"']}
+                />
+              }
+            />
+            <hbr />
+            {"return user"}
+          </py.FunctionDeclaration>
+        </py.SourceFile>,
+      ],
+      { externals: [dataclassesModule] },
+    );
+    assertFileContents(res, {
+      "models.py": `
+        from dataclasses import dataclass
+
+        @dataclass
+        class User:
+            id: int
+            name: str
+
+        `,
+      "services.py": `
+        from models import User
+
+        def get_user() -> User:
+            user: User = User(1, "Alice")
+            return user
+
+        `,
+    });
   });
 });

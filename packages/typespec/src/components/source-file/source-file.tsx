@@ -1,6 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { SourceFileScope } from "../../scopes/source-file.js";
-import { Block, computed, SourceFile as CoreSourceFile, Scope, useBinder } from "@alloy-js/core";
+import { Block, computed, SourceFile as CoreSourceFile, Scope, Show, useBinder } from "@alloy-js/core";
 import {
     useTypeSpecFormatOptions
 } from "../../contexts/format-options.js";
@@ -35,9 +35,8 @@ export interface SourceFileProps {
 export function SourceFile(props: SourceFileProps) {
     const sourceFileScope = new SourceFileScope(props.path);
 
-    const nsContext = useNamespaceContext();
     const globalNs = getGlobalNamespace(useBinder());
-    const nsSymbol = props?.namespace ?? (nsContext ? nsContext.symbol : globalNs);
+    const nsSymbol = props?.namespace ?? globalNs;
 
     const content = computed(() => (
         <NamespaceScopes symbol={nsSymbol}>{props.children}</NamespaceScopes>
@@ -52,26 +51,14 @@ export function SourceFile(props: SourceFileProps) {
             reference={Reference}
             {...options}
         >
-             <Scope value={sourceFileScope}>
-                {nsSymbol === globalNs ?
-                    content
-                : <>
-                        namespace <NamespaceName symbol={nsSymbol} />
-                        {sourceFileScope.hasBlockNamespace ?
-                        <>
-                            {" "}
-                            <Block>{content}</Block>
-                        </>
-                        :<>
-                            ;<hbr />
-                            <hbr />
-                            {content}
-                        </>    
-                    
-                    }
-                    </>
-                }
-             </Scope>
+            <Scope value={sourceFileScope}>
+                <Show when={nsSymbol !== globalNs}>
+                    namespace <NamespaceName symbol={nsSymbol} />;
+                    <hbr />
+                    <hbr />
+                </Show>
+                {content}
+            </Scope>
         </CoreSourceFile>
     );
 }

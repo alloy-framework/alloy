@@ -35,21 +35,6 @@ export class SourceFileScope extends OutputScope {
   addUsing(using: NamespaceSymbol) {
     this.#usings.add(using);
   }
-
-  #hasBlockNamespace: boolean = false;
-  get hasBlockNamespace() {
-    track(this, TrackOpTypes.GET, "hasBlockNamespace");
-    return this.#hasBlockNamespace;
-  }
-
-  set hasBlockNamespace(value: boolean) {
-    const old = this.#hasBlockNamespace;
-    if (this.#hasBlockNamespace === value) {
-      return;
-    }
-    this.#hasBlockNamespace = value;
-    trigger(this, TriggerOpTypes.SET, "hasBlockNamespace", value, old);
-  }
 }
 
 export function useSourceFileScope() {

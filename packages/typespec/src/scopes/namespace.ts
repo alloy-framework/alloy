@@ -58,5 +58,5 @@ export function useNamespace() {
     scope = scope.parent;
   }
 
-  throw new Error("A namespace is not in scope");
+  return undefined;
 }

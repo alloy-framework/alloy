@@ -24,7 +24,6 @@ export function Namespace(props: NamespaceProps) {
             {props.children}
         </NamespaceContext.Provider>);
     } else {
-        sfScope.hasBlockNamespace = true;
         return (
             <>
                 namespace <NamespaceName symbol={namespaceSymbol} relative />{" "}

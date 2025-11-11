@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/msbuild
 
+## 0.22.0
+
+No changes, version bump only.
+
 
 
 ## 0.21.0

@@ -426,7 +426,12 @@ function formatNonCallChain(parts: PartDescriptor[]): Children {
         if (Array.isArray(expression)) {
           expression.push(partExpr);
         } else {
-          expression = <>{expression}{partExpr}</>;
+          expression = (
+            <>
+              {expression}
+              {partExpr}
+            </>
+          );
         }
       }
 

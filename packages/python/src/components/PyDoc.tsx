@@ -373,14 +373,6 @@ export interface SimpleInlineCommentProps {
   children: Children;
 }
 
-export function SimpleInlineMemberComment(props: SimpleInlineCommentProps) {
-  return (
-    <>
-      {"  "}#: <Prose>{props.children}</Prose>
-    </>
-  );
-}
-
 interface GoogleStyleFunctionDocProps extends Omit<FunctionDocProps, "style"> {}
 
 /**

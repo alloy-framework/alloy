@@ -1143,18 +1143,18 @@ describe("Full example", () => {
           An enum representing colors.
           """
 
+          RED = 1
           """
           The color red.
           """
-          RED = 1
+          GREEN = 2
           """
           The color green.
           """
-          GREEN = 2
+          BLUE = 3
           """
           The color blue.
           """
-          BLUE = 3
 
 
     `;

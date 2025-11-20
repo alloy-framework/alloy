@@ -3,7 +3,7 @@ import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
-import { PyDoc } from "./PyDoc.jsx";
+import { InlineDoc } from "./PyDoc.jsx";
 
 export interface EnumMemberProps {
   /**
@@ -71,20 +71,20 @@ export function EnumMember(props: EnumMemberProps) {
   if (props.functional) {
     return (
       <>
-        <Show when={props.doc !== undefined}>
-          <PyDoc>{props.doc}</PyDoc>
-        </Show>
         '{sym.name}'<Show when={valueCode !== undefined}> : {valueCode}</Show>
+        <Show when={props.doc !== undefined}>
+          <InlineDoc>{props.doc}</InlineDoc>
+        </Show>
       </>
     );
   }
   return (
     <>
-      <Show when={props.doc !== undefined}>
-        <PyDoc>{props.doc}</PyDoc>
-      </Show>
       {sym.name}
       <Show when={valueCode !== undefined}> = {valueCode}</Show>
+      <Show when={props.doc !== undefined}>
+        <InlineDoc>{props.doc}</InlineDoc>
+      </Show>
     </>
   );
 }

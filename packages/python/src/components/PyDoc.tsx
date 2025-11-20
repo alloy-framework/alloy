@@ -259,6 +259,28 @@ export function PyDoc(props: PyDocProps) {
   );
 }
 
+export interface InlineDocProps {
+  children: Children;
+}
+
+/**
+ * An inline documentation component for attribute docstrings.
+ * Unlike PyDoc, this doesn't add a trailing line break after the closing quotes,
+ * which is appropriate for documenting consecutive attributes like enum members.
+ */
+export function InlineDoc(props: InlineDocProps) {
+  return (
+    <>
+      <hardline />
+      {'"""'}
+      <hbr />
+      {props.children}
+      <hbr />
+      {'"""'}
+    </>
+  );
+}
+
 export interface PyDocExampleProps {
   children: Children;
 }

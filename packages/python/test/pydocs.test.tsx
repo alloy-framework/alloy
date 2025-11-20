@@ -195,40 +195,6 @@ describe("SimpleInlineComment", () => {
   });
 });
 
-describe("SimpleInlineMemberComment", () => {
-  it("renders inline member comment", () => {
-    const res = toSourceText([
-      <>
-        status: int
-        <py.SimpleInlineMemberComment>
-          HTTP status code
-        </py.SimpleInlineMemberComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          status: int  #: HTTP status code
-          `,
-    );
-  });
-
-  it("renders inline member comment for variable declaration", () => {
-    const res = toSourceText([
-      <>
-        max_retries = 3
-        <py.SimpleInlineMemberComment>
-          Maximum number of retry attempts
-        </py.SimpleInlineMemberComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          max_retries = 3  #: Maximum number of retry attempts
-          `,
-    );
-  });
-});
-
 describe("New Documentation Components", () => {
   it("ModuleDoc renders correctly", () => {
     const res = toSourceText([
@@ -1177,9 +1143,18 @@ describe("Full example", () => {
           An enum representing colors.
           """
 
-          RED = 1  #: The color red.
-          GREEN = 2  #: The color green.
-          BLUE = 3  #: The color blue.
+          RED = 1
+          """
+          The color red.
+          """
+          GREEN = 2
+          """
+          The color green.
+          """
+          BLUE = 3
+          """
+          The color blue.
+          """
 
 
     `;

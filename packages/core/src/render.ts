@@ -186,6 +186,12 @@ export function isPrintHook(type: unknown): type is PrintHook {
 
 export type RenderedTextTree = (string | RenderedTextTree | PrintHook)[];
 
+/**
+ * Render a component tree to source directories and files. Will ensure that
+ * all non-async scheduled jobs are completed before returning. If async jobs
+ * are found, an error will be thrown. Use `renderAsync` when asynchronous
+ * jobs are expected.
+ */
 export function render(
   children: Children,
   options?: PrintTreeOptions,
@@ -195,15 +201,37 @@ export function render(
   return sourceFilesForTree(tree, options);
 }
 
+/**
+ * Render a component tree to source directories and files. Will ensure that all
+ * scheduled jobs are completed before returning.
+ */
 export async function renderAsync(
   children: Children,
   options?: PrintTreeOptions,
 ): Promise<OutputDirectory> {
   const tree = renderTree(children);
+  return sourceFilesForTreeAsync(tree, options);
+}
+
+/**
+ * Convert a rendered text tree to source directories and files. Will ensure that
+ * all scheduled jobs are completed, including async ones.
+ */
+export async function sourceFilesForTreeAsync(
+  tree: RenderedTextTree,
+  options?: PrintTreeOptions,
+) {
+  // if we await here, we ensure all reactive updates are flushed.
+  // sourceFilesForTree will flush again, but won't find anything, because tree
+  // printing won't schedule anything.
   await flushJobsAsync();
   return sourceFilesForTree(tree, options);
 }
 
+/**
+ * Convert a rendered text tree to source directories and files. Will ensure
+ * that all scheduled jobs are completed before returning.
+ */
 export function sourceFilesForTree(
   tree: RenderedTextTree,
   options?: PrintTreeOptions,
@@ -695,6 +723,10 @@ const defaultPrintTreeOptions: PrintTreeOptions = {
   tabWidth: 2,
 };
 
+/**
+ * Convert a rendered text tree to a string. Will ensure that the scheduler is
+ * empty before printing.
+ */
 export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
   options = {
     ...defaultPrintTreeOptions,

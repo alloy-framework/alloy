@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.22.0
+
+### Bug Fixes
+
+- [#328](https://github.com/alloy-framework/alloy/pull/328) Empty namespaces now don't render an empty block.
+
+
 ## 0.21.0
 
 ### Bug Fixes

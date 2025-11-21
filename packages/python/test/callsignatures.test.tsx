@@ -96,6 +96,35 @@ describe("Call Signature Parameters", () => {
       a: int = 5, b: str = "hello"
     `);
   });
+  it("renders keyword-only parameters with * marker", () => {
+    const result = toSourceText([
+      <py.CallSignatureParameters
+        parameters={[
+          { name: "a", type: "str" },
+          "*",
+          { name: "b", type: "int", default: 10 },
+          { name: "c", type: "bool", default: true },
+        ]}
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      a: str, *, b: int = 10, c: bool = True
+    `);
+  });
+  it("renders only keyword-only parameters with * marker at start", () => {
+    const result = toSourceText([
+      <py.CallSignatureParameters
+        parameters={[
+          "*",
+          { name: "a", type: "str", default: "hello" },
+          { name: "b", type: "int", default: 42 },
+        ]}
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      *, a: str = "hello", b: int = 42
+    `);
+  });
 });
 
 describe("Call Signature", () => {
@@ -279,6 +308,87 @@ describe("Call Signature - Parameter Descriptors", () => {
     ]);
     expect(result).toRenderTo(d`
       [T, U](a: int, b: str = "default_value") -> int
+    `);
+  });
+  it("renders a call signature with keyword-only parameters using * marker", () => {
+    const result = toSourceText([
+      <py.CallSignature
+        parameters={[
+          { name: "id", type: "str" },
+          "*",
+          { name: "locale", type: "str", default: "en-US" },
+          { name: "debug", type: "bool", default: false },
+        ]}
+        returnType="str"
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      (id: str, *, locale: str = "en-US", debug: bool = False) -> str
+    `);
+  });
+  it("renders a call signature with only keyword-only parameters", () => {
+    const result = toSourceText([
+      <py.CallSignature
+        parameters={[
+          "*",
+          { name: "name", type: "str", default: "alice" },
+          { name: "age", type: "int", default: 30 },
+        ]}
+        returnType="None"
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      (*, name: str = "alice", age: int = 30) -> None
+    `);
+  });
+  it("renders a call signature with positional, keyword-only, and *args/**kwargs", () => {
+    const result = toSourceText([
+      <py.CallSignature
+        parameters={[
+          { name: "a", type: "int" },
+          "*",
+          { name: "b", type: "str", default: "hello" },
+        ]}
+        args
+        kwargs
+        returnType="None"
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      (a: int, *, b: str = "hello", *args, **kwargs) -> None
+    `);
+  });
+  it("renders a call signature with positional-only parameters using / marker", () => {
+    const result = toSourceText([
+      <py.CallSignature
+        parameters={[
+          { name: "a", type: "int" },
+          { name: "b", type: "str" },
+          "/",
+          { name: "c", type: "bool" },
+        ]}
+        returnType="None"
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      (a: int, b: str, /, c: bool) -> None
+    `);
+  });
+  it("renders a call signature with positional-only, regular, and keyword-only parameters", () => {
+    const result = toSourceText([
+      <py.CallSignature
+        parameters={[
+          { name: "a", type: "int" },
+          "/",
+          { name: "b", type: "str" },
+          "*",
+          { name: "c", type: "bool", default: true },
+        ]}
+        returnType="None"
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      (a: int, /, b: str, *, c: bool = True) -> None
     `);
   });
 });

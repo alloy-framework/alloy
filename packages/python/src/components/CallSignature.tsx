@@ -14,8 +14,14 @@ import { createPythonSymbol } from "../symbol-creation.js";
 import { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
 
+export type ParameterMarker = "*" | "/";
+
+function isParameterMarker(param: unknown): param is ParameterMarker {
+  return param === "*" || param === "/";
+}
+
 export interface CallSignatureParametersProps {
-  readonly parameters?: (ParameterDescriptor | string)[];
+  readonly parameters?: (ParameterDescriptor | ParameterMarker | string)[];
   readonly args?: boolean;
   readonly kwargs?: boolean;
 }
@@ -34,13 +40,25 @@ export interface CallSignatureParametersProps {
  * ```
  */
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
-  const parameters = normalizeAndDeclareParameters(props.parameters ?? []);
+  const inputParams = props.parameters ?? [];
+
+  // Filter out markers and normalize the rest
+  const parametersToNormalize = inputParams.filter(
+    (p) => !isParameterMarker(p),
+  ) as (ParameterDescriptor | string)[];
+  const parameters = normalizeAndDeclareParameters(parametersToNormalize);
 
   const parameterList = computed(() => {
     const params = [];
-    // Add regular parameters
-    parameters.forEach((param) => {
-      params.push(parameter(param));
+    let paramIndex = 0;
+
+    // Rebuild the list with markers in their original positions
+    inputParams.forEach((param) => {
+      if (isParameterMarker(param)) {
+        params.push(param);
+      } else {
+        params.push(parameter(parameters[paramIndex++]));
+      }
     });
 
     // Add *args if specified
@@ -118,10 +136,11 @@ function normalizeAndDeclareParameters(
 
 export interface CallSignatureProps {
   /**
-   * The parameters to the call signature. Can be an array of strings (for parameters
-   * which don't have a type or a default value) or {@link ParameterDescriptor}s.
+   * The parameters to the call signature. Can be an array of strings (for simple
+   * parameter names), {@link ParameterDescriptor}s, or special markers ("*" for
+   * keyword-only, "/" for positional-only).
    */
-  parameters?: (ParameterDescriptor | string)[];
+  parameters?: (ParameterDescriptor | ParameterMarker | string)[];
 
   /**
    * The type parameters of the call signature, e.g. for a generic function.

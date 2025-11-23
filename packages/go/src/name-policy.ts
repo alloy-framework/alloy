@@ -1,4 +1,4 @@
-import { createNamePolicy, NamePolicy, useNamePolicy } from "@alloy-js/core";
+import { createNamePolicy, NamePolicy, NamePolicyGetter, useNamePolicy } from "@alloy-js/core";
 
 export type GoElements =
   | "parameter"
@@ -77,10 +77,22 @@ function ensureNonReservedName(name: string, _element: GoElements, isPublic?: bo
   return name;
 }
 
+/**
+ * Creates a name policy getter that captures public flag
+ * @param element - The Go element kind
+ * @param isPublic - Whether the symbol should be public (exported)
+ * @returns A NamePolicyGetter with public flag captured
+ */
+export function createGoNamePolicyGetterWithPublic(
+  element: GoElements,
+  isPublic?: boolean,
+): NamePolicyGetter {
+  return (name: string) => ensureNonReservedName(name, element, isPublic);
+}
+
 export function createGoNamePolicy(): NamePolicy<GoElements> {
-  return createNamePolicy((name, element, options) => {
-    const isPublic = (options as any)?.public;
-    return ensureNonReservedName(name, element, isPublic);
+  return createNamePolicy((name, element) => {
+    return ensureNonReservedName(name, element);
   });
 }
 

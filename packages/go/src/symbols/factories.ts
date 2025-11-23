@@ -223,12 +223,11 @@ export function createAnonymousTypeSymbol(
   );
 }
 
-function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(
-  options: T,
+function withNamePolicy(
+  options: GoSymbolOptions,
   elementType: GoElements,
 ): GoSymbolOptions {
-  const goOptions = options as GoSymbolOptions;
-  const publicFlag = goOptions.public;
+  const publicFlag = options.public;
   return {
     ...options,
     namePolicy: options.namePolicy ?? (publicFlag !== undefined ? 

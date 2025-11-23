@@ -56,6 +56,8 @@ export interface TypeDeclarationProps {
   doc?: Children;
   /** Whether the type is an alias */
   alias?: boolean;
+  /** Whether the type should be public (exported) or private (unexported) */
+  public?: boolean;
   /** Type expression */
   children?: Children;
   /** Type parameters */
@@ -69,6 +71,7 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
   if (!symbol) {
     symbol = createTypeSymbol(props.name, "type", {
       refkeys: props.refkey,
+      public: props.public,
       // TODO: set aliasTarget when alias is true
     });
 

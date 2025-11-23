@@ -42,6 +42,54 @@ it("applies camelCase naming policy when not exported", () => {
   `);
 });
 
+it("applies explicit public prop - public=true with lowercase name", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="myFunction" public={true} />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func MyFunction() {}
+  `);
+});
+
+it("applies explicit public prop - public=false with uppercase name", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="MyFunction" public={false} />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func myFunction() {}
+  `);
+});
+
+it("preserves original case when public prop is not specified", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="MixedCaseFunction" />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func MixedCaseFunction() {}
+  `);
+});
+
+it("handles reserved words with public prop", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="func" public={true} />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func Func_() {}
+  `);
+});
+
 it("defines single-line params and return type", () => {
   const params = [
     {

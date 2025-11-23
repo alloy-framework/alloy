@@ -90,6 +90,40 @@ it("handles reserved words with public prop", () => {
   `);
 });
 
+it("handles single character names with public prop", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="x" public={true} />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func X() {}
+  `);
+});
+
+it("handles empty string names with public prop", () => {
+  expect(() => {
+    render(
+      <TestPackage>
+        <FunctionDeclaration name="" public={true} />
+      </TestPackage>,
+    );
+  }).toThrow();
+});
+
+it("handles special characters in names with public prop", () => {
+  expect(
+    <TestPackage>
+      <FunctionDeclaration name="function_name_with_underscores" public={true} />
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    func Function_name_with_underscores() {}
+  `);
+});
+
 it("defines single-line params and return type", () => {
   const params = [
     {

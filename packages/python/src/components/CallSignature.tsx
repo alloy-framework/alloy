@@ -16,8 +16,10 @@ import { Atom } from "./Atom.jsx";
 
 export type ParameterMarker = "*" | "/";
 
-function isParameterMarker(param: unknown): param is ParameterMarker {
-  return param === "*" || param === "/";
+function isParameterMarker(
+  param: string | ParameterDescriptor | undefined,
+): param is ParameterMarker {
+  return typeof param === "string" && (param === "*" || param === "/");
 }
 
 export interface CallSignatureParametersProps {
@@ -40,25 +42,11 @@ export interface CallSignatureParametersProps {
  * ```
  */
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
-  const inputParams = props.parameters ?? [];
-
-  // Filter out markers and normalize the rest
-  const parametersToNormalize = inputParams.filter(
-    (p) => !isParameterMarker(p),
-  ) as (ParameterDescriptor | string)[];
-  const parameters = normalizeAndDeclareParameters(parametersToNormalize);
-
   const parameterList = computed(() => {
-    const params = [];
-    let paramIndex = 0;
-
-    // Rebuild the list with markers in their original positions
-    inputParams.forEach((param) => {
-      if (isParameterMarker(param)) {
-        params.push(param);
-      } else {
-        params.push(parameter(parameters[paramIndex++]));
-      }
+    const params = (props.parameters ?? []).map((p) => {
+      return isParameterMarker(p) ? p : (
+          parameter(normalizeAndDeclareParameter(p))
+        );
     });
 
     // Add *args if specified
@@ -106,32 +94,30 @@ interface DeclaredParameterDescriptor
   TypeSlot?: SymbolSlot;
 }
 
-function normalizeAndDeclareParameters(
-  parameters: (ParameterDescriptor | string)[],
-): DeclaredParameterDescriptor[] {
-  return parameters.map((param) => {
-    if (isParameterDescriptor(param)) {
-      const TypeSlot = createSymbolSlot();
+function normalizeAndDeclareParameter(
+  param: ParameterDescriptor | string,
+): DeclaredParameterDescriptor {
+  if (isParameterDescriptor(param)) {
+    const TypeSlot = createSymbolSlot();
 
-      const symbol = createPythonSymbol(
-        param.name,
-        {
-          refkeys: param.refkey,
-          type: TypeSlot.firstSymbol,
-        },
-        "parameter",
-      );
+    const symbol = createPythonSymbol(
+      param.name,
+      {
+        refkeys: param.refkey,
+        type: TypeSlot.firstSymbol,
+      },
+      "parameter",
+    );
 
-      return {
-        ...param,
-        symbol,
-        TypeSlot,
-      };
-    } else {
-      const symbol = createPythonSymbol(param, {}, "parameter");
-      return { refkeys: symbol.refkeys, symbol };
-    }
-  });
+    return {
+      ...param,
+      symbol,
+      TypeSlot,
+    };
+  } else {
+    const symbol = createPythonSymbol(param, {}, "parameter");
+    return { symbol };
+  }
 }
 
 export interface CallSignatureProps {

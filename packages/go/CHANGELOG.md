@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/go
 
+## 0.2.0
+
+### Features
+
+- [#333](https://github.com/alloy-framework/alloy/pull/333) Add build-in time module and export `createModule` function.
+
+
 ## 0.1.0
 
 ### Bug Fixes

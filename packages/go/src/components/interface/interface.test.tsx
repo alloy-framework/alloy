@@ -173,6 +173,70 @@ describe("naming", () => {
     }
   `);
   });
+
+  it("applies explicit public prop - public=true with lowercase name for interface functions", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <InterfaceFunction name="myFunc" returns="string" public={true} />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestInterface interface {
+      func MyFunc() string
+    }
+  `);
+  });
+
+  it("applies explicit public prop - public=false with uppercase name for interface functions", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <InterfaceFunction name="MyFunc" returns="string" public={false} />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestInterface interface {
+      func myFunc() string
+    }
+  `);
+  });
+
+  it("preserves original case when public prop is not specified for interface functions", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <InterfaceFunction name="mixedCaseFunc" returns="string" />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestInterface interface {
+      func mixedCaseFunc() string
+    }
+  `);
+  });
+
+  it("handles reserved words with public prop for interface functions", () => {
+    expect(
+      <Wrapper>
+        <List>
+          <InterfaceFunction name="func" returns="string" public={true} />
+        </List>
+      </Wrapper>,
+    ).toRenderTo(`
+    package alloy
+
+    type TestInterface interface {
+      func Func_() string
+    }
+  `);
+  });
 });
 
 describe("embedded", () => {

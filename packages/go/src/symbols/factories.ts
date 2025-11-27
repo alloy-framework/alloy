@@ -223,10 +223,10 @@ export function createAnonymousTypeSymbol(
   );
 }
 
-function withNamePolicy(
-  options: GoSymbolOptions,
+function withNamePolicy<T extends GoSymbolOptions>(
+  options: T,
   elementType: GoElements,
-): GoSymbolOptions {
+): T {
   const publicFlag = options.public;
   return {
     ...options,

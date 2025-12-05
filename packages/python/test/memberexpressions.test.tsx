@@ -577,6 +577,7 @@ describe("with refkeys", () => {
       "index.py": d`
         from source import import_me
 
+
         import_me.foo
       `,
     });

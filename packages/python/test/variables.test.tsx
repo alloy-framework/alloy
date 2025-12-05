@@ -185,6 +185,7 @@ describe("Python Variable", () => {
       "usage.py": `
         from classes import MyClass
 
+
         my_var: MyClass = None
       `,
     });

@@ -1,10 +1,45 @@
-import { Children, For, Output, render, writeOutput } from "@alloy-js/core";
+import {
+  Children,
+  For,
+  Output,
+  Prose,
+  render,
+  writeOutput,
+} from "@alloy-js/core";
 import * as py from "@alloy-js/python";
 import { Client } from "./components/Client.jsx";
 import { Model } from "./components/Model.jsx";
 import { Usage } from "./components/Usage.jsx";
 import { ApiContext, createApiContext } from "./context/api.js";
 import { api, RestApiModel } from "./schema.js";
+
+const modelsDoc = (
+  <py.ModuleDoc
+    description={[
+      <Prose>
+        Data models for the Petstore API. This module contains dataclass
+        definitions for all entities used in the API.
+      </Prose>,
+    ]}
+  />
+);
+
+const clientDoc = (
+  <py.ModuleDoc
+    description={[
+      <Prose>
+        HTTP client for the Petstore API. This module provides the
+        PetstoreClient class for interacting with the pet store service.
+      </Prose>,
+    ]}
+  />
+);
+
+const usageDoc = (
+  <py.ModuleDoc
+    description={[<Prose>Example usage of the Petstore API client.</Prose>]}
+  />
+);
 
 let apiContext = createApiContext(api);
 type ModelItem = [RestApiModel, Children[]];
@@ -75,15 +110,19 @@ let models = getTopologicallySortedModels(api.models, apiContext);
 const output = render(
   <Output externals={[py.requestsModule]}>
     <ApiContext.Provider value={apiContext}>
-      <py.SourceFile path="models.py">
+      <py.SourceFile
+        path="models.py"
+        doc={modelsDoc}
+        header={<>from __future__ import annotations</>}
+      >
         <For each={Array.from(models)} doubleHardline>
           {(item) => <Model model={item[0]} />}
         </For>
       </py.SourceFile>
-      <py.SourceFile path="client.py">
+      <py.SourceFile path="client.py" doc={clientDoc}>
         <Client />
       </py.SourceFile>
-      <py.SourceFile path="usage.py">
+      <py.SourceFile path="usage.py" doc={usageDoc}>
         <Usage />
       </py.SourceFile>
     </ApiContext.Provider>

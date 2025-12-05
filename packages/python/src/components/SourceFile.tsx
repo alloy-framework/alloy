@@ -37,7 +37,8 @@ export interface SourceFileProps {
    */
   children?: Children;
   /**
-   * Header comment to add to the file, which will be rendered at the top of the file.
+   * Content to render at the very top of the file, before docstrings and auto-imports.
+   * Use this for `from __future__ import annotations` or other imports that must come first.
    */
   header?: Children;
   /**
@@ -102,13 +103,18 @@ export function SourceFile(props: SourceFileProps) {
 
   return (
     <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
-      <Show when={scope.importedModules.size > 0}>
-        <ImportStatements records={scope.importedModules} />
+      <Show when={props.doc !== undefined}>
+        {props.doc}
+        <hbr />
+      </Show>
+      <Show when={props.header !== undefined}>
+        {props.header}
         <hbr />
         <hbr />
       </Show>
-      <Show when={props.doc !== undefined}>
-        {props.doc}
+      <Show when={scope.importedModules.size > 0}>
+        <ImportStatements records={scope.importedModules} />
+        <hbr />
         <hbr />
         <hbr />
       </Show>

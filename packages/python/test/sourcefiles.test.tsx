@@ -2,6 +2,7 @@ import { Prose } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
+import { dataclassesModule } from "../src/index.js";
 import {
   assertFileContents,
   toSourceText,
@@ -191,7 +192,6 @@ it("renders module documentation correctly", () => {
             * Improve error messages
         """
 
-
         default_timeout = 30
 
         max_retries = 3
@@ -223,6 +223,61 @@ it("renders source file without documentation correctly", () => {
     "simple.py": d`
         def hello_world():
             print("Hello, World!")
+
+
+        `,
+  });
+});
+
+it("renders source file with header, module docstring and imports", () => {
+  const moduleDoc = (
+    <py.ModuleDoc
+      description={[
+        <Prose>
+          This module provides utility functions for data processing. It
+          includes functions for validation, transformation, and analysis.
+        </Prose>,
+      ]}
+    />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="utils.py"
+      header={<>from __future__ import annotations</>}
+      doc={moduleDoc}
+    >
+      <py.DataclassDeclaration name="User">
+        <py.VariableDeclaration name="name" type="str" />
+        <py.VariableDeclaration name="age" type="int" />
+      </py.DataclassDeclaration>
+    </py.SourceFile>
+  );
+
+  const res = toSourceTextMultiple([content], {
+    externals: [dataclassesModule],
+  });
+  const file = res.contents.find(
+    (f) => f.kind === "file" && f.path === "utils.py",
+  );
+  expect(file).toBeDefined();
+
+  assertFileContents(res, {
+    "utils.py": d`
+        """
+        This module provides utility functions for data processing. It includes
+        functions for validation, transformation, and analysis.
+        """
+
+        from __future__ import annotations
+
+        from dataclasses import dataclass
+
+
+        @dataclass
+        class User:
+            name: str = None
+            age: int = None
 
 
         `,

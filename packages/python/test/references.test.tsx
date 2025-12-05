@@ -29,6 +29,7 @@ describe("Reference", () => {
       "services.py": `
         from models import User
 
+
         current_user: User = User("Marvin")
         `,
     });

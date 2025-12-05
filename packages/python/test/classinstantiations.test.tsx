@@ -48,6 +48,7 @@ it("correct resolving of external module", () => {
   const expected = d`
     from requests.models import Request
 
+
     Request()
   `;
   expect(result).toRenderTo(expected);

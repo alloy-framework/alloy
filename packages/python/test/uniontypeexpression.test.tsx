@@ -141,7 +141,6 @@ describe("UnionTypeExpression", () => {
       "use.py": `
         from defs import Bar
 
-
         v: Bar[T] = None
       `,
     });

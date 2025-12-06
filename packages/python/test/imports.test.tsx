@@ -126,7 +126,6 @@ describe("Imports being used", () => {
         from test_2 import conflict as conflict_3_test_2
         from test_3 import conflict as conflict_2_test_3
 
-
         one = conflict
         three = conflict_2_test_3
         two = conflict_3_test_2
@@ -176,7 +175,6 @@ describe("Imports being used", () => {
         from test_2 import something_else as something_else_3_test_2
         from test_3 import conflict as conflict_3_test_3
         from test_3 import something as something_3_test_3
-
 
         one = conflict
         two = conflict_2_test_2

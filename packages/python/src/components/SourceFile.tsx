@@ -1,7 +1,9 @@
 import {
+  childrenArray,
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  isComponentCreator,
   List,
   Scope,
   Show,
@@ -13,6 +15,47 @@ import { join } from "pathe";
 import { PythonModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { Reference } from "./Reference.js";
+
+// Non top-level definitions
+const NON_DEFINITION_NAMES = new Set([
+  "VariableDeclaration",
+  "MemberExpression",
+  "FunctionCallExpression",
+  "ClassInstantiation",
+  "Reference",
+]);
+
+// Wrapper components that we should look inside to find the actual first child
+const WRAPPER_COMPONENT_NAMES = new Set(["StatementList"]);
+
+/**
+ * Checks if the first child is not a top-level definition.
+ * PEP 8 requires 2 blank lines before top-level function and class definitions,
+ * but not before other statements like variable assignments.
+ *
+ * Returns true if we're certain the first child is a non-definition.
+ */
+function firstChildIsNonDefinition(children: Children | undefined): boolean {
+  if (!children) return false;
+  const arr = childrenArray(() => children);
+  if (arr.length === 0) return false;
+  const first = arr[0];
+
+  // Non-component children (strings, numbers, refkeys, etc.) are not definitions
+  if (!isComponentCreator(first)) {
+    return true;
+  }
+
+  const name = first.component.name;
+  if (NON_DEFINITION_NAMES.has(name)) {
+    return true;
+  }
+  // Look inside wrapper components
+  if (WRAPPER_COMPONENT_NAMES.has(name) && first.props?.children) {
+    return firstChildIsNonDefinition(first.props.children as Children);
+  }
+  return false;
+}
 
 export interface PythonSourceFileContext {
   scope: PythonModuleScope;
@@ -101,6 +144,9 @@ export function SourceFile(props: SourceFileProps) {
     module: path,
   };
 
+  // Check once whether first child needs 2 blank lines
+  const needsExtraBlankLine = !firstChildIsNonDefinition(props.children);
+
   return (
     <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
       <Show when={props.doc !== undefined}>
@@ -111,12 +157,25 @@ export function SourceFile(props: SourceFileProps) {
         {props.header}
         <hbr />
         <hbr />
+        {/* Add extra blank line when no imports but has header */}
+        <Show
+          when={
+            scope.importedModules.size === 0 &&
+            props.header !== undefined &&
+            needsExtraBlankLine
+          }
+        >
+          <hbr />
+        </Show>
       </Show>
       <Show when={scope.importedModules.size > 0}>
         <ImportStatements records={scope.importedModules} />
         <hbr />
         <hbr />
-        <hbr />
+        {/* Add extra blank line unless first child is definitely a non-definition */}
+        <Show when={needsExtraBlankLine}>
+          <hbr />
+        </Show>
       </Show>
       <PythonSourceFileContext.Provider value={sfContext}>
         <Scope value={scope}>

@@ -285,7 +285,6 @@ describe("Python Class - VariableDeclaration", () => {
       "inst.py": `
         from decl import Bar
 
-
         one: Bar = Bar()
         one.instance_prop
         one.instance_method()

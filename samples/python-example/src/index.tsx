@@ -113,7 +113,7 @@ const output = render(
       <py.SourceFile
         path="models.py"
         doc={modelsDoc}
-        header={<>from __future__ import annotations</>}
+        header={<py.FutureStatement feature="annotations" />}
       >
         <For each={Array.from(models)} doubleHardline>
           {(item) => <Model model={item[0]} />}

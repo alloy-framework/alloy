@@ -3,11 +3,7 @@ import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { dataclassesModule } from "../src/index.js";
-import {
-  assertFileContents,
-  toSourceText,
-  toSourceTextMultiple,
-} from "./utils.jsx";
+import { toSourceText } from "./utils.jsx";
 
 /**
  * toSourceText wraps the children in a SourceFile component
@@ -15,11 +11,10 @@ import {
  */
 it("renders an empty source file", () => {
   const result = toSourceText([]);
-  const expected = d`
+  expect(result).toRenderTo(d`
 
 
-  `;
-  expect(result).toRenderTo(expected);
+  `);
 });
 
 it("correct formatting of source file", () => {
@@ -100,7 +95,7 @@ it("correct formatting of source file", () => {
       <py.MemberExpression.Part key={"special-prop"} />
     </py.MemberExpression>,
   ]);
-  const expected = d`
+  expect(result).toRenderTo(d`
     class SomeClass:
         def some_method() -> str:
             x: int = 42
@@ -132,8 +127,7 @@ it("correct formatting of source file", () => {
 
     a.b["special-prop"]
 
-  `;
-  expect(result).toRenderTo(expected);
+  `);
 });
 
 it("renders module documentation correctly", () => {
@@ -163,123 +157,475 @@ it("renders module documentation correctly", () => {
   );
 
   const content = (
-    <py.SourceFile path="utils.py" doc={moduleDoc}>
+    <py.SourceFile path="test.py" doc={moduleDoc}>
       <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
       <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
       <py.FunctionDeclaration name="process_data">pass</py.FunctionDeclaration>
     </py.SourceFile>
   );
 
-  const res = toSourceTextMultiple([content]);
-  const file = res.contents.find(
-    (f) => f.kind === "file" && f.path === "utils.py",
-  );
-  expect(file).toBeDefined();
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    This module provides utility functions for data processing. It includes
+    functions for validation, transformation, and analysis.
 
-  assertFileContents(res, {
-    "utils.py": d`
-        """
-        This module provides utility functions for data processing. It includes
-        functions for validation, transformation, and analysis.
+    Attributes:
+        DEFAULT_TIMEOUT (int): Default timeout value in seconds.
 
-        Attributes:
-            DEFAULT_TIMEOUT (int): Default timeout value in seconds.
+        MAX_RETRIES (int): Maximum number of retry attempts.
 
-            MAX_RETRIES (int): Maximum number of retry attempts.
+    Todo:
+        * Add caching functionality
+        * Improve error messages
+    """
 
-        Todo:
-            * Add caching functionality
-            * Improve error messages
-        """
+    default_timeout = 30
 
-        default_timeout = 30
+    max_retries = 3
 
-        max_retries = 3
-
-        def process_data():
-            pass
+    def process_data():
+        pass
 
 
-        `,
-  });
+  `);
 });
 
 it("renders source file without documentation correctly", () => {
   const content = (
-    <py.SourceFile path="simple.py">
+    <py.SourceFile path="test.py">
       <py.FunctionDeclaration name="hello_world">
         print("Hello, World!")
       </py.FunctionDeclaration>
     </py.SourceFile>
   );
 
-  const res = toSourceTextMultiple([content]);
-  const file = res.contents.find(
-    (f) => f.kind === "file" && f.path === "simple.py",
-  );
-  expect(file).toBeDefined();
-
-  assertFileContents(res, {
-    "simple.py": d`
-        def hello_world():
-            print("Hello, World!")
+  expect(toSourceText(content)).toRenderTo(d`
+    def hello_world():
+        print("Hello, World!")
 
 
-        `,
-  });
+  `);
 });
 
-it("renders source file with header, module docstring and imports", () => {
+it("nothing before top-level definition", () => {
+  const content = (
+    <py.SourceFile path="test.py">
+      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    def hello():
+        pass
+
+
+  `);
+});
+
+it("nothing before non-definition", () => {
+  const content = (
+    <py.SourceFile path="test.py">
+      <py.VariableDeclaration name="x" initializer={42} />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo("x = 42");
+});
+
+it("only doc before definition", () => {
   const moduleDoc = (
-    <py.ModuleDoc
-      description={[
-        <Prose>
-          This module provides utility functions for data processing. It
-          includes functions for validation, transformation, and analysis.
-        </Prose>,
-      ]}
-    />
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
   const content = (
+    <py.SourceFile path="test.py" doc={moduleDoc}>
+      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+
+    def hello():
+        pass
+
+
+  `);
+});
+
+it("only doc before non-definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile path="test.py" doc={moduleDoc}>
+      <py.VariableDeclaration name="x" initializer={42} />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+    x = 42`);
+});
+
+it("only header before definition", () => {
+  const content = (
     <py.SourceFile
-      path="utils.py"
-      header={<>from __future__ import annotations</>}
-      doc={moduleDoc}
+      path="test.py"
+      header={<py.FutureStatement feature="annotations" />}
     >
+      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    from __future__ import annotations
+
+
+    def hello():
+        pass
+
+
+  `);
+});
+
+it("only header before non-definition", () => {
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.VariableDeclaration name="x" initializer={42} />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    from __future__ import annotations
+
+    x = 42`);
+});
+
+it("only imports before definition", () => {
+  const content = (
+    <py.SourceFile path="test.py">
       <py.DataclassDeclaration name="User">
         <py.VariableDeclaration name="name" type="str" />
-        <py.VariableDeclaration name="age" type="int" />
       </py.DataclassDeclaration>
     </py.SourceFile>
   );
 
-  const res = toSourceTextMultiple([content], {
-    externals: [dataclassesModule],
-  });
-  const file = res.contents.find(
-    (f) => f.kind === "file" && f.path === "utils.py",
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    from dataclasses import dataclass
+
+
+    @dataclass
+    class User:
+        name: str = None
+
+
+  `);
+});
+
+it("only imports before non-definition", () => {
+  const content = (
+    <py.SourceFile path="test.py">
+      <py.VariableDeclaration
+        name="x"
+        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+      />
+    </py.SourceFile>
   );
-  expect(file).toBeDefined();
 
-  assertFileContents(res, {
-    "utils.py": d`
-        """
-        This module provides utility functions for data processing. It includes
-        functions for validation, transformation, and analysis.
-        """
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    from dataclasses import dataclass
 
-        from __future__ import annotations
+    x = dataclass`);
+});
 
-        from dataclasses import dataclass
+it("doc + header before definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      doc={moduleDoc}
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from __future__ import annotations
 
 
-        @dataclass
-        class User:
-            name: str = None
-            age: int = None
+    def hello():
+        pass
 
 
-        `,
-  });
+  `);
+});
+
+it("doc + header before non-definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      doc={moduleDoc}
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.VariableDeclaration name="x" initializer={42} />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from __future__ import annotations
+
+    x = 42`);
+});
+
+it("doc + imports before definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile path="test.py" doc={moduleDoc}>
+      <py.DataclassDeclaration name="User">
+        <py.VariableDeclaration name="name" type="str" />
+      </py.DataclassDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from dataclasses import dataclass
+
+
+    @dataclass
+    class User:
+        name: str = None
+
+
+  `);
+});
+
+it("doc + imports before non-definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile path="test.py" doc={moduleDoc}>
+      <py.VariableDeclaration
+        name="x"
+        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+      />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from dataclasses import dataclass
+
+    x = dataclass`);
+});
+
+it("header + imports before definition", () => {
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.DataclassDeclaration name="User">
+        <py.VariableDeclaration name="name" type="str" />
+      </py.DataclassDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    from __future__ import annotations
+
+    from dataclasses import dataclass
+
+
+    @dataclass
+    class User:
+        name: str = None
+
+
+  `);
+});
+
+it("header + imports before non-definition", () => {
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.VariableDeclaration
+        name="x"
+        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+      />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    from __future__ import annotations
+
+    from dataclasses import dataclass
+
+    x = dataclass`);
+});
+
+it("doc + header + imports before definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      doc={moduleDoc}
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.DataclassDeclaration name="User">
+        <py.VariableDeclaration name="name" type="str" />
+      </py.DataclassDeclaration>
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from __future__ import annotations
+
+    from dataclasses import dataclass
+
+
+    @dataclass
+    class User:
+        name: str = None
+
+
+  `);
+});
+
+it("doc + header + imports before non-definition", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      doc={moduleDoc}
+      header={<py.FutureStatement feature="annotations" />}
+    >
+      <py.VariableDeclaration
+        name="x"
+        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+      />
+    </py.SourceFile>
+  );
+
+  expect(toSourceText(content, { externals: [dataclassesModule] }))
+    .toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from __future__ import annotations
+
+    from dataclasses import dataclass
+
+    x = dataclass`);
+});
+
+it("only doc in file (no children)", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = <py.SourceFile path="test.py" doc={moduleDoc} />;
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+
+  `);
+});
+
+it("only header in file (no children)", () => {
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      header={<py.FutureStatement feature="annotations" />}
+    />
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    from __future__ import annotations
+
+  `);
+});
+
+it("doc + header in file (no children)", () => {
+  const moduleDoc = (
+    <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
+  );
+
+  const content = (
+    <py.SourceFile
+      path="test.py"
+      doc={moduleDoc}
+      header={<py.FutureStatement feature="annotations" />}
+    />
+  );
+
+  expect(toSourceText(content)).toRenderTo(d`
+    """
+    Module description.
+    """
+
+    from __future__ import annotations
+
+  `);
 });

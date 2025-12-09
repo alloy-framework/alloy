@@ -181,6 +181,7 @@ describe("Method-like Declarations", () => {
     expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
       from abc import abstractmethod
 
+
       class MyClass:
           @abstractmethod
           def methoddef(self, x: int):

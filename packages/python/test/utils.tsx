@@ -101,7 +101,7 @@ export function toSourceTextMultiple(
 }
 
 export function toSourceText(
-  c: Children[],
+  content: Children | Children[],
   {
     policy,
     externals,
@@ -113,16 +113,21 @@ export function toSourceText(
     options?: { externals?: SymbolCreator[] };
     printOptions?: PrintTreeOptions;
   } = {},
+  path: string = "test.py",
 ): string {
-  const content = <py.SourceFile path="test.py">{c}</py.SourceFile>;
-  const res = toSourceTextMultiple([content], {
+  // If content is an array, wrap it in a default SourceFile
+  const sourceFile =
+    Array.isArray(content) ?
+      <py.SourceFile path={path}>{content}</py.SourceFile>
+    : content;
+
+  const res = toSourceTextMultiple([sourceFile], {
     policy,
     externals,
     options,
     printOptions,
   });
-  const file = findFile(res, "test.py");
-  return file.contents;
+  return findFile(res, path).contents;
 }
 
 // Helper function to create a PythonModuleScope to be used in tests

@@ -12,6 +12,7 @@ export * from "./EnumMember.js";
 export type { CommonFunctionProps } from "./FunctionBase.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";
+export * from "./FutureStatement.js";
 export * from "./ImportStatement.js";
 export * from "./LexicalScope.js";
 export * from "./MemberExpression.js";

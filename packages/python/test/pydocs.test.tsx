@@ -1138,6 +1138,7 @@ describe("Full example", () => {
     const expected = d`
       from enum import IntEnum
 
+
       class Color(IntEnum):
           """
           An enum representing colors.
@@ -1218,7 +1219,6 @@ describe("Full example", () => {
             * Add caching functionality
             * Improve error messages
         """
-
 
         default_timeout = 30
 

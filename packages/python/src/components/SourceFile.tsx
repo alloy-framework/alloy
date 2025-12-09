@@ -14,6 +14,7 @@ import {
 import { join } from "pathe";
 import { PythonModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
+import { SimpleCommentBlock } from "./PyDoc.js";
 import { Reference } from "./Reference.js";
 
 // Non top-level definitions
@@ -81,18 +82,23 @@ export interface SourceFileProps {
    */
   children?: Children;
   /**
-   * Content to render at the very top of the file, before docstrings and auto-imports.
-   * Use this for `from __future__ import annotations` or other imports that must come first.
+   * Content to render at the very top of the file, before everything else.
+   * Use this for shebang lines, encoding declarations, or license headers.
    */
   header?: Children;
   /**
-   * Comment to add to the header, which will be rendered as a comment in the file.
+   * Comment to add at the top of the file, rendered as a Python comment block.
+   * This is a convenience prop for adding copyright notices or other comments.
    */
   headerComment?: string;
   /**
    * Documentation for this module, which will be rendered as a module-level docstring.
    */
   doc?: Children;
+  /**
+   * __future__ imports to render after the docstring but before regular imports.
+   */
+  futureImports?: Children;
 }
 
 /**
@@ -150,26 +156,61 @@ export function SourceFile(props: SourceFileProps) {
     props.children !== undefined &&
     childrenArray(() => props.children).length > 0;
 
-  // PEP 8 requires 2 blank lines after content (imports, doc, header) if first child is a definition.
-  const needsExtraBlankLine = firstChildIsDefinition(props.children);
+  // PEP 8 requires 2 blank lines before top-level function/class definitions
+  const needsExtraSpacing = firstChildIsDefinition(props.children);
 
-  // Note: imports are only added when children render, so scope.importedModules.size
-  // is checked reactively in Show components, not pre-computed here.
-  // If there are imports, there must be children (imports come from child references).
-  const hasContentAfterDoc = props.header !== undefined || hasChildren;
-  const hasContentAfterHeader = hasChildren;
+  // Check if there's any preamble content (header, doc, imports, etc.)
+  const hasPreamble =
+    props.header !== undefined ||
+    props.headerComment !== undefined ||
+    props.doc !== undefined ||
+    props.futureImports !== undefined;
 
   return (
-    <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
-      <Show when={props.doc !== undefined}>
-        {props.doc}
-        <Show when={hasContentAfterDoc}>
+    <CoreSourceFile
+      path={props.path}
+      filetype="py"
+      reference={Reference}
+      header={props.header}
+    >
+      {/* Extra blank line after header when followed by doc/futureImports/children (not headerComment) */}
+      <Show
+        when={
+          props.header !== undefined &&
+          props.headerComment === undefined &&
+          (props.doc !== undefined ||
+            props.futureImports !== undefined ||
+            hasChildren)
+        }
+      >
+        <hbr />
+      </Show>
+      <Show when={props.headerComment !== undefined}>
+        <SimpleCommentBlock>{props.headerComment}</SimpleCommentBlock>
+        {/* When followed by doc: just newline (no blank line) */}
+        <Show when={props.doc !== undefined}>
+          <hbr />
+        </Show>
+        {/* When followed by futureImports or children directly (no doc): blank line */}
+        <Show
+          when={
+            props.doc === undefined &&
+            (props.futureImports !== undefined || hasChildren)
+          }
+        >
+          <hbr />
           <hbr />
         </Show>
       </Show>
-      <Show when={props.header !== undefined}>
-        {props.header}
-        <Show when={hasContentAfterHeader}>
+      <Show when={props.doc !== undefined}>
+        {props.doc}
+        <Show when={props.futureImports !== undefined || hasChildren}>
+          <hbr />
+        </Show>
+      </Show>
+      <Show when={props.futureImports !== undefined}>
+        {props.futureImports}
+        <Show when={hasChildren}>
           <hbr />
           <hbr />
         </Show>
@@ -181,13 +222,10 @@ export function SourceFile(props: SourceFileProps) {
           <hbr />
         </Show>
       </Show>
-      {/* PEP 8: extra blank line before top-level definitions if there's content above */}
+      {/* Extra blank line before top-level definitions */}
       <Show
         when={
-          needsExtraBlankLine &&
-          (scope.importedModules.size > 0 ||
-            props.doc !== undefined ||
-            props.header !== undefined)
+          needsExtraSpacing && (hasPreamble || scope.importedModules.size > 0)
         }
       >
         <hbr />

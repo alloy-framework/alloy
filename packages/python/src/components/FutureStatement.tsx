@@ -28,11 +28,11 @@ export interface FutureStatementProps {
  * should be compiled using syntax or semantics from a future Python release.
  * They must appear near the top of the module, after the module docstring (if any).
  *
- * Use this in the `header` prop of SourceFile to ensure proper placement.
+ * Use this in the `futureImports` prop of SourceFile to ensure proper placement.
  *
  * @example
  * ```tsx
- * <SourceFile path="models.py" header={<FutureStatement feature="annotations" />}>
+ * <SourceFile path="models.py" futureImports={<FutureStatement feature="annotations" />}>
  *   <ClassDeclaration name="User">
  *     <PropertyDeclaration name="manager" type="User" />
  *   </ClassDeclaration>

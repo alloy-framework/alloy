@@ -1,24 +1,10 @@
 import { type Children } from "@alloy-js/core";
 
-/**
- * Valid features for future statements.
- */
-export type FutureFeature =
-  | "annotations"
-  | "absolute_import"
-  | "division"
-  | "generators"
-  | "generator_stop"
-  | "unicode_literals"
-  | "print_function"
-  | "nested_scopes"
-  | "with_statement";
-
 export interface FutureStatementProps {
   /**
-   * The feature to import from __future__.
+   * The name of the feature to import from __future__.
    */
-  feature: FutureFeature;
+  feature: string;
 }
 
 /**

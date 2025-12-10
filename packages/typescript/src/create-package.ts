@@ -51,6 +51,7 @@ export interface CreatePackageProps<T extends PackageDescriptor> {
   version: string;
   descriptor: T;
   builtin?: boolean;
+  dependencyType?: "peer" | "dev";
 }
 
 /**
@@ -177,6 +178,7 @@ function createSymbols(
     {
       binder,
       builtin: props.builtin,
+      dependencyType: props.dependencyType,
     },
   );
 

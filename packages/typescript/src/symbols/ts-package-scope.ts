@@ -9,6 +9,7 @@ import { TSModuleScope } from "./ts-module-scope.js";
 
 export interface TSPackageScopeOptions extends OutputScopeOptions {
   builtin?: boolean;
+  dependencyType?: "peer" | "dev";
 }
 
 export class TSPackageScope extends OutputScope {
@@ -40,6 +41,22 @@ export class TSPackageScope extends OutputScope {
   #dependencies: Set<TSPackageScope> = shallowReactive(new Set());
 
   /**
+   * The scopes for the dev packages this package depends on.
+   */
+  get devDependencies() {
+    return this.#devDependencies;
+  }
+  #devDependencies: Set<TSPackageScope> = shallowReactive(new Set());
+
+  /**
+   * The scopes for the peer packages this package depends on.
+   */
+  get peerDependencies() {
+    return this.#peerDependencies;
+  }
+  #peerDependencies: Set<TSPackageScope> = shallowReactive(new Set());
+
+  /**
    * All of the modules contained within the package. These modules may or may not
    * be exported.
    */
@@ -64,6 +81,11 @@ export class TSPackageScope extends OutputScope {
   }
   #builtin: boolean;
 
+  get dependencyType() {
+    return this.#dependencyType;
+  }
+  #dependencyType: "peer" | "dev" | undefined;
+
   constructor(
     name: string,
     version: string,
@@ -74,10 +96,20 @@ export class TSPackageScope extends OutputScope {
     this.#version = version;
     this.#path = path;
     this.#builtin = !!options.builtin;
+    this.#dependencyType = options.dependencyType;
   }
 
   addDependency(pkg: TSPackageScope) {
-    this.dependencies.add(pkg);
+    switch (pkg.dependencyType) {
+      case "dev":
+        this.devDependencies.add(pkg);
+        break;
+      case "peer":
+        this.peerDependencies.add(pkg);
+        break;
+      default:
+        this.dependencies.add(pkg);
+    }
   }
   addExport(publicPath: string, module: TSModuleScope) {
     this.exportedSymbols.set(modulePath(publicPath), module);

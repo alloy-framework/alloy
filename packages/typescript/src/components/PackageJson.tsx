@@ -1,4 +1,5 @@
 import { memo, SourceFile } from "@alloy-js/core";
+import { TSPackageScope } from "../symbols/ts-package-scope.js";
 import { modulePath } from "../utils.js";
 import { usePackage } from "./PackageDirectory.js";
 
@@ -43,6 +44,9 @@ export interface PackageJsonFileProps {
   /** The dev dependencies of the package. */
   devDependencies?: Record<string, string>;
 
+  /** The peer dependencies of the package. */
+  peerDependencies?: Record<string, string>;
+
   /** The scripts entries of the package. */
   scripts?: Record<string, string>;
 }
@@ -80,19 +84,18 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       license: props.license,
       homepage: props.homepage,
       type: props.type ?? "module",
-      dependencies:
-        props.dependencies || (pkg && pkg.scope.dependencies.size > 0) ?
-          Object.fromEntries([
-            ...Object.entries(props.dependencies ?? {}),
-            ...(pkg ?
-              Array.from(pkg.scope.dependencies).map((dependency) => [
-                dependency.name,
-                dependency.version,
-              ])
-            : []),
-          ])
-        : undefined,
-      devDependencies: props.devDependencies,
+      dependencies: renderDependencies(
+        props.dependencies,
+        pkg?.scope?.dependencies,
+      ),
+      devDependencies: renderDependencies(
+        props.devDependencies,
+        pkg?.scope?.devDependencies,
+      ),
+      peerDependencies: renderDependencies(
+        props.peerDependencies,
+        pkg?.scope?.peerDependencies,
+      ),
       scripts: props.scripts,
       exports: undefined as any,
     };
@@ -128,4 +131,18 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       {jsonContent}
     </SourceFile>
   );
+}
+
+function renderDependencies(
+  propDeps?: Record<string, string>,
+  scopeDeps?: Set<TSPackageScope> | undefined,
+) {
+  return propDeps || (scopeDeps && scopeDeps.size > 0) ?
+      Object.fromEntries([
+        ...Object.entries(propDeps ?? {}),
+        ...(scopeDeps ?
+          Array.from(scopeDeps).map(({ name, version }) => [name, version])
+        : []),
+      ])
+    : undefined;
 }

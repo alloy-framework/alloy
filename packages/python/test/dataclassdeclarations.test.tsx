@@ -27,6 +27,7 @@ describe("DataclassDeclaration", () => {
       d`
         from dataclasses import dataclass
 
+
         @dataclass
         class User:
             """
@@ -74,6 +75,7 @@ describe("DataclassDeclaration", () => {
         from dataclasses import dataclass
         from dataclasses import KW_ONLY
 
+
         @dataclass
         class User:
             id: int
@@ -105,6 +107,7 @@ describe("DataclassDeclaration", () => {
     expect(res).toRenderTo(
       d`
         from dataclasses import dataclass
+
 
         @dataclass(frozen=True, slots=True, kw_only=True)
         class User:
@@ -140,6 +143,7 @@ describe("DataclassDeclaration", () => {
     expect(res).toRenderTo(
       d`
         from dataclasses import dataclass
+
 
         @dataclass(init=True, repr=False, eq=True, order=False, unsafe_hash=True, frozen=True, match_args=False, kw_only=True, slots=True, weakref_slot=False)
         class User:
@@ -178,6 +182,7 @@ describe("DataclassDeclaration", () => {
       d`
         from dataclasses import dataclass
 
+
         @dataclass(slots=True, weakref_slot=True)
         class User:
             pass
@@ -212,6 +217,7 @@ describe("DataclassDeclaration", () => {
     expect(res).toRenderTo(
       d`
         from dataclasses import dataclass
+
 
         @dataclass(order=True)
         class User:
@@ -398,6 +404,7 @@ describe("DataclassDeclaration", () => {
       d`
         from dataclasses import dataclass
 
+
         @dataclass(kw_only=True)
         class User:
             id: int
@@ -420,6 +427,7 @@ describe("DataclassDeclaration", () => {
     expect(res).toRenderTo(
       d`
         from dataclasses import dataclass
+
 
         @dataclass
         class User(Base):
@@ -503,6 +511,7 @@ describe("DataclassDeclaration", () => {
       d`
         from dataclasses import dataclass
 
+
         @dataclass(unsafe_hash=True)
         class User:
             pass
@@ -556,6 +565,7 @@ describe("DataclassDeclaration", () => {
       d`
         from dataclasses import dataclass
 
+
         @dataclass(frozen=True)
         class User:
             pass
@@ -577,6 +587,7 @@ describe("DataclassDeclaration", () => {
     expect(res).toRenderTo(
       d`
         from dataclasses import dataclass
+
 
         @dataclass(slots=True)
         class User:
@@ -627,6 +638,7 @@ describe("DataclassDeclaration", () => {
       "models.py": `
         from dataclasses import dataclass
 
+
         @dataclass
         class User:
             id: int
@@ -635,6 +647,7 @@ describe("DataclassDeclaration", () => {
         `,
       "services.py": `
         from models import User
+
 
         def get_user() -> User:
             user: User = User(1, "Alice")

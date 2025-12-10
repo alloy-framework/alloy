@@ -24,6 +24,7 @@ describe("Python Enum", () => {
     const expected = d`
       from enum import IntEnum
 
+
       class Color(IntEnum):
           RED = 1
           GREEN = 2
@@ -51,6 +52,7 @@ describe("Python Enum", () => {
     );
     const expected = d`
       from enum import IntEnum
+
 
       class Color(IntEnum):
           RED = "1"
@@ -83,6 +85,7 @@ describe("Python Enum", () => {
     const expected = d`
       from enum import Enum
 
+
       class Dog:
           pass
 
@@ -112,6 +115,7 @@ describe("Python Enum", () => {
     const expected = d`
       from enum import auto
       from enum import Enum
+
 
       class Animal(Enum):
           DOG = auto()
@@ -144,6 +148,7 @@ describe("Python Enum", () => {
       from enum import auto
       from enum import Flag
 
+
       class Permission(Flag):
           READ = 1
           WRITE = auto()
@@ -172,6 +177,7 @@ describe("Python Enum", () => {
     const expected = d`
       from enum import Enum
 
+
       Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])
     `;
     expect(result).toRenderTo(expected);
@@ -193,6 +199,7 @@ describe("Python Enum", () => {
     );
     const expected = d`
       from enum import Enum
+
 
       Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW' : 3})
     `;

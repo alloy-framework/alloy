@@ -1,7 +1,9 @@
 import {
+  childrenArray,
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  isComponentCreator,
   List,
   Scope,
   Show,
@@ -12,7 +14,50 @@ import {
 import { join } from "pathe";
 import { PythonModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
+import { SimpleCommentBlock } from "./PyDoc.js";
 import { Reference } from "./Reference.js";
+
+// Non top-level definitions
+const NON_DEFINITION_NAMES = new Set([
+  "VariableDeclaration",
+  "MemberExpression",
+  "FunctionCallExpression",
+  "ClassInstantiation",
+  "Reference",
+]);
+
+// Wrapper components that we should look inside to find the actual first child
+const WRAPPER_COMPONENT_NAMES = new Set(["StatementList"]);
+
+/**
+ * Checks if the first child is a top-level definition (function or class).
+ * PEP 8 requires 2 blank lines before top-level function and class definitions,
+ * but not before other statements like variable assignments.
+ *
+ * Returns true only if there are children and the first child is a definition.
+ */
+function firstChildIsDefinition(children: Children | undefined): boolean {
+  if (!children) return false;
+  const arr = childrenArray(() => children);
+  if (arr.length === 0) return false;
+  const first = arr[0];
+
+  // Non-component children (strings, numbers, refkeys, etc.) are not definitions
+  if (!isComponentCreator(first)) {
+    return false;
+  }
+
+  const name = first.component.name;
+  if (NON_DEFINITION_NAMES.has(name)) {
+    return false;
+  }
+  // Look inside wrapper components
+  if (WRAPPER_COMPONENT_NAMES.has(name) && first.props?.children) {
+    return firstChildIsDefinition(first.props.children as Children);
+  }
+  // If we get here, it's likely a definition (FunctionDeclaration, ClassDeclaration, etc.)
+  return true;
+}
 
 export interface PythonSourceFileContext {
   scope: PythonModuleScope;
@@ -37,17 +82,23 @@ export interface SourceFileProps {
    */
   children?: Children;
   /**
-   * Header comment to add to the file, which will be rendered at the top of the file.
+   * Content to render at the very top of the file, before everything else.
+   * Use this for shebang lines, encoding declarations, or license headers.
    */
   header?: Children;
   /**
-   * Comment to add to the header, which will be rendered as a comment in the file.
+   * Comment to add at the top of the file, rendered as a Python comment block.
+   * This is a convenience prop for adding copyright notices or other comments.
    */
   headerComment?: string;
   /**
    * Documentation for this module, which will be rendered as a module-level docstring.
    */
   doc?: Children;
+  /**
+   * __future__ imports to render after the docstring but before regular imports.
+   */
+  futureImports?: Children;
 }
 
 /**
@@ -100,21 +151,90 @@ export function SourceFile(props: SourceFileProps) {
     module: path,
   };
 
+  // Check if there are any children
+  const hasChildren =
+    props.children !== undefined &&
+    childrenArray(() => props.children).length > 0;
+
+  // PEP 8 requires 2 blank lines before top-level function/class definitions
+  const needsExtraSpacing = firstChildIsDefinition(props.children);
+
+  // Check if there's any preamble content (header, doc, imports, etc.)
+  const hasPreamble =
+    props.header !== undefined ||
+    props.headerComment !== undefined ||
+    props.doc !== undefined ||
+    props.futureImports !== undefined;
+
   return (
-    <CoreSourceFile path={props.path} filetype="py" reference={Reference}>
-      <Show when={scope.importedModules.size > 0}>
-        <ImportStatements records={scope.importedModules} />
+    <CoreSourceFile
+      path={props.path}
+      filetype="py"
+      reference={Reference}
+      header={props.header}
+    >
+      {/* Extra blank line after header when followed by doc/futureImports/children (not headerComment) */}
+      <Show
+        when={
+          props.header !== undefined &&
+          props.headerComment === undefined &&
+          (props.doc !== undefined ||
+            props.futureImports !== undefined ||
+            hasChildren)
+        }
+      >
         <hbr />
-        <hbr />
+      </Show>
+      <Show when={props.headerComment !== undefined}>
+        <SimpleCommentBlock>{props.headerComment}</SimpleCommentBlock>
+        {/* When followed by doc: just newline (no blank line) */}
+        <Show when={props.doc !== undefined}>
+          <hbr />
+        </Show>
+        {/* When followed by futureImports or children directly (no doc): blank line */}
+        <Show
+          when={
+            props.doc === undefined &&
+            (props.futureImports !== undefined || hasChildren)
+          }
+        >
+          <hbr />
+          <hbr />
+        </Show>
       </Show>
       <Show when={props.doc !== undefined}>
         {props.doc}
-        <hbr />
+        <Show when={props.futureImports !== undefined || hasChildren}>
+          <hbr />
+        </Show>
+      </Show>
+      <Show when={props.futureImports !== undefined}>
+        {props.futureImports}
+        <Show when={hasChildren}>
+          <hbr />
+          <hbr />
+        </Show>
+      </Show>
+      <Show when={scope.importedModules.size > 0}>
+        <ImportStatements records={scope.importedModules} />
+        <Show when={hasChildren}>
+          <hbr />
+          <hbr />
+        </Show>
+      </Show>
+      {/* Extra blank line before top-level definitions */}
+      <Show
+        when={
+          needsExtraSpacing && (hasPreamble || scope.importedModules.size > 0)
+        }
+      >
         <hbr />
       </Show>
       <PythonSourceFileContext.Provider value={sfContext}>
         <Scope value={scope}>
-          <List doubleHardline>{props.children}</List>
+          <Show when={hasChildren}>
+            <List doubleHardline>{props.children}</List>
+          </Show>
         </Scope>
       </PythonSourceFileContext.Provider>
     </CoreSourceFile>

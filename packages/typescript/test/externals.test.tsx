@@ -187,3 +187,101 @@ it("can import static members", () => {
     `,
   });
 });
+
+it("can import peer deps", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    dependencyType: "peer",
+    descriptor: {
+      ".": {
+        default: "defaultExport",
+        named: ["foo", "bar"],
+      },
+      "./subpath": {
+        named: ["nice", "cool"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory path="." name="test" version="1.0.0">
+        <SourceFile path="index.ts">
+          {testLib["./subpath"].nice};<hbr />
+          await {fs["./promises"].readFile}();
+        </SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "testLib": "1.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": `
+      import { readFile } from "node:fs/promises";
+      import { nice } from "testLib/subpath";
+
+      nice;
+      await readFile();
+    `,
+  });
+});
+
+it("can import dev deps", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    dependencyType: "dev",
+    descriptor: {
+      ".": {
+        default: "defaultExport",
+        named: ["foo", "bar"],
+      },
+      "./subpath": {
+        named: ["nice", "cool"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory path="." name="test" version="1.0.0">
+        <SourceFile path="index.ts">
+          {testLib["./subpath"].nice};<hbr />
+          await {fs["./promises"].readFile}();
+        </SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2",
+          "testLib": "1.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": `
+      import { readFile } from "node:fs/promises";
+      import { nice } from "testLib/subpath";
+
+      nice;
+      await readFile();
+    `,
+  });
+});

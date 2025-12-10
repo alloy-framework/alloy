@@ -43,6 +43,9 @@ export interface PackageJsonFileProps {
   /** The dev dependencies of the package. */
   devDependencies?: Record<string, string>;
 
+  /** The peer dependencies of the package. */
+  peerDependencies?: Record<string, string>;
+
   /** The scripts entries of the package. */
   scripts?: Record<string, string>;
 }
@@ -93,6 +96,7 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
           ])
         : undefined,
       devDependencies: props.devDependencies,
+      peerDependencies: props.peerDependencies,
       scripts: props.scripts,
       exports: undefined as any,
     };

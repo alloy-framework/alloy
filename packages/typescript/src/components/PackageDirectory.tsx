@@ -9,8 +9,11 @@ import {
   SourceDirectoryContext,
   splitProps,
   useContext,
+  Wrap,
 } from "@alloy-js/core";
 import { join } from "pathe";
+import { PackageMetadataContext } from "../context/package-metadata.js";
+import { ExternalPackage, getPackageScope } from "../create-package.js";
 import { TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
 import { PackageJsonFile, PackageJsonFileProps } from "./PackageJson.js";
@@ -20,6 +23,23 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
   tsConfig?: { outDir?: string };
   children?: Children;
   path?: string;
+
+  /**
+   * The versions to use for external packages referenced within this package.
+   * By default, the version specified when the external package was created is
+   * used.
+   */
+  packageVersions?: [ExternalPackage, string][];
+
+  /**
+   * The package dependency kinds to use for external packages referenced within
+   * this package. By default, all external packages are added as
+   * "dependencies".
+   */
+  packageDependencyKinds?: [
+    ExternalPackage,
+    "dependencies" | "peerDependencies" | "devDependencies",
+  ][];
 }
 
 export const PackageContext: ComponentContext<PackageContext> =
@@ -58,13 +78,39 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     "devDependencies",
   ]);
 
+  let pkgMeta: PackageMetadataContext | undefined = undefined;
+  if (props.packageVersions || props.packageDependencyKinds) {
+    pkgMeta = {
+      versionSpecifiers: new Map(),
+      dependencyType: new Map(),
+    };
+
+    if (props.packageVersions) {
+      for (const [pkg, version] of props.packageVersions) {
+        pkgMeta.versionSpecifiers.set(getPackageScope(pkg), version);
+      }
+    }
+
+    if (props.packageDependencyKinds) {
+      for (const [pkg, kind] of props.packageDependencyKinds) {
+        pkgMeta.dependencyType.set(getPackageScope(pkg), kind);
+      }
+    }
+  }
+
   return (
     <SourceDirectory path={props.path ?? "."}>
       <PackageContext.Provider value={packageContext}>
         <Scope value={packageContext.scope}>
-          <PackageJsonFile {...pkgJsonProps} devDependencies={devDeps} />
-          <TSConfigJson {...props.tsConfig} />
-          {props.children}
+          <Wrap
+            when={!!pkgMeta}
+            with={PackageMetadataContext.Provider}
+            props={{ value: pkgMeta }}
+          >
+            <PackageJsonFile {...pkgJsonProps} devDependencies={devDeps} />
+            <TSConfigJson {...props.tsConfig} />
+            {props.children}
+          </Wrap>
         </Scope>
       </PackageContext.Provider>
     </SourceDirectory>

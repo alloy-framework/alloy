@@ -187,3 +187,85 @@ it("can import static members", () => {
     `,
   });
 });
+
+it("can specify packages as dev dependencies", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packageVersions={[[testLib, "2.0.0"]]}
+        packageDependencyKinds={[[testLib, "devDependencies"]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2",
+          "testLib": "2.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});
+
+it("can specify packages as peer dependencies", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packageVersions={[[testLib, "2.0.0"]]}
+        packageDependencyKinds={[[testLib, "peerDependencies"]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "testLib": "2.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});

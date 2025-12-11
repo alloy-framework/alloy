@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/create
 
+## 0.23.0
+
+No changes, version bump only.
+
 ## 0.22.0
 
 No changes, version bump only.

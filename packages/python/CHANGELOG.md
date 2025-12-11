@@ -1,5 +1,20 @@
 # Changelog - @alloy-js/python
 
+## 0.3.0
+
+### Bug Fixes
+
+- [#334](https://github.com/alloy-framework/alloy/pull/334) Pass refkey to DataclassDeclaration
+
+### Features
+
+- [#328](https://github.com/alloy-framework/alloy/pull/328) `pass` is now emitted when function and class bodies have no content (rather than just no children). For example, show can now be used inside a class body.
+- [#325](https://github.com/alloy-framework/alloy/pull/325) Add Dataclass component
+- [#342](https://github.com/alloy-framework/alloy/pull/342) Add support for extra imports
+- [#340](https://github.com/alloy-framework/alloy/pull/340) Add / and * parameter handling
+- [#338](https://github.com/alloy-framework/alloy/pull/338) Change Enum item docstring pattern
+
+
 ## 0.2.0
 
 ### Bug Fixes

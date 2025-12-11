@@ -1,5 +1,18 @@
 # Changelog - @alloy-js/core
 
+## 0.22.0
+
+### Bug Fixes
+
+- [#327](https://github.com/alloy-framework/alloy/pull/327) Fix a bug where tracing would track additional signals.
+
+### Features
+
+- [#339](https://github.com/alloy-framework/alloy/pull/339) Add `sourceFilesForTreeAsync` API for getting source files from a rendered text tree when async jobs are present."
+- [#328](https://github.com/alloy-framework/alloy/pull/328) Add a `createContentSlot` API which returns a component which can be used to detect whether content is added inside it. This can be used to conditionally render fallback content or properly format empty components.
+- [#328](https://github.com/alloy-framework/alloy/pull/328) List, For, and their wrapper components now handle when an element has no content. Show can now be used to conditionally render an item in a list, for example.
+
+
 ## 0.21.0
 
 ### Bug Fixes

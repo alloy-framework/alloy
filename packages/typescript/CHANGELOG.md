@@ -1,5 +1,20 @@
 # Changelog - @alloy-js/typescript
 
+## 0.22.0
+
+### Bug Fixes
+
+- [#335](https://github.com/alloy-framework/alloy/pull/335) Add implements support for Typescript classes
+
+### Features
+
+- [#337](https://github.com/alloy-framework/alloy/pull/337) Add `await` prop to MemberExpression.Part to allow awaiting the value of that part.
+- [#327](https://github.com/alloy-framework/alloy/pull/327) Introduce `decl`, `declType`, and `declMember` functions to declare a symbol given a namekey and return the new symbol name. Allows avoiding the use of declaration components if desired.
+- [#343](https://github.com/alloy-framework/alloy/pull/343) Adding `peerDependencies` property to `PackageJson` component.
+- [#347](https://github.com/alloy-framework/alloy/pull/347) The PackageDirectory component can now specify what kind of dependency to create for package dependencies added by reference using the `packageDependencyKinds` prop.
+- [#347](https://github.com/alloy-framework/alloy/pull/347) The PackageDirectory component can now specify what version of a dependency to create for package dependencies added by reference using the `packageVersions` prop.
+
+
 ## 0.21.0
 
 ### Bug Fixes

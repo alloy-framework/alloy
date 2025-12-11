@@ -24,6 +24,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "peerDependencies": {
+    "@alloy-js/core": ">=0.22.0-dev.4"
+  },
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "change-case": "catalog:",

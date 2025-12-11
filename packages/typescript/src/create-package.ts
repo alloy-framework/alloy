@@ -165,10 +165,19 @@ function assignMembers(
   }
 }
 
+const packageScopeSymbol: unique symbol = Symbol();
+/**
+ * Retrieve the package scope associated with an external package created via
+ * createPackage.
+ */
+export function getPackageScope(pkg: ExternalPackage) {
+  return (pkg as any)[packageScopeSymbol];
+}
+
 function createSymbols(
   binder: Binder,
   props: CreatePackageProps<PackageDescriptor>,
-  refkeys: Record<string, any>,
+  refkeys: Record<string | typeof packageScopeSymbol, any>,
 ) {
   const pkgScope = new TSPackageScope(
     props.name,
@@ -179,6 +188,8 @@ function createSymbols(
       builtin: props.builtin,
     },
   );
+
+  refkeys[packageScopeSymbol] = pkgScope;
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
@@ -252,13 +263,20 @@ function createRefkeysForMembers(
   }
 }
 
+export interface ExternalPackage {
+  [externalPackageSymbol]: true;
+}
+
+const externalPackageSymbol: unique symbol = Symbol("ExternalPackageSymbol");
+
 export function createPackage<const T extends PackageDescriptor>(
   props: CreatePackageProps<T>,
-): PackageRefkeys<T> & SymbolCreator {
+): PackageRefkeys<T> & SymbolCreator & ExternalPackage {
   const refkeys: any = {
     [getSymbolCreatorSymbol()](binder: Binder) {
       createSymbols(binder, props, refkeys);
     },
+    [externalPackageSymbol]: true,
   };
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {

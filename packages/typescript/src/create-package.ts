@@ -170,8 +170,8 @@ const packageScopeSymbol: unique symbol = Symbol();
  * Retrieve the package scope associated with an external package created via
  * createPackage.
  */
-export function getPackageScope(pgk: ExternalPackage) {
-  return (pgk as any)[packageScopeSymbol];
+export function getPackageScope(pkg: ExternalPackage) {
+  return (pkg as any)[packageScopeSymbol];
 }
 
 function createSymbols(

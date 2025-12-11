@@ -25,21 +25,12 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
   path?: string;
 
   /**
-   * The versions to use for external packages referenced within this package.
-   * By default, the version specified when the external package was created is
-   * used.
+   * Optional configuration values for referenced external packages.
+   * By default, external packages are added as regular dependencies.
+   * However you can specify `peerDependencies` or `devDependencies` to change this behavior.
+   * Version can also be specified here to override the configured package version.
    */
-  packageVersions?: [ExternalPackage, string][];
-
-  /**
-   * The package dependency kinds to use for external packages referenced within
-   * this package. By default, all external packages are added as
-   * "dependencies".
-   */
-  packageDependencyKinds?: [
-    ExternalPackage,
-    "dependencies" | "peerDependencies" | "devDependencies",
-  ][];
+  packages?: [ExternalPackage, {version?: string, kind?: "dependencies" | "peerDependencies" | "devDependencies" }][]
 }
 
 export const PackageContext: ComponentContext<PackageContext> =
@@ -79,21 +70,17 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   ]);
 
   let pkgMeta: PackageMetadataContext | undefined = undefined;
-  if (props.packageVersions || props.packageDependencyKinds) {
+  if (props.packages) {
     pkgMeta = {
       versionSpecifiers: new Map(),
       dependencyType: new Map(),
     };
-
-    if (props.packageVersions) {
-      for (const [pkg, version] of props.packageVersions) {
-        pkgMeta.versionSpecifiers.set(getPackageScope(pkg), version);
+    for (const [pkg, config] of props.packages) {
+      if (config.version) {
+        pkgMeta.versionSpecifiers.set(getPackageScope(pkg), config.version);
       }
-    }
-
-    if (props.packageDependencyKinds) {
-      for (const [pkg, kind] of props.packageDependencyKinds) {
-        pkgMeta.dependencyType.set(getPackageScope(pkg), kind);
+      if (config.kind) {
+        pkgMeta.dependencyType.set(getPackageScope(pkg), config.kind);
       }
     }
   }

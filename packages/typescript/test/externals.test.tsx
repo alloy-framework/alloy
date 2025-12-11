@@ -205,8 +205,7 @@ it("can specify packages as dev dependencies", () => {
         path="."
         name="test"
         version="1.0.0"
-        packageVersions={[[testLib, "2.0.0"]]}
-        packageDependencyKinds={[[testLib, "devDependencies"]]}
+        packages={[[testLib, { version: "2.0.0", kind: "devDependencies" }]]}
       >
         <SourceFile path="index.ts">{testLib.foo};</SourceFile>
       </PackageDirectory>
@@ -245,8 +244,7 @@ it("can specify packages as peer dependencies", () => {
         path="."
         name="test"
         version="1.0.0"
-        packageVersions={[[testLib, "2.0.0"]]}
-        packageDependencyKinds={[[testLib, "peerDependencies"]]}
+        packages={[[testLib, { version: "2.0.0", kind: "peerDependencies" }]]}
       >
         <SourceFile path="index.ts">{testLib.foo};</SourceFile>
       </PackageDirectory>
@@ -262,6 +260,47 @@ it("can specify packages as peer dependencies", () => {
         },
         "peerDependencies": {
           "testLib": "2.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});
+
+it("can inherit package version as peer dependency", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packages={[[testLib, { kind: "peerDependencies" }]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "testLib": "1.0.0"
         }
       }
     `,

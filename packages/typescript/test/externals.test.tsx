@@ -327,7 +327,7 @@ it("must throw an error if package configuration is not provided", () => {
           path="."
           name="test"
           version="1.0.0"
-          // @ts-expect-error
+          // @ts-expect-error explicitly testing missing package config.
           packages={[[testLib]]}
         >
           <SourceFile path="index.ts">{testLib.foo};</SourceFile>

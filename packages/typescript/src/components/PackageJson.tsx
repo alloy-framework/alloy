@@ -1,4 +1,5 @@
-import { memo, SourceFile } from "@alloy-js/core";
+import { memo, SourceFile, useContext } from "@alloy-js/core";
+import { PackageMetadataContext } from "../context/package-metadata.js";
 import { modulePath } from "../utils.js";
 import { usePackage } from "./PackageDirectory.js";
 
@@ -73,8 +74,32 @@ export interface PackageExports {
  */
 export function PackageJsonFile(props: PackageJsonFileProps) {
   const pkg = usePackage();
+  const pkgMeta = useContext(PackageMetadataContext);
+
+  const dependencies = memo(() => {
+    const kinds = {
+      dependencies: props.dependencies,
+      devDependencies: props.devDependencies,
+      peerDependencies: props.peerDependencies,
+    };
+
+    if (pkg) {
+      for (const dependency of pkg.scope.dependencies) {
+        const kind = pkgMeta?.dependencyType.get(dependency) ?? "dependencies";
+        const versionSpecifier =
+          pkgMeta?.versionSpecifiers.get(dependency) ?? dependency.version;
+
+        kinds[kind] ??= {};
+        kinds[kind][dependency.name] = versionSpecifier;
+      }
+    }
+
+    return kinds;
+  });
 
   const jsonContent = memo(() => {
+    const deps = dependencies();
+
     const pkgJson = {
       name: props.name,
       version: props.version,
@@ -83,20 +108,9 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       license: props.license,
       homepage: props.homepage,
       type: props.type ?? "module",
-      dependencies:
-        props.dependencies || (pkg && pkg.scope.dependencies.size > 0) ?
-          Object.fromEntries([
-            ...Object.entries(props.dependencies ?? {}),
-            ...(pkg ?
-              Array.from(pkg.scope.dependencies).map((dependency) => [
-                dependency.name,
-                dependency.version,
-              ])
-            : []),
-          ])
-        : undefined,
-      devDependencies: props.devDependencies,
-      peerDependencies: props.peerDependencies,
+      dependencies: deps.dependencies,
+      devDependencies: deps.devDependencies,
+      peerDependencies: deps.peerDependencies,
       scripts: props.scripts,
       exports: undefined as any,
     };

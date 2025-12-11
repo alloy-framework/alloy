@@ -1,4 +1,4 @@
-import { Output } from "@alloy-js/core";
+import { Output, render } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -307,4 +307,32 @@ it("can inherit package version as peer dependency", () => {
     "tsconfig.json": expect.anything(),
     "index.ts": expect.anything(),
   });
+});
+
+it("must throw an error if package configuration is not provided", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(() =>
+    render(
+      <Output externals={[testLib, fs]}>
+        <PackageDirectory
+          path="."
+          name="test"
+          version="1.0.0"
+          // @ts-expect-error
+          packages={[[testLib]]}
+        >
+          <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+        </PackageDirectory>
+      </Output>,
+    ),
+  ).toThrowError("Package configuration must be provided");
 });

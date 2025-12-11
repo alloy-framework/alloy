@@ -82,6 +82,9 @@ export function PackageDirectory(props: PackageDirectoryProps) {
       dependencyType: new Map(),
     };
     for (const [pkg, config] of props.packages) {
+      if (!config) {
+        throw new Error("Package configuration must be provided");
+      }
       if (config.version) {
         pkgMeta.versionSpecifiers.set(getPackageScope(pkg), config.version);
       }

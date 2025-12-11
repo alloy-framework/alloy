@@ -1,5 +1,9 @@
 # Changelog - @alloy-js/python
 
+## 0.4.0
+
+No changes, version bump only.
+
 ## 0.3.0
 
 ### Bug Fixes

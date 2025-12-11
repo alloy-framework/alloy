@@ -30,7 +30,13 @@ export interface PackageDirectoryProps extends PackageJsonFileProps {
    * However you can specify `peerDependencies` or `devDependencies` to change this behavior.
    * Version can also be specified here to override the configured package version.
    */
-  packages?: [ExternalPackage, {version?: string, kind?: "dependencies" | "peerDependencies" | "devDependencies" }][]
+  packages?: [
+    ExternalPackage,
+    {
+      version?: string;
+      kind?: "dependencies" | "peerDependencies" | "devDependencies";
+    },
+  ][];
 }
 
 export const PackageContext: ComponentContext<PackageContext> =

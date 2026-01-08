@@ -1,13 +1,9 @@
 import { refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import {
-  CatchClause,
-  FinallyClause,
-  TryStatement,
-} from "../src/components/TryStatement.jsx";
-import { VarDeclaration } from "../src/components/VarDeclaration.js";
-import { toSourceText } from "./utils.jsx";
+import { toSourceText } from "../../test/utils.jsx";
+import { CatchClause, FinallyClause, TryStatement } from "./TryStatement.jsx";
+import { VarDeclaration } from "./VarDeclaration.jsx";
 
 it("works with try-catch", () => {
   const text = toSourceText(

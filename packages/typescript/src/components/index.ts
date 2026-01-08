@@ -35,6 +35,7 @@ export * from "./Reference.js";
 export * from "./SingleLineCommentBlock.jsx";
 export * from "./SourceFile.js";
 export * from "./SwitchStatement.jsx";
+export * from "./TryStatement.jsx";
 export * from "./TsConfigJson.js";
 export * from "./TypeDeclaration.js";
 export * from "./TypeRefContext.jsx";

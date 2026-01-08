@@ -1,5 +1,16 @@
 # Changelog - @alloy-js/typescript
 
+## 0.23.0
+
+### Bug Fixes
+
+- [#349](https://github.com/alloy-framework/alloy/pull/349) IfElseClause and ElseClause properly create block scopes.
+
+### Features
+
+- [#349](https://github.com/alloy-framework/alloy/pull/349) Add TryStatement, CatchClause, and FinallyClause components.
+
+
 ## 0.22.0
 
 ### Bug Fixes

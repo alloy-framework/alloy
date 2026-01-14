@@ -1148,6 +1148,19 @@ function transformComponent(path) {
     props = [t__namespace.callExpression(registerImportMethod(path, "mergeProps"), props)];
   }
   const componentArgs = [tagId, props[0]];
+  
+  // Add source location when enabled
+  if (config.generate !== "ssr" && config.addSourceInfo) {
+    const loc = path.node.loc;
+    if (loc && loc.start) {
+      const sourceInfo = t__namespace.objectExpression([
+        t__namespace.objectProperty(t__namespace.identifier("fileName"), t__namespace.stringLiteral(path.hub.file.opts.filename || "unknown")),
+        t__namespace.objectProperty(t__namespace.identifier("lineNumber"), t__namespace.numericLiteral(loc.start.line)),
+        t__namespace.objectProperty(t__namespace.identifier("columnNumber"), t__namespace.numericLiteral(loc.start.column + 1))
+      ]);
+      componentArgs.push(sourceInfo);
+    }
+  }
 
   exprs.push(t__namespace.callExpression(registerImportMethod(path, isComponentTag ? "createComponent" : "createIntrinsic"), componentArgs));
 
@@ -1429,6 +1442,11 @@ var postprocess = path => {
   }
 };
 
+const defaultAddSourceInfo = (() => {
+  const envMode = process.env.BABEL_ENV ?? process.env.NODE_ENV;
+  return envMode === undefined ? true : envMode !== "production";
+})();
+
 var config = {
   moduleName: "dom",
   generate: "dom",
@@ -1445,6 +1463,7 @@ var config = {
   memoWrapper: "memo",
   validate: true,
   preserveWhitespace: false,
+  addSourceInfo: defaultAddSourceInfo,
 };
 
 const { isValidHTMLNesting } = require("validate-html-nesting");

@@ -5,6 +5,21 @@ import { clearRenderStack } from "../../src/render-stack.js";
 import { renderTree } from "../../src/render.js";
 import "../../testing/extend-expect.js";
 
+// Strip ANSI escape codes from a string for consistent testing across environments
+function stripAnsi(str: string): string {
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "");
+}
+
+// Helper to check if any console.error call contains a string (after stripping ANSI codes)
+function expectErrorContaining(
+  spy: ReturnType<typeof vi.spyOn>,
+  substring: string,
+) {
+  const calls = spy.mock.calls.map((call) => stripAnsi(String(call[0])));
+  expect(calls.some((msg) => msg.includes(substring))).toBe(true);
+}
+
 describe("printRenderStack", () => {
   let originalEnv: string | undefined;
 
@@ -48,15 +63,9 @@ describe("printRenderStack", () => {
     }).toThrow("Test error");
 
     // Check that console.error was called with file path
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Error rendering in file test.ts"),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("ParentComponent"),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("ThrowingComponent"),
-    );
+    expectErrorContaining(consoleErrorSpy, "Error rendering in file test.ts");
+    expectErrorContaining(consoleErrorSpy, "ParentComponent");
+    expectErrorContaining(consoleErrorSpy, "ThrowingComponent");
 
     consoleErrorSpy.mockRestore();
   });
@@ -83,8 +92,9 @@ describe("printRenderStack", () => {
     }).toThrow("Nested error");
 
     // Should show the joined path of all directories
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Error rendering in file dir1/dir2/test.ts"),
+    expectErrorContaining(
+      consoleErrorSpy,
+      "Error rendering in file dir1/dir2/test.ts",
     );
 
     consoleErrorSpy.mockRestore();
@@ -110,7 +120,9 @@ describe("printRenderStack", () => {
 
     // Get only the calls from THIS test (after callsBefore)
     const callsFromThisTest = consoleErrorSpy.mock.calls.slice(callsBefore);
-    const messagesFromThisTest = callsFromThisTest.map((call: any) => call[0]);
+    const messagesFromThisTest = callsFromThisTest.map((call: any) =>
+      stripAnsi(String(call[0])),
+    );
 
     // Output component creates a SourceDirectory with path "./"
     // The error message should be "Error rendering in file ./"
@@ -144,21 +156,14 @@ describe("printRenderStack", () => {
       );
     }).toThrow("Component error");
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Error rendering in file props-test.ts"),
+    expectErrorContaining(
+      consoleErrorSpy,
+      "Error rendering in file props-test.ts",
     );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("WrapperComponent"),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('value: "test"'),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("ThrowingComponent"),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('message: "test", count: 42'),
-    );
+    expectErrorContaining(consoleErrorSpy, "WrapperComponent");
+    expectErrorContaining(consoleErrorSpy, 'value: "test"');
+    expectErrorContaining(consoleErrorSpy, "ThrowingComponent");
+    expectErrorContaining(consoleErrorSpy, 'message: "test", count: 42');
 
     consoleErrorSpy.mockRestore();
   });
@@ -180,7 +185,9 @@ describe("printRenderStack", () => {
 
     // Get only the calls from THIS test (after callsBefore)
     const callsFromThisTest = consoleErrorSpy.mock.calls.slice(callsBefore);
-    const messagesFromThisTest = callsFromThisTest.map((call: any) => call[0]);
+    const messagesFromThisTest = callsFromThisTest.map((call: any) =>
+      stripAnsi(String(call[0])),
+    );
 
     // Should have "Error rendering:" without file path
     expect(
@@ -220,12 +227,8 @@ describe("printRenderStack", () => {
     }).toThrow("Context error");
 
     // Check that the named context provider is shown as a separate component
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("at MyContext"),
-    );
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('value: "test-value"'),
-    );
+    expectErrorContaining(consoleErrorSpy, "at MyContext");
+    expectErrorContaining(consoleErrorSpy, 'value: "test-value"');
 
     consoleErrorSpy.mockRestore();
   });

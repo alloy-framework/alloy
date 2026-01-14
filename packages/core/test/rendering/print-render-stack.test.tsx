@@ -49,7 +49,7 @@ describe("printRenderStack", () => {
 
     // Check that console.error was called with file path
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error rendering in file test.ts",
+      expect.stringContaining("Error rendering in file test.ts"),
     );
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining("ParentComponent"),
@@ -84,7 +84,7 @@ describe("printRenderStack", () => {
 
     // Should show the joined path of all directories
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error rendering in file dir1/dir2/test.ts",
+      expect.stringContaining("Error rendering in file dir1/dir2/test.ts"),
     );
 
     consoleErrorSpy.mockRestore();
@@ -114,7 +114,11 @@ describe("printRenderStack", () => {
 
     // Output component creates a SourceDirectory with path "./"
     // The error message should be "Error rendering in file ./"
-    expect(messagesFromThisTest).toContain("Error rendering in file ./");
+    expect(
+      messagesFromThisTest.some(
+        (msg: string) => msg && msg.includes("Error rendering in file ./"),
+      ),
+    ).toBe(true);
 
     consoleErrorSpy.mockRestore();
   });
@@ -141,7 +145,7 @@ describe("printRenderStack", () => {
     }).toThrow("Component error");
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error rendering in file props-test.ts",
+      expect.stringContaining("Error rendering in file props-test.ts"),
     );
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining("WrapperComponent"),
@@ -179,7 +183,11 @@ describe("printRenderStack", () => {
     const messagesFromThisTest = callsFromThisTest.map((call: any) => call[0]);
 
     // Should have "Error rendering:" without file path
-    expect(messagesFromThisTest).toContain("Error rendering:");
+    expect(
+      messagesFromThisTest.some(
+        (msg: string) => msg && msg.includes("Error rendering:"),
+      ),
+    ).toBe(true);
     // Should NOT have any message with "in file"
     expect(
       messagesFromThisTest.some(

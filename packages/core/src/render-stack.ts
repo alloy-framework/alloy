@@ -124,9 +124,41 @@ export function printRenderStack() {
     console.error(pc.red("Error rendering:"));
   }
 
-  // Print stack from most recent to oldest, but collect providers to nest under their parent
-  const providerIndices = new Set<number>();
+  // First pass: determine which providers should be nested vs standalone
+  // A provider should be nested under its parent if it's from a different file
+  // (i.e., it's part of the component's implementation, not user-provided)
+  const nestedProviderIndices = new Set<number>();
 
+  for (let i = renderStack.length - 1; i >= 0; i--) {
+    const { component, source } = renderStack[i];
+
+    // Skip anonymous components and providers
+    if (!component.name || component.name === "Provider") {
+      continue;
+    }
+
+    // Look for providers that come immediately after this component
+    for (let j = i + 1; j < renderStack.length; j++) {
+      const providerEntry = renderStack[j];
+      if (!providerEntry.component.name) continue;
+      if (providerEntry.component.name !== "Provider") break;
+
+      // Nest provider if it's from a different file (component-internal)
+      const shouldNest =
+        !source ||
+        !providerEntry.source ||
+        source.fileName !== providerEntry.source.fileName;
+
+      if (shouldNest) {
+        nestedProviderIndices.add(j);
+      } else {
+        // Stop looking - this provider and all after should be standalone
+        break;
+      }
+    }
+  }
+
+  // Second pass: print stack entries in order, nesting providers where appropriate
   for (let i = renderStack.length - 1; i >= 0; i--) {
     const { component, props, source } = renderStack[i];
 
@@ -135,9 +167,8 @@ export function printRenderStack() {
       continue;
     }
 
-    // Check if this component is a context provider (all Providers have this name)
-    if (component.name === "Provider") {
-      providerIndices.add(i);
+    // Skip providers that will be nested under their parent
+    if (nestedProviderIndices.has(i)) {
       continue;
     }
 
@@ -155,32 +186,23 @@ export function printRenderStack() {
       console.error(`     ${propsStr}`);
     }
 
-    // Print any providers that come immediately after this component in the stack
-    // (providers have higher indices since they were pushed after this component)
-    // Only nest providers that were created in the same file (by the component itself)
-    for (let j = i + 1; j < renderStack.length; j++) {
-      if (!providerIndices.has(j)) break;
+    // For non-Provider components, print any nested providers
+    if (component.name !== "Provider") {
+      for (let j = i + 1; j < renderStack.length; j++) {
+        if (!nestedProviderIndices.has(j)) break;
 
-      const providerEntry = renderStack[j];
-      if (!providerEntry.component.name) continue;
+        const providerEntry = renderStack[j];
+        if (!providerEntry.component.name) continue;
 
-      // Nest provider if it's from a different file (component-internal, in the implementation)
-      // Don't nest if from same file (user-provided, in the same file as component invocation)
-      const shouldNest =
-        !source ||
-        !providerEntry.source ||
-        source.fileName !== providerEntry.source.fileName;
+        const providerName = getComponentDisplayName(
+          providerEntry.component,
+          providerEntry.props,
+        );
+        const providerSourceStr =
+          providerEntry.source ?
+            pc.gray(` (${formatSourceLocation(providerEntry.source)})`)
+          : "";
 
-      const providerName = getComponentDisplayName(
-        providerEntry.component,
-        providerEntry.props,
-      );
-      const providerSourceStr =
-        providerEntry.source ?
-          pc.gray(` (${formatSourceLocation(providerEntry.source)})`)
-        : "";
-
-      if (shouldNest) {
         // eslint-disable-next-line no-console
         console.error(
           `     ${pc.magenta("provides")} ${pc.bold(providerName)}${providerSourceStr}`,
@@ -191,32 +213,10 @@ export function printRenderStack() {
           // eslint-disable-next-line no-console
           console.error(`       ${providerPropsStr}`);
         }
-        providerIndices.delete(j);
-      } else {
-        // Don't nest - this provider will be printed as its own "at" entry
-        break;
       }
     }
   }
 
-  // Print any remaining providers that weren't nested (user-provided)
-  for (let i = renderStack.length - 1; i >= 0; i--) {
-    if (!providerIndices.has(i)) continue;
-
-    const { component, props, source } = renderStack[i];
-    if (!component.name) continue;
-
-    const providerName = getComponentDisplayName(component, props);
-    const sourceStr =
-      source ? pc.gray(` (${formatSourceLocation(source)})`) : "";
-
-    // eslint-disable-next-line no-console
-    console.error(`  ${pc.cyan("at")} ${pc.bold(providerName)}${sourceStr}`);
-
-    const propsStr = inspectProps(props);
-    if (propsStr) {
-      // eslint-disable-next-line no-console
-      console.error(`     ${propsStr}`);
-    }
-  }
+  // Clear the stack after printing to avoid stale data on subsequent render errors
+  clearRenderStack();
 }

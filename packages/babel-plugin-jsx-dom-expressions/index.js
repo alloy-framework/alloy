@@ -1463,6 +1463,7 @@ var config = {
   memoWrapper: "memo",
   validate: true,
   preserveWhitespace: false,
+  // Whether to include fileName/lineNumber/columnNumber debug info in JSX output
   addSourceInfo: defaultAddSourceInfo,
 };
 

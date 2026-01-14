@@ -45,4 +45,5 @@ export * from "./symbols/symbol-flow.js";
 export * from "./tap.js";
 export * from "./utils.js";
 export * from "./write-output.js";
+export { setDebugMode } from "./debug.js";
 import "./debug.js";

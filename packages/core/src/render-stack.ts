@@ -2,7 +2,6 @@ import pc from "picocolors";
 import { contextsByKey } from "./context.js";
 import { SourceDirectoryContext } from "./context/source-directory.js";
 import { SourceFileContext } from "./context/source-file.js";
-import { shouldDebug } from "./debug.js";
 import { Context, getContext } from "./reactivity.js";
 import { Component, Props, SourceLocation } from "./runtime/component.js";
 
@@ -19,12 +18,10 @@ export function pushStack(
   props: Props,
   source?: SourceLocation,
 ) {
-  if (!shouldDebug()) return;
   renderStack.push({ component, props, context: getContext(), source });
 }
 
 export function popStack() {
-  if (!shouldDebug()) return;
   renderStack.pop();
 }
 
@@ -98,8 +95,6 @@ function formatSourceLocation(source: SourceLocation): string {
  * chain has been restored. In the future this can probably be unified nicely.
  */
 export function printRenderStack() {
-  if (!shouldDebug()) return;
-
   // Find the nearest SourceFileContext or SourceDirectoryContext from the render stack
   let currentPath: string | undefined;
   for (let i = renderStack.length - 1; i >= 0; i--) {

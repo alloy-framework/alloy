@@ -17,9 +17,6 @@ const args = parseArgs({
     prod: {
       type: "boolean",
     },
-    mode: {
-      type: "string",
-    },
     "source-info": {
       type: "boolean",
     },
@@ -43,7 +40,7 @@ async function main() {
 await main();
 
 async function build() {
-  const { mode, addSourceInfo } = resolveBuildSettings();
+  const { addSourceInfo } = resolveBuildSettings();
   const opts = getParseCommandLine();
   const program = ts.createIncrementalProgram({
     rootNames: opts.fileNames,

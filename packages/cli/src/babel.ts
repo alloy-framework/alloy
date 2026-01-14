@@ -15,7 +15,10 @@ export interface BuildOptions {
 export async function buildFile(filename: string, options: BuildOptions) {
   return babel.transformFileAsync(filename, {
     sourceMaps: options.sourceMaps,
-    presets: [typescriptPreset, [alloyPreset, { addSourceInfo: options.addSourceInfo }]],
+    presets: [
+      typescriptPreset,
+      [alloyPreset, { addSourceInfo: options.addSourceInfo }],
+    ],
   });
 }
 

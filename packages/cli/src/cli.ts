@@ -11,6 +11,15 @@ const args = parseArgs({
     watch: {
       type: "boolean",
     },
+    dev: {
+      type: "boolean",
+    },
+    prod: {
+      type: "boolean",
+    },
+    "source-info": {
+      type: "boolean",
+    },
   },
 });
 
@@ -31,6 +40,7 @@ async function main() {
 await main();
 
 async function build() {
+  const { addSourceInfo } = resolveBuildSettings();
   const opts = getParseCommandLine();
   const program = ts.createIncrementalProgram({
     rootNames: opts.fileNames,
@@ -41,6 +51,7 @@ async function build() {
   const start = new Date().getTime();
   await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
     sourceMaps: opts.options.sourceMap,
+    addSourceInfo,
   });
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
@@ -65,6 +76,7 @@ async function build() {
 }
 
 function watchMain() {
+  const { addSourceInfo } = resolveBuildSettings();
   const opts = getParseCommandLine();
 
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
@@ -89,6 +101,7 @@ function watchMain() {
           .map((x) => x.fileName),
         opts.rootDir,
         opts.outDir,
+        { addSourceInfo },
       );
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -99,6 +112,26 @@ function watchMain() {
     origPostProgramCreate!(program);
   };
   ts.createWatchProgram(host);
+}
+
+function resolveBuildSettings() {
+  // Determine mode: CLI flags (--dev|--prod) > BABEL_ENV > NODE_ENV > watch default dev > prod
+  const envMode = process.env.BABEL_ENV ?? process.env.NODE_ENV;
+  const mode =
+    (args.values.dev ? "development" : undefined) ??
+    (args.values.prod ? "production" : undefined) ??
+    envMode ??
+    (args.values["watch"] ? "development" : "production");
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = mode;
+  }
+  if (!process.env.BABEL_ENV) {
+    process.env.BABEL_ENV = mode;
+  }
+
+  const addSourceInfo = args.values["source-info"] ?? mode !== "production";
+
+  return { mode, addSourceInfo };
 }
 
 function reportDiagnostic(diagnostic: ts.Diagnostic) {

@@ -3,7 +3,6 @@ import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
-import { shouldDebug } from "./debug.js";
 import {
   Context,
   CustomContext,
@@ -15,13 +14,12 @@ import {
   untrack,
 } from "./reactivity.js";
 import { isRefkeyable, toRefkey } from "./refkey.js";
+import { popStack, printRenderStack, pushStack } from "./render-stack.js";
 import {
   Child,
   Children,
-  Component,
   isComponentCreator,
   isRenderableObject,
-  Props,
   RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
@@ -585,7 +583,8 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
 
         if (context) context.componentOwner = child;
         const componentRoot: RenderedTextTree = [];
-        pushStack(child.component, child.props);
+
+        pushStack(child.component, child.props, child.source);
         renderWorker(componentRoot, untrack(child));
         popStack();
         node.push(componentRoot);
@@ -767,58 +766,4 @@ function printTreeWorker(tree: RenderedTextTree): Doc {
   }
 
   return doc;
-}
-// debugging utilities
-const renderStack: {
-  component: Component<any>;
-  props: Props;
-}[] = [];
-
-export function pushStack(component: Component<any>, props: Props) {
-  if (!shouldDebug()) return;
-  renderStack.push({ component, props });
-}
-
-export function popStack() {
-  if (!shouldDebug()) return;
-  renderStack.pop();
-}
-
-export function printRenderStack() {
-  if (!shouldDebug()) return;
-
-  // eslint-disable-next-line no-console
-  console.error("Error rendering:");
-  for (let i = renderStack.length - 1; i >= 0; i--) {
-    const { component, props } = renderStack[i];
-    // eslint-disable-next-line no-console
-    console.error(`    at ${component.name}(${inspectProps(props)})`);
-  }
-}
-
-function inspectProps(props: Props) {
-  return JSON.stringify(
-    Object.fromEntries(
-      Object.entries(props).map(([key, value]) => {
-        let safeValue;
-        switch (typeof value) {
-          case "string":
-          case "number":
-          case "boolean":
-            safeValue = value;
-            break;
-          case "undefined":
-            safeValue = "undefined";
-            break;
-          case "object":
-            safeValue = value ? "{...}" : null;
-            break;
-          case "function":
-            safeValue = "function";
-            break;
-        }
-        return [key, safeValue];
-      }),
-    ),
-  );
 }

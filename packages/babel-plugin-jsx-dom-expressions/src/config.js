@@ -1,3 +1,8 @@
+const defaultAddSourceInfo = (() => {
+  const envMode = process.env.BABEL_ENV ?? process.env.NODE_ENV;
+  return envMode === undefined ? true : envMode !== "production";
+})();
+
 export default {
   moduleName: "dom",
   generate: "dom",
@@ -14,4 +19,6 @@ export default {
   memoWrapper: "memo",
   validate: true,
   preserveWhitespace: false,
+  // Whether to include fileName/lineNumber/columnNumber debug info in JSX output
+  addSourceInfo: defaultAddSourceInfo,
 };

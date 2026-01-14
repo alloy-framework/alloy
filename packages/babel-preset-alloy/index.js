@@ -2,6 +2,8 @@ import alloyTransform from "@alloy-js/babel-plugin";
 import jsxTransform from "@alloy-js/babel-plugin-jsx-dom-expressions";
 
 export default function (context, options = {}) {
+  const envMode = process.env.BABEL_ENV ?? process.env.NODE_ENV;
+  const inferredDev = envMode === undefined ? true : envMode !== "production";
   const defaultOptions = {
     alloyModuleName: "@alloy-js/core",
     moduleName: "@alloy-js/core/jsx-runtime",
@@ -9,6 +11,15 @@ export default function (context, options = {}) {
     wrapConditionals: true,
     preserveWhitespace: true,
   };
+
+  const jsxOptions = Object.assign({}, defaultOptions, options);
+  if (options.addSourceInfo === undefined) {
+    if (options.dev !== undefined) {
+      jsxOptions.addSourceInfo = options.dev;
+    } else {
+      jsxOptions.addSourceInfo = inferredDev;
+    }
+  }
 
   const plugins = [
     [
@@ -20,7 +31,7 @@ export default function (context, options = {}) {
           options.legacyWhitespace ?? defaultOptions.legacyWhitespace,
       },
     ],
-    [jsxTransform, Object.assign(defaultOptions, options)],
+    [jsxTransform, jsxOptions],
   ];
 
   return { plugins };

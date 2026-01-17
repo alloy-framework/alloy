@@ -2,6 +2,11 @@ import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
 import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
+import {
+  registerDebugScope,
+  registerDebugSymbol,
+  unregisterDebugSymbol,
+} from "./devtools/symbols-debug.js";
 import { effect } from "./reactivity.js";
 import {
   isMemberRefkey,
@@ -235,6 +240,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   return binder;
 
   function notifyScopeCreated(scope: OutputScope) {
+    registerDebugScope(scope);
     if (!scope.parent || !waitingScopeNames.has(scope.parent)) {
       return;
     }
@@ -247,6 +253,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolDeleted(symbol: OutputSymbol) {
+    unregisterDebugSymbol(symbol);
     if (!refkey) {
       return;
     }
@@ -626,6 +633,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
+    registerDebugSymbol(symbol);
     effect<Refkey[]>((oldRefkeys) => {
       if (symbol.refkeys) {
         trace(

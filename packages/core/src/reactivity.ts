@@ -160,7 +160,10 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;
     context.disposables = [];
-    for (let k = 0, len = d.length; k < len; k++) d[k]();
+    for (let k = 0, len = d.length; k < len; k++) {
+      console.log(d[k].toString());
+      d[k]();
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     final && stop(runner);

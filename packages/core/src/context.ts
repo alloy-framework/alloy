@@ -54,6 +54,7 @@ export function createContext<T = unknown>(
     Provider,
     ProviderStc: stc(Provider),
   };
+  (Provider as any).contextName = name;
   contextsByKey.set(id, ctx);
   return ctx;
 }

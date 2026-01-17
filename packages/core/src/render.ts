@@ -1,8 +1,27 @@
-import { isRef, ref } from "@vue/reactivity";
+import { isRef, ref, watch } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
+import {
+  assertDevtoolsConnectedForSyncRender,
+  isDevtoolsEnabled,
+  waitForDevtoolsConnection,
+} from "./devtools/devtools-server.js";
+import {
+  clearRenderTreeChildren,
+  initializeRenderTreeDebug,
+  recordDirectoryNode,
+  recordFileNode,
+  recordFileUpdate,
+  recordNodeAdded,
+  recordNodePropsUpdated,
+  recordSubtreeAdded,
+  recordTextNode,
+  registerRenderNodeActions,
+  serializeRenderTreeProps,
+  unregisterRenderNodeActions,
+} from "./devtools/render-tree-debug.js";
 import {
   Context,
   CustomContext,
@@ -10,6 +29,7 @@ import {
   getContext,
   getElementCache,
   isCustomContext,
+  onCleanup,
   root,
   untrack,
 } from "./reactivity.js";
@@ -25,6 +45,10 @@ import {
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs, flushJobsAsync } from "./scheduler.js";
 import { trace, TracePhase } from "./tracer.js";
+
+if (isDevtoolsEnabled()) {
+  await waitForDevtoolsConnection();
+}
 
 const {
   builders: {
@@ -207,6 +231,7 @@ export async function renderAsync(
   children: Children,
   options?: PrintTreeOptions,
 ): Promise<OutputDirectory> {
+  await waitForDevtoolsConnection();
   const tree = renderTree(children);
   return sourceFilesForTreeAsync(tree, options);
 }
@@ -324,7 +349,9 @@ export function sourceFilesForTree(
   }
 }
 export function renderTree(children: Children) {
+  assertDevtoolsConnectedForSyncRender();
   const rootElem: RenderedTextTree = [];
+  initializeRenderTreeDebug(rootElem);
   try {
     root(() => {
       renderWorker(rootElem, children);
@@ -425,6 +452,8 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
   if (typeof child === "string") {
     if (child !== "") {
       contentAdded();
+      recordTextNode(node, node.length, child);
+      notifyFileUpdateForNode(node);
     }
     node.push(child);
   } else {
@@ -434,7 +463,11 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         TracePhase.render.appendChild,
         () => "Cached: " + debugPrintChild(child),
       );
+      recordNodeAdded(node, node.length, cache.get(child as any)!, {
+        kind: "fragment",
+      });
       node.push(cache.get(child as any)!);
+      notifyFileUpdateForNode(node);
       return;
     }
     if (isCustomContext(child)) {
@@ -444,10 +477,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       );
       child.useCustomContext((children) => {
         const newNode: RenderedTextTree = [];
+        recordNodeAdded(node, node.length, newNode, { kind: "customContext" });
         renderWorker(newNode, children);
         node.push(newNode);
         cache.set(child, newNode);
         notifyContentState();
+        notifyFileUpdateForNode(node);
       });
     } else if (isIntrinsicElement(child)) {
       trace(
@@ -455,59 +490,83 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         () => "IntrinsicElement: " + debugPrintChild(child),
       );
       // don't need a new context here because intrinsics are never reactive
+      const intrinsic = child as IntrinsicElement;
       const newNode: RenderedTextTree = [];
 
       function formatHookWithChildren(command: (doc: Doc) => Doc) {
-        node.push(
-          createRenderTreeHook(newNode, {
-            print(tree, print) {
-              return command(print(tree));
-            },
-          }),
-        );
+        const hook = createRenderTreeHook(newNode, {
+          print(tree, print) {
+            return command(print(tree));
+          },
+        });
+        recordNodeAdded(node, node.length, hook, {
+          kind: "printHook",
+          name: intrinsic.name,
+        });
+        recordSubtreeAdded(hook, newNode);
+        node.push(hook);
         renderWorker(newNode, (child as any).props.children);
+        notifyFileUpdateForNode(node);
       }
 
       function formatHook(command: Doc) {
-        return node.push(
-          createRenderTreeHook(newNode, {
-            print() {
-              return command;
-            },
-          }),
-        );
+        const hook = createRenderTreeHook(newNode, {
+          print() {
+            return command;
+          },
+        });
+        recordNodeAdded(node, node.length, hook, {
+          kind: "printHook",
+          name: intrinsic.name,
+        });
+        node.push(hook);
+        return hook;
       }
 
       switch (child.name) {
         case "indent":
           return formatHookWithChildren(indent);
         case "indentIfBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return indentIfBreak(print(tree), {
                   groupId: child.props.groupId,
                   negate: child.props.negate,
                 });
               },
-            }),
-          );
+            });
+            recordNodeAdded(node, node.length, hook, {
+              kind: "printHook",
+              name: intrinsic.name,
+            });
+            recordSubtreeAdded(hook, newNode);
+            node.push(hook);
+          }
           renderWorker(newNode, child.props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "fill":
           return formatHookWithChildren(fill as any);
         case "group":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return group(print(tree), {
                   id: child.props.id,
                   shouldBreak: child.props.shouldBreak,
                 });
               },
-            }),
-          );
+            });
+            recordNodeAdded(node, node.length, hook, {
+              kind: "printHook",
+              name: intrinsic.name,
+            });
+            recordSubtreeAdded(hook, newNode);
+            node.push(hook);
+          }
           renderWorker(newNode, child.props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "line":
         case "br":
@@ -522,17 +581,24 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         case "lbr":
           return formatHook(literalline);
         case "align":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return align(
                   (child.props as any).width ?? (child.props as any).string!,
                   print(tree),
                 );
               },
-            }),
-          );
+            });
+            recordNodeAdded(node, node.length, hook, {
+              kind: "printHook",
+              name: intrinsic.name,
+            });
+            recordSubtreeAdded(hook, newNode);
+            node.push(hook);
+          }
           renderWorker(newNode, (child as any).props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "lineSuffix":
           return formatHookWithChildren(lineSuffix);
@@ -547,17 +613,29 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         case "markAsRoot":
           return formatHookWithChildren(markAsRoot);
         case "ifBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return ifBreak(
                   print((tree as RenderedTextTree[])[0]),
                   print((tree as RenderedTextTree[])[1]),
                 );
               },
-            }),
-          );
+            });
+            recordNodeAdded(node, node.length, hook, {
+              kind: "printHook",
+              name: intrinsic.name,
+            });
+            recordSubtreeAdded(hook, newNode);
+            node.push(hook);
+          }
           newNode.push([], []);
+          recordSubtreeAdded(newNode, newNode[0] as RenderedTextTree, {
+            kind: "fragment",
+          });
+          recordSubtreeAdded(newNode, newNode[1] as RenderedTextTree, {
+            kind: "fragment",
+          });
           renderWorker(
             newNode[0] as RenderedTextTree[],
             (child as any).props.children,
@@ -566,13 +644,19 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             newNode[1] as RenderedTextTree[],
             (child as any).props.flatContents,
           );
+          notifyFileUpdateForNode(node);
           return;
         default:
           throw new Error("Unknown intrinsic element");
       }
     } else if (isComponentCreator(child)) {
+      const index = node.length;
+      const rerenderToken = ref(0);
+      const breakNext = ref(false);
       // todo: remove this effect (only needed for context, not needed for anything else)
       effect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        rerenderToken.value;
         trace(
           TracePhase.render.appendChild,
           () => "Component: " + debugPrintChild(child),
@@ -582,12 +666,109 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         context!.isEmpty ??= ref(true);
 
         if (context) context.componentOwner = child;
-        const componentRoot: RenderedTextTree = [];
+        const existing = node[index];
+        const componentRoot: RenderedTextTree =
+          Array.isArray(existing) ? existing : [];
+        context!.meta ??= {};
+        context!.meta.renderNode = componentRoot;
+        let componentName = child.component.name;
+        if (componentName === "Provider") {
+          const contextName = (child.component as any).contextName as
+            | string
+            | undefined;
+          if (contextName) {
+            componentName = `Context ${contextName}`;
+          }
+        }
+        const propsSource = (child.props ?? undefined) as
+          | Record<string, unknown>
+          | undefined;
+        const propsSerialized = serializeRenderTreeProps(propsSource);
+        if (Array.isArray(existing)) {
+          clearRenderTreeChildren(componentRoot);
+          componentRoot.length = 0;
+        } else {
+          recordNodeAdded(node, index, componentRoot, {
+            kind: "component",
+            name: componentName,
+            propsSerialized,
+            source: child.source,
+          });
+        }
+        recordNodePropsUpdated(componentRoot, propsSerialized);
+        registerRenderNodeActions(componentRoot, {
+          rerender: () => {
+            rerenderToken.value++;
+            try {
+              flushJobs();
+            } catch {
+              void flushJobsAsync();
+            }
+          },
+          rerenderAndBreak: () => {
+            breakNext.value = true;
+            rerenderToken.value++;
+            try {
+              flushJobs();
+            } catch {
+              void flushJobsAsync();
+            }
+          },
+        });
+
+        if (propsSource) {
+          const stopHandles: Array<() => void> = [];
+          const propKeys = Object.keys(propsSource).filter(
+            (key) => key !== "children",
+          );
+          const emitPropsUpdate = () => {
+            const nextSerialized = serializeRenderTreeProps(propsSource);
+            recordNodePropsUpdated(componentRoot, nextSerialized);
+          };
+
+          for (const key of propKeys) {
+            stopHandles.push(
+              watch(
+                () => propsSource[key],
+                () => emitPropsUpdate(),
+              ),
+            );
+          }
+
+          onCleanup(() => {
+            for (const stop of stopHandles) {
+              stop();
+            }
+          });
+        }
 
         pushStack(child.component, child.props, child.source);
-        renderWorker(componentRoot, untrack(child));
+        renderWorker(
+          componentRoot,
+          untrack(() => {
+            const shouldBreak = breakNext.value;
+            if (shouldBreak) {
+              breakNext.value = false;
+              // eslint-disable-next-line no-debugger
+              debugger;
+            }
+            return child();
+          }),
+        );
         popStack();
-        node.push(componentRoot);
+        if (context?.meta?.directory) {
+          recordDirectoryNode(componentRoot, context.meta.directory.path);
+        }
+        if (context?.meta?.sourceFile) {
+          context.meta.renderNode = componentRoot;
+          recordFileNode(
+            componentRoot,
+            context.meta.sourceFile.path,
+            context.meta.sourceFile.filetype,
+          );
+          notifyFileUpdateForNode(componentRoot);
+        }
+        node[index] = componentRoot;
         cache.set(child, componentRoot);
         notifyContentState();
         trace(
@@ -598,6 +779,8 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             ", empty: " +
             context!.isEmpty!.value,
         );
+
+        onCleanup(() => unregisterRenderNodeActions(componentRoot));
       });
     } else if (typeof child === "function") {
       trace(TracePhase.render.appendChild, () => "Memo: " + child.toString());
@@ -612,18 +795,62 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         context!.childrenWithContent = 0;
         context!.isEmpty ??= ref(true);
 
-        const newNodes: RenderedTextTree = [];
-        renderWorker(newNodes, res);
-        node[index] = newNodes;
-        cache.set(child, newNodes);
+        const existing = node[index];
+        const memoNode: RenderedTextTree =
+          Array.isArray(existing) ? existing : [];
+
+        if (Array.isArray(existing)) {
+          clearRenderTreeChildren(memoNode);
+          memoNode.length = 0;
+        } else {
+          recordNodeAdded(node, index, memoNode, { kind: "memo" });
+        }
+
+        renderWorker(memoNode, res);
+        node[index] = memoNode;
+        cache.set(child, memoNode);
+
+        notifyFileUpdateForNode(node);
 
         notifyContentState();
-        return newNodes;
+        return memoNode;
       });
     } else {
       throw new Error("Unexpected child type");
     }
   }
+}
+
+const fileContentCache = new Map<string, string>();
+
+function findSourceFileContext(node: RenderedTextTree) {
+  let context: Context | null | undefined =
+    getContextForRenderNode(node) ?? null;
+  while (context) {
+    if (context.meta?.sourceFile) return context;
+    context = context.owner;
+  }
+  return undefined;
+}
+
+function notifyFileUpdateForNode(node: RenderedTextTree) {
+  const context = findSourceFileContext(node);
+  if (!context?.meta?.sourceFile) return;
+  const sourceFile = context.meta.sourceFile;
+  const renderNode: RenderedTextTree =
+    (context.meta.renderNode as RenderedTextTree | undefined) ?? node;
+  const contents = printTree(renderNode, {
+    printWidth: context.meta?.printOptions?.printWidth,
+    tabWidth: context.meta?.printOptions?.tabWidth,
+    useTabs: context.meta?.printOptions?.useTabs,
+    insertFinalNewLine: context.meta?.printOptions?.insertFinalNewLine ?? true,
+  });
+
+  const previous = fileContentCache.get(sourceFile.path);
+  const unchanged = previous === contents;
+  fileContentCache.set(sourceFile.path, contents);
+
+  recordFileUpdate(sourceFile.path, sourceFile.filetype, contents, unchanged);
 }
 
 type NormalizedChildren = NormalizedChild | NormalizedChildren[];

@@ -38,7 +38,7 @@ export interface DecoratorDescriptor extends MemberDescriptor {
   kind: "decorator";
 }
 
-export interface ModelDecorator<M> extends NamedTypeDescriptor<M> {
+export interface ModelDescriptor<M> extends NamedTypeDescriptor<M> {
   kind: "model";
 }
 
@@ -66,22 +66,22 @@ export interface EnumDescriptor<M> extends NamedTypeDescriptor<M> {
   kind: "enum";
 }
 
-export interface EnumVariantDescriptor extends MemberDescriptor {
-  kind: "enum-variant";
+export interface EnumMemberDescriptor extends MemberDescriptor {
+  kind: "enum-member";
 }
 
 export type Descriptor =
   | NamespaceDescriptor<any>
   | ScalarDescriptor
   | DecoratorDescriptor
-  | ModelDecorator<any>
+  | ModelDescriptor<any>
   | PropertyDescriptor
   | InterfaceDescriptor<any>
   | OperationDescriptor
   | UnionDescriptor<any>
   | UnionVariantDescriptor
   | EnumDescriptor<any>
-  | EnumVariantDescriptor;
+  | EnumMemberDescriptor;
 
 export type ResolveDescriptor<D> =
   D extends NamedTypeDescriptor<infer M> ?
@@ -197,7 +197,7 @@ function createSymbolEntry(
     case "property":
     case "operation":
     case "union-variant":
-    case "enum-variant":
+    case "enum-member":
     case "decorator":
     case "scalar":
       break;
@@ -253,7 +253,7 @@ function createSymbolFromDescriptor(
     case "operation":
     case "decorator":
     case "union-variant":
-    case "enum-variant":
+    case "enum-member":
     case "property": {
       return new TypeSpecSymbol(namekey(name), ownerSymbol.members, {
         binder,

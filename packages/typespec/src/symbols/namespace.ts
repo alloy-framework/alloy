@@ -1,6 +1,10 @@
 import { Namekey } from "@alloy-js/core";
 import { NamedTypeSymbol } from "./named-type.js";
-import { TypeSpecSymbolKind, TypeSpecSymbolOptions } from "./typespec.js";
+import {
+  TypeSpecSymbol,
+  TypeSpecSymbolKind,
+  TypeSpecSymbolOptions,
+} from "./typespec.js";
 
 export interface NamespaceSymbolOptions extends TypeSpecSymbolOptions {
   isGlobal?: boolean;
@@ -28,4 +32,10 @@ export class NamespaceSymbol extends NamedTypeSymbol {
   get members() {
     return this.memberSpaceFor("members")!;
   }
+}
+
+export function isNamespaceSymbol(
+  symbol: TypeSpecSymbol,
+): symbol is NamespaceSymbol {
+  return symbol.symbolKind === "namespace";
 }

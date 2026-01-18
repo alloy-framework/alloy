@@ -12,7 +12,9 @@ export type NamedTypeKind =
   | "union"
   | "interface"
   | "alias"
-  | "operation";
+  | "operation"
+  | "scalar"
+  | "decorator";
 
 export class NamedTypeSymbol extends TypeSpecSymbol {
   public readonly symbolKind: TypeSpecSymbolKind = "named-type";

@@ -44,6 +44,9 @@ it("makes a complex package.json", () => {
         devDependencies={{
           typescript: "^5.5.2",
         }}
+        peerDependencies={{
+          zod: "^4.1.0",
+        }}
         exports={{
           ".": "./lib/index.js",
           "./complex": {
@@ -69,6 +72,9 @@ it("makes a complex package.json", () => {
         },
         "devDependencies": {
           "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "zod": "^4.1.0"
         },
         "scripts": {
           "build": "tsc -p .",

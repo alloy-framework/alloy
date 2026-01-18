@@ -116,9 +116,7 @@ it("uses a name policy", () => {
       <Namespace name="my-namespace" />
     </TestNamespace>,
   ).toRenderTo(`
-    namespace MyNamespace {
-
-    }
+    namespace MyNamespace {}
   `);
 });
 

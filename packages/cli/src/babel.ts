@@ -10,11 +10,15 @@ import { basename, dirname, join, relative } from "pathe";
 
 export interface BuildOptions {
   sourceMaps?: boolean;
+  addSourceInfo?: boolean;
 }
 export async function buildFile(filename: string, options: BuildOptions) {
   return babel.transformFileAsync(filename, {
     sourceMaps: options.sourceMaps,
-    presets: [typescriptPreset, alloyPreset],
+    presets: [
+      typescriptPreset,
+      [alloyPreset, { addSourceInfo: options.addSourceInfo }],
+    ],
   });
 }
 

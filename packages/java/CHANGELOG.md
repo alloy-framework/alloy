@@ -1,5 +1,17 @@
 # Changelog - @alloy-js/java
 
+## 0.22.0
+
+No changes, version bump only.
+
+## 0.21.0
+
+### Features
+
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
+  takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
+
+
 ## 0.20.0
 
 ### Breaking Changes

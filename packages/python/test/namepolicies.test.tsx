@@ -34,6 +34,7 @@ it("correct formatting of Enum name and EnumMember names", () => {
   const expected = d`
     from enum import Enum
 
+
     Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW_VALUE' : 3})
   `;
   expect(result).toRenderTo(expected);

@@ -198,7 +198,7 @@ export function trace(
         fg: { r: 50, g: 50, b: 50 },
       }) +
       " " +
-      cb() +
+      untrack(cb) +
       "\n",
   );
 }

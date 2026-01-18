@@ -209,7 +209,3 @@ function kvTable(sep = "  ") {
     style: { "padding-left": 0, "padding-right": 0 },
   });
 }
-
-export function shouldDebug() {
-  return typeof process !== "undefined" && !!process.env?.ALLOY_DEBUG;
-}

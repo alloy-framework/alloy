@@ -289,6 +289,7 @@ describe("Function Declaration", () => {
     expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
       from abc import abstractmethod
 
+
       class MyClass:
           @abstractmethod
           def methoddef(self, x: int):
@@ -452,6 +453,7 @@ describe("Function Declaration", () => {
             from mod1 import Foo
             from mod2 import A
             from mod2 import B
+
 
             async def foo(x: A, y: B, *args, **kwargs) -> Foo:
                 pass

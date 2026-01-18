@@ -27,6 +27,43 @@ it("creates extends", () => {
   `);
 });
 
+it("creates implements", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration name="Foo" implements={["SomeInterface"]} />,
+  );
+
+  expect(res).toEqual(d`
+    class Foo implements SomeInterface {}
+  `);
+});
+
+it("creates implements with multiple", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration
+      name="Foo"
+      implements={["SomeInterface", "OtherInterface"]}
+    />,
+  );
+
+  expect(res).toEqual(d`
+    class Foo implements SomeInterface, OtherInterface {}
+  `);
+});
+
+it("creates implements with extends", () => {
+  const res = toSourceText(
+    <ts.ClassDeclaration
+      name="Foo"
+      extends="string"
+      implements={["SomeInterface"]}
+    />,
+  );
+
+  expect(res).toEqual(d`
+    class Foo extends string implements SomeInterface {}
+  `);
+});
+
 it("takes namekeys for all elements", () => {
   const res = toSourceText(
     <ts.ClassDeclaration name={namekey("foo")}>

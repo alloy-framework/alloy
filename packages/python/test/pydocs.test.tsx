@@ -104,11 +104,7 @@ describe("PyDocExample", () => {
         <py.PyDoc>
           <Prose>This is an example of a docstring with a code sample.</Prose>
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>
         </py.PyDoc>,
       ],
@@ -136,12 +132,14 @@ describe("SimpleCommentBlock", () => {
   it("renders simple comment block", () => {
     const res = toSourceText([
       <py.SimpleCommentBlock>
-        This is a simple comment block that spans multiple lines.
+        This is a simple comment block that spans multiple lines and should be
+        split automatically.
       </py.SimpleCommentBlock>,
     ]);
     expect(res).toRenderTo(
       d`
-          # This is a simple comment block that spans multiple lines.
+          # This is a simple comment block that spans multiple lines and should be split
+          # automatically.
           
           `,
     );
@@ -150,14 +148,13 @@ describe("SimpleCommentBlock", () => {
   it("renders comment block with line breaks", () => {
     const res = toSourceText([
       <py.SimpleCommentBlock>
-        First line of comment.
-        <br />
-        Second line of comment.
+        First line of comment.\nSecond line of comment.
       </py.SimpleCommentBlock>,
     ]);
     expect(res).toRenderTo(
       d`
-          # First line of comment. Second line of comment.
+          # First line of comment.
+          # Second line of comment.
           
           `,
     );
@@ -193,40 +190,6 @@ describe("SimpleInlineComment", () => {
     expect(res).toRenderTo(
       d`
           result = calculate()  # TODO: Add error handling here
-          `,
-    );
-  });
-});
-
-describe("SimpleInlineMemberComment", () => {
-  it("renders inline member comment", () => {
-    const res = toSourceText([
-      <>
-        status: int
-        <py.SimpleInlineMemberComment>
-          HTTP status code
-        </py.SimpleInlineMemberComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          status: int  #: HTTP status code
-          `,
-    );
-  });
-
-  it("renders inline member comment for variable declaration", () => {
-    const res = toSourceText([
-      <>
-        max_retries = 3
-        <py.SimpleInlineMemberComment>
-          Maximum number of retry attempts
-        </py.SimpleInlineMemberComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          max_retries = 3  #: Maximum number of retry attempts
           `,
     );
   });
@@ -877,9 +840,7 @@ describe("New Documentation Components", () => {
             Generators have a Yields section instead of a Returns section.
           </Prose>,
           <py.PyDocExample>
-            print([i for i in example_generator(4)])
-            <br />
-            [0, 1, 2, 3]
+            {`print([i for i in example_generator(4)])\n[0, 1, 2, 3]`}
           </py.PyDocExample>,
         ]}
         parameters={[
@@ -928,11 +889,7 @@ describe("Full example", () => {
             We will also render another paragraph after this one.
           </Prose>,
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>,
         ]}
         attributes={[
@@ -1050,11 +1007,7 @@ describe("Full example", () => {
             We will also render another paragraph after this one.
           </Prose>,
           <py.PyDocExample>
-            print("Hello world!")
-            <br />
-            x = "Hello"
-            <br />
-            print(x)
+            {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>,
         ]}
         parameters={[
@@ -1185,14 +1138,24 @@ describe("Full example", () => {
     const expected = d`
       from enum import IntEnum
 
+
       class Color(IntEnum):
           """
           An enum representing colors.
           """
 
-          RED = 1  #: The color red.
-          GREEN = 2  #: The color green.
-          BLUE = 3  #: The color blue.
+          RED = 1
+          """
+          The color red.
+          """
+          GREEN = 2
+          """
+          The color green.
+          """
+          BLUE = 3
+          """
+          The color blue.
+          """
 
 
     `;
@@ -1256,7 +1219,6 @@ describe("Full example", () => {
             * Add caching functionality
             * Improve error messages
         """
-
 
         default_timeout = 30
 
@@ -1397,23 +1359,18 @@ describe("Full example", () => {
       </py.ClassDeclaration>,
     ]);
 
-    expect(result).toRenderTo(
-      d`
-        class Person:
-            @property
-            def full_name(self) -> str:
-                """
-                The full name of the person, combining first and last name. This
-                property automatically formats the name with proper capitalization.
-                """
-                return "John Doe"
-
-
-
-
-
-        `,
-    );
+    expect(result).toRenderTo(`
+      class Person:
+          @property
+          def full_name(self) -> str:
+              """
+              The full name of the person, combining first and last name. This
+              property automatically formats the name with proper capitalization.
+              """
+              return "John Doe"
+      
+      
+    `);
   });
 
   it("MethodDoc with FunctionDeclaration (inside class) integration", () => {

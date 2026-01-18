@@ -1,5 +1,40 @@
 # Changelog - @alloy-js/core
 
+## 0.22.0
+
+### Bug Fixes
+
+- [#327](https://github.com/alloy-framework/alloy/pull/327) Fix a bug where tracing would track additional signals.
+
+### Features
+
+- [#339](https://github.com/alloy-framework/alloy/pull/339) Add `sourceFilesForTreeAsync` API for getting source files from a rendered text tree when async jobs are present."
+- [#328](https://github.com/alloy-framework/alloy/pull/328) Add a `createContentSlot` API which returns a component which can be used to detect whether content is added inside it. This can be used to conditionally render fallback content or properly format empty components.
+- [#328](https://github.com/alloy-framework/alloy/pull/328) List, For, and their wrapper components now handle when an element has no content. Show can now be used to conditionally render an item in a list, for example.
+
+
+## 0.21.0
+
+### Bug Fixes
+
+- [#315](https://github.com/alloy-framework/alloy/pull/315) Fix For component and mapJoin with sets.
+- [#315](https://github.com/alloy-framework/alloy/pull/315) Fix immediately recursive reactives.
+- [#315](https://github.com/alloy-framework/alloy/pull/315) toRefkey is now untracked, preventing unintended effect triggering.
+- [#314](https://github.com/alloy-framework/alloy/pull/314) Fix broken testing exports
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+
+### Features
+
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added a new type of Refkey: Refkeyable. Refkeyables are objects which implement the REFKEYABLE symbol method to return a Refkey. Refkeyables are accepted in many places. When a Refkey is needed, the `toRefkey` function can be used.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) `memberRefkey` can now take a string for member names. It will look up a member with that name.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Add LibrarySymbolReference, a special kind of refkeyable object that supports lazy initialization of library symbols.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added OutputSymbol#lazyMemberInitializer, which can be used to delay initialization of a symbol's members until they are needed.
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Added OutputSymbol#resolveMemberByName, which can be used to find a member by name. By default it will look in all member spaces, but subtypes can implement their own behavior.
+- [#310](https://github.com/alloy-framework/alloy/pull/310) Add a general TestWrapper factory and TS specific factory
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Name policy's element can now be undefined, which leaves the name as-is.
+- [#245](https://github.com/alloy-framework/alloy/pull/245) Adds a new type of Alloy child, CustomChildElement, that is based on the presence of a symbol property.
+
+
 ## 0.20.0
 
 ### Bug Fixes

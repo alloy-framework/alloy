@@ -108,6 +108,7 @@ describe("Python Class", () => {
     const mod2Expected = d`
       from mod1 import A
 
+
       class B(A):
           pass
 
@@ -115,6 +116,7 @@ describe("Python Class", () => {
     `;
     const mod3Expected = d`
       from folder.mod2 import B
+
 
       class C(B):
           pass

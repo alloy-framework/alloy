@@ -170,6 +170,7 @@ describe("PropertyDeclaration", () => {
     expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
       from abc import abstractmethod
 
+
       class MyClass:
           @property
           @abstractmethod

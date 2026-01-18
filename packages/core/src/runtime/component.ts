@@ -51,6 +51,12 @@ export type Child =
 export type Children = Child | Children[];
 export type Props = Record<string, any>;
 
+export interface SourceLocation {
+  fileName: string;
+  lineNumber: number;
+  columnNumber: number;
+}
+
 export interface ComponentDefinition<TProps = Props> {
   (props: TProps): Children;
 }
@@ -64,6 +70,7 @@ export interface ComponentCreator<TProps = Props> {
   (): Children;
   props: TProps;
   tag?: symbol;
+  source?: SourceLocation;
 }
 
 export function isComponentCreator<TProps = any>(
@@ -79,12 +86,16 @@ export function isComponentCreator<TProps = any>(
 export function createComponent<TProps extends Props = Props>(
   C: Component<TProps>,
   props: TProps,
+  source?: SourceLocation,
 ): ComponentCreator<TProps> {
   const creator: ComponentCreator<TProps> = () => /* */ C(props);
   creator.props = props;
   creator.component = C;
   if (C.tag) {
     creator.tag = C.tag;
+  }
+  if (source) {
+    creator.source = source;
   }
 
   return creator;

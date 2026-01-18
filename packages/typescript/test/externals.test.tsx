@@ -1,4 +1,4 @@
-import { Output } from "@alloy-js/core";
+import { Output, render } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { fs } from "../src/builtins/node.js";
 import {
@@ -186,4 +186,153 @@ it("can import static members", () => {
       }
     `,
   });
+});
+
+it("can specify packages as dev dependencies", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packages={[[testLib, { version: "2.0.0", kind: "devDependencies" }]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2",
+          "testLib": "2.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});
+
+it("can specify packages as peer dependencies", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packages={[[testLib, { version: "2.0.0", kind: "peerDependencies" }]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "testLib": "2.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});
+
+it("can inherit package version as peer dependency", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(
+    <Output externals={[testLib, fs]}>
+      <PackageDirectory
+        path="."
+        name="test"
+        version="1.0.0"
+        packages={[[testLib, { kind: "peerDependencies" }]]}
+      >
+        <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+      </PackageDirectory>
+    </Output>,
+  ).toRenderTo({
+    "package.json": `
+      {
+        "name": "test",
+        "version": "1.0.0",
+        "type": "module",
+        "devDependencies": {
+          "typescript": "^5.5.2"
+        },
+        "peerDependencies": {
+          "testLib": "1.0.0"
+        }
+      }
+    `,
+    "tsconfig.json": expect.anything(),
+    "index.ts": expect.anything(),
+  });
+});
+
+it("must throw an error if package configuration is not provided", () => {
+  const testLib = createPackage({
+    name: "testLib",
+    version: "1.0.0",
+    descriptor: {
+      ".": {
+        named: ["foo"],
+      },
+    },
+  });
+
+  expect(() =>
+    render(
+      <Output externals={[testLib, fs]}>
+        <PackageDirectory
+          path="."
+          name="test"
+          version="1.0.0"
+          // @ts-expect-error explicitly testing missing package config.
+          packages={[[testLib]]}
+        >
+          <SourceFile path="index.ts">{testLib.foo};</SourceFile>
+        </PackageDirectory>
+      </Output>,
+    ),
+  ).toThrowError("Package configuration must be provided");
 });

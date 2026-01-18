@@ -1,6 +1,7 @@
 import {
   Block,
   Children,
+  For,
   MemberDeclaration,
   Name,
   Namekey,
@@ -28,6 +29,7 @@ import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface ClassDeclarationProps extends CommonDeclarationProps {
   extends?: Children;
+  implements?: Children[];
 }
 
 /**
@@ -65,6 +67,15 @@ export interface ClassDeclarationProps extends CommonDeclarationProps {
  */
 export function ClassDeclaration(props: ClassDeclarationProps) {
   const extendsPart = props.extends && <> extends {props.extends}</>;
+  const implementsPart = props.implements && props.implements.length > 0 && (
+    <>
+      {" "}
+      implements{" "}
+      <For each={props.implements} comma space>
+        {(implement) => implement}
+      </For>
+    </>
+  );
   const sym = createTypeAndValueSymbol(props.name, {
     refkeys: props.refkey,
     export: props.export,
@@ -83,7 +94,8 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
       <Declaration symbol={sym} export={props.export} default={props.default}>
         <MemberScope ownerSymbol={sym}>
           class <Name />
-          {extendsPart} <Block>{props.children}</Block>
+          {extendsPart}
+          {implementsPart} <Block>{props.children}</Block>
         </MemberScope>
       </Declaration>
     </>

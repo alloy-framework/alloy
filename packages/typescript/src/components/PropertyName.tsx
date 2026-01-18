@@ -1,4 +1,4 @@
-import { MemberDeclarationContext, useContext } from "@alloy-js/core";
+import { MemberDeclarationContext, memo, useContext } from "@alloy-js/core";
 import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { isValidJSIdentifier } from "../utils.js";
 
@@ -23,10 +23,12 @@ export interface PropertyNameProps {
  */
 export function PropertyName(props: PropertyNameProps) {
   if (props.name) {
-    if (props.private) {
-      return "#" + props.name;
-    }
-    return quoteIfNeeded(props.name);
+    return memo(() => {
+      if (props.private) {
+        return "#" + props.name;
+      }
+      return quoteIfNeeded(props.name!);
+    });
   } else {
     const declSymbol = useContext(MemberDeclarationContext) as TSOutputSymbol;
     if (!declSymbol) {

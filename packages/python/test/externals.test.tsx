@@ -94,6 +94,7 @@ it("uses import from external library in multiple functions", () => {
     from requests import post
     from requests.models import Response
 
+
     def get_user(user_id: int) -> Response:
         response = get(1)
         return response.json()
@@ -169,6 +170,7 @@ it("uses import from external library in multiple class methods", () => {
     from requests import get
     from requests import post
     from requests.models import Response
+
 
     class UserClient:
         some_var = 12

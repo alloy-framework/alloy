@@ -4,8 +4,10 @@ import {
   computed,
   emitSymbol,
   For,
+  isNamekey,
   Match,
   moveTakenMembersTo,
+  Namekey,
   Refkey,
   Switch,
   takeSymbols,
@@ -83,7 +85,7 @@ export function ObjectExpression(props: ObjectExpressionProps) {
 }
 
 export interface ObjectPropertyProps {
-  name?: string;
+  name?: string | Namekey;
   nameExpression?: Children;
   value?: Children;
   jsValue?: unknown;
@@ -92,22 +94,12 @@ export interface ObjectPropertyProps {
 }
 
 export function ObjectProperty(props: ObjectPropertyProps) {
-  let name;
-  let symbolName = props.name;
-  if (props.name) {
-    const namer = useTSNamePolicy();
-    symbolName = namer.getName(props.name, "object-member-data");
-    name = <PropertyName name={symbolName} />;
-  } else if (props.nameExpression) {
-    name = <>[{props.nameExpression}]</>;
-  } else {
-    throw new Error("ObjectProperty either a name or a nameExpression.");
-  }
-
   let sym = undefined;
-  if (props.refkey && props.name) {
-    sym = createStaticMemberSymbol(symbolName!, {
+
+  if (isNamekey(props.name) || (props.refkey && props.name)) {
+    sym = createStaticMemberSymbol(props.name, {
       refkeys: props.refkey,
+      namePolicy: useTSNamePolicy().for("object-member-data"),
     });
 
     moveTakenMembersTo(sym);
@@ -115,6 +107,18 @@ export function ObjectProperty(props: ObjectPropertyProps) {
   } else {
     // noop
     takeSymbols();
+  }
+
+  let name: Children;
+  if (sym) {
+    name = <PropertyName name={sym.name} />;
+  } else if (props.name) {
+    // can't be a namekey if we get here
+    name = <PropertyName name={props.name as string} />;
+  } else if (props.nameExpression) {
+    name = <>[{props.nameExpression}]</>;
+  } else {
+    throw new Error("ObjectProperty either a name or a nameExpression.");
   }
 
   let value;

@@ -2,7 +2,13 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
-import { onCleanup, printTree, reactive, renderTree } from "../../src/index.js";
+import {
+  onCleanup,
+  printTree,
+  reactive,
+  ref,
+  renderTree,
+} from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
 
 it("works", () => {
@@ -154,7 +160,13 @@ it("doesn't rerender mappers with maps", () => {
 it("doesn't rerender mappers (with splice)", () => {
   const messages = reactive(["hi", "maybe", "bye"]);
   let count = 0;
-  const template = <For each={messages}>{(msg) => <>item {count++}</>}</For>;
+  const template = (
+    <For each={messages}>
+      {(msg) => {
+        return <>item {count++}</>;
+      }}
+    </For>
+  );
   const tree = renderTree(template);
   expect(count).toBe(3);
   messages.splice(1, 1);
@@ -238,4 +250,33 @@ it("cleans up things which end up removed (with splice)", () => {
     Letter a
     Letter c
   `);
+});
+
+it("doesn't render empty content", () => {
+  const items = [1, 2, 3];
+  const tree = renderTree(
+    <For each={items}>{(item) => (item > 2 ? item : null)}</For>,
+  );
+  expect(printTree(tree)).toBe(`3`);
+});
+
+it("updates joiners appropriately when items get/lose content", () => {
+  const items = [
+    { content: ref("") },
+    { content: ref("") },
+    { content: ref("hello") },
+  ];
+
+  const tree = renderTree(
+    <For each={items} joiner=", ">
+      {(item) => {
+        return item.content;
+      }}
+    </For>,
+  );
+
+  expect(printTree(tree)).toBe(`hello`);
+  items[1].content.value = "hi";
+  flushJobs();
+  expect(printTree(tree)).toBe(`hi, hello`);
 });

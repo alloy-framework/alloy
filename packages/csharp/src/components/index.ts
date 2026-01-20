@@ -23,6 +23,7 @@ export * from "./parameters/parameters.jsx";
 export * from "./property/property.jsx";
 export * from "./record/declaration.js";
 export * from "./Reference.js";
+export * from "./region/region.jsx";
 export * from "./source-file/source-file.jsx";
 export * from "./struct/declaration.jsx";
 export type { TypeParameterProps } from "./type-parameters/type-parameter.jsx";

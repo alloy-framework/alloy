@@ -1,9 +1,8 @@
-import { isRef } from "@vue/reactivity";
+import { isRef, ref } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
-import { shouldDebug } from "./debug.js";
 import {
   Context,
   CustomContext,
@@ -15,13 +14,12 @@ import {
   untrack,
 } from "./reactivity.js";
 import { isRefkeyable, toRefkey } from "./refkey.js";
+import { popStack, printRenderStack, pushStack } from "./render-stack.js";
 import {
   Child,
   Children,
-  Component,
   isComponentCreator,
   isRenderableObject,
-  Props,
   RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
@@ -186,6 +184,12 @@ export function isPrintHook(type: unknown): type is PrintHook {
 
 export type RenderedTextTree = (string | RenderedTextTree | PrintHook)[];
 
+/**
+ * Render a component tree to source directories and files. Will ensure that
+ * all non-async scheduled jobs are completed before returning. If async jobs
+ * are found, an error will be thrown. Use `renderAsync` when asynchronous
+ * jobs are expected.
+ */
 export function render(
   children: Children,
   options?: PrintTreeOptions,
@@ -195,15 +199,37 @@ export function render(
   return sourceFilesForTree(tree, options);
 }
 
+/**
+ * Render a component tree to source directories and files. Will ensure that all
+ * scheduled jobs are completed before returning.
+ */
 export async function renderAsync(
   children: Children,
   options?: PrintTreeOptions,
 ): Promise<OutputDirectory> {
   const tree = renderTree(children);
+  return sourceFilesForTreeAsync(tree, options);
+}
+
+/**
+ * Convert a rendered text tree to source directories and files. Will ensure that
+ * all scheduled jobs are completed, including async ones.
+ */
+export async function sourceFilesForTreeAsync(
+  tree: RenderedTextTree,
+  options?: PrintTreeOptions,
+) {
+  // if we await here, we ensure all reactive updates are flushed.
+  // sourceFilesForTree will flush again, but won't find anything, because tree
+  // printing won't schedule anything.
   await flushJobsAsync();
   return sourceFilesForTree(tree, options);
 }
 
+/**
+ * Convert a rendered text tree to source directories and files. Will ensure
+ * that all scheduled jobs are completed before returning.
+ */
 export function sourceFilesForTree(
   tree: RenderedTextTree,
   options?: PrintTreeOptions,
@@ -332,11 +358,74 @@ function renderWorker(node: RenderedTextTree, children: Children) {
   }
 }
 
+function contentAdded() {
+  const context: Context = getContext()!;
+  context.childrenWithContent++;
+}
+
+export function notifyContentState() {
+  untrack(() => {
+    const startContext = getContext()!;
+
+    if (startContext.childrenWithContent === 0) {
+      if (startContext.isEmpty!.value === true) {
+        // it was already empty, no work to do.
+        return;
+      }
+
+      if (startContext.isEmpty) {
+        startContext.isEmpty.value = true;
+      }
+
+      // otherwise we need to decrement the content counts up the tree.
+      let current = startContext.owner;
+      while (current) {
+        if (current.childrenWithContent === 0) {
+          break;
+        }
+        current.childrenWithContent--;
+        if (current.isEmpty) {
+          current.isEmpty.value = true;
+        }
+        current = current.owner;
+      }
+    } else {
+      if (startContext.isEmpty!.value === false) {
+        // it was already non-empty, no work to do.
+        return;
+      }
+
+      if (startContext.isEmpty && startContext.isEmpty.value) {
+        startContext.isEmpty.value = false;
+      }
+
+      // otherwise we need to increment the content counts up the tree.
+      let current = startContext.owner;
+      while (current) {
+        current.childrenWithContent++;
+        if (current.childrenWithContent > 1) {
+          // This isn't the first content so we have no work to do
+          break;
+        }
+
+        if (current.isEmpty && current.isEmpty.value) {
+          current.isEmpty.value = false;
+        }
+
+        current = current.owner;
+      }
+    }
+  });
+}
+
 function appendChild(node: RenderedTextTree, rawChild: Child) {
   trace(TracePhase.render.appendChild, () => debugPrintChild(rawChild));
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
+    if (child !== "") {
+      contentAdded();
+    }
     node.push(child);
   } else {
     const cache = getElementCache();
@@ -358,6 +447,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         renderWorker(newNode, children);
         node.push(newNode);
         cache.set(child, newNode);
+        notifyContentState();
       });
     } else if (isIntrinsicElement(child)) {
       trace(
@@ -488,17 +578,25 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           () => "Component: " + debugPrintChild(child),
         );
         const context = getContext();
+        context!.childrenWithContent = 0;
+        context!.isEmpty ??= ref(true);
+
         if (context) context.componentOwner = child;
         const componentRoot: RenderedTextTree = [];
-        pushStack(child.component, child.props);
+
+        pushStack(child.component, child.props, child.source);
         renderWorker(componentRoot, untrack(child));
         popStack();
         node.push(componentRoot);
         cache.set(child, componentRoot);
-
+        notifyContentState();
         trace(
           TracePhase.render.appendChild,
-          () => "Component done: " + debugPrintChild(child),
+          () =>
+            "Component done: " +
+            debugPrintChild(child) +
+            ", empty: " +
+            context!.isEmpty!.value,
         );
       });
     } else if (typeof child === "function") {
@@ -510,10 +608,16 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         while (typeof res === "function" && !isComponentCreator(res)) {
           res = res();
         }
+        const context = getContext();
+        context!.childrenWithContent = 0;
+        context!.isEmpty ??= ref(true);
+
         const newNodes: RenderedTextTree = [];
         renderWorker(newNodes, res);
         node[index] = newNodes;
         cache.set(child, newNodes);
+
+        notifyContentState();
         return newNodes;
       });
     } else {
@@ -618,6 +722,10 @@ const defaultPrintTreeOptions: PrintTreeOptions = {
   tabWidth: 2,
 };
 
+/**
+ * Convert a rendered text tree to a string. Will ensure that the scheduler is
+ * empty before printing.
+ */
 export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
   options = {
     ...defaultPrintTreeOptions,
@@ -658,58 +766,4 @@ function printTreeWorker(tree: RenderedTextTree): Doc {
   }
 
   return doc;
-}
-// debugging utilities
-const renderStack: {
-  component: Component<any>;
-  props: Props;
-}[] = [];
-
-export function pushStack(component: Component<any>, props: Props) {
-  if (!shouldDebug()) return;
-  renderStack.push({ component, props });
-}
-
-export function popStack() {
-  if (!shouldDebug()) return;
-  renderStack.pop();
-}
-
-export function printRenderStack() {
-  if (!shouldDebug()) return;
-
-  // eslint-disable-next-line no-console
-  console.error("Error rendering:");
-  for (let i = renderStack.length - 1; i >= 0; i--) {
-    const { component, props } = renderStack[i];
-    // eslint-disable-next-line no-console
-    console.error(`    at ${component.name}(${inspectProps(props)})`);
-  }
-}
-
-function inspectProps(props: Props) {
-  return JSON.stringify(
-    Object.fromEntries(
-      Object.entries(props).map(([key, value]) => {
-        let safeValue;
-        switch (typeof value) {
-          case "string":
-          case "number":
-          case "boolean":
-            safeValue = value;
-            break;
-          case "undefined":
-            safeValue = "undefined";
-            break;
-          case "object":
-            safeValue = value ? "{...}" : null;
-            break;
-          case "function":
-            safeValue = "function";
-            break;
-        }
-        return [key, safeValue];
-      }),
-    ),
-  );
 }

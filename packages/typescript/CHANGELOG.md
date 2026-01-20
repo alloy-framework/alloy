@@ -1,5 +1,45 @@
 # Changelog - @alloy-js/typescript
 
+## 0.22.0
+
+### Bug Fixes
+
+- [#335](https://github.com/alloy-framework/alloy/pull/335) Add implements support for Typescript classes
+
+### Features
+
+- [#337](https://github.com/alloy-framework/alloy/pull/337) Add `await` prop to MemberExpression.Part to allow awaiting the value of that part.
+- [#327](https://github.com/alloy-framework/alloy/pull/327) Introduce `decl`, `declType`, and `declMember` functions to declare a symbol given a namekey and return the new symbol name. Allows avoiding the use of declaration components if desired.
+- [#343](https://github.com/alloy-framework/alloy/pull/343) Adding `peerDependencies` property to `PackageJson` component.
+- [#347](https://github.com/alloy-framework/alloy/pull/347) The PackageDirectory component can now specify what kind of dependency to create for package dependencies added by reference using the `packageDependencyKinds` prop.
+- [#347](https://github.com/alloy-framework/alloy/pull/347) The PackageDirectory component can now specify what version of a dependency to create for package dependencies added by reference using the `packageVersions` prop.
+
+
+## 0.21.0
+
+### Bug Fixes
+
+- [#295](https://github.com/alloy-framework/alloy/pull/295) Fix rendering of variable declarations that are default exports.
+- [#322](https://github.com/alloy-framework/alloy/pull/322) Fix function return types not being in type context.
+- [#314](https://github.com/alloy-framework/alloy/pull/314) Fix broken testing exports
+- [#282](https://github.com/alloy-framework/alloy/pull/282) `<Unresolved symbol>` include the refkey information for easier debugging
+- [#321](https://github.com/alloy-framework/alloy/pull/321) The PropertyName component properly handles reactive values for its name prop.
+- [#311](https://github.com/alloy-framework/alloy/pull/311) Fix additional comma when adding children to an ObjectExpression with a jsValue.
+- [#311](https://github.com/alloy-framework/alloy/pull/311) Fix rendering of variable declaration when no initializer is provided.
+
+### Features
+
+- [#310](https://github.com/alloy-framework/alloy/pull/310) Add a general TestWrapper factory and TS specific factory
+- [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
+  takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
+- [#321](https://github.com/alloy-framework/alloy/pull/321) The ObjectProperty component now accepts namekeys.
+
+### Breaking Changes
+
+- [#284](https://github.com/alloy-framework/alloy/pull/284) BaseDeclarationProps has been renamed to CommonDeclarationProps and no longer allows passing a symbol. The props for the `<Declaration>` component have been split into `WithInfo` and `WithSymbol` variants with required name and symbol info respectively.
+- [#284](https://github.com/alloy-framework/alloy/pull/284) `MemberDeclarationProps` is now a union of `WithInfo` and `WithSymbol` variants with required name and symbol metadata respectively.
+
+
 ## 0.20.0
 
 ### Breaking Changes

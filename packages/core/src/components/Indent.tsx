@@ -1,3 +1,4 @@
+import { computed } from "@vue/reactivity";
 import type { Children } from "../runtime/component.js";
 
 export interface IndentProps {
@@ -40,12 +41,13 @@ export interface IndentProps {
  * break suitable for typical blocks of statements but can be configured.
  */
 export function Indent(props: IndentProps) {
-  const breakElem =
+  const breakElem = computed(() =>
     props.nobreak ? ""
     : props.hardline ? <hbr />
     : props.softline ? <sbr />
     : props.line ? <br />
-    : <hbr />;
+    : <hbr />,
+  );
 
   return (
     <>

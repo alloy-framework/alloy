@@ -25,6 +25,7 @@ export {
 export * from "./binder.js";
 export * from "./code.js";
 export * from "./components/index.js";
+export * from "./content-slot.js";
 export * from "./context.js";
 export * from "./context/index.js";
 export * from "./library-symbol-reference.js";

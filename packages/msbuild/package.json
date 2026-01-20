@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/msbuild",
-  "version": "0.20.0",
+  "version": "0.22.0",
   "description": "Alloy components for msbuild files.",
   "exports": {
     "./components": {

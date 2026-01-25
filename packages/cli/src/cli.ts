@@ -101,7 +101,10 @@ function watchMain() {
           .map((x) => x.fileName),
         opts.rootDir,
         opts.outDir,
-        { addSourceInfo },
+        {
+          sourceMaps: opts.options.sourceMap,
+          addSourceInfo,
+        },
       );
     } catch (e) {
       // eslint-disable-next-line no-console

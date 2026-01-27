@@ -36,7 +36,7 @@ export interface SourceFileProps extends CSharpFormatOptions {
    */
   using?: string[];
   /** Optional doc comment for the source file */
-  docComment?: string;
+  docComment?: Children;
 }
 
 /** A C# source file exists within the context of a namespace contains using statements and declarations */

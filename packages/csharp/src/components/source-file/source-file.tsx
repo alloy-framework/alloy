@@ -72,9 +72,9 @@ export function SourceFile(props: SourceFileProps) {
       <Scope value={sourceFileScope}>
         {props.docComment && (
           <>
-            <DocComment>
-              {props.docComment.split("\n").map((line) => line.trimEnd())}
-            </DocComment>
+            <DocComment>{props.docComment}</DocComment>
+            <hbr />
+            <hbr />
           </>
         )}
         {(sourceFileScope.usings.size > 0 ||

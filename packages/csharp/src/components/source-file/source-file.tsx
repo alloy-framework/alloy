@@ -1,3 +1,4 @@
+import { DocComment } from "#components/doc/comment.jsx";
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
 import { NamespaceName } from "#components/namespace/namespace-name.jsx";
 import { Reference } from "#components/Reference.jsx";
@@ -34,6 +35,8 @@ export interface SourceFileProps extends CSharpFormatOptions {
    * explicit usings is not necessary when referencing symbols via refkeys.
    */
   using?: string[];
+  /** Optional doc comment for the source file */
+  docComment?: string;
 }
 
 /** A C# source file exists within the context of a namespace contains using statements and declarations */
@@ -67,6 +70,13 @@ export function SourceFile(props: SourceFileProps) {
       {...opts}
     >
       <Scope value={sourceFileScope}>
+        {props.docComment && (
+          <>
+            <DocComment>
+              {props.docComment.split("\n").map((line) => line.trimEnd())}
+            </DocComment>
+          </>
+        )}
         {(sourceFileScope.usings.size > 0 ||
           (props.using && props.using.length > 0)) && (
           <>

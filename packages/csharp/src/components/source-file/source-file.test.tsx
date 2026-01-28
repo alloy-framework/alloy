@@ -106,7 +106,11 @@ describe("format options", () => {
   it("respect docComment and using (and docComment before using)", () => {
     expect(
       <Output>
-        <SourceFile path="Test1.cs" docComment={"This is a file comment"}>
+        <SourceFile
+          path="Test1.cs"
+          headerComment={"This is a file comment"}
+          header={<Prose>// ---------Some Fake Heder-----------</Prose>}
+        >
           <List>
             <Attribute name={Serialization.JsonConverterAttribute} />
             <ClassDeclaration public name="TestClass1" />
@@ -115,6 +119,7 @@ describe("format options", () => {
       </Output>,
     ).toRenderTo(`
       /// This is a file comment
+      // ---------Some Fake Heder-----------
 
       using System.Text.Json.Serialization;
       

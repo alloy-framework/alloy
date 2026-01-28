@@ -1,6 +1,15 @@
+import { Attribute } from "#components/attributes/attributes.jsx";
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Namespace } from "#components/namespace/namespace.jsx";
-import { Children, FormatOptions, Indent, Output, Prose } from "@alloy-js/core";
+import {
+  Children,
+  FormatOptions,
+  Indent,
+  List,
+  Output,
+  Prose,
+} from "@alloy-js/core";
+import { Serialization } from "@alloy-js/csharp/global/System/Text/Json";
 import { describe, expect, it } from "vitest";
 import { CSharpFormatOptions } from "../../contexts/format-options.js";
 import { SourceFile } from "./source-file.jsx";
@@ -91,6 +100,26 @@ describe("format options", () => {
     ).toRenderTo(`
       hello
          indented 3 spaces
+    `);
+  });
+
+  it("respect docComment and using (and docComment before using)", () => {
+    expect(
+      <Output>
+        <SourceFile path="Test1.cs" docComment={"This is a file comment"}>
+          <List>
+            <Attribute name={Serialization.JsonConverterAttribute} />
+            <ClassDeclaration public name="TestClass1" />
+          </List>
+        </SourceFile>
+      </Output>,
+    ).toRenderTo(`
+      /// This is a file comment
+
+      using System.Text.Json.Serialization;
+      
+      [JsonConverter]
+      public class TestClass1;
     `);
   });
 });

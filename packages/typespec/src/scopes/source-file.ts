@@ -4,7 +4,7 @@ import {
   shallowReactive,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/index.js";
-import { DirectoryScope } from "./directory.js";
+import { SourceDirectoryScope } from "./source-directory.js";
 
 export interface SourceFileScopeOptions extends OutputScopeOptions {}
 
@@ -13,18 +13,14 @@ export class SourceFileScope extends OutputScope {
 
   constructor(
     name: string,
-    parent: DirectoryScope,
+    // parent: SourceDirectoryScope,
     options?: SourceFileScopeOptions,
   ) {
-    super(name, parent, options);
+    super(name, undefined, options);
   }
 
   get usings() {
     return this.#using;
-  }
-
-  get parent(): DirectoryScope {
-    return super.parent! as DirectoryScope;
   }
 
   addUsing(using: NamespaceSymbol) {

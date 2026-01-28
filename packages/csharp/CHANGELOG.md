@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.23.0
+
+### Features
+
+- [#354](https://github.com/alloy-framework/alloy/pull/354) Support add doc comment at the beginning of csharp src file
+
+
 ## 0.22.0
 
 ### Bug Fixes

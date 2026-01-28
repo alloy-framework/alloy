@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.23.0
+
+### Features
+
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Print richer stack traces when rendering fails.
+
+
 ## 0.22.0
 
 ### Bug Fixes

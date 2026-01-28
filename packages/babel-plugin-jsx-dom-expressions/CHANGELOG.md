@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-plugin-jsx-dom-expressions
 
+## 0.40.0
+
+### Features
+
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Emit source location information for components in dev builds.
+
+
 ## 0.39.1
 
 ### Bug Fixes

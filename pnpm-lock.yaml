@@ -542,6 +542,9 @@ importers:
       vite:
         specifier: npm:rolldown-vite@7.2.5
         version: rolldown-vite@7.2.5(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite-plugin-singlefile:
+        specifier: ^2.3.0
+        version: 2.3.0(rolldown-vite@7.2.5(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0))(rollup@4.46.2)
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -6002,6 +6005,13 @@ packages:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
+
+  vite-plugin-singlefile@2.3.0:
+    resolution: {integrity: sha512-DAcHzYypM0CasNLSz/WG0VdKOCxGHErfrjOoyIPiNxTPTGmO6rRD/te93n1YL/s+miXq66ipF1brMBikf99c6A==}
+    engines: {node: '>18.0.0'}
+    peerDependencies:
+      rollup: ^4.44.1
+      vite: ^5.4.11 || ^6.0.0 || ^7.0.0
 
   vitefu@1.1.1:
     resolution: {integrity: sha512-B/Fegf3i8zh0yFbpzZ21amWzHmuNlLlmJT6n7bu5e+pCHUKQIfXSYokrqOBGEMMe9UG2sostKQF9mml/vYaWJQ==}
@@ -12021,6 +12031,12 @@ snapshots:
       - terser
       - tsx
       - yaml
+
+  vite-plugin-singlefile@2.3.0(rolldown-vite@7.2.5(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0))(rollup@4.46.2):
+    dependencies:
+      micromatch: 4.0.8
+      rollup: 4.46.2
+      vite: rolldown-vite@7.2.5(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0)
 
   vitefu@1.1.1(rolldown-vite@7.2.5(@types/node@24.10.9)(esbuild@0.25.8)(jiti@2.6.1)(tsx@4.20.3)(yaml@2.8.0)):
     optionalDependencies:

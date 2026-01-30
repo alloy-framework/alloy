@@ -1,4 +1,9 @@
 import { readFileSync } from "node:fs";
+import {
+  createServer as createHttpServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from "node:http";
 
 export interface DevtoolsMessage {
   type: string;
@@ -17,6 +22,7 @@ export interface DevtoolsServerInfo {
 
 interface DevtoolsServerState extends DevtoolsServerInfo {
   clients: Set<any>;
+  httpServer: ReturnType<typeof createHttpServer>;
   close(): Promise<void>;
   ready: Promise<void>;
 }
@@ -27,6 +33,8 @@ const messageHandlers = new Set<(message: DevtoolsIncomingMessage) => void>();
 let cachedAlloyVersion: string | null = null;
 let devtoolsExplicitlyEnabled = false;
 let devtoolsInitialized = false;
+let loggedDevtoolsLinks = false;
+let waitingForConnection = false;
 
 function getCwd() {
   if (!isNodeEnvironment()) return undefined;
@@ -77,15 +85,49 @@ let configuredPort: number | undefined;
 async function createServer(): Promise<DevtoolsServerState> {
   const { WebSocketServer } = await import("ws");
 
+  const devtoolsUiCandidates = [
+    new URL("../../dist/devtools/index.html", import.meta.url),
+    new URL("../../devtools/index.html", import.meta.url),
+    new URL("../../../devtools/dist/index.html", import.meta.url),
+  ];
+  let devtoolsUiHtml: string | null = null;
+  for (const candidate of devtoolsUiCandidates) {
+    try {
+      devtoolsUiHtml = readFileSync(candidate, "utf-8");
+      break;
+    } catch {
+      devtoolsUiHtml = null;
+    }
+  }
+
   const port = configuredPort ?? resolveDebugPort();
-  const wss = new WebSocketServer({ port });
+  const httpServer = createHttpServer(
+    (req: IncomingMessage, res: ServerResponse) => {
+      const url = req.url ?? "/";
+      if (url !== "/" && url !== "/index.html") {
+        res.statusCode = 404;
+        res.end("Not Found");
+        return;
+      }
+      if (!devtoolsUiHtml) {
+        res.statusCode = 404;
+        res.end("Not Found");
+        return;
+      }
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.end(devtoolsUiHtml);
+    },
+  );
+  const wss = new WebSocketServer({ server: httpServer });
 
   await new Promise<void>((resolve, reject) => {
-    wss.once("listening", resolve);
-    wss.once("error", reject);
+    httpServer.once("listening", resolve);
+    httpServer.once("error", reject);
+    httpServer.listen(port);
   });
 
-  const address = wss.address();
+  const address = httpServer.address();
   const actualPort =
     typeof address === "object" && address !== null ? address.port : port;
 
@@ -99,13 +141,29 @@ async function createServer(): Promise<DevtoolsServerState> {
     port: actualPort,
     connected: false,
     clients,
+    httpServer,
     ready,
     close: async () => {
       await new Promise<void>((resolve) => wss.close(() => resolve()));
+      await new Promise<void>((resolve) => httpServer.close(() => resolve()));
       clients.clear();
       state.connected = false;
     },
   };
+  if (!loggedDevtoolsLinks) {
+    loggedDevtoolsLinks = true;
+    // eslint-disable-next-line no-console
+    console.log(`Alloy ${getAlloyVersion()}`);
+    // eslint-disable-next-line no-console
+    console.log(`➜ Debug UI: http://localhost:${state.port}/`);
+    // eslint-disable-next-line no-console
+    console.log(`➜ Websocket: ws://localhost:${state.port}/`);
+    // eslint-disable-next-line no-console
+    console.log("");
+    waitingForConnection = true;
+    // eslint-disable-next-line no-console
+    process.stdout.write("Waiting for connection...");
+  }
 
   wss.on("connection", (socket) => {
     // Only accept the first connection, reject subsequent ones
@@ -117,8 +175,11 @@ async function createServer(): Promise<DevtoolsServerState> {
     clients.add(socket);
     state.connected = true;
     resolveReady?.();
-    // eslint-disable-next-line no-console
-    console.log(`Devtools client connected on ws://127.0.0.1:${state.port}.`);
+    if (waitingForConnection) {
+      waitingForConnection = false;
+      // eslint-disable-next-line no-console
+      process.stdout.write(" Connected!\n");
+    }
 
     socket.send(
       JSON.stringify({
@@ -179,10 +240,6 @@ export async function waitForDevtoolsConnection(): Promise<void> {
   devtoolsExplicitlyEnabled = true;
   const server = await ensureDevtoolsServer();
   if (server.connected) return;
-  // eslint-disable-next-line no-console
-  console.log(
-    `Waiting for devtools client on ws://127.0.0.1:${server.port} (set VITE_ALLOY_DEBUG_PORT to match).`,
-  );
   await server.ready;
 }
 
@@ -194,7 +251,7 @@ export interface EnableDevtoolsOptions {
 /**
  * Enable devtools and start the server, returning when the server is ready.
  * Use this in tests to enable devtools before connecting a client.
- * 
+ *
  * @param options - Configuration options
  * @returns Server info with port number
  */
@@ -221,11 +278,59 @@ export async function initDevtoolsIfEnabled(): Promise<void> {
   await waitForDevtoolsConnection();
 }
 
+// Message batching for performance
+const MESSAGE_BATCH_INTERVAL = 16; // ~60fps
+let messageBatch: DevtoolsMessage[] = [];
+let batchTimer: ReturnType<typeof setTimeout> | null = null;
+
+function flushMessageBatch() {
+  if (messageBatch.length === 0) return;
+  if (!serverState || serverState.clients.size === 0) {
+    messageBatch = [];
+    return;
+  }
+
+  // Send all messages as a batch array for efficiency
+  const payload =
+    messageBatch.length === 1 ?
+      JSON.stringify(messageBatch[0])
+    : JSON.stringify({ type: "batch", messages: messageBatch });
+
+  for (const client of serverState.clients) {
+    if (client.readyState === client.OPEN) {
+      client.send(payload);
+    }
+  }
+  messageBatch = [];
+  batchTimer = null;
+}
+
 export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
   if (!isDevtoolsEnabled()) return;
   // Use synchronous access since server should already be initialized
   if (!serverState) return;
   if (serverState.clients.size === 0) return;
+
+  // Add to batch
+  messageBatch.push(message);
+
+  // Schedule flush if not already scheduled
+  if (batchTimer === null) {
+    batchTimer = setTimeout(flushMessageBatch, MESSAGE_BATCH_INTERVAL);
+  }
+}
+
+// For messages that need to be sent immediately (e.g., errors, connection info)
+export function broadcastDevtoolsMessageImmediate(message: DevtoolsMessage) {
+  if (!isDevtoolsEnabled()) return;
+  if (!serverState) return;
+  if (serverState.clients.size === 0) return;
+
+  // Flush any pending batch first
+  if (messageBatch.length > 0) {
+    flushMessageBatch();
+  }
+
   const payload = JSON.stringify(message);
   for (const client of serverState.clients) {
     if (client.readyState === client.OPEN) {

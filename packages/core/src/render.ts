@@ -262,10 +262,6 @@ export function getContextForRenderNode(node: RenderedTextTree) {
   return nodesToContext.get(node);
 }
 
-export function getDiagnosticsForTree(tree: RenderedTextTree) {
-  return diagnosticsByTree.get(tree)?.getDiagnostics() ?? [];
-}
-
 function reportDiagnosticsForTree(tree: RenderedTextTree) {
   const diagnostics = diagnosticsByTree.get(tree);
   if (!diagnostics) return;
@@ -345,6 +341,7 @@ export async function renderAsync(
   reportDiagnosticsForTree(tree);
   reportLastRenderError();
   debug.render.complete();
+
   return output;
 }
 
@@ -570,9 +567,9 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       return;
     }
     if (isCustomContext(child)) {
-      debug.render.appendCustomContext(node, []);
+      const newNode: RenderedTextTree = [];
+      debug.render.appendCustomContext(node, newNode);
       child.useCustomContext((children) => {
-        const newNode: RenderedTextTree = [];
         renderWorker(newNode, children);
         node.push(newNode);
         cache.set(child, newNode);

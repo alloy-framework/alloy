@@ -8,6 +8,7 @@ import {
 import { untrack } from "../reactivity.js";
 import type { PrintHook, RenderedTextTree } from "../render.js";
 import type { ComponentCreator } from "../runtime/component.js";
+import { flushJobsAsync } from "../scheduler.js";
 import { emitDevtoolsMessage, trace, TracePhase } from "./trace.js";
 
 export type RenderTreeNodeKind =
@@ -254,6 +255,7 @@ function ensureDevtoolsHandler() {
     } else {
       actions.rerenderAndBreak();
     }
+    void flushJobsAsync();
   });
 }
 

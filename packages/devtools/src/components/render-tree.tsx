@@ -17,6 +17,7 @@ import {
   forwardRef,
   memo,
   useCallback,
+  useDeferredValue,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -49,19 +50,22 @@ export interface RenderTreeProps {
 }
 
 // Build a map of node id -> parent path for quick ancestor lookup
-function buildAncestorMap(
-  nodes: RenderTreeNode[],
-  parentPath: string[] = [],
-): Map<string, string[]> {
+// Uses iterative approach to avoid O(n²) from spread in recursion
+function buildAncestorMap(nodes: RenderTreeNode[]): Map<string, string[]> {
   const map = new Map<string, string[]>();
-  for (const node of nodes) {
-    map.set(node.id, parentPath);
-    if (node.children) {
-      const childMap = buildAncestorMap(node.children, [
-        ...parentPath,
-        node.id,
-      ]);
-      childMap.forEach((value, key) => map.set(key, value));
+  const stack: Array<{ nodes: RenderTreeNode[]; path: string[] }> = [
+    { nodes, path: [] },
+  ];
+
+  while (stack.length > 0) {
+    const { nodes: currentNodes, path } = stack.pop()!;
+    for (const node of currentNodes) {
+      map.set(node.id, path);
+      if (node.children && node.children.length > 0) {
+        // Reuse the path array and only create new one when needed
+        const childPath = [...path, node.id];
+        stack.push({ nodes: node.children, path: childPath });
+      }
     }
   }
   return map;
@@ -71,6 +75,11 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
   function RenderTree({ className }, ref) {
     const { renderTree, fileContents, fileToRenderNode, sendMessage } =
       useDebugConnectionContext();
+
+    // Defer the render tree to allow urgent updates to happen first
+    // This prevents the tree rendering from blocking user interactions
+    const deferredRenderTree = useDeferredValue(renderTree);
+
     const {
       selectedRenderNodeId,
       setSelectedRenderNodeId,
@@ -82,8 +91,9 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       liftedFromMap,
       fileNodeToId,
       findLiftedRootForNodeById,
-    } = useRenderTreeIndex(renderTree, fileToRenderNode);
-    const { collectTextNodesForNode } = useRenderTreeQueries(renderTree);
+    } = useRenderTreeIndex(deferredRenderTree, fileToRenderNode);
+    const { collectTextNodesForNode } =
+      useRenderTreeQueries(deferredRenderTree);
     const { computeTextRangesForFile } = useFileTextRanges({
       activeTabId: null,
       openTabs,
@@ -93,7 +103,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       findLiftedRootForNode: findLiftedRootForNodeById,
     });
     const { goToSourceForNode } = useGoToSource({
-      renderTree,
+      renderTree: deferredRenderTree,
       fileContents,
       fileToRenderNode,
       openTabs,
@@ -108,7 +118,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
     });
     const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
       const initial = new Set<string>();
-      for (const node of renderTree) {
+      for (const node of deferredRenderTree) {
         initial.add(node.id);
         if (node.children) {
           for (const child of node.children) {
@@ -120,8 +130,8 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
     });
 
     const ancestorMap = useMemo(
-      () => buildAncestorMap(renderTree),
-      [renderTree],
+      () => buildAncestorMap(deferredRenderTree),
+      [deferredRenderTree],
     );
     const nodeRef = useRef<HTMLDivElement>(null);
     const focusedNodeRef = useRef<string | null>(null);
@@ -278,7 +288,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       >
         <ContextMenuTrigger asChild>
           <div ref={nodeRef} className={cn("text-xs font-mono", className)}>
-            {renderTree.map((node) => (
+            {deferredRenderTree.map((node) => (
               <RenderTreeNodeItem
                 key={node.id}
                 node={node}

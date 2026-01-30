@@ -1,7 +1,7 @@
 import { SourceLocationLink } from "@/components/source-location-link";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface GraphNode {
   id: string;
@@ -128,9 +128,19 @@ function findCycles(
 }
 
 export function EffectsView() {
-  const { effects, refs, effectEdges, formatPath } =
-    useDebugConnectionContext();
+  const {
+    effects,
+    refs,
+    effectEdges,
+    formatPath,
+    effectsVersion,
+    refsVersion,
+    effectEdgesVersion,
+  } = useDebugConnectionContext();
   const [activeTab, setActiveTab] = useState("effects");
+  // Track if cycles need to be recalculated (lazy computation)
+  const [cyclesVersion, setCyclesVersion] = useState(0);
+  const edgesLengthRef = useRef(0);
 
   const getEdgeTargetKey = (edge: {
     refId?: number;
@@ -143,15 +153,44 @@ export function EffectsView() {
     return `${kind}:${targetId}`;
   };
 
+  // Use version counters in dependencies to trigger re-computation when data changes
   const effectList = useMemo(
     () => Array.from(effects.values()).sort((a, b) => a.id - b.id),
-    [effects],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [effects, effectsVersion],
   );
   const refList = useMemo(
     () => Array.from(refs.values()).sort((a, b) => a.id - b.id),
-    [refs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refs, refsVersion],
   );
-  const edgeList = useMemo(() => effectEdges, [effectEdges]);
+  const edgeList = useMemo(
+    () => effectEdges,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [effectEdges, effectEdgesVersion],
+  );
+
+  // Only trigger cycle recalculation when actively viewing cycles tab
+  // and edges have significantly changed
+  useEffect(() => {
+    if (activeTab === "cycles") {
+      // Debounce cycle recalculation - only if edges changed by more than 10%
+      const currentLength = effectEdges.length;
+      const prevLength = edgesLengthRef.current;
+      if (
+        currentLength === 0 ||
+        Math.abs(currentLength - prevLength) > prevLength * 0.1 ||
+        prevLength === 0
+      ) {
+        edgesLengthRef.current = currentLength;
+        // Delay calculation to avoid blocking UI
+        const timer = setTimeout(() => {
+          setCyclesVersion((v) => v + 1);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [activeTab, effectEdges.length]);
 
   const trackEdges = useMemo(
     () => edgeList.filter((edge) => edge.type === "track"),
@@ -249,9 +288,13 @@ export function EffectsView() {
   const adjacency = useMemo(() => {
     const graph = new Map<string, string[]>();
     const addEdge = (from: string, to: string) => {
-      const existing = graph.get(from) ?? [];
+      let existing = graph.get(from);
+      if (!existing) {
+        existing = [];
+        graph.set(from, existing);
+      }
       if (!existing.includes(to)) {
-        graph.set(from, [...existing, to]);
+        existing.push(to);
       }
     };
 
@@ -273,14 +316,21 @@ export function EffectsView() {
   }, [triggerEdges, trackEdges]);
 
   const cycles = useMemo(() => {
+    // Only compute cycles when on the cycles tab and version changes
+    if (activeTab !== "cycles") return [];
     return findCycles(adjacency, edgeList);
-  }, [adjacency, edgeList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adjacency, edgeList, cyclesVersion, activeTab]);
 
   const edgesByEffect = useMemo(() => {
     const map = new Map<number, typeof edgeList>();
     for (const edge of edgeList) {
-      const existing = map.get(edge.effectId) ?? [];
-      map.set(edge.effectId, [...existing, edge]);
+      let existing = map.get(edge.effectId);
+      if (!existing) {
+        existing = [];
+        map.set(edge.effectId, existing);
+      }
+      existing.push(edge);
     }
     return map;
   }, [edgeList]);
@@ -351,8 +401,6 @@ export function EffectsView() {
       </button>
     );
   };
-
-  const renderRefLabel = (refId: number) => renderNodeLabel(`ref:${refId}`);
 
   return (
     <div className="h-full w-full flex text-sm">

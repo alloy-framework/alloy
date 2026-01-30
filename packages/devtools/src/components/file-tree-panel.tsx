@@ -7,10 +7,12 @@ import {
 } from "@/components/ui/context-menu";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
-import { useCallback, useState } from "react";
+import { useCallback, useDeferredValue, useState } from "react";
 
 export function FileTreePanel() {
   const { fileTree, fileToRenderNode } = useDebugConnectionContext();
+  // Defer the file tree to prevent blocking user interactions
+  const deferredFileTree = useDeferredValue(fileTree);
   const {
     requestFocusRenderNode,
     tabs: { activeTabId, handleNodeSelect },
@@ -43,7 +45,7 @@ export function FileTreePanel() {
       <ContextMenuTrigger asChild>
         <div>
           <TreeView
-            data={fileTree}
+            data={deferredFileTree}
             selectedId={activeTabId}
             onSelect={(node) => handleNodeSelect(node, "file")}
             onContextMenu={handleContextMenu}

@@ -10,15 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "devalue": "catalog:",
-    "diff-match-patch": "^1.0.5",
     "@radix-ui/react-context-menu": "^2.2.6",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
-    "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toast": "^1.2.6",
     "@tailwindcss/vite": "^4.1.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "devalue": "catalog:",
+    "diff-match-patch": "^1.0.5",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -41,6 +41,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "npm:rolldown-vite@7.2.5",
+    "vite-plugin-singlefile": "^2.3.0",
     "vitest": "catalog:"
   }
 }

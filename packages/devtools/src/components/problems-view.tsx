@@ -50,7 +50,10 @@ export function ProblemsView() {
       const source = error.componentStack
         .map((entry) => entry.source)
         .filter(Boolean)
-        .find((source) => !source.fileName.includes("@alloy-js"));
+        .find(
+          (source) =>
+            source?.fileName && !source.fileName.includes("@alloy-js"),
+        );
       const componentEntry = [...error.componentStack]
         .reverse()
         .find((entry) => entry.renderNodeId !== undefined);
@@ -74,7 +77,10 @@ export function ProblemsView() {
       const stackSource = diagnostic.componentStack
         ?.map((entry) => entry.source)
         .filter(Boolean)
-        .find((source) => !source.fileName.includes("@alloy-js"));
+        .find(
+          (source) =>
+            source?.fileName && !source.fileName.includes("@alloy-js"),
+        );
       const componentEntry = [...(diagnostic.componentStack ?? [])]
         .reverse()
         .find((entry) => entry.renderNodeId !== undefined);

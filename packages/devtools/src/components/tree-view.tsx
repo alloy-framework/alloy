@@ -8,7 +8,7 @@ import {
   FolderOpen,
   Tag,
 } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 export interface TreeNode {
   id: string;
@@ -25,7 +25,7 @@ export interface TreeViewProps {
   onContextMenu?: (node: TreeNode, event: React.MouseEvent) => void;
 }
 
-export function TreeView({
+export const TreeView = memo(function TreeView({
   data,
   className,
   selectedId,
@@ -46,7 +46,7 @@ export function TreeView({
       ))}
     </div>
   );
-}
+});
 
 interface TreeNodeItemProps {
   node: TreeNode;
@@ -56,7 +56,7 @@ interface TreeNodeItemProps {
   onContextMenu?: (node: TreeNode, event: React.MouseEvent) => void;
 }
 
-function TreeNodeItem({
+const TreeNodeItem = memo(function TreeNodeItem({
   node,
   level,
   selectedId,
@@ -67,20 +67,26 @@ function TreeNodeItem({
   const hasChildren = node.children && node.children.length > 0;
   const isSelected = node.id === selectedId;
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     onSelect?.(node);
-  };
+  }, [node, onSelect]);
 
-  const handleContextMenu = (event: React.MouseEvent) => {
-    onContextMenu?.(node, event);
-  };
+  const handleContextMenu = useCallback(
+    (event: React.MouseEvent) => {
+      onContextMenu?.(node, event);
+    },
+    [node, onContextMenu],
+  );
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    }
-  };
+  const handleToggle = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (hasChildren) {
+        setIsExpanded((prev) => !prev);
+      }
+    },
+    [hasChildren],
+  );
 
   const getIcon = () => {
     switch (node.icon) {
@@ -145,4 +151,4 @@ function TreeNodeItem({
       )}
     </div>
   );
-}
+});

@@ -21,11 +21,22 @@ export function notifyFileUpdated(info: Omit<FileUpdateInfo, "unchanged">) {
   const previous = fileContentCache.get(info.path);
   const unchanged = previous === info.contents;
   fileContentCache.set(info.path, info.contents);
-  emitDevtoolsMessage({
-    type: "files:fileUpdated",
-    path: info.path,
-    filetype: info.filetype,
-    contents: info.contents,
-    unchanged,
-  });
+
+  // Only send contents if they changed - avoids sending large payloads for unchanged files
+  if (unchanged) {
+    emitDevtoolsMessage({
+      type: "files:fileUpdated",
+      path: info.path,
+      filetype: info.filetype,
+      unchanged: true,
+    });
+  } else {
+    emitDevtoolsMessage({
+      type: "files:fileUpdated",
+      path: info.path,
+      filetype: info.filetype,
+      contents: info.contents,
+      unchanged: false,
+    });
+  }
 }

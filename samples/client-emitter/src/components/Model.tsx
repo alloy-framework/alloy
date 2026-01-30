@@ -5,6 +5,7 @@ import { ModelProperty } from "./ModelProperty.jsx";
 interface ModelProps {
   model: RestApiModel;
 }
+
 export function Model(props: ModelProps) {
   return (
     <ts.InterfaceDeclaration

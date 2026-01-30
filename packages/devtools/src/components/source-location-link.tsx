@@ -3,9 +3,9 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface SourceLocationLinkProps {
   source: {
-    fileName: string;
-    lineNumber: number;
-    columnNumber: number;
+    fileName?: string;
+    lineNumber?: number;
+    columnNumber?: number;
   };
   className?: string;
   children?: React.ReactNode;
@@ -19,13 +19,19 @@ export function SourceLocationLink({
   const { formatPath } = useDebugConnectionContext();
   const { toast } = useToast();
 
-  const sourceLabel = `${formatPath(source.fileName)}:${source.lineNumber}:${source.columnNumber}`;
+  const sourceLabel =
+    source.fileName ?
+      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}:${source.columnNumber ?? "?"}`
+    : "";
 
   const handleClick = async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
+    if (!source.fileName) return;
     const normalized = source.fileName.replace(/\\/g, "/");
-    const command = `code -g ${normalized}:${source.lineNumber}:${source.columnNumber}`;
+    const line = source.lineNumber ?? 1;
+    const column = source.columnNumber ?? 1;
+    const command = `code -g ${normalized}:${line}:${column}`;
     try {
       await navigator.clipboard.writeText(command);
       toast({
@@ -39,6 +45,10 @@ export function SourceLocationLink({
       });
     }
   };
+
+  if (!source.fileName) {
+    return <span className={className}>{children}</span>;
+  }
 
   return (
     <a

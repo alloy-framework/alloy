@@ -5,6 +5,7 @@ import {
   filterRenderTreeMessages,
   type DevtoolsMessage,
 } from "../../testing/devtools-utils.js";
+import { For } from "../components/For.jsx";
 import { Output } from "../components/Output.jsx";
 import { Show } from "../components/Show.jsx";
 import {
@@ -168,6 +169,77 @@ it("sends render tree messages during render", async () => {
     type: "render:nodeAdded",
     node: { value: "World" },
   });
+});
+
+it.only("rerenders when devtools requests rerender", async () => {
+  let renderCount = 0;
+
+  function Display() {
+    renderCount += 1;
+    return "Hi";
+  }
+
+  const collector = createMessageCollector(socket!);
+
+  await renderAsync(
+    <Output>
+      <Display />
+    </Output>,
+  );
+
+  const messages = await collector.waitForRender();
+  const renderMessages = filterRenderTreeMessages(messages);
+  const displayNode = renderMessages.find(
+    (message: DevtoolsMessage) =>
+      message.type === "render:nodeAdded" &&
+      (message as { node?: { name?: string } }).node?.name === "Display",
+  ) as { node?: { id?: number } } | undefined;
+
+  expect(renderCount).toBe(1);
+  expect(displayNode?.node?.id).toEqual(expect.any(Number));
+
+  socket!.send(
+    JSON.stringify({ type: "render:rerender", id: displayNode!.node!.id }),
+  );
+
+  await collector.waitForFlush();
+
+  expect(renderCount).toBe(2);
+  collector.stop();
+});
+
+it("sends render tree messages during render with For component", async () => {
+  const collector = createMessageCollector(socket!);
+  function Display(props: any) {
+    return <>item {props.item}</>;
+  }
+  await renderAsync(
+    <Output>
+      <For each={["a", "b"]}>{(item) => <Display item={item} />}</For>
+    </Output>,
+  );
+
+  const messages = await collector.waitForRender();
+  const renderMessages = filterRenderTreeMessages(messages);
+  collector.stop();
+
+  expect(renderMessages[0]).toMatchObject({ type: "render:reset" });
+  expect(renderMessages).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "render:nodeAdded",
+        node: expect.objectContaining({ name: "For" }),
+      }),
+      expect.objectContaining({
+        type: "render:nodeAdded",
+        node: expect.objectContaining({ value: "a" }),
+      }),
+      expect.objectContaining({
+        type: "render:nodeAdded",
+        node: expect.objectContaining({ value: "b" }),
+      }),
+    ]),
+  );
 });
 
 it("emits nodeUpdated when component props change", async () => {

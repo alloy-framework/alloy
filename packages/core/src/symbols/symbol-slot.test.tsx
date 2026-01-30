@@ -21,7 +21,7 @@ it("captures firstSymbol", async () => {
   expect(Slot.firstSymbol.value!.name).toBe("a");
 });
 
-it.only("captures firstSymbol when emitting a ref to a symbol", async () => {
+it("captures firstSymbol when emitting a ref to a symbol", async () => {
   const Slot = createSymbolSlot();
   const symref = shallowRef<BasicSymbol | undefined>();
 

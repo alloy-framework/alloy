@@ -1,4 +1,4 @@
-import { OutputScopeOptions } from "@alloy-js/core";
+import { OutputScopeOptions, createScope } from "@alloy-js/core";
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 import { CSharpClassScope } from "./class.js";
 import { useCSharpScope, useNamedTypeScope } from "./contexts.js";
@@ -21,7 +21,7 @@ export function createNamedTypeScope(
     );
   }
 
-  return new CSharpNamedTypeScope(ownerSymbol, currentScope, options);
+  return createScope(CSharpNamedTypeScope, ownerSymbol, currentScope, options);
 }
 
 export function createClassScope(
@@ -37,9 +37,9 @@ export function createClassScope(
       "Can't create C# class scope inside of " + currentScope.constructor.name,
     );
   }
-  return new CSharpClassScope(ownerSymbol, currentScope, options);
+  return createScope(CSharpClassScope, ownerSymbol, currentScope, options);
 }
 export function createMethodScope(options: OutputScopeOptions = {}) {
   const parentScope = useNamedTypeScope();
-  return new CSharpMethodScope("method scope", parentScope, options);
+  return createScope(CSharpMethodScope, "method scope", parentScope, options);
 }

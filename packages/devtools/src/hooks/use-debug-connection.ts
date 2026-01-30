@@ -6,7 +6,8 @@ import {
   type RenderTreeMessage,
   type RenderTreeViewNode,
 } from "@/lib/debug-tree";
-import { useEffect, useMemo, useRef, useState } from "react";
+import * as devalue from "devalue";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type DebugConnectionStatus =
   | "connecting"
@@ -26,8 +27,90 @@ export interface DebugConnectionState {
     { path: string; filetype: string; contents: string }
   >;
   fileToRenderNode: Map<string, string>;
+  renderErrors: Map<string, RenderErrorDetails>;
+  latestRenderErrorId?: string;
+  versionLabel?: string;
+  cwd?: string;
+  formatPath: (path: string) => string;
+  diagnostics: Array<{
+    id: string;
+    message: string;
+    severity: string;
+    source?: { fileName: string; lineNumber: number; columnNumber: number };
+    componentStack?: Array<{
+      name: string;
+      renderNodeId?: number;
+      source?: { fileName: string; lineNumber: number; columnNumber: number };
+    }>;
+  }>;
+  traceEntries: TraceEntry[];
+  effects: Map<number, EffectDebugInfo>;
+  refs: Map<number, RefDebugInfo>;
+  effectEdges: EffectEdgeDebugInfo[];
   sendMessage: (message: DebugMessage) => void;
   error?: string;
+}
+
+export interface RenderErrorComponentStackEntry {
+  name: string;
+  props?: Record<string, unknown>;
+  renderNodeId?: number;
+  source?: {
+    fileName: string;
+    lineNumber: number;
+    columnNumber: number;
+  };
+}
+
+export interface RenderErrorDetails {
+  id: string;
+  name: string;
+  message: string;
+  stack?: string;
+  componentStack: RenderErrorComponentStackEntry[];
+}
+
+export interface TraceEntry {
+  id: string;
+  type: string;
+  timestamp: number;
+  message: DebugMessage;
+}
+
+export interface SourceLocation {
+  fileName?: string;
+  lineNumber?: number;
+  columnNumber?: number;
+  stack?: string;
+}
+
+export interface EffectDebugInfo {
+  id: number;
+  name?: string;
+  type?: string;
+  createdAt?: SourceLocation;
+  lastTriggeredByRefId?: number;
+  lastTriggeredAt?: SourceLocation;
+}
+
+export interface RefDebugInfo {
+  id: number;
+  kind?: string;
+  createdAt?: SourceLocation;
+  createdByEffectId?: number;
+}
+
+export interface EffectEdgeDebugInfo {
+  id: number;
+  type: "track" | "trigger" | "triggered-by";
+  effectId: number;
+  refId?: number;
+  targetId?: number;
+  targetKind?: "ref" | "target";
+  targetLabel?: string;
+  targetKey?: string | number;
+  location?: SourceLocation;
+  count?: number;
 }
 
 type DebugMessage = {
@@ -68,13 +151,51 @@ export function useDebugConnection(): DebugConnectionState {
   const [fileToRenderNode, setFileToRenderNode] = useState<Map<string, string>>(
     new Map(),
   );
+  const [renderErrors, setRenderErrors] = useState<
+    Map<string, RenderErrorDetails>
+  >(new Map());
+  const [latestRenderErrorId, setLatestRenderErrorId] = useState<
+    string | undefined
+  >(undefined);
+  const [versionLabel, setVersionLabel] = useState<string | undefined>(
+    undefined,
+  );
+  const [cwd, setCwd] = useState<string | undefined>(undefined);
+  const [diagnostics, setDiagnostics] = useState<
+    Array<{
+      id: string;
+      message: string;
+      severity: string;
+      source?: { fileName: string; lineNumber: number; columnNumber: number };
+      componentStack?: Array<{
+        name: string;
+        renderNodeId?: number;
+        source?: {
+          fileName: string;
+          lineNumber: number;
+          columnNumber: number;
+        };
+      }>;
+    }>
+  >([]);
+  const [traceEntries, setTraceEntries] = useState<TraceEntry[]>([]);
+  const [effects, setEffects] = useState<Map<number, EffectDebugInfo>>(
+    new Map(),
+  );
+  const [refs, setRefs] = useState<Map<number, RefDebugInfo>>(new Map());
+  const [effectEdges, setEffectEdges] = useState<EffectEdgeDebugInfo[]>([]);
   const [error, setError] = useState<string | undefined>(undefined);
   const socketRef = useRef<WebSocket | null>(null);
+  const traceCounter = useRef(0);
+  const effectsRef = useRef(new Map<number, EffectDebugInfo>());
+  const refsDebugRef = useRef(new Map<number, RefDebugInfo>());
+  const effectEdgesRef = useRef<EffectEdgeDebugInfo[]>([]);
   const treeStateRef = useRef(createRenderTreeState());
   const directoriesRef = useRef(new Set<string>());
   const filesRef = useRef(
     new Map<string, { path: string; filetype: string; contents: string }>(),
   );
+  const cwdRef = useRef<string | undefined>(undefined);
   const fileToRenderNodeRef = useRef(new Map<string, string>());
   const scopesRef = useRef(
     new Map<
@@ -104,6 +225,21 @@ export function useDebugConnection(): DebugConnectionState {
       }
     >(),
   );
+
+  const normalizeCwd = (value: string) =>
+    value.replace(/\\/g, "/").replace(/\/+$/, "");
+
+  const formatPath = useCallback((rawPath: string) => {
+    const normalized = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
+    const cwdValue = cwdRef.current ? normalizeCwd(cwdRef.current) : undefined;
+    if (cwdValue) {
+      if (normalized === cwdValue) return ".";
+      if (normalized.startsWith(`${cwdValue}/`)) {
+        return normalized.slice(cwdValue.length + 1);
+      }
+    }
+    return normalized;
+  }, []);
 
   function buildFileTree() {
     const dirs = Array.from(directoriesRef.current.values());
@@ -137,15 +273,15 @@ export function useDebugConnection(): DebugConnectionState {
     }
 
     for (const dir of dirs) {
-      const normalized = dir.replace(/^\.\/?/, "").replace(/\\/g, "/");
-      if (!normalized) continue;
-      const parts = normalized.split("/").filter(Boolean);
+      const displayPath = formatPath(dir);
+      if (!displayPath || displayPath === ".") continue;
+      const parts = displayPath.split("/").filter(Boolean);
       ensureFolder(parts);
     }
 
     for (const file of files) {
-      const normalized = file.path.replace(/^\.\/?/, "").replace(/\\/g, "/");
-      const parts = normalized.split("/").filter(Boolean);
+      const displayPath = formatPath(file.path);
+      const parts = displayPath.split("/").filter(Boolean);
       const fileName = parts.pop();
       if (!fileName) continue;
       if (parts.length) {
@@ -160,7 +296,7 @@ export function useDebugConnection(): DebugConnectionState {
           currentMap = node.childrenMap;
         }
       }
-      const fileId = normalized;
+      const fileId = file.path;
       currentMap.set(fileId, {
         id: fileId,
         label: fileName,
@@ -299,6 +435,7 @@ export function useDebugConnection(): DebugConnectionState {
       if (cancelled) return;
       setStatus("connecting");
       setError(undefined);
+      setVersionLabel(undefined);
 
       try {
         socket = new WebSocket(resolveDebugUrl());
@@ -326,6 +463,18 @@ export function useDebugConnection(): DebugConnectionState {
         setScopeDetails(new Map());
         setFileContents(new Map());
         setFileToRenderNode(new Map());
+        setRenderErrors(new Map());
+        setLatestRenderErrorId(undefined);
+        setCwd(undefined);
+        cwdRef.current = undefined;
+        setDiagnostics([]);
+        setTraceEntries([]);
+        effectsRef.current = new Map();
+        refsDebugRef.current = new Map();
+        effectEdgesRef.current = [];
+        setEffects(new Map());
+        setRefs(new Map());
+        setEffectEdges([]);
       });
 
       socket.addEventListener("close", () => {
@@ -354,10 +503,41 @@ export function useDebugConnection(): DebugConnectionState {
         }
         if (!message) return;
         if (
-          message.type === "renderTree:reset" ||
-          message.type === "renderTree:nodeAdded" ||
-          message.type === "renderTree:nodeRemoved" ||
-          message.type === "renderTree:nodeUpdated"
+          message.type === "files:fileUpdated" ||
+          message.type === "render:error" ||
+          message.type === "diagnostics:report"
+        ) {
+          // Skip noisy file update events in the trace.
+        } else {
+          const sanitizedMessage = sanitizeTraceMessage(message);
+          traceCounter.current += 1;
+          setTraceEntries((prev) => {
+            const uniqueId =
+              typeof crypto !== "undefined" && "randomUUID" in crypto ?
+                crypto.randomUUID()
+              : `${Date.now()}-${traceCounter.current}-${Math.random()
+                  .toString(36)
+                  .slice(2, 8)}`;
+            const next = [
+              ...prev,
+              {
+                id: uniqueId,
+                type: sanitizedMessage.type,
+                timestamp: Date.now(),
+                message: sanitizedMessage,
+              },
+            ];
+            if (next.length > 500) {
+              next.splice(0, next.length - 500);
+            }
+            return next;
+          });
+        }
+        if (
+          message.type === "render:reset" ||
+          message.type === "render:nodeAdded" ||
+          message.type === "render:nodeRemoved" ||
+          message.type === "render:nodeUpdated"
         ) {
           applyRenderTreeMessage(
             treeStateRef.current,
@@ -429,7 +609,150 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:scopeAdded") {
+        if (message.type === "debugger:info") {
+          const version = (message as any).version as string | undefined;
+          const cwdValue = (message as any).cwd as string | undefined;
+          if (version) {
+            setVersionLabel(`Alloy v${version}`);
+          }
+          if (cwdValue) {
+            cwdRef.current = cwdValue;
+            setCwd(cwdValue);
+            setFileTree(buildFileTree());
+          }
+          return;
+        }
+
+        if (message.type === "diagnostics:report") {
+          const incoming = (message as any).diagnostics as
+            | Array<{
+                id: string;
+                message: string;
+                severity: string;
+                source?: {
+                  fileName: string;
+                  lineNumber: number;
+                  columnNumber: number;
+                };
+                componentStack?: Array<{
+                  name: string;
+                  renderNodeId?: number;
+                  source?: {
+                    fileName: string;
+                    lineNumber: number;
+                    columnNumber: number;
+                  };
+                }>;
+              }>
+            | undefined;
+          setDiagnostics(incoming ?? []);
+          return;
+        }
+
+        if (message.type === "render:error") {
+          const rawId = String((message as any).id ?? Date.now());
+          const id = `error:${rawId}`;
+          const rawStack = (message as any).componentStack as
+            | Array<{
+                name?: string;
+                propsSerialized?: string;
+                renderNodeId?: number;
+                source?: {
+                  fileName: string;
+                  lineNumber: number;
+                  columnNumber: number;
+                };
+              }>
+            | undefined;
+          const componentStack =
+            Array.isArray(rawStack) ?
+              rawStack.map((entry) => {
+                let props: Record<string, unknown> | undefined;
+                if (entry.propsSerialized) {
+                  try {
+                    props = devalue.parse(entry.propsSerialized) as Record<
+                      string,
+                      unknown
+                    >;
+                  } catch {
+                    props = undefined;
+                  }
+                }
+                return {
+                  name: entry.name ?? "(anonymous)",
+                  props,
+                  renderNodeId: entry.renderNodeId,
+                  source: entry.source,
+                };
+              })
+            : [];
+
+          const details: RenderErrorDetails = {
+            id,
+            name: String((message as any).name ?? "Error"),
+            message: String((message as any).message ?? ""),
+            stack: (message as any).stack as string | undefined,
+            componentStack,
+          };
+
+          setRenderErrors((prev) => {
+            const next = new Map(prev);
+            next.set(id, details);
+            return next;
+          });
+          setLatestRenderErrorId(id);
+          return;
+        }
+
+        if (message.type === "effect:effectAdded") {
+          const effect = (message as any).effect as EffectDebugInfo | undefined;
+          if (effect) {
+            effectsRef.current.set(effect.id, effect);
+            setEffects(new Map(effectsRef.current));
+          }
+          return;
+        }
+
+        if (message.type === "effect:effectUpdated") {
+          const effect = (message as any).effect as EffectDebugInfo | undefined;
+          if (effect) {
+            effectsRef.current.set(effect.id, effect);
+            setEffects(new Map(effectsRef.current));
+          }
+          return;
+        }
+
+        if (message.type === "effect:refAdded") {
+          const ref = (message as any).ref as RefDebugInfo | undefined;
+          if (ref) {
+            refsDebugRef.current.set(ref.id, ref);
+            setRefs(new Map(refsDebugRef.current));
+          }
+          return;
+        }
+
+        if (
+          message.type === "effect:track" ||
+          message.type === "effect:trigger"
+        ) {
+          const edge = (message as any).edge as EffectEdgeDebugInfo | undefined;
+          if (edge) {
+            effectEdgesRef.current = [...effectEdgesRef.current, edge];
+            setEffectEdges(effectEdgesRef.current);
+          }
+          return;
+        }
+
+        if (message.type === "effect:edgeUpdated") {
+          const edge = (message as any).edge as EffectEdgeDebugInfo | undefined;
+          if (edge) {
+            effectEdgesRef.current = [...effectEdgesRef.current, edge];
+            setEffectEdges(effectEdgesRef.current);
+          }
+          return;
+        }
+
+        if (message.type === "scope:create") {
           const scope = (message as any).scope;
           if (scope) {
             scopesRef.current.set(scope.id, scope);
@@ -443,7 +766,7 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:scopeUpdated") {
+        if (message.type === "scope:update") {
           const scope = (message as any).scope;
           if (scope) {
             scopesRef.current.set(scope.id, scope);
@@ -457,7 +780,7 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:scopeRemoved") {
+        if (message.type === "scope:delete") {
           const id = Number((message as any).id);
           if (Number.isFinite(id)) {
             scopesRef.current.delete(id);
@@ -471,7 +794,7 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:symbolAdded") {
+        if (message.type === "symbol:create") {
           const symbol = (message as any).symbol;
           if (symbol) {
             symbolsRef.current.set(symbol.id, symbol);
@@ -485,7 +808,7 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:symbolUpdated") {
+        if (message.type === "symbol:update") {
           const symbol = (message as any).symbol;
           if (symbol) {
             symbolsRef.current.set(symbol.id, symbol);
@@ -499,7 +822,7 @@ export function useDebugConnection(): DebugConnectionState {
           return;
         }
 
-        if (message.type === "symbols:symbolRemoved") {
+        if (message.type === "symbol:delete") {
           const id = Number((message as any).id);
           if (Number.isFinite(id)) {
             symbolsRef.current.delete(id);
@@ -544,6 +867,16 @@ export function useDebugConnection(): DebugConnectionState {
       scopeDetails,
       fileContents,
       fileToRenderNode,
+      renderErrors,
+      latestRenderErrorId,
+      versionLabel,
+      cwd,
+      formatPath,
+      diagnostics,
+      traceEntries,
+      effects,
+      refs,
+      effectEdges,
       sendMessage,
       error,
     }),
@@ -556,8 +889,34 @@ export function useDebugConnection(): DebugConnectionState {
       scopeDetails,
       fileContents,
       fileToRenderNode,
+      renderErrors,
+      latestRenderErrorId,
+      versionLabel,
+      cwd,
+      formatPath,
+      diagnostics,
+      traceEntries,
+      effects,
+      refs,
+      effectEdges,
       sendMessage,
       error,
     ],
   );
+}
+
+function sanitizeTraceMessage(message: DebugMessage): DebugMessage {
+  if (message.type === "files:fileUpdated") {
+    const { contents: _contents, ...rest } = message as DebugMessage & {
+      contents?: string;
+    };
+    return {
+      ...rest,
+      contents:
+        typeof _contents === "string" ?
+          `[${_contents.length} chars]`
+        : _contents,
+    };
+  }
+  return message;
 }

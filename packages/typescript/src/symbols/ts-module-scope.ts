@@ -1,4 +1,9 @@
-import { reactive, Refkey, shallowReactive } from "@alloy-js/core";
+import {
+  createSymbol,
+  reactive,
+  Refkey,
+  shallowReactive,
+} from "@alloy-js/core";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 
@@ -52,18 +57,31 @@ export class TSModuleScope extends TSLexicalScope {
       this.importedModules.set(targetModule, new Set());
     }
 
+    const binder = this.binder;
     let localSymbol;
 
     if (options?.type) {
-      localSymbol = new TSOutputSymbol(targetSymbol.name, this.types, {
-        aliasTarget: targetSymbol,
-        tsFlags: TSSymbolFlags.LocalImportSymbol,
-      });
+      localSymbol = createSymbol(
+        TSOutputSymbol,
+        targetSymbol.name,
+        this.types,
+        {
+          binder,
+          aliasTarget: targetSymbol,
+          tsFlags: TSSymbolFlags.LocalImportSymbol,
+        },
+      );
     } else {
-      localSymbol = new TSOutputSymbol(targetSymbol.name, this.values, {
-        aliasTarget: targetSymbol,
-        tsFlags: TSSymbolFlags.LocalImportSymbol,
-      });
+      localSymbol = createSymbol(
+        TSOutputSymbol,
+        targetSymbol.name,
+        this.values,
+        {
+          binder,
+          aliasTarget: targetSymbol,
+          tsFlags: TSSymbolFlags.LocalImportSymbol,
+        },
+      );
     }
 
     this.importedSymbols.set(targetSymbol, localSymbol);
@@ -84,5 +102,9 @@ export class TSModuleScope extends TSLexicalScope {
       allSymbols.add(symbol as TSOutputSymbol);
     }
     return allSymbols;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return super.debugInfo;
   }
 }

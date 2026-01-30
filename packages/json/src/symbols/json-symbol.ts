@@ -1,4 +1,5 @@
 import {
+  createSymbol,
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
@@ -52,8 +53,10 @@ export class JsonOutputSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new JsonOutputSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(JsonOutputSymbol, this.name, undefined, {
       ...options,
+      binder,
       jsonFlags: this.#jsonFlags,
     });
     this.initializeCopy(copy);

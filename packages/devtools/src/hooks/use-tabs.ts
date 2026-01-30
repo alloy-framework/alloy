@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 export interface OpenTab {
   id: string;
   label: string;
-  type: "file" | "symbol" | "scope" | "component";
+  type: "file" | "symbol" | "scope" | "component" | "error" | "diagnostic";
 }
 
 export interface UseTabsOptions {
@@ -16,11 +16,7 @@ export interface UseTabsOptions {
 export function useTabs(options: UseTabsOptions = {}) {
   const [openTabs, setOpenTabs] = useState<OpenTab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
-  const [tabMenu, setTabMenu] = useState<{
-    x: number;
-    y: number;
-    tabId: string | null;
-  } | null>(null);
+  const [tabMenu, setTabMenu] = useState<{ tabId: string | null } | null>(null);
 
   const openTab = useCallback((tab: OpenTab) => {
     setOpenTabs((prev) => {
@@ -105,10 +101,9 @@ export function useTabs(options: UseTabsOptions = {}) {
   }, [tabMenu]);
 
   const handleTabBarContextMenu = useCallback((e: MouseEvent) => {
-    e.preventDefault();
     const target = (e.target as HTMLElement).closest("[data-tab-id]");
     const tabId = target?.getAttribute("data-tab-id") ?? null;
-    setTabMenu({ x: e.clientX, y: e.clientY, tabId });
+    setTabMenu({ tabId });
   }, []);
 
   const openDetailTab = useCallback(

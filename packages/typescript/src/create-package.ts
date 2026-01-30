@@ -1,5 +1,7 @@
 import {
   type Binder,
+  createScope,
+  createSymbol,
   getSymbolCreatorSymbol,
   OutputMemberSpace,
   type Refkey,
@@ -136,7 +138,7 @@ function assignMembers(
     const memberKey = keys[namespace][memberObj.name];
     if (!memberKey) continue; // Skip if key doesn't exist
 
-    const memberSym = new TSOutputSymbol(memberObj.name, space, {
+    const memberSym = createSymbol(TSOutputSymbol, memberObj.name, space, {
       binder,
       refkeys: memberKey,
       export: false,
@@ -179,7 +181,8 @@ function createSymbols(
   props: CreatePackageProps<PackageDescriptor>,
   refkeys: Record<string | typeof packageScopeSymbol, any>,
 ) {
-  const pkgScope = new TSPackageScope(
+  const pkgScope = createScope(
+    TSPackageScope,
     props.name,
     props.version,
     `node_modules/${props.name}`,
@@ -193,7 +196,7 @@ function createSymbols(
 
   for (const [path, symbols] of Object.entries(props.descriptor)) {
     const keys = path === "." ? refkeys : refkeys[path];
-    const moduleScope = new TSModuleScope(path, pkgScope, {
+    const moduleScope = createScope(TSModuleScope, path, pkgScope, {
       binder,
     });
 
@@ -201,11 +204,17 @@ function createSymbols(
 
     if (symbols.default) {
       const key = keys.default;
-      const sym = new TSOutputSymbol(symbols.default, moduleScope.values, {
-        refkeys: key,
-        export: true,
-        default: true,
-      });
+      const sym = createSymbol(
+        TSOutputSymbol,
+        symbols.default,
+        moduleScope.values,
+        {
+          binder,
+          refkeys: key,
+          export: true,
+          default: true,
+        },
+      );
       moduleScope.exportedSymbols.set(key, sym);
     }
 
@@ -215,13 +224,18 @@ function createSymbols(
           { name: exportedName }
         : exportedName;
       const key = keys[namedRef.name];
-      const ownerSym = new TSOutputSymbol(namedRef.name, moduleScope.values, {
-        binder,
-        refkeys: key,
-        export: true,
-        default: false,
-        hasInstanceMembers: !!namedRef.instanceMembers?.length,
-      });
+      const ownerSym = createSymbol(
+        TSOutputSymbol,
+        namedRef.name,
+        moduleScope.values,
+        {
+          binder,
+          refkeys: key,
+          export: true,
+          default: false,
+          hasInstanceMembers: !!namedRef.instanceMembers?.length,
+        },
+      );
       moduleScope.exportedSymbols.set(key, ownerSym);
 
       assignMembers(

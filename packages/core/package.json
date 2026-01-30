@@ -49,11 +49,14 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "@vue/reactivity": "catalog:",
-    "picocolors": "catalog:",
     "cli-table3": "catalog:",
+    "devalue": "catalog:",
     "pathe": "catalog:",
-    "prettier": "catalog:"
+    "picocolors": "catalog:",
+    "prettier": "catalog:",
+    "ws": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",

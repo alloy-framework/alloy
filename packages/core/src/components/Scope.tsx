@@ -1,3 +1,4 @@
+import { createScope } from "../binder.js";
 import { ScopeContext, useScope } from "../context/scope.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
@@ -58,7 +59,9 @@ export function Scope(props: ScopeProps) {
         "Scope component can only make scopes within a BasicScope",
       );
     }
-    scope = new BasicScope(props.name ?? "", parentScope, {
+    const binder = parentScope?.binder;
+    scope = createScope(BasicScope, props.name ?? "", parentScope, {
+      binder,
       metadata: props.metadata,
       ownerSymbol: props.ownerSymbol,
     });

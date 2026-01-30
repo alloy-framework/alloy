@@ -1,5 +1,10 @@
-import { ContextMenu } from "@/components/context-menu";
 import { TreeView, type TreeNode } from "@/components/tree-view";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
@@ -55,19 +60,15 @@ export function SymbolTreePanel() {
     parentById,
     liftedFromMap,
   });
-  const [menu, setMenu] = useState<{
-    x: number;
-    y: number;
-    node: TreeNode | null;
-  } | null>(null);
+  const [menuNode, setMenuNode] = useState<TreeNode | null>(null);
 
-  const handleContextMenu = useCallback(
-    (node: TreeNode, event: React.MouseEvent) => {
-      if (node.icon !== "symbol" && node.icon !== "scope") return;
-      setMenu({ x: event.clientX, y: event.clientY, node });
-    },
-    [],
-  );
+  const handleContextMenu = useCallback((node: TreeNode) => {
+    if (node.icon !== "symbol" && node.icon !== "scope") {
+      setMenuNode(null);
+      return;
+    }
+    setMenuNode(node);
+  }, []);
 
   const getRenderNodeId = (node: TreeNode) => {
     const details =
@@ -78,47 +79,54 @@ export function SymbolTreePanel() {
   };
 
   return (
-    <>
-      <TreeView
-        data={symbolTree}
-        selectedId={activeTabId}
-        onSelect={(node) => handleNodeSelect(node, "symbol")}
-        onContextMenu={handleContextMenu}
-      />
-      <ContextMenu
-        menu={menu ? { x: menu.x, y: menu.y } : null}
-        onClose={() => setMenu(null)}
-        items={[
-          {
-            label: "Go to source",
-            onClick: () => {
-              if (!menu?.node) return;
-              goToSourceForRenderNodeId(getRenderNodeId(menu.node));
-            },
-            disabled: !menu?.node,
-          },
-          {
-            label: "Go to render node",
-            onClick: () => {
-              if (!menu?.node) return;
-              focusRenderNodeById(getRenderNodeId(menu.node) ?? null);
-            },
-            disabled: !menu?.node,
-          },
-          {
-            label: "Show details",
-            onClick: () => {
-              if (!menu?.node) return;
-              openDetailTab(
-                menu.node.id,
-                menu.node.label,
-                menu.node.icon === "scope" ? "scope" : "symbol",
-              );
-            },
-            disabled: !menu?.node,
-          },
-        ]}
-      />
-    </>
+    <ContextMenu
+      onOpenChange={(open) => {
+        if (!open) setMenuNode(null);
+      }}
+    >
+      <ContextMenuTrigger asChild>
+        <div>
+          <TreeView
+            data={symbolTree}
+            selectedId={activeTabId}
+            onSelect={(node) => handleNodeSelect(node, "symbol")}
+            onContextMenu={handleContextMenu}
+          />
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem
+          disabled={!menuNode}
+          onSelect={() => {
+            if (!menuNode) return;
+            goToSourceForRenderNodeId(getRenderNodeId(menuNode));
+          }}
+        >
+          Go to file
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!menuNode}
+          onSelect={() => {
+            if (!menuNode) return;
+            focusRenderNodeById(getRenderNodeId(menuNode) ?? null);
+          }}
+        >
+          Go to render node
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!menuNode}
+          onSelect={() => {
+            if (!menuNode) return;
+            openDetailTab(
+              menuNode.id,
+              menuNode.label,
+              menuNode.icon === "scope" ? "scope" : "symbol",
+            );
+          }}
+        >
+          Show details
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }

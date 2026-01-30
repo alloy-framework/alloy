@@ -1,4 +1,4 @@
-import { FileViewer } from "@/components/detail-views";
+import { FileViewer } from "@/components/detail-views/file-viewer.tsx";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
@@ -86,7 +86,7 @@ export function FileView() {
   })();
 
   return (
-    <div className="h-full w-full text-xs bg-muted/30 rounded p-3 whitespace-pre-wrap text-foreground overflow-auto font-mono">
+    <div className="h-full w-full text-sm bg-muted/30 rounded p-3 whitespace-pre-wrap text-foreground overflow-auto font-mono">
       <FileViewer content={content || "(No contents)"} />
     </div>
   );

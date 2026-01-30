@@ -29,27 +29,27 @@ export interface DevtoolsRenderTreeNode {
 }
 
 export interface RenderTreeNodeAddedMessage extends DevtoolsRenderTreeMessage {
-  type: "renderTree:nodeAdded";
+  type: "render:nodeAdded";
   parentId: number | null;
   node: DevtoolsRenderTreeNode;
 }
 
 export interface RenderTreeNodeRemovedMessage
   extends DevtoolsRenderTreeMessage {
-  type: "renderTree:nodeRemoved";
+  type: "render:nodeRemoved";
   parentId: number | null;
   id: number;
 }
 
 export interface RenderTreeNodeUpdatedMessage
   extends DevtoolsRenderTreeMessage {
-  type: "renderTree:nodeUpdated";
+  type: "render:nodeUpdated";
   id: number;
   propsSerialized?: string;
 }
 
 export interface RenderTreeResetMessage extends DevtoolsRenderTreeMessage {
-  type: "renderTree:reset";
+  type: "render:reset";
 }
 
 export type RenderTreeMessage =
@@ -138,14 +138,14 @@ export function applyRenderTreeMessage(
   state: RenderTreeState,
   message: RenderTreeMessage,
 ) {
-  if (message.type === "renderTree:reset") {
+  if (message.type === "render:reset") {
     state.nodes.clear();
     state.roots = [];
     state.hiddenParents.clear();
     return;
   }
 
-  if (message.type === "renderTree:nodeAdded") {
+  if (message.type === "render:nodeAdded") {
     const id = String(message.node.id);
     const rawParentId =
       message.parentId === null ? null : String(message.parentId);
@@ -216,7 +216,7 @@ export function applyRenderTreeMessage(
     return;
   }
 
-  if (message.type === "renderTree:nodeRemoved") {
+  if (message.type === "render:nodeRemoved") {
     const id = String(message.id);
     const rawParentId =
       message.parentId === null ? null : String(message.parentId);
@@ -246,7 +246,7 @@ export function applyRenderTreeMessage(
     removeNodeRecursive(state, id);
   }
 
-  if (message.type === "renderTree:nodeUpdated") {
+  if (message.type === "render:nodeUpdated") {
     const id = String(message.id);
     const node = state.nodes.get(id);
     if (!node) return;

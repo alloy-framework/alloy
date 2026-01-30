@@ -1,4 +1,4 @@
-import { Namekey, NamePolicyGetter } from "@alloy-js/core";
+import { createSymbol, Namekey, NamePolicyGetter } from "@alloy-js/core";
 import { join } from "pathe";
 import { GoElements, useGoNamePolicy } from "../name-policy.js";
 import { useGoScope, useNamedTypeScope } from "../scopes/contexts.js";
@@ -27,11 +27,11 @@ export function createParameterSymbol(
   if (!(scope instanceof GoFunctionScope)) {
     throw new Error(`Can't create parameter symbol outside of a func scope.`);
   }
-  return new GoSymbol(
-    originalName,
-    scope.parameters,
-    withNamePolicy(options, "parameter"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(GoSymbol, originalName, scope.parameters, {
+    ...withNamePolicy(options, "parameter"),
+    binder,
+  });
 }
 
 export interface CreateTypeParameterSymbolOptions extends GoSymbolOptions {
@@ -51,11 +51,11 @@ export function createTypeParameterSymbol(
     );
   }
 
-  return new GoSymbol(
-    originalName,
-    scope.typeParameters,
-    withNamePolicy(options, "type-parameter"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(GoSymbol, originalName, scope.typeParameters, {
+    ...withNamePolicy(options, "type-parameter"),
+    binder,
+  });
 }
 
 export function createStructMemberSymbol(
@@ -73,11 +73,16 @@ export function createStructMemberSymbol(
     );
   }
 
-  return new NamedTypeSymbol(
+  const binder = options.binder ?? scope.ownerSymbol.binder;
+  return createSymbol(
+    NamedTypeSymbol,
     originalName,
     scope.members,
     "struct-member",
-    withNamePolicy(options, "struct-member"),
+    {
+      ...withNamePolicy(options, "struct-member"),
+      binder,
+    },
   );
 }
 
@@ -93,11 +98,16 @@ export function createInterfaceMemberSymbol(
     );
   }
 
-  return new NamedTypeSymbol(
+  const binder = options.binder ?? scope.ownerSymbol.binder;
+  return createSymbol(
+    NamedTypeSymbol,
     originalName,
     scope.members,
     "interface-member",
-    withNamePolicy(options, "interface-member"),
+    {
+      ...withNamePolicy(options, "interface-member"),
+      binder,
+    },
   );
 }
 
@@ -109,12 +119,19 @@ export function createPackageSymbol(name: string, path?: string) {
     const modName = mod.name;
     const builtin = mod.builtin;
     const pkgPath = path ? join(modName, path) : modName;
-    return new PackageSymbol(name, undefined, { path: pkgPath, builtin });
+    return createSymbol(PackageSymbol, name, undefined, {
+      path: pkgPath,
+      builtin,
+      binder: mod.binder,
+    });
   }
   if (pkgSymbol.members.symbolNames.has(name)) {
     return pkgSymbol.members.symbolNames.get(name)! as PackageSymbol;
   }
-  return new PackageSymbol(name, pkgSymbol, { path });
+  return createSymbol(PackageSymbol, name, pkgSymbol, {
+    path,
+    binder: pkgSymbol.binder,
+  });
 }
 
 export function createFunctionSymbol(
@@ -124,17 +141,17 @@ export function createFunctionSymbol(
 ) {
   const scope = useGoScope();
   if (!isMethod && scope instanceof GoLexicalScope) {
-    return new FunctionSymbol(
-      originalName,
-      scope.types,
-      withNamePolicy(options, "function"),
-    );
+    const binder = options.binder ?? scope.binder;
+    return createSymbol(FunctionSymbol, originalName, scope.types, {
+      ...withNamePolicy(options, "function"),
+      binder,
+    });
   }
-  return new FunctionSymbol(
-    originalName,
-    undefined,
-    withNamePolicy(options, "function"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(FunctionSymbol, originalName, undefined, {
+    ...withNamePolicy(options, "function"),
+    binder,
+  });
 }
 
 export function createPropertySymbol(
@@ -142,11 +159,11 @@ export function createPropertySymbol(
   options: GoSymbolOptions,
 ) {
   const scope = useNamedTypeScope();
-  return new GoSymbol(
-    originalName,
-    scope.members,
-    withNamePolicy(options, "struct-member"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(GoSymbol, originalName, scope.members, {
+    ...withNamePolicy(options, "struct-member"),
+    binder,
+  });
 }
 
 export function createVariableSymbol(
@@ -159,11 +176,11 @@ export function createVariableSymbol(
       `Can't create variable symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
     );
   }
-  return new GoSymbol(
-    originalName,
-    scope.values,
-    withNamePolicy(options, "variable"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(GoSymbol, originalName, scope.values, {
+    ...withNamePolicy(options, "variable"),
+    binder,
+  });
 }
 
 export function createTypeSymbol(
@@ -173,12 +190,11 @@ export function createTypeSymbol(
 ) {
   const scope = useGoScope();
   if (scope instanceof GoLexicalScope) {
-    return new NamedTypeSymbol(
-      originalName,
-      scope.types,
-      kind,
-      withNamePolicy(options, "type"),
-    );
+    const binder = options.binder ?? scope.binder;
+    return createSymbol(NamedTypeSymbol, originalName, scope.types, kind, {
+      ...withNamePolicy(options, "type"),
+      binder,
+    });
   }
   throw new Error(
     `Can't create type symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
@@ -192,11 +208,16 @@ export function createNestedStructSymbol(
 ) {
   const scope = useGoScope();
   if (scope instanceof GoNamedTypeScope) {
-    return new NamedTypeSymbol(
+    const binder = options.binder ?? scope.binder;
+    return createSymbol(
+      NamedTypeSymbol,
       originalName,
       scope.ownerSymbol.members,
       kind,
-      withNamePolicy(options, "struct-member"),
+      {
+        ...withNamePolicy(options, "struct-member"),
+        binder,
+      },
     );
   }
   throw new Error(
@@ -214,9 +235,23 @@ export function createAnonymousTypeSymbol(
     "anonymous_" + anonymousTypeID++ + "_this_should_not_appear_in_output";
   const scope = useGoScope();
   if (scope instanceof GoLexicalScope) {
-    return new NamedTypeSymbol(name, scope.types, kind, options);
+    const binder = options.binder ?? scope.binder;
+    return createSymbol(NamedTypeSymbol, name, scope.types, kind, {
+      ...options,
+      binder,
+    });
   } else if (scope instanceof GoNamedTypeScope) {
-    return new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options);
+    const binder = options.binder ?? scope.binder;
+    return createSymbol(
+      NamedTypeSymbol,
+      name,
+      scope.ownerSymbol.members,
+      kind,
+      {
+        ...options,
+        binder,
+      },
+    );
   }
   throw new Error(
     `Can't create anonymous type symbol outside of a lexical or NamedType scope, got a ${scope.constructor.name}.`,

@@ -1,4 +1,9 @@
-import { ContextMenu } from "@/components/context-menu";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
@@ -64,7 +69,7 @@ function buildAncestorMap(
 
 export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
   function RenderTree({ className }, ref) {
-    const { renderTree, fileContents, fileToRenderNode } =
+    const { renderTree, fileContents, fileToRenderNode, sendMessage } =
       useDebugConnectionContext();
     const {
       selectedRenderNodeId,
@@ -120,11 +125,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
     );
     const nodeRef = useRef<HTMLDivElement>(null);
     const focusedNodeRef = useRef<string | null>(null);
-    const [contextMenu, setContextMenu] = useState<{
-      x: number;
-      y: number;
-      node: RenderTreeNode | null;
-    } | null>(null);
+    const [menuNode, setMenuNode] = useState<RenderTreeNode | null>(null);
 
     const toggleExpanded = useCallback((nodeId: string) => {
       setExpandedIds((prev) => {
@@ -241,13 +242,9 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       ],
     );
 
-    const handleNodeContextMenu = useCallback(
-      (node: RenderTreeNode, event: React.MouseEvent) => {
-        event.preventDefault();
-        setContextMenu({ x: event.clientX, y: event.clientY, node });
-      },
-      [],
-    );
+    const handleNodeContextMenu = useCallback((node: RenderTreeNode) => {
+      setMenuNode(node);
+    }, []);
 
     const handleShowDetails = useCallback(
       (node: RenderTreeNode) => {
@@ -256,50 +253,88 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       [handleRenderNodeSelect],
     );
 
+    const handleRerender = useCallback(
+      (node: RenderTreeNode, withBreak: boolean) => {
+        const id = Number(node.id);
+        if (!Number.isFinite(id)) return;
+        sendMessage({
+          type: withBreak ? "render:rerenderAndBreak" : "render:rerender",
+          id,
+        });
+      },
+      [sendMessage],
+    );
+
     useImperativeHandle(ref, () => ({ focusNode, expandToNode }), [
       focusNode,
       expandToNode,
     ]);
 
     return (
-      <div ref={nodeRef} className={cn("text-xs font-mono", className)}>
-        {renderTree.map((node) => (
-          <RenderTreeNodeItem
-            key={node.id}
-            node={node}
-            level={0}
-            expandedIds={expandedIds}
-            selectedId={selectedRenderNodeId}
-            onToggle={toggleExpanded}
-            onSelect={handleRenderNodeSelect}
-            onContextMenu={handleNodeContextMenu}
-          />
-        ))}
-        <ContextMenu
-          menu={contextMenu ? { x: contextMenu.x, y: contextMenu.y } : null}
-          onClose={() => setContextMenu(null)}
-          items={[
-            {
-              label: "Go to source",
-              onClick: () => {
-                if (contextMenu?.node) {
-                  goToSourceForNode(contextMenu.node);
-                }
-              },
-              disabled: !contextMenu?.node,
-            },
-            {
-              label: "Show details",
-              onClick: () => {
-                if (contextMenu?.node) {
-                  handleShowDetails(contextMenu.node);
-                }
-              },
-              disabled: !contextMenu?.node,
-            },
-          ]}
-        />
-      </div>
+      <ContextMenu
+        onOpenChange={(open: boolean) => {
+          if (!open) setMenuNode(null);
+        }}
+      >
+        <ContextMenuTrigger asChild>
+          <div ref={nodeRef} className={cn("text-xs font-mono", className)}>
+            {renderTree.map((node) => (
+              <RenderTreeNodeItem
+                key={node.id}
+                node={node}
+                level={0}
+                expandedIds={expandedIds}
+                selectedId={selectedRenderNodeId}
+                onToggle={toggleExpanded}
+                onSelect={handleRenderNodeSelect}
+                onContextMenu={handleNodeContextMenu}
+              />
+            ))}
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem
+            disabled={!menuNode}
+            onSelect={() => {
+              if (menuNode) {
+                goToSourceForNode(menuNode);
+              }
+            }}
+          >
+            Go to file
+          </ContextMenuItem>
+          <ContextMenuItem
+            disabled={!menuNode}
+            onSelect={() => {
+              if (menuNode) {
+                handleShowDetails(menuNode);
+              }
+            }}
+          >
+            Show details
+          </ContextMenuItem>
+          <ContextMenuItem
+            disabled={!menuNode}
+            onSelect={() => {
+              if (menuNode) {
+                handleRerender(menuNode, false);
+              }
+            }}
+          >
+            Rerender
+          </ContextMenuItem>
+          <ContextMenuItem
+            disabled={!menuNode}
+            onSelect={() => {
+              if (menuNode) {
+                handleRerender(menuNode, true);
+              }
+            }}
+          >
+            Rerender and Break
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
     );
   },
 );
@@ -341,7 +376,6 @@ const RenderTreeNodeItem = memo(function RenderTreeNodeItem({
 
   const handleContextMenu = useCallback(
     (event: React.MouseEvent) => {
-      event.preventDefault();
       onContextMenu?.(node, event);
     },
     [node, onContextMenu],

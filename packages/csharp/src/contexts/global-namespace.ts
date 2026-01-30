@@ -1,4 +1,4 @@
-import { Binder, useBinder } from "@alloy-js/core";
+import { Binder, createSymbol, useBinder } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/namespace.js";
 
 export function useGlobalNamespace() {
@@ -7,12 +7,17 @@ export function useGlobalNamespace() {
 }
 
 const globalNamespaces = new WeakMap<Binder, NamespaceSymbol>();
-let defaultGlobalNamespace = new NamespaceSymbol("global", undefined, {
-  isGlobal: true,
-});
+let defaultGlobalNamespace = createSymbol(
+  NamespaceSymbol,
+  "global",
+  undefined,
+  {
+    isGlobal: true,
+  },
+);
 
 export function resetGlobalNamespace() {
-  defaultGlobalNamespace = new NamespaceSymbol("global", undefined, {
+  defaultGlobalNamespace = createSymbol(NamespaceSymbol, "global", undefined, {
     isGlobal: true,
   });
 }
@@ -25,7 +30,7 @@ export function getGlobalNamespace(binder: Binder | undefined) {
   let namespace = globalNamespaces.get(binder);
 
   if (!namespace) {
-    namespace = new NamespaceSymbol("global", undefined, {
+    namespace = createSymbol(NamespaceSymbol, "global", undefined, {
       binder,
       isGlobal: true,
     });

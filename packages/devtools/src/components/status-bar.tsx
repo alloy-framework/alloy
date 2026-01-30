@@ -6,6 +6,7 @@ export type DebugStatus = "connected" | "connecting" | "error" | "disconnected";
 export interface StatusBarProps {
   status: DebugStatus;
   versionLabel?: string;
+  cwd?: string;
 }
 
 const statusLabels: Record<DebugStatus, string> = {
@@ -15,7 +16,7 @@ const statusLabels: Record<DebugStatus, string> = {
   disconnected: "Disconnected",
 };
 
-export function StatusBar({ status, versionLabel }: StatusBarProps) {
+export function StatusBar({ status, versionLabel, cwd }: StatusBarProps) {
   return (
     <div className="h-6 bg-muted/50 border-t border-border flex items-center justify-between px-3 text-xs text-muted-foreground">
       <div className="flex items-center gap-4">
@@ -34,6 +35,9 @@ export function StatusBar({ status, versionLabel }: StatusBarProps) {
         </div>
       </div>
       <div className="flex items-center gap-4">
+        {cwd ?
+          <span className="truncate max-w-[45vw]">{cwd}</span>
+        : null}
         <span>{versionLabel ?? "Alloy v0.0.0"}</span>
       </div>
     </div>

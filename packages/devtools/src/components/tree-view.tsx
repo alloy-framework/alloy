@@ -6,7 +6,7 @@ import {
   File,
   Folder,
   FolderOpen,
-  Hash,
+  Tag,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -72,7 +72,6 @@ function TreeNodeItem({
   };
 
   const handleContextMenu = (event: React.MouseEvent) => {
-    event.preventDefault();
     onContextMenu?.(node, event);
   };
 
@@ -94,7 +93,7 @@ function TreeNodeItem({
       case "scope":
         return <Braces className="size-4 text-purple-500" />;
       case "symbol":
-        return <Hash className="size-4 text-blue-500" />;
+        return <Tag className="size-4 text-blue-500" />;
       default:
         return (
           hasChildren ?

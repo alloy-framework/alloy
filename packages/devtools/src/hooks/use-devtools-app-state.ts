@@ -7,13 +7,14 @@ import { useState } from "react";
 export function useDevtoolsAppState(
   renderTreeRef: RefObject<RenderTreeHandle | null>,
   renderTree: unknown,
+  setBottomTab?: (tab: "render" | "problems" | "effects" | "trace") => void,
 ) {
   const {
     selectedRenderNodeId,
     setSelectedRenderNodeId,
     requestFocusRenderNode,
     focusRenderNodeById,
-  } = useRenderTreeFocus(renderTreeRef, renderTree);
+  } = useRenderTreeFocus(renderTreeRef, renderTree, setBottomTab);
   const tabs = useTabs({
     onActivateComponentTab: requestFocusRenderNode,
     onClearSelection: () => setSelectedRenderNodeId(null),

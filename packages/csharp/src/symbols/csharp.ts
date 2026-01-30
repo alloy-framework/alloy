@@ -1,4 +1,5 @@
 import {
+  createSymbol,
   Namekey,
   OutputDeclarationSpace,
   OutputMemberSpace,
@@ -77,6 +78,7 @@ export class CSharpSymbol extends OutputSymbol {
     this.#isExtern = options.isExtern ?? false;
     this.#isReadOnly = options.isReadOnly ?? false;
     this.#isNullable = options.isNullable; // undefined means unset, here.
+    this.init();
   }
 
   get enclosingNamespace(): NamespaceSymbol | undefined {
@@ -128,8 +130,10 @@ export class CSharpSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new CSharpSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(CSharpSymbol, this.name, undefined, {
       ...options,
+      binder,
       accessibility: this.#accessibility,
       isStatic: this.#isStatic,
       isVirtual: this.#isVirtual,
@@ -149,6 +153,22 @@ export class CSharpSymbol extends OutputSymbol {
     );
 
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      kind: this.symbolKind,
+      accessibility: this.accessibility,
+      isAbstract: this.isAbstract,
+      isVirtual: this.isVirtual,
+      isOverride: this.isOverride,
+      isStatic: this.isStatic,
+      isSealed: this.isSealed,
+      isExtern: this.isExtern,
+      isReadOnly: this.isReadOnly,
+      isNullable: this.isNullable,
+    };
   }
 
   /**

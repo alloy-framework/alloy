@@ -1,6 +1,6 @@
-import { effect, Ref, shallowRef } from "@vue/reactivity";
+import { Ref, shallowRef } from "@vue/reactivity";
 import { Show } from "./components/Show.jsx";
-import { getContext } from "./reactivity.js";
+import { effect, getContext } from "./reactivity.js";
 import { Children, Component } from "./runtime/component.js";
 
 export interface ContentSlot {
@@ -58,9 +58,18 @@ export function createContentSlot(): ContentSlot {
 
   function ContentSlot(props: { children: Children }) {
     const context = getContext()!;
-    effect(() => {
-      isEmpty.value = context.isEmpty!.value;
-    });
+    effect(
+      () => {
+        isEmpty.value = context.isEmpty!.value;
+      },
+      undefined,
+      {
+        debug: {
+          name: "contentSlot:syncEmpty",
+          type: "content",
+        },
+      },
+    );
 
     return props.children;
   }

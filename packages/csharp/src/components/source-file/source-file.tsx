@@ -7,6 +7,7 @@ import {
   Children,
   computed,
   SourceFile as CoreSourceFile,
+  createScope,
   Scope,
   useBinder,
 } from "@alloy-js/core";
@@ -38,10 +39,18 @@ export interface SourceFileProps extends CSharpFormatOptions {
 
 /** A C# source file exists within the context of a namespace contains using statements and declarations */
 export function SourceFile(props: SourceFileProps) {
-  const sourceFileScope = new CSharpSourceFileScope(props.path);
+  const binder = useBinder();
+  const sourceFileScope = createScope(
+    CSharpSourceFileScope,
+    props.path,
+    undefined,
+    {
+      binder,
+    },
+  );
 
   const nsContext = useNamespaceContext();
-  const globalNs = getGlobalNamespace(useBinder());
+  const globalNs = getGlobalNamespace(binder);
   const nsSymbol = nsContext ? nsContext.symbol : globalNs;
   const usings = computed(() => {
     return (

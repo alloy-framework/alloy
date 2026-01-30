@@ -166,3 +166,7 @@ it("keeps spaces between expressions", () => {
     </>,
   ).toRenderTo("a str str getStr getStr c");
 });
+
+it("renders numbers", () => {
+  expect(<>200</>).toRenderTo("200");
+});

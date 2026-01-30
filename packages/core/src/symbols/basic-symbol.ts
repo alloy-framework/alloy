@@ -1,3 +1,4 @@
+import { createSymbol } from "../binder.js";
 import { OutputSymbol } from "./output-symbol.js";
 
 /**
@@ -16,7 +17,11 @@ export class BasicSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copiedSymbol = new BasicSymbol(this.name, undefined, options);
+    const binder = this.binder;
+    const copiedSymbol = createSymbol(BasicSymbol, this.name, undefined, {
+      ...options,
+      binder,
+    });
     this.initializeCopy(copiedSymbol);
 
     return copiedSymbol;

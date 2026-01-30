@@ -1,4 +1,5 @@
 import {
+  createSymbol,
   Namekey,
   OutputSpace,
   track,
@@ -62,7 +63,8 @@ export class NamedTypeSymbol extends GoSymbol {
 
   copy() {
     const options = this.getGoCopyOptions();
-    const copy = new NamedTypeSymbol(
+    const copy = createSymbol(
+      NamedTypeSymbol,
       this.name,
       undefined,
       this.#typeKind,

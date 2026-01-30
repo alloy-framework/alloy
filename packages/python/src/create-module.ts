@@ -1,5 +1,6 @@
 import {
   type Binder,
+  createScope,
   getSymbolCreatorSymbol,
   type Refkey,
   refkey,
@@ -36,9 +37,12 @@ function createSymbols(
     // Otherwise, we append the path to the module name
     const fullModuleScopeName = props.name + (path === "." ? "" : `.${path}`);
     const keys = refkeys[path];
-    const moduleScope = new PythonModuleScope(fullModuleScopeName, undefined, {
-      binder: binder,
-    });
+    const moduleScope = createScope(
+      PythonModuleScope,
+      fullModuleScopeName,
+      undefined,
+      { binder },
+    );
 
     // Create a symbol for each exported name
     for (const exportedName of symbols ?? []) {

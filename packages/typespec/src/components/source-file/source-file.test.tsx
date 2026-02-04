@@ -3,7 +3,6 @@ import { Output } from "@alloy-js/core";
 import { SourceFile } from "./source-file.jsx";
 import { SourceDirectory } from "@alloy-js/core";
 import { createNamespaceSymbol } from "../../symbols/factories.js";
-import { d } from "@alloy-js/core/testing";
 
 it("defines multiple directories with unique source files", () => {
     expect(
@@ -25,13 +24,15 @@ it("declares a file level namespace when one is provided", () => {
     const parentNamespace = createNamespaceSymbol("My.Namespace");
     expect(
         <Output>
-          <SourceFile path="main.tsp" namespace={parentNamespace} />
+          <SourceFile path="main.tsp" namespace={parentNamespace}>
+            Content of the file
+          </SourceFile>
         </Output>
     ).toRenderTo({
-        "main.tsp": d`
+        "main.tsp": `
           namespace My.Namespace;
 
-
+          Content of the file
           `,
     });
 });

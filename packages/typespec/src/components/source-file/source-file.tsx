@@ -19,8 +19,7 @@ export function SourceFile(props: SourceFileProps) {
     const directoryContext = useContext(SourceDirectoryContext)!;
     const path = join(directoryContext.path, props.path);
 
-    // const parentScope = useScope();
-    const scope = new SourceFileScope(path/*, parentScope*/);
+    const scope = new SourceFileScope(path);
 
     const globalNamespace = getGlobalNamespace(useBinder());
     const namespaceSymbol = props.namespace ?? globalNamespace;
@@ -31,7 +30,7 @@ export function SourceFile(props: SourceFileProps) {
         <CoreSourceFile path={props.path} filetype="typespec">
             <Scope value={scope}>
                 <Show when={namespaceSymbol !== globalNamespace}>
-                    namespace <NamespaceName symbol={namespaceSymbol} />;<hbr />
+                    namespace <NamespaceName symbol={namespaceSymbol} />;<hbr /><hbr />
                 </Show>
                 <NamespaceContext.Provider value={{ symbol: namespaceSymbol }}>
                     <Scope value={namespaceScope}>

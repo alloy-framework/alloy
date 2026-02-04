@@ -56,6 +56,7 @@ it("renders namespaces when a file level namespace is present", () => {
     ).toRenderTo({
       "main.tsp": d`
         namespace File.Level;
+        
         namespace My.Namespace {
           Contents!
         }`,

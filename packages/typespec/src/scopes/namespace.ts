@@ -22,7 +22,7 @@ export class NamespaceScope extends OutputScope {
   }
 }
 
-export function useNamespace(): Optional<NamespaceScope> {
+export function useNamespace(): NamespaceScope | undefined {
     let scope: Optional<OutputScope> = useScope();
     while(scope !== undefined) {
         if (scope instanceof NamespaceScope) {

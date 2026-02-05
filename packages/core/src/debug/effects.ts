@@ -167,6 +167,17 @@ function formatNonRefTargetLabel(target: unknown): string {
   }
 }
 
+/**
+ * Sanitize a Map/object key to ensure it's serializable.
+ */
+function sanitizeTargetKey(key: unknown): string | number | undefined {
+  if (key === undefined) return undefined;
+  if (typeof key === "string" || typeof key === "number") return key;
+  if (typeof key === "symbol") return key.toString();
+  if (typeof key === "object" || typeof key === "function") return "Object";
+  return String(key);
+}
+
 function buildEffectTargetInfo(input: {
   target: unknown;
   refId?: number;
@@ -254,7 +265,7 @@ export function recordEffectTrack(input: {
   effectId: number;
   target: unknown;
   refId?: number;
-  targetKey?: string | number;
+  targetKey?: unknown;
   location?: SourceLocation;
 }) {
   if (!isDebugEnabled()) return;
@@ -263,7 +274,7 @@ export function recordEffectTrack(input: {
     type: "track",
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
-    targetKey: input.targetKey,
+    targetKey: sanitizeTargetKey(input.targetKey),
     location: input.location ?? captureSourceLocation(),
   };
   emitEffect({ type: traceType(TracePhase.effect.track), edge });
@@ -273,7 +284,7 @@ export function recordEffectTrigger(input: {
   effectId: number;
   target: unknown;
   refId?: number;
-  targetKey?: string | number;
+  targetKey?: unknown;
   location?: SourceLocation;
   kind?: "trigger" | "triggered-by";
 }) {
@@ -283,7 +294,7 @@ export function recordEffectTrigger(input: {
     type: input.kind ?? "triggered-by",
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
-    targetKey: input.targetKey,
+    targetKey: sanitizeTargetKey(input.targetKey),
     location: input.location ?? captureSourceLocation(),
   };
   emitEffect({ type: traceType(TracePhase.effect.trigger), edge });

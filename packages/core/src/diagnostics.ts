@@ -1,15 +1,9 @@
 import { getRenderNodeId } from "./debug/index.js";
 import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
-import { getContext, type Context } from "./reactivity.js";
+import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
 import type { RenderedTextTree } from "./render.js";
 import type { SourceLocation } from "./runtime/component.js";
-
-// Import dynamically to avoid circular dependency
-let getContextForRenderNode: (node: RenderedTextTree) => Context | undefined;
-import("./render.js").then((m) => {
-  getContextForRenderNode = m.getContextForRenderNode;
-});
 
 export interface DiagnosticStackEntry {
   name: string;
@@ -145,30 +139,4 @@ export function reportDiagnostics(collector: DiagnosticsCollector) {
       console.log(line);
     }
   }
-}
-
-/**
- * Get all diagnostics associated with a render tree by finding the
- * diagnostics collector attached to the root context.
- */
-export function getDiagnosticsForTree(tree: RenderedTextTree): Diagnostic[] {
-  if (!getContextForRenderNode) {
-    // Dynamic import not yet resolved
-    return [];
-  }
-  const context = getContextForRenderNode(tree);
-  if (!context) return [];
-
-  // Walk up context tree to find diagnostics collector
-  let current: Context | null | undefined = context;
-  while (current) {
-    const collector = current.meta?.[DIAGNOSTICS_META_KEY] as
-      | DiagnosticsCollector
-      | undefined;
-    if (collector) {
-      return collector.getDiagnostics();
-    }
-    current = current.owner;
-  }
-  return [];
 }

@@ -20,6 +20,12 @@ import {
   reportDiagnostics,
 } from "./diagnostics.js";
 import {
+  isPrintHook,
+  printHookTag,
+  type PrintHook,
+  type RenderedTextTree,
+} from "./print-hook.js";
+import {
   Context,
   CustomContext,
   effect,
@@ -262,6 +268,10 @@ export function getContextForRenderNode(node: RenderedTextTree) {
   return nodesToContext.get(node);
 }
 
+export function getDiagnosticsForTree(tree: RenderedTextTree) {
+  return diagnosticsByTree.get(tree)?.getDiagnostics() ?? [];
+}
+
 function reportDiagnosticsForTree(tree: RenderedTextTree) {
   const diagnostics = diagnosticsByTree.get(tree);
   if (!diagnostics) return;
@@ -274,17 +284,13 @@ function reportDiagnosticsForTree(tree: RenderedTextTree) {
   });
 }
 
-export const printHookTag = Symbol();
-
-export interface PrintHook {
-  [printHookTag]: true;
-  transform?(tree: RenderedTextTree): RenderedTextTree;
-  print?(
-    tree: RenderedTextTree,
-    print: (subtree: RenderedTextTree) => Doc,
-  ): Doc;
-  subtree: RenderedTextTree;
-}
+// Re-export from print-hook.ts to maintain backwards compatibility
+export {
+  isPrintHook,
+  printHookTag,
+  type PrintHook,
+  type RenderedTextTree,
+} from "./print-hook.js";
 
 export function createRenderTreeHook(
   subtree: RenderedTextTree,
@@ -296,12 +302,6 @@ export function createRenderTreeHook(
     ...hooks,
   };
 }
-
-export function isPrintHook(type: unknown): type is PrintHook {
-  return typeof type === "object" && type !== null && printHookTag in type;
-}
-
-export type RenderedTextTree = (string | RenderedTextTree | PrintHook)[];
 
 /**
  * Render a component tree to source directories and files. Will ensure that
@@ -562,8 +562,14 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
   } else {
     const cache = getElementCache();
     if (cache.has(child as any)) {
-      debug.render.appendCachedFragment(node, cache.get(child as any)!);
-      node.push(cache.get(child as any)!);
+      const cachedNode = cache.get(child as any)!;
+      // recordSubtreeAdded detects cached nodes automatically and re-adds their children
+      if (isCustomContext(child)) {
+        debug.render.appendCustomContext(node, cachedNode);
+      } else {
+        debug.render.appendFragmentChild(node, cachedNode);
+      }
+      node.push(cachedNode);
       return;
     }
     if (isCustomContext(child)) {
@@ -857,7 +863,6 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       const index = node.length;
       effect(
         () => {
-          debug.render.renderEffect();
           let res: Child | Children | undefined;
           let renderFailed = false;
           try {

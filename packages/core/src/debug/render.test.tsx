@@ -171,7 +171,7 @@ it("sends render tree messages during render", async () => {
   });
 });
 
-it.only("rerenders when devtools requests rerender", async () => {
+it("rerenders when devtools requests rerender", async () => {
   let renderCount = 0;
 
   function Display() {
@@ -307,4 +307,73 @@ it("emits nodeRemoved when conditional content disappears", async () => {
     id: expect.any(Number),
   });
   collector.stop();
+});
+
+it("emits proper events when items are added/removed in For component", async () => {
+  const items = ref(["a", "b"]);
+  const collector = createMessageCollector(socket!);
+
+  function Display(props: any) {
+    return <>item {props.item}</>;
+  }
+  await renderAsync(
+    <Output>
+      <For each={items}>{(item) => <Display item={item} />}</For>
+    </Output>,
+  );
+
+  const originalMessages = await collector.waitForRender();
+
+  // Track all nodes that are currently in the tree
+  const activeNodes = new Map<
+    number,
+    { parentId: number | null; kind: string; name?: string }
+  >();
+
+  function processMessages(messages: any[]) {
+    for (const msg of messages) {
+      if (msg.type === "render:nodeAdded") {
+        const nodeId = msg.node.id;
+        const parentId = msg.parentId;
+
+        // Root node has null parent, otherwise parent must exist
+        if (parentId !== null && !activeNodes.has(parentId)) {
+          throw new Error(
+            `Node ${nodeId} (${msg.node.kind}${msg.node.name ? `: ${msg.node.name}` : ""}) ` +
+              `added with parent ${parentId} but parent is not in active nodes. ` +
+              `Active nodes: ${[...activeNodes.keys()].join(", ")}`,
+          );
+        }
+
+        activeNodes.set(nodeId, {
+          parentId,
+          kind: msg.node.kind,
+          name: msg.node.name,
+        });
+      } else if (msg.type === "render:nodeRemoved") {
+        const nodeId = msg.id;
+        if (!activeNodes.has(nodeId)) {
+          throw new Error(
+            `Node ${nodeId} removed but was not in active nodes. ` +
+              `Active nodes: ${[...activeNodes.keys()].join(", ")}`,
+          );
+        }
+        activeNodes.delete(nodeId);
+      }
+    }
+  }
+
+  // Process initial render
+  processMessages(filterRenderTreeMessages(originalMessages));
+
+  // Mutate the list
+  items.value.push("c");
+  items.value.unshift("0");
+  await flushJobsAsync();
+
+  const updateMessages = await collector.waitForFlush();
+  const updateRenderMessages = filterRenderTreeMessages(updateMessages);
+
+  // Process update - this will throw if parent invariant is violated
+  processMessages(updateRenderMessages);
 });

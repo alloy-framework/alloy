@@ -192,10 +192,7 @@ export function filterRenderTreeMessages(
 ): DevtoolsMessage[] {
   return messages.filter(
     (m) =>
-      m.type === "render:reset" ||
-      m.type === "render:nodeAdded" ||
-      m.type === "render:nodeUpdated" ||
-      m.type === "render:nodeRemoved",
+      m.type.startsWith("render")
   );
 }
 

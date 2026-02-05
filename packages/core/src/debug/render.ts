@@ -5,11 +5,15 @@ import {
   registerDevtoolsMessageHandler,
   type DevtoolsMessage,
 } from "../devtools/devtools-server.js";
+import {
+  isPrintHook,
+  type PrintHook,
+  type RenderedTextTree,
+} from "../print-hook.js";
 import { untrack } from "../reactivity.js";
-import type { PrintHook, RenderedTextTree } from "../render.js";
 import type { ComponentCreator } from "../runtime/component.js";
 import { flushJobsAsync } from "../scheduler.js";
-import { emitDevtoolsMessage, trace, TracePhase } from "./trace.js";
+import { emitDevtoolsMessage } from "./trace.js";
 
 export type RenderTreeNodeKind =
   | "root"
@@ -307,7 +311,16 @@ function recordSubtreeAdded(
 ) {
   if (!isDevtoolsEnabled()) return;
   const parentId = getOrCreateNodeId(parentNode as unknown as object);
-  const id = getOrCreateNodeId(subtree as unknown as object);
+  // Check if this node was previously rendered (cached) by seeing if it already has an ID
+  const existingId = nodeIds.get(subtree as unknown as object);
+  const isCached = existingId !== undefined;
+  const id =
+    isCached ? existingId : getOrCreateNodeId(subtree as unknown as object);
+  // Track in entryIds so clearRenderTreeChildren can find and remove it
+  if (Array.isArray(parentNode)) {
+    const list = getEntryList(parentNode);
+    list.push(id);
+  }
   emitDevtoolsMessage({
     type: "render:nodeAdded",
     parentId,
@@ -316,6 +329,88 @@ function recordSubtreeAdded(
       ...info,
     },
   } as DevtoolsMessage);
+  // For cached nodes, we need to recursively re-add all their children since
+  // clearRenderTreeChildren removed them when the parent re-rendered
+  if (isCached) {
+    recordCachedSubtreeChildrenRecursively(subtree);
+  }
+}
+
+/**
+ * Recursively re-adds all children of a cached render tree node to devtools.
+ * This is needed because clearRenderTreeChildren recursively removes all
+ * descendants, but cached nodes aren't re-rendered so their children need
+ * to be explicitly re-added.
+ */
+function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
+  if (!isDevtoolsEnabled()) return;
+  const parentId = getOrCreateNodeId(node as unknown as object);
+
+  // Rebuild the entryIds for this node
+  const list = getEntryList(node);
+  list.length = 0;
+
+  for (let i = 0; i < node.length; i++) {
+    const child = node[i];
+    if (typeof child === "string") {
+      // Text nodes - re-record them with new IDs
+      if (child !== "") {
+        const id = nextId++;
+        list.push(id);
+        idToNode.set(id, child as unknown as RenderedTextTree);
+        emitDevtoolsMessage({
+          type: "render:nodeAdded",
+          parentId,
+          node: {
+            id,
+            kind: "text",
+            value: child,
+          },
+        } as DevtoolsMessage);
+      }
+    } else if (Array.isArray(child)) {
+      // Nested RenderedTextTree - record and recurse
+      const id = getOrCreateNodeId(child as unknown as object);
+      list.push(id);
+      emitDevtoolsMessage({
+        type: "render:nodeAdded",
+        parentId,
+        node: {
+          id,
+          kind: "fragment",
+        },
+      } as DevtoolsMessage);
+      recordCachedSubtreeChildrenRecursively(child);
+    } else if (isPrintHook(child)) {
+      // PrintHook - record and recurse into subtree
+      const id = getOrCreateNodeId(child as unknown as object);
+      list.push(id);
+      emitDevtoolsMessage({
+        type: "render:nodeAdded",
+        parentId,
+        node: {
+          id,
+          kind: "printHook",
+          name: (child as { name?: string }).name ?? "hook",
+        },
+      } as DevtoolsMessage);
+      if (child.subtree) {
+        const subtreeId = getOrCreateNodeId(child.subtree as unknown as object);
+        const hookList = getEntryList(child as unknown as RenderedTextTree);
+        hookList.length = 0;
+        hookList.push(subtreeId);
+        emitDevtoolsMessage({
+          type: "render:nodeAdded",
+          parentId: id,
+          node: {
+            id: subtreeId,
+            kind: "fragment",
+          },
+        } as DevtoolsMessage);
+        recordCachedSubtreeChildrenRecursively(child.subtree);
+      }
+    }
+  }
 }
 
 function recordNodePropsUpdated(
@@ -494,13 +589,6 @@ export function beginComponent(
   });
 }
 
-export function appendCachedFragment(
-  parent: RenderedTextTree,
-  node: RenderedTextTree,
-) {
-  recordSubtreeAdded(parent, node, { kind: "fragment" });
-}
-
 export function appendCustomContext(
   parent: RenderedTextTree,
   node: RenderedTextTree,
@@ -550,10 +638,6 @@ export function prepareMemoNode(
     return;
   }
   recordSubtreeAdded(parent, node, { kind: "memo" });
-}
-
-export function renderEffect() {
-  trace(TracePhase.render.renderEffect, () => "");
 }
 
 let nextErrorId = 1;

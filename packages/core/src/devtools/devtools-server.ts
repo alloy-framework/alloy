@@ -278,31 +278,12 @@ export async function initDevtoolsIfEnabled(): Promise<void> {
   await waitForDevtoolsConnection();
 }
 
-// Message batching for performance
-const MESSAGE_BATCH_INTERVAL = 16; // ~60fps
-let messageBatch: DevtoolsMessage[] = [];
-let batchTimer: ReturnType<typeof setTimeout> | null = null;
-
-function flushMessageBatch() {
-  if (messageBatch.length === 0) return;
-  if (!serverState || serverState.clients.size === 0) {
-    messageBatch = [];
-    return;
-  }
-
-  // Send all messages as a batch array for efficiency
-  const payload =
-    messageBatch.length === 1 ?
-      JSON.stringify(messageBatch[0])
-    : JSON.stringify({ type: "batch", messages: messageBatch });
-
-  for (const client of serverState.clients) {
-    if (client.readyState === client.OPEN) {
-      client.send(payload);
-    }
-  }
-  messageBatch = [];
-  batchTimer = null;
+/**
+ * Flush all pending devtools messages immediately.
+ * No-op now since we send messages immediately, but kept for API compatibility.
+ */
+export function flushDevtoolsMessages() {
+  // No-op - messages are sent immediately now
 }
 
 export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
@@ -311,33 +292,25 @@ export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
   if (!serverState) return;
   if (serverState.clients.size === 0) return;
 
-  // Add to batch
-  messageBatch.push(message);
-
-  // Schedule flush if not already scheduled
-  if (batchTimer === null) {
-    batchTimer = setTimeout(flushMessageBatch, MESSAGE_BATCH_INTERVAL);
-  }
-}
-
-// For messages that need to be sent immediately (e.g., errors, connection info)
-export function broadcastDevtoolsMessageImmediate(message: DevtoolsMessage) {
-  if (!isDevtoolsEnabled()) return;
-  if (!serverState) return;
-  if (serverState.clients.size === 0) return;
-
-  // Flush any pending batch first
-  if (messageBatch.length > 0) {
-    flushMessageBatch();
-  }
-
-  const payload = JSON.stringify(message);
-  for (const client of serverState.clients) {
-    if (client.readyState === client.OPEN) {
-      client.send(payload);
+  try {
+    const payload = JSON.stringify(message);
+    for (const client of serverState.clients) {
+      if (client.readyState === client.OPEN) {
+        client.send(payload);
+      }
     }
+  } catch (err) {
+    // Log but don't throw - don't break rendering due to devtools issues
+    // eslint-disable-next-line no-console
+    console.error(
+      `Failed to send devtools message (type: ${message.type}):`,
+      err,
+    );
   }
 }
+
+// Alias for consistency - all messages are sent immediately now
+export const broadcastDevtoolsMessageImmediate = broadcastDevtoolsMessage;
 
 export function registerDevtoolsMessageHandler(
   handler: (message: DevtoolsIncomingMessage) => void,

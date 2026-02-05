@@ -34,7 +34,9 @@
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
     "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
     "./dist/src/inspect.js": "./dist/src/inspect.browser.js",
-    "./src/inspect.ts": "./src/inspect.browser.ts"
+    "./src/inspect.ts": "./src/inspect.browser.ts",
+    "./dist/src/devtools/devtools-server.js": "./dist/src/devtools/devtools-server.browser.js",
+    "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts"
   },
   "scripts": {
     "generate-docs": "api-extractor run",

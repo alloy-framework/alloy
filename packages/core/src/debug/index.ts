@@ -29,7 +29,6 @@ import {
   type FileUpdateInfo,
 } from "./files.js";
 import {
-  appendCachedFragment,
   appendCustomContext,
   appendFragmentChild,
   appendPrintHook,
@@ -39,7 +38,6 @@ import {
   initializeRenderTreeDebug,
   prepareMemoNode,
   renderComplete,
-  renderEffect,
   renderError,
   renderWorker,
   type BeginComponentOptions,
@@ -123,10 +121,6 @@ export interface DebugInterface {
       index: number,
       value: string,
     ): void;
-    appendCachedFragment(
-      parent: RenderedTextTree,
-      node: RenderedTextTree,
-    ): void;
     appendCustomContext(parent: RenderedTextTree, node: RenderedTextTree): void;
     appendPrintHook(
       parent: RenderedTextTree,
@@ -145,7 +139,6 @@ export interface DebugInterface {
       node: RenderedTextTree,
       isExisting: boolean,
     ): void;
-    renderEffect(): void;
     error(
       error: RenderErrorInfo,
       componentStack: RenderErrorStackEntry[],
@@ -197,13 +190,11 @@ export const debug: DebugRuntime = {
     initialize: initializeRenderTreeDebug,
     worker: renderWorker,
     appendTextNode,
-    appendCachedFragment,
     appendCustomContext,
     appendPrintHook,
     appendFragmentChild,
     beginComponent,
     prepareMemoNode,
-    renderEffect,
     error: renderError,
     complete: renderComplete,
     flushJobsComplete,

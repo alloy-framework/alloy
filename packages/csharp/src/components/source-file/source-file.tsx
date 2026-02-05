@@ -1,3 +1,4 @@
+import { DocComment } from "#components/doc/comment.jsx";
 import { NamespaceScopes } from "#components/namespace-scopes.jsx";
 import { NamespaceName } from "#components/namespace/namespace-name.jsx";
 import { Reference } from "#components/Reference.jsx";
@@ -8,7 +9,9 @@ import {
   computed,
   SourceFile as CoreSourceFile,
   createScope,
+  List,
   Scope,
+  Show,
   useBinder,
 } from "@alloy-js/core";
 import {
@@ -35,6 +38,10 @@ export interface SourceFileProps extends CSharpFormatOptions {
    * explicit usings is not necessary when referencing symbols via refkeys.
    */
   using?: string[];
+  /* * Optional header content to include at the top of the file */
+  header?: Children;
+  /* * Optional doc comment to include at the top of the file, this will be before 'header' if both are provided */
+  headerComment?: string;
 }
 
 /** A C# source file exists within the context of a namespace contains using statements and declarations */
@@ -68,12 +75,21 @@ export function SourceFile(props: SourceFileProps) {
     useTabs: props.useTabs,
   });
 
+  const header =
+    props.header || props.headerComment ?
+      <SourceFileHeader
+        header={props.header}
+        headerComment={props.headerComment}
+      />
+    : undefined;
+
   return (
     <CoreSourceFile
       path={props.path}
       filetype="cs"
       reference={Reference}
       {...opts}
+      header={header}
     >
       <Scope value={sourceFileScope}>
         {(sourceFileScope.usings.size > 0 ||
@@ -103,5 +119,22 @@ export function SourceFile(props: SourceFileProps) {
         }
       </Scope>
     </CoreSourceFile>
+  );
+}
+
+interface SourceFileHeaderProps {
+  header?: Children;
+  headerComment?: string;
+}
+
+function SourceFileHeader(props: SourceFileHeaderProps) {
+  return (
+    <List>
+      <Show when={props.headerComment !== undefined}>
+        <DocComment>{props.headerComment}</DocComment>
+      </Show>
+      <Show when={props.header !== undefined}>{props.header}</Show>
+      <hbr />
+    </List>
   );
 }

@@ -28,7 +28,7 @@ interface DevtoolsServerState extends DevtoolsServerInfo {
 }
 
 let serverState: DevtoolsServerState | null = null;
-let serverPromise: Promise<DevtoolsServerState | null> | null = null;
+let _serverPromise: Promise<DevtoolsServerState | null> | null = null;
 const messageHandlers = new Set<(message: DevtoolsIncomingMessage) => void>();
 let cachedAlloyVersion: string | null = null;
 let devtoolsExplicitlyEnabled = false;
@@ -161,7 +161,6 @@ async function createServer(): Promise<DevtoolsServerState> {
     // eslint-disable-next-line no-console
     console.log("");
     waitingForConnection = true;
-    // eslint-disable-next-line no-console
     process.stdout.write("Waiting for connection...");
   }
 
@@ -177,7 +176,6 @@ async function createServer(): Promise<DevtoolsServerState> {
     resolveReady?.();
     if (waitingForConnection) {
       waitingForConnection = false;
-      // eslint-disable-next-line no-console
       process.stdout.write(" Connected!\n");
     }
 
@@ -338,7 +336,7 @@ export async function resetDevtoolsServerForTests() {
     await serverState.close();
   }
   serverState = null;
-  serverPromise = null;
+  _serverPromise = null;
   devtoolsExplicitlyEnabled = false;
   devtoolsInitialized = false;
   configuredPort = undefined;

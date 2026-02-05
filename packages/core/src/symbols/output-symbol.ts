@@ -681,16 +681,16 @@ export abstract class OutputSymbol {
   }
 }
 
-function formatRefkey(refkey: Refkey): string {
+function _formatRefkey(refkey: Refkey): string {
   if (isNamekey(refkey)) {
     return `name:${refkey.name}`;
   }
   if (isMemberRefkey(refkey)) {
-    const base = formatRefkey(toRefkey(refkey.base));
+    const base = _formatRefkey(toRefkey(refkey.base));
     const member =
       typeof refkey.member === "string" ?
         refkey.member
-      : formatRefkey(toRefkey(refkey.member));
+      : _formatRefkey(toRefkey(refkey.member));
     return `member:${base}.${member}`;
   }
   if (isSymbolRefkey(refkey)) {

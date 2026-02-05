@@ -28,6 +28,10 @@ export {
   resetDevtoolsServerForTests,
   waitForDevtoolsConnection,
 } from "./devtools/devtools-server.js";
+export type {
+  DevtoolsServerInfo,
+  EnableDevtoolsOptions,
+} from "./devtools/devtools-server.js";
 export * from "./diagnostics.js";
 export * from "./library-symbol-reference.js";
 export * from "./name-policy.js";

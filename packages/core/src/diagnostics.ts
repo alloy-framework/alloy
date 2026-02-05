@@ -2,7 +2,6 @@ import { getRenderNodeId } from "./debug/index.js";
 import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
 import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
-import type { RenderedTextTree } from "./render.js";
 import type { SourceLocation } from "./runtime/component.js";
 
 export interface DiagnosticStackEntry {

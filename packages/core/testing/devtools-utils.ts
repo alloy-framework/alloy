@@ -190,10 +190,7 @@ export function createMessageCollector(socket: WebSocket) {
 export function filterRenderTreeMessages(
   messages: DevtoolsMessage[],
 ): DevtoolsMessage[] {
-  return messages.filter(
-    (m) =>
-      m.type.startsWith("render")
-  );
+  return messages.filter((m) => m.type.startsWith("render"));
 }
 
 /**

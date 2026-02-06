@@ -53,6 +53,15 @@ export class PythonOutputSymbol extends OutputSymbol {
     return this.spaces.some((s) => s.key === "instance");
   }
 
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      module: this.#module,
+      isStaticMemberSymbol: this.isStaticMemberSymbol,
+      isInstanceMemberSymbol: this.isInstanceMemberSymbol,
+    };
+  }
+
   copy() {
     const binder = this.binder;
     const copy = createSymbol(PythonOutputSymbol, this.name, undefined, {

@@ -126,8 +126,8 @@ export function ProblemsView() {
                 <tbody>
                   {problems.map((problem) => {
                     const location =
-                      problem.source ?
-                        `${formatPath(problem.source.fileName)}:${problem.source.lineNumber}:${problem.source.columnNumber}`
+                      problem.source?.fileName ?
+                        `${formatPath(problem.source.fileName)}:${problem.source.lineNumber ?? 0}:${problem.source.columnNumber ?? 0}`
                       : "";
                     const sourceFileName =
                       problem.sourceFileId ?

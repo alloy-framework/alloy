@@ -105,6 +105,11 @@ export class TSModuleScope extends TSLexicalScope {
   }
 
   override get debugInfo(): Record<string, unknown> {
-    return super.debugInfo;
+    return {
+      ...super.debugInfo,
+      exportedSymbolCount: this.#exportedSymbols.size,
+      importedSymbolCount: this.#importedSymbols.size,
+      importedModuleCount: this.#importedModules.size,
+    };
   }
 }

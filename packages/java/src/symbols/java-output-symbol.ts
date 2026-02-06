@@ -58,4 +58,11 @@ export class JavaOutputSymbol extends OutputSymbol {
     this.initializeCopy(copy);
     return copy;
   }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      package: this.#package,
+    };
+  }
 }

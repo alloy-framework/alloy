@@ -28,7 +28,7 @@ interface DevtoolsServerState extends DevtoolsServerInfo {
 }
 
 let serverState: DevtoolsServerState | null = null;
-let _serverPromise: Promise<DevtoolsServerState | null> | null = null;
+let _serverPromise: Promise<DevtoolsServerState> | null = null;
 const messageHandlers = new Set<(message: DevtoolsIncomingMessage) => void>();
 let cachedAlloyVersion: string | null = null;
 let devtoolsExplicitlyEnabled = false;
@@ -211,9 +211,13 @@ async function createServer(): Promise<DevtoolsServerState> {
 
 export async function ensureDevtoolsServer(): Promise<DevtoolsServerState> {
   if (serverState) return serverState;
-  const server = await createServer();
-  serverState = server;
-  return server;
+  if (!_serverPromise) {
+    _serverPromise = createServer().then((server) => {
+      serverState = server;
+      return server;
+    });
+  }
+  return _serverPromise;
 }
 
 /**
@@ -225,7 +229,8 @@ export async function ensureDevtoolsServer(): Promise<DevtoolsServerState> {
  *
  * @example
  * ```ts
- * import { waitForDevtoolsConnection, render } from "@alloy-js/core";
+ * import { waitForDevtoolsConnection } from "@alloy-js/core/devtools";
+ * import { render } from "@alloy-js/core";
  *
  * // In your test, wait for devtools before rendering
  * await waitForDevtoolsConnection();
@@ -276,14 +281,6 @@ export async function initDevtoolsIfEnabled(): Promise<void> {
   await waitForDevtoolsConnection();
 }
 
-/**
- * Flush all pending devtools messages immediately.
- * No-op now since we send messages immediately, but kept for API compatibility.
- */
-export function flushDevtoolsMessages() {
-  // No-op - messages are sent immediately now
-}
-
 export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
   if (!isDevtoolsEnabled()) return;
   // Use synchronous access since server should already be initialized
@@ -307,9 +304,6 @@ export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
   }
 }
 
-// Alias for consistency - all messages are sent immediately now
-export const broadcastDevtoolsMessageImmediate = broadcastDevtoolsMessage;
-
 export function registerDevtoolsMessageHandler(
   handler: (message: DevtoolsIncomingMessage) => void,
 ) {
@@ -331,6 +325,32 @@ export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
   return { port: serverState.port, connected: serverState.connected };
 }
 
+/**
+ * Start the devtools server and wait for a client connection.
+ * Convenience function for tests that need to inspect render output
+ * with the devtools UI.
+ *
+ * @example
+ * ```ts
+ * import { enableDevtoolsAndConnect, resetDevtoolsServerForTests } from "@alloy-js/core/devtools";
+ *
+ * const serverInfo = await enableDevtoolsAndConnect({ port: 0 });
+ * // ... run your test ...
+ * await resetDevtoolsServerForTests();
+ * ```
+ *
+ * @returns Server info with port number once a client has connected
+ */
+export async function enableDevtoolsAndConnect(
+  options?: EnableDevtoolsOptions,
+): Promise<DevtoolsServerInfo> {
+  const info = await enableDevtools(options);
+  if (!info.connected) {
+    await serverState!.ready;
+  }
+  return { port: serverState!.port, connected: true };
+}
+
 export async function resetDevtoolsServerForTests() {
   if (serverState) {
     await serverState.close();
@@ -340,4 +360,5 @@ export async function resetDevtoolsServerForTests() {
   devtoolsExplicitlyEnabled = false;
   devtoolsInitialized = false;
   configuredPort = undefined;
+  loggedDevtoolsLinks = false;
 }

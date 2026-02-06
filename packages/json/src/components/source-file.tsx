@@ -2,6 +2,7 @@ import {
   Children,
   SourceFile as CoreSourceFile,
   createSourceFileTap,
+  createSymbol,
   moveTakenMembersTo,
 } from "@alloy-js/core";
 import { JsonFileContext } from "../context/JsonFileContext.js";
@@ -25,7 +26,7 @@ export interface SourceFileProps {
  *
  */
 export function SourceFile(props: SourceFileProps) {
-  const jsonValueSym = new JsonOutputSymbol(props.path, undefined);
+  const jsonValueSym = createSymbol(JsonOutputSymbol, props.path, undefined);
   moveTakenMembersTo(jsonValueSym);
   const fileContext: JsonFileContext = {
     symbol: jsonValueSym,

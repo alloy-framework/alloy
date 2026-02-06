@@ -63,6 +63,15 @@ export class JsonOutputSymbol extends OutputSymbol {
     return copy;
   }
 
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      jsonFlags: this.#jsonFlags,
+      isObject: Boolean(this.#jsonFlags & JsonSymbolFlags.Object),
+      isArray: Boolean(this.#jsonFlags & JsonSymbolFlags.Array),
+    };
+  }
+
   get staticMembers() {
     return this.memberSpaceFor("static")!;
   }

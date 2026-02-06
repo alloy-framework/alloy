@@ -1,5 +1,6 @@
 import { SourceLocationLink } from "@/components/source-location-link";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
+import { formatSourceLocation } from "@/lib/format-source-location";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -201,55 +202,6 @@ export function EffectsView() {
     [edgeList],
   );
 
-  // Debug specific effects once
-  useEffect(() => {
-    if (edgeList.length > 0) {
-      const effect89Tracks = [
-        ...new Set(
-          edgeList
-            .filter((e) => e.effectId === 89 && e.type === "track")
-            .map((e) => getEdgeTargetKey(e))
-            .filter((value): value is string => value !== null),
-        ),
-      ];
-      const effect89Triggers = [
-        ...new Set(
-          edgeList
-            .filter((e) => e.effectId === 89 && e.type === "trigger")
-            .map((e) => getEdgeTargetKey(e))
-            .filter((value): value is string => value !== null),
-        ),
-      ];
-      const effect90Tracks = [
-        ...new Set(
-          edgeList
-            .filter((e) => e.effectId === 90 && e.type === "track")
-            .map((e) => getEdgeTargetKey(e))
-            .filter((value): value is string => value !== null),
-        ),
-      ];
-      const effect90Triggers = [
-        ...new Set(
-          edgeList
-            .filter((e) => e.effectId === 90 && e.type === "trigger")
-            .map((e) => getEdgeTargetKey(e))
-            .filter((value): value is string => value !== null),
-        ),
-      ];
-
-      if (effect89Tracks.length > 0 || effect89Triggers.length > 0) {
-        console.log(
-          `Effect 89 - reads refs: [${effect89Tracks.join(", ")}], writes refs: [${effect89Triggers.join(", ")}]`,
-        );
-      }
-      if (effect90Tracks.length > 0 || effect90Triggers.length > 0) {
-        console.log(
-          `Effect 90 - reads refs: [${effect90Tracks.join(", ")}], writes refs: [${effect90Triggers.join(", ")}]`,
-        );
-      }
-    }
-  }, []); // Run once only
-
   const graphNodes = useMemo(() => {
     const nodes = new Map<string, GraphNode>();
     for (const effect of effectList) {
@@ -339,14 +291,7 @@ export function EffectsView() {
     fileName?: string;
     lineNumber?: number;
     columnNumber?: number;
-  }) => {
-    if (!location?.fileName) return "";
-    const normalizedFileName = location.fileName.replace(/^file:\/\//, "");
-    const path = formatPath(normalizedFileName);
-    const line = location.lineNumber ?? "?";
-    const column = location.columnNumber ?? "?";
-    return `${path}:${line}:${column}`;
-  };
+  }) => formatSourceLocation(location, formatPath);
 
   const renderNodeLabel = (id: string, showEffectName = false) => {
     const node = graphNodes.get(id);

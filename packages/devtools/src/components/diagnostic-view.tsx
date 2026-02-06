@@ -1,4 +1,4 @@
-import { ComponentStack } from "@/components/component-stack";
+import { ComponentStack, type ComponentStackEntry } from "@/components/component-stack";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 
 export interface DiagnosticViewProps {
@@ -17,14 +17,24 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
     );
   }
 
-  const stackSource = diagnostic.componentStack
-    ?.map((entry) => entry.source)
+  const componentStackEntries: ComponentStackEntry[] = (diagnostic.componentStack ?? []).map((entry) => ({
+    name: entry.name,
+    renderNodeId: entry.renderNodeId,
+    source: entry.source?.fileName ? {
+      fileName: entry.source.fileName,
+      lineNumber: entry.source.lineNumber ?? 0,
+      columnNumber: entry.source.columnNumber ?? 0,
+    } : undefined,
+  }));
+
+  const stackSource = componentStackEntries
+    .map((entry) => entry.source)
     .filter(Boolean)
     .at(-1);
   const locationSource = diagnostic.source ?? stackSource;
   const location =
-    locationSource ?
-      `${formatPath(locationSource.fileName)}:${locationSource.lineNumber}:${locationSource.columnNumber}`
+    locationSource?.fileName ?
+      `${formatPath(locationSource.fileName)}:${locationSource.lineNumber ?? 0}:${locationSource.columnNumber ?? 0}`
     : undefined;
 
   return (
@@ -40,7 +50,7 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
       <div className="text-sm">{diagnostic.message}</div>
       <div>
         <div className="text-sm font-medium">Component stack</div>
-        <ComponentStack entries={diagnostic.componentStack ?? []} />
+        <ComponentStack entries={componentStackEntries} />
       </div>
     </div>
   );

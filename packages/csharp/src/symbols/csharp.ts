@@ -78,7 +78,6 @@ export class CSharpSymbol extends OutputSymbol {
     this.#isExtern = options.isExtern ?? false;
     this.#isReadOnly = options.isReadOnly ?? false;
     this.#isNullable = options.isNullable; // undefined means unset, here.
-    this.init();
   }
 
   get enclosingNamespace(): NamespaceSymbol | undefined {

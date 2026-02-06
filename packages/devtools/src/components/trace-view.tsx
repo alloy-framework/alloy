@@ -1,5 +1,7 @@
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
+import { formatSourceLocation } from "@/lib/format-source-location";
+import type { ServerToClientMessage } from "@alloy-js/core/devtools";
 import { Filter } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -163,15 +165,16 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     openDetailTab(`error:${id}`, name ?? `Error #${id}`, "error");
   };
 
-  const renderLinksForMessage = (message: Record<string, unknown>) => {
-    const type = String(message.type ?? "");
+  const renderLinksForMessage = (message: ServerToClientMessage) => {
+    const msg = message as unknown as Record<string, unknown>;
+    const type = String(msg.type ?? "");
     const links: Array<{ label: string; onClick: () => void }> = [];
 
     if (type.startsWith("render:node")) {
-      const node = message.node as
+      const node = msg.node as
         | { id?: number; name?: string; kind?: string }
         | undefined;
-      const id = message.id as number | undefined;
+      const id = msg.id as number | undefined;
       if (node?.id !== undefined) {
         links.push({
           label: node.name ?? node.kind ?? `Render node #${node.id}`,
@@ -186,7 +189,7 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type.startsWith("files:")) {
-      const path = (message as any).path as string | undefined;
+      const path = msg.path as string | undefined;
       if (path) {
         links.push({
           label: formatPath(path),
@@ -196,13 +199,13 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type.startsWith("scope:") || type.startsWith("symbol:")) {
-      const symbol = (message as any).symbol as
+      const symbol = msg.symbol as
         | { id?: number; name?: string }
         | undefined;
-      const scope = (message as any).scope as
+      const scope = msg.scope as
         | { id?: number; name?: string }
         | undefined;
-      const id = (message as any).id as number | undefined;
+      const id = msg.id as number | undefined;
       if (symbol?.id !== undefined) {
         links.push({
           label: symbol.name ?? `Symbol #${symbol.id}`,
@@ -222,15 +225,15 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type === "render:error") {
-      const id = (message as any).id as number | undefined;
-      const name = (message as any).name as string | undefined;
+      const id = msg.id as number | undefined;
+      const name = msg.name as string | undefined;
       if (id !== undefined) {
         links.push({
           label: name ?? `Error #${id}`,
           onClick: () => openError(id, name),
         });
       }
-      const stack = (message as any).componentStack as
+      const stack = msg.componentStack as
         | Array<{ renderNodeId?: number; name?: string }>
         | undefined;
       if (Array.isArray(stack)) {
@@ -253,91 +256,49 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     fileName?: string;
     lineNumber?: number;
     columnNumber?: number;
-  }) => {
-    if (!location?.fileName) return "";
-    const normalizedFileName = location.fileName.replace(/^file:\/\//, "");
-    const path = formatPath(normalizedFileName);
-    const line = location.lineNumber ?? "?";
-    const column = location.columnNumber ?? "?";
-    return `${path}:${line}:${column}`;
+  }) => formatSourceLocation(location, formatPath);
+
+  const MESSAGE_LABELS: Record<string, { summary: string; typeLabel: string }> = {
+    "debugger:info": { summary: "Connected", typeLabel: "Debugger" },
+    "render:reset": { summary: "Render tree reset", typeLabel: "Render" },
+    "render:nodeAdded": { summary: "Node added", typeLabel: "Node added" },
+    "render:nodeUpdated": { summary: "Node updated", typeLabel: "Node updated" },
+    "render:nodeRemoved": { summary: "Node removed", typeLabel: "Node removed" },
+    "files:directoryAdded": { summary: "Directory added", typeLabel: "Directory added" },
+    "files:directoryRemoved": { summary: "Directory removed", typeLabel: "Directory removed" },
+    "files:fileAdded": { summary: "File added", typeLabel: "File added" },
+    "files:fileRemoved": { summary: "File removed", typeLabel: "File removed" },
+    "files:fileUpdated": { summary: "File updated", typeLabel: "File updated" },
+    "scope:create": { summary: "Scope added", typeLabel: "Scope added" },
+    "scope:update": { summary: "Scope updated", typeLabel: "Scope updated" },
+    "scope:delete": { summary: "Scope removed", typeLabel: "Scope removed" },
+    "symbol:create": { summary: "Symbol added", typeLabel: "Symbol added" },
+    "symbol:update": { summary: "Symbol updated", typeLabel: "Symbol updated" },
+    "symbol:delete": { summary: "Symbol removed", typeLabel: "Symbol removed" },
   };
 
-  const summarizeMessage = (message: Record<string, unknown>) => {
+  const summarizeMessage = (message: ServerToClientMessage) => {
+    const msg = message as unknown as Record<string, unknown>;
     const type = String(message.type ?? "");
 
-    if (type === "debugger:info") {
-      const version = (message as any).version as string | undefined;
-      return `Connected${version ? ` · Alloy v${version}` : ""}`;
-    }
-
-    if (type === "render:reset") {
-      return "Render tree reset";
-    }
-
-    if (type === "render:nodeAdded") {
-      return "Node added";
-    }
-
-    if (type === "render:nodeUpdated") {
-      return "Node updated";
-    }
-
-    if (type === "render:nodeRemoved") {
-      return "Node removed";
-    }
-
-    if (type === "files:directoryAdded") {
-      return "Directory added";
-    }
-
-    if (type === "files:directoryRemoved") {
-      return "Directory removed";
-    }
-
-    if (type === "files:fileAdded") {
-      return "File added";
-    }
-
-    if (type === "files:fileRemoved") {
-      return "File removed";
-    }
-
-    if (type === "files:fileUpdated") {
-      return "File updated";
-    }
-
-    if (type === "scope:create") {
-      return "Scope added";
-    }
-
-    if (type === "scope:update") {
-      return "Scope updated";
-    }
-
-    if (type === "scope:delete") {
-      return "Scope removed";
-    }
-
-    if (type === "symbol:create") {
-      return "Symbol added";
-    }
-
-    if (type === "symbol:update") {
-      return "Symbol updated";
-    }
-
-    if (type === "symbol:delete") {
-      return "Symbol removed";
+    // Static labels
+    const staticEntry = MESSAGE_LABELS[type];
+    if (staticEntry) {
+      if (type === "debugger:info") {
+        const version = msg.version as string | undefined;
+        return `Connected${version ? ` · Alloy v${version}` : ""}`;
+      }
+      return staticEntry.summary;
     }
 
     if (type === "render:error") {
-      const name = (message as any).name as string | undefined;
-      const msg = (message as any).message as string | undefined;
-      return `${name ?? "Error"}${msg ? ` · ${msg}` : ""}`;
+      const name = msg.name as string | undefined;
+      const errorMsg = msg.message as string | undefined;
+      return `${name ?? "Error"}${errorMsg ? ` · ${errorMsg}` : ""}`;
     }
 
     if (type === "effect:effectAdded") {
-      const effect = (message as any).effect as
+      const effect = msg.effect as
         | { id?: number; name?: string; type?: string; createdAt?: any }
         | undefined;
       const location = formatLocation(effect?.createdAt);
@@ -346,7 +307,7 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type === "effect:effectUpdated") {
-      const effect = (message as any).effect as
+      const effect = msg.effect as
         | { id?: number; name?: string; type?: string; lastTriggeredAt?: any }
         | undefined;
       const location = formatLocation(effect?.lastTriggeredAt);
@@ -355,7 +316,7 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type === "effect:refAdded") {
-      const ref = (message as any).ref as
+      const ref = msg.ref as
         | { id?: number; kind?: string; createdAt?: any }
         | undefined;
       const location = formatLocation(ref?.createdAt);
@@ -364,7 +325,7 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type === "effect:track" || type === "effect:trigger") {
-      const edge = (message as any).edge as
+      const edge = msg.edge as
         | {
             type?: string;
             effectId?: number;
@@ -376,7 +337,7 @@ export function TraceView({ scrollToken }: TraceViewProps) {
             location?: any;
           }
         | undefined;
-      const messageText = (message as any).message as string | undefined;
+      const messageText = msg.message as string | undefined;
       if (!edge) {
         return `${type}${messageText ? ` · ${messageText}` : ""}`;
       }
@@ -399,24 +360,11 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     return "Debug event";
   };
 
-  const summarizeType = (message: Record<string, unknown>) => {
+  const summarizeType = (message: ServerToClientMessage) => {
     const type = String(message.type ?? "");
-    if (type === "render:nodeAdded") return "Node added";
-    if (type === "render:nodeUpdated") return "Node updated";
-    if (type === "render:nodeRemoved") return "Node removed";
-    if (type === "render:reset") return "Render";
-    if (type === "files:directoryAdded") return "Directory added";
-    if (type === "files:directoryRemoved") return "Directory removed";
-    if (type === "files:fileAdded") return "File added";
-    if (type === "files:fileRemoved") return "File removed";
-    if (type === "scope:create") return "Scope added";
-    if (type === "scope:update") return "Scope updated";
-    if (type === "scope:delete") return "Scope removed";
-    if (type === "symbol:create") return "Symbol added";
-    if (type === "symbol:update") return "Symbol updated";
-    if (type === "symbol:delete") return "Symbol removed";
+    const staticEntry = MESSAGE_LABELS[type];
+    if (staticEntry) return staticEntry.typeLabel;
     if (type === "render:error") return "Error";
-    if (type === "debugger:info") return "Debugger";
     if (type.startsWith("effect:")) return "Effects";
     return "Debug";
   };

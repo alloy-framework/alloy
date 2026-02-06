@@ -28,6 +28,11 @@
     "./components": {
       "development": "./src/components/index.ts",
       "import": "./dist/src/components/index.js"
+    },
+    "./devtools": {
+      "browser": "./dist/src/devtools-entry.browser.js",
+      "development": "./src/devtools-entry.ts",
+      "import": "./dist/src/devtools-entry.js"
     }
   },
   "browser": {

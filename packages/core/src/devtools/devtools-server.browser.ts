@@ -42,15 +42,9 @@ export async function initDevtoolsIfEnabled(): Promise<void> {
   // No-op in browser
 }
 
-export function flushDevtoolsMessages(): void {
-  // No-op in browser
-}
-
 export function broadcastDevtoolsMessage(_message: DevtoolsMessage): void {
   // No-op in browser
 }
-
-export const broadcastDevtoolsMessageImmediate = broadcastDevtoolsMessage;
 
 export function registerDevtoolsMessageHandler(
   _handler: (message: DevtoolsIncomingMessage) => void,
@@ -63,6 +57,12 @@ export function assertDevtoolsConnectedForSyncRender(): void {
 }
 
 export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
+  return null;
+}
+
+export async function enableDevtoolsAndConnect(
+  _options?: EnableDevtoolsOptions,
+): Promise<DevtoolsServerInfo | null> {
   return null;
 }
 

@@ -2,6 +2,7 @@ import {
   Children,
   ComponentContext,
   createContext,
+  createScope,
   Scope,
   SourceDirectory,
   useContext,
@@ -41,7 +42,7 @@ export interface ProjectDirectoryProps {
  * with a build tool included (maven, gradle etc).
  */
 export function ProjectDirectory(props: ProjectDirectoryProps) {
-  const scope = new JavaProjectScope(props.name, {
+  const scope = createScope(JavaProjectScope, props.name, {
     mavenProjectConfig: props.mavenProjectConfig,
     gradleProjectConfig: props.gradleProjectConfig,
   });

@@ -1,4 +1,5 @@
 import {
+  createScope,
   Scope,
   ScopePropsWithInfo,
   ScopePropsWithValue,
@@ -22,7 +23,7 @@ export function LexicalScope(props: LexicalScopeProps) {
     scope = props.value;
   } else {
     const parentScope = useScope();
-    scope = new JavaLexicalScope(props.name ?? "lexical scope", parentScope, {
+    scope = createScope(JavaLexicalScope, props.name ?? "lexical scope", parentScope, {
       ...props,
     });
   }

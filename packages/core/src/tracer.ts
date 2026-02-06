@@ -4,6 +4,7 @@ import {
   isConsoleTraceEnabled,
   type TracePhaseInfo,
 } from "./debug/index.js";
+import { colorText, parseBreakOnIds } from "./debug/trace.js";
 import { untrack } from "./reactivity.js";
 import { inspectRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
@@ -15,27 +16,12 @@ import type {
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import { SymbolTable } from "./symbols/symbol-table.js";
 
-const debuggerIdsEnv = process.env.ALLOY_BREAK_ON_DID ?? "";
-const dids = new Set<number>();
-
-debuggerIdsEnv.split(",").forEach((id) => {
-  const num = parseInt(id, 10);
-  if (!isNaN(num)) {
-    dids.add(num);
-  }
-});
+const dids = parseBreakOnIds();
 
 let triggerCount = 0;
 
-function shouldTrace(phase: TracePhaseInfo) {
-  return (
-    isConsoleTraceEnabled(phase.area) ||
-    isConsoleTraceEnabled(phase.area + "." + phase.subarea)
-  );
-}
-
 export function traceEffect(phase: TracePhaseInfo, cb: () => string) {
-  if (!shouldTrace(phase)) return;
+  if (!isConsoleTraceEnabled(phase.area) && !isConsoleTraceEnabled(phase.area + "." + phase.subarea)) return;
   let first = true;
   const triggerIds = new Set<number>();
 
@@ -62,54 +48,6 @@ export function traceEffect(phase: TracePhaseInfo, cb: () => string) {
       },
     },
   );
-}
-
-interface Color {
-  r: number;
-  g: number;
-  b: number;
-}
-
-/** Descriptor for how to format the text */
-interface TextFormat {
-  fg?: Color; // optional foreground color
-  bg?: Color; // optional background color
-  bold?: boolean; // optional bold flag
-}
-
-/**
- * Wraps `text` in ANSI escape codes according to the given format.
- *
- * @param text  The string to format.
- * @param fmt   Optional formatting descriptor.
- * @returns     The text wrapped in ANSI codes (or unmodified if no styles given).
- */
-function colorText(text: string, fmt?: TextFormat): string {
-  if (!fmt) return text;
-
-  const codes: string[] = [];
-
-  if (fmt.bold) {
-    codes.push("1"); // ANSI code for bold
-  }
-
-  if (fmt.fg) {
-    const { r, g, b } = fmt.fg;
-    codes.push(`38;2;${r};${g};${b}`);
-  }
-
-  if (fmt.bg) {
-    const { r, g, b } = fmt.bg;
-    codes.push(`48;2;${r};${g};${b}`);
-  }
-
-  if (codes.length === 0) {
-    return text;
-  }
-
-  const prefix = `\x1b[${codes.join(";")}m`;
-  const reset = `\x1b[0m`;
-  return `${prefix}${text}${reset}`;
 }
 
 /**

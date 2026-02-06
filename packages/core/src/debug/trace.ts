@@ -26,6 +26,19 @@ debuggerIdsEnv.split(",").forEach((id) => {
   }
 });
 
+/** Parse the ALLOY_BREAK_ON_DID environment variable into a set of IDs. */
+export function parseBreakOnIds(): Set<number> {
+  const env = process.env.ALLOY_BREAK_ON_DID ?? "";
+  const ids = new Set<number>();
+  env.split(",").forEach((id) => {
+    const num = parseInt(id, 10);
+    if (!isNaN(num)) {
+      ids.add(num);
+    }
+  });
+  return ids;
+}
+
 /** Returns true if console tracing is enabled for the given phase (or any phase if not specified). */
 export function isConsoleTraceEnabled(phase?: string): boolean {
   if (tracePhases.size === 0) return false;
@@ -192,13 +205,13 @@ export const TracePhase = {
 // Console formatting utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface TextFormat {
+export interface TextFormat {
   fg?: Color;
   bg?: Color;
   bold?: boolean;
 }
 
-function colorText(text: string, fmt?: TextFormat): string {
+export function colorText(text: string, fmt?: TextFormat): string {
   if (!fmt) return text;
   const codes: string[] = [];
   if (fmt.bold) codes.push("1");

@@ -1,6 +1,4 @@
-import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
-import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
-import { findRenderNodeInTree } from "@/lib/render-tree-utils";
+import { useDetailResolvers } from "@/hooks/use-detail-resolvers";
 import {
   buildDebugInfoRows,
   formatDebugLabel,
@@ -34,45 +32,13 @@ export interface SymbolDetailsProps {
 }
 
 export function SymbolDetails({ details }: SymbolDetailsProps) {
-  const { renderTree, symbolDetails, scopeDetails } =
-    useDebugConnectionContext();
-  const {
-    focusRenderNodeById,
-    tabs: { openDetailTab },
-  } = useDevtoolsAppStateContext();
-  const resolveSymbolName = (id: number | null | undefined) => {
-    if (id === null || id === undefined) return undefined;
-    return symbolDetails.get(`symbol:${id}`)?.name as string | undefined;
-  };
-  const resolveScopeName = (id: number | null | undefined) => {
-    if (id === null || id === undefined) return undefined;
-    return scopeDetails.get(`scope:${id}`)?.name as string | undefined;
-  };
-  const resolveRenderNodeLabel = (id: number | null | undefined) => {
-    if (id === null || id === undefined) return undefined;
-    const node = findRenderNodeInTree(renderTree, String(id));
-    return node?.name ?? node?.kind ?? `Render node #${id}`;
-  };
+  const { resolveSymbolName, resolveScopeName, resolveRenderNodeLabel, options } =
+    useDetailResolvers();
   const scopeName = resolveScopeName(details.scopeId);
   const ownerName = resolveSymbolName(details.ownerSymbolId);
   const movedName = resolveSymbolName(details.movedToId);
   const renderNodeLabel = resolveRenderNodeLabel(details.renderNodeId);
   const debugRows = buildDebugInfoRows(details.debugInfo);
-  const options = {
-    onOpenSymbol: (id: number) =>
-      openDetailTab(
-        `symbol:${id}`,
-        resolveSymbolName(id) ?? "(unknown symbol)",
-        "symbol",
-      ),
-    onOpenScope: (id: number) =>
-      openDetailTab(
-        `scope:${id}`,
-        resolveScopeName(id) ?? "(unknown scope)",
-        "scope",
-      ),
-    onOpenRenderNode: (id: number) => focusRenderNodeById(id),
-  };
 
   return (
     <div className="p-4 text-sm">

@@ -2,6 +2,7 @@ import {
   Children,
   ComponentContext,
   createContext,
+  createSymbol,
   Declaration,
   Indent,
   List,
@@ -73,7 +74,7 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
     });
 
     for (const typeParameter of props.typeParameters ?? []) {
-      new TypeParameterSymbol(typeParameter.name, symbol.typeParameters, {
+      createSymbol(TypeParameterSymbol, typeParameter.name, symbol.typeParameters, {
         refkeys: typeParameter.refkey,
         constraint: typeParameter.constraint,
       });

@@ -500,6 +500,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@alloy-js/core':
+        specifier: workspace:~
+        version: link:../core
       '@eslint/js':
         specifier: ^9.39.1
         version: 9.39.2

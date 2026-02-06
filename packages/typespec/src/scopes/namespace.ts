@@ -1,7 +1,7 @@
 import { OutputScope, OutputScopeOptions, useScope } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/index.js";
-import { SourceFileScope } from "./source-file.js";
 import { Optional } from "../util.js";
+import { SourceFileScope } from "./source-file.js";
 
 export interface NamespaceScopeOptions extends OutputScopeOptions {}
 
@@ -14,7 +14,7 @@ export class NamespaceScope extends OutputScope {
     super(symbol.name, parent, {
       ...options,
       ownerSymbol: symbol,
-    } );
+    });
   }
 
   get ownerSymbol(): NamespaceSymbol {
@@ -22,16 +22,16 @@ export class NamespaceScope extends OutputScope {
   }
 }
 
-export function useNamespace(): NamespaceScope | undefined {
-    let scope: Optional<OutputScope> = useScope();
-    while(scope !== undefined) {
-        if (scope instanceof NamespaceScope) {
-            return scope;
-        }
-        if (scope instanceof SourceFileScope) {
-            return undefined;
-        }
-        scope = scope.parent;
+export function useNamespace(): Optional<NamespaceScope> {
+  let scope: Optional<OutputScope> = useScope();
+  while (scope !== undefined) {
+    if (scope instanceof NamespaceScope) {
+      return scope;
     }
-    return undefined;
+    if (scope instanceof SourceFileScope) {
+      return undefined;
+    }
+    scope = scope.parent;
+  }
+  return undefined;
 }

@@ -1,10 +1,15 @@
-import { Namekey, NamePolicyGetter, onCleanup, useBinder } from "@alloy-js/core";
-import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
-import { ValueOrArray } from "../util.js";
-import { useNamespace } from "../scopes/index.js";
+import {
+  Namekey,
+  NamePolicyGetter,
+  onCleanup,
+  useBinder,
+} from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/index.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
+import { useNamespace } from "../scopes/index.js";
+import { ValueOrArray } from "../util.js";
 import { TypeSpecSymbol } from "./index.js";
+import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
 
 export function createNamespaceSymbol(
   name: ValueOrArray<string | Namekey>,
@@ -21,14 +26,16 @@ export function createNamespaceSymbol(
   return current;
 }
 
-function normalizeNamespaceName(name: ValueOrArray<string | Namekey>): Array<string | Namekey> {
-    if (Array.isArray(name)) {
-        return name;
-    }
-    if (typeof name === "string" && name.includes(".")) {
-        return name.split(".");
-    }
-    return [name];
+function normalizeNamespaceName(
+  name: ValueOrArray<string | Namekey>,
+): Array<string | Namekey> {
+  if (Array.isArray(name)) {
+    return name;
+  }
+  if (typeof name === "string" && name.includes(".")) {
+    return name.split(".");
+  }
+  return [name];
 }
 
 function createNamespaceSymbolInternal(
@@ -54,10 +61,10 @@ function createNamespaceSymbolInternal(
 }
 
 function withCleanup<T extends TypeSpecSymbol>(symbol: T): T {
-    onCleanup(() => {
-        symbol.delete();
-    });
-    return symbol;
+  onCleanup(() => {
+    symbol.delete();
+  });
+  return symbol;
 }
 
 function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(

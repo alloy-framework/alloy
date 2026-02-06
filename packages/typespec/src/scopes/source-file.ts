@@ -4,7 +4,6 @@ import {
   shallowReactive,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/index.js";
-import { SourceDirectoryScope } from "./source-directory.js";
 
 export interface SourceFileScopeOptions extends OutputScopeOptions {}
 

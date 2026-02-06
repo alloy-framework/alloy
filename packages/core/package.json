@@ -30,6 +30,7 @@
       "import": "./dist/src/components/index.js"
     },
     "./devtools": {
+      "types": "./dist/src/devtools-entry.d.ts",
       "browser": "./dist/src/devtools-entry.browser.js",
       "development": "./src/devtools-entry.ts",
       "import": "./dist/src/devtools-entry.js"

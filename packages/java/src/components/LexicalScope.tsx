@@ -23,9 +23,14 @@ export function LexicalScope(props: LexicalScopeProps) {
     scope = props.value;
   } else {
     const parentScope = useScope();
-    scope = createScope(JavaLexicalScope, props.name ?? "lexical scope", parentScope, {
-      ...props,
-    });
+    scope = createScope(
+      JavaLexicalScope,
+      props.name ?? "lexical scope",
+      parentScope,
+      {
+        ...props,
+      },
+    );
   }
 
   return <Scope value={scope}>{props.children}</Scope>;

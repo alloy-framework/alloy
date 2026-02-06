@@ -153,7 +153,11 @@ export type ObjectPropertyProps =
 export function JsonObjectProperty(props: ObjectPropertyProps) {
   const memberScope = useMemberScope();
   const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
-  const sym = createSymbol(JsonOutputSymbol, props.name, ownerSymbol.staticMembers);
+  const sym = createSymbol(
+    JsonOutputSymbol,
+    props.name,
+    ownerSymbol.staticMembers,
+  );
   moveTakenMembersTo(sym);
   onCleanup(() => {
     sym.delete();

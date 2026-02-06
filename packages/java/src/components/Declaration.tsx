@@ -1,7 +1,7 @@
 import {
   Children,
-  createSymbol,
   Declaration as CoreDeclaration,
+  createSymbol,
   Namekey,
   Refkey,
 } from "@alloy-js/core";

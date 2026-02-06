@@ -46,7 +46,11 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     : packageName;
 
   const parentScope = useScope();
-  const scope = createScope(JavaPackageScope, fullyQualifiedPackageName, parentScope);
+  const scope = createScope(
+    JavaPackageScope,
+    fullyQualifiedPackageName,
+    parentScope,
+  );
 
   const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {

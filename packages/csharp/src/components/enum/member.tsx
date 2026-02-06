@@ -1,4 +1,10 @@
-import { createSymbol, MemberDeclaration, MemberName, Namekey, Refkey } from "@alloy-js/core";
+import {
+  createSymbol,
+  MemberDeclaration,
+  MemberName,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { CSharpSymbol } from "../../symbols/csharp.js";
@@ -23,10 +29,15 @@ export function EnumMember(props: EnumMemberProps) {
     throw new Error("EnumMember must be used within an EnumDeclaration.");
   }
 
-  const thisEnumValueSymbol = createSymbol(CSharpSymbol, props.name, symbol.members, {
-    refkeys: props.refkey,
-    namePolicy: useCSharpNamePolicy().for("enum-member"),
-  });
+  const thisEnumValueSymbol = createSymbol(
+    CSharpSymbol,
+    props.name,
+    symbol.members,
+    {
+      refkeys: props.refkey,
+      namePolicy: useCSharpNamePolicy().for("enum-member"),
+    },
+  );
 
   return (
     <MemberDeclaration symbol={thisEnumValueSymbol}>

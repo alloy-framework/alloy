@@ -887,19 +887,13 @@ export function useDebugConnection(): DebugConnectionState {
           const rawPath = (message as any).path as string;
           const path = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
           const filetype = (message as any).filetype as string;
-          const unchanged = (message as any).unchanged as boolean;
-
-          // Only update contents if they were actually sent (not unchanged)
-          if (!unchanged) {
-            const contents = (message as any).contents as string;
-            filesRef.current.set(path, { path, filetype, contents });
-            markDirty({
-              fileTree: true,
-              fileContents: true,
-              fileToRenderNode: true,
-            });
-          }
-          // Skip markDirty for unchanged files - nothing to update
+          const contents = (message as any).contents as string;
+          filesRef.current.set(path, { path, filetype, contents });
+          markDirty({
+            fileTree: true,
+            fileContents: true,
+            fileToRenderNode: true,
+          });
           return;
         }
 

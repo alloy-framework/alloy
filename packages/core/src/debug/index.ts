@@ -149,7 +149,7 @@ export interface DebugInterface {
   files: {
     recordDirectory(path: string): void;
     recordFile(path: string, filetype: string): void;
-    updated(info: Omit<FileUpdateInfo, "unchanged">): void;
+    updated(info: FileUpdateInfo): void;
   };
   symbols: {
     registerScope(scope: Parameters<typeof registerDebugScope>[0]): void;

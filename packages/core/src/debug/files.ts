@@ -4,7 +4,6 @@ export interface FileUpdateInfo {
   path: string;
   filetype: string;
   contents: string;
-  unchanged: boolean;
 }
 
 const fileContentCache = new Map<string, string>();
@@ -17,26 +16,15 @@ export function recordFile(path: string, filetype: string) {
   emitDevtoolsMessage({ type: "files:fileAdded", path, filetype });
 }
 
-export function notifyFileUpdated(info: Omit<FileUpdateInfo, "unchanged">) {
+export function notifyFileUpdated(info: FileUpdateInfo) {
   const previous = fileContentCache.get(info.path);
-  const unchanged = previous === info.contents;
+  if (previous === info.contents) return;
   fileContentCache.set(info.path, info.contents);
 
-  // Only send contents if they changed - avoids sending large payloads for unchanged files
-  if (unchanged) {
-    emitDevtoolsMessage({
-      type: "files:fileUpdated",
-      path: info.path,
-      filetype: info.filetype,
-      unchanged: true,
-    });
-  } else {
-    emitDevtoolsMessage({
-      type: "files:fileUpdated",
-      path: info.path,
-      filetype: info.filetype,
-      contents: info.contents,
-      unchanged: false,
-    });
-  }
+  emitDevtoolsMessage({
+    type: "files:fileUpdated",
+    path: info.path,
+    filetype: info.filetype,
+    contents: info.contents,
+  });
 }

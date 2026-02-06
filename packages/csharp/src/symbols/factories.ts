@@ -4,6 +4,7 @@ import {
   NamePolicyGetter,
   onCleanup,
   OutputSymbolOptions,
+  useBinder,
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
@@ -127,7 +128,7 @@ export function createNamespaceSymbol(
   const scope = useNamespaceContext();
   const parentSymbol =
     scope?.symbol ??
-    getGlobalNamespace(options.binder ?? scope?.symbol?.binder);
+    getGlobalNamespace(options.binder ?? scope?.symbol?.binder ?? useBinder());
   const names = normalizeNamespaceName(name);
   let current = parentSymbol;
   for (const name of names) {

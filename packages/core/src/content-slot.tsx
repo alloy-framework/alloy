@@ -1,6 +1,6 @@
-import { Ref, shallowRef } from "@vue/reactivity";
+import { computed, Ref, shallowRef } from "@vue/reactivity";
 import { Show } from "./components/Show.jsx";
-import { effect, getContext } from "./reactivity.js";
+import { getContext } from "./reactivity.js";
 import { Children, Component } from "./runtime/component.js";
 
 export interface ContentSlot {
@@ -54,23 +54,14 @@ export interface ContentSlot {
  * ```
  */
 export function createContentSlot(): ContentSlot {
-  const isEmpty = shallowRef<boolean>(false);
+  // Holds a reference to the rendering context's isEmpty ref once ContentSlot
+  // renders. Before that, reads fall through to a default of "not empty".
+  const isEmptySource = shallowRef<Ref<boolean> | undefined>(undefined);
+  const isEmpty = computed(() => isEmptySource.value?.value ?? false);
 
   function ContentSlot(props: { children: Children }) {
     const context = getContext()!;
-    effect(
-      () => {
-        isEmpty.value = context.isEmpty!.value;
-      },
-      undefined,
-      {
-        debug: {
-          name: "contentSlot:syncEmpty",
-          type: "content",
-        },
-      },
-    );
-
+    isEmptySource.value = context.isEmpty!;
     return props.children;
   }
   ContentSlot.ref = isEmpty;

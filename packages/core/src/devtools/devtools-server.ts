@@ -320,6 +320,10 @@ export function assertDevtoolsConnectedForSyncRender() {
   }
 }
 
+export function isDevtoolsConnected(): boolean {
+  return Boolean(serverState?.connected);
+}
+
 export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
   if (!serverState) return null;
   return { port: serverState.port, connected: serverState.connected };

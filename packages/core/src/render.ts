@@ -515,6 +515,10 @@ export function notifyContentState() {
           break;
         }
         current.childrenWithContent--;
+        if (current.childrenWithContent > 0) {
+          // This isn't the last content so we have no work to do
+          break;
+        }
         if (current.isEmpty) {
           current.isEmpty.value = true;
         }
@@ -873,6 +877,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           } catch (error) {
             notifyRenderError(error);
             renderFailed = true;
+            throw error;
           }
           const context = getContext();
           context!.childrenWithContent = 0;

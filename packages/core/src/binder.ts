@@ -214,8 +214,6 @@ export function createScope<TScope extends OutputScope, Args extends unknown[]>(
   ...args: Args
 ): TScope {
   const scope = new ctor(...args);
-  // Register debug scope here (after subclass constructor completes)
-  // because debugInfo may be overridden in subclasses
   debug.symbols.registerScope(scope);
   return scope;
 }
@@ -225,9 +223,6 @@ export function createSymbol<
   Args extends unknown[],
 >(ctor: new (...args: Args) => TSymbol, ...args: Args): TSymbol {
   const symbol = new ctor(...args);
-  const _binder = symbol.binder;
-  // Register debug symbol here (after subclass constructor completes)
-  // because debugInfo may be overridden in subclasses
   debug.symbols.registerSymbol(symbol);
   return symbol;
 }

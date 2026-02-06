@@ -56,6 +56,10 @@ export function assertDevtoolsConnectedForSyncRender(): void {
   // No-op in browser
 }
 
+export function isDevtoolsConnected(): boolean {
+  return false;
+}
+
 export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
   return null;
 }

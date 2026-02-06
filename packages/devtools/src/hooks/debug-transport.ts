@@ -1,4 +1,7 @@
-import type { ClientToServerMessage, ServerToClientMessage } from "@alloy-js/core/devtools";
+import type {
+  ClientToServerMessage,
+  ServerToClientMessage,
+} from "@alloy-js/core/devtools";
 import type { DebugConnectionStatus } from "./debug-connection-types";
 
 // ── Configuration ────────────────────────────────────────────────────────────

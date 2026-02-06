@@ -199,12 +199,8 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     }
 
     if (type.startsWith("scope:") || type.startsWith("symbol:")) {
-      const symbol = msg.symbol as
-        | { id?: number; name?: string }
-        | undefined;
-      const scope = msg.scope as
-        | { id?: number; name?: string }
-        | undefined;
+      const symbol = msg.symbol as { id?: number; name?: string } | undefined;
+      const scope = msg.scope as { id?: number; name?: string } | undefined;
       const id = msg.id as number | undefined;
       if (symbol?.id !== undefined) {
         links.push({
@@ -258,24 +254,49 @@ export function TraceView({ scrollToken }: TraceViewProps) {
     columnNumber?: number;
   }) => formatSourceLocation(location, formatPath);
 
-  const MESSAGE_LABELS: Record<string, { summary: string; typeLabel: string }> = {
-    "debugger:info": { summary: "Connected", typeLabel: "Debugger" },
-    "render:reset": { summary: "Render tree reset", typeLabel: "Render" },
-    "render:nodeAdded": { summary: "Node added", typeLabel: "Node added" },
-    "render:nodeUpdated": { summary: "Node updated", typeLabel: "Node updated" },
-    "render:nodeRemoved": { summary: "Node removed", typeLabel: "Node removed" },
-    "files:directoryAdded": { summary: "Directory added", typeLabel: "Directory added" },
-    "files:directoryRemoved": { summary: "Directory removed", typeLabel: "Directory removed" },
-    "files:fileAdded": { summary: "File added", typeLabel: "File added" },
-    "files:fileRemoved": { summary: "File removed", typeLabel: "File removed" },
-    "files:fileUpdated": { summary: "File updated", typeLabel: "File updated" },
-    "scope:create": { summary: "Scope added", typeLabel: "Scope added" },
-    "scope:update": { summary: "Scope updated", typeLabel: "Scope updated" },
-    "scope:delete": { summary: "Scope removed", typeLabel: "Scope removed" },
-    "symbol:create": { summary: "Symbol added", typeLabel: "Symbol added" },
-    "symbol:update": { summary: "Symbol updated", typeLabel: "Symbol updated" },
-    "symbol:delete": { summary: "Symbol removed", typeLabel: "Symbol removed" },
-  };
+  const MESSAGE_LABELS: Record<string, { summary: string; typeLabel: string }> =
+    {
+      "debugger:info": { summary: "Connected", typeLabel: "Debugger" },
+      "render:reset": { summary: "Render tree reset", typeLabel: "Render" },
+      "render:nodeAdded": { summary: "Node added", typeLabel: "Node added" },
+      "render:nodeUpdated": {
+        summary: "Node updated",
+        typeLabel: "Node updated",
+      },
+      "render:nodeRemoved": {
+        summary: "Node removed",
+        typeLabel: "Node removed",
+      },
+      "files:directoryAdded": {
+        summary: "Directory added",
+        typeLabel: "Directory added",
+      },
+      "files:directoryRemoved": {
+        summary: "Directory removed",
+        typeLabel: "Directory removed",
+      },
+      "files:fileAdded": { summary: "File added", typeLabel: "File added" },
+      "files:fileRemoved": {
+        summary: "File removed",
+        typeLabel: "File removed",
+      },
+      "files:fileUpdated": {
+        summary: "File updated",
+        typeLabel: "File updated",
+      },
+      "scope:create": { summary: "Scope added", typeLabel: "Scope added" },
+      "scope:update": { summary: "Scope updated", typeLabel: "Scope updated" },
+      "scope:delete": { summary: "Scope removed", typeLabel: "Scope removed" },
+      "symbol:create": { summary: "Symbol added", typeLabel: "Symbol added" },
+      "symbol:update": {
+        summary: "Symbol updated",
+        typeLabel: "Symbol updated",
+      },
+      "symbol:delete": {
+        summary: "Symbol removed",
+        typeLabel: "Symbol removed",
+      },
+    };
 
   const summarizeMessage = (message: ServerToClientMessage) => {
     const msg = message as unknown as Record<string, unknown>;

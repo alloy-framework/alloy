@@ -1,13 +1,14 @@
 import type { TreeNode } from "@/components/tree-view";
+import type { ScopeRecord, SymbolRecord } from "@/hooks/debug-state";
 import type { RenderTreeViewNode } from "@/lib/debug-tree";
 import type {
   ClientToServerMessage,
   DiagnosticInfo,
-  SourceLocation,
   EffectEdgeInfo,
   EffectInfo,
   RefInfo,
   ServerToClientMessage,
+  SourceLocation,
 } from "@alloy-js/core/devtools";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -71,8 +72,8 @@ export interface DebugConnectionInternalState {
   renderTree: RenderTreeViewNode[];
   fileTree: TreeNode[];
   symbolTree: TreeNode[];
-  symbolDetails: Map<string, Record<string, unknown>>;
-  scopeDetails: Map<string, Record<string, unknown>>;
+  symbolDetails: Map<string, SymbolRecord>;
+  scopeDetails: Map<string, ScopeRecord>;
   fileContentsVersion: number;
   fileToRenderNodeVersion: number;
   effectsVersion: number;
@@ -115,8 +116,8 @@ export interface DebugConnectionState {
   renderTree: RenderTreeViewNode[];
   fileTree: TreeNode[];
   symbolTree: TreeNode[];
-  symbolDetails: Map<string, Record<string, unknown>>;
-  scopeDetails: Map<string, Record<string, unknown>>;
+  symbolDetails: Map<string, SymbolRecord>;
+  scopeDetails: Map<string, ScopeRecord>;
   fileContents: Map<
     string,
     { path: string; filetype: string; contents: string }

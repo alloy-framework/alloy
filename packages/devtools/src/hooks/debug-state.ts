@@ -29,6 +29,7 @@ export interface ScopeRecord {
   parentId: number | null;
   ownerSymbolId: number | null;
   isMemberScope: boolean;
+  renderNodeId?: number | null;
 }
 
 export interface SymbolRecord {
@@ -41,6 +42,7 @@ export interface SymbolRecord {
   isTransient: boolean;
   isAlias: boolean;
   movedToId: number | null;
+  renderNodeId?: number | null;
 }
 
 // ── Mutable data store ───────────────────────────────────────────────────────
@@ -264,27 +266,27 @@ export function processMessage(
     const id = `error:${rawId}`;
     const rawStack = message.componentStack;
     const componentStack =
-      Array.isArray(rawStack)
-        ? rawStack.map((entry) => {
-            let props: Record<string, unknown> | undefined;
-            if (entry.propsSerialized) {
-              try {
-                props = devalue.parse(entry.propsSerialized) as Record<
-                  string,
-                  unknown
-                >;
-              } catch {
-                props = undefined;
-              }
+      Array.isArray(rawStack) ?
+        rawStack.map((entry) => {
+          let props: Record<string, unknown> | undefined;
+          if (entry.propsSerialized) {
+            try {
+              props = devalue.parse(entry.propsSerialized) as Record<
+                string,
+                unknown
+              >;
+            } catch {
+              props = undefined;
             }
-            return {
-              name: entry.name ?? "(anonymous)",
-              props,
-              renderNodeId: entry.renderNodeId,
-              source: entry.source,
-            };
-          })
-        : [];
+          }
+          return {
+            name: entry.name ?? "(anonymous)",
+            props,
+            renderNodeId: entry.renderNodeId,
+            source: entry.source,
+          };
+        })
+      : [];
 
     const details: RenderErrorDetails = {
       id,
@@ -580,9 +582,9 @@ export function sanitizeTraceMessage(
     return {
       ...message,
       contents:
-        typeof message.contents === "string"
-          ? `[${message.contents.length} chars]`
-          : message.contents,
+        typeof message.contents === "string" ?
+          `[${message.contents.length} chars]`
+        : message.contents,
     };
   }
   return message;

@@ -1,4 +1,7 @@
-import { ComponentStack, type ComponentStackEntry } from "@/components/component-stack";
+import {
+  ComponentStack,
+  type ComponentStackEntry,
+} from "@/components/component-stack";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 
 export interface RenderErrorViewProps {
@@ -37,16 +40,23 @@ export function RenderErrorView({ errorId }: RenderErrorViewProps) {
 
       <div>
         <div className="text-sm font-medium">Component stack</div>
-        <ComponentStack entries={error.componentStack.map((entry): ComponentStackEntry => ({
-          name: entry.name,
-          renderNodeId: entry.renderNodeId,
-          props: entry.props,
-          source: entry.source?.fileName ? {
-            fileName: entry.source.fileName,
-            lineNumber: entry.source.lineNumber ?? 0,
-            columnNumber: entry.source.columnNumber ?? 0,
-          } : undefined,
-        }))} />
+        <ComponentStack
+          entries={error.componentStack.map(
+            (entry): ComponentStackEntry => ({
+              name: entry.name,
+              renderNodeId: entry.renderNodeId,
+              props: entry.props,
+              source:
+                entry.source?.fileName ?
+                  {
+                    fileName: entry.source.fileName,
+                    lineNumber: entry.source.lineNumber ?? 0,
+                    columnNumber: entry.source.columnNumber ?? 0,
+                  }
+                : undefined,
+            }),
+          )}
+        />
       </div>
     </div>
   );

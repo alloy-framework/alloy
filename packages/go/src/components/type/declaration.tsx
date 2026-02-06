@@ -74,10 +74,15 @@ export function TypeDeclaration(props: TypeDeclarationProps) {
     });
 
     for (const typeParameter of props.typeParameters ?? []) {
-      createSymbol(TypeParameterSymbol, typeParameter.name, symbol.typeParameters, {
-        refkeys: typeParameter.refkey,
-        constraint: typeParameter.constraint,
-      });
+      createSymbol(
+        TypeParameterSymbol,
+        typeParameter.name,
+        symbol.typeParameters,
+        {
+          refkeys: typeParameter.refkey,
+          constraint: typeParameter.constraint,
+        },
+      );
     }
   }
 

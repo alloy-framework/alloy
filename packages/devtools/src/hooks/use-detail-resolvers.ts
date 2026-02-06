@@ -63,13 +63,13 @@ export function useDetailResolvers(): DetailResolvers {
         ),
       onOpenRenderNode: (id: number) => focusRenderNodeById(id),
     }),
-    [
-      openDetailTab,
-      focusRenderNodeById,
-      resolveSymbolName,
-      resolveScopeName,
-    ],
+    [openDetailTab, focusRenderNodeById, resolveSymbolName, resolveScopeName],
   );
 
-  return { resolveSymbolName, resolveScopeName, resolveRenderNodeLabel, options };
+  return {
+    resolveSymbolName,
+    resolveScopeName,
+    resolveRenderNodeLabel,
+    options,
+  };
 }

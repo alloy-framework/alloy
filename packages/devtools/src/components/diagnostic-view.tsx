@@ -1,4 +1,7 @@
-import { ComponentStack, type ComponentStackEntry } from "@/components/component-stack";
+import {
+  ComponentStack,
+  type ComponentStackEntry,
+} from "@/components/component-stack";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 
 export interface DiagnosticViewProps {
@@ -17,14 +20,19 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
     );
   }
 
-  const componentStackEntries: ComponentStackEntry[] = (diagnostic.componentStack ?? []).map((entry) => ({
+  const componentStackEntries: ComponentStackEntry[] = (
+    diagnostic.componentStack ?? []
+  ).map((entry) => ({
     name: entry.name,
     renderNodeId: entry.renderNodeId,
-    source: entry.source?.fileName ? {
-      fileName: entry.source.fileName,
-      lineNumber: entry.source.lineNumber ?? 0,
-      columnNumber: entry.source.columnNumber ?? 0,
-    } : undefined,
+    source:
+      entry.source?.fileName ?
+        {
+          fileName: entry.source.fileName,
+          lineNumber: entry.source.lineNumber ?? 0,
+          columnNumber: entry.source.columnNumber ?? 0,
+        }
+      : undefined,
   }));
 
   const stackSource = componentStackEntries

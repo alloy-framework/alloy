@@ -32,8 +32,12 @@ export interface SymbolDetailsProps {
 }
 
 export function SymbolDetails({ details }: SymbolDetailsProps) {
-  const { resolveSymbolName, resolveScopeName, resolveRenderNodeLabel, options } =
-    useDetailResolvers();
+  const {
+    resolveSymbolName,
+    resolveScopeName,
+    resolveRenderNodeLabel,
+    options,
+  } = useDetailResolvers();
   const scopeName = resolveScopeName(details.scopeId);
   const ownerName = resolveSymbolName(details.ownerSymbolId);
   const movedName = resolveSymbolName(details.movedToId);

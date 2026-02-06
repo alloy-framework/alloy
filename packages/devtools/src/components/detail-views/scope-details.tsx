@@ -31,8 +31,12 @@ export interface ScopeDetailsProps {
 }
 
 export function ScopeDetails({ details }: ScopeDetailsProps) {
-  const { resolveSymbolName, resolveScopeName, resolveRenderNodeLabel, options } =
-    useDetailResolvers();
+  const {
+    resolveSymbolName,
+    resolveScopeName,
+    resolveRenderNodeLabel,
+    options,
+  } = useDetailResolvers();
   const ownerName = resolveSymbolName(details.ownerSymbolId);
   const parentName = resolveScopeName(details.parentId);
   const renderNodeLabel = resolveRenderNodeLabel(details.renderNodeId);

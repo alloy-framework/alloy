@@ -21,7 +21,11 @@ const dids = parseBreakOnIds();
 let triggerCount = 0;
 
 export function traceEffect(phase: TracePhaseInfo, cb: () => string) {
-  if (!isConsoleTraceEnabled(phase.area) && !isConsoleTraceEnabled(phase.area + "." + phase.subarea)) return;
+  if (
+    !isConsoleTraceEnabled(phase.area) &&
+    !isConsoleTraceEnabled(phase.area + "." + phase.subarea)
+  )
+    return;
   let first = true;
   const triggerIds = new Set<number>();
 

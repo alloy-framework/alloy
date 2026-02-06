@@ -26,8 +26,6 @@ import { createDebugTransport, type DebugTransport } from "./debug-transport";
 export type {
   DebugConnectionState,
   DebugConnectionStatus,
-} from "./debug-connection-types";
-export type {
   EffectDebugInfo,
   EffectEdgeDebugInfo,
   RefDebugInfo,
@@ -59,9 +57,8 @@ export function useDebugConnection(): DebugConnectionState {
 
   const formatPath = useCallback((rawPath: string) => {
     const normalized = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    const cwdValue = storeRef.current.cwd
-      ? normalizeCwd(storeRef.current.cwd)
-      : undefined;
+    const cwdValue =
+      storeRef.current.cwd ? normalizeCwd(storeRef.current.cwd) : undefined;
     if (cwdValue) {
       if (normalized === cwdValue) return ".";
       if (normalized.startsWith(`${cwdValue}/`)) {
@@ -170,9 +167,8 @@ export function useDebugConnection(): DebugConnectionState {
     if (batchTimerRef.current !== null) return;
 
     const isHeavy = msgCountRef.current > HEAVY_LOAD_THRESHOLD;
-    const interval = isHeavy
-      ? BATCH_FLUSH_INTERVAL_HEAVY
-      : BATCH_FLUSH_INTERVAL;
+    const interval =
+      isHeavy ? BATCH_FLUSH_INTERVAL_HEAVY : BATCH_FLUSH_INTERVAL;
 
     if (typeof requestIdleCallback !== "undefined") {
       batchTimerRef.current = requestIdleCallback(
@@ -268,7 +264,9 @@ export function useDebugConnection(): DebugConnectionState {
 
   // ── sendMessage (stable reference) ──────────────────────────────────────
   const sendMessage = useMemo(() => {
-    return (message: import("@alloy-js/core/devtools").ClientToServerMessage) => {
+    return (
+      message: import("@alloy-js/core/devtools").ClientToServerMessage,
+    ) => {
       transportRef.current?.send(message);
     };
   }, []);

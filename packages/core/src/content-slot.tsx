@@ -56,7 +56,7 @@ export interface ContentSlot {
 export function createContentSlot(): ContentSlot {
   // Holds a reference to the rendering context's isEmpty ref once ContentSlot
   // renders. Before that, reads fall through to a default of "not empty".
-  const isEmptySource = shallowRef<Ref<boolean> | undefined>(undefined);
+  const isEmptySource = shallowRef<Ref<boolean>>();
   const isEmpty = computed(() => isEmptySource.value?.value ?? false);
 
   function ContentSlot(props: { children: Children }) {

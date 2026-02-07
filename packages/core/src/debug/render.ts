@@ -196,7 +196,7 @@ function setEntryId(parent: RenderedTextTree, index: number, id: number) {
   list[index] = id;
 }
 
-export function initializeRenderTreeDebug(root: RenderedTextTree) {
+export function initialize(root: RenderedTextTree) {
   if (!isDevtoolsEnabled()) return;
   ensureDevtoolsHandler();
   nodeIds = new WeakMap();
@@ -616,7 +616,7 @@ export function appendFragmentChild(
   recordSubtreeAdded(parent, child, { kind: "fragment" });
 }
 
-export function renderWorker(childrenDescription: () => string) {
+export function worker(childrenDescription: () => string) {
   void childrenDescription;
 }
 
@@ -656,7 +656,7 @@ export interface RenderErrorStackEntry {
   source?: RenderTreeNodeInfo["source"];
 }
 
-export function renderError(
+export function error(
   error: RenderErrorInfo,
   componentStack: RenderErrorStackEntry[],
 ) {
@@ -680,7 +680,7 @@ export function renderError(
   emitDevtoolsMessage(message);
 }
 
-export function renderComplete() {
+export function complete() {
   emitDevtoolsMessage({ type: "render:complete" } as DevtoolsMessage);
 }
 

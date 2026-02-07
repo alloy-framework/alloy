@@ -102,6 +102,7 @@ function parseStackLine(
 export function captureSourceLocation(
   skipReactives = true,
 ): SourceLocation | undefined {
+  if (!isDebugEnabled()) return undefined;
   const stack = new Error().stack;
   if (!stack) {
     if (process.env.ALLOY_DEBUG_STRICT === "1") {
@@ -205,7 +206,7 @@ function emitEffect(message: { type: string; [key: string]: unknown }) {
   emitDevtoolsMessage(message);
 }
 
-export function updateDebugEffect(
+export function update(
   input: Partial<EffectDebugInfo> & { id: number },
 ) {
   if (!isDebugEnabled()) return;
@@ -219,7 +220,7 @@ export function updateDebugEffect(
   });
 }
 
-export function registerDebugEffect(input: {
+export function register(input: {
   name?: string;
   type?: string;
   createdAt?: SourceLocation;
@@ -237,7 +238,7 @@ export function registerDebugEffect(input: {
   return id;
 }
 
-export function registerDebugRef(input: {
+export function registerRef(input: {
   id: number;
   kind?: string;
   createdAt?: SourceLocation;
@@ -255,13 +256,13 @@ export function registerDebugRef(input: {
   emitEffect({ type: traceType(TracePhase.effect.refAdded), ref: info });
 }
 
-export function ensureDebugRef(input: { id: number; kind?: string }) {
+export function ensureRef(input: { id: number; kind?: string }) {
   if (!isDebugEnabled()) return;
   if (refs.has(input.id)) return;
-  registerDebugRef({ id: input.id, kind: input.kind });
+  registerRef({ id: input.id, kind: input.kind });
 }
 
-export function recordEffectTrack(input: {
+export function track(input: {
   effectId: number;
   target: unknown;
   refId?: number;
@@ -280,7 +281,7 @@ export function recordEffectTrack(input: {
   emitEffect({ type: traceType(TracePhase.effect.track), edge });
 }
 
-export function recordEffectTrigger(input: {
+export function trigger(input: {
   effectId: number;
   target: unknown;
   refId?: number;
@@ -299,14 +300,14 @@ export function recordEffectTrigger(input: {
   };
   emitEffect({ type: traceType(TracePhase.effect.trigger), edge });
 
-  updateDebugEffect({
+  update({
     id: input.effectId,
     ...(input.refId !== undefined ? { lastTriggeredByRefId: input.refId } : {}),
     lastTriggeredAt: input.location ?? captureSourceLocation(),
   });
 }
 
-export function resetEffectsDebugState() {
+export function reset() {
   effects.clear();
   refs.clear();
   effectIdCounter = 1;

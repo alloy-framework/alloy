@@ -3,7 +3,7 @@ import { getContext, untrack } from "../reactivity.js";
 import type { OutputScope } from "../symbols/output-scope.js";
 import type { OutputSymbol } from "../symbols/output-symbol.js";
 import { getRenderNodeId } from "./render.js";
-import { emitDevtoolsMessage, TracePhase, traceType } from "./trace.js";
+import { emitDevtoolsMessage, isDebugEnabled, TracePhase, traceType } from "./trace.js";
 
 interface ScopeSnapshot {
   id: number;
@@ -204,7 +204,8 @@ function snapshotSymbol(
   };
 }
 
-export function registerDebugScope(scope: OutputScope) {
+export function registerScope(scope: OutputScope) {
+  if (!isDebugEnabled()) return;
   if (scopeWatchers.has(scope.id)) return;
   untrack(() => {
     const renderNodeId = getRenderNodeIdForCurrentContext();
@@ -229,7 +230,8 @@ export function registerDebugScope(scope: OutputScope) {
   });
 }
 
-export function unregisterDebugScope(scope: OutputScope) {
+export function unregisterScope(scope: OutputScope) {
+  if (!isDebugEnabled()) return;
   const stop = scopeWatchers.get(scope.id);
   if (stop) stop();
   scopeWatchers.delete(scope.id);
@@ -239,7 +241,8 @@ export function unregisterDebugScope(scope: OutputScope) {
   });
 }
 
-export function registerDebugSymbol(symbol: OutputSymbol) {
+export function registerSymbol(symbol: OutputSymbol) {
+  if (!isDebugEnabled()) return;
   if (symbolWatchers.has(symbol.id)) return;
   untrack(() => {
     const renderNodeId = getRenderNodeIdForCurrentContext();
@@ -264,7 +267,8 @@ export function registerDebugSymbol(symbol: OutputSymbol) {
   });
 }
 
-export function unregisterDebugSymbol(symbol: OutputSymbol) {
+export function unregisterSymbol(symbol: OutputSymbol) {
+  if (!isDebugEnabled()) return;
   const stop = symbolWatchers.get(symbol.id);
   if (stop) stop();
   symbolWatchers.delete(symbol.id);

@@ -12,18 +12,18 @@ import {
   debugWatch,
 } from "./cli.js";
 import {
-  ensureDebugRef,
-  recordEffectTrack,
-  recordEffectTrigger,
-  registerDebugEffect,
-  registerDebugRef,
-  resetEffectsDebugState,
-  updateDebugEffect,
+  ensureRef,
+  track,
+  trigger,
+  register,
+  registerRef,
+  reset,
+  update,
   type EffectDebugInfo,
   type SourceLocation,
 } from "./effects.js";
 import {
-  notifyFileUpdated,
+  updated,
   recordDirectory,
   recordFile,
   type FileUpdateInfo,
@@ -35,21 +35,21 @@ import {
   appendTextNode,
   beginComponent,
   flushJobsComplete,
-  initializeRenderTreeDebug,
+  initialize,
   prepareMemoNode,
-  renderComplete,
-  renderError,
-  renderWorker,
+  complete,
+  error,
+  worker,
   type BeginComponentOptions,
   type ComponentDebugSession,
   type RenderErrorInfo,
   type RenderErrorStackEntry,
 } from "./render.js";
 import {
-  registerDebugScope,
-  registerDebugSymbol,
-  unregisterDebugScope,
-  unregisterDebugSymbol,
+  registerScope,
+  registerSymbol,
+  unregisterScope,
+  unregisterSymbol,
 } from "./symbols.js";
 import { trace, type TracePhaseInfo } from "./trace.js";
 
@@ -152,10 +152,10 @@ export interface DebugInterface {
     updated(info: FileUpdateInfo): void;
   };
   symbols: {
-    registerScope(scope: Parameters<typeof registerDebugScope>[0]): void;
-    unregisterScope(scope: Parameters<typeof unregisterDebugScope>[0]): void;
-    registerSymbol(symbol: Parameters<typeof registerDebugSymbol>[0]): void;
-    unregisterSymbol(symbol: Parameters<typeof unregisterDebugSymbol>[0]): void;
+    registerScope(scope: Parameters<typeof registerScope>[0]): void;
+    unregisterScope(scope: Parameters<typeof unregisterScope>[0]): void;
+    registerSymbol(symbol: Parameters<typeof registerSymbol>[0]): void;
+    unregisterSymbol(symbol: Parameters<typeof unregisterSymbol>[0]): void;
   };
 }
 
@@ -178,37 +178,37 @@ export const debug: DebugRuntime = {
     context: debugContext,
   },
   effect: {
-    register: registerDebugEffect,
-    update: updateDebugEffect,
-    registerRef: registerDebugRef,
-    ensureRef: ensureDebugRef,
-    track: recordEffectTrack,
-    trigger: recordEffectTrigger,
-    reset: resetEffectsDebugState,
+    register,
+    update,
+    registerRef,
+    ensureRef,
+    track,
+    trigger,
+    reset,
   },
   render: {
-    initialize: initializeRenderTreeDebug,
-    worker: renderWorker,
+    initialize,
+    worker,
     appendTextNode,
     appendCustomContext,
     appendPrintHook,
     appendFragmentChild,
     beginComponent,
     prepareMemoNode,
-    error: renderError,
-    complete: renderComplete,
+    error,
+    complete,
     flushJobsComplete,
   },
   files: {
     recordDirectory,
     recordFile,
-    updated: notifyFileUpdated,
+    updated,
   },
   symbols: {
-    registerScope: registerDebugScope,
-    unregisterScope: unregisterDebugScope,
-    registerSymbol: registerDebugSymbol,
-    unregisterSymbol: unregisterDebugSymbol,
+    registerScope,
+    unregisterScope,
+    registerSymbol,
+    unregisterSymbol,
   },
   trace(phase: TracePhaseInfo, cb: () => string, triggerIds?: Set<number>) {
     trace(phase, cb, triggerIds ?? new Set());

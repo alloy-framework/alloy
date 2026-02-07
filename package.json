@@ -40,7 +40,8 @@
       "@microsoft/tsdoc@0.15.1": "patches/@microsoft__tsdoc@0.15.1.patch"
     },
     "overrides": {
-      "vite": "npm:rolldown-vite@7.2.5"
+      "vite": "npm:rolldown-vite@7.2.5",
+      "astro>vite": "^7.3.1"
     }
   }
 }

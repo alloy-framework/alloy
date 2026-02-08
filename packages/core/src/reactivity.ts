@@ -13,14 +13,14 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
-import { captureSourceLocation, debug, isDebugEnabled } from "./debug/index.js";
+import { captureSourceLocation, debug, isDevtoolsEnabled } from "./debug/index.js";
 import { RenderedTextTree } from "./render.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 function attachEffectWriteDebug(refValue: Ref<unknown>, kind: string) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   const descriptor =
     Object.getOwnPropertyDescriptor(refValue, "value") ??
     Object.getOwnPropertyDescriptor(Object.getPrototypeOf(refValue), "value");

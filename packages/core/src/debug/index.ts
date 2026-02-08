@@ -3,7 +3,6 @@ import {
   initDevtoolsIfEnabled,
   isDevtoolsEnabled,
 } from "../devtools/devtools-server.js";
-import type { PrintHook, RenderedTextTree } from "../render.js";
 import {
   debugContext,
   debugRender,
@@ -19,14 +18,12 @@ import {
   registerRef,
   reset,
   update,
-  type EffectDebugInfo,
-  type SourceLocation,
 } from "./effects.js";
 import {
   updated,
   recordDirectory,
   recordFile,
-  type FileUpdateInfo,
+  reset as resetFiles,
 } from "./files.js";
 import {
   appendCustomContext,
@@ -39,15 +36,11 @@ import {
   prepareMemoNode,
   complete,
   error,
-  worker,
-  type BeginComponentOptions,
-  type ComponentDebugSession,
-  type RenderErrorInfo,
-  type RenderErrorStackEntry,
 } from "./render.js";
 import {
   registerScope,
   registerSymbol,
+  reset as resetSymbols,
   unregisterScope,
   unregisterSymbol,
 } from "./symbols.js";
@@ -68,108 +61,16 @@ export type {
 } from "./render.js";
 export {
   isConsoleTraceEnabled,
-  isDebugEnabled,
+  isDevtoolsEnabled,
   trace,
   TracePhase,
   type TracePhaseInfo,
 } from "./trace.js";
 
-export interface DebugInterface {
-  component: {
-    stack(): void;
-    tree(): void;
-    watch(): void;
-    render(): void;
-    context(): void;
-  };
-  effect: {
-    register(input: {
-      name?: string;
-      type?: string;
-      createdAt?: SourceLocation;
-    }): number;
-    update(input: Partial<EffectDebugInfo> & { id: number }): void;
-    registerRef(input: {
-      id: number;
-      kind?: string;
-      createdAt?: SourceLocation;
-      createdByEffectId?: number;
-    }): void;
-    ensureRef(input: { id: number; kind?: string }): void;
-    track(input: {
-      effectId: number;
-      target: unknown;
-      refId?: number;
-      targetKey?: string | number;
-      location?: SourceLocation;
-    }): void;
-    trigger(input: {
-      effectId: number;
-      target: unknown;
-      refId?: number;
-      targetKey?: string | number;
-      location?: SourceLocation;
-      kind?: "trigger" | "triggered-by";
-    }): void;
-    reset(): void;
-  };
-  render: {
-    initialize(root: RenderedTextTree): void;
-    worker(childrenDescription: () => string): void;
-    appendTextNode(
-      parent: RenderedTextTree,
-      index: number,
-      value: string,
-    ): void;
-    appendCustomContext(parent: RenderedTextTree, node: RenderedTextTree): void;
-    appendPrintHook(
-      parent: RenderedTextTree,
-      index: number,
-      hook: PrintHook,
-      name: string,
-      subtree?: RenderedTextTree,
-    ): void;
-    appendFragmentChild(
-      parent: RenderedTextTree,
-      child: RenderedTextTree,
-    ): void;
-    beginComponent(options: BeginComponentOptions): ComponentDebugSession;
-    prepareMemoNode(
-      parent: RenderedTextTree,
-      node: RenderedTextTree,
-      isExisting: boolean,
-    ): void;
-    error(
-      error: RenderErrorInfo,
-      componentStack: RenderErrorStackEntry[],
-    ): void;
-    complete(): void;
-    flushJobsComplete(): void;
-  };
-  files: {
-    recordDirectory(path: string): void;
-    recordFile(path: string, filetype: string): void;
-    updated(info: FileUpdateInfo): void;
-  };
-  symbols: {
-    registerScope(scope: Parameters<typeof registerScope>[0]): void;
-    unregisterScope(scope: Parameters<typeof unregisterScope>[0]): void;
-    registerSymbol(symbol: Parameters<typeof registerSymbol>[0]): void;
-    unregisterSymbol(symbol: Parameters<typeof unregisterSymbol>[0]): void;
-  };
-}
+/** The full debug runtime interface, derived from the `debug` object implementation. */
+export type DebugRuntime = typeof debug;
 
-export interface DebugRuntime extends DebugInterface {
-  trace(
-    phase: TracePhaseInfo,
-    cb: () => string,
-    triggerIds?: Set<number>,
-  ): void;
-  prepare(): Promise<void>;
-  assertReadyForSyncRender(): void;
-}
-
-export const debug: DebugRuntime = {
+export const debug = {
   component: {
     stack: debugStack,
     tree: debugTree,
@@ -188,7 +89,6 @@ export const debug: DebugRuntime = {
   },
   render: {
     initialize,
-    worker,
     appendTextNode,
     appendCustomContext,
     appendPrintHook,
@@ -203,12 +103,14 @@ export const debug: DebugRuntime = {
     recordDirectory,
     recordFile,
     updated,
+    reset: resetFiles,
   },
   symbols: {
     registerScope,
     unregisterScope,
     registerSymbol,
     unregisterSymbol,
+    reset: resetSymbols,
   },
   trace(phase: TracePhaseInfo, cb: () => string, triggerIds?: Set<number>) {
     trace(phase, cb, triggerIds ?? new Set());

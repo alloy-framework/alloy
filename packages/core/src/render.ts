@@ -6,13 +6,10 @@ import { SourceFileContext } from "./context/source-file.js";
 import {
   debug,
   getRenderNodeId,
-  isDebugEnabled,
+  isDevtoolsEnabled,
   type RenderTreeNodeInfo,
 } from "./debug/index.js";
-import {
-  broadcastDevtoolsMessage,
-  isDevtoolsEnabled,
-} from "./devtools/devtools-server.js";
+import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
 import {
   attachDiagnosticsCollector,
   DiagnosticsCollector,
@@ -319,7 +316,7 @@ export function render(
   reportDiagnosticsForTree(tree);
   reportLastRenderError();
   debug.render.complete();
-  if (isDebugEnabled()) {
+  if (isDevtoolsEnabled()) {
     void waitForSignal();
   }
   return output;
@@ -449,6 +446,9 @@ export function renderTree(children: Children) {
   const rootElem: RenderedTextTree = [];
   const diagnostics = new DiagnosticsCollector();
   lastRenderError = null;
+  debug.effect.reset();
+  debug.symbols.reset();
+  debug.files.reset();
   debug.render.initialize(rootElem);
   try {
     root(() => {
@@ -473,7 +473,6 @@ function renderWorker(node: RenderedTextTree, children: Children) {
       "Cannot render without a context. Make sure you are using the Output component.",
     );
   }
-  debug.render.worker(() => dumpChildren(children));
 
   if (Array.isArray(node)) {
     nodesToContext.set(node, getContext()!);
@@ -990,31 +989,6 @@ function normalizeChild(child: Child): NormalizedChildren {
     return child;
   } else {
     return String(child);
-  }
-}
-
-function dumpChildren(children: Children): string {
-  if (Array.isArray(children)) {
-    return `[ ${children.map(debugPrintChild).join(", ")} ]`;
-  }
-  return debugPrintChild(children);
-}
-
-function debugPrintChild(child: Children): string {
-  if (isComponentCreator(child)) {
-    return "<" + child.component.name + ">";
-  } else if (typeof child === "function") {
-    return "$memo";
-  } else if (isRef(child)) {
-    return "$ref";
-  } else if (isIntrinsicElement(child)) {
-    return `<${child.name}>`;
-  } else if (isRenderableObject(child)) {
-    return `CustomChildElement(${JSON.stringify(child)})`;
-  } else if (isRefkeyable(child)) {
-    return `refkey`;
-  } else {
-    return JSON.stringify(child);
   }
 }
 

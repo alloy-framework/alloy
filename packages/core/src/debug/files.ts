@@ -1,4 +1,4 @@
-import { emitDevtoolsMessage, isDebugEnabled } from "./trace.js";
+import { emitDevtoolsMessage, isDevtoolsEnabled } from "./trace.js";
 
 export interface FileUpdateInfo {
   path: string;
@@ -8,16 +8,19 @@ export interface FileUpdateInfo {
 
 const fileContentCache = new Map<string, string>();
 
+/** Record a directory being added to the output. */
 export function recordDirectory(path: string) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   emitDevtoolsMessage({ type: "files:directoryAdded", path });
 }
 
+/** Record a file being added to the output. */
 export function recordFile(path: string, filetype: string) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   emitDevtoolsMessage({ type: "files:fileAdded", path, filetype });
 }
 
+/** Notify devtools that a file's contents have changed. De-duplicates by content. */
 export function updated(info: FileUpdateInfo) {
   const previous = fileContentCache.get(info.path);
   if (previous === info.contents) return;
@@ -29,4 +32,9 @@ export function updated(info: FileUpdateInfo) {
     filetype: info.filetype,
     contents: info.contents,
   });
+}
+
+/** Clear all cached file state. Called when a new render begins. */
+export function reset() {
+  fileContentCache.clear();
 }

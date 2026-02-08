@@ -6,7 +6,10 @@ import {
   isDevtoolsEnabled,
   type DevtoolsMessage,
 } from "../devtools/devtools-server.js";
+import type { ServerToClientMessage } from "../devtools/devtools-protocol.js";
 import { untrack } from "../reactivity.js";
+
+export { isDevtoolsEnabled } from "../devtools/devtools-server.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Environment configuration
@@ -45,11 +48,6 @@ export function isConsoleTraceEnabled(phase?: string): boolean {
   if (!phase) return true;
   const [area, subarea] = phase.split(".");
   return tracePhases.has(area) || (subarea ? tracePhases.has(phase) : false);
-}
-
-/** Returns true if any tracing/debugging is enabled (console or devtools). */
-export function isDebugEnabled(): boolean {
-  return tracePhases.size > 0 || isDevtoolsEnabled();
 }
 
 if (tracePhases.size > 0) {
@@ -241,7 +239,9 @@ export function traceType(phase: TracePhaseInfo): string {
   return `${phase.area}:${phase.subarea}`;
 }
 
-export function logDevtoolsMessage(message: DevtoolsMessage) {
+export function logDevtoolsMessage(
+  message: ServerToClientMessage | DevtoolsMessage,
+) {
   if (!isConsoleTraceEnabled()) return;
   const type = String(message.type ?? "");
   const colonIndex = type.indexOf(":");
@@ -254,10 +254,19 @@ export function logDevtoolsMessage(message: DevtoolsMessage) {
   console.log("devtools:", message.type, message);
 }
 
-export function emitDevtoolsMessage(message: DevtoolsMessage) {
+/**
+ * Emit a devtools message. Logs to console if tracing is enabled for the
+ * message's area, and broadcasts over the WebSocket if devtools are connected.
+ *
+ * Accepts both strictly-typed protocol messages and loosely-typed trace
+ * messages (which construct the type string dynamically).
+ */
+export function emitDevtoolsMessage(
+  message: ServerToClientMessage | DevtoolsMessage,
+) {
   logDevtoolsMessage(message);
   if (!isDevtoolsEnabled()) return;
-  broadcastDevtoolsMessage(message);
+  broadcastDevtoolsMessage(message as DevtoolsMessage);
 }
 
 /**

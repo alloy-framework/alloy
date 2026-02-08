@@ -1,7 +1,7 @@
 import { isReactive, isRef } from "@vue/reactivity";
 import {
   emitDevtoolsMessage,
-  isDebugEnabled,
+  isDevtoolsEnabled,
   TracePhase,
   traceType,
 } from "./trace.js";
@@ -102,13 +102,9 @@ function parseStackLine(
 export function captureSourceLocation(
   skipReactives = true,
 ): SourceLocation | undefined {
-  if (!isDebugEnabled()) return undefined;
+  if (!isDevtoolsEnabled()) return undefined;
   const stack = new Error().stack;
   if (!stack) {
-    if (process.env.ALLOY_DEBUG_STRICT === "1") {
-      // eslint-disable-next-line no-console
-      console.error("Alloy debug: missing stack for source location.");
-    }
     return { stack: "" };
   }
   const lines = stack.split("\n").slice(1);
@@ -127,13 +123,6 @@ export function captureSourceLocation(
     }
   }
 
-  if (process.env.ALLOY_DEBUG_STRICT === "1") {
-    // eslint-disable-next-line no-console
-    console.error(
-      "Alloy debug: unable to resolve source location. Stack:\n",
-      stack,
-    );
-  }
   return { stack };
 }
 
@@ -209,7 +198,7 @@ function emitEffect(message: { type: string; [key: string]: unknown }) {
 export function update(
   input: Partial<EffectDebugInfo> & { id: number },
 ) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   const existing = effects.get(input.id);
   if (!existing) return;
   const next: EffectDebugInfo = { ...existing, ...input };
@@ -225,7 +214,7 @@ export function register(input: {
   type?: string;
   createdAt?: SourceLocation;
 }): number {
-  if (!isDebugEnabled()) return -1;
+  if (!isDevtoolsEnabled()) return -1;
   const id = effectIdCounter++;
   const info: EffectDebugInfo = {
     id,
@@ -244,7 +233,7 @@ export function registerRef(input: {
   createdAt?: SourceLocation;
   createdByEffectId?: number;
 }) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   if (refs.has(input.id)) return;
   const info: RefDebugInfo = {
     id: input.id,
@@ -257,7 +246,7 @@ export function registerRef(input: {
 }
 
 export function ensureRef(input: { id: number; kind?: string }) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   if (refs.has(input.id)) return;
   registerRef({ id: input.id, kind: input.kind });
 }
@@ -269,7 +258,7 @@ export function track(input: {
   targetKey?: unknown;
   location?: SourceLocation;
 }) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   const edge: EffectEdgeDebugInfo = {
     id: edgeEventIdCounter++,
     type: "track",
@@ -289,7 +278,7 @@ export function trigger(input: {
   location?: SourceLocation;
   kind?: "trigger" | "triggered-by";
 }) {
-  if (!isDebugEnabled()) return;
+  if (!isDevtoolsEnabled()) return;
   const edge: EffectEdgeDebugInfo = {
     id: edgeEventIdCounter++,
     type: input.kind ?? "triggered-by",
@@ -310,8 +299,10 @@ export function trigger(input: {
 export function reset() {
   effects.clear();
   refs.clear();
+  primitiveTargetIds.clear();
   effectIdCounter = 1;
   edgeEventIdCounter = 1;
+  nonRefTargetIdCounter = 1;
 }
 
 // Utilities used by other debug sections

@@ -19,10 +19,6 @@ export function isDevtoolsEnabled(): boolean {
   return false;
 }
 
-export async function ensureDevtoolsServer(): Promise<null> {
-  return null;
-}
-
 export async function waitForDevtoolsConnection(): Promise<void> {
   // No-op in browser
 }

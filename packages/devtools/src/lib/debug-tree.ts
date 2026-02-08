@@ -1,62 +1,20 @@
+import type {
+  RenderNodeAddedMessage,
+  RenderNodeRemovedMessage,
+  RenderNodeUpdatedMessage,
+  RenderResetMessage,
+  RenderTreeNode,
+  SourceLocation,
+} from "@alloy-js/core/devtools";
 import * as devalue from "devalue";
 
-export type RenderTreeNodeKind =
-  | "root"
-  | "component"
-  | "intrinsic"
-  | "printHook"
-  | "text"
-  | "memo"
-  | "customContext"
-  | "fragment";
-
-export interface DevtoolsRenderTreeMessage {
-  type: string;
-  [key: string]: unknown;
-}
-
-export interface DevtoolsRenderTreeNode {
-  id: number;
-  kind: RenderTreeNodeKind;
-  name?: string;
-  propsSerialized?: string;
-  value?: string;
-  source?: {
-    fileName: string;
-    lineNumber: number;
-    columnNumber: number;
-  };
-}
-
-export interface RenderTreeNodeAddedMessage extends DevtoolsRenderTreeMessage {
-  type: "render:nodeAdded";
-  parentId: number | null;
-  node: DevtoolsRenderTreeNode;
-}
-
-export interface RenderTreeNodeRemovedMessage
-  extends DevtoolsRenderTreeMessage {
-  type: "render:nodeRemoved";
-  parentId: number | null;
-  id: number;
-}
-
-export interface RenderTreeNodeUpdatedMessage
-  extends DevtoolsRenderTreeMessage {
-  type: "render:nodeUpdated";
-  id: number;
-  propsSerialized?: string;
-}
-
-export interface RenderTreeResetMessage extends DevtoolsRenderTreeMessage {
-  type: "render:reset";
-}
+export type RenderTreeNodeKind = RenderTreeNode["kind"];
 
 export type RenderTreeMessage =
-  | RenderTreeNodeAddedMessage
-  | RenderTreeNodeRemovedMessage
-  | RenderTreeNodeUpdatedMessage
-  | RenderTreeResetMessage;
+  | RenderNodeAddedMessage
+  | RenderNodeRemovedMessage
+  | RenderNodeUpdatedMessage
+  | RenderResetMessage;
 
 export interface RenderTreeNodeState {
   id: string;
@@ -65,11 +23,7 @@ export interface RenderTreeNodeState {
   text?: string;
   kind: RenderTreeNodeKind;
   children: string[];
-  source?: {
-    fileName: string;
-    lineNumber: number;
-    columnNumber: number;
-  };
+  source?: SourceLocation;
 }
 
 export interface RenderTreeState {
@@ -86,11 +40,7 @@ export interface RenderTreeViewNode {
   text?: string;
   kind?: RenderTreeNodeKind;
   liftedFrom?: string;
-  source?: {
-    fileName: string;
-    lineNumber: number;
-    columnNumber: number;
-  };
+  source?: SourceLocation;
 }
 
 export function createRenderTreeState(): RenderTreeState {

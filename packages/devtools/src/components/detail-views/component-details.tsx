@@ -17,18 +17,18 @@ export function ComponentDetails({
   const { formatPath } = useDebugConnectionContext();
   const source = node.source;
   const sourceLabel =
-    source ?
+    source && source.fileName ?
       `${formatPath(source.fileName)}:${source.lineNumber}:${source.columnNumber}`
     : undefined;
   return (
     <div className="p-4 text-sm">
       <div className="text-muted-foreground">Render node #{node.id}</div>
       <div className="mt-3">
-        <div>
+      <div>
           <span className="font-medium">Source:</span>{" "}
-          {source ?
+          {sourceLabel ?
             <SourceLocationLink
-              source={source}
+              source={source!}
               className="text-primary underline font-normal"
             >
               {sourceLabel}

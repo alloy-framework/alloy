@@ -3,12 +3,11 @@ import type { OpenTab } from "@/hooks/use-tabs";
 import {
   findFileIdForRenderNode,
   findFirstTextNodeId,
-  findRenderNodeInTree,
 } from "@/lib/render-tree-utils";
 import { useCallback } from "react";
 
 export interface UseGoToSourceOptions {
-  renderTree: RenderTreeNode[];
+  nodeById: Map<string, RenderTreeNode>;
   fileContents: Map<string, { contents: string }>;
   fileToRenderNode: Map<string, string>;
   openTabs: OpenTab[];
@@ -27,7 +26,7 @@ export interface UseGoToSourceOptions {
 }
 
 export function useGoToSource({
-  renderTree,
+  nodeById,
   fileContents,
   fileToRenderNode,
   openTabs,
@@ -94,11 +93,11 @@ export function useGoToSource({
   const goToSourceForRenderNodeId = useCallback(
     (renderNodeId: number | null | undefined) => {
       if (!renderNodeId) return;
-      const node = findRenderNodeInTree(renderTree, String(renderNodeId));
+      const node = nodeById.get(String(renderNodeId));
       if (!node) return;
       goToSourceForNode(node);
     },
-    [renderTree, goToSourceForNode],
+    [nodeById, goToSourceForNode],
   );
 
   return { goToSourceForNode, goToSourceForRenderNodeId };

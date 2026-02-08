@@ -1,6 +1,7 @@
 import { ComponentView } from "@/components/component-view";
 import { DiagnosticView } from "@/components/diagnostic-view";
 import { EffectsView } from "@/components/effects-view";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { FileTreePanel } from "@/components/file-tree-panel";
 import { FileView } from "@/components/file-view";
 import { ProblemsView } from "@/components/problems-view";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DebugConnectionContext } from "@/hooks/debug-connection-context";
+import { RenderTreeServicesProvider } from "@/hooks/render-tree-services-context";
 import { ToastStateProvider } from "@/hooks/toast-state-provider";
 import { useDebugConnection } from "@/hooks/use-debug-connection";
 import { useDevtoolsAppState } from "@/hooks/use-devtools-app-state";
@@ -95,8 +97,12 @@ function App() {
 
   return (
     <DebugConnectionContext.Provider value={debugConnection}>
-      <ToastStateProvider>
-        <DevtoolsAppStateProvider value={appState}>
+      <RenderTreeServicesProvider
+        renderTree={renderTree}
+        fileToRenderNode={debugConnection.fileToRenderNode}
+      >
+        <ToastStateProvider>
+          <DevtoolsAppStateProvider value={appState}>
           <div className="h-screen w-screen bg-background text-foreground flex flex-col">
             <ResizablePanelGroup direction="horizontal" className="flex-1">
               {/* Left Panel - File Explorer */}
@@ -172,6 +178,7 @@ function App() {
                       <TabBar />
                       {/* Tab Content */}
                       <div className="flex-1 p-4 overflow-auto">
+                        <ErrorBoundary>
                         {activeTab ?
                           activeTab.type === "file" ?
                             <FileView />
@@ -199,6 +206,7 @@ function App() {
                             Open a file or symbol to view its contents
                           </div>
                         }
+                        </ErrorBoundary>
                       </div>
                     </div>
                   </ResizablePanel>
@@ -254,25 +262,33 @@ function App() {
                         value="render"
                         className="flex-1 overflow-auto p-1"
                       >
-                        <RenderTree ref={renderTreeRef} />
+                        <ErrorBoundary>
+                          <RenderTree ref={renderTreeRef} />
+                        </ErrorBoundary>
                       </TabsContent>
                       <TabsContent
                         value="problems"
                         className="flex-1 overflow-auto"
                       >
-                        <ProblemsView />
+                        <ErrorBoundary>
+                          <ProblemsView />
+                        </ErrorBoundary>
                       </TabsContent>
                       <TabsContent
                         value="effects"
                         className="flex-1 overflow-hidden"
                       >
-                        <EffectsView />
+                        <ErrorBoundary>
+                          <EffectsView />
+                        </ErrorBoundary>
                       </TabsContent>
                       <TabsContent
                         value="trace"
                         className="flex-1 overflow-auto p-1"
                       >
-                        <TraceView scrollToken={traceScrollToken} />
+                        <ErrorBoundary>
+                          <TraceView scrollToken={traceScrollToken} />
+                        </ErrorBoundary>
                       </TabsContent>
                     </Tabs>
                   </ResizablePanel>
@@ -288,8 +304,9 @@ function App() {
             />
             <Toaster />
           </div>
-        </DevtoolsAppStateProvider>
-      </ToastStateProvider>
+          </DevtoolsAppStateProvider>
+        </ToastStateProvider>
+      </RenderTreeServicesProvider>
     </DebugConnectionContext.Provider>
   );
 }

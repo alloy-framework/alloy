@@ -5,9 +5,11 @@ import {
   type RenderTreeMessage,
   type RenderTreeState,
 } from "@/lib/debug-tree";
+import { normalizePath } from "@/lib/utils";
 import type {
   DiagnosticInfo,
   ServerToClientMessage,
+  SourceLocation,
 } from "@alloy-js/core/devtools";
 import * as devalue from "devalue";
 import {
@@ -133,6 +135,296 @@ export type DirtyFlagKey =
 
 // ── processMessage ───────────────────────────────────────────────────────────
 
+type MessageHandler = (
+  store: DebugStore,
+  pending: PendingState,
+  message: any,
+) => DirtyFlagKey[];
+
+const TRACE_SKIP_TYPES = new Set([
+  "files:fileUpdated",
+  "render:error",
+  "diagnostics:report",
+]);
+
+// ── Render-tree messages ────────────────────────────────────────────────────
+
+function handleRenderTreeMessage(
+  store: DebugStore,
+  _pending: PendingState,
+  message: RenderTreeMessage,
+): DirtyFlagKey[] {
+  applyRenderTreeMessage(store.treeState, message);
+  return ["renderTree"];
+}
+
+// ── File / directory messages ───────────────────────────────────────────────
+
+function handleDirectoryMessage(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { path: string },
+  action: "add" | "remove",
+): DirtyFlagKey[] {
+  const normalized = normalizePath(message.path);
+  if (normalized) {
+    if (action === "add") store.directories.add(normalized);
+    else store.directories.delete(normalized);
+  }
+  return ["fileTree"];
+}
+
+function handleFileAdded(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { path: string; filetype: string; renderNodeId?: number },
+): DirtyFlagKey[] {
+  const path = normalizePath(message.path);
+  if (!store.files.has(path)) {
+    store.files.set(path, { path, filetype: message.filetype, contents: "" });
+  }
+  if (message.renderNodeId !== undefined) {
+    store.fileToRenderNode.set(path, String(message.renderNodeId));
+  }
+  return ["fileTree", "fileContents", "fileToRenderNode"];
+}
+
+function handleFileRemoved(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { path: string },
+): DirtyFlagKey[] {
+  const path = normalizePath(message.path);
+  store.files.delete(path);
+  store.fileToRenderNode.delete(path);
+  return ["fileTree", "fileContents", "fileToRenderNode"];
+}
+
+function handleFileUpdated(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { path: string; filetype: string; contents: string },
+): DirtyFlagKey[] {
+  const path = normalizePath(message.path);
+  store.files.set(path, {
+    path,
+    filetype: message.filetype,
+    contents: message.contents,
+  });
+  return ["fileTree", "fileContents", "fileToRenderNode"];
+}
+
+// ── Info / diagnostics / errors ─────────────────────────────────────────────
+
+function handleDebuggerInfo(
+  store: DebugStore,
+  pending: PendingState,
+  message: { version: string; cwd?: string },
+): DirtyFlagKey[] {
+  const dirty: DirtyFlagKey[] = [];
+  if (message.version) {
+    pending.versionLabel = `Alloy v${message.version}`;
+    dirty.push("versionLabel");
+  }
+  if (message.cwd) {
+    store.cwd = message.cwd;
+    pending.cwd = message.cwd;
+    dirty.push("cwd", "fileTree");
+  }
+  return dirty;
+}
+
+function handleDiagnosticsReport(
+  _store: DebugStore,
+  pending: PendingState,
+  message: { diagnostics?: DiagnosticInfo[] },
+): DirtyFlagKey[] {
+  pending.diagnostics = message.diagnostics ?? [];
+  return ["diagnostics"];
+}
+
+function handleRenderError(
+  _store: DebugStore,
+  pending: PendingState,
+  message: {
+    id: number;
+    name?: string;
+    message?: string;
+    stack?: string;
+    componentStack: Array<{
+      name?: string;
+      propsSerialized?: string;
+      renderNodeId?: number;
+      source?: unknown;
+    }>;
+  },
+): DirtyFlagKey[] {
+  const rawId = String(message.id ?? Date.now());
+  const id = `error:${rawId}`;
+  const componentStack =
+    Array.isArray(message.componentStack) ?
+      message.componentStack.map((entry) => {
+        let props: Record<string, unknown> | undefined;
+        if (entry.propsSerialized) {
+          try {
+            props = devalue.parse(entry.propsSerialized) as Record<
+              string,
+              unknown
+            >;
+          } catch {
+            props = undefined;
+          }
+        }
+        return {
+          name: entry.name ?? "(anonymous)",
+          props,
+          renderNodeId: entry.renderNodeId,
+          source: entry.source as SourceLocation | undefined,
+        };
+      })
+    : [];
+
+  const details: RenderErrorDetails = {
+    id,
+    name: String(message.name ?? "Error"),
+    message: String(message.message ?? ""),
+    stack: message.stack,
+    componentStack,
+  };
+
+  if (!pending.renderErrors) {
+    pending.renderErrors = new Map();
+  }
+  pending.renderErrors.set(id, details);
+  pending.latestRenderErrorId = id;
+  return ["renderErrors", "latestRenderErrorId"];
+}
+
+// ── Effects / refs ──────────────────────────────────────────────────────────
+
+function handleEffectAddedOrUpdated(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { effect: { id: number } },
+): DirtyFlagKey[] {
+  if (message.effect) {
+    store.effects.set(message.effect.id, message.effect);
+    return ["effects"];
+  }
+  return [];
+}
+
+function handleRefAdded(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { ref: { id: number } },
+): DirtyFlagKey[] {
+  if (message.ref) {
+    store.refs.set(message.ref.id, message.ref);
+    return ["refs"];
+  }
+  return [];
+}
+
+function handleEdge(
+  store: DebugStore,
+  _pending: PendingState,
+  message: { edge: any },
+): DirtyFlagKey[] {
+  if (message.edge) {
+    store.effectEdges.push(message.edge);
+    if (store.effectEdges.length > MAX_EFFECT_EDGES + 1000) {
+      store.effectEdges = store.effectEdges.slice(-MAX_EFFECT_EDGES);
+    }
+    return ["effectEdges"];
+  }
+  return [];
+}
+
+// ── Scopes / symbols ────────────────────────────────────────────────────────
+
+function handleScopeCreateOrUpdate(
+  store: DebugStore,
+  _pending: PendingState,
+  message: any,
+): DirtyFlagKey[] {
+  const scope = message.scope;
+  if (scope) {
+    store.scopes.set(scope.id, scope);
+    return ["symbolTree", "scopeDetails"];
+  }
+  return [];
+}
+
+function handleScopeDelete(
+  store: DebugStore,
+  _pending: PendingState,
+  message: any,
+): DirtyFlagKey[] {
+  const id = message.id;
+  if (Number.isFinite(id)) {
+    store.scopes.delete(id);
+    return ["symbolTree", "scopeDetails"];
+  }
+  return [];
+}
+
+function handleSymbolCreateOrUpdate(
+  store: DebugStore,
+  _pending: PendingState,
+  message: any,
+): DirtyFlagKey[] {
+  const symbol = message.symbol;
+  if (symbol) {
+    store.symbols.set(symbol.id, symbol);
+    return ["symbolTree", "symbolDetails"];
+  }
+  return [];
+}
+
+function handleSymbolDelete(
+  store: DebugStore,
+  _pending: PendingState,
+  message: any,
+): DirtyFlagKey[] {
+  const id = message.id;
+  if (Number.isFinite(id)) {
+    store.symbols.delete(id);
+    return ["symbolTree", "symbolDetails"];
+  }
+  return [];
+}
+
+// ── Dispatch table ──────────────────────────────────────────────────────────
+
+const messageHandlers: Record<string, MessageHandler> = {
+  "render:reset": handleRenderTreeMessage,
+  "render:nodeAdded": handleRenderTreeMessage,
+  "render:nodeRemoved": handleRenderTreeMessage,
+  "render:nodeUpdated": handleRenderTreeMessage,
+  "files:directoryAdded": (s, p, m) => handleDirectoryMessage(s, p, m, "add"),
+  "files:directoryRemoved": (s, p, m) =>
+    handleDirectoryMessage(s, p, m, "remove"),
+  "files:fileAdded": handleFileAdded,
+  "files:fileRemoved": handleFileRemoved,
+  "files:fileUpdated": handleFileUpdated,
+  "debugger:info": handleDebuggerInfo,
+  "diagnostics:report": handleDiagnosticsReport,
+  "render:error": handleRenderError,
+  "effect:effectAdded": handleEffectAddedOrUpdated,
+  "effect:effectUpdated": handleEffectAddedOrUpdated,
+  "effect:refAdded": handleRefAdded,
+  "effect:track": handleEdge,
+  "effect:trigger": handleEdge,
+  "effect:edgeUpdated": handleEdge,
+  "scope:create": handleScopeCreateOrUpdate,
+  "scope:update": handleScopeCreateOrUpdate,
+  "scope:delete": handleScopeDelete,
+  "symbol:create": handleSymbolCreateOrUpdate,
+  "symbol:update": handleSymbolCreateOrUpdate,
+  "symbol:delete": handleSymbolDelete,
+};
+
 /**
  * Process a single server-to-client message, mutating the `store` and
  * `pending` in place. Returns the dirty-flag keys that should be marked.
@@ -144,21 +436,16 @@ export function processMessage(
 ): DirtyFlagKey[] {
   const dirty: DirtyFlagKey[] = [];
 
-  // ── Trace accumulation (skip noisy events) ──────────────────────────────
-  if (
-    message.type !== "files:fileUpdated" &&
-    message.type !== "render:error" &&
-    message.type !== "diagnostics:report"
-  ) {
+  // Accumulate trace entries for all messages except noisy ones
+  if (!TRACE_SKIP_TYPES.has(message.type)) {
     const sanitized = sanitizeTraceMessage(message);
     store.traceCounter += 1;
-    const uniqueId = `${store.traceCounter}-${Date.now()}`;
 
     if (!pending.traceEntries) {
       pending.traceEntries = [];
     }
     pending.traceEntries.push({
-      id: uniqueId,
+      id: `${store.traceCounter}-${Date.now()}`,
       type: sanitized.type,
       timestamp: Date.now(),
       message: sanitized,
@@ -170,215 +457,9 @@ export function processMessage(
     dirty.push("traceEntries");
   }
 
-  // ── Render-tree messages ────────────────────────────────────────────────
-  if (
-    message.type === "render:reset" ||
-    message.type === "render:nodeAdded" ||
-    message.type === "render:nodeRemoved" ||
-    message.type === "render:nodeUpdated"
-  ) {
-    applyRenderTreeMessage(store.treeState, message as RenderTreeMessage);
-    dirty.push("renderTree");
-    return dirty;
-  }
-
-  // ── File / directory messages ───────────────────────────────────────────
-  if (message.type === "files:directoryAdded") {
-    const path = String(message.path ?? "");
-    const normalized = path.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    if (normalized) {
-      store.directories.add(normalized);
-    }
-    dirty.push("fileTree");
-    return dirty;
-  }
-
-  if (message.type === "files:directoryRemoved") {
-    const path = String(message.path ?? "");
-    const normalized = path.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    if (normalized) {
-      store.directories.delete(normalized);
-    }
-    dirty.push("fileTree");
-    return dirty;
-  }
-
-  if (message.type === "files:fileAdded") {
-    const rawPath = message.path;
-    const path = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    const filetype = message.filetype;
-    const renderNodeId = message.renderNodeId;
-    if (!store.files.has(path)) {
-      store.files.set(path, { path, filetype, contents: "" });
-    }
-    if (renderNodeId !== undefined) {
-      store.fileToRenderNode.set(path, String(renderNodeId));
-    }
-    dirty.push("fileTree", "fileContents", "fileToRenderNode");
-    return dirty;
-  }
-
-  if (message.type === "files:fileRemoved") {
-    const rawPath = message.path;
-    const path = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    store.files.delete(path);
-    store.fileToRenderNode.delete(path);
-    dirty.push("fileTree", "fileContents", "fileToRenderNode");
-    return dirty;
-  }
-
-  if (message.type === "files:fileUpdated") {
-    const rawPath = message.path;
-    const path = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    const filetype = message.filetype;
-    const contents = message.contents;
-    store.files.set(path, { path, filetype, contents });
-    dirty.push("fileTree", "fileContents", "fileToRenderNode");
-    return dirty;
-  }
-
-  // ── Debugger info ───────────────────────────────────────────────────────
-  if (message.type === "debugger:info") {
-    const version = message.version;
-    const cwdValue = message.cwd;
-    if (version) {
-      pending.versionLabel = `Alloy v${version}`;
-      dirty.push("versionLabel");
-    }
-    if (cwdValue) {
-      store.cwd = cwdValue;
-      pending.cwd = cwdValue;
-      dirty.push("cwd", "fileTree");
-    }
-    return dirty;
-  }
-
-  // ── Diagnostics ─────────────────────────────────────────────────────────
-  if (message.type === "diagnostics:report") {
-    pending.diagnostics = message.diagnostics ?? [];
-    dirty.push("diagnostics");
-    return dirty;
-  }
-
-  // ── Render errors ───────────────────────────────────────────────────────
-  if (message.type === "render:error") {
-    const rawId = String(message.id ?? Date.now());
-    const id = `error:${rawId}`;
-    const rawStack = message.componentStack;
-    const componentStack =
-      Array.isArray(rawStack) ?
-        rawStack.map((entry) => {
-          let props: Record<string, unknown> | undefined;
-          if (entry.propsSerialized) {
-            try {
-              props = devalue.parse(entry.propsSerialized) as Record<
-                string,
-                unknown
-              >;
-            } catch {
-              props = undefined;
-            }
-          }
-          return {
-            name: entry.name ?? "(anonymous)",
-            props,
-            renderNodeId: entry.renderNodeId,
-            source: entry.source,
-          };
-        })
-      : [];
-
-    const details: RenderErrorDetails = {
-      id,
-      name: String(message.name ?? "Error"),
-      message: String(message.message ?? ""),
-      stack: message.stack,
-      componentStack,
-    };
-
-    if (!pending.renderErrors) {
-      pending.renderErrors = new Map();
-    }
-    pending.renderErrors.set(id, details);
-    pending.latestRenderErrorId = id;
-    dirty.push("renderErrors", "latestRenderErrorId");
-    return dirty;
-  }
-
-  // ── Effects & refs ──────────────────────────────────────────────────────
-  if (
-    message.type === "effect:effectAdded" ||
-    message.type === "effect:effectUpdated"
-  ) {
-    const effect = message.effect;
-    if (effect) {
-      store.effects.set(effect.id, effect);
-      dirty.push("effects");
-    }
-    return dirty;
-  }
-
-  if (message.type === "effect:refAdded") {
-    const ref = message.ref;
-    if (ref) {
-      store.refs.set(ref.id, ref);
-      dirty.push("refs");
-    }
-    return dirty;
-  }
-
-  if (
-    message.type === "effect:track" ||
-    message.type === "effect:trigger" ||
-    message.type === "effect:edgeUpdated"
-  ) {
-    const edge = message.edge;
-    if (edge) {
-      store.effectEdges.push(edge);
-      if (store.effectEdges.length > MAX_EFFECT_EDGES + 1000) {
-        store.effectEdges = store.effectEdges.slice(-MAX_EFFECT_EDGES);
-      }
-      dirty.push("effectEdges");
-    }
-    return dirty;
-  }
-
-  // ── Scopes ──────────────────────────────────────────────────────────────
-  if (message.type === "scope:create" || message.type === "scope:update") {
-    const scope = message.scope;
-    if (scope) {
-      store.scopes.set(scope.id, scope);
-      dirty.push("symbolTree", "scopeDetails");
-    }
-    return dirty;
-  }
-
-  if (message.type === "scope:delete") {
-    const id = message.id;
-    if (Number.isFinite(id)) {
-      store.scopes.delete(id);
-      dirty.push("symbolTree", "scopeDetails");
-    }
-    return dirty;
-  }
-
-  // ── Symbols ─────────────────────────────────────────────────────────────
-  if (message.type === "symbol:create" || message.type === "symbol:update") {
-    const symbol = message.symbol;
-    if (symbol) {
-      store.symbols.set(symbol.id, symbol);
-      dirty.push("symbolTree", "symbolDetails");
-    }
-    return dirty;
-  }
-
-  if (message.type === "symbol:delete") {
-    const id = message.id;
-    if (Number.isFinite(id)) {
-      store.symbols.delete(id);
-      dirty.push("symbolTree", "symbolDetails");
-    }
-    return dirty;
+  const handler = messageHandlers[message.type];
+  if (handler) {
+    dirty.push(...handler(store, pending, message));
   }
 
   return dirty;

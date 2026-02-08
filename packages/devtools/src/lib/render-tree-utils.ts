@@ -3,6 +3,10 @@ import type { RenderTreeNode } from "@/components/render-tree";
 export interface RenderTreeIndex {
   parentById: Map<string, string | null>;
   liftedFromMap: Map<string, string>;
+  /** Reverse of liftedFromMap: original node id → lifted node id */
+  liftedToMap: Map<string, string>;
+  /** O(1) node lookup by id */
+  nodeById: Map<string, RenderTreeNode>;
 }
 
 export function buildRenderTreeIndex(
@@ -10,13 +14,17 @@ export function buildRenderTreeIndex(
 ): RenderTreeIndex {
   const parentById = new Map<string, string | null>();
   const liftedFromMap = new Map<string, string>();
+  const liftedToMap = new Map<string, string>();
+  const nodeById = new Map<string, RenderTreeNode>();
   const stack: Array<{ node: RenderTreeNode; parent: string | null }> =
     renderTree.map((node) => ({ node, parent: null }));
   while (stack.length) {
     const { node, parent } = stack.pop()!;
     parentById.set(node.id, parent);
+    nodeById.set(node.id, node);
     if (node.liftedFrom) {
       liftedFromMap.set(node.id, node.liftedFrom);
+      liftedToMap.set(node.liftedFrom, node.id);
     }
     if (node.children) {
       for (const child of node.children) {
@@ -24,7 +32,7 @@ export function buildRenderTreeIndex(
       }
     }
   }
-  return { parentById, liftedFromMap };
+  return { parentById, liftedFromMap, liftedToMap, nodeById };
 }
 
 export function invertFileToRenderNode(
@@ -57,20 +65,25 @@ export function findFileIdForRenderNode(
   return undefined;
 }
 
+/** O(1) lookup using the pre-built reverse `liftedToMap`. */
 export function findLiftedRootForNode(
   nodeId: string,
-  liftedFromMap: Map<string, string>,
+  liftedToMap: Map<string, string>,
 ): string | undefined {
-  for (const [candidateId, liftedFrom] of liftedFromMap.entries()) {
-    if (liftedFrom === nodeId) return candidateId;
-  }
-  return undefined;
+  return liftedToMap.get(nodeId);
 }
 
+/**
+ * Find a render tree node by id.
+ * Uses the pre-built `nodeById` index for O(1) lookup when available,
+ * falls back to DFS when no index is provided.
+ */
 export function findRenderNodeInTree(
   renderTree: RenderTreeNode[],
   nodeId: string,
+  nodeById?: Map<string, RenderTreeNode>,
 ): RenderTreeNode | undefined {
+  if (nodeById) return nodeById.get(nodeId);
   const stack = [...renderTree];
   while (stack.length) {
     const current = stack.pop()!;

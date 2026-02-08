@@ -8,8 +8,7 @@ import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
-import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useToast } from "@/hooks/use-toast";
 
 export interface ComponentStackEntry {
@@ -28,7 +27,7 @@ export interface ComponentStackProps {
 }
 
 export function ComponentStack({ entries }: ComponentStackProps) {
-  const { renderTree, fileContents, fileToRenderNode, formatPath } =
+  const { fileContents, fileToRenderNode, formatPath } =
     useDebugConnectionContext();
   const {
     requestFocusRenderNode,
@@ -44,9 +43,14 @@ export function ComponentStack({ entries }: ComponentStackProps) {
     },
   } = useDevtoolsAppStateContext();
   const { toast } = useToast();
-  const { findLiftedRootForNodeById, fileNodeToId, parentById, liftedFromMap } =
-    useRenderTreeIndex(renderTree, fileToRenderNode);
-  const { collectTextNodesForNode } = useRenderTreeQueries(renderTree);
+  const {
+    findLiftedRootForNodeById,
+    fileNodeToId,
+    parentById,
+    liftedFromMap,
+    nodeById,
+    collectTextNodesForNode,
+  } = useRenderTreeServices();
   const { computeTextRangesForFile } = useFileTextRanges({
     activeTabId,
     openTabs,
@@ -56,7 +60,7 @@ export function ComponentStack({ entries }: ComponentStackProps) {
     findLiftedRootForNode: findLiftedRootForNodeById,
   });
   const { goToSourceForRenderNodeId } = useGoToSource({
-    renderTree,
+    nodeById,
     fileContents,
     fileToRenderNode,
     openTabs,

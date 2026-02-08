@@ -11,7 +11,7 @@ export function useRenderTreeIndex(
   renderTree: RenderTreeNode[],
   fileToRenderNode: Map<string, string>,
 ) {
-  const { parentById, liftedFromMap } = useMemo(
+  const { parentById, liftedFromMap, liftedToMap, nodeById } = useMemo(
     () => buildRenderTreeIndex(renderTree),
     [renderTree],
   );
@@ -27,13 +27,14 @@ export function useRenderTreeIndex(
   );
 
   const findLiftedRootForNodeById = useCallback(
-    (nodeId: string) => findLiftedRootForNode(nodeId, liftedFromMap),
-    [liftedFromMap],
+    (nodeId: string) => findLiftedRootForNode(nodeId, liftedToMap),
+    [liftedToMap],
   );
 
   return {
     parentById,
     liftedFromMap,
+    nodeById,
     fileNodeToId,
     findFileIdForRenderNodeById,
     findLiftedRootForNodeById,

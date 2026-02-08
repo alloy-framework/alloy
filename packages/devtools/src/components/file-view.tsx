@@ -2,12 +2,11 @@ import { FileViewer } from "@/components/detail-views/file-viewer.tsx";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
-import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
-import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { cn } from "@/lib/utils";
 
 export function FileView() {
-  const { renderTree, fileContents, fileToRenderNode } =
+  const { fileContents, fileToRenderNode } =
     useDebugConnectionContext();
   const {
     hoveredRenderNodeId,
@@ -15,11 +14,8 @@ export function FileView() {
     requestFocusRenderNode,
     tabs: { activeTabId, openTabs },
   } = useDevtoolsAppStateContext();
-  const { findLiftedRootForNodeById } = useRenderTreeIndex(
-    renderTree,
-    fileToRenderNode,
-  );
-  const { collectTextNodesForNode } = useRenderTreeQueries(renderTree);
+  const { findLiftedRootForNodeById, collectTextNodesForNode } =
+    useRenderTreeServices();
   const { fileTextRanges } = useFileTextRanges({
     activeTabId,
     openTabs,

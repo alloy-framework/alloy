@@ -8,10 +8,10 @@ import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
-import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { findFileIdForRenderNode } from "@/lib/render-tree-utils";
 import { cn } from "@/lib/utils";
+import type { SourceLocation } from "@alloy-js/core/devtools";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import {
   forwardRef,
@@ -33,11 +33,7 @@ export interface RenderTreeNode {
   fileId?: string; // Maps to a file in the file tree
   kind?: string;
   liftedFrom?: string;
-  source?: {
-    fileName: string;
-    lineNumber: number;
-    columnNumber: number;
-  };
+  source?: SourceLocation;
 }
 
 export interface RenderTreeHandle {
@@ -90,10 +86,10 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       parentById,
       liftedFromMap,
       fileNodeToId,
+      nodeById,
       findLiftedRootForNodeById,
-    } = useRenderTreeIndex(deferredRenderTree, fileToRenderNode);
-    const { collectTextNodesForNode } =
-      useRenderTreeQueries(deferredRenderTree);
+      collectTextNodesForNode,
+    } = useRenderTreeServices();
     const { computeTextRangesForFile } = useFileTextRanges({
       activeTabId: null,
       openTabs,
@@ -103,7 +99,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       findLiftedRootForNode: findLiftedRootForNodeById,
     });
     const { goToSourceForNode } = useGoToSource({
-      renderTree: deferredRenderTree,
+      nodeById,
       fileContents,
       fileToRenderNode,
       openTabs,

@@ -9,21 +9,17 @@ import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
-import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useCallback, useDeferredValue, useState } from "react";
 
 export function SymbolTreePanel() {
   const {
-    renderTree,
     symbolTree,
     symbolDetails,
     scopeDetails,
     fileContents,
     fileToRenderNode,
   } = useDebugConnectionContext();
-  // Defer trees to prevent blocking user interactions
-  const deferredRenderTree = useDeferredValue(renderTree);
   const deferredSymbolTree = useDeferredValue(symbolTree);
   const {
     focusRenderNodeById,
@@ -38,9 +34,14 @@ export function SymbolTreePanel() {
       openDetailTab,
     },
   } = useDevtoolsAppStateContext();
-  const { parentById, liftedFromMap, fileNodeToId, findLiftedRootForNodeById } =
-    useRenderTreeIndex(deferredRenderTree, fileToRenderNode);
-  const { collectTextNodesForNode } = useRenderTreeQueries(deferredRenderTree);
+  const {
+    parentById,
+    liftedFromMap,
+    fileNodeToId,
+    nodeById,
+    findLiftedRootForNodeById,
+    collectTextNodesForNode,
+  } = useRenderTreeServices();
   const { computeTextRangesForFile } = useFileTextRanges({
     activeTabId,
     openTabs,
@@ -50,7 +51,7 @@ export function SymbolTreePanel() {
     findLiftedRootForNode: findLiftedRootForNodeById,
   });
   const { goToSourceForRenderNodeId } = useGoToSource({
-    renderTree: deferredRenderTree,
+    nodeById,
     fileContents,
     fileToRenderNode,
     openTabs,

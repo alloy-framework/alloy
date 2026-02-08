@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/context-menu";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
-import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useState } from "react";
 
 export function ProblemsView() {
@@ -15,17 +15,12 @@ export function ProblemsView() {
     diagnostics,
     renderErrors,
     formatPath,
-    renderTree,
-    fileToRenderNode,
   } = useDebugConnectionContext();
   const {
     tabs: { openDetailTab, openTab },
     requestFocusRenderNode,
   } = useDevtoolsAppStateContext();
-  const { findFileIdForRenderNodeById } = useRenderTreeIndex(
-    renderTree,
-    fileToRenderNode,
-  );
+  const { findFileIdForRenderNodeById } = useRenderTreeServices();
   const [menuProblem, setMenuProblem] = useState<{
     id: string;
     componentRenderNodeId?: number;

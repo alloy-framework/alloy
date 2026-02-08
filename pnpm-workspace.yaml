@@ -28,6 +28,7 @@ catalog:
   change-case: ^5.4.4
   cli-table3: ^0.6.5
   concurrently: ^9.2.0
+  devalue: ^5.6.2
   eslint: ^9.32.0
   fast-xml-parser: ^5.2.5
   html-entities: 2.6.0
@@ -43,4 +44,5 @@ catalog:
   typescript-eslint: ^8.38.0
   validate-html-nesting: ^1.2.1
   vite: ^7.0.6
-  vitest: ^3.2.4
+  vitest: 3.2.4
+  ws: ^8.19.0

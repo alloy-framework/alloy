@@ -2,21 +2,61 @@ import {
   isRef,
   pauseTracking,
   ReactiveEffectRunner,
-  ref,
   Ref,
   resetTracking,
   ShallowReactive,
-  shallowRef,
   stop,
+  computed as vueComputed,
   effect as vueEffect,
+  ref as vueRef,
+  shallowRef as vueShallowRef,
+  toRef as vueToRef,
+  toRefs as vueToRefs,
 } from "@vue/reactivity";
-import type { RenderedTextTree } from "./render.js";
-import type { Children, ComponentCreator } from "./runtime/component.js";
+import {
+  captureSourceLocation,
+  debug,
+  isDevtoolsEnabled,
+} from "./debug/index.js";
+import { RenderedTextTree } from "./render.js";
+import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
-import { trace, TracePhase } from "./tracer.js";
 
-// check for multiple versions of alloy here.
+function attachEffectWriteDebug(refValue: Ref<unknown>, kind: string) {
+  if (!isDevtoolsEnabled()) return;
+  const descriptor =
+    Object.getOwnPropertyDescriptor(refValue, "value") ??
+    Object.getOwnPropertyDescriptor(Object.getPrototypeOf(refValue), "value");
+  if (!descriptor?.get || !descriptor?.set) return;
+  if ((refValue as any).__alloyDebugWrapped) return;
+  Object.defineProperty(refValue, "value", {
+    get: descriptor.get,
+    set(value: unknown) {
+      descriptor.set!.call(this, value);
+      const effectId = globalContext?.meta?.effectId;
+      if (effectId !== undefined && effectId !== -1) {
+        const id = refId(refValue);
+        debug.effect.ensureRef({ id, kind });
+        debug.effect.trigger({
+          effectId,
+          target: refValue,
+          refId: id,
+          location: captureSourceLocation(),
+          kind: "trigger",
+        });
+      }
+    },
+    enumerable: descriptor.enumerable ?? true,
+    configurable: true,
+  });
+  Object.defineProperty(refValue, "__alloyDebugWrapped", {
+    value: true,
+    enumerable: false,
+    configurable: false,
+  });
+}
+
 if ((globalThis as any).__ALLOY__) {
   throw new Error(
     "Multiple versions of Alloy are loaded for this project. This will likely cause undesirable behavior.",
@@ -116,7 +156,7 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
     ret = untrack(() =>
       fn(() => {
         for (const d of context!.disposables) {
-          d();
+          untrack(d);
         }
       }),
     );
@@ -127,6 +167,15 @@ export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
   return ret;
 }
 
+export interface EffectDebugOptions {
+  name?: string;
+  type?: string;
+}
+
+export interface EffectOptions {
+  debug?: EffectDebugOptions;
+}
+
 export function untrack<T>(fn: () => T): T {
   pauseTracking();
   const v = fn();
@@ -135,17 +184,27 @@ export function untrack<T>(fn: () => T): T {
 }
 
 export function memo<T>(fn: () => T, equal?: boolean): () => T {
-  const o = shallowRef();
-  effect((prev) => {
-    const res = fn();
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (!equal || prev !== res) && (o.value = res);
-    return res;
-  }, undefined as T);
-  return () => o.value;
+  const o = shallowRef<T>();
+  effect(
+    (prev) => {
+      const res = fn();
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      (!equal || prev !== res) && (o.value = res);
+      return res;
+    },
+    undefined as T,
+    {
+      debug: { name: "memo" },
+    },
+  );
+  return () => o.value as T;
 }
 
-export function effect<T>(fn: (prev?: T) => T, current?: T) {
+export function effect<T>(
+  fn: (prev?: T) => T,
+  current?: T,
+  options?: EffectOptions,
+) {
   const context: Context = {
     context: {},
     disposables: [] as (() => void)[],
@@ -157,10 +216,22 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
     isRoot: false,
   };
 
+  const debugInfo = options?.debug;
+  const effectId = debug.effect.register({
+    name: debugInfo?.name ?? fn.name,
+    type: debugInfo?.type,
+    createdAt: captureSourceLocation(),
+  });
+
+  context.meta ??= {};
+  if (effectId !== -1) {
+    context.meta.effectId = effectId;
+  }
+
   const cleanupFn = (final: boolean) => {
     const d = context.disposables;
     context.disposables = [];
-    for (let k = 0, len = d.length; k < len; k++) d[k]();
+    for (let k = 0, len = d.length; k < len; k++) untrack(d[k]);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     final && stop(runner);
@@ -185,14 +256,56 @@ export function effect<T>(fn: (prev?: T) => T, current?: T) {
       flags: 1 | 4 | 32,
       scheduler: scheduler(),
       onTrack(event) {
-        trace(TracePhase.effect.track, () => {
-          return `tracking ${isRef(event.target) ? `Ref:${refId(event.target)}` : event.target}, ${String(event.key)}`;
-        });
+        if (effectId !== -1) {
+          const targetKey =
+            typeof event.key === "symbol" ? event.key.toString() : event.key;
+          if (isRef(event.target)) {
+            const id = refId(event.target);
+            debug.effect.ensureRef({ id, kind: "ref" });
+            debug.effect.track({
+              effectId,
+              target: event.target,
+              refId: id,
+              targetKey,
+              location: captureSourceLocation(),
+            });
+          } else {
+            debug.effect.track({
+              effectId,
+              target: event.target,
+              targetKey,
+              location: captureSourceLocation(),
+            });
+          }
+        }
+        // track edge emitted via recordEffectTrack
       },
       onTrigger(event) {
-        trace(TracePhase.effect.trigger, () => {
-          return `triggering ${isRef(event.target) ? `Ref:${refId(event.target)}` : event.target}, ${String(event.key)}`;
-        });
+        if (effectId !== -1) {
+          const targetKey =
+            typeof event.key === "symbol" ? event.key.toString() : event.key;
+          if (isRef(event.target)) {
+            const id = refId(event.target);
+            debug.effect.ensureRef({ id, kind: "ref" });
+            debug.effect.trigger({
+              effectId,
+              target: event.target,
+              refId: id,
+              targetKey,
+              location: captureSourceLocation(),
+              kind: "triggered-by",
+            });
+          } else {
+            debug.effect.trigger({
+              effectId,
+              target: event.target,
+              targetKey,
+              location: captureSourceLocation(),
+              kind: "triggered-by",
+            });
+          }
+        }
+        // trigger edge emitted via recordEffectTrigger
       },
     },
   );
@@ -251,6 +364,76 @@ export function isCustomContext(child: Children): child is CustomContext {
     child !== null &&
     Object.hasOwn(child, CUSTOM_CONTEXT_SYM)
   );
+}
+
+export function ref<T>(value?: T): Ref<T> {
+  const result = vueRef(value) as Ref<T>;
+  attachEffectWriteDebug(result, "ref");
+  debug.effect.registerRef({
+    id: refId(result),
+    kind: "ref",
+    createdAt: captureSourceLocation(),
+    createdByEffectId: globalContext?.meta?.effectId,
+  });
+  return result;
+}
+
+export function shallowRef<T>(value?: T): Ref<T> {
+  const result = vueShallowRef(value) as Ref<T>;
+  attachEffectWriteDebug(result, "shallowRef");
+  debug.effect.registerRef({
+    id: refId(result),
+    kind: "shallowRef",
+    createdAt: captureSourceLocation(),
+    createdByEffectId: globalContext?.meta?.effectId,
+  });
+  return result;
+}
+
+export function computed<T>(getter: () => T): Ref<T> {
+  const result = vueComputed(getter) as Ref<T>;
+  debug.effect.registerRef({
+    id: refId(result),
+    kind: "computed",
+    createdAt: captureSourceLocation(),
+    createdByEffectId: globalContext?.meta?.effectId,
+  });
+  return result;
+}
+
+export function toRef<T extends object, K extends keyof T>(
+  object: T,
+  key: K,
+  defaultValue?: T[K],
+): Ref<T[K]> {
+  const result =
+    defaultValue === undefined ?
+      (vueToRef(object, key) as Ref<T[K]>)
+    : (vueToRef(object, key, defaultValue) as Ref<T[K]>);
+  attachEffectWriteDebug(result, "toRef");
+  debug.effect.registerRef({
+    id: refId(result),
+    kind: "toRef",
+    createdAt: captureSourceLocation(),
+    createdByEffectId: globalContext?.meta?.effectId,
+  });
+  return result;
+}
+
+export function toRefs<T extends object>(
+  object: T,
+): { [K in keyof T]: Ref<T[K]> } {
+  const result = vueToRefs(object) as { [K in keyof T]: Ref<T[K]> };
+  for (const refValue of Object.values(result) as Ref<unknown>[]) {
+    attachEffectWriteDebug(refValue, "toRef");
+    debug.effect.registerRef({
+      id: refId(refValue),
+      kind: "toRef",
+      createdAt: captureSourceLocation(),
+      createdByEffectId: globalContext?.meta?.effectId,
+    });
+  }
+  return result;
 }
 
 const seenRefs = new WeakMap<Ref<unknown>, number>();

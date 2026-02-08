@@ -1,4 +1,4 @@
-import { OutputScope, useScope } from "@alloy-js/core";
+import { OutputScope, createScope, useScope } from "@alloy-js/core";
 import { GoScope } from "./go.js";
 
 export class GoModuleScope extends GoScope {
@@ -18,7 +18,7 @@ export function createGoModuleScope(name: string) {
   if (parentScope) {
     throw new Error("Modules can only be created at the top level");
   }
-  const scope = new GoModuleScope(name);
+  const scope = createScope(GoModuleScope, name);
   return scope;
 }
 

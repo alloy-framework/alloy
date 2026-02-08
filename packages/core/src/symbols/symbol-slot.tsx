@@ -50,36 +50,63 @@ export function createSymbolSlot(): SymbolSlot {
   Object.defineProperty(SymbolSlot, "firstSymbol", {
     get() {
       const ref = shallowRef();
-      effect(() => {
-        ref.value = symbolSlotRef.value?.values().next().value;
-      });
+      effect(
+        () => {
+          ref.value = symbolSlotRef.value?.values().next().value;
+        },
+        undefined,
+        {
+          debug: {
+            name: "symbolSlot:firstSymbol",
+            type: "symbol",
+          },
+        },
+      );
       return ref;
     },
   });
 
   SymbolSlot.copyMembersTo = (baseSymbol: OutputSymbol) => {
-    effect(() => {
-      if (!symbolSlotRef.value) {
-        return;
-      }
+    effect(
+      () => {
+        if (!symbolSlotRef.value) {
+          return;
+        }
 
-      for (const symbol of symbolSlotRef.value) {
-        symbol.copyMembersTo(baseSymbol);
-      }
-    });
+        for (const symbol of symbolSlotRef.value) {
+          symbol.copyMembersTo(baseSymbol);
+        }
+      },
+      undefined,
+      {
+        debug: {
+          name: "symbolSlot:copyMembers",
+          type: "symbol",
+        },
+      },
+    );
   };
 
   SymbolSlot.moveMembersTo = (baseSymbol: OutputSymbol) => {
-    effect(() => {
-      if (!symbolSlotRef.value) {
-        return;
-      }
-      for (const symbol of symbolSlotRef.value) {
-        if (symbol.isTransient) {
-          symbol.moveMembersTo(baseSymbol);
+    effect(
+      () => {
+        if (!symbolSlotRef.value) {
+          return;
         }
-      }
-    });
+        for (const symbol of symbolSlotRef.value) {
+          if (symbol.isTransient) {
+            symbol.moveMembersTo(baseSymbol);
+          }
+        }
+      },
+      undefined,
+      {
+        debug: {
+          name: "symbolSlot:moveMembers",
+          type: "symbol",
+        },
+      },
+    );
   };
 
   return SymbolSlot as any;

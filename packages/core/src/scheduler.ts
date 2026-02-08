@@ -1,4 +1,5 @@
 import { ReactiveEffect } from "@vue/reactivity";
+import { debug } from "./debug/index.js";
 
 export interface QueueJob {
   run(): void;
@@ -6,6 +7,10 @@ export interface QueueJob {
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
 const pendingPromises = new Set<Promise<any>>();
+let waitForSignalPromise: Promise<void> | null = null;
+let resolveWaitForSignal: (() => void) | null = null;
+let jobSignalPromise: Promise<void> | null = null;
+let resolveJobSignal: (() => void) | null = null;
 
 export function scheduler(immediate = false) {
   return function (this: ReactiveEffect) {
@@ -19,11 +24,16 @@ export function queueJob(job: QueueJob | (() => void), immediate = false) {
   if (typeof job === "function") {
     job = { run: job };
   }
-
   if (immediate) {
     immediateQueue.add(job);
   } else {
     queue.add(job);
+  }
+
+  if (resolveJobSignal) {
+    resolveJobSignal();
+    resolveJobSignal = null;
+    jobSignalPromise = null;
   }
 }
 
@@ -51,6 +61,33 @@ export function flushJobs() {
       "Asynchronous jobs were found but render was called synchronously. Use `renderAsync` instead.",
     );
   }
+
+  debug.render.flushJobsComplete();
+}
+
+export function waitForSignal(): Promise<void> {
+  if (!waitForSignalPromise) {
+    waitForSignalPromise = new Promise<void>((resolve) => {
+      resolveWaitForSignal = resolve;
+    });
+    pendingPromises.add(waitForSignalPromise);
+  }
+  return waitForSignalPromise;
+}
+
+export function signalSchedulerWait() {
+  if (resolveWaitForSignal) {
+    resolveWaitForSignal();
+    resolveWaitForSignal = null;
+  }
+  if (waitForSignalPromise) {
+    pendingPromises.delete(waitForSignalPromise);
+  }
+  waitForSignalPromise = null;
+}
+
+export function isWaitingForSignal() {
+  return waitForSignalPromise !== null;
 }
 
 export async function flushJobsAsync() {
@@ -67,9 +104,24 @@ export async function flushJobsAsync() {
       break;
     }
 
-    // Wait for all current promises to complete
-    await Promise.allSettled(Array.from(pendingPromises));
+    if (!jobSignalPromise) {
+      jobSignalPromise = new Promise<void>((resolve) => {
+        resolveJobSignal = resolve;
+      });
+    }
+
+    // Wait for either pending promises to complete or new jobs to arrive
+    await Promise.race([
+      Promise.allSettled(Array.from(pendingPromises)),
+      jobSignalPromise,
+    ]);
+
+    // Clear the job signal after each iteration so we create a new one next time
+    jobSignalPromise = null;
+    resolveJobSignal = null;
   }
+
+  debug.render.flushJobsComplete();
 }
 
 function takeJob() {

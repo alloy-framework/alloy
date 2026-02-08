@@ -6,6 +6,11 @@ interface ToRenderToRenderOptions {
   useTabs?: boolean;
 }
 
+interface ExpectedDiagnostic {
+  message: string | RegExp;
+  severity?: "info" | "warning" | "error";
+}
+
 interface CustomMatchers<R = unknown> {
   toRenderTo: (
     str: string | Record<string, string>,
@@ -14,6 +19,10 @@ interface CustomMatchers<R = unknown> {
   toRenderToAsync: (
     str: string | Record<string, string>,
     options?: ToRenderToRenderOptions,
+  ) => Promise<R>;
+  toHaveDiagnostics: (expectedDiagnostics: ExpectedDiagnostic[]) => R;
+  toHaveDiagnosticsAsync: (
+    expectedDiagnostics: ExpectedDiagnostic[],
   ) => Promise<R>;
 }
 

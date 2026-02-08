@@ -1,5 +1,6 @@
 import {
   Children,
+  createSymbol,
   emitSymbol,
   For,
   Indent,
@@ -55,7 +56,7 @@ export type JsonArrayProps =
  * @see {@link @alloy-js/core#(MemberScopeContext:variable)}
  */
 export function JsonArray(props: JsonArrayProps) {
-  const arraySym = new JsonOutputSymbol("array symbol", undefined, {
+  const arraySym = createSymbol(JsonOutputSymbol, "array symbol", undefined, {
     transient: true,
     refkeys: props.refkey ? [props.refkey].flat() : undefined,
   });
@@ -124,7 +125,7 @@ export function JsonArrayElement(props: JsonArrayElementProps) {
   const memberScope = useMemberScope();
   const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
   const name = String(ownerSymbol.staticMembers.size);
-  const sym = new JsonOutputSymbol(name, ownerSymbol.staticMembers);
+  const sym = createSymbol(JsonOutputSymbol, name, ownerSymbol.staticMembers);
   moveTakenMembersTo(sym);
   onCleanup(() => {
     sym.delete();

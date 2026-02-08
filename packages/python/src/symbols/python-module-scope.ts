@@ -1,4 +1,4 @@
-import { reactive, shallowReactive } from "@alloy-js/core";
+import { createSymbol, reactive, shallowReactive } from "@alloy-js/core";
 import { PythonLexicalScope } from "./python-lexical-scope.js";
 import { PythonOutputSymbol } from "./python-output-symbol.js";
 
@@ -46,7 +46,8 @@ export class PythonModuleScope extends PythonLexicalScope {
       });
     }
 
-    const localSymbol = new PythonOutputSymbol(
+    const localSymbol = createSymbol(
+      PythonOutputSymbol,
       targetSymbol.name,
       this.symbols,
       { binder: this.binder, aliasTarget: targetSymbol },
@@ -59,5 +60,13 @@ export class PythonModuleScope extends PythonLexicalScope {
     });
 
     return localSymbol;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      importedSymbolCount: this.#importedSymbols.size,
+      importedModuleCount: this.#importedModules.size,
+    };
   }
 }

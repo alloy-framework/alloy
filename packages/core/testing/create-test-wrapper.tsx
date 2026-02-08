@@ -7,7 +7,7 @@ import {
   Output,
   OutputSymbol,
   shallowReactive,
-} from "@alloy-js/core";
+} from "../src/index.js";
 
 export interface TestWrapper {
   Wrapper: (props: { children: Children }) => Children;

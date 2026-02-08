@@ -1,6 +1,7 @@
 import {
   OutputScope,
   OutputScopeOptions,
+  createSymbol,
   shallowReactive,
   useScope,
 } from "@alloy-js/core";
@@ -39,8 +40,9 @@ export class GoSourceFileScope extends GoLexicalScope {
       return this.#imports.get(import_)!;
     }
 
-    const localSymbol = new GoSymbol(import_.name, this.values, {
+    const localSymbol = createSymbol(GoSymbol, import_.name, this.values, {
       aliasTarget: import_,
+      binder: this.binder,
     });
 
     this.#imports.set(import_, localSymbol);

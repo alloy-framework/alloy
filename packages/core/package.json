@@ -28,13 +28,21 @@
     "./components": {
       "development": "./src/components/index.ts",
       "import": "./dist/src/components/index.js"
+    },
+    "./devtools": {
+      "types": "./dist/src/devtools-entry.d.ts",
+      "browser": "./dist/src/devtools-entry.browser.js",
+      "development": "./src/devtools-entry.ts",
+      "import": "./dist/src/devtools-entry.js"
     }
   },
   "browser": {
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
     "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
     "./dist/src/inspect.js": "./dist/src/inspect.browser.js",
-    "./src/inspect.ts": "./src/inspect.browser.ts"
+    "./src/inspect.ts": "./src/inspect.browser.ts",
+    "./dist/src/devtools/devtools-server.js": "./dist/src/devtools/devtools-server.browser.js",
+    "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts"
   },
   "scripts": {
     "generate-docs": "api-extractor run",
@@ -49,11 +57,14 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "@vue/reactivity": "catalog:",
-    "picocolors": "catalog:",
     "cli-table3": "catalog:",
+    "devalue": "catalog:",
     "pathe": "catalog:",
-    "prettier": "catalog:"
+    "picocolors": "catalog:",
+    "prettier": "catalog:",
+    "ws": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",

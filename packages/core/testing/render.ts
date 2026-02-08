@@ -1,6 +1,6 @@
-import { Children, printTree, renderTree } from "@alloy-js/core";
+import { Children, printTree, renderTree } from "../src/index.js";
 
-export { printTree } from "@alloy-js/core";
+export { printTree } from "../src/index.js";
 
 export function renderToString(element: Children) {
   return printTree(renderTree(element));

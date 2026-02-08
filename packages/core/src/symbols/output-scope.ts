@@ -1,5 +1,4 @@
 import {
-  effect,
   reactive,
   ReactiveFlags,
   shallowReactive,
@@ -11,8 +10,7 @@ import {
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
-import { untrack } from "../reactivity.js";
-import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
+import { effect, untrack } from "../reactivity.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
 import { OutputSymbol } from "./output-symbol.js";
 
@@ -154,7 +152,7 @@ export abstract class OutputScope {
     return this.#binder;
   }
 
-  [ReactiveFlags.SKIP] = this;
+  [ReactiveFlags.SKIP] = true;
 
   constructor(
     name: string,
@@ -167,9 +165,20 @@ export abstract class OutputScope {
     this.#binder = options.binder ?? useBinder();
     this.#children = shallowReactive(new Set());
     this.#parent = parentScope;
-    effect(() => {
-      this.#setOwnerSymbol(options.ownerSymbol?.movedTo ?? options.ownerSymbol);
-    });
+    effect(
+      () => {
+        this.#setOwnerSymbol(
+          options.ownerSymbol?.movedTo ?? options.ownerSymbol,
+        );
+      },
+      undefined,
+      {
+        debug: {
+          name: "outputScope:ownerSymbol",
+          type: "symbol",
+        },
+      },
+    );
 
     if (this.#parent) {
       this.#parent.children.add(this);
@@ -184,12 +193,8 @@ export abstract class OutputScope {
       ]),
     );
 
+    // Notify binder so resolution tracking works even without createScope
     this.#binder?.notifyScopeCreated(this);
-
-    trace(TracePhase.scope.create, () => `${formatScope(this)}`);
-    traceEffect(TracePhase.scope.update, () => {
-      return `${formatScope(this)}`;
-    });
   }
 
   /**
@@ -213,6 +218,10 @@ export abstract class OutputScope {
   get ownerSymbol() {
     track(this, TrackOpTypes.GET, "ownerSymbol");
     return this.#ownerSymbol;
+  }
+
+  get debugInfo(): Record<string, unknown> {
+    return {};
   }
 
   #setOwnerSymbol(value: OutputSymbol | undefined) {

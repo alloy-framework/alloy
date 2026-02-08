@@ -1,8 +1,27 @@
-import { isRef, ref } from "@vue/reactivity";
+import { isRef } from "@vue/reactivity";
 import { Doc, doc } from "prettier";
 import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
+import {
+  debug,
+  getRenderNodeId,
+  isDevtoolsEnabled,
+  type RenderTreeNodeInfo,
+} from "./debug/index.js";
+import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
+import {
+  attachDiagnosticsCollector,
+  DiagnosticsCollector,
+  emitDiagnostic,
+  reportDiagnostics,
+} from "./diagnostics.js";
+import {
+  isPrintHook,
+  printHookTag,
+  type PrintHook,
+  type RenderedTextTree,
+} from "./print-hook.js";
 import {
   Context,
   CustomContext,
@@ -10,11 +29,18 @@ import {
   getContext,
   getElementCache,
   isCustomContext,
+  onCleanup,
+  ref,
   root,
   untrack,
 } from "./reactivity.js";
 import { isRefkeyable, toRefkey } from "./refkey.js";
-import { popStack, printRenderStack, pushStack } from "./render-stack.js";
+import {
+  getRenderStackSnapshot,
+  popStack,
+  printRenderStack,
+  pushStack,
+} from "./render-stack.js";
 import {
   Child,
   Children,
@@ -23,8 +49,91 @@ import {
   RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
-import { flushJobs, flushJobsAsync } from "./scheduler.js";
-import { trace, TracePhase } from "./tracer.js";
+import { flushJobs, flushJobsAsync, waitForSignal } from "./scheduler.js";
+
+const notifiedErrors = new WeakSet<object>();
+let lastRenderError: {
+  error: { name: string; message: string; stack?: string };
+  componentStack: Array<{
+    name: string;
+    props?: Record<string, unknown> | undefined;
+    propsSerialized?: string;
+    renderNodeId?: number;
+    source?: RenderTreeNodeInfo["source"];
+  }>;
+} | null = null;
+
+function normalizeRenderError(error: unknown): {
+  name: string;
+  message: string;
+  stack?: string;
+} {
+  if (error instanceof Error) {
+    return {
+      name: error.name || error.constructor?.name || "Error",
+      message: error.message || "",
+      stack: error.stack,
+    };
+  }
+  if (error && typeof error === "object") {
+    const anyError = error as {
+      name?: string;
+      message?: string;
+      stack?: string;
+    };
+    return {
+      name: anyError.name || "Error",
+      message: anyError.message || String(error),
+      stack: anyError.stack,
+    };
+  }
+  return {
+    name: "Error",
+    message: String(error),
+  };
+}
+
+function notifyRenderError(error: unknown) {
+  if (error && typeof error === "object") {
+    if (notifiedErrors.has(error)) return;
+    notifiedErrors.add(error);
+  }
+  if (lastRenderError) return;
+
+  const { name, message, stack } = normalizeRenderError(error);
+  const componentStack = getRenderStackSnapshot().map((entry) => {
+    const renderNode = entry.context?.meta?.renderNode as
+      | RenderedTextTree
+      | undefined;
+    const renderNodeId = renderNode ? getRenderNodeId(renderNode) : undefined;
+    return {
+      name: entry.displayName,
+      props: entry.props as Record<string, unknown> | undefined,
+      renderNodeId,
+      source: entry.source,
+    };
+  });
+
+  // Output to console
+  printRenderStack(error);
+
+  // Send to devtools if enabled
+  debug.render.error({ name, message, stack }, componentStack);
+
+  // Store for diagnostics
+  lastRenderError = { error: { name, message, stack }, componentStack };
+  const lastEntry = componentStack.at(-1);
+  emitDiagnostic({
+    severity: "error",
+    message: `${name}: ${message}`,
+    source: lastEntry?.source,
+  });
+}
+
+function reportLastRenderError() {
+  // Error already reported in notifyRenderError via debug.renderError
+  lastRenderError = null;
+}
 
 const {
   builders: {
@@ -150,22 +259,35 @@ export interface ContentOutputFile extends OutputFileBase {
 export type OutputFile = ContentOutputFile | CopyOutputFile;
 
 const nodesToContext = new WeakMap<RenderedTextTree, Context>();
+const diagnosticsByTree = new WeakMap<RenderedTextTree, DiagnosticsCollector>();
 
 export function getContextForRenderNode(node: RenderedTextTree) {
   return nodesToContext.get(node);
 }
 
-export const printHookTag = Symbol();
-
-export interface PrintHook {
-  [printHookTag]: true;
-  transform?(tree: RenderedTextTree): RenderedTextTree;
-  print?(
-    tree: RenderedTextTree,
-    print: (subtree: RenderedTextTree) => Doc,
-  ): Doc;
-  subtree: RenderedTextTree;
+export function getDiagnosticsForTree(tree: RenderedTextTree) {
+  return diagnosticsByTree.get(tree)?.getDiagnostics() ?? [];
 }
+
+function reportDiagnosticsForTree(tree: RenderedTextTree) {
+  const diagnostics = diagnosticsByTree.get(tree);
+  if (!diagnostics) return;
+  const entries = diagnostics.getDiagnostics();
+  if (entries.length === 0) return;
+  reportDiagnostics(diagnostics);
+  void broadcastDevtoolsMessage({
+    type: "diagnostics:report",
+    diagnostics: entries,
+  });
+}
+
+// Re-export from print-hook.ts to maintain backwards compatibility
+export {
+  isPrintHook,
+  printHookTag,
+  type PrintHook,
+  type RenderedTextTree,
+} from "./print-hook.js";
 
 export function createRenderTreeHook(
   subtree: RenderedTextTree,
@@ -177,12 +299,6 @@ export function createRenderTreeHook(
     ...hooks,
   };
 }
-
-export function isPrintHook(type: unknown): type is PrintHook {
-  return typeof type === "object" && type !== null && printHookTag in type;
-}
-
-export type RenderedTextTree = (string | RenderedTextTree | PrintHook)[];
 
 /**
  * Render a component tree to source directories and files. Will ensure that
@@ -196,7 +312,14 @@ export function render(
 ): OutputDirectory {
   const tree = renderTree(children);
   flushJobs();
-  return sourceFilesForTree(tree, options);
+  const output = sourceFilesForTree(tree, options);
+  reportDiagnosticsForTree(tree);
+  reportLastRenderError();
+  debug.render.complete();
+  if (isDevtoolsEnabled()) {
+    void waitForSignal();
+  }
+  return output;
 }
 
 /**
@@ -207,23 +330,16 @@ export async function renderAsync(
   children: Children,
   options?: PrintTreeOptions,
 ): Promise<OutputDirectory> {
+  await debug.prepare();
   const tree = renderTree(children);
-  return sourceFilesForTreeAsync(tree, options);
-}
-
-/**
- * Convert a rendered text tree to source directories and files. Will ensure that
- * all scheduled jobs are completed, including async ones.
- */
-export async function sourceFilesForTreeAsync(
-  tree: RenderedTextTree,
-  options?: PrintTreeOptions,
-) {
-  // if we await here, we ensure all reactive updates are flushed.
-  // sourceFilesForTree will flush again, but won't find anything, because tree
-  // printing won't schedule anything.
+  // Ensure all reactive updates are flushed before printing.
   await flushJobsAsync();
-  return sourceFilesForTree(tree, options);
+  const output = sourceFilesForTree(tree, options);
+  reportDiagnosticsForTree(tree);
+  reportLastRenderError();
+  debug.render.complete();
+
+  return output;
 }
 
 /**
@@ -239,9 +355,12 @@ export function sourceFilesForTree(
   collectSourceFiles(undefined, tree);
 
   if (!rootDirectory) {
-    throw new Error(
-      "No root directory found. Make sure you are using the Output component.",
-    );
+    emitDiagnostic({
+      severity: "error",
+      message:
+        "No root directory found. Make sure you are using the output component.",
+    });
+    return { kind: "directory", path: "", contents: [] };
   }
 
   return rootDirectory;
@@ -325,25 +444,35 @@ export function sourceFilesForTree(
 }
 export function renderTree(children: Children) {
   const rootElem: RenderedTextTree = [];
+  const diagnostics = new DiagnosticsCollector();
+  lastRenderError = null;
+  debug.effect.reset();
+  debug.symbols.reset();
+  debug.files.reset();
+  debug.render.initialize(rootElem);
   try {
     root(() => {
+      attachDiagnosticsCollector(diagnostics);
       renderWorker(rootElem, children);
     });
   } catch (e) {
-    printRenderStack();
+    notifyRenderError(e);
+    reportLastRenderError();
     throw e;
   }
+
+  diagnosticsByTree.set(rootElem, diagnostics);
 
   return rootElem;
 }
 
 function renderWorker(node: RenderedTextTree, children: Children) {
+  if (lastRenderError) return;
   if (!getContext()) {
     throw new Error(
       "Cannot render without a context. Make sure you are using the Output component.",
     );
   }
-  trace(TracePhase.render.worker, () => dumpChildren(children));
 
   if (Array.isArray(node)) {
     nodesToContext.set(node, getContext()!);
@@ -352,6 +481,7 @@ function renderWorker(node: RenderedTextTree, children: Children) {
   if (Array.isArray(children)) {
     for (const child of (children as any).flat(Infinity)) {
       appendChild(node, child);
+      if (lastRenderError) break;
     }
   } else {
     appendChild(node, children);
@@ -384,6 +514,10 @@ export function notifyContentState() {
           break;
         }
         current.childrenWithContent--;
+        if (current.childrenWithContent > 0) {
+          // This isn't the last content so we have no work to do
+          break;
+        }
         if (current.isEmpty) {
           current.isEmpty.value = true;
         }
@@ -419,95 +553,120 @@ export function notifyContentState() {
 }
 
 function appendChild(node: RenderedTextTree, rawChild: Child) {
-  trace(TracePhase.render.appendChild, () => debugPrintChild(rawChild));
+  if (lastRenderError) return;
   const child = normalizeChild(rawChild);
 
   if (typeof child === "string") {
     if (child !== "") {
       contentAdded();
+      debug.render.appendTextNode(node, node.length, child);
     }
     node.push(child);
   } else {
     const cache = getElementCache();
     if (cache.has(child as any)) {
-      trace(
-        TracePhase.render.appendChild,
-        () => "Cached: " + debugPrintChild(child),
-      );
-      node.push(cache.get(child as any)!);
+      const cachedNode = cache.get(child as any)!;
+      // recordSubtreeAdded detects cached nodes automatically and re-adds their children
+      if (isCustomContext(child)) {
+        debug.render.appendCustomContext(node, cachedNode);
+      } else {
+        debug.render.appendFragmentChild(node, cachedNode);
+      }
+      node.push(cachedNode);
       return;
     }
     if (isCustomContext(child)) {
-      trace(
-        TracePhase.render.appendChild,
-        () => "CustomContext: " + debugPrintChild(child),
-      );
+      const newNode: RenderedTextTree = [];
+      debug.render.appendCustomContext(node, newNode);
       child.useCustomContext((children) => {
-        const newNode: RenderedTextTree = [];
         renderWorker(newNode, children);
         node.push(newNode);
         cache.set(child, newNode);
         notifyContentState();
+        notifyFileUpdateForNode(node);
       });
     } else if (isIntrinsicElement(child)) {
-      trace(
-        TracePhase.render.appendChild,
-        () => "IntrinsicElement: " + debugPrintChild(child),
-      );
       // don't need a new context here because intrinsics are never reactive
+      const intrinsic = child as IntrinsicElement;
       const newNode: RenderedTextTree = [];
 
       function formatHookWithChildren(command: (doc: Doc) => Doc) {
-        node.push(
-          createRenderTreeHook(newNode, {
-            print(tree, print) {
-              return command(print(tree));
-            },
-          }),
+        const hook = createRenderTreeHook(newNode, {
+          print(tree, print) {
+            return command(print(tree));
+          },
+        });
+        debug.render.appendPrintHook(
+          node,
+          node.length,
+          hook,
+          intrinsic.name,
+          newNode,
         );
+        node.push(hook);
         renderWorker(newNode, (child as any).props.children);
+        notifyFileUpdateForNode(node);
       }
 
       function formatHook(command: Doc) {
-        return node.push(
-          createRenderTreeHook(newNode, {
-            print() {
-              return command;
-            },
-          }),
-        );
+        const hook = createRenderTreeHook(newNode, {
+          print() {
+            return command;
+          },
+        });
+        debug.render.appendPrintHook(node, node.length, hook, intrinsic.name);
+        node.push(hook);
+        return hook;
       }
 
       switch (child.name) {
         case "indent":
           return formatHookWithChildren(indent);
         case "indentIfBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return indentIfBreak(print(tree), {
                   groupId: child.props.groupId,
                   negate: child.props.negate,
                 });
               },
-            }),
-          );
+            });
+            debug.render.appendPrintHook(
+              node,
+              node.length,
+              hook,
+              intrinsic.name,
+              newNode,
+            );
+            node.push(hook);
+          }
           renderWorker(newNode, child.props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "fill":
           return formatHookWithChildren(fill as any);
         case "group":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return group(print(tree), {
                   id: child.props.id,
                   shouldBreak: child.props.shouldBreak,
                 });
               },
-            }),
-          );
+            });
+            debug.render.appendPrintHook(
+              node,
+              node.length,
+              hook,
+              intrinsic.name,
+              newNode,
+            );
+            node.push(hook);
+          }
           renderWorker(newNode, child.props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "line":
         case "br":
@@ -522,17 +681,26 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         case "lbr":
           return formatHook(literalline);
         case "align":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return align(
                   (child.props as any).width ?? (child.props as any).string!,
                   print(tree),
                 );
               },
-            }),
-          );
+            });
+            debug.render.appendPrintHook(
+              node,
+              node.length,
+              hook,
+              intrinsic.name,
+              newNode,
+            );
+            node.push(hook);
+          }
           renderWorker(newNode, (child as any).props.children);
+          notifyFileUpdateForNode(node);
           return;
         case "lineSuffix":
           return formatHookWithChildren(lineSuffix);
@@ -547,17 +715,33 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
         case "markAsRoot":
           return formatHookWithChildren(markAsRoot);
         case "ifBreak":
-          node.push(
-            createRenderTreeHook(newNode, {
+          {
+            const hook = createRenderTreeHook(newNode, {
               print(tree, print) {
                 return ifBreak(
                   print((tree as RenderedTextTree[])[0]),
                   print((tree as RenderedTextTree[])[1]),
                 );
               },
-            }),
-          );
+            });
+            debug.render.appendPrintHook(
+              node,
+              node.length,
+              hook,
+              intrinsic.name,
+              newNode,
+            );
+            node.push(hook);
+          }
           newNode.push([], []);
+          debug.render.appendFragmentChild(
+            newNode,
+            newNode[0] as RenderedTextTree,
+          );
+          debug.render.appendFragmentChild(
+            newNode,
+            newNode[1] as RenderedTextTree,
+          );
           renderWorker(
             newNode[0] as RenderedTextTree[],
             (child as any).props.children,
@@ -566,64 +750,204 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             newNode[1] as RenderedTextTree[],
             (child as any).props.flatContents,
           );
+          notifyFileUpdateForNode(node);
           return;
         default:
           throw new Error("Unknown intrinsic element");
       }
     } else if (isComponentCreator(child)) {
-      // todo: remove this effect (only needed for context, not needed for anything else)
-      effect(() => {
-        trace(
-          TracePhase.render.appendChild,
-          () => "Component: " + debugPrintChild(child),
-        );
-        const context = getContext();
-        context!.childrenWithContent = 0;
-        context!.isEmpty ??= ref(true);
-
-        if (context) context.componentOwner = child;
-        const componentRoot: RenderedTextTree = [];
-
-        pushStack(child.component, child.props, child.source);
-        renderWorker(componentRoot, untrack(child));
-        popStack();
-        node.push(componentRoot);
-        cache.set(child, componentRoot);
-        notifyContentState();
-        trace(
-          TracePhase.render.appendChild,
-          () =>
-            "Component done: " +
-            debugPrintChild(child) +
-            ", empty: " +
-            context!.isEmpty!.value,
-        );
-      });
-    } else if (typeof child === "function") {
-      trace(TracePhase.render.appendChild, () => "Memo: " + child.toString());
       const index = node.length;
-      effect(() => {
-        trace(TracePhase.render.renderEffect, () => "");
-        let res = child();
-        while (typeof res === "function" && !isComponentCreator(res)) {
-          res = res();
-        }
-        const context = getContext();
-        context!.childrenWithContent = 0;
-        context!.isEmpty ??= ref(true);
+      const rerenderToken = ref(0);
+      const breakNext = ref(false);
+      // todo: remove this effect (only needed for context, not needed for anything else)
+      effect(
+        () => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          rerenderToken.value;
+          const context = getContext();
+          context!.childrenWithContent = 0;
+          context!.isEmpty ??= ref(true);
 
-        const newNodes: RenderedTextTree = [];
-        renderWorker(newNodes, res);
-        node[index] = newNodes;
-        cache.set(child, newNodes);
+          if (context) context.componentOwner = child;
+          const existing = node[index];
+          const componentRoot: RenderedTextTree =
+            Array.isArray(existing) ? existing : [];
+          context!.meta ??= {};
+          context!.meta.renderNode = componentRoot;
+          const propsSource = (child.props ?? undefined) as
+            | Record<string, unknown>
+            | undefined;
+          const debugSession = debug.render.beginComponent({
+            parent: node,
+            index,
+            node: componentRoot,
+            component: child,
+            propsSource,
+            source: child.source,
+            isExisting: Array.isArray(existing),
+            actions: {
+              rerender: () => {
+                lastRenderError = null;
+                rerenderToken.value++;
+              },
+              rerenderAndBreak: () => {
+                lastRenderError = null;
+                breakNext.value = true;
+                rerenderToken.value++;
+              },
+            },
+          });
+          if (Array.isArray(existing)) {
+            componentRoot.length = 0;
+          }
 
-        notifyContentState();
-        return newNodes;
-      });
+          pushStack(child.component, child.props, child.source);
+          let renderFailed = false;
+          let childResult: Children | undefined;
+          try {
+            childResult = untrack(() => {
+              const shouldBreak = breakNext.value;
+              if (shouldBreak) {
+                breakNext.value = false;
+                // eslint-disable-next-line no-debugger
+                debugger;
+              }
+              return child();
+            });
+          } catch (error) {
+            notifyRenderError(error);
+            renderFailed = true;
+            throw error;
+          }
+          try {
+            if (context?.meta?.directory) {
+              debugSession.recordDirectory(context.meta.directory.path);
+            }
+            if (context?.meta?.sourceFile) {
+              context.meta.renderNode = componentRoot;
+              debugSession.recordFile(
+                context.meta.sourceFile.path,
+                context.meta.sourceFile.filetype,
+              );
+              context.meta.sourceFileReady = false;
+            }
+            if (!renderFailed) {
+              renderWorker(componentRoot, childResult);
+            }
+          } finally {
+            popStack();
+          }
+          if (renderFailed) {
+            node[index] = componentRoot;
+            cache.set(child, componentRoot);
+            notifyFileUpdateForNode(node);
+            notifyContentState();
+            onCleanup(() => debugSession.dispose());
+            return;
+          }
+          if (context?.meta?.sourceFile) {
+            context.meta.sourceFileReady = true;
+            notifyFileUpdateForNode(componentRoot);
+          }
+          node[index] = componentRoot;
+          cache.set(child, componentRoot);
+          notifyContentState();
+          onCleanup(() => debugSession.dispose());
+        },
+        undefined,
+        {
+          debug: {
+            name: `render:${child.component.name || "Anonymous"}`,
+            type: "render",
+          },
+        },
+      );
+    } else if (typeof child === "function") {
+      const index = node.length;
+      effect(
+        () => {
+          let res: Child | Children | undefined;
+          let renderFailed = false;
+          try {
+            res = child();
+            while (typeof res === "function" && !isComponentCreator(res)) {
+              res = res();
+            }
+          } catch (error) {
+            notifyRenderError(error);
+            renderFailed = true;
+            throw error;
+          }
+          const context = getContext();
+          context!.childrenWithContent = 0;
+          context!.isEmpty ??= ref(true);
+
+          const existing = node[index];
+          const memoNode: RenderedTextTree =
+            Array.isArray(existing) ? existing : [];
+
+          debug.render.prepareMemoNode(node, memoNode, Array.isArray(existing));
+          if (Array.isArray(existing)) {
+            memoNode.length = 0;
+          }
+
+          if (!renderFailed) {
+            renderWorker(memoNode, res);
+          }
+          node[index] = memoNode;
+          cache.set(child, memoNode);
+          notifyFileUpdateForNode(node);
+          notifyContentState();
+          return memoNode;
+        },
+        undefined,
+        {
+          debug: {
+            name: `render:memo:${child.name || "anonymous"}`,
+            type: "render",
+          },
+        },
+      );
     } else {
       throw new Error("Unexpected child type");
     }
   }
+}
+
+function findSourceFileContext(node: RenderedTextTree) {
+  let context: Context | null | undefined =
+    getContextForRenderNode(node) ?? null;
+  while (context) {
+    if (context.meta?.sourceFile) return context;
+    context = context.owner;
+  }
+  return undefined;
+}
+
+function notifyFileUpdateForNode(node: RenderedTextTree) {
+  // Only do the expensive printTree when devtools are actually enabled
+  if (!isDevtoolsEnabled()) return;
+  const context = findSourceFileContext(node);
+  if (!context?.meta?.sourceFile) return;
+  if (context.meta.sourceFileReady === false) return;
+  const sourceFile = context.meta.sourceFile;
+  const renderNode: RenderedTextTree =
+    (context.meta.renderNode as RenderedTextTree | undefined) ?? node;
+  // Pass noFlush here since it flushes jobs and can re-enter rendering
+  // during effect setup, triggering premature cleanup.
+  const contents = printTree(renderNode, {
+    printWidth: context.meta?.printOptions?.printWidth,
+    tabWidth: context.meta?.printOptions?.tabWidth,
+    useTabs: context.meta?.printOptions?.useTabs,
+    insertFinalNewLine: context.meta?.printOptions?.insertFinalNewLine ?? true,
+    noFlush: true,
+  });
+
+  debug.files.updated({
+    path: sourceFile.path,
+    filetype: sourceFile.filetype,
+    contents,
+  });
 }
 
 type NormalizedChildren = NormalizedChild | NormalizedChildren[];
@@ -668,31 +992,6 @@ function normalizeChild(child: Child): NormalizedChildren {
   }
 }
 
-function dumpChildren(children: Children): string {
-  if (Array.isArray(children)) {
-    return `[ ${children.map(debugPrintChild).join(", ")} ]`;
-  }
-  return debugPrintChild(children);
-}
-
-function debugPrintChild(child: Children): string {
-  if (isComponentCreator(child)) {
-    return "<" + child.component.name + ">";
-  } else if (typeof child === "function") {
-    return "$memo";
-  } else if (isRef(child)) {
-    return "$ref";
-  } else if (isIntrinsicElement(child)) {
-    return `<${child.name}>`;
-  } else if (isRenderableObject(child)) {
-    return `CustomChildElement(${JSON.stringify(child)})`;
-  } else if (isRefkeyable(child)) {
-    return `refkey`;
-  } else {
-    return JSON.stringify(child);
-  }
-}
-
 export interface PrintTreeOptions {
   /**
    * The number of characters the printer will wrap on. Defaults to 100
@@ -715,6 +1014,12 @@ export interface PrintTreeOptions {
    * @default true
    */
   insertFinalNewLine?: boolean;
+
+  /**
+   * Skip flushing scheduled jobs before printing.
+   * @default false
+   */
+  noFlush?: boolean;
 }
 
 const defaultPrintTreeOptions: PrintTreeOptions = {
@@ -734,8 +1039,10 @@ export function printTree(tree: RenderedTextTree, options?: PrintTreeOptions) {
     ),
   };
 
-  // make sure queue is empty
-  flushJobs();
+  if (!options.noFlush) {
+    // make sure queue is empty
+    flushJobs();
+  }
 
   const d = printTreeWorker(tree);
   const result = doc.printer.printDocToString(

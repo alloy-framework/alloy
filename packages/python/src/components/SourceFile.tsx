@@ -3,6 +3,7 @@ import {
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  createScope,
   isComponentCreator,
   List,
   Scope,
@@ -145,7 +146,7 @@ export function SourceFile(props: SourceFileProps) {
   const path: string = join(currentDir, props.path)
     .replace(/\.py$/, "")
     .replace(/\//g, ".");
-  const scope = new PythonModuleScope(path, undefined);
+  const scope = createScope(PythonModuleScope, path, undefined);
   const sfContext: PythonSourceFileContext = {
     scope: scope,
     module: path,

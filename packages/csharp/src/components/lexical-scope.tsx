@@ -1,4 +1,9 @@
-import { Scope, ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import {
+  Scope,
+  ScopePropsWithInfo,
+  ScopePropsWithValue,
+  createScope,
+} from "@alloy-js/core";
 import { useCSharpScope } from "../scopes/contexts.js";
 import { CSharpLexicalScope } from "../scopes/lexical.js";
 
@@ -20,9 +25,15 @@ export function LexicalScope(props: LexicalScopeProps) {
     scope = props.value;
   } else {
     const parentScope = useCSharpScope();
-    scope = new CSharpLexicalScope(props.name ?? "lexical scope", parentScope, {
-      ...props,
-    });
+    scope = createScope(
+      CSharpLexicalScope,
+      props.name ?? "lexical scope",
+      parentScope,
+      {
+        ...props,
+        binder: parentScope?.binder,
+      },
+    );
   }
 
   return <Scope value={scope}>{props.children}</Scope>;

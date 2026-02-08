@@ -2,8 +2,11 @@ import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
 import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
-import { effect } from "./reactivity.js";
+import { debug, TracePhase } from "./debug/index.js";
+import { emitDiagnostic, type DiagnosticHandle } from "./diagnostics.js";
+import { effect, onCleanup } from "./reactivity.js";
 import {
+  inspectRefkey,
   isMemberRefkey,
   MemberRefkey,
   refkey,
@@ -13,12 +16,7 @@ import {
 } from "./refkey.js";
 import { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
-import {
-  formatRefkeys,
-  formatSymbolName,
-  trace,
-  TracePhase,
-} from "./tracer.js";
+import { formatRefkeys, formatSymbolName } from "./tracer.js";
 export type Metadata = object;
 
 /**
@@ -211,6 +209,24 @@ export interface BinderOptions {
   nameConflictResolver?: NameConflictResolver;
 }
 
+export function createScope<TScope extends OutputScope, Args extends unknown[]>(
+  ctor: new (...args: Args) => TScope,
+  ...args: Args
+): TScope {
+  const scope = new ctor(...args);
+  debug.symbols.registerScope(scope);
+  return scope;
+}
+
+export function createSymbol<
+  TSymbol extends OutputSymbol,
+  Args extends unknown[],
+>(ctor: new (...args: Args) => TSymbol, ...args: Args): TSymbol {
+  const symbol = new ctor(...args);
+  debug.symbols.registerSymbol(symbol);
+  return symbol;
+}
+
 export function createOutputBinder(options: BinderOptions = {}): Binder {
   const binder: Binder = {
     resolveDeclarationByKey,
@@ -247,6 +263,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolDeleted(symbol: OutputSymbol) {
+    debug.symbols.unregisterSymbol(symbol);
     if (!refkey) {
       return;
     }
@@ -458,25 +475,25 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     const resolvedSymbol = getSymbolForRefkey(refkey);
 
     return computed(() => {
-      trace(
+      debug.trace(
         TracePhase.resolve.pending,
         () => `Resolving ${formatRefkeys(refkey)}.`,
       );
       const symbol = resolvedSymbol.value as TSymbol;
       if (!symbol) {
-        trace(
+        debug.trace(
           TracePhase.resolve.failure,
           () => `No symbol for ${formatRefkeys(refkey)}.`,
         );
         return undefined;
       }
-      trace(
+      debug.trace(
         TracePhase.resolve.pending,
         () =>
           `${formatRefkeys(refkey)} resolved to ${formatSymbolName(symbol)}.`,
       );
       if (symbol.isTransient) {
-        trace(
+        debug.trace(
           TracePhase.resolve.failure,
           () => `Symbol ${formatSymbolName(symbol)} is transient.`,
         );
@@ -485,7 +502,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
 
       const chain = scopeChain(symbol.scope);
       if (chain.some((scope) => scope.isTransient)) {
-        trace(
+        debug.trace(
           TracePhase.resolve.failure,
           () => `Symbol ${formatSymbolName(symbol)} is in a transient scope.`,
         );
@@ -533,7 +550,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         for (const descriptor of allDescriptors) {
           const member = descriptor.symbol as TSymbol;
           if (currentBase.isTyped && !currentBase.hasTypeSymbol) {
-            trace(
+            debug.trace(
               TracePhase.resolve.pending,
               () =>
                 `${formatRefkeys(refkey)} needs type information from a parent type.`,
@@ -550,7 +567,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
           currentBase = member;
         }
 
-        trace(
+        debug.trace(
           TracePhase.resolve.success,
           () =>
             `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
@@ -628,7 +645,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   function notifySymbolCreated(symbol: OutputSymbol): void {
     effect<Refkey[]>((oldRefkeys) => {
       if (symbol.refkeys) {
-        trace(
+        debug.trace(
           TracePhase.resolve.pending,
           () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
         );
@@ -702,11 +719,49 @@ export function resolve<
     throw new Error("Can't resolve refkey without a binder");
   }
 
-  return binder.resolveDeclarationByKey(
+  const result = binder.resolveDeclarationByKey(
     scope as TScope,
     refkey,
     options,
   ) as any;
+
+  let diagnosticHandle: DiagnosticHandle | null = null;
+
+  effect(
+    () => {
+      if (result.value === undefined) {
+        // Emit diagnostic for this specific reference site
+        if (!diagnosticHandle) {
+          diagnosticHandle = emitDiagnostic({
+            severity: "warning",
+            message: `Unresolved refkey: ${inspectRefkey(refkey)}`,
+          });
+        }
+      } else {
+        // Dismiss diagnostic when resolved
+        if (diagnosticHandle) {
+          diagnosticHandle.dismiss();
+          diagnosticHandle = null;
+        }
+      }
+    },
+    undefined,
+    {
+      debug: {
+        name: `binder:resolve:${inspectRefkey(refkey)}`,
+        type: "binder",
+      },
+    },
+  );
+
+  onCleanup(() => {
+    if (diagnosticHandle) {
+      diagnosticHandle.dismiss();
+      diagnosticHandle = null;
+    }
+  });
+
+  return result;
 }
 
 /**

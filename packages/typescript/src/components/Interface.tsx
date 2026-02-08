@@ -2,6 +2,7 @@ import {
   Block,
   Children,
   childrenArray,
+  createSymbol,
   createSymbolSlot,
   effect,
   emitSymbol,
@@ -35,7 +36,7 @@ export interface InterfaceDeclarationProps extends CommonDeclarationProps {
 }
 
 const _InterfaceDeclaration = ensureTypeRefContext(
-  (props: InterfaceDeclarationProps) => {
+  function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     const ExprSlot = createSymbolSlot();
 
     effect(() => {
@@ -68,13 +69,15 @@ const _InterfaceDeclaration = ensureTypeRefContext(
     const filteredChildren = findUnkeyedChildren(children);
     const currentScope = useTSLexicalScope();
 
-    const sym = new TSOutputSymbol(props.name, currentScope.types, {
+    const binder = currentScope?.binder;
+    const sym = createSymbol(TSOutputSymbol, props.name, currentScope.types, {
       refkeys: props.refkey,
       default: props.default,
       export: props.export,
       metadata: props.metadata,
       tsFlags: TSSymbolFlags.TypeSymbol,
       namePolicy: useTSNamePolicy().for("interface"),
+      binder,
     });
     return (
       <>
@@ -115,9 +118,11 @@ export interface InterfaceExpressionProps {
 }
 
 export const InterfaceExpression = ensureTypeRefContext(
-  (props: InterfaceExpressionProps) => {
-    const symbol = new TSOutputSymbol("", undefined, {
+  function InterfaceExpression(props: InterfaceExpressionProps) {
+    const scope = useTSLexicalScope();
+    const symbol = createSymbol(TSOutputSymbol, "", undefined, {
       transient: true,
+      binder: scope?.binder,
     });
 
     emitSymbol(symbol);
@@ -180,15 +185,21 @@ export function InterfaceMember(props: InterfaceMemberProps) {
 
   const optionality = props.optional ? "?" : "";
   const scope = useTSMemberScope();
-  const sym = new TSOutputSymbol(props.name, scope.ownerSymbol.staticMembers, {
-    refkeys: props.refkey,
-    tsFlags:
-      TSSymbolFlags.TypeSymbol |
-      ((props.nullish ?? props.optional) ?
-        TSSymbolFlags.Nullish
-      : TSSymbolFlags.None),
-    namePolicy: useTSNamePolicy().for("interface-member"),
-  });
+  const sym = createSymbol(
+    TSOutputSymbol,
+    props.name,
+    scope.ownerSymbol.staticMembers,
+    {
+      refkeys: props.refkey,
+      tsFlags:
+        TSSymbolFlags.TypeSymbol |
+        ((props.nullish ?? props.optional) ?
+          TSSymbolFlags.Nullish
+        : TSSymbolFlags.None),
+      namePolicy: useTSNamePolicy().for("interface-member"),
+      binder: scope.binder,
+    },
+  );
 
   const taken = takeSymbols();
 

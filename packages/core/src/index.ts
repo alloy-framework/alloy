@@ -1,17 +1,12 @@
 export {
   TrackOpTypes,
   TriggerOpTypes,
-  computed,
   isProxy,
   isReactive,
   isRef,
   reactive,
-  ref,
   shallowReactive,
-  shallowRef,
   toRaw,
-  toRef,
-  toRefs,
   track,
   trigger,
   watch,
@@ -28,6 +23,7 @@ export * from "./components/index.js";
 export * from "./content-slot.js";
 export * from "./context.js";
 export * from "./context/index.js";
+export * from "./diagnostics.js";
 export * from "./library-symbol-reference.js";
 export * from "./name-policy.js";
 export * from "./props-combinators.js";
@@ -45,4 +41,4 @@ export * from "./symbols/symbol-flow.js";
 export * from "./tap.js";
 export * from "./utils.js";
 export * from "./write-output.js";
-import "./debug.js";
+import "./debug/index.js";

@@ -330,19 +330,28 @@ export function mapJoin<T, U, V>(
 
             slot.disposer = disposer;
             disposer();
-            effect((prev?: boolean) => {
-              const isEmpty = isEmptyFlag.value;
-              return untrack(() => {
-                if (slot.isEmpty.value !== isEmpty) {
-                  slot.isEmpty.value = isEmpty;
-                }
-                const wasEmpty = prev ?? true;
+            effect(
+              (prev?: boolean) => {
+                const isEmpty = isEmptyFlag.value;
+                return untrack(() => {
+                  if (slot.isEmpty.value !== isEmpty) {
+                    slot.isEmpty.value = isEmpty;
+                  }
+                  const wasEmpty = prev ?? true;
 
-                applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
+                  applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
 
-                return isEmpty;
-              });
-            });
+                  return isEmpty;
+                });
+              },
+              undefined,
+              {
+                debug: {
+                  name: `list:slotEmpty:${cleanupIndex}`,
+                  type: "list",
+                },
+              },
+            );
             cb(mapper(items[cleanupIndex], cleanupIndex));
           });
         });

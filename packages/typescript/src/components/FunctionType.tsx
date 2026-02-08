@@ -31,7 +31,7 @@ export interface FunctionTypeProps extends CallSignatureProps {
 }
 
 const FunctionTypeComponent = ensureTypeRefContext(
-  (props: FunctionTypeProps) => {
+  function FunctionTypeComponent(props: FunctionTypeProps) {
     const children = childrenArray(() => props.children);
     const typeParametersChildren =
       findKeyedChild(children, TypeParameters.tag) ?? undefined;

@@ -4,7 +4,12 @@ import type { OutputScope } from "../symbols/output-scope.js";
 import type { OutputSymbol } from "../symbols/output-symbol.js";
 import { getRenderNodeId } from "./render.js";
 import { sanitizeRecord } from "./serialize.js";
-import { emitDevtoolsMessage, isDevtoolsEnabled, TracePhase, traceType } from "./trace.js";
+import {
+  emitDevtoolsMessage,
+  isDevtoolsEnabled,
+  TracePhase,
+  traceType,
+} from "./trace.js";
 
 interface ScopeSnapshot {
   id: number;

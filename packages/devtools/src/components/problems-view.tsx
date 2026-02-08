@@ -11,11 +11,7 @@ import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useState } from "react";
 
 export function ProblemsView() {
-  const {
-    diagnostics,
-    renderErrors,
-    formatPath,
-  } = useDebugConnectionContext();
+  const { diagnostics, renderErrors, formatPath } = useDebugConnectionContext();
   const {
     tabs: { openDetailTab, openTab },
     requestFocusRenderNode,

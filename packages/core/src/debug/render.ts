@@ -1,13 +1,13 @@
 import { watch } from "@vue/reactivity";
 import * as devalue from "devalue";
+import type {
+  RenderErrorStackEntry as ProtocolRenderErrorStackEntry,
+  RenderTreeNode,
+} from "../devtools/devtools-protocol.js";
 import {
   isDevtoolsEnabled,
   registerDevtoolsMessageHandler,
 } from "../devtools/devtools-server.js";
-import type {
-  RenderTreeNode,
-  RenderErrorStackEntry as ProtocolRenderErrorStackEntry,
-} from "../devtools/devtools-protocol.js";
 import {
   isPrintHook,
   type PrintHook,
@@ -269,8 +269,7 @@ function recordSubtreeAdded(
   // Check if this node was previously rendered (cached) by seeing if it already has an ID
   const existingId = nodeIds.get(subtree);
   const isCached = existingId !== undefined;
-  const id =
-    isCached ? existingId : getOrCreateNodeId(subtree);
+  const id = isCached ? existingId : getOrCreateNodeId(subtree);
   // Track in entryIds so clearRenderTreeChildren can find and remove it
   if (Array.isArray(parentNode)) {
     const list = getEntryList(parentNode);

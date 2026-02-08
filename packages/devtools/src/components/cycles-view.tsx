@@ -37,8 +37,7 @@ export function CyclesView(props: CyclesViewProps) {
 
   const renderClickableNode = (id: string, showEffectName = false) => {
     const match = id.match(/^(effect|ref|target):(\d+)$/);
-    if (!match)
-      return <span>{renderNodeLabel(id, showEffectName)}</span>;
+    if (!match) return <span>{renderNodeLabel(id, showEffectName)}</span>;
     const [, type, num] = match;
     const label = renderNodeLabel(id, showEffectName);
     if (type === "target") return <span>{label}</span>;

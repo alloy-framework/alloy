@@ -1,7 +1,12 @@
 import type { RenderTreeNode } from "@/components/render-tree";
 import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
 import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
-import { createContext, useContext, useDeferredValue, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useDeferredValue,
+  type ReactNode,
+} from "react";
 
 export interface RenderTreeServices {
   parentById: Map<string, string | null>;
@@ -16,7 +21,9 @@ export interface RenderTreeServices {
   ) => Array<{ id: string; text: string }>;
 }
 
-const RenderTreeServicesContext = createContext<RenderTreeServices | null>(null);
+const RenderTreeServicesContext = createContext<RenderTreeServices | null>(
+  null,
+);
 
 export interface RenderTreeServicesProviderProps {
   renderTree: RenderTreeNode[];

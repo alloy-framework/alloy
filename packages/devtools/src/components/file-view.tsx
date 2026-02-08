@@ -1,13 +1,12 @@
 import { FileViewer } from "@/components/detail-views/file-viewer.tsx";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
-import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
+import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { cn } from "@/lib/utils";
 
 export function FileView() {
-  const { fileContents, fileToRenderNode } =
-    useDebugConnectionContext();
+  const { fileContents, fileToRenderNode } = useDebugConnectionContext();
   const {
     hoveredRenderNodeId,
     setHoveredRenderNodeId,

@@ -13,7 +13,11 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
-import { captureSourceLocation, debug, isDevtoolsEnabled } from "./debug/index.js";
+import {
+  captureSourceLocation,
+  debug,
+  isDevtoolsEnabled,
+} from "./debug/index.js";
 import { RenderedTextTree } from "./render.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler } from "./scheduler.js";

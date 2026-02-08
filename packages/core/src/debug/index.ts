@@ -12,18 +12,18 @@ import {
 } from "./cli.js";
 import {
   ensureRef,
-  track,
-  trigger,
   register,
   registerRef,
   reset,
+  track,
+  trigger,
   update,
 } from "./effects.js";
 import {
-  updated,
   recordDirectory,
   recordFile,
   reset as resetFiles,
+  updated,
 } from "./files.js";
 import {
   appendCustomContext,
@@ -31,11 +31,11 @@ import {
   appendPrintHook,
   appendTextNode,
   beginComponent,
+  complete,
+  error,
   flushJobsComplete,
   initialize,
   prepareMemoNode,
-  complete,
-  error,
 } from "./render.js";
 import {
   registerScope,

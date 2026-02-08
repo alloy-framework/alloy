@@ -6,9 +6,9 @@ import {
 } from "@/components/ui/context-menu";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
+import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useToast } from "@/hooks/use-toast";
 
 export interface ComponentStackEntry {

@@ -1,11 +1,11 @@
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
+import type { CategoryKey } from "@/lib/trace-utils";
 import {
   MESSAGE_CATEGORIES,
   summarizeMessage,
   summarizeType,
 } from "@/lib/trace-utils";
-import type { CategoryKey } from "@/lib/trace-utils";
 import type { ServerToClientMessage } from "@alloy-js/core/devtools";
 import { Filter } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

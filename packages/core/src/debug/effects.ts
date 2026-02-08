@@ -195,9 +195,7 @@ function emitEffect(message: { type: string; [key: string]: unknown }) {
   emitDevtoolsMessage(message);
 }
 
-export function update(
-  input: Partial<EffectDebugInfo> & { id: number },
-) {
+export function update(input: Partial<EffectDebugInfo> & { id: number }) {
   if (!isDevtoolsEnabled()) return;
   const existing = effects.get(input.id);
   if (!existing) return;

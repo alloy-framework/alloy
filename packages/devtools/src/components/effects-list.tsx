@@ -1,6 +1,6 @@
 import { SourceLocationLink } from "@/components/source-location-link";
 import { formatSourceLocation } from "@/lib/format-source-location";
-import type { EffectInfo, EffectEdgeInfo } from "@alloy-js/core/devtools";
+import type { EffectEdgeInfo, EffectInfo } from "@alloy-js/core/devtools";
 
 interface GraphNode {
   id: string;
@@ -61,7 +61,9 @@ export function EffectsList(props: EffectsListProps) {
     if (type === "target") return <span>{label}</span>;
     return (
       <button
-        onClick={() => onNavigate(type === "effect" ? "effects" : "refs", type, num)}
+        onClick={() =>
+          onNavigate(type === "effect" ? "effects" : "refs", type, num)
+        }
         className="hover:underline text-foreground font-medium"
       >
         {label}

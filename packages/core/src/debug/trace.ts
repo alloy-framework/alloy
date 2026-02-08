@@ -1,12 +1,12 @@
 /**
  * Trace helpers and configuration.
  */
+import type { ServerToClientMessage } from "../devtools/devtools-protocol.js";
 import {
   broadcastDevtoolsMessage,
   isDevtoolsEnabled,
   type DevtoolsMessage,
 } from "../devtools/devtools-server.js";
-import type { ServerToClientMessage } from "../devtools/devtools-protocol.js";
 import { untrack } from "../reactivity.js";
 
 export { isDevtoolsEnabled } from "../devtools/devtools-server.js";

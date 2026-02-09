@@ -29,7 +29,8 @@
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",
     "test": "vitest run",
-    "prepack": "node ../../scripts/strip-dev-exports.js"
+    "prepack": "node ../../scripts/strip-dev-exports.js",
+    "format": "prettier --write src test"
   },
   "keywords": [],
   "license": "MIT",

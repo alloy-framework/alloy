@@ -12,7 +12,6 @@
 - [#328](https://github.com/alloy-framework/alloy/pull/328) Add a `createContentSlot` API which returns a component which can be used to detect whether content is added inside it. This can be used to conditionally render fallback content or properly format empty components.
 - [#328](https://github.com/alloy-framework/alloy/pull/328) List, For, and their wrapper components now handle when an element has no content. Show can now be used to conditionally render an item in a list, for example.
 
-
 ## 0.21.0
 
 ### Bug Fixes
@@ -34,7 +33,6 @@
 - [#284](https://github.com/alloy-framework/alloy/pull/284) Name policy's element can now be undefined, which leaves the name as-is.
 - [#245](https://github.com/alloy-framework/alloy/pull/245) Adds a new type of Alloy child, CustomChildElement, that is based on the presence of a symbol property.
 
-
 ## 0.20.0
 
 ### Bug Fixes
@@ -53,7 +51,6 @@
 ### Breaking Changes
 
 - [#206](https://github.com/alloy-framework/alloy/pull/206) Update core's representation of symbols and scopes. These changes should not impact usage of language components in code generators, but there are some significant changes for language library implementations. See https://github.com/alloy-framework/alloy/pull/206 for more details.
-
 
 ## 0.19.0
 
@@ -76,20 +73,17 @@
 
 - [#253](https://github.com/alloy-framework/alloy/pull/253) The `writeOutput` function is now async.
 
-
 ## 0.18.2
 
 ### Bug Fixes
 
 - Fix invalid .d.ts import
 
-
 ## 0.18.1
 
 ### Bug Fixes
 
 - [#232](https://github.com/alloy-framework/alloy/pull/232) Improve `toRenderTo` test matcher to work better with SourceFiles
-
 
 ## 0.18.0
 
@@ -100,7 +94,6 @@
 ### Features
 
 - [#198](https://github.com/alloy-framework/alloy/pull/198) Add `inline` option for `<Block>` component to define inline blocks
-
 
 ## 0.17.0
 
@@ -116,14 +109,12 @@
 - [#157](https://github.com/alloy-framework/alloy/pull/157) Refactor symbols to drastically simplify and optimize their usage. Symbols and scopes are now classes, and languages subclass these to add additional behaviors. Many binder APIs which operated on scopes or symbols are now methods on scopes or symbols.
 - [#157](https://github.com/alloy-framework/alloy/pull/157) New takeSymbol/emitSymbol APIs added for passing symbols up the render tree to components which accept them. This is a generalization of the pattern in AssignmentTargetContext, so that context has been deleted.
 
-
 ## 0.16.0
 
 ### Features
 
 - [#150](https://github.com/alloy-framework/alloy/pull/150) Export `isRef` and `isReactive` utility functions.
 - [#150](https://github.com/alloy-framework/alloy/pull/150) Fully resolve refkeys given to the first part of a MemberExpression.
-
 
 ## 0.15.0
 
@@ -139,7 +130,6 @@ No changes, version bump only.
 
 - [#137](https://github.com/alloy-framework/alloy/pull/137) Fix default symbol conflict resolver not working with more than 2 symbols.
 
-
 ## 0.12.0
 
 ### Bug Fixes
@@ -154,7 +144,6 @@ No changes, version bump only.
 
 - [#127](https://github.com/alloy-framework/alloy/pull/127) Use a scheduler for effects. Effects are no longer run instantly but are queued to run after the current effect finishes. This significantly reduces effect calls due to coalescing multiple updates and also enables more recursive patterns.
 
-
 ## 0.11.0
 
 ### Bug Fixes
@@ -166,7 +155,6 @@ No changes, version bump only.
 
 - [#104](https://github.com/alloy-framework/alloy/pull/104) Add new `<ReferenceOrContent />` component
 - [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
-
 
 ## 0.10.0
 
@@ -180,7 +168,6 @@ No changes, version bump only.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) Add getSymbolForRefkey to binder.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) isComponentCreator now takes an optional Component parameter which allows you to check if a child is a specific component.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) Export `toRef` and `toRefs` utility functions for constructing refs from reactives.
-
 
 ## 0.8.0
 
@@ -207,7 +194,6 @@ No changes, version bump only.
 - [#74](https://github.com/alloy-framework/alloy/pull/74) Remove plural `refkeys` prop. Can now pass an array for the `refkey` prop.
 - [#68](https://github.com/alloy-framework/alloy/pull/68) Indent component no longer takes `break` prop. Instead, pass `hardline`, `softline`, `line`, or `literalline` boolean props.
 
-
 ## 0.7.0
 
 ### Bug Fixes
@@ -217,7 +203,6 @@ No changes, version bump only.
 ### Breaking Changes
 
 - [#61](https://github.com/alloy-framework/alloy/pull/61) Symbols now allow for multiple refkeys. The `refkey` property has been removed, however the refkey prop remains on declaration components and the refkey option remains for the binder's createSymbol, so the breakage should be limited to code which interacts directly with symbols."
-
 
 ## 0.6.0
 
@@ -262,7 +247,6 @@ No changes, version bump only.
 - [#56](https://github.com/alloy-framework/alloy/pull/56) Added support for formatting primitives to produce formatted output. This includes elements like `group` and `fill` for attempting to fit text on a single line, `hbr`, `sbr`, `lbr`, and `br` for introducing line breaks, `align` for padding output, and more. All the built-in components have been updated to generate nicely formatted code.
 - [#55](https://github.com/alloy-framework/alloy/pull/55) `mapJoin` now properly handles reactive sources. To support this, the array source must be wrapped in a callback. For example, `mapJoin(someArray, ...)` needs to be updated to `mapJoin(() => someArray, ...)`. The return value of `mapJoin` is now a memo rather than an array.
 
-
 ## 0.5.0
 
 ### Features
@@ -270,7 +254,6 @@ No changes, version bump only.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Add support for adding refkeys to symbols after symbol creation.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Improve types of JSX elements so typescript and editors can provide accurate errors when providing props to components. For example, component props can be unions of props interfaces, enabling an overload-like pattern.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Add Tappers, which allow getting a reference to contexts provided by nested components from a parent component. Useful for allowing nested components to create things like symbols when the parent component merely needs access to it but doesn't care how its created.
-
 
 ## 0.4.0
 
@@ -282,19 +265,14 @@ No changes, version bump only.
 
 - [#48](https://github.com/alloy-framework/alloy/pull/48) Add browser mappings to enable running in browser
 
-
 ## 0.3.0
 
 ### Features
 
 - [#38](https://github.com/alloy-framework/alloy/pull/38) Add indent prop to source files for setting indent level.
 
-
-
-
 ## 0.2.0
 
 ### Bug Fixes
 
 - [#31](https://github.com/alloy-framework/alloy/pull/31) Update license to MIT
-

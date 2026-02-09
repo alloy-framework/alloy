@@ -3,6 +3,8 @@
 
 import {
   Binder,
+  createScope,
+  createSymbol,
   getSymbolCreatorSymbol,
   Refkey,
   refkey,
@@ -23,15 +25,15 @@ function createSymbols(
   props: CreateLibraryProps<LibraryDescriptor>,
   refkeys: Record<string, any>,
 ) {
-  const projectScope = new JavaProjectScope(props.groupId, { binder });
+  const projectScope = createScope(JavaProjectScope, props.groupId, { binder });
 
   for (const [pkg, symbols] of Object.entries(props.descriptor)) {
-    const packageScope = new JavaPackageScope(pkg, projectScope, {
+    const packageScope = createScope(JavaPackageScope, pkg, projectScope, {
       binder,
     });
 
     for (const symB of symbols) {
-      new JavaOutputSymbol(symB, packageScope.symbols, {
+      createSymbol(JavaOutputSymbol, symB, packageScope.symbols, {
         binder,
         refkeys: refkeys[symB],
         package: packageScope.name,

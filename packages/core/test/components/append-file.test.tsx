@@ -3,7 +3,6 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppendFile, AppendRegion } from "../../src/components/AppendFile.jsx";
-import { render, renderAsync } from "../../src/render.js";
 import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
@@ -34,6 +33,7 @@ describe("AppendFile", () => {
 
     await expect(result).toRenderToAsync("Initial content\nNew content");
   });
+
   it("should append content to end of file when no sigils present with no explicit append region", async () => {
     // Create initial file content
     writeFileSync(testFilePath, "Initial content", "utf-8");
@@ -148,30 +148,35 @@ describe("AppendFile", () => {
     await expect(result).toRenderToAsync("Content\ndefault region");
   });
 
-  it("should throw error when region is missing corresponding AppendRegion", async () => {
+  it("should emit diagnostic when region is missing corresponding AppendRegion", async () => {
     writeFileSync(testFilePath, "content", "utf-8");
 
-    expect(() =>
-      render(
-        <AppendFile path={testFilePath} regions={["missing"]}>
-          <AppendRegion id="append">content</AppendRegion>
-        </AppendFile>,
-      ),
-    ).toThrow(
-      'Region "missing" specified but no corresponding AppendRegion child found',
-    );
+    await expect(
+      <AppendFile path={testFilePath} regions={["missing"]}>
+        <AppendRegion id="append">content</AppendRegion>
+      </AppendFile>,
+    ).toHaveDiagnosticsAsync([
+      {
+        message:
+          'Region "missing" specified but no corresponding AppendRegion child found',
+        severity: "error",
+      },
+    ]);
   });
 
-  it("should throw error when AppendRegion has neither children nor content", async () => {
+  it("should emit diagnostic when AppendRegion has neither children nor content", async () => {
     writeFileSync(testFilePath, "content", "utf-8");
 
-    expect(() =>
-      render(
-        <AppendFile path={testFilePath}>
-          <AppendRegion id="append" />
-        </AppendFile>,
-      ),
-    ).toThrow('AppendRegion "append" must have either children or content');
+    await expect(
+      <AppendFile path={testFilePath}>
+        <AppendRegion id="append" />
+      </AppendFile>,
+    ).toHaveDiagnosticsAsync([
+      {
+        message: 'AppendRegion "append" must have either children or content',
+        severity: "error",
+      },
+    ]);
   });
 
   it("should throw error when region has missing start sigil", async () => {
@@ -196,7 +201,7 @@ describe("AppendFile", () => {
     `);
   });
 
-  it("should throw error when region has missing end sigil", async () => {
+  it("should emit diagnostic when region has missing end sigil", async () => {
     const contentWithOnlyStart = d`
       Content
       <!-- alloy-incomplete-start -->
@@ -204,15 +209,17 @@ describe("AppendFile", () => {
 
     writeFileSync(testFilePath, contentWithOnlyStart, "utf-8");
 
-    await expect(async () =>
-      renderAsync(
-        <AppendFile path={testFilePath} regions={["incomplete"]}>
-          <AppendRegion id="incomplete">content</AppendRegion>
-        </AppendFile>,
-      ),
-    ).rejects.toThrow(
-      'Region "incomplete" has start sigil but no corresponding end sigil',
-    );
+    await expect(
+      <AppendFile path={testFilePath} regions={["incomplete"]}>
+        <AppendRegion id="incomplete">content</AppendRegion>
+      </AppendFile>,
+    ).toHaveDiagnosticsAsync([
+      {
+        message:
+          'Region "incomplete" has start sigil but no corresponding end sigil',
+        severity: "error",
+      },
+    ]);
   });
 
   it("should handle complex nested content", async () => {

@@ -1,5 +1,6 @@
 import {
   Binder,
+  createSymbol,
   LibrarySymbolReference,
   namekey,
   refkey,
@@ -124,10 +125,15 @@ export function createLibrary<T extends Record<string, Descriptor>>(
                 name,
               )! as NamespaceSymbol;
             } else {
-              ownerSymbol = new NamespaceSymbol(namekey(name), ownerSymbol!, {
-                binder,
-                refkeys: refkey(),
-              });
+              ownerSymbol = createSymbol(
+                NamespaceSymbol,
+                namekey(name),
+                ownerSymbol!,
+                {
+                  binder,
+                  refkeys: refkey(),
+                },
+              );
             }
           }
 
@@ -214,7 +220,8 @@ function createSymbolFromDescriptor(
       if (ownerSymbol.members.symbolNames.has(name)) {
         return ownerSymbol.members.symbolNames.get(name)! as NamespaceSymbol;
       }
-      return new NamespaceSymbol(
+      return createSymbol(
+        NamespaceSymbol,
         namekey(name),
         ownerSymbol as NamespaceSymbol,
         {
@@ -228,7 +235,8 @@ function createSymbolFromDescriptor(
     case "interface":
     case "struct":
     case "record":
-      return new NamedTypeSymbol(
+      return createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
         descriptor.kind,
@@ -239,7 +247,8 @@ function createSymbolFromDescriptor(
         },
       );
     case "method":
-      return new MethodSymbol(
+      return createSymbol(
+        MethodSymbol,
         namekey(name),
         ownerSymbol.members,
         descriptor.methodKind,
@@ -250,7 +259,7 @@ function createSymbolFromDescriptor(
       );
     case "field":
     case "property":
-      return new CSharpSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(CSharpSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
         type:
@@ -262,7 +271,7 @@ function createSymbolFromDescriptor(
         lazyMemberInitializer,
       });
     case "generic":
-      return new CSharpSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(CSharpSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
       });

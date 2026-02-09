@@ -11,13 +11,11 @@ No changes, version bump only.
 - [#284](https://github.com/alloy-framework/alloy/pull/284) Declaration components' `name` prop and symbol constructors' `name` parameter now allow namekeys. Namekeys are a special kind of refkey which
   takes a name and name options. For example, `namekey("myVariable", { disableNamePolicy: true})` when passed to a declaration component would create a symbol named "myVariable", use the namekey as a refkey, and disable the name policy for that symbol.
 
-
 ## 0.20.0
 
 ### Breaking Changes
 
 - [#206](https://github.com/alloy-framework/alloy/pull/206) Update core's representation of symbols and scopes. These changes should not impact usage of language components in code generators, but there are some significant changes for language library implementations. See https://github.com/alloy-framework/alloy/pull/206 for more details.
-
 
 ## 0.19.0
 
@@ -57,7 +55,6 @@ No changes, version bump only.
 
 - [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
 
-
 ## 0.10.0
 
 No changes, version bump only.
@@ -96,7 +93,6 @@ No changes, version bump only.
 - [#56](https://github.com/alloy-framework/alloy/pull/56) The Variable component no longer includes the ending semicolon (line enders should be handled by the component consumers via e.g. StatementList).
 - [#56](https://github.com/alloy-framework/alloy/pull/56) The `arguments` prop for ObjectDeclaration and Class is now called `args` for consistency.
 
-
 ## 0.5.0
 
 No changes, version bump only.
@@ -111,12 +107,8 @@ No changes, version bump only.
 
 - [#37](https://github.com/alloy-framework/alloy/pull/37) @alloy-js/java: Allowing specifying `throws` clause to methods
 
-
-
-
 ## 0.2.0
 
 ### Bug Fixes
 
 - [#31](https://github.com/alloy-framework/alloy/pull/31) Update license to MIT
-

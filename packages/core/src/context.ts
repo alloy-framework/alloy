@@ -38,12 +38,22 @@ export function createContext<T = unknown>(
   const id = Symbol(name ?? "context");
   function Provider(props: ContextProviderProps<T>) {
     const context = getContext();
+    const contextName = name ?? "anonymous";
 
     const rendered = shallowRef();
-    effect(() => {
-      context!.context![id] = props.value;
-      rendered.value = () => props.children;
-    }, undefined);
+    effect(
+      () => {
+        context!.context![id] = props.value;
+        rendered.value = () => props.children;
+      },
+      undefined,
+      {
+        debug: {
+          name: `context:provider:${contextName}`,
+          type: "context",
+        },
+      },
+    );
 
     return rendered.value;
   }
@@ -54,6 +64,7 @@ export function createContext<T = unknown>(
     Provider,
     ProviderStc: stc(Provider),
   };
+  (Provider as any).contextName = name;
   contextsByKey.set(id, ctx);
   return ctx;
 }

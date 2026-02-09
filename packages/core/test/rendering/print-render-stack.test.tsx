@@ -1,8 +1,17 @@
-import { Output, SourceDirectory, SourceFile } from "@alloy-js/core";
+import {
+  Output,
+  SourceDirectory,
+  SourceFile,
+  renderAsync,
+} from "@alloy-js/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import WebSocket from "ws";
 import { createNamedContext } from "../../src/context.js";
+import {
+  enableDevtools,
+  resetDevtoolsServerForTests,
+} from "../../src/devtools/devtools-server.js";
 import { clearRenderStack } from "../../src/render-stack.js";
-import { renderTree } from "../../src/render.js";
 import "../../testing/extend-expect.js";
 
 // Strip ANSI escape codes from a string for consistent testing across environments
@@ -21,27 +30,29 @@ function expectErrorContaining(
 }
 
 describe("printRenderStack", () => {
-  let originalEnv: string | undefined;
+  let socket: WebSocket | undefined;
 
-  beforeEach(() => {
-    // Enable debug mode
-    originalEnv = process.env.ALLOY_DEBUG;
-    process.env.ALLOY_DEBUG = "1";
+  beforeEach(async () => {
+    const server = await enableDevtools({ port: 0 });
+    socket = new WebSocket(`ws://127.0.0.1:${server.port}`);
+    await new Promise<void>((resolve, reject) => {
+      socket?.once("open", resolve);
+      socket?.once("error", reject);
+    });
   });
 
-  afterEach(() => {
-    // Restore environment
-    if (originalEnv === undefined) {
-      delete process.env.ALLOY_DEBUG;
-    } else {
-      process.env.ALLOY_DEBUG = originalEnv;
+  afterEach(async () => {
+    if (socket) {
+      socket.close();
+      socket = undefined;
     }
+    await resetDevtoolsServerForTests();
 
     // Clear render stack to prevent state leakage between tests
     clearRenderStack();
   });
 
-  it("prints the current file when an error occurs", () => {
+  it("prints the current file when an error occurs", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     function ThrowingComponent() {
@@ -52,15 +63,15 @@ describe("printRenderStack", () => {
       return <ThrowingComponent />;
     }
 
-    expect(() => {
-      renderTree(
+    await expect(
+      renderAsync(
         <Output>
           <SourceFile path="test.ts" filetype="typescript">
             <ParentComponent />
           </SourceFile>
         </Output>,
-      );
-    }).toThrow("Test error");
+      ),
+    ).rejects.toThrow("Test error");
 
     // Check that console.error was called with file path
     expectErrorContaining(consoleErrorSpy, "Error rendering in file test.ts");
@@ -70,15 +81,15 @@ describe("printRenderStack", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("prints joined path from nested directories", () => {
+  it("prints joined path from nested directories", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     function ThrowingComponent() {
       throw new Error("Nested error");
     }
 
-    expect(() => {
-      renderTree(
+    await expect(
+      renderAsync(
         <Output>
           <SourceDirectory path="dir1">
             <SourceDirectory path="dir2">
@@ -88,8 +99,8 @@ describe("printRenderStack", () => {
             </SourceDirectory>
           </SourceDirectory>
         </Output>,
-      );
-    }).toThrow("Nested error");
+      ),
+    ).rejects.toThrow("Nested error");
 
     // Should show the joined path of all directories
     expectErrorContaining(
@@ -100,7 +111,7 @@ describe("printRenderStack", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("works when no file context is present", () => {
+  it("works when no file context is present", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     function ThrowingComponent() {
@@ -110,13 +121,13 @@ describe("printRenderStack", () => {
     // Track the number of calls before our test
     const callsBefore = consoleErrorSpy.mock.calls.length;
 
-    expect(() => {
-      renderTree(
+    await expect(
+      renderAsync(
         <Output>
           <ThrowingComponent />
         </Output>,
-      );
-    }).toThrow("No file context error");
+      ),
+    ).rejects.toThrow("No file context error");
 
     // Get only the calls from THIS test (after callsBefore)
     const callsFromThisTest = consoleErrorSpy.mock.calls.slice(callsBefore);
@@ -135,7 +146,7 @@ describe("printRenderStack", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("includes component stack with props", () => {
+  it("includes component stack with props", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     function ThrowingComponent(props: { message: string; count: number }) {
@@ -146,15 +157,15 @@ describe("printRenderStack", () => {
       return <ThrowingComponent message={props.value} count={42} />;
     }
 
-    expect(() => {
-      renderTree(
+    await expect(
+      renderAsync(
         <Output>
           <SourceFile path="props-test.ts" filetype="typescript">
             <WrapperComponent value="test" />
           </SourceFile>
         </Output>,
-      );
-    }).toThrow("Component error");
+      ),
+    ).rejects.toThrow("Component error");
 
     expectErrorContaining(
       consoleErrorSpy,
@@ -168,7 +179,7 @@ describe("printRenderStack", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("prints 'Error rendering:' when no file or directory context is present", () => {
+  it("prints 'Error rendering:' when no file or directory context is present", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     function ThrowingComponent() {
@@ -179,9 +190,7 @@ describe("printRenderStack", () => {
     const callsBefore = consoleErrorSpy.mock.calls.length;
 
     // Don't use Output wrapper to avoid SourceDirectory context
-    expect(() => {
-      renderTree(<ThrowingComponent />);
-    }).toThrow();
+    await expect(renderAsync(<ThrowingComponent />)).rejects.toThrow();
 
     // Get only the calls from THIS test (after callsBefore)
     const callsFromThisTest = consoleErrorSpy.mock.calls.slice(callsBefore);
@@ -205,7 +214,7 @@ describe("printRenderStack", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("shows context name for named context providers", () => {
+  it("shows context name for named context providers", async () => {
     const consoleErrorSpy = vi.spyOn(console, "error");
 
     const MyContext = createNamedContext<string>("MyContext");
@@ -214,8 +223,8 @@ describe("printRenderStack", () => {
       throw new Error("Context error");
     }
 
-    expect(() => {
-      renderTree(
+    await expect(
+      renderAsync(
         <Output>
           <SourceFile path="context-test.ts" filetype="typescript">
             <MyContext.Provider value="test-value">
@@ -223,8 +232,8 @@ describe("printRenderStack", () => {
             </MyContext.Provider>
           </SourceFile>
         </Output>,
-      );
-    }).toThrow("Context error");
+      ),
+    ).rejects.toThrow("Context error");
 
     // Check that the named context provider is shown as a separate component
     expectErrorContaining(consoleErrorSpy, "at MyContext");

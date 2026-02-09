@@ -1,4 +1,10 @@
 import { effect } from "@vue/reactivity";
+import {
+  debug,
+  isConsoleTraceEnabled,
+  type TracePhaseInfo,
+} from "./debug/index.js";
+import { colorText, parseBreakOnIds } from "./debug/trace.js";
 import { untrack } from "./reactivity.js";
 import { inspectRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";
@@ -10,203 +16,16 @@ import type {
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import { SymbolTable } from "./symbols/symbol-table.js";
 
-// enable tracing for specific phases using a comma separated list of
-// dotted identifiers, e.g. `scope.update,symbol.create`.
-const traceEnv = process.env.ALLOY_TRACE ?? "";
-const tracePhases = new Set<string>(
-  traceEnv === "" ? [] : traceEnv.split(",").map((t) => t.trim()),
-);
-
-if (tracePhases.size > 0) {
-  // eslint-disable-next-line no-console
-  console.log(
-    "Tracing enabled for phases:",
-    Array.from(tracePhases).join(", "),
-  );
-}
-
-const debuggerIdsEnv = process.env.ALLOY_BREAK_ON_DID ?? "";
-const dids = new Set<number>();
-
-debuggerIdsEnv.split(",").forEach((id) => {
-  const num = parseInt(id, 10);
-  if (!isNaN(num)) {
-    dids.add(num);
-  }
-});
-export const TracePhase = {
-  scope: {
-    update: {
-      area: "scope",
-      subarea: "update",
-      bg: { r: 0, g: 255, b: 100 },
-    },
-    create: {
-      area: "scope",
-      subarea: "create",
-      bg: { r: 0, g: 150, b: 100 },
-    },
-    copySymbols: {
-      area: "scope",
-      subarea: "copySymbols",
-      bg: { r: 0, g: 100, b: 100 },
-    },
-    moveSymbols: {
-      area: "scope",
-      subarea: "moveSymbols",
-      bg: { r: 0, g: 100, b: 100 },
-    },
-  },
-  symbol: {
-    update: {
-      area: "symbol",
-      subarea: "update",
-      bg: { r: 0, g: 0, b: 255 },
-    },
-    resolve: {
-      area: "symbol",
-      subarea: "resolve",
-      bg: { r: 0, g: 0, b: 200 },
-    },
-    create: {
-      area: "symbol",
-      subarea: "create",
-      bg: { r: 0, g: 0, b: 150 },
-    },
-    flow: {
-      area: "symbol",
-      subarea: "flow",
-      bg: { r: 0, g: 0, b: 100 },
-    },
-    addToScope: {
-      area: "symbol",
-      subarea: "addToScope",
-      bg: { r: 0, g: 0, b: 50 },
-    },
-    instantiate: {
-      area: "symbol",
-      subarea: "instantiate",
-      bg: { r: 0, g: 0, b: 25 },
-    },
-    clone: {
-      area: "symbol",
-      subarea: "clone",
-      bg: { r: 0, g: 0, b: 25 },
-    },
-    delete: {
-      area: "symbol",
-      subarea: "delete",
-      bg: { r: 100, g: 0, b: 100 },
-    },
-    removeFromScope: {
-      area: "symbol",
-      subarea: "removeFromScope",
-      bg: { r: 50, g: 0, b: 50 },
-    },
-  },
-  resolve: {
-    success: {
-      area: "resolve",
-      subarea: "success",
-      bg: { r: 0, g: 255, b: 0 },
-    },
-    pending: {
-      area: "resolve",
-      subarea: "pending",
-      bg: { r: 255, g: 255, b: 0 },
-    },
-    failure: {
-      area: "resolve",
-      subarea: "failure",
-      bg: { r: 100, g: 50, b: 50 },
-    },
-  },
-  effect: {
-    schedule: {
-      area: "effect",
-      subarea: "schedule",
-      bg: { r: 100, g: 100, b: 0 },
-    },
-    track: {
-      area: "effect",
-      subarea: "track",
-      bg: { r: 75, g: 75, b: 0 },
-    },
-    trigger: {
-      area: "effect",
-      subarea: "trigger",
-      bg: { r: 50, g: 50, b: 0 },
-    },
-  },
-  render: {
-    worker: {
-      area: "render",
-      subarea: "worker",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-    appendChild: {
-      area: "render",
-      subarea: "appendChild",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-    renderEffect: {
-      area: "render",
-      subarea: "render effect",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-  },
-} as const;
-
-interface TracePhase extends TextFormat {
-  area: string;
-  subarea: string;
-}
+const dids = parseBreakOnIds();
 
 let triggerCount = 0;
 
-function shouldTrace(phase: TracePhase) {
-  return (
-    tracePhases.has(phase.area) ||
-    tracePhases.has(phase.area + "." + phase.subarea)
-  );
-}
-export function trace(
-  phase: TracePhase,
-  cb: () => string,
-  triggerIds: Set<number> = new Set(),
-) {
-  if (!shouldTrace(phase)) {
+export function traceEffect(phase: TracePhaseInfo, cb: () => string) {
+  if (
+    !isConsoleTraceEnabled(phase.area) &&
+    !isConsoleTraceEnabled(phase.area + "." + phase.subarea)
+  )
     return;
-  }
-  if (triggerIds.size === 0) {
-    // not an effect trace.
-    const id = triggerCount++;
-    triggerIds.add(id);
-
-    if (dids.has(id)) {
-      // eslint-disable-next-line no-debugger
-      debugger;
-    }
-  }
-
-  const areaTag = ` ${phase.area + ":" + phase.subarea} `;
-  // eslint-disable-next-line no-console
-  console.log(
-    colorText(areaTag, { ...phase, bold: true }) +
-      " " +
-      colorText("[" + [...triggerIds].join(",") + "]", {
-        fg: { r: 50, g: 50, b: 50 },
-      }) +
-      " " +
-      untrack(cb) +
-      "\n",
-  );
-}
-
-export function traceEffect(phase: TracePhase, cb: () => string) {
-  if (!shouldTrace(phase)) {
-    return;
-  }
   let first = true;
   const triggerIds = new Set<number>();
 
@@ -218,7 +37,7 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
         first = false;
         return;
       }
-      trace(phase, cb, triggerIds);
+      debug.trace(phase, cb, triggerIds);
       triggerIds.clear();
     },
     {
@@ -233,54 +52,6 @@ export function traceEffect(phase: TracePhase, cb: () => string) {
       },
     },
   );
-}
-
-interface Color {
-  r: number;
-  g: number;
-  b: number;
-}
-
-/** Descriptor for how to format the text */
-interface TextFormat {
-  fg?: Color; // optional foreground color
-  bg?: Color; // optional background color
-  bold?: boolean; // optional bold flag
-}
-
-/**
- * Wraps `text` in ANSI escape codes according to the given format.
- *
- * @param text  The string to format.
- * @param fmt   Optional formatting descriptor.
- * @returns     The text wrapped in ANSI codes (or unmodified if no styles given).
- */
-function colorText(text: string, fmt?: TextFormat): string {
-  if (!fmt) return text;
-
-  const codes: string[] = [];
-
-  if (fmt.bold) {
-    codes.push("1"); // ANSI code for bold
-  }
-
-  if (fmt.fg) {
-    const { r, g, b } = fmt.fg;
-    codes.push(`38;2;${r};${g};${b}`);
-  }
-
-  if (fmt.bg) {
-    const { r, g, b } = fmt.bg;
-    codes.push(`48;2;${r};${g};${b}`);
-  }
-
-  if (codes.length === 0) {
-    return text;
-  }
-
-  const prefix = `\x1b[${codes.join(";")}m`;
-  const reset = `\x1b[0m`;
-  return `${prefix}${text}${reset}`;
 }
 
 /**

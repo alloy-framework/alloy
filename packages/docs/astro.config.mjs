@@ -26,6 +26,10 @@ export default defineConfig({
               label: "Example walkthrough",
               slug: "guides/typescript-walkthrough",
             },
+            {
+              label: "Diagnosing issues",
+              slug: "guides/diagnosing-issues",
+            },
           ],
         },
         {

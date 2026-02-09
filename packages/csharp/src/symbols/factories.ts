@@ -1,4 +1,5 @@
 import {
+  createSymbol,
   Namekey,
   NamePolicyGetter,
   onCleanup,
@@ -37,11 +38,11 @@ export function createParameterSymbol(
       `Can't create parameter symbol outside of a method or class scope.`,
     );
   }
-  return new CSharpSymbol(
-    originalName,
-    scope.parameters,
-    withNamePolicy(options, "parameter"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(CSharpSymbol, originalName, scope.parameters, {
+    ...withNamePolicy(options, "parameter"),
+    binder,
+  });
 }
 
 export interface CreateTypeParameterSymbolOptions extends CSharpSymbolOptions {
@@ -61,11 +62,11 @@ export function createTypeParameterSymbol(
     );
   }
 
-  return new CSharpSymbol(
-    originalName,
-    scope.typeParameters,
-    withNamePolicy(options, "type-parameter"),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(CSharpSymbol, originalName, scope.typeParameters, {
+    ...withNamePolicy(options, "type-parameter"),
+    binder,
+  });
 }
 
 export function createFieldSymbol(
@@ -91,11 +92,11 @@ export function createFieldSymbol(
     throw new Error(`Can't define a field outside of a class or struct.`);
   }
 
-  return new CSharpSymbol(
-    originalName,
-    scope.members,
-    withNamePolicy(options, nameElement),
-  );
+  const binder = options.binder ?? scope.binder;
+  return createSymbol(CSharpSymbol, originalName, scope.members, {
+    ...withNamePolicy(options, nameElement),
+    binder,
+  });
 }
 
 function withCleanup<T extends CSharpSymbol>(sym: T): T {
@@ -111,8 +112,12 @@ export function createNamedTypeSymbol(
   options?: OutputSymbolOptions,
 ) {
   const scope = useNamedTypeScope();
+  const binder = options?.binder ?? scope.ownerSymbol.binder;
   return withCleanup(
-    new NamedTypeSymbol(name, scope.ownerSymbol.members, kind, options),
+    createSymbol(NamedTypeSymbol, name, scope.ownerSymbol.members, kind, {
+      ...options,
+      binder,
+    }),
   );
 }
 
@@ -121,7 +126,9 @@ export function createNamespaceSymbol(
   options: CSharpSymbolOptions = {},
 ): NamespaceSymbol {
   const scope = useNamespaceContext();
-  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
+  const parentSymbol =
+    scope?.symbol ??
+    getGlobalNamespace(options.binder ?? scope?.symbol?.binder ?? useBinder());
   const names = normalizeNamespaceName(name);
   let current = parentSymbol;
   for (const name of names) {
@@ -155,12 +162,12 @@ function createNamespaceSymbolInternal(
       expectedName,
     )! as NamespaceSymbol;
   }
+  const binder = options.binder ?? parentSymbol.binder;
   return withCleanup(
-    new NamespaceSymbol(
-      name,
-      parentSymbol,
-      withNamePolicy(options, "namespace"),
-    ),
+    createSymbol(NamespaceSymbol, name, parentSymbol, {
+      ...withNamePolicy(options, "namespace"),
+      binder,
+    }),
   );
 }
 
@@ -184,12 +191,17 @@ export function createMethodSymbol(
     );
   }
 
+  const binder = options.binder ?? scope.binder;
   return withCleanup(
-    new MethodSymbol(
+    createSymbol(
+      MethodSymbol,
       originalName,
       scope.members,
       options.methodKind ?? "ordinary",
-      withNamePolicy(options, "class-method"),
+      {
+        ...withNamePolicy(options, "class-method"),
+        binder,
+      },
     ),
   );
 }
@@ -199,12 +211,12 @@ export function createPropertySymbol(
   options: CSharpSymbolOptions,
 ) {
   const scope = useNamedTypeScope();
+  const binder = options.binder ?? scope.binder;
   return withCleanup(
-    new CSharpSymbol(
-      name,
-      scope.members,
-      withNamePolicy(options, "class-property"),
-    ),
+    createSymbol(CSharpSymbol, name, scope.members, {
+      ...withNamePolicy(options, "class-property"),
+      binder,
+    }),
   );
 }
 
@@ -232,12 +244,12 @@ export function createVariableSymbol(
       `Can't create variable symbol outside of a lexical scope, got a ${scope.constructor.name}.`,
     );
   }
+  const binder = options.binder ?? scope.binder;
   return withCleanup(
-    new CSharpSymbol(
-      originalName,
-      scope.localVariables,
-      withNamePolicy(options, "variable"),
-    ),
+    createSymbol(CSharpSymbol, originalName, scope.localVariables, {
+      ...withNamePolicy(options, "variable"),
+      binder,
+    }),
   );
 }
 

@@ -1,3 +1,4 @@
+import { createSymbol } from "../binder.js";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
@@ -83,7 +84,7 @@ export function Declaration(props: DeclarationProps) {
       );
     }
 
-    declaration = new BasicSymbol(props.name, scope.symbols, {
+    declaration = createSymbol(BasicSymbol, props.name, scope.symbols, {
       binder,
       refkeys: [props.refkey ?? []].flat(),
       metadata: props.metadata,

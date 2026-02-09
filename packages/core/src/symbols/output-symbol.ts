@@ -12,17 +12,19 @@ import {
 } from "@vue/reactivity";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
+import { debug, TracePhase } from "../debug/index.js";
 import { inspect } from "../inspect.js";
 import { NamePolicyGetter } from "../name-policy.js";
 import { untrack } from "../reactivity.js";
-import { Namekey, type Refkey } from "../refkey.js";
 import {
-  formatSymbol,
-  formatSymbolName,
-  trace,
-  traceEffect,
-  TracePhase,
-} from "../tracer.js";
+  isMemberRefkey,
+  isNamekey,
+  isSymbolRefkey,
+  Namekey,
+  toRefkey,
+  type Refkey,
+} from "../refkey.js";
+import { formatSymbolName } from "../tracer.js";
 import {
   OutputDeclarationSpace,
   OutputMemberSpace,
@@ -459,6 +461,10 @@ export abstract class OutputSymbol {
     return this.#isTyped;
   }
 
+  get debugInfo(): Record<string, unknown> {
+    return {};
+  }
+
   #namePolicy: NamePolicyGetter | undefined;
   get namePolicy() {
     return this.#namePolicy;
@@ -552,10 +558,7 @@ export abstract class OutputSymbol {
       ]),
     );
 
-    trace(TracePhase.symbol.create, () => `${formatSymbol(this)}`);
-    traceEffect(TracePhase.symbol.update, () => {
-      return `${formatSymbol(this)}`;
-    });
+    // Notify binder so resolution tracking works even without createSymbol
     this.#binder?.notifySymbolCreated(this);
   }
 
@@ -570,7 +573,7 @@ export abstract class OutputSymbol {
   }
 
   delete() {
-    trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
+    debug.trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
     if (this.#spaces) {
       this.#spaces.forEach((space) => space.delete(this));
     }
@@ -676,4 +679,22 @@ export abstract class OutputSymbol {
   toString() {
     return untrack(() => `${this.constructor.name} "${this.name}"[${this.id}]`);
   }
+}
+
+function _formatRefkey(refkey: Refkey): string {
+  if (isNamekey(refkey)) {
+    return `name:${refkey.name}`;
+  }
+  if (isMemberRefkey(refkey)) {
+    const base = _formatRefkey(toRefkey(refkey.base));
+    const member =
+      typeof refkey.member === "string" ?
+        refkey.member
+      : _formatRefkey(toRefkey(refkey.member));
+    return `member:${base}.${member}`;
+  }
+  if (isSymbolRefkey(refkey)) {
+    return `key:${refkey.key}`;
+  }
+  return "refkey";
 }

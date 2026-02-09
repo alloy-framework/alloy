@@ -1,5 +1,6 @@
 import {
   SourceFile as CoreSourceFile,
+  createScope,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -27,7 +28,7 @@ export function SourceFile(props: SourceFileProps) {
   const directoryContext = useContext(SourceDirectoryContext)!;
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
-  const scope = new GoSourceFileScope(path, pkg);
+  const scope = createScope(GoSourceFileScope, path, pkg);
 
   const header = (
     <SourceFileHeader

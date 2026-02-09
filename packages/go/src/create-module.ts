@@ -1,5 +1,6 @@
 import {
   Binder,
+  createSymbol,
   LibrarySymbolReference,
   namekey,
   refkey,
@@ -191,14 +192,13 @@ function createSymbolFromDescriptor(
       if (ownerSymbol === null) {
         const dname = basename(name);
         const packageName = descriptor.name ?? dname;
-        const packageSymbol = new PackageSymbol(packageName, undefined, {
+        return createSymbol(PackageSymbol, packageName, undefined, {
           binder,
           refkeys: refkey(),
           lazyMemberInitializer,
           path: descriptor.path,
           builtin: context.builtin,
         });
-        return packageSymbol;
       }
       if (!(ownerSymbol instanceof PackageSymbol)) {
         throw new Error(
@@ -208,7 +208,7 @@ function createSymbolFromDescriptor(
       if (ownerSymbol.members.symbolNames.has(name)) {
         return ownerSymbol.members.symbolNames.get(name)! as PackageSymbol;
       }
-      return new PackageSymbol(name, ownerSymbol as PackageSymbol, {
+      return createSymbol(PackageSymbol, name, ownerSymbol as PackageSymbol, {
         binder,
         refkeys: refkey(),
         lazyMemberInitializer,
@@ -223,7 +223,8 @@ function createSymbolFromDescriptor(
           `Cannot create a named type symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new NamedTypeSymbol(
+      return createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
         descriptor.kind,
@@ -239,7 +240,7 @@ function createSymbolFromDescriptor(
           `Cannot create a function symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new FunctionSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(FunctionSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
       });
@@ -249,7 +250,8 @@ function createSymbolFromDescriptor(
           `Cannot create a field symbol (${name}) with a non-named-type owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new NamedTypeSymbol(
+      return createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
         ownerSymbol.typeKind === "interface" ?
@@ -272,7 +274,8 @@ function createSymbolFromDescriptor(
           `Cannot create a field symbol (${name}) with a non-named-type owner symbol (${ownerSymbol.name}).`,
         );
       }
-      const symbol = new NamedTypeSymbol(
+      const symbol = createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
         ownerSymbol.typeKind === "interface" ?
@@ -298,7 +301,7 @@ function createSymbolFromDescriptor(
           `Cannot create a variable symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new GoSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(GoSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
         type:

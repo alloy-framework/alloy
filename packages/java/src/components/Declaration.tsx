@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  createSymbol,
   Namekey,
   Refkey,
 } from "@alloy-js/core";
@@ -32,7 +33,7 @@ export function Declaration(props: DeclarationProps) {
     throw new Error("A lexical scope is required for declaration");
   }
 
-  const sym = new JavaOutputSymbol(props.name, scope.symbols, {
+  const sym = createSymbol(JavaOutputSymbol, props.name, scope.symbols, {
     refkeys: props.refkey,
     namePolicy: useJavaNamePolicy().for(props.nameKind),
   });

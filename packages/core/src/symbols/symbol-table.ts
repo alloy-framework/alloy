@@ -1,13 +1,9 @@
 import type { Binder, NameConflictResolver } from "../binder.js";
+import { debug, TracePhase } from "../debug/index.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
 import { Refkey } from "../refkey.js";
 import { queueJob } from "../scheduler.js";
-import {
-  formatSymbolName,
-  formatSymbolTableName,
-  trace,
-  TracePhase,
-} from "../tracer.js";
+import { formatSymbolName, formatSymbolTableName } from "../tracer.js";
 import { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
@@ -65,7 +61,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   ) {
     super({
       onAdd: (symbol) => {
-        trace(
+        debug.trace(
           TracePhase.symbol.addToScope,
           () =>
             `${formatSymbolName(symbol)} added to ${formatSymbolTableName(this)}`,
@@ -78,7 +74,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
         return symbol;
       },
       onDelete: (symbol) => {
-        trace(
+        debug.trace(
           TracePhase.symbol.removeFromScope,
           () =>
             `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
@@ -97,7 +93,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   }
 
   moveTo(target: SymbolTable): void {
-    trace(
+    debug.trace(
       TracePhase.scope.moveSymbols,
       () =>
         `${formatSymbolTableName(this)} -> ${formatSymbolTableName(target)}`,
@@ -117,7 +113,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
       createRefkeys?(sourceSymbol: OutputSymbol): Refkey[];
     } = {},
   ): void {
-    trace(
+    debug.trace(
       TracePhase.scope.copySymbols,
       () =>
         `${formatSymbolTableName(this)} copied to ${formatSymbolTableName(target)}`,

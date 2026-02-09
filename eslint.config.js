@@ -17,6 +17,7 @@ export default tsEslint.config(
       "packages/babel-plugin-jsx-dom-expressions/**/*",
       "packages/babel-plugin-alloy/**/*",
       "packages/babel-preset-alloy/**/*",
+      "packages/devtools/**/*",
       "packages/docs/**/*",
       "samples/**/*", // for some reason eslint is unhappy with some files in here
       "**/scripts/**/*",

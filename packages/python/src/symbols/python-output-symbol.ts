@@ -3,6 +3,7 @@ import {
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
+  createSymbol,
 } from "@alloy-js/core";
 
 export interface PythonOutputSymbolOptions extends OutputSymbolOptions {
@@ -52,9 +53,19 @@ export class PythonOutputSymbol extends OutputSymbol {
     return this.spaces.some((s) => s.key === "instance");
   }
 
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      module: this.#module,
+      isStaticMemberSymbol: this.isStaticMemberSymbol,
+      isInstanceMemberSymbol: this.isInstanceMemberSymbol,
+    };
+  }
+
   copy() {
-    const copy = new PythonOutputSymbol(this.name, undefined, {
-      binder: this.binder,
+    const binder = this.binder;
+    const copy = createSymbol(PythonOutputSymbol, this.name, undefined, {
+      binder,
       aliasTarget: this.aliasTarget,
       module: this.module,
       metadata: this.metadata,

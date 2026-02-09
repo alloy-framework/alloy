@@ -2,7 +2,8 @@ import {
   Namekey,
   OutputScopeOptions,
   OutputSpace,
-  useBinder,
+  createScope,
+  createSymbol,
   useContext,
 } from "@alloy-js/core";
 import { PythonSourceFileContext } from "./components/SourceFile.js";
@@ -62,10 +63,10 @@ export function createPythonSymbol(
     }
   }
 
-  const binder = options.binder ?? currentScope?.binder ?? useBinder();
+  const binder = options.binder ?? currentScope?.binder;
 
-  return new PythonOutputSymbol(name, targetSpace, {
-    binder: binder,
+  return createSymbol(PythonOutputSymbol, name, targetSpace, {
+    binder,
     aliasTarget: options.aliasTarget,
     refkeys: options.refkeys,
     metadata: options.metadata,
@@ -81,6 +82,10 @@ export function createLexicalScope(
   options: OutputScopeOptions = {},
 ) {
   const parent = usePythonScope();
+  const binder = options.binder ?? parent?.binder;
 
-  return new PythonLexicalScope(name, parent, options);
+  return createScope(PythonLexicalScope, name, parent, {
+    ...options,
+    binder,
+  });
 }

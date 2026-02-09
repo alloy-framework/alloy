@@ -1,5 +1,5 @@
-import { computed } from "@vue/reactivity";
 import { createContentSlot } from "../content-slot.jsx";
+import { computed } from "../reactivity.js";
 import type { Children } from "../runtime/component.js";
 import { Indent } from "./Indent.jsx";
 

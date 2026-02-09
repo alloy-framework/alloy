@@ -2,6 +2,7 @@ import {
   Children,
   ComponentContext,
   createNamedContext,
+  createScope,
   Ref,
   Scope,
   shallowRef,
@@ -122,7 +123,7 @@ function createPackageContext(
   // todo: this can probably just use context.
   const fullPath = parentDir ? join(parentDir.path, path) : path;
 
-  const scope = new TSPackageScope(name, version, fullPath);
+  const scope = createScope(TSPackageScope, name, version, fullPath);
 
   return {
     scope,

@@ -2,6 +2,7 @@ import {
   Children,
   ComponentContext,
   createContext,
+  createScope,
   Scope,
   SourceDirectory,
   SourceDirectoryContext,
@@ -45,7 +46,11 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     : packageName;
 
   const parentScope = useScope();
-  const scope = new JavaPackageScope(fullyQualifiedPackageName, parentScope);
+  const scope = createScope(
+    JavaPackageScope,
+    fullyQualifiedPackageName,
+    parentScope,
+  );
 
   const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {

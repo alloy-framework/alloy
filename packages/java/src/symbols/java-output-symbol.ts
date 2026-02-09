@@ -1,4 +1,5 @@
 import {
+  createSymbol,
   Namekey,
   OutputSpace,
   OutputSymbol,
@@ -48,11 +49,20 @@ export class JavaOutputSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new JavaOutputSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(JavaOutputSymbol, this.name, undefined, {
       ...options,
+      binder,
       package: this.#package,
     });
     this.initializeCopy(copy);
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      package: this.#package,
+    };
   }
 }

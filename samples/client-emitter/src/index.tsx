@@ -1,4 +1,4 @@
-import { For, Output, render, writeOutput } from "@alloy-js/core";
+import { For, Output, renderAsync, writeOutput } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 
 import { Client } from "./components/Client.jsx";
@@ -8,7 +8,7 @@ import { api } from "./schema.js";
 
 const namePolicy = ts.createTSNamePolicy();
 
-const output = render(
+const output = await renderAsync(
   <Output namePolicy={namePolicy}>
     <ApiContext.Provider value={createApiContext(api)}>
       <ts.PackageDirectory name={`${api.name}-client`} version="1.0.0">

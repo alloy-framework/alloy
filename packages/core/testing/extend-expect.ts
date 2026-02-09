@@ -1,6 +1,8 @@
 import {
   Children,
+  Diagnostic,
   getContextForRenderNode,
+  getDiagnosticsForTree,
   printTree,
   RenderedTextTree,
   renderTree,
@@ -14,6 +16,11 @@ interface ToRenderToOptions {
   printWidth?: number;
   tabWidth?: number;
   useTabs?: boolean;
+}
+
+interface ExpectedDiagnostic {
+  message: string | RegExp;
+  severity?: Diagnostic["severity"];
 }
 
 expect.extend({
@@ -37,6 +44,24 @@ expect.extend({
     await flushJobsAsync();
     const actual = getFilesFromTree(tree, renderOptions);
     return validateRender(actual, expectedRaw, this.isNot);
+  },
+  toHaveDiagnostics(
+    received: Children,
+    expectedDiagnostics: ExpectedDiagnostic[],
+  ) {
+    const tree = renderTree(received);
+    flushJobs();
+    const diagnostics = getDiagnosticsForTree(tree);
+    return validateDiagnostics(diagnostics, expectedDiagnostics, this.isNot);
+  },
+  async toHaveDiagnosticsAsync(
+    received: Children,
+    expectedDiagnostics: ExpectedDiagnostic[],
+  ) {
+    const tree = renderTree(received);
+    await flushJobsAsync();
+    const diagnostics = getDiagnosticsForTree(tree);
+    return validateDiagnostics(diagnostics, expectedDiagnostics, this.isNot);
   },
 });
 
@@ -106,6 +131,70 @@ function validateRender(
       expected: expectedRaw,
     };
   }
+}
+
+function validateDiagnostics(
+  actual: Diagnostic[],
+  expected: ExpectedDiagnostic[],
+  isNot: boolean,
+) {
+  const message = () => `Diagnostics are${isNot ? " not" : ""} incorrect`;
+
+  if (actual.length !== expected.length) {
+    return {
+      pass: false,
+      message: () =>
+        `Expected ${expected.length} diagnostic(s), but got ${actual.length}`,
+      actual: actual.map((d) => ({ message: d.message, severity: d.severity })),
+      expected,
+    };
+  }
+
+  for (let i = 0; i < expected.length; i++) {
+    const actualDiag = actual[i];
+    const expectedDiag = expected[i];
+
+    const messageMatches =
+      expectedDiag.message instanceof RegExp ?
+        expectedDiag.message.test(actualDiag.message)
+      : actualDiag.message === expectedDiag.message;
+
+    if (!messageMatches) {
+      return {
+        pass: false,
+        message: () =>
+          `Diagnostic ${i} message mismatch: expected "${expectedDiag.message}", got "${actualDiag.message}"`,
+        actual: actual.map((d) => ({
+          message: d.message,
+          severity: d.severity,
+        })),
+        expected,
+      };
+    }
+
+    if (
+      expectedDiag.severity !== undefined &&
+      actualDiag.severity !== expectedDiag.severity
+    ) {
+      return {
+        pass: false,
+        message: () =>
+          `Diagnostic ${i} severity mismatch: expected "${expectedDiag.severity}", got "${actualDiag.severity}"`,
+        actual: actual.map((d) => ({
+          message: d.message,
+          severity: d.severity,
+        })),
+        expected,
+      };
+    }
+  }
+
+  return {
+    pass: true,
+    message,
+    actual: actual.map((d) => ({ message: d.message, severity: d.severity })),
+    expected,
+  };
 }
 
 function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {

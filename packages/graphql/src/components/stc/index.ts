@@ -1,0 +1,26 @@
+import * as core from "@alloy-js/core";
+import * as base from "../index.js";
+
+export const Argument = core.stc(base.Argument);
+export const Connection = core.stc(base.Connection);
+export const ConnectionPagination = core.stc(base.ConnectionPagination);
+export const Directive = core.stc(base.Directive);
+export const DirectiveDefinition = core.stc(base.DirectiveDefinition);
+export const EnumType = core.stc(base.EnumType);
+export const EnumValue = core.stc(base.EnumValue);
+export const Field = core.stc(base.Field);
+export const InputField = core.stc(base.InputField);
+export const InputValue = core.stc(base.InputValue);
+export const InputObjectType = core.stc(base.InputObjectType);
+export const InterfaceType = core.stc(base.InterfaceType);
+export const Mutation = core.stc(base.Mutation);
+export const NodeField = core.stc(base.NodeField);
+export const NodeInterface = core.stc(base.NodeInterface);
+export const ObjectType = core.stc(base.ObjectType);
+export const PageInfoType = core.stc(base.PageInfoType);
+export const Query = core.stc(base.Query);
+export const Schema = core.stc(base.Schema);
+export const ScalarType = core.stc(base.ScalarType);
+export const Subscription = core.stc(base.Subscription);
+export const UnionMember = core.stc(base.UnionMember);
+export const UnionType = core.stc(base.UnionType);

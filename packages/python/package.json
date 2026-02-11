@@ -2,6 +2,10 @@
   "name": "@alloy-js/python",
   "version": "0.3.0",
   "description": "Python bindings for Alloy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     ".": {
       "development": "./src/index.ts",

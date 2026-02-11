@@ -2,6 +2,10 @@
   "name": "@alloy-js/markdown",
   "version": "0.22.0",
   "description": "Alloy components for generating markdown",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     ".": {
       "development": "./src/index.ts",

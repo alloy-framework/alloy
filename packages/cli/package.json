@@ -12,7 +12,10 @@
   "bin": {
     "alloy": "./cmd/alloy.js"
   },
-  "repository": "https://github.com/alloy-framework/alloy.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

@@ -2,6 +2,10 @@
   "name": "alloy",
   "private": true,
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "type": "module",
   "packageManager": "pnpm@10.13.1",
   "scripts": {

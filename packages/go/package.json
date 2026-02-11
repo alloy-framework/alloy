@@ -2,6 +2,10 @@
   "name": "@alloy-js/go",
   "version": "0.2.0",
   "description": "Go bindings for Alloy",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     ".": {
       "development": "./src/index.ts",

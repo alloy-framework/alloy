@@ -2,6 +2,10 @@
   "name": "@alloy-js/msbuild",
   "version": "0.22.0",
   "description": "Alloy components for msbuild files.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     "./components": {
       "development": "./src/components/index.tsx",

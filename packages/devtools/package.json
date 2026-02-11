@@ -2,6 +2,10 @@
   "name": "devtools",
   "private": true,
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

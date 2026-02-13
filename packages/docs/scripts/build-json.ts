@@ -28,6 +28,7 @@ import {
 } from "./components/stc/index.js";
 import { ApiModelContext } from "./contexts/api-model.js";
 import { ContentRootDir } from "./contexts/content-root-dir.js";
+import { normalizeDeclarationReference } from "./utils.js";
 
 const rootDir = resolve(import.meta.dirname, "../src/content/docs");
 
@@ -42,6 +43,7 @@ const apiPackages = {
     apiPath(resolve(packagesPath, "typescript")),
   ),
   csharp: apiModel.loadPackage(apiPath(resolve(packagesPath, "csharp"))),
+  graphql: apiModel.loadPackage(apiPath(resolve(packagesPath, "graphql"))),
   java: apiModel.loadPackage(apiPath(resolve(packagesPath, "java"))),
   json: apiModel.loadPackage(apiPath(resolve(packagesPath, "json"))),
   python: apiModel.loadPackage(apiPath(resolve(packagesPath, "python"))),
@@ -179,19 +181,7 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
         const nameMatch = variable.displayName.match(/(\w+)Context/);
         if (!nameMatch) continue;
         const contextName = nameMatch[1];
-        const instantiationStart =
-          variable.variableTypeExcerpt.spannedTokens[1];
-        let contextInterface: ApiItem | string;
-        if (instantiationStart.text.match(/<.*>/)) {
-          // primitive type
-          contextInterface = instantiationStart.text.slice(1, -1);
-        } else {
-          const refToken = variable.variableTypeExcerpt.spannedTokens[2];
-          contextInterface = apiModel.resolveDeclarationReference(
-            refToken.canonicalReference!,
-            variable,
-          ).resolvedApiItem!;
-        }
+        const contextInterface = resolveContextInterface(apiModel, variable);
 
         const record: ContextApi = {
           kind: "context",
@@ -252,8 +242,14 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
                 );
                 continue;
               }
+              const reference = normalizeDeclarationReference(propsTypeRef);
+              if (!reference) {
+                throw new Error(
+                  `Cannot resolve prop type for ${member.displayName}.`,
+                );
+              }
               const model = apiModel.resolveDeclarationReference(
-                propsTypeRef!,
+                reference,
                 undefined,
               );
 
@@ -273,8 +269,12 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
                     continue;
                   }
 
+                  const aliasReference = normalizeDeclarationReference(
+                    token.canonicalReference,
+                  );
+                  if (!aliasReference) continue;
                   const aliasRef = apiModel.resolveDeclarationReference(
-                    token.canonicalReference!,
+                    aliasReference,
                     resolvedPropType,
                   ).resolvedApiItem;
 
@@ -342,4 +342,58 @@ function queryApis(apiModel: ApiModel): DocumentationStructure {
 
 function isComponent(fn: ApiFunction) {
   return fn.fileUrlPath && fn.fileUrlPath.indexOf("components") > -1;
+}
+
+function resolveContextInterface(
+  apiModel: ApiModel,
+  variable: ApiVariable,
+): ApiItem | string {
+  const tokens = variable.variableTypeExcerpt.spannedTokens;
+  const genericStartIndex = tokens.findIndex((token) => token.text === "<");
+  if (genericStartIndex !== -1) {
+    for (let i = genericStartIndex + 1; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (token.text === ">" || token.text === ",") {
+        break;
+      }
+      const reference = normalizeDeclarationReference(token.canonicalReference);
+      if (reference) {
+        const resolved = apiModel.resolveDeclarationReference(
+          reference,
+          variable,
+        ).resolvedApiItem;
+        if (resolved) {
+          return resolved;
+        }
+      }
+      if (token.text) {
+        return token.text;
+      }
+    }
+  }
+
+  const instantiationStart = tokens[1];
+  if (instantiationStart?.text.match(/<.*>/)) {
+    return instantiationStart.text.slice(1, -1);
+  }
+
+  const fallbackMatch = variable.variableTypeExcerpt.text.match(/<([^>]+)>/);
+  if (fallbackMatch) {
+    return fallbackMatch[1].trim();
+  }
+
+  const legacyReference = normalizeDeclarationReference(
+    tokens[2]?.canonicalReference,
+  );
+  if (legacyReference) {
+    const resolved = apiModel.resolveDeclarationReference(
+      legacyReference,
+      variable,
+    ).resolvedApiItem;
+    if (resolved) {
+      return resolved;
+    }
+  }
+
+  return variable.variableTypeExcerpt.text;
 }

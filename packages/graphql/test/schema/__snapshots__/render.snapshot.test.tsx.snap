@@ -1,0 +1,144 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderSchema snapshots > prints a comprehensive schema snapshot 1`] = `
+"directive @tag(name: String!, important: Boolean = false) on OBJECT | FIELD_DEFINITION
+
+scalar Url @specifiedBy(url: "https://example.com/spec#url")
+
+interface Node {
+  """The ID of an object"""
+  id: ID!
+}
+
+enum Role {
+  ADMIN
+  USER @deprecated
+}
+
+type Profile {
+  url: Url
+  bio: String @deprecated
+}
+
+type User implements Node {
+  """The ID of an object"""
+  id: ID!
+  name: String
+  role: Role @deprecated
+  profile: Profile
+}
+
+type Post {
+  id: ID!
+  author: User
+  tags: [String!]
+}
+
+union SearchResult = User | Post
+
+input ProfileInput {
+  displayName: String = "Anonymous"
+  url: Url
+  legacy: String @deprecated
+}
+
+input SearchFilter @oneOf {
+  id: ID
+  name: String
+}
+
+type Query {
+  me: User
+  search(filter: SearchFilter, limit: Int = 10, includeArchived: Boolean @deprecated): [SearchResult]
+}
+
+type Mutation {
+  updateProfile(input: ProfileInput!): Profile
+}
+
+type Subscription {
+  userAdded: User
+}"
+`;
+
+exports[`renderSchema snapshots > prints a schema snapshot with custom roots 1`] = `
+"schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+directive @cacheControl(maxAge: Int = 60) on OBJECT | FIELD_DEFINITION
+
+type RootQuery {
+  ping: String
+}
+
+type RootMutation {
+  noop: String
+}"
+`;
+
+exports[`renderSchema snapshots > prints a schema snapshot with descriptions 1`] = `
+""""Example schema"""
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+"""Authorization details"""
+directive @auth(
+  """Required scope"""
+  scope: String = "public"
+) repeatable on FIELD_DEFINITION
+
+"""A URL scalar"""
+scalar Url @specifiedBy(url: "https://example.com/spec#url")
+
+"""User roles"""
+enum Role {
+  """Administrator"""
+  ADMIN
+
+  """Standard user"""
+  USER
+}
+
+"""Input for user creation"""
+input UserInput {
+  """Display name"""
+  name: String
+
+  """User role"""
+  role: Role
+}
+
+"""Query root"""
+type RootQuery {
+  """Fetch a user"""
+  user(
+    """User id"""
+    id: ID!
+  ): User
+}
+
+"""Mutation root"""
+type RootMutation {
+  """Create a user"""
+  createUser(
+    """New user data"""
+    input: UserInput!
+  ): User
+}
+
+"""A user"""
+type User {
+  """User id"""
+  id: ID!
+
+  """User role"""
+  role: Role @deprecated
+
+  """Personal site"""
+  website: Url
+}"
+`;

@@ -28,6 +28,7 @@
   "devDependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/csharp": "workspace:~",
+    "@alloy-js/graphql": "workspace:~",
     "@alloy-js/java": "workspace:~",
     "@alloy-js/python": "workspace:~",
     "@alloy-js/typescript": "workspace:~",

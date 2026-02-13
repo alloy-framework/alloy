@@ -5,19 +5,30 @@ import {
   type ApiItem,
   type ExcerptToken,
 } from "@microsoft/api-extractor-model";
+import type { DocDeclarationReference } from "@microsoft/tsdoc";
+import { DeclarationReference } from "@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference.js";
 import { ApiModelContext } from "./contexts/api-model.js";
+
+export function normalizeDeclarationReference(
+  reference: unknown,
+): DeclarationReference | DocDeclarationReference | undefined {
+  if (!reference) return;
+  if (typeof reference === "string") {
+    return DeclarationReference.parse(reference);
+  }
+  return reference as DeclarationReference | DocDeclarationReference;
+}
 
 export function resolveExcerptReference(
   excerpt: ExcerptToken,
   context: ApiItem,
 ) {
   const apiModel = useContext(ApiModelContext)!;
-  if (!excerpt.canonicalReference) return;
+  const reference = normalizeDeclarationReference(excerpt.canonicalReference);
+  if (!reference) return;
 
-  return apiModel.resolveDeclarationReference(
-    excerpt.canonicalReference,
-    context,
-  ).resolvedApiItem;
+  return apiModel.resolveDeclarationReference(reference, context)
+    .resolvedApiItem;
 }
 
 export function cleanExcerpt(excerpt: string) {

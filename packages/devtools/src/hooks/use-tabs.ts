@@ -5,7 +5,15 @@ import { useCallback, useMemo, useState } from "react";
 export interface OpenTab {
   id: string;
   label: string;
-  type: "file" | "symbol" | "scope" | "component" | "error" | "diagnostic";
+  type:
+    | "file"
+    | "symbol"
+    | "scope"
+    | "component"
+    | "error"
+    | "diagnostic"
+    | "effect"
+    | "ref";
 }
 
 export interface UseTabsOptions {

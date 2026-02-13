@@ -5,11 +5,43 @@ export interface DevtoolsMessage {
   [key: string]: unknown;
 }
 
+const ALL_CHANNELS = [
+  "render",
+  "effects",
+  "refs",
+  "edges",
+  "symbols",
+  "scopes",
+  "files",
+  "directories",
+  "scheduler",
+  "diagnostics",
+  "errors",
+  "lifecycle",
+];
+
+/** Subscribe to all channels on the given socket. */
+export function subscribeAll(socket: WebSocket): void {
+  socket.send(JSON.stringify({ type: "subscribe", channels: ALL_CHANNELS }));
+}
+
 /**
  * Creates a message collector that accumulates messages and provides utilities
  * for waiting on conditions. Useful for tests with reactive updates.
+ *
+ * Returns a Promise because it waits for the subscription to be processed by
+ * the server before the caller starts rendering.
+ *
+ * @param channels - Optional list of channels to subscribe to. Defaults to all channels.
  */
-export function createMessageCollector(socket: WebSocket) {
+export async function createMessageCollector(
+  socket: WebSocket,
+  channels?: string[],
+) {
+  socket.send(
+    JSON.stringify({ type: "subscribe", channels: channels ?? ALL_CHANNELS }),
+  );
+  await new Promise((resolve) => setTimeout(resolve, 50));
   let renderBuffer: DevtoolsMessage[] = [];
   let flushBuffer: DevtoolsMessage[] = [];
   const completedRenderBatches: DevtoolsMessage[][] = [];
@@ -186,18 +218,28 @@ export function createMessageCollector(socket: WebSocket) {
 
 /**
  * Filter messages to only include render tree messages (those starting with "render:")
+ * Excludes trace messages (those with triggerIds).
  */
 export function filterRenderTreeMessages(
   messages: DevtoolsMessage[],
 ): DevtoolsMessage[] {
-  return messages.filter((m) => m.type.startsWith("render"));
+  return messages.filter(
+    (m) => m.type.startsWith("render") && !("triggerIds" in m),
+  );
 }
 
 /**
- * Filter messages to only include effect debug messages (those starting with "effect:")
+ * Filter messages to only include effect/ref/edge debug messages.
+ * Excludes trace messages (those with triggerIds).
  */
 export function filterEffectsMessages(
   messages: DevtoolsMessage[],
 ): DevtoolsMessage[] {
-  return messages.filter((m) => m.type.startsWith("effect:"));
+  return messages.filter(
+    (m) =>
+      (m.type.startsWith("effect:") ||
+        m.type.startsWith("ref:") ||
+        m.type.startsWith("edge:")) &&
+      !("triggerIds" in m),
+  );
 }

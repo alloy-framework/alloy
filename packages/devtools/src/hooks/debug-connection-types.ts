@@ -3,11 +3,6 @@ import type { ScopeRecord, SymbolRecord } from "@/hooks/debug-state";
 import type { RenderTreeViewNode } from "@/lib/debug-tree";
 import type {
   ClientToServerMessage,
-  DiagnosticInfo,
-  EffectEdgeInfo,
-  EffectInfo,
-  RefInfo,
-  ServerToClientMessage,
   SourceLocation,
 } from "@alloy-js/core/devtools";
 
@@ -19,17 +14,66 @@ export const BATCH_FLUSH_INTERVAL = 100;
 export const BATCH_FLUSH_INTERVAL_HEAVY = 250;
 /** Threshold for considering load as "heavy" (messages per batch interval) */
 export const HEAVY_LOAD_THRESHOLD = 100;
-/** Maximum number of trace entries to keep */
-export const MAX_TRACE_ENTRIES = 500;
-/** Maximum number of effect edges to keep */
-export const MAX_EFFECT_EDGES = 10000;
 
-// ── Re-exported type aliases ─────────────────────────────────────────────────
+// ── Local type definitions (matching what the UI consumes) ───────────────────
 
 export type { SourceLocation };
-export type EffectDebugInfo = EffectInfo;
-export type RefDebugInfo = RefInfo;
-export type EffectEdgeDebugInfo = EffectEdgeInfo;
+
+export interface EffectDebugInfo {
+  id: number;
+  name?: string;
+  type?: string;
+  createdAt?: SourceLocation;
+  contextId?: number;
+  ownerContextId?: number | null;
+  component?: string;
+  sourcePackage?: string;
+  lastTriggeredByRefId?: number;
+  lastTriggeredAt?: SourceLocation;
+}
+
+export interface RefDebugInfo {
+  id: number;
+  kind?: string;
+  createdAt?: SourceLocation;
+  createdByEffectId?: number;
+  isInfrastructure?: boolean;
+  sourcePackage?: string;
+}
+
+export interface EffectEdgeDebugInfo {
+  id: number;
+  type: string;
+  effectId: number;
+  causedBy?: number;
+  refId?: number;
+  targetId?: number;
+  targetKind?: string;
+  targetLabel?: string;
+  targetKey?: string | number;
+  count?: number;
+}
+
+export interface EffectLifecycleEvent {
+  id: number;
+  effectId: number;
+  event: string;
+  triggerRefId?: number;
+}
+
+export interface DiagnosticComponentStackEntry {
+  name?: string;
+  renderNodeId?: number;
+  source?: SourceLocation;
+}
+
+export interface DiagnosticInfo {
+  id: string;
+  message: string;
+  severity: string;
+  source?: SourceLocation;
+  componentStack?: DiagnosticComponentStackEntry[];
+}
 
 // ── Connection status ────────────────────────────────────────────────────────
 
@@ -56,15 +100,6 @@ export interface RenderErrorDetails {
   componentStack: RenderErrorComponentStackEntry[];
 }
 
-// ── Trace entry ──────────────────────────────────────────────────────────────
-
-export interface TraceEntry {
-  id: string;
-  type: string;
-  timestamp: number;
-  message: ServerToClientMessage;
-}
-
 // ── Internal state (one setState per flush) ──────────────────────────────────
 
 export interface DebugConnectionInternalState {
@@ -79,12 +114,13 @@ export interface DebugConnectionInternalState {
   effectsVersion: number;
   refsVersion: number;
   effectEdgesVersion: number;
+  effectLifecycleVersion: number;
   renderErrors: Map<string, RenderErrorDetails>;
   latestRenderErrorId?: string;
   versionLabel?: string;
   cwd?: string;
+  sourceMapEnabled: boolean;
   diagnostics: DiagnosticInfo[];
-  traceEntries: TraceEntry[];
   error?: string;
 }
 
@@ -100,12 +136,13 @@ export const INITIAL_STATE: DebugConnectionInternalState = {
   effectsVersion: 0,
   refsVersion: 0,
   effectEdgesVersion: 0,
+  effectLifecycleVersion: 0,
   renderErrors: new Map(),
   latestRenderErrorId: undefined,
   versionLabel: undefined,
   cwd: undefined,
+  sourceMapEnabled: false,
   diagnostics: [],
-  traceEntries: [],
   error: undefined,
 };
 
@@ -126,18 +163,20 @@ export interface DebugConnectionState {
   effects: Map<number, EffectDebugInfo>;
   refs: Map<number, RefDebugInfo>;
   effectEdges: EffectEdgeDebugInfo[];
+  effectLifecycleEvents: EffectLifecycleEvent[];
   fileContentsVersion: number;
   fileToRenderNodeVersion: number;
   effectsVersion: number;
   refsVersion: number;
   effectEdgesVersion: number;
+  effectLifecycleVersion: number;
   renderErrors: Map<string, RenderErrorDetails>;
   latestRenderErrorId?: string;
   versionLabel?: string;
   cwd?: string;
+  sourceMapEnabled: boolean;
   formatPath: (path: string) => string;
   diagnostics: DiagnosticInfo[];
-  traceEntries: TraceEntry[];
   sendMessage: (message: ClientToServerMessage) => void;
   error?: string;
 }
@@ -156,11 +195,12 @@ export interface DirtyFlags {
   effects: boolean;
   refs: boolean;
   effectEdges: boolean;
-  traceEntries: boolean;
+  effectLifecycle: boolean;
   diagnostics: boolean;
   renderErrors: boolean;
   versionLabel: boolean;
   cwd: boolean;
+  sourceMapEnabled: boolean;
   latestRenderErrorId: boolean;
   error: boolean;
 }
@@ -178,11 +218,12 @@ export function createCleanFlags(): DirtyFlags {
     effects: false,
     refs: false,
     effectEdges: false,
-    traceEntries: false,
+    effectLifecycle: false,
     diagnostics: false,
     renderErrors: false,
     versionLabel: false,
     cwd: false,
+    sourceMapEnabled: false,
     latestRenderErrorId: false,
     error: false,
   };
@@ -201,11 +242,12 @@ export function createAllDirtyFlags(): DirtyFlags {
     effects: true,
     refs: true,
     effectEdges: true,
-    traceEntries: true,
+    effectLifecycle: true,
     diagnostics: true,
     renderErrors: true,
     versionLabel: true,
     cwd: true,
+    sourceMapEnabled: true,
     latestRenderErrorId: true,
     error: true,
   };

@@ -2,14 +2,20 @@
  * Trace helpers and configuration.
  */
 import type { ServerToClientMessage } from "../devtools/devtools-protocol.js";
-import {
-  broadcastDevtoolsMessage,
-  isDevtoolsEnabled,
-  type DevtoolsMessage,
-} from "../devtools/devtools-server.js";
+import { isDevtoolsEnabled } from "../devtools/devtools-server.js";
 import { untrack } from "../reactivity.js";
+import { initTrace, isTraceEnabled } from "./trace-writer.js";
 
 export { isDevtoolsEnabled } from "../devtools/devtools-server.js";
+export { isTraceEnabled } from "./trace-writer.js";
+
+/**
+ * Returns true when any debug instrumentation is active:
+ * devtools, console trace, or ALLOY_DEBUG_TRACE.
+ */
+export function isDebugEnabled(): boolean {
+  return isDevtoolsEnabled() || isConsoleTraceEnabled() || isTraceEnabled();
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Environment configuration
@@ -56,6 +62,14 @@ if (tracePhases.size > 0) {
     "Tracing enabled for phases:",
     Array.from(tracePhases).join(", "),
   );
+}
+
+// Initialize SQLite trace writer if ALLOY_DEBUG_TRACE is set
+const traceDbEnv = process.env.ALLOY_DEBUG_TRACE;
+if (traceDbEnv) {
+  const traceDbPath =
+    traceDbEnv === "1" || traceDbEnv === "true" ? "alloy-trace.db" : traceDbEnv;
+  await initTrace(traceDbPath);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -240,7 +254,7 @@ export function traceType(phase: TracePhaseInfo): string {
 }
 
 export function logDevtoolsMessage(
-  message: ServerToClientMessage | DevtoolsMessage,
+  message: ServerToClientMessage | { type: string; [key: string]: unknown },
 ) {
   if (!isConsoleTraceEnabled()) return;
   const type = String(message.type ?? "");
@@ -252,21 +266,6 @@ export function logDevtoolsMessage(
   if (!shouldTracePhase(area, subarea)) return;
   // eslint-disable-next-line no-console
   console.log("devtools:", message.type, message);
-}
-
-/**
- * Emit a devtools message. Logs to console if tracing is enabled for the
- * message's area, and broadcasts over the WebSocket if devtools are connected.
- *
- * Accepts both strictly-typed protocol messages and loosely-typed trace
- * messages (which construct the type string dynamically).
- */
-export function emitDevtoolsMessage(
-  message: ServerToClientMessage | DevtoolsMessage,
-) {
-  logDevtoolsMessage(message);
-  if (!isDevtoolsEnabled()) return;
-  broadcastDevtoolsMessage(message as DevtoolsMessage);
 }
 
 /**
@@ -301,12 +300,5 @@ export function trace(
         message +
         "\n",
     );
-  }
-
-  if (isDevtoolsEnabled()) {
-    broadcastDevtoolsMessage({
-      type: traceType(phase),
-      triggerIds: [...triggerIds],
-    });
   }
 }

@@ -1,7 +1,9 @@
 import { isReactive, isRef } from "@vue/reactivity";
+import { insertEdge, insertEffect, insertRef } from "./trace-writer.js";
 import {
-  emitDevtoolsMessage,
-  isDevtoolsEnabled,
+  isDebugEnabled,
+  isTraceEnabled,
+  logDevtoolsMessage,
   TracePhase,
   traceType,
 } from "./trace.js";
@@ -22,6 +24,9 @@ export interface EffectDebugInfo {
   name?: string;
   type?: string;
   createdAt?: SourceLocation;
+  contextId?: number;
+  ownerContextId?: number | null;
+  component?: string;
   lastTriggeredByRefId?: number;
   lastTriggeredAt?: SourceLocation;
 }
@@ -53,7 +58,6 @@ let nonRefTargetIdCounter = 1;
 const nonRefTargetIds = new WeakMap<object, number>();
 const primitiveTargetIds = new Map<unknown, number>();
 
-const STACK_LINE = /\s*at\s+(?:.+?\s+\()?(.+?):(\d+):(\d+)\)?$/;
 const STACK_SKIP = [
   "node:internal",
   "/node_modules/",
@@ -80,50 +84,134 @@ const VUE_REACTIVITY_MARKERS = [
   "\\@vue\\",
 ];
 
-function isVueReactivityLine(line: string) {
-  return VUE_REACTIVITY_MARKERS.some((marker) => line.includes(marker));
+// ─────────────────────────────────────────────────────────────────────────────
+// Fast source location capture using V8 structured CallSite API
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Lazily loaded findSourceMap from node:module
+let findSourceMap:
+  | ((path: string) =>
+      | {
+          findEntry: (
+            line: number,
+            col: number,
+          ) =>
+            | {
+                originalSource: string;
+                originalLine: number;
+                originalColumn: number;
+              }
+            | undefined;
+        }
+      | undefined)
+  | undefined;
+let findSourceMapLoaded = false;
+
+function loadFindSourceMap() {
+  if (findSourceMapLoaded) return;
+  findSourceMapLoaded = true;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mod = require("node:module");
+    if (typeof mod.findSourceMap === "function") {
+      findSourceMap = mod.findSourceMap;
+    }
+  } catch {
+    // not available
+  }
 }
 
-function parseStackLine(
-  line: string,
-  stack?: string,
-): SourceLocation | undefined {
-  const match = STACK_LINE.exec(line);
-  if (!match) return undefined;
-  const [, fileName, lineNumber, columnNumber] = match;
+function isSkipFile(fileName: string): boolean {
+  for (const skip of STACK_SKIP) {
+    if (fileName.includes(skip)) return true;
+  }
+  return false;
+}
+
+function isVueReactivityFile(fileName: string): boolean {
+  for (const marker of VUE_REACTIVITY_MARKERS) {
+    if (fileName.includes(marker)) return true;
+  }
+  return false;
+}
+
+function resolveSourceMap(
+  fileName: string,
+  line: number,
+  col: number,
+): { fileName: string; line: number; col: number } {
+  if (!findSourceMap) return { fileName, line, col };
+  const map = findSourceMap(fileName);
+  if (!map) return { fileName, line, col };
+  const entry = map.findEntry(line - 1, col - 1);
+  if (!entry) return { fileName, line, col };
   return {
-    fileName,
-    lineNumber: Number(lineNumber),
-    columnNumber: Number(columnNumber),
-    stack,
+    fileName: entry.originalSource,
+    line: entry.originalLine + 1,
+    col: entry.originalColumn + 1,
   };
+}
+
+// V8 structured stack capture — avoids string formatting entirely
+const structuredPrepare = (
+  _err: Error,
+  callSites: NodeJS.CallSite[],
+): NodeJS.CallSite[] => callSites;
+
+function captureCallSites(): NodeJS.CallSite[] {
+  const orig = Error.prepareStackTrace;
+  Error.prepareStackTrace = structuredPrepare;
+  const obj: { stack?: NodeJS.CallSite[] } = {};
+  Error.captureStackTrace(obj, captureCallSites);
+  const sites = obj.stack ?? [];
+  Error.prepareStackTrace = orig;
+  return sites;
 }
 
 export function captureSourceLocation(
   skipReactives = true,
 ): SourceLocation | undefined {
-  if (!isDevtoolsEnabled()) return undefined;
-  const stack = new Error().stack;
-  if (!stack) {
-    return { stack: "" };
-  }
-  const lines = stack.split("\n").slice(1);
-  for (const line of lines) {
-    if (STACK_SKIP.some((skip) => line.includes(skip))) continue;
-    const parsed = parseStackLine(line, stack);
-    if (parsed) return parsed;
+  if (!isDebugEnabled()) return undefined;
+  loadFindSourceMap();
+
+  const sites = captureCallSites();
+
+  // First pass: skip internal/framework frames
+  for (const site of sites) {
+    const fn = site.getFileName();
+    if (!fn) continue;
+    if (isSkipFile(fn)) continue;
+    if (skipReactives && isVueReactivityFile(fn)) continue;
+
+    const line = site.getLineNumber() ?? 0;
+    const col = site.getColumnNumber() ?? 0;
+    const resolved = resolveSourceMap(fn, line, col);
+    return {
+      fileName: resolved.fileName,
+      lineNumber: resolved.line,
+      columnNumber: resolved.col,
+    };
   }
 
+  // Second pass without reactive filter
   if (skipReactives) {
-    for (const line of lines) {
-      if (STACK_SKIP.some((skip) => line.includes(skip))) continue;
-      if (isVueReactivityLine(line)) continue;
-      const parsed = parseStackLine(line, stack);
-      if (parsed) return parsed;
+    for (const site of sites) {
+      const fn = site.getFileName();
+      if (!fn) continue;
+      if (isSkipFile(fn)) continue;
+
+      const line = site.getLineNumber() ?? 0;
+      const col = site.getColumnNumber() ?? 0;
+      const resolved = resolveSourceMap(fn, line, col);
+      return {
+        fileName: resolved.fileName,
+        lineNumber: resolved.line,
+        columnNumber: resolved.col,
+      };
     }
   }
 
-  return { stack };
+  return undefined;
 }
 
 function getNonRefTargetId(target: unknown): number {
@@ -192,11 +280,11 @@ function buildEffectTargetInfo(input: {
 }
 
 function emitEffect(message: { type: string; [key: string]: unknown }) {
-  emitDevtoolsMessage(message);
+  logDevtoolsMessage(message);
 }
 
 export function update(input: Partial<EffectDebugInfo> & { id: number }) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const existing = effects.get(input.id);
   if (!existing) return;
   const next: EffectDebugInfo = { ...existing, ...input };
@@ -214,16 +302,32 @@ export function register(input: {
   contextId?: number;
   ownerContextId?: number | null;
 }): number {
-  if (!isDevtoolsEnabled()) return -1;
+  if (!isDebugEnabled()) return -1;
   const id = effectIdCounter++;
   const info: EffectDebugInfo = {
     id,
     name: input.name,
     type: input.type,
     createdAt: input.createdAt ?? captureSourceLocation(),
+    contextId: input.contextId,
+    ownerContextId: input.ownerContextId ?? null,
   };
   effects.set(id, info);
   emitEffect({ type: traceType(TracePhase.effect.effectAdded), effect: info });
+
+  if (isTraceEnabled()) {
+    insertEffect(
+      id,
+      input.name,
+      input.type,
+      input.contextId,
+      input.ownerContextId ?? null,
+      info.createdAt?.fileName,
+      info.createdAt?.lineNumber,
+      info.createdAt?.columnNumber,
+    );
+  }
+
   return id;
 }
 
@@ -234,7 +338,7 @@ export function registerRef(input: {
   createdByEffectId?: number;
   isInfrastructure?: boolean;
 }) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   if (refs.has(input.id)) return;
   const info: RefDebugInfo = {
     id: input.id,
@@ -244,10 +348,21 @@ export function registerRef(input: {
   };
   refs.set(input.id, info);
   emitEffect({ type: traceType(TracePhase.effect.refAdded), ref: info });
+
+  if (isTraceEnabled()) {
+    insertRef(
+      input.id,
+      input.kind,
+      input.createdByEffectId,
+      info.createdAt?.fileName,
+      info.createdAt?.lineNumber,
+      info.createdAt?.columnNumber,
+    );
+  }
 }
 
 export function ensureRef(input: { id: number; kind?: string }) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   if (refs.has(input.id)) return;
   registerRef({ id: input.id, kind: input.kind });
 }
@@ -259,16 +374,27 @@ export function track(input: {
   targetKey?: unknown;
   location?: SourceLocation;
 }) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const edge: EffectEdgeDebugInfo = {
     id: edgeEventIdCounter++,
     type: "track",
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
     targetKey: sanitizeTargetKey(input.targetKey),
-    location: input.location ?? captureSourceLocation(),
+    location: input.location,
   };
   emitEffect({ type: traceType(TracePhase.effect.track), edge });
+
+  if (isTraceEnabled()) {
+    insertEdge(
+      "track",
+      input.effectId,
+      edge.refId,
+      edge.targetId,
+      edge.targetKey,
+      undefined,
+    );
+  }
 }
 
 export function trigger(input: {
@@ -280,21 +406,32 @@ export function trigger(input: {
   kind?: "trigger" | "triggered-by";
   causedBy?: number;
 }) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const edge: EffectEdgeDebugInfo = {
     id: edgeEventIdCounter++,
-    type: input.kind ?? "triggered-by",
+    type: input.kind ?? "trigger",
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
     targetKey: sanitizeTargetKey(input.targetKey),
-    location: input.location ?? captureSourceLocation(),
+    location: input.location,
   };
   emitEffect({ type: traceType(TracePhase.effect.trigger), edge });
+
+  if (isTraceEnabled()) {
+    insertEdge(
+      edge.type,
+      input.effectId,
+      edge.refId,
+      edge.targetId,
+      edge.targetKey,
+      input.causedBy,
+    );
+  }
 
   update({
     id: input.effectId,
     ...(input.refId !== undefined ? { lastTriggeredByRefId: input.refId } : {}),
-    lastTriggeredAt: input.location ?? captureSourceLocation(),
+    lastTriggeredAt: input.location,
   });
 }
 

@@ -23,7 +23,7 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
   const componentStackEntries: ComponentStackEntry[] = (
     diagnostic.componentStack ?? []
   ).map((entry) => ({
-    name: entry.name,
+    name: entry.name ?? "(anonymous)",
     renderNodeId: entry.renderNodeId,
     source:
       entry.source?.fileName ?

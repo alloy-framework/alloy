@@ -13,11 +13,27 @@ import {
   type PrintHook,
   type RenderedTextTree,
 } from "../print-hook.js";
-import { untrack } from "../reactivity.js";
+import { getContext, untrack } from "../reactivity.js";
 import type { ComponentCreator } from "../runtime/component.js";
 import { flushJobsAsync } from "../scheduler.js";
 import { sanitizeRecord } from "./serialize.js";
-import { emitDevtoolsMessage } from "./trace.js";
+import {
+  deleteDirectory,
+  deleteOutputFile,
+  insertDirectory,
+  insertOutputFile,
+  insertRenderError,
+  insertRenderNode,
+  isTraceEnabled,
+  notifyFlushComplete,
+  notifyRenderComplete,
+  notifyRenderReset,
+  deleteRenderNode as traceDeleteRenderNode,
+  updateRenderNodeProps as traceUpdateRenderNodeProps,
+  updateEffectComponentByContext,
+  updateRenderNodeContext,
+} from "./trace-writer.js";
+import { isDebugEnabled, logDevtoolsMessage } from "./trace.js";
 
 /** The kind discriminant for render tree nodes. */
 export type RenderTreeNodeKind = RenderTreeNode["kind"];
@@ -94,11 +110,7 @@ function serializeRenderTreeProps(input: Record<string, unknown> | undefined) {
 
 function emitNodeRemoved(parentId: number | null, id: number) {
   clearRenderTreeChildrenForId(id);
-  emitDevtoolsMessage({
-    type: "render:nodeRemoved",
-    parentId,
-    id,
-  });
+  traceDeleteRenderNode(id);
 
   rerenderActions.delete(id);
   nodeProps.delete(id);
@@ -106,19 +118,13 @@ function emitNodeRemoved(parentId: number | null, id: number) {
 
   const fileInfo = fileNodes.get(id);
   if (fileInfo) {
-    emitDevtoolsMessage({
-      type: "files:fileRemoved",
-      path: fileInfo.path,
-    });
+    deleteOutputFile(fileInfo.path);
     fileNodes.delete(id);
   }
 
   const dirInfo = directoryNodes.get(id);
   if (dirInfo) {
-    emitDevtoolsMessage({
-      type: "files:directoryRemoved",
-      path: dirInfo.path,
-    });
+    deleteDirectory(dirInfo.path);
     directoryNodes.delete(id);
   }
 }
@@ -134,7 +140,13 @@ function getEntryList(parent: RenderedTextTree) {
 
 function getOrCreateNodeId(node: TrackedNode) {
   const existing = nodeIds.get(node);
-  if (existing) return existing;
+  if (existing) {
+    // Restore reverse mapping — emitNodeRemoved deletes idToNode but nodeIds
+    // (WeakMap) survives.  Without this, clearRenderTreeChildrenForId can't
+    // find the node on the next cleanup, leaving orphaned children in the DB.
+    idToNode.set(existing, node);
+    return existing;
+  }
   const id = nextId++;
   nodeIds.set(node, id);
   idToNode.set(id, node);
@@ -142,7 +154,7 @@ function getOrCreateNodeId(node: TrackedNode) {
 }
 
 export function getRenderNodeId(node: RenderedTextTree | PrintHook) {
-  if (!isDevtoolsEnabled()) return undefined;
+  if (!isDebugEnabled()) return undefined;
   return getOrCreateNodeId(node);
 }
 
@@ -152,7 +164,7 @@ function setEntryId(parent: RenderedTextTree, index: number, id: number) {
 }
 
 export function initialize(root: RenderedTextTree) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   ensureDevtoolsHandler();
   nodeIds = new WeakMap();
   idToNode = new Map();
@@ -162,23 +174,27 @@ export function initialize(root: RenderedTextTree) {
   nodeProps = new Map();
   rerenderActions = new Map();
   nextId = 1;
-  emitDevtoolsMessage({ type: "render:reset" });
+  notifyRenderReset();
   const rootId = getOrCreateNodeId(root);
-  emitDevtoolsMessage({
-    type: "render:nodeAdded",
-    parentId: null,
-    node: {
-      id: rootId,
-      kind: "root",
-    },
-  });
+  insertRenderNode(
+    rootId,
+    null,
+    "root",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    null,
+    undefined,
+  );
 }
 
 export function registerRenderNodeActions(
   node: RenderedTextTree | PrintHook,
   actions: RenderNodeActions,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = getOrCreateNodeId(node);
   rerenderActions.set(id, actions);
 }
@@ -186,7 +202,7 @@ export function registerRenderNodeActions(
 export function unregisterRenderNodeActions(
   node: RenderedTextTree | PrintHook,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = nodeIds.get(node);
   if (id !== undefined) {
     rerenderActions.delete(id);
@@ -223,18 +239,21 @@ export function recordTextNode(
   index: number,
   value: string,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = nextId++;
   setEntryId(parent, index, id);
-  emitDevtoolsMessage({
-    type: "render:nodeAdded",
-    parentId: getOrCreateNodeId(parent),
-    node: {
-      id,
-      kind: "text",
-      value,
-    },
-  });
+  insertRenderNode(
+    id,
+    getOrCreateNodeId(parent),
+    "text",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    null,
+    value,
+  );
 }
 
 function recordNodeAdded(
@@ -243,20 +262,24 @@ function recordNodeAdded(
   node: RenderedTextTree | PrintHook,
   info: RenderTreeNodeInfo,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = getOrCreateNodeId(node);
   if (info.propsSerialized !== undefined) {
     nodeProps.set(id, info.propsSerialized);
   }
   setEntryId(parent, index, id);
-  emitDevtoolsMessage({
-    type: "render:nodeAdded",
-    parentId: getOrCreateNodeId(parent),
-    node: {
-      id,
-      ...info,
-    },
-  });
+  insertRenderNode(
+    id,
+    getOrCreateNodeId(parent),
+    info.kind,
+    info.name,
+    info.propsSerialized,
+    info.source?.fileName,
+    info.source?.lineNumber,
+    info.source?.columnNumber,
+    null,
+    undefined,
+  );
 }
 
 function recordSubtreeAdded(
@@ -264,7 +287,7 @@ function recordSubtreeAdded(
   subtree: RenderedTextTree,
   info: RenderTreeNodeInfo = { kind: "fragment" },
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const parentId = getOrCreateNodeId(parentNode);
   // Check if this node was previously rendered (cached) by seeing if it already has an ID
   const existingId = nodeIds.get(subtree);
@@ -275,14 +298,19 @@ function recordSubtreeAdded(
     const list = getEntryList(parentNode);
     list.push(id);
   }
-  emitDevtoolsMessage({
-    type: "render:nodeAdded",
+  insertRenderNode(
+    id,
     parentId,
-    node: {
-      id,
-      ...info,
-    },
-  });
+    info.kind,
+    info.name,
+    info.propsSerialized,
+    info.source?.fileName,
+    info.source?.lineNumber,
+    info.source?.columnNumber,
+    null,
+    undefined,
+  );
+
   // For cached nodes, we need to recursively re-add all their children since
   // clearRenderTreeChildren removed them when the parent re-rendered
   if (isCached) {
@@ -297,8 +325,14 @@ function recordSubtreeAdded(
  * to be explicitly re-added.
  */
 function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const parentId = getOrCreateNodeId(node);
+
+  // Clear any previously-recorded children from the DB before re-adding.
+  // The in-memory tree may have changed since the last cached re-add
+  // (e.g., a memo inside the cached subtree re-ran), so old DB children
+  // that are no longer in the tree would become orphans.
+  clearRenderTreeChildren(node);
 
   // Rebuild the entryIds for this node
   const list = getEntryList(node);
@@ -312,55 +346,69 @@ function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
         const id = nextId++;
         list.push(id);
         idToNode.set(id, child as unknown as RenderedTextTree);
-        emitDevtoolsMessage({
-          type: "render:nodeAdded",
+        insertRenderNode(
+          id,
           parentId,
-          node: {
-            id,
-            kind: "text",
-            value: child,
-          },
-        });
+          "text",
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          null,
+          child,
+        );
       }
     } else if (Array.isArray(child)) {
       // Nested RenderedTextTree - record and recurse
       const id = getOrCreateNodeId(child);
       list.push(id);
-      emitDevtoolsMessage({
-        type: "render:nodeAdded",
+      insertRenderNode(
+        id,
         parentId,
-        node: {
-          id,
-          kind: "fragment",
-        },
-      });
+        "fragment",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        null,
+        undefined,
+      );
       recordCachedSubtreeChildrenRecursively(child);
     } else if (isPrintHook(child)) {
       // PrintHook - record and recurse into subtree
       const id = getOrCreateNodeId(child);
       list.push(id);
-      emitDevtoolsMessage({
-        type: "render:nodeAdded",
+      insertRenderNode(
+        id,
         parentId,
-        node: {
-          id,
-          kind: "printHook",
-          name: (child as { name?: string }).name ?? "hook",
-        },
-      });
+        "printHook",
+        (child as { name?: string }).name ?? "hook",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        null,
+        undefined,
+      );
       if (child.subtree) {
         const subtreeId = getOrCreateNodeId(child.subtree);
         const hookList = getEntryList(child as unknown as RenderedTextTree);
         hookList.length = 0;
         hookList.push(subtreeId);
-        emitDevtoolsMessage({
-          type: "render:nodeAdded",
-          parentId: id,
-          node: {
-            id: subtreeId,
-            kind: "fragment",
-          },
-        });
+        insertRenderNode(
+          subtreeId,
+          id,
+          "fragment",
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          null,
+          undefined,
+        );
         recordCachedSubtreeChildrenRecursively(child.subtree);
       }
     }
@@ -371,20 +419,16 @@ function recordNodePropsUpdated(
   node: RenderedTextTree | PrintHook,
   propsSerialized: string | undefined,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = getOrCreateNodeId(node);
   const previous = nodeProps.get(id);
   if (previous === propsSerialized) return;
   nodeProps.set(id, propsSerialized);
-  emitDevtoolsMessage({
-    type: "render:nodeUpdated",
-    id,
-    propsSerialized,
-  });
+  traceUpdateRenderNodeProps(id, propsSerialized);
 }
 
 function clearRenderTreeChildren(parent: RenderedTextTree) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const list = entryIds.get(parent);
   if (!list || list.length === 0) return;
   const parentId = getOrCreateNodeId(parent);
@@ -403,9 +447,15 @@ function clearRenderTreeChildrenForId(id: number) {
     clearRenderTreeChildren(node);
     return;
   }
+  // For PrintHook nodes: clear the subtree's children, then remove
+  // the subtree node itself (which is a child of this hook).
   const subtree = (node as { subtree?: RenderedTextTree }).subtree;
   if (subtree && Array.isArray(subtree)) {
     clearRenderTreeChildren(subtree);
+    const subtreeId = nodeIds.get(subtree);
+    if (subtreeId !== undefined) {
+      emitNodeRemoved(id, subtreeId);
+    }
   }
 }
 
@@ -414,14 +464,11 @@ function clearRenderTreeChildrenForId(id: number) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function recordDirectoryNode(node: RenderedTextTree, path: string) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = getOrCreateNodeId(node);
   if (directoryNodes.has(id)) return;
   directoryNodes.set(id, { path });
-  emitDevtoolsMessage({
-    type: "files:directoryAdded",
-    path,
-  });
+  insertDirectory(path);
 }
 
 function recordFileNode(
@@ -429,36 +476,25 @@ function recordFileNode(
   path: string,
   filetype: string,
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = getOrCreateNodeId(node);
   if (fileNodes.has(id)) return;
   fileNodes.set(id, { path, filetype });
-  emitDevtoolsMessage({
-    type: "files:fileAdded",
-    path,
-    filetype,
-    renderNodeId: id,
-  });
+  insertOutputFile(path, filetype, id);
 }
 
 function removeFileEntriesForNode(node: RenderedTextTree | PrintHook) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const id = nodeIds.get(node);
   if (id === undefined) return;
   const fileInfo = fileNodes.get(id);
   if (fileInfo) {
-    emitDevtoolsMessage({
-      type: "files:fileRemoved",
-      path: fileInfo.path,
-    });
+    deleteOutputFile(fileInfo.path);
     fileNodes.delete(id);
   }
   const dirInfo = directoryNodes.get(id);
   if (dirInfo) {
-    emitDevtoolsMessage({
-      type: "files:directoryRemoved",
-      path: dirInfo.path,
-    });
+    deleteDirectory(dirInfo.path);
     directoryNodes.delete(id);
   }
 }
@@ -482,7 +518,7 @@ export function beginComponent(
     actions,
   } = options;
 
-  if (!isDevtoolsEnabled()) {
+  if (!isDebugEnabled()) {
     return {
       recordDirectory() {},
       recordFile() {},
@@ -510,6 +546,14 @@ export function beginComponent(
         propsSerialized,
         source,
       });
+    }
+
+    if (isTraceEnabled()) {
+      const ctx = getContext();
+      if (ctx) {
+        updateRenderNodeContext(getOrCreateNodeId(node), ctx.id);
+        updateEffectComponentByContext(ctx.id, componentName);
+      }
     }
     recordNodePropsUpdated(node, propsSerialized);
     registerRenderNodeActions(node, actions);
@@ -610,7 +654,7 @@ export function error(
   error: RenderErrorInfo,
   componentStack: RenderErrorStackEntry[],
 ) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const serializedStack = untrack(() =>
     componentStack.map((entry) => ({
       name: entry.name,
@@ -619,21 +663,29 @@ export function error(
       source: entry.source,
     })),
   );
-  const message = {
+  logDevtoolsMessage({
     type: "render:error" as const,
     id: nextErrorId++,
     name: error.name,
     message: error.message,
     stack: error.stack,
     componentStack: serializedStack,
-  };
-  emitDevtoolsMessage(message);
+  });
+
+  insertRenderError(
+    error.name,
+    error.message,
+    error.stack,
+    JSON.stringify(serializedStack),
+  );
 }
 
 export function complete() {
-  emitDevtoolsMessage({ type: "render:complete" });
+  logDevtoolsMessage({ type: "render:complete" });
+  notifyRenderComplete();
 }
 
 export function flushJobsComplete() {
-  emitDevtoolsMessage({ type: "flushJobs:complete" });
+  logDevtoolsMessage({ type: "flushJobs:complete" });
+  notifyFlushComplete();
 }

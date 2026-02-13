@@ -47,6 +47,7 @@ import {
 } from "./symbols.js";
 import { trace, type TracePhaseInfo } from "./trace.js";
 
+export { isDevtoolsConnected } from "../devtools/devtools-server.js";
 export { captureSourceLocation } from "./effects.js";
 export type {
   EffectDebugInfo,
@@ -62,6 +63,7 @@ export type {
 } from "./render.js";
 export {
   isConsoleTraceEnabled,
+  isDebugEnabled,
   isDevtoolsEnabled,
   trace,
   TracePhase,

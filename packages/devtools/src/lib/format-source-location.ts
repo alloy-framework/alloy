@@ -9,13 +9,15 @@ export interface FormatableSourceLocation {
  * Uses the provided formatPath function to normalize the file path.
  */
 export function formatSourceLocation(
-  location: FormatableSourceLocation | undefined,
+  source: FormatableSourceLocation | undefined,
   formatPath: (path: string) => string,
-): string {
-  if (!location?.fileName) return "";
-  const normalizedFileName = location.fileName.replace(/^file:\/\//, "");
+): string | null {
+  if (!source?.fileName) return null;
+  const normalizedFileName = source.fileName.replace(/^file:\/\//, "");
   const path = formatPath(normalizedFileName);
-  const line = location.lineNumber ?? "?";
-  const column = location.columnNumber ?? "?";
-  return `${path}:${line}:${column}`;
+  const line = source.lineNumber ?? "?";
+  if (source.columnNumber !== undefined) {
+    return `${path}:${line}:${source.columnNumber}`;
+  }
+  return `${path}:${line}`;
 }

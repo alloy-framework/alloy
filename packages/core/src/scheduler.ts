@@ -1,11 +1,21 @@
 import { ReactiveEffect } from "@vue/reactivity";
 import { debug } from "./debug/index.js";
+import {
+  beginTransaction,
+  commitTransaction,
+  insertEffectLifecycle,
+  insertSchedulerFlush,
+  insertSchedulerJob,
+} from "./debug/trace-writer.js";
+import { isTraceEnabled } from "./debug/trace.js";
+import { getEffectDebugId } from "./reactivity.js";
 
 export interface QueueJob {
   run(): void;
 }
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
+
 function isJobActive(job: QueueJob): boolean {
   // ReactiveEffect uses bit 0 (flags & 1) as the ACTIVE flag.
   // Skip effects that were stopped after being queued.
@@ -18,12 +28,19 @@ let resolveWaitForSignal: (() => void) | null = null;
 let jobSignalPromise: Promise<void> | null = null;
 let resolveJobSignal: (() => void) | null = null;
 
-// Maps effect debug IDs to the ref that most recently triggered them
+// Maps effect debug IDs to the ref that most recently triggered them.
+// Intentionally overwrites on repeated triggers for the same effect before flush —
+// we only need the last trigger ref for lifecycle recording, not all intermediate ones.
 const lastTriggerRef = new Map<number, number>();
 
 /**
  * Record which ref triggered an effect re-run.
  * Called from the onTrigger debug hook before the effect is scheduled.
+ *
+ * Note: if an effect is triggered multiple times before flush, only the last
+ * trigger ref is retained. This is intentional — we care about the most
+ * recent cause, and tracking all triggers would add overhead with minimal
+ * diagnostic value since only the last mutation actually caused the re-run.
  */
 export function setLastTriggerRef(effectDebugId: number, refId: number): void {
   lastTriggerRef.set(effectDebugId, refId);
@@ -52,6 +69,18 @@ export function queueJob(job: QueueJob | (() => void), immediate = false) {
     queue.add(job);
   }
 
+  if (isTraceEnabled()) {
+    const effectId = getEffectDebugId(job as object);
+    if (effectId !== undefined) {
+      insertSchedulerJob(
+        "queue",
+        effectId,
+        immediate,
+        immediateQueue.size + queue.size,
+      );
+    }
+  }
+
   if (resolveJobSignal) {
     resolveJobSignal();
     resolveJobSignal = null;
@@ -72,17 +101,67 @@ export function trackPromise(promise: Promise<any>) {
 
 export function flushJobs() {
   // First, run all synchronous jobs
+  if (isTraceEnabled()) beginTransaction();
   let job;
+  let jobCount = 0;
   while ((job = takeJob()) !== null) {
-    if (!isJobActive(job)) continue;
+    if (isTraceEnabled()) {
+      const effectId = getEffectDebugId(job as object);
+      if (effectId !== undefined) {
+        insertSchedulerJob(
+          "run",
+          effectId,
+          false,
+          immediateQueue.size + queue.size,
+        );
+      }
+    }
+    if (!isJobActive(job)) {
+      if (isTraceEnabled()) {
+        const effectId = getEffectDebugId(job as object);
+        if (effectId !== undefined) {
+          insertEffectLifecycle(
+            effectId,
+            "skipped",
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          );
+        }
+      }
+      continue;
+    }
+    if (isTraceEnabled()) {
+      const effectId = getEffectDebugId(job as object);
+      if (effectId !== undefined) {
+        const triggerRefId = lastTriggerRef.get(effectId);
+        lastTriggerRef.delete(effectId);
+        insertEffectLifecycle(
+          effectId,
+          "ran",
+          triggerRefId,
+          undefined,
+          undefined,
+          undefined,
+        );
+      }
+    }
     job.run();
+    jobCount++;
   }
 
   // If there are no pending promises, we're done
   if (pendingPromises.size > 0) {
+    if (isTraceEnabled()) commitTransaction();
     throw new Error(
       "Asynchronous jobs were found but render was called synchronously. Use `renderAsync` instead.",
     );
+  }
+
+  if (isTraceEnabled()) {
+    insertSchedulerFlush(jobCount);
+    commitTransaction();
   }
 
   debug.render.flushJobsComplete();
@@ -115,34 +194,74 @@ export function isWaitingForSignal() {
 
 export async function flushJobsAsync() {
   // Keep running jobs until both the queues are empty and all promises are resolved
-  while (true) {
-    // First, run all synchronous jobs
-    let job;
-    while ((job = takeJob()) !== null) {
-      if (!isJobActive(job)) continue;
-      job.run();
+  if (isTraceEnabled()) beginTransaction();
+  try {
+    while (true) {
+      // First, run all synchronous jobs
+      let job;
+      while ((job = takeJob()) !== null) {
+        if (!isJobActive(job)) {
+          if (isTraceEnabled()) {
+            const effectId = getEffectDebugId(job as object);
+            if (effectId !== undefined) {
+              insertEffectLifecycle(
+                effectId,
+                "skipped",
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              );
+            }
+          }
+          continue;
+        }
+        if (isTraceEnabled()) {
+          const effectId = getEffectDebugId(job as object);
+          if (effectId !== undefined) {
+            const triggerRefId = lastTriggerRef.get(effectId);
+            lastTriggerRef.delete(effectId);
+            insertEffectLifecycle(
+              effectId,
+              "ran",
+              triggerRefId,
+              undefined,
+              undefined,
+              undefined,
+            );
+          }
+        }
+        job.run();
+      }
+
+      // If there are no pending promises, we're done
+      if (pendingPromises.size === 0) {
+        break;
+      }
+
+      // Commit before awaiting so writes are visible, then re-open after
+      if (isTraceEnabled()) commitTransaction();
+
+      if (!jobSignalPromise) {
+        jobSignalPromise = new Promise<void>((resolve) => {
+          resolveJobSignal = resolve;
+        });
+      }
+
+      // Wait for either pending promises to complete or new jobs to arrive
+      await Promise.race([
+        Promise.allSettled(Array.from(pendingPromises)),
+        jobSignalPromise,
+      ]);
+
+      // Clear the job signal after each iteration so we create a new one next time
+      jobSignalPromise = null;
+      resolveJobSignal = null;
+
+      if (isTraceEnabled()) beginTransaction();
     }
-
-    // If there are no pending promises, we're done
-    if (pendingPromises.size === 0) {
-      break;
-    }
-
-    if (!jobSignalPromise) {
-      jobSignalPromise = new Promise<void>((resolve) => {
-        resolveJobSignal = resolve;
-      });
-    }
-
-    // Wait for either pending promises to complete or new jobs to arrive
-    await Promise.race([
-      Promise.allSettled(Array.from(pendingPromises)),
-      jobSignalPromise,
-    ]);
-
-    // Clear the job signal after each iteration so we create a new one next time
-    jobSignalPromise = null;
-    resolveJobSignal = null;
+  } finally {
+    if (isTraceEnabled()) commitTransaction();
   }
 
   debug.render.flushJobsComplete();

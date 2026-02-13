@@ -7,6 +7,7 @@ export interface StatusBarProps {
   status: DebugStatus;
   versionLabel?: string;
   cwd?: string;
+  sourceMapEnabled: boolean;
 }
 
 const statusLabels: Record<DebugStatus, string> = {
@@ -16,7 +17,12 @@ const statusLabels: Record<DebugStatus, string> = {
   disconnected: "Disconnected",
 };
 
-export function StatusBar({ status, versionLabel, cwd }: StatusBarProps) {
+export function StatusBar({
+  status,
+  versionLabel,
+  cwd,
+  sourceMapEnabled,
+}: StatusBarProps) {
   return (
     <div className="h-6 bg-muted/50 border-t border-border flex items-center justify-between px-3 text-xs text-muted-foreground">
       <div className="flex items-center gap-4">
@@ -33,6 +39,14 @@ export function StatusBar({ status, versionLabel, cwd }: StatusBarProps) {
           />
           <span>{statusLabels[status]}</span>
         </div>
+        {status === "connected" && !sourceMapEnabled && (
+          <span
+            className="text-amber-500"
+            title="Pass the --enable-source-maps option to node to enable source maps."
+          >
+            source maps disabled
+          </span>
+        )}
       </div>
       <div className="flex items-center gap-4">
         {cwd ?

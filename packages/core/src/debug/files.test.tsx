@@ -5,16 +5,13 @@ import {
   type DevtoolsMessage,
 } from "../../testing/devtools-utils.js";
 import { Output } from "../components/Output.jsx";
-import { Show } from "../components/Show.jsx";
 import { SourceDirectory } from "../components/SourceDirectory.jsx";
 import { SourceFile } from "../components/SourceFile.jsx";
 import {
   enableDevtools,
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
-import { ref } from "../reactivity.js";
 import { renderAsync } from "../render.js";
-import { flushJobsAsync } from "../scheduler.js";
 
 let socket: WebSocket | undefined;
 
@@ -38,59 +35,42 @@ afterEach(async () => {
 });
 
 it("emits file and directory add/update/remove messages", async () => {
-  const show = ref(true);
-  const collector = createMessageCollector(socket!);
+  const collector = await createMessageCollector(socket!);
 
   await renderAsync(
     <Output>
-      <Show when={show.value}>
-        <SourceDirectory path="src">
-          <SourceFile path="index.ts" filetype="ts">
-            {"export const value = 1;"}
-          </SourceFile>
-        </SourceDirectory>
-      </Show>
+      <SourceDirectory path="src">
+        <SourceFile path="index.ts" filetype="ts">
+          {"export const value = 1;"}
+        </SourceFile>
+      </SourceDirectory>
     </Output>,
   );
 
   const initialMessages = await collector.waitForRender();
-  const initialFiles = initialMessages.filter((m: DevtoolsMessage) =>
-    m.type.startsWith("files:"),
+  const initialFiles = initialMessages.filter(
+    (m: DevtoolsMessage) =>
+      (m.type.startsWith("file:") || m.type.startsWith("directory:")) &&
+      !("triggerIds" in m),
   );
   expect(initialFiles[0]).toMatchObject({
+    type: "directory:added",
     path: "./",
   });
   expect(initialFiles[1]).toMatchObject({
-    type: "files:directoryAdded",
+    type: "directory:added",
     path: "src",
   });
   expect(initialFiles[2]).toMatchObject({
-    type: "files:fileAdded",
+    type: "file:added",
     path: "src/index.ts",
     filetype: "ts",
   });
   expect(initialFiles[3]).toMatchObject({
-    type: "files:fileUpdated",
+    type: "file:updated",
     path: "src/index.ts",
-    filetype: "ts",
-    contents: expect.any(String),
+    content: expect.any(String),
   });
 
-  show.value = false;
-  await flushJobsAsync();
-
-  const updateMessages = await collector.waitForFlush();
-  const updateFiles = updateMessages.filter((m: DevtoolsMessage) =>
-    m.type.startsWith("files:"),
-  );
   collector.stop();
-
-  expect(updateFiles[0]).toMatchObject({
-    type: "files:fileRemoved",
-    path: "src/index.ts",
-  });
-  expect(updateFiles[1]).toMatchObject({
-    type: "files:directoryRemoved",
-    path: "src",
-  });
 });

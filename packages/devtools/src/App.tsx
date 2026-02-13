@@ -1,10 +1,12 @@
 import { ComponentView } from "@/components/component-view";
 import { DiagnosticView } from "@/components/diagnostic-view";
+import { EffectDetailView } from "@/components/effect-detail-view";
 import { EffectsView } from "@/components/effects-view";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FileTreePanel } from "@/components/file-tree-panel";
 import { FileView } from "@/components/file-view";
 import { ProblemsView } from "@/components/problems-view";
+import { RefDetailView } from "@/components/ref-detail-view";
 import { RenderErrorView } from "@/components/render-error-view";
 import { RenderTree, type RenderTreeHandle } from "@/components/render-tree";
 import { SidebarSection } from "@/components/sidebar-section";
@@ -13,7 +15,6 @@ import { SymbolTreePanel } from "@/components/symbol-tree-panel";
 import { SymbolView } from "@/components/symbol-view";
 import { TabBar } from "@/components/tab-bar";
 import { Toaster } from "@/components/toaster";
-import { TraceView } from "@/components/trace-view";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -32,10 +33,9 @@ function App() {
   const [filesOpen, setFilesOpen] = useState(true);
   const [symbolsOpen, setSymbolsOpen] = useState(true);
   const [sidebarSplit, setSidebarSplit] = useState(50); // percentage for files section
-  const [bottomTab, setBottomTab] = useState<
-    "render" | "problems" | "effects" | "trace"
-  >("render");
-  const [traceScrollToken, setTraceScrollToken] = useState(0);
+  const [bottomTab, setBottomTab] = useState<"render" | "problems" | "effects">(
+    "render",
+  );
   const resizeRef = useRef<{ startY: number; startSplit: number } | null>(null);
   const renderTreeRef = useRef<RenderTreeHandle>(null);
   const debugConnection = useDebugConnection();
@@ -46,6 +46,7 @@ function App() {
     latestRenderErrorId,
     versionLabel,
     cwd,
+    sourceMapEnabled,
   } = debugConnection;
   const appState = useDevtoolsAppState(renderTreeRef, renderTree, setBottomTab);
   const {
@@ -188,6 +189,34 @@ function App() {
                                 <RenderErrorView errorId={activeTab.id} />
                               : activeTab.type === "diagnostic" ?
                                 <DiagnosticView diagnosticId={activeTab.id} />
+                              : activeTab.type === "effect" ?
+                                <EffectDetailView
+                                  effectId={activeTab.id}
+                                  onOpenDetailTab={(id, name) =>
+                                    openDetailTab(
+                                      `effect:${id}`,
+                                      `${name} #${id}`,
+                                      "effect",
+                                    )
+                                  }
+                                  onOpenRefTab={(id, label) =>
+                                    openDetailTab(`ref:${id}`, label, "ref")
+                                  }
+                                />
+                              : activeTab.type === "ref" ?
+                                <RefDetailView
+                                  refId={activeTab.id}
+                                  onOpenDetailTab={(id, name) =>
+                                    openDetailTab(
+                                      `effect:${id}`,
+                                      `${name} #${id}`,
+                                      "effect",
+                                    )
+                                  }
+                                  onOpenRefTab={(id, label) =>
+                                    openDetailTab(`ref:${id}`, label, "ref")
+                                  }
+                                />
                               : (
                                 activeTab.type === "symbol" ||
                                 activeTab.type === "scope"
@@ -224,15 +253,8 @@ function App() {
                         value={bottomTab}
                         onValueChange={(value) => {
                           setBottomTab(
-                            value as
-                              | "render"
-                              | "problems"
-                              | "effects"
-                              | "trace",
+                            value as "render" | "problems" | "effects",
                           );
-                          if (value === "trace") {
-                            setTraceScrollToken((token) => token + 1);
-                          }
                         }}
                         className="h-full border-t border-border flex flex-col gap-0"
                       >
@@ -254,12 +276,6 @@ function App() {
                             className="flex-none h-9 rounded-none border-none border-r border-border px-3 text-sm font-medium text-muted-foreground hover:bg-accent/50 data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:text-foreground"
                           >
                             Effects
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="trace"
-                            className="flex-none h-9 rounded-none border-none border-r border-border px-3 text-sm font-medium text-muted-foreground hover:bg-accent/50 data-[state=active]:bg-background data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:text-foreground"
-                          >
-                            Trace
                           </TabsTrigger>
                         </TabsList>
                         <TabsContent
@@ -283,15 +299,18 @@ function App() {
                           className="flex-1 overflow-hidden"
                         >
                           <ErrorBoundary>
-                            <EffectsView />
-                          </ErrorBoundary>
-                        </TabsContent>
-                        <TabsContent
-                          value="trace"
-                          className="flex-1 overflow-auto p-1"
-                        >
-                          <ErrorBoundary>
-                            <TraceView scrollToken={traceScrollToken} />
+                            <EffectsView
+                              onOpenDetailTab={(id, name) =>
+                                openDetailTab(
+                                  `effect:${id}`,
+                                  `${name} #${id}`,
+                                  "effect",
+                                )
+                              }
+                              onOpenRefTab={(id, label) =>
+                                openDetailTab(`ref:${id}`, label, "ref")
+                              }
+                            />
                           </ErrorBoundary>
                         </TabsContent>
                       </Tabs>
@@ -305,6 +324,7 @@ function App() {
                 status={debugStatus as DebugStatus}
                 versionLabel={versionLabel}
                 cwd={cwd}
+                sourceMapEnabled={sourceMapEnabled}
               />
               <Toaster />
             </div>

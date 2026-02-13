@@ -95,6 +95,9 @@ export function TabBar() {
                 key={tab.id}
                 data-tab-id={tab.id}
                 onClick={() => handleTabActivate(tab.id)}
+                onAuxClick={(e) => {
+                  if (e.button === 1) handleCloseTab(tab.id, e);
+                }}
                 className={cn(
                   "flex items-center gap-2 px-3 h-full text-sm border-r border-border hover:bg-accent/50 group",
                   activeTabId === tab.id ?
@@ -108,9 +111,9 @@ export function TabBar() {
                 <span className="truncate max-w-32">{tab.label}</span>
                 <span
                   onClick={(e) => handleCloseTab(tab.id, e)}
-                  className="opacity-0 group-hover:opacity-100 hover:bg-muted rounded p-0.5"
+                  className="ml-1 rounded p-0.5 hover:bg-muted-foreground/20"
                 >
-                  <X className="size-3" />
+                  <X className="size-3" strokeWidth={2} />
                 </span>
               </button>
             ))

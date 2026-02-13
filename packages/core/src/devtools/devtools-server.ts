@@ -5,6 +5,15 @@
  * messages, and reset. Transport details (HTTP/WebSocket) are delegated
  * to devtools-transport.ts.
  */
+import type { ChangeChannel, ChangeEvent } from "../debug/trace-writer.js";
+import {
+  ALL_CHANNELS,
+  closeTrace,
+  initTrace,
+  isTraceEnabled,
+  queryChannel,
+  setChangeListener,
+} from "../debug/trace-writer.js";
 import {
   createTransport,
   getAlloyVersion,
@@ -14,11 +23,6 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 // Public types
 // ─────────────────────────────────────────────────────────────────────────────
-
-export interface DevtoolsMessage {
-  type: string;
-  [key: string]: unknown;
-}
 
 export interface DevtoolsIncomingMessage {
   type: string;
@@ -47,6 +51,95 @@ let devtoolsInitialized = false;
 let loggedDevtoolsLinks = false;
 let waitingForConnection = false;
 let configuredPort: number | undefined;
+let tempDbPath: string | null = null;
+let subscribedPromise: Promise<void> | null = null;
+let resolveSubscribed: (() => void) | null = null;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Per-client subscription state
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ClientState {
+  subscriptions: Set<ChangeChannel>;
+}
+
+const clientStates = new Map<any, ClientState>();
+
+function eventToMessageType(event: ChangeEvent): string {
+  const map: Record<string, Record<string, string>> = {
+    render: {
+      added: "render:node_added",
+      updated: "render:node_updated",
+      removed: "render:node_removed",
+      reset: "render:reset",
+    },
+    effects: { added: "effect:added", updated: "effect:updated" },
+    refs: { added: "ref:added" },
+    edges: { added: `edge:${(event.data as any).edge_type ?? "track"}` },
+    symbols: {
+      added: "symbol:added",
+      updated: "symbol:updated",
+      removed: "symbol:removed",
+    },
+    scopes: {
+      added: "scope:added",
+      updated: "scope:updated",
+      removed: "scope:removed",
+    },
+    files: {
+      added: "file:added",
+      updated: "file:updated",
+      removed: "file:removed",
+    },
+    directories: { added: "directory:added", removed: "directory:removed" },
+    diagnostics: { added: "diagnostics:report" },
+    errors: { added: "render:error" },
+    lifecycle: { added: "effect:lifecycle" },
+    scheduler: { added: "scheduler:job" },
+  };
+  return (
+    map[event.channel]?.[event.action] ?? `${event.channel}:${event.action}`
+  );
+}
+
+function channelToInitialMessageType(
+  channel: ChangeChannel,
+  row: Record<string, unknown>,
+): string {
+  const map: Record<string, string> = {
+    render: "render:node_added",
+    effects: "effect:added",
+    refs: "ref:added",
+    symbols: "symbol:added",
+    scopes: "scope:added",
+    files: "file:added",
+    directories: "directory:added",
+    diagnostics: "diagnostics:report",
+    errors: "render:error",
+    lifecycle: "effect:lifecycle",
+    scheduler: "scheduler:job",
+  };
+  if (channel === "edges") {
+    return `edge:${(row.type as string) ?? "track"}`;
+  }
+  return map[channel] ?? `${channel}:added`;
+}
+
+function sendInitialState(socket: any, channels: ChangeChannel[]): void {
+  if (!isTraceEnabled()) return;
+  for (const channel of channels) {
+    const rows = queryChannel(channel);
+    for (const row of rows) {
+      const msgType = channelToInitialMessageType(channel, row);
+      // Remap SQLite column names that collide with the message `type` field
+      if (channel === "effects" && row.type !== undefined) {
+        row.effect_type = row.type;
+      }
+      const msg = { ...row, type: msgType };
+      socket.send(JSON.stringify(msg));
+    }
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Environment helpers
@@ -99,6 +192,38 @@ export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Temp SQLite for devtools
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function ensureSqliteForDevtools(): Promise<void> {
+  if (isTraceEnabled()) return;
+  const os = await import("node:os");
+  const path = await import("node:path");
+  tempDbPath = path.join(os.tmpdir(), `alloy-debug-${process.pid}.db`);
+  await initTrace(tempDbPath);
+  process.on("exit", () => {
+    if (!tempDbPath) return;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require("node:fs");
+      fs.unlinkSync(tempDbPath);
+      try {
+        fs.unlinkSync(tempDbPath + "-wal");
+      } catch {
+        /* ignore */
+      }
+      try {
+        fs.unlinkSync(tempDbPath + "-shm");
+      } catch {
+        /* ignore */
+      }
+    } catch {
+      /* ignore cleanup failures */
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Server lifecycle
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -108,6 +233,13 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
     transportPromise = createTransport({
       port: configuredPort ?? resolveDebugPort(),
       onConnection(socket) {
+        // Start with no subscriptions — client must subscribe explicitly.
+        clientStates.set(socket, { subscriptions: new Set() });
+        if (!subscribedPromise) {
+          subscribedPromise = new Promise<void>((resolve) => {
+            resolveSubscribed = resolve;
+          });
+        }
         if (waitingForConnection) {
           waitingForConnection = false;
           process.stdout.write(" Connected!\n");
@@ -117,21 +249,75 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
             type: "debugger:info",
             version: getAlloyVersion(),
             cwd: getCwd(),
+            sourceMapEnabled: process.execArgv.includes("--enable-source-maps"),
           }),
         );
       },
-      onMessage(raw) {
+      onMessage(raw, socket) {
         const message = raw as DevtoolsIncomingMessage;
         if (!message || !message.type) return;
+
+        if (message.type === "subscribe") {
+          const channels = (message as any).channels as string[];
+          const state = clientStates.get(socket);
+          if (state && channels && Array.isArray(channels)) {
+            const validChannels = channels.filter((ch) =>
+              ALL_CHANNELS.includes(ch as ChangeChannel),
+            ) as ChangeChannel[];
+            state.subscriptions = new Set(validChannels);
+            sendInitialState(socket, validChannels);
+          }
+          resolveSubscribed?.();
+          return;
+        }
+        if (message.type === "unsubscribe") {
+          const channels = (message as any).channels as string[];
+          const state = clientStates.get(socket);
+          if (state && channels) {
+            for (const ch of channels)
+              state.subscriptions.delete(ch as ChangeChannel);
+          }
+          return;
+        }
+
         for (const handler of messageHandlers) {
           handler(message);
         }
       },
-      onDisconnect() {
-        // Currently no-op; transport handles client set management
+      onDisconnect(socket) {
+        clientStates.delete(socket);
       },
     }).then((state) => {
       transportState = state;
+
+      // Wire up the change notification bus to forward events to subscribed clients
+      setChangeListener((event: ChangeEvent) => {
+        if (!transportState) return;
+
+        // Lifecycle signals are broadcast to ALL connected clients
+        const signalType = (event.data as any)?._signal as string | undefined;
+        if (signalType) {
+          const payload = JSON.stringify({ type: signalType });
+          for (const client of transportState.clients) {
+            if (client.readyState === client.OPEN) {
+              client.send(payload);
+            }
+          }
+          return;
+        }
+
+        const msgType = eventToMessageType(event);
+        const message = { ...event.data, type: msgType };
+        const payload = JSON.stringify(message);
+
+        for (const [client, clientState] of clientStates) {
+          if (client.readyState !== client.OPEN) continue;
+          if (clientState.subscriptions.has(event.channel)) {
+            client.send(payload);
+          }
+        }
+      });
+
       if (!loggedDevtoolsLinks) {
         loggedDevtoolsLinks = true;
         // eslint-disable-next-line no-console
@@ -173,8 +359,14 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
 export async function waitForDevtoolsConnection(): Promise<void> {
   devtoolsExplicitlyEnabled = true;
   const server = await ensureServer();
-  if (server.connected) return;
-  await server.ready;
+  if (!server.connected) {
+    await server.ready;
+  }
+  // Wait for the client to send its initial subscribe message so that
+  // messages emitted during a synchronous render are not dropped.
+  if (subscribedPromise) {
+    await subscribedPromise;
+  }
 }
 
 /**
@@ -191,6 +383,7 @@ export async function enableDevtools(
   if (options?.port !== undefined) {
     configuredPort = options.port;
   }
+  await ensureSqliteForDevtools();
   const server = await ensureServer();
   return { port: server.port, connected: server.connected };
 }
@@ -203,6 +396,7 @@ export async function initDevtoolsIfEnabled(): Promise<void> {
   if (devtoolsInitialized) return;
   if (!isDevtoolsEnabled()) return;
   devtoolsInitialized = true;
+  await ensureSqliteForDevtools();
   await waitForDevtoolsConnection();
 }
 
@@ -232,28 +426,6 @@ export async function enableDevtoolsAndConnect(
 // Messaging
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Broadcast a message to all connected devtools clients. */
-export function broadcastDevtoolsMessage(message: DevtoolsMessage) {
-  if (!isDevtoolsEnabled()) return;
-  if (!transportState) return;
-  if (transportState.clients.size === 0) return;
-
-  try {
-    const payload = JSON.stringify(message);
-    for (const client of transportState.clients) {
-      if (client.readyState === client.OPEN) {
-        client.send(payload);
-      }
-    }
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `Failed to send devtools message (type: ${message.type}):`,
-      err,
-    );
-  }
-}
-
 /** Register a handler for incoming devtools messages. Returns an unsubscribe function. */
 export function registerDevtoolsMessageHandler(
   handler: (message: DevtoolsIncomingMessage) => void,
@@ -278,6 +450,8 @@ export function assertDevtoolsConnectedForSyncRender() {
 
 /** Reset all devtools state. For use in tests only. */
 export async function resetDevtoolsServerForTests() {
+  setChangeListener(null);
+  clientStates.clear();
   if (transportState) {
     await transportState.close();
   }
@@ -287,4 +461,8 @@ export async function resetDevtoolsServerForTests() {
   devtoolsInitialized = false;
   configuredPort = undefined;
   loggedDevtoolsLinks = false;
+  subscribedPromise = null;
+  resolveSubscribed = null;
+  // Close the trace DB so each test starts fresh
+  closeTrace();
 }

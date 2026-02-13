@@ -3,12 +3,11 @@ import type {
   RenderNodeRemovedMessage,
   RenderNodeUpdatedMessage,
   RenderResetMessage,
-  RenderTreeNode,
   SourceLocation,
 } from "@alloy-js/core/devtools";
 import * as devalue from "devalue";
 
-export type RenderTreeNodeKind = RenderTreeNode["kind"];
+export type RenderTreeNodeKind = string;
 
 export type RenderTreeMessage =
   | RenderNodeAddedMessage
@@ -24,6 +23,7 @@ export interface RenderTreeNodeState {
   kind: RenderTreeNodeKind;
   children: string[];
   source?: SourceLocation;
+  parentId?: string | null;
 }
 
 export interface RenderTreeState {
@@ -95,41 +95,45 @@ export function applyRenderTreeMessage(
     return;
   }
 
-  if (message.type === "render:nodeAdded") {
-    const id = String(message.node.id);
+  if (message.type === "render:node_added") {
+    const id = String(message.id);
     const rawParentId =
-      message.parentId === null ? null : String(message.parentId);
+      message.parent_id === null ? null : String(message.parent_id);
     const parentId =
       rawParentId && state.hiddenParents.has(rawParentId) ?
         (state.hiddenParents.get(rawParentId) ?? null)
       : rawParentId;
-    const kind = message.node.kind;
+    const kind = message.kind;
     if (kind === "memo") {
       state.hiddenParents.set(id, parentId ?? null);
       return;
     }
     let props: Record<string, unknown> | undefined;
-    if (message.node.propsSerialized) {
+    if (message.props) {
       try {
-        props = devalue.parse(message.node.propsSerialized) as Record<
-          string,
-          unknown
-        >;
+        props = devalue.parse(message.props) as Record<string, unknown>;
       } catch {
         props = undefined;
       }
     }
+    const source: SourceLocation | undefined =
+      message.source_file ?
+        {
+          fileName: message.source_file,
+          lineNumber: message.source_line,
+          columnNumber: message.source_col,
+        }
+      : undefined;
     const node: RenderTreeNodeState = {
       id,
       kind,
       name:
-        kind === "text" ? "Text" : (
-          (message.node.name ?? defaultNameForKind(kind))
-        ),
+        kind === "text" ? "Text" : (message.name ?? defaultNameForKind(kind)),
       props,
-      text: message.node.value,
+      text: message.value ?? undefined,
       children: [],
-      source: message.node.source,
+      source,
+      parentId,
     };
     state.nodes.set(id, node);
 
@@ -139,8 +143,8 @@ export function applyRenderTreeMessage(
         console.warn("Unparented render tree node received:", {
           id,
           kind,
-          name: message.node.name,
-          value: message.node.value,
+          name: message.name,
+          value: message.value,
         });
       }
       state.roots.push(id);
@@ -153,8 +157,8 @@ export function applyRenderTreeMessage(
       console.warn("Render tree node parent missing:", {
         id,
         kind,
-        name: message.node.name,
-        value: message.node.value,
+        name: message.name,
+        value: message.value,
         parentId,
       });
       state.roots.push(id);
@@ -166,19 +170,16 @@ export function applyRenderTreeMessage(
     return;
   }
 
-  if (message.type === "render:nodeRemoved") {
+  if (message.type === "render:node_removed") {
     const id = String(message.id);
-    const rawParentId =
-      message.parentId === null ? null : String(message.parentId);
-    const parentId =
-      rawParentId && state.hiddenParents.has(rawParentId) ?
-        (state.hiddenParents.get(rawParentId) ?? null)
-      : rawParentId;
 
     if (state.hiddenParents.has(id)) {
       state.hiddenParents.delete(id);
       return;
     }
+
+    const node = state.nodes.get(id);
+    const parentId = node?.parentId ?? null;
 
     if (parentId === null) {
       state.roots = state.roots.filter((rootId) => rootId !== id);
@@ -196,16 +197,13 @@ export function applyRenderTreeMessage(
     removeNodeRecursive(state, id);
   }
 
-  if (message.type === "render:nodeUpdated") {
+  if (message.type === "render:node_updated") {
     const id = String(message.id);
     const node = state.nodes.get(id);
     if (!node) return;
-    if (message.propsSerialized !== undefined) {
+    if (message.props !== undefined) {
       try {
-        node.props = devalue.parse(message.propsSerialized) as Record<
-          string,
-          unknown
-        >;
+        node.props = devalue.parse(message.props) as Record<string, unknown>;
       } catch {
         node.props = undefined;
       }

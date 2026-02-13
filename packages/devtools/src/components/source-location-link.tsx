@@ -21,7 +21,7 @@ export function SourceLocationLink({
 
   const sourceLabel =
     source.fileName ?
-      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}:${source.columnNumber ?? "?"}`
+      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}`
     : "";
 
   const handleClick = async (event: React.MouseEvent) => {

@@ -14,14 +14,10 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
-import {
-  captureSourceLocation,
-  debug,
-  isDevtoolsEnabled,
-} from "./debug/index.js";
+import { captureSourceLocation, debug, isDebugEnabled } from "./debug/index.js";
 import { RenderedTextTree } from "./render.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
-import { scheduler } from "./scheduler.js";
+import { scheduler, setLastTriggerRef } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 if ((globalThis as any).__ALLOY__) {
@@ -292,8 +288,21 @@ export function effect<T>(
       }
     };
     effectOpts.onTrigger = (event: any) => {
+      if (!("target" in event)) {
+        // Vue Dep.notify() chain propagation — no actual reactive target.
+        // Skip recording: these are computed→subscriber notifications without
+        // a meaningful target reference.
+        return;
+      }
       const targetKey =
         typeof event.key === "symbol" ? event.key.toString() : event.key;
+      // findCurrentEffectId() works because onTrigger fires synchronously
+      // during the mutation, so globalContext still points to the producer.
+      const producerEffectId = findCurrentEffectId();
+      const causedBy =
+        producerEffectId !== undefined && producerEffectId !== effectId ?
+          producerEffectId
+        : undefined;
       if (isRef(event.target)) {
         const id = refId(event.target);
         debug.effect.ensureRef({ id, kind: "ref" });
@@ -302,14 +311,15 @@ export function effect<T>(
           target: event.target,
           refId: id,
           targetKey,
-          kind: "triggered-by",
+          causedBy,
         });
+        setLastTriggerRef(effectId, id);
       } else {
         debug.effect.trigger({
           effectId,
           target: event.target,
           targetKey,
-          kind: "triggered-by",
+          causedBy,
         });
       }
     };
@@ -417,7 +427,7 @@ export function shallowReactive<T extends object>(
   target: T,
 ): ShallowReactive<T> {
   const result = vueShallowReactive(target);
-  if (isDevtoolsEnabled()) {
+  if (isDebugEnabled()) {
     // Store by raw target — Vue's onTrack/onTrigger events pass the raw object, not the proxy.
     reactiveCreationLocations.set(target, captureSourceLocation());
   }

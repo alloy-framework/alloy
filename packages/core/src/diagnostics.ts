@@ -1,5 +1,5 @@
 import { getRenderNodeId } from "./debug/index.js";
-import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
+import { insertDiagnostic } from "./debug/trace-writer.js";
 import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
 import type { SourceLocation } from "./runtime/component.js";
@@ -77,10 +77,19 @@ export class DiagnosticsCollector {
   }
 
   private broadcast() {
-    broadcastDevtoolsMessage({
-      type: "diagnostics:report",
-      diagnostics: this.getDiagnostics(),
-    });
+    const diagnostics = this.getDiagnostics();
+    for (const diagnostic of diagnostics) {
+      insertDiagnostic(
+        diagnostic.message,
+        diagnostic.severity,
+        diagnostic.source?.fileName,
+        diagnostic.source?.lineNumber,
+        diagnostic.source?.columnNumber,
+        diagnostic.componentStack ?
+          JSON.stringify(diagnostic.componentStack)
+        : undefined,
+      );
+    }
   }
 }
 

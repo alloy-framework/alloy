@@ -257,6 +257,50 @@ export function wrappedByText(list, startIndex) {
   return false;
 }
 
+const MAX_EXPR_NAME_LEN = 50;
+
+/**
+ * Generate a short human-readable description from an AST expression node,
+ * used to name memoized expressions for debug tracing.
+ */
+export function describeExpression(node, depth = 0) {
+  if (depth > 4) return "…";
+  if (t.isIdentifier(node)) return node.name;
+  if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
+    const obj = describeExpression(node.object, depth + 1);
+    if (!obj) return null;
+    if (node.computed) {
+      const prop = t.isIdentifier(node.property) ? node.property.name :
+        t.isStringLiteral(node.property) ? node.property.value : "…";
+      return truncName(`${obj}[${prop}]`);
+    }
+    return truncName(`${obj}.${node.property.name || "?"}`);
+  }
+  if (t.isCallExpression(node) || t.isOptionalCallExpression(node)) {
+    const callee = describeExpression(node.callee, depth + 1);
+    return callee ? truncName(`${callee}(…)`) : null;
+  }
+  if (t.isConditionalExpression(node)) {
+    const test = describeExpression(node.test, depth + 1);
+    return test ? truncName(`${test} ? …`) : null;
+  }
+  if (t.isLogicalExpression(node)) {
+    const left = describeExpression(node.left, depth + 1);
+    return left ? truncName(`${left} ${node.operator} …`) : null;
+  }
+  if (t.isTemplateLiteral(node)) return "template";
+  if (t.isArrowFunctionExpression(node) || t.isFunctionExpression(node)) {
+    // Try to describe the body
+    const body = t.isBlockStatement(node.body) ? null : describeExpression(node.body, depth + 1);
+    return body ? truncName(`() => ${body}`) : null;
+  }
+  return null;
+}
+
+function truncName(s) {
+  return s && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
+}
+
 export function transformCondition(path, inline, deep) {
   const config = getConfig(path);
   const expr = path.node;

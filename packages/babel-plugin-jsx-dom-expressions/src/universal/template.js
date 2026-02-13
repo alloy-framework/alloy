@@ -30,10 +30,12 @@ export function createTemplate(path, result, wrap) {
   }
   if (wrap && result.dynamic && config.memoWrapper) {
     const args = [result.exprs[0]];
-    const name = describeExpression(
-      t.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
-    );
-    if (config.addSourceInfo && name) args.push(t.booleanLiteral(false), t.stringLiteral(name));
+    if (config.addSourceInfo) {
+      const name = describeExpression(
+        t.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
+      );
+      if (name) args.push(t.booleanLiteral(false), t.stringLiteral(name));
+    }
     return t.callExpression(registerImportMethod(path, config.memoWrapper), args);
   }
   return result.exprs[0];

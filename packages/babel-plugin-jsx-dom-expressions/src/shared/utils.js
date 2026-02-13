@@ -271,7 +271,8 @@ export function describeExpression(node, depth = 0) {
     if (!obj) return null;
     if (node.computed) {
       const prop = t.isIdentifier(node.property) ? node.property.name :
-        t.isStringLiteral(node.property) ? node.property.value : "…";
+        t.isStringLiteral(node.property) ? node.property.value :
+        t.isNumericLiteral(node.property) ? String(node.property.value) : "…";
       return truncName(`${obj}[${prop}]`);
     }
     return truncName(`${obj}.${node.property.name || "?"}`);
@@ -298,7 +299,7 @@ export function describeExpression(node, depth = 0) {
 }
 
 function truncName(s) {
-  return s && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
+  return s != null && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
 }
 
 export function transformCondition(path, inline, deep) {

@@ -313,7 +313,8 @@ function describeExpression(node, depth = 0) {
     if (!obj) return null;
     if (node.computed) {
       const prop = t__namespace.isIdentifier(node.property) ? node.property.name :
-        t__namespace.isStringLiteral(node.property) ? node.property.value : "…";
+        t__namespace.isStringLiteral(node.property) ? node.property.value :
+        t__namespace.isNumericLiteral(node.property) ? String(node.property.value) : "…";
       return truncName(`${obj}[${prop}]`);
     }
     return truncName(`${obj}.${node.property.name || "?"}`);
@@ -340,7 +341,7 @@ function describeExpression(node, depth = 0) {
 }
 
 function truncName(s) {
-  return s && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
+  return s != null && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
 }
 
 function transformCondition(path, inline, deep) {
@@ -910,10 +911,12 @@ function createTemplate(path, result, wrap) {
   }
   if (wrap && result.dynamic && config.memoWrapper) {
     const args = [result.exprs[0]];
-    const name = describeExpression(
-      t__namespace.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
-    );
-    if (config.addSourceInfo && name) args.push(t__namespace.booleanLiteral(false), t__namespace.stringLiteral(name));
+    if (config.addSourceInfo) {
+      const name = describeExpression(
+        t__namespace.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
+      );
+      if (name) args.push(t__namespace.booleanLiteral(false), t__namespace.stringLiteral(name));
+    }
     return t__namespace.callExpression(registerImportMethod(path, config.memoWrapper), args);
   }
   return result.exprs[0];

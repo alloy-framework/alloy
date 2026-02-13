@@ -17,7 +17,7 @@ function renderTokens(tokens: Token[]) {
       {tokens.map((token, index) => (
         <>
           <DocFromMarkedToken token={token} />
-          {token.type === "paragraph" && index !== tokens.length - 1 && <br />}
+          {/*@once*/ token.type === "paragraph" && index !== tokens.length - 1 && <br />}
         </>
       ))}
     </>

@@ -40,6 +40,7 @@ import {
 import {
   registerScope,
   registerSymbol,
+  relocateScope,
   reset as resetSymbols,
   unregisterScope,
   unregisterSymbol,
@@ -107,6 +108,7 @@ export const debug = {
   },
   symbols: {
     registerScope,
+    relocateScope,
     unregisterScope,
     registerSymbol,
     unregisterSymbol,

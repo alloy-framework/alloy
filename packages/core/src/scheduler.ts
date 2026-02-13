@@ -6,17 +6,39 @@ export interface QueueJob {
 }
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
+function isJobActive(job: QueueJob): boolean {
+  // ReactiveEffect uses bit 0 (flags & 1) as the ACTIVE flag.
+  // Skip effects that were stopped after being queued.
+  const flags = (job as any).flags;
+  return flags === undefined || (flags & 1) !== 0;
+}
 const pendingPromises = new Set<Promise<any>>();
 let waitForSignalPromise: Promise<void> | null = null;
 let resolveWaitForSignal: (() => void) | null = null;
 let jobSignalPromise: Promise<void> | null = null;
 let resolveJobSignal: (() => void) | null = null;
 
+// Maps effect debug IDs to the ref that most recently triggered them
+const lastTriggerRef = new Map<number, number>();
+
+/**
+ * Record which ref triggered an effect re-run.
+ * Called from the onTrigger debug hook before the effect is scheduled.
+ */
+export function setLastTriggerRef(effectDebugId: number, refId: number): void {
+  lastTriggerRef.set(effectDebugId, refId);
+}
+
 export function scheduler(immediate = false) {
+  if (!immediate) return defaultScheduler;
   return function (this: ReactiveEffect) {
-    queueJob(this, immediate);
+    queueJob(this, true);
   };
 }
+
+const defaultScheduler = function (this: ReactiveEffect) {
+  queueJob(this, false);
+};
 export function queueJob(job: QueueJob | (() => void), immediate = false) {
   // if we have an immediate job, we don't need to queue the normal job.
   // the set is serving an important purpose here in deduping the effects we run
@@ -52,6 +74,7 @@ export function flushJobs() {
   // First, run all synchronous jobs
   let job;
   while ((job = takeJob()) !== null) {
+    if (!isJobActive(job)) continue;
     job.run();
   }
 
@@ -96,6 +119,7 @@ export async function flushJobsAsync() {
     // First, run all synchronous jobs
     let job;
     while ((job = takeJob()) !== null) {
+      if (!isJobActive(job)) continue;
       job.run();
     }
 

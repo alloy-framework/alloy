@@ -3,7 +3,6 @@ import {
   reactive,
   ReactiveFlags,
   Ref,
-  shallowReactive,
   track,
   TrackOpTypes,
   trigger,
@@ -15,7 +14,7 @@ import { useBinder } from "../context/binder.js";
 import { debug, TracePhase } from "../debug/index.js";
 import { inspect } from "../inspect.js";
 import { NamePolicyGetter } from "../name-policy.js";
-import { untrack } from "../reactivity.js";
+import { shallowReactive, untrack } from "../reactivity.js";
 import {
   isMemberRefkey,
   isNamekey,

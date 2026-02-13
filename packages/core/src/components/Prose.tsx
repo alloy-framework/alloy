@@ -22,7 +22,7 @@ export function Prose(props: Prose) {
             .map((word, index, array) => (
               <>
                 {word}
-                {index < array.length - 1 && <br />}
+                {/*@once*/ index < array.length - 1 && <br />}
               </>
             ));
         }

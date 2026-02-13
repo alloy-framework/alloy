@@ -184,6 +184,15 @@ export function unregisterScope(scope: OutputScope) {
   });
 }
 
+/**
+ * Re-register a pre-existing scope under the current render context.
+ * Called when `<Scope value={existingScope}>` mounts an already-created scope
+ * into a new location in the render tree.
+ */
+export function relocateScope(_scope: OutputScope) {
+  // Placeholder — real implementation added in the trace-writer branch.
+}
+
 export function registerSymbol(symbol: OutputSymbol) {
   if (!isDevtoolsEnabled()) return;
   if (symbolWatchers.has(symbol.id)) return;

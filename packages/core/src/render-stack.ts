@@ -33,6 +33,11 @@ export function popStack() {
   renderStack.pop();
 }
 
+export function currentComponentName(): string | undefined {
+  const entry = renderStack[renderStack.length - 1];
+  return entry?.component.name || undefined;
+}
+
 export function clearRenderStack() {
   renderStack.length = 0;
 }

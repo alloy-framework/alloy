@@ -1,5 +1,6 @@
 import { createScope } from "../binder.js";
 import { ScopeContext, useScope } from "../context/scope.js";
+import { debug } from "../debug/index.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
 import { OutputScope } from "../symbols/output-scope.js";
@@ -52,6 +53,7 @@ export function Scope(props: ScopeProps) {
   let scope: OutputScope;
   if ("value" in props) {
     scope = props.value;
+    debug.symbols.relocateScope(scope);
   } else {
     const parentScope = useScope();
     if (parentScope && !(parentScope instanceof BasicScope)) {

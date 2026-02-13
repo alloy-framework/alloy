@@ -20,8 +20,8 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
   while (current) {
-    if (Object.hasOwn(current.context!, context.id)) {
-      return current.context![context.id] as T | undefined;
+    if (current.context && Object.hasOwn(current.context, context.id)) {
+      return current.context[context.id] as T | undefined;
     }
     current = current.owner;
   }
@@ -43,7 +43,7 @@ export function createContext<T = unknown>(
     const rendered = shallowRef();
     effect(
       () => {
-        context!.context![id] = props.value;
+        (context!.context ??= {})[id] = props.value;
         rendered.value = () => props.children;
       },
       undefined,

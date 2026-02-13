@@ -5,6 +5,7 @@ import {
   CustomContext,
   Disposable,
   effect,
+  ensureIsEmpty,
   getContext,
   memo,
   onCleanup,
@@ -278,9 +279,6 @@ export function mapJoin<T, U, V>(
     }
 
     const context = getContext();
-    if (context) {
-      context.isEmpty ??= ref(true);
-    }
     // this is important to access here in reactive context so we are
     // notified of new items from reactives.
     const itemsLen = items.length;
@@ -326,7 +324,7 @@ export function mapJoin<T, U, V>(
         mapped[startIndex * 2] = createCustomContext((cb) => {
           return root((disposer) => {
             const nestedContext = getContext()!;
-            const isEmptyFlag = nestedContext.isEmpty!;
+            const isEmptyFlag = ensureIsEmpty(nestedContext);
 
             slot.disposer = disposer;
             disposer();

@@ -1,14 +1,13 @@
 import {
   ITERATE_KEY,
   ReactiveFlags,
-  shallowReactive,
   shallowReadonly,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { effect, untrack } from "./reactivity.js";
+import { effect, root, shallowReactive, untrack } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {
   onAdd?: OnReactiveSetAddCallback<T>;
@@ -129,6 +128,7 @@ export class ReactiveUnionSet<T> extends Set<T> {
      * that were added to the parent set.
      */
     const prevValues = new Map<T, T>();
+    const itemDisposers = new Map<T, () => void>();
 
     effect(
       () => {
@@ -137,13 +137,24 @@ export class ReactiveUnionSet<T> extends Set<T> {
             untrack(() => onDelete?.(prevSourceValue));
             prevValues.delete(prevSourceValue);
             this.delete(prevTargetValue);
+            const disposer = itemDisposers.get(prevSourceValue);
+            if (disposer) {
+              disposer();
+              itemDisposers.delete(prevSourceValue);
+            }
           }
         }
 
         for (const value of subset) {
           if (!prevValues.has(value)) {
             if (onAdd) {
-              const added = untrack(() => onAdd(value));
+              const added = untrack(() =>
+                root((disposer) => {
+                  const result = onAdd(value);
+                  itemDisposers.set(value, disposer);
+                  return result;
+                }),
+              );
               prevValues.set(value, added);
             } else {
               this.add(value);

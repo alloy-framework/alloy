@@ -216,7 +216,7 @@ export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
       debug: { name: name ? `memo:${name}` : "memo" },
     },
   );
-  const getter = (() => o.value as T) as (() => T);
+  const getter = (() => o.value as T) as () => T;
   if (name) {
     Object.defineProperty(getter, "name", { value: name, configurable: true });
   }
@@ -315,20 +315,17 @@ export function effect<T>(
     };
   }
 
-  const runner: ReactiveEffectRunner<void> = vueEffect(
-    () => {
-      cleanupFn(false);
+  const runner: ReactiveEffectRunner<void> = vueEffect(() => {
+    cleanupFn(false);
 
-      const oldContext = globalContext;
-      globalContext = context;
-      try {
-        current = fn(current);
-      } finally {
-        globalContext = oldContext;
-      }
-    },
-    effectOpts as any,
-  );
+    const oldContext = globalContext;
+    globalContext = context;
+    try {
+      current = fn(current);
+    } finally {
+      globalContext = oldContext;
+    }
+  }, effectOpts as any);
 
   if (effectId !== -1) {
     effectIdMap.set(runner.effect, effectId);
@@ -390,7 +387,10 @@ export function isCustomContext(child: Children): child is CustomContext {
   );
 }
 
-export function ref<T>(value?: T, options?: { isInfrastructure?: boolean }): Ref<T> {
+export function ref<T>(
+  value?: T,
+  options?: { isInfrastructure?: boolean },
+): Ref<T> {
   const result = vueRef(value) as Ref<T>;
   debug.effect.registerRef({
     id: refId(result, options?.isInfrastructure),
@@ -404,13 +404,18 @@ export function ref<T>(value?: T, options?: { isInfrastructure?: boolean }): Ref
 
 // Stores creation location for shallowReactive objects so registerNonRefTarget
 // can look it up later (since targets are lazily registered on first track/trigger).
-const reactiveCreationLocations = new WeakMap<object, ReturnType<typeof captureSourceLocation>>();
+const reactiveCreationLocations = new WeakMap<
+  object,
+  ReturnType<typeof captureSourceLocation>
+>();
 
 export function getReactiveCreationLocation(target: object) {
   return reactiveCreationLocations.get(target);
 }
 
-export function shallowReactive<T extends object>(target: T): ShallowReactive<T> {
+export function shallowReactive<T extends object>(
+  target: T,
+): ShallowReactive<T> {
   const result = vueShallowReactive(target);
   if (isDevtoolsEnabled()) {
     // Store by raw target — Vue's onTrack/onTrigger events pass the raw object, not the proxy.

@@ -56,7 +56,8 @@ it("emits effect, ref, edge, and update messages", async () => {
   collector.stop();
 
   // Check that core message types are present
-  const byType = (type: string) => effectsMessages.filter((m: any) => m.type === type);
+  const byType = (type: string) =>
+    effectsMessages.filter((m: any) => m.type === type);
   expect(byType("effect:refAdded").length).toBeGreaterThanOrEqual(1);
   expect(byType("effect:effectAdded").length).toBeGreaterThanOrEqual(1);
   expect(byType("effect:track").length).toBeGreaterThanOrEqual(1);

@@ -9,13 +9,12 @@ import {
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
-import { shallowReactive } from "../reactivity.js";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { debug, TracePhase } from "../debug/index.js";
 import { inspect } from "../inspect.js";
 import { NamePolicyGetter } from "../name-policy.js";
-import { untrack } from "../reactivity.js";
+import { shallowReactive, untrack } from "../reactivity.js";
 import {
   isMemberRefkey,
   isNamekey,

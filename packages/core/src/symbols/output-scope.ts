@@ -6,11 +6,10 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { shallowReactive } from "../reactivity.js";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
-import { effect, untrack } from "../reactivity.js";
+import { effect, shallowReactive, untrack } from "../reactivity.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
 import { OutputSymbol } from "./output-symbol.js";
 

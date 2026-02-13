@@ -1,6 +1,11 @@
 import { isRef, Ref } from "@vue/reactivity";
-import { shallowReactive } from "../reactivity.js";
-import { Context, effect, getContext, onCleanup } from "../reactivity.js";
+import {
+  Context,
+  effect,
+  getContext,
+  onCleanup,
+  shallowReactive,
+} from "../reactivity.js";
 
 import { MemberContext } from "../context/member-scope.js";
 import { ScopeContext } from "../context/scope.js";

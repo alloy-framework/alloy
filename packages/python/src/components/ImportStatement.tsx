@@ -45,7 +45,7 @@ export function ImportStatements(props: ImportStatementsProps) {
           return sortedSymbols.map((symbol, idx, arr) => (
             <>
               <ImportStatement path={targetPath} symbols={new Set([symbol])} />
-              {idx < arr.length - 1 && <hbr />}
+              {/*@once*/ idx < arr.length - 1 && <hbr />}
             </>
           ));
         }

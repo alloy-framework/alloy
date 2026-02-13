@@ -13,17 +13,8 @@ export interface MemberExpressionProps {
   children: Children;
 }
 
-const MEMBER_ACCESS_TYPES = {
-  ATTRIBUTE: "attribute",
-  SUBSCRIPTION: "subscription",
-  CALL: "call",
-} as const;
-
 type PartDescriptor = {
-  type:
-    | typeof MEMBER_ACCESS_TYPES.CALL
-    | typeof MEMBER_ACCESS_TYPES.SUBSCRIPTION
-    | typeof MEMBER_ACCESS_TYPES.ATTRIBUTE;
+  type: "call" | "subscription" | "attribute";
   name: Children | undefined;
   expression: Children | undefined;
   quoted: boolean;

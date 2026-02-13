@@ -2,6 +2,7 @@ import {
   Children,
   childrenArray,
   ComponentCreator,
+  ComponentDefinition,
   computed,
   isComponentCreator,
   OutputSymbol,
@@ -25,7 +26,10 @@ export interface BasePartProps {
  * @typeParam TPartProps - The Part component's props type (extends BasePartProps)
  * @typeParam TPart - The descriptor type that formatPart receives
  */
-export interface AccessExpressionConfig<TPartProps extends BasePartProps, TPart> {
+export interface AccessExpressionConfig<
+  TPartProps extends BasePartProps,
+  TPart,
+> {
   /**
    * Convert Part props + resolved symbol into a plain descriptor object.
    * Called once per Part during children processing. The returned descriptor
@@ -102,7 +106,7 @@ export function createAccessExpression<
   // Additional component references to match during flattening.
   // Used when the wrapper function (e.g. MemberExpression) differs
   // from the inner Expression function.
-  const outerComponents: Function[] = [];
+  const outerComponents: ComponentDefinition<any>[] = [];
 
   function Expression(props: { children: Children }): Children {
     const children = flattenExpression(childrenArray(() => props.children));
@@ -116,7 +120,7 @@ export function createAccessExpression<
     const { isCallPart, canUseCallChains } = config;
 
     if (!isCallPart) {
-      return computed(() => formatLinear(config, parts));
+      return formatLinear(config, parts);
     }
 
     const isCallChain = computed(() => {
@@ -130,11 +134,11 @@ export function createAccessExpression<
       return callCount > 1;
     });
 
-    return computed(() => {
-      return isCallChain.value
-        ? formatCallChain(config, parts)
+    return () => {
+      return isCallChain.value ?
+          formatCallChain(config, parts)
         : formatLinear(config, parts);
-    });
+    };
   }
 
   function Part(_props: TPartProps) {
@@ -210,7 +214,7 @@ export function createAccessExpression<
    * Call this after creating the wrapper function:
    *   `registerOuterComponent(MemberExpression);`
    */
-  function registerOuterComponent(component: Function) {
+  function registerOuterComponent(component: ComponentDefinition<any>) {
     outerComponents.push(component);
   }
 
@@ -317,8 +321,7 @@ function formatCallChain<TPartProps extends BasePartProps, TPart>(
           continue;
         }
         const part = chunk[cpi];
-        const prevPart =
-          cpi === 0 ? chunks[ci - 1].at(-1)! : chunk[cpi - 1];
+        const prevPart = cpi === 0 ? chunks[ci - 1].at(-1)! : chunk[cpi - 1];
         chunkExpr.push(config.formatPart(part, prevPart, true));
       }
 

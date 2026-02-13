@@ -56,10 +56,7 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
     } else if (partProps.id !== undefined) {
       id = normalizeIfAttribute(partProps.id, partProps.attribute);
     } else if (sym) {
-      id = normalizeIfAttribute(
-        escapeId(sym.name),
-        partProps.attribute,
-      );
+      id = normalizeIfAttribute(escapeId(sym.name), partProps.attribute);
     } else {
       id = "<unresolved symbol>";
     }
@@ -75,11 +72,10 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
       id,
       indexerArgs,
       conditional: !!partProps.conditional,
-      nullable: partProps.nullable
-        ? true
-        : sym
-          ? (sym as CSharpSymbol).isNullable
-          : false,
+      nullable:
+        partProps.nullable ? true
+        : sym ? (sym as CSharpSymbol).isNullable
+        : false,
       args:
         partProps.args === true ? []
         : Array.isArray(partProps.args) ? partProps.args

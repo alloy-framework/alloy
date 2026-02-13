@@ -66,9 +66,9 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
       id = partProps.refkey;
     } else if (partProps.id !== undefined) {
       id =
-        isNumericIdentifier(partProps.id)
-          ? partProps.id
-          : escapeId(partProps.id);
+        isNumericIdentifier(partProps.id) ?
+          partProps.id
+        : escapeId(partProps.id);
     } else if (partProps.index !== undefined) {
       id = partProps.index;
     } else if (sym) {
@@ -80,20 +80,20 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
     let accessStyle: "dot" | "bracket";
     if (partProps.children !== undefined) {
       accessStyle =
-        typeof partProps.children === "string"
-          ? partProps.quoteId
-            ? "bracket"
-            : accessStyleForMemberName(partProps.children)
-          : "bracket";
+        typeof partProps.children === "string" ?
+          partProps.quoteId ?
+            "bracket"
+          : accessStyleForMemberName(partProps.children)
+        : "bracket";
     } else if (partProps.args) {
       accessStyle = "dot";
     } else if (partProps.quoteId) {
       accessStyle = "bracket";
     } else if (partProps.id !== undefined) {
       accessStyle =
-        isNumericIdentifier(partProps.id)
-          ? "bracket"
-          : accessStyleForMemberName(partProps.id);
+        isNumericIdentifier(partProps.id) ? "bracket" : (
+          accessStyleForMemberName(partProps.id)
+        );
     } else if (partProps.index !== undefined) {
       accessStyle = "bracket";
     } else if (sym) {
@@ -105,20 +105,17 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
     return {
       id,
       accessStyle,
-      quoteId: partProps.quoteId
-        ? partProps.quoteId
-        : partProps.id !== undefined
-          ? isNumericIdentifier(partProps.id)
-            ? false
-            : !isValidJSIdentifier(partProps.id)
-          : sym
-            ? !isValidJSIdentifier(sym.name)
-            : false,
-      nullish: partProps.nullish
-        ? partProps.nullish
-        : sym
-          ? isNullish(sym)
-          : false,
+      quoteId:
+        partProps.quoteId ? partProps.quoteId
+        : partProps.id !== undefined ?
+          isNumericIdentifier(partProps.id) ? false
+          : !isValidJSIdentifier(partProps.id)
+        : sym ? !isValidJSIdentifier(sym.name)
+        : false,
+      nullish:
+        partProps.nullish ? partProps.nullish
+        : sym ? isNullish(sym)
+        : false,
       args: partProps.args === true ? [] : partProps.args,
       jsPrivate: !!sym && (sym as TSOutputSymbol).isPrivateMemberSymbol,
       type: !!sym && (sym as TSOutputSymbol).isTypeSymbol,
@@ -155,9 +152,7 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
 
   wrapPartResult(expression, part, _index, isLast) {
     if (part.await) {
-      return isLast
-        ? <>await {expression}</>
-        : <>(await {expression})</>;
+      return isLast ? <>await {expression}</> : <>(await {expression})</>;
     }
     return expression;
   },

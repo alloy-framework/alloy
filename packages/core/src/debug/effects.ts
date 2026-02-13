@@ -211,6 +211,8 @@ export function register(input: {
   name?: string;
   type?: string;
   createdAt?: SourceLocation;
+  contextId?: number;
+  ownerContextId?: number | null;
 }): number {
   if (!isDevtoolsEnabled()) return -1;
   const id = effectIdCounter++;
@@ -230,6 +232,7 @@ export function registerRef(input: {
   kind?: string;
   createdAt?: SourceLocation;
   createdByEffectId?: number;
+  isInfrastructure?: boolean;
 }) {
   if (!isDevtoolsEnabled()) return;
   if (refs.has(input.id)) return;
@@ -275,6 +278,7 @@ export function trigger(input: {
   targetKey?: unknown;
   location?: SourceLocation;
   kind?: "trigger" | "triggered-by";
+  causedBy?: number;
 }) {
   if (!isDevtoolsEnabled()) return;
   const edge: EffectEdgeDebugInfo = {

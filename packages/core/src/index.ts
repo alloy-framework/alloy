@@ -5,7 +5,6 @@ export {
   isReactive,
   isRef,
   reactive,
-  shallowReactive,
   toRaw,
   track,
   trigger,

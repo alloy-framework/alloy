@@ -3,13 +3,13 @@ import {
   reactive,
   ReactiveFlags,
   Ref,
-  shallowReactive,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
+import { shallowReactive } from "../reactivity.js";
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { debug, TracePhase } from "../debug/index.js";

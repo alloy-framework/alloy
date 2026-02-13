@@ -1,6 +1,6 @@
 import { computed, Ref, shallowRef } from "@vue/reactivity";
 import { Show } from "./components/Show.jsx";
-import { getContext } from "./reactivity.js";
+import { ensureIsEmpty, getContext } from "./reactivity.js";
 import { Children, Component } from "./runtime/component.js";
 
 export interface ContentSlot {
@@ -61,7 +61,7 @@ export function createContentSlot(): ContentSlot {
 
   function ContentSlot(props: { children: Children }) {
     const context = getContext()!;
-    isEmptySource.value = context.isEmpty!;
+    isEmptySource.value = ensureIsEmpty(context);
     return props.children;
   }
   ContentSlot.ref = isEmpty;

@@ -498,11 +498,12 @@ export function notifyContentState() {
     const startContext = getContext()!;
 
     if (startContext.childrenWithContent === 0) {
-      if (startContext.isEmpty!.value === true) {
+      if (startContext._lastEmpty) {
         // it was already empty, no work to do.
         return;
       }
 
+      startContext._lastEmpty = true;
       if (startContext.isEmpty) {
         startContext.isEmpty.value = true;
       }
@@ -518,18 +519,20 @@ export function notifyContentState() {
           // This isn't the last content so we have no work to do
           break;
         }
+        current._lastEmpty = true;
         if (current.isEmpty) {
           current.isEmpty.value = true;
         }
         current = current.owner;
       }
     } else {
-      if (startContext.isEmpty!.value === false) {
+      if (!startContext._lastEmpty) {
         // it was already non-empty, no work to do.
         return;
       }
 
-      if (startContext.isEmpty && startContext.isEmpty.value) {
+      startContext._lastEmpty = false;
+      if (startContext.isEmpty) {
         startContext.isEmpty.value = false;
       }
 
@@ -542,7 +545,8 @@ export function notifyContentState() {
           break;
         }
 
-        if (current.isEmpty && current.isEmpty.value) {
+        current._lastEmpty = false;
+        if (current.isEmpty) {
           current.isEmpty.value = false;
         }
 
@@ -757,16 +761,15 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       }
     } else if (isComponentCreator(child)) {
       const index = node.length;
-      const rerenderToken = ref(0);
-      const breakNext = ref(false);
+      const rerenderToken = isDevtoolsEnabled() ? ref(0) : undefined;
+      const breakNext = isDevtoolsEnabled() ? ref(false) : undefined;
       // todo: remove this effect (only needed for context, not needed for anything else)
       effect(
         () => {
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-          rerenderToken.value;
+          rerenderToken?.value;
           const context = getContext();
           context!.childrenWithContent = 0;
-          context!.isEmpty ??= ref(true);
 
           if (context) context.componentOwner = child;
           const existing = node[index];
@@ -788,12 +791,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             actions: {
               rerender: () => {
                 lastRenderError = null;
-                rerenderToken.value++;
+                if (rerenderToken) rerenderToken.value++;
               },
               rerenderAndBreak: () => {
                 lastRenderError = null;
-                breakNext.value = true;
-                rerenderToken.value++;
+                if (breakNext) breakNext.value = true;
+                if (rerenderToken) rerenderToken.value++;
               },
             },
           });
@@ -806,9 +809,9 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           let childResult: Children | undefined;
           try {
             childResult = untrack(() => {
-              const shouldBreak = breakNext.value;
+              const shouldBreak = breakNext?.value;
               if (shouldBreak) {
-                breakNext.value = false;
+                breakNext!.value = false;
                 // eslint-disable-next-line no-debugger
                 debugger;
               }
@@ -880,7 +883,6 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           }
           const context = getContext();
           context!.childrenWithContent = 0;
-          context!.isEmpty ??= ref(true);
 
           const existing = node[index];
           const memoNode: RenderedTextTree =

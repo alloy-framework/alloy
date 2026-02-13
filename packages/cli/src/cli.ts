@@ -61,9 +61,7 @@ async function build() {
 
   if (allDiagnostics.length > 0) {
     // eslint-disable-next-line no-console
-    console.log(
-      `Build completed with ${allDiagnostics.length} errors.`,
-    );
+    console.log(`Build completed with ${allDiagnostics.length} errors.`);
     process.exit(1);
   } else {
     const end = new Date().getTime();

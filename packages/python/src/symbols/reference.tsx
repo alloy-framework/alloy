@@ -13,8 +13,17 @@ import { PythonModuleScope } from "./python-module-scope.js";
 import { PythonOutputSymbol } from "./python-output-symbol.js";
 import { PythonOutputScope } from "./scopes.js";
 
+export interface RefOptions {
+  /**
+   * If true, this reference is only used in a type annotation context.
+   * The import will be guarded with `if TYPE_CHECKING:`.
+   */
+  type?: boolean;
+}
+
 export function ref(
   refkey: Refkey,
+  options?: RefOptions,
 ): () => [Children, PythonOutputSymbol | undefined] {
   const sourceFile = useContext(PythonSourceFileContext);
   const resolveResult = resolve<PythonOutputScope, PythonOutputSymbol>(
@@ -41,6 +50,7 @@ export function ref(
         sourceFile!.scope.addImport(
           lexicalDeclaration,
           pathDown[0] as PythonModuleScope,
+          { type: options?.type },
         ),
       );
     }

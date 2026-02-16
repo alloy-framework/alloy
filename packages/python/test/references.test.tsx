@@ -15,7 +15,7 @@ describe("Reference", () => {
           name="current_user"
           type={rk1}
           initializer={
-            <py.ClassInstantiation target="User" args={['"Marvin"']} />
+            <py.ClassInstantiation target={rk1} args={['"Marvin"']} />
           }
         />
       </py.SourceFile>,

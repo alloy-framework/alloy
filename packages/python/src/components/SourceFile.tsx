@@ -1,6 +1,7 @@
 import {
   childrenArray,
   ComponentContext,
+  computed,
   SourceFile as CoreSourceFile,
   createNamedContext,
   createScope,
@@ -14,8 +15,12 @@ import {
 } from "@alloy-js/core";
 import { join } from "pathe";
 import { PythonModuleScope } from "../symbols/index.js";
-import { ImportStatements } from "./ImportStatement.js";
+import {
+  categorizeImportRecords,
+  ImportStatements,
+} from "./ImportStatement.js";
 import { SimpleCommentBlock } from "./PyDoc.js";
+import { PythonBlock } from "./PythonBlock.js";
 import { Reference } from "./Reference.js";
 
 // Non top-level definitions
@@ -99,7 +104,7 @@ export interface SourceFileProps {
   /**
    * __future__ imports to render after the docstring but before regular imports.
    */
-  futureImports?: Children;
+  futureImports?: Children[];
 }
 
 /**
@@ -167,6 +172,28 @@ export function SourceFile(props: SourceFileProps) {
     props.doc !== undefined ||
     props.futureImports !== undefined;
 
+  const imports = computed(() => {
+    // Quick scan for any type-only imports
+    const hasTypeImports = [...scope.importedModules.values()].some(
+      (props) =>
+        props.symbols && [...props.symbols].some((s) => s.local.isTypeOnly),
+    );
+
+    // Add TYPE_CHECKING before categorizing so it's naturally included
+    const typeImportSymbol = hasTypeImports ? scope.addTypeImport() : undefined;
+
+    // Single categorize - TYPE_CHECKING is already in scope.importedModules
+    const { valueImports, typeImports } = categorizeImportRecords(
+      scope.importedModules,
+    );
+
+    return {
+      valueImports,
+      typeImports,
+      typeImportSymbol,
+    };
+  });
+
   return (
     <CoreSourceFile
       path={props.path}
@@ -216,12 +243,21 @@ export function SourceFile(props: SourceFileProps) {
           <hbr />
         </Show>
       </Show>
-      <Show when={scope.importedModules.size > 0}>
-        <ImportStatements records={scope.importedModules} />
-        <Show when={hasChildren}>
-          <hbr />
-          <hbr />
-        </Show>
+      {/* Regular (non-type-only) imports */}
+      <Show when={imports.value.valueImports.size > 0}>
+        <ImportStatements records={imports.value.valueImports} />
+        <hbr />
+      </Show>
+      {/* TYPE_CHECKING block with type-only imports */}
+      <Show when={imports.value.typeImports.size > 0}>
+        <hbr />
+        <PythonBlock opener={`if ${imports.value.typeImportSymbol!.name}:`}>
+          <ImportStatements records={imports.value.typeImports} />
+        </PythonBlock>
+      </Show>
+      {/* Spacing after imports */}
+      <Show when={hasChildren && scope.importedModules.size > 0}>
+        <hbr />
       </Show>
       {/* Extra blank line before top-level definitions */}
       <Show

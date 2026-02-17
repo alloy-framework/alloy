@@ -146,15 +146,24 @@ describe("file", () => {
   });
 
   describe("search", () => {
-    it("finds text node and shows component stack", () => {
+    it("finds text within file content and shows component stack", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
-      expect(stdout).toContain("Found 1 text node(s)");
-      expect(stdout).toContain("export interface Foo");
+      expect(stdout).toContain("Found 1 match");
+      expect(stdout).toContain("interface Foo");
       expect(stdout).toContain("Component stack");
       expect(stdout).toContain("at Declaration");
       expect(stdout).toContain("at SourceFile");
+    });
+
+    it("finds text spanning across nodes", () => {
+      // "bar;\n}" spans two lines inside text node 4
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "export", "interface"], {}),
+      );
+      expect(stdout).toContain("Found 1 match");
+      expect(stdout).toContain("export interface");
     });
 
     it("shows source locations in stack trace format", () => {
@@ -169,17 +178,17 @@ describe("file", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["models.ts", "interface"], {}),
       );
-      expect(stdout).toContain("Found 1 text node(s)");
+      expect(stdout).toContain("Found 1 match");
     });
 
     it("finds import text in fragment subtree", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "import"], {}),
       );
-      expect(stdout).toContain("Found 1 text node(s)");
+      expect(stdout).toContain("Found 1 match");
       expect(stdout).toContain("import { Bar }");
       // Fragment has no component ancestor until SourceFile
-      expect(stdout).toContain("SourceFile");
+      expect(stdout).toContain("at SourceFile");
     });
 
     it("reports no match", () => {
@@ -189,16 +198,15 @@ describe("file", () => {
       expect(stdout).toContain("No text matching");
     });
 
-    it("returns json", () => {
+    it("returns json with node and offset info", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
       );
       const parsed = JSON.parse(stdout);
-      expect(parsed.textNodeId).toBe(4);
-      expect(parsed.text).toContain("interface Foo");
-      expect(parsed.stack).toHaveLength(2);
-      expect(parsed.stack[0].name).toBe("Declaration");
-      expect(parsed.stack[1].name).toBe("SourceFile");
+      expect(parsed.text).toBe("interface Foo");
+      expect(parsed.offset).toBeTypeOf("number");
+      expect(parsed.nodes).toBeInstanceOf(Array);
+      expect(parsed.nodes.length).toBeGreaterThan(0);
     });
   });
 });

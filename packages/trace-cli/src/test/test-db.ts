@@ -86,10 +86,13 @@ function seedData(db: DatabaseSync) {
     INSERT INTO render_nodes VALUES (2, 1, 'component', 'SourceFile', '{"path":"src/models.ts"}',
       '/home/user/packages/typescript/src/components/source-file.tsx', 10, 5, 100, NULL, 2);
     INSERT INTO render_nodes VALUES (3, 2, 'component', 'Declaration', NULL,
-      '/home/user/packages/typescript/src/components/declaration.tsx', 25, 3, 200, NULL, 3);
-    INSERT INTO render_nodes VALUES (4, 3, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'export interface Foo {}', 4);
-    INSERT INTO render_nodes VALUES (5, 2, 'fragment', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5);
-    INSERT INTO render_nodes VALUES (6, 5, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'import { Bar } from "bar";', 6);
+      '/home/user/packages/typescript/src/components/declaration.tsx', 25, 3, 200, NULL, 5);
+    INSERT INTO render_nodes VALUES (4, 3, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'export interface Foo {
+  bar: string;
+}', 6);
+    INSERT INTO render_nodes VALUES (5, 2, 'fragment', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3);
+    INSERT INTO render_nodes VALUES (6, 5, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'import { Bar } from "bar";
+', 4);
     INSERT INTO render_nodes VALUES (7, 2, 'memo', 'mapJoin', NULL,
       '/home/user/packages/core/src/utils.tsx', 100, 1, 300, NULL, 7);
     INSERT INTO render_nodes VALUES (8, 7, 'customContext', 'NamePolicy', NULL, NULL, NULL, NULL, NULL, NULL, 8);
@@ -151,9 +154,11 @@ function seedData(db: DatabaseSync) {
     INSERT INTO symbols VALUES (3, 'Baz', 'BazOriginal', 1, NULL, NULL, 0, 1, 0, NULL, 3);
   `);
 
-  // Output files
+  // Output files — content must equal concatenation of descendant text nodes
+  db.prepare("INSERT INTO output_files VALUES (1, 'src/models.ts', 'typescript', 2, ?, 1)").run(
+    "import { Bar } from \"bar\";\nexport interface Foo {\n  bar: string;\n}",
+  );
   db.exec(`
-    INSERT INTO output_files VALUES (1, 'src/models.ts', 'typescript', 2, 'export interface Foo {\\n  bar: string;\\n}', 1);
     INSERT INTO output_files VALUES (2, 'src/index.ts', 'typescript', 2, 'export { Foo } from "./models";', 2);
   `);
 

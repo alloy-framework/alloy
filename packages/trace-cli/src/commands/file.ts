@@ -163,25 +163,23 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
 
 /**
  * Find text nodes whose values contain words from the search string.
- * Returns nodes sorted by specificity — longest matching value first.
+ * Tries the full string first, then falls back to the longest token.
  */
 function findRelevantTextNodes(textNodes: any[], substring: string): any[] {
-  // Split search string into non-whitespace tokens
+  // First: try exact substring match within a single node
+  const exact = textNodes.filter((tn: any) => tn.value.includes(substring));
+  if (exact.length > 0) return exact;
+
+  // Fall back: match the longest token (most specific word)
   const tokens = substring.split(/\s+/).filter(Boolean);
-  const matched = new Map<number, any>();
+  tokens.sort((a, b) => b.length - a.length);
 
   for (const token of tokens) {
-    for (const tn of textNodes) {
-      if (tn.value.includes(token) && !matched.has(tn.id)) {
-        matched.set(tn.id, tn);
-      }
-    }
+    const matches = textNodes.filter((tn: any) => tn.value.includes(token));
+    if (matches.length > 0) return matches;
   }
 
-  // Sort by longest value first (more specific nodes)
-  return [...matched.values()].sort(
-    (a, b) => b.value.length - a.value.length,
-  );
+  return [];
 }
 
 function buildComponentStack(db: Db, nodeId: number): any[] {

@@ -5,8 +5,16 @@ import type { OutputSymbol } from "../symbols/output-symbol.js";
 import { getRenderNodeId } from "./render.js";
 import { sanitizeRecord } from "./serialize.js";
 import {
-  emitDevtoolsMessage,
-  isDevtoolsEnabled,
+  insertScope,
+  insertSymbol,
+  deleteScope as traceDeleteScope,
+  deleteSymbol as traceDeleteSymbol,
+  updateScope as traceUpdateScope,
+  updateSymbol as traceUpdateSymbol,
+} from "./trace-writer.js";
+import {
+  isDebugEnabled,
+  logDevtoolsMessage,
   TracePhase,
   traceType,
 } from "./trace.js";
@@ -147,25 +155,49 @@ function snapshotSymbol(
   };
 }
 
+const scopeRenderNodes = new Map<number, { value: number | null }>();
+
 export function registerScope(scope: OutputScope) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   if (scopeWatchers.has(scope.id)) return;
   untrack(() => {
-    const renderNodeId = getRenderNodeIdForCurrentContext();
-    let previous = snapshotScope(scope, renderNodeId);
-    emitDevtoolsMessage({
+    const renderNodeRef = { value: getRenderNodeIdForCurrentContext() };
+    scopeRenderNodes.set(scope.id, renderNodeRef);
+    let previous = snapshotScope(scope, renderNodeRef.value);
+    logDevtoolsMessage({
       type: traceType(TracePhase.scope.create),
       scope: previous,
     });
+
+    insertScope(
+      previous.id,
+      previous.name,
+      previous.parentId ?? undefined,
+      previous.ownerSymbolId ?? undefined,
+      previous.renderNodeId ?? undefined,
+      previous.isMemberScope,
+      previous.metadata ? JSON.stringify(previous.metadata) : undefined,
+    );
+
     const stop = watch(
-      () => snapshotScope(scope, renderNodeId),
+      () => snapshotScope(scope, renderNodeRef.value),
       (next) => {
         if (!shallowEqual(previous, next)) {
           previous = next;
-          emitDevtoolsMessage({
+          logDevtoolsMessage({
             type: traceType(TracePhase.scope.update),
             scope: next,
           });
+
+          traceUpdateScope(
+            next.id,
+            next.name,
+            next.parentId ?? undefined,
+            next.ownerSymbolId ?? undefined,
+            next.renderNodeId ?? undefined,
+            next.isMemberScope,
+            next.metadata ? JSON.stringify(next.metadata) : undefined,
+          );
         }
       },
     );
@@ -173,45 +205,94 @@ export function registerScope(scope: OutputScope) {
   });
 }
 
-export function unregisterScope(scope: OutputScope) {
-  if (!isDevtoolsEnabled()) return;
-  const stop = scopeWatchers.get(scope.id);
-  if (stop) stop();
-  scopeWatchers.delete(scope.id);
-  emitDevtoolsMessage({
-    type: traceType(TracePhase.scope.delete),
-    id: scope.id,
+/**
+ * Update a scope's render_node_id to the current context's render node.
+ * Called when a scope is mounted in the component tree (e.g. via the Scope
+ * component with a `value` prop) so that the scope is associated with where
+ * it lives in the render tree rather than where it was instantiated.
+ */
+export function relocateScope(scope: OutputScope) {
+  if (!isDebugEnabled()) return;
+  untrack(() => {
+    const renderNodeId = getRenderNodeIdForCurrentContext();
+    if (renderNodeId !== null) {
+      const renderNodeRef = scopeRenderNodes.get(scope.id);
+      if (renderNodeRef) {
+        renderNodeRef.value = renderNodeId;
+      }
+      const snapshot = snapshotScope(scope, renderNodeId);
+      traceUpdateScope(
+        snapshot.id,
+        snapshot.name,
+        snapshot.parentId ?? undefined,
+        snapshot.ownerSymbolId ?? undefined,
+        snapshot.renderNodeId ?? undefined,
+        snapshot.isMemberScope,
+        snapshot.metadata ? JSON.stringify(snapshot.metadata) : undefined,
+      );
+    }
   });
 }
 
-/**
- * Re-register a pre-existing scope under the current render context.
- * Called when `<Scope value={existingScope}>` mounts an already-created scope
- * into a new location in the render tree.
- */
-export function relocateScope(_scope: OutputScope) {
-  // Placeholder — real implementation added in the trace-writer branch.
+export function unregisterScope(scope: OutputScope) {
+  if (!isDebugEnabled()) return;
+  const stop = scopeWatchers.get(scope.id);
+  if (stop) stop();
+  scopeWatchers.delete(scope.id);
+  logDevtoolsMessage({
+    type: traceType(TracePhase.scope.delete),
+    id: scope.id,
+  });
+
+  traceDeleteScope(scope.id);
 }
 
 export function registerSymbol(symbol: OutputSymbol) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   if (symbolWatchers.has(symbol.id)) return;
   untrack(() => {
     const renderNodeId = getRenderNodeIdForCurrentContext();
     let previous = snapshotSymbol(symbol, renderNodeId);
-    emitDevtoolsMessage({
+    logDevtoolsMessage({
       type: traceType(TracePhase.symbol.create),
       symbol: previous,
     });
+
+    insertSymbol(
+      previous.id,
+      previous.name,
+      previous.originalName,
+      previous.scopeId ?? undefined,
+      previous.ownerSymbolId ?? undefined,
+      previous.renderNodeId ?? undefined,
+      previous.isMemberSymbol,
+      previous.isTransient,
+      previous.isAlias,
+      previous.metadata ? JSON.stringify(previous.metadata) : undefined,
+    );
+
     const stop = watch(
       () => snapshotSymbol(symbol, renderNodeId),
       (next) => {
         if (!shallowEqual(previous, next)) {
           previous = next;
-          emitDevtoolsMessage({
+          logDevtoolsMessage({
             type: traceType(TracePhase.symbol.update),
             symbol: next,
           });
+
+          traceUpdateSymbol(
+            next.id,
+            next.name,
+            next.originalName,
+            next.scopeId ?? undefined,
+            next.ownerSymbolId ?? undefined,
+            next.renderNodeId ?? undefined,
+            next.isMemberSymbol,
+            next.isTransient,
+            next.isAlias,
+            next.metadata ? JSON.stringify(next.metadata) : undefined,
+          );
         }
       },
     );
@@ -220,14 +301,16 @@ export function registerSymbol(symbol: OutputSymbol) {
 }
 
 export function unregisterSymbol(symbol: OutputSymbol) {
-  if (!isDevtoolsEnabled()) return;
+  if (!isDebugEnabled()) return;
   const stop = symbolWatchers.get(symbol.id);
   if (stop) stop();
   symbolWatchers.delete(symbol.id);
-  emitDevtoolsMessage({
+  logDevtoolsMessage({
     type: traceType(TracePhase.symbol.delete),
     id: symbol.id,
   });
+
+  traceDeleteSymbol(symbol.id);
 }
 
 /** Stop all watchers and clear tracked state. Called when a new render begins. */

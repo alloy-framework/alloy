@@ -7,7 +7,7 @@ import { useState } from "react";
 export function useDevtoolsAppState(
   renderTreeRef: RefObject<RenderTreeHandle | null>,
   renderTree: unknown,
-  setBottomTab?: (tab: "render" | "problems" | "effects" | "trace") => void,
+  setBottomTab?: (tab: "render" | "problems" | "effects") => void,
 ) {
   const {
     selectedRenderNodeId,

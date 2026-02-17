@@ -7,20 +7,18 @@ import {
 } from "@/lib/debug-tree";
 import { normalizePath } from "@/lib/utils";
 import type {
-  DiagnosticInfo,
+  DiagnosticRow,
   ServerToClientMessage,
   SourceLocation,
 } from "@alloy-js/core/devtools";
-import * as devalue from "devalue";
 import {
-  MAX_EFFECT_EDGES,
-  MAX_TRACE_ENTRIES,
   type DebugConnectionStatus,
+  type DiagnosticInfo,
   type EffectDebugInfo,
   type EffectEdgeDebugInfo,
+  type EffectLifecycleEvent,
   type RefDebugInfo,
   type RenderErrorDetails,
-  type TraceEntry,
 } from "./debug-connection-types";
 
 // ── Scope / symbol shapes stored in refs ─────────────────────────────────────
@@ -64,8 +62,8 @@ export interface DebugStore {
   effects: Map<number, EffectDebugInfo>;
   refs: Map<number, RefDebugInfo>;
   effectEdges: EffectEdgeDebugInfo[];
+  effectLifecycleEvents: EffectLifecycleEvent[];
   cwd: string | undefined;
-  traceCounter: number;
 }
 
 export function createDebugStore(): DebugStore {
@@ -79,8 +77,8 @@ export function createDebugStore(): DebugStore {
     effects: new Map(),
     refs: new Map(),
     effectEdges: [],
+    effectLifecycleEvents: [],
     cwd: undefined,
-    traceCounter: 0,
   };
 }
 
@@ -95,6 +93,7 @@ export function resetDebugStore(store: DebugStore): void {
   store.effects = new Map();
   store.refs = new Map();
   store.effectEdges = [];
+  store.effectLifecycleEvents = [];
   store.cwd = undefined;
 }
 
@@ -108,7 +107,7 @@ export interface PendingState {
   latestRenderErrorId?: string;
   versionLabel?: string;
   cwd?: string;
-  traceEntries?: TraceEntry[];
+  sourceMapEnabled?: boolean;
 }
 
 // ── Dirty-flag helpers ───────────────────────────────────────────────────────
@@ -125,11 +124,12 @@ export type DirtyFlagKey =
   | "effects"
   | "refs"
   | "effectEdges"
-  | "traceEntries"
+  | "effectLifecycle"
   | "diagnostics"
   | "renderErrors"
   | "versionLabel"
   | "cwd"
+  | "sourceMapEnabled"
   | "latestRenderErrorId"
   | "error";
 
@@ -140,12 +140,6 @@ type MessageHandler = (
   pending: PendingState,
   message: any,
 ) => DirtyFlagKey[];
-
-const TRACE_SKIP_TYPES = new Set([
-  "files:fileUpdated",
-  "render:error",
-  "diagnostics:report",
-]);
 
 // ── Render-tree messages ────────────────────────────────────────────────────
 
@@ -177,14 +171,18 @@ function handleDirectoryMessage(
 function handleFileAdded(
   store: DebugStore,
   _pending: PendingState,
-  message: { path: string; filetype: string; renderNodeId?: number },
+  message: { path: string; filetype?: string; render_node_id?: number },
 ): DirtyFlagKey[] {
   const path = normalizePath(message.path);
   if (!store.files.has(path)) {
-    store.files.set(path, { path, filetype: message.filetype, contents: "" });
+    store.files.set(path, {
+      path,
+      filetype: message.filetype ?? "",
+      contents: "",
+    });
   }
-  if (message.renderNodeId !== undefined) {
-    store.fileToRenderNode.set(path, String(message.renderNodeId));
+  if (message.render_node_id != null) {
+    store.fileToRenderNode.set(path, String(message.render_node_id));
   }
   return ["fileTree", "fileContents", "fileToRenderNode"];
 }
@@ -203,23 +201,53 @@ function handleFileRemoved(
 function handleFileUpdated(
   store: DebugStore,
   _pending: PendingState,
-  message: { path: string; filetype: string; contents: string },
+  message: { path: string; content?: string },
 ): DirtyFlagKey[] {
   const path = normalizePath(message.path);
+  const existing = store.files.get(path);
   store.files.set(path, {
     path,
-    filetype: message.filetype,
-    contents: message.contents,
+    filetype: existing?.filetype ?? "",
+    contents: message.content ?? "",
   });
   return ["fileTree", "fileContents", "fileToRenderNode"];
 }
 
 // ── Info / diagnostics / errors ─────────────────────────────────────────────
 
+/** Try to parse a serialized component stack string into structured entries. */
+function tryParseComponentStack(
+  raw?: string,
+):
+  | Array<{ name?: string; renderNodeId?: number; source?: SourceLocation }>
+  | undefined {
+  if (!raw) return undefined;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.map((entry: any) => ({
+        name: entry.name ?? entry.component,
+        renderNodeId: entry.renderNodeId ?? entry.render_node_id,
+        source:
+          (entry.source_file ?? entry.source?.fileName) ?
+            {
+              fileName: entry.source_file ?? entry.source?.fileName,
+              lineNumber: entry.source_line ?? entry.source?.lineNumber,
+              columnNumber: entry.source_col ?? entry.source?.columnNumber,
+            }
+          : entry.source,
+      }));
+    }
+  } catch {
+    // Not valid JSON, ignore
+  }
+  return undefined;
+}
+
 function handleDebuggerInfo(
   store: DebugStore,
   pending: PendingState,
-  message: { version: string; cwd?: string },
+  message: { version: string; cwd?: string; sourceMapEnabled?: boolean },
 ): DirtyFlagKey[] {
   const dirty: DirtyFlagKey[] = [];
   if (message.version) {
@@ -231,15 +259,37 @@ function handleDebuggerInfo(
     pending.cwd = message.cwd;
     dirty.push("cwd", "fileTree");
   }
+  if (message.sourceMapEnabled !== undefined) {
+    pending.sourceMapEnabled = message.sourceMapEnabled;
+    dirty.push("sourceMapEnabled");
+  }
   return dirty;
 }
 
 function handleDiagnosticsReport(
   _store: DebugStore,
   pending: PendingState,
-  message: { diagnostics?: DiagnosticInfo[] },
+  message: { diagnostics?: DiagnosticRow[] },
 ): DirtyFlagKey[] {
-  pending.diagnostics = message.diagnostics ?? [];
+  pending.diagnostics = (message.diagnostics ?? []).map(
+    (row, i): DiagnosticInfo => ({
+      id: `diag-${Date.now()}-${i}`,
+      message: row.message,
+      severity: row.severity ?? "info",
+      source:
+        row.source_file ?
+          {
+            fileName: row.source_file,
+            lineNumber: row.source_line,
+            columnNumber: row.source_col,
+          }
+        : undefined,
+      componentStack:
+        row.component_stack ?
+          tryParseComponentStack(row.component_stack)
+        : undefined,
+    }),
+  );
   return ["diagnostics"];
 }
 
@@ -247,49 +297,28 @@ function handleRenderError(
   _store: DebugStore,
   pending: PendingState,
   message: {
-    id: number;
+    seq: number;
     name?: string;
     message?: string;
     stack?: string;
-    componentStack: Array<{
-      name?: string;
-      propsSerialized?: string;
-      renderNodeId?: number;
-      source?: unknown;
-    }>;
+    component_stack?: string;
   },
 ): DirtyFlagKey[] {
-  const rawId = String(message.id ?? Date.now());
+  const rawId = String(message.seq ?? Date.now());
   const id = `error:${rawId}`;
-  const componentStack =
-    Array.isArray(message.componentStack) ?
-      message.componentStack.map((entry) => {
-        let props: Record<string, unknown> | undefined;
-        if (entry.propsSerialized) {
-          try {
-            props = devalue.parse(entry.propsSerialized) as Record<
-              string,
-              unknown
-            >;
-          } catch {
-            props = undefined;
-          }
-        }
-        return {
-          name: entry.name ?? "(anonymous)",
-          props,
-          renderNodeId: entry.renderNodeId,
-          source: entry.source as SourceLocation | undefined,
-        };
-      })
-    : [];
+  const componentStack = tryParseComponentStack(message.component_stack) ?? [];
 
   const details: RenderErrorDetails = {
     id,
     name: String(message.name ?? "Error"),
     message: String(message.message ?? ""),
     stack: message.stack,
-    componentStack,
+    componentStack: componentStack.map((entry) => ({
+      name: entry.name ?? "(anonymous)",
+      props: undefined,
+      renderNodeId: entry.renderNodeId,
+      source: entry.source,
+    })),
   };
 
   if (!pending.renderErrors) {
@@ -302,43 +331,133 @@ function handleRenderError(
 
 // ── Effects / refs ──────────────────────────────────────────────────────────
 
+/**
+ * Extract the npm package name from a source file path.
+ * Looks for `/node_modules/(@scope/pkg|pkg)/` and returns the package name.
+ */
+function extractPackageFromPath(
+  filePath: string | undefined,
+): string | undefined {
+  if (!filePath) return undefined;
+  // Match scoped packages: node_modules/@scope/name
+  const scoped = /[/\\]node_modules[/\\](@[^/\\]+[/\\][^/\\]+)/.exec(filePath);
+  if (scoped) return scoped[1].replace(/\\/g, "/");
+  // Match unscoped packages: node_modules/name
+  const unscoped = /[/\\]node_modules[/\\]([^@/\\][^/\\]*)/.exec(filePath);
+  if (unscoped) return unscoped[1];
+  return undefined;
+}
+
 function handleEffectAddedOrUpdated(
   store: DebugStore,
   _pending: PendingState,
-  message: { effect: { id: number } },
+  message: any,
 ): DirtyFlagKey[] {
-  if (message.effect) {
-    store.effects.set(message.effect.id, message.effect);
-    return ["effects"];
+  const id = message.id as number | undefined;
+  if (id === undefined) return [];
+  const info: EffectDebugInfo = {
+    id,
+    name: message.name,
+    type: message.effect_type,
+    createdAt:
+      message.source_file ?
+        {
+          fileName: message.source_file,
+          lineNumber: message.source_line,
+          columnNumber: message.source_col,
+        }
+      : undefined,
+    contextId: message.context_id ?? undefined,
+    ownerContextId: message.owner_context_id,
+    component: message.component,
+    sourcePackage:
+      message.source_package ?? extractPackageFromPath(message.source_file),
+  };
+  const existing = store.effects.get(id);
+  if (existing) {
+    // Preserve trigger info from edges
+    info.lastTriggeredAt = existing.lastTriggeredAt;
+    info.lastTriggeredByRefId = existing.lastTriggeredByRefId;
   }
-  return [];
+  store.effects.set(id, info);
+  return ["effects"];
 }
 
 function handleRefAdded(
   store: DebugStore,
   _pending: PendingState,
-  message: { ref: { id: number } },
+  message: any,
 ): DirtyFlagKey[] {
-  if (message.ref) {
-    store.refs.set(message.ref.id, message.ref);
-    return ["refs"];
-  }
-  return [];
+  const id = message.id as number | undefined;
+  if (id === undefined) return [];
+  const info: RefDebugInfo = {
+    id,
+    kind: message.kind,
+    label: message.label,
+    createdAt:
+      message.source_file ?
+        {
+          fileName: message.source_file,
+          lineNumber: message.source_line,
+          columnNumber: message.source_col,
+        }
+      : undefined,
+    createdByEffectId: message.created_by_effect_id,
+    isInfrastructure: Boolean(message.is_infrastructure),
+    isApproxLocation: Boolean(message.is_approx_location),
+    sourcePackage:
+      message.source_package ?? extractPackageFromPath(message.source_file),
+  };
+  store.refs.set(id, info);
+  return ["refs"];
 }
 
 function handleEdge(
   store: DebugStore,
   _pending: PendingState,
-  message: { edge: any },
+  message: any,
 ): DirtyFlagKey[] {
-  if (message.edge) {
-    store.effectEdges.push(message.edge);
-    if (store.effectEdges.length > MAX_EFFECT_EDGES + 1000) {
-      store.effectEdges = store.effectEdges.slice(-MAX_EFFECT_EDGES);
+  const effectId = message.effect_id as number | undefined;
+  if (effectId === undefined) return [];
+  const msgType = message.type as string;
+  const edgeType = msgType === "edge:track" ? "track" : "trigger";
+  const edge: EffectEdgeDebugInfo = {
+    id: message.seq ?? Date.now(),
+    type: edgeType,
+    effectId,
+    causedBy: message.caused_by ?? undefined,
+    refId: message.ref_id,
+    targetId: message.target_id,
+    targetKind: message.target_kind,
+    targetLabel: message.target_label,
+    targetKey: message.target_key,
+  };
+  store.effectEdges.push(edge);
+  // Update last-triggered info on the effect for trigger edges
+  if (edgeType === "trigger") {
+    const effect = store.effects.get(effectId);
+    if (effect) {
+      effect.lastTriggeredByRefId = message.ref_id;
     }
-    return ["effectEdges"];
   }
-  return [];
+  return ["effectEdges"];
+}
+
+function handleEffectLifecycle(
+  store: DebugStore,
+  _pending: PendingState,
+  message: any,
+): DirtyFlagKey[] {
+  const effectId = message.effect_id as number | undefined;
+  if (effectId === undefined) return [];
+  const event: EffectLifecycleEvent = {
+    id: message.seq ?? Date.now(),
+    effectId,
+    event: message.event,
+    triggerRefId: message.trigger_ref_id ?? undefined,
+  };
+  store.effectLifecycleEvents.push(event);
+  return ["effectLifecycle"];
 }
 
 // ── Scopes / symbols ────────────────────────────────────────────────────────
@@ -348,12 +467,18 @@ function handleScopeCreateOrUpdate(
   _pending: PendingState,
   message: any,
 ): DirtyFlagKey[] {
-  const scope = message.scope;
-  if (scope) {
-    store.scopes.set(scope.id, scope);
-    return ["symbolTree", "scopeDetails"];
-  }
-  return [];
+  const id = message.id as number | undefined;
+  if (id === undefined) return [];
+  const scope: ScopeRecord = {
+    id,
+    name: message.name ?? "",
+    parentId: message.parent_id ?? null,
+    ownerSymbolId: message.owner_symbol_id ?? null,
+    isMemberScope: !!message.is_member_scope,
+    renderNodeId: message.render_node_id,
+  };
+  store.scopes.set(id, scope);
+  return ["symbolTree", "scopeDetails"];
 }
 
 function handleScopeDelete(
@@ -374,12 +499,22 @@ function handleSymbolCreateOrUpdate(
   _pending: PendingState,
   message: any,
 ): DirtyFlagKey[] {
-  const symbol = message.symbol;
-  if (symbol) {
-    store.symbols.set(symbol.id, symbol);
-    return ["symbolTree", "symbolDetails"];
-  }
-  return [];
+  const id = message.id as number | undefined;
+  if (id === undefined) return [];
+  const symbol: SymbolRecord = {
+    id,
+    name: message.name ?? "",
+    originalName: message.original_name ?? "",
+    scopeId: message.scope_id ?? null,
+    ownerSymbolId: message.owner_symbol_id ?? null,
+    isMemberSymbol: !!message.is_member,
+    isTransient: !!message.is_transient,
+    isAlias: !!message.is_alias,
+    movedToId: message.moved_to_id ?? null,
+    renderNodeId: message.render_node_id,
+  };
+  store.symbols.set(id, symbol);
+  return ["symbolTree", "symbolDetails"];
 }
 
 function handleSymbolDelete(
@@ -399,30 +534,29 @@ function handleSymbolDelete(
 
 const messageHandlers: Record<string, MessageHandler> = {
   "render:reset": handleRenderTreeMessage,
-  "render:nodeAdded": handleRenderTreeMessage,
-  "render:nodeRemoved": handleRenderTreeMessage,
-  "render:nodeUpdated": handleRenderTreeMessage,
-  "files:directoryAdded": (s, p, m) => handleDirectoryMessage(s, p, m, "add"),
-  "files:directoryRemoved": (s, p, m) =>
-    handleDirectoryMessage(s, p, m, "remove"),
-  "files:fileAdded": handleFileAdded,
-  "files:fileRemoved": handleFileRemoved,
-  "files:fileUpdated": handleFileUpdated,
+  "render:node_added": handleRenderTreeMessage,
+  "render:node_removed": handleRenderTreeMessage,
+  "render:node_updated": handleRenderTreeMessage,
+  "directory:added": (s, p, m) => handleDirectoryMessage(s, p, m, "add"),
+  "directory:removed": (s, p, m) => handleDirectoryMessage(s, p, m, "remove"),
+  "file:added": handleFileAdded,
+  "file:removed": handleFileRemoved,
+  "file:updated": handleFileUpdated,
   "debugger:info": handleDebuggerInfo,
   "diagnostics:report": handleDiagnosticsReport,
   "render:error": handleRenderError,
-  "effect:effectAdded": handleEffectAddedOrUpdated,
-  "effect:effectUpdated": handleEffectAddedOrUpdated,
-  "effect:refAdded": handleRefAdded,
-  "effect:track": handleEdge,
-  "effect:trigger": handleEdge,
-  "effect:edgeUpdated": handleEdge,
-  "scope:create": handleScopeCreateOrUpdate,
-  "scope:update": handleScopeCreateOrUpdate,
-  "scope:delete": handleScopeDelete,
-  "symbol:create": handleSymbolCreateOrUpdate,
-  "symbol:update": handleSymbolCreateOrUpdate,
-  "symbol:delete": handleSymbolDelete,
+  "effect:added": handleEffectAddedOrUpdated,
+  "effect:updated": handleEffectAddedOrUpdated,
+  "ref:added": handleRefAdded,
+  "edge:track": handleEdge,
+  "edge:trigger": handleEdge,
+  "effect:lifecycle": handleEffectLifecycle,
+  "scope:added": handleScopeCreateOrUpdate,
+  "scope:updated": handleScopeCreateOrUpdate,
+  "scope:removed": handleScopeDelete,
+  "symbol:added": handleSymbolCreateOrUpdate,
+  "symbol:updated": handleSymbolCreateOrUpdate,
+  "symbol:removed": handleSymbolDelete,
 };
 
 /**
@@ -435,27 +569,6 @@ export function processMessage(
   message: ServerToClientMessage,
 ): DirtyFlagKey[] {
   const dirty: DirtyFlagKey[] = [];
-
-  // Accumulate trace entries for all messages except noisy ones
-  if (!TRACE_SKIP_TYPES.has(message.type)) {
-    const sanitized = sanitizeTraceMessage(message);
-    store.traceCounter += 1;
-
-    if (!pending.traceEntries) {
-      pending.traceEntries = [];
-    }
-    pending.traceEntries.push({
-      id: `${store.traceCounter}-${Date.now()}`,
-      type: sanitized.type,
-      timestamp: Date.now(),
-      message: sanitized,
-    });
-
-    if (pending.traceEntries.length > MAX_TRACE_ENTRIES + 100) {
-      pending.traceEntries = pending.traceEntries.slice(-MAX_TRACE_ENTRIES);
-    }
-    dirty.push("traceEntries");
-  }
 
   const handler = messageHandlers[message.type];
   if (handler) {
@@ -652,21 +765,4 @@ export function buildSymbolTree(store: DebugStore): TreeNode[] {
   };
   sortNodes(roots);
   return roots;
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-export function sanitizeTraceMessage(
-  message: ServerToClientMessage,
-): ServerToClientMessage {
-  if (message.type === "files:fileUpdated") {
-    return {
-      ...message,
-      contents:
-        typeof message.contents === "string" ?
-          `[${message.contents.length} chars]`
-        : message.contents,
-    };
-  }
-  return message;
 }

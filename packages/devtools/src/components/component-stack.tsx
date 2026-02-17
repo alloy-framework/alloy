@@ -100,7 +100,10 @@ export function ComponentStack({ entries }: ComponentStackProps) {
 
   const copyVscodeCommand = async (entry: ComponentStackEntry) => {
     if (!entry.source) return;
-    const command = `code -g ${entry.source.fileName}:${entry.source.lineNumber}:${entry.source.columnNumber}`;
+    const normalized = entry.source.fileName
+      .replace(/^file:\/\//, "")
+      .replace(/\\/g, "/");
+    const command = `code -g ${normalized}:${entry.source.lineNumber}:${entry.source.columnNumber}`;
     try {
       await navigator.clipboard.writeText(command);
       toast({ description: "VSCode open command copied" });

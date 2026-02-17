@@ -32,7 +32,6 @@ export type {
   RenderErrorComponentStackEntry,
   RenderErrorDetails,
   SourceLocation,
-  TraceEntry,
 } from "./debug-connection-types";
 
 export function useDebugConnection(): DebugConnectionState {
@@ -128,12 +127,8 @@ export function useDebugConnection(): DebugConnectionState {
       if (dirty.effectEdges) {
         updates.effectEdgesVersion = prev.effectEdgesVersion + 1;
       }
-      if (dirty.traceEntries && pending.traceEntries) {
-        let traceEntries = [...prev.traceEntries, ...pending.traceEntries];
-        if (traceEntries.length > 500) {
-          traceEntries = traceEntries.slice(-500);
-        }
-        updates.traceEntries = traceEntries;
+      if (dirty.effectLifecycle) {
+        updates.effectLifecycleVersion = prev.effectLifecycleVersion + 1;
       }
       if (dirty.diagnostics && pending.diagnostics !== undefined) {
         updates.diagnostics = pending.diagnostics;
@@ -153,6 +148,9 @@ export function useDebugConnection(): DebugConnectionState {
       }
       if (dirty.cwd && pending.cwd !== undefined) {
         updates.cwd = pending.cwd;
+      }
+      if (dirty.sourceMapEnabled && pending.sourceMapEnabled !== undefined) {
+        updates.sourceMapEnabled = pending.sourceMapEnabled;
       }
 
       return { ...prev, ...updates };
@@ -221,6 +219,30 @@ export function useDebugConnection(): DebugConnectionState {
         // Reset mutable store
         resetDebugStore(storeRef.current);
 
+        // Reset React state to initial so stale data from previous
+        // connection is fully cleared before new messages arrive.
+        setState({ ...INITIAL_STATE, status: "connected" });
+
+        // Request initial state for all channels (server auto-subscribes on connect,
+        // so this only triggers sending existing SQLite rows for the current state).
+        transport.send({
+          type: "subscribe",
+          channels: [
+            "render",
+            "effects",
+            "refs",
+            "edges",
+            "symbols",
+            "scopes",
+            "files",
+            "directories",
+            "scheduler",
+            "diagnostics",
+            "errors",
+            "lifecycle",
+          ],
+        });
+
         // Reset pending state and mark everything dirty
         pendingRef.current = { status: "connected" };
         dirtyFlagsRef.current = createAllDirtyFlags();
@@ -280,6 +302,7 @@ export function useDebugConnection(): DebugConnectionState {
       effects: storeRef.current.effects,
       refs: storeRef.current.refs,
       effectEdges: storeRef.current.effectEdges,
+      effectLifecycleEvents: storeRef.current.effectLifecycleEvents,
       formatPath,
       sendMessage,
     }),

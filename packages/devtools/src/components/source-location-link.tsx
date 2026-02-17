@@ -21,14 +21,16 @@ export function SourceLocationLink({
 
   const sourceLabel =
     source.fileName ?
-      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}:${source.columnNumber ?? "?"}`
+      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}`
     : "";
 
   const handleClick = async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!source.fileName) return;
-    const normalized = source.fileName.replace(/\\/g, "/");
+    const normalized = source.fileName
+      .replace(/^file:\/\//, "")
+      .replace(/\\/g, "/");
     const line = source.lineNumber ?? 1;
     const column = source.columnNumber ?? 1;
     const command = `code -g ${normalized}:${line}:${column}`;

@@ -58,8 +58,8 @@ function loadDevtoolsUiHtml(): string | null {
 export interface CreateTransportOptions {
   port: number;
   onConnection(socket: any): void;
-  onMessage(message: unknown): void;
-  onDisconnect(): void;
+  onMessage(message: unknown, socket: any): void;
+  onDisconnect(socket: any): void;
 }
 
 /**
@@ -137,7 +137,7 @@ export async function createTransport(
 
     socket.on("message", (data) => {
       try {
-        options.onMessage(JSON.parse(String(data)));
+        options.onMessage(JSON.parse(String(data)), socket);
       } catch {
         // ignore malformed messages
       }
@@ -146,7 +146,7 @@ export async function createTransport(
     socket.on("close", () => {
       clients.delete(socket);
       state.connected = clients.size > 0;
-      options.onDisconnect();
+      options.onDisconnect(socket);
     });
   });
 

@@ -6,10 +6,17 @@ import { SourceFileContext } from "./context/source-file.js";
 import {
   debug,
   getRenderNodeId,
+  isDevtoolsConnected,
   isDevtoolsEnabled,
   type RenderTreeNodeInfo,
 } from "./debug/index.js";
-import { broadcastDevtoolsMessage } from "./devtools/devtools-server.js";
+import {
+  beginTransaction,
+  closeTrace,
+  commitTransaction,
+  notifyDiagnosticsReport,
+} from "./debug/trace-writer.js";
+import { isTraceEnabled } from "./debug/trace.js";
 import {
   attachDiagnosticsCollector,
   DiagnosticsCollector,
@@ -52,6 +59,43 @@ import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
 import { flushJobs, flushJobsAsync, waitForSignal } from "./scheduler.js";
 
 const notifiedErrors = new WeakSet<object>();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Deferred file printing: mark files dirty during render, print once at end
+// ─────────────────────────────────────────────────────────────────────────────
+interface DirtyFileEntry {
+  renderNode: RenderedTextTree;
+  printOptions: {
+    printWidth?: number;
+    tabWidth?: number;
+    useTabs?: boolean;
+    insertFinalNewLine?: boolean;
+  };
+  path: string;
+  filetype: string;
+}
+const dirtyFiles = new Map<string, DirtyFileEntry>();
+const lastFlushTimeByFile = new Map<string, number>();
+const DEVTOOLS_FLUSH_INTERVAL_MS = 1000;
+
+function flushDirtyFile(path: string): void {
+  const entry = dirtyFiles.get(path);
+  if (!entry) return;
+  dirtyFiles.delete(path);
+  const contents = printTree(entry.renderNode, {
+    ...entry.printOptions,
+    insertFinalNewLine: entry.printOptions.insertFinalNewLine ?? true,
+    noFlush: true,
+  });
+  debug.files.updated({ path: entry.path, filetype: entry.filetype, contents });
+}
+
+function flushDirtyFiles(): void {
+  for (const path of [...dirtyFiles.keys()]) {
+    flushDirtyFile(path);
+  }
+}
+
 let lastRenderError: {
   error: { name: string; message: string; stack?: string };
   componentStack: Array<{
@@ -275,10 +319,7 @@ function reportDiagnosticsForTree(tree: RenderedTextTree) {
   const entries = diagnostics.getDiagnostics();
   if (entries.length === 0) return;
   reportDiagnostics(diagnostics);
-  void broadcastDevtoolsMessage({
-    type: "diagnostics:report",
-    diagnostics: entries,
-  });
+  notifyDiagnosticsReport(entries);
 }
 
 // Re-export from print-hook.ts to maintain backwards compatibility
@@ -313,9 +354,13 @@ export function render(
   const tree = renderTree(children);
   flushJobs();
   const output = sourceFilesForTree(tree, options);
+  flushDirtyFiles();
   reportDiagnosticsForTree(tree);
   reportLastRenderError();
   debug.render.complete();
+  // Only close the trace DB when devtools is NOT running. When devtools is
+  // active the DB must remain open for post-render reactive updates.
+  if (isTraceEnabled() && !isDevtoolsEnabled()) closeTrace();
   if (isDevtoolsEnabled()) {
     void waitForSignal();
   }
@@ -335,9 +380,13 @@ export async function renderAsync(
   // Ensure all reactive updates are flushed before printing.
   await flushJobsAsync();
   const output = sourceFilesForTree(tree, options);
+  flushDirtyFiles();
   reportDiagnosticsForTree(tree);
   reportLastRenderError();
   debug.render.complete();
+  // Only close the trace DB when devtools is NOT running. When devtools is
+  // active the DB must remain open for post-render reactive updates.
+  if (isTraceEnabled() && !isDevtoolsEnabled()) closeTrace();
 
   return output;
 }
@@ -449,17 +498,23 @@ export function renderTree(children: Children) {
   debug.effect.reset();
   debug.symbols.reset();
   debug.files.reset();
+  dirtyFiles.clear();
+  lastFlushTimeByFile.clear();
   debug.render.initialize(rootElem);
+  if (isTraceEnabled()) beginTransaction();
   try {
     root(() => {
       attachDiagnosticsCollector(diagnostics);
       renderWorker(rootElem, children);
     });
   } catch (e) {
+    if (isTraceEnabled()) commitTransaction();
+    flushDirtyFiles();
     notifyRenderError(e);
     reportLastRenderError();
     throw e;
   }
+  if (isTraceEnabled()) commitTransaction();
 
   diagnosticsByTree.set(rootElem, diagnostics);
 
@@ -761,8 +816,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       }
     } else if (isComponentCreator(child)) {
       const index = node.length;
-      const rerenderToken = isDevtoolsEnabled() ? ref(0) : undefined;
-      const breakNext = isDevtoolsEnabled() ? ref(false) : undefined;
+      const rerenderToken =
+        isDevtoolsEnabled() ? ref(0, { isInfrastructure: true }) : undefined;
+      const breakNext =
+        isDevtoolsEnabled() ?
+          ref(false, { isInfrastructure: true })
+        : undefined;
       // todo: remove this effect (only needed for context, not needed for anything else)
       effect(
         () => {
@@ -789,15 +848,21 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
             source: child.source,
             isExisting: Array.isArray(existing),
             actions: {
-              rerender: () => {
-                lastRenderError = null;
-                if (rerenderToken) rerenderToken.value++;
-              },
-              rerenderAndBreak: () => {
-                lastRenderError = null;
-                if (breakNext) breakNext.value = true;
-                if (rerenderToken) rerenderToken.value++;
-              },
+              rerender:
+                rerenderToken ?
+                  () => {
+                    lastRenderError = null;
+                    rerenderToken.value++;
+                  }
+                : () => {},
+              rerenderAndBreak:
+                breakNext && rerenderToken ?
+                  () => {
+                    lastRenderError = null;
+                    breakNext.value = true;
+                    rerenderToken.value++;
+                  }
+                : () => {},
             },
           });
           if (Array.isArray(existing)) {
@@ -809,7 +874,7 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
           let childResult: Children | undefined;
           try {
             childResult = untrack(() => {
-              const shouldBreak = breakNext?.value;
+              const shouldBreak = breakNext?.value ?? false;
               if (shouldBreak) {
                 breakNext!.value = false;
                 // eslint-disable-next-line no-debugger
@@ -927,29 +992,38 @@ function findSourceFileContext(node: RenderedTextTree) {
 }
 
 function notifyFileUpdateForNode(node: RenderedTextTree) {
-  // Only do the expensive printTree when devtools are actually enabled
-  if (!isDevtoolsEnabled()) return;
+  // Only track when devtools or trace are actually enabled
+  if (!isDevtoolsEnabled() && !isTraceEnabled()) return;
   const context = findSourceFileContext(node);
   if (!context?.meta?.sourceFile) return;
   if (context.meta.sourceFileReady === false) return;
   const sourceFile = context.meta.sourceFile;
   const renderNode: RenderedTextTree =
     (context.meta.renderNode as RenderedTextTree | undefined) ?? node;
-  // Pass noFlush here since it flushes jobs and can re-enter rendering
-  // during effect setup, triggering premature cleanup.
-  const contents = printTree(renderNode, {
-    printWidth: context.meta?.printOptions?.printWidth,
-    tabWidth: context.meta?.printOptions?.tabWidth,
-    useTabs: context.meta?.printOptions?.useTabs,
-    insertFinalNewLine: context.meta?.printOptions?.insertFinalNewLine ?? true,
-    noFlush: true,
-  });
 
-  debug.files.updated({
+  // Mark this file as dirty — defer the expensive printTree to end of render
+  dirtyFiles.set(sourceFile.path, {
+    renderNode,
+    printOptions: {
+      printWidth: context.meta?.printOptions?.printWidth,
+      tabWidth: context.meta?.printOptions?.tabWidth,
+      useTabs: context.meta?.printOptions?.useTabs,
+      insertFinalNewLine: context.meta?.printOptions?.insertFinalNewLine,
+    },
     path: sourceFile.path,
     filetype: sourceFile.filetype,
-    contents,
   });
+
+  // When a devtools client is connected, throttle file flushing to ~1s per file
+  // so the user can watch content build up during rendering.
+  if (isDevtoolsConnected()) {
+    const now = Date.now();
+    const lastFlush = lastFlushTimeByFile.get(sourceFile.path) ?? 0;
+    if (now - lastFlush >= DEVTOOLS_FLUSH_INTERVAL_MS) {
+      lastFlushTimeByFile.set(sourceFile.path, now);
+      flushDirtyFile(sourceFile.path);
+    }
+  }
 }
 
 type NormalizedChildren = NormalizedChild | NormalizedChildren[];

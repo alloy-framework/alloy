@@ -34,7 +34,7 @@ afterEach(async () => {
 });
 
 it("emits tracking info", async () => {
-  const collector = createMessageCollector(socket!);
+  const collector = await createMessageCollector(socket!);
   const binder = createOutputBinder();
 
   const scope = createScope(BasicScope, "root", undefined, { binder });
@@ -44,14 +44,14 @@ it("emits tracking info", async () => {
   });
   symbol.name = "hi";
   await flushJobsAsync();
-  const items = (await collector.waitForFlush()).filter((m) =>
-    m.type.startsWith("effect:track"),
+  const items = (await collector.waitForFlush()).filter(
+    (m) => m.type.startsWith("edge:track") && !("triggerIds" in m),
   );
   expect(items.length).toBeGreaterThan(0);
 });
 
 it("emits symbol and scope add/update/remove messages", async () => {
-  const collector = createMessageCollector(socket!);
+  const collector = await createMessageCollector(socket!);
   const binder = createOutputBinder();
 
   const scope = createScope(BasicScope, "root", undefined, { binder });
@@ -70,37 +70,36 @@ it("emits symbol and scope add/update/remove messages", async () => {
 
   const messages = await collector.waitForFlush();
   const symbolsMessages = messages.filter((m) => {
-    return m.type.startsWith("scope:") || m.type.startsWith("symbol:");
+    return (
+      (m.type.startsWith("scope:") || m.type.startsWith("symbol:")) &&
+      !("triggerIds" in m)
+    );
   });
   collector.stop();
 
   expect(symbolsMessages[0]).toMatchObject({
-    type: "scope:create",
-    scope: expect.objectContaining({ name: "root" }),
+    type: "scope:added",
+    name: "root",
   });
 
   expect(symbolsMessages[1]).toMatchObject({
-    type: "symbol:addToScope",
+    type: "symbol:added",
+    name: "Foo",
   });
-
   expect(symbolsMessages[2]).toMatchObject({
-    type: "symbol:create",
-    symbol: expect.objectContaining({ name: "Foo" }),
+    type: "scope:updated",
+    name: "root-updated",
   });
   expect(symbolsMessages[3]).toMatchObject({
-    type: "scope:update",
-    scope: expect.objectContaining({ name: "root-updated" }),
+    type: "symbol:updated",
+    name: "FooUpdated",
   });
   expect(symbolsMessages[4]).toMatchObject({
-    type: "symbol:update",
-    symbol: expect.objectContaining({ name: "FooUpdated" }),
-  });
-  expect(symbolsMessages[5]).toMatchObject({
-    type: "symbol:delete",
+    type: "symbol:removed",
     id: expect.any(Number),
   });
-  expect(symbolsMessages[6]).toMatchObject({
-    type: "scope:delete",
+  expect(symbolsMessages[5]).toMatchObject({
+    type: "scope:removed",
     id: expect.any(Number),
   });
 });

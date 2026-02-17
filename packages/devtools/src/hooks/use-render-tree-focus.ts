@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 export function useRenderTreeFocus(
   renderTreeRef: RefObject<RenderTreeHandle | null>,
   focusRefreshKey?: unknown,
-  setBottomTab?: (tab: "render" | "problems" | "effects" | "trace") => void,
+  setBottomTab?: (tab: "render" | "problems" | "effects") => void,
 ) {
   const [selectedRenderNodeId, setSelectedRenderNodeId] = useState<
     string | null

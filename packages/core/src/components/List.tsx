@@ -57,10 +57,13 @@ export interface ListProps extends BaseListProps {
  */
 export function List(props: ListProps) {
   const [rest, forProps] = splitProps(props, ["children"]);
-  const resolvedChildren = memo(() =>
-    childrenArray(() => rest.children, {
-      preserveFragments: true,
-    }),
+  const resolvedChildren = memo(
+    () =>
+      childrenArray(() => rest.children, {
+        preserveFragments: true,
+      }),
+    undefined,
+    "List:children",
   );
   return (
     <For each={resolvedChildren} {...forProps} skipFalsy>

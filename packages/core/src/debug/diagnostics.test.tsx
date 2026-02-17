@@ -34,7 +34,7 @@ afterEach(async () => {
 });
 
 it("emits diagnostics:report messages", async () => {
-  const collector = createMessageCollector(socket!);
+  const collector = await createMessageCollector(socket!);
   const diagnostics = new DiagnosticsCollector();
 
   diagnostics.emit({ message: "Test diagnostic", severity: "warning" });
@@ -50,6 +50,7 @@ it("emits diagnostics:report messages", async () => {
 
   expect(diagnosticsMessages[0]).toMatchObject({
     type: "diagnostics:report",
-    diagnostics: expect.any(Array),
+    message: "Test diagnostic",
+    severity: "warning",
   });
 });

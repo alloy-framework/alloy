@@ -11,6 +11,7 @@ import {
   debugWatch,
 } from "./cli.js";
 import {
+  ensureReactivePropertyRef,
   ensureRef,
   register,
   registerRef,
@@ -47,6 +48,7 @@ import {
 } from "./symbols.js";
 import { trace, type TracePhaseInfo } from "./trace.js";
 
+export { isDevtoolsConnected } from "../devtools/devtools-server.js";
 export { captureSourceLocation } from "./effects.js";
 export type {
   EffectDebugInfo,
@@ -62,6 +64,7 @@ export type {
 } from "./render.js";
 export {
   isConsoleTraceEnabled,
+  isDebugEnabled,
   isDevtoolsEnabled,
   trace,
   TracePhase,
@@ -84,6 +87,7 @@ export const debug = {
     update,
     registerRef,
     ensureRef,
+    ensureReactivePropertyRef,
     track,
     trigger,
     reset,

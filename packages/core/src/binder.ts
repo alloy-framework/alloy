@@ -643,54 +643,63 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
-    effect<Refkey[]>((oldRefkeys) => {
-      if (symbol.refkeys) {
-        debug.trace(
-          TracePhase.resolve.pending,
-          () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
-        );
-      }
+    effect<Refkey[]>(
+      (oldRefkeys) => {
+        if (symbol.refkeys) {
+          debug.trace(
+            TracePhase.resolve.pending,
+            () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
+          );
+        }
 
-      if (oldRefkeys) {
-        for (const refkey of oldRefkeys) {
-          if (!symbol.refkeys.includes(refkey)) {
-            // remove the old refkey from the known declarations
-            knownDeclarations.delete(refkey);
+        if (oldRefkeys) {
+          for (const refkey of oldRefkeys) {
+            if (!symbol.refkeys.includes(refkey)) {
+              // remove the old refkey from the known declarations
+              knownDeclarations.delete(refkey);
 
-            // reset any waiting declarations
-            if (waitingDeclarations.has(refkey)) {
-              const signal = waitingDeclarations.get(refkey)!;
-              signal.value = undefined;
+              // reset any waiting declarations
+              if (waitingDeclarations.has(refkey)) {
+                const signal = waitingDeclarations.get(refkey)!;
+                signal.value = undefined;
+              }
             }
           }
         }
-      }
 
-      for (const refkey of symbol.refkeys) {
-        // notify those waiting for this refkey
-        knownDeclarations.set(refkey, symbol);
-        if (waitingDeclarations.has(refkey)) {
-          const signal = waitingDeclarations.get(refkey)!;
-          signal.value = symbol;
-        }
+        for (const refkey of symbol.refkeys) {
+          // notify those waiting for this refkey
+          knownDeclarations.set(refkey, symbol);
+          if (waitingDeclarations.has(refkey)) {
+            const signal = waitingDeclarations.get(refkey)!;
+            signal.value = symbol;
+          }
 
-        const scope = symbol.scope;
-        if (!scope) {
-          continue;
-        }
+          const scope = symbol.scope;
+          if (!scope) {
+            continue;
+          }
 
-        // notify those waiting for this symbol name
-        const waitingScope = waitingSymbolNames.get(scope);
-        if (waitingScope) {
-          const waitingName = waitingScope.get(symbol.name);
-          if (waitingName) {
-            waitingName.value = symbol;
+          // notify those waiting for this symbol name
+          const waitingScope = waitingSymbolNames.get(scope);
+          if (waitingScope) {
+            const waitingName = waitingScope.get(symbol.name);
+            if (waitingName) {
+              waitingName.value = symbol;
+            }
           }
         }
-      }
 
-      return [...symbol.refkeys];
-    });
+        return [...symbol.refkeys];
+      },
+      undefined,
+      {
+        debug: {
+          name: "binder:notifySymbolCreated",
+          type: "binder",
+        },
+      },
+    );
   }
 }
 

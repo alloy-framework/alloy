@@ -98,13 +98,7 @@ export function createDebugTransport(
       }
       if (!parsed) return;
 
-      // Unwrap batch messages
-      const messages: ServerToClientMessage[] =
-        parsed.type === "batch" ? parsed.messages : [parsed];
-
-      for (const message of messages) {
-        callbacks.onMessage(message);
-      }
+      callbacks.onMessage(parsed);
     });
   }
 

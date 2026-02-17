@@ -1,10 +1,5 @@
 // Browser stub for devtools-server - devtools are not supported in browsers
 
-export interface DevtoolsMessage {
-  type: string;
-  [key: string]: unknown;
-}
-
 export interface DevtoolsIncomingMessage {
   type: string;
   [key: string]: unknown;
@@ -35,10 +30,6 @@ export async function enableDevtools(
 }
 
 export async function initDevtoolsIfEnabled(): Promise<void> {
-  // No-op in browser
-}
-
-export function broadcastDevtoolsMessage(_message: DevtoolsMessage): void {
   // No-op in browser
 }
 

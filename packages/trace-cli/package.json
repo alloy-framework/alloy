@@ -6,6 +6,12 @@
   "bin": {
     "alloy-trace": "./dist/cli.js"
   },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },

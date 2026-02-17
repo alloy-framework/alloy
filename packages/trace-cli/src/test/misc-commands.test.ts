@@ -153,24 +153,16 @@ describe("file", () => {
       expect(stdout).toContain("Found 1 text node(s)");
       expect(stdout).toContain("export interface Foo");
       expect(stdout).toContain("Component stack");
-      expect(stdout).toContain("Declaration");
-      expect(stdout).toContain("SourceFile");
+      expect(stdout).toContain("at Declaration");
+      expect(stdout).toContain("at SourceFile");
     });
 
-    it("shows component props in stack", () => {
+    it("shows source locations in stack trace format", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
-      expect(stdout).toContain("props:");
-      expect(stdout).toContain("src/models.ts");
-    });
-
-    it("shows source locations in stack", () => {
-      const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
-      );
-      expect(stdout).toContain("declaration.tsx");
-      expect(stdout).toContain("source-file.tsx");
+      expect(stdout).toContain("at Declaration (typescript/src/components/declaration.tsx:25:3)");
+      expect(stdout).toContain("at SourceFile (typescript/src/components/source-file.tsx:10:5)");
     });
 
     it("matches by path suffix", () => {

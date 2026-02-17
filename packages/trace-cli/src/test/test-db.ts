@@ -84,9 +84,9 @@ function seedData(db: DatabaseSync) {
   db.exec(`
     INSERT INTO render_nodes VALUES (1, NULL, 'root', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
     INSERT INTO render_nodes VALUES (2, 1, 'component', 'SourceFile', '{"path":"src/models.ts"}',
-      '/home/user/src/components/source-file.tsx', 10, 5, 100, NULL, 2);
+      '/home/user/packages/typescript/src/components/source-file.tsx', 10, 5, 100, NULL, 2);
     INSERT INTO render_nodes VALUES (3, 2, 'component', 'Declaration', NULL,
-      '/home/user/src/components/declaration.tsx', 25, 3, 200, NULL, 3);
+      '/home/user/packages/typescript/src/components/declaration.tsx', 25, 3, 200, NULL, 3);
     INSERT INTO render_nodes VALUES (4, 3, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'export interface Foo {}', 4);
     INSERT INTO render_nodes VALUES (5, 2, 'fragment', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5);
     INSERT INTO render_nodes VALUES (6, 5, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'import { Bar } from "bar";', 6);
@@ -98,20 +98,20 @@ function seedData(db: DatabaseSync) {
   // Effects: render effects for the components, plus a computed memo
   db.exec(`
     INSERT INTO effects VALUES (1, 'render:SourceFile', 'render', 100, NULL, 'SourceFile',
-      '/home/user/src/components/source-file.tsx', 15, 1, 1);
+      '/home/user/packages/typescript/src/components/source-file.tsx', 15, 1, 1);
     INSERT INTO effects VALUES (2, 'render:Declaration', 'render', 200, 100, 'Declaration',
-      '/home/user/src/components/declaration.tsx', 30, 1, 2);
+      '/home/user/packages/typescript/src/components/declaration.tsx', 30, 1, 2);
     INSERT INTO effects VALUES (3, 'content:models', 'content', 300, 200, NULL,
-      '/home/user/src/components/declaration.tsx', 35, 1, 3);
+      '/home/user/packages/typescript/src/components/declaration.tsx', 35, 1, 3);
     INSERT INTO effects VALUES (4, 'binder:resolve', 'binder', 400, 100, NULL, NULL, NULL, NULL, 4);
   `);
 
   // Refs: two reactive values
   db.exec(`
-    INSERT INTO refs VALUES (1, 'ref', 'allTypes', 1, '/home/user/src/models.ts', 10, 1, 1);
+    INSERT INTO refs VALUES (1, 'ref', 'allTypes', 1, '/home/user/packages/typescript/src/models.ts', 10, 1, 1);
     INSERT INTO refs VALUES (2, 'computed', 'typeCount', 3,
-      '/home/user/src/components/declaration.tsx', 40, 1, 2);
-    INSERT INTO refs VALUES (3, 'ref', 'unusedRef', 2, '/home/user/src/other.ts', 5, 1, 3);
+      '/home/user/packages/typescript/src/components/declaration.tsx', 40, 1, 2);
+    INSERT INTO refs VALUES (3, 'ref', 'unusedRef', 2, '/home/user/packages/typescript/src/other.ts', 5, 1, 3);
   `);
 
   // Edges: effect 2 tracks ref 1, effect 3 triggers ref 2, effect 3 triggered-by ref 1

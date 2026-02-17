@@ -1,4 +1,4 @@
-import { type Db, type Opts, shortPath } from "../types.js";
+import { type Db, type Opts, shortPath, formatComponentStack } from "../types.js";
 
 export function fileCommand(
   db: Db,
@@ -120,15 +120,18 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
 
     const stack = buildComponentStack(db, textNode.id);
     if (stack.length > 0) {
-      console.log("  Component stack (innermost first):");
-      for (let j = 0; j < stack.length; j++) {
-        const c = stack[j];
-        const src = c.source_file ? `${shortPath(c.source_file)}:${c.source_line}` : "";
-        const indent = "    " + "  ".repeat(j);
-        console.log(`${indent}${c.name ?? "(unnamed)"} #${c.id}${src ? `  (${src})` : ""}`);
-        if (c.props) {
-          console.log(`${indent}  props: ${c.props}`);
-        }
+      const json = JSON.stringify(
+        stack.map((c: any) => ({
+          name: c.name ?? "(unnamed)",
+          source: c.source_file
+            ? { fileName: c.source_file, lineNumber: c.source_line, columnNumber: c.source_col }
+            : undefined,
+        })),
+      );
+      const formatted = formatComponentStack(json);
+      if (formatted) {
+        console.log("  Component stack (innermost first):");
+        console.log(formatted);
       }
     } else {
       console.log("  (no component ancestors)");
@@ -143,7 +146,7 @@ function buildComponentStack(db: Db, nodeId: number): any[] {
 
   while (currentId !== null) {
     const node = db
-      .prepare("SELECT id, parent_id, kind, name, props, source_file, source_line FROM render_nodes WHERE id = ?")
+      .prepare("SELECT id, parent_id, kind, name, props, source_file, source_line, source_col FROM render_nodes WHERE id = ?")
       .get(currentId) as any;
     if (!node) break;
     if (node.kind === "component") {

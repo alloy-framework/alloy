@@ -137,7 +137,7 @@ export function formatComponentStack(json: string, allFrames = false): string | 
     const lines = userFrames.map(formatEntry);
 
     if (hiddenCount > 0 && lines.length > 0) {
-      lines.push(dim(`    ... ${hiddenCount} framework frames hidden (use --all-frames to show)`));
+      lines.push(dim(`    ... ${hiddenCount} external frames hidden (use --all-frames to show)`));
     }
 
     return lines.length > 0 ? lines.join("\n") : undefined;

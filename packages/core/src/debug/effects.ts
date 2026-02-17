@@ -4,6 +4,11 @@ import {
   getReactiveCreationLocation,
   nextReactiveId,
 } from "../reactivity.js";
+import {
+  getRealPath,
+  loadSourceMapSupport,
+  resolveSourceMap,
+} from "./source-map.js";
 import { insertEdge, insertEffect, insertRef } from "./trace-writer.js";
 import {
   isDebugEnabled,
@@ -112,68 +117,6 @@ const VUE_REACTIVITY_MARKERS = [
 // Fast source location capture using V8 structured CallSite API
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Lazily loaded findSourceMap from node:module
-let findSourceMap:
-  | ((path: string) =>
-      | {
-          findEntry: (
-            line: number,
-            col: number,
-          ) =>
-            | {
-                originalSource: string;
-                originalLine: number;
-                originalColumn: number;
-              }
-            | undefined;
-        }
-      | undefined)
-  | undefined;
-let findSourceMapLoaded = false;
-let realpathSync: ((path: string) => string) | undefined;
-// Cache realpath lookups to avoid repeated fs calls
-const realpathCache = new Map<string, string>();
-
-function loadFindSourceMap() {
-  if (findSourceMapLoaded) return;
-  findSourceMapLoaded = true;
-  // process.getBuiltinModule works in both ESM and CJS contexts
-  try {
-    const mod = process.getBuiltinModule?.("node:module") as
-      | typeof import("node:module")
-      | undefined;
-    if (mod && typeof mod.findSourceMap === "function") {
-      findSourceMap = mod.findSourceMap as typeof findSourceMap;
-    }
-  } catch {
-    // not available
-  }
-  try {
-    const fs = process.getBuiltinModule?.("node:fs") as
-      | typeof import("node:fs")
-      | undefined;
-    if (fs) {
-      realpathSync = fs.realpathSync;
-    }
-  } catch {
-    // not available
-  }
-}
-
-function getRealPath(fileName: string): string {
-  if (!realpathSync) return fileName;
-  let real = realpathCache.get(fileName);
-  if (real === undefined) {
-    try {
-      real = realpathSync(fileName);
-    } catch {
-      real = fileName;
-    }
-    realpathCache.set(fileName, real);
-  }
-  return real;
-}
-
 function isSkipFile(fileName: string): boolean {
   for (const skip of STACK_SKIP) {
     if (fileName.includes(skip)) return true;
@@ -186,25 +129,6 @@ function isVueReactivityFile(fileName: string): boolean {
     if (fileName.includes(marker)) return true;
   }
   return false;
-}
-
-function resolveSourceMap(
-  fileName: string,
-  line: number,
-  col: number,
-): { fileName: string; line: number; col: number } {
-  if (!findSourceMap) return { fileName, line, col };
-  // pnpm uses symlinks; findSourceMap only matches the real path
-  const real = getRealPath(fileName);
-  const map = findSourceMap(real);
-  if (!map) return { fileName, line, col };
-  const entry = map.findEntry(line - 1, col - 1);
-  if (!entry) return { fileName, line, col };
-  return {
-    fileName: entry.originalSource,
-    line: entry.originalLine + 1,
-    col: entry.originalColumn + 1,
-  };
 }
 
 // V8 structured stack capture — avoids string formatting entirely
@@ -227,7 +151,7 @@ export function captureSourceLocation(
   skipReactives = true,
 ): SourceLocation | undefined {
   if (!isDebugEnabled()) return undefined;
-  loadFindSourceMap();
+  loadSourceMapSupport();
 
   const sites = captureCallSites();
 

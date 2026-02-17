@@ -1,12 +1,7 @@
 import type { RenderTreeNode } from "@/components/render-tree";
 import { useRenderTreeIndex } from "@/hooks/use-render-tree-index";
 import { useRenderTreeQueries } from "@/hooks/use-render-tree-queries";
-import {
-  createContext,
-  useContext,
-  useDeferredValue,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
 export interface RenderTreeServices {
   parentById: Map<string, string | null>;
@@ -36,9 +31,8 @@ export function RenderTreeServicesProvider({
   fileToRenderNode,
   children,
 }: RenderTreeServicesProviderProps) {
-  const deferredTree = useDeferredValue(renderTree);
-  const index = useRenderTreeIndex(deferredTree, fileToRenderNode);
-  const queries = useRenderTreeQueries(deferredTree);
+  const index = useRenderTreeIndex(renderTree, fileToRenderNode);
+  const queries = useRenderTreeQueries(renderTree);
 
   const value: RenderTreeServices = {
     ...index,

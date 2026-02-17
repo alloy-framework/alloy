@@ -79,6 +79,7 @@ type TrackedNode = RenderedTextTree | PrintHook;
 let nodeIds = new WeakMap<TrackedNode, number>();
 let idToNode = new Map<number, TrackedNode>();
 let entryIds = new WeakMap<RenderedTextTree, number[]>();
+let nodeKinds = new WeakMap<TrackedNode, { kind: string; name?: string }>();
 let fileNodes = new Map<number, { path: string; filetype: string }>();
 let directoryNodes = new Map<number, { path: string }>();
 let nodeProps = new Map<number, string | undefined>();
@@ -169,6 +170,7 @@ export function initialize(root: RenderedTextTree) {
   nodeIds = new WeakMap();
   idToNode = new Map();
   entryIds = new WeakMap();
+  nodeKinds = new WeakMap();
   fileNodes = new Map();
   directoryNodes = new Map();
   nodeProps = new Map();
@@ -267,6 +269,8 @@ function recordNodeAdded(
   if (info.propsSerialized !== undefined) {
     nodeProps.set(id, info.propsSerialized);
   }
+  // Remember the kind so cached re-adds preserve it
+  nodeKinds.set(node, { kind: info.kind, name: info.name });
   setEntryId(parent, index, id);
   insertRenderNode(
     id,
@@ -293,6 +297,8 @@ function recordSubtreeAdded(
   const existingId = nodeIds.get(subtree);
   const isCached = existingId !== undefined;
   const id = isCached ? existingId : getOrCreateNodeId(subtree);
+  // Remember the kind so cached re-adds preserve it
+  nodeKinds.set(subtree, { kind: info.kind, name: info.name });
   // Track in entryIds so clearRenderTreeChildren can find and remove it
   if (Array.isArray(parentNode)) {
     const list = getEntryList(parentNode);
@@ -360,14 +366,15 @@ function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
         );
       }
     } else if (Array.isArray(child)) {
-      // Nested RenderedTextTree - record and recurse
+      // Nested RenderedTextTree - record and recurse, preserving original kind
       const id = getOrCreateNodeId(child);
       list.push(id);
+      const savedKind = nodeKinds.get(child);
       insertRenderNode(
         id,
         parentId,
-        "fragment",
-        undefined,
+        savedKind?.kind ?? "fragment",
+        savedKind?.name,
         undefined,
         undefined,
         undefined,

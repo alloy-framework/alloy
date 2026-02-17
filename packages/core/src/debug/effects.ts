@@ -33,7 +33,6 @@ export interface EffectDebugInfo {
   ownerContextId?: number | null;
   component?: string;
   lastTriggeredByRefId?: number;
-  lastTriggeredAt?: SourceLocation;
 }
 
 export interface RefDebugInfo {
@@ -54,7 +53,6 @@ export interface EffectEdgeDebugInfo {
   targetKind?: "ref" | "target";
   targetLabel?: string;
   targetKey?: string | number;
-  location?: SourceLocation;
 }
 
 const effects = new Map<number, EffectDebugInfo>();
@@ -328,7 +326,6 @@ function buildEffectTargetInfo(input: {
     };
   }
 
-  // Fallback for targets without a refId (rare — most go through refId now)
   const targetId = getNonRefTargetId(input.target);
   return {
     targetId,
@@ -458,7 +455,6 @@ export function track(input: {
   target: unknown;
   refId?: number;
   targetKey?: unknown;
-  location?: SourceLocation;
 }) {
   if (!isDebugEnabled()) return;
   const edge: EffectEdgeDebugInfo = {
@@ -467,7 +463,6 @@ export function track(input: {
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
     targetKey: sanitizeTargetKey(input.targetKey),
-    location: input.location,
   };
   emitEffect({ type: traceType(TracePhase.effect.track), edge });
 
@@ -488,7 +483,6 @@ export function trigger(input: {
   target: unknown;
   refId?: number;
   targetKey?: unknown;
-  location?: SourceLocation;
   kind?: "trigger" | "triggered-by";
   causedBy?: number;
 }) {
@@ -499,7 +493,6 @@ export function trigger(input: {
     effectId: input.effectId,
     ...buildEffectTargetInfo({ target: input.target, refId: input.refId }),
     targetKey: sanitizeTargetKey(input.targetKey),
-    location: input.location,
   };
   emitEffect({ type: traceType(TracePhase.effect.trigger), edge });
 
@@ -517,7 +510,6 @@ export function trigger(input: {
   update({
     id: input.effectId,
     ...(input.refId !== undefined ? { lastTriggeredByRefId: input.refId } : {}),
-    lastTriggeredAt: input.location,
   });
 }
 

@@ -69,7 +69,12 @@ const traceDbEnv = process.env.ALLOY_DEBUG_TRACE;
 if (traceDbEnv) {
   const traceDbPath =
     traceDbEnv === "1" || traceDbEnv === "true" ? "alloy-trace.db" : traceDbEnv;
-  await initTrace(traceDbPath);
+  try {
+    await initTrace(traceDbPath);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn(`Failed to initialize trace database at ${traceDbPath}:`, e);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

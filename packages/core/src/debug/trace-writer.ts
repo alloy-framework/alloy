@@ -494,7 +494,7 @@ export function insertRef(
     source_file: sourceFile ?? null,
     source_line: sourceLine ?? null,
     source_col: sourceCol ?? null,
-    is_approx_location: isApproxLocation ? 1 : undefined,
+    is_approx_location: isApproxLocation ? 1 : 0,
     seq: s,
   });
 }

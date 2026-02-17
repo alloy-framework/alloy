@@ -255,7 +255,7 @@ it("emits nodeUpdated during render for context updates", async () => {
   collector.stop();
 });
 
-it("tracks render tree nodes across initial render and reactive updates", async () => {
+it("tracks render tree nodes during initial render", async () => {
   const items = ref(["a", "b", "c"]);
   const collector = await createMessageCollector(socket!);
 

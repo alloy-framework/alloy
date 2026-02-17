@@ -30,10 +30,6 @@ function bodyOf(output: string): string {
   return output.split("\n").slice(1).join("\n");
 }
 
-function countMemo(s: string): number {
-  return (s.match(/_\$memo\(/g) || []).length;
-}
-
 describe("babel transform: inline condition memo (boolean gate)", () => {
   // Fragment children: outer memo wraps the expression; inner memo gates the
   // boolean condition so truthy→truthy signal changes don't recreate components.

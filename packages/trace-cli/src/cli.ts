@@ -100,7 +100,7 @@ Entity commands:
   component <list|show|tree|stats> [id]                    Components (render tree nodes)
   symbol <list|show> [id]                                  Symbols (output symbols)
   scope <list|show> [id]                                   Scopes (output scopes)
-  file <list|show> [path]                                  Output files
+  file <list|show|search> [path] [substring]          Output files
 
 Analysis commands:
   stats              Aggregate stats and overhead analysis

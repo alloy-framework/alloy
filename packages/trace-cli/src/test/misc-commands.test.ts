@@ -83,8 +83,8 @@ describe("errors", () => {
   it("lists render errors", () => {
     const { stdout } = captureOutput(() => runErrors(db, {}));
     expect(stdout).toContain("1 render error(s)");
-    expect(stdout).toContain("TypeError");
-    expect(stdout).toContain("Cannot read property x of undefined");
+    expect(stdout).toContain("TypeError: Cannot read property x");
+    expect(stdout).toContain("at Declaration (/src/decl.tsx:15:3)");
   });
 
   it("shows component stack", () => {
@@ -141,6 +141,71 @@ describe("file", () => {
     db.exec("DELETE FROM output_files");
     const { stdout } = captureOutput(() => fileCommand(db, "list", [], {}));
     expect(stdout).toContain("No output files recorded");
+  });
+
+  describe("search", () => {
+    it("finds text node and shows component stack", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
+      );
+      expect(stdout).toContain("Found 1 text node(s)");
+      expect(stdout).toContain("export interface Foo");
+      expect(stdout).toContain("Component stack");
+      expect(stdout).toContain("Declaration");
+      expect(stdout).toContain("SourceFile");
+    });
+
+    it("shows component props in stack", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
+      );
+      expect(stdout).toContain("props:");
+      expect(stdout).toContain("src/models.ts");
+    });
+
+    it("shows source locations in stack", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
+      );
+      expect(stdout).toContain("declaration.tsx");
+      expect(stdout).toContain("source-file.tsx");
+    });
+
+    it("matches by path suffix", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["models.ts", "interface"], {}),
+      );
+      expect(stdout).toContain("Found 1 text node(s)");
+    });
+
+    it("finds import text in fragment subtree", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "import"], {}),
+      );
+      expect(stdout).toContain("Found 1 text node(s)");
+      expect(stdout).toContain("import { Bar }");
+      // Fragment has no component ancestor until SourceFile
+      expect(stdout).toContain("SourceFile");
+    });
+
+    it("reports no match", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "nonexistent"], {}),
+      );
+      expect(stdout).toContain("No text matching");
+    });
+
+    it("returns json", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+      );
+      const parsed = JSON.parse(stdout);
+      expect(parsed.textNodeId).toBe(4);
+      expect(parsed.text).toContain("interface Foo");
+      expect(parsed.stack).toHaveLength(2);
+      expect(parsed.stack[0].name).toBe("Declaration");
+      expect(parsed.stack[1].name).toBe("SourceFile");
+    });
   });
 });
 

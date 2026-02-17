@@ -77,3 +77,31 @@ export function printPaginationFooter(
     }
   }
 }
+
+/**
+ * Formats a JSON component_stack string as a stack-trace-style string.
+ * Each entry becomes a line like:
+ *   at ComponentName (file.tsx:10:5)
+ */
+export function formatComponentStack(json: string): string | undefined {
+  try {
+    const stack = JSON.parse(json) as {
+      name: string;
+      source?: { fileName?: string; lineNumber?: number; columnNumber?: number };
+    }[];
+    return stack
+      .map((entry) => {
+        const loc = entry.source;
+        if (loc?.fileName) {
+          const parts = [shortPath(loc.fileName)];
+          if (loc.lineNumber != null) parts.push(String(loc.lineNumber));
+          if (loc.columnNumber != null) parts.push(String(loc.columnNumber));
+          return `    at ${entry.name} (${parts.join(":")})`;
+        }
+        return `    at ${entry.name}`;
+      })
+      .join("\n");
+  } catch {
+    return undefined;
+  }
+}

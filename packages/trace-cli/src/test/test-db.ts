@@ -164,6 +164,23 @@ function seedData(db: DatabaseSync) {
     "TypeError",
     "Cannot read property x of undefined",
     "TypeError: Cannot read property x\n    at Declaration (/src/decl.tsx:15:3)",
-    JSON.stringify([{ name: "SourceFile" }, { name: "Declaration" }]),
+    JSON.stringify([
+      {
+        name: "SourceFile",
+        source: {
+          fileName: "/home/user/packages/typescript/src/components/source-file.tsx",
+          lineNumber: 10,
+          columnNumber: 5,
+        },
+      },
+      {
+        name: "Declaration",
+        source: {
+          fileName: "/home/user/packages/typescript/src/components/declaration.tsx",
+          lineNumber: 25,
+          columnNumber: 3,
+        },
+      },
+    ]),
   );
 }

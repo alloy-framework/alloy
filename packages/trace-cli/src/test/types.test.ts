@@ -1,6 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  formatComponentStack,
   outputFileContextsCte,
   outputFileRenderNodesCte,
   printPaginationFooter,
@@ -41,6 +42,28 @@ describe("requireId", () => {
     });
     expect(() => requireId(["abc"], "Usage: foo")).toThrow("exit");
     mockExit.mockRestore();
+  });
+});
+
+describe("formatComponentStack", () => {
+  it("formats entries with source locations", () => {
+    const json = JSON.stringify([
+      { name: "App", source: { fileName: "/home/user/packages/core/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
+      { name: "Child", source: { fileName: "/home/user/packages/core/src/child.tsx", lineNumber: 20 } },
+    ]);
+    const result = formatComponentStack(json)!;
+    expect(result).toContain("at App (core/src/app.tsx:10:3)");
+    expect(result).toContain("at Child (core/src/child.tsx:20)");
+  });
+
+  it("formats entries without source locations", () => {
+    const json = JSON.stringify([{ name: "Anonymous" }]);
+    const result = formatComponentStack(json)!;
+    expect(result).toBe("    at Anonymous");
+  });
+
+  it("returns undefined for invalid JSON", () => {
+    expect(formatComponentStack("not json")).toBeUndefined();
   });
 });
 

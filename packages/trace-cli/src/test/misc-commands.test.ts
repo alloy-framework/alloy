@@ -87,9 +87,11 @@ describe("errors", () => {
     expect(stdout).toContain("at Declaration (/src/decl.tsx:15:3)");
   });
 
-  it("shows component stack", () => {
+  it("shows component stack with source locations", () => {
     const { stdout } = captureOutput(() => runErrors(db, {}));
-    expect(stdout).toContain("Component stack: SourceFile > Declaration");
+    expect(stdout).toContain("Component stack:");
+    expect(stdout).toContain("at SourceFile (typescript/src/components/source-file.tsx:10:5)");
+    expect(stdout).toContain("at Declaration (typescript/src/components/declaration.tsx:25:3)");
   });
 
   it("shows first stack line", () => {

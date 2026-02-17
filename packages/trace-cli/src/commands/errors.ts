@@ -1,4 +1,4 @@
-import { type Db, type Opts } from "../types.js";
+import { type Db, type Opts, formatComponentStack } from "../types.js";
 
 export function runErrors(db: Db, opts: Opts) {
   const errors = db
@@ -23,13 +23,10 @@ export function runErrors(db: Db, opts: Opts) {
       console.log(`${err.name}: ${err.message}`);
     }
     if (err.component_stack) {
-      try {
-        const stack = JSON.parse(err.component_stack);
-        console.log(
-          `Component stack: ${stack.map((s: any) => s.name).join(" > ")}`,
-        );
-      } catch {
-        // ignore parse errors
+      const formatted = formatComponentStack(err.component_stack);
+      if (formatted) {
+        console.log("Component stack:");
+        console.log(formatted);
       }
     }
     console.log();

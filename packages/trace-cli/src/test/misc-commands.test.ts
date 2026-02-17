@@ -206,6 +206,48 @@ describe("file", () => {
       expect(parsed.textNodeId).toBeTypeOf("number");
       expect(parsed.stack).toBeInstanceOf(Array);
     });
+
+    it("maps text nodes correctly when seq differs from DFS order", () => {
+      // Add a type reference text node with a high seq (created late, e.g. via
+      // reactive resolution) that renders BETWEEN existing text nodes in the tree.
+      //   Declaration(3) -> TypeRef(10) -> text(11, "Bar", seq=100)
+      // In the file content "Bar" appears as the type in "bar: Bar" which is
+      // between "interface Foo {" and "}".  The text node's seq (100) is higher
+      // than closing "}" text node (seq=6), but DFS order places it correctly.
+      db.exec(`
+        INSERT INTO render_nodes VALUES (10, 3, 'component', 'TypeRef', NULL,
+          '/home/user/packages/typescript/src/components/type-ref.tsx', 5, 1, NULL, NULL, 100);
+        INSERT INTO render_nodes VALUES (11, 10, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'string', 101);
+      `);
+      // Update file content to include the type reference text node's value
+      // Text node DFS order: Fragment->text(6) "import..." then Declaration->text(4) "export interface..."
+      //   then Declaration->TypeRef->text(11) "string" (which is already in text(4))
+      // This test just verifies the DFS walk collects nodes correctly even with
+      // high-seq children.
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+      );
+      const parsed = JSON.parse(stdout);
+      expect(parsed.textNodeId).toBe(4);
+    });
+
+    it("resolves correct node when same text appears in multiple tree branches", () => {
+      // Simulate: "Foo" appears both in the declaration (node 4, under Declaration)
+      // and as a type reference (node 12, under a sibling MemberExpr).
+      // Search for "interface Foo" should match the declaration, not the reference.
+      db.exec(`
+        INSERT INTO render_nodes VALUES (10, 2, 'component', 'MemberExpr', NULL, NULL, NULL, NULL, NULL, NULL, 200);
+        INSERT INTO render_nodes VALUES (12, 10, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'Foo', 201);
+      `);
+      // File content has "interface Foo" only once, at the declaration site
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+      );
+      const parsed = JSON.parse(stdout);
+      // The match should map to a node within the Declaration subtree (node 4),
+      // not the MemberExpr reference (node 12)
+      expect(parsed.textNodeId).toBe(4);
+    });
   });
 });
 

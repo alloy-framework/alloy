@@ -1,4 +1,5 @@
-import { type Db, type Opts, shortPath, formatComponentStack } from "../types.js";
+import { DIFF_EQUAL, diff_match_patch } from "diff-match-patch";
+import { type Db, type Opts, formatComponentStack } from "../types.js";
 
 export function fileCommand(
   db: Db,
@@ -67,13 +68,164 @@ function fileShow(db: Db, path: string | undefined, opts: Opts) {
   console.log(file.content ?? "(no content recorded)");
 }
 
+interface TextRange {
+  fileStart: number;
+  fileEnd: number;
+  nodeId: number;
+}
+
+/**
+ * Collect text nodes in DFS (output) order by walking the tree structure.
+ * Children of each parent are ordered by seq, matching the render pipeline's
+ * output order. This is critical because text nodes may be created out of
+ * order (e.g. reactive references resolved later) but their position in the
+ * tree reflects where they appear in the file.
+ */
+function collectTextNodesDfs(db: Db, rootId: number): { id: number; value: string }[] {
+  // Load all descendant nodes
+  const allNodes = db.prepare(`
+    WITH RECURSIVE desc_nodes(id) AS (
+      SELECT ?
+      UNION ALL
+      SELECT rn.id FROM render_nodes rn JOIN desc_nodes d ON rn.parent_id = d.id
+    )
+    SELECT rn.id, rn.kind, rn.value, rn.parent_id, rn.seq
+    FROM render_nodes rn
+    JOIN desc_nodes d ON rn.id = d.id
+  `).all(rootId) as { id: number; kind: string; value: string | null; parent_id: number | null; seq: number }[];
+
+  // Build parent→children map, sorted by seq
+  const childrenMap = new Map<number, typeof allNodes>();
+  const nodeMap = new Map<number, typeof allNodes[0]>();
+  for (const n of allNodes) {
+    nodeMap.set(n.id, n);
+    if (n.parent_id != null) {
+      let children = childrenMap.get(n.parent_id);
+      if (!children) {
+        children = [];
+        childrenMap.set(n.parent_id, children);
+      }
+      children.push(n);
+    }
+  }
+  for (const children of childrenMap.values()) {
+    children.sort((a, b) => a.seq - b.seq);
+  }
+
+  // DFS walk collecting text nodes
+  const result: { id: number; value: string }[] = [];
+  const stack: number[] = [rootId];
+  while (stack.length > 0) {
+    const id = stack.pop()!;
+    const node = nodeMap.get(id);
+    if (!node) continue;
+
+    if (node.kind === "text" && node.value) {
+      result.push({ id: node.id, value: node.value });
+      continue;
+    }
+
+    const children = childrenMap.get(id);
+    if (children) {
+      // Push in reverse order so first child is popped first
+      for (let i = children.length - 1; i >= 0; i--) {
+        stack.push(children[i].id);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Build a mapping from file content offsets to text node IDs using the same
+ * diff-match-patch approach as the devtools. Text nodes collected in DFS
+ * (output) order differ from the file content by formatting whitespace; the
+ * diff identifies equal segments and maps them between the two coordinate
+ * systems.
+ */
+function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string): TextRange[] {
+  const textNodes = collectTextNodesDfs(db, renderNodeId);
+
+  if (textNodes.length === 0 || fileContent.length === 0) return [];
+
+  // Build node spans in concatenated-text coordinate system
+  const nodeSpans: { id: number; start: number; end: number }[] = [];
+  let cursor = 0;
+  for (const node of textNodes) {
+    nodeSpans.push({ id: node.id, start: cursor, end: cursor + node.value.length });
+    cursor += node.value.length;
+  }
+
+  const nodeText = textNodes.map((n) => n.value).join("");
+
+  // Diff concatenated text vs file content to find equal segments
+  const dmp = new diff_match_patch();
+  const diffs = dmp.diff_main(nodeText, fileContent);
+  dmp.diff_cleanupSemantic(diffs);
+
+  const equalSegments: { nodeStart: number; nodeEnd: number; fileStart: number; fileEnd: number }[] = [];
+  let nodePos = 0;
+  let filePos = 0;
+  for (const [op, text] of diffs) {
+    const len = text.length;
+    if (op === DIFF_EQUAL) {
+      equalSegments.push({ nodeStart: nodePos, nodeEnd: nodePos + len, fileStart: filePos, fileEnd: filePos + len });
+      nodePos += len;
+      filePos += len;
+    } else if (op === -1) {
+      nodePos += len;
+    } else {
+      filePos += len;
+    }
+  }
+
+  // Map each node span through equal segments to get file ranges
+  const ranges: TextRange[] = [];
+  let segIdx = 0;
+  for (const span of nodeSpans) {
+    while (segIdx < equalSegments.length && equalSegments[segIdx].nodeEnd <= span.start) {
+      segIdx++;
+    }
+    let idx = segIdx;
+    while (idx < equalSegments.length && equalSegments[idx].nodeStart < span.end) {
+      const seg = equalSegments[idx];
+      const start = Math.max(span.start, seg.nodeStart);
+      const end = Math.min(span.end, seg.nodeEnd);
+      if (start < end) {
+        const fileStart = seg.fileStart + (start - seg.nodeStart);
+        const fileEnd = fileStart + (end - start);
+        ranges.push({ fileStart, fileEnd, nodeId: span.id });
+      }
+      if (seg.nodeEnd >= span.end) break;
+      idx++;
+    }
+  }
+
+  ranges.sort((a, b) => a.fileStart - b.fileStart);
+  return ranges;
+}
+
+/**
+ * Given a file offset range, find the text node(s) that produced it using
+ * the pre-computed text ranges. Returns the first (shallowest file-offset)
+ * node whose range overlaps the match.
+ */
+function findNodeAtOffset(ranges: TextRange[], matchStart: number, matchEnd: number): number | undefined {
+  for (const r of ranges) {
+    if (r.fileEnd <= matchStart) continue;
+    if (r.fileStart >= matchEnd) break;
+    return r.nodeId;
+  }
+  return undefined;
+}
+
 function fileSearch(db: Db, path: string | undefined, substring: string | undefined, opts: Opts) {
   if (!path || !substring) {
     console.error("Usage: alloy-trace file search <path> <substring>");
     process.exit(1);
   }
 
-  // Find the output file
   const file = db
     .prepare(
       "SELECT * FROM output_files WHERE path = ? OR path LIKE ? ORDER BY seq DESC LIMIT 1",
@@ -89,22 +241,20 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     return;
   }
 
-  // Find all occurrences of substring in the file content
   const matches = findContentMatches(file.content, substring);
   if (matches.length === 0) {
     console.log(`No text matching "${substring}" found in ${file.path}`);
     return;
   }
 
-  // Find the deepest text node containing any part of the search string.
-  // We search for text nodes containing the search string or any of its
-  // words, then pick the one with the deepest nesting (most ancestors).
-  const deepestNode = findDeepestMatchingNode(db, file.render_node_id, substring);
+  // Build the offset→node mapping using diff-match-patch
+  const ranges = buildFileTextRanges(db, file.render_node_id, file.content);
 
   if (opts.json) {
     for (const match of matches) {
-      const stack = deepestNode ? buildComponentStack(db, deepestNode.id) : [];
-      console.log(JSON.stringify({ text: match.text, offset: match.start, textNodeId: deepestNode?.id, stack }));
+      const nodeId = findNodeAtOffset(ranges, match.start, match.end);
+      const stack = nodeId ? buildComponentStack(db, nodeId) : [];
+      console.log(JSON.stringify({ text: match.text, offset: match.start, textNodeId: nodeId, stack }));
     }
     return;
   }
@@ -117,8 +267,9 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     console.log(`Match ${i + 1}:`);
     console.log(`  ${context}`);
 
-    if (deepestNode) {
-      const stack = buildComponentStack(db, deepestNode.id);
+    const nodeId = findNodeAtOffset(ranges, match.start, match.end);
+    if (nodeId) {
+      const stack = buildComponentStack(db, nodeId);
       if (stack.length > 0) {
         const formatted = formatComponentStack(
           JSON.stringify(
@@ -138,61 +289,6 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     }
     console.log();
   }
-}
-
-/**
- * Find the deepest text node that contains the search string or part of it.
- * Tries the full string first, then each word from longest to shortest.
- * "Deepest" = most component ancestors (most specific in the render tree).
- */
-function findDeepestMatchingNode(db: Db, renderNodeId: number, substring: string): any | undefined {
-  const baseQuery = `
-    WITH RECURSIVE desc_nodes(id) AS (
-      SELECT ?
-      UNION ALL
-      SELECT rn.id FROM render_nodes rn JOIN desc_nodes d ON rn.parent_id = d.id
-    )
-    SELECT rn.id, rn.value, rn.parent_id
-    FROM render_nodes rn
-    JOIN desc_nodes d ON rn.id = d.id
-    WHERE rn.kind = 'text' AND rn.value LIKE ?
-  `;
-
-  // Try full substring
-  let nodes = db.prepare(baseQuery).all(renderNodeId, `%${substring}%`) as any[];
-  if (nodes.length > 0) return pickDeepest(db, nodes);
-
-  // Try each word, longest first
-  const words = substring.split(/\s+/).filter(Boolean).sort((a, b) => b.length - a.length);
-  for (const word of words) {
-    nodes = db.prepare(baseQuery).all(renderNodeId, `%${word}%`) as any[];
-    if (nodes.length > 0) return pickDeepest(db, nodes);
-  }
-
-  return undefined;
-}
-
-function pickDeepest(db: Db, nodes: any[]): any {
-  if (nodes.length === 1) return nodes[0];
-
-  let best = nodes[0];
-  let bestDepth = 0;
-
-  for (const node of nodes) {
-    let depth = 0;
-    let id = node.parent_id;
-    while (id != null) {
-      depth++;
-      const parent = db.prepare("SELECT parent_id FROM render_nodes WHERE id = ?").get(id) as any;
-      if (!parent) break;
-      id = parent.parent_id;
-    }
-    if (depth > bestDepth) {
-      bestDepth = depth;
-      best = node;
-    }
-  }
-  return best;
 }
 
 function buildComponentStack(db: Db, nodeId: number): any[] {

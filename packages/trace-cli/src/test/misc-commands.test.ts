@@ -88,10 +88,12 @@ describe("errors", () => {
   });
 
   it("shows component stack with source locations", () => {
-    const { stdout } = captureOutput(() => runErrors(db, {}));
+    const { stdout } = captureOutput(() => runErrors(db, { allFrames: true }));
     expect(stdout).toContain("Component stack:");
-    expect(stdout).toContain("at SourceFile #2 (typescript/src/components/source-file.tsx:10:5)");
-    expect(stdout).toContain("at Declaration #3 (typescript/src/components/declaration.tsx:25:3)");
+    expect(stdout).toContain("at SourceFile #2");
+    expect(stdout).toContain("source-file.tsx:10:5)");
+    expect(stdout).toContain("at Declaration #3");
+    expect(stdout).toContain("declaration.tsx:25:3)");
   });
 
   it("shows first stack line", () => {
@@ -164,10 +166,12 @@ describe("file", () => {
 
     it("shows source locations in stack trace format", () => {
       const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { allFrames: true }),
       );
-      expect(stdout).toContain("at Declaration #3 (typescript/src/components/declaration.tsx:25:3)");
-      expect(stdout).toContain("at SourceFile #2 (typescript/src/components/source-file.tsx:10:5)");
+      expect(stdout).toContain("at Declaration #3");
+      expect(stdout).toContain("declaration.tsx:25:3)");
+      expect(stdout).toContain("at SourceFile #2");
+      expect(stdout).toContain("source-file.tsx:10:5)");
     });
 
     it("shows 3 lines of context", () => {

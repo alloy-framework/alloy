@@ -277,6 +277,7 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
                 : undefined,
             })),
           ),
+          opts.allFrames,
         );
         if (formatted) {
           console.log(formatted);

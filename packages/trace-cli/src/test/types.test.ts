@@ -12,14 +12,17 @@ import { createTestDb } from "./test-db.js";
 import { captureOutput } from "./capture.js";
 
 describe("shortPath", () => {
-  it("strips up to /packages/", () => {
-    expect(shortPath("/home/user/projects/alloy/packages/core/src/render.ts")).toBe(
-      "core/src/render.ts",
-    );
+  it("converts absolute path to relative from cwd", () => {
+    const cwd = process.cwd();
+    const abs = cwd + "/src/types.ts";
+    expect(shortPath(abs)).toBe("src/types.ts");
   });
 
-  it("returns full path if no /packages/", () => {
-    expect(shortPath("/some/other/path.ts")).toBe("/some/other/path.ts");
+  it("handles paths outside cwd with ../", () => {
+    const result = shortPath("/some/other/path.ts");
+    expect(result).toContain("path.ts");
+    // Should be relative, not absolute
+    expect(result).not.toMatch(/^\//);
   });
 });
 
@@ -47,29 +50,62 @@ describe("requireId", () => {
 
 describe("formatComponentStack", () => {
   it("formats entries with source locations", () => {
+    const cwd = process.cwd();
     const json = JSON.stringify([
-      { name: "App", source: { fileName: "/home/user/packages/core/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
-      { name: "Child", source: { fileName: "/home/user/packages/core/src/child.tsx", lineNumber: 20 } },
+      { name: "App", source: { fileName: cwd + "/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
+      { name: "Child", source: { fileName: cwd + "/src/child.tsx", lineNumber: 20 } },
     ]);
-    const result = formatComponentStack(json)!;
-    expect(result).toContain("at App (core/src/app.tsx:10:3)");
-    expect(result).toContain("at Child (core/src/child.tsx:20)");
+    const result = formatComponentStack(json, true)!;
+    expect(result).toContain("at App (src/app.tsx:10:3)");
+    expect(result).toContain("at Child (src/child.tsx:20)");
   });
 
   it("formats entries without source locations", () => {
     const json = JSON.stringify([{ name: "Anonymous" }]);
-    const result = formatComponentStack(json)!;
+    const result = formatComponentStack(json, true)!;
     expect(result).toBe("    at Anonymous");
   });
 
   it("includes render node IDs when present", () => {
+    const cwd = process.cwd();
     const json = JSON.stringify([
-      { name: "App", renderNodeId: 42, source: { fileName: "/home/user/packages/core/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
+      { name: "App", renderNodeId: 42, source: { fileName: cwd + "/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
       { name: "Child", renderNodeId: 99 },
     ]);
-    const result = formatComponentStack(json)!;
-    expect(result).toContain("at App #42 (core/src/app.tsx:10:3)");
+    const result = formatComponentStack(json, true)!;
+    expect(result).toContain("at App #42 (src/app.tsx:10:3)");
     expect(result).toContain("at Child #99");
+  });
+
+  it("hides library frames by default", () => {
+    const json = JSON.stringify([
+      { name: "UserComp", source: { fileName: "/home/user/my-project/src/app.tsx", lineNumber: 5 } },
+      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+      { name: "NoSource" },
+    ]);
+    const result = formatComponentStack(json)!;
+    expect(result).toContain("at UserComp");
+    expect(result).not.toContain("at LibComp");
+    expect(result).not.toContain("at NoSource");
+    expect(result).toContain("2 framework frames hidden (use --all-frames to show)");
+  });
+
+  it("shows all frames when allFrames is true", () => {
+    const json = JSON.stringify([
+      { name: "UserComp", source: { fileName: "/home/user/my-project/src/app.tsx", lineNumber: 5 } },
+      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+    ]);
+    const result = formatComponentStack(json, true)!;
+    expect(result).toContain("at UserComp");
+    expect(result).toContain("at LibComp");
+    expect(result).not.toContain("framework frames hidden");
+  });
+
+  it("returns undefined when all frames are library and not showing all", () => {
+    const json = JSON.stringify([
+      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+    ]);
+    expect(formatComponentStack(json)).toBeUndefined();
   });
 
   it("returns undefined for invalid JSON", () => {

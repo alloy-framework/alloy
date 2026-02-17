@@ -25,6 +25,7 @@ const { positionals, values } = parseArgs({
     "min-trackers": { type: "string" },
     unused: { type: "boolean", default: false },
     framework: { type: "boolean", default: false },
+    "all-frames": { type: "boolean", default: false },
   },
   allowPositionals: true,
   strict: false,
@@ -50,6 +51,7 @@ const opts = {
   minTrackers: values["min-trackers"] ? parseInt(values["min-trackers"] as string, 10) : undefined,
   unused: values.unused as boolean,
   framework: values.framework as boolean,
+  allFrames: values["all-frames"] as boolean,
 };
 
 try {
@@ -120,5 +122,6 @@ Options:
   --min-trackers=<n>      Filter refs by minimum tracker count
   --unused                Show only unused refs
   --framework             Show only framework-internal effects
+  --all-frames            Show all stack frames (including library/framework)
 `);
 }

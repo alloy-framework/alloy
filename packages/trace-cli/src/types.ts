@@ -1,3 +1,4 @@
+import { relative } from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 
 export interface Opts {
@@ -12,6 +13,7 @@ export interface Opts {
   minTrackers?: number;
   unused?: boolean;
   framework?: boolean;
+  allFrames?: boolean;
 }
 
 export type Db = DatabaseSync;
@@ -52,8 +54,15 @@ export function outputFileRenderNodesCte(): string {
   )`;
 }
 
+/**
+ * Convert an absolute path to a display-friendly relative path from cwd.
+ * Falls back to the original path if it can't be relativized.
+ */
 export function shortPath(p: string): string {
-  return p.replace(/.*\/packages\//, "");
+  const rel = relative(process.cwd(), p);
+  // If relative path starts with too many '../', it's not useful — but still
+  // shorter than the absolute path in most cases. Return it as-is.
+  return rel || p;
 }
 
 export function requireId(args: string[], usage: string): number {
@@ -78,31 +87,54 @@ export function printPaginationFooter(
   }
 }
 
+interface StackEntry {
+  name: string;
+  renderNodeId?: number;
+  source?: { fileName?: string; lineNumber?: number; columnNumber?: number };
+}
+
+/**
+ * A frame is "external" (library/framework) if it has no source location or
+ * its source is inside node_modules. Matches the devtools filtering logic.
+ */
+function isExternalFrame(entry: StackEntry): boolean {
+  if (!entry.source?.fileName) return true;
+  return entry.source.fileName.includes("/node_modules/");
+}
+
+function formatEntry(entry: StackEntry): string {
+  const id = entry.renderNodeId != null ? ` #${entry.renderNodeId}` : "";
+  const loc = entry.source;
+  if (loc?.fileName) {
+    const parts = [shortPath(loc.fileName)];
+    if (loc.lineNumber != null) parts.push(String(loc.lineNumber));
+    if (loc.columnNumber != null) parts.push(String(loc.columnNumber));
+    return `    at ${entry.name}${id} (${parts.join(":")})`;
+  }
+  return `    at ${entry.name}${id}`;
+}
+
 /**
  * Formats a JSON component_stack string as a stack-trace-style string.
- * Each entry becomes a line like:
- *   at ComponentName #123 (file.tsx:10:5)
+ * When allFrames is false (default), only user frames are shown and a
+ * hint about hidden library frames is appended.
  */
-export function formatComponentStack(json: string): string | undefined {
+export function formatComponentStack(json: string, allFrames = false): string | undefined {
   try {
-    const stack = JSON.parse(json) as {
-      name: string;
-      renderNodeId?: number;
-      source?: { fileName?: string; lineNumber?: number; columnNumber?: number };
-    }[];
-    return stack
-      .map((entry) => {
-        const id = entry.renderNodeId != null ? ` #${entry.renderNodeId}` : "";
-        const loc = entry.source;
-        if (loc?.fileName) {
-          const parts = [shortPath(loc.fileName)];
-          if (loc.lineNumber != null) parts.push(String(loc.lineNumber));
-          if (loc.columnNumber != null) parts.push(String(loc.columnNumber));
-          return `    at ${entry.name}${id} (${parts.join(":")})`;
-        }
-        return `    at ${entry.name}${id}`;
-      })
-      .join("\n");
+    const stack = JSON.parse(json) as StackEntry[];
+    if (allFrames) {
+      return stack.map(formatEntry).join("\n");
+    }
+
+    const userFrames = stack.filter((e) => !isExternalFrame(e));
+    const hiddenCount = stack.length - userFrames.length;
+    const lines = userFrames.map(formatEntry);
+
+    if (hiddenCount > 0 && lines.length > 0) {
+      lines.push(`    ... ${hiddenCount} framework frames hidden (use --all-frames to show)`);
+    }
+
+    return lines.length > 0 ? lines.join("\n") : undefined;
   } catch {
     return undefined;
   }

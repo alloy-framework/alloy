@@ -259,13 +259,9 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     return;
   }
 
-  console.log(`Found ${matches.length} match(es) for "${substring}" in ${file.path}\n`);
-
-  for (let i = 0; i < matches.length; i++) {
-    const match = matches[i];
+  for (const match of matches) {
     const context = getMatchContext(file.content, match.start, match.end);
-    console.log(`Match ${i + 1}:`);
-    console.log(`  ${context}`);
+    console.log(context);
 
     const nodeId = findNodeAtOffset(ranges, match.start, match.end);
     if (nodeId) {
@@ -275,6 +271,7 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
           JSON.stringify(
             stack.map((c: any) => ({
               name: c.name ?? "(unnamed)",
+              renderNodeId: c.id,
               source: c.source_file
                 ? { fileName: c.source_file, lineNumber: c.source_line, columnNumber: c.source_col }
                 : undefined,
@@ -282,7 +279,6 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
           ),
         );
         if (formatted) {
-          console.log("  Component stack (innermost first):");
           console.log(formatted);
         }
       }
@@ -322,7 +318,21 @@ function findContentMatches(content: string, substring: string): { start: number
 }
 
 function getMatchContext(content: string, start: number, end: number): string {
-  const lineStart = content.lastIndexOf("\n", start - 1) + 1;
-  const lineEnd = content.indexOf("\n", end);
-  return content.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
+  const matchLineStart = content.lastIndexOf("\n", start - 1) + 1;
+  const matchLineEnd = content.indexOf("\n", end);
+
+  // Line before
+  const prevLineStart = matchLineStart > 0 ? content.lastIndexOf("\n", matchLineStart - 2) + 1 : -1;
+  // Line after — find end of next line, or end of content
+  let contextEnd: number;
+  if (matchLineEnd === -1) {
+    // Match is on the last line (no newline after match)
+    contextEnd = content.length;
+  } else {
+    const nextLineEnd = content.indexOf("\n", matchLineEnd + 1);
+    contextEnd = nextLineEnd !== -1 ? nextLineEnd : content.length;
+  }
+
+  const contextStart = prevLineStart >= 0 ? prevLineStart : matchLineStart;
+  return content.slice(contextStart, contextEnd);
 }

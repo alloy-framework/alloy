@@ -90,8 +90,8 @@ describe("errors", () => {
   it("shows component stack with source locations", () => {
     const { stdout } = captureOutput(() => runErrors(db, {}));
     expect(stdout).toContain("Component stack:");
-    expect(stdout).toContain("at SourceFile (typescript/src/components/source-file.tsx:10:5)");
-    expect(stdout).toContain("at Declaration (typescript/src/components/declaration.tsx:25:3)");
+    expect(stdout).toContain("at SourceFile #2 (typescript/src/components/source-file.tsx:10:5)");
+    expect(stdout).toContain("at Declaration #3 (typescript/src/components/declaration.tsx:25:3)");
   });
 
   it("shows first stack line", () => {
@@ -150,18 +150,15 @@ describe("file", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
-      expect(stdout).toContain("Found 1 match");
       expect(stdout).toContain("interface Foo");
-      expect(stdout).toContain("Component stack");
-      expect(stdout).toContain("at Declaration");
-      expect(stdout).toContain("at SourceFile");
+      expect(stdout).toContain("at Declaration #3");
+      expect(stdout).toContain("at SourceFile #2");
     });
 
     it("finds cross-node text", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "export", "interface"], {}),
       );
-      expect(stdout).toContain("Found 1 match");
       expect(stdout).toContain("export interface");
     });
 
@@ -169,24 +166,33 @@ describe("file", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
-      expect(stdout).toContain("at Declaration (typescript/src/components/declaration.tsx:25:3)");
-      expect(stdout).toContain("at SourceFile (typescript/src/components/source-file.tsx:10:5)");
+      expect(stdout).toContain("at Declaration #3 (typescript/src/components/declaration.tsx:25:3)");
+      expect(stdout).toContain("at SourceFile #2 (typescript/src/components/source-file.tsx:10:5)");
+    });
+
+    it("shows 3 lines of context", () => {
+      const { stdout } = captureOutput(() =>
+        fileCommand(db, "search", ["src/models.ts", "bar:", "string"], {}),
+      );
+      // Should include line before and after the match line
+      expect(stdout).toContain("export interface Foo {");
+      expect(stdout).toContain("bar: string;");
+      expect(stdout).toContain("}");
     });
 
     it("matches by path suffix", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["models.ts", "interface"], {}),
       );
-      expect(stdout).toContain("Found 1 match");
+      expect(stdout).toContain("interface Foo");
     });
 
     it("finds import text in fragment subtree", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "import"], {}),
       );
-      expect(stdout).toContain("Found 1 match");
       expect(stdout).toContain("import { Bar }");
-      expect(stdout).toContain("at SourceFile");
+      expect(stdout).toContain("at SourceFile #2");
     });
 
     it("reports no match", () => {

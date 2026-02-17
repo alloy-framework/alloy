@@ -172,6 +172,7 @@ function seedData(db: DatabaseSync) {
     JSON.stringify([
       {
         name: "SourceFile",
+        renderNodeId: 2,
         source: {
           fileName: "/home/user/packages/typescript/src/components/source-file.tsx",
           lineNumber: 10,
@@ -180,6 +181,7 @@ function seedData(db: DatabaseSync) {
       },
       {
         name: "Declaration",
+        renderNodeId: 3,
         source: {
           fileName: "/home/user/packages/typescript/src/components/declaration.tsx",
           lineNumber: 25,

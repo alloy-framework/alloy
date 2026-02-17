@@ -62,6 +62,16 @@ describe("formatComponentStack", () => {
     expect(result).toBe("    at Anonymous");
   });
 
+  it("includes render node IDs when present", () => {
+    const json = JSON.stringify([
+      { name: "App", renderNodeId: 42, source: { fileName: "/home/user/packages/core/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
+      { name: "Child", renderNodeId: 99 },
+    ]);
+    const result = formatComponentStack(json)!;
+    expect(result).toContain("at App #42 (core/src/app.tsx:10:3)");
+    expect(result).toContain("at Child #99");
+  });
+
   it("returns undefined for invalid JSON", () => {
     expect(formatComponentStack("not json")).toBeUndefined();
   });

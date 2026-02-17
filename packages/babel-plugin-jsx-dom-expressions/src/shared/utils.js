@@ -257,51 +257,6 @@ export function wrappedByText(list, startIndex) {
   return false;
 }
 
-const MAX_EXPR_NAME_LEN = 50;
-
-/**
- * Generate a short human-readable description from an AST expression node,
- * used to name memoized expressions for debug tracing.
- */
-export function describeExpression(node, depth = 0) {
-  if (depth > 4) return "…";
-  if (t.isIdentifier(node)) return node.name;
-  if (t.isMemberExpression(node) || t.isOptionalMemberExpression(node)) {
-    const obj = describeExpression(node.object, depth + 1);
-    if (!obj) return null;
-    if (node.computed) {
-      const prop = t.isIdentifier(node.property) ? node.property.name :
-        t.isStringLiteral(node.property) ? node.property.value :
-        t.isNumericLiteral(node.property) ? String(node.property.value) : "…";
-      return truncName(`${obj}[${prop}]`);
-    }
-    return truncName(`${obj}.${node.property.name || "?"}`);
-  }
-  if (t.isCallExpression(node) || t.isOptionalCallExpression(node)) {
-    const callee = describeExpression(node.callee, depth + 1);
-    return callee ? truncName(`${callee}(…)`) : null;
-  }
-  if (t.isConditionalExpression(node)) {
-    const test = describeExpression(node.test, depth + 1);
-    return test ? truncName(`${test} ? …`) : null;
-  }
-  if (t.isLogicalExpression(node)) {
-    const left = describeExpression(node.left, depth + 1);
-    return left ? truncName(`${left} ${node.operator} …`) : null;
-  }
-  if (t.isTemplateLiteral(node)) return "template";
-  if (t.isArrowFunctionExpression(node) || t.isFunctionExpression(node)) {
-    // Try to describe the body
-    const body = t.isBlockStatement(node.body) ? null : describeExpression(node.body, depth + 1);
-    return body ? truncName(`() => ${body}`) : null;
-  }
-  return null;
-}
-
-function truncName(s) {
-  return s != null && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
-}
-
 export function transformCondition(path, inline, deep) {
   const config = getConfig(path);
   const expr = path.node;
@@ -319,17 +274,10 @@ export function transformCondition(path, inline, deep) {
       cond = expr.test;
       if (!t.isBinaryExpression(cond))
         cond = t.unaryExpression("!", t.unaryExpression("!", cond, true), true);
-      if (inline) {
-        // Inline: create and immediately invoke the condition memo as a boolean
-        // gate. This prevents the outer memo/getter from re-running when the
-        // signal changes between truthy values (e.g. 1→2), avoiding unnecessary
-        // component recreation.
-        id = t.callExpression(memo, [t.arrowFunctionExpression([], cond)]);
-        expr.test = t.callExpression(id, []);
-      } else {
-        id = path.scope.generateUidIdentifier("_c$");
-        expr.test = t.callExpression(id, []);
-      }
+      id = inline
+        ? t.callExpression(memo, [t.arrowFunctionExpression([], cond)])
+        : path.scope.generateUidIdentifier("_c$");
+      expr.test = t.callExpression(id, []);
       if (t.isConditionalExpression(expr.consequent) || t.isLogicalExpression(expr.consequent)) {
         expr.consequent = transformCondition(path.get("consequent"), inline, true);
       }
@@ -348,18 +296,14 @@ export function transformCondition(path, inline, deep) {
       (dTest = isDynamic(nextPath.get("left"), {
         checkMember: true
       }));
-    // Same boolean gate optimization for logical expressions.
     if (dTest) {
       cond = nextPath.node.left;
       if (!t.isBinaryExpression(cond))
         cond = t.unaryExpression("!", t.unaryExpression("!", cond, true), true);
-      if (inline) {
-        id = t.callExpression(memo, [t.arrowFunctionExpression([], cond)]);
-        nextPath.node.left = t.callExpression(id, []);
-      } else {
-        id = path.scope.generateUidIdentifier("_c$");
-        nextPath.node.left = t.callExpression(id, []);
-      }
+      id = inline
+        ? t.callExpression(memo, [t.arrowFunctionExpression([], cond)])
+        : path.scope.generateUidIdentifier("_c$");
+      nextPath.node.left = t.callExpression(id, []);
     }
   }
   if (dTest && !inline) {

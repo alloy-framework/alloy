@@ -299,51 +299,6 @@ function toPropertyName(name) {
   return name.toLowerCase().replace(/-([a-z])/g, (_, w) => w.toUpperCase());
 }
 
-const MAX_EXPR_NAME_LEN = 50;
-
-/**
- * Generate a short human-readable description from an AST expression node,
- * used to name memoized expressions for debug tracing.
- */
-function describeExpression(node, depth = 0) {
-  if (depth > 4) return "…";
-  if (t__namespace.isIdentifier(node)) return node.name;
-  if (t__namespace.isMemberExpression(node) || t__namespace.isOptionalMemberExpression(node)) {
-    const obj = describeExpression(node.object, depth + 1);
-    if (!obj) return null;
-    if (node.computed) {
-      const prop = t__namespace.isIdentifier(node.property) ? node.property.name :
-        t__namespace.isStringLiteral(node.property) ? node.property.value :
-        t__namespace.isNumericLiteral(node.property) ? String(node.property.value) : "…";
-      return truncName(`${obj}[${prop}]`);
-    }
-    return truncName(`${obj}.${node.property.name || "?"}`);
-  }
-  if (t__namespace.isCallExpression(node) || t__namespace.isOptionalCallExpression(node)) {
-    const callee = describeExpression(node.callee, depth + 1);
-    return callee ? truncName(`${callee}(…)`) : null;
-  }
-  if (t__namespace.isConditionalExpression(node)) {
-    const test = describeExpression(node.test, depth + 1);
-    return test ? truncName(`${test} ? …`) : null;
-  }
-  if (t__namespace.isLogicalExpression(node)) {
-    const left = describeExpression(node.left, depth + 1);
-    return left ? truncName(`${left} ${node.operator} …`) : null;
-  }
-  if (t__namespace.isTemplateLiteral(node)) return "template";
-  if (t__namespace.isArrowFunctionExpression(node) || t__namespace.isFunctionExpression(node)) {
-    // Try to describe the body
-    const body = t__namespace.isBlockStatement(node.body) ? null : describeExpression(node.body, depth + 1);
-    return body ? truncName(`() => ${body}`) : null;
-  }
-  return null;
-}
-
-function truncName(s) {
-  return s != null && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
-}
-
 function transformCondition(path, inline, deep) {
   const config = getConfig(path);
   const expr = path.node;
@@ -361,17 +316,10 @@ function transformCondition(path, inline, deep) {
       cond = expr.test;
       if (!t__namespace.isBinaryExpression(cond))
         cond = t__namespace.unaryExpression("!", t__namespace.unaryExpression("!", cond, true), true);
-      if (inline) {
-        // Inline: create and immediately invoke the condition memo as a boolean
-        // gate. This prevents the outer memo/getter from re-running when the
-        // signal changes between truthy values (e.g. 1→2), avoiding unnecessary
-        // component recreation.
-        id = t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)]);
-        expr.test = t__namespace.callExpression(id, []);
-      } else {
-        id = path.scope.generateUidIdentifier("_c$");
-        expr.test = t__namespace.callExpression(id, []);
-      }
+      id = inline
+        ? t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)])
+        : path.scope.generateUidIdentifier("_c$");
+      expr.test = t__namespace.callExpression(id, []);
       if (t__namespace.isConditionalExpression(expr.consequent) || t__namespace.isLogicalExpression(expr.consequent)) {
         expr.consequent = transformCondition(path.get("consequent"), inline, true);
       }
@@ -390,18 +338,14 @@ function transformCondition(path, inline, deep) {
       (dTest = isDynamic(nextPath.get("left"), {
         checkMember: true
       }));
-    // Same boolean gate optimization for logical expressions.
     if (dTest) {
       cond = nextPath.node.left;
       if (!t__namespace.isBinaryExpression(cond))
         cond = t__namespace.unaryExpression("!", t__namespace.unaryExpression("!", cond, true), true);
-      if (inline) {
-        id = t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)]);
-        nextPath.node.left = t__namespace.callExpression(id, []);
-      } else {
-        id = path.scope.generateUidIdentifier("_c$");
-        nextPath.node.left = t__namespace.callExpression(id, []);
-      }
+      id = inline
+        ? t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)])
+        : path.scope.generateUidIdentifier("_c$");
+      nextPath.node.left = t__namespace.callExpression(id, []);
     }
   }
   if (dTest && !inline) {
@@ -921,14 +865,7 @@ function createTemplate(path, result, wrap) {
     }
   }
   if (wrap && result.dynamic && config.memoWrapper) {
-    const args = [result.exprs[0]];
-    if (config.addSourceInfo) {
-      const name = describeExpression(
-        t__namespace.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
-      );
-      if (name) args.push(t__namespace.booleanLiteral(false), t__namespace.stringLiteral(name));
-    }
-    return t__namespace.callExpression(registerImportMethod(path, config.memoWrapper), args);
+    return t__namespace.callExpression(registerImportMethod(path, config.memoWrapper), [result.exprs[0]]);
   }
   return result.exprs[0];
 }

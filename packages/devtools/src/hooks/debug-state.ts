@@ -335,7 +335,9 @@ function handleRenderError(
  * Extract the npm package name from a source file path.
  * Looks for `/node_modules/(@scope/pkg|pkg)/` and returns the package name.
  */
-function extractPackageFromPath(filePath: string | undefined): string | undefined {
+function extractPackageFromPath(
+  filePath: string | undefined,
+): string | undefined {
   if (!filePath) return undefined;
   // Match scoped packages: node_modules/@scope/name
   const scoped = /[/\\]node_modules[/\\](@[^/\\]+[/\\][^/\\]+)/.exec(filePath);
@@ -368,7 +370,8 @@ function handleEffectAddedOrUpdated(
     contextId: message.context_id ?? undefined,
     ownerContextId: message.owner_context_id,
     component: message.component,
-    sourcePackage: message.source_package ?? extractPackageFromPath(message.source_file),
+    sourcePackage:
+      message.source_package ?? extractPackageFromPath(message.source_file),
   };
   const existing = store.effects.get(id);
   if (existing) {
@@ -402,7 +405,8 @@ function handleRefAdded(
     createdByEffectId: message.created_by_effect_id,
     isInfrastructure: Boolean(message.is_infrastructure),
     isApproxLocation: Boolean(message.is_approx_location),
-    sourcePackage: message.source_package ?? extractPackageFromPath(message.source_file),
+    sourcePackage:
+      message.source_package ?? extractPackageFromPath(message.source_file),
   };
   store.refs.set(id, info);
   return ["refs"];

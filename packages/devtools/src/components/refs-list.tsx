@@ -182,8 +182,7 @@ export function RefsList(props: RefsListProps) {
               >
                 {virtualizer.getVirtualItems().map((virtualRow) => {
                   const row = filtered[virtualRow.index];
-                  const displayLabel =
-                    row.label ?? row.kind;
+                  const displayLabel = row.label ?? row.kind;
                   const sourceLabel = formatSourceLocation(
                     row.createdAt,
                     formatPath,
@@ -197,7 +196,9 @@ export function RefsList(props: RefsListProps) {
                     <div
                       key={row.id}
                       id={`ref-${row.id}`}
-                      onClick={() => onOpenRefTab(row.id, `${displayLabel} #${row.id}`)}
+                      onClick={() =>
+                        onOpenRefTab(row.id, `${displayLabel} #${row.id}`)
+                      }
                       className="flex items-center border-b border-border/50 cursor-pointer hover:bg-accent/30 transition-colors text-xs"
                       style={{
                         position: "absolute",
@@ -224,7 +225,9 @@ export function RefsList(props: RefsListProps) {
                             : "bg-muted text-foreground"
                           }`}
                         >
-                          {row.kind === "reactive-property" ? "reactive" : row.kind}
+                          {row.kind === "reactive-property" ?
+                            "reactive"
+                          : row.kind}
                         </span>
                       </div>
                       <div className="w-48 py-1.5 pr-2 text-muted-foreground truncate flex items-center gap-1">

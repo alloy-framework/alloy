@@ -648,8 +648,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         if (symbol.refkeys) {
           debug.trace(
             TracePhase.resolve.pending,
-            () =>
-              `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
+            () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
           );
         }
 

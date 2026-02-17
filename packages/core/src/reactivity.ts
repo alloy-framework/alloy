@@ -475,10 +475,7 @@ export function shallowReactive<T extends object>(
   return result;
 }
 
-export function shallowRef<T>(
-  value?: T,
-  options?: { label?: string },
-): Ref<T> {
+export function shallowRef<T>(value?: T, options?: { label?: string }): Ref<T> {
   const result = vueShallowRef(value) as Ref<T>;
   debug.effect.registerRef({
     id: refId(result),

@@ -361,10 +361,17 @@ function transformCondition(path, inline, deep) {
       cond = expr.test;
       if (!t__namespace.isBinaryExpression(cond))
         cond = t__namespace.unaryExpression("!", t__namespace.unaryExpression("!", cond, true), true);
-      id = inline
-        ? t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)])
-        : path.scope.generateUidIdentifier("_c$");
-      expr.test = t__namespace.callExpression(id, []);
+      if (inline) {
+        // Inline: create and immediately invoke the condition memo as a boolean
+        // gate. This prevents the outer memo/getter from re-running when the
+        // signal changes between truthy values (e.g. 1→2), avoiding unnecessary
+        // component recreation.
+        id = t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)]);
+        expr.test = t__namespace.callExpression(id, []);
+      } else {
+        id = path.scope.generateUidIdentifier("_c$");
+        expr.test = t__namespace.callExpression(id, []);
+      }
       if (t__namespace.isConditionalExpression(expr.consequent) || t__namespace.isLogicalExpression(expr.consequent)) {
         expr.consequent = transformCondition(path.get("consequent"), inline, true);
       }
@@ -383,14 +390,18 @@ function transformCondition(path, inline, deep) {
       (dTest = isDynamic(nextPath.get("left"), {
         checkMember: true
       }));
+    // Same boolean gate optimization for logical expressions.
     if (dTest) {
       cond = nextPath.node.left;
       if (!t__namespace.isBinaryExpression(cond))
         cond = t__namespace.unaryExpression("!", t__namespace.unaryExpression("!", cond, true), true);
-      id = inline
-        ? t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)])
-        : path.scope.generateUidIdentifier("_c$");
-      nextPath.node.left = t__namespace.callExpression(id, []);
+      if (inline) {
+        id = t__namespace.callExpression(memo, [t__namespace.arrowFunctionExpression([], cond)]);
+        nextPath.node.left = t__namespace.callExpression(id, []);
+      } else {
+        id = path.scope.generateUidIdentifier("_c$");
+        nextPath.node.left = t__namespace.callExpression(id, []);
+      }
     }
   }
   if (dTest && !inline) {

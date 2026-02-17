@@ -219,6 +219,10 @@ export function useDebugConnection(): DebugConnectionState {
         // Reset mutable store
         resetDebugStore(storeRef.current);
 
+        // Reset React state to initial so stale data from previous
+        // connection is fully cleared before new messages arrive.
+        setState({ ...INITIAL_STATE, status: "connected" });
+
         // Request initial state for all channels (server auto-subscribes on connect,
         // so this only triggers sending existing SQLite rows for the current state).
         transport.send({

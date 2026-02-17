@@ -3,7 +3,7 @@ import type {
   EffectEdgeDebugInfo,
   RefDebugInfo,
 } from "@/hooks/debug-connection-types";
-import { resolveEdgeRefId } from "@/lib/edge-utils";
+import { formatRefLabel, resolveEdgeRefId } from "@/lib/edge-utils";
 import {
   buildGraphLookups,
   findAncestorWithIncomingTriggers,
@@ -37,7 +37,6 @@ interface EdgeData {
   source: string;
   target: string;
   refId: number;
-  refKind?: string;
   isSpawn?: boolean;
 }
 
@@ -173,7 +172,6 @@ export function ReactiveChain(props: ReactiveChainProps) {
           source: `e:${upId}`,
           target: `e:${eid}`,
           refId: rid,
-          refKind: refs.get(rid)?.kind,
         });
 
         if (!visitedUp.has(upId)) {
@@ -277,7 +275,6 @@ export function ReactiveChain(props: ReactiveChainProps) {
               source: `e:${eid}`,
               target: `e:${downId}`,
               refId: rid,
-              refKind: refs.get(rid)?.kind,
             });
           } else {
             const nk = `e:${eid}`;
@@ -299,7 +296,6 @@ export function ReactiveChain(props: ReactiveChainProps) {
           source: `e:${eid}`,
           target: `e:${downId}`,
           refId: rid,
-          refKind: refs.get(rid)?.kind,
         });
 
         if (!visitedDown.has(downId)) {
@@ -323,7 +319,6 @@ export function ReactiveChain(props: ReactiveChainProps) {
           source: `e:${eid}`,
           target: sumId,
           refId: rid,
-          refKind: refs.get(rid)?.kind,
         });
       }
     }
@@ -509,19 +504,17 @@ function GraphEdgePath(props: {
   const mid = pts[Math.floor(pts.length / 2)];
   const isSpawn = edge.isSpawn === true;
   const ref = !isSpawn && edge.refId > 0 ? refMap.get(edge.refId) : undefined;
-  const kind = edge.refKind ?? ref?.kind;
   const label =
     isSpawn ? "spawns"
-    : kind ? `${kind} #${edge.refId}`
-    : edge.refId > 0 ? `#${edge.refId}`
+    : ref ? formatRefLabel(ref, edge.refId)
+    : edge.refId > 0 ? `ref #${edge.refId}`
     : "";
   const clickable = !isSpawn && edge.refId > 0 && onOpenRefTab;
 
   const handleClick =
     clickable ?
       () => {
-        const refLabel = kind ? `${kind} #${edge.refId}` : `ref #${edge.refId}`;
-        onOpenRefTab!(edge.refId, refLabel);
+        onOpenRefTab!(edge.refId, `${label || "ref"} #${edge.refId}`);
       }
     : undefined;
 

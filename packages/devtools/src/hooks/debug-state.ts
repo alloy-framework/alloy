@@ -331,6 +331,21 @@ function handleRenderError(
 
 // ── Effects / refs ──────────────────────────────────────────────────────────
 
+/**
+ * Extract the npm package name from a source file path.
+ * Looks for `/node_modules/(@scope/pkg|pkg)/` and returns the package name.
+ */
+function extractPackageFromPath(filePath: string | undefined): string | undefined {
+  if (!filePath) return undefined;
+  // Match scoped packages: node_modules/@scope/name
+  const scoped = /[/\\]node_modules[/\\](@[^/\\]+[/\\][^/\\]+)/.exec(filePath);
+  if (scoped) return scoped[1].replace(/\\/g, "/");
+  // Match unscoped packages: node_modules/name
+  const unscoped = /[/\\]node_modules[/\\]([^@/\\][^/\\]*)/.exec(filePath);
+  if (unscoped) return unscoped[1];
+  return undefined;
+}
+
 function handleEffectAddedOrUpdated(
   store: DebugStore,
   _pending: PendingState,
@@ -353,7 +368,7 @@ function handleEffectAddedOrUpdated(
     contextId: message.context_id ?? undefined,
     ownerContextId: message.owner_context_id,
     component: message.component,
-    sourcePackage: message.source_package,
+    sourcePackage: message.source_package ?? extractPackageFromPath(message.source_file),
   };
   const existing = store.effects.get(id);
   if (existing) {
@@ -375,6 +390,7 @@ function handleRefAdded(
   const info: RefDebugInfo = {
     id,
     kind: message.kind,
+    label: message.label,
     createdAt:
       message.source_file ?
         {
@@ -385,7 +401,8 @@ function handleRefAdded(
       : undefined,
     createdByEffectId: message.created_by_effect_id,
     isInfrastructure: Boolean(message.is_infrastructure),
-    sourcePackage: message.source_package,
+    isApproxLocation: Boolean(message.is_approx_location),
+    sourcePackage: message.source_package ?? extractPackageFromPath(message.source_file),
   };
   store.refs.set(id, info);
   return ["refs"];

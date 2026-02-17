@@ -35,9 +35,11 @@ export interface EffectDebugInfo {
 export interface RefDebugInfo {
   id: number;
   kind?: string;
+  label?: string;
   createdAt?: SourceLocation;
   createdByEffectId?: number;
   isInfrastructure?: boolean;
+  isApproxLocation?: boolean;
   sourcePackage?: string;
 }
 

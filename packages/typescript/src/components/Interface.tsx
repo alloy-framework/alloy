@@ -39,17 +39,26 @@ const _InterfaceDeclaration = ensureTypeRefContext(
   function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     const ExprSlot = createSymbolSlot();
 
-    effect(() => {
-      if (ExprSlot.ref.value) {
-        const takenSymbols = ExprSlot.ref.value;
-        for (const symbol of takenSymbols) {
-          // ignore non-transient symbols (likely not the result of an expression).
-          if (symbol.isTransient) {
-            symbol.moveMembersTo(sym);
+    effect(
+      () => {
+        if (ExprSlot.ref.value) {
+          const takenSymbols = ExprSlot.ref.value;
+          for (const symbol of takenSymbols) {
+            // ignore non-transient symbols (likely not the result of an expression).
+            if (symbol.isTransient) {
+              symbol.moveMembersTo(sym);
+            }
           }
         }
-      }
-    });
+      },
+      undefined,
+      {
+        debug: {
+          name: "InterfaceDeclaration:moveExprSlotMembers",
+          type: "symbol",
+        },
+      },
+    );
 
     const children = childrenArray(() => props.children);
 
@@ -203,13 +212,22 @@ export function InterfaceMember(props: InterfaceMemberProps) {
 
   const taken = takeSymbols();
 
-  effect(() => {
-    if (taken.size > 1) return;
-    const symbol = Array.from(taken)[0];
-    if (symbol?.isTransient) {
-      symbol.moveMembersTo(sym!);
-    }
-  });
+  effect(
+    () => {
+      if (taken.size > 1) return;
+      const symbol = Array.from(taken)[0];
+      if (symbol?.isTransient) {
+        symbol.moveMembersTo(sym!);
+      }
+    },
+    undefined,
+    {
+      debug: {
+        name: "InterfaceMember:moveTakenMembers",
+        type: "symbol",
+      },
+    },
+  );
 
   return (
     <MemberDeclaration symbol={sym}>

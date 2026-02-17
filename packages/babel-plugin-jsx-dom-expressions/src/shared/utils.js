@@ -319,10 +319,17 @@ export function transformCondition(path, inline, deep) {
       cond = expr.test;
       if (!t.isBinaryExpression(cond))
         cond = t.unaryExpression("!", t.unaryExpression("!", cond, true), true);
-      id = inline
-        ? t.callExpression(memo, [t.arrowFunctionExpression([], cond)])
-        : path.scope.generateUidIdentifier("_c$");
-      expr.test = t.callExpression(id, []);
+      if (inline) {
+        // Inline: create and immediately invoke the condition memo as a boolean
+        // gate. This prevents the outer memo/getter from re-running when the
+        // signal changes between truthy values (e.g. 1→2), avoiding unnecessary
+        // component recreation.
+        id = t.callExpression(memo, [t.arrowFunctionExpression([], cond)]);
+        expr.test = t.callExpression(id, []);
+      } else {
+        id = path.scope.generateUidIdentifier("_c$");
+        expr.test = t.callExpression(id, []);
+      }
       if (t.isConditionalExpression(expr.consequent) || t.isLogicalExpression(expr.consequent)) {
         expr.consequent = transformCondition(path.get("consequent"), inline, true);
       }
@@ -341,14 +348,18 @@ export function transformCondition(path, inline, deep) {
       (dTest = isDynamic(nextPath.get("left"), {
         checkMember: true
       }));
+    // Same boolean gate optimization for logical expressions.
     if (dTest) {
       cond = nextPath.node.left;
       if (!t.isBinaryExpression(cond))
         cond = t.unaryExpression("!", t.unaryExpression("!", cond, true), true);
-      id = inline
-        ? t.callExpression(memo, [t.arrowFunctionExpression([], cond)])
-        : path.scope.generateUidIdentifier("_c$");
-      nextPath.node.left = t.callExpression(id, []);
+      if (inline) {
+        id = t.callExpression(memo, [t.arrowFunctionExpression([], cond)]);
+        nextPath.node.left = t.callExpression(id, []);
+      } else {
+        id = path.scope.generateUidIdentifier("_c$");
+        nextPath.node.left = t.callExpression(id, []);
+      }
     }
   }
   if (dTest && !inline) {

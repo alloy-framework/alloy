@@ -5,7 +5,7 @@ import type {
   EffectDebugInfo,
   EffectEdgeDebugInfo,
 } from "@/hooks/debug-connection-types";
-import { resolveEdgeRefId } from "@/lib/edge-utils";
+import { formatRefLabel, resolveEdgeRefId } from "@/lib/edge-utils";
 import { formatSourceLocation } from "@/lib/format-source-location";
 import { useMemo } from "react";
 
@@ -74,25 +74,15 @@ export function RefDetailView(props: RefDetailViewProps) {
     [triggerEdges, effects],
   );
 
-  // Synthesize info for non-ref reactive targets
-  const isTarget = !refInfo && numericId !== null;
-  const targetLabel = useMemo(() => {
-    if (!isTarget) return undefined;
-    for (const edge of effectEdges) {
-      if (edge.targetId === numericId && edge.targetLabel)
-        return edge.targetLabel;
-    }
-    return undefined;
-  }, [isTarget, effectEdges, numericId]);
-
   if (numericId === null) {
     return (
       <div className="text-sm text-muted-foreground/70">Invalid ref ID.</div>
     );
   }
 
-  const kind = refInfo?.kind ?? (isTarget ? "reactive" : "ref");
-  const displayName = targetLabel ?? kind;
+  const kind = refInfo?.kind ?? "ref";
+  const displayName = formatRefLabel(refInfo, numericId);
+  const isReactiveProp = kind === "reactive-property";
   const sourceLabel =
     refInfo?.createdAt ?
       formatSourceLocation(refInfo.createdAt, formatPath)
@@ -107,25 +97,28 @@ export function RefDetailView(props: RefDetailViewProps) {
           <span className="text-muted-foreground">#{numericId}</span>
           <span
             className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-wide ${
-              isTarget ? "bg-amber-500/20 text-amber-400"
+              isReactiveProp ? "bg-amber-500/20 text-amber-400"
               : kind === "computed" ? "bg-purple-500/20 text-purple-400"
               : kind === "shallowRef" ? "bg-blue-500/20 text-blue-400"
               : "bg-muted text-foreground"
             }`}
           >
-            {isTarget ? "reactive target" : kind}
+            {isReactiveProp ? "reactive" : kind}
           </span>
-          {refInfo?.isInfrastructure && (
-            <span className="rounded bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-              infra
-            </span>
-          )}
         </div>
         {refInfo?.createdAt && sourceLabel && (
-          <div className="text-xs">
+          <div className="text-xs flex items-center gap-1">
             <SourceLocationLink source={refInfo.createdAt}>
               {sourceLabel}
             </SourceLocationLink>
+            {refInfo.isApproxLocation && (
+              <span
+                title="Approximate: location is from first usage, not creation site"
+                className="text-muted-foreground/50 text-[9px] cursor-help"
+              >
+                ~
+              </span>
+            )}
           </div>
         )}
       </div>

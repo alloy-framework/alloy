@@ -1,4 +1,4 @@
-import { ref, Ref, toRaw } from "@vue/reactivity";
+import { Ref, toRaw } from "@vue/reactivity";
 import { BaseListProps } from "./components/List.jsx";
 import {
   createCustomContext,
@@ -9,6 +9,7 @@ import {
   getContext,
   memo,
   onCleanup,
+  ref,
   root,
   untrack,
 } from "./reactivity.js";
@@ -129,14 +130,16 @@ export function mapJoin<T, U, V>(
     }
     return slot;
   }
-  const firstNonEmptyIndex = ref(-1);
-  const lastNonEmptyIndex = ref(-1);
+  const firstNonEmptyIndex = ref(-1, { isInfrastructure: true });
+  const lastNonEmptyIndex = ref(-1, { isInfrastructure: true });
   const mapped: Children[] = [];
   let enderMemo: (() => Children) | undefined;
 
   // Creates a ref placeholder that stores the joiner node for a boundary.
   function createJoinerRef(): Ref<Children | undefined> {
-    return ref<unknown>(undefined) as Ref<Children | undefined>;
+    return ref<unknown>(undefined, { isInfrastructure: true }) as Ref<
+      Children | undefined
+    >;
   }
 
   // Makes sure we have a joiner ref at the requested boundary index.

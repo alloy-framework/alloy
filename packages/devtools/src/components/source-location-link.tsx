@@ -28,7 +28,9 @@ export function SourceLocationLink({
     event.preventDefault();
     event.stopPropagation();
     if (!source.fileName) return;
-    const normalized = source.fileName.replace(/\\/g, "/");
+    const normalized = source.fileName
+      .replace(/^file:\/\//, "")
+      .replace(/\\/g, "/");
     const line = source.lineNumber ?? 1;
     const column = source.columnNumber ?? 1;
     const command = `code -g ${normalized}:${line}:${column}`;

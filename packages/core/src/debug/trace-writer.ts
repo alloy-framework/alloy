@@ -180,6 +180,7 @@ function createSchema(): void {
     CREATE TABLE IF NOT EXISTS refs (
       id                   INTEGER PRIMARY KEY,
       kind                 TEXT,
+      label                TEXT,
       created_by_effect_id INTEGER REFERENCES effects(id),
       source_file          TEXT,
       source_line          INTEGER,
@@ -335,8 +336,8 @@ function prepareStatements(): void {
     `UPDATE effects SET component = ? WHERE context_id = ?`,
   );
   stmtInsertRef = db!.prepare(
-    `INSERT OR IGNORE INTO refs (id, kind, created_by_effect_id, source_file, source_line, source_col, seq)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT OR IGNORE INTO refs (id, kind, label, created_by_effect_id, source_file, source_line, source_col, seq)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   stmtInsertEdge = db!.prepare(
     `INSERT INTO edges (seq, type, effect_id, ref_id, target_id, target_key, caused_by, source_file, source_line)
@@ -470,12 +471,15 @@ export function insertRef(
   sourceFile: string | undefined,
   sourceLine: number | undefined,
   sourceCol: number | undefined,
+  label?: string | undefined,
+  isApproxLocation?: boolean,
 ): void {
   if (!db) return;
   const s = nextSeq();
   stmtInsertRef.run(
     id,
     kind ?? null,
+    label ?? null,
     createdByEffectId ?? null,
     sourceFile ?? null,
     sourceLine ?? null,
@@ -485,10 +489,12 @@ export function insertRef(
   notifyChange("refs", "added", {
     id,
     kind: kind ?? null,
+    label: label ?? null,
     created_by_effect_id: createdByEffectId ?? null,
     source_file: sourceFile ?? null,
     source_line: sourceLine ?? null,
     source_col: sourceCol ?? null,
+    is_approx_location: isApproxLocation ? 1 : undefined,
     seq: s,
   });
 }

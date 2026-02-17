@@ -32,11 +32,10 @@ const TYPE_COLORS: Record<string, string> = {
 type SortColumn = "track" | "triggered" | "triggers" | "runs";
 type SortDir = "asc" | "desc";
 
-function isFrameworkEffect(effect: EffectDebugInfo): boolean {
-  if (effect.sourcePackage) {
-    return effect.sourcePackage.startsWith("@alloy-js/");
-  }
-  return false;
+function isExternalEffect(effect: EffectDebugInfo): boolean {
+  // Purely source-location-based: external if source_file is inside node_modules or absent
+  if (!effect.createdAt?.fileName) return true;
+  return effect.createdAt.fileName.includes("/node_modules/");
 }
 
 function edgeCounts(
@@ -107,7 +106,7 @@ export function EffectsList(props: EffectsListProps) {
       }
     }
     if (userOnly) {
-      list = list.filter((e) => !isFrameworkEffect(e));
+      list = list.filter((e) => !isExternalEffect(e));
     }
     if (sortCol) {
       const mul = sortDir === "desc" ? -1 : 1;
@@ -229,7 +228,7 @@ export function EffectsList(props: EffectsListProps) {
                   const typeColor =
                     TYPE_COLORS[effect.type ?? ""] ??
                     "bg-muted text-foreground";
-                  const isFramework = isFrameworkEffect(effect);
+                  const isExternal = isExternalEffect(effect);
 
                   return (
                     <div
@@ -261,9 +260,9 @@ export function EffectsList(props: EffectsListProps) {
                               {effect.type}
                             </span>
                           )}
-                          {isFramework && (
+                          {isExternal && (
                             <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                              fw
+                              ext
                             </span>
                           )}
                         </div>

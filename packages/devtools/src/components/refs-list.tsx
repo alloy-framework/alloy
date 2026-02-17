@@ -24,12 +24,12 @@ type SortDir = "asc" | "desc";
 interface RefRow {
   id: number;
   kind: string;
+  label?: string;
   createdAt?: { fileName?: string; lineNumber?: number; columnNumber?: number };
   createdByEffectId?: number;
-  isInfrastructure?: boolean;
   sourcePackage?: string;
-  isTarget: boolean;
-  targetLabel?: string;
+  isInfrastructure?: boolean;
+  isApproxLocation?: boolean;
   tracks: number;
   triggers: number;
 }
@@ -37,7 +37,6 @@ interface RefRow {
 export function RefsList(props: RefsListProps) {
   const { refList, effects, effectEdges, formatPath, onOpenRefTab } = props;
   const [search, setSearch] = useState("");
-  const [hideInfra, setHideInfra] = useState(true);
   const [userOnly, setUserOnly] = useState(false);
   const [sortCol, setSortCol] = useState<SortColumn | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -54,73 +53,32 @@ export function RefsList(props: RefsListProps) {
     [sortCol],
   );
 
-  // Build unified ref rows: real refs + synthesized non-ref reactive targets
+  // Build ref rows with edge counts
   const allRows = useMemo(() => {
-    // Count edges per ref/target
     const trackCounts = new Map<number, number>();
     const triggerCounts = new Map<number, number>();
-    const targetLabels = new Map<number, string>();
-    const knownRefIds = new Set(refList.map((r) => r.id));
 
     for (const edge of effectEdges) {
       const rid = resolveEdgeRefId(edge);
-      if (rid === undefined || rid <= 0) continue;
+      if (rid === undefined) continue;
       if (edge.type === "track")
         trackCounts.set(rid, (trackCounts.get(rid) ?? 0) + 1);
       else if (edge.type === "trigger")
         triggerCounts.set(rid, (triggerCounts.get(rid) ?? 0) + 1);
-
-      // Collect non-ref targets
-      if (
-        edge.refId === undefined &&
-        edge.targetId !== undefined &&
-        edge.targetId > 0 &&
-        !knownRefIds.has(edge.targetId)
-      ) {
-        if (edge.targetLabel && !targetLabels.has(edge.targetId)) {
-          targetLabels.set(edge.targetId, edge.targetLabel);
-        }
-      }
     }
 
-    const rows: RefRow[] = [];
-
-    // Real refs
-    for (const ref of refList) {
-      rows.push({
-        id: ref.id,
-        kind: ref.kind ?? "ref",
-        createdAt: ref.createdAt,
-        createdByEffectId: ref.createdByEffectId,
-        isInfrastructure: ref.isInfrastructure,
-        sourcePackage: ref.sourcePackage,
-        isTarget: false,
-        tracks: trackCounts.get(ref.id) ?? 0,
-        triggers: triggerCounts.get(ref.id) ?? 0,
-      });
-    }
-
-    // Synthesized non-ref targets
-    const seenTargets = new Set<number>();
-    for (const edge of effectEdges) {
-      if (
-        edge.refId !== undefined ||
-        edge.targetId === undefined ||
-        edge.targetId <= 0
-      )
-        continue;
-      if (knownRefIds.has(edge.targetId) || seenTargets.has(edge.targetId))
-        continue;
-      seenTargets.add(edge.targetId);
-      rows.push({
-        id: edge.targetId,
-        kind: "reactive",
-        isTarget: true,
-        targetLabel: targetLabels.get(edge.targetId),
-        tracks: trackCounts.get(edge.targetId) ?? 0,
-        triggers: triggerCounts.get(edge.targetId) ?? 0,
-      });
-    }
+    const rows: RefRow[] = refList.map((ref) => ({
+      id: ref.id,
+      kind: ref.kind ?? "ref",
+      label: ref.label,
+      createdAt: ref.createdAt,
+      createdByEffectId: ref.createdByEffectId,
+      sourcePackage: ref.sourcePackage,
+      isInfrastructure: ref.isInfrastructure,
+      isApproxLocation: ref.isApproxLocation,
+      tracks: trackCounts.get(ref.id) ?? 0,
+      triggers: triggerCounts.get(ref.id) ?? 0,
+    }));
 
     rows.sort((a, b) => a.id - b.id);
     return rows;
@@ -128,11 +86,8 @@ export function RefsList(props: RefsListProps) {
 
   const filtered = useMemo(() => {
     let list = allRows;
-    if (hideInfra) {
-      list = list.filter((r) => !r.isInfrastructure);
-    }
     if (userOnly) {
-      list = list.filter((r) => !isFrameworkRef(r));
+      list = list.filter((r) => !isExternalRef(r));
     }
     if (search) {
       if (search.startsWith("#")) {
@@ -143,13 +98,13 @@ export function RefsList(props: RefsListProps) {
       } else {
         const s = search.toLowerCase();
         list = list.filter((r) => {
-          const label = r.kind + " #" + r.id;
+          const label = (r.label ?? r.kind) + " #" + r.id;
           const loc = formatSourceLocation(r.createdAt, formatPath) ?? "";
           return (
             label.toLowerCase().includes(s) ||
             String(r.id).includes(s) ||
             loc.toLowerCase().includes(s) ||
-            (r.targetLabel?.toLowerCase().includes(s) ?? false)
+            (r.label?.toLowerCase().includes(s) ?? false)
           );
         });
       }
@@ -159,7 +114,7 @@ export function RefsList(props: RefsListProps) {
       list = [...list].sort((a, b) => (a[sortCol] - b[sortCol]) * mul);
     }
     return list;
-  }, [allRows, search, hideInfra, userOnly, sortCol, sortDir, formatPath]);
+  }, [allRows, search, userOnly, sortCol, sortDir, formatPath]);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -180,16 +135,6 @@ export function RefsList(props: RefsListProps) {
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 h-7 rounded border border-border bg-background px-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <button
-            onClick={() => setHideInfra(!hideInfra)}
-            className={`h-7 px-2 rounded border text-[10px] font-medium whitespace-nowrap transition-colors ${
-              hideInfra ?
-                "border-primary bg-primary/10 text-primary"
-              : "border-border text-muted-foreground hover:bg-accent/50"
-            }`}
-          >
-            Hide infra
-          </button>
           <button
             onClick={() => setUserOnly(!userOnly)}
             className={`h-7 px-2 rounded border text-[10px] font-medium whitespace-nowrap transition-colors ${
@@ -237,8 +182,8 @@ export function RefsList(props: RefsListProps) {
               >
                 {virtualizer.getVirtualItems().map((virtualRow) => {
                   const row = filtered[virtualRow.index];
-                  const displayKind =
-                    row.isTarget ? (row.targetLabel ?? "reactive") : row.kind;
+                  const displayLabel =
+                    row.label ?? row.kind;
                   const sourceLabel = formatSourceLocation(
                     row.createdAt,
                     formatPath,
@@ -247,13 +192,12 @@ export function RefsList(props: RefsListProps) {
                     row.createdByEffectId !== undefined ?
                       effects.get(row.createdByEffectId)
                     : undefined;
-                  const refLabel = `${displayKind} #${row.id}`;
 
                   return (
                     <div
                       key={row.id}
                       id={`ref-${row.id}`}
-                      onClick={() => onOpenRefTab(row.id, refLabel)}
+                      onClick={() => onOpenRefTab(row.id, `${displayLabel} #${row.id}`)}
                       className="flex items-center border-b border-border/50 cursor-pointer hover:bg-accent/30 transition-colors text-xs"
                       style={{
                         position: "absolute",
@@ -265,13 +209,14 @@ export function RefsList(props: RefsListProps) {
                       }}
                     >
                       <div className="flex-1 py-1.5 pr-2">
-                        <span className="font-medium">{displayKind}</span>{" "}
+                        <span className="font-medium">{displayLabel}</span>{" "}
                         <span className="text-muted-foreground">#{row.id}</span>
                       </div>
                       <div className="w-20 py-1.5 pr-2">
                         <span
                           className={`rounded px-1.5 py-0.5 text-[10px] uppercase ${
-                            row.isTarget ? "bg-amber-500/20 text-amber-400"
+                            row.kind === "reactive-property" ?
+                              "bg-amber-500/20 text-amber-400"
                             : row.kind === "computed" ?
                               "bg-purple-500/20 text-purple-400"
                             : row.kind === "shallowRef" ?
@@ -279,14 +224,24 @@ export function RefsList(props: RefsListProps) {
                             : "bg-muted text-foreground"
                           }`}
                         >
-                          {row.isTarget ? "reactive" : row.kind}
+                          {row.kind === "reactive-property" ? "reactive" : row.kind}
                         </span>
                       </div>
-                      <div className="w-48 py-1.5 pr-2 text-muted-foreground truncate">
+                      <div className="w-48 py-1.5 pr-2 text-muted-foreground truncate flex items-center gap-1">
                         {sourceLabel ?
-                          <SourceLocationLink source={row.createdAt!}>
-                            {sourceLabel}
-                          </SourceLocationLink>
+                          <>
+                            <SourceLocationLink source={row.createdAt!}>
+                              {sourceLabel}
+                            </SourceLocationLink>
+                            {row.isApproxLocation && (
+                              <span
+                                title="Approximate: location is from first usage, not creation site"
+                                className="text-muted-foreground/50 text-[9px] cursor-help"
+                              >
+                                ~
+                              </span>
+                            )}
+                          </>
                         : "—"}
                       </div>
                       <div className="w-36 py-1.5 pr-2 text-muted-foreground truncate">
@@ -312,11 +267,12 @@ export function RefsList(props: RefsListProps) {
   );
 }
 
-function isFrameworkRef(row: RefRow): boolean {
-  if (row.sourcePackage) {
-    return row.sourcePackage.startsWith("@alloy-js/");
-  }
-  return false;
+function isExternalRef(row: RefRow): boolean {
+  // Infrastructure refs are always excluded in user-only mode
+  if (row.isInfrastructure) return true;
+  // Purely source-location-based: external if source_file is inside node_modules or absent
+  if (!row.createdAt?.fileName) return true;
+  return row.createdAt.fileName.includes("/node_modules/");
 }
 
 function SortableHeader(props: {

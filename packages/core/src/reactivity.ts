@@ -131,7 +131,9 @@ function resolveOwnerEffectContextId(context: Context): number | null {
  * ContentSlot, mapJoin). Most contexts don't need an isEmpty ref.
  */
 export function ensureIsEmpty(context: Context): Ref<boolean> {
-  context.isEmpty ??= ref(context.childrenWithContent === 0);
+  context.isEmpty ??= ref(context.childrenWithContent === 0, {
+    isInfrastructure: true,
+  });
   return context.isEmpty;
 }
 
@@ -199,7 +201,10 @@ export function findCurrentEffectId(): number | undefined {
 }
 
 export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
-  const o = shallowRef<T>();
+  const memoLabel = name ? `memo:${name}` : "memo";
+  const o = shallowRef<T>(undefined as T, {
+    label: memoLabel,
+  });
   effect(
     (prev) => {
       const res = fn();
@@ -279,6 +284,23 @@ export function effect<T>(
           refId: id,
           targetKey,
         });
+      } else if (
+        typeof event.target === "object" &&
+        event.target !== null &&
+        targetKey !== undefined
+      ) {
+        const id = reactivePropertyRefId(event.target, targetKey);
+        debug.effect.ensureReactivePropertyRef({
+          id,
+          target: event.target,
+          key: targetKey,
+        });
+        debug.effect.track({
+          effectId,
+          target: event.target,
+          refId: id,
+          targetKey,
+        });
       } else {
         debug.effect.track({
           effectId,
@@ -306,6 +328,25 @@ export function effect<T>(
       if (isRef(event.target)) {
         const id = refId(event.target);
         debug.effect.ensureRef({ id, kind: "ref" });
+        debug.effect.trigger({
+          effectId,
+          target: event.target,
+          refId: id,
+          targetKey,
+          causedBy,
+        });
+        setLastTriggerRef(effectId, id);
+      } else if (
+        typeof event.target === "object" &&
+        event.target !== null &&
+        targetKey !== undefined
+      ) {
+        const id = reactivePropertyRefId(event.target, targetKey);
+        debug.effect.ensureReactivePropertyRef({
+          id,
+          target: event.target,
+          key: targetKey,
+        });
         debug.effect.trigger({
           effectId,
           target: event.target,
@@ -403,7 +444,7 @@ export function ref<T>(
 ): Ref<T> {
   const result = vueRef(value) as Ref<T>;
   debug.effect.registerRef({
-    id: refId(result, options?.isInfrastructure),
+    id: refId(result),
     kind: "ref",
     createdAt: captureSourceLocation(),
     createdByEffectId: globalContext?.meta?.effectId,
@@ -434,11 +475,15 @@ export function shallowReactive<T extends object>(
   return result;
 }
 
-export function shallowRef<T>(value?: T): Ref<T> {
+export function shallowRef<T>(
+  value?: T,
+  options?: { label?: string },
+): Ref<T> {
   const result = vueShallowRef(value) as Ref<T>;
   debug.effect.registerRef({
     id: refId(result),
     kind: "shallowRef",
+    label: options?.label,
     createdAt: captureSourceLocation(),
     createdByEffectId: globalContext?.meta?.effectId,
   });
@@ -491,16 +536,61 @@ export function toRefs<T extends object>(
 
 const seenRefs = new WeakMap<Ref<unknown>, number>();
 let refIdCounter = 1;
-let infraRefIdCounter = -1;
 const effectIdMap = new WeakMap<object, number>();
 
-export function refId(ref: Ref<unknown>, isInfrastructure?: boolean): number {
+// Stable ID mapping for (reactive, key) pairs — each property acts as a virtual ref.
+const reactivePropertyIds = new WeakMap<object, Map<string | number, number>>();
+
+export function refId(ref: Ref<unknown>): number {
   let id = seenRefs.get(ref);
   if (id === undefined) {
-    id = isInfrastructure ? infraRefIdCounter-- : refIdCounter++;
+    id = refIdCounter++;
     seenRefs.set(ref, id);
   }
   return id;
+}
+
+/**
+ * Get a stable ref ID for a property of a reactive object.
+ * Each (target, key) pair gets a unique positive ID from the same counter as refs.
+ */
+export function reactivePropertyRefId(
+  target: object,
+  key: string | number,
+): number {
+  let keys = reactivePropertyIds.get(target);
+  if (!keys) {
+    keys = new Map();
+    reactivePropertyIds.set(target, keys);
+  }
+  let id = keys.get(key);
+  if (id === undefined) {
+    id = refIdCounter++;
+    keys.set(key, id);
+  }
+  return id;
+}
+
+/**
+ * Build a human-readable label for a reactive property like `symbolName.prop`.
+ */
+export function formatReactivePropertyLabel(
+  target: object,
+  key: string | number,
+): string {
+  let ownerLabel: string;
+  try {
+    const str = String(target);
+    // OutputSymbol toString() returns something like: TSOutputSymbol "MyInterface"[42]
+    // Trim to just the meaningful part
+    ownerLabel = str.length > 60 ? str.slice(0, 57) + "..." : str;
+  } catch {
+    ownerLabel = "reactive";
+  }
+  if (Array.isArray(target)) {
+    ownerLabel = "[]";
+  }
+  return `${ownerLabel}.${key}`;
 }
 
 /** Allocate a unique reactive target ID from the same counter space as ref IDs. */
@@ -510,7 +600,6 @@ export function nextReactiveId(): number {
 
 export function resetRefIdCounter(): void {
   refIdCounter = 1;
-  infraRefIdCounter = -1;
 }
 
 export function getEffectDebugId(effect: object): number | undefined {

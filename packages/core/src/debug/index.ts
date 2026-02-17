@@ -11,6 +11,7 @@ import {
   debugWatch,
 } from "./cli.js";
 import {
+  ensureReactivePropertyRef,
   ensureRef,
   register,
   registerRef,
@@ -86,6 +87,7 @@ export const debug = {
     update,
     registerRef,
     ensureRef,
+    ensureReactivePropertyRef,
     track,
     trigger,
     reset,

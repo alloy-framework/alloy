@@ -816,8 +816,12 @@ function appendChild(node: RenderedTextTree, rawChild: Child) {
       }
     } else if (isComponentCreator(child)) {
       const index = node.length;
-      const rerenderToken = isDevtoolsEnabled() ? ref(0) : undefined;
-      const breakNext = isDevtoolsEnabled() ? ref(false) : undefined;
+      const rerenderToken = isDevtoolsEnabled()
+        ? ref(0, { isInfrastructure: true })
+        : undefined;
+      const breakNext = isDevtoolsEnabled()
+        ? ref(false, { isInfrastructure: true })
+        : undefined;
       // todo: remove this effect (only needed for context, not needed for anything else)
       effect(
         () => {

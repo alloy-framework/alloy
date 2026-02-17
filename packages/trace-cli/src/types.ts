@@ -94,24 +94,30 @@ interface StackEntry {
 }
 
 /**
- * A frame is "external" (library/framework) if it has no source location or
- * its source is inside node_modules. Matches the devtools filtering logic.
+ * A frame is "external" (library/framework) if its source is inside
+ * node_modules. Frames with no source are kept (they may be user components
+ * without source annotations). Matches the devtools filtering approach.
  */
 function isExternalFrame(entry: StackEntry): boolean {
-  if (!entry.source?.fileName) return true;
+  if (!entry.source?.fileName) return false;
   return entry.source.fileName.includes("/node_modules/");
 }
 
+// ANSI color helpers
+const bold = (s: string) => `\x1b[1m${s}\x1b[22m`;
+const dim = (s: string) => `\x1b[2m${s}\x1b[22m`;
+const cyan = (s: string) => `\x1b[36m${s}\x1b[39m`;
+
 function formatEntry(entry: StackEntry): string {
-  const id = entry.renderNodeId != null ? ` #${entry.renderNodeId}` : "";
+  const id = entry.renderNodeId != null ? dim(` #${entry.renderNodeId}`) : "";
   const loc = entry.source;
   if (loc?.fileName) {
     const parts = [shortPath(loc.fileName)];
     if (loc.lineNumber != null) parts.push(String(loc.lineNumber));
     if (loc.columnNumber != null) parts.push(String(loc.columnNumber));
-    return `    at ${entry.name}${id} (${parts.join(":")})`;
+    return `    at ${bold(entry.name)}${id} ${cyan(`(${parts.join(":")})`)}`;
   }
-  return `    at ${entry.name}${id}`;
+  return `    at ${bold(entry.name)}${id}`;
 }
 
 /**
@@ -131,7 +137,7 @@ export function formatComponentStack(json: string, allFrames = false): string | 
     const lines = userFrames.map(formatEntry);
 
     if (hiddenCount > 0 && lines.length > 0) {
-      lines.push(`    ... ${hiddenCount} framework frames hidden (use --all-frames to show)`);
+      lines.push(dim(`    ... ${hiddenCount} framework frames hidden (use --all-frames to show)`));
     }
 
     return lines.length > 0 ? lines.join("\n") : undefined;

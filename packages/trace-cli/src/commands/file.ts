@@ -96,29 +96,15 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     return;
   }
 
-  // Get all text nodes under this file's render subtree
-  const allTextNodes = db.prepare(`
-    WITH RECURSIVE desc_nodes(id) AS (
-      SELECT ?
-      UNION ALL
-      SELECT rn.id FROM render_nodes rn JOIN desc_nodes d ON rn.parent_id = d.id
-    )
-    SELECT rn.id, rn.value, rn.parent_id, rn.seq
-    FROM render_nodes rn
-    JOIN desc_nodes d ON rn.id = d.id
-    WHERE rn.kind = 'text' AND rn.value IS NOT NULL
-    ORDER BY rn.seq
-  `).all(file.render_node_id) as any[];
+  // Find the deepest text node containing any part of the search string.
+  // We search for text nodes containing the search string or any of its
+  // words, then pick the one with the deepest nesting (most ancestors).
+  const deepestNode = findDeepestMatchingNode(db, file.render_node_id, substring);
 
   if (opts.json) {
     for (const match of matches) {
-      const relevant = findRelevantTextNodes(allTextNodes, substring);
-      const stacks = relevant.map((tn: any) => ({
-        textNodeId: tn.id,
-        text: tn.value,
-        stack: buildComponentStack(db, tn.id),
-      }));
-      console.log(JSON.stringify({ text: match.text, offset: match.start, nodes: stacks }));
+      const stack = deepestNode ? buildComponentStack(db, deepestNode.id) : [];
+      console.log(JSON.stringify({ text: match.text, offset: match.start, textNodeId: deepestNode?.id, stack }));
     }
     return;
   }
@@ -128,16 +114,11 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
     const context = getMatchContext(file.content, match.start, match.end);
-    console.log(`Match ${i + 1}: offset ${match.start}`);
+    console.log(`Match ${i + 1}:`);
     console.log(`  ${context}`);
 
-    // Find text nodes relevant to this match
-    const relevant = findRelevantTextNodes(allTextNodes, substring);
-    if (relevant.length > 0) {
-      // Use the most specific (deepest) text node for the component stack
-      const deepest = relevant[0];
-      const stack = buildComponentStack(db, deepest.id);
-      console.log(`  Text nodes: ${relevant.map((tn: any) => "#" + tn.id).join(", ")}`);
+    if (deepestNode) {
+      const stack = buildComponentStack(db, deepestNode.id);
       if (stack.length > 0) {
         const formatted = formatComponentStack(
           JSON.stringify(
@@ -154,32 +135,64 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
           console.log(formatted);
         }
       }
-    } else {
-      console.log("  (could not map to text nodes)");
     }
     console.log();
   }
 }
 
 /**
- * Find text nodes whose values contain words from the search string.
- * Tries the full string first, then falls back to the longest token.
+ * Find the deepest text node that contains the search string or part of it.
+ * Tries the full string first, then each word from longest to shortest.
+ * "Deepest" = most component ancestors (most specific in the render tree).
  */
-function findRelevantTextNodes(textNodes: any[], substring: string): any[] {
-  // First: try exact substring match within a single node
-  const exact = textNodes.filter((tn: any) => tn.value.includes(substring));
-  if (exact.length > 0) return exact;
+function findDeepestMatchingNode(db: Db, renderNodeId: number, substring: string): any | undefined {
+  const baseQuery = `
+    WITH RECURSIVE desc_nodes(id) AS (
+      SELECT ?
+      UNION ALL
+      SELECT rn.id FROM render_nodes rn JOIN desc_nodes d ON rn.parent_id = d.id
+    )
+    SELECT rn.id, rn.value, rn.parent_id
+    FROM render_nodes rn
+    JOIN desc_nodes d ON rn.id = d.id
+    WHERE rn.kind = 'text' AND rn.value LIKE ?
+  `;
 
-  // Fall back: match the longest token (most specific word)
-  const tokens = substring.split(/\s+/).filter(Boolean);
-  tokens.sort((a, b) => b.length - a.length);
+  // Try full substring
+  let nodes = db.prepare(baseQuery).all(renderNodeId, `%${substring}%`) as any[];
+  if (nodes.length > 0) return pickDeepest(db, nodes);
 
-  for (const token of tokens) {
-    const matches = textNodes.filter((tn: any) => tn.value.includes(token));
-    if (matches.length > 0) return matches;
+  // Try each word, longest first
+  const words = substring.split(/\s+/).filter(Boolean).sort((a, b) => b.length - a.length);
+  for (const word of words) {
+    nodes = db.prepare(baseQuery).all(renderNodeId, `%${word}%`) as any[];
+    if (nodes.length > 0) return pickDeepest(db, nodes);
   }
 
-  return [];
+  return undefined;
+}
+
+function pickDeepest(db: Db, nodes: any[]): any {
+  if (nodes.length === 1) return nodes[0];
+
+  let best = nodes[0];
+  let bestDepth = 0;
+
+  for (const node of nodes) {
+    let depth = 0;
+    let id = node.parent_id;
+    while (id != null) {
+      depth++;
+      const parent = db.prepare("SELECT parent_id FROM render_nodes WHERE id = ?").get(id) as any;
+      if (!parent) break;
+      id = parent.parent_id;
+    }
+    if (depth > bestDepth) {
+      bestDepth = depth;
+      best = node;
+    }
+  }
+  return best;
 }
 
 function buildComponentStack(db: Db, nodeId: number): any[] {

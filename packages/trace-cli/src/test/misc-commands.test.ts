@@ -146,7 +146,7 @@ describe("file", () => {
   });
 
   describe("search", () => {
-    it("finds text within file content and shows component stack", () => {
+    it("finds text in file content and shows component stack", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
@@ -157,8 +157,7 @@ describe("file", () => {
       expect(stdout).toContain("at SourceFile");
     });
 
-    it("finds text spanning across nodes", () => {
-      // "bar;\n}" spans two lines inside text node 4
+    it("finds cross-node text", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "export", "interface"], {}),
       );
@@ -187,7 +186,6 @@ describe("file", () => {
       );
       expect(stdout).toContain("Found 1 match");
       expect(stdout).toContain("import { Bar }");
-      // Fragment has no component ancestor until SourceFile
       expect(stdout).toContain("at SourceFile");
     });
 
@@ -198,15 +196,15 @@ describe("file", () => {
       expect(stdout).toContain("No text matching");
     });
 
-    it("returns json with node and offset info", () => {
+    it("returns json", () => {
       const { stdout } = captureOutput(() =>
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
       );
       const parsed = JSON.parse(stdout);
       expect(parsed.text).toBe("interface Foo");
       expect(parsed.offset).toBeTypeOf("number");
-      expect(parsed.nodes).toBeInstanceOf(Array);
-      expect(parsed.nodes.length).toBeGreaterThan(0);
+      expect(parsed.textNodeId).toBeTypeOf("number");
+      expect(parsed.stack).toBeInstanceOf(Array);
     });
   });
 });

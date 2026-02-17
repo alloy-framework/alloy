@@ -2,13 +2,15 @@ import {
   Namekey,
   NamePolicyGetter,
   onCleanup,
+  OutputSymbolOptions,
   useBinder,
 } from "@alloy-js/core";
 import { getGlobalNamespace } from "../contexts/index.js";
+import { useNamespaceContext } from "../contexts/namespace.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
 import { useNamespace } from "../scopes/index.js";
 import { ValueOrArray } from "../util.js";
-import { TypeSpecSymbol } from "./index.js";
+import { NamedTypeKind, NamedTypeSymbol, TypeSpecSymbol } from "./index.js";
 import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
 
 export function createNamespaceSymbol(
@@ -57,6 +59,18 @@ function createNamespaceSymbolInternal(
       parentSymbol,
       withNamePolicy(options, "namespace"),
     ),
+  );
+}
+
+export function createNamedTypeSymbol(
+  name: string | Namekey,
+  kind: NamedTypeKind,
+  options?: OutputSymbolOptions,
+) {
+  const scope = useNamespaceContext();
+  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
+  return withCleanup(
+    new NamedTypeSymbol(name, parentSymbol.memberSpaces, kind, options),
   );
 }
 

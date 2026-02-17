@@ -2,6 +2,7 @@ import { createNamePolicy, NamePolicy, useNamePolicy } from "@alloy-js/core";
 
 export type TypeSpecElements =
   | "alias"
+  | "scalar"
   | "decorator"
   | "enum"
   | "interface"
@@ -16,6 +17,7 @@ export function createTypeSpecNamePolicy(): NamePolicy<TypeSpecElements> {
   return createNamePolicy<TypeSpecElements>((name, element) => {
     switch (element) {
       case "alias":
+      case "scalar":
       case "enum":
       case "interface":
       case "model-property":

@@ -21,7 +21,7 @@ const args = parseArgs({
     "source-info": {
       type: "boolean",
     },
-    "no-dev": {
+    "with-dev": {
       type: "boolean",
     },
   },
@@ -54,18 +54,22 @@ async function build() {
   const emitResult = program.emit();
   const start = new Date().getTime();
 
-  // Prod build: always produce dist/ with production settings
-  await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
-    sourceMaps: opts.options.sourceMap,
-    addSourceInfo: false,
-  });
-
-  // Dev build: produce dist/dev/ with source info unless --no-dev
-  if (!args.values["no-dev"]) {
+  if (args.values["with-dev"]) {
+    // Dual build: prod → dist/, dev → dist/dev/
+    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo: false,
+    });
     const devOutDir = join(opts.outDir, "dev");
     await buildAllFiles(opts.fileNames, opts.rootDir, devOutDir, {
       sourceMaps: opts.options.sourceMap,
       addSourceInfo: true,
+    });
+  } else {
+    // Single build: --dev produces dev build, default produces prod build
+    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo,
     });
   }
 
@@ -93,7 +97,6 @@ async function build() {
 
 function watchMain() {
   const opts = getParseCommandLine();
-  const devOutDir = join(opts.outDir, "dev");
 
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
@@ -116,7 +119,7 @@ function watchMain() {
           .filter((x) => !x.isDeclarationFile)
           .map((x) => x.fileName),
         opts.rootDir,
-        devOutDir,
+        opts.outDir,
         {
           sourceMaps: opts.options.sourceMap,
           addSourceInfo: true,

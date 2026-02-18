@@ -1,5 +1,15 @@
 # Changelog - @alloy-js/csharp
 
+## 0.23.0
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#354](https://github.com/alloy-framework/alloy/pull/354) Support add doc comment at the beginning of csharp src file
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+
+
 ## 0.22.0
 
 ### Bug Fixes

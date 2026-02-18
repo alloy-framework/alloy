@@ -1,5 +1,14 @@
 # Changelog - @alloy-js/python
 
+## 0.4.0
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+
+
 ## 0.3.0
 
 ### Bug Fixes

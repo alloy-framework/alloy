@@ -115,7 +115,7 @@ export function resolveComponentSource(
   if (!source?.fileName) return source;
   loadSourceMapSupport();
 
-  let fileName = stripFileUrl(source.fileName);
+  const fileName = stripFileUrl(source.fileName);
 
   if (source.lineNumber != null && source.columnNumber != null) {
     // Resolve through source maps to get the original .tsx path

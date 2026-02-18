@@ -8,6 +8,9 @@
   },
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
     "alloy-trace": "./dist/cli.js"

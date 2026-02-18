@@ -28,39 +28,39 @@ alloy-trace <command> [subcommand] [options]
 
 ### Entity commands
 
-| Command | Subcommands | Description |
-|---------|-------------|-------------|
-| `component` | `list`, `show <id>`, `tree [id]`, `stats` | Render tree components |
-| `effect` | `list`, `show <id>`, `chain <id>`, `hotspots`, `ancestry <id>`, `subtree <ctx-id>` | Reactive effects |
-| `ref` | `list`, `show <id>`, `chain <id>`, `hotspots`, `fanout <id>`, `ownership <id>` | Reactive refs |
-| `symbol` | `list`, `show <id>` | Output symbols |
-| `scope` | `list`, `show <id>` | Output scopes |
-| `file` | `list`, `show <path>` | Generated output files |
+| Command     | Subcommands                                                                        | Description            |
+| ----------- | ---------------------------------------------------------------------------------- | ---------------------- |
+| `component` | `list`, `show <id>`, `tree [id]`, `stats`                                          | Render tree components |
+| `effect`    | `list`, `show <id>`, `chain <id>`, `hotspots`, `ancestry <id>`, `subtree <ctx-id>` | Reactive effects       |
+| `ref`       | `list`, `show <id>`, `chain <id>`, `hotspots`, `fanout <id>`, `ownership <id>`     | Reactive refs          |
+| `symbol`    | `list`, `show <id>`                                                                | Output symbols         |
+| `scope`     | `list`, `show <id>`                                                                | Output scopes          |
+| `file`      | `list`, `show <path>`                                                              | Generated output files |
 
 ### Analysis commands
 
-| Command | Description |
-|---------|-------------|
-| `stats` | Aggregate statistics and overhead analysis |
-| `errors` | List render errors with component stacks |
+| Command       | Description                                    |
+| ------------- | ---------------------------------------------- |
+| `stats`       | Aggregate statistics and overhead analysis     |
+| `errors`      | List render errors with component stacks       |
 | `query <sql>` | Run a raw SQL query against the trace database |
 
 ### Options
 
-| Option | Description |
-|--------|-------------|
-| `--db=<path>` | Path to trace database (default: `./trace.db`) |
-| `--json` | Output as JSON (one object per line) |
-| `--limit=<n>` | Limit number of results |
-| `--depth=<n>` | Max tree depth for `component tree` |
-| `--source-file=<pattern>` | Filter by source file path (LIKE match) |
-| `--output-file=<pattern>` | Filter by output file path (LIKE match) |
-| `--component=<name>` | Filter by component name |
-| `--name=<pattern>` | Filter by name |
-| `--type=<type>` | Filter by effect type or ref kind |
-| `--min-trackers=<n>` | Show refs tracked by at least N effects |
-| `--unused` | Show only unused refs (no edges) |
-| `--framework` | Show only framework-internal effects |
+| Option                    | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+| `--db=<path>`             | Path to trace database (default: `./trace.db`) |
+| `--json`                  | Output as JSON (one object per line)           |
+| `--limit=<n>`             | Limit number of results                        |
+| `--depth=<n>`             | Max tree depth for `component tree`            |
+| `--source-file=<pattern>` | Filter by source file path (LIKE match)        |
+| `--output-file=<pattern>` | Filter by output file path (LIKE match)        |
+| `--component=<name>`      | Filter by component name                       |
+| `--name=<pattern>`        | Filter by name                                 |
+| `--type=<type>`           | Filter by effect type or ref kind              |
+| `--min-trackers=<n>`      | Show refs tracked by at least N effects        |
+| `--unused`                | Show only unused refs (no edges)               |
+| `--framework`             | Show only framework-internal effects           |
 
 ## Examples
 

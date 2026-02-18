@@ -1,5 +1,3 @@
-import type { DatabaseSync } from "node:sqlite";
-
 /**
  * Captures all console.log and console.error output during `fn()`.
  * Returns { stdout, stderr } as joined strings with ANSI codes stripped.

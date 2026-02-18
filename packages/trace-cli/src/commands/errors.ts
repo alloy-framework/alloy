@@ -23,7 +23,10 @@ export function runErrors(db: Db, opts: Opts) {
       console.log(`${err.name}: ${err.message}`);
     }
     if (err.component_stack) {
-      const formatted = formatComponentStack(err.component_stack, opts.allFrames);
+      const formatted = formatComponentStack(
+        err.component_stack,
+        opts.allFrames,
+      );
       if (formatted) {
         console.log("Component stack:");
         console.log(formatted);

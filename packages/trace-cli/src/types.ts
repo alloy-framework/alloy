@@ -66,9 +66,15 @@ export function shortPath(p: string): string {
 }
 
 export function requireId(args: string[], usage: string): number {
-  if (!args[0]) { console.error(usage); process.exit(1); }
+  if (!args[0]) {
+    console.error(usage);
+    process.exit(1);
+  }
   const id = parseInt(args[0], 10);
-  if (isNaN(id)) { console.error(usage); process.exit(1); }
+  if (isNaN(id)) {
+    console.error(usage);
+    process.exit(1);
+  }
   return id;
 }
 
@@ -82,7 +88,9 @@ export function printPaginationFooter(
   if (shown >= limit) {
     const total = (db.prepare(countSql).get(...params) as any)?.n;
     if (total > limit) {
-      console.log(`\n  (showing ${limit} of ${total}, use --limit to show more)`);
+      console.log(
+        `\n  (showing ${limit} of ${total}, use --limit to show more)`,
+      );
     }
   }
 }
@@ -124,7 +132,10 @@ function formatEntry(entry: StackEntry): string {
  * When allFrames is false (default), only user frames are shown and a
  * hint about hidden library frames is appended.
  */
-export function formatComponentStack(json: string, allFrames = false): string | undefined {
+export function formatComponentStack(
+  json: string,
+  allFrames = false,
+): string | undefined {
   try {
     const stack = JSON.parse(json) as StackEntry[];
     if (allFrames) {
@@ -136,7 +147,11 @@ export function formatComponentStack(json: string, allFrames = false): string | 
     const lines = userFrames.map(formatEntry);
 
     if (hiddenCount > 0 && lines.length > 0) {
-      lines.push(dim(`    ... ${hiddenCount} external frames hidden (use --all-frames to show)`));
+      lines.push(
+        dim(
+          `    ... ${hiddenCount} external frames hidden (use --all-frames to show)`,
+        ),
+      );
     }
 
     return lines.length > 0 ? lines.join("\n") : undefined;

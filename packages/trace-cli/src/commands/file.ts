@@ -81,9 +81,14 @@ interface TextRange {
  * order (e.g. reactive references resolved later) but their position in the
  * tree reflects where they appear in the file.
  */
-function collectTextNodesDfs(db: Db, rootId: number): { id: number; value: string }[] {
+function collectTextNodesDfs(
+  db: Db,
+  rootId: number,
+): { id: number; value: string }[] {
   // Load all descendant nodes
-  const allNodes = db.prepare(`
+  const allNodes = db
+    .prepare(
+      `
     WITH RECURSIVE desc_nodes(id) AS (
       SELECT ?
       UNION ALL
@@ -92,11 +97,19 @@ function collectTextNodesDfs(db: Db, rootId: number): { id: number; value: strin
     SELECT rn.id, rn.kind, rn.value, rn.parent_id, rn.seq
     FROM render_nodes rn
     JOIN desc_nodes d ON rn.id = d.id
-  `).all(rootId) as { id: number; kind: string; value: string | null; parent_id: number | null; seq: number }[];
+  `,
+    )
+    .all(rootId) as {
+    id: number;
+    kind: string;
+    value: string | null;
+    parent_id: number | null;
+    seq: number;
+  }[];
 
   // Build parent→children map, sorted by seq
   const childrenMap = new Map<number, typeof allNodes>();
-  const nodeMap = new Map<number, typeof allNodes[0]>();
+  const nodeMap = new Map<number, (typeof allNodes)[0]>();
   for (const n of allNodes) {
     nodeMap.set(n.id, n);
     if (n.parent_id != null) {
@@ -144,7 +157,11 @@ function collectTextNodesDfs(db: Db, rootId: number): { id: number; value: strin
  * diff identifies equal segments and maps them between the two coordinate
  * systems.
  */
-function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string): TextRange[] {
+function buildFileTextRanges(
+  db: Db,
+  renderNodeId: number,
+  fileContent: string,
+): TextRange[] {
   const textNodes = collectTextNodesDfs(db, renderNodeId);
 
   if (textNodes.length === 0 || fileContent.length === 0) return [];
@@ -153,7 +170,11 @@ function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string):
   const nodeSpans: { id: number; start: number; end: number }[] = [];
   let cursor = 0;
   for (const node of textNodes) {
-    nodeSpans.push({ id: node.id, start: cursor, end: cursor + node.value.length });
+    nodeSpans.push({
+      id: node.id,
+      start: cursor,
+      end: cursor + node.value.length,
+    });
     cursor += node.value.length;
   }
 
@@ -164,13 +185,23 @@ function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string):
   const diffs = dmp.diff_main(nodeText, fileContent);
   dmp.diff_cleanupSemantic(diffs);
 
-  const equalSegments: { nodeStart: number; nodeEnd: number; fileStart: number; fileEnd: number }[] = [];
+  const equalSegments: {
+    nodeStart: number;
+    nodeEnd: number;
+    fileStart: number;
+    fileEnd: number;
+  }[] = [];
   let nodePos = 0;
   let filePos = 0;
   for (const [op, text] of diffs) {
     const len = text.length;
     if (op === DIFF_EQUAL) {
-      equalSegments.push({ nodeStart: nodePos, nodeEnd: nodePos + len, fileStart: filePos, fileEnd: filePos + len });
+      equalSegments.push({
+        nodeStart: nodePos,
+        nodeEnd: nodePos + len,
+        fileStart: filePos,
+        fileEnd: filePos + len,
+      });
       nodePos += len;
       filePos += len;
     } else if (op === -1) {
@@ -184,11 +215,17 @@ function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string):
   const ranges: TextRange[] = [];
   let segIdx = 0;
   for (const span of nodeSpans) {
-    while (segIdx < equalSegments.length && equalSegments[segIdx].nodeEnd <= span.start) {
+    while (
+      segIdx < equalSegments.length &&
+      equalSegments[segIdx].nodeEnd <= span.start
+    ) {
       segIdx++;
     }
     let idx = segIdx;
-    while (idx < equalSegments.length && equalSegments[idx].nodeStart < span.end) {
+    while (
+      idx < equalSegments.length &&
+      equalSegments[idx].nodeStart < span.end
+    ) {
       const seg = equalSegments[idx];
       const start = Math.max(span.start, seg.nodeStart);
       const end = Math.min(span.end, seg.nodeEnd);
@@ -211,7 +248,11 @@ function buildFileTextRanges(db: Db, renderNodeId: number, fileContent: string):
  * the pre-computed text ranges. Returns the first (shallowest file-offset)
  * node whose range overlaps the match.
  */
-function findNodeAtOffset(ranges: TextRange[], matchStart: number, matchEnd: number): number | undefined {
+function findNodeAtOffset(
+  ranges: TextRange[],
+  matchStart: number,
+  matchEnd: number,
+): number | undefined {
   for (const r of ranges) {
     if (r.fileEnd <= matchStart) continue;
     if (r.fileStart >= matchEnd) break;
@@ -220,7 +261,12 @@ function findNodeAtOffset(ranges: TextRange[], matchStart: number, matchEnd: num
   return undefined;
 }
 
-function fileSearch(db: Db, path: string | undefined, substring: string | undefined, opts: Opts) {
+function fileSearch(
+  db: Db,
+  path: string | undefined,
+  substring: string | undefined,
+  opts: Opts,
+) {
   if (!path || !substring) {
     console.error("Usage: alloy-trace file search <path> <substring>");
     process.exit(1);
@@ -254,7 +300,14 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
     for (const match of matches) {
       const nodeId = findNodeAtOffset(ranges, match.start, match.end);
       const stack = nodeId ? buildComponentStack(db, nodeId) : [];
-      console.log(JSON.stringify({ text: match.text, offset: match.start, textNodeId: nodeId, stack }));
+      console.log(
+        JSON.stringify({
+          text: match.text,
+          offset: match.start,
+          textNodeId: nodeId,
+          stack,
+        }),
+      );
     }
     return;
   }
@@ -272,8 +325,13 @@ function fileSearch(db: Db, path: string | undefined, substring: string | undefi
             stack.map((c: any) => ({
               name: c.name ?? "(unnamed)",
               renderNodeId: c.id,
-              source: c.source_file
-                ? { fileName: c.source_file, lineNumber: c.source_line, columnNumber: c.source_col }
+              source:
+                c.source_file ?
+                  {
+                    fileName: c.source_file,
+                    lineNumber: c.source_line,
+                    columnNumber: c.source_col,
+                  }
                 : undefined,
             })),
           ),
@@ -294,7 +352,9 @@ function buildComponentStack(db: Db, nodeId: number): any[] {
 
   while (currentId !== null) {
     const node = db
-      .prepare("SELECT id, parent_id, kind, name, props, source_file, source_line, source_col FROM render_nodes WHERE id = ?")
+      .prepare(
+        "SELECT id, parent_id, kind, name, props, source_file, source_line, source_col FROM render_nodes WHERE id = ?",
+      )
       .get(currentId) as any;
     if (!node) break;
     if (node.kind === "component") {
@@ -306,7 +366,10 @@ function buildComponentStack(db: Db, nodeId: number): any[] {
   return stack;
 }
 
-function findContentMatches(content: string, substring: string): { start: number; end: number; text: string }[] {
+function findContentMatches(
+  content: string,
+  substring: string,
+): { start: number; end: number; text: string }[] {
   const matches: { start: number; end: number; text: string }[] = [];
   let pos = 0;
   while (true) {
@@ -323,7 +386,8 @@ function getMatchContext(content: string, start: number, end: number): string {
   const matchLineEnd = content.indexOf("\n", end);
 
   // Line before
-  const prevLineStart = matchLineStart > 0 ? content.lastIndexOf("\n", matchLineStart - 2) + 1 : -1;
+  const prevLineStart =
+    matchLineStart > 0 ? content.lastIndexOf("\n", matchLineStart - 2) + 1 : -1;
   // Line after — find end of next line, or end of content
   let contextEnd: number;
   if (matchLineEnd === -1) {

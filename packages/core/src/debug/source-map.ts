@@ -9,9 +9,7 @@ import type { SourceLocation } from "../devtools/devtools-protocol.js";
 
 // Lazily loaded findSourceMap from node:module
 let findSourceMap:
-  | ((
-      path: string,
-    ) =>
+  | ((path: string) =>
       | {
           findEntry: (
             line: number,

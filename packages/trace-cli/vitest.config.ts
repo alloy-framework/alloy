@@ -5,7 +5,10 @@ export default defineConfig({
     pool: "forks",
     poolOptions: {
       forks: {
-        execArgv: ["--experimental-sqlite", "--no-warnings=ExperimentalWarning"],
+        execArgv: [
+          "--experimental-sqlite",
+          "--no-warnings=ExperimentalWarning",
+        ],
       },
     },
   },

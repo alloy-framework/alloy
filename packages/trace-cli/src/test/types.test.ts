@@ -8,8 +8,8 @@ import {
   requireId,
   shortPath,
 } from "../types.js";
-import { createTestDb } from "./test-db.js";
 import { captureOutput } from "./capture.js";
+import { createTestDb } from "./test-db.js";
 
 // eslint-disable-next-line no-control-regex
 const stripAnsi = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "");
@@ -55,8 +55,18 @@ describe("formatComponentStack", () => {
   it("formats entries with source locations", () => {
     const cwd = process.cwd();
     const json = JSON.stringify([
-      { name: "App", source: { fileName: cwd + "/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
-      { name: "Child", source: { fileName: cwd + "/src/child.tsx", lineNumber: 20 } },
+      {
+        name: "App",
+        source: {
+          fileName: cwd + "/src/app.tsx",
+          lineNumber: 10,
+          columnNumber: 3,
+        },
+      },
+      {
+        name: "Child",
+        source: { fileName: cwd + "/src/child.tsx", lineNumber: 20 },
+      },
     ]);
     const result = stripAnsi(formatComponentStack(json, true)!);
     expect(result).toContain("at App (src/app.tsx:10:3)");
@@ -72,7 +82,15 @@ describe("formatComponentStack", () => {
   it("includes render node IDs when present", () => {
     const cwd = process.cwd();
     const json = JSON.stringify([
-      { name: "App", renderNodeId: 42, source: { fileName: cwd + "/src/app.tsx", lineNumber: 10, columnNumber: 3 } },
+      {
+        name: "App",
+        renderNodeId: 42,
+        source: {
+          fileName: cwd + "/src/app.tsx",
+          lineNumber: 10,
+          columnNumber: 3,
+        },
+      },
       { name: "Child", renderNodeId: 99 },
     ]);
     const result = stripAnsi(formatComponentStack(json, true)!);
@@ -82,8 +100,20 @@ describe("formatComponentStack", () => {
 
   it("hides node_modules frames by default", () => {
     const json = JSON.stringify([
-      { name: "UserComp", source: { fileName: "/home/user/my-project/src/app.tsx", lineNumber: 5 } },
-      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+      {
+        name: "UserComp",
+        source: {
+          fileName: "/home/user/my-project/src/app.tsx",
+          lineNumber: 5,
+        },
+      },
+      {
+        name: "LibComp",
+        source: {
+          fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx",
+          lineNumber: 10,
+        },
+      },
       { name: "NoSource" },
     ]);
     const result = stripAnsi(formatComponentStack(json)!);
@@ -91,13 +121,27 @@ describe("formatComponentStack", () => {
     expect(result).not.toContain("at LibComp");
     // Sourceless frames are hidden (treated as external)
     expect(result).not.toContain("at NoSource");
-    expect(result).toContain("2 external frames hidden (use --all-frames to show)");
+    expect(result).toContain(
+      "2 external frames hidden (use --all-frames to show)",
+    );
   });
 
   it("shows all frames when allFrames is true", () => {
     const json = JSON.stringify([
-      { name: "UserComp", source: { fileName: "/home/user/my-project/src/app.tsx", lineNumber: 5 } },
-      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+      {
+        name: "UserComp",
+        source: {
+          fileName: "/home/user/my-project/src/app.tsx",
+          lineNumber: 5,
+        },
+      },
+      {
+        name: "LibComp",
+        source: {
+          fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx",
+          lineNumber: 10,
+        },
+      },
     ]);
     const result = stripAnsi(formatComponentStack(json, true)!);
     expect(result).toContain("at UserComp");
@@ -107,7 +151,13 @@ describe("formatComponentStack", () => {
 
   it("returns undefined when all frames are library and not showing all", () => {
     const json = JSON.stringify([
-      { name: "LibComp", source: { fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx", lineNumber: 10 } },
+      {
+        name: "LibComp",
+        source: {
+          fileName: "/home/user/node_modules/@alloy-js/core/src/lib.tsx",
+          lineNumber: 10,
+        },
+      },
     ]);
     expect(formatComponentStack(json)).toBeUndefined();
   });

@@ -166,7 +166,9 @@ describe("file", () => {
 
     it("shows source locations in stack trace format", () => {
       const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { allFrames: true }),
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {
+          allFrames: true,
+        }),
       );
       expect(stdout).toContain("at Declaration #3");
       expect(stdout).toContain("declaration.tsx:25:3)");
@@ -208,7 +210,9 @@ describe("file", () => {
 
     it("returns json", () => {
       const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {
+          json: true,
+        }),
       );
       const parsed = JSON.parse(stdout);
       expect(parsed.text).toBe("interface Foo");
@@ -235,7 +239,9 @@ describe("file", () => {
       // This test just verifies the DFS walk collects nodes correctly even with
       // high-seq children.
       const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {
+          json: true,
+        }),
       );
       const parsed = JSON.parse(stdout);
       expect(parsed.textNodeId).toBe(4);
@@ -251,7 +257,9 @@ describe("file", () => {
       `);
       // File content has "interface Foo" only once, at the declaration site
       const { stdout } = captureOutput(() =>
-        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], { json: true }),
+        fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {
+          json: true,
+        }),
       );
       const parsed = JSON.parse(stdout);
       // The match should map to a node within the Declaration subtree (node 4),
@@ -308,9 +316,7 @@ describe("query", () => {
 
 describe("symbol", () => {
   it("lists all symbols", () => {
-    const { stdout } = captureOutput(() =>
-      symbolCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => symbolCommand(db, "list", [], {}));
     expect(stdout).toContain("Foo");
     expect(stdout).toContain("bar");
     expect(stdout).toContain("Baz");
@@ -325,17 +331,13 @@ describe("symbol", () => {
   });
 
   it("shows symbol flags", () => {
-    const { stdout } = captureOutput(() =>
-      symbolCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => symbolCommand(db, "list", [], {}));
     expect(stdout).toContain("member");
     expect(stdout).toContain("transient");
   });
 
   it("shows original name when different", () => {
-    const { stdout } = captureOutput(() =>
-      symbolCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => symbolCommand(db, "list", [], {}));
     expect(stdout).toContain("original: BazOriginal");
   });
 
@@ -381,17 +383,13 @@ describe("symbol", () => {
 
 describe("scope", () => {
   it("lists all scopes", () => {
-    const { stdout } = captureOutput(() =>
-      scopeCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => scopeCommand(db, "list", [], {}));
     expect(stdout).toContain("global");
     expect(stdout).toContain("Foo");
   });
 
   it("shows member scope flag", () => {
-    const { stdout } = captureOutput(() =>
-      scopeCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => scopeCommand(db, "list", [], {}));
     expect(stdout).toContain("[member]");
   });
 
@@ -404,9 +402,7 @@ describe("scope", () => {
   });
 
   it("shows scope details", () => {
-    const { stdout } = captureOutput(() =>
-      scopeCommand(db, "show", ["2"], {}),
-    );
+    const { stdout } = captureOutput(() => scopeCommand(db, "show", ["2"], {}));
     expect(stdout).toContain('Scope 2: "Foo"');
     expect(stdout).toContain("Parent:");
     expect(stdout).toContain("Member scope: true");
@@ -414,9 +410,7 @@ describe("scope", () => {
   });
 
   it("lists scope symbols", () => {
-    const { stdout } = captureOutput(() =>
-      scopeCommand(db, "show", ["1"], {}),
-    );
+    const { stdout } = captureOutput(() => scopeCommand(db, "show", ["1"], {}));
     expect(stdout).toContain("Symbols:");
     expect(stdout).toContain("Foo");
   });

@@ -90,9 +90,7 @@ describe("ref show", () => {
   });
 
   it("reports not found", () => {
-    const { stderr } = captureOutput(() =>
-      refCommand(db, "show", ["999"], {}),
-    );
+    const { stderr } = captureOutput(() => refCommand(db, "show", ["999"], {}));
     expect(stderr).toContain("not found");
   });
 });
@@ -119,9 +117,7 @@ describe("ref chain", () => {
 
 describe("ref hotspots", () => {
   it("shows refs sorted by tracker count", () => {
-    const { stdout } = captureOutput(() =>
-      refCommand(db, "hotspots", [], {}),
-    );
+    const { stdout } = captureOutput(() => refCommand(db, "hotspots", [], {}));
     expect(stdout).toContain("most trackers");
     // ref 1 has 3 trackers — should be first
     const lines = stdout.split("\n").filter((l) => l.trim().match(/^\d/));
@@ -140,25 +136,19 @@ describe("ref hotspots", () => {
 
 describe("ref fanout", () => {
   it("shows which effects track a ref", () => {
-    const { stdout } = captureOutput(() =>
-      refCommand(db, "fanout", ["1"], {}),
-    );
+    const { stdout } = captureOutput(() => refCommand(db, "fanout", ["1"], {}));
     expect(stdout).toContain("Ref 1");
     expect(stdout).toContain("tracked by 3 effects");
   });
 
   it("groups trackers by component", () => {
-    const { stdout } = captureOutput(() =>
-      refCommand(db, "fanout", ["1"], {}),
-    );
+    const { stdout } = captureOutput(() => refCommand(db, "fanout", ["1"], {}));
     // effects 2 and 3 have component Declaration (or none), effect 4 has no component
     expect(stdout).toContain("Declaration");
   });
 
   it("shows writers", () => {
-    const { stdout } = captureOutput(() =>
-      refCommand(db, "fanout", ["2"], {}),
-    );
+    const { stdout } = captureOutput(() => refCommand(db, "fanout", ["2"], {}));
     expect(stdout).toContain("Written by");
   });
 

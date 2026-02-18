@@ -1,15 +1,15 @@
 #!/usr/bin/env -S node --experimental-sqlite --no-warnings=ExperimentalWarning
 import { parseArgs } from "node:util";
-import { openTrace } from "./db.js";
-import { effectCommand } from "./commands/effect.js";
-import { refCommand } from "./commands/ref.js";
 import { componentCommand } from "./commands/component.js";
-import { symbolCommand } from "./commands/symbol.js";
-import { scopeCommand } from "./commands/scope.js";
-import { fileCommand } from "./commands/file.js";
-import { statsCommand } from "./commands/stats.js";
+import { effectCommand } from "./commands/effect.js";
 import { runErrors } from "./commands/errors.js";
+import { fileCommand } from "./commands/file.js";
 import { runQuery } from "./commands/query.js";
+import { refCommand } from "./commands/ref.js";
+import { scopeCommand } from "./commands/scope.js";
+import { statsCommand } from "./commands/stats.js";
+import { symbolCommand } from "./commands/symbol.js";
+import { openTrace } from "./db.js";
 
 const { positionals, values } = parseArgs({
   options: {
@@ -48,7 +48,10 @@ const opts = {
   outputFile: values["output-file"] as string | undefined,
   name: values.name as string | undefined,
   type: values.type as string | undefined,
-  minTrackers: values["min-trackers"] ? parseInt(values["min-trackers"] as string, 10) : undefined,
+  minTrackers:
+    values["min-trackers"] ?
+      parseInt(values["min-trackers"] as string, 10)
+    : undefined,
   unused: values.unused as boolean,
   framework: values.framework as boolean,
   allFrames: values["all-frames"] as boolean,

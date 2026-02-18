@@ -15,9 +15,7 @@ afterEach(() => {
 
 describe("effect list", () => {
   it("lists all effects", () => {
-    const { stdout } = captureOutput(() =>
-      effectCommand(db, "list", [], {}),
-    );
+    const { stdout } = captureOutput(() => effectCommand(db, "list", [], {}));
     expect(stdout).toContain("render:SourceFile");
     expect(stdout).toContain("render:Declaration");
     expect(stdout).toContain("content:models");
@@ -156,9 +154,7 @@ describe("effect hotspots", () => {
     const { stdout } = captureOutput(() =>
       effectCommand(db, "hotspots", [], { limit: 1 }),
     );
-    const lines = stdout
-      .split("\n")
-      .filter((l) => l.trim().match(/^\d/));
+    const lines = stdout.split("\n").filter((l) => l.trim().match(/^\d/));
     expect(lines.length).toBeLessThanOrEqual(1);
   });
 

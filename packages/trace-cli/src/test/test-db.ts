@@ -155,17 +155,17 @@ function seedData(db: DatabaseSync) {
   `);
 
   // Output files — content must equal concatenation of descendant text nodes
-  db.prepare("INSERT INTO output_files VALUES (1, 'src/models.ts', 'typescript', 2, ?, 1)").run(
-    "import { Bar } from \"bar\";\nexport interface Foo {\n  bar: string;\n}",
+  db.prepare(
+    "INSERT INTO output_files VALUES (1, 'src/models.ts', 'typescript', 2, ?, 1)",
+  ).run(
+    'import { Bar } from "bar";\nexport interface Foo {\n  bar: string;\n}',
   );
   db.exec(`
     INSERT INTO output_files VALUES (2, 'src/index.ts', 'typescript', 2, 'export { Foo } from "./models";', 2);
   `);
 
   // Render errors
-  db.prepare(
-    "INSERT INTO render_errors VALUES (1, ?, ?, ?, ?, 1)",
-  ).run(
+  db.prepare("INSERT INTO render_errors VALUES (1, ?, ?, ?, ?, 1)").run(
     "TypeError",
     "Cannot read property x of undefined",
     "TypeError: Cannot read property x\n    at Declaration (/src/decl.tsx:15:3)",
@@ -174,7 +174,8 @@ function seedData(db: DatabaseSync) {
         name: "SourceFile",
         renderNodeId: 2,
         source: {
-          fileName: "/home/user/packages/typescript/src/components/source-file.tsx",
+          fileName:
+            "/home/user/packages/typescript/src/components/source-file.tsx",
           lineNumber: 10,
           columnNumber: 5,
         },
@@ -183,7 +184,8 @@ function seedData(db: DatabaseSync) {
         name: "Declaration",
         renderNodeId: 3,
         source: {
-          fileName: "/home/user/packages/typescript/src/components/declaration.tsx",
+          fileName:
+            "/home/user/packages/typescript/src/components/declaration.tsx",
           lineNumber: 25,
           columnNumber: 3,
         },

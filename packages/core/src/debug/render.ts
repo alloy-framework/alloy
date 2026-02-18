@@ -274,7 +274,11 @@ function recordNodeAdded(
     nodeProps.set(id, info.propsSerialized);
   }
   // Remember the kind and source so cached re-adds preserve them
-  nodeKinds.set(node, { kind: info.kind, name: info.name, source: info.source });
+  nodeKinds.set(node, {
+    kind: info.kind,
+    name: info.name,
+    source: info.source,
+  });
   setEntryId(parent, index, id);
   insertRenderNode(
     id,

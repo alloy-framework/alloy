@@ -4,11 +4,7 @@ import {
   getReactiveCreationLocation,
   nextReactiveId,
 } from "../reactivity.js";
-import {
-  getRealPath,
-  loadSourceMapSupport,
-  resolveSourceMap,
-} from "./source-map.js";
+import { loadSourceMapSupport, resolveSourceMap } from "./source-map.js";
 import { insertEdge, insertEffect, insertRef } from "./trace-writer.js";
 import {
   isDebugEnabled,

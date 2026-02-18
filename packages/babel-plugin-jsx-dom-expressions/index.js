@@ -1205,8 +1205,14 @@ function transformComponent(path) {
   if (config.generate !== "ssr" && config.addSourceInfo) {
     const loc = path.node.loc;
     if (loc && loc.start) {
+      // Use import.meta.url so the path resolves to the installed location at
+      // runtime rather than being a hardcoded absolute path from the build machine.
+      const importMetaUrl = t__namespace.memberExpression(
+        t__namespace.metaProperty(t__namespace.identifier("import"), t__namespace.identifier("meta")),
+        t__namespace.identifier("url"),
+      );
       const sourceInfo = t__namespace.objectExpression([
-        t__namespace.objectProperty(t__namespace.identifier("fileName"), t__namespace.stringLiteral(path.hub.file.opts.filename || "unknown")),
+        t__namespace.objectProperty(t__namespace.identifier("fileName"), importMetaUrl),
         t__namespace.objectProperty(t__namespace.identifier("lineNumber"), t__namespace.numericLiteral(loc.start.line)),
         t__namespace.objectProperty(t__namespace.identifier("columnNumber"), t__namespace.numericLiteral(loc.start.column + 1))
       ]);

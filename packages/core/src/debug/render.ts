@@ -17,6 +17,7 @@ import { getContext, untrack } from "../reactivity.js";
 import type { ComponentCreator } from "../runtime/component.js";
 import { flushJobsAsync } from "../scheduler.js";
 import { sanitizeRecord } from "./serialize.js";
+import { resolveComponentSource } from "./source-map.js";
 import {
   deleteDirectory,
   deleteOutputFile,
@@ -79,7 +80,10 @@ type TrackedNode = RenderedTextTree | PrintHook;
 let nodeIds = new WeakMap<TrackedNode, number>();
 let idToNode = new Map<number, TrackedNode>();
 let entryIds = new WeakMap<RenderedTextTree, number[]>();
-let nodeKinds = new WeakMap<TrackedNode, { kind: string; name?: string }>();
+let nodeKinds = new WeakMap<
+  TrackedNode,
+  { kind: string; name?: string; source?: RenderTreeNodeInfo["source"] }
+>();
 let fileNodes = new Map<number, { path: string; filetype: string }>();
 let directoryNodes = new Map<number, { path: string }>();
 let nodeProps = new Map<number, string | undefined>();
@@ -269,8 +273,12 @@ function recordNodeAdded(
   if (info.propsSerialized !== undefined) {
     nodeProps.set(id, info.propsSerialized);
   }
-  // Remember the kind so cached re-adds preserve it
-  nodeKinds.set(node, { kind: info.kind, name: info.name });
+  // Remember the kind and source so cached re-adds preserve them
+  nodeKinds.set(node, {
+    kind: info.kind,
+    name: info.name,
+    source: info.source,
+  });
   setEntryId(parent, index, id);
   insertRenderNode(
     id,
@@ -297,8 +305,11 @@ function recordSubtreeAdded(
   const existingId = nodeIds.get(subtree);
   const isCached = existingId !== undefined;
   const id = isCached ? existingId : getOrCreateNodeId(subtree);
-  // Remember the kind so cached re-adds preserve it
-  nodeKinds.set(subtree, { kind: info.kind, name: info.name });
+  // Merge source from previously-saved nodeKinds if the caller didn't provide one
+  const savedKind = nodeKinds.get(subtree);
+  const source = info.source ?? savedKind?.source;
+  // Remember the kind and source so cached re-adds preserve them
+  nodeKinds.set(subtree, { kind: info.kind, name: info.name, source });
   // Track in entryIds so clearRenderTreeChildren can find and remove it
   if (Array.isArray(parentNode)) {
     const list = getEntryList(parentNode);
@@ -310,9 +321,9 @@ function recordSubtreeAdded(
     info.kind,
     info.name,
     info.propsSerialized,
-    info.source?.fileName,
-    info.source?.lineNumber,
-    info.source?.columnNumber,
+    source?.fileName,
+    source?.lineNumber,
+    source?.columnNumber,
     null,
     undefined,
   );
@@ -366,7 +377,7 @@ function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
         );
       }
     } else if (Array.isArray(child)) {
-      // Nested RenderedTextTree - record and recurse, preserving original kind
+      // Nested RenderedTextTree - record and recurse, preserving original kind and source
       const id = getOrCreateNodeId(child);
       list.push(id);
       const savedKind = nodeKinds.get(child);
@@ -376,9 +387,9 @@ function recordCachedSubtreeChildrenRecursively(node: RenderedTextTree) {
         savedKind?.kind ?? "fragment",
         savedKind?.name,
         undefined,
-        undefined,
-        undefined,
-        undefined,
+        savedKind?.source?.fileName,
+        savedKind?.source?.lineNumber,
+        savedKind?.source?.columnNumber,
         null,
         undefined,
       );
@@ -544,6 +555,7 @@ export function beginComponent(
       }
     }
     const propsSerialized = serializeRenderTreeProps(propsSource);
+    const resolvedSource = resolveComponentSource(source);
     if (isExisting) {
       clearRenderTreeChildren(node);
     } else {
@@ -551,7 +563,7 @@ export function beginComponent(
         kind: "component",
         name: componentName,
         propsSerialized,
-        source,
+        source: resolvedSource,
       });
     }
 

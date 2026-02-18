@@ -9,7 +9,7 @@
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "build": "node scripts/gen-deps.js && alloy build",
+    "build": "node scripts/gen-deps.js && alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",

@@ -71,9 +71,25 @@ if (traceDbEnv) {
     traceDbEnv === "1" || traceDbEnv === "true" ? "alloy-trace.db" : traceDbEnv;
   try {
     await initTrace(traceDbPath);
+    // eslint-disable-next-line no-console
+    console.log(`  Trace database: ${traceDbPath}`);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.warn(`Failed to initialize trace database at ${traceDbPath}:`, e);
+  }
+}
+
+if (import.meta.url.includes("/dist/dev/")) {
+  // eslint-disable-next-line no-console
+  console.log("Alloy debug build loaded.");
+  if (process.sourceMapsEnabled) {
+    // eslint-disable-next-line no-console
+    console.log("  Source maps enabled.");
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(
+      "  Source maps disabled. Run with --enable-source-maps for better stack traces.",
+    );
   }
 }
 

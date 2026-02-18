@@ -80,7 +80,7 @@ describe("Browser Build Test", () => {
     expect(() => {
       execSync("npm run build", { cwd: testDir, stdio: "inherit" });
     }).not.toThrow();
-  });
+  }, 10000);
 
   afterAll(() => {
     // Ensure testDir exists before attempting to remove it

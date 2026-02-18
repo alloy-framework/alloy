@@ -8,24 +8,27 @@
   },
   "exports": {
     ".": {
-      "development": "./src/index.ts",
+      "source": "./src/index.ts",
+      "development": "./dist/dev/src/index.js",
       "import": "./dist/src/index.js"
     },
     "./stc": {
-      "development": "./src/components/stc/index.ts",
+      "source": "./src/components/stc/index.ts",
+      "development": "./dist/dev/src/components/stc/index.js",
       "import": "./dist/src/components/stc/index.js"
     }
   },
   "imports": {
     "#test/*": "./test/*",
     "#components/*": {
-      "development": "./src/components/*",
+      "source": "./src/components/*",
+      "development": "./dist/dev/src/components/*",
       "default": "./dist/src/components/*"
     }
   },
   "scripts": {
     "generate-docs": "api-extractor run",
-    "build": "alloy build && pnpm run generate-docs",
+    "build": "alloy build --with-dev && pnpm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",

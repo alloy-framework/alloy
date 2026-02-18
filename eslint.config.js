@@ -56,6 +56,15 @@ export default tsEslint.config(
   },
   {
     /**
+     * CLI packages — console.log is the primary output mechanism.
+     */
+    files: ["packages/trace-cli/**/*.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+  {
+    /**
      * Test files specific rules
      */
     files: ["**/*.test.ts"],

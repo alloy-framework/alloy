@@ -1,4 +1,5 @@
 import { parseArgs } from "node:util";
+import { join } from "pathe";
 import pc from "picocolors";
 import ts from "typescript";
 import { buildAllFiles } from "./babel.js";
@@ -18,6 +19,9 @@ const args = parseArgs({
       type: "boolean",
     },
     "source-info": {
+      type: "boolean",
+    },
+    "with-dev": {
       type: "boolean",
     },
   },
@@ -49,10 +53,26 @@ async function build() {
   });
   const emitResult = program.emit();
   const start = new Date().getTime();
-  await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
-    sourceMaps: opts.options.sourceMap,
-    addSourceInfo,
-  });
+
+  if (args.values["with-dev"]) {
+    // Dual build: prod → dist/, dev → dist/dev/
+    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo: false,
+    });
+    const devOutDir = join(opts.outDir, "dev");
+    await buildAllFiles(opts.fileNames, opts.rootDir, devOutDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo: true,
+    });
+  } else {
+    // Single build: --dev produces dev build, default produces prod build
+    await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo,
+    });
+  }
+
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
     .concat(emitResult.diagnostics);
@@ -76,7 +96,6 @@ async function build() {
 }
 
 function watchMain() {
-  const { addSourceInfo } = resolveBuildSettings();
   const opts = getParseCommandLine();
 
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
@@ -103,7 +122,7 @@ function watchMain() {
         opts.outDir,
         {
           sourceMaps: opts.options.sourceMap,
-          addSourceInfo,
+          addSourceInfo: true,
         },
       );
     } catch (e) {

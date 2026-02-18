@@ -1,0 +1,26 @@
+{
+  "name": "@alloy-js/trace-cli",
+  "version": "0.1.0",
+  "description": "CLI tool for querying Alloy debug trace databases",
+  "type": "module",
+  "bin": {
+    "alloy-trace": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/diff-match-patch": "^1.0.36",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "diff-match-patch": "^1.0.5"
+  }
+}

@@ -6,27 +6,27 @@ import path from "path";
 const pkgPath = path.resolve(process.cwd(), "./package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
 
-// Recursively remove "development" keys from exports
-function removeDevExports(exportsField) {
+// Recursively remove "source" keys from exports
+function removeSourceExports(exportsField) {
   if (exportsField && typeof exportsField === "object") {
-    if ("development" in exportsField) {
-      delete exportsField.development;
+    if ("source" in exportsField) {
+      delete exportsField.source;
     }
     // Recursively handle nested export objects
     for (const key of Object.keys(exportsField)) {
-      removeDevExports(exportsField[key]);
+      removeSourceExports(exportsField[key]);
     }
   }
 }
 
 if (pkg.exports) {
-  removeDevExports(pkg.exports);
+  removeSourceExports(pkg.exports);
 }
 
 if (pkg.imports) {
-  removeDevExports(pkg.imports);
+  removeSourceExports(pkg.imports);
 }
 
 // Write the modified package.json back
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n", "utf8");
-console.log("Stripped development exports from package.json.");
+console.log("Stripped source exports from package.json.");

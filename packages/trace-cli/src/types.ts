@@ -94,12 +94,11 @@ interface StackEntry {
 }
 
 /**
- * A frame is "external" (library/framework) if its source is inside
- * node_modules. Frames with no source are kept (they may be user components
- * without source annotations). Matches the devtools filtering approach.
+ * A frame is "external" if its source is inside node_modules or if it has
+ * no source location at all. Matches the devtools filtering approach.
  */
 function isExternalFrame(entry: StackEntry): boolean {
-  if (!entry.source?.fileName) return false;
+  if (!entry.source?.fileName) return true;
   return entry.source.fileName.includes("/node_modules/");
 }
 

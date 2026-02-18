@@ -89,9 +89,9 @@ describe("formatComponentStack", () => {
     const result = stripAnsi(formatComponentStack(json)!);
     expect(result).toContain("at UserComp");
     expect(result).not.toContain("at LibComp");
-    // Sourceless frames are kept (may be user components without annotations)
-    expect(result).toContain("at NoSource");
-    expect(result).toContain("1 external frames hidden (use --all-frames to show)");
+    // Sourceless frames are hidden (treated as external)
+    expect(result).not.toContain("at NoSource");
+    expect(result).toContain("2 external frames hidden (use --all-frames to show)");
   });
 
   it("shows all frames when allFrames is true", () => {

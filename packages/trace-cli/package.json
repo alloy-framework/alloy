@@ -2,6 +2,12 @@
   "name": "@alloy-js/trace-cli",
   "version": "0.1.0",
   "description": "CLI tool for querying Alloy debug trace databases",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
+  "author": "brian.terlson@microsoft.com",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "alloy-trace": "./dist/cli.js"

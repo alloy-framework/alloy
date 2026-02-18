@@ -21,18 +21,6 @@ export function isDebugEnabled(): boolean {
 // Environment configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line no-console
-console.log("Alloy debug build loaded.");
-if (process.sourceMapsEnabled) {
-  // eslint-disable-next-line no-console
-  console.log("  Source maps enabled.");
-} else {
-  // eslint-disable-next-line no-console
-  console.log(
-    "  Source maps disabled. Run with --enable-source-maps for better stack traces.",
-  );
-}
-
 const traceEnv = process.env.ALLOY_TRACE ?? "";
 const tracePhases = new Set<string>(
   traceEnv === "" ? [] : traceEnv.split(",").map((t) => t.trim()),
@@ -88,6 +76,20 @@ if (traceDbEnv) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.warn(`Failed to initialize trace database at ${traceDbPath}:`, e);
+  }
+}
+
+if (import.meta.url.includes("/dist/dev/")) {
+  // eslint-disable-next-line no-console
+  console.log("Alloy debug build loaded.");
+  if (process.sourceMapsEnabled) {
+    // eslint-disable-next-line no-console
+    console.log("  Source maps enabled.");
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(
+      "  Source maps disabled. Run with --enable-source-maps for better stack traces.",
+    );
   }
 }
 

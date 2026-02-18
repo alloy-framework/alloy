@@ -8,11 +8,13 @@
   },
   "exports": {
     ".": {
-      "development": "./src/index.ts",
+      "source": "./src/index.ts",
+      "development": "./dist/dev/src/index.js",
       "import": "./dist/src/index.js"
     },
     "./stc": {
-      "development": "./src/components/stc/index.ts",
+      "source": "./src/components/stc/index.ts",
+      "development": "./dist/dev/src/components/stc/index.js",
       "import": "./dist/src/components/stc/index.js"
     }
   },

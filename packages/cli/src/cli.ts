@@ -1,4 +1,5 @@
 import { parseArgs } from "node:util";
+import { join } from "pathe";
 import pc from "picocolors";
 import ts from "typescript";
 import { buildAllFiles } from "./babel.js";
@@ -18,6 +19,9 @@ const args = parseArgs({
       type: "boolean",
     },
     "source-info": {
+      type: "boolean",
+    },
+    "no-dev": {
       type: "boolean",
     },
   },
@@ -49,10 +53,22 @@ async function build() {
   });
   const emitResult = program.emit();
   const start = new Date().getTime();
+
+  // Prod build: always produce dist/ with production settings
   await buildAllFiles(opts.fileNames, opts.rootDir, opts.outDir, {
     sourceMaps: opts.options.sourceMap,
-    addSourceInfo,
+    addSourceInfo: false,
   });
+
+  // Dev build: produce dist/dev/ with source info unless --no-dev
+  if (!args.values["no-dev"]) {
+    const devOutDir = join(opts.outDir, "dev");
+    await buildAllFiles(opts.fileNames, opts.rootDir, devOutDir, {
+      sourceMaps: opts.options.sourceMap,
+      addSourceInfo: true,
+    });
+  }
+
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program as any)
     .concat(emitResult.diagnostics);
@@ -76,8 +92,8 @@ async function build() {
 }
 
 function watchMain() {
-  const { addSourceInfo } = resolveBuildSettings();
   const opts = getParseCommandLine();
+  const devOutDir = join(opts.outDir, "dev");
 
   const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
 
@@ -100,10 +116,10 @@ function watchMain() {
           .filter((x) => !x.isDeclarationFile)
           .map((x) => x.fileName),
         opts.rootDir,
-        opts.outDir,
+        devOutDir,
         {
           sourceMaps: opts.options.sourceMap,
-          addSourceInfo,
+          addSourceInfo: true,
         },
       );
     } catch (e) {

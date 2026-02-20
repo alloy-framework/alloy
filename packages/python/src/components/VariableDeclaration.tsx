@@ -6,6 +6,7 @@ import {
   createSymbolSlot,
   memo,
 } from "@alloy-js/core";
+import { usePythonNamePolicy } from "../name-policy.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
@@ -74,17 +75,20 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   const TypeSymbolSlot = createSymbolSlot();
   const ValueTypeSymbolSlot = createSymbolSlot();
 
-  const sym = createPythonSymbol(
-    props.name,
-    {
-      instance: props.instanceVariable,
-      refkeys: props.refkey,
-      type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
-    },
-    "variable",
-  );
+  // For callStatementVar, don't create a symbol (keyword arguments aren't variables)
+  const sym = props.callStatementVar
+    ? undefined
+    : createPythonSymbol(
+        props.name,
+        {
+          instance: props.instanceVariable,
+          refkeys: props.refkey,
+          type: props.type ? TypeSymbolSlot.firstSymbol : undefined,
+        },
+        "variable",
+      );
 
-  if (!props.type) {
+  if (!props.type && sym) {
     ValueTypeSymbolSlot.moveMembersTo(sym);
   }
 
@@ -133,13 +137,32 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     ];
   };
   const [renderRightSideOperator, rightSide] = getRightSide();
+
+  // For callStatementVar, render without symbol registration
+  // We need to manually apply the name policy to the name
+  // since that is normally handled by the symbol creation.
+  if (props.callStatementVar) {
+    const namePolicy = usePythonNamePolicy();
+    const name =
+      typeof props.name === "string" && props.name
+        ? namePolicy.getName(props.name, "variable")
+        : "";
+    return (
+      <>
+        {name}
+        {renderRightSideOperator && assignmentOperator}
+        {rightSide}
+      </>
+    );
+  }
+
   return (
     <>
       <Show when={Boolean(props.doc)}>
         <SimpleCommentBlock children={props.doc} />
         <hbr />
       </Show>
-      <CoreDeclaration symbol={sym}>
+      <CoreDeclaration symbol={sym!}>
         {<Name />}
         {type}
         {renderRightSideOperator && assignmentOperator}

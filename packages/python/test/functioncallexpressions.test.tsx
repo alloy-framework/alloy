@@ -142,4 +142,63 @@ describe("FunctionCallExpression", () => {
     `;
     expect(result).toRenderTo(expected);
   });
+
+  it("keyword argument name does not conflict with same-named variable", () => {
+    const resKey = refkey();
+    const kwargsKey = refkey();
+    const result = toSourceText([
+      <py.StatementList>
+        <py.VariableDeclaration name="kwargs" refkey={kwargsKey} initializer={<py.Atom jsValue={{}} />} />
+        <py.VariableDeclaration
+          name="res"
+          refkey={resKey}
+          initializer={
+            <py.FunctionCallExpression
+              target="resolve_with_adapter"
+              args={[
+                "obj",
+                "info",
+                <py.VariableDeclaration
+                  name="operation"
+                  initializer={<>Operation.QUERY</>}
+                  callStatementVar
+                />,
+                <py.VariableDeclaration
+                  name="data"
+                  initializer={kwargsKey}
+                  callStatementVar
+                />,
+                <py.VariableDeclaration
+                  name="is_v5"
+                  initializer={true}
+                  callStatementVar
+                />,
+              ]}
+            />
+          }
+        />
+        <py.VariableDeclaration
+          name="data"
+          initializer={
+            <py.MemberExpression>
+              <py.MemberExpression.Part refkey={resKey} />
+              <py.MemberExpression.Part key={"data"} />
+            </py.MemberExpression>
+          }
+        />
+      </py.StatementList>,
+    ]);
+    const expected = d`
+      kwargs = {}
+      res = resolve_with_adapter(
+          obj,
+          info,
+          operation=Operation.QUERY,
+          data=kwargs,
+          is_v5=True
+      )
+      data = res["data"]
+    `;
+    expect(result).toRenderTo(expected);
+  });
 });

@@ -1,6 +1,9 @@
 import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { ImportStatement } from "../src/components/ImportStatement.jsx";
+import {
+  ImportStatement,
+  ImportStatements,
+} from "../src/components/ImportStatement.jsx";
 import * as py from "../src/index.js";
 import { createPythonSymbol } from "../src/symbol-creation.js";
 import { ImportedSymbol, ImportRecords } from "../src/symbols/index.js";
@@ -56,7 +59,7 @@ describe("ImportStatements", () => {
       [sysModuleScope, { symbols: new Set<ImportedSymbol>() }],
     ]);
 
-    const result = toSourceText([<py.ImportStatements records={records} />]);
+    const result = toSourceText([<ImportStatements records={records} />]);
     const expected = `
     from math import pi
     from math import sqrt
@@ -85,10 +88,7 @@ describe("ImportStatements", () => {
     ]);
 
     const result = toSourceText([
-      <py.ImportStatements
-        records={records}
-        joinImportsFromSameModule={true}
-      />,
+      <ImportStatements records={records} joinImportsFromSameModule={true} />,
     ]);
     const expected = `
     from math import pi, sqrt

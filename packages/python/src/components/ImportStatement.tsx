@@ -6,6 +6,53 @@ export interface ImportStatementsProps {
   joinImportsFromSameModule?: boolean;
 }
 
+export interface CategorizedImports {
+  /** Imports used only in type annotation contexts (for TYPE_CHECKING block) */
+  typeImports: ImportRecords;
+  /** Regular imports used at runtime */
+  valueImports: ImportRecords;
+}
+
+/**
+ * Categorize import records into type-only and value imports.
+ * Type-only imports are those used only in type annotation contexts.
+ * Value imports are regular imports used at runtime.
+ */
+export function categorizeImportRecords(
+  records: ImportRecords,
+): CategorizedImports {
+  const typeImports = new Map() as ImportRecords;
+  const valueImports = new Map() as ImportRecords;
+
+  for (const [module, properties] of records) {
+    if (!properties.symbols || properties.symbols.size === 0) {
+      // Module-level imports without symbols go to value imports
+      valueImports.set(module, properties);
+      continue;
+    }
+
+    const typeSymbols = new Set<ImportedSymbol>();
+    const valueSymbols = new Set<ImportedSymbol>();
+
+    for (const sym of properties.symbols) {
+      if (sym.local.isTypeOnly) {
+        typeSymbols.add(sym);
+      } else {
+        valueSymbols.add(sym);
+      }
+    }
+
+    if (typeSymbols.size > 0) {
+      typeImports.set(module, { symbols: typeSymbols });
+    }
+    if (valueSymbols.size > 0) {
+      valueImports.set(module, { symbols: valueSymbols });
+    }
+  }
+
+  return { typeImports, valueImports };
+}
+
 /**
  * A component that renders import statements based on the provided import records.
  *
@@ -16,11 +63,11 @@ export interface ImportStatementsProps {
  */
 export function ImportStatements(props: ImportStatementsProps) {
   // Sort the import records by module name
-  const imports = computed(() =>
-    [...props.records].sort(([a], [b]) => {
+  const imports = computed(() => {
+    return [...props.records].sort(([a], [b]) => {
       return a.name.localeCompare(b.name);
-    }),
-  );
+    });
+  });
 
   return mapJoin(
     () => imports.value,

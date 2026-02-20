@@ -450,9 +450,12 @@ describe("Function Declaration", () => {
 
             `,
       "usage.py": `
-            from mod1 import Foo
-            from mod2 import A
-            from mod2 import B
+            from typing import TYPE_CHECKING
+
+            if TYPE_CHECKING:
+                from mod1 import Foo
+                from mod2 import A
+                from mod2 import B
 
 
             async def foo(x: A, y: B, *args, **kwargs) -> Foo:

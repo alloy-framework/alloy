@@ -13,7 +13,10 @@ import { PackageSymbol } from "./package.js";
 /**
  * Options for creating a Go symbol.
  */
-export interface GoSymbolOptions extends OutputSymbolOptions {}
+export interface GoSymbolOptions extends OutputSymbolOptions {
+  /** Whether the symbol should be public (exported) or private (unexported) */
+  public?: boolean;
+}
 
 export type GoSymbolKinds =
   | "symbol"

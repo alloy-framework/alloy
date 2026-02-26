@@ -1,5 +1,6 @@
 import { Children, Refkey, Show } from "@alloy-js/core";
 import { TypeArguments } from "./TypeArguments.js";
+import { TypeRefContext } from "./TypeRefContext.js";
 
 export interface TypeReferenceProps {
   /** A refkey to a declared symbol. */
@@ -12,6 +13,11 @@ export interface TypeReferenceProps {
 
 /**
  * A type reference like Foo[T, P] or int.
+ *
+ * @remarks
+ * This component automatically wraps its content in a type reference context,
+ * so any symbols referenced via refkey will be imported as type-only
+ * (inside a `if TYPE_CHECKING:` block) unless also used as values elsewhere.
  */
 export function TypeReference(props: TypeReferenceProps) {
   const type = props.refkey ? props.refkey : props.name;
@@ -21,13 +27,15 @@ export function TypeReference(props: TypeReferenceProps) {
     : undefined;
 
   return (
-    <group>
-      <indent>
+    <TypeRefContext>
+      <group>
+        <indent>
+          <sbr />
+          {type}
+          <Show when={Boolean(typeArgs)}>{typeArgs}</Show>
+        </indent>
         <sbr />
-        {type}
-        <Show when={Boolean(typeArgs)}>{typeArgs}</Show>
-      </indent>
-      <sbr />
-    </group>
+      </group>
+    </TypeRefContext>
   );
 }

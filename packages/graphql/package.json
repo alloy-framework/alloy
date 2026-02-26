@@ -1,0 +1,51 @@
+{
+  "name": "@alloy-js/graphql",
+  "version": "0.1.0",
+  "description": "GraphQL bindings for Alloy",
+  "readme": "README.md",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./stc": {
+      "development": "./src/components/stc/index.ts",
+      "import": "./dist/src/components/stc/index.js"
+    }
+  },
+  "imports": {
+    "#components/*": {
+      "development": "./src/components/*",
+      "default": "./dist/src/components/*"
+    }
+  },
+  "scripts": {
+    "generate-docs": "api-extractor run",
+    "build": "alloy build && pnpm run generate-docs",
+    "clean": "rimraf dist/ .temp/",
+    "test:watch": "vitest -w",
+    "watch": "alloy build --watch",
+    "test": "vitest run",
+    "prepack": "node ../../scripts/strip-dev-exports.js"
+  },
+  "keywords": [],
+  "author": "steverice@pinterest.com",
+  "license": "MIT",
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "graphql": "^17.0.0-alpha.9",
+    "pathe": "catalog:",
+    "pluralize": "^8.0.0"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@microsoft/api-extractor": "catalog:",
+    "@rollup/plugin-typescript": "catalog:",
+    "@types/pluralize": "^0.0.33",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module"
+}

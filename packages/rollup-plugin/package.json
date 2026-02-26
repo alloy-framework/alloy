@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/rollup-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Prettier plugin for Alloy JSX/TSX files that disable formatting for JSX elements",
   "homepage": "https://github.com/alloy-framework/alloy",

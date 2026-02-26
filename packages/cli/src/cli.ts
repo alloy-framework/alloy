@@ -80,11 +80,8 @@ async function build() {
   reportDiagnostics(allDiagnostics);
 
   if (allDiagnostics.length > 0) {
-    reportDiagnostics(emitResult.diagnostics);
     // eslint-disable-next-line no-console
-    console.log(
-      `Build completed with ${emitResult.diagnostics.length} errors.`,
-    );
+    console.log(`Build completed with ${allDiagnostics.length} errors.`);
     process.exit(1);
   } else {
     const end = new Date().getTime();

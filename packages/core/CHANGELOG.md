@@ -1,5 +1,25 @@
 # Changelog - @alloy-js/core
 
+## 0.23.0
+
+### Bug Fixes
+
+- [#356](https://github.com/alloy-framework/alloy/pull/356) onCleanup callbacks are now untracked, which fixes cases where cleaning up some reactive context would trigger it to run again.
+- [#361](https://github.com/alloy-framework/alloy/pull/361) Reduce allocation overhead: lazy Context fields (disposables, context, elementCache, isEmpty), `_lastEmpty` boolean for cheap empty-state propagation, `ensureIsEmpty()` gating, scheduler `isJobActive` check to skip stopped effects, `ReactiveUnionSet` per-item root-scope disposers, and hoisted `defaultScheduler` closure.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add a new diagnostics reporting interface. Diagnostics will log that an error occurred but will not stop emission. Various things that used to cause errors will now log diagnostics instead, including missing regions in AppendFile and TemplateFile. Unresolved refkeys will also produce a diagnostic.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add new `createScope` and `createSymbol` APIs which construct subclasses of `OutputScope` and `OutputSymbol`, respectively. These are necessary to register the created scopes and symbols with the new debugger interface.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added a browser-based debugger which is started when the ALLOY_DEBUG environment variable is set. The debugger shows emitted files, scopes, symbols, render nodes, effects, diagnostics, and more.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added options to `effect` to allow passing debug information that helps identify that effect.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Tracing will now capture both "trigger" and "triggered-by" events (previously we only traced triggered-by (and called it trigger).
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Print richer stack traces when rendering fails.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+- [#366](https://github.com/alloy-framework/alloy/pull/366) Add SQLite-based trace storage for debug and devtools infrastructure, enabling structured recording of render trees, effects, reactive edges, scopes, symbols, and diagnostics during development builds.
+
+
 ## 0.22.0
 
 ### Bug Fixes

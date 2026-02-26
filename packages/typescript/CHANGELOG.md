@@ -1,5 +1,19 @@
 # Changelog - @alloy-js/typescript
 
+## 0.23.0
+
+### Bug Fixes
+
+- [#349](https://github.com/alloy-framework/alloy/pull/349) IfElseClause and ElseClause properly create block scopes.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+- [#349](https://github.com/alloy-framework/alloy/pull/349) Add TryStatement, CatchClause, and FinallyClause components.
+
+
 ## 0.22.0
 
 ### Bug Fixes

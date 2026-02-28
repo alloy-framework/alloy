@@ -3,12 +3,12 @@ import {
   NamePolicyGetter,
   onCleanup,
   OutputSymbolOptions,
-  useBinder,
+  useScope,
 } from "@alloy-js/core";
-import { getGlobalNamespace } from "../contexts/index.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
-import { useNamespace } from "../scopes/index.js";
+import { SourceFileScope } from "../scopes/index.js";
+import { NamedTypeScope } from "../scopes/named-type.js";
 import { ValueOrArray } from "../util.js";
 import { NamedTypeKind, NamedTypeSymbol, TypeSpecSymbol } from "./index.js";
 import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
@@ -17,15 +17,21 @@ export function createNamespaceSymbol(
   name: ValueOrArray<string | Namekey>,
   options: NamespaceSymbolOptions = {},
 ): NamespaceSymbol {
-  const parent = useNamespace();
-
-  const parentSymbol = parent?.ownerSymbol ?? getGlobalNamespace(useBinder());
-  const names = normalizeNamespaceName(name);
-  let current = parentSymbol;
-  for (const name of names) {
-    current = createNamespaceSymbolInternal(name, current, options);
+  const scope = useScope();
+  let parent: NamespaceSymbol | SourceFileScope;
+  if (scope instanceof SourceFileScope) {
+    parent = scope;
+  } else {
+    parent = scope.ownerSymbol as NamespaceSymbol;
   }
-  return current;
+  // const parent = useNamespace()!;
+
+  const names = normalizeNamespaceName(name);
+  let current: NamespaceSymbol | undefined;
+  for (const name of names) {
+    current = createNamespaceSymbolInternal(name, current ?? parent, options);
+  }
+  return current!;
 }
 
 function normalizeNamespaceName(
@@ -42,21 +48,19 @@ function normalizeNamespaceName(
 
 function createNamespaceSymbolInternal(
   name: string | Namekey,
-  parentSymbol: NamespaceSymbol,
+  parent: NamespaceSymbol | SourceFileScope,
   options: NamespaceSymbolOptions = {},
 ): NamespaceSymbol {
   const namePolicy =
     options.namePolicy ?? useTypeSpecNamePolicy().for("namespace");
   const expectedName = namePolicy(typeof name === "string" ? name : name.name);
-  if (parentSymbol.members.symbolNames.has(expectedName)) {
-    return parentSymbol.members.symbolNames.get(
-      expectedName,
-    )! as NamespaceSymbol;
+  if (parent.members.symbolNames.has(expectedName)) {
+    return parent.members.symbolNames.get(expectedName)! as NamespaceSymbol;
   }
   return withCleanup(
     new NamespaceSymbol(
       name,
-      parentSymbol,
+      parent.members,
       withNamePolicy(options, "namespace"),
     ),
   );
@@ -68,9 +72,34 @@ export function createNamedTypeSymbol(
   options?: OutputSymbolOptions,
 ) {
   const scope = useNamespaceContext();
-  const parentSymbol = scope?.symbol ?? getGlobalNamespace(useBinder());
+  if (scope === undefined) {
+    throw new Error(
+      `Cannot create a named type symbol without a namespace context.`,
+    );
+  }
+  const parentSymbol = scope?.symbol;
   return withCleanup(
     new NamedTypeSymbol(name, parentSymbol.memberSpaces, kind, options),
+  );
+}
+
+export function createTemplateParameterSymbol(
+  name: string | Namekey,
+  options: OutputSymbolOptions = {},
+) {
+  const scope = useScope();
+  if (!(scope instanceof NamedTypeScope)) {
+    throw new Error(
+      "Can't create a template parameter symbol outside of a named type scope.",
+    );
+  }
+
+  return withCleanup(
+    new TypeSpecSymbol(
+      name,
+      scope.templateParameters,
+      withNamePolicy(options, "template"),
+    ),
   );
 }
 

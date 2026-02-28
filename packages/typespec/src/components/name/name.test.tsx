@@ -1,17 +1,22 @@
 import { Declaration, Output } from "@alloy-js/core";
 import { d, renderToString } from "@alloy-js/core/testing";
-import { beforeEach, expect, it } from "vitest";
-import { resetGlobalNamespace } from "../../contexts/index.js";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { resetProgram } from "../../contexts/index.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { Name } from "./name.jsx";
 
 beforeEach(() => {
-  resetGlobalNamespace();
+  resetProgram();
 });
 
 it("throws when used without a declaration context", () => {
+  const consoleMock = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  afterEach(() => {
+    consoleMock.mockReset();
+  });
   expect(() =>
     renderToString(
       <Output>

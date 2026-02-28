@@ -25,6 +25,7 @@ export function createTypeSpecNamePolicy(): NamePolicy<TypeSpecElements> {
       case "decorator":
       case "namespace":
       case "operation":
+      case "template":
       case "union": {
         const invalidNameRegex =
           /(?:^model$)|(?:^enum$)|(?:^never$)|(?:^null$)|(?:^unknown$)|[-./[\]]/;

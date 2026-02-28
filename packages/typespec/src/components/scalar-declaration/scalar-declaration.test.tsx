@@ -1,14 +1,15 @@
-import { Output, StatementList } from "@alloy-js/core";
+import { Output, refkey, StatementList } from "@alloy-js/core";
 import { d, renderToString } from "@alloy-js/core/testing";
-import { beforeEach, expect, it } from "vitest";
-import { resetGlobalNamespace } from "../../contexts/index.js";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { Namespace } from "../namespace/namespace.jsx";
+import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { ScalarDeclaration } from "./scalar-declaration.jsx";
 
 beforeEach(() => {
-  resetGlobalNamespace();
+  resetProgram();
 });
 
 it("renders a scalar", () => {
@@ -54,6 +55,12 @@ it("renders a scalar with 'extends'", () => {
 });
 
 it("throws if both 'is' and 'extends' are provided", () => {
+  const consoleMock = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  afterEach(() => {
+    consoleMock.mockReset();
+  });
+
   expect(() =>
     renderToString(
       <Output namePolicy={createTypeSpecNamePolicy()}>
@@ -89,6 +96,7 @@ it("does not deconflict names across namespaces", () => {
           <ScalarDeclaration name="Foo" />
         </Namespace>
         <hbr />
+        <hbr />
         <Namespace name="B">
           <ScalarDeclaration name="Foo" />
         </Namespace>
@@ -99,6 +107,7 @@ it("does not deconflict names across namespaces", () => {
       namespace A {
         scalar Foo
       }
+
       namespace B {
         scalar Foo
       }`,
@@ -119,9 +128,88 @@ it("deconflicts duplicate names within the same namespace", () => {
     </Output>,
   ).toRenderTo({
     "main.tsp": d`
-      namespace A {
-        scalar Foo;
-        scalar Foo_2;
-      }`,
+      namespace A;
+
+      scalar Foo;
+      scalar Foo_2;`,
+  });
+});
+
+it("renders a scalar with template parameters", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <ScalarDeclaration name="Unreal" templateParameters={["Type"]} />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": d`
+      namespace A;
+
+      scalar Unreal<Type>`,
+  });
+});
+
+it("renders a scalar with constrained template parameters", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <ScalarDeclaration
+            name="Unreal"
+            templateParameters={[{ name: "Type", extends: "string" }]}
+          />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": d`
+      namespace A;
+
+      scalar Unreal<Type extends string>`,
+  });
+});
+
+it("resolves template parameter references within the scalar", () => {
+  const typeKey = refkey();
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <ScalarDeclaration
+            name="Wrapped"
+            templateParameters={[{ name: "T", refkey: typeKey }]}
+            extends={<Reference refkey={typeKey} />}
+          />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": d`
+      namespace A;
+
+      scalar Wrapped<T> extends T`,
+  });
+});
+
+it("does not resolve template parameter references outside the scalar", () => {
+  const typeKey = refkey();
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <ScalarDeclaration
+            name="Wrapped"
+            templateParameters={[{ name: "T", refkey: typeKey }]}
+          />
+          <hbr />
+          <Reference refkey={typeKey} />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": expect.stringContaining("Unresolved Symbol"),
   });
 });

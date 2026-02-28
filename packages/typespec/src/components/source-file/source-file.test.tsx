@@ -1,7 +1,7 @@
+import { Namespace } from "#components/namespace/namespace.jsx";
 import { Output, SourceDirectory } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { createNamespaceSymbol } from "../../symbols/factories.js";
 import { SourceFile } from "./source-file.jsx";
 
 it("defines multiple directories with unique source files", () => {
@@ -21,18 +21,36 @@ it("defines multiple directories with unique source files", () => {
 });
 
 it("declares a file level namespace when one is provided", () => {
-  const parentNamespace = createNamespaceSymbol("My.Namespace");
   expect(
     <Output>
-      <SourceFile path="main.tsp" namespace={parentNamespace}>
-        Content of the file
+      <SourceFile path="main.tsp">
+        <Namespace name="My.Namespace">Content of the file</Namespace>
       </SourceFile>
     </Output>,
   ).toRenderTo({
     "main.tsp": d`
-          namespace My.Namespace;
+      namespace My.Namespace;
 
-          Content of the file
-          `,
+      Content of the file`,
+  });
+});
+
+it("does not declare a file level namespace when more than one top-level namespace is provided", () => {
+  expect(
+    <Output>
+      <SourceFile path="main.tsp">
+        <Namespace name="My.Namespace1">Content of the file</Namespace>
+        <hbr />
+        <Namespace name="My.Namespace2">More content of the file</Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": d`
+      namespace My.Namespace1 {
+        Content of the file
+      }
+      namespace My.Namespace2 {
+        More content of the file
+      }`,
   });
 });

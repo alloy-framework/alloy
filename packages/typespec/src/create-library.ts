@@ -7,7 +7,8 @@ import {
   TO_SYMBOL,
   useBinder,
 } from "@alloy-js/core";
-import { getGlobalNamespace } from "./contexts/global-namespace.js";
+import { getProgram } from "./contexts/program.js";
+import { ProgramScope } from "./scopes/program.js";
 import {
   isNamespaceSymbol,
   NamedTypeSymbol,
@@ -93,13 +94,16 @@ export type LibraryFrom<T> = {
 } & LibrarySymbolReference;
 
 interface InternalContext {
-  ownerSymbol(binder: Binder | undefined): NamedTypeSymbol;
+  parent(binder: Binder | undefined): NamedTypeSymbol | ProgramScope;
 }
 export function createLibrary<T extends Record<string, Descriptor>>(
   rootNs: string,
   props: T,
 ): LibraryFrom<T> {
-  const ownerSymbolPerBinder = new WeakMap<Binder, NamespaceSymbol>();
+  const ownerSymbolPerBinder = new WeakMap<
+    Binder,
+    NamespaceSymbol | ProgramScope
+  >();
 
   const namespaceNames = rootNs.split(".");
 
@@ -110,9 +114,11 @@ export function createLibrary<T extends Record<string, Descriptor>>(
       members: props,
     },
     {
-      ownerSymbol(binder: Binder | undefined) {
+      parent(binder: Binder | undefined) {
         return mapGet(ownerSymbolPerBinder, binder, () => {
-          let ownerSymbol = getGlobalNamespace(binder);
+          const program = getProgram(binder);
+          let ownerSymbol: ProgramScope | NamespaceSymbol = program;
+
           for (const name of namespaceNames.slice(0, -1)) {
             if (ownerSymbol.members.symbolNames.has(name)) {
               const nsSymbol = ownerSymbol.members.symbolNames.get(
@@ -125,10 +131,14 @@ export function createLibrary<T extends Record<string, Descriptor>>(
               }
               ownerSymbol = nsSymbol;
             } else {
-              ownerSymbol = new NamespaceSymbol(namekey(name), ownerSymbol, {
-                binder,
-                refkeys: refkey(),
-              });
+              ownerSymbol = new NamespaceSymbol(
+                namekey(name),
+                ownerSymbol.members,
+                {
+                  binder,
+                  refkeys: refkey(),
+                },
+              );
             }
           }
           return ownerSymbol;
@@ -145,7 +155,7 @@ function createSymbolEntry(
 ): LibrarySymbolReference {
   const symbols = new WeakMap<Binder, TypeSpecSymbol>();
   const newContext: InternalContext = {
-    ownerSymbol(binder) {
+    parent(binder) {
       return getSymbol(binder) as NamedTypeSymbol;
     },
   };
@@ -217,19 +227,19 @@ function createSymbolFromDescriptor(
   context: InternalContext,
   lazyMemberInitializer: () => void,
 ): TypeSpecSymbol {
-  const ownerSymbol = context.ownerSymbol(binder);
+  const parent = context.parent(binder);
 
   switch (descriptor.kind) {
     case "namespace": {
-      if (!isNamespaceSymbol(ownerSymbol)) {
+      if (!(parent instanceof ProgramScope) && !isNamespaceSymbol(parent)) {
         throw new Error(
-          `Cannot create namespace '${name}' under non-namespace symbol '${ownerSymbol.name}'.`,
+          `Cannot create namespace '${name}' under non-namespace symbol '${parent.name}'.`,
         );
       }
-      if (ownerSymbol.members.symbolNames.has(name)) {
-        return ownerSymbol.members.symbolNames.get(name)! as NamespaceSymbol;
+      if (parent.members.symbolNames.has(name)) {
+        return parent.members.symbolNames.get(name)! as NamespaceSymbol;
       }
-      return new NamespaceSymbol(namekey(name), ownerSymbol, {
+      return new NamespaceSymbol(namekey(name), parent.members, {
         binder,
         refkeys: refkey(),
         lazyMemberInitializer,
@@ -241,7 +251,7 @@ function createSymbolFromDescriptor(
     case "model": {
       return new NamedTypeSymbol(
         namekey(name),
-        ownerSymbol.members,
+        parent.members,
         descriptor.kind,
         {
           binder,
@@ -255,7 +265,7 @@ function createSymbolFromDescriptor(
     case "union-variant":
     case "enum-member":
     case "property": {
-      return new TypeSpecSymbol(namekey(name), ownerSymbol.members, {
+      return new TypeSpecSymbol(namekey(name), parent.members, {
         binder,
         refkeys: refkey(),
         type:
@@ -269,7 +279,7 @@ function createSymbolFromDescriptor(
     case "scalar": {
       return new NamedTypeSymbol(
         namekey(name),
-        ownerSymbol.members,
+        parent.members,
         descriptor.kind,
         { binder, refkeys: refkey() },
       );
@@ -284,7 +294,7 @@ function createSymbolFromDescriptor(
 
 const defaultsPerMap = new WeakMap<WeakMap<Binder, unknown>, unknown>();
 
-function mapGet<V extends TypeSpecSymbol>(
+function mapGet<V>(
   map: WeakMap<Binder, V>,
   key: Binder | undefined,
   init: () => V,

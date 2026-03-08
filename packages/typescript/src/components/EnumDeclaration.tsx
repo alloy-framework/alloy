@@ -27,6 +27,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     refkeys: props.refkey,
     default: props.default,
     export: props.export,
+    internal: props.internal,
     metadata: props.metadata,
     namePolicy: useTSNamePolicy().for("enum"),
   });

@@ -64,7 +64,8 @@ export function ref(
       // find public dependency
       for (const module of sourcePackage.exportedSymbols.values()) {
         for (const refkey of lexicalDeclaration.refkeys) {
-          if (module.exportedSymbols.has(refkey)) {
+          const sym = module.exportedSymbols.get(refkey);
+          if (sym && !sym.internal) {
             localSymbol = untrack(() =>
               sourceFile!.scope.addImport(lexicalDeclaration, module, {
                 type: options?.type,
@@ -73,6 +74,7 @@ export function ref(
             break;
           }
         }
+        if (localSymbol) break;
       }
 
       if (!localSymbol) {

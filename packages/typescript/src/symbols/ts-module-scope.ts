@@ -104,6 +104,33 @@ export class TSModuleScope extends TSLexicalScope {
     return allSymbols;
   }
 
+  /**
+   * Get symbols that are exported from this module (i.e. have `export: true`).
+   */
+  getExportedSymbols() {
+    const exported = new Set<TSOutputSymbol>();
+    for (const symbol of this.getAllSymbols()) {
+      if (symbol.export) {
+        exported.add(symbol);
+      }
+    }
+    return exported;
+  }
+
+  /**
+   * Get symbols that are public exports from this module. These are symbols
+   * that are exported and not marked as internal.
+   */
+  getPublicSymbols() {
+    const publicSymbols = new Set<TSOutputSymbol>();
+    for (const symbol of this.getAllSymbols()) {
+      if (symbol.export && !symbol.internal) {
+        publicSymbols.add(symbol);
+      }
+    }
+    return publicSymbols;
+  }
+
   override get debugInfo(): Record<string, unknown> {
     return {
       ...super.debugInfo,

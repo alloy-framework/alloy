@@ -83,6 +83,7 @@ const _InterfaceDeclaration = ensureTypeRefContext(
       refkeys: props.refkey,
       default: props.default,
       export: props.export,
+      internal: props.internal,
       metadata: props.metadata,
       tsFlags: TSSymbolFlags.TypeSymbol,
       namePolicy: useTSNamePolicy().for("interface"),

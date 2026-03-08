@@ -28,6 +28,7 @@ export function VarDeclaration(props: VarDeclarationProps) {
     refkeys: props.refkey,
     default: props.default,
     export: props.export,
+    internal: props.internal,
     metadata: props.metadata,
     tsFlags: props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None,
     type: props.type ? TypeSymbolSlot.firstSymbol : undefined,

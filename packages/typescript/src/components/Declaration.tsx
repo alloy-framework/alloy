@@ -68,6 +68,13 @@ export interface DeclarationPropsWithInfo extends DeclarationPropsBase {
   export?: boolean;
 
   /**
+   * Whether this is an internal export. Internal declarations are exported from
+   * their source module but are not re-exported through barrel files or the
+   * public package surface.
+   */
+  internal?: boolean;
+
+  /**
    * Whether this is the default export of the module.
    */
   default?: boolean;
@@ -104,6 +111,7 @@ export function Declaration(props: DeclarationProps) {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
+        internal: props.internal,
         metadata: props.metadata,
         namePolicy: useTSNamePolicy().for(props.nameKind!),
       });
@@ -112,6 +120,7 @@ export function Declaration(props: DeclarationProps) {
         refkeys: props.refkey,
         export: props.export,
         default: props.default,
+        internal: props.internal,
         metadata: props.metadata,
         namePolicy: useTSNamePolicy().for(props.nameKind!),
       });

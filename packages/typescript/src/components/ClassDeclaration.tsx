@@ -80,6 +80,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
     refkeys: props.refkey,
     export: props.export,
     default: props.default,
+    internal: props.internal,
     metadata: props.metadata,
     hasInstanceMembers: true,
     namePolicy: useTSNamePolicy().for("class"),

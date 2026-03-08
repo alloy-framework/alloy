@@ -67,7 +67,7 @@ export function ref(
           const sym = module.exportedSymbols.get(refkey);
           if (sym && !sym.internal) {
             localSymbol = untrack(() =>
-              sourceFile!.scope.addImport(lexicalDeclaration, module, {
+              sourceFile!.scope.addImport(sym, module, {
                 type: options?.type,
               }),
             );

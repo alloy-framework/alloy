@@ -179,3 +179,167 @@ it("supports internal on various declaration types", () => {
     `,
   });
 });
+
+it("aliases duplicate export names across modules", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="a.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 1;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.SourceFile path="b.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 2;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.BarrelFile />
+    </Output>,
+  ).toRenderTo({
+    "a.ts": d`
+      export function helper() {
+        return 1;
+      }
+    `,
+    "b.ts": d`
+      export function helper() {
+        return 2;
+      }
+    `,
+    "index.ts": d`
+      export * from "./a.js";
+      export { helper as helper_1 } from "./b.js";
+    `,
+  });
+});
+
+it("aliases duplicate exports with mixed non-conflicting names", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="a.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 1;
+        </ts.FunctionDeclaration>
+        <hbr />
+        <ts.FunctionDeclaration export name="foo">
+          return 2;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.SourceFile path="b.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 3;
+        </ts.FunctionDeclaration>
+        <hbr />
+        <ts.FunctionDeclaration export name="bar">
+          return 4;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.BarrelFile />
+    </Output>,
+  ).toRenderTo({
+    "a.ts": d`
+      export function helper() {
+        return 1;
+      }
+      export function foo() {
+        return 2;
+      }
+    `,
+    "b.ts": d`
+      export function helper() {
+        return 3;
+      }
+      export function bar() {
+        return 4;
+      }
+    `,
+    "index.ts": d`
+      export * from "./a.js";
+      export { bar, helper as helper_1 } from "./b.js";
+    `,
+  });
+});
+
+it("aliases duplicate exports across three modules", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="a.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 1;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.SourceFile path="b.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 2;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.SourceFile path="c.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 3;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.BarrelFile />
+    </Output>,
+  ).toRenderTo({
+    "a.ts": d`
+      export function helper() {
+        return 1;
+      }
+    `,
+    "b.ts": d`
+      export function helper() {
+        return 2;
+      }
+    `,
+    "c.ts": d`
+      export function helper() {
+        return 3;
+      }
+    `,
+    "index.ts": d`
+      export * from "./a.js";
+      export { helper as helper_1 } from "./b.js";
+      export { helper as helper_2 } from "./c.js";
+    `,
+  });
+});
+
+it("handles duplicate exports combined with internal exports", () => {
+  expect(
+    <Output>
+      <ts.SourceFile path="a.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 1;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.SourceFile path="b.ts">
+        <ts.FunctionDeclaration export name="helper">
+          return 2;
+        </ts.FunctionDeclaration>
+        <hbr />
+        <ts.FunctionDeclaration export internal name="secret">
+          return 3;
+        </ts.FunctionDeclaration>
+      </ts.SourceFile>
+      <ts.BarrelFile />
+    </Output>,
+  ).toRenderTo({
+    "a.ts": d`
+      export function helper() {
+        return 1;
+      }
+    `,
+    "b.ts": d`
+      export function helper() {
+        return 2;
+      }
+      export function secret() {
+        return 3;
+      }
+    `,
+    "index.ts": d`
+      export * from "./a.js";
+      export { helper as helper_1 } from "./b.js";
+    `,
+  });
+});

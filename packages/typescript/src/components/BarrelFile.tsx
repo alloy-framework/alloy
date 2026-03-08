@@ -82,9 +82,47 @@ export function BarrelFile(props: BarrelFileProps) {
     return [...sourceFiles, ...nestedBarrels];
   });
 
+  const exportNameConflicts = memo(() => {
+    const modules = exports();
+    const nameOwners = new Map<string, TSModuleScope[]>();
+
+    for (const mod of modules) {
+      const publicSymbols = mod.getPublicSymbols();
+      for (const sym of publicSymbols) {
+        if (!nameOwners.has(sym.name)) {
+          nameOwners.set(sym.name, []);
+        }
+        const owners = nameOwners.get(sym.name)!;
+        if (!owners.includes(mod)) {
+          owners.push(mod);
+        }
+      }
+    }
+
+    const moduleConflicts = new Map<TSModuleScope, Map<string, string>>();
+
+    for (const [name, owners] of nameOwners) {
+      if (owners.length <= 1) continue;
+
+      for (let i = 1; i < owners.length; i++) {
+        if (!moduleConflicts.has(owners[i])) {
+          moduleConflicts.set(owners[i], new Map());
+        }
+        moduleConflicts.get(owners[i])!.set(name, `${name}_${i}`);
+      }
+    }
+
+    return moduleConflicts;
+  });
+
   return (
     <SourceFile path={path} export={props.export}>
-      <For each={exports}>{(mod) => <ExportStatement star from={mod} />}</For>
+      <For each={exports}>
+        {(mod) => {
+          const conflicts = exportNameConflicts().get(mod);
+          return <ExportStatement star from={mod} nameConflicts={conflicts} />;
+        }}
+      </For>
     </SourceFile>
   );
 }

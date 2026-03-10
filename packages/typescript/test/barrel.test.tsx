@@ -208,7 +208,7 @@ it("aliases duplicate export names across modules", () => {
     `,
     "index.ts": d`
       export * from "./a.js";
-      export { helper as helper_1 } from "./b.js";
+      export { helper as helper_2 } from "./b.js";
     `,
   });
 });
@@ -255,7 +255,7 @@ it("aliases duplicate exports with mixed non-conflicting names", () => {
     `,
     "index.ts": d`
       export * from "./a.js";
-      export { bar, helper as helper_1 } from "./b.js";
+      export { bar, helper as helper_2 } from "./b.js";
     `,
   });
 });
@@ -298,8 +298,8 @@ it("aliases duplicate exports across three modules", () => {
     `,
     "index.ts": d`
       export * from "./a.js";
-      export { helper as helper_1 } from "./b.js";
-      export { helper as helper_2 } from "./c.js";
+      export { helper as helper_2 } from "./b.js";
+      export { helper as helper_3 } from "./c.js";
     `,
   });
 });
@@ -339,7 +339,7 @@ it("handles duplicate exports combined with internal exports", () => {
     `,
     "index.ts": d`
       export * from "./a.js";
-      export { helper as helper_1 } from "./b.js";
+      export { helper as helper_2 } from "./b.js";
     `,
   });
 });

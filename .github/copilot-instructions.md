@@ -16,3 +16,26 @@ This repository is built on alloy which use JSX to define components. This is NO
   - DO NOT destructure props in the component definition
 
 Do not update changelogs, these are managed by `npx chronus`.
+
+
+Critical rules:
+1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.
+2. Prefer concrete evidence over broad summaries.
+3. Distinguish clearly between:
+   - observed facts from the repo
+   - inferences from patterns
+   - proposals for the new language package
+4. When something is unclear, say so explicitly under "Open Questions" or "Ambiguities".
+5. Do not start implementing code unless explicitly asked. This phase is documentation and planning only.
+6. Write output directly to the requested markdown file.
+7. Use clear headings and bullet points where useful.
+8. When referencing repository files, include repository-relative paths.
+9. Focus only on the parts of the repo relevant to Alloy core and existing language packages.
+10. Optimize for future AI coding agents that will consume these documents.
+
+Quality bar:
+- Precise
+- Evidence-based
+- Dependency-aware
+- Implementation-oriented
+- Not generic

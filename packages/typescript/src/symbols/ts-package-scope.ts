@@ -88,7 +88,8 @@ export class TSPackageScope extends OutputScope {
 
   findExportedSymbol(refkey: Refkey): [string, TSModuleScope] | null {
     for (const [publicPath, module] of this.exportedSymbols) {
-      if (module.exportedSymbols.has(refkey)) {
+      const sym = module.exportedSymbols.get(refkey);
+      if (sym && !sym.internal) {
         return [publicPath, module];
       }
     }

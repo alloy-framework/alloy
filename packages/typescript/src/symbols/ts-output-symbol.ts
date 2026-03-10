@@ -25,6 +25,13 @@ export enum TSSymbolFlags {
 export interface CreateTsSymbolOptions extends OutputSymbolOptions {
   export?: boolean;
   default?: boolean;
+
+  /**
+   * Whether this symbol is internal. Internal symbols are exported from their
+   * source module but are not re-exported through barrel files or the public
+   * package surface.
+   */
+  internal?: boolean;
   tsFlags?: TSSymbolFlags;
   hasInstanceMembers?: boolean;
 }
@@ -45,6 +52,7 @@ export class TSOutputSymbol extends OutputSymbol {
     super(name, spaces, options);
     this.#export = !!options.export;
     this.#default = !!options.default;
+    this.#internal = !!options.internal;
     this.#tsFlags = options.tsFlags ?? TSSymbolFlags.None;
     this.#hasInstanceMembers = !!options.hasInstanceMembers;
     if (
@@ -75,6 +83,7 @@ export class TSOutputSymbol extends OutputSymbol {
       aliasTarget: this.aliasTarget,
       default: this.default,
       export: this.export,
+      internal: this.internal,
       tsFlags: this.tsFlags,
       metadata: this.metadata,
     });
@@ -89,6 +98,11 @@ export class TSOutputSymbol extends OutputSymbol {
     watch(
       () => this.export,
       (exp) => (copy.export = exp),
+    );
+
+    watch(
+      () => this.internal,
+      (int) => (copy.internal = int),
     );
 
     watch(
@@ -111,6 +125,26 @@ export class TSOutputSymbol extends OutputSymbol {
     }
     this.#export = value;
     trigger(this, TriggerOpTypes.SET, "export", value, !value);
+  }
+
+  #internal: boolean;
+
+  /**
+   * Whether this symbol is internal. Internal symbols are exported from their
+   * source module but are not re-exported through barrel files or the public
+   * package surface.
+   */
+  get internal() {
+    track(this, TrackOpTypes.GET, "internal");
+    return this.#internal;
+  }
+
+  set internal(value: boolean) {
+    if (this.#internal === value) {
+      return;
+    }
+    this.#internal = value;
+    trigger(this, TriggerOpTypes.SET, "internal", value, !value);
   }
 
   #default: boolean;
@@ -208,6 +242,7 @@ export class TSOutputSymbol extends OutputSymbol {
       ...info,
       export: this.export,
       default: this.default,
+      internal: this.internal,
       tsFlags: this.tsFlags,
       hasInstanceMembers: this.hasInstanceMembers,
       isTypeSymbol: this.isTypeSymbol,

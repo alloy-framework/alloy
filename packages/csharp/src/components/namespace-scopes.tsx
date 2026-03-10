@@ -50,7 +50,10 @@ export function NamespaceScopes(props: NamespaceScopesProps) {
       <NamespaceScope symbol={symbol}>{children}</NamespaceScope>
     );
 
-    if (symbol.enclosingNamespace && symbol.enclosingNamespace !== props.stopAt) {
+    if (
+      symbol.enclosingNamespace &&
+      symbol.enclosingNamespace !== props.stopAt
+    ) {
       return wrapWithScope(symbol.enclosingNamespace, scopeChildren);
     }
 

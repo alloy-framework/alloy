@@ -118,7 +118,7 @@ docs/backlog/
 | [T026](tasks/T026-import-integration-tests.md) | Import integration tests | E005 | test | P0 | T022, T023, T025 | done |
 | [T027](tasks/T027-module-structure-tests.md) | Module structure tests | E005 | test | P0 | T024–T026 | done |
 | [T028](tasks/T028-create-crate.md) | createCrate() factory | E006 | feature | P0 | T003, T005, T006 | done |
-| [T029](tasks/T029-std-builtins.md) | std builtin descriptors | E006 | feature | P1 | T028 | pending |
+| [T029](tasks/T029-std-builtins.md) | std builtin descriptors | E006 | feature | P1 | T028 | blocked |
 | [T030](tasks/T030-cargo-toml.md) | CargoTomlFile component | E006 | feature | P0 | T009, T031 | pending |
 | [T031](tasks/T031-dependency-tracking.md) | External crate dependency tracking | E006 | feature | P0 | T005, T022, T028 | pending |
 | [T032](tasks/T032-stc-wrappers.md) | STC wrappers | E006 | feature | P2 | T011–T021 | pending |
@@ -179,7 +179,9 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 
 ## Blocked Tasks
 
-No tasks are currently blocked.
+| ID | Title | Reason |
+|---|---|---|
+| T029 | std builtin descriptors | Repeated build validation failures on exported `std` typing portability (TS2742/API Extractor). |
 
 ---
 

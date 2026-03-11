@@ -5,7 +5,7 @@
 | **ID**           | T029                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
-| **Status**       | pending                                                                                 |
+| **Status**       | blocked                                                                                 |
 | **Priority**     | medium                                                                                  |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -133,3 +133,10 @@ Provide a ready-to-use `std` crate descriptor so that generated code can referen
 cd packages/rust
 npx vitest run test/builtins.test.tsx
 ```
+
+## Blocked Reason (2026-03-11)
+
+Validation failed repeatedly on the same issue while implementing `std` builtins:
+export typing for `std` in `src/builtins/std.ts` causes TypeScript/API Extractor
+portability failures (`TS2742` and export-surface warnings). After 3 build/test
+validation attempts on this issue, work stopped per execution rules.

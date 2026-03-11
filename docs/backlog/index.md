@@ -113,7 +113,7 @@ docs/backlog/
 | [T021](tasks/T021-self-receiver.md) | Self receiver in FunctionDeclaration | E004 | feature | P0 | T013, T020 | pending |
 | [T022](tasks/T022-reference-resolution.md) | Reference resolution + use tracking | E005 | feature | P0 | T005, T010 | done |
 | [T023](tasks/T023-use-statements.md) | UseStatement + UseStatements | E005 | feature | P0 | T022 | done |
-| [T024](tasks/T024-module-directory.md) | ModuleDirectory | E005 | feature | P0 | T009, T005 | pending |
+| [T024](tasks/T024-module-directory.md) | ModuleDirectory | E005 | feature | P0 | T009, T005 | done |
 | [T025](tasks/T025-mod-declarations.md) | Auto mod declarations | E005 | feature | P0 | T009, T024 | pending |
 | [T026](tasks/T026-import-integration-tests.md) | Import integration tests | E005 | test | P0 | T022, T023, T025 | pending |
 | [T027](tasks/T027-module-structure-tests.md) | Module structure tests | E005 | test | P0 | T024–T026 | pending |

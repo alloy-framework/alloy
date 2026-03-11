@@ -24,6 +24,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
 - In components using `scope.enclosingModule`, narrow to `RustModuleScope` (for example, `instanceof RustModuleScope`) before accessing `.types` or `.values`; `enclosingModule` is typed as `RustScopeBase`.
 - Avoid whitespace-only `code` template literals (for example, ``code` ` ``); they can crash core code rendering. Use plain string literals like `" "` for standalone spaces.
+- For `ModuleDirectory`, derive the module name from the last `path` segment before calling `addChildModule`, so nested paths register the correct child module.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

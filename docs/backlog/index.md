@@ -171,17 +171,15 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 
 | ID | Title | Phase |
 |---|---|---|
-| T007 | Name policy | P01 |
 | T008 | Parameter descriptor | P01 |
 | T016 | DocComment | P02 |
-| T017 | TypeParameters | P02 |
 | T018 | Value component | P02 |
 
 ---
 
 ## Blocked Tasks
 
-No tasks are currently blocked. All tasks are `pending` and become ready when their dependencies complete.
+No tasks are currently blocked.
 
 ---
 

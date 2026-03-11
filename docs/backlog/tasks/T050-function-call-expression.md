@@ -5,7 +5,7 @@
 | **ID** | T050 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | blocked |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -95,3 +95,7 @@ TypeScript: `FunctionCallExpression` at `packages/typescript/src/components/Func
 ## Evidence
 
 4 method call instances in `samples/rust-example/store-module.tsx` — `self.data.len()`, `self.data.is_empty()`, `self.data.insert(key, entry)`, `self.data.remove(key)`.
+
+## Blocked Reason
+
+Validation failed 3 consecutive times on `pnpm --filter @alloy-js/rust test` for a snapshot formatting mismatch in `test/function-call-expression.test.tsx` (`FunctionCallExpression` turbofish + multi-argument wrapping line breaks), so this task is marked blocked per execution policy.

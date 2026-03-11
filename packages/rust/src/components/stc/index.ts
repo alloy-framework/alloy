@@ -14,6 +14,7 @@ import {
   ElseIfClause as ElseIfClauseComponent,
   IfExpression as IfExpressionComponent,
 } from "../if-expression.js";
+import { FunctionCallExpression as FunctionCallExpressionComponent } from "../function-call-expression.js";
 import { ForExpression as ForExpressionComponent } from "../for-expression.js";
 import { LetBinding as LetBindingComponent } from "../let-binding.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
@@ -49,6 +50,7 @@ export const ForExpression = stc(ForExpressionComponent);
 export const IfExpression = stc(IfExpressionComponent);
 export const ElseIfClause = stc(ElseIfClauseComponent);
 export const ElseClause = stc(ElseClauseComponent);
+export const FunctionCallExpression = stc(FunctionCallExpressionComponent);
 export const ImplBlock = stc(ImplBlockComponent);
 export const LetBinding = stc(LetBindingComponent);
 export const MatchArm = stc(MatchArmComponent);

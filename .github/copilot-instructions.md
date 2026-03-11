@@ -39,6 +39,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - For `ModDeclarations` render-order regressions, first run `pnpm --filter @alloy-js/rust exec vitest run test/t045-render-order.test.tsx test/mod-declarations.test.tsx`, then run full rust validation.
 - For Rust generic rendering, keep lifetime parameters and type parameters in the same `TypeParameterProp[]`, but always render lifetimes first (`<'a, 'b, T>`), and quickly verify with `pnpm --filter @alloy-js/rust exec vitest run test/type-parameters.test.tsx test/lifetime-parameters.test.tsx`.
 - `LetBinding` intentionally does **not** register symbols in scope (T049 exclusions); treat it as syntax-only statement rendering with optional type/initializer and a trailing `;`.
+- In `FunctionCallExpression`-style components using `<group>` + `Wrap` (`when={args.length > 1}`), expect stable multiline output for multi-arg calls, and turbofish type-arg lists may also line-break under the same group; snapshot tests should assert multiline form.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

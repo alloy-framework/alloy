@@ -13,6 +13,7 @@ import {
   EnumVariant,
   Field,
   FunctionDeclaration,
+  FunctionCallExpression,
   ImplBlock,
   ModuleDirectory,
   ModuleDocComment,
@@ -348,5 +349,19 @@ describe("STC wrappers", () => {
         ..self
       }
     `);
+  });
+
+  it("FunctionCallExpression wrapper matches JSX output", () => {
+    expect(
+      <FunctionCallExpression target="self.data.insert" typeArgs={["String"]} args={["key", "entry"]} />,
+    ).toRenderTo(d`self.data.insert::<String>(key, entry)`);
+
+    expect(
+      Stc.FunctionCallExpression({
+        target: "self.data.insert",
+        typeArgs: ["String"],
+        args: ["key", "entry"],
+      }),
+    ).toRenderTo(d`self.data.insert::<String>(key, entry)`);
   });
 });

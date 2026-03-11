@@ -14,6 +14,10 @@ export interface RustChildModuleDeclaration {
   visibility: RustVisibility;
 }
 
+export interface RustCrateScopeOptions extends OutputScopeOptions {
+  builtin?: boolean;
+}
+
 export class RustCrateScope extends RustScopeBase {
   public static readonly declarationSpaces = ["types", "values"];
 
@@ -24,10 +28,15 @@ export class RustCrateScope extends RustScopeBase {
 
   #childModules = shallowReactive<Map<string, RustChildModuleDeclaration>>(new Map());
   #dependencies = shallowReactive<Map<string, CrateDependency>>(new Map());
+  #builtin = false;
+  get builtin() {
+    return this.#builtin;
+  }
 
-  constructor(name: string, version?: string, options?: OutputScopeOptions) {
+  constructor(name: string, version?: string, options: RustCrateScopeOptions = {}) {
     super(name, undefined, options);
     this.#version = version;
+    this.#builtin = options.builtin ?? false;
   }
 
   override get enclosingCrate() {

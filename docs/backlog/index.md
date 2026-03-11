@@ -34,7 +34,7 @@ docs/backlog/
 | 3 | Core declaration components | E003 | T009–T018 | P02 |
 | 4 | Traits and impl blocks | E004 | T019–T021 | P03 |
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
-| 6 | External deps, build file, polish | E006 | T028–T035 | P05–P06 |
+| 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
 
 ### Recommended Implementation Order
 
@@ -125,6 +125,9 @@ docs/backlog/
 | [T033](tasks/T033-barrel-exports.md) | Barrel exports verification | E006 | infra | P1 | T032 | done |
 | [T034](tasks/T034-golden-scenarios.md) | Golden scenario tests | E006 | test | P0 | T026–T027, T030–T031 | done |
 | [T035](tasks/T035-edge-cases.md) | Edge case tests | E006 | test | P1 | T011–T025 | done |
+| [T036](tasks/T036-builtin-crate-support.md) | Builtin crate support in createCrate/ref | E006 | feature | P0 | T028 | done |
+| [T037](tasks/T037-complete-stc-wrappers.md) | Complete STC wrappers | E006 | feature | P2 | T032 | pending |
+| [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | pending |
 
 ---
 

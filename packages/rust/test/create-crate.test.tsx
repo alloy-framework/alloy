@@ -151,4 +151,40 @@ describe("createCrate", () => {
     expect(consumerModuleScope!.imports.get("serde::de")?.size).toBe(1);
     expect(consumerCrateScope!.dependencies.get("serde")).toBe("1.0.219");
   });
+
+  it("references builtin crate symbols without tracking Cargo.toml dependencies", () => {
+    const std = createCrate({
+      name: "std",
+      builtin: true,
+      modules: {
+        collections: {
+          HashMap: { kind: "struct" },
+        },
+      },
+    });
+
+    let consumerCrateScope: RustCrateScope | undefined;
+
+    const output = render(
+      <Output externals={[std]}>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib">
+            <ScopeCapture
+              onCapture={(_, capturedCrateScope) => {
+                consumerCrateScope = capturedCrateScope;
+              }}
+            >
+              type DataMap = <Reference refkey={std.collections.HashMap} />;
+            </ScopeCapture>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib").contents.trim()).toBe(
+      ["use std::collections::HashMap;", "type DataMap = HashMap;"].join("\n"),
+    );
+    expect(consumerCrateScope).toBeDefined();
+    expect(consumerCrateScope!.dependencies.has("std")).toBe(false);
+  });
 });

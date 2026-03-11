@@ -1,4 +1,5 @@
 import { Refkey, memo, resolve, unresolvedRefkey } from "@alloy-js/core";
+import { isBuiltinCrate } from "../create-crate.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { RustScopeBase } from "../scopes/rust-scope.js";
@@ -98,7 +99,9 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
         } else {
           const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
           currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
-          sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
+          if (!isBuiltinCrate(targetCrate)) {
+            sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
+          }
         }
       }
     }

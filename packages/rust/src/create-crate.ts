@@ -24,6 +24,7 @@ export interface CrateDescriptor<
 > {
   name: string;
   version?: string;
+  builtin?: boolean;
   modules: TModules;
 }
 
@@ -38,6 +39,7 @@ const crateFactoryStateSymbol: unique symbol = Symbol("RustCreateCrateFactorySta
 interface CrateFactoryState {
   name: string;
   version?: string;
+  builtin: boolean;
   scopes: WeakMap<Binder, RustCrateScope>;
 }
 
@@ -55,6 +57,14 @@ export function getCrateInfo(crate: ExternalCrate) {
 
 export function getCrateScope(crate: ExternalCrate, binder: Binder) {
   return getFactoryState(crate).scopes.get(binder);
+}
+
+export function isBuiltinCrate(crate: ExternalCrate | RustCrateScope) {
+  if (crate instanceof RustCrateScope) {
+    return crate.builtin;
+  }
+
+  return getFactoryState(crate).builtin;
 }
 
 interface DescriptorEntry {
@@ -78,6 +88,7 @@ export function createCrate<const TModules extends Record<string, Record<string,
   const crateFactoryState: CrateFactoryState = {
     name: descriptor.name,
     version: descriptor.version,
+    builtin: descriptor.builtin ?? false,
     scopes: new WeakMap<Binder, RustCrateScope>(),
   };
 
@@ -136,8 +147,10 @@ function createBinderState(
 ): BinderState {
   const crateScope = createScope(RustCrateScope, descriptor.name, descriptor.version, {
     binder,
+    builtin: crateFactoryState.builtin,
     metadata: {
       external: true,
+      builtin: crateFactoryState.builtin,
     },
   });
   crateFactoryState.scopes.set(binder, crateScope);

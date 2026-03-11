@@ -93,7 +93,10 @@ describe("ModuleDirectory", () => {
     const innerDirectoryScope = sourceFileScope!.parent;
     expect(innerDirectoryScope).toBeInstanceOf(RustModuleScope);
     expect(innerDirectoryScope!.name).toBe("http");
-    expect(innerDirectoryScope!.childModules.size).toBe(0);
+    expect(innerDirectoryScope!.childModules.get("client")).toEqual({
+      name: "client",
+      visibility: undefined,
+    });
 
     const outerDirectoryScope = innerDirectoryScope!.parent;
     expect(outerDirectoryScope).toBeInstanceOf(RustModuleScope);

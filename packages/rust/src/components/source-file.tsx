@@ -11,9 +11,11 @@ import { Reference } from "./reference.js";
 import { UseStatements } from "./use-statement.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
+import { type RustVisibility } from "../symbols/rust-output-symbol.js";
 
 export interface SourceFileProps {
   path: string;
+  pub?: boolean;
   children?: Children;
   header?: Children;
   headerComment?: Children;
@@ -44,12 +46,26 @@ function getDeclarationScope(
   return scope;
 }
 
+function getStandaloneModuleName(path: string): string {
+  const segments = path.split("/").filter((segment) => segment.length > 0);
+  const fileName = segments[segments.length - 1] ?? path;
+  return fileName.endsWith(".rs") ? fileName.slice(0, -".rs".length) : fileName;
+}
+
+function isStandaloneModulePath(path: string): boolean {
+  return path.endsWith(".rs") && !isModuleRootPath(path);
+}
+
 export function SourceFile(props: SourceFileProps) {
   const parentScope = useScope();
   const scopeParent =
     parentScope instanceof RustCrateScope || parentScope instanceof RustModuleScope ?
       parentScope
     : undefined;
+  const visibility: RustVisibility = props.pub ? "pub" : undefined;
+  if (scopeParent && isStandaloneModulePath(props.path)) {
+    scopeParent.addChildModule(getStandaloneModuleName(props.path), visibility);
+  }
   const scope = createScope(RustModuleScope, props.path, scopeParent, {
     binder: scopeParent?.binder,
   });

@@ -111,6 +111,73 @@ describe("Module structure integration", () => {
     );
   });
 
+  it("auto-generates lib.rs mod declarations for standalone root source files", () => {
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="user.rs">{`pub struct User;`}</SourceFile>
+          <SourceFile path="lib.rs" />
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(d`mod user;`);
+    expect(findFile(output, "user.rs").contents.trim()).toBe(d`pub struct User;`);
+  });
+
+  it("supports pub mod declarations for standalone root source files", () => {
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="api.rs" pub>{`pub fn ping() {}`}</SourceFile>
+          <SourceFile path="lib.rs" />
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(d`pub mod api;`);
+    expect(findFile(output, "api.rs").contents.trim()).toBe(d`pub fn ping() {}`);
+  });
+
+  it("does not self-register module-root files", () => {
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">{`fn root() {}`}</SourceFile>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(d`fn root() {}`);
+  });
+
+  it("keeps deterministic ordering across module directories and standalone source files", () => {
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="zebra">
+            <SourceFile path="mod.rs" />
+          </ModuleDirectory>
+          <ModuleDirectory path="beta" pub>
+            <SourceFile path="mod.rs" />
+          </ModuleDirectory>
+          <SourceFile path="alpha.rs" />
+          <SourceFile path="gamma.rs" pub />
+          <SourceFile path="lib.rs" />
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(
+      d`
+        mod alpha;
+        pub mod beta;
+        pub mod gamma;
+        mod zebra;
+      `.trim(),
+    );
+  });
+
   it("generates use statements for cross-module references", () => {
     const userRef = refkey("user");
 

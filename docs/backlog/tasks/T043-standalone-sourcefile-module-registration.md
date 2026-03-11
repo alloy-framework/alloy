@@ -5,7 +5,7 @@
 | **ID** | T043 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -47,11 +47,28 @@ Non-root `SourceFile` components (paths that aren't `lib.rs`, `main.rs`, or `mod
 
 ## Acceptance Criteria
 
-- [ ] `<SourceFile path="config.rs" />` inside `<CrateDirectory>` generates `mod config;` in lib.rs
-- [ ] `<SourceFile path="config.rs" pub />` generates `pub mod config;`
-- [ ] Root files (`lib.rs`, `main.rs`, `mod.rs`) are NOT registered as child modules
-- [ ] Module registration works alongside ModuleDirectory children
-- [ ] Existing tests continue to pass
+- [x] `<SourceFile path="config.rs" />` inside `<CrateDirectory>` generates `mod config;` in lib.rs
+- [x] `<SourceFile path="config.rs" pub />` generates `pub mod config;`
+- [x] Root files (`lib.rs`, `main.rs`, `mod.rs`) are NOT registered as child modules
+- [x] Module registration works alongside ModuleDirectory children
+- [x] Existing tests continue to pass
+
+---
+
+## Completion Notes
+
+- Updated `SourceFile` module registration so standalone non-root files register themselves with their parent module declarations, while `lib.rs`/`main.rs`/`mod.rs` are explicitly excluded from self-registration.
+- Added/updated coverage for standalone source-file registration behavior, including root-file non-registration cases.
+
+## Validation
+
+- `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` ✅
+- `pnpm --filter @alloy-js/rust build` ✅
+- `pnpm --filter @alloy-js/rust test` ✅
+
+## Learning Note
+
+- When rendering Rust module trees, treat non-root `SourceFile` nodes as declarative children that must call parent module registration; never self-register module-root files (`lib.rs`, `main.rs`, `mod.rs`) or roots will duplicate module declarations.
 
 ---
 

@@ -5,7 +5,7 @@
 | **ID** | T002 |
 | **Epic** | [E001: Package Foundation](../epics/E001-package-foundation.md) |
 | **Type** | foundation |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical path |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |

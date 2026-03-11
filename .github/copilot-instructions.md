@@ -19,7 +19,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 
 ## TypeScript/Symbol Patterns - Known Gotchas
 
-**Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`
+**Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

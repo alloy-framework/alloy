@@ -95,7 +95,7 @@ docs/backlog/
 | [T005](tasks/T005-scope-hierarchy.md) | Scope hierarchy part 1 (module/crate) | E002 | foundation | P0 | T003, T004 | pending |
 | [T005b](tasks/T005b-scope-hierarchy-part2.md) | Scope hierarchy part 2 (function/lexical/member) | E002 | foundation | P0 | T005 | pending |
 | [T006](tasks/T006-symbol-factories.md) | Symbol factory functions | E002 | foundation | P0 | T003–T005 | pending |
-| [T007](tasks/T007-name-policy.md) | Name policy | E002 | feature | P0 | T001 | pending |
+| [T007](tasks/T007-name-policy.md) | Name policy | E002 | feature | P0 | T001 | done |
 | [T007b](tasks/T007b-name-conflict-resolver.md) | Name conflict resolver | E002 | feature | P1 | T003 | pending |
 | [T008](tasks/T008-parameter-descriptor.md) | Parameter descriptor + hooks | E002 | foundation | P1 | T001 | pending |
 | [T009](tasks/T009-source-file-crate-directory.md) | SourceFile + CrateDirectory | E003 | feature | P0 | T005, T007 | pending |

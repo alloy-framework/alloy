@@ -5,7 +5,7 @@
 | **ID** | T007 |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | feature |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical path |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |

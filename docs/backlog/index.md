@@ -96,7 +96,7 @@ docs/backlog/
 | [T005b](tasks/T005b-scope-hierarchy-part2.md) | Scope hierarchy part 2 (function/lexical/member) | E002 | foundation | P0 | T005 | done |
 | [T006](tasks/T006-symbol-factories.md) | Symbol factory functions | E002 | foundation | P0 | T003–T005 | done |
 | [T007](tasks/T007-name-policy.md) | Name policy | E002 | feature | P0 | T001 | done |
-| [T007b](tasks/T007b-name-conflict-resolver.md) | Name conflict resolver | E002 | feature | P1 | T003 | pending |
+| [T007b](tasks/T007b-name-conflict-resolver.md) | Name conflict resolver (local declarations win; rename imports) | E002 | feature | P1 | T003 | done |
 | [T008](tasks/T008-parameter-descriptor.md) | Parameter descriptor + hooks | E002 | foundation | P1 | T001 | done |
 | [T009](tasks/T009-source-file-crate-directory.md) | SourceFile + CrateDirectory | E003 | feature | P0 | T005, T007 | done |
 | [T010](tasks/T010-declaration-reference.md) | Declaration + Reference basics | E003 | feature | P0 | T006, T009 | done |

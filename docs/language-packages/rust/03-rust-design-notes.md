@@ -426,6 +426,7 @@ Rust needs a custom name conflict resolver (not core's default). When imported s
 The resolver should:
 1. Keep local declarations unchanged.
 2. Rename `use`-imported symbols with `_2`, `_3` suffixes on conflict.
+3. Treat symbols created as local `use` aliases as import symbols (e.g., alias symbols from `addUse`), so deconfliction targets imports before declarations.
 
 ---
 

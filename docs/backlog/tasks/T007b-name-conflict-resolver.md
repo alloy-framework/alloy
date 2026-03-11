@@ -5,7 +5,7 @@
 | **ID** | T007b |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | feature |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P1 |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -41,3 +41,10 @@ Create `packages/rust/src/name-conflict-resolver.ts`:
 
 ## Definition of Done
 Name conflict resolver exists, compiles, and is exported.
+
+## Completion Notes
+- Added `packages/rust/src/name-conflict-resolver.ts` with `rustNameConflictResolver(name, symbols)`.
+- Resolver keeps local declarations unchanged and renames imported symbols first using `_2`, `_3`, etc.
+- Imported detection supports alias symbols (from `addUse`-style local imports) and explicit import metadata markers.
+- Exported resolver from `packages/rust/src/index.ts`.
+- Added `packages/rust/test/name-conflict-resolver.test.ts` for local-vs-import priority and suffix behavior.

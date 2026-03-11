@@ -47,6 +47,12 @@ export function StructDeclaration(props: StructDeclarationProps) {
     props.pub ? "pub "
     : props.pub_crate ? "pub(crate) "
     : "";
+  const members =
+    props.children ?
+      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+        (child) => !(typeof child === "string" && child.trim().length === 0),
+      )
+    : [];
 
   return (
     <>
@@ -81,11 +87,13 @@ export function StructDeclaration(props: StructDeclarationProps) {
             <WhereClause>{props.whereClause}</WhereClause>
           </>
         ) : null}
-        {props.children ? (
+        {members.length > 0 ? (
           <>
             {" {"}
             <Scope value={structScope}>
-              <Indent>{props.children}</Indent>
+              <Indent>
+                <For each={members} joiner={<hbr />}>{(child) => child}</For>
+              </Indent>
             </Scope>
             <hbr />
             {"}"}

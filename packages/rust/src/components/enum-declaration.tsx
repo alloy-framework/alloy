@@ -44,6 +44,12 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     props.pub ? "pub "
     : props.pub_crate ? "pub(crate) "
     : "";
+  const variants =
+    props.children ?
+      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+        (child) => !(typeof child === "string" && child.trim().length === 0),
+      )
+    : [];
 
   return (
     <>
@@ -72,11 +78,13 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
         {"enum "}
         {enumSymbol.name}
         <TypeParameters params={props.typeParameters} />
-        {props.children ? (
+        {variants.length > 0 ? (
           <>
             {" {"}
             <Scope value={enumScope}>
-              <Indent>{props.children}</Indent>
+              <Indent>
+                <For each={variants} joiner={<hbr />}>{(child) => child}</For>
+              </Indent>
             </Scope>
             <hbr />
             {"}"}
@@ -91,6 +99,13 @@ export function EnumVariant(props: EnumVariantProps) {
   const variantSymbol = createVariantSymbol(props.name, {
     refkeys: props.refkey ? [props.refkey] : [],
   });
+
+  const members =
+    props.children ?
+      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+        (child) => !(typeof child === "string" && child.trim().length === 0),
+      )
+    : [];
 
   return (
     <CoreDeclaration symbol={variantSymbol}>
@@ -107,10 +122,12 @@ export function EnumVariant(props: EnumVariantProps) {
           <For each={props.fields} joiner={", "}>{(field) => field}</For>
           {"),"}
         </>
-      ) : props.children ? (
+      ) : members.length > 0 ? (
         <>
           {" {"}
-          <Indent>{props.children}</Indent>
+          <Indent>
+            <For each={members} joiner={<hbr />}>{(child) => child}</For>
+          </Indent>
           <hbr />
           {"},"}
         </>

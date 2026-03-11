@@ -160,7 +160,6 @@ describe("EnumVariant", () => {
             <EnumDeclaration name="Message">
               <EnumVariant name="Data">
                 {"id: u64,"}
-                <hbr />
                 {"payload: String,"}
               </EnumVariant>
             </EnumDeclaration>
@@ -203,12 +202,9 @@ describe("EnumVariant", () => {
           <SourceFile path="lib.rs">
             <EnumDeclaration name="Event" pub={true}>
               <EnumVariant name="Ready" />
-              <hbr />
               <EnumVariant name="Data" fields={["String"]} />
-              <hbr />
               <EnumVariant name="Error">
                 {"code: u32,"}
-                <hbr />
                 {"message: String,"}
               </EnumVariant>
             </EnumDeclaration>

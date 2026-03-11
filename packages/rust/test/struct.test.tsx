@@ -89,7 +89,6 @@ describe("StructDeclaration", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo">
               <Field name="first" type="String" />
-              <hbr />
               <Field name="second" type="u64" />
             </StructDeclaration>
           </SourceFile>
@@ -148,7 +147,6 @@ describe("Field", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo">
               <Field name="name" type="String" pub={true} />
-              <hbr />
               <Field name="id" type="u64" pub_crate={true} />
             </StructDeclaration>
           </SourceFile>

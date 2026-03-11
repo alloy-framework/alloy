@@ -150,7 +150,6 @@ describe("Module structure integration", () => {
             <SourceFile path="mod.rs">
               <StructDeclaration name="User" pub>
                 <Field name="name" type="String" pub />
-                <hbr />
                 <Field name="age" type="u32" pub />
               </StructDeclaration>
             </SourceFile>

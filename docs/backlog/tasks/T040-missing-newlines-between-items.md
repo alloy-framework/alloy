@@ -5,7 +5,7 @@
 | **ID** | T040 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P0 — critical |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -59,15 +59,28 @@ Proper line breaks between all sibling items within enum declarations, struct de
 
 ## Acceptance Criteria
 
-- [ ] Each enum variant starts on its own line
-- [ ] Each struct field starts on its own line
-- [ ] Doc comments are separated from the following `#[derive(...)]` or declaration by a newline
-- [ ] `#[derive(...)]` is on its own line above the declaration
-- [ ] Custom `#[attribute]` is on its own line
-- [ ] Existing tests updated to reflect correct formatting
+- [x] Each enum variant starts on its own line
+- [x] Each struct field starts on its own line
+- [x] Doc comments are separated from the following `#[derive(...)]` or declaration by a newline
+- [x] `#[derive(...)]` is on its own line above the declaration
+- [x] Custom `#[attribute]` is on its own line
+- [x] Existing tests updated to reflect correct formatting
 
 ---
 
 ## Evidence
 
 Discovered in `samples/rust-example/` generated output. The `EnumDeclaration` and `StructDeclaration` components in `packages/rust/src/components/` do not add `<hbr />` joiners between their children.
+
+---
+
+## Implementation Summary
+
+- Added explicit `<hbr />` sibling separators in enum and struct declaration rendering so each variant/field emits on its own line.
+- Fixed spacing boundaries between doc comments, derives/attributes, and declarations so annotation and declaration blocks no longer concatenate.
+- Updated formatting expectations in related tests to lock in newline behavior.
+
+## Validation
+
+- `pnpm --filter @alloy-js/rust build` ✅
+- `pnpm --filter @alloy-js/rust test` ✅

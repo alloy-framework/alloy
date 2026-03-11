@@ -28,7 +28,6 @@ describe("Golden scenarios", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration name="Point" refkey={pointRef} pub>
               <Field name="x" type="f64" pub />
-              <hbr />
               <Field name="y" type="f64" pub />
             </StructDeclaration>
             <hbr />
@@ -87,7 +86,6 @@ describe("Golden scenarios", () => {
             <SourceFile path="mod.rs">
               <StructDeclaration name="User" pub>
                 <Field name="name" type="String" pub />
-                <hbr />
                 <Field name="age" type="u32" pub />
               </StructDeclaration>
             </SourceFile>
@@ -183,15 +181,11 @@ describe("Golden scenarios", () => {
               <EnumVariant name="Circle">
                 {"radius: f64,"}
               </EnumVariant>
-              <hbr />
               <EnumVariant name="Rectangle">
                 {"width: f64,"}
-                <hbr />
                 {"height: f64,"}
               </EnumVariant>
-              <hbr />
               <EnumVariant name="Point" fields={["f64", "f64"]} />
-              <hbr />
               <EnumVariant name="Nothing" />
             </EnumDeclaration>
           </SourceFile>

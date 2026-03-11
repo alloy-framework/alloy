@@ -31,6 +31,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - For public builtins exports (for example `export const std = createCrate(...)` in `packages/rust/src/builtins/std.ts`), avoid relying on inferred/private descriptor shapes; this can trigger TS2742/API Extractor portability errors. Prefer explicit exported type aliases/interfaces for the export surface, then validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
 - In `packages/rust/src/components/stc/index.ts`, prefer explicit named component imports (alias if needed) and `stc(ComponentAlias)` for exported wrappers; avoid `import * as base` + `stc(base.X)`, which can trigger API Extractor `ae-forgotten-export` private type leakage.
 - `Parameters` rendering requires `RustFunctionScope`; when testing `Parameters`/`Stc.Parameters`, render within a `FunctionDeclaration` instead of at module/root scope to avoid `Can't create parameter symbol outside of a function scope.`
+- For enum/struct sibling rendering, always insert explicit `<hbr />` separators between repeated children (variants/fields) and between doc comments and declaration attributes; debug quickly with `pnpm --filter @alloy-js/rust exec vitest run test/enum.test.tsx test/struct.test.tsx`, then confirm with full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

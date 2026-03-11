@@ -163,6 +163,7 @@ docs/backlog/
 | [T080](tasks/T080-preflight-rust-validation-failure.md) | Preflight Rust validation failure in turbofish type args formatting | E008 | bug | P1 | — | open |
 | [T081](tasks/T081-preflight-turbofish-type-args-comma-line-break.md) | Pre-flight turbofish type-args comma line-break persistence | E008 | bug | P1 | T050, T080 | open |
 | [T082](tasks/T082-preflight-turbofish-type-args-regression-rerun.md) | Pre-flight turbofish type-args regression persisted on validation rerun | E008 | bug | P1 | T050, T081 | open |
+| [T083](tasks/T083-preflight-turbofish-fce-test-failure.md) | Pre-flight turbofish FunctionCallExpression test validation failure | E008 | bug | P1 | T050, T077 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |

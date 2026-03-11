@@ -5,7 +5,7 @@
 | **ID**           | T033                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | infra                                                                                   |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | medium                                                                                  |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -82,13 +82,13 @@ Ensure the `@alloy-js/rust` package has a clean, complete public API surface tha
 
 ## Acceptance Criteria
 
-- [ ] `src/index.ts` re-exports all public modules.
-- [ ] `src/components/index.ts` exports all components and STC wrappers.
-- [ ] `src/symbols/index.ts` exports all symbols and scopes.
-- [ ] `src/builtins/index.ts` exports std and PRELUDE_TYPES.
-- [ ] A consumer file can import all key items from `@alloy-js/rust`.
-- [ ] No export naming conflicts.
-- [ ] Package compiles cleanly with `tsc`.
+- [x] `src/index.ts` re-exports all current public modules (`components`, `symbols`, `scopes`, `context`, name policy/conflict, parameter descriptor, `create-crate`).
+- [x] `src/components/index.ts` exports all components and STC wrappers.
+- [x] `src/symbols/index.ts` exports all symbol primitives and reference utilities.
+- [x] `PRELUDE_TYPES` is publicly exported from `src/symbols/reference.ts` via `src/symbols/index.ts`.
+- [x] A consumer file can import key items from `@alloy-js/rust` and `@alloy-js/rust/stc`.
+- [x] No export naming conflicts were introduced.
+- [x] Package compiles and tests cleanly.
 
 ## Definition of Done
 

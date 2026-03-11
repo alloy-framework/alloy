@@ -40,7 +40,7 @@ export interface RustOutputSymbolOptions extends OutputSymbolOptions {
 }
 
 export class RustOutputSymbol extends OutputSymbol {
-  static readonly memberSpaces = ["members"] as const;
+  static readonly memberSpaces: readonly string[] = ["members"];
 
   #visibility: RustVisibility;
   get visibility() {

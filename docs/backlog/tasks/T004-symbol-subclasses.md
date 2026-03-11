@@ -5,7 +5,7 @@
 | **ID** | T004 |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | foundation |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical path |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -57,3 +57,8 @@ Provide specialized symbol classes for Rust's type declarations and functions.
 
 ## Definition of Done
 Symbol subclasses exist, compile, and are exported.
+
+## Completion Notes
+- Added `NamedTypeSymbol` and `FunctionSymbol` in `packages/rust/src/symbols/`.
+- Exported both from `packages/rust/src/symbols/index.ts`.
+- Added tests for creation, reactive updates, member spaces, and copy behavior in `packages/rust/test/symbol-subclasses.test.ts`.

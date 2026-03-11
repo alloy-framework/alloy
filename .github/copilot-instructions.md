@@ -17,6 +17,9 @@ This repository is built on alloy which use JSX to define components. This is NO
 
 Do not update changelogs, these are managed by `npx chronus`.
 
+## TypeScript/Symbol Patterns - Known Gotchas
+
+**Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

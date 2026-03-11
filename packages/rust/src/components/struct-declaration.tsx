@@ -9,6 +9,7 @@ import {
 } from "@alloy-js/core";
 import { RustImplScope, useRustScope } from "../scopes/index.js";
 import { createFieldSymbol, createStructSymbol } from "../symbols/factories.js";
+import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
 
 export interface StructDeclarationProps {
@@ -51,8 +52,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
     <>
       {props.doc ? (
         <>
-          {"/// "}
-          {props.doc}
+          <DocComment>{props.doc}</DocComment>
           <hbr />
         </>
       ) : null}
@@ -109,8 +109,7 @@ export function Field(props: FieldProps) {
     <CoreDeclaration symbol={fieldSymbol}>
       {props.doc ? (
         <>
-          {"/// "}
-          {props.doc}
+          <DocComment>{props.doc}</DocComment>
           <hbr />
         </>
       ) : null}

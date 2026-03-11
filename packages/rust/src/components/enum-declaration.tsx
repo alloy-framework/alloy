@@ -9,6 +9,7 @@ import {
 } from "@alloy-js/core";
 import { RustImplScope, useRustScope } from "../scopes/index.js";
 import { createEnumSymbol, createVariantSymbol } from "../symbols/factories.js";
+import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
 
 export interface EnumDeclarationProps {
@@ -48,8 +49,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
     <>
       {props.doc ? (
         <>
-          {"/// "}
-          {props.doc}
+          <DocComment>{props.doc}</DocComment>
           <hbr />
         </>
       ) : null}
@@ -96,8 +96,7 @@ export function EnumVariant(props: EnumVariantProps) {
     <CoreDeclaration symbol={variantSymbol}>
       {props.doc ? (
         <>
-          {"/// "}
-          {props.doc}
+          <DocComment>{props.doc}</DocComment>
           <hbr />
         </>
       ) : null}

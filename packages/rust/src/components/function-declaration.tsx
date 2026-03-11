@@ -9,6 +9,7 @@ import {
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { RustFunctionScope, useRustScope } from "../scopes/index.js";
 import { createFunctionSymbol } from "../symbols/factories.js";
+import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
 import { Parameters } from "./parameters.js";
 
@@ -26,18 +27,6 @@ export interface FunctionDeclarationProps {
   whereClause?: Children;
   doc?: string;
   children?: Children;
-}
-
-function DocComment(props: { doc: string }) {
-  const lines = props.doc.split("\n");
-
-  return lines.map((line) => (
-    <>
-      {"/// "}
-      {line}
-      <hbr />
-    </>
-  ));
 }
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
@@ -65,7 +54,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
 
   return (
     <>
-      {props.doc ? <DocComment doc={props.doc} /> : null}
+      {props.doc ? (
+        <>
+          <DocComment>{props.doc}</DocComment>
+          <hbr />
+        </>
+      ) : null}
       <CoreDeclaration symbol={functionSymbol}>
         {visibilityPrefix}
         {props.async ? "async " : ""}

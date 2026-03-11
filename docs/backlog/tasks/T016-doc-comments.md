@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components       |
 | **Deps**    | T001 (Package scaffold)                  |
 | **Blocks**  | —                                        |
-| **Status**  | Pending                                  |
+| **Status**  | done                                     |
 
 ## Description
 
@@ -96,12 +96,12 @@ Declaration components accept a `doc` string prop and render `DocComment` intern
 
 ## Acceptance Criteria
 
-- [ ] `DocComment` renders single line: `/// Hello`.
-- [ ] `DocComment` renders multi-line: `/// Line 1\n/// Line 2`.
-- [ ] `DocComment` renders nothing for empty/undefined children.
-- [ ] `ModuleDocComment` renders: `//! Module docs`.
-- [ ] `ModuleDocComment` renders multi-line: `//! Line 1\n//! Line 2`.
-- [ ] `ModuleDocComment` renders nothing for empty/undefined children.
+- [x] `DocComment` renders single line: `/// Hello`.
+- [x] `DocComment` renders multi-line: `/// Line 1\n/// Line 2`.
+- [x] `DocComment` renders nothing for empty/undefined children.
+- [x] `ModuleDocComment` renders: `//! Module docs`.
+- [x] `ModuleDocComment` renders multi-line: `//! Line 1\n//! Line 2`.
+- [x] `ModuleDocComment` renders nothing for empty/undefined children.
 
 ## Definition of Done
 

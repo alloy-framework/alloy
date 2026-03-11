@@ -2,6 +2,7 @@ export * from "./attribute.js";
 export * from "./crate-directory.js";
 export * from "./declaration.js";
 export * from "./const-declaration.js";
+export * from "./doc-comment.js";
 export * from "./reference.js";
 export * from "./source-file.js";
 export * from "./type-parameters.js";

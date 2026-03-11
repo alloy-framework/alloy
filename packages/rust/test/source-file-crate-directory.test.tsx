@@ -6,6 +6,7 @@ import { useCrateContext } from "../src/context/crate-context.js";
 import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { useRustModuleScope } from "../src/scopes/index.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
+import { ModuleDocComment } from "../src/components/doc-comment.js";
 import { SourceFile } from "../src/components/source-file.js";
 import { findFile } from "./utils.js";
 
@@ -52,6 +53,21 @@ describe("SourceFile", () => {
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`fn main() {}`);
+  });
+
+  it("renders module doc comments via headerComment", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs" headerComment={<ModuleDocComment>Crate docs</ModuleDocComment>}>
+            {code`fn main() {}`}
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      //! Crate docs
+      fn main() {}
+    `);
   });
 });
 

@@ -5,7 +5,7 @@
 | **ID**           | T022                                                                        |
 | **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
 | **Type**         | feature                                                                     |
-| **Status**       | pending                                                                     |
+| **Status**       | done                                                                        |
 | **Priority**     | high                                                                        |
 | **Owner**        | AI coding agent                                                             |
 | **AI Executable**| yes                                                                         |
@@ -68,11 +68,11 @@ Enable automatic import generation when referencing symbols across modules and c
 
 ## Acceptance Criteria
 
-- [ ] Reference to a symbol in the same module renders just the symbol name.
-- [ ] Reference to a symbol in a different module of the same crate triggers a `crate::mod::Symbol` use import.
-- [ ] Reference to a symbol in an external crate triggers the correct use import and registers a crate dependency.
-- [ ] Prelude types (`Option`, `Result`, `Vec`, etc.) do not generate use statements.
-- [ ] The use path is correctly built from `ResolutionResult.pathDown`.
+- [x] Reference to a symbol in the same module renders just the symbol name.
+- [x] Reference to a symbol in a different module of the same crate triggers a `crate::mod::Symbol` use import.
+- [x] Reference to a symbol in an external crate triggers the correct use import and registers a crate dependency.
+- [x] Prelude types (`Option`, `Result`, `Vec`, etc.) do not generate use statements.
+- [x] The use path is correctly built from `ResolutionResult.pathDown`.
 
 ## Definition of Done
 

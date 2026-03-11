@@ -111,7 +111,7 @@ docs/backlog/
 | [T019](tasks/T019-trait-declaration.md) | TraitDeclaration | E004 | feature | P0 | T006, T010, T013, T017 | pending |
 | [T020](tasks/T020-impl-block.md) | ImplBlock | E004 | feature | P0 | T006, T010, T013, T017, T019 | pending |
 | [T021](tasks/T021-self-receiver.md) | Self receiver in FunctionDeclaration | E004 | feature | P0 | T013, T020 | pending |
-| [T022](tasks/T022-reference-resolution.md) | Reference resolution + use tracking | E005 | feature | P0 | T005, T010 | pending |
+| [T022](tasks/T022-reference-resolution.md) | Reference resolution + use tracking | E005 | feature | P0 | T005, T010 | done |
 | [T023](tasks/T023-use-statements.md) | UseStatement + UseStatements | E005 | feature | P0 | T022 | pending |
 | [T024](tasks/T024-module-directory.md) | ModuleDirectory | E005 | feature | P0 | T009, T005 | pending |
 | [T025](tasks/T025-mod-declarations.md) | Auto mod declarations | E005 | feature | P0 | T009, T024 | pending |

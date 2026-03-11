@@ -1,22 +1,15 @@
-import {
-  Refkey,
-  computed,
-  emitSymbol,
-  resolve,
-  unresolvedRefkey,
-} from "@alloy-js/core";
-import { RustScopeBase } from "../scopes/rust-scope.js";
-import { RustOutputSymbol } from "../symbols/rust-output-symbol.js";
+import { Refkey, computed, emitSymbol } from "@alloy-js/core";
+import { ref } from "../symbols/reference.js";
 
 export interface ReferenceProps {
   refkey: Refkey;
 }
 
 export function Reference(props: ReferenceProps) {
-  const result = resolve<RustScopeBase, RustOutputSymbol>(props.refkey);
-  const symbolRef = computed(() => result.value?.symbol);
+  const result = ref(props.refkey);
+  const symbolRef = computed(() => result()[1]);
 
   emitSymbol(symbolRef);
 
-  return <>{result.value?.symbol.name ?? unresolvedRefkey(props.refkey)}</>;
+  return <>{result()[0]}</>;
 }

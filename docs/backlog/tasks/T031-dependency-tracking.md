@@ -5,7 +5,7 @@
 | **ID**           | T031                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | high                                                                                    |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -64,18 +64,25 @@ Ensure that referencing any symbol from an external crate automatically adds tha
 
 ## Acceptance Criteria
 
-- [ ] `RustCrateScope.dependencies` tracks registered dependencies.
-- [ ] `addDependency()` correctly adds a crate dependency.
-- [ ] Reference to external crate symbol auto-registers dependency.
-- [ ] Duplicate references to same crate produce single dependency entry.
-- [ ] `CargoTomlFile` renders auto-tracked dependencies.
-- [ ] End-to-end: reference `serde::Serialize` → `Cargo.toml` includes `serde = "1.0"`.
+- [x] `RustCrateScope.dependencies` tracks registered dependencies.
+- [x] `addDependency()` correctly adds a crate dependency.
+- [x] Reference to external crate symbol auto-registers dependency.
+- [x] Duplicate references to same crate produce single dependency entry.
+- [x] `CargoTomlFile` renders auto-tracked dependencies.
+- [x] End-to-end: reference `serde::Serialize` → `Cargo.toml` includes `serde = "1.0"`.
 
 ## Definition of Done
 
 - `RustCrateScope` has `dependencies` and `addDependency()`.
 - Reference resolution calls `addDependency()` for external crates.
 - `test/dependency-tracking.test.tsx` passes with all acceptance criteria covered.
+
+## Implementation Evidence
+
+- `packages/rust/src/scopes/rust-crate-scope.ts`
+- `packages/rust/src/symbols/reference.ts`
+- `packages/rust/test/reference.test.tsx`
+- `packages/rust/test/create-crate.test.tsx`
 
 ## Validation
 

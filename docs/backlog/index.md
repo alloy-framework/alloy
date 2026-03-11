@@ -120,7 +120,7 @@ docs/backlog/
 | [T028](tasks/T028-create-crate.md) | createCrate() factory | E006 | feature | P0 | T003, T005, T006 | done |
 | [T029](tasks/T029-std-builtins.md) | std builtin descriptors | E006 | feature | P1 | T028 | blocked |
 | [T030](tasks/T030-cargo-toml.md) | CargoTomlFile component | E006 | feature | P0 | T009, T031 | pending |
-| [T031](tasks/T031-dependency-tracking.md) | External crate dependency tracking | E006 | feature | P0 | T005, T022, T028 | pending |
+| [T031](tasks/T031-dependency-tracking.md) | External crate dependency tracking | E006 | feature | P0 | T005, T022, T028 | done |
 | [T032](tasks/T032-stc-wrappers.md) | STC wrappers | E006 | feature | P2 | T011–T021 | pending |
 | [T033](tasks/T033-barrel-exports.md) | Barrel exports verification | E006 | infra | P1 | T032 | pending |
 | [T034](tasks/T034-golden-scenarios.md) | Golden scenario tests | E006 | test | P0 | T026–T027, T030–T031 | pending |

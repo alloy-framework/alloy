@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components         |
 | **Deps**    | T005 (Scope hierarchy), T007 (Name policy) |
 | **Blocks**  | T010, T022                                 |
-| **Status**  | Pending                                    |
+| **Status**  | Done                                       |
 
 ## Description
 
@@ -104,13 +104,13 @@ function SourceFile(props: SourceFileProps) {
 
 ## Acceptance Criteria
 
-- [ ] `SourceFile` renders a `.rs` file with `filetype="rust"`.
-- [ ] `SourceFile` creates a `RustModuleScope` for its children.
-- [ ] `CrateDirectory` creates a `RustCrateScope`.
-- [ ] `CrateDirectory` provides `CrateContext` to descendants.
-- [ ] `CrateContext` exposes crate name, version, edition, and scope.
-- [ ] `test/utils.tsx` updated to use the real components.
-- [ ] Stub locations for `use` statements and `mod` declarations are present.
+- [x] `SourceFile` renders a `.rs` file with `filetype="rust"`.
+- [x] `SourceFile` creates a `RustModuleScope` for its children.
+- [x] `CrateDirectory` creates a `RustCrateScope`.
+- [x] `CrateDirectory` provides `CrateContext` to descendants.
+- [x] `CrateContext` exposes crate name, version, edition, and scope.
+- [x] `test/utils.tsx` updated to use the real components.
+- [x] Stub locations for `use` statements and `mod` declarations are present.
 
 ## Definition of Done
 
@@ -125,3 +125,9 @@ function SourceFile(props: SourceFileProps) {
 cd packages/rust
 pnpm build && pnpm test
 ```
+
+## Implementation Notes / Learnings
+
+- `SourceFile` now wraps `@alloy-js/core` `SourceFile`, sets `filetype="rust"`, and creates a `RustModuleScope` keyed by file path with crate/module parent scope support (`packages/rust/src/components/source-file.tsx`).
+- `CrateDirectory` creates a `RustCrateScope`, defaults crate edition to `"2021"` when omitted, and provides `CrateContext` metadata (`packages/rust/src/components/crate-directory.tsx`, `packages/rust/src/context/crate-context.tsx`).
+- `test/utils.tsx` uses real `CrateDirectory` + `SourceFile` wrappers, and focused coverage in `test/source-file-crate-directory.test.tsx` verifies scope/context behavior, rust filetype, and output-neutral placeholder blocks.

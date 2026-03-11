@@ -5,11 +5,12 @@ import {
   OutputDirectory,
   OutputFile,
   PrintTreeOptions,
-  SourceFile,
   render,
 } from "@alloy-js/core";
 import { dedent } from "@alloy-js/core/testing";
 import { expect } from "vitest";
+import { CrateDirectory } from "../src/components/crate-directory.js";
+import { SourceFile } from "../src/components/source-file.js";
 
 /**
  * Renders a single Rust source file for testing.
@@ -35,9 +36,9 @@ export function toSourceText(
 ): string {
   const res = render(
     <Output>
-      <SourceFile path="test.rs" filetype="rust">
-        {c}
-      </SourceFile>
+      <CrateDirectory name="test_crate">
+        <SourceFile path="test.rs">{c}</SourceFile>
+      </CrateDirectory>
     </Output>,
     { insertFinalNewLine: false, ...options },
   );
@@ -67,7 +68,7 @@ export function toSourceText(
 export function toSourceTextMultiple(children: Children[]): OutputDirectory {
   return render(
     <Output>
-      {children}
+      <CrateDirectory name="test_crate">{children}</CrateDirectory>
     </Output>,
   );
 }

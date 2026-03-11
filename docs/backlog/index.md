@@ -149,6 +149,7 @@ docs/backlog/
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | done |
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | blocked |
 | [T068](tasks/T068-function-call-turbofish-wrap.md) | FunctionCallExpression turbofish + wrap formatting | E008 | bug | P2 | T050 | open |
+| [T069](tasks/T069-function-call-expression-turbofish-regression.md) | FunctionCallExpression turbofish line-wrap regression | E008 | bug | P2 | T050 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -240,6 +241,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T044** | FunctionDeclaration default receiver | P2 | ✓ Completed — no code changes required; behavior already implemented and tested |
 | **T045** | ModDeclarations render order | P2 | ✓ Completed — `ModDeclarations` now reactively re-renders as child modules are registered |
 | **T068** | FunctionCallExpression turbofish wrap stability | P2 | Pre-flight validation fails on turbofish + multi-arg call formatting snapshot |
+| **T069** | FunctionCallExpression turbofish line-wrap regression | P2 | New pre-flight failure: turbofish type list wraps at comma (`f::<String,\n u32>(...)`) |
 
 ---
 
@@ -348,7 +350,7 @@ These P0 tasks are on the critical path and should be prioritized:
 - [P05: External Deps & Build](phases/P05-external-deps-build.md)
 - [P06: Polish](phases/P06-polish.md)
 - P07: Bug Fixes (T039–T045)
-- P08: Expressions & Language Gaps (T046–T068)
+- P08: Expressions & Language Gaps (T046–T069)
 
 ### Agent Guidance
 - [AI Agent Execution Rules](agents/execution-rules.md)

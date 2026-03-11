@@ -152,13 +152,33 @@ describe("EnumVariant", () => {
     `);
   });
 
+  it("renders tuple variant from children when kind is tuple", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Message">
+              <EnumVariant name="Text" kind="tuple">
+                {"String"}
+              </EnumVariant>
+            </EnumDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      enum Message {
+        Text(String),
+      }
+    `);
+  });
+
   it("renders struct variant with fields", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
             <EnumDeclaration name="Message">
-              <EnumVariant name="Data">
+              <EnumVariant name="Data" kind="struct">
                 {"id: u64,"}
                 {"payload: String,"}
               </EnumVariant>
@@ -202,8 +222,8 @@ describe("EnumVariant", () => {
           <SourceFile path="lib.rs">
             <EnumDeclaration name="Event" pub={true}>
               <EnumVariant name="Ready" />
-              <EnumVariant name="Data" fields={["String"]} />
-              <EnumVariant name="Error">
+              <EnumVariant name="Data" kind="tuple" fields={["String"]} />
+              <EnumVariant name="Error" kind="struct">
                 {"code: u32,"}
                 {"message: String,"}
               </EnumVariant>

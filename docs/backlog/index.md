@@ -139,7 +139,7 @@ docs/backlog/
 | [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E007 | bug | P0 | T010, T022 | done |
 | [T040](tasks/T040-missing-newlines-between-items.md) | Missing newlines between sibling items | E007 | bug | P0 | T011, T012 | done |
 | [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E007 | bug | P1 | T013, T019 | done |
-| [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E007 | bug | P1 | T012 | open |
+| [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E007 | bug | P1 | T012 | done |
 | [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E007 | bug | P1 | T009, T025 | open |
 | [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E007 | improvement | P2 | T013, T021 | open |
 | [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E007 | improvement | P2 | T025, T009 | open |

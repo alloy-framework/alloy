@@ -5,7 +5,7 @@
 | **ID** | T042 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -58,10 +58,20 @@ The `EnumVariantProps` interface has both `fields?: Children[]` and `children?: 
 
 ## Acceptance Criteria
 
-- [ ] Tuple variants render as `VariantName(Type1, Type2)`
-- [ ] Struct variants render as `VariantName { field_name: Type }`
-- [ ] Unit variants continue to render as `VariantName`
-- [ ] Clear API to distinguish tuple vs struct variants
+- [x] Tuple variants render as `VariantName(Type1, Type2)`
+- [x] Struct variants render as `VariantName { field_name: Type }`
+- [x] Unit variants continue to render as `VariantName`
+- [x] Clear API to distinguish tuple vs struct variants
+
+---
+
+## Completion Notes
+
+- Added `kind?: "unit" | "tuple" | "struct"` to `EnumVariantProps` so callers can explicitly choose tuple vs struct rendering.
+- Kept backward-compatible inference:
+  - `fields` still renders tuple variants.
+  - `children` still renders struct variants when `kind` is omitted.
+- Added test coverage for tuple rendering from `children` when `kind="tuple"` and updated mixed-variant tests to use explicit `kind` values for API clarity.
 
 ---
 

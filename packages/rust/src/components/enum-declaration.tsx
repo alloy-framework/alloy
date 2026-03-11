@@ -28,6 +28,7 @@ export interface EnumVariantProps {
   name: string;
   refkey?: Refkey;
   doc?: string;
+  kind?: "unit" | "tuple" | "struct";
   fields?: Children[];
   children?: Children;
 }
@@ -100,12 +101,19 @@ export function EnumVariant(props: EnumVariantProps) {
     refkeys: props.refkey ? [props.refkey] : [],
   });
 
+  const tupleFields = (props.fields ?? []).filter(
+    (field) => !(typeof field === "string" && field.trim().length === 0),
+  );
   const members =
     props.children ?
       (Array.isArray(props.children) ? props.children : [props.children]).filter(
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
+  const variantKind =
+    props.kind ??
+    (tupleFields.length > 0 ? "tuple" : members.length > 0 ? "struct" : "unit");
+  const tupleValues = tupleFields.length > 0 ? tupleFields : members;
 
   return (
     <CoreDeclaration symbol={variantSymbol}>
@@ -116,13 +124,13 @@ export function EnumVariant(props: EnumVariantProps) {
         </>
       ) : null}
       {variantSymbol.name}
-      {props.fields && props.fields.length > 0 ? (
+      {variantKind === "tuple" && tupleValues.length > 0 ? (
         <>
           {"("}
-          <For each={props.fields} joiner={", "}>{(field) => field}</For>
+          <For each={tupleValues} joiner={", "}>{(field) => field}</For>
           {"),"}
         </>
-      ) : members.length > 0 ? (
+      ) : variantKind === "struct" ? (
         <>
           {" {"}
           <Indent>

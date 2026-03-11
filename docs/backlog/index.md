@@ -167,12 +167,10 @@ These tasks have **no dependencies** and can start immediately:
 |---|---|---|
 | **T001** | Package scaffold | P01 |
 
-These tasks depend **only on T001** and can start as soon as T001 completes:
+These pending tasks depend **only on T001** and are ready once T001 is complete:
 
 | ID | Title | Phase |
 |---|---|---|
-| T002 | Test infrastructure | P01 |
-| T003 | RustOutputSymbol base class | P01 |
 | T007 | Name policy | P01 |
 | T008 | Parameter descriptor | P01 |
 | T016 | DocComment | P02 |

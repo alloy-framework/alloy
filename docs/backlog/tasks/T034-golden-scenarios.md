@@ -5,7 +5,7 @@
 | **ID**           | T034                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | test                                                                                    |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | high                                                                                    |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |

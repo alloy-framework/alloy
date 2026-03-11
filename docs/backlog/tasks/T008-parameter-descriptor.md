@@ -5,7 +5,7 @@
 | **ID** | T008 |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | foundation |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P1 |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -52,3 +52,9 @@ Export both from `src/index.ts`.
 
 ## Definition of Done
 Parameter descriptor and scope hooks exist, compile, and are exported.
+
+## Completion Notes
+- Added `packages/rust/src/parameter-descriptor.ts` with `ParameterDescriptor` containing only `name`, `type`, `mutable`, and `refType`.
+- Implemented `isParameterDescriptor(value)` with object/name checks and `Namekey` support via `isNamekey()`.
+- Exported the descriptor from `packages/rust/src/index.ts`.
+- Added `packages/rust/test/parameter-descriptor.test.ts` with positive/negative guard coverage and practical descriptor usage expectations.

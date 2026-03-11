@@ -5,7 +5,7 @@
 | **ID**           | T032                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | medium                                                                                  |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -73,11 +73,11 @@ Provide a complete STC API surface for the Rust package, enabling programmatic t
 
 ## Acceptance Criteria
 
-- [ ] All listed components have STC wrappers.
-- [ ] STC wrappers produce identical output to JSX equivalents.
-- [ ] Wrappers are exported from `src/components/stc/index.ts`.
-- [ ] Wrappers are re-exported from package entry point.
-- [ ] Basic test verifies at least 3 STC wrappers work correctly.
+- [x] All listed components have STC wrappers.
+- [x] STC wrappers produce identical output to JSX equivalents.
+- [x] Wrappers are exported from `src/components/stc/index.ts`.
+- [x] Wrappers are re-exported from package entry point.
+- [x] Basic test verifies at least 3 STC wrappers work correctly.
 
 ## Definition of Done
 

@@ -18,3 +18,4 @@ export * from "./impl-block.js";
 export * from "./module-directory.js";
 export * from "./mod-declarations.js";
 export * from "./value.js";
+export * as stc from "./stc/index.js";

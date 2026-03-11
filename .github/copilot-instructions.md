@@ -29,6 +29,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - For `ModuleDirectory`, derive the module name from the last `path` segment before calling `addChildModule`, so nested paths register the correct child module.
 - For exported Rust APIs, avoid exposing private helper types through symbol-keyed fields on exported interfaces; API Extractor treats them as public and fails build with `ae-forgotten-export`.
 - For public builtins exports (for example `export const std = createCrate(...)` in `packages/rust/src/builtins/std.ts`), avoid relying on inferred/private descriptor shapes; this can trigger TS2742/API Extractor portability errors. Prefer explicit exported type aliases/interfaces for the export surface, then validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+- In `packages/rust/src/components/stc/index.ts`, prefer explicit named component imports (alias if needed) and `stc(ComponentAlias)` for exported wrappers; avoid `import * as base` + `stc(base.X)`, which can trigger API Extractor `ae-forgotten-export` private type leakage.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

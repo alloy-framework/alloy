@@ -19,6 +19,8 @@ import {
   Parameters,
   Reference,
   SourceFile,
+  StructExpression,
+  FieldInit as FieldInitializer,
   StructDeclaration,
   TraitDeclaration,
   TypeAlias,
@@ -322,5 +324,29 @@ describe("STC wrappers", () => {
   it("Value wrapper matches JSX output", () => {
     expect(<Value value={[1, "a"]} />).toRenderTo(d`vec![1, "a"]`);
     expect(Stc.Value({ value: [1, "a"] })).toRenderTo(d`vec![1, "a"]`);
+  });
+
+  it("StructExpression and FieldInit wrappers match JSX output", () => {
+    expect(
+      <StructExpression type="Self" spread="self">
+        <FieldInitializer name="max_capacity">capacity</FieldInitializer>
+      </StructExpression>,
+    ).toRenderTo(d`
+      Self {
+        max_capacity: capacity,
+        ..self
+      }
+    `);
+
+    expect(
+      Stc.StructExpression({ type: "Self", spread: "self" }).children([
+        Stc.FieldInit({ name: "max_capacity" }).children(["capacity"]),
+      ]),
+    ).toRenderTo(d`
+      Self {
+        max_capacity: capacity,
+        ..self
+      }
+    `);
   });
 });

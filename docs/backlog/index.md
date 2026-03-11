@@ -143,7 +143,7 @@ docs/backlog/
 | [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E007 | bug | P1 | T009, T025 | done |
 | [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E007 | improvement | P2 | T013, T021 | open |
 | [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E007 | improvement | P2 | T025, T009 | open |
-| [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E008 | feature | P1 | T009 | open |
+| [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E008 | feature | P1 | T009 | done |
 | [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | open |
 | [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | open |
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | open |

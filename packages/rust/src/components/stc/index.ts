@@ -14,6 +14,10 @@ import { ModuleDirectory as ModuleDirectoryComponent } from "../module-directory
 import { Parameters as ParametersComponent } from "../parameters.js";
 import { Reference as ReferenceComponent } from "../reference.js";
 import { SourceFile as SourceFileComponent } from "../source-file.js";
+import {
+  FieldInit as FieldInitComponent,
+  StructExpression as StructExpressionComponent,
+} from "../struct-expression.js";
 import { Field as FieldComponent, StructDeclaration as StructDeclarationComponent } from "../struct-declaration.js";
 import { TraitDeclaration as TraitDeclarationComponent } from "../trait-declaration.js";
 import { TypeAlias as TypeAliasComponent } from "../type-alias.js";
@@ -36,6 +40,8 @@ export const ModuleDocComment = stc(ModuleDocCommentComponent);
 export const Parameters = stc(ParametersComponent);
 export const Reference = stc(ReferenceComponent);
 export const SourceFile = stc(SourceFileComponent);
+export const StructExpression = stc(StructExpressionComponent);
+export const FieldInit = stc(FieldInitComponent);
 export const StructDeclaration = stc(StructDeclarationComponent);
 export const TraitDeclaration = stc(TraitDeclarationComponent);
 export const TypeAlias = stc(TypeAliasComponent);

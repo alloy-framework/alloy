@@ -5,7 +5,7 @@
 | **ID** | T046 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -113,12 +113,20 @@ TypeScript package has `ObjectExpression` + `ObjectProperty` (at `packages/types
 
 ## Acceptance Criteria
 
-- [ ] `<StructExpression type="Self">` renders `Self { ... }`
-- [ ] `<FieldInit name="x">{value}</FieldInit>` renders `x: value`
-- [ ] `<FieldInit name="x" />` renders shorthand `x`
-- [ ] `spread` prop renders `..source` after all fields
-- [ ] Fields separated by commas with proper formatting
-- [ ] STC wrappers exported
+- [x] `<StructExpression type="Self">` renders `Self { ... }`
+- [x] `<FieldInit name="x">{value}</FieldInit>` renders `x: value`
+- [x] `<FieldInit name="x" />` renders shorthand `x`
+- [x] `spread` prop renders `..source` after all fields
+- [x] Fields separated by commas with proper formatting
+- [x] STC wrappers exported
+
+---
+
+## Completion Notes
+
+- Added `StructExpression` and `FieldInit` components in `packages/rust/src/components/struct-expression.tsx`.
+- Added `StructExpression`/`FieldInit` STC exports in `packages/rust/src/components/stc/index.ts`.
+- Added unit coverage in `packages/rust/test/struct-expression.test.tsx` and STC parity coverage in `packages/rust/test/stc.test.tsx`.
 
 ---
 

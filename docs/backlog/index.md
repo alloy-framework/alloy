@@ -128,6 +128,21 @@ docs/backlog/
 | [T036](tasks/T036-builtin-crate-support.md) | Builtin crate support in createCrate/ref | E006 | feature | P0 | T028 | done |
 | [T037](tasks/T037-complete-stc-wrappers.md) | Complete STC wrappers | E006 | feature | P2 | T032 | done |
 | [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | done |
+| [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E006 | bug | P0 | T010, T022 | open |
+| [T040](tasks/T040-missing-newlines-between-items.md) | Missing newlines between sibling items | E006 | bug | P0 | T011, T012 | open |
+| [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E006 | bug | P1 | T013, T019 | open |
+| [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E006 | bug | P1 | T012 | open |
+| [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E006 | bug | P1 | T009, T025 | open |
+| [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E006 | improvement | P2 | T013, T021 | open |
+| [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E006 | improvement | P2 | T025, T009 | open |
+| [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E006 | feature | P1 | T009 | open |
+| [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E006 | feature | P1 | T009 | open |
+| [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E006 | feature | P1 | T009 | open |
+| [T049](tasks/T049-let-binding.md) | LetBinding | E006 | feature | P2 | T009 | open |
+| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E006 | feature | P2 | T009 | open |
+| [T051](tasks/T051-closure-expression.md) | ClosureExpression | E006 | feature | P2 | T009 | open |
+| [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E006 | feature | P3 | T009 | open |
+| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E006 | test | P2 | T039–T052 | open |
 
 ---
 
@@ -185,6 +200,56 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 | ID | Title | Reason |
 |---|---|---|
 | T029 | std builtin descriptors | Repeated build validation failures on exported `std` typing portability (TS2742/API Extractor). |
+
+---
+
+## Open Bug Fixes (Post-MVP)
+
+These bugs were discovered during integration testing with `samples/rust-example/`:
+
+| ID | Title | Priority | Impact |
+|---|---|---|---|
+| **T039** | Reference scope traversal | P0 | Reference unusable in fields, params, return types |
+| **T040** | Missing newlines between items | P0 | All generated enum/struct output lacks line breaks |
+| **T041** | Trait abstract method signatures | P1 | Trait methods render `{}` instead of `;` |
+| **T042** | Enum tuple variant support | P1 | Tuple variants render as struct variants |
+| **T043** | Standalone SourceFile module registration | P1 | Single-file modules missing from mod declarations |
+| **T044** | FunctionDeclaration default receiver | P2 | Constructors need verbose `receiver="none"` |
+| **T045** | ModDeclarations render order | P2 | lib.rs must be last child in JSX tree |
+
+---
+
+## Open Feature Requests — Expression & Statement Components
+
+These components were identified by analyzing raw `code` template usage in `samples/rust-example/`. TypeScript and C# packages already provide equivalent components.
+
+### Tier 1 — High Impact (eliminates ~12/24 raw code instances)
+
+| ID | Title | Priority | Covers |
+|---|---|---|---|
+| **T046** | StructExpression + FieldInit | P1 | Self/struct literals (8 instances) |
+| **T047** | MatchExpression + MatchArm | P1 | Pattern matching (2 instances, core Rust) |
+| **T048** | IfExpression + ElseIfClause + ElseClause | P1 | If-expressions, if-let (2 instances) |
+
+### Tier 2 — Medium Impact
+
+| ID | Title | Priority | Covers |
+|---|---|---|---|
+| **T049** | LetBinding | P2 | Variable declarations (2 instances) |
+| **T050** | FunctionCallExpression | P2 | Method/function calls (4 instances) |
+| **T051** | ClosureExpression | P2 | Closure expressions (1 instance) |
+
+### Tier 3 — Nice to Have
+
+| ID | Title | Priority | Covers |
+|---|---|---|---|
+| **T052** | ReturnExpression + MacroCall | P3 | Returns, macros (3 instances) |
+
+### Integration
+
+| ID | Title | Priority | Deps |
+|---|---|---|---|
+| **T053** | Update rust-example sample | P2 | All bug fixes (T039–T045) + all expression components (T046–T052) |
 
 ---
 

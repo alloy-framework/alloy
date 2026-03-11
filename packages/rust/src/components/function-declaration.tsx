@@ -7,8 +7,8 @@ import {
   createScope,
 } from "@alloy-js/core";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
-import { RustFunctionScope, useRustScope } from "../scopes/index.js";
-import { createFunctionSymbol } from "../symbols/factories.js";
+import { RustFunctionScope, RustImplScope, RustTraitScope, useRustScope } from "../scopes/index.js";
+import { createFunctionSymbol, createMethodSymbol } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
 import { Parameters } from "./parameters.js";
@@ -31,9 +31,14 @@ export interface FunctionDeclarationProps {
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const parentScope = useRustScope();
-  const functionSymbol = createFunctionSymbol(props.name, {
-    refkeys: props.refkey ? [props.refkey] : [],
-  });
+  const functionSymbol =
+    parentScope instanceof RustImplScope || parentScope instanceof RustTraitScope ?
+      createMethodSymbol(props.name, {
+        refkeys: props.refkey ? [props.refkey] : [],
+      })
+    : createFunctionSymbol(props.name, {
+        refkeys: props.refkey ? [props.refkey] : [],
+      });
   const functionScope = createScope(RustFunctionScope, functionSymbol.name, parentScope, {
     ownerSymbol: functionSymbol,
     binder: parentScope.binder,

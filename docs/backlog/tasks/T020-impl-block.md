@@ -5,7 +5,7 @@
 | **ID**           | T020                                                                  |
 | **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
 | **Type**         | feature                                                               |
-| **Status**       | pending                                                               |
+| **Status**       | done                                                                  |
 | **Priority**     | high                                                                  |
 | **Owner**        | AI coding agent                                                       |
 | **AI Executable**| yes                                                                   |
@@ -75,13 +75,13 @@ Enable generation of both inherent and trait impl blocks, with methods correctly
 
 ## Acceptance Criteria
 
-- [ ] `ImplBlock` renders an inherent impl with methods.
-- [ ] `ImplBlock` renders a trait impl with methods.
-- [ ] `ImplBlock` renders with type parameters.
-- [ ] `ImplBlock` renders with a where clause.
-- [ ] Methods inside impl block are added to target type's member space.
-- [ ] `props.type` works with both `Refkey` and inline `Children`.
-- [ ] `props.trait` works with both `Refkey` and inline `Children`.
+- [x] `ImplBlock` renders an inherent impl with methods.
+- [x] `ImplBlock` renders a trait impl with methods.
+- [x] `ImplBlock` renders with type parameters.
+- [x] `ImplBlock` renders with a where clause.
+- [x] Methods inside impl block are added to target type's member space.
+- [x] `props.type` works with both `Refkey` and inline `Children`.
+- [x] `props.trait` works with both `Refkey` and inline `Children`.
 
 ## Definition of Done
 

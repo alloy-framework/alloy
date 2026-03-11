@@ -12,3 +12,4 @@ export * from "./enum-declaration.js";
 export * from "./function-declaration.js";
 export * from "./parameters.js";
 export * from "./trait-declaration.js";
+export * from "./impl-block.js";

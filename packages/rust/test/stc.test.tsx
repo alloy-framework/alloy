@@ -4,6 +4,7 @@ import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
   Attribute,
+  CargoTomlFile,
   ConstDeclaration,
   CrateDirectory,
   DeriveAttribute,
@@ -13,10 +14,16 @@ import {
   Field,
   FunctionDeclaration,
   ImplBlock,
+  ModuleDirectory,
+  ModuleDocComment,
+  Parameters,
+  Reference,
   SourceFile,
   StructDeclaration,
   TraitDeclaration,
   TypeAlias,
+  TypeParameters,
+  Value,
 } from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
@@ -179,5 +186,141 @@ describe("STC wrappers", () => {
   it("DocComment wrapper supports .children and matches JSX output", () => {
     expect(inFile(<DocComment>Hello</DocComment>)).toRenderTo(d`/// Hello`);
     expect(inFile(Stc.DocComment().children(["Hello"]))).toRenderTo(d`/// Hello`);
+  });
+
+  it("ModuleDocComment wrapper supports .children and matches JSX output", () => {
+    expect(inFile(<ModuleDocComment>Hello module</ModuleDocComment>)).toRenderTo(d`//! Hello module`);
+    expect(inFile(Stc.ModuleDocComment().children(["Hello module"]))).toRenderTo(d`//! Hello module`);
+  });
+
+  it("CrateDirectory + ModuleDirectory + SourceFile wrappers match JSX output", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="net">
+            <SourceFile path="client.rs">{"fn client() {}"}</SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`fn client() {}`);
+
+    expect(
+      <Output>
+        {Stc.CrateDirectory({ name: "my_crate" }).children([
+          Stc.ModuleDirectory({ path: "net" }).children([
+            Stc.SourceFile({ path: "client.rs" }).children(["fn client() {}"]),
+          ]),
+        ])}
+      </Output>,
+    ).toRenderTo(d`fn client() {}`);
+  });
+
+  it("CargoTomlFile wrapper matches JSX output", () => {
+    expect(
+      <Output>
+        <CargoTomlFile
+          name="my_crate"
+          dependencies={{
+            serde: "1.0",
+          }}
+        />
+      </Output>,
+    ).toRenderTo(d`
+      [package]
+      name = "my_crate"
+      version = "0.1.0"
+      edition = "2021"
+
+      [dependencies]
+      serde = "1.0"
+    `);
+
+    expect(
+      <Output>
+        {Stc.CargoTomlFile({
+          name: "my_crate",
+          dependencies: {
+            serde: "1.0",
+          },
+        })}
+      </Output>,
+    ).toRenderTo(d`
+      [package]
+      name = "my_crate"
+      version = "0.1.0"
+      edition = "2021"
+
+      [dependencies]
+      serde = "1.0"
+    `);
+  });
+
+  it("Reference wrapper matches JSX output", () => {
+    const userRef = refkey("user");
+
+    expect(
+      inFile(
+        <>
+          <StructDeclaration name="User" refkey={userRef} />
+          <hbr />
+          <TypeAlias name="UserAlias">
+            <Reference refkey={userRef} />
+          </TypeAlias>
+        </>,
+      ),
+    ).toRenderTo(d`
+      struct User {}
+      type UserAlias = User;
+    `);
+
+    expect(
+      inFile(
+        <>
+          <StructDeclaration name="User" refkey={userRef} />
+          <hbr />
+          {Stc.TypeAlias({ name: "UserAlias" }).children([Stc.Reference({ refkey: userRef })])}
+        </>,
+      ),
+    ).toRenderTo(d`
+      struct User {}
+      type UserAlias = User;
+    `);
+  });
+
+  it("Parameters and TypeParameters wrappers match JSX output", () => {
+    expect(
+      inFile(
+        <FunctionDeclaration name="render_params">
+          <Parameters parameters={[{ name: "value", type: "i32" }]} />
+        </FunctionDeclaration>,
+      ),
+    ).toRenderTo(d`
+      fn render_params() {
+        (value: i32)
+      }
+    `);
+    expect(
+      inFile(
+        Stc.FunctionDeclaration({ name: "render_params" }).children([
+          Stc.Parameters({ parameters: [{ name: "value", type: "i32" }] }),
+        ]),
+      ),
+    ).toRenderTo(d`
+      fn render_params() {
+        (value: i32)
+      }
+    `);
+
+    expect(inFile(<TypeParameters params={[{ name: "T", constraint: "Clone" }]} />)).toRenderTo(
+      d`<T: Clone>`,
+    );
+    expect(inFile(Stc.TypeParameters({ params: [{ name: "T", constraint: "Clone" }] }))).toRenderTo(
+      d`<T: Clone>`,
+    );
+  });
+
+  it("Value wrapper matches JSX output", () => {
+    expect(<Value value={[1, "a"]} />).toRenderTo(d`vec![1, "a"]`);
+    expect(Stc.Value({ value: [1, "a"] })).toRenderTo(d`vec![1, "a"]`);
   });
 });

@@ -283,7 +283,27 @@ describe("FunctionDeclaration", () => {
       </Output>,
     ).toRenderTo(d`
       trait Runner {
-        fn run(&self) {}
+        fn run(&self);
+      }
+    `);
+  });
+
+  it("renders default implementations for trait methods with bodies", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration name="Runner">
+              <FunctionDeclaration name="run">{"println!(\"default\");"}</FunctionDeclaration>
+            </TraitDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      trait Runner {
+        fn run(&self) {
+          println!("default");
+        }
       }
     `);
   });

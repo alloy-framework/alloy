@@ -333,7 +333,7 @@ describe("Rust reference nested scope traversal", () => {
     expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
       use crate::models::User;
       trait UserMapper {
-        fn map_user(user: User) -> User {}
+        fn map_user(user: User) -> User;
       }
     `.trim());
   });

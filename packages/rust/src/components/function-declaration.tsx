@@ -106,7 +106,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
               <hbr />
               {"}"}
             </>
-          ) : " {}"}
+          ) : parentScope instanceof RustTraitScope ? ";" : " {}"}
         </Scope>
       </CoreDeclaration>
     </>

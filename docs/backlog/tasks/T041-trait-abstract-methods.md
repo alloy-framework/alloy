@@ -5,7 +5,7 @@
 | **ID** | T041 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -55,10 +55,10 @@ In Rust, trait method signatures without default implementations must end with `
 
 ## Acceptance Criteria
 
-- [ ] Self-closing `<FunctionDeclaration />` inside `<TraitDeclaration>` renders `fn name();`
-- [ ] `<FunctionDeclaration>body</FunctionDeclaration>` inside `<TraitDeclaration>` renders `fn name() { body }` (default impl)
-- [ ] Functions outside traits with no children continue to render `fn name() {}`
-- [ ] Existing trait tests updated
+- [x] Self-closing `<FunctionDeclaration />` inside `<TraitDeclaration>` renders `fn name();`
+- [x] `<FunctionDeclaration>body</FunctionDeclaration>` inside `<TraitDeclaration>` renders `fn name() { body }` (default impl)
+- [x] Functions outside traits with no children continue to render `fn name() {}`
+- [x] Existing trait tests updated
 
 ---
 

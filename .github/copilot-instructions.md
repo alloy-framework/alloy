@@ -32,6 +32,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - In `packages/rust/src/components/stc/index.ts`, prefer explicit named component imports (alias if needed) and `stc(ComponentAlias)` for exported wrappers; avoid `import * as base` + `stc(base.X)`, which can trigger API Extractor `ae-forgotten-export` private type leakage.
 - `Parameters` rendering requires `RustFunctionScope`; when testing `Parameters`/`Stc.Parameters`, render within a `FunctionDeclaration` instead of at module/root scope to avoid `Can't create parameter symbol outside of a function scope.`
 - For enum/struct sibling rendering, always insert explicit `<hbr />` separators between repeated children (variants/fields) and between doc comments and declaration attributes; debug quickly with `pnpm --filter @alloy-js/rust exec vitest run test/enum.test.tsx test/struct.test.tsx`, then confirm with full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+- In `TraitDeclaration`, a self-closing `FunctionDeclaration` is an abstract signature and must render with `;` (not `{}`); a trait method with children is a default implementation and renders with braces. For fast regression checks, run `pnpm --filter @alloy-js/rust exec vitest run test/function.test.tsx test/reference.test.tsx`.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

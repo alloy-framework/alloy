@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **ID** | T046 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
 | **Status** | open |
 | **Priority** | P1 — must-have |

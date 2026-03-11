@@ -15,9 +15,9 @@ This backlog defines all work needed to implement `@alloy-js/rust`, a new Alloy 
 ```
 docs/backlog/
 ├── index.md                    ← You are here
-├── epics/                      ← Epic-level documents (6 epics)
-├── tasks/                      ← Executable task documents (35 tasks)
-├── phases/                     ← Implementation phase documents (6 phases)
+├── epics/                      ← Epic-level documents (9 epics)
+├── tasks/                      ← Executable task documents (69 tasks)
+├── phases/                     ← Implementation phase documents (8 phases)
 └── agents/                     ← AI agent execution guidance
 ```
 
@@ -35,6 +35,9 @@ docs/backlog/
 | 4 | Traits and impl blocks | E004 | T019–T021 | P03 |
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
 | 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
+| 7 | Bug fixes and rendering corrections | E007 | T039–T045 | P07 |
+| 8 | Expression and statement components | E008 | T046–T067 (expression) | P08 |
+| 9 | Language feature gaps | E009 | T054–T066 (declaration) | P08 |
 
 ### Recommended Implementation Order
 
@@ -67,7 +70,10 @@ docs/backlog/
 | [E003](epics/E003-core-components.md) | Core Declaration Components | T009–T018 | E001, E002 | P02 |
 | [E004](epics/E004-traits-and-impl.md) | Traits and Impl Blocks | T019–T021 | E002, E003 | P03 |
 | [E005](epics/E005-module-system-imports.md) | Module System and Imports | T022–T027 | E002, E003 | P04 |
-| [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T035 | E001–E005 | P05–P06 |
+| [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T038 | E001–E005 | P05–P06 |
+| [E007](epics/E007-bug-fixes.md) | Bug Fixes and Rendering Corrections | T039–T045 | E001–E006 | P07 |
+| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T067 (expression) | E007 | P08 |
+| [E009](epics/E009-language-feature-gaps.md) | Language Feature Gaps | T054–T066 (declaration) | E001–E006 | P08 |
 
 ---
 
@@ -80,7 +86,9 @@ docs/backlog/
 | [P03](phases/P03-traits-impl.md) | Traits & Impl | E004 | T019–T021 | Traits and impl blocks |
 | [P04](phases/P04-module-system.md) | Module System | E005 | T022–T027 | Multi-module crates with `use` and `mod` |
 | [P05](phases/P05-external-deps-build.md) | External Deps & Build | E006 (partial) | T028–T031 | External crates and Cargo.toml |
-| [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T035 | STC wrappers, exports, golden tests |
+| [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T038 | STC wrappers, exports, golden tests |
+| P07 | Bug Fixes | E007 | T039–T045 | Fix rendering bugs discovered in integration testing |
+| P08 | Expressions & Language Gaps | E008, E009 | T046–T067 | Expression components, control flow, language feature gaps |
 
 ---
 
@@ -128,21 +136,35 @@ docs/backlog/
 | [T036](tasks/T036-builtin-crate-support.md) | Builtin crate support in createCrate/ref | E006 | feature | P0 | T028 | done |
 | [T037](tasks/T037-complete-stc-wrappers.md) | Complete STC wrappers | E006 | feature | P2 | T032 | done |
 | [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | done |
-| [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E006 | bug | P0 | T010, T022 | open |
-| [T040](tasks/T040-missing-newlines-between-items.md) | Missing newlines between sibling items | E006 | bug | P0 | T011, T012 | open |
-| [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E006 | bug | P1 | T013, T019 | open |
-| [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E006 | bug | P1 | T012 | open |
-| [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E006 | bug | P1 | T009, T025 | open |
-| [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E006 | improvement | P2 | T013, T021 | open |
-| [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E006 | improvement | P2 | T025, T009 | open |
-| [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E006 | feature | P1 | T009 | open |
-| [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E006 | feature | P1 | T009 | open |
-| [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E006 | feature | P1 | T009 | open |
-| [T049](tasks/T049-let-binding.md) | LetBinding | E006 | feature | P2 | T009 | open |
-| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E006 | feature | P2 | T009 | open |
-| [T051](tasks/T051-closure-expression.md) | ClosureExpression | E006 | feature | P2 | T009 | open |
-| [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E006 | feature | P3 | T009 | open |
-| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E006 | test | P2 | T039–T052 | open |
+| [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E007 | bug | P0 | T010, T022 | open |
+| [T040](tasks/T040-missing-newlines-between-items.md) | Missing newlines between sibling items | E007 | bug | P0 | T011, T012 | open |
+| [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E007 | bug | P1 | T013, T019 | open |
+| [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E007 | bug | P1 | T012 | open |
+| [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E007 | bug | P1 | T009, T025 | open |
+| [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E007 | improvement | P2 | T013, T021 | open |
+| [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E007 | improvement | P2 | T025, T009 | open |
+| [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E008 | feature | P1 | T009 | open |
+| [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | open |
+| [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | open |
+| [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | open |
+| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | open |
+| [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
+| [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
+| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
+| [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | open |
+| [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | open |
+| [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | open |
+| [T057](tasks/T057-break-continue.md) | BreakExpression + ContinueExpression | E008 | feature | P2 | T055, T056 | open |
+| [T058](tasks/T058-tuple-struct.md) | Tuple struct declaration | E009 | feature | P1 | T011 | open |
+| [T059](tasks/T059-static-declaration.md) | StaticDeclaration | E009 | feature | P2 | T014 | open |
+| [T060](tasks/T060-await-expression.md) | AwaitExpression | E008 | feature | P2 | T009 | open |
+| [T061](tasks/T061-method-chain-expression.md) | MethodChainExpression | E008 | feature | P2 | T050 | open |
+| [T062](tasks/T062-pub-super-visibility.md) | pub(super) visibility | E009 | feature | P2 | T011 | open |
+| [T063](tasks/T063-associated-type.md) | AssociatedType in traits | E009 | feature | P2 | T019 | open |
+| [T064](tasks/T064-try-expression.md) | TryExpression (? operator) | E008 | feature | P2 | T009 | open |
+| [T065](tasks/T065-unsafe-block.md) | UnsafeBlock | E008 | feature | P3 | T009 | open |
+| [T066](tasks/T066-inner-attribute.md) | InnerAttribute (#![...]) | E009 | feature | P3 | T015 | open |
+| [T067](tasks/T067-block-expression.md) | BlockExpression | E008 | feature | P3 | T009 | open |
 
 ---
 
@@ -253,6 +275,41 @@ These components were identified by analyzing raw `code` template usage in `samp
 
 ---
 
+## Open Feature Requests — Language Feature Gaps
+
+Discovered by auditing the full Rust language against existing components.
+
+### Declaration & Type System
+
+| ID | Title | Priority | Rust Feature |
+|---|---|---|---|
+| **T054** | Lifetime parameter support | P1 | `'a` lifetimes in generics — core Rust feature |
+| **T058** | Tuple struct declaration | P1 | `struct Point(i32, i32)` — common pattern |
+| **T059** | StaticDeclaration | P2 | `static` / `static mut` items |
+| **T062** | pub(super) visibility | P2 | Complete visibility modifier support |
+| **T063** | AssociatedType in traits | P2 | `type Item;` / `type Item = T;` |
+
+### Control Flow
+
+| ID | Title | Priority | Rust Feature |
+|---|---|---|---|
+| **T055** | ForExpression | P1 | `for x in iter { }` — most common loop |
+| **T056** | WhileExpression + LoopExpression | P2 | `while` / `loop` |
+| **T057** | BreakExpression + ContinueExpression | P2 | `break` / `continue` with labels/values |
+
+### Expression Components
+
+| ID | Title | Priority | Rust Feature |
+|---|---|---|---|
+| **T060** | AwaitExpression | P2 | `.await` postfix syntax |
+| **T061** | MethodChainExpression | P2 | `.iter().filter().map().collect()` |
+| **T064** | TryExpression (? operator) | P2 | Error propagation with `?` |
+| **T065** | UnsafeBlock | P3 | `unsafe { }` blocks |
+| **T066** | InnerAttribute | P3 | `#![...]` crate/module attributes |
+| **T067** | BlockExpression | P3 | Expression blocks `{ let x = ...; x }`  |
+
+---
+
 ## High-Priority Tasks
 
 These P0 tasks are on the critical path and should be prioritized:
@@ -278,6 +335,9 @@ These P0 tasks are on the critical path and should be prioritized:
 - [E004: Traits and Impl Blocks](epics/E004-traits-and-impl.md)
 - [E005: Module System and Imports](epics/E005-module-system-imports.md)
 - [E006: External Deps, Build File, and Polish](epics/E006-external-deps-build-polish.md)
+- [E007: Bug Fixes and Rendering Corrections](epics/E007-bug-fixes.md)
+- [E008: Expression and Statement Components](epics/E008-expression-components.md)
+- [E009: Language Feature Gaps](epics/E009-language-feature-gaps.md)
 
 ### Phases
 - [P01: Foundation](phases/P01-foundation.md)
@@ -286,6 +346,8 @@ These P0 tasks are on the critical path and should be prioritized:
 - [P04: Module System](phases/P04-module-system.md)
 - [P05: External Deps & Build](phases/P05-external-deps-build.md)
 - [P06: Polish](phases/P06-polish.md)
+- P07: Bug Fixes (T039–T045)
+- P08: Expressions & Language Gaps (T046–T067)
 
 ### Agent Guidance
 - [AI Agent Execution Rules](agents/execution-rules.md)

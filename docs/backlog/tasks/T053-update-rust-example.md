@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **ID** | T053 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | test |
 | **Status** | open |
 | **Priority** | P2 — should-have |

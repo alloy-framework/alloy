@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **ID** | T045 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | improvement |
 | **Status** | open |
 | **Priority** | P2 — should-have |

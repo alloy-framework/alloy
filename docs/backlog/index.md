@@ -93,7 +93,7 @@ docs/backlog/
 | [T003](tasks/T003-rust-output-symbol.md) | RustOutputSymbol base class | E002 | foundation | P0 | T001 | done |
 | [T004](tasks/T004-symbol-subclasses.md) | NamedTypeSymbol + FunctionSymbol | E002 | foundation | P0 | T003 | done |
 | [T005](tasks/T005-scope-hierarchy.md) | Scope hierarchy part 1 (module/crate) | E002 | foundation | P0 | T003, T004 | done |
-| [T005b](tasks/T005b-scope-hierarchy-part2.md) | Scope hierarchy part 2 (function/lexical/member) | E002 | foundation | P0 | T005 | pending |
+| [T005b](tasks/T005b-scope-hierarchy-part2.md) | Scope hierarchy part 2 (function/lexical/member) | E002 | foundation | P0 | T005 | done |
 | [T006](tasks/T006-symbol-factories.md) | Symbol factory functions | E002 | foundation | P0 | T003–T005 | done |
 | [T007](tasks/T007-name-policy.md) | Name policy | E002 | feature | P0 | T001 | done |
 | [T007b](tasks/T007b-name-conflict-resolver.md) | Name conflict resolver | E002 | feature | P1 | T003 | pending |

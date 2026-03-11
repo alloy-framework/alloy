@@ -158,6 +158,7 @@ docs/backlog/
 | [T075](tasks/T075-function-call-expression-turbofish-wrapping-mismatch.md) | FunctionCallExpression turbofish wrapping mismatch: two-type-argument case | E008 | bug | P1 | T050 | open |
 | [T076](tasks/T076-preflight-turbofish-line-wrapping-failure.md) | Pre-flight turbofish line-wrapping failure in `FunctionCallExpression` | E008 | bug | P1 | T050 | open |
 | [T077](tasks/T077-preflight-turbofish-regression-persistence.md) | Pre-flight turbofish regression persistence in `FunctionCallExpression` | E008 | bug | P1 | T050, T076 | pending |
+| [T078](tasks/T078-preflight-turbofish-call-formatting-failure.md) | Pre-flight turbofish call-formatting failure in `FunctionCallExpression` | E008 | bug | P1 | T050, T077 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -254,6 +255,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T073** | Pre-flight turbofish formatting mismatch blocker | P1 | Current pre-flight blocker: `FunctionCallExpression` test expects `f::<String, u32>(` but receives `f::<String,` then `u32>(` |
 | **T074** | Pre-flight turbofish comma-wrap regression (loop 2026-03-11) | P1 | New pre-flight run still fails before task start: expected `f::<String, u32>(` but received `f::<String,` then `u32>(` |
 | **T076** | Pre-flight turbofish line-wrapping failure (`function-call-expression.test.tsx`) | P1 | Latest pre-flight blocker: `FunctionCallExpression` still renders `f::<String,` then `u32>(` instead of `f::<String, u32>(` |
+| **T078** | Pre-flight turbofish call-formatting failure (`function-call-expression.test.tsx`) | P1 | Baseline pre-flight remains red: expected `f::<String, u32>(` but received wrapped turbofish with newline after comma (`f::<String,` then `u32>(`) |
 
 ---
 

@@ -5,7 +5,7 @@
 | **ID**           | T021                                                                  |
 | **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
 | **Type**         | feature                                                               |
-| **Status**       | pending                                                               |
+| **Status**       | done                                                                  |
 | **Priority**     | high                                                                  |
 | **Owner**        | AI coding agent                                                       |
 | **AI Executable**| yes                                                                   |
@@ -70,14 +70,14 @@ Enable `FunctionDeclaration` to automatically handle self receiver rendering whe
 
 ## Acceptance Criteria
 
-- [ ] Method with `&self` receiver renders `fn name(&self)`.
-- [ ] Method with `&mut self` receiver renders `fn name(&mut self)`.
-- [ ] Method with `self` (by value) receiver renders `fn name(self)`.
-- [ ] Method with `receiver="none"` renders no self parameter (associated function).
-- [ ] Default receiver inside `ImplBlock` is `&self`.
-- [ ] Default receiver inside `TraitDeclaration` is `&self`.
-- [ ] Receiver with additional parameters renders correctly: `fn name(&self, x: i32)`.
-- [ ] Function outside impl/trait ignores receiver prop.
+- [x] Method with `&self` receiver renders `fn name(&self)`.
+- [x] Method with `&mut self` receiver renders `fn name(&mut self)`.
+- [x] Method with `self` (by value) receiver renders `fn name(self)`.
+- [x] Method with `receiver="none"` renders no self parameter (associated function).
+- [x] Default receiver inside `ImplBlock` is `&self`.
+- [x] Default receiver inside `TraitDeclaration` is `&self`.
+- [x] Receiver with additional parameters renders correctly: `fn name(&self, x: i32)`.
+- [x] Function outside impl/trait ignores receiver prop.
 
 ## Definition of Done
 

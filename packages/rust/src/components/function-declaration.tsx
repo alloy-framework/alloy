@@ -25,14 +25,17 @@ export interface FunctionDeclarationProps {
   returnType?: Children;
   typeParameters?: TypeParameterProp[];
   whereClause?: Children;
+  receiver?: "&self" | "&mut self" | "self" | "none";
   doc?: string;
   children?: Children;
 }
 
 export function FunctionDeclaration(props: FunctionDeclarationProps) {
   const parentScope = useRustScope();
+  const isMethod = parentScope instanceof RustImplScope || parentScope instanceof RustTraitScope;
+  const effectiveReceiver = isMethod ? (props.receiver ?? "&self") : "none";
   const functionSymbol =
-    parentScope instanceof RustImplScope || parentScope instanceof RustTraitScope ?
+    isMethod ?
       createMethodSymbol(props.name, {
         refkeys: props.refkey ? [props.refkey] : [],
       })
@@ -51,6 +54,7 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
   functionSymbol.isAsync = props.async ?? false;
   functionSymbol.isUnsafe = props.unsafe ?? false;
   functionSymbol.isConst = props.const ?? false;
+  functionSymbol.receiverType = effectiveReceiver === "none" ? undefined : effectiveReceiver;
 
   const visibilityPrefix =
     props.pub ? "pub "
@@ -74,7 +78,15 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
         {functionSymbol.name}
         <Scope value={functionScope}>
           <TypeParameters params={props.typeParameters} />
-          <Parameters parameters={props.parameters} />
+          {"("}
+          {effectiveReceiver !== "none" ? (
+            <>
+              {effectiveReceiver}
+              {props.parameters && props.parameters.length > 0 ? ", " : ""}
+            </>
+          ) : null}
+          <Parameters parameters={props.parameters} wrap={false} />
+          {")"}
           {props.returnType ? (
             <>
               {" -> "}

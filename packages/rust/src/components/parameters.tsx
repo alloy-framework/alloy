@@ -4,6 +4,7 @@ import { createParameterSymbol } from "../symbols/factories.js";
 
 export interface ParametersProps {
   parameters?: readonly ParameterDescriptor[];
+  wrap?: boolean;
 }
 
 function Parameter(props: { parameter: ParameterDescriptor }) {
@@ -29,15 +30,17 @@ function Parameter(props: { parameter: ParameterDescriptor }) {
 }
 
 export function Parameters(props: ParametersProps) {
+  const shouldWrap = props.wrap ?? true;
+
   return (
     <>
-      {"("}
+      {shouldWrap ? "(" : null}
       {props.parameters && props.parameters.length > 0 ? (
         <For each={props.parameters} joiner={", "}>
           {(parameter) => <Parameter parameter={parameter} />}
         </For>
       ) : null}
-      {")"}
+      {shouldWrap ? ")" : null}
     </>
   );
 }

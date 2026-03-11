@@ -44,7 +44,7 @@ describe("ImplBlock", () => {
     ).toRenderTo(d`
       struct Foo {}
       impl Foo {
-        fn new() {}
+        fn new(&self) {}
       }
     `);
   });
@@ -71,7 +71,7 @@ describe("ImplBlock", () => {
       trait Printable {}
       struct Foo {}
       impl Printable for Foo {
-        fn print() {}
+        fn print(&self) {}
       }
     `);
   });
@@ -134,7 +134,7 @@ describe("ImplBlock", () => {
     ).toRenderTo(d`
       struct Foo {}
       impl Foo {
-        fn run() {}
+        fn run(&self) {}
       }
       run
     `);

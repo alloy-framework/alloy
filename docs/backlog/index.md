@@ -152,7 +152,7 @@ docs/backlog/
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
 | [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | done |
-| [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | open |
+| [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | done |
 | [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | open |
 | [T057](tasks/T057-break-continue.md) | BreakExpression + ContinueExpression | E008 | feature | P2 | T055, T056 | open |
 | [T058](tasks/T058-tuple-struct.md) | Tuple struct declaration | E009 | feature | P1 | T011 | open |

@@ -14,6 +14,7 @@ import {
   ElseIfClause as ElseIfClauseComponent,
   IfExpression as IfExpressionComponent,
 } from "../if-expression.js";
+import { ForExpression as ForExpressionComponent } from "../for-expression.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
 import {
   MatchArm as MatchArmComponent,
@@ -43,6 +44,7 @@ export const EnumDeclaration = stc(EnumDeclarationComponent);
 export const EnumVariant = stc(EnumVariantComponent);
 export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
+export const ForExpression = stc(ForExpressionComponent);
 export const IfExpression = stc(IfExpressionComponent);
 export const ElseIfClause = stc(ElseIfClauseComponent);
 export const ElseClause = stc(ElseClauseComponent);

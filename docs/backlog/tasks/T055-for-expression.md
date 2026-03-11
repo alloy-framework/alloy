@@ -5,7 +5,7 @@
 | **ID** | T055 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -73,6 +73,6 @@ interface ForExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<ForExpression pattern="x" iterator="items">body</ForExpression>` renders `for x in items { body }`
-- [ ] `label` prop renders `'label: for x in items { body }`
-- [ ] STC wrapper exported
+- [x] `<ForExpression pattern="x" iterator="items">body</ForExpression>` renders `for x in items { body }`
+- [x] `label` prop renders `'label: for x in items { body }`
+- [x] STC wrapper exported

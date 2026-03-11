@@ -6,11 +6,11 @@
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
 | **Status**       | blocked                                                                                 |
-| **Priority**     | medium                                                                                  |
+| **Priority**     | P0 — required for v1                                                                    |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
 | **Human Review** | yes                                                                                     |
-| **Dependencies** | T028                                                                                    |
+| **Dependencies** | T028, T036                                                                              |
 | **Blocks**       | —                                                                                       |
 
 ---
@@ -140,3 +140,19 @@ Validation failed repeatedly on the same issue while implementing `std` builtins
 export typing for `std` in `src/builtins/std.ts` causes TypeScript/API Extractor
 portability failures (`TS2742` and export-surface warnings). After 3 build/test
 validation attempts on this issue, work stopped per execution rules.
+
+## Unblock Plan (v1)
+
+Two changes are needed before retrying:
+
+1. **T036 (builtin crate support):** `createCrate()` must support `builtin: true` so that `std` does not appear in Cargo.toml `[dependencies]`. Without this, referencing `HashMap` would incorrectly add `std = "*"` to Cargo.toml.
+
+2. **TS2742 fix:** Use explicit exported type annotations on the `std` constant instead of relying on type inference from `createCrate()`. The inferred generic return type is too complex for API Extractor's portability check. Pattern:
+
+```typescript
+const stdDescriptor = { name: "std", builtin: true, modules: { ... } } as const;
+export type StdCrate = CrateRef<typeof stdDescriptor> & SymbolCreator & ExternalCrate;
+export const std: StdCrate = createCrate(stdDescriptor);
+```
+
+See also: custom instruction note on avoiding TS2742/API Extractor portability errors with explicit type aliases.

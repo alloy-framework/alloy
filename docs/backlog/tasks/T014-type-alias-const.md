@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components             |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference) |
 | **Blocks**  | —                                              |
-| **Status**  | Pending                                        |
+| **Status**  | done                                           |
 
 ## Description
 
@@ -92,13 +92,13 @@ interface ConstDeclarationProps {
 
 ## Acceptance Criteria
 
-- [ ] Type alias renders: `type Foo = Bar;`.
-- [ ] Pub type alias renders: `pub type Foo = Bar;`.
-- [ ] Type alias with type parameters renders: `type Foo<T> = Vec<T>;`.
-- [ ] Const renders: `const MAX_SIZE: usize = 100;`.
-- [ ] Pub const renders: `pub const MAX_SIZE: usize = 100;`.
-- [ ] Const name is transformed to SCREAMING_SNAKE_CASE by name policy.
-- [ ] Symbols are created with correct typeKind/symbolKind.
+- [x] Type alias renders: `type Foo = Bar;`.
+- [x] Pub type alias renders: `pub type Foo = Bar;`.
+- [x] Type alias with type parameters renders: `type Foo<T> = Vec<T>;`.
+- [x] Const renders: `const MAX_SIZE: usize = 100;`.
+- [x] Pub const renders: `pub const MAX_SIZE: usize = 100;`.
+- [x] Const name is transformed to SCREAMING_SNAKE_CASE by name policy.
+- [x] Symbols are created with correct typeKind/symbolKind.
 
 ## Definition of Done
 

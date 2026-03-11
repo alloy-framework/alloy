@@ -31,13 +31,14 @@ These tasks have no dependencies and can start immediately:
 ### Sequential Chains
 These tasks must be done in order:
 - T001 → T002 → T003 → T004 → T005 → T006 (foundation chain)
+- T001 → T003 → T004 → T005 → T005b → T006 (foundation chain)
 - T009 → T010 → T011/T012/T013/T014 (component chain)
 - T022 → T023 → T024 → T025 → T026 → T027 (module system chain)
 - T028 → T029 → T031 → T030 (external deps chain)
 
 ### Parallel-Safe Tasks
 These groups can be done in parallel (after their dependencies are met):
-- T007, T008, T016, T017, T018 (independent foundations)
+- T007, T007b, T008, T016, T017, T018 (independent foundations)
 - T011, T012, T013, T014, T015 (independent components after T010)
 - T019, T020 (traits and impl after E003)
 - T032, T033, T034, T035 (polish tasks after prior phases)

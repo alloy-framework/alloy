@@ -36,6 +36,7 @@ Validate that the import system works end-to-end across all reference scenarios,
   2. Resolve refkey to different-module symbol (same crate).
   3. Resolve refkey to external crate symbol.
   4. Prelude type bypass.
+- **Negative test:** Reference to a private symbol from another module should produce a diagnostic error or warning (similar to Go's uppercase export check).
 
 ## Out of Scope
 

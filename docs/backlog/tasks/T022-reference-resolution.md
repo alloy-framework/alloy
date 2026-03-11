@@ -34,6 +34,7 @@ Enable automatic import generation when referencing symbols across modules and c
   5. **External crate**: call `moduleScope.addUse("<crate>::path", symbol)` to register the import AND call `crateScope.addDependency()` to register the crate dependency.
 - Build the use path from `ResolutionResult.pathDown` (the scope chain from resolution root to the symbol).
 - **Prelude handling**: maintain a `PRELUDE_TYPES` set of types that are automatically in scope (e.g., `Option`, `Result`, `Vec`, `String`, `Box`, `Some`, `None`, `Ok`, `Err`). Skip use generation for these types.
+- Maintain a `PRELUDE_TYPES: Set<string>` constant with Rust prelude types. Skip `use` generation for prelude types. Full list: Option, Some, None, Result, Ok, Err, Vec, String, ToString, Box, Clone, Copy, Default, Drop, Eq, PartialEq, Ord, PartialOrd, Iterator, IntoIterator, From, Into, TryFrom, TryInto, AsRef, AsMut, Send, Sync, Sized, Unpin, ToOwned, Fn, FnMut, FnOnce, bool, char, f32, f64, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize, str.
 - Create `test/reference.test.tsx` with basic resolution tests.
 
 ## Out of Scope

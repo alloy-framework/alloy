@@ -5,7 +5,7 @@ Review the following documents:
 - <PATTERNS_DOC>
 - <DESIGN_DOC>
 - <PRD_DOC>
-- <BACKLOG_DOC>
+- docs/backlog/*
 
 Your task is to act as a skeptical senior architect and planning reviewer.
 

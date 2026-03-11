@@ -9,13 +9,13 @@ Your task is to revise the planning set based on:
 - <PATTERNS_DOC>
 - <DESIGN_DOC>
 - <PRD_DOC>
-- <BACKLOG_DOC>
+- docs/backlog
 - <OUTPUT_DIR>/06-review.md
 
 Update the following files in place as needed:
 - <DESIGN_DOC>
 - <PRD_DOC>
-- <BACKLOG_DOC>
+- docs/backlog
 
 Goals:
 1. Resolve ambiguities where possible.

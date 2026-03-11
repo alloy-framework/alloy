@@ -4,7 +4,7 @@
 | ----------- | ---------------------------------------------------------------------------------------- |
 | **Task ID** | T011                                                                                     |
 | **Epic**    | E003 — Core Declaration Components                                                       |
-| **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference), T015 (Attributes), T016 (DocComments), T017 (TypeParameters) |
+| **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference) |
 | **Blocks**  | T020 (ImplBlock needs struct types)                                                      |
 | **Status**  | Pending                                                                                  |
 
@@ -46,6 +46,10 @@ interface FieldProps {
   doc?: string;
 }
 ```
+
+## Implementation Note on Optional Dependencies
+
+The `derives` prop renders `#[derive(...)]` if the Attribute component (T015) is available. If T015 is not yet implemented, the struct renders without derives — this is acceptable for initial testing. The `doc` prop similarly depends on T016 but is optional.
 
 ## Out of Scope
 

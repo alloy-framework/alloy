@@ -28,19 +28,21 @@ Generate correctly formatted, grouped, and sorted `use` statements in each sourc
 - Create `src/components/use-statement.tsx`.
 - `UseStatement` component: renders a single `use path::Symbol;` line.
 - `UseStatements` component: reads `RustModuleScope.imports` and renders all accumulated use statements.
-- **Grouping**: Multiple symbols imported from the same path are grouped: `use path::{A, B, C};`.
+- **Flat syntax**: Each symbol gets its own `use` statement: `use path::A;`, `use path::B;`.
 - **Sorting**: Follow Rust convention:
   1. `std::` imports first.
   2. External crate imports second.
   3. `crate::` imports third.
   4. Alphabetical within each group.
   5. Blank line between groups.
-- **Single import**: `use path::Symbol;` (no braces for single symbol).
 - Update `SourceFile` component to render `UseStatements` after any `mod` declarations and before the main content.
 - Create `test/use-statements.test.tsx`.
 
+**MVP Decision:** Use flat `use` statements (`use path::A; use path::B;`) for simplicity. Tree grouping (`use path::{A, B};`) is deferred to post-MVP polish. Flat syntax is valid Rust and `rustfmt` can group if desired.
+
 ## Out of Scope
 
+- Tree grouping (`use path::{A, B};`) — deferred to post-MVP.
 - Glob imports (`use path::*`).
 - Re-exports (`pub use`).
 - Aliased imports (`use path::Type as Alias`).
@@ -56,9 +58,8 @@ Generate correctly formatted, grouped, and sorted `use` statements in each sourc
 ## Implementation Guidance
 
 1. **File**: `packages/rust/src/components/use-statement.tsx`.
-2. **`UseStatement` component**: Takes `path: string` and `symbols: string[]` props. Renders:
-   - Single symbol: `use path::Symbol;`
-   - Multiple symbols: `use path::{A, B, C};`
+2. **`UseStatement` component**: Takes `path: string` and `symbol: string` props. Renders:
+   - `use path::Symbol;`
 3. **`UseStatements` component**: No props needed — reads from the nearest `RustModuleScope` via context.
    - Collect all imports from `moduleScope.imports` (a map of path → symbol names).
    - Group by category: `std`, external, `crate`.
@@ -71,7 +72,7 @@ Generate correctly formatted, grouped, and sorted `use` statements in each sourc
 ## Acceptance Criteria
 
 - [ ] Single import renders as `use std::fmt::Display;`.
-- [ ] Multiple imports from same path render as `use std::fmt::{Debug, Display};`.
+- [ ] Multiple imports from same path render as flat statements: `use std::fmt::Debug;` and `use std::fmt::Display;`.
 - [ ] Imports are sorted: `std::` → external → `crate::`.
 - [ ] Blank line separates import groups.
 - [ ] Alphabetical order within each group.

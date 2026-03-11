@@ -210,8 +210,8 @@ Rust symbols need:
 
 | Alloy Scope | Rust Concept | Declaration Spaces | Notes |
 |---|---|---|---|
-| `RustCrateScope` | Crate root | `["types", "values", "macros"]` | Top-level scope. Tracks `mod` declarations. |
-| `RustModuleScope` | Module (file) | `["types", "values", "macros"]` | Tracks `use` imports. Creates `mod` declarations in parent. |
+| `RustCrateScope` | Crate root | `["types", "values"]` | Top-level scope. Tracks `mod` declarations. |
+| `RustModuleScope` | Module (file) | `["types", "values"]` | Tracks `use` imports. Creates `mod` declarations in parent. |
 | `RustImplScope` | `impl` block | — (member scope) | Owner is the target type symbol. |
 | `RustTraitScope` | `trait` body | — (member scope) | Owner is the trait symbol. |
 | `RustFunctionScope` | Function body | `["parameters", "type-parameters", "local-variables"]` | Parameters include lifetimes. |
@@ -223,7 +223,7 @@ Rust symbols need:
 
 2. **`RustCrateScope` must track `mod` declarations** — the crate root needs to know which modules exist to generate `mod foo;` statements. This is unique to Rust (Go packages don't need explicit module declarations).
 
-3. **Triple declaration spaces** on module/crate scopes: `["types", "values", "macros"]`. In Rust, a type `Foo` and a function `Foo` can coexist (though this is uncommon). Macros are a separate namespace.
+3. **Dual declaration spaces** on module/crate scopes: `["types", "values"]`, matching Go's pattern. Macros are deferred beyond MVP — they rarely conflict with type/value names in code generation contexts and can be added to a `"macros"` space later if needed.
 
 **Inference:** The Go package's approach (`GoModuleScope` → `GoPackageScope` → `GoSourceFileScope`) is the closest analog but needs the extra `mod` declaration tracking.
 
@@ -292,7 +292,7 @@ An `ImplBlock` component would:
 **Proposed component:**
 ```tsx
 <ImplBlock type={structRefkey}>
-  <FunctionDeclaration name="new" pub returnType="Self">
+  <FunctionDeclaration name="new" pub receiver="none" returnType="Self">
     {code`Self { field: 0 }`}
   </FunctionDeclaration>
 </ImplBlock>
@@ -303,6 +303,8 @@ An `ImplBlock` component would:
   </FunctionDeclaration>
 </ImplBlock>
 ```
+
+**Self receiver design decision (resolved):** Methods inside `ImplBlock` or `TraitDeclaration` default to `receiver="&self"`. Standalone functions default to `receiver="none"`. The `receiver` prop accepts `"&self" | "&mut self" | "self" | "none"` and overrides the default in any context. `receiver="none"` inside an impl block creates an associated function (e.g., `fn new()`).
 
 ## 3.7 Traits
 
@@ -346,7 +348,7 @@ An `Attribute` component renders `#[name(args)]`. A `DeriveAttribute` convenienc
 
 **Maps to the existing `createPackage`/`createModule`/`createLibrary` pattern.**
 
-A `createCrate()` factory would describe external crate APIs:
+A `createCrate()` factory would describe external crate APIs using the `REFKEYABLE` + `TO_SYMBOL` protocol with per-binder caching via `WeakMap<Binder, Symbol>` (the same pattern used by Go's `createModule()` and C#'s `createLibrary()`):
 
 ```typescript
 const serde = createCrate({
@@ -408,6 +410,23 @@ The `SourceFile` component for `lib.rs` / `main.rs` must auto-generate `mod` sta
 
 **Design:** The `RustCrateScope` (or `RustModuleScope` for submodules) tracks child modules and renders `mod` declarations automatically.
 
+## 3.14 Prelude Types
+
+Rust's standard prelude automatically imports certain types into every module. References to these types should **not** generate `use` statements.
+
+**Prelude type list (Rust 2021 edition):**
+`bool`, `char`, `f32`, `f64`, `i8`, `i16`, `i32`, `i64`, `i128`, `isize`, `u8`, `u16`, `u32`, `u64`, `u128`, `usize`, `str`, `Option`, `Some`, `None`, `Result`, `Ok`, `Err`, `Vec`, `String`, `ToString`, `Box`, `Clone`, `Copy`, `Default`, `Drop`, `Eq`, `PartialEq`, `Ord`, `PartialOrd`, `Iterator`, `IntoIterator`, `ExactSizeIterator`, `DoubleEndedIterator`, `From`, `Into`, `TryFrom`, `TryInto`, `AsRef`, `AsMut`, `Send`, `Sync`, `Sized`, `Unpin`, `ToOwned`, `Fn`, `FnMut`, `FnOnce`.
+
+This list is maintained as a `PRELUDE_TYPES: Set<string>` constant in the reference resolution module. When a symbol's name matches a prelude type, no `use` statement is generated.
+
+## 3.15 Name Conflict Resolver
+
+Rust needs a custom name conflict resolver (not core's default). When imported symbols (`use` aliases) conflict with local declarations, the imported symbol should be renamed — not the local declaration. This follows TypeScript's pattern where `LocalImportSymbol` flagged symbols are renamed first.
+
+The resolver should:
+1. Keep local declarations unchanged.
+2. Rename `use`-imported symbols with `_2`, `_3` suffixes on conflict.
+
 ---
 
 # 4. Proposed Package Shape
@@ -419,6 +438,7 @@ packages/rust/
 ├── src/
 │   ├── index.ts                      # Barrel export
 │   ├── name-policy.ts                # Rust naming conventions
+│   ├── name-conflict-resolver.ts     # Custom name conflict handling
 │   ├── create-crate.ts               # External crate descriptor factory
 │   ├── parameter-descriptor.ts       # Parameter metadata (name, type, ref, mut, lifetime)
 │   ├── utils.ts                      # Utility helpers
@@ -427,42 +447,40 @@ packages/rust/
 │   │   ├── rust-output-symbol.ts     # RustOutputSymbol class
 │   │   ├── named-type-symbol.ts      # NamedTypeSymbol (struct, enum, trait)
 │   │   ├── function-symbol.ts        # FunctionSymbol (fn, method)
-│   │   ├── scopes.ts                 # Scope type alias + hooks (useRustScope, etc.)
-│   │   ├── rust-crate-scope.ts       # RustCrateScope
-│   │   ├── rust-module-scope.ts      # RustModuleScope (with use tracking)
+│   │   ├── factories.ts              # Symbol creation functions
+│   │   └── reference.tsx             # Reference resolution + use generation
+│   ├── scopes/
+│   │   ├── index.ts                  # Scope barrel + type alias + hooks
+│   │   ├── rust-crate-scope.ts       # RustCrateScope (mod tracking, deps)
+│   │   ├── rust-module-scope.ts      # RustModuleScope (use tracking)
 │   │   ├── rust-function-scope.ts    # RustFunctionScope
 │   │   ├── rust-lexical-scope.ts     # RustLexicalScope
 │   │   ├── rust-impl-scope.ts        # RustImplScope (member scope)
-│   │   ├── rust-trait-scope.ts       # RustTraitScope (member scope)
-│   │   ├── factories.ts              # Symbol creation functions
-│   │   └── reference.tsx             # Reference resolution + use generation
+│   │   └── rust-trait-scope.ts       # RustTraitScope (member scope)
 │   ├── components/
 │   │   ├── index.ts                  # Component barrel
 │   │   ├── stc/index.ts              # STC wrappers
-│   │   ├── SourceFile.tsx            # Rust source file (.rs)
-│   │   ├── CrateDirectory.tsx        # Crate root (creates CrateScope, Cargo.toml)
-│   │   ├── ModuleDirectory.tsx       # Module directory (submodules)
-│   │   ├── CargoTomlFile.tsx         # Cargo.toml generation
-│   │   ├── Declaration.tsx           # Base declaration component
-│   │   ├── Reference.tsx             # Symbol reference rendering
-│   │   ├── UseStatement.tsx          # use path::to::item; rendering
-│   │   ├── StructDeclaration.tsx     # struct Name { fields }
-│   │   ├── EnumDeclaration.tsx       # enum Name { variants }
-│   │   ├── FunctionDeclaration.tsx   # fn name(params) -> Type { body }
-│   │   ├── TraitDeclaration.tsx      # trait Name { ... }
-│   │   ├── ImplBlock.tsx             # impl [Trait for] Type { ... }
-│   │   ├── TypeAlias.tsx             # type Name = Type;
-│   │   ├── ConstDeclaration.tsx      # const NAME: Type = value;
-│   │   ├── StaticDeclaration.tsx     # static NAME: Type = value;
-│   │   ├── ModDeclaration.tsx        # mod name; or mod name { ... }
-│   │   ├── Attribute.tsx             # #[attr(args)]
-│   │   ├── DeriveAttribute.tsx       # #[derive(Trait1, Trait2)]
-│   │   ├── DocComment.tsx            # /// doc comment
-│   │   ├── MatchExpression.tsx       # match expr { arms }
-│   │   ├── Parameters.tsx            # (param: Type, ...) rendering
-│   │   ├── TypeParameters.tsx        # <'a, T: Bound> rendering
-│   │   ├── WhereClause.tsx           # where T: Display + Clone
-│   │   └── Value.tsx                 # Literal rendering
+│   │   ├── source-file.tsx           # Rust source file (.rs)
+│   │   ├── crate-directory.tsx       # Crate root (creates CrateScope, Cargo.toml)
+│   │   ├── module-directory.tsx      # Module directory (submodules)
+│   │   ├── cargo-toml-file.tsx       # Cargo.toml generation
+│   │   ├── declaration.tsx           # Base declaration component
+│   │   ├── reference.tsx             # Symbol reference rendering
+│   │   ├── use-statement.tsx         # use path::to::item; rendering
+│   │   ├── struct-declaration.tsx    # struct Name { fields }
+│   │   ├── enum-declaration.tsx      # enum Name { variants }
+│   │   ├── function-declaration.tsx  # fn name(params) -> Type { body }
+│   │   ├── trait-declaration.tsx     # trait Name { ... }
+│   │   ├── impl-block.tsx            # impl [Trait for] Type { ... }
+│   │   ├── type-alias.tsx            # type Name = Type;
+│   │   ├── const-declaration.tsx     # const NAME: Type = value;
+│   │   ├── mod-declaration.tsx       # mod name; or mod name { ... }
+│   │   ├── attribute.tsx             # #[attr(args)]
+│   │   ├── doc-comment.tsx           # /// doc comment
+│   │   ├── parameters.tsx            # (param: Type, ...) rendering
+│   │   ├── type-parameters.tsx       # <'a, T: Bound> rendering
+│   │   ├── where-clause.tsx          # where T: Display + Clone
+│   │   └── value.tsx                 # Literal rendering
 │   ├── context/
 │   │   ├── index.ts
 │   │   └── crate-context.tsx         # Crate metadata context

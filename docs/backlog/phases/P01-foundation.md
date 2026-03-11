@@ -17,9 +17,11 @@ No components can be built without symbols and scopes. No tests can run without 
 | T002 | Test infrastructure | foundation |
 | T003 | RustOutputSymbol base class | foundation |
 | T004 | NamedTypeSymbol and FunctionSymbol | foundation |
-| T005 | Scope hierarchy | foundation |
+| T005 | Scope hierarchy Part 1 (crate/module) | foundation |
+| T005b | Scope hierarchy Part 2 (function/lexical/member) | foundation |
 | T006 | Symbol factory functions | foundation |
 | T007 | Name policy | feature |
+| T007b | Name conflict resolver | feature |
 | T008 | Parameter descriptor and scope hooks | foundation |
 
 ## Exit Criteria

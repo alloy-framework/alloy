@@ -1,4 +1,4 @@
-# T005: Scope Hierarchy
+# T005: Scope Hierarchy Part 1: Module and Crate Scopes
 
 | Field | Value |
 |-------|-------|
@@ -11,54 +11,33 @@
 | **AI Executable** | Yes |
 | **Human Review Required** | Yes (architecture review) |
 | **Dependencies** | T003, T004 |
-| **Blocks** | T006, T009, T022 |
+| **Blocks** | T005b, T006, T009, T022 |
 
 ## Description
-Implement all 6 Rust scope classes.
+Implement the module/crate scopes (RustCrateScope and RustModuleScope) — the scopes with import tracking and module declaration tracking. These are the most architecturally critical scopes.
 
 ## Goal
 Define the complete scope hierarchy with correct declaration spaces, member spaces, and tracking capabilities.
 
 ## Scope Included
-Create these files in `packages/rust/src/symbols/`:
+Create these files in `packages/rust/src/scopes/`:
 
 1. **`rust-crate-scope.ts`** — `RustCrateScope`:
-   - `declarationSpaces = ["types", "values", "macros"]`.
-   - `childModules: Map<string, { name: string, visibility: RustVisibility }>` — tracks child modules for `mod` generation.
-   - `dependencies: Map<string, CrateDependency>` — tracks external crate deps for Cargo.toml.
-   - `addChildModule(name, visibility)` method.
-   - `addDependency(name, dep)` method.
-   - Getters: `types`, `values`, `macros`.
+   - `declarationSpaces = ["types", "values"]`.
+   - `childModules: Map<string, { name: string, visibility: RustVisibility }>`.
+   - `dependencies: Map<string, CrateDependency>`.
+   - `addChildModule(name, visibility)` and `addDependency(name, dep)` methods.
+   - Getters: `types`, `values`.
 
 2. **`rust-module-scope.ts`** — `RustModuleScope`:
-   - `declarationSpaces = ["types", "values", "macros"]`.
+   - `declarationSpaces = ["types", "values"]`.
    - Import tracking: `imports: Map<string, Set<RustOutputSymbol>>` (path → symbols).
    - `addUse(path, symbol)` method.
    - `childModules: Map<string, { name: string, visibility: RustVisibility }>`.
    - `addChildModule(name, visibility)` method.
-   - Getters: `types`, `values`, `macros`.
+   - Getters: `types`, `values`.
 
-3. **`rust-function-scope.ts`** — `RustFunctionScope`:
-   - `declarationSpaces = ["parameters", "type-parameters", "local-variables"]`.
-   - Getters: `parameters`, `typeParameters`, `localVariables`.
-
-4. **`rust-lexical-scope.ts`** — `RustLexicalScope`:
-   - `declarationSpaces = ["local-variables"]`.
-   - Getter: `localVariables`.
-
-5. **`rust-impl-scope.ts`** — `RustImplScope`:
-   - Member scope (has `ownerSymbol`).
-   - `declarationSpaces = []` (delegates to ownerSymbol.members).
-
-6. **`rust-trait-scope.ts`** — `RustTraitScope`:
-   - Member scope (has `ownerSymbol`).
-   - `declarationSpaces = []` (delegates to ownerSymbol.members).
-
-Also create **`scopes.ts`** with:
-- `RustScope` type alias = union of all scope types.
-- `useRustScope()` hook — `useContext(ScopeContext)` with type narrowing.
-- `useRustModuleScope()` — gets nearest module scope.
-- `useRustCrateScope()` — gets nearest crate scope.
+3. **`index.ts`** — Scope barrel with `RustScope` type alias and hooks: `useRustScope()`, `useRustModuleScope()`, `useRustCrateScope()`.
 
 ## Out of Scope
 - Factory functions (T006).
@@ -78,14 +57,15 @@ Also create **`scopes.ts`** with:
 5. Study `GoSourceFileScope` in `packages/go/src/scopes/go-source-file-scope.ts` for import tracking pattern.
 
 ## Acceptance Criteria
-- All 6 scope classes compile and can be instantiated via `createScope()`.
-- Declaration spaces match the specification.
+- Both scope classes compile and can be instantiated.
+- Declaration spaces match specification.
 - `RustModuleScope.addUse()` correctly records imports.
 - `RustCrateScope.addChildModule()` and `addDependency()` work.
 - Hook functions return correctly typed scopes.
+- Barrel exports.
 
 ## Definition of Done
-All scope classes exist, compile, are exported, and hooks work.
+All scopes exist, compile, and are exported from `scopes/index.ts`.
 
 ## Validation Approach
 Build succeeds. Unit test for scope instantiation (can be added to a general symbols test).

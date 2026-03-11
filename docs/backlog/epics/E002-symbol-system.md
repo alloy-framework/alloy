@@ -43,13 +43,15 @@ Alloy's code generation model is built on symbols and scopes. Every declaration,
 ## Task List
 - [T003: RustOutputSymbol base class](../tasks/T003-rust-output-symbol.md)
 - [T004: NamedTypeSymbol and FunctionSymbol](../tasks/T004-symbol-subclasses.md)
-- [T005: Scope hierarchy (all 6 scopes)](../tasks/T005-scope-hierarchy.md)
+- [T005: Scope hierarchy Part 1 (crate/module)](../tasks/T005-scope-hierarchy.md)
+- [T005b: Scope hierarchy Part 2 (function/lexical/member)](../tasks/T005b-scope-hierarchy-part2.md)
 - [T006: Symbol factory functions](../tasks/T006-symbol-factories.md)
 - [T007: Name policy](../tasks/T007-name-policy.md)
+- [T007b: Name conflict resolver](../tasks/T007b-name-conflict-resolver.md)
 - [T008: Parameter descriptor and scope hooks](../tasks/T008-parameter-descriptor.md)
 
 ## Sequencing Notes
-T003 → T004 → T005 → T006 (sequential dependency chain). T007 and T008 can be done in parallel with T005/T006.
+T003 → T004 → T005 → T005b → T006 (sequential dependency chain). T007, T007b, and T008 can be done in parallel with T005/T006.
 
 ## Completion Criteria
 - All symbol classes instantiate correctly with expected properties.

@@ -143,13 +143,13 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-3: Scope Hierarchy
 
 **FR-3.1:** `RustCrateScope` extends `OutputScope`:
-- `declarationSpaces = ["types", "values", "macros"]`.
+- `declarationSpaces = ["types", "values"]`.
 - Tracks child module declarations (for auto-generating `mod` statements).
 - Tracks external crate dependencies (for `Cargo.toml`).
 - Has `addChildModule(name, visibility)` and `addDependency(crate)` methods.
 
 **FR-3.2:** `RustModuleScope` extends `OutputScope`:
-- `declarationSpaces = ["types", "values", "macros"]`.
+- `declarationSpaces = ["types", "values"]`.
 - Tracks `use` imports via `addUse(targetSymbol, sourcePath)`.
 - Tracks child module declarations (for submodule `mod` statements).
 - Has `imports` getter returning tracked use records.
@@ -438,15 +438,16 @@ packages/rust/
 │   │   ├── rust-output-symbol.ts     # RustOutputSymbol (base class)
 │   │   ├── named-type-symbol.ts      # NamedTypeSymbol (struct, enum, trait)
 │   │   ├── function-symbol.ts        # FunctionSymbol
-│   │   ├── scopes.ts                 # Type alias RustScope + hooks
+│   │   ├── factories.ts              # createStructSymbol, createFunctionSymbol, etc.
+│   │   └── reference.tsx             # ref() resolution + use generation
+│   ├── scopes/
+│   │   ├── index.ts                  # Scope barrel + type alias + hooks
 │   │   ├── rust-crate-scope.ts       # RustCrateScope (mod tracking, dependencies)
 │   │   ├── rust-module-scope.ts      # RustModuleScope (use tracking)
 │   │   ├── rust-function-scope.ts    # RustFunctionScope
 │   │   ├── rust-lexical-scope.ts     # RustLexicalScope
 │   │   ├── rust-impl-scope.ts        # RustImplScope (member scope)
-│   │   ├── rust-trait-scope.ts       # RustTraitScope (member scope)
-│   │   ├── factories.ts              # createStructSymbol, createFunctionSymbol, etc.
-│   │   └── reference.tsx             # ref() resolution + use generation
+│   │   └── rust-trait-scope.ts       # RustTraitScope (member scope)
 │   ├── components/
 │   │   ├── index.ts                  # Component barrel
 │   │   ├── stc/index.ts              # STC wrappers
@@ -684,32 +685,28 @@ Tests should be added for any bug found during development. Key regression areas
 
 # 16. Open Questions
 
-1. **Should `ImplBlock` auto-inject `&self` as the receiver for methods?**
-   - Recommendation: Yes, with opt-out via `receiver="none"` prop. This matches Rust convention where most methods take `&self`.
-   - Must resolve before: Phase 3.
+*Questions 1, 3, 4, 5, and 6 have been resolved. Remaining open questions:*
+
+1. ~~**Self receiver auto-injection**~~ **RESOLVED:** Methods inside `ImplBlock` or `TraitDeclaration` default to `receiver="&self"`. Standalone functions default to `receiver="none"`. Overridable via prop. `receiver="none"` inside an impl block creates an associated function.
 
 2. **How should `mod` declarations handle visibility?**
-   - In Rust, `mod foo;` makes the module private; `pub mod foo;` makes it public. The child module's visibility should be determined by the symbols it exports or by an explicit prop.
-   - Recommendation: Default to `pub mod` for modules containing `pub` items; allow override via prop.
-   - Must resolve before: Phase 4.
+   - In Rust, `mod foo;` makes the module private; `pub mod foo;` makes it public.
+   - **Decision:** `ModuleDirectory` accepts a `pub` prop (default false). The parent SourceFile renders `pub mod name;` or `mod name;` accordingly.
+   - Status: Resolved.
 
-3. **Should `use` statements use tree syntax (`use path::{A, B}`) or flat syntax (`use path::A; use path::B;`)?**
-   - Recommendation: Tree syntax for MVP (more idiomatic Rust).
-   - Must resolve before: Phase 4.
+3. ~~**`use` tree syntax vs flat**~~ **RESOLVED:** MVP uses flat `use` statements (`use path::A; use path::B;`) for simplicity. Tree grouping (`use path::{A, B};`) is a post-MVP polish item. Flat syntax is valid Rust and `rustfmt` can group if desired.
 
-4. **How should the `std` prelude be handled?**
-   - Rust auto-imports certain types (`Option`, `Result`, `Vec`, `String`, `Box`, etc.) via the prelude. Should the import system skip `use` statements for prelude types?
-   - Recommendation: Yes, maintain a prelude list. References to prelude types should not generate `use` statements.
-   - Must resolve before: Phase 5.
+4. ~~**Prelude handling**~~ **RESOLVED:** Yes, maintain a `PRELUDE_TYPES` set. Prelude types skip `use` generation. Full list defined in design doc section 3.14.
 
-5. **Should `CrateDirectory` support both `lib.rs` and `main.rs` crate types?**
-   - Recommendation: Support both via a `crateType` prop (`"lib"` | `"bin"`, default `"lib"`).
-   - Must resolve before: Phase 2.
+5. ~~**Crate types**~~ **RESOLVED:** `CrateDirectory` supports both via `crateType` prop (`"lib"` | `"bin"`, default `"lib"`).
 
-6. **How should `self` receiver types be modeled in the parameter system?**
-   - Options: (a) Dedicated `receiver` prop on `FunctionDeclaration`. (b) First parameter in `ParameterDescriptor[]`.
-   - Recommendation: Dedicated `receiver` prop for clarity.
-   - Must resolve before: Phase 3.
+6. ~~**Self receiver modeling**~~ **RESOLVED:** Dedicated `receiver` prop on `FunctionDeclaration`.
+
+**Remaining unresolved:**
+
+7. **Should generated code include trailing commas in all multi-line contexts?**
+   - Rust convention allows it. `rustfmt` adds them. Recommend: yes.
+   - Low risk — can be changed later.
 
 ---
 

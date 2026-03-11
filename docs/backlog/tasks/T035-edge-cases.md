@@ -47,6 +47,10 @@ Validate that all components handle edge cases gracefully — empty content, sin
 ### Multiple impl blocks
 10. **Multiple impl blocks for same type**: Two separate `ImplBlock` components targeting the same type should both render correctly without conflict.
 
+### Visibility and prelude
+11. **Negative test: private symbol cross-module reference**: Reference to a private symbol from another module should produce a diagnostic error or warning.
+12. **Test: prelude types**: `Option`, `Vec`, `String` referenced without generating `use`.
+
 ## Out of Scope
 
 - Fuzzing / random input testing.
@@ -119,7 +123,7 @@ Validate that all components handle edge cases gracefully — empty content, sin
 
 ## Definition of Done
 
-- `test/edge-cases.test.tsx` exists with all ten test cases.
+- `test/edge-cases.test.tsx` exists with all twelve test cases.
 - All tests pass.
 
 ## Validation

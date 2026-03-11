@@ -31,6 +31,11 @@ Establish the package scaffold so that subsequent tasks can add source files and
 - Create `packages/rust/vitest.config.ts` matching other language packages.
 - Create `packages/rust/src/index.ts` as empty barrel export file.
 - Ensure the package is included in `pnpm-workspace.yaml` (if not already via glob).
+- Create `packages/rust/api-extractor.json` extending `../../api-extractor.base.json`.
+- Ensure build script uses `alloy build --with-dev && pnpm run generate-docs`.
+- Include `prepack` script: `"prepack": "node ../../scripts/strip-dev-exports.js"`.
+- Include `#imports` hash pattern in package.json matching Go's pattern.
+- Include `generate-docs` script: `"generate-docs": "api-extractor run"`.
 
 ## Out of Scope
 - Test utilities (T002).
@@ -43,6 +48,8 @@ Establish the package scaffold so that subsequent tasks can add source files and
 - `packages/go/src/index.ts` — reference for barrel export pattern.
 - `pnpm-workspace.yaml` — verify package discovery.
 - `tsconfig.base.json` — base config being extended.
+- `packages/go/api-extractor.json` — reference for api-extractor config.
+- `api-extractor.base.json` — base api-extractor config.
 
 ## Implementation Guidance
 1. Copy `packages/go/package.json` as starting point. Change name to `@alloy-js/rust`, update description.

@@ -99,7 +99,7 @@ docs/backlog/
 | [T007b](tasks/T007b-name-conflict-resolver.md) | Name conflict resolver | E002 | feature | P1 | T003 | pending |
 | [T008](tasks/T008-parameter-descriptor.md) | Parameter descriptor + hooks | E002 | foundation | P1 | T001 | pending |
 | [T009](tasks/T009-source-file-crate-directory.md) | SourceFile + CrateDirectory | E003 | feature | P0 | T005, T007 | done |
-| [T010](tasks/T010-declaration-reference.md) | Declaration + Reference basics | E003 | feature | P0 | T006, T009 | pending |
+| [T010](tasks/T010-declaration-reference.md) | Declaration + Reference basics | E003 | feature | P0 | T006, T009 | done |
 | [T011](tasks/T011-struct-declaration.md) | StructDeclaration + Field | E003 | feature | P0 | T006, T010 | pending |
 | [T012](tasks/T012-enum-declaration.md) | EnumDeclaration + EnumVariant | E003 | feature | P0 | T006, T010, T015–T017 | pending |
 | [T013](tasks/T013-function-declaration.md) | FunctionDeclaration + Parameters | E003 | feature | P0 | T006, T008, T010, T017 | pending |

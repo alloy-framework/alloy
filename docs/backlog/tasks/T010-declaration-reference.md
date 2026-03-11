@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components               |
 | **Deps**    | T006 (Symbol factories), T009 (SourceFile/Crate) |
 | **Blocks**  | T011, T012, T013, T014, T015, T016, T017, T018  |
-| **Status**  | Pending                                          |
+| **Status**  | Done                                             |
 
 ## Description
 
@@ -110,3 +110,7 @@ function Declaration(props: DeclarationProps) {
 cd packages/rust
 pnpm build && pnpm test
 ```
+
+## Completion Note
+
+Implemented `Declaration` and `Reference` base components, wired reference resolution through `SourceFile` scope/context, and added tests covering declaration visibility behavior plus reference resolution rendering.

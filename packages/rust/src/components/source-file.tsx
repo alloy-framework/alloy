@@ -1,12 +1,11 @@
 import {
-  ComponentDefinition,
   Scope,
   SourceFile as CoreSourceFile,
   createScope,
   useScope,
   type Children,
-  type Refkey,
 } from "@alloy-js/core";
+import { Reference } from "./reference.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 
@@ -16,10 +15,6 @@ export interface SourceFileProps {
   header?: Children;
   headerComment?: Children;
 }
-
-const RustReference: ComponentDefinition<{ refkey: Refkey }> = () => {
-  return <></>;
-};
 
 function UseStatementsPlaceholder() {
   return <></>;
@@ -51,7 +46,7 @@ export function SourceFile(props: SourceFileProps) {
     <CoreSourceFile
       path={props.path}
       filetype="rust"
-      reference={RustReference}
+      reference={Reference}
       header={header}
     >
       <UseStatementsPlaceholder />

@@ -16,7 +16,7 @@ This backlog defines all work needed to implement `@alloy-js/rust`, a new Alloy 
 docs/backlog/
 ├── index.md                    ← You are here
 ├── epics/                      ← Epic-level documents (9 epics)
-├── tasks/                      ← Executable task documents (69 tasks)
+├── tasks/                      ← Executable task documents (70 tasks)
 ├── phases/                     ← Implementation phase documents (8 phases)
 └── agents/                     ← AI agent execution guidance
 ```
@@ -36,7 +36,7 @@ docs/backlog/
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
 | 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
 | 7 | Bug fixes and rendering corrections | E007 | T039–T045 | P07 |
-| 8 | Expression and statement components | E008 | T046–T067 (expression) | P08 |
+| 8 | Expression and statement components | E008 | T046–T070 (expression) | P08 |
 | 9 | Language feature gaps | E009 | T054–T066 (declaration) | P08 |
 
 ### Recommended Implementation Order
@@ -72,7 +72,7 @@ docs/backlog/
 | [E005](epics/E005-module-system-imports.md) | Module System and Imports | T022–T027 | E002, E003 | P04 |
 | [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T038 | E001–E005 | P05–P06 |
 | [E007](epics/E007-bug-fixes.md) | Bug Fixes and Rendering Corrections | T039–T045 | E001–E006 | P07 |
-| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T067 (expression) | E007 | P08 |
+| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T070 (expression) | E007 | P08 |
 | [E009](epics/E009-language-feature-gaps.md) | Language Feature Gaps | T054–T066 (declaration) | E001–E006 | P08 |
 
 ---
@@ -88,7 +88,7 @@ docs/backlog/
 | [P05](phases/P05-external-deps-build.md) | External Deps & Build | E006 (partial) | T028–T031 | External crates and Cargo.toml |
 | [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T038 | STC wrappers, exports, golden tests |
 | P07 | Bug Fixes | E007 | T039–T045 | Fix rendering bugs discovered in integration testing |
-| P08 | Expressions & Language Gaps | E008, E009 | T046–T067 | Expression components, control flow, language feature gaps |
+| P08 | Expressions & Language Gaps | E008, E009 | T046–T070 | Expression components, control flow, language feature gaps |
 
 ---
 
@@ -150,6 +150,7 @@ docs/backlog/
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | blocked |
 | [T068](tasks/T068-function-call-turbofish-wrap.md) | FunctionCallExpression turbofish + wrap formatting | E008 | bug | P2 | T050 | open |
 | [T069](tasks/T069-function-call-expression-turbofish-regression.md) | FunctionCallExpression turbofish line-wrap regression | E008 | bug | P2 | T050 | open |
+| [T070](tasks/T070-preflight-validation-turbofish-failure.md) | Function-call turbofish wrapping pre-flight validation fix | E008 | bug | P1 | T050 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -350,7 +351,7 @@ These P0 tasks are on the critical path and should be prioritized:
 - [P05: External Deps & Build](phases/P05-external-deps-build.md)
 - [P06: Polish](phases/P06-polish.md)
 - P07: Bug Fixes (T039–T045)
-- P08: Expressions & Language Gaps (T046–T069)
+- P08: Expressions & Language Gaps (T046–T070)
 
 ### Agent Guidance
 - [AI Agent Execution Rules](agents/execution-rules.md)

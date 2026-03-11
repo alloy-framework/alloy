@@ -5,7 +5,7 @@
 | **ID**           | T030                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | high                                                                                    |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -79,14 +79,14 @@ Enable automatic `Cargo.toml` generation with correct package metadata and depen
 
 ## Acceptance Criteria
 
-- [ ] `CargoTomlFile` renders correct `[package]` section.
-- [ ] `CargoTomlFile` renders `[dependencies]` with explicit dependencies.
-- [ ] `CargoTomlFile` merges auto-tracked dependencies from `RustCrateScope`.
-- [ ] Simple version dependency renders as `name = "version"`.
-- [ ] Dependency with features renders as `name = { version = "version", features = [...] }`.
-- [ ] Dependencies are sorted alphabetically.
-- [ ] Default version is `"0.1.0"` and default edition is `"2021"`.
-- [ ] `CrateDirectory` includes `CargoTomlFile` in output.
+- [x] `CargoTomlFile` renders correct `[package]` section.
+- [x] `CargoTomlFile` renders `[dependencies]` with explicit dependencies.
+- [x] `CargoTomlFile` merges auto-tracked dependencies from `RustCrateScope`.
+- [x] Simple version dependency renders as `name = "version"`.
+- [x] Dependency with features renders as `name = { version = "version", features = [...] }`.
+- [x] Dependencies are sorted alphabetically.
+- [x] Default version is `"0.1.0"` and default edition is `"2021"`.
+- [x] `CrateDirectory` includes `CargoTomlFile` in output.
 
 ## Definition of Done
 

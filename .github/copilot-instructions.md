@@ -36,6 +36,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - In `TraitDeclaration`, a self-closing `FunctionDeclaration` is an abstract signature and must render with `;` (not `{}`); a trait method with children is a default implementation and renders with braces. For fast regression checks, run `pnpm --filter @alloy-js/rust exec vitest run test/function.test.tsx test/reference.test.tsx`.
 - In `SourceFile`/module registration flows, standalone non-root files should self-register with parent module declarations, but module-root files (`lib.rs`, `main.rs`, `mod.rs`) must never self-register.
 - In `ImplBlock`/`TraitDeclaration`, `FunctionDeclaration` defaults receiver to `&self`; set `receiver="none"` for associated functions like `new()`.
+- For `ModDeclarations` render-order regressions, first run `pnpm --filter @alloy-js/rust exec vitest run test/t045-render-order.test.tsx test/mod-declarations.test.tsx`, then run full rust validation.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

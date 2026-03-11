@@ -5,7 +5,7 @@
 | **ID** | T045 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | improvement |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -60,9 +60,9 @@ This means `<SourceFile path="lib.rs" />` must be placed AFTER all `<ModuleDirec
 
 ## Acceptance Criteria
 
-- [ ] `<SourceFile path="lib.rs" />` renders correct mod declarations regardless of JSX position
-- [ ] Existing module structure tests continue to pass
-- [ ] New test validates order-independence
+- [x] `<SourceFile path="lib.rs" />` renders correct mod declarations regardless of JSX position
+- [x] Existing module structure tests continue to pass
+- [x] New test validates order-independence
 
 ---
 

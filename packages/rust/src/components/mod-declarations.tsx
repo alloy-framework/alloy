@@ -1,4 +1,4 @@
-import { code } from "@alloy-js/core";
+import { code, memo } from "@alloy-js/core";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 
@@ -23,22 +23,24 @@ function ModDeclarationLine(props: ModDeclaration) {
 }
 
 export function ModDeclarations(props: ModDeclarationsProps) {
-  const declarations = Array.from(props.scope.childModules.values()).sort((left, right) =>
-    left.name.localeCompare(right.name),
-  );
+  return memo(() => {
+    const declarations = Array.from(props.scope.childModules.values()).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    );
 
-  if (declarations.length === 0) {
-    return <></>;
-  }
+    if (declarations.length === 0) {
+      return <></>;
+    }
 
-  return (
-    <>
-      {declarations.map((declaration, index) => (
-        <>
-          <ModDeclarationLine name={declaration.name} visibility={declaration.visibility} />
-          {index < declarations.length - 1 ? <hbr /> : null}
-        </>
-      ))}
-    </>
-  );
+    return (
+      <>
+        {declarations.map((declaration, index) => (
+          <>
+            <ModDeclarationLine name={declaration.name} visibility={declaration.visibility} />
+            {index < declarations.length - 1 ? <hbr /> : null}
+          </>
+        ))}
+      </>
+    );
+  });
 }

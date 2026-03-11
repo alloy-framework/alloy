@@ -9,6 +9,11 @@ import {
   EnumVariant as EnumVariantComponent,
 } from "../enum-declaration.js";
 import { FunctionDeclaration as FunctionDeclarationComponent } from "../function-declaration.js";
+import {
+  ElseClause as ElseClauseComponent,
+  ElseIfClause as ElseIfClauseComponent,
+  IfExpression as IfExpressionComponent,
+} from "../if-expression.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
 import {
   MatchArm as MatchArmComponent,
@@ -38,6 +43,9 @@ export const EnumDeclaration = stc(EnumDeclarationComponent);
 export const EnumVariant = stc(EnumVariantComponent);
 export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
+export const IfExpression = stc(IfExpressionComponent);
+export const ElseIfClause = stc(ElseIfClauseComponent);
+export const ElseClause = stc(ElseClauseComponent);
 export const ImplBlock = stc(ImplBlockComponent);
 export const MatchArm = stc(MatchArmComponent);
 export const MatchExpression = stc(MatchExpressionComponent);

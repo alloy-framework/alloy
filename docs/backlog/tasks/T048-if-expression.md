@@ -5,7 +5,7 @@
 | **ID** | T048 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -103,12 +103,12 @@ Both use the same pattern: condition prop + children body + sibling clause compo
 
 ## Acceptance Criteria
 
-- [ ] `<IfExpression condition={...}>body</IfExpression>` renders `if condition { body }`
-- [ ] `<ElseIfClause>` renders ` else if condition { body }`
-- [ ] `<ElseClause>` renders ` else { body }`
-- [ ] `if let` patterns work via condition prop
-- [ ] Proper indentation of body
-- [ ] STC wrappers exported
+- [x] `<IfExpression condition={...}>body</IfExpression>` renders `if condition { body }`
+- [x] `<ElseIfClause>` renders ` else if condition { body }`
+- [x] `<ElseClause>` renders ` else { body }`
+- [x] `if let` patterns work via condition prop
+- [x] Proper indentation of body
+- [x] STC wrappers exported
 
 ---
 

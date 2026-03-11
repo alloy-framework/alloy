@@ -145,7 +145,7 @@ docs/backlog/
 | [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E007 | improvement | P2 | T025, T009 | open |
 | [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E008 | feature | P1 | T009 | done |
 | [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | done |
-| [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | open |
+| [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | done |
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | open |
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
@@ -250,7 +250,6 @@ These components were identified by analyzing raw `code` template usage in `samp
 |---|---|---|---|
 | **T046** | StructExpression + FieldInit | P1 | Self/struct literals (8 instances) |
 | **T047** | MatchExpression + MatchArm | P1 | Pattern matching (2 instances, core Rust) |
-| **T048** | IfExpression + ElseIfClause + ElseClause | P1 | If-expressions, if-let (2 instances) |
 
 ### Tier 2 — Medium Impact
 

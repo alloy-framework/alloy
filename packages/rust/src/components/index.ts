@@ -18,6 +18,7 @@ export * from "./impl-block.js";
 export * from "./module-directory.js";
 export * from "./mod-declarations.js";
 export * from "./match-expression.js";
+export * from "./if-expression.js";
 export * from "./struct-expression.js";
 export * from "./value.js";
 export * as stc from "./stc/index.js";

@@ -5,7 +5,7 @@
 | **ID**           | T025                                                                        |
 | **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
 | **Type**         | feature                                                                     |
-| **Status**       | pending                                                                     |
+| **Status**       | done                                                                        |
 | **Priority**     | medium                                                                      |
 | **Owner**        | AI coding agent                                                             |
 | **AI Executable**| yes                                                                         |
@@ -62,20 +62,26 @@ Eliminate manual `mod` declaration management — child modules are automaticall
 
 ## Acceptance Criteria
 
-- [ ] Crate root (`lib.rs`) renders `mod` declarations for child modules.
-- [ ] Module root (`mod.rs`) renders `mod` declarations for nested child modules.
-- [ ] `pub mod name;` renders for public modules.
-- [ ] `mod name;` renders for private modules.
-- [ ] `mod` declarations are sorted alphabetically.
-- [ ] `mod` declarations appear before `use` statements.
-- [ ] Non-root files do not render `mod` declarations.
-- [ ] A crate with 3 modules generates correct `mod` declarations.
+- [x] Crate root (`lib.rs`) renders `mod` declarations for child modules.
+- [x] Module root (`mod.rs`) renders `mod` declarations for nested child modules.
+- [x] `pub mod name;` renders for public modules.
+- [x] `mod name;` renders for private modules.
+- [x] `mod` declarations are sorted alphabetically.
+- [x] `mod` declarations appear before `use` statements.
+- [x] Non-root files do not render `mod` declarations.
+- [x] A crate with 3 modules generates correct `mod` declarations.
 
 ## Definition of Done
 
 - `SourceFile` (or `ModDeclarations`) correctly renders `mod` declarations.
 - Tests pass with all acceptance criteria covered.
 - Changes are re-exported if new components are created.
+
+## Completion Notes
+
+- Completed in `packages/rust/src/components/source-file.tsx` with automatic `mod` declaration rendering from registered child modules.
+- Declaration output now respects visibility (`pub mod` vs `mod`), root-file-only rendering (`lib.rs`, `main.rs`, `mod.rs`), ordering before `use` statements, and alphabetical sorting.
+- Useful learning: when child modules are registered from nested paths, using the last path segment as the module name is essential to keep generated `mod` declarations correct.
 
 ## Validation
 

@@ -15,4 +15,5 @@ export * from "./parameters.js";
 export * from "./trait-declaration.js";
 export * from "./impl-block.js";
 export * from "./module-directory.js";
+export * from "./mod-declarations.js";
 export * from "./value.js";

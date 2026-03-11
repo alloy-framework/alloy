@@ -62,3 +62,10 @@ Base symbol class exists, compiles, and is exported from `symbols/index.ts`.
 
 ## Validation Approach
 Build succeeds: `pnpm --filter @alloy-js/rust build`.
+
+Implementation evidence:
+- `packages/rust/src/symbols/rust-output-symbol.ts` defines `RustOutputSymbol`, exported `RustVisibility`/`RustSymbolKind`, `memberSpaces`, and `copy()`.
+- `packages/rust/src/symbols/index.ts` exports the symbol module surface.
+
+Test evidence:
+- `packages/rust/test/rust-output-symbol.test.ts` covers instantiation, reactive property updates, `copy()`, and member-space behavior.

@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components       |
 | **Deps**    | T010 (Declaration/Reference)             |
 | **Blocks**  | —                                        |
-| **Status**  | Pending                                  |
+| **Status**  | Done                                     |
 
 ## Description
 
@@ -104,12 +104,12 @@ Attributes are typically passed via the `attributes` or `derives` props on decla
 
 ## Acceptance Criteria
 
-- [ ] `Attribute` renders `#[test]` for simple attribute.
-- [ ] `Attribute` renders `#[cfg(test)]` with args.
-- [ ] `DeriveAttribute` renders `#[derive(Debug)]` for single trait.
-- [ ] `DeriveAttribute` renders `#[derive(Debug, Clone, Serialize)]` for multiple traits.
-- [ ] Attributes render on the line before the annotated item.
-- [ ] Refkey-based trait names resolve correctly.
+- [x] `Attribute` renders `#[test]` for simple attribute.
+- [x] `Attribute` renders `#[cfg(test)]` with args.
+- [x] `DeriveAttribute` renders `#[derive(Debug)]` for single trait.
+- [x] `DeriveAttribute` renders `#[derive(Debug, Clone, Serialize)]` for multiple traits.
+- [x] Attributes render on the line before the annotated item.
+- [x] Refkey-based trait names resolve correctly.
 
 ## Definition of Done
 

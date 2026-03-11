@@ -1,3 +1,4 @@
+export * from "./attribute.js";
 export * from "./crate-directory.js";
 export * from "./declaration.js";
 export * from "./reference.js";

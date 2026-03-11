@@ -32,6 +32,7 @@ Critical rules:
 8. When referencing repository files, include repository-relative paths.
 9. Focus only on the parts of the repo relevant to Alloy core and existing language packages.
 10. Optimize for future AI coding agents that will consume these documents.
+11. For symbol-model changes (like Rust T003), always validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` before moving to dependent tasks.
 
 Quality bar:
 - Precise

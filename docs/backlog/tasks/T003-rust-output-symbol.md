@@ -5,7 +5,7 @@
 | **ID** | T003 |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | foundation |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical path |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -52,10 +52,10 @@ Provide the base symbol class that all Rust symbols will inherit from.
 4. Create `symbols/index.ts` barrel exporting the class and types.
 
 ## Acceptance Criteria
-- `RustOutputSymbol` can be instantiated with `createSymbol()`.
-- All properties are reactive (tracked/triggered).
-- `copy()` produces a copy with same properties.
-- Types (`RustVisibility`, `RustSymbolKind`) are exported.
+- [x] `RustOutputSymbol` can be instantiated with `createSymbol()`.
+- [x] All properties are reactive (tracked/triggered).
+- [x] `copy()` produces a copy with same properties.
+- [x] Types (`RustVisibility`, `RustSymbolKind`) are exported.
 
 ## Definition of Done
 Base symbol class exists, compiles, and is exported from `symbols/index.ts`.

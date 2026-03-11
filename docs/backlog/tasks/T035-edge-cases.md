@@ -5,7 +5,7 @@
 | **ID**           | T035                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | test                                                                                    |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | medium                                                                                  |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -112,14 +112,25 @@ Validate that all components handle edge cases gracefully — empty content, sin
 
 ## Acceptance Criteria
 
-- [ ] Empty struct renders `struct Empty {}`.
-- [ ] Empty enum renders `enum Never {}`.
-- [ ] Function with no params/return renders `fn noop() {}`.
-- [ ] Single-field struct renders correctly.
-- [ ] Reserved word `type` renders as `r#type`.
-- [ ] Duplicate references produce single `use` statement.
-- [ ] Same-path imports are grouped.
-- [ ] Multiple impl blocks for same type render without conflict.
+- [x] Empty struct renders `struct Empty {}`.
+- [x] Empty enum renders `enum Never {}`.
+- [x] Function with no params/return renders `fn noop() {}`.
+- [x] Single-field struct renders correctly.
+- [x] Reserved word `type` renders as `r#type`.
+- [x] Duplicate references produce single `use` statement.
+- [x] Same-path imports are grouped.
+- [x] Multiple impl blocks for same type render without conflict.
+
+## Implementation Notes
+
+- Added `packages/rust/test/edge-cases.test.tsx` with category-based coverage for:
+  - empty/minimal constructs;
+  - reserved-word escaping (`type`, `self`, `super`, `crate`, `fn`, `struct`, `enum`, `trait`, `impl`);
+  - import deduplication and same-path grouping;
+  - multiple impl blocks on one type;
+  - private cross-module reference failure;
+  - prelude import skipping (`Option`, `Vec`, `String`).
+- Used deterministic assertions with `toRenderTo(d\`...\`)` and exact rendered-file checks for module import scenarios.
 
 ## Definition of Done
 

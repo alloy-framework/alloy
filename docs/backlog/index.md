@@ -124,7 +124,7 @@ docs/backlog/
 | [T032](tasks/T032-stc-wrappers.md) | STC wrappers | E006 | feature | P2 | T011–T021 | done |
 | [T033](tasks/T033-barrel-exports.md) | Barrel exports verification | E006 | infra | P1 | T032 | done |
 | [T034](tasks/T034-golden-scenarios.md) | Golden scenario tests | E006 | test | P0 | T026–T027, T030–T031 | done |
-| [T035](tasks/T035-edge-cases.md) | Edge case tests | E006 | test | P1 | T011–T025 | pending |
+| [T035](tasks/T035-edge-cases.md) | Edge case tests | E006 | test | P1 | T011–T025 | done |
 
 ---
 

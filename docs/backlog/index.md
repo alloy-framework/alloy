@@ -141,7 +141,7 @@ docs/backlog/
 | [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E007 | bug | P1 | T013, T019 | done |
 | [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E007 | bug | P1 | T012 | done |
 | [T043](tasks/T043-standalone-sourcefile-module-registration.md) | Standalone SourceFile module registration | E007 | bug | P1 | T009, T025 | done |
-| [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E007 | improvement | P2 | T013, T021 | open |
+| [T044](tasks/T044-function-default-receiver.md) | FunctionDeclaration default receiver in impl blocks | E007 | improvement | P2 | T013, T021 | done |
 | [T045](tasks/T045-mod-declarations-render-order.md) | ModDeclarations render order dependency | E007 | improvement | P2 | T025, T009 | open |
 | [T046](tasks/T046-struct-expression.md) | StructExpression + FieldInit | E008 | feature | P1 | T009 | done |
 | [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | done |
@@ -235,7 +235,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T041** | Trait abstract method signatures | P1 | Trait methods render `{}` instead of `;` |
 | **T042** | Enum tuple variant support | P1 | Tuple variants render as struct variants |
 | **T043** | Standalone SourceFile module registration | P1 | Single-file modules missing from mod declarations |
-| **T044** | FunctionDeclaration default receiver | P2 | Constructors need verbose `receiver="none"` |
+| **T044** | FunctionDeclaration default receiver | P2 | ✓ Completed — no code changes required; behavior already implemented and tested |
 | **T045** | ModDeclarations render order | P2 | lib.rs must be last child in JSX tree |
 
 ---

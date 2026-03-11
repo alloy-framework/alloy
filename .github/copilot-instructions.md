@@ -35,6 +35,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - For braced expression components that use `<Indent>` (for example `StructExpression`), do not add a leading `<hbr />` right after `" {"`; it introduces an extra blank line before the first indented entry.
 - In `TraitDeclaration`, a self-closing `FunctionDeclaration` is an abstract signature and must render with `;` (not `{}`); a trait method with children is a default implementation and renders with braces. For fast regression checks, run `pnpm --filter @alloy-js/rust exec vitest run test/function.test.tsx test/reference.test.tsx`.
 - In `SourceFile`/module registration flows, standalone non-root files should self-register with parent module declarations, but module-root files (`lib.rs`, `main.rs`, `mod.rs`) must never self-register.
+- In `ImplBlock`/`TraitDeclaration`, `FunctionDeclaration` defaults receiver to `&self`; set `receiver="none"` for associated functions like `new()`.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

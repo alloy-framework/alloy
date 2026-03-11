@@ -5,13 +5,14 @@
 | **ID** | T044 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | improvement |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
 | **Human Review Required** | Yes |
 | **Dependencies** | T013 (FunctionDeclaration), T021 (Self Receiver) |
 | **Blocks** | — |
+| **Resolution** | No code changes required. Behavior is already correctly implemented: `FunctionDeclaration` defaults to `"&self"` for methods in `ImplBlock`/`TraitDeclaration`, with `receiver="none"` opt-out for associated functions. Existing tests validate the pattern. |
 
 ---
 
@@ -58,9 +59,9 @@ Evaluate and improve the default receiver behavior for functions in impl blocks.
 
 ## Acceptance Criteria
 
-- [ ] Design decision documented
-- [ ] If default changes, all existing tests updated
-- [ ] Associated functions like `new()` have a clear, ergonomic pattern
+- [x] Design decision documented (default `"&self"` for methods is correct; `receiver="none"` for associated functions)
+- [x] All existing tests already validate the pattern (no code changes needed)
+- [x] Associated functions like `new()` have clear pattern (`receiver="none"` explicit opt-out)
 
 ---
 

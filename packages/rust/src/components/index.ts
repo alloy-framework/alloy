@@ -20,6 +20,7 @@ export * from "./mod-declarations.js";
 export * from "./match-expression.js";
 export * from "./if-expression.js";
 export * from "./for-expression.js";
+export * from "./let-binding.js";
 export * from "./struct-expression.js";
 export * from "./value.js";
 export * as stc from "./stc/index.js";

@@ -5,7 +5,7 @@
 | **ID** | T049 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -81,14 +81,24 @@ interface LetBindingProps {
 
 ## Acceptance Criteria
 
-- [ ] `<LetBinding name="x">value</LetBinding>` renders `let x = value;`
-- [ ] `mutable` prop renders `let mut x = value;`
-- [ ] `type` prop renders `let x: Type = value;`
-- [ ] Without children renders `let x;` (uninitialized)
-- [ ] STC wrapper exported
+- [x] `<LetBinding name="x">value</LetBinding>` renders `let x = value;`
+- [x] `mutable` prop renders `let mut x = value;`
+- [x] `type` prop renders `let x: Type = value;`
+- [x] Without children renders `let x;` (uninitialized)
+- [x] STC wrapper exported
 
 ---
 
 ## Evidence
 
-2 let-binding instances in `samples/rust-example/store-module.tsx` — `let entry = Entry { ... };` and `let before = self.data.len();`.
+Implemented in:
+
+- `packages/rust/src/components/let-binding.tsx`
+- `packages/rust/src/components/index.ts`
+- `packages/rust/src/components/stc/index.ts`
+- `packages/rust/test/let-binding.test.tsx`
+
+Validation:
+
+- `pnpm --filter @alloy-js/rust build`
+- `pnpm --filter @alloy-js/rust test`

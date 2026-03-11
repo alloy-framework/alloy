@@ -152,6 +152,7 @@ docs/backlog/
 | [T069](tasks/T069-function-call-expression-turbofish-regression.md) | FunctionCallExpression turbofish line-wrap regression | E008 | bug | P2 | T050 | open |
 | [T070](tasks/T070-preflight-validation-turbofish-failure.md) | Function-call turbofish wrapping pre-flight validation fix | E008 | bug | P1 | T050 | open |
 | [T071](tasks/T071-preflight-turbofish-snapshot-mismatch.md) | Pre-flight turbofish snapshot mismatch failure tracking | E008 | bug | P1 | T050 | open |
+| [T072](tasks/T072-preflight-turbofish-call-args-mismatch.md) | Pre-flight turbofish call-args snapshot mismatch tracking | E008 | bug | P1 | T050 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |

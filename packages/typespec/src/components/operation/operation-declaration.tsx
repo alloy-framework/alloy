@@ -72,11 +72,10 @@ function Parameters(props: { parameters?: ParameterDescriptor[] }) {
     <group>
       (
       {props.parameters && props.parameters.length > 0 && (
-        <Indent nobreak>
-          <For each={props.parameters} joiner={", "}>
+        <Indent softline trailingBreak>
+          <For each={props.parameters} comma line>
             {(param) => (
               <>
-                <softline />
                 {param.name}
                 {param.optional ? "?" : ""}: {param.type}
               </>
@@ -84,7 +83,7 @@ function Parameters(props: { parameters?: ParameterDescriptor[] }) {
           </For>
         </Indent>
       )}
-      <softline />)
+      )
     </group>
   );
 }

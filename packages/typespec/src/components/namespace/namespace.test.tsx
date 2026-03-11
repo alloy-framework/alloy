@@ -1,5 +1,4 @@
 import { Output } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { Namespace } from "./namespace.jsx";
@@ -12,7 +11,7 @@ it("renders a namespace with contents", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
         namespace My.Namespace;
 
         Contents!`,
@@ -29,7 +28,7 @@ it("renders namespaces when a file level namespace is present", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
         namespace File.Level;
 
         namespace My.Namespace {

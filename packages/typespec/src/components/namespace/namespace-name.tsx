@@ -1,6 +1,7 @@
 import { useNamespaceContext } from "../../contexts/namespace.js";
 import { NamespaceSymbol } from "../../symbols/namespace.js";
 
+/** @internal */
 export interface NamespaceNameProps {
   symbol: NamespaceSymbol;
 
@@ -8,6 +9,7 @@ export interface NamespaceNameProps {
   relative?: boolean;
 }
 
+/** @internal */
 export function NamespaceName(props: NamespaceNameProps) {
   const names = [props.symbol.name];
   const parent = props.relative ? useNamespaceContext()?.symbol : undefined;

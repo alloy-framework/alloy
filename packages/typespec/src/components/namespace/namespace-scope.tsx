@@ -9,6 +9,7 @@ export interface NamespaceScopeProps {
   children: Children;
 }
 
+/** @internal */
 export function NamespaceScopeComponent(props: NamespaceScopeProps) {
   const parentScope = useScope() as NamespaceScope | SourceFileScope;
   const scope = new NamespaceScope(props.symbol, parentScope);

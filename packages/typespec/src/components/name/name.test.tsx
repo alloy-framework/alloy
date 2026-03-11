@@ -1,5 +1,5 @@
 import { Declaration, Output } from "@alloy-js/core";
-import { d, renderToString } from "@alloy-js/core/testing";
+import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/index.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
@@ -44,7 +44,7 @@ it("renders the current declaration's name", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       Foo
     `,
   });
@@ -66,7 +66,7 @@ it("renders the policy-adjusted name", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       \`model\`
     `,
   });

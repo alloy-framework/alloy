@@ -1,5 +1,5 @@
 import { Output, refkey, StatementList } from "@alloy-js/core";
-import { d, renderToString } from "@alloy-js/core/testing";
+import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
@@ -20,7 +20,7 @@ it("renders a scalar", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       scalar Foo
     `,
   });
@@ -34,7 +34,7 @@ it("renders a scalar with 'is'", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       scalar Foo is string
     `,
   });
@@ -48,7 +48,7 @@ it("renders a scalar with 'extends'", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       scalar Foo extends Bar
     `,
   });
@@ -82,7 +82,7 @@ it("applies the scalar name policy", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       scalar \`model\`
     `,
   });
@@ -103,7 +103,7 @@ it("does not deconflict names across namespaces", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A {
         scalar Foo
       }
@@ -127,7 +127,7 @@ it("deconflicts duplicate names within the same namespace", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       scalar Foo;
@@ -145,7 +145,7 @@ it("renders a scalar with template parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       scalar Unreal<Type>`,
@@ -165,7 +165,7 @@ it("renders a scalar with constrained template parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       scalar Unreal<Type extends string>`,
@@ -187,7 +187,7 @@ it("resolves template parameter references within the scalar", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       scalar Wrapped<T> extends T`,

@@ -1,6 +1,5 @@
 import { Namespace } from "#components/namespace/namespace.jsx";
 import { Output, SourceDirectory } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { SourceFile } from "./source-file.jsx";
 
@@ -28,7 +27,7 @@ it("declares a file level namespace when one is provided", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace My.Namespace;
 
       Content of the file`,
@@ -45,7 +44,7 @@ it("does not declare a file level namespace when more than one top-level namespa
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace My.Namespace1 {
         Content of the file
       }

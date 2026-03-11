@@ -2,7 +2,6 @@ import { Namespace } from "#components/namespace/namespace.jsx";
 import { ScalarDeclaration } from "#components/scalar-declaration/scalar-declaration.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
 import { Output, refkey, SourceDirectory } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
@@ -26,11 +25,11 @@ it("properly resolves and imports referenced types in different files", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "a.tsp": d`
+    "a.tsp": `
       namespace A;
 
       scalar Bar`,
-    "b.tsp": d`
+    "b.tsp": `
       import "./a.tsp";
 
       using A;
@@ -52,7 +51,7 @@ it("properly resolves types in the same file and namespace", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       scalar Bar
@@ -76,7 +75,7 @@ it("properly resolves types in the same file and different namespace", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       using A;
 
       namespace A {
@@ -107,11 +106,11 @@ it("properly resolves types in different directories", () => {
       </SourceDirectory>
     </Output>,
   ).toRenderTo({
-    "dir1/a.tsp": d`
+    "dir1/a.tsp": `
       namespace A;
 
       scalar Bar`,
-    "dir2/b.tsp": d`
+    "dir2/b.tsp": `
       import "../dir1/a.tsp";
 
       using A;

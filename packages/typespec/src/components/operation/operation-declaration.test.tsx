@@ -1,5 +1,5 @@
 import { Output, refkey, StatementList } from "@alloy-js/core";
-import { d, renderToString } from "@alloy-js/core/testing";
+import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
@@ -22,7 +22,7 @@ it("renders an operation with no parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op ping(): void`,
@@ -43,7 +43,7 @@ it("renders an operation with parameters and return type", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op getPet(name: string): Pet`,
@@ -60,7 +60,7 @@ it("renders an operation with 'is'", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op deletePet is Delete`,
@@ -103,7 +103,7 @@ it("applies the operation name policy", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op \`model\`(): void`,
@@ -123,7 +123,7 @@ it("deconflicts duplicate operation names within the same namespace", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op ping(): void;
@@ -148,10 +148,37 @@ it("renders an operation with multiple parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op createPet(name: string, age: int32): Pet`,
+  });
+});
+
+it("renders an operation in multiple lines if parameters exceed line length limit", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <OperationDeclaration
+            name="createPet"
+            parameters={[
+              { name: "name", type: "string" },
+              { name: "age", type: "int32" },
+            ]}
+            returnType="Pet"
+          />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      namespace A;
+
+      op createPet(
+        name: string,
+        age: int32
+      ): Pet`,
   });
 });
 
@@ -169,7 +196,7 @@ it("renders an operation with an optional parameter", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op listPets(filter?: string): Pet[]`,
@@ -191,7 +218,7 @@ it("renders an operation with template parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op ReadResource<T>(id: string): T`,
@@ -215,7 +242,7 @@ it("renders an operation with constrained template parameters", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op ReadResource<T extends BaseModel = DefaultModel>(id: string): T`,
@@ -238,7 +265,7 @@ it("resolves template parameter references within the operation", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo({
-    "main.tsp": d`
+    "main.tsp": `
       namespace A;
 
       op ReadResource<T>(id: string): T`,

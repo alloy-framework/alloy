@@ -38,11 +38,11 @@ export function SourceFile(props: SourceFileProps) {
   const usings = computed(() => scope.usings);
   return (
     <CoreSourceFile path={props.path} filetype="typespec">
-      <List joiner={<hbr />} ender={<hbr />}>
-        <For each={imports.value} joiner={<hbr />} ender={<hbr />}>
+      <List hardline ender>
+        <For each={imports.value} hardline ender>
           {(importPath) => <>import "{importPath}";</>}
         </For>
-        <For each={usings.value} joiner={<hbr />} ender={<hbr />}>
+        <For each={usings.value} hardline ender>
           {(using) => <>using {using.name};</>}
         </For>
       </List>

@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components                                                       |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference) |
 | **Blocks**  | T020 (ImplBlock needs struct types)                                                      |
-| **Status**  | Pending                                                                                  |
+| **Status**  | Done                                                                                     |
 
 ## Description
 
@@ -101,15 +101,15 @@ The `derives` prop renders `#[derive(...)]` if the Attribute component (T015) is
 
 ## Acceptance Criteria
 
-- [ ] Basic struct renders: `struct Foo {}`.
-- [ ] Pub struct renders: `pub struct Foo {}`.
-- [ ] Struct with derives renders: `#[derive(Debug, Clone)]\nstruct Foo {}`.
-- [ ] Struct with fields renders correctly with indentation and trailing commas.
-- [ ] Field visibility renders: `pub name: Type,`.
-- [ ] Struct with doc comment renders `/// ...` above the struct.
-- [ ] Struct with type parameters renders: `struct Foo<T, U: Display> {}`.
-- [ ] Struct with where clause renders correctly.
-- [ ] `NamedTypeSymbol` is created with `typeKind: "struct"`.
+- [x] Basic struct renders: `struct Foo {}`.
+- [x] Pub struct renders: `pub struct Foo {}`.
+- [x] Struct with derives renders: `#[derive(Debug, Clone)]\nstruct Foo {}`.
+- [x] Struct with fields renders correctly with indentation and trailing commas.
+- [x] Field visibility renders: `pub name: Type,`.
+- [x] Struct with doc comment renders `/// ...` above the struct.
+- [x] Struct with type parameters renders: `struct Foo<T, U: Display> {}`.
+- [x] Struct with where clause renders correctly.
+- [x] `NamedTypeSymbol` is created with `typeKind: "struct"`.
 
 ## Definition of Done
 

@@ -106,7 +106,7 @@ docs/backlog/
 | [T014](tasks/T014-type-alias-const.md) | TypeAlias + ConstDeclaration | E003 | feature | P1 | T006, T010 | pending |
 | [T015](tasks/T015-attributes.md) | Attribute + DeriveAttribute | E003 | feature | P0 | T010 | pending |
 | [T016](tasks/T016-doc-comments.md) | DocComment + ModuleDocComment | E003 | feature | P1 | T001 | pending |
-| [T017](tasks/T017-type-parameters.md) | TypeParameters + WhereClause | E003 | feature | P0 | T001 | pending |
+| [T017](tasks/T017-type-parameters.md) | TypeParameters + WhereClause | E003 | feature | P0 | T001 | done |
 | [T018](tasks/T018-value-component.md) | Value component | E003 | feature | P2 | T001 | pending |
 | [T019](tasks/T019-trait-declaration.md) | TraitDeclaration | E004 | feature | P0 | T006, T010, T013, T017 | pending |
 | [T020](tasks/T020-impl-block.md) | ImplBlock | E004 | feature | P0 | T006, T010, T013, T017, T019 | pending |

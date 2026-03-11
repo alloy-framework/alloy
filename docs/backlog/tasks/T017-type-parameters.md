@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components       |
 | **Deps**    | T001 (Package scaffold)                  |
 | **Blocks**  | —                                        |
-| **Status**  | Pending                                  |
+| **Status**  | done                                     |
 
 ## Description
 
@@ -111,14 +111,14 @@ Used by declaration components:
 
 ## Acceptance Criteria
 
-- [ ] Single type parameter renders: `<T>`.
-- [ ] Multiple type parameters render: `<T, U>`.
-- [ ] Type parameter with constraint renders: `<T: Display>`.
-- [ ] Multiple params with mixed bounds render: `<T, U: Display + Clone>`.
-- [ ] Empty/undefined params render nothing (no `<>`).
-- [ ] Where clause renders: `where T: Display + Clone`.
-- [ ] Where clause with multiple constraints renders correctly.
-- [ ] Empty/undefined where clause renders nothing.
+- [x] Single type parameter renders: `<T>`.
+- [x] Multiple type parameters render: `<T, U>`.
+- [x] Type parameter with constraint renders: `<T: Display>`.
+- [x] Multiple params with mixed bounds render: `<T, U: Display + Clone>`.
+- [x] Empty/undefined params render nothing (no `<>`).
+- [x] Where clause renders: `where T: Display + Clone`.
+- [x] Where clause with multiple constraints renders correctly.
+- [x] Empty/undefined where clause renders nothing.
 
 ## Definition of Done
 
@@ -133,3 +133,7 @@ Used by declaration components:
 cd packages/rust
 pnpm build && pnpm vitest run type-parameters
 ```
+
+## Implementation Notes
+
+- TSX parser gotcha: when test literals include `<...>` (for example `impl<T> Thing`), wrap the text in a JS expression (`{"impl<T> Thing"}`) to avoid JSX parse errors.

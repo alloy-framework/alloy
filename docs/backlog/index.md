@@ -155,7 +155,7 @@ docs/backlog/
 | [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | done |
 | [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | open |
 | [T057](tasks/T057-break-continue.md) | BreakExpression + ContinueExpression | E008 | feature | P2 | T055, T056 | open |
-| [T058](tasks/T058-tuple-struct.md) | Tuple struct declaration | E009 | feature | P1 | T011 | open |
+| [T058](tasks/T058-tuple-struct.md) | Tuple struct declaration | E009 | feature | P1 | T011 | done |
 | [T059](tasks/T059-static-declaration.md) | StaticDeclaration | E009 | feature | P2 | T014 | open |
 | [T060](tasks/T060-await-expression.md) | AwaitExpression | E008 | feature | P2 | T009 | open |
 | [T061](tasks/T061-method-chain-expression.md) | MethodChainExpression | E008 | feature | P2 | T050 | open |

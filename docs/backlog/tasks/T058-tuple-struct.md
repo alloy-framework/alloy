@@ -5,7 +5,7 @@
 | **ID** | T058 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -85,9 +85,9 @@ interface StructDeclarationProps {
 
 ## Acceptance Criteria
 
-- [ ] Tuple structs render as `struct Name(Type1, Type2);`
-- [ ] Unit structs render as `struct Name;` (no braces)
-- [ ] Derives, attributes, doc comments work on tuple structs
-- [ ] Generic tuple structs render `struct Name<T>(T);`
-- [ ] Existing named-field struct tests unaffected
-- [ ] STC wrapper exported
+- [x] Tuple structs render as `struct Name(Type1, Type2);`
+- [x] Unit structs render as `struct Name;` (no braces)
+- [x] Derives, attributes, doc comments work on tuple structs
+- [x] Generic tuple structs render `struct Name<T>(T);`
+- [x] Existing named-field struct tests unaffected
+- [x] STC wrapper exported

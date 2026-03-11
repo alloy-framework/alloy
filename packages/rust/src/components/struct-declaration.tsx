@@ -22,6 +22,9 @@ export interface StructDeclarationProps {
   doc?: string;
   typeParameters?: TypeParameterProp[];
   whereClause?: Children;
+  tuple?: boolean;
+  types?: Children[];
+  unit?: boolean;
   children?: Children;
 }
 
@@ -53,6 +56,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
+  const tupleTypes = props.types ?? [];
 
   return (
     <>
@@ -81,13 +85,28 @@ export function StructDeclaration(props: StructDeclarationProps) {
         {"struct "}
         {structSymbol.name}
         <TypeParameters params={props.typeParameters} />
-        {props.whereClause ? (
+        {props.whereClause && !props.tuple ? (
           <>
             {" "}
             <WhereClause>{props.whereClause}</WhereClause>
           </>
         ) : null}
-        {members.length > 0 ? (
+        {props.unit ? (
+          ";"
+        ) : props.tuple ? (
+          <>
+            {"("}
+            <For each={tupleTypes} joiner={", "}>{(type) => type}</For>
+            {")"}
+            {props.whereClause ? (
+              <>
+                {" "}
+                <WhereClause>{props.whereClause}</WhereClause>
+              </>
+            ) : null}
+            {";"}
+          </>
+        ) : members.length > 0 ? (
           <>
             {" {"}
             <Scope value={structScope}>

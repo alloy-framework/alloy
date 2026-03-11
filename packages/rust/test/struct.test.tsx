@@ -121,6 +121,81 @@ describe("StructDeclaration", () => {
     ).toRenderTo(d`struct Foo<T, U: Display> where U: Clone {}`);
   });
 
+  it("renders tuple struct", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Foo" tuple={true} types={["String", "u64"]} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`struct Foo(String, u64);`);
+  });
+
+  it("renders tuple struct with visibility, derives, and generics", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration
+              name="Foo"
+              pub={true}
+              tuple={true}
+              types={["T", "U"]}
+              derives={["Debug", "Clone"]}
+              typeParameters={[
+                { name: "T" },
+                { name: "U", constraint: "Display" },
+              ]}
+              whereClause="U: Clone"
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(
+      d`
+        #[derive(Debug, Clone)]
+        pub struct Foo<T, U: Display>(T, U) where U: Clone;
+      `,
+    );
+  });
+
+  it("renders unit struct", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Foo" unit={true} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`struct Foo;`);
+  });
+
+  it("renders unit struct with doc, attributes, and derives", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration
+              name="Foo"
+              unit={true}
+              doc="Represents foo."
+              attributes="#[repr(C)]"
+              derives={["Debug", "Clone"]}
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      /// Represents foo.
+      #[repr(C)]
+      #[derive(Debug, Clone)]
+      struct Foo;
+    `);
+  });
+
   it("creates a NamedTypeSymbol with typeKind struct", () => {
     expect(
       <Output>

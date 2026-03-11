@@ -22,6 +22,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 **Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
 **For SourceFile/CrateDirectory loop changes:** run `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` first for fast debugging, then run full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
 **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
+- Avoid whitespace-only `code` template literals (for example, ``code` ` ``); they can crash core code rendering. Use plain string literals like `" "` for standalone spaces.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

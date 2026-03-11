@@ -5,7 +5,7 @@
 | **ID**           | T019                                                                  |
 | **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
 | **Type**         | feature                                                               |
-| **Status**       | pending                                                               |
+| **Status**       | done                                                                  |
 | **Priority**     | high                                                                  |
 | **Owner**        | AI coding agent                                                       |
 | **AI Executable**| yes                                                                   |
@@ -80,14 +80,14 @@ The implementation agent should read these files first:
 
 ## Acceptance Criteria
 
-- [ ] `TraitDeclaration` renders a basic trait with no methods.
-- [ ] `TraitDeclaration` renders a trait with method signatures (no body).
-- [ ] `TraitDeclaration` renders a trait with supertraits (`: Display + Debug`).
-- [ ] `TraitDeclaration` renders a trait with default method implementations.
-- [ ] `TraitDeclaration` renders a trait with type parameters and where clause.
-- [ ] `TraitDeclaration` with `pub` renders `pub trait`.
-- [ ] Doc comments render correctly above the trait.
-- [ ] A `NamedTypeSymbol` with `typeKind: "trait"` is created and resolvable via refkey.
+- [x] `TraitDeclaration` renders a basic trait with no methods.
+- [x] `TraitDeclaration` renders a trait with method signatures (no body).
+- [x] `TraitDeclaration` renders a trait with supertraits (`: Display + Debug`).
+- [x] `TraitDeclaration` renders a trait with default method implementations.
+- [x] `TraitDeclaration` renders a trait with type parameters and where clause.
+- [x] `TraitDeclaration` with `pub` renders `pub trait`.
+- [x] Doc comments render correctly above the trait.
+- [x] A `NamedTypeSymbol` with `typeKind: "trait"` is created and resolvable via refkey.
 
 ## Definition of Done
 

@@ -5,7 +5,7 @@
 | **ID** | T039 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P0 — critical |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -51,11 +51,11 @@ This defeats the purpose of the reference/import system, forcing users to use pl
 
 ## Acceptance Criteria
 
-- [ ] `<Reference refkey={...} />` resolves correctly inside `<Field type={...} />`
-- [ ] `<Reference refkey={...} />` resolves correctly inside function `parameters` and `returnType`
-- [ ] `<Reference refkey={...} />` resolves correctly inside `<ImplBlock>` and `<TraitDeclaration>`
-- [ ] Auto-generated `use` statements appear in the correct enclosing module's source file
-- [ ] Existing Reference tests continue to pass
+- [x] `<Reference refkey={...} />` resolves correctly inside `<Field type={...} />`
+- [x] `<Reference refkey={...} />` resolves correctly inside function `parameters` and `returnType`
+- [x] `<Reference refkey={...} />` resolves correctly inside `<ImplBlock>` and `<TraitDeclaration>`
+- [x] Auto-generated `use` statements appear in the correct enclosing module's source file
+- [x] Existing Reference tests continue to pass
 
 ---
 

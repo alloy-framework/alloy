@@ -3,7 +3,7 @@ import { isBuiltinCrate } from "../create-crate.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { RustScopeBase } from "../scopes/rust-scope.js";
-import { useRustModuleScope } from "../scopes/contexts.js";
+import { useRustScope } from "../scopes/contexts.js";
 import { RustOutputSymbol } from "./rust-output-symbol.js";
 
 export const PRELUDE_TYPES = new Set<string>([
@@ -61,7 +61,13 @@ export const PRELUDE_TYPES = new Set<string>([
 ]);
 
 export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined] {
-  const currentModuleScope = useRustModuleScope();
+  const currentScope = useRustScope();
+  const currentModuleScope = currentScope.enclosingModule;
+  if (!(currentModuleScope instanceof RustModuleScope)) {
+    throw new Error(
+      `Expected an enclosing Rust module scope, but got ${currentScope.constructor.name}.`,
+    );
+  }
   const resolveResult = resolve<RustScopeBase, RustOutputSymbol>(refkey as Refkey);
 
   return memo(() => {

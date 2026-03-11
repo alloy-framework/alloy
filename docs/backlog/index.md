@@ -136,7 +136,7 @@ docs/backlog/
 | [T036](tasks/T036-builtin-crate-support.md) | Builtin crate support in createCrate/ref | E006 | feature | P0 | T028 | done |
 | [T037](tasks/T037-complete-stc-wrappers.md) | Complete STC wrappers | E006 | feature | P2 | T032 | done |
 | [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | done |
-| [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E007 | bug | P0 | T010, T022 | open |
+| [T039](tasks/T039-reference-scope-traversal.md) | Reference component scope traversal | E007 | bug | P0 | T010, T022 | done |
 | [T040](tasks/T040-missing-newlines-between-items.md) | Missing newlines between sibling items | E007 | bug | P0 | T011, T012 | open |
 | [T041](tasks/T041-trait-abstract-methods.md) | Trait methods should render as abstract signatures | E007 | bug | P1 | T013, T019 | open |
 | [T042](tasks/T042-enum-tuple-variants.md) | Enum tuple variant support | E007 | bug | P1 | T012 | open |
@@ -231,7 +231,6 @@ These bugs were discovered during integration testing with `samples/rust-example
 
 | ID | Title | Priority | Impact |
 |---|---|---|---|
-| **T039** | Reference scope traversal | P0 | Reference unusable in fields, params, return types |
 | **T040** | Missing newlines between items | P0 | All generated enum/struct output lacks line breaks |
 | **T041** | Trait abstract method signatures | P1 | Trait methods render `{}` instead of `;` |
 | **T042** | Enum tuple variant support | P1 | Tuple variants render as struct variants |

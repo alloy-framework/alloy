@@ -7,14 +7,21 @@ import {
   render,
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
+import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { useCrateContext } from "../src/context/crate-context.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
 import { Declaration } from "../src/components/declaration.js";
+import { FunctionDeclaration } from "../src/components/function-declaration.js";
+import { ImplBlock } from "../src/components/impl-block.js";
+import { ModuleDirectory } from "../src/components/module-directory.js";
 import { Reference } from "../src/components/reference.js";
 import { SourceFile } from "../src/components/source-file.js";
+import { Field, StructDeclaration } from "../src/components/struct-declaration.js";
+import { TraitDeclaration } from "../src/components/trait-declaration.js";
 import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { RustModuleScope, useRustModuleScope } from "../src/scopes/index.js";
+import { findFile } from "./utils.js";
 
 interface ScopeCaptureProps {
   onCapture: (moduleScope: RustModuleScope, crateScope: RustCrateScope) => void;
@@ -185,5 +192,149 @@ describe("Rust reference resolution", () => {
         </Output>,
       ),
     ).toThrowError("Cannot reference private symbol 'PrivateModel'");
+  });
+});
+
+describe("Rust reference nested scope traversal", () => {
+  it("resolves Reference inside Field type and emits use in enclosing module", () => {
+    const userType = refkey("user-type");
+
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="models">
+            <SourceFile path="mod.rs">
+              <Declaration name="User" refkey={userType} nameKind="struct" pub>
+                pub struct User;
+              </Declaration>
+            </SourceFile>
+          </ModuleDirectory>
+          <ModuleDirectory path="routes">
+            <SourceFile path="mod.rs">
+              <StructDeclaration name="Response">
+                <Field name="user" type={<Reference refkey={userType} />} />
+              </StructDeclaration>
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+      use crate::models::User;
+      struct Response {
+        user: User,
+      }
+    `.trim());
+  });
+
+  it("resolves Reference inside function parameters and returnType", () => {
+    const userType = refkey("user-type");
+
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="models">
+            <SourceFile path="mod.rs">
+              <Declaration name="User" refkey={userType} nameKind="struct" pub>
+                pub struct User;
+              </Declaration>
+            </SourceFile>
+          </ModuleDirectory>
+          <ModuleDirectory path="routes">
+            <SourceFile path="mod.rs">
+              <FunctionDeclaration
+                name="lookup"
+                parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                returnType={<Reference refkey={userType} />}
+              />
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+      use crate::models::User;
+      fn lookup(user: User) -> User {}
+    `.trim());
+  });
+
+  it("resolves Reference inside ImplBlock method signatures", () => {
+    const userType = refkey("user-type");
+    const routerType = refkey("router-type");
+
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="models">
+            <SourceFile path="mod.rs">
+              <Declaration name="User" refkey={userType} nameKind="struct" pub>
+                pub struct User;
+              </Declaration>
+            </SourceFile>
+          </ModuleDirectory>
+          <ModuleDirectory path="routes">
+            <SourceFile path="mod.rs">
+              <StructDeclaration name="Router" refkey={routerType} />
+              <hbr />
+              <ImplBlock type={routerType}>
+                <FunctionDeclaration
+                  name="from_user"
+                  receiver="none"
+                  parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                  returnType={<Reference refkey={userType} />}
+                />
+              </ImplBlock>
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+      use crate::models::User;
+      struct Router {}
+      impl Router {
+        fn from_user(user: User) -> User {}
+      }
+    `.trim());
+  });
+
+  it("resolves Reference inside TraitDeclaration method signatures", () => {
+    const userType = refkey("user-type");
+
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="models">
+            <SourceFile path="mod.rs">
+              <Declaration name="User" refkey={userType} nameKind="struct" pub>
+                pub struct User;
+              </Declaration>
+            </SourceFile>
+          </ModuleDirectory>
+          <ModuleDirectory path="routes">
+            <SourceFile path="mod.rs">
+              <TraitDeclaration name="UserMapper">
+                <FunctionDeclaration
+                  name="map_user"
+                  receiver="none"
+                  parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                  returnType={<Reference refkey={userType} />}
+                />
+              </TraitDeclaration>
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+      use crate::models::User;
+      trait UserMapper {
+        fn map_user(user: User) -> User {}
+      }
+    `.trim());
   });
 });

@@ -138,6 +138,8 @@ describe("createCrate", () => {
 
     expect(findFile(output, "lib").contents.trim()).toBe(
       [
+        "use serde::Serialize;",
+        "use serde::de::Deserializer;",
         "type RootAlias = Serialize;",
         "type NestedAlias = Deserializer;",
       ].join("\n"),

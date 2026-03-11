@@ -5,7 +5,7 @@
 | **ID**           | T026                                                                        |
 | **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
 | **Type**         | test                                                                        |
-| **Status**       | pending                                                                     |
+| **Status**       | done                                                                        |
 | **Priority**     | high                                                                        |
 | **Owner**        | AI coding agent                                                             |
 | **AI Executable**| yes                                                                         |
@@ -87,12 +87,12 @@ Validate that the import system works end-to-end across all reference scenarios,
 
 ## Acceptance Criteria
 
-- [ ] Same-module reference generates no `use` statement.
-- [ ] Cross-module reference generates correct `use crate::...` statement.
-- [ ] Multiple imports from same path are grouped with braces.
-- [ ] Import sorting follows `std` → external → `crate` convention.
-- [ ] Prelude types do not generate `use` statements.
-- [ ] Reference resolution returns correct symbol for all scenarios.
+- [x] Same-module reference generates no `use` statement.
+- [x] Cross-module reference generates correct `use crate::...` statement.
+- [x] Multiple imports from same path are grouped with braces.
+- [x] Import sorting follows `std` → external → `crate` convention.
+- [x] Prelude types do not generate `use` statements.
+- [x] Reference resolution returns correct symbol for all scenarios.
 
 ## Definition of Done
 

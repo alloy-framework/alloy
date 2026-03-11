@@ -58,6 +58,18 @@ function toRustSymbolKind(nameKind: RustElements): RustSymbolKind {
   }
 }
 
+function toRustVisibility(props: DeclarationProps) {
+  if (props.pub) {
+    return "pub" as const;
+  }
+
+  if (props.pub_crate) {
+    return "pub(crate)" as const;
+  }
+
+  return undefined;
+}
+
 export function Declaration(props: DeclarationProps) {
   const scope = useRustScope();
   if (!(scope instanceof RustCrateScope) && !(scope instanceof RustModuleScope)) {
@@ -75,6 +87,7 @@ export function Declaration(props: DeclarationProps) {
       refkeys: props.refkey ? [props.refkey] : [],
       namePolicy: useRustNamePolicy().for(rustNameKind),
       symbolKind: toRustSymbolKind(rustNameKind),
+      visibility: toRustVisibility(props),
       metadata: props.nameKind ? { nameKind: props.nameKind } : undefined,
     },
   );

@@ -85,17 +85,23 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
       targetCrate instanceof RustCrateScope &&
       sourceCrate instanceof RustCrateScope
     ) {
-        if (targetModule !== currentModuleScope) {
-          if (targetCrate === sourceCrate) {
-            const sameCratePath = buildUsePath("crate", result.pathDown);
-            currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
-          } else {
-            const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
-            currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
-            sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
+      if (targetModule !== currentModuleScope) {
+        if (targetCrate === sourceCrate) {
+          if (result.lexicalDeclaration.visibility === undefined) {
+            throw new Error(
+              `Cannot reference private symbol '${targetName}' from module '${currentModuleScope.name}'.`,
+            );
           }
+
+          const sameCratePath = buildUsePath("crate", result.pathDown);
+          currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
+        } else {
+          const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
+          currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
+          sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
         }
       }
+    }
 
     return [targetName, result.symbol];
   });
@@ -106,11 +112,20 @@ function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {
 
   for (const scope of pathDown) {
     if (scope instanceof RustModuleScope) {
-      if (scope.name.length > 0) {
-        moduleSegments.push(scope.name);
-      }
+      moduleSegments.push(...moduleNameSegments(scope.name));
     }
   }
 
   return [prefix, ...moduleSegments].join("::");
+}
+
+function moduleNameSegments(moduleName: string): string[] {
+  const normalized = moduleName
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0)
+    .map((segment) => segment.endsWith(".rs") ? segment.slice(0, -3) : segment)
+    .filter((segment) => segment !== "mod" && segment !== "lib" && segment !== "main");
+
+  return normalized;
 }

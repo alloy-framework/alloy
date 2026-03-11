@@ -1,4 +1,5 @@
 import {
+  Show,
   Scope,
   SourceFile as CoreSourceFile,
   createScope,
@@ -77,7 +78,9 @@ export function SourceFile(props: SourceFileProps) {
           <hbr />
         : null}
         <UseStatements />
-        {scope.imports.size > 0 ? <hbr /> : null}
+        <Show when={scope.imports.size > 0}>
+          <hbr />
+        </Show>
         {props.children}
       </Scope>
     </CoreSourceFile>

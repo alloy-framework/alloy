@@ -33,7 +33,7 @@ describe("UseStatements", () => {
     ).toRenderTo(d`use std::fmt::Display;`);
   });
 
-  it("renders flat statements for multiple symbols from same path", () => {
+  it("renders grouped statements for multiple symbols from same path", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("lib.rs", crateScope);
     const display = createSymbol(RustOutputSymbol, "Display", moduleScope.values);
@@ -48,8 +48,7 @@ describe("UseStatements", () => {
         </Scope>
       </Output>,
     ).toRenderTo(d`
-      use std::fmt::Debug;
-      use std::fmt::Display;
+      use std::fmt::{Debug, Display};
     `);
   });
 

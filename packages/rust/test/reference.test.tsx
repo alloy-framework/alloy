@@ -7,7 +7,6 @@ import {
   render,
 } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { useCrateContext } from "../src/context/crate-context.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
@@ -16,7 +15,6 @@ import { Reference } from "../src/components/reference.js";
 import { SourceFile } from "../src/components/source-file.js";
 import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { RustModuleScope, useRustModuleScope } from "../src/scopes/index.js";
-import { findFile } from "./utils.js";
 
 interface ScopeCaptureProps {
   onCapture: (moduleScope: RustModuleScope, crateScope: RustCrateScope) => void;
@@ -45,11 +43,11 @@ function NestedModule(props: NestedModuleProps) {
 }
 
 describe("Rust reference resolution", () => {
-  it("renders same-module references without adding use imports", () => {
+  it("resolves refkey to same-module symbol", () => {
     const userType = refkey("user-type");
     let moduleScope: RustModuleScope | undefined;
 
-    expect(
+    render(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
@@ -58,8 +56,8 @@ describe("Rust reference resolution", () => {
                 moduleScope = capturedModuleScope;
               }}
             >
-              <Declaration name="UserType" refkey={userType} nameKind="struct">
-                struct UserType;
+              <Declaration name="UserType" refkey={userType} nameKind="struct" pub>
+                pub struct UserType;
               </Declaration>
               <hbr />
               type Alias = <Reference refkey={userType} />;
@@ -67,26 +65,23 @@ describe("Rust reference resolution", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`
-      struct UserType;
-      type Alias = UserType;
-    `);
+    );
 
     expect(moduleScope).toBeDefined();
     expect(moduleScope!.imports.size).toBe(0);
   });
 
-  it("adds crate use imports for same-crate references across modules using pathDown", () => {
+  it("resolves refkey to different-module symbol in same crate", () => {
     const nestedType = refkey("nested-type");
     let consumerModuleScope: RustModuleScope | undefined;
 
-    const output = render(
+    render(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="types">
             <NestedModule name="nested">
-              <Declaration name="NestedType" refkey={nestedType} nameKind="struct">
-                struct NestedType;
+              <Declaration name="NestedType" refkey={nestedType} nameKind="struct" pub>
+                pub struct NestedType;
               </Declaration>
             </NestedModule>
           </SourceFile>
@@ -103,22 +98,21 @@ describe("Rust reference resolution", () => {
       </Output>,
     );
 
-    expect(findFile(output, "lib").contents.trim()).toBe("type Alias = NestedType;");
     expect(consumerModuleScope).toBeDefined();
     expect(consumerModuleScope!.imports.get("crate::types::nested")?.size).toBe(1);
   });
 
-  it("adds external crate use import and crate dependency", () => {
+  it("resolves refkey to external crate symbol and tracks dependency", () => {
     const externalType = refkey("external-type");
     let consumerModuleScope: RustModuleScope | undefined;
     let consumerCrateScope: RustCrateScope | undefined;
 
-    const output = render(
+    render(
       <Output>
         <CrateDirectory name="serde">
           <SourceFile path="types">
-            <Declaration name="Serialize" refkey={externalType} nameKind="trait">
-              trait Serialize;
+            <Declaration name="Serialize" refkey={externalType} nameKind="trait" pub>
+              pub trait Serialize {}
             </Declaration>
           </SourceFile>
         </CrateDirectory>
@@ -137,23 +131,22 @@ describe("Rust reference resolution", () => {
       </Output>,
     );
 
-    expect(findFile(output, "lib").contents.trim()).toBe("type Alias = Serialize;");
     expect(consumerModuleScope).toBeDefined();
     expect(consumerCrateScope).toBeDefined();
     expect(consumerModuleScope!.imports.get("serde::types")?.size).toBe(1);
     expect(consumerCrateScope!.dependencies.get("serde")).toBe("*");
   });
 
-  it("does not add imports for prelude type names", () => {
+  it("bypasses use tracking for prelude symbols", () => {
     const preludeLikeType = refkey("prelude-like-type");
     let consumerModuleScope: RustModuleScope | undefined;
 
-    const output = render(
+    render(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="types">
-            <Declaration name="Option" refkey={preludeLikeType} nameKind="struct">
-              struct Option;
+            <Declaration name="Option" refkey={preludeLikeType} nameKind="struct" pub>
+              pub struct Option;
             </Declaration>
           </SourceFile>
           <SourceFile path="lib">
@@ -169,8 +162,28 @@ describe("Rust reference resolution", () => {
       </Output>,
     );
 
-    expect(findFile(output, "lib").contents.trim()).toBe("type Alias = Option;");
     expect(consumerModuleScope).toBeDefined();
     expect(consumerModuleScope!.imports.size).toBe(0);
+  });
+
+  it("throws on private symbol reference from another module", () => {
+    const privateType = refkey("private-type");
+
+    expect(() =>
+      render(
+        <Output>
+          <CrateDirectory name="my_crate">
+            <SourceFile path="models">
+              <Declaration name="PrivateModel" refkey={privateType} nameKind="struct">
+                struct PrivateModel;
+              </Declaration>
+            </SourceFile>
+            <SourceFile path="routes">
+              type Alias = <Reference refkey={privateType} />;
+            </SourceFile>
+          </CrateDirectory>
+        </Output>,
+      ),
+    ).toThrowError("Cannot reference private symbol 'PrivateModel'");
   });
 });

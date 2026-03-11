@@ -5,7 +5,7 @@
 | **ID**           | T023                                                                        |
 | **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
 | **Type**         | feature                                                                     |
-| **Status**       | pending                                                                     |
+| **Status**       | done                                                                        |
 | **Priority**     | high                                                                        |
 | **Owner**        | AI coding agent                                                             |
 | **AI Executable**| yes                                                                         |
@@ -71,13 +71,13 @@ Generate correctly formatted, grouped, and sorted `use` statements in each sourc
 
 ## Acceptance Criteria
 
-- [ ] Single import renders as `use std::fmt::Display;`.
-- [ ] Multiple imports from same path render as flat statements: `use std::fmt::Debug;` and `use std::fmt::Display;`.
-- [ ] Imports are sorted: `std::` → external → `crate::`.
-- [ ] Blank line separates import groups.
-- [ ] Alphabetical order within each group.
-- [ ] `UseStatements` correctly reads from `RustModuleScope`.
-- [ ] `SourceFile` renders `UseStatements` in the correct position.
+- [x] Single import renders as `use std::fmt::Display;`.
+- [x] Multiple imports from same path render as flat statements: `use std::fmt::Debug;` and `use std::fmt::Display;`.
+- [x] Imports are sorted: `std::` → external → `crate::`.
+- [x] Blank line separates import groups.
+- [x] Alphabetical order within each group.
+- [x] `UseStatements` correctly reads from `RustModuleScope`.
+- [x] `SourceFile` renders `UseStatements` in the correct position.
 
 ## Definition of Done
 

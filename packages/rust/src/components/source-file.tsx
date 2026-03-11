@@ -6,6 +6,7 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { Reference } from "./reference.js";
+import { UseStatements } from "./use-statement.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 
@@ -14,10 +15,6 @@ export interface SourceFileProps {
   children?: Children;
   header?: Children;
   headerComment?: Children;
-}
-
-function UseStatementsPlaceholder() {
-  return <></>;
 }
 
 function ModuleDeclarationsPlaceholder() {
@@ -49,9 +46,12 @@ export function SourceFile(props: SourceFileProps) {
       reference={Reference}
       header={header}
     >
-      <UseStatementsPlaceholder />
-      <ModuleDeclarationsPlaceholder />
-      <Scope value={scope}>{props.children}</Scope>
+      <Scope value={scope}>
+        <ModuleDeclarationsPlaceholder />
+        <UseStatements />
+        {scope.imports.size > 0 ? <hbr /> : null}
+        {props.children}
+      </Scope>
     </CoreSourceFile>
   );
 }

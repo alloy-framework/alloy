@@ -5,6 +5,7 @@ export * from "./const-declaration.js";
 export * from "./doc-comment.js";
 export * from "./reference.js";
 export * from "./source-file.js";
+export * from "./use-statement.js";
 export * from "./type-parameters.js";
 export * from "./type-alias.js";
 export * from "./struct-declaration.js";

@@ -10,6 +10,7 @@ export interface CrateContextValue {
   name: string;
   version?: string;
   edition: string;
+  crateType: "lib" | "bin";
 }
 
 export const CrateContext: ComponentContext<CrateContextValue> =

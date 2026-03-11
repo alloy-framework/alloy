@@ -127,7 +127,7 @@ docs/backlog/
 | [T035](tasks/T035-edge-cases.md) | Edge case tests | E006 | test | P1 | T011–T025 | done |
 | [T036](tasks/T036-builtin-crate-support.md) | Builtin crate support in createCrate/ref | E006 | feature | P0 | T028 | done |
 | [T037](tasks/T037-complete-stc-wrappers.md) | Complete STC wrappers | E006 | feature | P2 | T032 | done |
-| [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | pending |
+| [T038](tasks/T038-crate-type-prop.md) | CrateDirectory crateType prop | E006 | feature | P3 | T009 | done |
 
 ---
 

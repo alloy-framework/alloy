@@ -7,6 +7,7 @@ export interface CrateDirectoryProps {
   name: string;
   version?: string;
   edition?: string;
+  crateType?: "lib" | "bin";
   dependencies?: Record<string, CrateDependency>;
   includeCargoToml?: boolean;
   children?: Children;
@@ -19,6 +20,7 @@ export function CrateDirectory(props: CrateDirectoryProps) {
     name: props.name,
     version: props.version,
     edition: props.edition ?? "2021",
+    crateType: props.crateType ?? "lib",
   };
 
   return (

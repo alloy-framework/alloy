@@ -12,7 +12,7 @@ import { findFile } from "./utils.js";
 
 function CrateContextProbe() {
   const crate = useCrateContext();
-  return `${crate?.name}|${crate?.version ?? "none"}|${crate?.edition}|${crate?.scope instanceof RustCrateScope}`;
+  return `${crate?.name}|${crate?.version ?? "none"}|${crate?.edition}|${crate?.crateType}|${crate?.scope instanceof RustCrateScope}`;
 }
 
 function ModuleScopeProbe() {
@@ -81,7 +81,7 @@ describe("CrateDirectory", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`my_crate|0.1.0|2021|true`);
+    ).toRenderTo(d`my_crate|0.1.0|2021|lib|true`);
   });
 
   it("uses explicit edition override", () => {
@@ -93,6 +93,42 @@ describe("CrateDirectory", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`my_crate|none|2024|true`);
+    ).toRenderTo(d`my_crate|none|2024|lib|true`);
+  });
+
+  it("defaults crateType to lib when omitted", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <CrateContextProbe />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`my_crate|none|2021|lib|true`);
+  });
+
+  it("propagates explicit crateType=bin", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate" crateType="bin">
+          <SourceFile path="lib.rs">
+            <CrateContextProbe />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`my_crate|none|2021|bin|true`);
+  });
+
+  it("propagates explicit crateType=lib", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate" crateType="lib">
+          <SourceFile path="lib.rs">
+            <CrateContextProbe />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`my_crate|none|2021|lib|true`);
   });
 });

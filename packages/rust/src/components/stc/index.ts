@@ -10,6 +10,10 @@ import {
 } from "../enum-declaration.js";
 import { FunctionDeclaration as FunctionDeclarationComponent } from "../function-declaration.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
+import {
+  MatchArm as MatchArmComponent,
+  MatchExpression as MatchExpressionComponent,
+} from "../match-expression.js";
 import { ModuleDirectory as ModuleDirectoryComponent } from "../module-directory.js";
 import { Parameters as ParametersComponent } from "../parameters.js";
 import { Reference as ReferenceComponent } from "../reference.js";
@@ -35,6 +39,8 @@ export const EnumVariant = stc(EnumVariantComponent);
 export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
 export const ImplBlock = stc(ImplBlockComponent);
+export const MatchArm = stc(MatchArmComponent);
+export const MatchExpression = stc(MatchExpressionComponent);
 export const ModuleDirectory = stc(ModuleDirectoryComponent);
 export const ModuleDocComment = stc(ModuleDocCommentComponent);
 export const Parameters = stc(ParametersComponent);

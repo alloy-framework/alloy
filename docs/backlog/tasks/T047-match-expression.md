@@ -5,7 +5,7 @@
 | **ID** | T047 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -115,12 +115,12 @@ TypeScript package has `SwitchStatement` + `CaseClause` (at `packages/typescript
 
 ## Acceptance Criteria
 
-- [ ] `<MatchExpression expression={...}>` renders `match expr { ... }`
-- [ ] `<MatchArm pattern="X">expr</MatchArm>` renders `X => expr,`
-- [ ] Multi-statement arm bodies render with block syntax `X => { ... }`
-- [ ] `guard` prop renders `if guard` after pattern
-- [ ] Arms properly separated and indented
-- [ ] STC wrappers exported
+- [x] `<MatchExpression expression={...}>` renders `match expr { ... }`
+- [x] `<MatchArm pattern="X">expr</MatchArm>` renders `X => expr,`
+- [x] Multi-statement arm bodies render with block syntax `X => { ... }`
+- [x] `guard` prop renders `if guard` after pattern
+- [x] Arms properly separated and indented
+- [x] STC wrappers exported
 
 ---
 

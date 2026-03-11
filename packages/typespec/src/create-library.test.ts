@@ -1,11 +1,11 @@
 import { toRefkey } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
-import { getGlobalNamespace, resetGlobalNamespace } from "./contexts/index.js";
+import { getProgram, resetProgram } from "./contexts/program.js";
 import { createLibrary } from "./create-library.js";
 import { NamespaceSymbol } from "./symbols/index.js";
 
 beforeEach(() => {
-  resetGlobalNamespace();
+  resetProgram();
 });
 
 it("Creates symbols on demand", () => {
@@ -13,13 +13,13 @@ it("Creates symbols on demand", () => {
     string: { kind: "scalar" },
   });
 
-  const globalNamespace = getGlobalNamespace(undefined);
-  const typeSpecNs = globalNamespace.members.symbolNames.get("TypeSpec");
+  const program = getProgram(undefined);
+  const typeSpecNs = program.members.symbolNames.get("TypeSpec");
   expect(typeSpecNs).toBeUndefined();
 
   const _ = toRefkey(TypeSpec);
 
-  const typeSpecNs2 = globalNamespace.members.symbolNames.get("TypeSpec");
+  const typeSpecNs2 = program.members.symbolNames.get("TypeSpec");
   expect(typeSpecNs2).toBeDefined();
 });
 
@@ -28,13 +28,13 @@ it("Works with nested namespaces", () => {
     get: { kind: "decorator" },
   });
 
-  const globalNamespace = getGlobalNamespace(undefined);
-  const typeSpecNs = globalNamespace.members.symbolNames.get("TypeSpec");
+  const program = getProgram(undefined);
+  const typeSpecNs = program.members.symbolNames.get("TypeSpec");
   expect(typeSpecNs).toBeUndefined();
 
   const _ = toRefkey(Http.get);
 
-  const typeSpecNs2 = globalNamespace.members.symbolNames.get("TypeSpec");
+  const typeSpecNs2 = program.members.symbolNames.get("TypeSpec");
   expect(typeSpecNs2).toBeDefined();
 });
 
@@ -50,8 +50,8 @@ it("Doesn't create duplicate namespaces", () => {
 
   const _ = [toRefkey(Http.get), toRefkey(Http.post), toRefkey(Rest.action)];
 
-  const globalNamespace = getGlobalNamespace(undefined);
-  const typeSpecNs = globalNamespace.members.symbolNames.get(
+  const program = getProgram(undefined);
+  const typeSpecNs = program.members.symbolNames.get(
     "TypeSpec",
   ) as NamespaceSymbol;
   expect(typeSpecNs).toBeDefined();
@@ -91,13 +91,12 @@ it("Can reference types which haven't been created yet", () => {
     },
   });
 
-  const globalNamespace = getGlobalNamespace(undefined);
+  const program = getProgram(undefined);
 
-  expect(globalNamespace.members.symbolNames.get("TypeSpec")).toBeUndefined();
-  expect(globalNamespace.members.symbolNames.get("Other")).toBeUndefined();
-
+  expect(program.members.symbolNames.get("TypeSpec")).toBeUndefined();
+  expect(program.members.symbolNames.get("Other")).toBeUndefined();
   const _ = toRefkey(TypeSpec.Foo.bar);
 
-  expect(globalNamespace.members.symbolNames.get("TypeSpec")).toBeDefined();
-  expect(globalNamespace.members.symbolNames.get("Other")).toBeDefined();
+  expect(program.members.symbolNames.get("TypeSpec")).toBeDefined();
+  expect(program.members.symbolNames.get("Other")).toBeDefined();
 });

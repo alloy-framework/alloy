@@ -7,7 +7,11 @@ import {
 
 export interface TypeSpecSymbolOptions extends OutputSymbolOptions {}
 
-export type TypeSpecSymbolKind = "symbol" | "namespace" | "named-type";
+export type TypeSpecSymbolKind =
+  | "symbol"
+  | "program"
+  | "namespace"
+  | "named-type";
 
 export class TypeSpecSymbol extends OutputSymbol {
   public readonly symbolKind: TypeSpecSymbolKind = "symbol";

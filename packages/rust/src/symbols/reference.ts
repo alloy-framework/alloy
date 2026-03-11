@@ -85,17 +85,17 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
       targetCrate instanceof RustCrateScope &&
       sourceCrate instanceof RustCrateScope
     ) {
-      if (targetModule !== currentModuleScope) {
-        if (targetCrate === sourceCrate) {
-          const sameCratePath = buildUsePath("crate", result.pathDown);
-          currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
-        } else {
-          const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
-          currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
-          sourceCrate.addDependency(targetCrate.name, "*");
+        if (targetModule !== currentModuleScope) {
+          if (targetCrate === sourceCrate) {
+            const sameCratePath = buildUsePath("crate", result.pathDown);
+            currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
+          } else {
+            const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
+            currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
+            sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
+          }
         }
       }
-    }
 
     return [targetName, result.symbol];
   });
@@ -106,7 +106,9 @@ function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {
 
   for (const scope of pathDown) {
     if (scope instanceof RustModuleScope) {
-      moduleSegments.push(scope.name);
+      if (scope.name.length > 0) {
+        moduleSegments.push(scope.name);
+      }
     }
   }
 

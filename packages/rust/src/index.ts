@@ -5,3 +5,4 @@ export * from "./parameter-descriptor.js";
 export * from "./scopes/index.js";
 export * from "./context/index.js";
 export * from "./components/index.js";
+export * from "./create-crate.js";

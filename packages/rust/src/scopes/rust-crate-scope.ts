@@ -1,4 +1,4 @@
-import { type OutputSpace, shallowReactive } from "@alloy-js/core";
+import { type OutputScopeOptions, type OutputSpace, shallowReactive } from "@alloy-js/core";
 import { type RustVisibility } from "../symbols/rust-output-symbol.js";
 import { RustScopeBase } from "./rust-scope.js";
 
@@ -17,11 +17,17 @@ export interface RustChildModuleDeclaration {
 export class RustCrateScope extends RustScopeBase {
   public static readonly declarationSpaces = ["types", "values"];
 
+  #version?: string;
+  get version() {
+    return this.#version;
+  }
+
   #childModules = shallowReactive<Map<string, RustChildModuleDeclaration>>(new Map());
   #dependencies = shallowReactive<Map<string, CrateDependency>>(new Map());
 
-  constructor(name: string) {
-    super(name, undefined);
+  constructor(name: string, version?: string, options?: OutputScopeOptions) {
+    super(name, undefined, options);
+    this.#version = version;
   }
 
   override get enclosingCrate() {

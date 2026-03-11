@@ -5,7 +5,7 @@
 | **ID**           | T028                                                                                    |
 | **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
 | **Type**         | feature                                                                                 |
-| **Status**       | pending                                                                                 |
+| **Status**       | done                                                                                    |
 | **Priority**     | high                                                                                    |
 | **Owner**        | AI coding agent                                                                         |
 | **AI Executable**| yes                                                                                     |
@@ -78,11 +78,11 @@ Enable declarative description of external crates so that referencing their symb
 
 ## Acceptance Criteria
 
-- [ ] `createCrate()` returns a `CrateRef` with refkeys for all described symbols.
-- [ ] Symbols are lazily created when first resolved by the binder.
-- [ ] Crate name and version are accessible for dependency tracking.
-- [ ] Module paths correctly map to Rust module hierarchy.
-- [ ] Root module symbols (path `""`) are accessible at `crateRef[""].SymbolName`.
+- [x] `createCrate()` returns a `CrateRef` with refkeys for all described symbols.
+- [x] Symbols are lazily created when first resolved by the binder.
+- [x] Crate name and version are accessible for dependency tracking.
+- [x] Module paths correctly map to Rust module hierarchy.
+- [x] Root module symbols (path `""`) are accessible at `crateRef[""].SymbolName`.
 
 ## Definition of Done
 

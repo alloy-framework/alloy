@@ -10,7 +10,7 @@ export interface CrateDirectoryProps {
 }
 
 export function CrateDirectory(props: CrateDirectoryProps) {
-  const scope = createScope(RustCrateScope, props.name);
+  const scope = createScope(RustCrateScope, props.name, props.version);
   const context: CrateContextValue = {
     scope,
     name: props.name,

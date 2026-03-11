@@ -88,7 +88,7 @@ docs/backlog/
 
 | ID | Title | Epic | Type | Priority | Deps | Status |
 |---|---|---|---|---|---|---|
-| [T001](tasks/T001-package-scaffold.md) | Package scaffold | E001 | foundation | P0 | — | pending |
+| [T001](tasks/T001-package-scaffold.md) | Package scaffold | E001 | foundation | P0 | — | done |
 | [T002](tasks/T002-test-infrastructure.md) | Test infrastructure | E001 | foundation | P0 | T001 | pending |
 | [T003](tasks/T003-rust-output-symbol.md) | RustOutputSymbol base class | E002 | foundation | P0 | T001 | pending |
 | [T004](tasks/T004-symbol-subclasses.md) | NamedTypeSymbol + FunctionSymbol | E002 | foundation | P0 | T003 | pending |

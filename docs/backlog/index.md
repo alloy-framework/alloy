@@ -101,7 +101,7 @@ docs/backlog/
 | [T009](tasks/T009-source-file-crate-directory.md) | SourceFile + CrateDirectory | E003 | feature | P0 | T005, T007 | done |
 | [T010](tasks/T010-declaration-reference.md) | Declaration + Reference basics | E003 | feature | P0 | T006, T009 | done |
 | [T011](tasks/T011-struct-declaration.md) | StructDeclaration + Field | E003 | feature | P0 | T006, T010 | done |
-| [T012](tasks/T012-enum-declaration.md) | EnumDeclaration + EnumVariant | E003 | feature | P0 | T006, T010, T015–T017 | pending |
+| [T012](tasks/T012-enum-declaration.md) | EnumDeclaration + EnumVariant | E003 | feature | P0 | T006, T010, T015–T017 | done |
 | [T013](tasks/T013-function-declaration.md) | FunctionDeclaration + Parameters | E003 | feature | P0 | T006, T008, T010, T017 | pending |
 | [T014](tasks/T014-type-alias-const.md) | TypeAlias + ConstDeclaration | E003 | feature | P1 | T006, T010 | pending |
 | [T015](tasks/T015-attributes.md) | Attribute + DeriveAttribute | E003 | feature | P0 | T010 | done |

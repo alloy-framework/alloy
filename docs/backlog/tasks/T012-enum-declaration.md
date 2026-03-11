@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components                                                       |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference), T015 (Attributes), T016 (DocComments), T017 (TypeParameters) |
 | **Blocks**  | —                                                                                        |
-| **Status**  | Pending                                                                                  |
+| **Status**  | done                                                                                     |
 
 ## Description
 
@@ -114,15 +114,15 @@ Name {
 
 ## Acceptance Criteria
 
-- [ ] Unit variant renders: `Name,`.
-- [ ] Tuple variant renders: `Name(String, i32),`.
-- [ ] Struct variant renders: `Name {\n  field: Type,\n},`.
-- [ ] Pub enum renders: `pub enum Foo {}`.
-- [ ] Enum with derives renders: `#[derive(Debug)]\nenum Foo {}`.
-- [ ] Enum with doc comment renders `/// ...` above.
-- [ ] Enum with type parameters renders: `enum Foo<T> {}`.
-- [ ] Mixed variant kinds render correctly in one enum.
-- [ ] `NamedTypeSymbol` is created with `typeKind: "enum"`.
+- [x] Unit variant renders: `Name,`.
+- [x] Tuple variant renders: `Name(String, i32),`.
+- [x] Struct variant renders: `Name {\n  field: Type,\n},`.
+- [x] Pub enum renders: `pub enum Foo {}`.
+- [x] Enum with derives renders: `#[derive(Debug)]\nenum Foo {}`.
+- [x] Enum with doc comment renders `/// ...` above.
+- [x] Enum with type parameters renders: `enum Foo<T> {}`.
+- [x] Mixed variant kinds render correctly in one enum.
+- [x] `NamedTypeSymbol` is created with `typeKind: "enum"`.
 
 ## Definition of Done
 
@@ -130,6 +130,11 @@ Name {
 - `pnpm build` succeeds for `@alloy-js/rust`.
 - `test/enum.test.tsx` passes with all listed test cases.
 - No regressions in existing tests.
+
+## Implementation Notes
+
+- Struct-style enum variants currently render their inner fields from raw children content (e.g. `field: Type,`) instead of reusing `Field`.
+- `Field` creates symbols through `createFieldSymbol()`, which intentionally rejects non-`struct` owners; enum variants use `createVariantSymbol()` and a variant member scope instead.
 
 ## Validation
 

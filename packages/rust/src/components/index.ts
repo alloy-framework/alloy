@@ -6,3 +6,5 @@ export * from "./source-file.js";
 export * from "./type-parameters.js";
 export * from "./struct-declaration.js";
 export * from "./enum-declaration.js";
+export * from "./function-declaration.js";
+export * from "./parameters.js";

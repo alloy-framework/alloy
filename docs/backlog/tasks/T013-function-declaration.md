@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components                                             |
 | **Deps**    | T006 (Symbol factories), T008 (ParameterDescriptor), T010 (Declaration/Reference), T017 (TypeParameters) |
 | **Blocks**  | —                                                                              |
-| **Status**  | Pending                                                                        |
+| **Status**  | done                                                                           |
 
 ## Description
 
@@ -102,19 +102,19 @@ interface ParameterDescriptor {
 
 ## Acceptance Criteria
 
-- [ ] Basic function renders: `fn foo() {}`.
-- [ ] Pub function renders: `pub fn foo() {}`.
-- [ ] Async function renders: `pub async fn foo() {}`.
-- [ ] Unsafe function renders: `unsafe fn foo() {}`.
-- [ ] Const function renders: `const fn foo() {}`.
-- [ ] Function with parameters renders: `fn foo(x: i32, y: String) {}`.
-- [ ] Function with return type renders: `fn foo() -> i32 {}`.
-- [ ] Function with type parameters renders: `fn foo<T: Display>(x: T) -> T {}`.
-- [ ] Function with where clause renders correctly.
-- [ ] Function with doc comment renders `/// ...` above.
-- [ ] Function with body renders children indented inside braces.
-- [ ] Empty body renders `{}` (not `{\n}`).
-- [ ] `FunctionSymbol` is created with correct properties.
+- [x] Basic function renders: `fn foo() {}`.
+- [x] Pub function renders: `pub fn foo() {}`.
+- [x] Async function renders: `pub async fn foo() {}`.
+- [x] Unsafe function renders: `unsafe fn foo() {}`.
+- [x] Const function renders: `const fn foo() {}`.
+- [x] Function with parameters renders: `fn foo(x: i32, y: String) {}`.
+- [x] Function with return type renders: `fn foo() -> i32 {}`.
+- [x] Function with type parameters renders: `fn foo<T: Display>(x: T) -> T {}`.
+- [x] Function with where clause renders correctly.
+- [x] Function with doc comment renders `/// ...` above.
+- [x] Function with body renders children indented inside braces.
+- [x] Empty body renders `{}` (not `{\n}`).
+- [x] `FunctionSymbol` is created with correct properties.
 
 ## Definition of Done
 
@@ -123,9 +123,16 @@ interface ParameterDescriptor {
 - `test/function.test.tsx` passes with all listed test cases.
 - No regressions in existing tests.
 
+## Completion Notes
+
+- Implemented `FunctionDeclaration` and `Parameters` in `packages/rust/src/components/function-declaration.tsx` and `packages/rust/src/components/parameters.tsx`.
+- Added/updated coverage in `packages/rust/test/function.test.tsx` for qualifier order, parameters, return types, generics/where clauses, doc comments, body formatting, and symbol creation.
+- Kept `receiver` support deferred to T021 as planned.
+
 ## Validation
 
 ```bash
-cd packages/rust
-pnpm build && pnpm vitest run function
+pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust exec vitest run test/function.test.tsx
 ```
+
+Result: ✅ Passed (build succeeded; `test/function.test.tsx` — 1 file, 6 tests passed).

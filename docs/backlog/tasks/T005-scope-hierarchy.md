@@ -5,7 +5,7 @@
 | **ID** | T005 |
 | **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
 | **Type** | foundation |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical path |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |

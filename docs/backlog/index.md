@@ -151,7 +151,7 @@ docs/backlog/
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
-| [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | open |
+| [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | done |
 | [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | open |
 | [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | open |
 | [T057](tasks/T057-break-continue.md) | BreakExpression + ContinueExpression | E008 | feature | P2 | T055, T056 | open |

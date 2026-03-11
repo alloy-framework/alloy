@@ -31,6 +31,35 @@ describe("TypeParameters", () => {
     ).toRenderTo(d`<T, U: Display + Clone>`);
   });
 
+  it("renders a single lifetime parameter", () => {
+    expect(<TypeParameters params={[{ lifetime: "'a" }]} />).toRenderTo(d`<'a>`);
+  });
+
+  it("renders lifetimes before type parameters", () => {
+    expect(
+      <TypeParameters
+        params={[
+          { name: "T" },
+          { lifetime: "'a" },
+          { name: "U", constraint: "'a + Display" },
+          { lifetime: "'b" },
+        ]}
+      />,
+    ).toRenderTo(d`<'a, 'b, T, U: 'a + Display>`);
+  });
+
+  it("renders lifetime bounds", () => {
+    expect(
+      <TypeParameters params={[{ lifetime: "'a" }, { lifetime: "'b", constraint: "'a" }]} />,
+    ).toRenderTo(d`<'a, 'b: 'a>`);
+  });
+
+  it("renders type parameter lifetime bounds", () => {
+    expect(
+      <TypeParameters params={[{ lifetime: "'a" }, { name: "T", constraint: "'a + Clone" }]} />,
+    ).toRenderTo(d`<'a, T: 'a + Clone>`);
+  });
+
   it("renders nothing for empty params", () => {
     expect(
       <>

@@ -5,7 +5,7 @@
 | **ID** | T054 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -101,8 +101,14 @@ interface TypeParameterProp {
 
 ## Acceptance Criteria
 
-- [ ] `{ lifetime: "'a" }` renders `'a` in type parameter list
-- [ ] Lifetimes appear before type parameters in output
-- [ ] Lifetime bounds render correctly (`'b: 'a`)
-- [ ] Type parameters with lifetime bounds render (`T: 'a + Clone`)
-- [ ] Existing type parameter tests continue to pass
+- [x] `{ lifetime: "'a" }` renders `'a` in type parameter list
+- [x] Lifetimes appear before type parameters in output
+- [x] Lifetime bounds render correctly (`'b: 'a`)
+- [x] Type parameters with lifetime bounds render (`T: 'a + Clone`)
+- [x] Existing type parameter tests continue to pass
+
+## Implementation Notes
+
+- Extended `TypeParameterProp` with optional `lifetime` support while preserving existing `name`-based parameters.
+- Updated `TypeParameters` rendering to order lifetimes before type parameters regardless of input order.
+- Added direct unit coverage in `packages/rust/test/type-parameters.test.tsx` and integration coverage in `packages/rust/test/lifetime-parameters.test.tsx` for function/struct/enum/trait/impl use-cases.

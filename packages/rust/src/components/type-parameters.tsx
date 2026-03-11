@@ -1,7 +1,8 @@
 import { Children, For } from "@alloy-js/core";
 
 export interface TypeParameterProp {
-  name: string;
+  name?: string;
+  lifetime?: string;
   constraint?: Children;
 }
 
@@ -18,13 +19,34 @@ export function TypeParameters(props: TypeParametersProps) {
     return <></>;
   }
 
+  const lifetimes: TypeParameterProp[] = [];
+  const typeParameters: TypeParameterProp[] = [];
+
+  for (const param of props.params) {
+    if (param.lifetime) {
+      lifetimes.push(param);
+      continue;
+    }
+
+    if (param.name) {
+      typeParameters.push(param);
+      continue;
+    }
+
+    throw new Error(
+      "TypeParameters entries must include either `lifetime` or `name`.",
+    );
+  }
+
+  const orderedParams = [...lifetimes, ...typeParameters];
+
   return (
     <>
       {"<"}
-      <For each={props.params} joiner={", "}>
+      <For each={orderedParams} joiner={", "}>
         {(param) => (
           <>
-            {param.name}
+            {param.lifetime ?? param.name}
             {param.constraint ? (
               <>
                 {": "}

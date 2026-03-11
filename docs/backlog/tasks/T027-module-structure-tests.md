@@ -5,7 +5,7 @@
 | **ID**           | T027                                                                        |
 | **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
 | **Type**         | test                                                                        |
-| **Status**       | pending                                                                     |
+| **Status**       | done                                                                        |
 | **Priority**     | medium                                                                      |
 | **Owner**        | AI coding agent                                                             |
 | **AI Executable**| yes                                                                         |
@@ -82,12 +82,12 @@ Validate that the full module system (crate → module directory → source file
 
 ## Acceptance Criteria
 
-- [ ] Crate with multiple source files generates correct file tree.
-- [ ] Nested module directories create correct directory structure.
-- [ ] `lib.rs` contains auto-generated `mod` declarations for top-level modules.
-- [ ] `mod.rs` in subdirectories contains `mod` declarations for nested modules.
-- [ ] Cross-module references generate correct `use` statements.
-- [ ] PRD 7.2 golden scenario produces exact expected output.
+- [x] Crate with multiple source files generates correct file tree.
+- [x] Nested module directories create correct directory structure.
+- [x] `lib.rs` contains auto-generated `mod` declarations for top-level modules.
+- [x] `mod.rs` in subdirectories contains `mod` declarations for nested modules.
+- [x] Cross-module references generate correct `use` statements.
+- [x] PRD 7.2 golden scenario produces exact expected output.
 
 ## Definition of Done
 

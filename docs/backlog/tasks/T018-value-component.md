@@ -6,7 +6,7 @@
 | **Epic**    | E003 — Core Declaration Components       |
 | **Deps**    | T001 (Package scaffold)                  |
 | **Blocks**  | —                                        |
-| **Status**  | Pending                                  |
+| **Status**  | Done                                     |
 
 ## Description
 
@@ -117,17 +117,17 @@ function Value(props: ValueProps) {
 
 ## Acceptance Criteria
 
-- [ ] String renders: `"hello"`.
-- [ ] Integer renders: `42`.
-- [ ] Float renders: `3.14`.
-- [ ] Boolean true renders: `true`.
-- [ ] Boolean false renders: `false`.
-- [ ] Null renders: `None`.
-- [ ] Undefined renders: `None`.
-- [ ] Array renders: `vec![1, 2, 3]`.
-- [ ] Nested array renders: `vec![vec![1, 2], vec![3, 4]]`.
-- [ ] Empty array renders: `vec![]`.
-- [ ] String with special characters is properly escaped.
+- [x] String renders: `"hello"`.
+- [x] Integer renders: `42`.
+- [x] Float renders: `3.14`.
+- [x] Boolean true renders: `true`.
+- [x] Boolean false renders: `false`.
+- [x] Null renders: `None`.
+- [x] Undefined renders: `None`.
+- [x] Array renders: `vec![1, 2, 3]`.
+- [x] Nested array renders: `vec![vec![1, 2], vec![3, 4]]`.
+- [x] Empty array renders: `vec![]`.
+- [x] String with special characters is properly escaped.
 
 ## Definition of Done
 

@@ -107,7 +107,7 @@ docs/backlog/
 | [T015](tasks/T015-attributes.md) | Attribute + DeriveAttribute | E003 | feature | P0 | T010 | done |
 | [T016](tasks/T016-doc-comments.md) | DocComment + ModuleDocComment | E003 | feature | P1 | T001 | done |
 | [T017](tasks/T017-type-parameters.md) | TypeParameters + WhereClause | E003 | feature | P0 | T001 | done |
-| [T018](tasks/T018-value-component.md) | Value component | E003 | feature | P2 | T001 | pending |
+| [T018](tasks/T018-value-component.md) | Value component | E003 | feature | P2 | T001 | done |
 | [T019](tasks/T019-trait-declaration.md) | TraitDeclaration | E004 | feature | P0 | T006, T010, T013, T017 | done |
 | [T020](tasks/T020-impl-block.md) | ImplBlock | E004 | feature | P0 | T006, T010, T013, T017, T019 | done |
 | [T021](tasks/T021-self-receiver.md) | Self receiver in FunctionDeclaration | E004 | feature | P0 | T013, T020 | pending |

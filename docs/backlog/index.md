@@ -36,7 +36,7 @@ docs/backlog/
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
 | 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
 | 7 | Bug fixes and rendering corrections | E007 | T039–T045 | P07 |
-| 8 | Expression and statement components | E008 | T046–T074 (expression) | P08 |
+| 8 | Expression and statement components | E008 | T046–T076 (expression) | P08 |
 | 9 | Language feature gaps | E009 | T054–T066 (declaration) | P08 |
 
 ### Recommended Implementation Order
@@ -72,7 +72,7 @@ docs/backlog/
 | [E005](epics/E005-module-system-imports.md) | Module System and Imports | T022–T027 | E002, E003 | P04 |
 | [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T038 | E001–E005 | P05–P06 |
 | [E007](epics/E007-bug-fixes.md) | Bug Fixes and Rendering Corrections | T039–T045 | E001–E006 | P07 |
-| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T074 (expression) | E007 | P08 |
+| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T076 (expression) | E007 | P08 |
 | [E009](epics/E009-language-feature-gaps.md) | Language Feature Gaps | T054–T066 (declaration) | E001–E006 | P08 |
 
 ---
@@ -88,7 +88,7 @@ docs/backlog/
 | [P05](phases/P05-external-deps-build.md) | External Deps & Build | E006 (partial) | T028–T031 | External crates and Cargo.toml |
 | [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T038 | STC wrappers, exports, golden tests |
 | P07 | Bug Fixes | E007 | T039–T045 | Fix rendering bugs discovered in integration testing |
-| P08 | Expressions & Language Gaps | E008, E009 | T046–T074 | Expression components, control flow, language feature gaps |
+| P08 | Expressions & Language Gaps | E008, E009 | T046–T076 | Expression components, control flow, language feature gaps |
 
 ---
 
@@ -156,6 +156,7 @@ docs/backlog/
 | [T073](tasks/T073-preflight-turbofish-formatting-mismatch.md) | Pre-flight turbofish formatting mismatch blocker | E008 | bug | P1 | T050, T069, T072 | pending |
 | [T074](tasks/T074-preflight-turbofish-comma-wrap-regression.md) | Pre-flight turbofish comma-wrap regression from loop pre-check | E008 | bug | P1 | T050 | open |
 | [T075](tasks/T075-function-call-expression-turbofish-wrapping-mismatch.md) | FunctionCallExpression turbofish wrapping mismatch: two-type-argument case | E008 | bug | P1 | T050 | open |
+| [T076](tasks/T076-preflight-turbofish-line-wrapping-failure.md) | Pre-flight turbofish line-wrapping failure in `FunctionCallExpression` | E008 | bug | P1 | T050 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -251,6 +252,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T071** | Pre-flight turbofish snapshot mismatch tracking | P1 | Baseline pre-flight blocker: `function-call-expression` expects `f::<String, u32>(` but receives wrapped turbofish with newline after comma |
 | **T073** | Pre-flight turbofish formatting mismatch blocker | P1 | Current pre-flight blocker: `FunctionCallExpression` test expects `f::<String, u32>(` but receives `f::<String,` then `u32>(` |
 | **T074** | Pre-flight turbofish comma-wrap regression (loop 2026-03-11) | P1 | New pre-flight run still fails before task start: expected `f::<String, u32>(` but received `f::<String,` then `u32>(` |
+| **T076** | Pre-flight turbofish line-wrapping failure (`function-call-expression.test.tsx`) | P1 | Latest pre-flight blocker: `FunctionCallExpression` still renders `f::<String,` then `u32>(` instead of `f::<String, u32>(` |
 
 ---
 

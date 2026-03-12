@@ -52,6 +52,7 @@ import { TraitDeclaration as TraitDeclarationComponent } from "../trait-declarat
 import { TryExpression as TryExpressionComponent } from "../try-expression.js";
 import { TypeAlias as TypeAliasComponent } from "../type-alias.js";
 import { TypeParameters as TypeParametersComponent } from "../type-parameters.js";
+import { UnsafeBlock as UnsafeBlockComponent } from "../unsafe-block.js";
 import { Value as ValueComponent } from "../value.js";
 import { WhileExpression as WhileExpressionComponent } from "../while-expression.js";
 
@@ -98,5 +99,6 @@ export const TraitDeclaration = stc(TraitDeclarationComponent);
 export const TryExpression = stc(TryExpressionComponent);
 export const TypeAlias = stc(TypeAliasComponent);
 export const TypeParameters = stc(TypeParametersComponent);
+export const UnsafeBlock = stc(UnsafeBlockComponent);
 export const Value = stc(ValueComponent);
 export const WhileExpression = stc(WhileExpressionComponent);

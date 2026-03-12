@@ -28,6 +28,7 @@ export * from "./if-expression.js";
 export * from "./for-expression.js";
 export * from "./while-expression.js";
 export * from "./loop-expression.js";
+export * from "./unsafe-block.js";
 export * from "./return-expression.js";
 export * from "./let-binding.js";
 export * from "./break-expression.js";

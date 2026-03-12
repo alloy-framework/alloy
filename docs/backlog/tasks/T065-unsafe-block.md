@@ -5,7 +5,7 @@
 | **ID** | T065 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P3 — nice-to-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -59,6 +59,6 @@ interface UnsafeBlockProps {
 
 ## Acceptance Criteria
 
-- [ ] `<UnsafeBlock>body</UnsafeBlock>` renders `unsafe { body }`
-- [ ] Multi-line bodies properly indented
-- [ ] STC wrapper exported
+- [x] `<UnsafeBlock>body</UnsafeBlock>` renders `unsafe { body }`
+- [x] Multi-line bodies properly indented
+- [x] STC wrapper exported

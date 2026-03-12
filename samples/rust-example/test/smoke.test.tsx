@@ -46,11 +46,8 @@ function getCargoBin(): string {
  * between doc comments, attributes, and declarations. This causes Rust's
  * line-comment syntax (`///`) to consume following declarations.
  *
- * Tracked as backlog items:
+ * Tracked as backlog item:
  * - framework-newline-rendering: Missing newlines between items
- * - implblock-missing-generics: ImplBlock doesn't apply generic params to type
- * - implblock-trait-import: ImplBlock trait doesn't generate use statement
- * - cargo-toml-lib-path: CrateDirectory doesn't set [lib] path
  */
 function postProcessRustOutput(content: string): string {
   // Fix doc comments running into declarations on the same line
@@ -189,7 +186,28 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
     expect(storeMod).toMatch(/\.ok_or\(StoreError::NotFound\)/);
   });
 
-  it.todo(
-    "compiles with cargo check (blocked by framework formatting bugs: missing newlines between items)",
-  );
+  it("compiles with cargo check after post-processing", async () => {
+    const { readFileSync, writeFileSync, readdirSync, statSync } = require("fs");
+
+    // Post-process all .rs files to fix known framework formatting issues
+    function processDir(dir: string) {
+      for (const entry of readdirSync(dir)) {
+        const fullPath = join(dir, entry);
+        if (statSync(fullPath).isDirectory()) {
+          processDir(fullPath);
+        } else if (entry.endsWith(".rs")) {
+          const content = readFileSync(fullPath, "utf-8");
+          writeFileSync(fullPath, postProcessRustOutput(content));
+        }
+      }
+    }
+    processDir(outputDir);
+
+    const cargo = getCargoBin();
+    const result = execSync(`${cargo} check --manifest-path ${join(outputDir, "Cargo.toml")} 2>&1`, {
+      encoding: "utf-8",
+      timeout: 60_000,
+    });
+    expect(result).toContain("Finished");
+  }, 60_000);
 });

@@ -256,7 +256,7 @@ export function StoreModule(props: StoreModuleProps) {
 
         <ImplBlock
           type={storeKey}
-          trait={cacheableKey}
+          trait={<><Reference refkey={cacheableKey} />{"<V>"}</>}
           typeParameters={[
             { name: "K", constraint: "Eq + std::hash::Hash + Clone" },
             { name: "V", constraint: "Clone + Send + Sync" },

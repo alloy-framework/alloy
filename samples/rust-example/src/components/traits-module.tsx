@@ -41,6 +41,7 @@ export function TraitsModule(props: TraitsModuleProps) {
             receiver="none"
             parameters={[{ name: "bytes", type: "&[u8]" }]}
             returnType={<><Reference refkey={resultAliasKey} />{"<Self>"}</>}
+            whereClause="Self: Sized"
           />
         </TraitDeclaration>
 

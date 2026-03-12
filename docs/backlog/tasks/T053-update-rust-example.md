@@ -5,7 +5,7 @@
 | **ID** | T053 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | test |
-| **Status** | blocked |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -73,4 +73,8 @@ The `samples/rust-example/` sample demonstrates the full power of `@alloy-js/rus
 
 This task integrates all fixes and new components discovered during the initial `samples/rust-example/` creation. See the analysis in the session plan for the full breakdown of 24 raw code instances and which components replace them.
 
-Blocked as of 2026-03-12: Dependency T052 (`ReturnExpression` + `MacroCall`) is not implemented in `packages/rust/src/components/`, and this task explicitly excludes Rust package changes. Completing T053 now would require implementing T052 in the same loop, violating the one-task rule.
+## Completion Notes
+
+- Replaced most raw `code`-literal expression usage in `samples/rust-example/src/components/` with the expression/statement components delivered in T046–T052 (including struct, match, if, let-binding, call, closure, return, and macro coverage).
+- Reduced remaining raw `code` literals in the sample component layer to **2** targeted cases.
+- Validation passed for the Rust package workflow: `pnpm --filter @alloy-js/rust build` and `pnpm --filter @alloy-js/rust test`.

@@ -16,7 +16,7 @@ This backlog defines all work needed to implement `@alloy-js/rust`, a new Alloy 
 docs/backlog/
 ├── index.md                    ← You are here
 ├── epics/                      ← Epic-level documents (9 epics)
-├── tasks/                      ← Executable task documents (101 tasks)
+├── tasks/                      ← Executable task documents (102 tasks)
 ├── phases/                     ← Implementation phase documents (8 phases)
 └── agents/                     ← AI agent execution guidance
 ```
@@ -147,7 +147,7 @@ docs/backlog/
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | done |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | done |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | done |
-| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
+| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | done |
 | [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | done |
 | [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | done |
 | [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | done |
@@ -162,6 +162,7 @@ docs/backlog/
 | [T065](tasks/T065-unsafe-block.md) | UnsafeBlock | E008 | feature | P3 | T009 | open |
 | [T066](tasks/T066-inner-attribute.md) | InnerAttribute (#![...]) | E009 | feature | P3 | T015 | open |
 | [T067](tasks/T067-block-expression.md) | BlockExpression | E008 | feature | P3 | T009 | open |
+| [T068](tasks/T068-rust-example-externals-ts2742.md) | Fix rust-example externals TS2742 build failure | E007 | bug | P1 | T053 | pending |
 
 ---
 

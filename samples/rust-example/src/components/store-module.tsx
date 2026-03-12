@@ -5,10 +5,18 @@ import {
   EnumDeclaration,
   EnumVariant,
   Field,
+  FieldInit,
   FunctionDeclaration,
+  IfExpression,
   ImplBlock,
+  LetBinding,
+  MacroCall,
+  MatchArm,
+  MatchExpression,
+  ReturnExpression,
   ModuleDirectory,
   SourceFile,
+  StructExpression,
   StructDeclaration,
 } from "@alloy-js/rust";
 import { storeErrorKey } from "./error-module.js";
@@ -92,13 +100,11 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "max_capacity", type: "usize" }]}
             returnType="Self"
           >
-            {code`
-              Self {
-                  data: std::collections::HashMap::new(),
-                  max_capacity,
-                  default_ttl: None,
-              }
-            `}
+            <StructExpression type="Self">
+              <FieldInit name="data">std::collections::HashMap::new()</FieldInit>
+              <FieldInit name="max_capacity" />
+              <FieldInit name="default_ttl">None</FieldInit>
+            </StructExpression>
           </FunctionDeclaration>
 
           <hbr />
@@ -111,12 +117,9 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "ttl", type: "std::time::Duration" }]}
             returnType="Self"
           >
-            {code`
-              Self {
-                  default_ttl: Some(ttl),
-                  ..self
-              }
-            `}
+            <StructExpression type="Self" spread="self">
+              <FieldInit name="default_ttl">Some(ttl)</FieldInit>
+            </StructExpression>
           </FunctionDeclaration>
 
           <hbr />
@@ -132,21 +135,21 @@ export function StoreModule(props: StoreModuleProps) {
             ]}
             returnType="crate::error::Result<()>"
           >
-            {code`
-              if self.data.len() >= self.max_capacity && !self.data.contains_key(&key) {
-                  return Err(crate::error::StoreError::StorageFull);
-              }
-
-              let entry = Entry {
-                  value,
-                  created_at: std::time::Instant::now(),
-                  ttl: self.default_ttl,
-                  status: EntryStatus::Active,
-              };
-
-              self.data.insert(key, entry);
-              Ok(())
-            `}
+            <IfExpression condition="self.data.len() >= self.max_capacity && !self.data.contains_key(&key)">
+              <>
+                <ReturnExpression>Err(crate::error::StoreError::StorageFull)</ReturnExpression>;
+              </>
+            </IfExpression>
+            <LetBinding name="entry">
+              <StructExpression type="Entry">
+                <FieldInit name="value" />
+                <FieldInit name="created_at">std::time::Instant::now()</FieldInit>
+                <FieldInit name="ttl">self.default_ttl</FieldInit>
+                <FieldInit name="status">EntryStatus::Active</FieldInit>
+              </StructExpression>
+            </LetBinding>
+            self.data.insert(key, entry);
+            Ok(())
           </FunctionDeclaration>
 
           <hbr />
@@ -159,22 +162,24 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "key", type: "&K" }]}
             returnType="crate::error::Result<&V>"
           >
-            {code`
-              match self.data.get(key) {
-                  Some(entry) => {
-                      if entry.status == EntryStatus::Expired {
-                          return Err(crate::error::StoreError::NotFound);
-                      }
-                      if let Some(ttl) = entry.ttl {
-                          if entry.created_at.elapsed() > ttl {
-                              return Err(crate::error::StoreError::NotFound);
-                          }
-                      }
-                      Ok(&entry.value)
-                  }
-                  None => Err(crate::error::StoreError::NotFound),
-              }
-            `}
+            <MatchExpression expression="self.data.get(key)">
+              <MatchArm pattern="Some(entry)">
+                <IfExpression condition="entry.status == EntryStatus::Expired">
+                  <>
+                    <ReturnExpression>Err(crate::error::StoreError::NotFound)</ReturnExpression>;
+                  </>
+                </IfExpression>
+                <IfExpression condition="let Some(ttl) = entry.ttl">
+                  <IfExpression condition="entry.created_at.elapsed() &gt; ttl">
+                    <>
+                      <ReturnExpression>Err(crate::error::StoreError::NotFound)</ReturnExpression>;
+                    </>
+                  </IfExpression>
+                </IfExpression>
+                Ok(&entry.value)
+              </MatchArm>
+              <MatchArm pattern="None">Err(crate::error::StoreError::NotFound)</MatchArm>
+            </MatchExpression>
           </FunctionDeclaration>
 
           <hbr />
@@ -205,7 +210,7 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&self"
             returnType="usize"
           >
-            {code`self.data.len()`}
+            self.data.len()
           </FunctionDeclaration>
 
           <hbr />
@@ -218,7 +223,7 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&self"
             returnType="bool"
           >
-            {code`self.data.is_empty()`}
+            self.data.is_empty()
           </FunctionDeclaration>
 
           <hbr />
@@ -259,7 +264,7 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&self"
             returnType="String"
           >
-            {code`format!("store::{}", self.data.len())`}
+            <MacroCall name="format" args={['"store::{}"', "self.data.len()"]} />
           </FunctionDeclaration>
 
           <hbr />
@@ -269,7 +274,7 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&self"
             returnType="bool"
           >
-            {code`self.data.is_empty()`}
+            self.data.is_empty()
           </FunctionDeclaration>
 
           <hbr />
@@ -277,9 +282,9 @@ export function StoreModule(props: StoreModuleProps) {
           <FunctionDeclaration
             name="cached_value"
             receiver="&self"
-            returnType={code`Option<&V>`}
+            returnType="Option<&V>"
           >
-            {code`None`}
+            None
           </FunctionDeclaration>
         </ImplBlock>
       </SourceFile>

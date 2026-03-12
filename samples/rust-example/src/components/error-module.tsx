@@ -1,10 +1,13 @@
-import { code, Children, refkey } from "@alloy-js/core";
+import { Children, refkey } from "@alloy-js/core";
 import {
   DocComment,
   EnumDeclaration,
   EnumVariant,
   FunctionDeclaration,
   ImplBlock,
+  MacroCall,
+  MatchArm,
+  MatchExpression,
   ModuleDirectory,
   SourceFile,
   TypeAlias,
@@ -35,10 +38,10 @@ export function ErrorModule(props: ErrorModuleProps) {
             doc="The store has reached its maximum capacity."
           />
           <EnumVariant name="SerializationError" doc="Failed to serialize or deserialize a value.">
-            {code`String`}
+            String
           </EnumVariant>
           <EnumVariant name="LockError" doc="Failed to acquire a lock on the store.">
-            {code`String`}
+            String
           </EnumVariant>
         </EnumDeclaration>
 
@@ -56,14 +59,20 @@ export function ErrorModule(props: ErrorModuleProps) {
             ]}
             returnType="std::fmt::Result"
           >
-            {code`
-              match self {
-                  Self::NotFound => write!(f, "key not found"),
-                  Self::StorageFull => write!(f, "storage is full"),
-                  Self::SerializationError(msg) => write!(f, "serialization error: {}", msg),
-                  Self::LockError(msg) => write!(f, "lock error: {}", msg),
-              }
-            `}
+            <MatchExpression expression="self">
+              <MatchArm pattern="Self::NotFound">
+                <MacroCall name="write" args={["f", '"key not found"']} />
+              </MatchArm>
+              <MatchArm pattern="Self::StorageFull">
+                <MacroCall name="write" args={["f", '"storage is full"']} />
+              </MatchArm>
+              <MatchArm pattern="Self::SerializationError(msg)">
+                <MacroCall name="write" args={["f", '"serialization error: {}"', "msg"]} />
+              </MatchArm>
+              <MatchArm pattern="Self::LockError(msg)">
+                <MacroCall name="write" args={["f", '"lock error: {}"', "msg"]} />
+              </MatchArm>
+            </MatchExpression>
           </FunctionDeclaration>
         </ImplBlock>
 
@@ -71,7 +80,7 @@ export function ErrorModule(props: ErrorModuleProps) {
 
         <DocComment>A specialized Result type for store operations.</DocComment>
         <TypeAlias name="Result" refkey={resultAliasKey} pub typeParameters={[{ name: "T" }]}>
-          {code`std::result::Result<T, StoreError>`}
+          std::result::Result&lt;T, StoreError&gt;
         </TypeAlias>
       </SourceFile>
     </ModuleDirectory>

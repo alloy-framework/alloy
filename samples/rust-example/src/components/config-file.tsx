@@ -1,12 +1,14 @@
-import { code, Children, refkey } from "@alloy-js/core";
+import { Children, refkey } from "@alloy-js/core";
 import {
   Attribute,
   ConstDeclaration,
   DocComment,
   Field,
+  FieldInit,
   FunctionDeclaration,
   ImplBlock,
   SourceFile,
+  StructExpression,
   StructDeclaration,
 } from "@alloy-js/rust";
 
@@ -29,7 +31,7 @@ export function ConfigFile(props: ConfigFileProps) {
         pub
         type="usize"
       >
-        {code`10_000`}
+        10_000
       </ConstDeclaration>
 
       <hbr />
@@ -40,7 +42,7 @@ export function ConfigFile(props: ConfigFileProps) {
         pub
         type="u64"
       >
-        {code`3600`}
+        3600
       </ConstDeclaration>
 
       <hbr />
@@ -69,14 +71,12 @@ export function ConfigFile(props: ConfigFileProps) {
       <ImplBlock type={configKey}>
         <DocComment>Creates a new Config with sensible defaults.</DocComment>
         <FunctionDeclaration name="new" pub receiver="none" returnType="Self">
-          {code`
-            Self {
-                max_capacity: MAX_ENTRIES,
-                default_ttl: Some(Duration::from_secs(DEFAULT_TTL_SECS)),
-                enable_eviction: true,
-                name: String::from("default"),
-            }
-          `}
+          <StructExpression type="Self">
+            <FieldInit name="max_capacity">MAX_ENTRIES</FieldInit>
+            <FieldInit name="default_ttl">Some(Duration::from_secs(DEFAULT_TTL_SECS))</FieldInit>
+            <FieldInit name="enable_eviction">true</FieldInit>
+            <FieldInit name="name">String::from("default")</FieldInit>
+          </StructExpression>
         </FunctionDeclaration>
 
         <hbr />
@@ -90,12 +90,9 @@ export function ConfigFile(props: ConfigFileProps) {
           parameters={[{ name: "capacity", type: "usize" }]}
           returnType="Self"
         >
-          {code`
-            Self {
-                max_capacity: capacity,
-                ..self
-            }
-          `}
+          <StructExpression type="Self" spread="self">
+            <FieldInit name="max_capacity">capacity</FieldInit>
+          </StructExpression>
         </FunctionDeclaration>
 
         <hbr />
@@ -111,12 +108,9 @@ export function ConfigFile(props: ConfigFileProps) {
           ]}
           returnType="Self"
         >
-          {code`
-            Self {
-                default_ttl: Some(ttl),
-                ..self
-            }
-          `}
+          <StructExpression type="Self" spread="self">
+            <FieldInit name="default_ttl">Some(ttl)</FieldInit>
+          </StructExpression>
         </FunctionDeclaration>
 
         <hbr />
@@ -129,12 +123,9 @@ export function ConfigFile(props: ConfigFileProps) {
           receiver="self"
           returnType="Self"
         >
-          {code`
-            Self {
-                enable_eviction: false,
-                ..self
-            }
-          `}
+          <StructExpression type="Self" spread="self">
+            <FieldInit name="enable_eviction">false</FieldInit>
+          </StructExpression>
         </FunctionDeclaration>
 
         <hbr />
@@ -145,15 +136,12 @@ export function ConfigFile(props: ConfigFileProps) {
           name="with_name"
           pub
           receiver="self"
-          parameters={[{ name: "name", type: <>&amp;str</> }]}
+          parameters={[{ name: "name", type: "&str" }]}
           returnType="Self"
         >
-          {code`
-            Self {
-                name: name.to_owned(),
-                ..self
-            }
-          `}
+          <StructExpression type="Self" spread="self">
+            <FieldInit name="name">name.to_owned()</FieldInit>
+          </StructExpression>
         </FunctionDeclaration>
       </ImplBlock>
     </SourceFile>

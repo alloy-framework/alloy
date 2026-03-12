@@ -180,6 +180,7 @@ docs/backlog/
 | [T097](tasks/T097-preflight-function-call-expression-turbofish-wrap-regression-rerun.md) | Preflight rerun failure: FunctionCallExpression turbofish wraps between type args | E008 | bug | P0 | T050, T096 | pending |
 | [T098](tasks/T098-preflight-function-call-expression-turbofish-comma-line-wrap-rerun.md) | Preflight rerun failure: turbofish type args wrap after comma in FunctionCallExpression test | E008 | bug | P0 | T050, T097 | pending |
 | [T099](tasks/T099-preflight-function-call-expression-turbofish-comma-wrap-regression-rerun-2.md) | Preflight rerun failure: FunctionCallExpression turbofish comma-wrap regression persists | E008 | bug | P0 | T050, T098 | pending |
+| [T100](tasks/T100-preflight-function-call-expression-turbofish-wrapping-in-fce-tests.md) | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | E008 | bug | P0 | T050, T099 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -285,6 +286,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T088** | Pre-flight FunctionCallExpression turbofish one-line formatting blocker | P0 | Current pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` turbofish type arguments wrap after `String` (`f::<String,` then `u32>(...)`) instead of `f::<String, u32>(...)` |
 | **T089** | Pre-flight FunctionCallExpression turbofish comma-wrap regression | P0 | New pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` still renders `f::<String,` then `u32>(...)` instead of one-line `f::<String, u32>(...)` for turbofish type arguments with call args |
 | **T097** | Preflight rerun: FunctionCallExpression turbofish type-arg wrap regression | P0 | Latest pre-flight run still fails before task start: expected `f::<String, u32>(...)` but actual output wraps after `String` (`f::<String,` then `u32>(...)`) in `test/function-call-expression.test.tsx`. |
+| **T100** | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | P0 | Latest pre-flight run fails before task work: expected `f::<String, u32>(` but got a wrapped turbofish with newline between type args (`f::<String,` then `u32>(`) in `FunctionCallExpression` test output. |
 
 ---
 

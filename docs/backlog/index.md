@@ -157,7 +157,7 @@ docs/backlog/
 | [T060](tasks/T060-await-expression.md) | AwaitExpression | E008 | feature | P2 | T009 | done |
 | [T061](tasks/T061-method-chain-expression.md) | MethodChainExpression | E008 | feature | P2 | T050 | done |
 | [T062](tasks/T062-pub-super-visibility.md) | pub(super) visibility | E009 | feature | P2 | T011 | done |
-| [T063](tasks/T063-associated-type.md) | AssociatedType in traits | E009 | feature | P2 | T019 | open |
+| [T063](tasks/T063-associated-type.md) | AssociatedType in traits | E009 | feature | P2 | T019 | done |
 | [T064](tasks/T064-try-expression.md) | TryExpression (? operator) | E008 | feature | P2 | T009 | open |
 | [T065](tasks/T065-unsafe-block.md) | UnsafeBlock | E008 | feature | P3 | T009 | open |
 | [T066](tasks/T066-inner-attribute.md) | InnerAttribute (#![...]) | E009 | feature | P3 | T015 | open |

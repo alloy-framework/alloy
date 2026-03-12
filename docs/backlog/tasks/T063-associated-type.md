@@ -5,7 +5,7 @@
 | **ID** | T063 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -79,7 +79,12 @@ interface AssociatedTypeProps {
 
 ## Acceptance Criteria
 
-- [ ] `<AssociatedType name="Item" />` in trait renders `type Item;`
-- [ ] `<AssociatedType name="Item" constraint="Clone" />` renders `type Item: Clone;`
-- [ ] `<AssociatedType name="Item">u32</AssociatedType>` in impl renders `type Item = u32;`
-- [ ] STC wrapper exported
+- [x] `<AssociatedType name="Item" />` in trait renders `type Item;`
+- [x] `<AssociatedType name="Item" constraint="Clone" />` renders `type Item: Clone;`
+- [x] `<AssociatedType name="Item">u32</AssociatedType>` in impl renders `type Item = u32;`
+- [x] STC wrapper exported
+
+## Completion Note
+
+- Completed on 2026-03-12.
+- Implemented in key files: `packages/rust/src/components/associated-type.tsx`, `packages/rust/src/components/index.ts`, `packages/rust/src/components/stc/index.ts`, and `packages/rust/test/associated-types.test.tsx`.

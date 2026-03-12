@@ -79,6 +79,23 @@ export function createMethodSymbol(
   });
 }
 
+export function createAssociatedTypeSymbol(
+  originalName: string | Namekey,
+  options: RustOutputSymbolOptions = {},
+) {
+  const scope = useRustScope();
+  if (!(scope instanceof RustImplScope) && !(scope instanceof RustTraitScope)) {
+    throw new Error("Can't create associated type symbol outside of an impl or trait scope.");
+  }
+
+  const binder = options.binder ?? scope.binder ?? useBinder();
+  return createSymbol(RustOutputSymbol, originalName, scope.members, {
+    ...withNamePolicy(options, "type-alias"),
+    binder,
+    symbolKind: "associated-type",
+  });
+}
+
 export function createTypeAliasSymbol(
   originalName: string | Namekey,
   options: NamedTypeSymbolOptions = {},

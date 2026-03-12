@@ -5,7 +5,7 @@
 | **ID** | T061 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -93,8 +93,14 @@ C# package has `AccessExpression` with `AccessExpression.Part` sub-components fo
 
 ## Acceptance Criteria
 
-- [ ] Chain renders with `.method()` calls
-- [ ] Long chains wrap with proper indentation
-- [ ] Turbofish works on individual calls
-- [ ] `.await` and `?` work on individual steps
-- [ ] STC wrapper exported
+- [x] Chain renders with `.method()` calls
+- [x] Long chains wrap with proper indentation
+- [x] Turbofish works on individual calls
+- [x] `.await` and `?` work on individual steps
+- [x] STC wrapper exported
+
+---
+
+## Completion Note
+
+Completed on 2026-03-12 during record-phase documentation updates.

@@ -155,7 +155,7 @@ docs/backlog/
 | [T058](tasks/T058-tuple-struct.md) | Tuple struct declaration | E009 | feature | P1 | T011 | done |
 | [T059](tasks/T059-static-declaration.md) | StaticDeclaration | E009 | feature | P2 | T014 | done |
 | [T060](tasks/T060-await-expression.md) | AwaitExpression | E008 | feature | P2 | T009 | done |
-| [T061](tasks/T061-method-chain-expression.md) | MethodChainExpression | E008 | feature | P2 | T050 | open |
+| [T061](tasks/T061-method-chain-expression.md) | MethodChainExpression | E008 | feature | P2 | T050 | done |
 | [T062](tasks/T062-pub-super-visibility.md) | pub(super) visibility | E009 | feature | P2 | T011 | open |
 | [T063](tasks/T063-associated-type.md) | AssociatedType in traits | E009 | feature | P2 | T019 | open |
 | [T064](tasks/T064-try-expression.md) | TryExpression (? operator) | E008 | feature | P2 | T009 | open |

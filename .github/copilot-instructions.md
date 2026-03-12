@@ -19,6 +19,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 
 ## TypeScript/Symbol Patterns - Known Gotchas
 
+- For exported components that attach subcomponents (for example, `Component.Call = ...`), avoid private type aliases in public exported const annotations; API Extractor can fail. Prefer `export function Component(...) { ... }` and attach subcomponents as properties after declaration.
 **Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
 **For SourceFile/CrateDirectory loop changes:** run `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` first for fast debugging, then run full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
 **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.

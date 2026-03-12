@@ -22,6 +22,10 @@ import {
 import { FunctionCallExpression as FunctionCallExpressionComponent } from "../function-call-expression.js";
 import { ForExpression as ForExpressionComponent } from "../for-expression.js";
 import { LoopExpression as LoopExpressionComponent } from "../loop-expression.js";
+import {
+  MethodChainCall as MethodChainCallComponent,
+  MethodChainExpression as MethodChainExpressionComponent,
+} from "../method-chain-expression.js";
 import { LetBinding as LetBindingComponent } from "../let-binding.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
 import {
@@ -60,6 +64,8 @@ export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
 export const ForExpression = stc(ForExpressionComponent);
 export const LoopExpression = stc(LoopExpressionComponent);
+export const MethodChainExpression = stc(MethodChainExpressionComponent);
+export const MethodChainCall = stc(MethodChainCallComponent);
 export const IfExpression = stc(IfExpressionComponent);
 export const ElseIfClause = stc(ElseIfClauseComponent);
 export const ElseClause = stc(ElseClauseComponent);

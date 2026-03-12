@@ -240,6 +240,9 @@ describe("Golden scenarios", () => {
         version = "0.1.0"
         edition = "2021"
 
+        [lib]
+        path = "lib.rs"
+
         [dependencies]
         serde = "1.0.219"
       `.trim(),

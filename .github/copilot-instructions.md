@@ -25,6 +25,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
 **For import/reference integration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/imports.test.tsx test/reference.test.tsx` before full-suite validation to iterate faster.
 **For Cargo.toml generation loops:** keep `CrateDirectory` Cargo.toml emission opt-in (`includeCargoToml`) so existing single-file `toRenderTo()` tests keep stable output.
+- For `CargoTomlFile` targets, emit explicit sections (`[lib] path = "lib.rs"` for libs, `[[bin]]` with `name`/`path` for bins) before `[dependencies]`; expect snapshot updates in cargo-toml/golden/stc tests.
 **Validation workflow tip:** use `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` as the Rust package correctness gate; also run `pnpm --filter rust-example build` when touching sample crate exports, and fix TS2742 by replacing inferred exported `createCrate(...)` values with explicit descriptor constants (`as const`) plus exported type aliases.
 - In components using `scope.enclosingModule`, narrow to `RustModuleScope` (for example, `instanceof RustModuleScope`) before accessing `.types` or `.values`; `enclosingModule` is typed as `RustScopeBase`.
 - Avoid whitespace-only `code` template literals (for example, ``code` ` ``); they can crash core code rendering. Use plain string literals like `" "` for standalone spaces.

@@ -5,7 +5,7 @@
 | **ID** | T067 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P3 — nice-to-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -63,7 +63,12 @@ interface BlockExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<BlockExpression>body</BlockExpression>` renders `{ body }`
-- [ ] Properly indented
-- [ ] Composable with LetBinding and other components
-- [ ] STC wrapper exported
+- [x] `<BlockExpression>body</BlockExpression>` renders `{ body }`
+- [x] Properly indented
+- [x] Composable with LetBinding and other components
+- [x] STC wrapper exported
+
+## Completion Note
+
+- Completed on 2026-03-12.
+- Implemented `BlockExpression`, STC export, and unit tests with block-expression return semantics.

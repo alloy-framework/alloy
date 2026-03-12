@@ -6,6 +6,7 @@ import {
 } from "../attribute.js";
 import { AssociatedType as AssociatedTypeComponent } from "../associated-type.js";
 import { AwaitExpression as AwaitExpressionComponent } from "../await-expression.js";
+import { BlockExpression as BlockExpressionComponent } from "../block-expression.js";
 import { CargoTomlFile as CargoTomlFileComponent } from "../cargo-toml-file.js";
 import { ClosureExpression as ClosureExpressionComponent } from "../closure-expression.js";
 import { ConstDeclaration as ConstDeclarationComponent } from "../const-declaration.js";
@@ -60,6 +61,7 @@ export const Attribute = stc(AttributeComponent);
 export const InnerAttribute = stc(InnerAttributeComponent);
 export const AssociatedType = stc(AssociatedTypeComponent);
 export const AwaitExpression = stc(AwaitExpressionComponent);
+export const BlockExpression = stc(BlockExpressionComponent);
 export const CargoTomlFile = stc(CargoTomlFileComponent);
 export const ClosureExpression = stc(ClosureExpressionComponent);
 export const ConstDeclaration = stc(ConstDeclarationComponent);

@@ -5,7 +5,7 @@
 | **ID** | T071 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | pending |
+| **Status** | blocked |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -49,3 +49,5 @@ This causes compilation failure when other modules reference `crate::error::Resu
 ## Evidence
 
 Discovered during rust-example review on 2026-03-12. The `traits-module.tsx` had to use raw `crate::error::Result` paths as a workaround because the import system suppressed the `use` for shadowed `Result`.
+
+Blocked as of 2026-03-12: dependency T029 (`std` builtins) remains blocked, so this task is not currently executable.

@@ -165,7 +165,7 @@ docs/backlog/
 | [T068](tasks/T068-rust-example-externals-ts2742.md) | Fix rust-example externals TS2742 build failure | E007 | bug | P1 | T053 | done |
 | [T069](tasks/T069-implblock-generic-forwarding.md) | ImplBlock generic parameter forwarding | E007 | bug | P0 | T020, T017 | done |
 | [T070](tasks/T070-implblock-trait-use-import.md) | ImplBlock trait name missing use import | E007 | bug | P0 | T020, T022 | done |
-| [T071](tasks/T071-prelude-type-shadowing.md) | Prelude type shadowing causes missing imports | E007 | bug | P1 | T022, T029 | pending |
+| [T071](tasks/T071-prelude-type-shadowing.md) | Prelude type shadowing causes missing imports | E007 | bug | P1 | T022, T029 | blocked |
 | [T072](tasks/T072-cargo-toml-lib-path.md) | CrateDirectory Cargo.toml missing [lib] path | E007 | bug | P1 | T030, T038 | done |
 | [T073](tasks/T073-reference-inline-line-breaks.md) | Reference inline rendering inserts unexpected line breaks | E007 | bug | P2 | T010, T022 | done |
 | [T074](tasks/T074-empty-dependencies-section.md) | Cargo.toml renders empty [dependencies] section | E007 | bug | P3 | T030, T031 | done |
@@ -226,6 +226,7 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 | ID | Title | Reason |
 |---|---|---|
 | T029 | std builtin descriptors | Repeated build validation failures on exported `std` typing portability (TS2742/API Extractor). |
+| T071 | Prelude type shadowing causes missing imports | Blocked by dependency T029 (`std` builtins) still blocked. |
 
 
 ---

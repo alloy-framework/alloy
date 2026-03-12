@@ -144,7 +144,7 @@ describe("Rust reference resolution", () => {
     expect(consumerCrateScope!.dependencies.get("serde")).toBe("*");
   });
 
-  it("bypasses use tracking for prelude symbols", () => {
+  it("generates use for same-crate symbols that shadow prelude names", () => {
     const preludeLikeType = refkey("prelude-like-type");
     let consumerModuleScope: RustModuleScope | undefined;
 
@@ -170,7 +170,8 @@ describe("Rust reference resolution", () => {
     );
 
     expect(consumerModuleScope).toBeDefined();
-    expect(consumerModuleScope!.imports.size).toBe(0);
+    expect(consumerModuleScope!.imports.size).toBe(1);
+    expect(consumerModuleScope!.imports.get("crate::types")?.size).toBe(1);
   });
 
   it("throws on private symbol reference from another module", () => {

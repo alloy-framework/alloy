@@ -5,12 +5,12 @@
 | **ID** | T071 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | blocked |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
 | **Human Review Required** | Yes |
-| **Dependencies** | T022 (Reference resolution), T029 (std builtins) |
+| **Dependencies** | T022 (Reference resolution) |
 | **Blocks** | — |
 
 ---
@@ -50,4 +50,4 @@ This causes compilation failure when other modules reference `crate::error::Resu
 
 Discovered during rust-example review on 2026-03-12. The `traits-module.tsx` had to use raw `crate::error::Result` paths as a workaround because the import system suppressed the `use` for shadowed `Result`.
 
-Blocked as of 2026-03-12: dependency T029 (`std` builtins) remains blocked, so this task is not currently executable.
+Fixed on 2026-03-12: The `ref()` function in `reference.ts` now checks whether a prelude-named symbol is declared in the same crate. If so, it treats it as a user-defined shadow and generates the `use` import normally. Only truly external/unresolved prelude types skip import generation.

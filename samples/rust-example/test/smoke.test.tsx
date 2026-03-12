@@ -141,12 +141,26 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
     // References should generate proper use statements
     expect(storeMod).toContain("use std::collections::HashMap");
     expect(storeMod).toContain("use std::time::");
-    expect(storeMod).toContain("use crate::error::StoreError");
+    expect(storeMod).toMatch(/use crate::error::\{?.*StoreError/);
+    expect(storeMod).toMatch(/use crate::error::\{?.*Result/);
 
     // Types should use short names (not fully-qualified)
     expect(storeMod).toMatch(/data: HashMap</);
     expect(storeMod).toMatch(/created_at: Instant/);
     expect(storeMod).toMatch(/Option<Duration>/);
+
+    // Prelude-shadowed Result should use short name in return types
+    expect(storeMod).toMatch(/-> Result<\(\)>/);
+    expect(storeMod).not.toMatch(/-> crate::error::Result/);
+
+    // Traits module should also import Result via use statement
+    const traitsMod = readFileSync(
+      join(outputDir, "traits", "mod.rs"),
+      "utf-8",
+    );
+    expect(traitsMod).toMatch(/use crate::error::\{?.*Result/);
+    expect(traitsMod).toMatch(/-> Result<Vec<u8>>/);
+    expect(traitsMod).not.toMatch(/-> crate::error::Result/);
   });
 
   it("generates correct enum variant syntax", () => {
@@ -176,6 +190,6 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
   });
 
   it.todo(
-    "compiles with cargo check (blocked by framework bugs: ImplBlock missing generics, trait import missing)",
+    "compiles with cargo check (blocked by framework formatting bugs: missing newlines between items)",
   );
 });

@@ -3,9 +3,11 @@ import {
   DocComment,
   FunctionDeclaration,
   ModuleDirectory,
+  Reference,
   SourceFile,
   TraitDeclaration,
 } from "@alloy-js/rust";
+import { resultAliasKey } from "./error-module.js";
 
 export const serializableKey = refkey();
 export const cacheableKey = refkey();
@@ -29,7 +31,7 @@ export function TraitsModule(props: TraitsModuleProps) {
           <FunctionDeclaration
             name="to_bytes"
             receiver="&self"
-            returnType="crate::error::Result<Vec<u8>>"
+            returnType={<><Reference refkey={resultAliasKey} />{"<Vec<u8>>"}</>}
           />
 
           <hbr />
@@ -38,7 +40,7 @@ export function TraitsModule(props: TraitsModuleProps) {
             name="from_bytes"
             receiver="none"
             parameters={[{ name: "bytes", type: "&[u8]" }]}
-            returnType="crate::error::Result<Self>"
+            returnType={<><Reference refkey={resultAliasKey} />{"<Self>"}</>}
           />
         </TraitDeclaration>
 

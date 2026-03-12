@@ -161,7 +161,7 @@ describe("Rust edge cases", () => {
       );
     });
 
-    it("does not generate use statements for prelude symbols", () => {
+    it("generates use statements for same-crate types shadowing prelude names", () => {
       const optionRef = refkey("edge-option");
       const vecRef = refkey("edge-vec");
       const stringRef = refkey("edge-string");
@@ -195,6 +195,7 @@ describe("Rust edge cases", () => {
 
       expect(findFile(output, "lib.rs").contents.trim()).toBe(
         d`
+          use crate::types::{Option, String, Vec};
           type Maybe = Option;
           type Items = Vec;
           type Name = String;

@@ -155,7 +155,7 @@ describe("Rust imports integration", () => {
     `.trim());
   });
 
-  it("does not generate use statements for prelude types", () => {
+  it("generates use statements for same-crate types that shadow prelude names", () => {
     const optionRef = refkey("option");
     const resultRef = refkey("result");
     const vecRef = refkey("vec");
@@ -188,6 +188,7 @@ describe("Rust imports integration", () => {
     );
 
     expect(findFile(output, "lib.rs").contents.trim()).toBe(d`
+      use crate::types::{Option, Result, Vec};
       type OptionAlias = Option;
       type ResultAlias = Result;
       type VecAlias = Vec;

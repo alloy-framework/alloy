@@ -22,7 +22,7 @@ import {
   StructExpression,
   StructDeclaration,
 } from "@alloy-js/rust";
-import { storeErrorKey } from "./error-module.js";
+import { storeErrorKey, resultAliasKey } from "./error-module.js";
 import { cacheableKey } from "./traits-module.js";
 import { stdCrate } from "../externals.js";
 
@@ -137,7 +137,7 @@ export function StoreModule(props: StoreModuleProps) {
               { name: "key", type: "K" },
               { name: "value", type: "V" },
             ]}
-            returnType="crate::error::Result<()>"
+            returnType={<><Reference refkey={resultAliasKey} />{"<()>"}</>}
           >
             <IfExpression condition="self.data.len() >= self.max_capacity && !self.data.contains_key(&key)">
               <>
@@ -164,7 +164,7 @@ export function StoreModule(props: StoreModuleProps) {
             pub
             receiver="&self"
             parameters={[{ name: "key", type: "&K" }]}
-            returnType="crate::error::Result<&V>"
+            returnType={<><Reference refkey={resultAliasKey} />{"<&V>"}</>}
           >
             <MatchExpression expression="self.data.get(key)">
               <MatchArm pattern="Some(entry)">
@@ -194,7 +194,7 @@ export function StoreModule(props: StoreModuleProps) {
             pub
             receiver="&mut self"
             parameters={[{ name: "key", type: "&K" }]}
-            returnType="crate::error::Result<V>"
+            returnType={<><Reference refkey={resultAliasKey} />{"<V>"}</>}
           >
             <MethodChainExpression receiver="self.data">
               <MethodChainExpression.Call name="remove" args={["key"]} />

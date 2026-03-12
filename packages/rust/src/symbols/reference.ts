@@ -78,14 +78,22 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
     const result = resolveResult.value;
     const targetName = result.symbol.name;
 
-    if (PRELUDE_TYPES.has(targetName)) {
-      return [targetName, result.symbol];
-    }
-
     const sourceCrate = currentModuleScope.enclosingCrate;
     const declarationScope = result.lexicalDeclaration.scope as RustScopeBase | undefined;
     const targetModule = declarationScope?.enclosingModule;
     const targetCrate = declarationScope?.enclosingCrate;
+
+    // Only skip import for prelude types when the symbol is NOT declared
+    // in the current crate. User-defined types that shadow prelude names
+    // (e.g., `type Result<T> = ...`) still need `use` imports.
+    const isLocalSymbol =
+      targetCrate instanceof RustCrateScope &&
+      sourceCrate instanceof RustCrateScope &&
+      targetCrate === sourceCrate;
+
+    if (PRELUDE_TYPES.has(targetName) && !isLocalSymbol) {
+      return [targetName, result.symbol];
+    }
 
     if (
       targetModule instanceof RustModuleScope &&

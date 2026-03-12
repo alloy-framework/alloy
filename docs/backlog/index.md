@@ -194,6 +194,7 @@ docs/backlog/
 | [T111](tasks/T111-preflight-function-call-expression-turbofish-type-args-line-break-rerun-4.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 4) | E008 | bug | P0 | T050, T110 | pending |
 | [T112](tasks/T112-preflight-function-call-expression-turbofish-type-args-line-break-rerun-5.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 5) | E008 | bug | P0 | T050, T111 | pending |
 | [T113](tasks/T113-preflight-function-call-expression-turbofish-type-args-line-break-rerun-6.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 6) | E008 | bug | P0 | T050, T112 | pending |
+| [T114](tasks/T114-preflight-function-call-expression-turbofish-type-args-line-break-rerun-7.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 7) | E008 | bug | P0 | T050, T113 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |

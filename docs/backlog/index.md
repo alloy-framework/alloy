@@ -165,6 +165,7 @@ docs/backlog/
 | [T082](tasks/T082-preflight-turbofish-type-args-regression-rerun.md) | Pre-flight turbofish type-args regression persisted on validation rerun | E008 | bug | P1 | T050, T081 | open |
 | [T083](tasks/T083-preflight-turbofish-fce-test-failure.md) | Pre-flight turbofish FunctionCallExpression test validation failure | E008 | bug | P1 | T050, T077 | open |
 | [T084](tasks/T084-preflight-function-call-expression-turbofish-type-args-wrap.md) | Pre-flight FunctionCallExpression turbofish type-args wrapping alignment | E008 | bug | P1 | T050, T083 | open |
+| [T085](tasks/T085-preflight-function-call-expression-turbofish-single-line-regression.md) | Pre-flight FunctionCallExpression turbofish single-line regression | E008 | bug | P1 | T050, T084 | open |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |

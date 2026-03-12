@@ -5,7 +5,7 @@
 | **ID** | T068 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P1 — must-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -41,12 +41,14 @@ This failure is unrelated to Rust package component correctness, but it prevents
 
 ## Acceptance Criteria
 
-- [ ] `pnpm --filter rust-example build` succeeds without `TS2742`
-- [ ] `samples/rust-example/src/externals.ts` no longer relies on non-portable inferred exported types
-- [ ] No behavior change in sample generation flow
+- [x] `pnpm --filter rust-example build` succeeds without `TS2742`
+- [x] `samples/rust-example/src/externals.ts` no longer relies on non-portable inferred exported types
+- [x] No behavior change in sample generation flow
 
 ---
 
 ## Evidence
 
 Observed during T053 RECORD phase on 2026-03-12: `pnpm --filter rust-example build` still fails with pre-existing `TS2742` in `samples/rust-example/src/externals.ts`.
+
+Resolved on 2026-03-12 by replacing inferred exported crate values in `samples/rust-example/src/externals.ts` with explicit descriptor constants (`as const`) and explicit exported crate type aliases (`CrateRef<typeof descriptor> & SymbolCreator & ExternalCrate`).

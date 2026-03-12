@@ -1,6 +1,7 @@
-import { createCrate } from "@alloy-js/rust";
+import { createCrate, type CrateRef, type ExternalCrate } from "@alloy-js/rust";
+import type { SymbolCreator } from "@alloy-js/core";
 
-export const serde = createCrate({
+const serdeDescriptor = {
   name: "serde",
   version: "1.0",
   modules: {
@@ -9,9 +10,12 @@ export const serde = createCrate({
       Deserialize: { kind: "trait" },
     },
   },
-});
+} as const;
 
-export const tokio = createCrate({
+type SerdeCrate = CrateRef<typeof serdeDescriptor> & SymbolCreator & ExternalCrate;
+export const serde: SerdeCrate = createCrate(serdeDescriptor);
+
+const tokioDescriptor = {
   name: "tokio",
   version: "1",
   modules: {
@@ -19,9 +23,12 @@ export const tokio = createCrate({
       RwLock: { kind: "struct" },
     },
   },
-});
+} as const;
 
-export const std_fmt = createCrate({
+type TokioCrate = CrateRef<typeof tokioDescriptor> & SymbolCreator & ExternalCrate;
+export const tokio: TokioCrate = createCrate(tokioDescriptor);
+
+const stdFmtDescriptor = {
   name: "std",
   builtin: true,
   modules: {
@@ -38,4 +45,7 @@ export const std_fmt = createCrate({
       Instant: { kind: "struct" },
     },
   },
-});
+} as const;
+
+type StdFmtCrate = CrateRef<typeof stdFmtDescriptor> & SymbolCreator & ExternalCrate;
+export const std_fmt: StdFmtCrate = createCrate(stdFmtDescriptor);

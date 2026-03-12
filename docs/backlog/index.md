@@ -162,7 +162,7 @@ docs/backlog/
 | [T065](tasks/T065-unsafe-block.md) | UnsafeBlock | E008 | feature | P3 | T009 | open |
 | [T066](tasks/T066-inner-attribute.md) | InnerAttribute (#![...]) | E009 | feature | P3 | T015 | open |
 | [T067](tasks/T067-block-expression.md) | BlockExpression | E008 | feature | P3 | T009 | open |
-| [T068](tasks/T068-rust-example-externals-ts2742.md) | Fix rust-example externals TS2742 build failure | E007 | bug | P1 | T053 | pending |
+| [T068](tasks/T068-rust-example-externals-ts2742.md) | Fix rust-example externals TS2742 build failure | E007 | bug | P1 | T053 | done |
 
 ---
 

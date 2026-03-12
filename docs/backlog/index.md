@@ -167,6 +167,7 @@ docs/backlog/
 | [T084](tasks/T084-preflight-function-call-expression-turbofish-type-args-wrap.md) | Pre-flight FunctionCallExpression turbofish type-args wrapping alignment | E008 | bug | P1 | T050, T083 | open |
 | [T085](tasks/T085-preflight-function-call-expression-turbofish-single-line-regression.md) | Pre-flight FunctionCallExpression turbofish single-line regression | E008 | bug | P1 | T050, T084 | open |
 | [T086](tasks/T086-preflight-function-call-expression-turbofish-formatting-regression.md) | Pre-flight FunctionCallExpression turbofish formatting regression | E008 | bug | P0 | T050 | pending |
+| [T087](tasks/T087-preflight-function-call-turbofish-line-wrap.md) | Pre-flight FunctionCallExpression turbofish line-wrap failure | E008 | bug | P0 | — | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -268,6 +269,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T080** | Preflight Rust validation failure in turbofish type args formatting | P1 | New pre-flight blocker: `function-call-expression.test.tsx` still fails because turbofish type args render as `f::<String,` + `u32>(` instead of `f::<String, u32>(` |
 | **T081** | Pre-flight turbofish type-args comma line-break persistence | P1 | Latest pre-flight blocker is unchanged: expected `f::<String, u32>(` but got `f::<String,` followed by `u32>(` in `FunctionCallExpression` |
 | **T086** | Pre-flight FunctionCallExpression turbofish formatting regression | P0 | Current pre-flight blocker: `test/function-call-expression.test.tsx` renders turbofish type args with a newline between `String` and `u32` instead of `f::<String, u32>(...)` |
+| **T087** | Pre-flight FunctionCallExpression turbofish line-wrap failure | P0 | Current pre-flight blocker: `FunctionCallExpression > renders turbofish type arguments with call arguments` expects `f::<String, u32>(raw, 10)` but receives a newline after the comma in turbofish generics (`f::<String,` then `u32>(raw, 10)`) |
 
 ---
 

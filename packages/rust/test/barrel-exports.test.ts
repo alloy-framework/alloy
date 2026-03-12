@@ -56,5 +56,6 @@ describe("@alloy-js/rust barrel exports", () => {
     expect(rustStc.StructDeclaration).toBeTypeOf("function");
     expect(rustStc.FunctionDeclaration).toBeTypeOf("function");
     expect(rustStc.TypeAlias).toBeTypeOf("function");
+    expect(rustStc.AwaitExpression).toBeTypeOf("function");
   });
 });

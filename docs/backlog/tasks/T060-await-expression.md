@@ -5,7 +5,7 @@
 | **ID** | T060 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -60,6 +60,6 @@ interface AwaitExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<AwaitExpression>expr</AwaitExpression>` renders `expr.await`
-- [ ] `try` prop renders `expr.await?`
-- [ ] STC wrapper exported
+- [x] `<AwaitExpression>expr</AwaitExpression>` renders `expr.await`
+- [x] `try` prop renders `expr.await?`
+- [x] STC wrapper exported

@@ -5,7 +5,7 @@
 | **ID** | T056 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -89,8 +89,8 @@ interface LoopExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<WhileExpression condition={...}>` renders `while condition { body }`
-- [ ] `while let` works via condition prop
-- [ ] `<LoopExpression>` renders `loop { body }`
-- [ ] Label prop renders `'label: while/loop { body }`
-- [ ] STC wrappers exported
+- [x] `<WhileExpression condition={...}>` renders `while condition { body }`
+- [x] `while let` works via condition prop
+- [x] `<LoopExpression>` renders `loop { body }`
+- [x] Label prop renders `'label: while/loop { body }`
+- [x] STC wrappers exported

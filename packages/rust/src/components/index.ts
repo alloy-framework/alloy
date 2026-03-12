@@ -20,6 +20,8 @@ export * from "./mod-declarations.js";
 export * from "./match-expression.js";
 export * from "./if-expression.js";
 export * from "./for-expression.js";
+export * from "./while-expression.js";
+export * from "./loop-expression.js";
 export * from "./let-binding.js";
 export * from "./struct-expression.js";
 export * from "./function-call-expression.js";

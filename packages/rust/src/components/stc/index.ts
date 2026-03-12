@@ -16,6 +16,7 @@ import {
 } from "../if-expression.js";
 import { FunctionCallExpression as FunctionCallExpressionComponent } from "../function-call-expression.js";
 import { ForExpression as ForExpressionComponent } from "../for-expression.js";
+import { LoopExpression as LoopExpressionComponent } from "../loop-expression.js";
 import { LetBinding as LetBindingComponent } from "../let-binding.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
 import {
@@ -35,6 +36,7 @@ import { TraitDeclaration as TraitDeclarationComponent } from "../trait-declarat
 import { TypeAlias as TypeAliasComponent } from "../type-alias.js";
 import { TypeParameters as TypeParametersComponent } from "../type-parameters.js";
 import { Value as ValueComponent } from "../value.js";
+import { WhileExpression as WhileExpressionComponent } from "../while-expression.js";
 
 export const Attribute = stc(AttributeComponent);
 export const CargoTomlFile = stc(CargoTomlFileComponent);
@@ -47,6 +49,7 @@ export const EnumVariant = stc(EnumVariantComponent);
 export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
 export const ForExpression = stc(ForExpressionComponent);
+export const LoopExpression = stc(LoopExpressionComponent);
 export const IfExpression = stc(IfExpressionComponent);
 export const ElseIfClause = stc(ElseIfClauseComponent);
 export const ElseClause = stc(ElseClauseComponent);
@@ -67,3 +70,4 @@ export const TraitDeclaration = stc(TraitDeclarationComponent);
 export const TypeAlias = stc(TypeAliasComponent);
 export const TypeParameters = stc(TypeParametersComponent);
 export const Value = stc(ValueComponent);
+export const WhileExpression = stc(WhileExpressionComponent);

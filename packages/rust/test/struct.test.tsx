@@ -47,6 +47,18 @@ describe("StructDeclaration", () => {
     ).toRenderTo(d`pub struct Foo {}`);
   });
 
+  it("renders pub(super) struct", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Foo" pub_super={true} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`pub(super) struct Foo {}`);
+  });
+
   it("renders derives and attributes", () => {
     expect(
       <Output>
@@ -215,7 +227,7 @@ describe("StructDeclaration", () => {
 });
 
 describe("Field", () => {
-  it("renders pub and pub(crate) visibility", () => {
+  it("renders pub, pub(crate), and pub(super) visibility", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -223,6 +235,7 @@ describe("Field", () => {
             <StructDeclaration name="Foo">
               <Field name="name" type="String" pub={true} />
               <Field name="id" type="u64" pub_crate={true} />
+              <Field name="owner" type="String" pub_super={true} />
             </StructDeclaration>
           </SourceFile>
         </CrateDirectory>
@@ -231,6 +244,7 @@ describe("Field", () => {
       struct Foo {
         pub name: String,
         pub(crate) id: u64,
+        pub(super) owner: String,
       }
     `);
   });
@@ -250,6 +264,24 @@ describe("Field", () => {
       struct Foo {
         /// Primary name.
         name: String,
+      }
+    `);
+  });
+
+  it("applies visibility precedence for fields", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Foo">
+              <Field name="id" type="u64" pub={true} pub_crate={true} pub_super={true} />
+            </StructDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      struct Foo {
+        pub id: u64,
       }
     `);
   });

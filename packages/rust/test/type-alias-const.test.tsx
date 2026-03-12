@@ -48,7 +48,7 @@ describe("TypeAlias", () => {
     ).toRenderTo(d`type Foo = Bar;`);
   });
 
-  it("renders public and pub(crate) visibility", () => {
+  it("renders public, pub(crate), and pub(super) visibility", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -60,12 +60,17 @@ describe("TypeAlias", () => {
             <TypeAlias name="CrateAlias" pub_crate={true}>
               usize
             </TypeAlias>
+            <hbr />
+            <TypeAlias name="ParentAlias" pub_super={true}>
+              u32
+            </TypeAlias>
           </SourceFile>
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`
       pub type PublicAlias = String;
       pub(crate) type CrateAlias = usize;
+      pub(super) type ParentAlias = u32;
     `);
   });
 
@@ -109,6 +114,25 @@ describe("TypeAlias", () => {
       ResponseValue
     `);
   });
+
+  it("applies visibility precedence for type aliases", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TypeAlias name="ResponseValue" pub={true} pub_crate={true} pub_super={true}>
+              String
+            </TypeAlias>
+            <hbr />
+            <TypeAliasSymbolProbe name="ResponseValue" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub type ResponseValue = String;
+      type-alias|type-alias|pub
+    `);
+  });
 });
 
 describe("ConstDeclaration", () => {
@@ -138,12 +162,17 @@ describe("ConstDeclaration", () => {
             <ConstDeclaration name="WORKER_ID" type="u64" pub_crate={true}>
               1
             </ConstDeclaration>
+            <hbr />
+            <ConstDeclaration name="PARENT_ID" type="u64" pub_super={true}>
+              2
+            </ConstDeclaration>
           </SourceFile>
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`
       pub const MAX_SIZE: usize = 100;
       pub(crate) const WORKER_ID: u64 = 1;
+      pub(super) const PARENT_ID: u64 = 2;
     `);
   });
 
@@ -182,6 +211,25 @@ describe("ConstDeclaration", () => {
       pub const MAX_ITEMS: usize = 16;
       const|pub
       MAX_ITEMS
+    `);
+  });
+
+  it("applies visibility precedence for const declarations", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <ConstDeclaration name="MAX_ITEMS" type="usize" pub={true} pub_crate={true} pub_super={true}>
+              16
+            </ConstDeclaration>
+            <hbr />
+            <ConstSymbolProbe name="MAX_ITEMS" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub const MAX_ITEMS: usize = 16;
+      const|pub
     `);
   });
 });

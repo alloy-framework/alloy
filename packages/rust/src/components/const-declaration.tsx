@@ -1,11 +1,13 @@
 import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
 import { createConstSymbol } from "../symbols/factories.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface ConstDeclarationProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   type: Children;
   children?: Children;
 }
@@ -15,15 +17,9 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
     refkeys: props.refkey ? [props.refkey] : [],
   });
 
-  constSymbol.visibility =
-    props.pub ? "pub"
-    : props.pub_crate ? "pub(crate)"
-    : undefined;
+  constSymbol.visibility = toRustVisibility(props);
 
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <CoreDeclaration symbol={constSymbol}>

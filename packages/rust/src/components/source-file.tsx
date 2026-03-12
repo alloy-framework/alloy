@@ -11,11 +11,13 @@ import { Reference } from "./reference.js";
 import { UseStatements } from "./use-statement.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
-import { type RustVisibility } from "../symbols/rust-output-symbol.js";
+import { toRustVisibility } from "./visibility.js";
 
 export interface SourceFileProps {
   path: string;
   pub?: boolean;
+  pub_crate?: boolean;
+  pub_super?: boolean;
   children?: Children;
   header?: Children;
   headerComment?: Children;
@@ -62,7 +64,7 @@ export function SourceFile(props: SourceFileProps) {
     parentScope instanceof RustCrateScope || parentScope instanceof RustModuleScope ?
       parentScope
     : undefined;
-  const visibility: RustVisibility = props.pub ? "pub" : undefined;
+  const visibility = toRustVisibility(props);
   if (scopeParent && isStandaloneModulePath(props.path)) {
     scopeParent.addChildModule(getStandaloneModuleName(props.path), visibility);
   }

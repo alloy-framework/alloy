@@ -11,12 +11,14 @@ import { RustImplScope, useRustScope } from "../scopes/index.js";
 import { createEnumSymbol, createVariantSymbol } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface EnumDeclarationProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   derives?: (string | Refkey)[];
   attributes?: Children;
   doc?: string;
@@ -41,10 +43,8 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const enumScope = createScope(RustImplScope, enumSymbol, parentScope, {
     binder: parentScope.binder,
   });
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  enumSymbol.visibility = toRustVisibility(props);
+  const visibilityPrefix = toVisibilityPrefix(props);
   const variants =
     props.children ?
       (Array.isArray(props.children) ? props.children : [props.children]).filter(

@@ -12,12 +12,14 @@ import { createFunctionSymbol, createMethodSymbol } from "../symbols/factories.j
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
 import { Parameters } from "./parameters.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface FunctionDeclarationProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   async?: boolean;
   unsafe?: boolean;
   const?: boolean;
@@ -47,19 +49,13 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
     binder: parentScope.binder,
   });
 
-  functionSymbol.visibility =
-    props.pub ? "pub"
-    : props.pub_crate ? "pub(crate)"
-    : undefined;
+  functionSymbol.visibility = toRustVisibility(props);
   functionSymbol.isAsync = props.async ?? false;
   functionSymbol.isUnsafe = props.unsafe ?? false;
   functionSymbol.isConst = props.const ?? false;
   functionSymbol.receiverType = effectiveReceiver === "none" ? undefined : effectiveReceiver;
 
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <>

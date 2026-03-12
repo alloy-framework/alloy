@@ -65,6 +65,18 @@ describe("FunctionDeclaration", () => {
     ).toRenderTo(d`pub(crate) async unsafe const fn work() {}`);
   });
 
+  it("renders pub(super) visibility with qualifiers in rust order", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <FunctionDeclaration name="work" pub_super={true} async={true} unsafe={true} const={true} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`pub(super) async unsafe const fn work() {}`);
+  });
+
   it("renders parameters from descriptors", () => {
     expect(
       <Output>
@@ -149,6 +161,23 @@ describe("FunctionDeclaration", () => {
         input-value
       }
       pub(crate)|true|true|true
+    `);
+  });
+
+  it("applies visibility precedence on function symbols", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <FunctionDeclaration name="run-work" pub={true} pub_crate={true} pub_super={true} />
+            <hbr />
+            <FunctionFlagsProbe name="run-work" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub fn run-work() {}
+      pub|false|false|false
     `);
   });
 

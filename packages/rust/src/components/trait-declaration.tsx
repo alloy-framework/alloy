@@ -12,11 +12,14 @@ import { RustTraitScope, useRustScope } from "../scopes/index.js";
 import { createTraitSymbol } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface TraitDeclarationProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
+  pub_crate?: boolean;
+  pub_super?: boolean;
   typeParameters?: TypeParameterProp[];
   supertraits?: Children[];
   whereClause?: Children;
@@ -33,7 +36,8 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
     binder: parentScope.binder,
   });
 
-  traitSymbol.visibility = props.pub ? "pub" : undefined;
+  traitSymbol.visibility = toRustVisibility(props);
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <>
@@ -44,7 +48,7 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
         </>
       ) : null}
       <CoreDeclaration symbol={traitSymbol}>
-        {props.pub ? code`pub ` : null}
+        {visibilityPrefix}
         {code`trait `}
         {traitSymbol.name}
         <TypeParameters params={props.typeParameters} />

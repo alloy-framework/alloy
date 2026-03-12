@@ -5,7 +5,7 @@
 | **ID** | T062 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -45,6 +45,15 @@ Consider refactoring from separate boolean props to a single `visibility` prop:
 
 ## Acceptance Criteria
 
-- [ ] `pub(super)` visibility works on all declarations
-- [ ] Existing `pub` and `pub(crate)` behavior preserved
-- [ ] RustVisibility type fully utilized
+- [x] `pub(super)` visibility works on all declarations
+- [x] Existing `pub` and `pub(crate)` behavior preserved
+- [x] RustVisibility type fully utilized
+
+---
+
+## Completion Notes
+
+- Added `pub_super?: boolean` support for visibility-bearing declaration/module/field components in `packages/rust/src/components`.
+- Added shared visibility mapping helper with precedence: `pub > pub(crate) > pub(super) > private`.
+- Updated symbol visibility assignments to use shared Rust visibility mapping.
+- Expanded tests across declaration/function/struct/enum/trait/type alias/const/static/module-sourcefile paths to cover `pub(super)` and precedence while preserving existing behavior.

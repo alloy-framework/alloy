@@ -7,10 +7,13 @@ import {
 } from "@alloy-js/core";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
+import { toRustVisibility } from "./visibility.js";
 
 export interface ModuleDirectoryProps {
   path: string;
   pub?: boolean;
+  pub_crate?: boolean;
+  pub_super?: boolean;
   children?: Children;
 }
 
@@ -26,7 +29,7 @@ export function ModuleDirectory(props: ModuleDirectoryProps) {
       parentScope
     : undefined;
   const moduleName = getModuleName(props.path);
-  const visibility = props.pub ? "pub" : undefined;
+  const visibility = toRustVisibility(props);
 
   if (scopeParent) {
     scopeParent.addChildModule(moduleName, visibility);

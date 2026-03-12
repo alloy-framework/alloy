@@ -11,12 +11,14 @@ import { RustImplScope, useRustScope } from "../scopes/index.js";
 import { createFieldSymbol, createStructSymbol } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface StructDeclarationProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   derives?: (string | Refkey)[];
   attributes?: Children;
   doc?: string;
@@ -34,6 +36,7 @@ export interface FieldProps {
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   doc?: string;
 }
 
@@ -46,10 +49,8 @@ export function StructDeclaration(props: StructDeclarationProps) {
     binder: parentScope.binder,
   });
 
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  structSymbol.visibility = toRustVisibility(props);
+  const visibilityPrefix = toVisibilityPrefix(props);
   const members =
     props.children ?
       (Array.isArray(props.children) ? props.children : [props.children]).filter(
@@ -127,10 +128,8 @@ export function Field(props: FieldProps) {
   const fieldSymbol = createFieldSymbol(props.name, {
     refkeys: props.refkey ? [props.refkey] : [],
   });
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  fieldSymbol.visibility = toRustVisibility(props);
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <CoreDeclaration symbol={fieldSymbol}>

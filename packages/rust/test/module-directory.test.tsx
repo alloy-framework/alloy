@@ -109,4 +109,40 @@ describe("ModuleDirectory", () => {
       visibility: "pub",
     });
   });
+
+  it("supports pub(super) and precedence for module directory visibility", () => {
+    let crateScope: RustCrateScope | undefined;
+
+    function CrateScopeCapture() {
+      crateScope = useCrateContext()!.scope;
+      return <></>;
+    }
+
+    render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="net" pub_super={true}>
+            <SourceFile path="client.rs">
+              <CrateScopeCapture />
+            </SourceFile>
+          </ModuleDirectory>
+          <ModuleDirectory path="api" pub_crate={true} pub_super={true}>
+            <SourceFile path="mod.rs">
+              <CrateScopeCapture />
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(crateScope).toBeDefined();
+    expect(crateScope!.childModules.get("net")).toEqual({
+      name: "net",
+      visibility: "pub(super)",
+    });
+    expect(crateScope!.childModules.get("api")).toEqual({
+      name: "api",
+      visibility: "pub(crate)",
+    });
+  });
 });

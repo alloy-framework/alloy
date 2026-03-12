@@ -6,6 +6,7 @@ import { useCrateContext } from "../src/context/crate-context.js";
 import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { useRustModuleScope } from "../src/scopes/index.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
+import { ModuleDirectory } from "../src/components/module-directory.js";
 import { ModuleDocComment } from "../src/components/doc-comment.js";
 import { SourceFile } from "../src/components/source-file.js";
 import { findFile } from "./utils.js";
@@ -68,6 +69,47 @@ describe("SourceFile", () => {
       //! Crate docs
       fn main() {}
     `);
+  });
+
+  it("registers standalone source files with pub(super) visibility", () => {
+    let moduleScopeName = "";
+    let moduleScopeValues = "";
+
+    function ModuleVisibilityCapture() {
+      const scope = useRustModuleScope();
+      const parentScope = scope.parent;
+      if (parentScope instanceof RustCrateScope) {
+        return "missing-parent-module";
+      }
+
+      moduleScopeName = parentScope?.name ?? "";
+      moduleScopeValues = [...(parentScope?.childModules.values() ?? [])]
+        .map((entry) => `${entry.name}:${entry.visibility ?? "none"}`)
+        .sort()
+        .join("|");
+
+      return <></>;
+    }
+
+    render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="net">
+            <SourceFile path="client.rs" pub_super={true}>
+              <ModuleVisibilityCapture />
+              {code`fn client() {}`}
+            </SourceFile>
+            <SourceFile path="server.rs" pub_crate={true} pub_super={true}>
+              <ModuleVisibilityCapture />
+              {code`fn server() {}`}
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(moduleScopeName).toBe("net");
+    expect(moduleScopeValues).toBe("client:pub(super)|server:pub(crate)");
   });
 });
 

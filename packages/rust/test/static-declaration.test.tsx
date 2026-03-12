@@ -51,7 +51,7 @@ describe("StaticDeclaration", () => {
     ).toRenderTo(d`static mut BUFFER: Vec<u8> = Vec::new();`);
   });
 
-  it("renders pub and pub(crate) visibility", () => {
+  it("renders pub, pub(crate), and pub(super) visibility", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -63,12 +63,17 @@ describe("StaticDeclaration", () => {
             <StaticDeclaration name="BUFFER" pub_crate={true} type="Vec<u8>">
               Vec::new()
             </StaticDeclaration>
+            <hbr />
+            <StaticDeclaration name="OWNER" pub_super={true} type="usize">
+              7
+            </StaticDeclaration>
           </SourceFile>
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`
       pub static COUNTER: AtomicUsize = AtomicUsize::new(0);
       pub(crate) static BUFFER: Vec<u8> = Vec::new();
+      pub(super) static OWNER: usize = 7;
     `);
   });
 
@@ -109,6 +114,25 @@ describe("StaticDeclaration", () => {
     ).toRenderTo(d`
       pub(crate) static WORKER_COUNT: usize = 4;
       static|pub(crate)
+    `);
+  });
+
+  it("applies visibility precedence for static declarations", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StaticDeclaration name="WORKER_COUNT" pub={true} pub_crate={true} pub_super={true} type="usize">
+              4
+            </StaticDeclaration>
+            <hbr />
+            <StaticSymbolProbe name="WORKER_COUNT" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub static WORKER_COUNT: usize = 4;
+      static|pub
     `);
   });
 

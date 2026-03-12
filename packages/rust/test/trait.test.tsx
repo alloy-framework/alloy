@@ -27,6 +27,17 @@ function TraitScopeProbe() {
   return scope instanceof RustTraitScope ? "trait-scope" : "other-scope";
 }
 
+function TraitVisibilityProbe(props: { name: string }) {
+  const scope = useRustModuleScope();
+  for (const symbol of scope.types) {
+    if (symbol instanceof NamedTypeSymbol && symbol.name === props.name) {
+      return symbol.visibility ?? "none";
+    }
+  }
+
+  return "missing";
+}
+
 describe("TraitDeclaration", () => {
   it("renders basic trait", () => {
     expect(
@@ -50,6 +61,23 @@ describe("TraitDeclaration", () => {
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`pub trait Displayable {}`);
+  });
+
+  it("renders pub(crate) and pub(super) trait visibility", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration name="CrateVisible" pub_crate={true} />
+            <hbr />
+            <TraitDeclaration name="ParentVisible" pub_super={true} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub(crate) trait CrateVisible {}
+      pub(super) trait ParentVisible {}
+    `);
   });
 
   it("renders supertraits", () => {
@@ -161,6 +189,23 @@ describe("TraitDeclaration", () => {
       trait Serialize {}
       type Alias = Serialize;
       trait
+    `);
+  });
+
+  it("applies visibility precedence on trait symbols", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration name="Serialize" pub={true} pub_crate={true} pub_super={true} />
+            <hbr />
+            <TraitVisibilityProbe name="Serialize" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub trait Serialize {}
+      pub
     `);
   });
 });

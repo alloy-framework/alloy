@@ -10,6 +10,7 @@ import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { useRustScope } from "../scopes/contexts.js";
 import { RustOutputSymbol, RustSymbolKind } from "../symbols/rust-output-symbol.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface DeclarationProps {
   name: string;
@@ -17,6 +18,7 @@ export interface DeclarationProps {
   nameKind?: string;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   children?: Children;
 }
 
@@ -58,18 +60,6 @@ function toRustSymbolKind(nameKind: RustElements): RustSymbolKind {
   }
 }
 
-function toRustVisibility(props: DeclarationProps) {
-  if (props.pub) {
-    return "pub" as const;
-  }
-
-  if (props.pub_crate) {
-    return "pub(crate)" as const;
-  }
-
-  return undefined;
-}
-
 export function Declaration(props: DeclarationProps) {
   const scope = useRustScope();
   if (!(scope instanceof RustCrateScope) && !(scope instanceof RustModuleScope)) {
@@ -91,10 +81,7 @@ export function Declaration(props: DeclarationProps) {
       metadata: props.nameKind ? { nameKind: props.nameKind } : undefined,
     },
   );
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <CoreDeclaration symbol={symbol}>

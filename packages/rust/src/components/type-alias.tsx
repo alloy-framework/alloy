@@ -1,12 +1,14 @@
 import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
 import { createTypeAliasSymbol } from "../symbols/factories.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
+import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface TypeAliasProps {
   name: string;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
+  pub_super?: boolean;
   typeParameters?: TypeParameterProp[];
   children?: Children;
 }
@@ -16,15 +18,9 @@ export function TypeAlias(props: TypeAliasProps) {
     refkeys: props.refkey ? [props.refkey] : [],
   });
 
-  typeAliasSymbol.visibility =
-    props.pub ? "pub"
-    : props.pub_crate ? "pub(crate)"
-    : undefined;
+  typeAliasSymbol.visibility = toRustVisibility(props);
 
-  const visibilityPrefix =
-    props.pub ? "pub "
-    : props.pub_crate ? "pub(crate) "
-    : "";
+  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <CoreDeclaration symbol={typeAliasSymbol}>

@@ -22,6 +22,17 @@ function EnumKindProbe(props: { name: string }) {
   return "missing";
 }
 
+function EnumVisibilityProbe(props: { name: string }) {
+  const scope = useRustModuleScope();
+  for (const symbol of scope.types) {
+    if (symbol instanceof NamedTypeSymbol && symbol.name === props.name) {
+      return symbol.visibility ?? "none";
+    }
+  }
+
+  return "missing";
+}
+
 describe("EnumDeclaration", () => {
   it("renders empty enum", () => {
     expect(
@@ -45,6 +56,18 @@ describe("EnumDeclaration", () => {
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`pub enum Foo {}`);
+  });
+
+  it("renders pub(super) enum", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Foo" pub_super={true} />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`pub(super) enum Foo {}`);
   });
 
   it("renders derives and attributes", () => {
@@ -111,6 +134,23 @@ describe("EnumDeclaration", () => {
     ).toRenderTo(d`
       enum Status {}
       enum
+    `);
+  });
+
+  it("applies visibility precedence on enum symbols", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Status" pub={true} pub_crate={true} pub_super={true} />
+            <hbr />
+            <EnumVisibilityProbe name="Status" />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      pub enum Status {}
+      pub
     `);
   });
 });

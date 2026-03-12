@@ -9,10 +9,11 @@ import {
   MatchArm,
   MatchExpression,
   ModuleDirectory,
+  Reference,
   SourceFile,
   TypeAlias,
 } from "@alloy-js/rust";
-import { std_fmt } from "../externals.js";
+import { stdCrate } from "../externals.js";
 
 export const storeErrorKey = refkey();
 export const resultAliasKey = refkey();
@@ -37,25 +38,31 @@ export function ErrorModule(props: ErrorModuleProps) {
             name="StorageFull"
             doc="The store has reached its maximum capacity."
           />
-          <EnumVariant name="SerializationError" doc="Failed to serialize or deserialize a value.">
-            String
-          </EnumVariant>
-          <EnumVariant name="LockError" doc="Failed to acquire a lock on the store.">
-            String
-          </EnumVariant>
+          <EnumVariant
+            name="SerializationError"
+            doc="Failed to serialize or deserialize a value."
+            kind="tuple"
+            fields={["String"]}
+          />
+          <EnumVariant
+            name="LockError"
+            doc="Failed to acquire a lock on the store."
+            kind="tuple"
+            fields={["String"]}
+          />
         </EnumDeclaration>
 
         <hbr />
 
         <ImplBlock
           type={storeErrorKey}
-          trait={std_fmt.fmt.Display}
+          trait={stdCrate.fmt.Display}
         >
           <FunctionDeclaration
             name="fmt"
             receiver="&self"
             parameters={[
-              { name: "f", type: "&mut std::fmt::Formatter<'_>" },
+              { name: "f", type: <>{"&mut "}<Reference refkey={stdCrate.fmt.Formatter} />{"<'_>"}</> },
             ]}
             returnType="std::fmt::Result"
           >

@@ -5,23 +5,19 @@ import {
   SourceFile,
   createRustNamePolicy,
 } from "@alloy-js/rust";
-import { std_fmt } from "./externals.js";
+import { stdCrate } from "./externals.js";
 import { ErrorModule } from "./components/error-module.js";
 import { TraitsModule } from "./components/traits-module.js";
 import { StoreModule } from "./components/store-module.js";
 import { ConfigFile } from "./components/config-file.js";
 
 const output = render(
-  <Output namePolicy={createRustNamePolicy()} externals={[std_fmt]}>
+  <Output namePolicy={createRustNamePolicy()} externals={[stdCrate]}>
     <CrateDirectory
       name="kv_store"
       version="0.1.0"
       edition="2021"
       crateType="lib"
-      dependencies={{
-        serde: { version: "1.0", features: ["derive"] },
-        tokio: { version: "1", features: ["full"] },
-      }}
       includeCargoToml
     >
       <ErrorModule />

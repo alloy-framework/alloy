@@ -1,6 +1,7 @@
 import { code, Children, refkey } from "@alloy-js/core";
 import {
   Attribute,
+  ClosureExpression,
   DocComment,
   EnumDeclaration,
   EnumVariant,
@@ -13,14 +14,17 @@ import {
   MacroCall,
   MatchArm,
   MatchExpression,
-  ReturnExpression,
+  MethodChainExpression,
   ModuleDirectory,
+  Reference,
+  ReturnExpression,
   SourceFile,
   StructExpression,
   StructDeclaration,
 } from "@alloy-js/rust";
 import { storeErrorKey } from "./error-module.js";
 import { cacheableKey } from "./traits-module.js";
+import { stdCrate } from "../externals.js";
 
 export const storeKey = refkey();
 export const entryKey = refkey();
@@ -61,8 +65,8 @@ export function StoreModule(props: StoreModuleProps) {
           doc="A single entry in the store, holding a value and metadata."
         >
           <Field name="value" pub type="V" />
-          <Field name="created_at" pub type="std::time::Instant" />
-          <Field name="ttl" pub type="Option<std::time::Duration>" />
+          <Field name="created_at" pub type={<Reference refkey={stdCrate.time.Instant} />} />
+          <Field name="ttl" pub type={<>{"Option<"}<Reference refkey={stdCrate.time.Duration} />{">"}</>} />
           <Field name="status" pub type="EntryStatus" />
         </StructDeclaration>
 
@@ -78,9 +82,9 @@ export function StoreModule(props: StoreModuleProps) {
           ]}
           doc="A generic key-value store with capacity limits and TTL support."
         >
-          <Field name="data" type="std::collections::HashMap<K, Entry<V>>" />
+          <Field name="data" type={<><Reference refkey={stdCrate.collections.HashMap} />{"<K, Entry<V>>"}</>} />
           <Field name="max_capacity" type="usize" />
-          <Field name="default_ttl" type="Option<std::time::Duration>" />
+          <Field name="default_ttl" type={<>{"Option<"}<Reference refkey={stdCrate.time.Duration} />{">"}</>} />
         </StructDeclaration>
 
         <hbr />
@@ -101,7 +105,7 @@ export function StoreModule(props: StoreModuleProps) {
             returnType="Self"
           >
             <StructExpression type="Self">
-              <FieldInit name="data">std::collections::HashMap::new()</FieldInit>
+              <FieldInit name="data"><Reference refkey={stdCrate.collections.HashMap} />::new()</FieldInit>
               <FieldInit name="max_capacity" />
               <FieldInit name="default_ttl">None</FieldInit>
             </StructExpression>
@@ -114,7 +118,7 @@ export function StoreModule(props: StoreModuleProps) {
             name="with_default_ttl"
             pub
             receiver="self"
-            parameters={[{ name: "ttl", type: "std::time::Duration" }]}
+            parameters={[{ name: "ttl", type: <Reference refkey={stdCrate.time.Duration} /> }]}
             returnType="Self"
           >
             <StructExpression type="Self" spread="self">
@@ -137,13 +141,13 @@ export function StoreModule(props: StoreModuleProps) {
           >
             <IfExpression condition="self.data.len() >= self.max_capacity && !self.data.contains_key(&key)">
               <>
-                <ReturnExpression>Err(crate::error::StoreError::StorageFull)</ReturnExpression>;
+                <ReturnExpression>Err(StoreError::StorageFull)</ReturnExpression>;
               </>
             </IfExpression>
             <LetBinding name="entry">
               <StructExpression type="Entry">
                 <FieldInit name="value" />
-                <FieldInit name="created_at">std::time::Instant::now()</FieldInit>
+                <FieldInit name="created_at"><Reference refkey={stdCrate.time.Instant} />::now()</FieldInit>
                 <FieldInit name="ttl">self.default_ttl</FieldInit>
                 <FieldInit name="status">EntryStatus::Active</FieldInit>
               </StructExpression>
@@ -166,19 +170,19 @@ export function StoreModule(props: StoreModuleProps) {
               <MatchArm pattern="Some(entry)">
                 <IfExpression condition="entry.status == EntryStatus::Expired">
                   <>
-                    <ReturnExpression>Err(crate::error::StoreError::NotFound)</ReturnExpression>;
+                    <ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>;
                   </>
                 </IfExpression>
                 <IfExpression condition="let Some(ttl) = entry.ttl">
                   <IfExpression condition="entry.created_at.elapsed() &gt; ttl">
                     <>
-                      <ReturnExpression>Err(crate::error::StoreError::NotFound)</ReturnExpression>;
+                      <ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>;
                     </>
                   </IfExpression>
                 </IfExpression>
                 Ok(&entry.value)
               </MatchArm>
-              <MatchArm pattern="None">Err(crate::error::StoreError::NotFound)</MatchArm>
+              <MatchArm pattern="None">Err(StoreError::NotFound)</MatchArm>
             </MatchExpression>
           </FunctionDeclaration>
 
@@ -192,12 +196,13 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "key", type: "&K" }]}
             returnType="crate::error::Result<V>"
           >
-            {code`
-              self.data
-                  .remove(key)
-                  .map(|entry| entry.value)
-                  .ok_or(crate::error::StoreError::NotFound)
-            `}
+            <MethodChainExpression receiver="self.data">
+              <MethodChainExpression.Call name="remove" args={["key"]} />
+              <MethodChainExpression.Call name="map" args={[
+                <ClosureExpression parameters={[{ name: "entry" }]}>entry.value</ClosureExpression>
+              ]} />
+              <MethodChainExpression.Call name="ok_or" args={[<><Reference refkey={storeErrorKey} />::NotFound</>]} />
+            </MethodChainExpression>
           </FunctionDeclaration>
 
           <hbr />
@@ -235,17 +240,15 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&mut self"
             returnType="usize"
           >
-            {code`
-              let before = self.data.len();
-              self.data.retain(|_, entry| {
-                  if let Some(ttl) = entry.ttl {
-                      entry.created_at.elapsed() <= ttl
-                  } else {
-                      true
-                  }
-              });
-              before - self.data.len()
-            `}
+            <LetBinding name="before">self.data.len()</LetBinding>
+            {code`self.data.retain(|_, entry| {
+                if let Some(ttl) = entry.ttl {
+                    entry.created_at.elapsed() <= ttl
+                } else {
+                    true
+                }
+            });`}
+            before - self.data.len()
           </FunctionDeclaration>
         </ImplBlock>
 

@@ -5,7 +5,7 @@
 | **ID** | T070 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P0 — critical |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -40,13 +40,25 @@ The trait reference in the impl block header should trigger the same import reso
 
 ## Acceptance Criteria
 
-- [ ] `impl Display for MyType` generates `use std::fmt::Display;` when `Display` is from `std::fmt`
-- [ ] Local trait impls (same crate) generate appropriate `use crate::...` paths
-- [ ] No duplicate `use` statements when the trait is already imported for other reasons
-- [ ] `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes
+- [x] `impl Display for MyType` generates `use std::fmt::Display;` when `Display` is from `std::fmt`
+- [x] Local trait impls (same crate) generate appropriate `use crate::...` paths
+- [x] No duplicate `use` statements when the trait is already imported for other reasons
+- [x] `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes
 
 ---
 
 ## Evidence
 
 Discovered during rust-example review on 2026-03-12. The `impl Display for StoreError` block renders the trait name but no `use std::fmt::Display;` is generated.
+
+---
+
+## Completion Notes
+
+- `ImplBlock` trait refkeys now render through `Reference`, so trait names in `impl Trait for Type` participate in normal import resolution.
+- Added `packages/rust/test/t070-trait-import.test.tsx` coverage for:
+  - external trait imports,
+  - same-crate trait imports,
+  - duplicate-import prevention,
+  - blanket impl with generic type parameters.
+- Validation: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (pass).

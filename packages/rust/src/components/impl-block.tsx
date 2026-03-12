@@ -8,6 +8,7 @@ import {
   isRefkey,
   unresolvedRefkey,
 } from "@alloy-js/core";
+import { Reference } from "./reference.js";
 import { RustImplScope, RustModuleScope, useRustScope } from "../scopes/index.js";
 import { NamedTypeSymbol } from "../symbols/named-type-symbol.js";
 import { RustOutputSymbol } from "../symbols/rust-output-symbol.js";
@@ -113,7 +114,7 @@ export function ImplBlock(props: ImplBlockProps) {
 
   const renderedTrait =
     props.trait && isRefkey(props.trait) ?
-      resolveSymbolNameFromRefkey(props.trait, parentScope)
+      <Reference refkey={props.trait} />
     : props.trait;
 
   const implScope = createScope(RustImplScope, implTargetSymbol, parentScope, {

@@ -16,7 +16,7 @@ This backlog defines all work needed to implement `@alloy-js/rust`, a new Alloy 
 docs/backlog/
 ├── index.md                    ← You are here
 ├── epics/                      ← Epic-level documents (9 epics)
-├── tasks/                      ← Executable task documents (70 tasks)
+├── tasks/                      ← Executable task documents (101 tasks)
 ├── phases/                     ← Implementation phase documents (8 phases)
 └── agents/                     ← AI agent execution guidance
 ```
@@ -36,7 +36,7 @@ docs/backlog/
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
 | 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
 | 7 | Bug fixes and rendering corrections | E007 | T039–T045 | P07 |
-| 8 | Expression and statement components | E008 | T046–T076 (expression) | P08 |
+| 8 | Expression and statement components | E008 | T046–T101 (expression) | P08 |
 | 9 | Language feature gaps | E009 | T054–T066 (declaration) | P08 |
 
 ### Recommended Implementation Order
@@ -72,7 +72,7 @@ docs/backlog/
 | [E005](epics/E005-module-system-imports.md) | Module System and Imports | T022–T027 | E002, E003 | P04 |
 | [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T038 | E001–E005 | P05–P06 |
 | [E007](epics/E007-bug-fixes.md) | Bug Fixes and Rendering Corrections | T039–T045 | E001–E006 | P07 |
-| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T076 (expression) | E007 | P08 |
+| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T101 (expression) | E007 | P08 |
 | [E009](epics/E009-language-feature-gaps.md) | Language Feature Gaps | T054–T066 (declaration) | E001–E006 | P08 |
 
 ---
@@ -88,7 +88,7 @@ docs/backlog/
 | [P05](phases/P05-external-deps-build.md) | External Deps & Build | E006 (partial) | T028–T031 | External crates and Cargo.toml |
 | [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T038 | STC wrappers, exports, golden tests |
 | P07 | Bug Fixes | E007 | T039–T045 | Fix rendering bugs discovered in integration testing |
-| P08 | Expressions & Language Gaps | E008, E009 | T046–T076 | Expression components, control flow, language feature gaps |
+| P08 | Expressions & Language Gaps | E008, E009 | T046–T101 | Expression components, control flow, language feature gaps |
 
 ---
 
@@ -181,6 +181,7 @@ docs/backlog/
 | [T098](tasks/T098-preflight-function-call-expression-turbofish-comma-line-wrap-rerun.md) | Preflight rerun failure: turbofish type args wrap after comma in FunctionCallExpression test | E008 | bug | P0 | T050, T097 | pending |
 | [T099](tasks/T099-preflight-function-call-expression-turbofish-comma-wrap-regression-rerun-2.md) | Preflight rerun failure: FunctionCallExpression turbofish comma-wrap regression persists | E008 | bug | P0 | T050, T098 | pending |
 | [T100](tasks/T100-preflight-function-call-expression-turbofish-wrapping-in-fce-tests.md) | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | E008 | bug | P0 | T050, T099 | pending |
+| [T101](tasks/T101-preflight-rust-build-test-failure-function-call-expression-turbofish-line-break.md) | Preflight rust build+test failure: FunctionCallExpression turbofish line break regression | E008 | bug | P0 | T050, T100 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -287,6 +288,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T089** | Pre-flight FunctionCallExpression turbofish comma-wrap regression | P0 | New pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` still renders `f::<String,` then `u32>(...)` instead of one-line `f::<String, u32>(...)` for turbofish type arguments with call args |
 | **T097** | Preflight rerun: FunctionCallExpression turbofish type-arg wrap regression | P0 | Latest pre-flight run still fails before task start: expected `f::<String, u32>(...)` but actual output wraps after `String` (`f::<String,` then `u32>(...)`) in `test/function-call-expression.test.tsx`. |
 | **T100** | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | P0 | Latest pre-flight run fails before task work: expected `f::<String, u32>(` but got a wrapped turbofish with newline between type args (`f::<String,` then `u32>(`) in `FunctionCallExpression` test output. |
+| **T101** | Preflight rust build+test failure: FunctionCallExpression turbofish line break regression | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` where turbofish type args render wrapped (`f::<String,` then `u32>(`) instead of one-line `f::<String, u32>(`) for call arguments. |
 
 ---
 
@@ -395,7 +397,7 @@ These P0 tasks are on the critical path and should be prioritized:
 - [P05: External Deps & Build](phases/P05-external-deps-build.md)
 - [P06: Polish](phases/P06-polish.md)
 - P07: Bug Fixes (T039–T045)
-- P08: Expressions & Language Gaps (T046–T074)
+- P08: Expressions & Language Gaps (T046–T101)
 
 ### Agent Guidance
 - [AI Agent Execution Rules](agents/execution-rules.md)

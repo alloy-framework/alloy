@@ -23,6 +23,12 @@ The initial MVP implementation (E001–E006) produced working components, but in
 - T043: Standalone SourceFile module registration
 - T044: FunctionDeclaration default receiver
 - T045: ModDeclarations render order dependency
+- T069: ImplBlock generic parameter forwarding
+- T070: ImplBlock trait name missing use import
+- T071: Prelude type shadowing causes missing imports
+- T072: CrateDirectory Cargo.toml missing [lib] path
+- T073: Reference inline rendering inserts unexpected line breaks
+- T074: Cargo.toml renders empty [dependencies] section
 
 ## Out of Scope
 - New components or features (those are in E008/E009).
@@ -49,6 +55,12 @@ The initial MVP implementation (E001–E006) produced working components, but in
 - [T043: Standalone SourceFile module registration](../tasks/T043-standalone-sourcefile-module-registration.md) — P1
 - [T044: FunctionDeclaration default receiver](../tasks/T044-function-default-receiver.md) — P2
 - [T045: ModDeclarations render order dependency](../tasks/T045-mod-declarations-render-order.md) — P2
+- [T069: ImplBlock generic parameter forwarding](../tasks/T069-implblock-generic-forwarding.md) — P0
+- [T070: ImplBlock trait name missing use import](../tasks/T070-implblock-trait-use-import.md) — P0
+- [T071: Prelude type shadowing causes missing imports](../tasks/T071-prelude-type-shadowing.md) — P1
+- [T072: CrateDirectory Cargo.toml missing [lib] path](../tasks/T072-cargo-toml-lib-path.md) — P1
+- [T073: Reference inline rendering inserts unexpected line breaks](../tasks/T073-reference-inline-line-breaks.md) — P2
+- [T074: Cargo.toml renders empty [dependencies] section](../tasks/T074-empty-dependencies-section.md) — P3
 
 ## Sequencing Notes
 T039 and T040 are P0 and can be worked in parallel. T041–T043 are P1 and independent. T044–T045 are P2 improvements.

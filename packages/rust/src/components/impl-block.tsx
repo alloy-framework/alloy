@@ -63,6 +63,37 @@ function findTypeSymbolFromInline(
   return undefined;
 }
 
+function inferredTypeParametersForImpl(symbol: NamedTypeSymbol | undefined): TypeParameterProp[] {
+  if (!symbol) {
+    return [];
+  }
+
+  const params: TypeParameterProp[] = [];
+  for (const typeParameter of symbol.typeParameters) {
+    if (typeParameter instanceof RustOutputSymbol) {
+      params.push({ name: typeParameter.name });
+    }
+  }
+
+  return params;
+}
+
+function renderTypeWithInferredTypeParameters(
+  renderedType: Children,
+  inferredTypeParameters: TypeParameterProp[],
+): Children {
+  if (typeof renderedType !== "string" || inferredTypeParameters.length === 0) {
+    return renderedType;
+  }
+
+  const names = inferredTypeParameters.map((param) => param.name).filter((name) => Boolean(name));
+  if (names.length === 0) {
+    return renderedType;
+  }
+
+  return code`${renderedType}<${names.join(", ")}>`;
+}
+
 export function ImplBlock(props: ImplBlockProps) {
   const parentScope = useRustScope();
 
@@ -88,11 +119,17 @@ export function ImplBlock(props: ImplBlockProps) {
   const implScope = createScope(RustImplScope, implTargetSymbol, parentScope, {
     binder: parentScope.binder,
   });
+  const inferredTypeParameters = inferredTypeParametersForImpl(targetTypeSymbol);
+  const implTypeParameters = props.typeParameters ?? inferredTypeParameters;
+  const renderedTypeWithTypeParameters = renderTypeWithInferredTypeParameters(
+    renderedType,
+    inferredTypeParameters,
+  );
 
   return (
     <>
       {code`impl`}
-      <TypeParameters params={props.typeParameters} />
+      <TypeParameters params={implTypeParameters} />
       {" "}
       {renderedTrait ? (
         <>
@@ -100,7 +137,7 @@ export function ImplBlock(props: ImplBlockProps) {
           {code` for `}
         </>
       ) : null}
-      {renderedType}
+      {renderedTypeWithTypeParameters}
       {props.whereClause ? (
         <>
           {" "}

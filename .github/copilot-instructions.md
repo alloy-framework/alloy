@@ -40,6 +40,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - In `ImplBlock`/`TraitDeclaration`, `FunctionDeclaration` defaults receiver to `&self`; set `receiver="none"` for associated functions like `new()`.
 - For `ModDeclarations` render-order regressions, first run `pnpm --filter @alloy-js/rust exec vitest run test/t045-render-order.test.tsx test/mod-declarations.test.tsx`, then run full rust validation.
 - For Rust generic rendering, keep lifetime parameters and type parameters in the same `TypeParameterProp[]`, but always render lifetimes first (`<'a, 'b, T>`), and quickly verify with `pnpm --filter @alloy-js/rust exec vitest run test/type-parameters.test.tsx test/lifetime-parameters.test.tsx`.
+- For `ImplBlock` generic forwarding, ensure `StructDeclaration`/`EnumDeclaration` register named type parameter symbols on `NamedTypeSymbol.typeParameters` whenever `typeParameters` are provided.
 - `LetBinding` intentionally does **not** register symbols in scope (T049 exclusions); treat it as syntax-only statement rendering with optional type/initializer and a trailing `;`.
 - In `FunctionCallExpression`-style components using `<group>` + `Wrap` (`when={args.length > 1}`), expect stable multiline output for multi-arg calls, and turbofish type-arg lists may also line-break under the same group; snapshot tests should assert multiline form.
 - For components using `<Wrap when={...}>`, line breaks occur only after print-width overflow; include at least one long argument in multi-arg tests when asserting multiline wrapping.

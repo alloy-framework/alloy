@@ -8,7 +8,11 @@ import {
   createScope,
 } from "@alloy-js/core";
 import { RustImplScope, useRustScope } from "../scopes/index.js";
-import { createFieldSymbol, createStructSymbol } from "../symbols/factories.js";
+import {
+  createFieldSymbol,
+  createStructSymbol,
+  createTypeParameterSymbol,
+} from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
@@ -38,6 +42,17 @@ export interface FieldProps {
   pub_crate?: boolean;
   pub_super?: boolean;
   doc?: string;
+}
+
+function DeclareNamedTypeTypeParameters(props: { typeParameters?: TypeParameterProp[] }) {
+  const params = props.typeParameters ?? [];
+  for (const param of params) {
+    if (param.name) {
+      createTypeParameterSymbol(param.name);
+    }
+  }
+
+  return <></>;
 }
 
 export function StructDeclaration(props: StructDeclarationProps) {
@@ -82,6 +97,9 @@ export function StructDeclaration(props: StructDeclarationProps) {
         </>
       ) : null}
       <CoreDeclaration symbol={structSymbol}>
+        <Scope value={structScope}>
+          <DeclareNamedTypeTypeParameters typeParameters={props.typeParameters} />
+        </Scope>
         {visibilityPrefix}
         {"struct "}
         {structSymbol.name}

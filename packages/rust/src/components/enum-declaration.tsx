@@ -8,7 +8,11 @@ import {
   createScope,
 } from "@alloy-js/core";
 import { RustImplScope, useRustScope } from "../scopes/index.js";
-import { createEnumSymbol, createVariantSymbol } from "../symbols/factories.js";
+import {
+  createEnumSymbol,
+  createTypeParameterSymbol,
+  createVariantSymbol,
+} from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
@@ -33,6 +37,17 @@ export interface EnumVariantProps {
   kind?: "unit" | "tuple" | "struct";
   fields?: Children[];
   children?: Children;
+}
+
+function DeclareNamedTypeTypeParameters(props: { typeParameters?: TypeParameterProp[] }) {
+  const params = props.typeParameters ?? [];
+  for (const param of params) {
+    if (param.name) {
+      createTypeParameterSymbol(param.name);
+    }
+  }
+
+  return <></>;
 }
 
 export function EnumDeclaration(props: EnumDeclarationProps) {
@@ -75,6 +90,9 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
         </>
       ) : null}
       <CoreDeclaration symbol={enumSymbol}>
+        <Scope value={enumScope}>
+          <DeclareNamedTypeTypeParameters typeParameters={props.typeParameters} />
+        </Scope>
         {visibilityPrefix}
         {"enum "}
         {enumSymbol.name}

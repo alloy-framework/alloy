@@ -48,8 +48,14 @@ iteration. Load the same stack every loop to ensure consistency:
    pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test
    ```
    If the build or tests fail BEFORE you start your work:
-   - Create a task file at `docs/backlog/tasks/<id>-<issue>.md` to track
-     the failure.
+   - **Search existing tasks first.** Use a subagent to check whether
+     `docs/backlog/tasks/` already contains a task tracking the same
+     failure (match on the failing test name and error signature). If a
+     matching task exists, do NOT create a duplicate — instead, add a
+     short "Still failing as of <date>" note to the existing task, commit,
+     push, and **exit**.
+   - Only create a new task file at `docs/backlog/tasks/<id>-<issue>.md`
+     if no existing task covers the failure.
    - Update `docs/backlog/index.md` to include the new task.
    - Commit, push, and **exit**. Do not work on anything else.
 4. If pre-flight passes, choose the highest-priority `pending` task whose

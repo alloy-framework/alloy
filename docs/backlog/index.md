@@ -36,7 +36,6 @@ docs/backlog/
 | 5 | Module system and imports | E005 | T022–T027 | P04 |
 | 6 | External deps, build file, polish | E006 | T028–T038 | P05–P06 |
 | 7 | Bug fixes and rendering corrections | E007 | T039–T045 | P07 |
-| 8 | Expression and statement components | E008 | T046–T101 (expression) | P08 |
 | 9 | Language feature gaps | E009 | T054–T066 (declaration) | P08 |
 
 ### Recommended Implementation Order
@@ -72,7 +71,6 @@ docs/backlog/
 | [E005](epics/E005-module-system-imports.md) | Module System and Imports | T022–T027 | E002, E003 | P04 |
 | [E006](epics/E006-external-deps-build-polish.md) | External Deps, Build, Polish | T028–T038 | E001–E005 | P05–P06 |
 | [E007](epics/E007-bug-fixes.md) | Bug Fixes and Rendering Corrections | T039–T045 | E001–E006 | P07 |
-| [E008](epics/E008-expression-components.md) | Expression and Statement Components | T046–T101 (expression) | E007 | P08 |
 | [E009](epics/E009-language-feature-gaps.md) | Language Feature Gaps | T054–T066 (declaration) | E001–E006 | P08 |
 
 ---
@@ -88,7 +86,6 @@ docs/backlog/
 | [P05](phases/P05-external-deps-build.md) | External Deps & Build | E006 (partial) | T028–T031 | External crates and Cargo.toml |
 | [P06](phases/P06-polish.md) | Polish | E006 (partial) | T032–T038 | STC wrappers, exports, golden tests |
 | P07 | Bug Fixes | E007 | T039–T045 | Fix rendering bugs discovered in integration testing |
-| P08 | Expressions & Language Gaps | E008, E009 | T046–T101 | Expression components, control flow, language feature gaps |
 
 ---
 
@@ -147,54 +144,7 @@ docs/backlog/
 | [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | done |
 | [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | done |
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | done |
-| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | blocked |
-| [T068](tasks/T068-function-call-turbofish-wrap.md) | FunctionCallExpression turbofish + wrap formatting | E008 | bug | P2 | T050 | open |
-| [T069](tasks/T069-function-call-expression-turbofish-regression.md) | FunctionCallExpression turbofish line-wrap regression | E008 | bug | P2 | T050 | open |
-| [T070](tasks/T070-preflight-validation-turbofish-failure.md) | Function-call turbofish wrapping pre-flight validation fix | E008 | bug | P1 | T050 | open |
-| [T071](tasks/T071-preflight-turbofish-snapshot-mismatch.md) | Pre-flight turbofish snapshot mismatch failure tracking | E008 | bug | P1 | T050 | open |
-| [T072](tasks/T072-preflight-turbofish-call-args-mismatch.md) | Pre-flight turbofish call-args snapshot mismatch tracking | E008 | bug | P1 | T050 | open |
-| [T073](tasks/T073-preflight-turbofish-formatting-mismatch.md) | Pre-flight turbofish formatting mismatch blocker | E008 | bug | P1 | T050, T069, T072 | pending |
-| [T074](tasks/T074-preflight-turbofish-comma-wrap-regression.md) | Pre-flight turbofish comma-wrap regression from loop pre-check | E008 | bug | P1 | T050 | open |
-| [T075](tasks/T075-function-call-expression-turbofish-wrapping-mismatch.md) | FunctionCallExpression turbofish wrapping mismatch: two-type-argument case | E008 | bug | P1 | T050 | open |
-| [T076](tasks/T076-preflight-turbofish-line-wrapping-failure.md) | Pre-flight turbofish line-wrapping failure in `FunctionCallExpression` | E008 | bug | P1 | T050 | open |
-| [T077](tasks/T077-preflight-turbofish-regression-persistence.md) | Pre-flight turbofish regression persistence in `FunctionCallExpression` | E008 | bug | P1 | T050, T076 | pending |
-| [T078](tasks/T078-preflight-turbofish-call-formatting-failure.md) | Pre-flight turbofish call-formatting failure in `FunctionCallExpression` | E008 | bug | P1 | T050, T077 | open |
-| [T079](tasks/T079-pre-flight-turbofish-call-args-line-break-mismatch.md) | Pre-flight turbofish call-args line-break mismatch in `FunctionCallExpression` | E008 | bug | P1 | T050 | open |
-| [T080](tasks/T080-preflight-rust-validation-failure.md) | Preflight Rust validation failure in turbofish type args formatting | E008 | bug | P1 | — | open |
-| [T081](tasks/T081-preflight-turbofish-type-args-comma-line-break.md) | Pre-flight turbofish type-args comma line-break persistence | E008 | bug | P1 | T050, T080 | open |
-| [T082](tasks/T082-preflight-turbofish-type-args-regression-rerun.md) | Pre-flight turbofish type-args regression persisted on validation rerun | E008 | bug | P1 | T050, T081 | open |
-| [T083](tasks/T083-preflight-turbofish-fce-test-failure.md) | Pre-flight turbofish FunctionCallExpression test validation failure | E008 | bug | P1 | T050, T077 | open |
-| [T084](tasks/T084-preflight-function-call-expression-turbofish-type-args-wrap.md) | Pre-flight FunctionCallExpression turbofish type-args wrapping alignment | E008 | bug | P1 | T050, T083 | open |
-| [T085](tasks/T085-preflight-function-call-expression-turbofish-single-line-regression.md) | Pre-flight FunctionCallExpression turbofish single-line regression | E008 | bug | P1 | T050, T084 | open |
-| [T086](tasks/T086-preflight-function-call-expression-turbofish-formatting-regression.md) | Pre-flight FunctionCallExpression turbofish formatting regression | E008 | bug | P0 | T050 | pending |
-| [T087](tasks/T087-preflight-function-call-turbofish-line-wrap.md) | Pre-flight FunctionCallExpression turbofish line-wrap failure | E008 | bug | P0 | — | pending |
-| [T088](tasks/T088-preflight-function-call-expression-turbofish-one-line-blocker.md) | Pre-flight FunctionCallExpression turbofish one-line formatting blocker | E008 | bug | P0 | T050, T087 | pending |
-| [T089](tasks/T089-preflight-function-call-expression-turbofish-comma-wrap-regression.md) | Pre-flight FunctionCallExpression turbofish comma-wrap regression | E008 | bug | P0 | T050, T088 | pending |
-| [T090](tasks/T090-preflight-function-call-expression-turbofish-type-args-wrap-rerun.md) | Pre-flight FunctionCallExpression turbofish type-args wrap failure on rerun | E008 | bug | P0 | T050, T089 | pending |
-| [T091](tasks/T091-preflight-rust-turbofish-function-call-test-failure.md) | Pre-flight rust turbofish function-call formatting test failure | E008 | bug | P0 | T050, T090 | pending |
-| [T092](tasks/T092-preflight-function-call-expression-turbofish-wrapping.md) | Pre-flight FunctionCallExpression turbofish type args formatting wraps unexpectedly | E008 | bug | P0 | T050, T091 | pending |
-| [T093](tasks/T093-preflight-function-call-expression-turbofish-type-args-wrapping-test.md) | Pre-flight FunctionCallExpression turbofish type-args wrapping in function-call test | E008 | bug | P0 | T050, T092 | pending |
-| [T094](tasks/T094-preflight-function-call-expression-turbofish-one-line-formatting-regression-recheck.md) | Pre-flight FunctionCallExpression turbofish one-line formatting regression (recheck) | E008 | bug | P0 | T050, T093 | pending |
-| [T095](tasks/T095-preflight-function-call-expression-turbofish-wrapped-type-args.md) | Preflight FunctionCallExpression turbofish type-args wrapping in multi-line call | E008 | bug | P0 | T050 | open |
-| [T096](tasks/T096-preflight-rust-tests-failing-function-call-expression-turbofish-line-wrapping.md) | Preflight rust tests failing in FunctionCallExpression turbofish line wrapping | E008 | bug | P0 | T050, T095 | open |
-| [T097](tasks/T097-preflight-function-call-expression-turbofish-wrap-regression-rerun.md) | Preflight rerun failure: FunctionCallExpression turbofish wraps between type args | E008 | bug | P0 | T050, T096 | pending |
-| [T098](tasks/T098-preflight-function-call-expression-turbofish-comma-line-wrap-rerun.md) | Preflight rerun failure: turbofish type args wrap after comma in FunctionCallExpression test | E008 | bug | P0 | T050, T097 | pending |
-| [T099](tasks/T099-preflight-function-call-expression-turbofish-comma-wrap-regression-rerun-2.md) | Preflight rerun failure: FunctionCallExpression turbofish comma-wrap regression persists | E008 | bug | P0 | T050, T098 | pending |
-| [T100](tasks/T100-preflight-function-call-expression-turbofish-wrapping-in-fce-tests.md) | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | E008 | bug | P0 | T050, T099 | pending |
-| [T101](tasks/T101-preflight-rust-build-test-failure-function-call-expression-turbofish-line-break.md) | Preflight rust build+test failure: FunctionCallExpression turbofish line break regression | E008 | bug | P0 | T050, T100 | pending |
-| [T102](tasks/T102-preflight-function-call-expression-turbofish-test-mismatch.md) | Preflight FunctionCallExpression turbofish formatting test mismatch | E008 | bug | P0 | T050, T101 | pending |
-| [T103](tasks/T103-preflight-function-call-expression-turbofish-comma-wrap-rerun.md) | Preflight FunctionCallExpression turbofish comma-wrap regression on rerun | E008 | bug | P0 | T050, T102 | pending |
-| [T104](tasks/T104-preflight-function-call-expression-turbofish-type-args-line-break.md) | Preflight FunctionCallExpression turbofish type-args line-break regression | E008 | bug | P0 | T050, T103 | pending |
-| [T105](tasks/T105-preflight-function-call-expression-turbofish-type-args-line-wrap.md) | Preflight FunctionCallExpression turbofish type-args line-wrap failure | E008 | bug | P0 | T050, T104 | pending |
-| [T106](tasks/T106-preflight-function-call-expression-turbofish-type-args-line-wrap-rerun.md) | Preflight FunctionCallExpression turbofish type-args line-wrap failure (rerun) | E008 | bug | P0 | T050, T105 | pending |
-| [T107](tasks/T107-preflight-function-call-expression-turbofish-comma-wrap-failure.md) | Preflight FunctionCallExpression turbofish comma wrap after type arguments | E008 | bug | P0 | T050, T106 | pending |
-| [T108](tasks/T108-preflight-function-call-expression-turbofish-formatting-mismatch.md) | Preflight FunctionCallExpression turbofish formatting mismatch in test output | E008 | bug | P0 | T050, T107 | pending |
-| [T109](tasks/T109-preflight-function-call-expression-turbofish-comma-line-wrap-rerun-2.md) | Preflight FunctionCallExpression turbofish comma line-wrap regression (rerun 2) | E008 | bug | P0 | T050, T108 | pending |
-| [T110](tasks/T110-preflight-function-call-expression-turbofish-type-args-line-break-rerun-3.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 3) | E008 | bug | P0 | T050, T109 | pending |
-| [T111](tasks/T111-preflight-function-call-expression-turbofish-type-args-line-break-rerun-4.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 4) | E008 | bug | P0 | T050, T110 | pending |
-| [T112](tasks/T112-preflight-function-call-expression-turbofish-type-args-line-break-rerun-5.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 5) | E008 | bug | P0 | T050, T111 | pending |
-| [T113](tasks/T113-preflight-function-call-expression-turbofish-type-args-line-break-rerun-6.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 6) | E008 | bug | P0 | T050, T112 | pending |
-| [T114](tasks/T114-preflight-function-call-expression-turbofish-type-args-line-break-rerun-7.md) | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 7) | E008 | bug | P0 | T050, T113 | pending |
+| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -269,7 +219,7 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 | ID | Title | Reason |
 |---|---|---|
 | T029 | std builtin descriptors | Repeated build validation failures on exported `std` typing portability (TS2742/API Extractor). |
-| T050 | FunctionCallExpression | Repeated validation failure (3x) in `test/function-call-expression.test.tsx` for stable turbofish + multi-arg wrap snapshot formatting. |
+
 
 ---
 
@@ -285,26 +235,6 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T043** | Standalone SourceFile module registration | P1 | Single-file modules missing from mod declarations |
 | **T044** | FunctionDeclaration default receiver | P2 | ✓ Completed — no code changes required; behavior already implemented and tested |
 | **T045** | ModDeclarations render order | P2 | ✓ Completed — `ModDeclarations` now reactively re-renders as child modules are registered |
-| **T068** | FunctionCallExpression turbofish wrap stability | P2 | Pre-flight validation fails on turbofish + multi-arg call formatting snapshot |
-| **T069** | FunctionCallExpression turbofish line-wrap regression | P2 | New pre-flight failure: turbofish type list wraps at comma (`f::<String,\n u32>(...)`) |
-| **T071** | Pre-flight turbofish snapshot mismatch tracking | P1 | Baseline pre-flight blocker: `function-call-expression` expects `f::<String, u32>(` but receives wrapped turbofish with newline after comma |
-| **T073** | Pre-flight turbofish formatting mismatch blocker | P1 | Current pre-flight blocker: `FunctionCallExpression` test expects `f::<String, u32>(` but receives `f::<String,` then `u32>(` |
-| **T074** | Pre-flight turbofish comma-wrap regression (loop 2026-03-11) | P1 | New pre-flight run still fails before task start: expected `f::<String, u32>(` but received `f::<String,` then `u32>(` |
-| **T076** | Pre-flight turbofish line-wrapping failure (`function-call-expression.test.tsx`) | P1 | Latest pre-flight blocker: `FunctionCallExpression` still renders `f::<String,` then `u32>(` instead of `f::<String, u32>(` |
-| **T078** | Pre-flight turbofish call-formatting failure (`function-call-expression.test.tsx`) | P1 | Baseline pre-flight remains red: expected `f::<String, u32>(` but received wrapped turbofish with newline after comma (`f::<String,` then `u32>(`) |
-| **T079** | Pre-flight turbofish call-args line-break mismatch in `FunctionCallExpression` | P1 | Pre-flight blocker remains: `FunctionCallExpression` call args still line-break unexpectedly after turbofish in two-type-argument call formatting path |
-| **T080** | Preflight Rust validation failure in turbofish type args formatting | P1 | New pre-flight blocker: `function-call-expression.test.tsx` still fails because turbofish type args render as `f::<String,` + `u32>(` instead of `f::<String, u32>(` |
-| **T081** | Pre-flight turbofish type-args comma line-break persistence | P1 | Latest pre-flight blocker is unchanged: expected `f::<String, u32>(` but got `f::<String,` followed by `u32>(` in `FunctionCallExpression` |
-| **T086** | Pre-flight FunctionCallExpression turbofish formatting regression | P0 | Current pre-flight blocker: `test/function-call-expression.test.tsx` renders turbofish type args with a newline between `String` and `u32` instead of `f::<String, u32>(...)` |
-| **T087** | Pre-flight FunctionCallExpression turbofish line-wrap failure | P0 | Current pre-flight blocker: `FunctionCallExpression > renders turbofish type arguments with call arguments` expects `f::<String, u32>(raw, 10)` but receives a newline after the comma in turbofish generics (`f::<String,` then `u32>(raw, 10)`) |
-| **T088** | Pre-flight FunctionCallExpression turbofish one-line formatting blocker | P0 | Current pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` turbofish type arguments wrap after `String` (`f::<String,` then `u32>(...)`) instead of `f::<String, u32>(...)` |
-| **T089** | Pre-flight FunctionCallExpression turbofish comma-wrap regression | P0 | New pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` still renders `f::<String,` then `u32>(...)` instead of one-line `f::<String, u32>(...)` for turbofish type arguments with call args |
-| **T097** | Preflight rerun: FunctionCallExpression turbofish type-arg wrap regression | P0 | Latest pre-flight run still fails before task start: expected `f::<String, u32>(...)` but actual output wraps after `String` (`f::<String,` then `u32>(...)`) in `test/function-call-expression.test.tsx`. |
-| **T100** | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | P0 | Latest pre-flight run fails before task work: expected `f::<String, u32>(` but got a wrapped turbofish with newline between type args (`f::<String,` then `u32>(`) in `FunctionCallExpression` test output. |
-| **T101** | Preflight rust build+test failure: FunctionCallExpression turbofish line break regression | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` where turbofish type args render wrapped (`f::<String,` then `u32>(`) instead of one-line `f::<String, u32>(`) for call arguments. |
-| **T109** | Preflight FunctionCallExpression turbofish comma line-wrap regression (rerun 2) | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` where turbofish type args render wrapped (`f::<String,` then `u32>(`) instead of one-line `f::<String, u32>(`) for call arguments. |
-| **T110** | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 3) | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` (`FunctionCallExpression > renders turbofish type arguments with call arguments`) where expected prefix `f::<String, u32>(` is rendered as `f::<String,` then `u32>(`. |
-| **T111** | Preflight FunctionCallExpression turbofish type-args line-break regression (rerun 4) | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` (`FunctionCallExpression > renders turbofish type arguments with call arguments`) where expected prefix `f::<String, u32>(` is rendered as `f::<String,` then `u32>(`. |
 
 ---
 
@@ -413,7 +343,6 @@ These P0 tasks are on the critical path and should be prioritized:
 - [P05: External Deps & Build](phases/P05-external-deps-build.md)
 - [P06: Polish](phases/P06-polish.md)
 - P07: Bug Fixes (T039–T045)
-- P08: Expressions & Language Gaps (T046–T101)
 
 ### Agent Guidance
 - [AI Agent Execution Rules](agents/execution-rules.md)

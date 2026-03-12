@@ -13,7 +13,7 @@ export function FunctionCallExpression(props: FunctionCallExpressionProps) {
       {props.typeArgs && props.typeArgs.length > 0 ? (
         <>
           {"::<"}
-          <For each={props.typeArgs} comma>
+          <For each={props.typeArgs} joiner={", "}>
             {(typeArg) => typeArg}
           </For>
           {">"}

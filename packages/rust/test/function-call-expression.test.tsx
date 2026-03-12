@@ -27,12 +27,7 @@ describe("FunctionCallExpression", () => {
         typeArgs={["String", "u32"]}
         args={["raw", "10"]}
       />,
-    ).toRenderTo(d`
-      f::<String, u32>(
-        raw,
-        10
-      )
-    `);
+    ).toRenderTo(d`f::<String, u32>(raw, 10)`);
   });
 
   it("wraps multiple arguments across lines", () => {

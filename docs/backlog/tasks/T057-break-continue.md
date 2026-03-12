@@ -5,7 +5,7 @@
 | **ID** | T057 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -68,8 +68,8 @@ interface ContinueExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<BreakExpression />` renders `break`
-- [ ] `<BreakExpression label="'outer">value</BreakExpression>` renders `break 'outer value`
-- [ ] `<ContinueExpression />` renders `continue`
-- [ ] `<ContinueExpression label="'outer" />` renders `continue 'outer`
-- [ ] STC wrappers exported
+- [x] `<BreakExpression />` renders `break`
+- [x] `<BreakExpression label="'outer">value</BreakExpression>` renders `break 'outer value`
+- [x] `<ContinueExpression />` renders `continue`
+- [x] `<ContinueExpression label="'outer" />` renders `continue 'outer`
+- [x] STC wrappers exported

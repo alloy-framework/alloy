@@ -3,7 +3,9 @@ import { Attribute as AttributeComponent, DeriveAttribute as DeriveAttributeComp
 import { CargoTomlFile as CargoTomlFileComponent } from "../cargo-toml-file.js";
 import { ClosureExpression as ClosureExpressionComponent } from "../closure-expression.js";
 import { ConstDeclaration as ConstDeclarationComponent } from "../const-declaration.js";
+import { ContinueExpression as ContinueExpressionComponent } from "../continue-expression.js";
 import { CrateDirectory as CrateDirectoryComponent } from "../crate-directory.js";
+import { BreakExpression as BreakExpressionComponent } from "../break-expression.js";
 import { DocComment as DocCommentComponent, ModuleDocComment as ModuleDocCommentComponent } from "../doc-comment.js";
 import {
   EnumDeclaration as EnumDeclarationComponent,
@@ -43,7 +45,9 @@ export const Attribute = stc(AttributeComponent);
 export const CargoTomlFile = stc(CargoTomlFileComponent);
 export const ClosureExpression = stc(ClosureExpressionComponent);
 export const ConstDeclaration = stc(ConstDeclarationComponent);
+export const ContinueExpression = stc(ContinueExpressionComponent);
 export const CrateDirectory = stc(CrateDirectoryComponent);
+export const BreakExpression = stc(BreakExpressionComponent);
 export const DeriveAttribute = stc(DeriveAttributeComponent);
 export const DocComment = stc(DocCommentComponent);
 export const EnumDeclaration = stc(EnumDeclarationComponent);

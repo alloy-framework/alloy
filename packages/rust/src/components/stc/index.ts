@@ -9,6 +9,7 @@ import { StaticDeclaration as StaticDeclarationComponent } from "../static-decla
 import { ContinueExpression as ContinueExpressionComponent } from "../continue-expression.js";
 import { CrateDirectory as CrateDirectoryComponent } from "../crate-directory.js";
 import { BreakExpression as BreakExpressionComponent } from "../break-expression.js";
+import { MacroCall as MacroCallComponent } from "../macro-call.js";
 import { DocComment as DocCommentComponent, ModuleDocComment as ModuleDocCommentComponent } from "../doc-comment.js";
 import {
   EnumDeclaration as EnumDeclarationComponent,
@@ -36,6 +37,7 @@ import {
 import { ModuleDirectory as ModuleDirectoryComponent } from "../module-directory.js";
 import { Parameters as ParametersComponent } from "../parameters.js";
 import { Reference as ReferenceComponent } from "../reference.js";
+import { ReturnExpression as ReturnExpressionComponent } from "../return-expression.js";
 import { SourceFile as SourceFileComponent } from "../source-file.js";
 import {
   FieldInit as FieldInitComponent,
@@ -67,6 +69,7 @@ export const Field = stc(FieldComponent);
 export const FunctionDeclaration = stc(FunctionDeclarationComponent);
 export const ForExpression = stc(ForExpressionComponent);
 export const LoopExpression = stc(LoopExpressionComponent);
+export const MacroCall = stc(MacroCallComponent);
 export const MethodChainExpression = stc(MethodChainExpressionComponent);
 export const MethodChainCall = stc(MethodChainCallComponent);
 export const IfExpression = stc(IfExpressionComponent);
@@ -81,6 +84,7 @@ export const ModuleDirectory = stc(ModuleDirectoryComponent);
 export const ModuleDocComment = stc(ModuleDocCommentComponent);
 export const Parameters = stc(ParametersComponent);
 export const Reference = stc(ReferenceComponent);
+export const ReturnExpression = stc(ReturnExpressionComponent);
 export const SourceFile = stc(SourceFileComponent);
 export const StructExpression = stc(StructExpressionComponent);
 export const FieldInit = stc(FieldInitComponent);

@@ -5,7 +5,7 @@
 | **ID** | T052 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P3 — nice-to-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -87,11 +87,11 @@ interface MacroCallProps {
 
 ## Acceptance Criteria
 
-- [ ] `<ReturnExpression>value</ReturnExpression>` renders `return value`
-- [ ] `<ReturnExpression />` renders `return`
-- [ ] `<MacroCall name="format" args={[...]}>` renders `format!(...)`
-- [ ] `bracket="bracket"` renders `vec![...]`
-- [ ] STC wrappers exported
+- [x] `<ReturnExpression>value</ReturnExpression>` renders `return value`
+- [x] `<ReturnExpression />` renders `return`
+- [x] `<MacroCall name="format" args={[...]}>` renders `format!(...)`
+- [x] `bracket="bracket"` renders `vec![...]`
+- [x] STC wrappers exported
 
 ---
 

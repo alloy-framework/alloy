@@ -146,8 +146,8 @@ docs/backlog/
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | done |
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | done |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | done |
-| [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
-| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | blocked |
+| [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | done |
+| [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
 | [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | done |
 | [T055](tasks/T055-for-expression.md) | ForExpression | E008 | feature | P1 | T009 | done |
 | [T056](tasks/T056-while-loop-expression.md) | WhileExpression + LoopExpression | E008 | feature | P2 | T009 | done |
@@ -219,7 +219,6 @@ These pending tasks depend **only on T001** and are ready once T001 is complete:
 | ID | Title | Reason |
 |---|---|---|
 | T029 | std builtin descriptors | Repeated build validation failures on exported `std` typing portability (TS2742/API Extractor). |
-| T053 | Update rust-example with expression components | Blocked by unmet dependency T052: `ReturnExpression` and `MacroCall` are not implemented in `packages/rust/src/components/`, so sample refactor cannot satisfy acceptance criteria without doing a second task. |
 
 
 ---

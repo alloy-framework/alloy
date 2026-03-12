@@ -6,11 +6,11 @@ export interface DocCommentProps {
 
 function renderCommentLines(children: Children, prefix: string) {
   const lines = String(children).split("\n");
-  return lines.map((line, index) => (
+  return lines.map((line) => (
     <>
       {prefix}
       {line}
-      {index < lines.length - 1 ? <hbr /> : null}
+      <hbr />
     </>
   ));
 }

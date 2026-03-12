@@ -62,7 +62,6 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       <CoreDeclaration symbol={functionSymbol}>

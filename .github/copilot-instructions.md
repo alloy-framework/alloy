@@ -46,6 +46,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - `LetBinding` intentionally does **not** register symbols in scope (T049 exclusions); treat it as syntax-only statement rendering with optional type/initializer and a trailing `;`.
 - In `FunctionCallExpression`-style components using `<group>` + `Wrap` (`when={args.length > 1}`), expect stable multiline output for multi-arg calls, and turbofish type-arg lists may also line-break under the same group; snapshot tests should assert multiline form.
 - For components using `<Wrap when={...}>`, line breaks occur only after print-width overflow; include at least one long argument in multi-arg tests when asserting multiline wrapping.
+- Ensure `DocComment`/`ModuleDocComment` end with a trailing line break before declarations; otherwise generated output can concatenate comment text and the next declaration.
 
 Critical rules:
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.

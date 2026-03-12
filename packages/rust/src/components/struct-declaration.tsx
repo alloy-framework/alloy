@@ -79,7 +79,6 @@ export function StructDeclaration(props: StructDeclarationProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       {props.attributes ? (
@@ -154,7 +153,6 @@ export function Field(props: FieldProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       {visibilityPrefix}

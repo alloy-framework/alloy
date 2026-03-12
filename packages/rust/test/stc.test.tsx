@@ -187,13 +187,13 @@ describe("STC wrappers", () => {
   });
 
   it("DocComment wrapper supports .children and matches JSX output", () => {
-    expect(inFile(<DocComment>Hello</DocComment>)).toRenderTo(d`/// Hello`);
-    expect(inFile(Stc.DocComment().children(["Hello"]))).toRenderTo(d`/// Hello`);
+    expect(inFile(<DocComment>Hello</DocComment>)).toRenderTo("/// Hello\n\n");
+    expect(inFile(Stc.DocComment().children(["Hello"]))).toRenderTo("/// Hello\n\n");
   });
 
   it("ModuleDocComment wrapper supports .children and matches JSX output", () => {
-    expect(inFile(<ModuleDocComment>Hello module</ModuleDocComment>)).toRenderTo(d`//! Hello module`);
-    expect(inFile(Stc.ModuleDocComment().children(["Hello module"]))).toRenderTo(d`//! Hello module`);
+    expect(inFile(<ModuleDocComment>Hello module</ModuleDocComment>)).toRenderTo("//! Hello module\n\n");
+    expect(inFile(Stc.ModuleDocComment().children(["Hello module"]))).toRenderTo("//! Hello module\n\n");
   });
 
   it("CrateDirectory + ModuleDirectory + SourceFile wrappers match JSX output", () => {

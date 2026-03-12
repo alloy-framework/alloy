@@ -67,6 +67,7 @@ describe("SourceFile", () => {
       </Output>,
     ).toRenderTo(d`
       //! Crate docs
+
       fn main() {}
     `);
   });

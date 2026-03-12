@@ -5,7 +5,7 @@
 | **ID** | T073 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P2 — nice-to-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -40,13 +40,20 @@ The issue appears to be related to how the Reference component interacts with th
 
 ## Acceptance Criteria
 
-- [ ] `field: HashMap<K, V>` renders on a single line (no unexpected breaks)
-- [ ] `fn foo() -> Result<T>` renders on a single line
-- [ ] References inside expressions (e.g., `let x: Type = ...`) render inline
-- [ ] `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes
+- [x] `field: HashMap<K, V>` renders on a single line (no unexpected breaks)
+- [x] `fn foo() -> Result<T>` renders on a single line
+- [x] References inside expressions (e.g., `let x: Type = ...`) render inline
+- [x] `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes
 
 ---
 
 ## Evidence
 
 Discovered during rust-example review on 2026-03-12. Some References in block contexts produced unexpected line breaks in the generated output.
+
+---
+
+## Completion Notes
+
+- 2026-03-12: Completed. Inline `Reference` rendering was stabilized across declaration/expression contexts and test coverage was updated accordingly.
+- Gotcha: ensure `DocComment`/`ModuleDocComment` emit a trailing line break so the next declaration does not concatenate onto the doc-comment line.

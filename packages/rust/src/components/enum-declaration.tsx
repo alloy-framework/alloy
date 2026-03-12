@@ -72,7 +72,6 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       {props.attributes ? (
@@ -138,7 +137,6 @@ export function EnumVariant(props: EnumVariantProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       {variantSymbol.name}

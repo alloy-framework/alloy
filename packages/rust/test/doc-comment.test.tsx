@@ -1,6 +1,5 @@
 import { Output } from "@alloy-js/core";
 import "@alloy-js/core/testing";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { CrateDirectory, DocComment, ModuleDocComment, SourceFile } from "../src/components/index.js";
 
@@ -14,7 +13,7 @@ describe("DocComment", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`/// Hello`);
+    ).toRenderTo("/// Hello\n\n");
   });
 
   it("renders multiple lines", () => {
@@ -26,10 +25,7 @@ describe("DocComment", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`
-      /// Line 1
-      /// Line 2
-    `);
+    ).toRenderTo("/// Line 1\n/// Line 2\n\n");
   });
 
   it("renders nothing for empty or undefined children", () => {
@@ -65,7 +61,7 @@ describe("ModuleDocComment", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`//! Module docs`);
+    ).toRenderTo("//! Module docs\n\n");
   });
 
   it("renders multiple lines", () => {
@@ -77,10 +73,7 @@ describe("ModuleDocComment", () => {
           </SourceFile>
         </CrateDirectory>
       </Output>,
-    ).toRenderTo(d`
-      //! Line 1
-      //! Line 2
-    `);
+    ).toRenderTo("//! Line 1\n//! Line 2\n\n");
   });
 
   it("renders nothing for empty or undefined children", () => {

@@ -44,7 +44,6 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
       {props.doc ? (
         <>
           <DocComment>{props.doc}</DocComment>
-          <hbr />
         </>
       ) : null}
       <CoreDeclaration symbol={traitSymbol}>

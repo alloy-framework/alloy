@@ -107,7 +107,20 @@ export function createConstSymbol(
   return createSymbol(RustOutputSymbol, originalName, scope.values, {
     ...withNamePolicy(options, "constant"),
     binder,
-    symbolKind: "const",
+      symbolKind: "const",
+  });
+}
+
+export function createStaticSymbol(
+  originalName: string | Namekey,
+  options: RustOutputSymbolOptions = {},
+) {
+  const scope = useTypeValueScope("static");
+  const binder = options.binder ?? scope.binder ?? useBinder();
+  return createSymbol(RustOutputSymbol, originalName, scope.values, {
+    ...withNamePolicy(options, "constant"),
+    binder,
+    symbolKind: "static",
   });
 }
 

@@ -5,7 +5,7 @@
 | **ID** | T059 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -66,7 +66,7 @@ interface StaticDeclarationProps {
 
 ## Acceptance Criteria
 
-- [ ] `<StaticDeclaration name="X" type="T">value</StaticDeclaration>` renders `static X: T = value;`
-- [ ] `mutable` prop renders `static mut X: T = value;`
-- [ ] Visibility props work
-- [ ] STC wrapper exported
+- [x] `<StaticDeclaration name="X" type="T">value</StaticDeclaration>` renders `static X: T = value;`
+- [x] `mutable` prop renders `static mut X: T = value;`
+- [x] Visibility props work
+- [x] STC wrapper exported

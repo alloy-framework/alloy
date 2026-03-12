@@ -5,7 +5,7 @@
 | **ID** | T064 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -60,6 +60,6 @@ interface TryExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<TryExpression>expr</TryExpression>` renders `expr?`
-- [ ] Composes with other expression components
-- [ ] STC wrapper exported
+- [x] `<TryExpression>expr</TryExpression>` renders `expr?`
+- [x] Composes with other expression components
+- [x] STC wrapper exported

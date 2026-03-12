@@ -32,5 +32,6 @@ export * from "./break-expression.js";
 export * from "./struct-expression.js";
 export * from "./function-call-expression.js";
 export * from "./method-chain-expression.js";
+export * from "./try-expression.js";
 export * from "./value.js";
 export * as stc from "./stc/index.js";

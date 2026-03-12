@@ -43,6 +43,7 @@ import {
 } from "../struct-expression.js";
 import { Field as FieldComponent, StructDeclaration as StructDeclarationComponent } from "../struct-declaration.js";
 import { TraitDeclaration as TraitDeclarationComponent } from "../trait-declaration.js";
+import { TryExpression as TryExpressionComponent } from "../try-expression.js";
 import { TypeAlias as TypeAliasComponent } from "../type-alias.js";
 import { TypeParameters as TypeParametersComponent } from "../type-parameters.js";
 import { Value as ValueComponent } from "../value.js";
@@ -85,6 +86,7 @@ export const StructExpression = stc(StructExpressionComponent);
 export const FieldInit = stc(FieldInitComponent);
 export const StructDeclaration = stc(StructDeclarationComponent);
 export const TraitDeclaration = stc(TraitDeclarationComponent);
+export const TryExpression = stc(TryExpressionComponent);
 export const TypeAlias = stc(TypeAliasComponent);
 export const TypeParameters = stc(TypeParametersComponent);
 export const Value = stc(ValueComponent);

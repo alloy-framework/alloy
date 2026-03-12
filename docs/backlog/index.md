@@ -145,7 +145,7 @@ docs/backlog/
 | [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | done |
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | done |
 | [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | done |
-| [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
+| [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | done |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
 | [T054](tasks/T054-lifetime-parameters.md) | Lifetime parameter support | E009 | feature | P1 | T017 | done |

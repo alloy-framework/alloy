@@ -5,7 +5,7 @@
 | **ID** | T051 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -91,15 +91,21 @@ interface ClosureExpressionProps {
 
 ## Acceptance Criteria
 
-- [ ] `<ClosureExpression parameters={[...]}>body</ClosureExpression>` renders `|params| body`
-- [ ] Multi-statement body auto-wraps in braces
-- [ ] `move` prop renders `move |params| body`
-- [ ] `returnType` prop renders `|params| -> Type { body }`
-- [ ] Parameter types render `|x: Type|`
-- [ ] STC wrapper exported
+- [x] `<ClosureExpression parameters={[...]}>body</ClosureExpression>` renders `|params| body`
+- [x] Multi-statement body auto-wraps in braces
+- [x] `move` prop renders `move |params| body`
+- [x] `returnType` prop renders `|params| -> Type { body }`
+- [x] Parameter types render `|x: Type|`
+- [x] STC wrapper exported
 
 ---
 
 ## Evidence
 
 1 closure in `samples/rust-example/store-module.tsx` — `.retain(|_, entry| { ... })` in evict_expired method. Closures are ubiquitous in idiomatic Rust iterator chains.
+
+Implemented in:
+- `packages/rust/src/components/closure-expression.tsx`
+- `packages/rust/src/components/index.ts`
+- `packages/rust/src/components/stc/index.ts`
+- `packages/rust/test/closure-expression.test.tsx`

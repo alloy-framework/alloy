@@ -1,6 +1,7 @@
 import { stc } from "@alloy-js/core";
 import { Attribute as AttributeComponent, DeriveAttribute as DeriveAttributeComponent } from "../attribute.js";
 import { CargoTomlFile as CargoTomlFileComponent } from "../cargo-toml-file.js";
+import { ClosureExpression as ClosureExpressionComponent } from "../closure-expression.js";
 import { ConstDeclaration as ConstDeclarationComponent } from "../const-declaration.js";
 import { CrateDirectory as CrateDirectoryComponent } from "../crate-directory.js";
 import { DocComment as DocCommentComponent, ModuleDocComment as ModuleDocCommentComponent } from "../doc-comment.js";
@@ -40,6 +41,7 @@ import { WhileExpression as WhileExpressionComponent } from "../while-expression
 
 export const Attribute = stc(AttributeComponent);
 export const CargoTomlFile = stc(CargoTomlFileComponent);
+export const ClosureExpression = stc(ClosureExpressionComponent);
 export const ConstDeclaration = stc(ConstDeclarationComponent);
 export const CrateDirectory = stc(CrateDirectoryComponent);
 export const DeriveAttribute = stc(DeriveAttributeComponent);

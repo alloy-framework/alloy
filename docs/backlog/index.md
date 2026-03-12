@@ -189,6 +189,7 @@ docs/backlog/
 | [T106](tasks/T106-preflight-function-call-expression-turbofish-type-args-line-wrap-rerun.md) | Preflight FunctionCallExpression turbofish type-args line-wrap failure (rerun) | E008 | bug | P0 | T050, T105 | pending |
 | [T107](tasks/T107-preflight-function-call-expression-turbofish-comma-wrap-failure.md) | Preflight FunctionCallExpression turbofish comma wrap after type arguments | E008 | bug | P0 | T050, T106 | pending |
 | [T108](tasks/T108-preflight-function-call-expression-turbofish-formatting-mismatch.md) | Preflight FunctionCallExpression turbofish formatting mismatch in test output | E008 | bug | P0 | T050, T107 | pending |
+| [T109](tasks/T109-preflight-function-call-expression-turbofish-comma-line-wrap-rerun-2.md) | Preflight FunctionCallExpression turbofish comma line-wrap regression (rerun 2) | E008 | bug | P0 | T050, T108 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -296,6 +297,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T097** | Preflight rerun: FunctionCallExpression turbofish type-arg wrap regression | P0 | Latest pre-flight run still fails before task start: expected `f::<String, u32>(...)` but actual output wraps after `String` (`f::<String,` then `u32>(...)`) in `test/function-call-expression.test.tsx`. |
 | **T100** | Preflight FunctionCallExpression turbofish wrapping in function call expression tests | P0 | Latest pre-flight run fails before task work: expected `f::<String, u32>(` but got a wrapped turbofish with newline between type args (`f::<String,` then `u32>(`) in `FunctionCallExpression` test output. |
 | **T101** | Preflight rust build+test failure: FunctionCallExpression turbofish line break regression | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` where turbofish type args render wrapped (`f::<String,` then `u32>(`) instead of one-line `f::<String, u32>(`) for call arguments. |
+| **T109** | Preflight FunctionCallExpression turbofish comma line-wrap regression (rerun 2) | P0 | Latest pre-flight run fails before task work: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` passes build but fails `test/function-call-expression.test.tsx` where turbofish type args render wrapped (`f::<String,` then `u32>(`) instead of one-line `f::<String, u32>(`) for call arguments. |
 
 ---
 

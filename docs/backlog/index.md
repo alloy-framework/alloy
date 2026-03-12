@@ -174,6 +174,7 @@ docs/backlog/
 | [T091](tasks/T091-preflight-rust-turbofish-function-call-test-failure.md) | Pre-flight rust turbofish function-call formatting test failure | E008 | bug | P0 | T050, T090 | pending |
 | [T092](tasks/T092-preflight-function-call-expression-turbofish-wrapping.md) | Pre-flight FunctionCallExpression turbofish type args formatting wraps unexpectedly | E008 | bug | P0 | T050, T091 | pending |
 | [T093](tasks/T093-preflight-function-call-expression-turbofish-type-args-wrapping-test.md) | Pre-flight FunctionCallExpression turbofish type-args wrapping in function-call test | E008 | bug | P0 | T050, T092 | pending |
+| [T094](tasks/T094-preflight-function-call-expression-turbofish-one-line-formatting-regression-recheck.md) | Pre-flight FunctionCallExpression turbofish one-line formatting regression (recheck) | E008 | bug | P0 | T050, T093 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |

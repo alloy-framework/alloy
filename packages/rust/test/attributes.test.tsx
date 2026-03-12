@@ -7,9 +7,11 @@ import {
   CrateDirectory,
   Declaration,
   DeriveAttribute,
+  InnerAttribute,
   SourceFile,
   StructDeclaration,
 } from "../src/components/index.js";
+import * as Stc from "../src/components/stc/index.js";
 
 describe("Attribute", () => {
   it("renders simple attribute", () => {
@@ -90,5 +92,21 @@ describe("DeriveAttribute", () => {
       #[derive(Debug, Clone)]
       struct Foo {}
     `);
+  });
+});
+
+describe("InnerAttribute", () => {
+  it("renders simple inner attribute", () => {
+    expect(<InnerAttribute name="allow" />).toRenderTo(d`#![allow]`);
+  });
+
+  it("renders inner attribute with args", () => {
+    expect(<InnerAttribute name="cfg" args="test" />).toRenderTo(d`#![cfg(test)]`);
+  });
+
+  it("renders stc inner attribute wrapper", () => {
+    expect(Stc.InnerAttribute({ name: "cfg", args: "feature = \"cli\"" })).toRenderTo(
+      d`#![cfg(feature = "cli")]`,
+    );
   });
 });

@@ -1,5 +1,9 @@
 import { stc } from "@alloy-js/core";
-import { Attribute as AttributeComponent, DeriveAttribute as DeriveAttributeComponent } from "../attribute.js";
+import {
+  Attribute as AttributeComponent,
+  DeriveAttribute as DeriveAttributeComponent,
+  InnerAttribute as InnerAttributeComponent,
+} from "../attribute.js";
 import { AssociatedType as AssociatedTypeComponent } from "../associated-type.js";
 import { AwaitExpression as AwaitExpressionComponent } from "../await-expression.js";
 import { CargoTomlFile as CargoTomlFileComponent } from "../cargo-toml-file.js";
@@ -52,6 +56,7 @@ import { Value as ValueComponent } from "../value.js";
 import { WhileExpression as WhileExpressionComponent } from "../while-expression.js";
 
 export const Attribute = stc(AttributeComponent);
+export const InnerAttribute = stc(InnerAttributeComponent);
 export const AssociatedType = stc(AssociatedTypeComponent);
 export const AwaitExpression = stc(AwaitExpressionComponent);
 export const CargoTomlFile = stc(CargoTomlFileComponent);

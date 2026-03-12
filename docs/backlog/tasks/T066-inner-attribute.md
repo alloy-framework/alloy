@@ -5,7 +5,7 @@
 | **ID** | T066 |
 | **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
 | **Type** | feature |
-| **Status** | open |
+| **Status** | done |
 | **Priority** | P3 — nice-to-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -59,6 +59,11 @@ interface InnerAttributeProps {
 
 ## Acceptance Criteria
 
-- [ ] Renders `#![name(args)]`
-- [ ] Works without args: `#![name]`
-- [ ] STC wrapper exported
+- [x] Renders `#![name(args)]`
+- [x] Works without args: `#![name]`
+- [x] STC wrapper exported
+
+## Completion Note
+
+- Completed on 2026-03-12.
+- Implemented `InnerAttribute` component, STC export, tests, and validation passed.

@@ -144,7 +144,7 @@ docs/backlog/
 | [T047](tasks/T047-match-expression.md) | MatchExpression + MatchArm | E008 | feature | P1 | T009 | done |
 | [T048](tasks/T048-if-expression.md) | IfExpression + ElseIfClause + ElseClause | E008 | feature | P1 | T009 | done |
 | [T049](tasks/T049-let-binding.md) | LetBinding | E008 | feature | P2 | T009 | done |
-| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | pending |
+| [T050](tasks/T050-function-call-expression.md) | FunctionCallExpression | E008 | feature | P2 | T009 | done |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -254,7 +254,6 @@ These components were identified by analyzing raw `code` template usage in `samp
 | ID | Title | Priority | Covers |
 |---|---|---|---|
 | **T049** | LetBinding | P2 | Variable declarations (2 instances) |
-| **T050** | FunctionCallExpression | P2 | Method/function calls (4 instances) |
 | **T051** | ClosureExpression | P2 | Closure expressions (1 instance) |
 
 ### Tier 3 — Nice to Have

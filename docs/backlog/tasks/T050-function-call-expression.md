@@ -5,7 +5,7 @@
 | **ID** | T050 |
 | **Epic** | [E008](../epics/E008-expression-components.md) |
 | **Type** | feature |
-| **Status** | blocked |
+| **Status** | done |
 | **Priority** | P2 — should-have |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -84,11 +84,11 @@ TypeScript: `FunctionCallExpression` at `packages/typescript/src/components/Func
 
 ## Acceptance Criteria
 
-- [ ] No-arg calls render `target()`
-- [ ] Args render `target(arg1, arg2)`
-- [ ] Turbofish renders `target::<Type>(args)`
-- [ ] Long arg lists wrap with proper indentation
-- [ ] STC wrapper exported
+- [x] No-arg calls render `target()`
+- [x] Args render `target(arg1, arg2)`
+- [x] Turbofish renders `target::<Type>(args)`
+- [x] Long arg lists wrap with proper indentation
+- [x] STC wrapper exported
 
 ---
 
@@ -96,6 +96,9 @@ TypeScript: `FunctionCallExpression` at `packages/typescript/src/components/Func
 
 4 method call instances in `samples/rust-example/store-module.tsx` — `self.data.len()`, `self.data.is_empty()`, `self.data.insert(key, entry)`, `self.data.remove(key)`.
 
-## Blocked Reason
+## Completion Notes
 
-Validation failed 3 consecutive times on `pnpm --filter @alloy-js/rust test` for a snapshot formatting mismatch in `test/function-call-expression.test.tsx` (`FunctionCallExpression` turbofish + multi-argument wrapping line breaks), so this task is marked blocked per execution policy.
+Previously blocked snapshot formatting issues are resolved. Revalidated successfully with:
+
+- `pnpm --filter @alloy-js/rust build`
+- `pnpm --filter @alloy-js/rust test`

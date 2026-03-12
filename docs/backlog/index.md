@@ -169,6 +169,7 @@ docs/backlog/
 | [T086](tasks/T086-preflight-function-call-expression-turbofish-formatting-regression.md) | Pre-flight FunctionCallExpression turbofish formatting regression | E008 | bug | P0 | T050 | pending |
 | [T087](tasks/T087-preflight-function-call-turbofish-line-wrap.md) | Pre-flight FunctionCallExpression turbofish line-wrap failure | E008 | bug | P0 | — | pending |
 | [T088](tasks/T088-preflight-function-call-expression-turbofish-one-line-blocker.md) | Pre-flight FunctionCallExpression turbofish one-line formatting blocker | E008 | bug | P0 | T050, T087 | pending |
+| [T089](tasks/T089-preflight-function-call-expression-turbofish-comma-wrap-regression.md) | Pre-flight FunctionCallExpression turbofish comma-wrap regression | E008 | bug | P0 | T050, T088 | pending |
 | [T051](tasks/T051-closure-expression.md) | ClosureExpression | E008 | feature | P2 | T009 | open |
 | [T052](tasks/T052-return-macro.md) | ReturnExpression + MacroCall | E008 | feature | P3 | T009 | open |
 | [T053](tasks/T053-update-rust-example.md) | Update rust-example with expression components | E008 | test | P2 | T039–T052 | open |
@@ -272,6 +273,7 @@ These bugs were discovered during integration testing with `samples/rust-example
 | **T086** | Pre-flight FunctionCallExpression turbofish formatting regression | P0 | Current pre-flight blocker: `test/function-call-expression.test.tsx` renders turbofish type args with a newline between `String` and `u32` instead of `f::<String, u32>(...)` |
 | **T087** | Pre-flight FunctionCallExpression turbofish line-wrap failure | P0 | Current pre-flight blocker: `FunctionCallExpression > renders turbofish type arguments with call arguments` expects `f::<String, u32>(raw, 10)` but receives a newline after the comma in turbofish generics (`f::<String,` then `u32>(raw, 10)`) |
 | **T088** | Pre-flight FunctionCallExpression turbofish one-line formatting blocker | P0 | Current pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` turbofish type arguments wrap after `String` (`f::<String,` then `u32>(...)`) instead of `f::<String, u32>(...)` |
+| **T089** | Pre-flight FunctionCallExpression turbofish comma-wrap regression | P0 | New pre-flight blocker from full validation command (`pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`): build passes, but `FunctionCallExpression` still renders `f::<String,` then `u32>(...)` instead of one-line `f::<String, u32>(...)` for turbofish type arguments with call args |
 
 ---
 

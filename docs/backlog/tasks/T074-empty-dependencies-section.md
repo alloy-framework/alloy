@@ -5,7 +5,7 @@
 | **ID** | T074 |
 | **Epic** | [E007](../epics/E007-bug-fixes.md) |
 | **Type** | bug |
-| **Status** | pending |
+| **Status** | done |
 | **Priority** | P3 — cosmetic |
 | **Owner Role** | AI coding agent |
 | **AI Executable** | Yes |
@@ -46,3 +46,9 @@ When a crate has no external dependencies, `CargoTomlFile` still renders an empt
 ## Evidence
 
 Discovered during rust-example review on 2026-03-12. Generated Cargo.toml includes `[dependencies]` with no entries.
+
+---
+
+## Completion Note
+
+2026-03-12: Completed. `CargoTomlFile` now omits empty `[dependencies]` sections, and tests were updated to verify omission when no dependencies are present.

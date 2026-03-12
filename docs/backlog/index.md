@@ -168,7 +168,7 @@ docs/backlog/
 | [T071](tasks/T071-prelude-type-shadowing.md) | Prelude type shadowing causes missing imports | E007 | bug | P1 | T022, T029 | pending |
 | [T072](tasks/T072-cargo-toml-lib-path.md) | CrateDirectory Cargo.toml missing [lib] path | E007 | bug | P1 | T030, T038 | done |
 | [T073](tasks/T073-reference-inline-line-breaks.md) | Reference inline rendering inserts unexpected line breaks | E007 | bug | P2 | T010, T022 | done |
-| [T074](tasks/T074-empty-dependencies-section.md) | Cargo.toml renders empty [dependencies] section | E007 | bug | P3 | T030, T031 | pending |
+| [T074](tasks/T074-empty-dependencies-section.md) | Cargo.toml renders empty [dependencies] section | E007 | bug | P3 | T030, T031 | done |
 
 ---
 

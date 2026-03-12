@@ -145,9 +145,39 @@ describe("CargoTomlFile", () => {
       [[bin]]
       name = "consumer_bin"
       path = "main.rs"
-
-      [dependencies]
     `.trim());
+  });
+
+  it("omits dependencies section when no dependencies are present", () => {
+    expect(
+      <Output>
+        <CargoTomlFile name="empty_dependencies" />
+      </Output>,
+    ).toRenderTo(d`
+      [package]
+      name = "empty_dependencies"
+      version = "0.1.0"
+      edition = "2021"
+
+      [lib]
+      path = "lib.rs"
+    `);
+  });
+
+  it("omits dependencies section when dependencies is an empty object", () => {
+    expect(
+      <Output>
+        <CargoTomlFile name="empty_map" dependencies={{}} />
+      </Output>,
+    ).toRenderTo(d`
+      [package]
+      name = "empty_map"
+      version = "0.1.0"
+      edition = "2021"
+
+      [lib]
+      path = "lib.rs"
+    `);
   });
 
   it("renders crate target section before dependencies", () => {

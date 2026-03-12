@@ -58,12 +58,13 @@ export function CargoTomlFile(props: CargoTomlFileProps) {
       `edition = "${props.edition ?? "2021"}"`,
       "",
       ...targetLines,
-      "",
-      "[dependencies]",
     ];
 
-    for (const [name, dependency] of sortedDependencies) {
-      lines.push(`${name} = ${renderDependency(dependency)}`);
+    if (sortedDependencies.length > 0) {
+      lines.push("", "[dependencies]");
+      for (const [name, dependency] of sortedDependencies) {
+        lines.push(`${name} = ${renderDependency(dependency)}`);
+      }
     }
 
     return lines.join("\n");

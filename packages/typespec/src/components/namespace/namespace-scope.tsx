@@ -4,6 +4,7 @@ import { NamespaceScope } from "../../scopes/namespace.js";
 import { SourceFileScope } from "../../scopes/source-file.js";
 import { NamespaceSymbol } from "../../symbols/index.js";
 
+/** @internal */
 export interface NamespaceScopeProps {
   symbol: NamespaceSymbol;
   children: Children;

@@ -1,7 +1,8 @@
 import {
-  memo,
+  computed,
   OutputScope,
   OutputSymbol,
+  Ref,
   Refkey,
   resolve,
 } from "@alloy-js/core";
@@ -12,13 +13,13 @@ import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
 import { Optional, relativePath } from "../util.js";
 import { TypeSpecSymbol } from "./typespec.js";
 
-export function ref(refkey: Refkey): () => Optional<OutputSymbol> {
+export function ref(refkey: Refkey): Ref<Optional<OutputSymbol>> {
   const scope = useSourceFileScope();
   if (!scope) {
     throw new Error("Reference used outside of a source file scope.");
   }
   const resolveResult = resolve<NamedTypeScope, TypeSpecSymbol>(refkey);
-  return memo(() => {
+  return computed(() => {
     if (resolveResult.value === undefined) {
       return undefined;
     }

@@ -8,14 +8,13 @@ export interface ReferenceProps {
 export function Reference(props: ReferenceProps) {
   const { refkey } = props;
   const symbol = ref(refkey);
-  const symbolRef = computed(() => symbol());
   const renderedRef = computed(() => {
-    const sym = symbol();
+    const sym = symbol.value;
     if (sym !== undefined) {
       return sym.name;
     }
     return unresolvedRefkey(refkey);
   });
-  emitSymbol(symbolRef);
+  emitSymbol(symbol);
   return <>{renderedRef.value}</>;
 }

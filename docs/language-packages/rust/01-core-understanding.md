@@ -21,6 +21,7 @@ Alloy is a **reactive, component-based code generation framework** written in Ty
 5. The framework prints the text tree through a Prettier-based formatter and writes the result to disk.
 
 **Key evidence:**
+
 - `packages/core/src/render.ts` — orchestrates the 4-phase pipeline (component tree → rendered text tree → document tree → file output).
 - `packages/core/src/binder.ts` — symbol resolution engine.
 - `packages/core/src/jsx-runtime.ts` — custom JSX runtime (not React).
@@ -35,10 +36,13 @@ Alloy is a **reactive, component-based code generation framework** written in Ty
 Alloy renders in **four sequential phases**:
 
 ### Phase 1 — Component Tree Building
+
 JSX templates produce a tree of `Child` nodes. A `Child` can be a string, number, boolean, function (reactive computation), `ComponentCreator`, `Ref`, `Refkey`, intrinsic element, or `CustomContext`. This phase is driven by user code.
 
 ### Phase 2 — Rendering (`renderTree`)
+
 `render.ts:renderTree()` walks the component tree. For each node:
+
 - **Strings/numbers** are added directly to a `RenderedTextTree`.
 - **Components** are called inside a reactive `effect()`, so they automatically re-render when dependencies change.
 - **Functions** (nullary) are wrapped in effects that call them and insert results.
@@ -48,9 +52,11 @@ JSX templates produce a tree of `Child` nodes. A `Child` can be a string, number
 The output is a `RenderedTextTree`: a recursive array of `(string | RenderedTextTree | PrintHook)[]`.
 
 ### Phase 3 — Output Extraction & Printing (`sourceFilesForTree` + `printTree`)
+
 The rendered tree is traversed. Context metadata on each node identifies directories (`OutputDirectory`) and files (`ContentOutputFile`, `CopyOutputFile`). For each file, `printTree()` converts the `RenderedTextTree` into a Prettier `Doc` and calls `prettier.printDocToString()` to produce a formatted string.
 
 ### Phase 4 — File System Writing (`writeOutput`)
+
 `write-output.ts:writeOutput()` uses the `AlloyHost` abstraction to write files and directories to disk.
 
 **Key files:** `packages/core/src/render.ts`, `packages/core/src/write-output.ts`, `packages/core/src/print-hook.ts`.
@@ -60,22 +66,23 @@ The rendered tree is traversed. Context metadata on each node identifies directo
 Components are plain functions `(props: TProps) => Children`. They are not classes. They receive props (which may be reactive getters) and return children.
 
 **Composition tools:**
+
 - **`stc(Component)`** (Stateful Template Component) — wraps a component with a fluent API: `stc(MyComp)({ prop: v }).code\`...\``. Enables chaining `.code()`, `.text()`, `.children()`. Defined in `packages/core/src/stc.ts`.
 - **`sti(name)`** (Stateful Template Intrinsic) — same fluent API for intrinsic elements. Defined in `packages/core/src/sti.ts`.
 - **`mergeProps()`, `splitProps()`, `defaultProps()`** — reactive-aware prop utilities in `packages/core/src/props-combinators.ts`.
-- **`code` and `text` template tags** — `code\`...\`` preserves indentation structure and newlines; `text\`...\`` collapses whitespace like JSX. Defined in `packages/core/src/code.ts`.
+- **`code` and `text` template tags** — `code\`...\``preserves indentation structure and newlines;`text\`...\``collapses whitespace like JSX. Defined in`packages/core/src/code.ts`.
 - **`mapJoin()`, `join()`** — list rendering with configurable joiners/enders. Defined in `packages/core/src/utils.tsx`.
 
 **Built-in components** (in `packages/core/src/components/`):
 
-| Category | Components |
-|---|---|
-| **Structure** | `Output`, `SourceDirectory`, `SourceFile`, `Scope`, `MemberScope` |
-| **Declarations** | `Declaration`, `MemberDeclaration` |
-| **References** | `Name`, `MemberName`, `AccessExpression`, `ReferenceOrContent` |
-| **Formatting** | `Block`, `Indent`, `StatementList`, `Prose`, `Wrap` |
-| **Files** | `TemplateFile`, `UpdateFile`, `AppendFile`, `CopyFile` |
-| **Control flow** | `Show`, `For`, `Switch`/`Match`, `List` |
+| Category         | Components                                                        |
+| ---------------- | ----------------------------------------------------------------- |
+| **Structure**    | `Output`, `SourceDirectory`, `SourceFile`, `Scope`, `MemberScope` |
+| **Declarations** | `Declaration`, `MemberDeclaration`                                |
+| **References**   | `Name`, `MemberName`, `AccessExpression`, `ReferenceOrContent`    |
+| **Formatting**   | `Block`, `Indent`, `StatementList`, `Prose`, `Wrap`               |
+| **Files**        | `TemplateFile`, `UpdateFile`, `AppendFile`, `CopyFile`            |
+| **Control flow** | `Show`, `For`, `Switch`/`Match`, `List`                           |
 
 ## 3.3 Context / Providers / Hooks
 
@@ -85,16 +92,16 @@ Alloy implements a provider-based context system modeled on Vue's composition AP
 
 **Key contexts provided by core** (defined in `packages/core/src/context/`):
 
-| Context | Set by | Purpose |
-|---|---|---|
-| `BinderContext` | `Output` | Access to the `Binder` instance |
-| `ScopeContext` | `Scope` | Current symbol scope |
-| `DeclarationContext` | `Declaration` | Current symbol being declared |
-| `MemberDeclarationContext` | `MemberDeclaration` | Current member being declared |
-| `SourceFileContext` | `SourceFile` | Current output file metadata |
-| `SourceDirectoryContext` | `SourceDirectory` | Current output directory |
-| `NamePolicyContext` | `Output` | Active naming convention policy |
-| `FormatOptions` | `Output` | Formatting rules (indent, width) |
+| Context                    | Set by              | Purpose                          |
+| -------------------------- | ------------------- | -------------------------------- |
+| `BinderContext`            | `Output`            | Access to the `Binder` instance  |
+| `ScopeContext`             | `Scope`             | Current symbol scope             |
+| `DeclarationContext`       | `Declaration`       | Current symbol being declared    |
+| `MemberDeclarationContext` | `MemberDeclaration` | Current member being declared    |
+| `SourceFileContext`        | `SourceFile`        | Current output file metadata     |
+| `SourceDirectoryContext`   | `SourceDirectory`   | Current output directory         |
+| `NamePolicyContext`        | `Output`            | Active naming convention policy  |
+| `FormatOptions`            | `Output`            | Formatting rules (indent, width) |
 
 **Taps** (`packages/core/src/tap.ts`): A mechanism for parent components to capture values from children. `createTap(tapper, handler?)` returns a component that, when rendered, calls `tapper` to capture a context value. Specialized variants: `createDeclarationTap`, `createMemberTap`, `createScopeTap`, `createSourceFileTap`.
 
@@ -121,6 +128,7 @@ File structure is declared via components:
 The `filetype` on `SourceFile` is a string identifier. Language packages use it to control file extensions and formatting behavior. The `reference` prop is a component that language packages provide to render references to symbols (e.g., generating import statements).
 
 **Output types** (from `render.ts`):
+
 - `OutputDirectory` — `{ kind: "directory", path, contents: (OutputDirectory | OutputFile)[] }`
 - `ContentOutputFile` — `{ kind: "file", path, filetype, contents: string }`
 - `CopyOutputFile` — `{ kind: "copy-file", path, sourcePath }`
@@ -130,7 +138,9 @@ The `filetype` on `SourceFile` is a string identifier. Language packages use it 
 Alloy has a comprehensive symbol system for tracking named entities and resolving cross-references.
 
 ### Symbols (`OutputSymbol`)
+
 An abstract base class (`packages/core/src/symbols/output-symbol.ts`). Key reactive properties:
+
 - `name` — display name (may be transformed by name policy)
 - `originalName` — the name as requested
 - `refkeys` — array of `Refkey` identifiers
@@ -145,7 +155,9 @@ An abstract base class (`packages/core/src/symbols/output-symbol.ts`). Key react
 Language packages subclass this. For example, `TSOutputSymbol` adds `export`, `default`, `tsFlags`. `CSharpSymbol` adds `accessibility`, `isOverride`, `isAbstract`, etc.
 
 ### Scopes (`OutputScope`)
+
 An abstract base class (`packages/core/src/symbols/output-scope.ts`). Scopes form a tree:
+
 - `parent` — parent scope (undefined for root)
 - `children` — set of child scopes
 - `ownerSymbol` — if set, this is a **member scope** that exposes the owner's members instead of its own declaration spaces
@@ -153,14 +165,18 @@ An abstract base class (`packages/core/src/symbols/output-scope.ts`). Scopes for
 Each scope subclass declares `static readonly declarationSpaces: string[]`. For example, `BasicScope` declares `["symbols"]`; TypeScript scopes declare `["values", "types"]`.
 
 ### Spaces (`OutputSpace`)
+
 Two kinds (`packages/core/src/symbols/output-space.ts`):
+
 - **`OutputDeclarationSpace`** — symbols declared within a scope.
 - **`OutputMemberSpace`** — member symbols of a particular symbol.
 
 Both are backed by `SymbolTable` (`packages/core/src/symbols/symbol-table.ts`), a reactive set with name/refkey indexing and automatic name deconfliction.
 
 ### Refkeys (`Refkey`)
+
 The identity system for symbols (`packages/core/src/refkey.ts`):
+
 - **`SymbolRefkey`** — `{ key: string }`, deterministic from arguments.
 - **`Namekey`** — a SymbolRefkey with a `name` property and optional naming flags.
 - **`MemberRefkey`** — `{ base: Refkey, member: Refkey | string }`, for nested member access.
@@ -171,9 +187,11 @@ The identity system for symbols (`packages/core/src/refkey.ts`):
 ## 3.6 Scope and Name Resolution Model
 
 ### Binder (`packages/core/src/binder.ts`)
+
 The `Binder` is the central resolution engine. Created by `createOutputBinder(options)` and provided via `BinderContext`.
 
 **Resolution:** `resolveDeclarationByKey(currentScope, refkey, options?)` returns a reactive `Ref<ResolutionResult>` containing:
+
 - `symbol` — the resolved symbol
 - `lexicalDeclaration` — the top-level symbol (if resolved through member path)
 - `memberPath` — symbols traversed from lexical declaration to target
@@ -185,6 +203,7 @@ The `Binder` is the central resolution engine. Created by `createOutputBinder(op
 This information tells language packages how to generate qualified references, whether imports are needed, etc.
 
 **Symbol lifecycle managed by binder:**
+
 1. `notifySymbolCreated(symbol)` — registers symbol by refkeys, notifies waiters.
 2. `notifySymbolDeleted(symbol)` — unregisters symbol.
 3. Waiting refs: if a symbol is referenced before it's declared, the binder creates a `shallowRef` that resolves later.
@@ -194,29 +213,30 @@ This information tells language packages how to generate qualified references, w
 **Member resolution:** An optional `MemberResolver` callback receives `(owner, member, context)` and can implement language-specific visibility/access rules.
 
 ### Name Policies (`packages/core/src/name-policy.ts`)
+
 `createNamePolicy<T>(namer)` creates a policy that transforms symbol names based on element type. The `namer` function receives `(name: string, element: T) => string`. Policies are provided via `NamePolicyContext` and applied when symbols are created.
 
 ## 3.7 Formatting / Printing Model
 
 Alloy uses **Prettier's document IR** for output formatting. Intrinsic JSX elements map to Prettier builders:
 
-| Intrinsic Element | Prettier Builder | Purpose |
-|---|---|---|
-| `<group>` | `group()` | Try single line; break if too wide |
-| `<indent>` | `indent()` | Increase indent level |
-| `<dedent>` | `dedent()` | Decrease indent level |
-| `<line>` / `<br>` | `line` | Space if fits, newline if broken |
-| `<hardline>` / `<hbr>` | `hardline` | Always newline |
-| `<softline>` / `<sbr>` | `softline` | Newline only if group breaks |
-| `<literalline>` / `<lbr>` | `literalline` | Always newline, ignore indent |
-| `<fill>` | `fill()` | Paragraph-like wrapping |
-| `<ifBreak>` | `ifBreak()` | Conditional on group break state |
-| `<indentIfBreak>` | `indentIfBreak()` | Conditional indent |
-| `<lineSuffix>` | `lineSuffix()` | Append to end of line |
-| `<breakParent>` | `breakParent` | Force parent group to break |
-| `<align>` | `align()` | Align to column |
-| `<markAsRoot>` | `markAsRoot()` | Set indent root |
-| `<dedentToRoot>` | `dedentToRoot()` | Dedent to root level |
+| Intrinsic Element         | Prettier Builder  | Purpose                            |
+| ------------------------- | ----------------- | ---------------------------------- |
+| `<group>`                 | `group()`         | Try single line; break if too wide |
+| `<indent>`                | `indent()`        | Increase indent level              |
+| `<dedent>`                | `dedent()`        | Decrease indent level              |
+| `<line>` / `<br>`         | `line`            | Space if fits, newline if broken   |
+| `<hardline>` / `<hbr>`    | `hardline`        | Always newline                     |
+| `<softline>` / `<sbr>`    | `softline`        | Newline only if group breaks       |
+| `<literalline>` / `<lbr>` | `literalline`     | Always newline, ignore indent      |
+| `<fill>`                  | `fill()`          | Paragraph-like wrapping            |
+| `<ifBreak>`               | `ifBreak()`       | Conditional on group break state   |
+| `<indentIfBreak>`         | `indentIfBreak()` | Conditional indent                 |
+| `<lineSuffix>`            | `lineSuffix()`    | Append to end of line              |
+| `<breakParent>`           | `breakParent`     | Force parent group to break        |
+| `<align>`                 | `align()`         | Align to column                    |
+| `<markAsRoot>`            | `markAsRoot()`    | Set indent root                    |
+| `<dedentToRoot>`          | `dedentToRoot()`  | Dedent to root level               |
 
 The `code` template tag automatically converts indentation into nested `<indent>` structures and newlines into `<hbr>` elements.
 
@@ -307,7 +327,7 @@ Language packages extend core by:
 
 ## 4.9 `code` and `text` Template Tags
 
-**What it means:** `code\`...\`` is a template tag that preserves indentation and newlines, converting them to `<indent>` and `<hbr>` structures. `text\`...\`` collapses whitespace like JSX.
+**What it means:** `code\`...\``is a template tag that preserves indentation and newlines, converting them to`<indent>`and`<hbr>`structures.`text\`...\`` collapses whitespace like JSX.
 
 **Why it matters:** The `code` tag is the primary way to emit formatted code from within components.
 
@@ -436,6 +456,7 @@ These are directly exercised by all existing language packages:
 These patterns are consistent across packages but not formally documented as extension contracts:
 
 1. **Source directory layout** — A typical language package organizes as:
+
    ```
    src/
    ├── symbols/           # OutputSymbol subclass + factories
@@ -468,96 +489,96 @@ These patterns are consistent across packages but not formally documented as ext
 
 ### Rendering Pipeline
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `render.ts` | Main render orchestrator | `render()`, `renderAsync()`, `renderTree()`, `sourceFilesForTree()`, `printTree()`, `OutputDirectory`, `OutputFile`, `ContentOutputFile`, `CopyOutputFile` | Core pipeline; language packages don't call directly but depend on its behavior |
-| `write-output.ts` | File system writing | `writeOutput()` | Output phase |
-| `print-hook.ts` | Print hook protocol | `PrintHook`, `isPrintHook()`, `RenderedTextTree` | Formatting bridge |
-| `code.ts` | Template tags | `code`, `text` | Primary way to emit formatted code |
-| `jsx-runtime.ts` | JSX runtime | `jsx`, `jsxs` | JSX compilation target |
+| Path              | Purpose                  | Key Exports                                                                                                                                                | Relevance                                                                       |
+| ----------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `render.ts`       | Main render orchestrator | `render()`, `renderAsync()`, `renderTree()`, `sourceFilesForTree()`, `printTree()`, `OutputDirectory`, `OutputFile`, `ContentOutputFile`, `CopyOutputFile` | Core pipeline; language packages don't call directly but depend on its behavior |
+| `write-output.ts` | File system writing      | `writeOutput()`                                                                                                                                            | Output phase                                                                    |
+| `print-hook.ts`   | Print hook protocol      | `PrintHook`, `isPrintHook()`, `RenderedTextTree`                                                                                                           | Formatting bridge                                                               |
+| `code.ts`         | Template tags            | `code`, `text`                                                                                                                                             | Primary way to emit formatted code                                              |
+| `jsx-runtime.ts`  | JSX runtime              | `jsx`, `jsxs`                                                                                                                                              | JSX compilation target                                                          |
 
 ### Symbol System
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `symbols/output-symbol.ts` | Base symbol class | `OutputSymbol`, `OutputSymbolOptions` | **Must subclass** for any language |
-| `symbols/output-scope.ts` | Base scope class | `OutputScope`, `OutputScopeOptions` | **Must subclass** for any language |
-| `symbols/output-space.ts` | Space types | `OutputDeclarationSpace`, `OutputMemberSpace`, `OutputSpace` | Containers for symbols |
-| `symbols/symbol-table.ts` | Reactive symbol set | `SymbolTable` | Name/refkey indexing, deconfliction |
-| `symbols/basic-symbol.ts` | Simple symbol | `BasicSymbol` | Reference implementation; `memberSpaces = ["static", "instance"]` |
-| `symbols/basic-scope.ts` | Simple scope | `BasicScope` | Reference implementation; `declarationSpaces = ["symbols"]` |
-| `symbols/symbol-flow.ts` | Symbol emission | `takeSymbols()`, `emitSymbol()`, `moveTakenMembersTo()`, `instantiateTakenMembersTo()` | Symbol collection across component boundaries |
-| `symbols/symbol-slot.tsx` | Symbol collection component | `SymbolSlot`, `createSymbolSlot()` | Collecting emitted symbols |
-| `symbols/decl.ts` | Declaration helper | `decl(namekey)` | Quick symbol declaration for BasicScope |
-| `binder.ts` | Resolution engine | `createOutputBinder()`, `createScope()`, `createSymbol()`, `Binder`, `ResolutionResult`, `MemberResolver` | **Central API** for symbol management |
-| `refkey.ts` | Identity system | `refkey()`, `namekey()`, `memberRefkey()`, `Refkey`, `SymbolRefkey`, `Namekey`, `MemberRefkey` | **Must use** for symbol identity |
-| `name-policy.ts` | Naming conventions | `createNamePolicy()`, `NamePolicy`, `NamePolicyGetter` | **Must implement** for any language |
-| `library-symbol-reference.ts` | External symbol bridge | `LibrarySymbolReference`, `TO_SYMBOL` | For library/builtin type references |
+| Path                          | Purpose                     | Key Exports                                                                                               | Relevance                                                         |
+| ----------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `symbols/output-symbol.ts`    | Base symbol class           | `OutputSymbol`, `OutputSymbolOptions`                                                                     | **Must subclass** for any language                                |
+| `symbols/output-scope.ts`     | Base scope class            | `OutputScope`, `OutputScopeOptions`                                                                       | **Must subclass** for any language                                |
+| `symbols/output-space.ts`     | Space types                 | `OutputDeclarationSpace`, `OutputMemberSpace`, `OutputSpace`                                              | Containers for symbols                                            |
+| `symbols/symbol-table.ts`     | Reactive symbol set         | `SymbolTable`                                                                                             | Name/refkey indexing, deconfliction                               |
+| `symbols/basic-symbol.ts`     | Simple symbol               | `BasicSymbol`                                                                                             | Reference implementation; `memberSpaces = ["static", "instance"]` |
+| `symbols/basic-scope.ts`      | Simple scope                | `BasicScope`                                                                                              | Reference implementation; `declarationSpaces = ["symbols"]`       |
+| `symbols/symbol-flow.ts`      | Symbol emission             | `takeSymbols()`, `emitSymbol()`, `moveTakenMembersTo()`, `instantiateTakenMembersTo()`                    | Symbol collection across component boundaries                     |
+| `symbols/symbol-slot.tsx`     | Symbol collection component | `SymbolSlot`, `createSymbolSlot()`                                                                        | Collecting emitted symbols                                        |
+| `symbols/decl.ts`             | Declaration helper          | `decl(namekey)`                                                                                           | Quick symbol declaration for BasicScope                           |
+| `binder.ts`                   | Resolution engine           | `createOutputBinder()`, `createScope()`, `createSymbol()`, `Binder`, `ResolutionResult`, `MemberResolver` | **Central API** for symbol management                             |
+| `refkey.ts`                   | Identity system             | `refkey()`, `namekey()`, `memberRefkey()`, `Refkey`, `SymbolRefkey`, `Namekey`, `MemberRefkey`            | **Must use** for symbol identity                                  |
+| `name-policy.ts`              | Naming conventions          | `createNamePolicy()`, `NamePolicy`, `NamePolicyGetter`                                                    | **Must implement** for any language                               |
+| `library-symbol-reference.ts` | External symbol bridge      | `LibrarySymbolReference`, `TO_SYMBOL`                                                                     | For library/builtin type references                               |
 
 ### Component Infrastructure
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `components/Output.tsx` | Root component | `Output` | Entry point; sets up binder, name policy, format options |
-| `components/SourceFile.tsx` | File component | `SourceFile` | Must set `reference` prop to language-specific reference component |
-| `components/SourceDirectory.tsx` | Directory component | `SourceDirectory` | File structure |
-| `components/Declaration.tsx` | Symbol declaration | `Declaration` | Declares a symbol in current scope |
-| `components/MemberDeclaration.tsx` | Member declaration | `MemberDeclaration` | Declares a member on current symbol |
-| `components/Scope.tsx` | Scope creation | `Scope` | Creates a new scope level |
-| `components/MemberScope.tsx` | Member scope | `MemberScope` | Creates a member scope for a symbol |
-| `components/Block.tsx` | Code block | `Block` | `{ ... }` with indentation |
-| `components/Indent.tsx` | Indentation | `Indent` | Indent children |
-| `components/List.tsx` | List rendering | `List` | Maps arrays to joined output |
-| `components/For.tsx` | Iteration | `For` | Collection iteration |
-| `components/Show.tsx` | Conditional | `Show` | If/else rendering |
-| `components/Name.tsx` | Symbol name | `Name` | Renders resolved symbol name |
-| `components/AccessExpression.tsx` | Member access | `AccessExpression` | `obj.member` expressions |
+| Path                               | Purpose             | Key Exports         | Relevance                                                          |
+| ---------------------------------- | ------------------- | ------------------- | ------------------------------------------------------------------ |
+| `components/Output.tsx`            | Root component      | `Output`            | Entry point; sets up binder, name policy, format options           |
+| `components/SourceFile.tsx`        | File component      | `SourceFile`        | Must set `reference` prop to language-specific reference component |
+| `components/SourceDirectory.tsx`   | Directory component | `SourceDirectory`   | File structure                                                     |
+| `components/Declaration.tsx`       | Symbol declaration  | `Declaration`       | Declares a symbol in current scope                                 |
+| `components/MemberDeclaration.tsx` | Member declaration  | `MemberDeclaration` | Declares a member on current symbol                                |
+| `components/Scope.tsx`             | Scope creation      | `Scope`             | Creates a new scope level                                          |
+| `components/MemberScope.tsx`       | Member scope        | `MemberScope`       | Creates a member scope for a symbol                                |
+| `components/Block.tsx`             | Code block          | `Block`             | `{ ... }` with indentation                                         |
+| `components/Indent.tsx`            | Indentation         | `Indent`            | Indent children                                                    |
+| `components/List.tsx`              | List rendering      | `List`              | Maps arrays to joined output                                       |
+| `components/For.tsx`               | Iteration           | `For`               | Collection iteration                                               |
+| `components/Show.tsx`              | Conditional         | `Show`              | If/else rendering                                                  |
+| `components/Name.tsx`              | Symbol name         | `Name`              | Renders resolved symbol name                                       |
+| `components/AccessExpression.tsx`  | Member access       | `AccessExpression`  | `obj.member` expressions                                           |
 
 ### Context System
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `context.ts` | Context primitives | `createContext()`, `useContext()`, `ComponentContext` | **Must use** for language-specific state |
-| `context/binder.ts` | Binder context | `BinderContext`, `useBinder()` | Access current binder |
-| `context/scope.ts` | Scope context | `ScopeContext`, `useScope()` | Access current scope |
-| `context/declaration.ts` | Declaration context | `DeclarationContext`, `useDeclaration()` | Access current declaration |
-| `context/source-file.ts` | Source file context | `SourceFileContext`, `useSourceFile()` | Access current file metadata |
-| `context/format-options.ts` | Format options | `FormatOptionsContext` | Formatting configuration |
-| `context/name-policy.ts` | Name policy context | `NamePolicyContext`, `useNamePolicy()` | Access current name policy |
+| Path                        | Purpose             | Key Exports                                           | Relevance                                |
+| --------------------------- | ------------------- | ----------------------------------------------------- | ---------------------------------------- |
+| `context.ts`                | Context primitives  | `createContext()`, `useContext()`, `ComponentContext` | **Must use** for language-specific state |
+| `context/binder.ts`         | Binder context      | `BinderContext`, `useBinder()`                        | Access current binder                    |
+| `context/scope.ts`          | Scope context       | `ScopeContext`, `useScope()`                          | Access current scope                     |
+| `context/declaration.ts`    | Declaration context | `DeclarationContext`, `useDeclaration()`              | Access current declaration               |
+| `context/source-file.ts`    | Source file context | `SourceFileContext`, `useSourceFile()`                | Access current file metadata             |
+| `context/format-options.ts` | Format options      | `FormatOptionsContext`                                | Formatting configuration                 |
+| `context/name-policy.ts`    | Name policy context | `NamePolicyContext`, `useNamePolicy()`                | Access current name policy               |
 
 ### Composition & Utilities
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `stc.ts` | Component wrapper | `stc()` | Fluent API for component composition |
-| `sti.ts` | Intrinsic wrapper | `sti()` | Fluent API for intrinsic composition |
-| `props-combinators.ts` | Prop utilities | `mergeProps()`, `splitProps()`, `defaultProps()` | Reactive prop handling |
-| `utils.tsx` | Common utilities | `mapJoin()`, `join()`, `children()`, `childrenArray()`, `traverseOutput()` | List rendering, output traversal |
-| `content-slot.tsx` | Content tracking | `createContentSlot()` | Conditional rendering based on content |
-| `tap.ts` | Context tapping | `createTap()`, `createDeclarationTap()`, etc. | Parent captures child context values |
-| `resource.ts` | Async resources | `createResource()`, `createFileResource()` | Async data fetching |
-| `reactive-union-set.ts` | Reactive set | `ReactiveUnionSet` | Aggregating symbols from multiple sources |
+| Path                    | Purpose           | Key Exports                                                                | Relevance                                 |
+| ----------------------- | ----------------- | -------------------------------------------------------------------------- | ----------------------------------------- |
+| `stc.ts`                | Component wrapper | `stc()`                                                                    | Fluent API for component composition      |
+| `sti.ts`                | Intrinsic wrapper | `sti()`                                                                    | Fluent API for intrinsic composition      |
+| `props-combinators.ts`  | Prop utilities    | `mergeProps()`, `splitProps()`, `defaultProps()`                           | Reactive prop handling                    |
+| `utils.tsx`             | Common utilities  | `mapJoin()`, `join()`, `children()`, `childrenArray()`, `traverseOutput()` | List rendering, output traversal          |
+| `content-slot.tsx`      | Content tracking  | `createContentSlot()`                                                      | Conditional rendering based on content    |
+| `tap.ts`                | Context tapping   | `createTap()`, `createDeclarationTap()`, etc.                              | Parent captures child context values      |
+| `resource.ts`           | Async resources   | `createResource()`, `createFileResource()`                                 | Async data fetching                       |
+| `reactive-union-set.ts` | Reactive set      | `ReactiveUnionSet`                                                         | Aggregating symbols from multiple sources |
 
 ### Runtime & Infrastructure
 
-| Path | Purpose | Key Exports | Relevance |
-|---|---|---|---|
-| `runtime/component.ts` | Component types | `Component`, `ComponentCreator`, `Child`, `Children`, `Props` | Type definitions for component system |
-| `runtime/intrinsic.ts` | Formatting elements | Intrinsic element definitions | Prettier-mapped formatting primitives |
-| `reactivity.ts` | Reactivity wrappers | `ref()`, `shallowRef()`, `computed()`, `effect()`, `memo()`, `watch()`, `untrack()`, `onCleanup()` | Vue reactivity with Alloy extensions |
-| `scheduler.ts` | Job scheduler | `queueJob()`, `flushJobs()`, `flushJobsAsync()`, `scheduler()` | Batched reactive updates |
-| `diagnostics.ts` | Diagnostic system | `DiagnosticsCollector`, `emitDiagnostic()`, `reportDiagnostics()` | Structured error/warning reporting |
-| `render-stack.ts` | Component stack tracking | `pushStack()`, `popStack()`, `printRenderStack()` | Error diagnostics with component context |
-| `host/alloy-host.ts` | File system abstraction | `AlloyHost`, `AlloyFileInterface` | Environment-portable I/O |
+| Path                   | Purpose                  | Key Exports                                                                                        | Relevance                                |
+| ---------------------- | ------------------------ | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `runtime/component.ts` | Component types          | `Component`, `ComponentCreator`, `Child`, `Children`, `Props`                                      | Type definitions for component system    |
+| `runtime/intrinsic.ts` | Formatting elements      | Intrinsic element definitions                                                                      | Prettier-mapped formatting primitives    |
+| `reactivity.ts`        | Reactivity wrappers      | `ref()`, `shallowRef()`, `computed()`, `effect()`, `memo()`, `watch()`, `untrack()`, `onCleanup()` | Vue reactivity with Alloy extensions     |
+| `scheduler.ts`         | Job scheduler            | `queueJob()`, `flushJobs()`, `flushJobsAsync()`, `scheduler()`                                     | Batched reactive updates                 |
+| `diagnostics.ts`       | Diagnostic system        | `DiagnosticsCollector`, `emitDiagnostic()`, `reportDiagnostics()`                                  | Structured error/warning reporting       |
+| `render-stack.ts`      | Component stack tracking | `pushStack()`, `popStack()`, `printRenderStack()`                                                  | Error diagnostics with component context |
+| `host/alloy-host.ts`   | File system abstraction  | `AlloyHost`, `AlloyFileInterface`                                                                  | Environment-portable I/O                 |
 
 ## 6.2 Testing (`packages/core/testing/`)
 
-| Path | Purpose | Key Exports |
-|---|---|---|
-| `index.ts` | Testing barrel | Re-exports all testing utilities |
-| `extend-expect.ts` | Vitest matchers | `toRenderTo()`, `toRenderToAsync()`, `toHaveDiagnostics()`, `toHaveDiagnosticsAsync()` |
-| `render.ts` | Test rendering | `renderToString()`, `d` (dedent template tag), `dedent()`, `printTree()` |
-| `create-test-wrapper.tsx` | Test wrapper factory | `createTestWrapper()` |
+| Path                      | Purpose              | Key Exports                                                                            |
+| ------------------------- | -------------------- | -------------------------------------------------------------------------------------- |
+| `index.ts`                | Testing barrel       | Re-exports all testing utilities                                                       |
+| `extend-expect.ts`        | Vitest matchers      | `toRenderTo()`, `toRenderToAsync()`, `toHaveDiagnostics()`, `toHaveDiagnosticsAsync()` |
+| `render.ts`               | Test rendering       | `renderToString()`, `d` (dedent template tag), `dedent()`, `printTree()`               |
+| `create-test-wrapper.tsx` | Test wrapper factory | `createTestWrapper()`                                                                  |
 
 ---
 
@@ -622,6 +643,7 @@ Alloy uses **Vitest** for all testing. Tests are `.test.tsx` files using JSX.
 ## 8.2 Custom Vitest Matchers
 
 Core provides custom matchers in `packages/core/testing/extend-expect.ts`:
+
 - **`toRenderTo(expected)`** — renders JSX and compares to expected string (single file) or `Record<string, string>` (multi-file).
 - **`toRenderToAsync(expected)`** — async variant.
 - **`toHaveDiagnostics(expected)`** — validates emitted diagnostics.
@@ -640,6 +662,7 @@ These are enabled by importing `"@alloy-js/core/testing"` in test files.
 ## 8.4 Testing Patterns
 
 **Pattern 1: Simple rendering assertion**
+
 ```tsx
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
@@ -650,6 +673,7 @@ it("renders", () => {
 ```
 
 **Pattern 2: Multi-file with symbol references**
+
 ```tsx
 const key = refkey();
 expect(
@@ -660,11 +684,12 @@ expect(
     <SourceFile path="b.ts" filetype="typescript">
       <Reference refkey={key} />
     </SourceFile>
-  </Output>
+  </Output>,
 ).toRenderTo({ "a.ts": "...", "b.ts": "..." });
 ```
 
 **Pattern 3: Symbol/scope unit tests**
+
 ```tsx
 const scope = createScope(BasicScope, "test", undefined, { binder });
 const symbol = createSymbol(BasicSymbol, "sym", undefined, { binder });
@@ -673,6 +698,7 @@ expect(scope.symbols.symbolNames.has("sym")).toBe(true);
 ```
 
 **Pattern 4: Language package test utility**
+
 ```tsx
 // In test/utils.tsx
 export function toSourceText(children, options?, path?) {

@@ -5,11 +5,11 @@ import {
   SourceFile,
   createRustNamePolicy,
 } from "@alloy-js/rust";
-import { stdCrate } from "./externals.js";
-import { ErrorModule } from "./components/error-module.js";
-import { TraitsModule } from "./components/traits-module.js";
-import { StoreModule } from "./components/store-module.js";
 import { ConfigFile } from "./components/config-file.js";
+import { ErrorModule } from "./components/error-module.js";
+import { StoreModule } from "./components/store-module.js";
+import { TraitsModule } from "./components/traits-module.js";
+import { stdCrate } from "./externals.js";
 
 const output = render(
   <Output namePolicy={createRustNamePolicy()} externals={[stdCrate]}>
@@ -37,4 +37,4 @@ const output = render(
   </Output>,
 );
 
-await writeOutput(output, "./alloy-output");
+await writeOutput(output, "./output");

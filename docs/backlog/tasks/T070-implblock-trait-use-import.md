@@ -1,17 +1,17 @@
 # T070 — ImplBlock Trait Name Missing Use Import
 
-| Field | Value |
-|-------|-------|
-| **ID** | T070 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P0 — critical |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T020 (ImplBlock), T022 (Reference resolution) |
-| **Blocks** | — |
+| Field                     | Value                                         |
+| ------------------------- | --------------------------------------------- |
+| **ID**                    | T070                                          |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)            |
+| **Type**                  | bug                                           |
+| **Status**                | done                                          |
+| **Priority**              | P0 — critical                                 |
+| **Owner Role**            | AI coding agent                               |
+| **AI Executable**         | Yes                                           |
+| **Human Review Required** | Yes                                           |
+| **Dependencies**          | T020 (ImplBlock), T022 (Reference resolution) |
+| **Blocks**                | —                                             |
 
 ---
 

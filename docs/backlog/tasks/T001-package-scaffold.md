@@ -1,25 +1,28 @@
 # T001: Package Scaffold
 
-| Field | Value |
-|-------|-------|
-| **ID** | T001 |
-| **Epic** | [E001: Package Foundation](../epics/E001-package-foundation.md) |
-| **Type** | foundation |
-| **Status** | done |
-| **Priority** | P0 — critical path |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes (initial package setup) |
-| **Dependencies** | None |
-| **Blocks** | T002, all subsequent tasks |
+| Field                     | Value                                                           |
+| ------------------------- | --------------------------------------------------------------- |
+| **ID**                    | T001                                                            |
+| **Epic**                  | [E001: Package Foundation](../epics/E001-package-foundation.md) |
+| **Type**                  | foundation                                                      |
+| **Status**                | done                                                            |
+| **Priority**              | P0 — critical path                                              |
+| **Owner Role**            | AI coding agent                                                 |
+| **AI Executable**         | Yes                                                             |
+| **Human Review Required** | Yes (initial package setup)                                     |
+| **Dependencies**          | None                                                            |
+| **Blocks**                | T002, all subsequent tasks                                      |
 
 ## Description
+
 Create the `@alloy-js/rust` package directory structure with build configuration files.
 
 ## Goal
+
 Establish the package scaffold so that subsequent tasks can add source files and tests.
 
 ## Scope Included
+
 - Create `packages/rust/` directory.
 - Create `packages/rust/package.json` with:
   - `name: "@alloy-js/rust"`
@@ -38,10 +41,12 @@ Establish the package scaffold so that subsequent tasks can add source files and
 - Include `generate-docs` script: `"generate-docs": "api-extractor run"`.
 
 ## Out of Scope
+
 - Test utilities (T002).
 - Any source code beyond the empty barrel export.
 
 ## Context Files to Read First
+
 - `packages/go/package.json` — reference for package.json structure.
 - `packages/go/tsconfig.json` — reference for tsconfig.
 - `packages/go/vitest.config.ts` — reference for vitest config.
@@ -52,6 +57,7 @@ Establish the package scaffold so that subsequent tasks can add source files and
 - `api-extractor.base.json` — base api-extractor config.
 
 ## Implementation Guidance
+
 1. Copy `packages/go/package.json` as starting point. Change name to `@alloy-js/rust`, update description.
 2. Copy `packages/go/tsconfig.json`. Adjust references if needed.
 3. Copy `packages/go/vitest.config.ts`.
@@ -60,6 +66,7 @@ Establish the package scaffold so that subsequent tasks can add source files and
 6. Run `pnpm install` to link the new package.
 
 ## Acceptance Criteria
+
 - `packages/rust/package.json` exists with correct name and dependencies.
 - `packages/rust/tsconfig.json` exists and extends base config.
 - `packages/rust/vitest.config.ts` exists.
@@ -68,12 +75,15 @@ Establish the package scaffold so that subsequent tasks can add source files and
 - `pnpm --filter @alloy-js/rust build` succeeds (empty build).
 
 ## Definition of Done
+
 Package scaffold exists and builds without errors.
 
 ## Validation Approach
+
 ```bash
 cd packages/rust && pnpm build && pnpm test
 ```
 
 ## Risks / Notes
+
 - Check that the exports field in package.json matches the pattern used by other packages (especially the `"source"`, `"development"`, and `"import"` conditions).

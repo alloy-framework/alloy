@@ -6,14 +6,18 @@ export interface MacroCallProps {
   bracket?: "paren" | "bracket" | "brace";
 }
 
-const macroCallBrackets: Record<NonNullable<MacroCallProps["bracket"]>, [string, string]> = {
+const macroCallBrackets: Record<
+  NonNullable<MacroCallProps["bracket"]>,
+  [string, string]
+> = {
   paren: ["(", ")"],
   bracket: ["[", "]"],
   brace: ["{", "}"],
 };
 
 export function MacroCall(props: MacroCallProps) {
-  const [openBracket, closeBracket] = macroCallBrackets[props.bracket ?? "paren"];
+  const [openBracket, closeBracket] =
+    macroCallBrackets[props.bracket ?? "paren"];
 
   return (
     <group>

@@ -178,9 +178,7 @@ describe("Golden scenarios", () => {
         <CrateDirectory name="shapes">
           <SourceFile path="lib.rs">
             <EnumDeclaration name="Shape" pub>
-              <EnumVariant name="Circle">
-                {"radius: f64,"}
-              </EnumVariant>
+              <EnumVariant name="Circle">{"radius: f64,"}</EnumVariant>
               <EnumVariant name="Rectangle">
                 {"width: f64,"}
                 {"height: f64,"}

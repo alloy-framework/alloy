@@ -1,12 +1,15 @@
 # E006: External Dependencies, Build File, and Polish
 
 ## Summary
+
 Implement external crate descriptors, `Cargo.toml` generation, `std` builtins, STC wrappers, and final integration tests.
 
 ## Why This Epic Exists
+
 External crate support and build file generation are essential for real-world use. Polish ensures the package is production-ready and consistent with other Alloy language packages.
 
 ## Goals
+
 - Implement `createCrate()` factory for external crate descriptors.
 - Implement `std` builtin crate descriptor.
 - Implement `CargoTomlFile` component.
@@ -16,6 +19,7 @@ External crate support and build file generation are essential for real-world us
 - Pass all golden scenario tests.
 
 ## In Scope
+
 - `createCrate()` factory with descriptor pattern.
 - `std` builtins (Option, Result, Vec, String, HashMap, fmt::Display, etc.).
 - `CargoTomlFile` with [package] and [dependencies] sections.
@@ -25,23 +29,28 @@ External crate support and build file generation are essential for real-world us
 - Edge case tests (empty structs, empty enums, etc.).
 
 ## Out of Scope
+
 - Cargo workspace support.
 - Feature flags in Cargo.toml.
 - Dev dependencies section.
 
 ## Dependencies
+
 - E001–E005 (all prior epics).
 
 ## What It Enables
+
 - Complete MVP delivery.
 - Real-world usage for code generation targeting Rust.
 
 ## Risks / Notes
+
 - `createCrate()` must follow the SymbolCreator protocol used by existing packages. Study `packages/go/src/create-module.ts` and `packages/csharp/src/create-library.ts`.
 - TOML formatting is string-based (no TOML library needed for simple cases).
 - Prelude handling: std prelude types should not generate `use` statements.
 
 ## Task List
+
 - [T028: createCrate() factory](../tasks/T028-create-crate.md)
 - [T029: std builtin descriptors](../tasks/T029-std-builtins.md)
 - [T030: CargoTomlFile component](../tasks/T030-cargo-toml.md)
@@ -52,9 +61,11 @@ External crate support and build file generation are essential for real-world us
 - [T035: Edge case tests](../tasks/T035-edge-cases.md)
 
 ## Sequencing Notes
+
 T028 → T029 → T031 (dependency chain). T030 depends on T031. T032–T035 can be done in parallel after T028–T031.
 
 ## Completion Criteria
+
 - `cargo-toml.test.tsx` passes.
 - External crate references generate `use` + `Cargo.toml` dependency.
 - All golden scenarios from PRD section 7 pass.

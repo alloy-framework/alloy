@@ -1,17 +1,17 @@
 # T037 — Complete STC Wrappers
 
-| Field | Value |
-|-------|-------|
-| **ID** | T037 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T032 (initial STC wrappers) |
-| **Blocks** | — |
+| Field                     | Value                                               |
+| ------------------------- | --------------------------------------------------- |
+| **ID**                    | T037                                                |
+| **Epic**                  | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Type**                  | feature                                             |
+| **Status**                | done                                                |
+| **Priority**              | P2                                                  |
+| **Owner Role**            | AI coding agent                                     |
+| **AI Executable**         | Yes                                                 |
+| **Human Review Required** | No                                                  |
+| **Dependencies**          | T032 (initial STC wrappers)                         |
+| **Blocks**                | —                                                   |
 
 ---
 
@@ -46,6 +46,7 @@ Add STC wrappers for:
 ## Out of Scope
 
 Internal/auto-rendered components that users don't construct directly:
+
 - `UseStatement` / `UseStatements` (auto-rendered by SourceFile)
 - `ModDeclarations` (auto-rendered by SourceFile)
 - `Declaration` (internal wrapper, not user-facing)
@@ -54,12 +55,12 @@ Internal/auto-rendered components that users don't construct directly:
 
 ## Context Files
 
-| File | Relevance |
-|------|-----------|
-| `packages/rust/src/components/stc/index.ts` | Add new wrappers here |
-| `packages/go/src/components/stc/index.ts` | Reference pattern (28 wrappers) |
-| `packages/rust/src/components/index.ts` | Component exports to wrap |
-| `packages/rust/test/stc.test.tsx` | Update tests |
+| File                                        | Relevance                       |
+| ------------------------------------------- | ------------------------------- |
+| `packages/rust/src/components/stc/index.ts` | Add new wrappers here           |
+| `packages/go/src/components/stc/index.ts`   | Reference pattern (28 wrappers) |
+| `packages/rust/src/components/index.ts`     | Component exports to wrap       |
+| `packages/rust/test/stc.test.tsx`           | Update tests                    |
 
 ---
 

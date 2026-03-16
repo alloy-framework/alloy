@@ -1,12 +1,15 @@
 # E007: Bug Fixes and Rendering Corrections
 
 ## Summary
+
 Fix bugs and rendering issues discovered during integration testing with `samples/rust-example/`. These are defects in existing components that produce incorrect Rust output.
 
 ## Why This Epic Exists
+
 The initial MVP implementation (E001–E006) produced working components, but integration testing revealed rendering defects that produce invalid Rust code. These must be fixed before adding new features.
 
 ## Goals
+
 - Fix Reference component to work in all scope positions (fields, parameters, return types).
 - Fix missing newlines between sibling items (enum variants, struct fields, doc comments).
 - Fix trait abstract method rendering (`;` instead of `{}`).
@@ -16,6 +19,7 @@ The initial MVP implementation (E001–E006) produced working components, but in
 - Fix ModDeclarations reactivity for JSX ordering independence.
 
 ## In Scope
+
 - T039: Reference scope traversal
 - T040: Missing newlines between sibling items
 - T041: Trait abstract method signatures
@@ -31,23 +35,28 @@ The initial MVP implementation (E001–E006) produced working components, but in
 - T074: Cargo.toml renders empty [dependencies] section
 
 ## Out of Scope
+
 - New components or features (those are in E008/E009).
 - Changes to the core Alloy rendering engine.
 
 ## Dependencies
+
 - E001–E006 (existing implementation must be complete).
 
 ## What It Enables
+
 - Correct Rust output from all existing components.
 - Unblocks expression components (E008) and language feature gaps (E009).
 - Unblocks the sample project update (T053).
 
 ## Risks / Notes
+
 - T039 (Reference scope traversal) is the highest-impact fix — it enables type-safe references everywhere.
 - T040 (newlines) affects all generated output — likely requires changes to multiple components.
 - Some fixes may require test updates for changed output formatting.
 
 ## Task List
+
 - [T039: Reference scope traversal](../tasks/T039-reference-scope-traversal.md) — P0
 - [T040: Missing newlines between sibling items](../tasks/T040-missing-newlines-between-items.md) — P0
 - [T041: Trait abstract method signatures](../tasks/T041-trait-abstract-methods.md) — P1
@@ -63,9 +72,11 @@ The initial MVP implementation (E001–E006) produced working components, but in
 - [T074: Cargo.toml renders empty [dependencies] section](../tasks/T074-empty-dependencies-section.md) — P3
 
 ## Sequencing Notes
+
 T039 and T040 are P0 and can be worked in parallel. T041–T043 are P1 and independent. T044–T045 are P2 improvements.
 
 ## Completion Criteria
+
 - All 7 bug fix tasks completed and tested.
 - Generated Rust output has correct formatting (newlines, indentation).
 - Reference component works in all scope positions.

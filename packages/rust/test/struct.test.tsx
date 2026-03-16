@@ -138,7 +138,11 @@ describe("StructDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StructDeclaration name="Foo" tuple={true} types={["String", "u64"]} />
+            <StructDeclaration
+              name="Foo"
+              tuple={true}
+              types={["String", "u64"]}
+            />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -274,7 +278,13 @@ describe("Field", () => {
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo">
-              <Field name="id" type="u64" pub={true} pub_crate={true} pub_super={true} />
+              <Field
+                name="id"
+                type="u64"
+                pub={true}
+                pub_crate={true}
+                pub_super={true}
+              />
             </StructDeclaration>
           </SourceFile>
         </CrateDirectory>

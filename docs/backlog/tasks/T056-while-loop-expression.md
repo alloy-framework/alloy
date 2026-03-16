@@ -1,17 +1,17 @@
 # T056 — WhileExpression + LoopExpression Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T056 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T056                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -63,13 +63,13 @@ loop {
 
 ```typescript
 interface WhileExpressionProps {
-  condition: Children;   // Condition or "let pattern = expr"
-  label?: string;        // Optional loop label
+  condition: Children; // Condition or "let pattern = expr"
+  label?: string; // Optional loop label
   children: Children;
 }
 
 interface LoopExpressionProps {
-  label?: string;        // Optional loop label
+  label?: string; // Optional loop label
   children: Children;
 }
 ```

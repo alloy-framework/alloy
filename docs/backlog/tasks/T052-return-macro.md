@@ -1,17 +1,17 @@
 # T052 — ReturnExpression + MacroCall Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T052 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P3 — nice-to-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T052                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P3 — nice-to-have                              |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -41,7 +41,7 @@ Provide `ReturnExpression` and `MacroCall` components.
 
 ```typescript
 interface ReturnExpressionProps {
-  children?: Children;   // Return value (omit for bare return)
+  children?: Children; // Return value (omit for bare return)
 }
 ```
 
@@ -60,9 +60,9 @@ interface ReturnExpressionProps {
 
 ```typescript
 interface MacroCallProps {
-  name: string;          // Macro name (without !)
-  args?: Children[];     // Arguments
-  bracket?: "paren" | "bracket" | "brace";  // Delimiter style (default: paren)
+  name: string; // Macro name (without !)
+  args?: Children[]; // Arguments
+  bracket?: "paren" | "bracket" | "brace"; // Delimiter style (default: paren)
 }
 ```
 

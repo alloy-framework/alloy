@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import {
   AwaitExpression,
   CrateDirectory,
-  FunctionDeclaration,
   FunctionCallExpression,
+  FunctionDeclaration,
   SourceFile,
 } from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
@@ -23,15 +23,15 @@ function inFile(children: Children) {
 
 describe("AwaitExpression", () => {
   it("renders postfix await", () => {
-    expect(inFile(<AwaitExpression>{code`client.get(url)`}</AwaitExpression>)).toRenderTo(
-      d`client.get(url).await`,
-    );
+    expect(
+      inFile(<AwaitExpression>{code`client.get(url)`}</AwaitExpression>),
+    ).toRenderTo(d`client.get(url).await`);
   });
 
   it("renders postfix await with try operator", () => {
-    expect(inFile(<AwaitExpression try>{code`client.get(url)`}</AwaitExpression>)).toRenderTo(
-      d`client.get(url).await?`,
-    );
+    expect(
+      inFile(<AwaitExpression try>{code`client.get(url)`}</AwaitExpression>),
+    ).toRenderTo(d`client.get(url).await?`);
   });
 
   it("composes with other expression components", () => {

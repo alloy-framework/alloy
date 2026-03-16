@@ -1,17 +1,17 @@
 # T032: STC Wrappers
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T032                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | feature                                                                                 |
-| **Status**       | done                                                                                    |
-| **Priority**     | medium                                                                                  |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T011, T012, T013, T014, T015, T016, T017, T018, T019, T020, T021                       |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T032                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | feature                                                                             |
+| **Status**        | done                                                                                |
+| **Priority**      | medium                                                                              |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T011, T012, T013, T014, T015, T016, T017, T018, T019, T020, T021                    |
+| **Blocks**        | —                                                                                   |
 
 ---
 
@@ -57,6 +57,7 @@ Provide a complete STC API surface for the Rust package, enabling programmatic t
 
 1. **File**: `packages/rust/src/components/stc/index.ts`.
 2. **Pattern**: Follow `packages/go/src/components/stc/index.ts` exactly:
+
    ```ts
    import { stc } from "@alloy-js/core";
    import { StructDeclaration as StructDeclarationComponent } from "../struct-declaration.js";
@@ -66,6 +67,7 @@ Provide a complete STC API surface for the Rust package, enabling programmatic t
    export const Field = stc(FieldComponent);
    // ... etc
    ```
+
 3. **Naming**: The STC export should use the same name as the component. Import the component with an alias if needed to avoid conflicts.
 4. **Completeness**: Wrap every public component that takes props. Skip components that are purely internal.
 5. **Re-export**: Ensure `src/components/index.ts` has `export * from "./stc/index.js"` or a namespaced export (check Go package pattern).

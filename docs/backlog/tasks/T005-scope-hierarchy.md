@@ -1,25 +1,28 @@
 # T005: Scope Hierarchy Part 1: Module and Crate Scopes
 
-| Field | Value |
-|-------|-------|
-| **ID** | T005 |
-| **Epic** | [E002: Symbol System](../epics/E002-symbol-system.md) |
-| **Type** | foundation |
-| **Status** | done |
-| **Priority** | P0 — critical path |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes (architecture review) |
-| **Dependencies** | T003, T004 |
-| **Blocks** | T005b, T006, T009, T022 |
+| Field                     | Value                                                 |
+| ------------------------- | ----------------------------------------------------- |
+| **ID**                    | T005                                                  |
+| **Epic**                  | [E002: Symbol System](../epics/E002-symbol-system.md) |
+| **Type**                  | foundation                                            |
+| **Status**                | done                                                  |
+| **Priority**              | P0 — critical path                                    |
+| **Owner Role**            | AI coding agent                                       |
+| **AI Executable**         | Yes                                                   |
+| **Human Review Required** | Yes (architecture review)                             |
+| **Dependencies**          | T003, T004                                            |
+| **Blocks**                | T005b, T006, T009, T022                               |
 
 ## Description
+
 Implement the module/crate scopes (RustCrateScope and RustModuleScope) — the scopes with import tracking and module declaration tracking. These are the most architecturally critical scopes.
 
 ## Goal
+
 Define the complete scope hierarchy with correct declaration spaces, member spaces, and tracking capabilities.
 
 ## Scope Included
+
 Create these files in `packages/rust/src/scopes/`:
 
 1. **`rust-crate-scope.ts`** — `RustCrateScope`:
@@ -40,16 +43,19 @@ Create these files in `packages/rust/src/scopes/`:
 3. **`index.ts`** — Scope barrel with `RustScope` type alias and hooks: `useRustScope()`, `useRustModuleScope()`, `useRustCrateScope()`.
 
 ## Out of Scope
+
 - Factory functions (T006).
 - Reference resolution logic (T022).
 
 ## Context Files to Read First
+
 - `packages/core/src/symbols/output-scope.ts` — base class.
 - `packages/go/src/scopes/` — Go scope hierarchy (closest analog).
 - `packages/csharp/src/scopes/` — C# scope hierarchy.
 - `packages/core/src/context/scope.ts` — ScopeContext.
 
 ## Implementation Guidance
+
 1. All scopes extend `OutputScope` from core.
 2. Member scopes (impl, trait) pass `ownerSymbol` to the OutputScope constructor via `OutputScopeOptions`.
 3. Use `shallowReactive` for Maps that need reactive tracking.
@@ -57,6 +63,7 @@ Create these files in `packages/rust/src/scopes/`:
 5. Study `GoSourceFileScope` in `packages/go/src/scopes/go-source-file-scope.ts` for import tracking pattern.
 
 ## Acceptance Criteria
+
 - Both scope classes compile and can be instantiated.
 - Declaration spaces match specification.
 - `RustModuleScope.addUse()` correctly records imports.
@@ -65,7 +72,9 @@ Create these files in `packages/rust/src/scopes/`:
 - Barrel exports.
 
 ## Definition of Done
+
 All scopes exist, compile, and are exported from `scopes/index.ts`.
 
 ## Validation Approach
+
 Build succeeds. Unit test for scope instantiation (can be added to a general symbols test).

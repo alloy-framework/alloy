@@ -1,12 +1,12 @@
 # T016: DocComment and ModuleDocComment
 
-| Field       | Value                                    |
-| ----------- | ---------------------------------------- |
-| **Task ID** | T016                                     |
-| **Epic**    | E003 — Core Declaration Components       |
-| **Deps**    | T001 (Package scaffold)                  |
-| **Blocks**  | —                                        |
-| **Status**  | done                                     |
+| Field       | Value                              |
+| ----------- | ---------------------------------- |
+| **Task ID** | T016                               |
+| **Epic**    | E003 — Core Declaration Components |
+| **Deps**    | T001 (Package scaffold)            |
+| **Blocks**  | —                                  |
+| **Status**  | done                               |
 
 ## Description
 
@@ -42,10 +42,10 @@ interface ModuleDocCommentProps {
 
 ## Context Files
 
-| File                                                    | Why                                    |
-| ------------------------------------------------------- | -------------------------------------- |
-| `packages/java/src/components/JavadocComment.tsx`        | Java doc comment pattern                |
-| `packages/csharp/src/components/XmlDocComment.tsx`       | C# doc comment pattern                  |
+| File                                               | Why                      |
+| -------------------------------------------------- | ------------------------ |
+| `packages/java/src/components/JavadocComment.tsx`  | Java doc comment pattern |
+| `packages/csharp/src/components/XmlDocComment.tsx` | C# doc comment pattern   |
 
 ## Implementation Guidance
 
@@ -85,7 +85,9 @@ Declaration components accept a `doc` string prop and render `DocComment` intern
 
 ```tsx
 // Inside StructDeclaration:
-{props.doc && <DocComment>{props.doc}</DocComment>}
+{
+  props.doc && <DocComment>{props.doc}</DocComment>;
+}
 ```
 
 ### Alloy Conventions

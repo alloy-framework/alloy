@@ -1,18 +1,18 @@
 # T044 — FunctionDeclaration Default Receiver in Impl Blocks
 
-| Field | Value |
-|-------|-------|
-| **ID** | T044 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | improvement |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T013 (FunctionDeclaration), T021 (Self Receiver) |
-| **Blocks** | — |
-| **Resolution** | No code changes required. Behavior is already correctly implemented: `FunctionDeclaration` defaults to `"&self"` for methods in `ImplBlock`/`TraitDeclaration`, with `receiver="none"` opt-out for associated functions. Existing tests validate the pattern. |
+| Field                     | Value                                                                                                                                                                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ID**                    | T044                                                                                                                                                                                                                                                          |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                                                                                                                                                                                                                            |
+| **Type**                  | improvement                                                                                                                                                                                                                                                   |
+| **Status**                | done                                                                                                                                                                                                                                                          |
+| **Priority**              | P2 — should-have                                                                                                                                                                                                                                              |
+| **Owner Role**            | AI coding agent                                                                                                                                                                                                                                               |
+| **AI Executable**         | Yes                                                                                                                                                                                                                                                           |
+| **Human Review Required** | Yes                                                                                                                                                                                                                                                           |
+| **Dependencies**          | T013 (FunctionDeclaration), T021 (Self Receiver)                                                                                                                                                                                                              |
+| **Blocks**                | —                                                                                                                                                                                                                                                             |
+| **Resolution**            | No code changes required. Behavior is already correctly implemented: `FunctionDeclaration` defaults to `"&self"` for methods in `ImplBlock`/`TraitDeclaration`, with `receiver="none"` opt-out for associated functions. Existing tests validate the pattern. |
 
 ---
 

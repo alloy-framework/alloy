@@ -84,8 +84,12 @@ describe("createRustNamePolicy", () => {
     expect(namePolicy.getName("already_snake_case", "function")).toBe(
       "already_snake_case",
     );
-    expect(namePolicy.getName("alreadyCamel", "variable")).toBe("already_camel");
-    expect(namePolicy.getName("already_pascal", "struct")).toBe("AlreadyPascal");
+    expect(namePolicy.getName("alreadyCamel", "variable")).toBe(
+      "already_camel",
+    );
+    expect(namePolicy.getName("already_pascal", "struct")).toBe(
+      "AlreadyPascal",
+    );
   });
 });
 

@@ -1,12 +1,12 @@
 # T011: StructDeclaration and Field
 
-| Field       | Value                                                                                    |
-| ----------- | ---------------------------------------------------------------------------------------- |
-| **Task ID** | T011                                                                                     |
-| **Epic**    | E003 — Core Declaration Components                                                       |
+| Field       | Value                                                 |
+| ----------- | ----------------------------------------------------- |
+| **Task ID** | T011                                                  |
+| **Epic**    | E003 — Core Declaration Components                    |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference) |
-| **Blocks**  | T020 (ImplBlock needs struct types)                                                      |
-| **Status**  | Done                                                                                     |
+| **Blocks**  | T020 (ImplBlock needs struct types)                   |
+| **Status**  | Done                                                  |
 
 ## Description
 
@@ -60,12 +60,12 @@ The `derives` prop renders `#[derive(...)]` if the Attribute component (T015) is
 
 ## Context Files
 
-| File                                                 | Why                                     |
-| ---------------------------------------------------- | --------------------------------------- |
-| `packages/csharp/src/components/struct/`              | Similar struct concept in C#             |
-| `packages/go/src/components/StructDeclaration.tsx`    | Go struct pattern                        |
+| File                                                          | Why                               |
+| ------------------------------------------------------------- | --------------------------------- |
+| `packages/csharp/src/components/struct/`                      | Similar struct concept in C#      |
+| `packages/go/src/components/StructDeclaration.tsx`            | Go struct pattern                 |
 | `packages/typescript/src/components/InterfaceDeclaration.tsx` | Named type with members pattern   |
-| `packages/rust/src/symbols/` (from T003–T006)        | NamedTypeSymbol, symbol factories        |
+| `packages/rust/src/symbols/` (from T003–T006)                 | NamedTypeSymbol, symbol factories |
 
 ## Implementation Guidance
 

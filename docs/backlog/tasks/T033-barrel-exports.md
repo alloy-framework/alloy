@@ -1,17 +1,17 @@
 # T033: Barrel Exports
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T033                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | infra                                                                                   |
-| **Status**       | done                                                                                    |
-| **Priority**     | medium                                                                                  |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T032                                                                                    |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T033                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | infra                                                                               |
+| **Status**        | done                                                                                |
+| **Priority**      | medium                                                                              |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T032                                                                                |
+| **Blocks**        | —                                                                                   |
 
 ---
 
@@ -59,7 +59,10 @@ Ensure the `@alloy-js/rust` package has a clean, complete public API surface tha
 1. **Audit**: Read through all `src/**/*.ts` and `src/**/*.tsx` files to identify every public export.
 2. **Component index**: Ensure `src/components/index.ts` has an export line for every component file:
    ```ts
-   export { StructDeclaration, StructDeclarationProps } from "./struct-declaration.js";
+   export {
+     StructDeclaration,
+     StructDeclarationProps,
+   } from "./struct-declaration.js";
    export { Field, FieldProps } from "./field.js";
    // ... etc
    export * from "./stc/index.js";
@@ -75,7 +78,12 @@ Ensure the `@alloy-js/rust` package has a clean, complete public API surface tha
    ```
 5. **Compile test**: Create a test file that imports key types and verifies they are defined:
    ```ts
-   import { StructDeclaration, RustCrateScope, createCrate, std } from "@alloy-js/rust";
+   import {
+     StructDeclaration,
+     RustCrateScope,
+     createCrate,
+     std,
+   } from "@alloy-js/rust";
    // If this compiles, exports are correct
    ```
 6. **Check for conflicts**: Ensure no naming conflicts between re-exported modules.

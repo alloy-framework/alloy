@@ -86,7 +86,10 @@ describe("ImplBlock", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo" refkey={typeRef} />
             <hbr />
-            <ImplBlock type={typeRef} typeParameters={[{ name: "T" }, { name: "U" }]} />
+            <ImplBlock
+              type={typeRef}
+              typeParameters={[{ name: "T" }, { name: "U" }]}
+            />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -196,7 +199,11 @@ describe("ImplBlock", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StructDeclaration name="Store" refkey={typeRef} typeParameters={[{ name: "K" }, { name: "V" }]} />
+            <StructDeclaration
+              name="Store"
+              refkey={typeRef}
+              typeParameters={[{ name: "K" }, { name: "V" }]}
+            />
             <hbr />
             <ImplBlock type={typeRef}>
               <FunctionDeclaration name="new" />
@@ -222,7 +229,11 @@ describe("ImplBlock", () => {
           <SourceFile path="lib.rs">
             <TraitDeclaration name="Displayable" refkey={traitRef} />
             <hbr />
-            <StructDeclaration name="Store" refkey={typeRef} typeParameters={[{ name: "K" }, { name: "V" }]} />
+            <StructDeclaration
+              name="Store"
+              refkey={typeRef}
+              typeParameters={[{ name: "K" }, { name: "V" }]}
+            />
             <hbr />
             <ImplBlock type={typeRef} trait={traitRef}>
               <FunctionDeclaration name="fmt" />
@@ -246,7 +257,11 @@ describe("ImplBlock", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <EnumDeclaration name="Result" refkey={enumRef} typeParameters={[{ name: "T" }, { name: "E" }]} />
+            <EnumDeclaration
+              name="Result"
+              refkey={enumRef}
+              typeParameters={[{ name: "T" }, { name: "E" }]}
+            />
             <hbr />
             <ImplBlock type={enumRef} whereClause="T: Clone" />
           </SourceFile>

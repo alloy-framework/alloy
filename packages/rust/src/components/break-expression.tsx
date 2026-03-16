@@ -9,18 +9,12 @@ export function BreakExpression(props: BreakExpressionProps) {
   return (
     <>
       {"break"}
-      {props.label ? (
-        <>
-          {" "}
-          {props.label}
-        </>
-      ) : null}
-      {typeof props.children !== "undefined" ? (
-        <>
-          {" "}
-          {props.children}
-        </>
-      ) : null}
+      {props.label ?
+        <> {props.label}</>
+      : null}
+      {typeof props.children !== "undefined" ?
+        <> {props.children}</>
+      : null}
     </>
   );
 }

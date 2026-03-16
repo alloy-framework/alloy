@@ -20,7 +20,9 @@ export function TraitsModule(props: TraitsModuleProps) {
   return (
     <ModuleDirectory path="traits" pub>
       <SourceFile path="mod.rs">
-        <DocComment>Traits defining serialization and caching behavior.</DocComment>
+        <DocComment>
+          Traits defining serialization and caching behavior.
+        </DocComment>
 
         <TraitDeclaration
           name="Serializable"
@@ -31,7 +33,12 @@ export function TraitsModule(props: TraitsModuleProps) {
           <FunctionDeclaration
             name="to_bytes"
             receiver="&self"
-            returnType={<><Reference refkey={resultAliasKey} />{"<Vec<u8>>"}</>}
+            returnType={
+              <>
+                <Reference refkey={resultAliasKey} />
+                {"<Vec<u8>>"}
+              </>
+            }
           />
 
           <hbr />
@@ -40,14 +47,21 @@ export function TraitsModule(props: TraitsModuleProps) {
             name="from_bytes"
             receiver="none"
             parameters={[{ name: "bytes", type: "&[u8]" }]}
-            returnType={<><Reference refkey={resultAliasKey} />{"<Self>"}</>}
+            returnType={
+              <>
+                <Reference refkey={resultAliasKey} />
+                {"<Self>"}
+              </>
+            }
             whereClause="Self: Sized"
           />
         </TraitDeclaration>
 
         <hbr />
 
-        <DocComment>A trait for types that support caching with expiration.</DocComment>
+        <DocComment>
+          A trait for types that support caching with expiration.
+        </DocComment>
         <TraitDeclaration
           name="Cacheable"
           refkey={cacheableKey}

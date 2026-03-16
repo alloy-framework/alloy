@@ -14,8 +14,8 @@ import {
   SourceFile,
   StructDeclaration,
 } from "../src/components/index.js";
-import { createRustNamePolicy } from "../src/name-policy.js";
 import { ModuleDirectory } from "../src/components/module-directory.js";
+import { createRustNamePolicy } from "../src/name-policy.js";
 import { findFile } from "./utils.js";
 
 describe("Rust edge cases", () => {
@@ -136,7 +136,12 @@ describe("Rust edge cases", () => {
                   pub struct User;
                 </Declaration>
                 <hbr />
-                <Declaration name="Account" refkey={accountRef} nameKind="struct" pub>
+                <Declaration
+                  name="Account"
+                  refkey={accountRef}
+                  nameKind="struct"
+                  pub
+                >
                   pub struct Account;
                 </Declaration>
               </SourceFile>
@@ -170,7 +175,12 @@ describe("Rust edge cases", () => {
         <Output>
           <CrateDirectory name="my_crate">
             <SourceFile path="types">
-              <Declaration name="Option" refkey={optionRef} nameKind="struct" pub>
+              <Declaration
+                name="Option"
+                refkey={optionRef}
+                nameKind="struct"
+                pub
+              >
                 pub struct Option;
               </Declaration>
               <hbr />
@@ -178,7 +188,12 @@ describe("Rust edge cases", () => {
                 pub struct Vec;
               </Declaration>
               <hbr />
-              <Declaration name="String" refkey={stringRef} nameKind="struct" pub>
+              <Declaration
+                name="String"
+                refkey={stringRef}
+                nameKind="struct"
+                pub
+              >
                 pub struct String;
               </Declaration>
             </SourceFile>
@@ -211,7 +226,11 @@ describe("Rust edge cases", () => {
           <Output>
             <CrateDirectory name="my_crate">
               <SourceFile path="models">
-                <Declaration name="PrivateModel" refkey={privateType} nameKind="struct">
+                <Declaration
+                  name="PrivateModel"
+                  refkey={privateType}
+                  nameKind="struct"
+                >
                   struct PrivateModel;
                 </Declaration>
               </SourceFile>

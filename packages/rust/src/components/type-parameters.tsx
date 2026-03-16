@@ -47,12 +47,12 @@ export function TypeParameters(props: TypeParametersProps) {
         {(param) => (
           <>
             {param.lifetime ?? param.name}
-            {param.constraint ? (
+            {param.constraint ?
               <>
                 {": "}
                 {param.constraint}
               </>
-            ) : null}
+            : null}
           </>
         )}
       </For>

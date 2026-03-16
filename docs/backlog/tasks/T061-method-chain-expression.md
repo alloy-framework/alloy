@@ -1,17 +1,17 @@
 # T061 — MethodChainExpression Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T061 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T050 (FunctionCallExpression) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T061                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T050 (FunctionCallExpression)                  |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -41,16 +41,22 @@ This needs a component that composes well with `FunctionCallExpression` and `Clo
 ```tsx
 <MethodChainExpression receiver="items">
   <MethodChainExpression.Call name="iter" />
-  <MethodChainExpression.Call name="filter" args={[
-    <ClosureExpression parameters={[{ name: "x" }]}>
-      {code`x.is_valid()`}
-    </ClosureExpression>
-  ]} />
-  <MethodChainExpression.Call name="map" args={[
-    <ClosureExpression parameters={[{ name: "x" }]}>
-      {code`x.value()`}
-    </ClosureExpression>
-  ]} />
+  <MethodChainExpression.Call
+    name="filter"
+    args={[
+      <ClosureExpression parameters={[{ name: "x" }]}>
+        {code`x.is_valid()`}
+      </ClosureExpression>,
+    ]}
+  />
+  <MethodChainExpression.Call
+    name="map"
+    args={[
+      <ClosureExpression parameters={[{ name: "x" }]}>
+        {code`x.value()`}
+      </ClosureExpression>,
+    ]}
+  />
   <MethodChainExpression.Call name="collect" typeArgs={["Vec<_>"]} />
 </MethodChainExpression>
 ```
@@ -59,16 +65,16 @@ This needs a component that composes well with `FunctionCallExpression` and `Clo
 
 ```typescript
 interface MethodChainExpressionProps {
-  receiver: Children;    // Starting expression
-  children: Children;    // Chain calls
+  receiver: Children; // Starting expression
+  children: Children; // Chain calls
 }
 
 interface MethodChainCallProps {
-  name: string;          // Method name
-  args?: Children[];     // Arguments
+  name: string; // Method name
+  args?: Children[]; // Arguments
   typeArgs?: Children[]; // Turbofish type arguments
-  await?: boolean;       // .await before this call
-  try?: boolean;         // ? after this call
+  await?: boolean; // .await before this call
+  try?: boolean; // ? after this call
 }
 ```
 

@@ -1,17 +1,17 @@
 # T019: TraitDeclaration Component
 
-| Field            | Value                                                                 |
-| ---------------- | --------------------------------------------------------------------- |
-| **ID**           | T019                                                                  |
-| **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
-| **Type**         | feature                                                               |
-| **Status**       | done                                                                  |
-| **Priority**     | high                                                                  |
-| **Owner**        | AI coding agent                                                       |
-| **AI Executable**| yes                                                                   |
-| **Human Review** | yes                                                                   |
-| **Dependencies** | T006, T010, T013, T017                                                |
-| **Blocks**       | T020                                                                  |
+| Field             | Value                                                             |
+| ----------------- | ----------------------------------------------------------------- |
+| **ID**            | T019                                                              |
+| **Epic**          | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md) |
+| **Type**          | feature                                                           |
+| **Status**        | done                                                              |
+| **Priority**      | high                                                              |
+| **Owner**         | AI coding agent                                                   |
+| **AI Executable** | yes                                                               |
+| **Human Review**  | yes                                                               |
+| **Dependencies**  | T006, T010, T013, T017                                            |
+| **Blocks**        | T020                                                              |
 
 ---
 
@@ -74,7 +74,7 @@ The implementation agent should read these files first:
        }
    }
    ```
-6. **Supertraits**: Join `props.supertraits` with ` + ` separator. Prefix with `: ` if non-empty.
+6. **Supertraits**: Join `props.supertraits` with `+` separator. Prefix with `: ` if non-empty.
 7. **Use `code` template tag** for raw string fragments.
 8. **Reference the C# `InterfaceDeclaration`** for the overall component structure, symbol creation, and scope management patterns.
 

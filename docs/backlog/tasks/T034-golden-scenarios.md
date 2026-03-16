@@ -1,17 +1,17 @@
 # T034: Golden Scenario Tests
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T034                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | test                                                                                    |
-| **Status**       | done                                                                                    |
-| **Priority**     | high                                                                                    |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T026, T027, T030, T031                                                                  |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T034                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | test                                                                                |
+| **Status**        | done                                                                                |
+| **Priority**      | high                                                                                |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T026, T027, T030, T031                                                              |
+| **Blocks**        | —                                                                                   |
 
 ---
 
@@ -28,23 +28,27 @@ Prove that the package can generate correct, complete Rust projects including fi
 - Create `test/golden-scenarios.test.tsx` with the following scenarios:
 
 ### Scenario 7.1: Struct with Impl
+
 - `Point` struct with `x: f64`, `y: f64` fields.
 - Inherent impl with `new(x: f64, y: f64) -> Self` and `distance(&self, other: &Point) -> f64`.
 - Validates: struct + impl + method rendering.
 
 ### Scenario 7.2: Multi-Module Crate with Imports
+
 - Crate with `models` and `services` modules.
 - `User` struct in `models` with `name: String`, `age: u32`.
 - `greet(user: &User) -> String` function in `services`.
 - Validates: module structure + cross-module import + `Cargo.toml`.
 
 ### Scenario 7.3: Trait and Impl
+
 - `Greetable` trait with `fn greet(&self) -> String`.
 - `User` struct.
 - `impl Greetable for User` with implementation.
 - Validates: trait declaration + trait impl rendering.
 
 ### Scenario 7.4: Enum with All Variant Kinds
+
 - `Shape` enum with:
   - `Circle { radius: f64 }` (struct variant).
   - `Rectangle { width: f64, height: f64 }` (struct variant).
@@ -53,6 +57,7 @@ Prove that the package can generate correct, complete Rust projects including fi
 - Validates: all enum variant types.
 
 ### Scenario 7.5: Cargo.toml with Dependencies
+
 - Crate that references `serde::Serialize`.
 - Validates: `Cargo.toml` includes `serde` in `[dependencies]`.
 

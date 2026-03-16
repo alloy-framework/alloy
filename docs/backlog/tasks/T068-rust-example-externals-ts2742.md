@@ -1,17 +1,17 @@
 # T068 — Fix rust-example externals TS2742 Build Failure
 
-| Field | Value |
-|-------|-------|
-| **ID** | T068 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T053 (Update rust-example sample) |
-| **Blocks** | — |
+| Field                     | Value                              |
+| ------------------------- | ---------------------------------- |
+| **ID**                    | T068                               |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md) |
+| **Type**                  | bug                                |
+| **Status**                | done                               |
+| **Priority**              | P1 — must-have                     |
+| **Owner Role**            | AI coding agent                    |
+| **AI Executable**         | Yes                                |
+| **Human Review Required** | Yes                                |
+| **Dependencies**          | T053 (Update rust-example sample)  |
+| **Blocks**                | —                                  |
 
 ---
 

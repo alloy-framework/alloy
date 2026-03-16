@@ -64,7 +64,8 @@ describe("CargoTomlFile", () => {
       </Output>,
     );
 
-    expect(findFile(output, "Cargo.toml").contents.trim()).toBe(d`
+    expect(findFile(output, "Cargo.toml").contents.trim()).toBe(
+      d`
       [package]
       name = "consumer"
       version = "0.1.0"
@@ -76,7 +77,8 @@ describe("CargoTomlFile", () => {
       [dependencies]
       serde = { version = "1.0.200", features = ["derive"] }
       tokio = "1.42.0"
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("renders deterministic dependency output for tracked crate dependencies", () => {
@@ -92,7 +94,12 @@ describe("CargoTomlFile", () => {
 
     const output = render(
       <Output externals={[serde]}>
-        <CrateDirectory name="consumer" version="2.0.0" edition="2024" includeCargoToml>
+        <CrateDirectory
+          name="consumer"
+          version="2.0.0"
+          edition="2024"
+          includeCargoToml
+        >
           <SourceFile path="lib.rs">
             type Alias = <Reference refkey={serde[""].Serialize} />;
           </SourceFile>
@@ -101,7 +108,8 @@ describe("CargoTomlFile", () => {
     );
 
     const cargoToml = findFile(output, "Cargo.toml").contents.trim();
-    expect(cargoToml).toBe(d`
+    expect(cargoToml).toBe(
+      d`
       [package]
       name = "consumer"
       version = "2.0.0"
@@ -112,11 +120,17 @@ describe("CargoTomlFile", () => {
 
       [dependencies]
       serde = "1.0.219"
-    `.trim());
+    `.trim(),
+    );
 
     const secondOutput = render(
       <Output externals={[serde]}>
-        <CrateDirectory name="consumer" version="2.0.0" edition="2024" includeCargoToml>
+        <CrateDirectory
+          name="consumer"
+          version="2.0.0"
+          edition="2024"
+          includeCargoToml
+        >
           <SourceFile path="lib.rs">
             type Alias = <Reference refkey={serde[""].Serialize} />;
           </SourceFile>
@@ -124,7 +138,9 @@ describe("CargoTomlFile", () => {
       </Output>,
     );
 
-    expect(findFile(secondOutput, "Cargo.toml").contents.trim()).toBe(cargoToml);
+    expect(findFile(secondOutput, "Cargo.toml").contents.trim()).toBe(
+      cargoToml,
+    );
   });
 
   it("renders bin target section with crate name and path", () => {
@@ -136,7 +152,8 @@ describe("CargoTomlFile", () => {
       </Output>,
     );
 
-    expect(findFile(output, "Cargo.toml").contents.trim()).toBe(d`
+    expect(findFile(output, "Cargo.toml").contents.trim()).toBe(
+      d`
       [package]
       name = "consumer_bin"
       version = "0.1.0"
@@ -145,7 +162,8 @@ describe("CargoTomlFile", () => {
       [[bin]]
       name = "consumer_bin"
       path = "main.rs"
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("omits dependencies section when no dependencies are present", () => {
@@ -188,7 +206,11 @@ describe("CargoTomlFile", () => {
     );
 
     const cargoToml = findFile(output, "Cargo.toml").contents;
-    expect(cargoToml.indexOf("[lib]")).toBeGreaterThan(cargoToml.indexOf(`edition = "2021"`));
-    expect(cargoToml.indexOf("[lib]")).toBeLessThan(cargoToml.indexOf("[dependencies]"));
+    expect(cargoToml.indexOf("[lib]")).toBeGreaterThan(
+      cargoToml.indexOf(`edition = "2021"`),
+    );
+    expect(cargoToml.indexOf("[lib]")).toBeLessThan(
+      cargoToml.indexOf("[dependencies]"),
+    );
   });
 });

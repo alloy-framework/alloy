@@ -1,17 +1,17 @@
 # T063 — AssociatedType in Traits
 
-| Field | Value |
-|-------|-------|
-| **ID** | T063 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T019 (TraitDeclaration) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T063                                           |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T019 (TraitDeclaration)                        |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -59,8 +59,8 @@ No component exists for `type Item;` inside a trait or `type Item = u32;` inside
 ```typescript
 interface AssociatedTypeProps {
   name: string;
-  constraint?: Children;   // Bounds (in trait declaration)
-  children?: Children;     // Concrete type (in impl block)
+  constraint?: Children; // Bounds (in trait declaration)
+  children?: Children; // Concrete type (in impl block)
 }
 ```
 

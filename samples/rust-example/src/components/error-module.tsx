@@ -54,15 +54,21 @@ export function ErrorModule(props: ErrorModuleProps) {
 
         <hbr />
 
-        <ImplBlock
-          type={storeErrorKey}
-          trait={stdCrate.fmt.Display}
-        >
+        <ImplBlock type={storeErrorKey} trait={stdCrate.fmt.Display}>
           <FunctionDeclaration
             name="fmt"
             receiver="&self"
             parameters={[
-              { name: "f", type: <>{"&mut "}<Reference refkey={stdCrate.fmt.Formatter} />{"<'_>"}</> },
+              {
+                name: "f",
+                type: (
+                  <>
+                    {"&mut "}
+                    <Reference refkey={stdCrate.fmt.Formatter} />
+                    {"<'_>"}
+                  </>
+                ),
+              },
             ]}
             returnType="std::fmt::Result"
           >
@@ -74,10 +80,16 @@ export function ErrorModule(props: ErrorModuleProps) {
                 <MacroCall name="write" args={["f", '"storage is full"']} />
               </MatchArm>
               <MatchArm pattern="Self::SerializationError(msg)">
-                <MacroCall name="write" args={["f", '"serialization error: {}"', "msg"]} />
+                <MacroCall
+                  name="write"
+                  args={["f", '"serialization error: {}"', "msg"]}
+                />
               </MatchArm>
               <MatchArm pattern="Self::LockError(msg)">
-                <MacroCall name="write" args={["f", '"lock error: {}"', "msg"]} />
+                <MacroCall
+                  name="write"
+                  args={["f", '"lock error: {}"', "msg"]}
+                />
               </MatchArm>
             </MatchExpression>
           </FunctionDeclaration>
@@ -86,7 +98,12 @@ export function ErrorModule(props: ErrorModuleProps) {
         <hbr />
 
         <DocComment>A specialized Result type for store operations.</DocComment>
-        <TypeAlias name="Result" refkey={resultAliasKey} pub typeParameters={[{ name: "T" }]}>
+        <TypeAlias
+          name="Result"
+          refkey={resultAliasKey}
+          pub
+          typeParameters={[{ name: "T" }]}
+        >
           std::result::Result&lt;T, StoreError&gt;
         </TypeAlias>
       </SourceFile>

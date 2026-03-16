@@ -1,8 +1,4 @@
-import {
-  ComponentContext,
-  createContext,
-  useContext,
-} from "@alloy-js/core";
+import { ComponentContext, createContext, useContext } from "@alloy-js/core";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 
 export interface CrateContextValue {

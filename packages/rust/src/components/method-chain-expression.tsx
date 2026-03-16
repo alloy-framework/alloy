@@ -93,7 +93,7 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
       <>
         {"."}
         {part.name}
-        {part.typeArgs.length > 0 ? (
+        {part.typeArgs.length > 0 ?
           <>
             {"::<"}
             <For each={part.typeArgs} joiner={", "}>
@@ -101,7 +101,7 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
             </For>
             {">"}
           </>
-        ) : null}
+        : null}
         {"("}
         <Wrap
           when={part.args.length > 1}

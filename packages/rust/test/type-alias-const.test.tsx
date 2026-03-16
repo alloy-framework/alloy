@@ -2,13 +2,13 @@ import { Output, refkey } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { createRustNamePolicy } from "../src/name-policy.js";
 import {
   ConstDeclaration,
   CrateDirectory,
   SourceFile,
   TypeAlias,
 } from "../src/components/index.js";
+import { createRustNamePolicy } from "../src/name-policy.js";
 import { useRustModuleScope } from "../src/scopes/index.js";
 import { NamedTypeSymbol } from "../src/symbols/named-type-symbol.js";
 import { RustOutputSymbol } from "../src/symbols/rust-output-symbol.js";
@@ -81,7 +81,10 @@ describe("TypeAlias", () => {
           <SourceFile path="lib.rs">
             <TypeAlias
               name="Collection"
-              typeParameters={[{ name: "T" }, { name: "U", constraint: "Display" }]}
+              typeParameters={[
+                { name: "T" },
+                { name: "U", constraint: "Display" },
+              ]}
             >
               {"Vec<T>"}
             </TypeAlias>
@@ -120,7 +123,12 @@ describe("TypeAlias", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <TypeAlias name="ResponseValue" pub={true} pub_crate={true} pub_super={true}>
+            <TypeAlias
+              name="ResponseValue"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+            >
               String
             </TypeAlias>
             <hbr />
@@ -197,7 +205,12 @@ describe("ConstDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <ConstDeclaration name="MAX_ITEMS" refkey={maxItems} type="usize" pub={true}>
+            <ConstDeclaration
+              name="MAX_ITEMS"
+              refkey={maxItems}
+              type="usize"
+              pub={true}
+            >
               16
             </ConstDeclaration>
             <hbr />
@@ -219,7 +232,13 @@ describe("ConstDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <ConstDeclaration name="MAX_ITEMS" type="usize" pub={true} pub_crate={true} pub_super={true}>
+            <ConstDeclaration
+              name="MAX_ITEMS"
+              type="usize"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+            >
               16
             </ConstDeclaration>
             <hbr />

@@ -1,9 +1,9 @@
 import { Refkey, memo, resolve, unresolvedRefkey } from "@alloy-js/core";
 import { isBuiltinCrate } from "../create-crate.js";
+import { useRustScope } from "../scopes/contexts.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { RustScopeBase } from "../scopes/rust-scope.js";
-import { useRustScope } from "../scopes/contexts.js";
 import { RustOutputSymbol } from "./rust-output-symbol.js";
 
 export const PRELUDE_TYPES = new Set<string>([
@@ -60,7 +60,9 @@ export const PRELUDE_TYPES = new Set<string>([
   "str",
 ]);
 
-export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined] {
+export function ref(
+  refkey: Refkey,
+): () => [string, RustOutputSymbol | undefined] {
   const currentScope = useRustScope();
   const currentModuleScope = currentScope.enclosingModule;
   if (!(currentModuleScope instanceof RustModuleScope)) {
@@ -68,7 +70,9 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
       `Expected an enclosing Rust module scope, but got ${currentScope.constructor.name}.`,
     );
   }
-  const resolveResult = resolve<RustScopeBase, RustOutputSymbol>(refkey as Refkey);
+  const resolveResult = resolve<RustScopeBase, RustOutputSymbol>(
+    refkey as Refkey,
+  );
 
   return memo(() => {
     if (resolveResult.value === undefined) {
@@ -79,7 +83,9 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
     const targetName = result.symbol.name;
 
     const sourceCrate = currentModuleScope.enclosingCrate;
-    const declarationScope = result.lexicalDeclaration.scope as RustScopeBase | undefined;
+    const declarationScope = result.lexicalDeclaration.scope as
+      | RustScopeBase
+      | undefined;
     const targetModule = declarationScope?.enclosingModule;
     const targetCrate = declarationScope?.enclosingCrate;
 
@@ -111,10 +117,19 @@ export function ref(refkey: Refkey): () => [string, RustOutputSymbol | undefined
           const sameCratePath = buildUsePath("crate", result.pathDown);
           currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
         } else {
-          const externalCratePath = buildUsePath(targetCrate.name, result.pathDown);
-          currentModuleScope.addUse(externalCratePath, result.lexicalDeclaration);
+          const externalCratePath = buildUsePath(
+            targetCrate.name,
+            result.pathDown,
+          );
+          currentModuleScope.addUse(
+            externalCratePath,
+            result.lexicalDeclaration,
+          );
           if (!isBuiltinCrate(targetCrate)) {
-            sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
+            sourceCrate.addDependency(
+              targetCrate.name,
+              targetCrate.version ?? "*",
+            );
           }
         }
       }
@@ -141,8 +156,12 @@ function moduleNameSegments(moduleName: string): string[] {
     .split("/")
     .map((segment) => segment.trim())
     .filter((segment) => segment.length > 0)
-    .map((segment) => segment.endsWith(".rs") ? segment.slice(0, -3) : segment)
-    .filter((segment) => segment !== "mod" && segment !== "lib" && segment !== "main");
+    .map((segment) =>
+      segment.endsWith(".rs") ? segment.slice(0, -3) : segment,
+    )
+    .filter(
+      (segment) => segment !== "mod" && segment !== "lib" && segment !== "main",
+    );
 
   return normalized;
 }

@@ -1,17 +1,17 @@
 # T022: Reference Resolution
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T022                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | feature                                                                     |
-| **Status**       | done                                                                        |
-| **Priority**     | high                                                                        |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T005, T010                                                                  |
-| **Blocks**       | T023, T026                                                                  |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T022                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | feature                                                                  |
+| **Status**        | done                                                                     |
+| **Priority**      | high                                                                     |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T005, T010                                                               |
+| **Blocks**        | T023, T026                                                               |
 
 ---
 

@@ -23,14 +23,19 @@ function inFile(children: Children) {
 
 describe("TryExpression", () => {
   it("renders postfix question mark operator", () => {
-    expect(inFile(<TryExpression>{code`result`}</TryExpression>)).toRenderTo(d`result?`);
+    expect(inFile(<TryExpression>{code`result`}</TryExpression>)).toRenderTo(
+      d`result?`,
+    );
   });
 
   it("composes with function call expression", () => {
     expect(
       inFile(
         <TryExpression>
-          <FunctionCallExpression target="std::fs::read_to_string" args={['"file.txt"']} />
+          <FunctionCallExpression
+            target="std::fs::read_to_string"
+            args={['"file.txt"']}
+          />
         </TryExpression>,
       ),
     ).toRenderTo(d`std::fs::read_to_string("file.txt")?`);
@@ -42,7 +47,10 @@ describe("TryExpression", () => {
         <TryExpression>
           <MethodChainExpression receiver="map">
             <MethodChainExpression.Call name="get" args={['"key"']} />
-            <MethodChainExpression.Call name="ok_or" args={["Error::NotFound"]} />
+            <MethodChainExpression.Call
+              name="ok_or"
+              args={["Error::NotFound"]}
+            />
           </MethodChainExpression>
         </TryExpression>,
       ),
@@ -50,6 +58,8 @@ describe("TryExpression", () => {
   });
 
   it("stc wrapper renders question mark operator", () => {
-    expect(inFile(Stc.TryExpression().children([code`result`]))).toRenderTo(d`result?`);
+    expect(inFile(Stc.TryExpression().children([code`result`]))).toRenderTo(
+      d`result?`,
+    );
   });
 });

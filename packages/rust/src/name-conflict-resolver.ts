@@ -8,7 +8,10 @@ function isUseImportedSymbol(symbol: RustOutputSymbol): boolean {
   );
 }
 
-export function rustNameConflictResolver(name: string, symbols: RustOutputSymbol[]) {
+export function rustNameConflictResolver(
+  name: string,
+  symbols: RustOutputSymbol[],
+) {
   if (symbols.length <= 1) {
     return;
   }

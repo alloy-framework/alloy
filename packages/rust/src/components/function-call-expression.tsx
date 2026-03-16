@@ -10,7 +10,7 @@ export function FunctionCallExpression(props: FunctionCallExpressionProps) {
   return (
     <group>
       {props.target}
-      {props.typeArgs && props.typeArgs.length > 0 ? (
+      {props.typeArgs && props.typeArgs.length > 0 ?
         <>
           {"::<"}
           <For each={props.typeArgs} joiner={", "}>
@@ -18,7 +18,7 @@ export function FunctionCallExpression(props: FunctionCallExpressionProps) {
           </For>
           {">"}
         </>
-      ) : null}
+      : null}
       {"("}
       <Wrap
         when={!!props.args && props.args.length > 1}

@@ -2,7 +2,11 @@ import { Children, Output, code } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { CrateDirectory, ForExpression, SourceFile } from "../src/components/index.js";
+import {
+  CrateDirectory,
+  ForExpression,
+  SourceFile,
+} from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
 function inFile(children: Children) {
@@ -78,7 +82,7 @@ describe("ForExpression", () => {
     expect(
       inFile(
         Stc.ForExpression({ pattern: "x", iterator: "vec" }).children([
-          "println!(\"{}\", x);",
+          'println!("{}", x);',
         ]),
       ),
     ).toRenderTo(d`

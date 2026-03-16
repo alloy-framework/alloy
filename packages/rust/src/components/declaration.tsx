@@ -6,10 +6,13 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { RustElements, useRustNamePolicy } from "../name-policy.js";
+import { useRustScope } from "../scopes/contexts.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
-import { useRustScope } from "../scopes/contexts.js";
-import { RustOutputSymbol, RustSymbolKind } from "../symbols/rust-output-symbol.js";
+import {
+  RustOutputSymbol,
+  RustSymbolKind,
+} from "../symbols/rust-output-symbol.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface DeclarationProps {
@@ -22,7 +25,13 @@ export interface DeclarationProps {
   children?: Children;
 }
 
-const typeNameKinds = new Set(["struct", "enum", "trait", "type-alias", "type-parameter"]);
+const typeNameKinds = new Set([
+  "struct",
+  "enum",
+  "trait",
+  "type-alias",
+  "type-parameter",
+]);
 const rustNameKinds = new Set<RustElements>([
   "function",
   "method",
@@ -62,8 +71,13 @@ function toRustSymbolKind(nameKind: RustElements): RustSymbolKind {
 
 export function Declaration(props: DeclarationProps) {
   const scope = useRustScope();
-  if (!(scope instanceof RustCrateScope) && !(scope instanceof RustModuleScope)) {
-    throw new Error("Rust declaration components can only be created in crate or module scopes.");
+  if (
+    !(scope instanceof RustCrateScope) &&
+    !(scope instanceof RustModuleScope)
+  ) {
+    throw new Error(
+      "Rust declaration components can only be created in crate or module scopes.",
+    );
   }
 
   const binder = scope.binder ?? useBinder();

@@ -1,4 +1,4 @@
-import { code, Children, refkey } from "@alloy-js/core";
+import { Children, code, refkey } from "@alloy-js/core";
 import {
   Attribute,
   ClosureExpression,
@@ -19,12 +19,12 @@ import {
   Reference,
   ReturnExpression,
   SourceFile,
-  StructExpression,
   StructDeclaration,
+  StructExpression,
 } from "@alloy-js/rust";
-import { storeErrorKey, resultAliasKey } from "./error-module.js";
-import { cacheableKey } from "./traits-module.js";
 import { stdCrate } from "../externals.js";
+import { resultAliasKey, storeErrorKey } from "./error-module.js";
+import { cacheableKey } from "./traits-module.js";
 
 export const storeKey = refkey();
 export const entryKey = refkey();
@@ -50,8 +50,14 @@ export function StoreModule(props: StoreModuleProps) {
           doc="Represents the current status of a cached entry."
         >
           <EnumVariant name="Active" doc="The entry is valid and accessible." />
-          <EnumVariant name="Expired" doc="The entry has passed its time-to-live." />
-          <EnumVariant name="Evicted" doc="The entry was removed to make room for new entries." />
+          <EnumVariant
+            name="Expired"
+            doc="The entry has passed its time-to-live."
+          />
+          <EnumVariant
+            name="Evicted"
+            doc="The entry was removed to make room for new entries."
+          />
         </EnumDeclaration>
 
         <hbr />
@@ -65,8 +71,22 @@ export function StoreModule(props: StoreModuleProps) {
           doc="A single entry in the store, holding a value and metadata."
         >
           <Field name="value" pub type="V" />
-          <Field name="created_at" pub type={<Reference refkey={stdCrate.time.Instant} />} />
-          <Field name="ttl" pub type={<>{"Option<"}<Reference refkey={stdCrate.time.Duration} />{">"}</>} />
+          <Field
+            name="created_at"
+            pub
+            type={<Reference refkey={stdCrate.time.Instant} />}
+          />
+          <Field
+            name="ttl"
+            pub
+            type={
+              <>
+                {"Option<"}
+                <Reference refkey={stdCrate.time.Duration} />
+                {">"}
+              </>
+            }
+          />
           <Field name="status" pub type="EntryStatus" />
         </StructDeclaration>
 
@@ -82,9 +102,26 @@ export function StoreModule(props: StoreModuleProps) {
           ]}
           doc="A generic key-value store with capacity limits and TTL support."
         >
-          <Field name="data" type={<><Reference refkey={stdCrate.collections.HashMap} />{"<K, Entry<V>>"}</>} />
+          <Field
+            name="data"
+            type={
+              <>
+                <Reference refkey={stdCrate.collections.HashMap} />
+                {"<K, Entry<V>>"}
+              </>
+            }
+          />
           <Field name="max_capacity" type="usize" />
-          <Field name="default_ttl" type={<>{"Option<"}<Reference refkey={stdCrate.time.Duration} />{">"}</>} />
+          <Field
+            name="default_ttl"
+            type={
+              <>
+                {"Option<"}
+                <Reference refkey={stdCrate.time.Duration} />
+                {">"}
+              </>
+            }
+          />
         </StructDeclaration>
 
         <hbr />
@@ -96,7 +133,9 @@ export function StoreModule(props: StoreModuleProps) {
             { name: "V", constraint: "Clone + Send + Sync" },
           ]}
         >
-          <DocComment>Creates a new store with the given maximum capacity.</DocComment>
+          <DocComment>
+            Creates a new store with the given maximum capacity.
+          </DocComment>
           <FunctionDeclaration
             name="new"
             pub
@@ -105,7 +144,10 @@ export function StoreModule(props: StoreModuleProps) {
             returnType="Self"
           >
             <StructExpression type="Self">
-              <FieldInit name="data"><Reference refkey={stdCrate.collections.HashMap} />::new()</FieldInit>
+              <FieldInit name="data">
+                <Reference refkey={stdCrate.collections.HashMap} />
+                ::new()
+              </FieldInit>
               <FieldInit name="max_capacity" />
               <FieldInit name="default_ttl">None</FieldInit>
             </StructExpression>
@@ -118,7 +160,12 @@ export function StoreModule(props: StoreModuleProps) {
             name="with_default_ttl"
             pub
             receiver="self"
-            parameters={[{ name: "ttl", type: <Reference refkey={stdCrate.time.Duration} /> }]}
+            parameters={[
+              {
+                name: "ttl",
+                type: <Reference refkey={stdCrate.time.Duration} />,
+              },
+            ]}
             returnType="Self"
           >
             <StructExpression type="Self" spread="self">
@@ -128,7 +175,9 @@ export function StoreModule(props: StoreModuleProps) {
 
           <hbr />
 
-          <DocComment>Inserts a value into the store, returning an error if full.</DocComment>
+          <DocComment>
+            Inserts a value into the store, returning an error if full.
+          </DocComment>
           <FunctionDeclaration
             name="insert"
             pub
@@ -137,46 +186,69 @@ export function StoreModule(props: StoreModuleProps) {
               { name: "key", type: "K" },
               { name: "value", type: "V" },
             ]}
-            returnType={<><Reference refkey={resultAliasKey} />{"<()>"}</>}
+            returnType={
+              <>
+                <Reference refkey={resultAliasKey} />
+                {"<()>"}
+              </>
+            }
           >
             <IfExpression condition="self.data.len() >= self.max_capacity && !self.data.contains_key(&key)">
               <>
-                <ReturnExpression>Err(StoreError::StorageFull)</ReturnExpression>;
+                <ReturnExpression>
+                  Err(StoreError::StorageFull)
+                </ReturnExpression>
+                ;
               </>
             </IfExpression>
             <LetBinding name="entry">
               <StructExpression type="Entry">
                 <FieldInit name="value" />
-                <FieldInit name="created_at"><Reference refkey={stdCrate.time.Instant} />::now()</FieldInit>
+                <FieldInit name="created_at">
+                  <Reference refkey={stdCrate.time.Instant} />
+                  ::now()
+                </FieldInit>
                 <FieldInit name="ttl">self.default_ttl</FieldInit>
                 <FieldInit name="status">EntryStatus::Active</FieldInit>
               </StructExpression>
             </LetBinding>
-            self.data.insert(key, entry);
-            Ok(())
+            self.data.insert(key, entry); Ok(())
           </FunctionDeclaration>
 
           <hbr />
 
-          <DocComment>Retrieves a value by key, checking for expiration.</DocComment>
+          <DocComment>
+            Retrieves a value by key, checking for expiration.
+          </DocComment>
           <FunctionDeclaration
             name="get"
             pub
             receiver="&self"
             parameters={[{ name: "key", type: "&K" }]}
-            returnType={<><Reference refkey={resultAliasKey} />{"<&V>"}</>}
+            returnType={
+              <>
+                <Reference refkey={resultAliasKey} />
+                {"<&V>"}
+              </>
+            }
           >
             <MatchExpression expression="self.data.get(key)">
               <MatchArm pattern="Some(entry)">
                 <IfExpression condition="entry.status == EntryStatus::Expired">
                   <>
-                    <ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>;
+                    <ReturnExpression>
+                      Err(StoreError::NotFound)
+                    </ReturnExpression>
+                    ;
                   </>
                 </IfExpression>
                 <IfExpression condition="let Some(ttl) = entry.ttl">
                   <IfExpression condition="entry.created_at.elapsed() &gt; ttl">
                     <>
-                      <ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>;
+                      <ReturnExpression>
+                        Err(StoreError::NotFound)
+                      </ReturnExpression>
+                      ;
                     </>
                   </IfExpression>
                 </IfExpression>
@@ -194,14 +266,32 @@ export function StoreModule(props: StoreModuleProps) {
             pub
             receiver="&mut self"
             parameters={[{ name: "key", type: "&K" }]}
-            returnType={<><Reference refkey={resultAliasKey} />{"<V>"}</>}
+            returnType={
+              <>
+                <Reference refkey={resultAliasKey} />
+                {"<V>"}
+              </>
+            }
           >
             <MethodChainExpression receiver="self.data">
               <MethodChainExpression.Call name="remove" args={["key"]} />
-              <MethodChainExpression.Call name="map" args={[
-                <ClosureExpression parameters={[{ name: "entry" }]}>entry.value</ClosureExpression>
-              ]} />
-              <MethodChainExpression.Call name="ok_or" args={[<><Reference refkey={storeErrorKey} />::NotFound</>]} />
+              <MethodChainExpression.Call
+                name="map"
+                args={[
+                  <ClosureExpression parameters={[{ name: "entry" }]}>
+                    entry.value
+                  </ClosureExpression>,
+                ]}
+              />
+              <MethodChainExpression.Call
+                name="ok_or"
+                args={[
+                  <>
+                    <Reference refkey={storeErrorKey} />
+                    ::NotFound
+                  </>,
+                ]}
+              />
             </MethodChainExpression>
           </FunctionDeclaration>
 
@@ -256,7 +346,12 @@ export function StoreModule(props: StoreModuleProps) {
 
         <ImplBlock
           type={storeKey}
-          trait={<><Reference refkey={cacheableKey} />{"<V>"}</>}
+          trait={
+            <>
+              <Reference refkey={cacheableKey} />
+              {"<V>"}
+            </>
+          }
           typeParameters={[
             { name: "K", constraint: "Eq + std::hash::Hash + Clone" },
             { name: "V", constraint: "Clone + Send + Sync" },
@@ -267,7 +362,10 @@ export function StoreModule(props: StoreModuleProps) {
             receiver="&self"
             returnType="String"
           >
-            <MacroCall name="format" args={['"store::{}"', "self.data.len()"]} />
+            <MacroCall
+              name="format"
+              args={['"store::{}"', "self.data.len()"]}
+            />
           </FunctionDeclaration>
 
           <hbr />

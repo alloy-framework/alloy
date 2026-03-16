@@ -1,7 +1,5 @@
 import { Output, Scope, createSymbol } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { NamedTypeSymbol } from "../src/symbols/named-type-symbol.js";
-import { RustOutputSymbol } from "../src/symbols/rust-output-symbol.js";
 import {
   RustCrateScope,
   RustFunctionScope,
@@ -13,6 +11,8 @@ import {
   useRustModuleScope,
   useRustScope,
 } from "../src/scopes/index.js";
+import { NamedTypeSymbol } from "../src/symbols/named-type-symbol.js";
+import { RustOutputSymbol } from "../src/symbols/rust-output-symbol.js";
 
 describe("Rust scope hierarchy", () => {
   it("tracks crate modules and dependencies", () => {
@@ -40,8 +40,16 @@ describe("Rust scope hierarchy", () => {
   it("tracks module imports grouped by path and child modules", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("http", crateScope);
-    const request = createSymbol(RustOutputSymbol, "Request", moduleScope.values);
-    const response = createSymbol(RustOutputSymbol, "Response", moduleScope.values);
+    const request = createSymbol(
+      RustOutputSymbol,
+      "Request",
+      moduleScope.values,
+    );
+    const response = createSymbol(
+      RustOutputSymbol,
+      "Response",
+      moduleScope.values,
+    );
 
     moduleScope.addUse("crate::types", request);
     moduleScope.addUse("crate::types", response);
@@ -53,7 +61,9 @@ describe("Rust scope hierarchy", () => {
     expect(moduleScope.imports.get("crate::types")?.has(request)).toBe(true);
     expect(moduleScope.imports.get("crate::types")?.has(response)).toBe(true);
     expect(moduleScope.imports.get("crate::types")?.size).toBe(2);
-    expect(moduleScope.childModules.get("client")?.visibility).toBe("pub(crate)");
+    expect(moduleScope.childModules.get("client")?.visibility).toBe(
+      "pub(crate)",
+    );
   });
 
   it("defines lexical and function declaration spaces", () => {

@@ -8,12 +8,9 @@ export function ReturnExpression(props: ReturnExpressionProps) {
   return (
     <>
       {"return"}
-      {typeof props.children !== "undefined" ? (
-        <>
-          {" "}
-          {props.children}
-        </>
-      ) : null}
+      {typeof props.children !== "undefined" ?
+        <> {props.children}</>
+      : null}
     </>
   );
 }

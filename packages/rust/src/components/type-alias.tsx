@@ -1,4 +1,8 @@
-import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
+import {
+  Children,
+  Declaration as CoreDeclaration,
+  Refkey,
+} from "@alloy-js/core";
 import { createTypeAliasSymbol } from "../symbols/factories.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";

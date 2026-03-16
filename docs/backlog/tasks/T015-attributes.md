@@ -1,12 +1,12 @@
 # T015: Attribute and DeriveAttribute
 
-| Field       | Value                                    |
-| ----------- | ---------------------------------------- |
-| **Task ID** | T015                                     |
-| **Epic**    | E003 — Core Declaration Components       |
-| **Deps**    | T010 (Declaration/Reference)             |
-| **Blocks**  | —                                        |
-| **Status**  | Done                                     |
+| Field       | Value                              |
+| ----------- | ---------------------------------- |
+| **Task ID** | T015                               |
+| **Epic**    | E003 — Core Declaration Components |
+| **Deps**    | T010 (Declaration/Reference)       |
+| **Blocks**  | —                                  |
+| **Status**  | Done                               |
 
 ## Description
 
@@ -42,10 +42,10 @@ interface DeriveAttributeProps {
 
 ## Context Files
 
-| File                                                  | Why                                     |
-| ----------------------------------------------------- | --------------------------------------- |
-| `packages/csharp/src/components/attributes/`           | C# attribute pattern (similar concept)   |
-| `packages/java/src/components/Annotation.tsx`          | Java annotation pattern                  |
+| File                                          | Why                                    |
+| --------------------------------------------- | -------------------------------------- |
+| `packages/csharp/src/components/attributes/`  | C# attribute pattern (similar concept) |
+| `packages/java/src/components/Annotation.tsx` | Java annotation pattern                |
 
 ## Implementation Guidance
 

@@ -2,12 +2,12 @@ import { Output, code, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { useCrateContext } from "../src/context/crate-context.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
 import { ModuleDirectory } from "../src/components/module-directory.js";
 import { SourceFile } from "../src/components/source-file.js";
-import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
+import { useCrateContext } from "../src/context/crate-context.js";
 import { RustModuleScope, useRustModuleScope } from "../src/scopes/index.js";
+import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { findFile } from "./utils.js";
 
 function ScopeCapture() {
@@ -15,7 +15,9 @@ function ScopeCapture() {
   const crateScope = useCrateContext()!.scope;
   const directoryScope = sourceFileScope.parent;
   const parentDirectoryScope =
-    directoryScope instanceof RustModuleScope ? directoryScope.parent : undefined;
+    directoryScope instanceof RustModuleScope ?
+      directoryScope.parent
+    : undefined;
 
   return (
     <>
@@ -82,7 +84,9 @@ describe("ModuleDirectory", () => {
       </Output>,
     );
 
-    expect(findFile(output, "net/http/client.rs").contents.trim()).toBe(d`fn client() {}`);
+    expect(findFile(output, "net/http/client.rs").contents.trim()).toBe(
+      d`fn client() {}`,
+    );
     expect(crateScope).toBeDefined();
     expect(sourceFileScope).toBeDefined();
     expect(crateScope!.childModules.get("net")).toEqual({
@@ -101,7 +105,9 @@ describe("ModuleDirectory", () => {
     const outerDirectoryScope = innerDirectoryScope!.parent;
     expect(outerDirectoryScope).toBeInstanceOf(RustModuleScope);
     if (!(outerDirectoryScope instanceof RustModuleScope)) {
-      throw new Error("Expected outer directory scope to be a RustModuleScope.");
+      throw new Error(
+        "Expected outer directory scope to be a RustModuleScope.",
+      );
     }
     expect(outerDirectoryScope.name).toBe("net");
     expect(outerDirectoryScope.childModules.get("http")).toEqual({

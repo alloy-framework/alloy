@@ -1,17 +1,17 @@
 # T046 — StructExpression + FieldInit Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T046 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T046                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -27,13 +27,16 @@ Self {
 ```
 
 Currently this must be written as raw code:
+
 ```tsx
-{code`
+{
+  code`
   Self {
       max_capacity: capacity,
       ..self
   }
-`}
+`;
+}
 ```
 
 A dedicated component would make this composable and type-safe.
@@ -74,14 +77,14 @@ Provide `StructExpression` and `FieldInit` components for constructing struct li
 
 ```typescript
 interface StructExpressionProps {
-  type: Children;        // Struct name or Self
-  spread?: Children;     // Optional ..spread source (e.g., "self")
-  children?: Children;   // FieldInit children
+  type: Children; // Struct name or Self
+  spread?: Children; // Optional ..spread source (e.g., "self")
+  children?: Children; // FieldInit children
 }
 
 interface FieldInitProps {
-  name: string;          // Field name
-  children?: Children;   // Value expression (omit for shorthand)
+  name: string; // Field name
+  children?: Children; // Value expression (omit for shorthand)
 }
 ```
 

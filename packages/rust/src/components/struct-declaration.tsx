@@ -14,7 +14,11 @@ import {
   createTypeParameterSymbol,
 } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
-import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
+import {
+  TypeParameterProp,
+  TypeParameters,
+  WhereClause,
+} from "./type-parameters.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface StructDeclarationProps {
@@ -44,7 +48,9 @@ export interface FieldProps {
   doc?: string;
 }
 
-function DeclareNamedTypeTypeParameters(props: { typeParameters?: TypeParameterProp[] }) {
+function DeclareNamedTypeTypeParameters(props: {
+  typeParameters?: TypeParameterProp[];
+}) {
   const params = props.typeParameters ?? [];
   for (const param of params) {
     if (param.name) {
@@ -68,7 +74,10 @@ export function StructDeclaration(props: StructDeclarationProps) {
   const visibilityPrefix = toVisibilityPrefix(props);
   const members =
     props.children ?
-      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+      (Array.isArray(props.children) ?
+        props.children
+      : [props.children]
+      ).filter(
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
@@ -76,66 +85,74 @@ export function StructDeclaration(props: StructDeclarationProps) {
 
   return (
     <>
-      {props.doc ? (
+      {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
         </>
-      ) : null}
-      {props.attributes ? (
+      : null}
+      {props.attributes ?
         <>
           {props.attributes}
           <hbr />
         </>
-      ) : null}
-      {props.derives && props.derives.length > 0 ? (
+      : null}
+      {props.derives && props.derives.length > 0 ?
         <>
           {"#[derive("}
-          <For each={props.derives} joiner={", "}>{(derive) => derive}</For>
+          <For each={props.derives} joiner={", "}>
+            {(derive) => derive}
+          </For>
           {")]"}
           <hbr />
         </>
-      ) : null}
+      : null}
       <CoreDeclaration symbol={structSymbol}>
         <Scope value={structScope}>
-          <DeclareNamedTypeTypeParameters typeParameters={props.typeParameters} />
+          <DeclareNamedTypeTypeParameters
+            typeParameters={props.typeParameters}
+          />
         </Scope>
         {visibilityPrefix}
         {"struct "}
         {structSymbol.name}
         <TypeParameters params={props.typeParameters} />
-        {props.whereClause && !props.tuple ? (
+        {props.whereClause && !props.tuple ?
           <>
             {" "}
             <WhereClause>{props.whereClause}</WhereClause>
           </>
-        ) : null}
-        {props.unit ? (
+        : null}
+        {props.unit ?
           ";"
-        ) : props.tuple ? (
+        : props.tuple ?
           <>
             {"("}
-            <For each={tupleTypes} joiner={", "}>{(type) => type}</For>
+            <For each={tupleTypes} joiner={", "}>
+              {(type) => type}
+            </For>
             {")"}
-            {props.whereClause ? (
+            {props.whereClause ?
               <>
                 {" "}
                 <WhereClause>{props.whereClause}</WhereClause>
               </>
-            ) : null}
+            : null}
             {";"}
           </>
-        ) : members.length > 0 ? (
+        : members.length > 0 ?
           <>
             {" {"}
             <Scope value={structScope}>
               <Indent>
-                <For each={members} joiner={<hbr />}>{(child) => child}</For>
+                <For each={members} joiner={<hbr />}>
+                  {(child) => child}
+                </For>
               </Indent>
             </Scope>
             <hbr />
             {"}"}
           </>
-        ) : " {}"}
+        : " {}"}
       </CoreDeclaration>
     </>
   );
@@ -150,11 +167,11 @@ export function Field(props: FieldProps) {
 
   return (
     <CoreDeclaration symbol={fieldSymbol}>
-      {props.doc ? (
+      {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
         </>
-      ) : null}
+      : null}
       {visibilityPrefix}
       {fieldSymbol.name}
       {": "}

@@ -1,4 +1,4 @@
-import { Output, render, refkey } from "@alloy-js/core";
+import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
@@ -128,6 +128,8 @@ describe("AssociatedType", () => {
           </CrateDirectory>
         </Output>,
       ),
-    ).toThrow("Can't create associated type symbol outside of an impl or trait scope.");
+    ).toThrow(
+      "Can't create associated type symbol outside of an impl or trait scope.",
+    );
   });
 });

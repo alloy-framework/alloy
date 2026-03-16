@@ -12,17 +12,17 @@ import {
   EnumDeclaration,
   EnumVariant,
   Field,
-  FunctionDeclaration,
+  FieldInit as FieldInitializer,
   FunctionCallExpression,
+  FunctionDeclaration,
   ImplBlock,
   ModuleDirectory,
   ModuleDocComment,
   Parameters,
   Reference,
   SourceFile,
-  StructExpression,
-  FieldInit as FieldInitializer,
   StructDeclaration,
+  StructExpression,
   TraitDeclaration,
   TypeAlias,
   TypeParameters,
@@ -95,7 +95,11 @@ describe("STC wrappers", () => {
 
   it("FunctionDeclaration wrapper supports .code and matches JSX output", () => {
     expect(
-      inFile(<FunctionDeclaration name="hello">{"println!(\"hi\");"}</FunctionDeclaration>),
+      inFile(
+        <FunctionDeclaration name="hello">
+          {'println!("hi");'}
+        </FunctionDeclaration>,
+      ),
     ).toRenderTo(d`
       fn hello() {
         println!("hi");
@@ -112,8 +116,12 @@ describe("STC wrappers", () => {
   });
 
   it("TraitDeclaration wrapper matches JSX output", () => {
-    expect(inFile(<TraitDeclaration name="Runner" />)).toRenderTo(d`trait Runner {}`);
-    expect(inFile(Stc.TraitDeclaration({ name: "Runner" }))).toRenderTo(d`trait Runner {}`);
+    expect(inFile(<TraitDeclaration name="Runner" />)).toRenderTo(
+      d`trait Runner {}`,
+    );
+    expect(inFile(Stc.TraitDeclaration({ name: "Runner" }))).toRenderTo(
+      d`trait Runner {}`,
+    );
   });
 
   it("ImplBlock wrapper matches JSX output", () => {
@@ -158,42 +166,58 @@ describe("STC wrappers", () => {
     expect(inFile(<TypeAlias name="Bytes">{"Vec<u8>"}</TypeAlias>)).toRenderTo(
       d`type Bytes = Vec<u8>;`,
     );
-    expect(inFile(Stc.TypeAlias({ name: "Bytes" }).children(["Vec<u8>"]))).toRenderTo(
-      d`type Bytes = Vec<u8>;`,
-    );
+    expect(
+      inFile(Stc.TypeAlias({ name: "Bytes" }).children(["Vec<u8>"])),
+    ).toRenderTo(d`type Bytes = Vec<u8>;`);
   });
 
   it("ConstDeclaration wrapper matches JSX output", () => {
-    expect(inFile(<ConstDeclaration name="MAX" type="usize">100</ConstDeclaration>)).toRenderTo(
-      d`const MAX: usize = 100;`,
-    );
-    expect(inFile(Stc.ConstDeclaration({ name: "MAX", type: "usize" }).children(["100"]))).toRenderTo(
-      d`const MAX: usize = 100;`,
-    );
+    expect(
+      inFile(
+        <ConstDeclaration name="MAX" type="usize">
+          100
+        </ConstDeclaration>,
+      ),
+    ).toRenderTo(d`const MAX: usize = 100;`);
+    expect(
+      inFile(
+        Stc.ConstDeclaration({ name: "MAX", type: "usize" }).children(["100"]),
+      ),
+    ).toRenderTo(d`const MAX: usize = 100;`);
   });
 
   it("Attribute wrapper matches JSX output", () => {
-    expect(inFile(<Attribute name="cfg" args="test" />)).toRenderTo(d`#[cfg(test)]`);
-    expect(inFile(Stc.Attribute({ name: "cfg", args: "test" }))).toRenderTo(d`#[cfg(test)]`);
+    expect(inFile(<Attribute name="cfg" args="test" />)).toRenderTo(
+      d`#[cfg(test)]`,
+    );
+    expect(inFile(Stc.Attribute({ name: "cfg", args: "test" }))).toRenderTo(
+      d`#[cfg(test)]`,
+    );
   });
 
   it("DeriveAttribute wrapper matches JSX output", () => {
     expect(inFile(<DeriveAttribute traits={["Debug", "Clone"]} />)).toRenderTo(
       d`#[derive(Debug, Clone)]`,
     );
-    expect(inFile(Stc.DeriveAttribute({ traits: ["Debug", "Clone"] }))).toRenderTo(
-      d`#[derive(Debug, Clone)]`,
-    );
+    expect(
+      inFile(Stc.DeriveAttribute({ traits: ["Debug", "Clone"] })),
+    ).toRenderTo(d`#[derive(Debug, Clone)]`);
   });
 
   it("DocComment wrapper supports .children and matches JSX output", () => {
     expect(inFile(<DocComment>Hello</DocComment>)).toRenderTo("/// Hello\n\n");
-    expect(inFile(Stc.DocComment().children(["Hello"]))).toRenderTo("/// Hello\n\n");
+    expect(inFile(Stc.DocComment().children(["Hello"]))).toRenderTo(
+      "/// Hello\n\n",
+    );
   });
 
   it("ModuleDocComment wrapper supports .children and matches JSX output", () => {
-    expect(inFile(<ModuleDocComment>Hello module</ModuleDocComment>)).toRenderTo("//! Hello module\n\n");
-    expect(inFile(Stc.ModuleDocComment().children(["Hello module"]))).toRenderTo("//! Hello module\n\n");
+    expect(
+      inFile(<ModuleDocComment>Hello module</ModuleDocComment>),
+    ).toRenderTo("//! Hello module\n\n");
+    expect(
+      inFile(Stc.ModuleDocComment().children(["Hello module"])),
+    ).toRenderTo("//! Hello module\n\n");
   });
 
   it("CrateDirectory + ModuleDirectory + SourceFile wrappers match JSX output", () => {
@@ -287,7 +311,9 @@ describe("STC wrappers", () => {
         <>
           <StructDeclaration name="User" refkey={userRef} />
           <hbr />
-          {Stc.TypeAlias({ name: "UserAlias" }).children([Stc.Reference({ refkey: userRef })])}
+          {Stc.TypeAlias({ name: "UserAlias" }).children([
+            Stc.Reference({ refkey: userRef }),
+          ])}
         </>,
       ),
     ).toRenderTo(d`
@@ -320,12 +346,14 @@ describe("STC wrappers", () => {
       }
     `);
 
-    expect(inFile(<TypeParameters params={[{ name: "T", constraint: "Clone" }]} />)).toRenderTo(
-      d`<T: Clone>`,
-    );
-    expect(inFile(Stc.TypeParameters({ params: [{ name: "T", constraint: "Clone" }] }))).toRenderTo(
-      d`<T: Clone>`,
-    );
+    expect(
+      inFile(<TypeParameters params={[{ name: "T", constraint: "Clone" }]} />),
+    ).toRenderTo(d`<T: Clone>`);
+    expect(
+      inFile(
+        Stc.TypeParameters({ params: [{ name: "T", constraint: "Clone" }] }),
+      ),
+    ).toRenderTo(d`<T: Clone>`);
   });
 
   it("Value wrapper matches JSX output", () => {
@@ -359,7 +387,11 @@ describe("STC wrappers", () => {
 
   it("FunctionCallExpression wrapper matches JSX output", () => {
     expect(
-      <FunctionCallExpression target="self.data.insert" typeArgs={["String"]} args={["key", "entry"]} />,
+      <FunctionCallExpression
+        target="self.data.insert"
+        typeArgs={["String"]}
+        args={["key", "entry"]}
+      />,
     ).toRenderTo(d`self.data.insert::<String>(key, entry)`);
 
     expect(

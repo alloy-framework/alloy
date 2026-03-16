@@ -1,17 +1,17 @@
 # T045 — ModDeclarations Render Order Dependency
 
-| Field | Value |
-|-------|-------|
-| **ID** | T045 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | improvement |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T025 (ModDeclarations), T009 (SourceFile / CrateDirectory) |
-| **Blocks** | — |
+| Field                     | Value                                                      |
+| ------------------------- | ---------------------------------------------------------- |
+| **ID**                    | T045                                                       |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                         |
+| **Type**                  | improvement                                                |
+| **Status**                | done                                                       |
+| **Priority**              | P2 — should-have                                           |
+| **Owner Role**            | AI coding agent                                            |
+| **AI Executable**         | Yes                                                        |
+| **Human Review Required** | Yes                                                        |
+| **Dependencies**          | T025 (ModDeclarations), T009 (SourceFile / CrateDirectory) |
+| **Blocks**                | —                                                          |
 
 ---
 

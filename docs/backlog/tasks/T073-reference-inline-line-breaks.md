@@ -1,17 +1,17 @@
 # T073 — Reference Inline Rendering Inserts Unexpected Line Breaks
 
-| Field | Value |
-|-------|-------|
-| **ID** | T073 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P2 — nice-to-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T010 (Reference basics), T022 (Reference resolution) |
-| **Blocks** | — |
+| Field                     | Value                                                |
+| ------------------------- | ---------------------------------------------------- |
+| **ID**                    | T073                                                 |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                   |
+| **Type**                  | bug                                                  |
+| **Status**                | done                                                 |
+| **Priority**              | P2 — nice-to-have                                    |
+| **Owner Role**            | AI coding agent                                      |
+| **AI Executable**         | Yes                                                  |
+| **Human Review Required** | Yes                                                  |
+| **Dependencies**          | T010 (Reference basics), T022 (Reference resolution) |
+| **Blocks**                | —                                                    |
 
 ---
 

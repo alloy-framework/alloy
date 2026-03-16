@@ -13,11 +13,13 @@ Your task is to revise the planning set based on:
 - <OUTPUT_DIR>/06-review.md
 
 Update the following files in place as needed:
+
 - <DESIGN_DOC>
 - <PRD_DOC>
 - docs/backlog
 
 Goals:
+
 1. Resolve ambiguities where possible.
 2. Tighten MVP scope if needed.
 3. Improve requirement clarity and task ordering.
@@ -29,6 +31,7 @@ At the end, create:
 <OUTPUT_DIR>/07-revision-summary.md
 
 That file must contain:
+
 - what changed
 - why it changed
 - remaining unresolved questions

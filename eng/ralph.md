@@ -176,7 +176,7 @@ commit, push, and **exit**. Do not burn the remaining context window retrying.
 4. `git add -A && git commit` using **conventional commit format**, then
    `git push`.
    - Format: `type(rust): description` — e.g., `feat(rust): add struct
-     declaration component`, `fix(rust): correct scope hierarchy for impl blocks`,
+declaration component`, `fix(rust): correct scope hierarchy for impl blocks`,
      `test(rust): add enum variant rendering tests`
    - Valid types: `feat`, `fix`, `test`, `chore`, `refactor`, `docs`
    - Scope is always `rust` for `@alloy-js/rust` work.

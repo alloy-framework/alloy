@@ -9,8 +9,8 @@ import {
   ImplBlock,
   Reference,
   SourceFile,
-  StructExpression,
   StructDeclaration,
+  StructExpression,
 } from "@alloy-js/rust";
 import { stdCrate } from "../externals.js";
 
@@ -62,7 +62,13 @@ export function ConfigFile(props: ConfigFileProps) {
         <Field
           name="default_ttl"
           pub
-          type={<>{"Option<"}<Reference refkey={stdCrate.time.Duration} />{">"}</>}
+          type={
+            <>
+              {"Option<"}
+              <Reference refkey={stdCrate.time.Duration} />
+              {">"}
+            </>
+          }
         />
         <Field name="enable_eviction" pub type="bool" />
         <Field name="name" pub type="String" />
@@ -75,7 +81,11 @@ export function ConfigFile(props: ConfigFileProps) {
         <FunctionDeclaration name="new" pub receiver="none" returnType="Self">
           <StructExpression type="Self">
             <FieldInit name="max_capacity">MAX_ENTRIES</FieldInit>
-            <FieldInit name="default_ttl">{"Some("}<Reference refkey={stdCrate.time.Duration} />::from_secs(DEFAULT_TTL_SECS){")"}</FieldInit>
+            <FieldInit name="default_ttl">
+              {"Some("}
+              <Reference refkey={stdCrate.time.Duration} />
+              ::from_secs(DEFAULT_TTL_SECS){")"}
+            </FieldInit>
             <FieldInit name="enable_eviction">true</FieldInit>
             <FieldInit name="name">String::from("default")</FieldInit>
           </StructExpression>
@@ -106,7 +116,10 @@ export function ConfigFile(props: ConfigFileProps) {
           pub
           receiver="self"
           parameters={[
-            { name: "ttl", type: <Reference refkey={stdCrate.time.Duration} /> },
+            {
+              name: "ttl",
+              type: <Reference refkey={stdCrate.time.Duration} />,
+            },
           ]}
           returnType="Self"
         >

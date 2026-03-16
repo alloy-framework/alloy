@@ -41,22 +41,22 @@ export function BlockExpression(props: BlockExpressionProps) {
   return (
     <>
       {"{"}
-      {statements.length > 0 ? (
+      {statements.length > 0 ?
         <>
           <Indent>
-            {precedingStatements.length > 0 ? (
+            {precedingStatements.length > 0 ?
               <>
                 <For each={precedingStatements} joiner={<hbr />}>
                   {(statement) => statement}
                 </For>
                 <hbr />
               </>
-            ) : null}
+            : null}
             {lastExpression}
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );

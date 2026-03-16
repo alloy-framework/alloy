@@ -1,17 +1,17 @@
 # T069 — ImplBlock Generic Parameter Forwarding
 
-| Field | Value |
-|-------|-------|
-| **ID** | T069 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P0 — critical |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T020 (ImplBlock), T017 (TypeParameters) |
-| **Blocks** | — |
+| Field                     | Value                                   |
+| ------------------------- | --------------------------------------- |
+| **ID**                    | T069                                    |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)      |
+| **Type**                  | bug                                     |
+| **Status**                | done                                    |
+| **Priority**              | P0 — critical                           |
+| **Owner Role**            | AI coding agent                         |
+| **AI Executable**         | Yes                                     |
+| **Human Review Required** | Yes                                     |
+| **Dependencies**          | T020 (ImplBlock), T017 (TypeParameters) |
+| **Blocks**                | —                                       |
 
 ---
 
@@ -54,6 +54,7 @@ This causes compilation failure because Rust requires generic parameters to be d
 Discovered during rust-example review on 2026-03-12. The sample `Store<K, V>` struct's impl block renders without generic parameters, causing `cargo check` to fail.
 
 Resolved on 2026-03-12 by:
+
 - Inferring target type parameters from `NamedTypeSymbol.typeParameters` in `ImplBlock`
 - Registering named type parameter symbols for `StructDeclaration` and `EnumDeclaration`
 - Rendering inferred parameters in both `impl<...>` and target type position

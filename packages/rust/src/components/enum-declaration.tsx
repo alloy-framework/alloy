@@ -39,7 +39,9 @@ export interface EnumVariantProps {
   children?: Children;
 }
 
-function DeclareNamedTypeTypeParameters(props: { typeParameters?: TypeParameterProp[] }) {
+function DeclareNamedTypeTypeParameters(props: {
+  typeParameters?: TypeParameterProp[];
+}) {
   const params = props.typeParameters ?? [];
   for (const param of params) {
     if (param.name) {
@@ -62,52 +64,61 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const visibilityPrefix = toVisibilityPrefix(props);
   const variants =
     props.children ?
-      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+      (Array.isArray(props.children) ?
+        props.children
+      : [props.children]
+      ).filter(
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
 
   return (
     <>
-      {props.doc ? (
+      {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
         </>
-      ) : null}
-      {props.attributes ? (
+      : null}
+      {props.attributes ?
         <>
           {props.attributes}
           <hbr />
         </>
-      ) : null}
-      {props.derives && props.derives.length > 0 ? (
+      : null}
+      {props.derives && props.derives.length > 0 ?
         <>
           {"#[derive("}
-          <For each={props.derives} joiner={", "}>{(derive) => derive}</For>
+          <For each={props.derives} joiner={", "}>
+            {(derive) => derive}
+          </For>
           {")]"}
           <hbr />
         </>
-      ) : null}
+      : null}
       <CoreDeclaration symbol={enumSymbol}>
         <Scope value={enumScope}>
-          <DeclareNamedTypeTypeParameters typeParameters={props.typeParameters} />
+          <DeclareNamedTypeTypeParameters
+            typeParameters={props.typeParameters}
+          />
         </Scope>
         {visibilityPrefix}
         {"enum "}
         {enumSymbol.name}
         <TypeParameters params={props.typeParameters} />
-        {variants.length > 0 ? (
+        {variants.length > 0 ?
           <>
             {" {"}
             <Scope value={enumScope}>
               <Indent>
-                <For each={variants} joiner={<hbr />}>{(child) => child}</For>
+                <For each={variants} joiner={<hbr />}>
+                  {(child) => child}
+                </For>
               </Indent>
             </Scope>
             <hbr />
             {"}"}
           </>
-        ) : " {}"}
+        : " {}"}
       </CoreDeclaration>
     </>
   );
@@ -123,41 +134,48 @@ export function EnumVariant(props: EnumVariantProps) {
   );
   const members =
     props.children ?
-      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+      (Array.isArray(props.children) ?
+        props.children
+      : [props.children]
+      ).filter(
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
   const variantKind =
     props.kind ??
-    (tupleFields.length > 0 ? "tuple" : members.length > 0 ? "struct" : "unit");
+    (tupleFields.length > 0 ? "tuple"
+    : members.length > 0 ? "struct"
+    : "unit");
   const tupleValues = tupleFields.length > 0 ? tupleFields : members;
 
   return (
     <CoreDeclaration symbol={variantSymbol}>
-      {props.doc ? (
+      {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
         </>
-      ) : null}
+      : null}
       {variantSymbol.name}
-      {variantKind === "tuple" && tupleValues.length > 0 ? (
+      {variantKind === "tuple" && tupleValues.length > 0 ?
         <>
           {"("}
-          <For each={tupleValues} joiner={", "}>{(field) => field}</For>
+          <For each={tupleValues} joiner={", "}>
+            {(field) => field}
+          </For>
           {"),"}
         </>
-      ) : variantKind === "struct" ? (
+      : variantKind === "struct" ?
         <>
           {" {"}
           <Indent>
-            <For each={members} joiner={<hbr />}>{(child) => child}</For>
+            <For each={members} joiner={<hbr />}>
+              {(child) => child}
+            </For>
           </Indent>
           <hbr />
           {"},"}
         </>
-      ) : (
-        ","
-      )}
+      : ","}
     </CoreDeclaration>
   );
 }

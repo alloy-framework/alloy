@@ -1,7 +1,7 @@
 # Planning Review: @alloy-js/rust
 
 **Reviewer role:** Skeptical senior architect  
-**Documents reviewed:** 01-core-understanding.md, 02-existing-language-patterns.md, 03-rust-design-notes.md, 04-rust-prd.md, docs/backlog/*  
+**Documents reviewed:** 01-core-understanding.md, 02-existing-language-patterns.md, 03-rust-design-notes.md, 04-rust-prd.md, docs/backlog/\*  
 **Verified against:** Actual repository code in packages/go, packages/csharp, packages/typescript, packages/python, packages/core
 
 ---
@@ -38,52 +38,52 @@ The most significant issues are: (1) the scopes directory structure is wrong in 
 
 **G1: `api-extractor.json` is not in the backlog.**  
 Every existing language package (Go, TS, Java, Python, C#) has an `api-extractor.json` that extends `../../api-extractor.base.json`. The Go build script is `"build": "alloy build --with-dev && pnpm run generate-docs"`. The backlog's T001 (package scaffold) does not mention this.  
-*Evidence:* `packages/go/api-extractor.json`, `packages/go/package.json` scripts.
+_Evidence:_ `packages/go/api-extractor.json`, `packages/go/package.json` scripts.
 
 **G2: The `alloy build` tool is not mentioned.**  
 Go uses `alloy build --with-dev` (not `tsc`). The CLI is at `packages/cli/`. The build script and `--with-dev` flag produce both `dist/` and `dist/dev/` directories. T001 says "Copy package.json from Go" but doesn't explicitly call out the build tool.  
-*Evidence:* `packages/go/package.json` scripts section.
+_Evidence:_ `packages/go/package.json` scripts section.
 
 **G3: The `#imports` hash pattern is missing.**  
 Go's `package.json` includes `"imports": { "#test/*": "./test/*", "#components/*": { ... } }` for path aliases. This is used alongside `tsconfig.json` paths. The Rust package will need the same.  
-*Evidence:* `packages/go/package.json` imports field.
+_Evidence:_ `packages/go/package.json` imports field.
 
 **G4: No task for `tsdoc.json`.**  
 Some packages have `tsdoc.json`. While not all do, the api-extractor integration may require it.
 
 **G5: The `prepack` script is missing from T001.**  
 Go has `"prepack": "node ../../scripts/strip-dev-exports.js"` which strips `"source"` conditions on publish. This is needed for correctness.  
-*Evidence:* `packages/go/package.json`.
+_Evidence:_ `packages/go/package.json`.
 
 ## 3.2 Missing Design Details
 
 **G6: Prelude type list is undefined.**  
-The design says "maintain a PRELUDE_TYPES set" for skipping imports, but neither the design doc nor any task defines the exact list. Rust's prelude includes: `Option`, `Some`, `None`, `Result`, `Ok`, `Err`, `Vec`, `String`, `ToString`, `Box`, `Clone`, `Copy`, `Default`, `Drop`, `Eq`, `PartialEq`, `Ord`, `PartialOrd`, `Iterator`, `IntoIterator`, `From`, `Into`, `AsRef`, `AsMut`, `Send`, `Sync`, `Sized`, `Unpin`, `bool`, `char`, `i8`–`i128`, `u8`–`u128`, `f32`, `f64`, `str`, `usize`, `isize`. This is a non-trivial list.  
-*Impact:* T022 (reference resolution) and T029 (std builtins) need this, but it's not specified.
+The design says "maintain a PRELUDE*TYPES set" for skipping imports, but neither the design doc nor any task defines the exact list. Rust's prelude includes: `Option`, `Some`, `None`, `Result`, `Ok`, `Err`, `Vec`, `String`, `ToString`, `Box`, `Clone`, `Copy`, `Default`, `Drop`, `Eq`, `PartialEq`, `Ord`, `PartialOrd`, `Iterator`, `IntoIterator`, `From`, `Into`, `AsRef`, `AsMut`, `Send`, `Sync`, `Sized`, `Unpin`, `bool`, `char`, `i8`–`i128`, `u8`–`u128`, `f32`, `f64`, `str`, `usize`, `isize`. This is a non-trivial list.  
+\_Impact:* T022 (reference resolution) and T029 (std builtins) need this, but it's not specified.
 
 **G7: No name conflict resolver task.**  
 The backlog says "use default from core" for name conflicts. But TypeScript has a custom `tsNameConflictResolver` that prioritizes non-import symbols. Rust will likely need similar logic — imported symbols (via `use`) should be renamed before local declarations. No task exists for this.  
-*Evidence:* `packages/typescript/src/name-conflict-resolver.ts`.
+_Evidence:_ `packages/typescript/src/name-conflict-resolver.ts`.
 
 **G8: `SourceFile` mod-declaration rendering is underspecified.**  
-The design says "SourceFile auto-generates mod declarations in parent modules" but the mechanics are unclear. In Rust, `mod foo;` goes in the *parent* file, not the child. So `lib.rs` declares `mod models;`, not `models/mod.rs`. But `ModuleDirectory` creates the child scope. How does the child registration propagate to the parent SourceFile for rendering? This needs clearer design.
+The design says "SourceFile auto-generates mod declarations in parent modules" but the mechanics are unclear. In Rust, `mod foo;` goes in the _parent_ file, not the child. So `lib.rs` declares `mod models;`, not `models/mod.rs`. But `ModuleDirectory` creates the child scope. How does the child registration propagate to the parent SourceFile for rendering? This needs clearer design.
 
 ---
 
 # 4. Ambiguities
 
 **A1: "Triple declaration space" (`["types", "values", "macros"]`) is not justified.**  
-The design proposes `declarationSpaces = ["types", "values", "macros"]` for module scopes. Go uses `["values", "types"]` which is the closest analog. However, *no existing package puts macros in a declaration space*. Rust macro names rarely conflict with type/value names in code generation contexts. This adds complexity without clear benefit for MVP.  
-*Recommendation:* Use `["types", "values"]` like Go for MVP. Add `"macros"` later if needed.
+The design proposes `declarationSpaces = ["types", "values", "macros"]` for module scopes. Go uses `["values", "types"]` which is the closest analog. However, _no existing package puts macros in a declaration space_. Rust macro names rarely conflict with type/value names in code generation contexts. This adds complexity without clear benefit for MVP.  
+_Recommendation:_ Use `["types", "values"]` like Go for MVP. Add `"macros"` later if needed.
 
 **A2: `RustImplScope` ownership semantics are unclear.**  
 The design says "methods declared inside are added to the target type's `members` space." But how does `RustImplScope` get the target type? By refkey? The scope is created with `ownerSymbol`, but the target type may not be in the same file. If the `ImplBlock` references a struct via refkey, that struct's symbol must be resolved before the scope is created. This temporal dependency is not addressed.
 
 **A3: `receiver` prop default behavior is undecided.**  
-Open question 1 asks: "Should methods in impl blocks auto-get `&self`?" The recommendation is "yes" but the answer is listed as "must resolve before T021" — while T021 is the task that *implements* it. This is circular. The decision should be made in the design doc, not left to the implementing agent.
+Open question 1 asks: "Should methods in impl blocks auto-get `&self`?" The recommendation is "yes" but the answer is listed as "must resolve before T021" — while T021 is the task that _implements_ it. This is circular. The decision should be made in the design doc, not left to the implementing agent.
 
 **A4: `CrateDirectory` vs `ModuleDirectory` vs `SourceFile` — who renders `mod` declarations?**  
-T025 says "Update `SourceFile` to auto-generate `mod` declarations." But T009 says `CrateDirectory` creates the crate scope. The `mod` declarations need to go in the *root source file* (`lib.rs`). Does `CrateDirectory` create `lib.rs` implicitly, or does the user create it? If the user creates `<SourceFile path="lib.rs">`, how does it know to render mod declarations?
+T025 says "Update `SourceFile` to auto-generate `mod` declarations." But T009 says `CrateDirectory` creates the crate scope. The `mod` declarations need to go in the _root source file_ (`lib.rs`). Does `CrateDirectory` create `lib.rs` implicitly, or does the user create it? If the user creates `<SourceFile path="lib.rs">`, how does it know to render mod declarations?
 
 **A5: Struct variant fields in `EnumVariant` — confusing prop names.**  
 `EnumVariantProps` has `fields?: Children[]` for tuple variant and `children?: Children` for struct variant. The distinction between "fields" and "children" is confusing — both represent variant data. This could cause agent implementation errors.
@@ -94,16 +94,16 @@ T025 says "Update `SourceFile` to auto-generate `mod` declarations." But T009 sa
 
 **R1: Scopes in `symbols/` instead of `scopes/`.**  
 The proposed layout puts all scope classes in `src/symbols/`. But the actual Go package puts scopes in `src/scopes/` (a separate directory), and C# does the same. The symbols directory has 7 files in Go, scopes has 10 files. Mixing them would create an oversized directory. The design doc (03) proposes `symbols/` for everything; this is inconsistent with Go and C#.  
-*Evidence:* `packages/go/src/scopes/` (10 files), `packages/csharp/src/scopes/` (9 files).  
-*Recommendation:* Use a separate `src/scopes/` directory.
+_Evidence:_ `packages/go/src/scopes/` (10 files), `packages/csharp/src/scopes/` (9 files).  
+_Recommendation:_ Use a separate `src/scopes/` directory.
 
 **R2: `SymbolCreator` protocol claim is incorrect.**  
 The design doc (03, section 3.10) and patterns doc (02, section 5.8) say external dependency descriptors use the "SymbolCreator protocol." In reality, neither Go's `create-module.ts` nor C#'s `create-library.ts` use a formal `SymbolCreator` interface. They use `REFKEYABLE` + `TO_SYMBOL` symbols from core and call `createSymbol()` directly with a `WeakMap<Binder, Symbol>` for per-binder caching. Task T028 should reference the actual pattern, not the claimed "SymbolCreator protocol."  
-*Evidence:* `packages/go/src/create-module.ts`, `packages/csharp/src/create-library.ts`.
+_Evidence:_ `packages/go/src/create-module.ts`, `packages/csharp/src/create-library.ts`.
 
 **R3: `Reference` component is passed to `CoreSourceFile`, not set as a context.**  
-The design doc (03, section 3.3) says language packages "provide a Reference component set on `SourceFile`'s `reference` prop." This is correct — it's a *prop*, not a context. But the backlog tasks (T009, T010) don't clearly describe how the Rust `Reference` component is connected to `CoreSourceFile`. The Go pattern is: `<CoreSourceFile reference={Reference}>`.  
-*Implication:* T009 must explicitly pass the `Reference` component as a prop to core's SourceFile.
+The design doc (03, section 3.3) says language packages "provide a Reference component set on `SourceFile`'s `reference` prop." This is correct — it's a _prop_, not a context. But the backlog tasks (T009, T010) don't clearly describe how the Rust `Reference` component is connected to `CoreSourceFile`. The Go pattern is: `<CoreSourceFile reference={Reference}>`.  
+_Implication:_ T009 must explicitly pass the `Reference` component as a prop to core's SourceFile.
 
 **R4: Factory functions assume scope availability.**  
 T006 (factory functions) says "Get the current scope via `useRustScope()`." But this only works inside a reactive component context. Factory functions called outside a component tree will fail silently. Go's factories have the same pattern, but this is a footgun. The implementation must validate scope availability and emit diagnostics if called in the wrong context.
@@ -132,11 +132,12 @@ The plan acknowledges this but doesn't mitigate it. Golden scenario tests compar
 T026 (import integration tests) depends on T022, T023, T025 — if any of those is buggy, T026 tests will fail for non-obvious reasons. The test strategy should include intermediate unit tests for `RustModuleScope.addUse()` independently of the Reference component.
 
 **T3: No negative tests.**  
-The test plan covers correct behavior but not error cases. What happens when:  
-- A refkey references a non-existent symbol?  
-- A private symbol is referenced from another module?  
+The test plan covers correct behavior but not error cases. What happens when:
+
+- A refkey references a non-existent symbol?
+- A private symbol is referenced from another module?
 - A `use` would be circular?  
-At minimum, the visibility error case should be tested (like Go's uppercase export check).
+  At minimum, the visibility error case should be tested (like Go's uppercase export check).
 
 **T4: `test/utils.tsx` bootstrapping problem.**  
 T002 creates test utilities, but `SourceFile` and `CrateDirectory` don't exist yet (created in T009). The initial `toSourceText()` must use core components as stubs — but T002 says "update in T009." This creates a fragile intermediate state where tests in T003–T008 may need different utils than T009+ tests.
@@ -146,13 +147,14 @@ T002 creates test utilities, but `SourceFile` and `CrateDirectory` don't exist y
 # 8. Backlog Risks
 
 **B1: T011 (StructDeclaration) has too many dependencies.**  
-T011 lists dependencies on T006, T010, T015, T016, T017 — that's 5 deps. T015 (Attribute) and T016 (DocComment) are needed because StructDeclaration uses `derives` and `doc` props. But this means T011 can't start until attributes *and* doc comments are done. Consider: T011 should implement the core struct rendering first, with derives/doc as optional props that do nothing if the attribute/doc components aren't loaded yet. Then T015/T016 tests verify integration.
+T011 lists dependencies on T006, T010, T015, T016, T017 — that's 5 deps. T015 (Attribute) and T016 (DocComment) are needed because StructDeclaration uses `derives` and `doc` props. But this means T011 can't start until attributes _and_ doc comments are done. Consider: T011 should implement the core struct rendering first, with derives/doc as optional props that do nothing if the attribute/doc components aren't loaded yet. Then T015/T016 tests verify integration.
 
 **B2: T005 (scope hierarchy) is too large.**  
-T005 creates 6 scope classes + scope hooks in one task. This is the biggest single task and the most architecturally critical. It should be split:  
-- T005a: `RustCrateScope` + `RustModuleScope` (with import/mod tracking) — the complex ones.  
-- T005b: `RustFunctionScope` + `RustLexicalScope` — simple.  
-- T005c: `RustImplScope` + `RustTraitScope` — member scopes.  
+T005 creates 6 scope classes + scope hooks in one task. This is the biggest single task and the most architecturally critical. It should be split:
+
+- T005a: `RustCrateScope` + `RustModuleScope` (with import/mod tracking) — the complex ones.
+- T005b: `RustFunctionScope` + `RustLexicalScope` — simple.
+- T005c: `RustImplScope` + `RustTraitScope` — member scopes.
 - T005d: Scope hooks.
 
 **B3: T022 (reference resolution) is the riskiest task and has no sub-breakdown.**  
@@ -165,7 +167,7 @@ Go's `vitest.setup.ts` is minimal (just imports `@alloy-js/core/testing`). But t
 Go wraps 24 components. The Rust package will have ~15-20 components. Each STC wrapper must be typed correctly. This is tedious but straightforward. The task should note the expected component count.
 
 **B6: Missing task: barrel index files.**  
-T033 says "verify barrel exports" but there's no task to *create* `src/components/index.ts` or `src/symbols/index.ts` as barrel files. These are incrementally built as components are added, but no task explicitly owns creating the initial barrel structure.
+T033 says "verify barrel exports" but there's no task to _create_ `src/components/index.ts` or `src/symbols/index.ts` as barrel files. These are incrementally built as components are added, but no task explicitly owns creating the initial barrel structure.
 
 ---
 

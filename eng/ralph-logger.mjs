@@ -20,12 +20,19 @@
  * @see docs/design-decisions/ (parallel ralph loop)
  */
 
-import { appendFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync } from 'fs';
-import { resolve, basename } from 'path';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  unlinkSync,
+} from "fs";
+import { resolve } from "path";
 
 // ── Configuration ───────────────────────────────────────────────────────
 
-let logDir = resolve(process.cwd(), 'eng/logs');
+let logDir = resolve(process.cwd(), "eng/logs");
 let retentionDays = 7;
 
 /**
@@ -55,7 +62,7 @@ function isoTimestamp() {
 }
 
 function timestampForFile() {
-  return new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  return new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 }
 
 // ── Logger registry ─────────────────────────────────────────────────────
@@ -108,11 +115,11 @@ export function rotateAllLogs() {
     for (const file of files) {
       // Match patterns: *.jsonl, *.json, ralph-*.log, validation-*.log
       const isRotatable =
-        file.endsWith('.jsonl') ||
-        file.endsWith('.json') ||
-        (file.startsWith('ralph-') && file.endsWith('.log')) ||
-        (file.startsWith('validation-') && file.endsWith('.log')) ||
-        (file.startsWith('tui-dump-') && file.endsWith('.json'));
+        file.endsWith(".jsonl") ||
+        file.endsWith(".json") ||
+        (file.startsWith("ralph-") && file.endsWith(".log")) ||
+        (file.startsWith("validation-") && file.endsWith(".log")) ||
+        (file.startsWith("tui-dump-") && file.endsWith(".json"));
 
       if (!isRotatable) continue;
 
@@ -179,26 +186,30 @@ class RalphLogger {
     }
 
     try {
-      appendFileSync(this._getFilePath(), JSON.stringify(entry) + '\n', 'utf-8');
+      appendFileSync(
+        this._getFilePath(),
+        JSON.stringify(entry) + "\n",
+        "utf-8",
+      );
     } catch {
       // Non-fatal — don't crash the orchestrator because of a log write failure
     }
   }
 
   debug(event, ctx) {
-    this._write('debug', event, ctx);
+    this._write("debug", event, ctx);
   }
 
   info(event, ctx) {
-    this._write('info', event, ctx);
+    this._write("info", event, ctx);
   }
 
   warn(event, ctx) {
-    this._write('warn', event, ctx);
+    this._write("warn", event, ctx);
   }
 
   error(event, ctx) {
-    this._write('error', event, ctx);
+    this._write("error", event, ctx);
   }
 
   /**
@@ -223,8 +234,8 @@ export function writeJsonLog(prefix, data) {
   mkdirSync(logDir, { recursive: true });
   const filePath = resolve(logDir, `${prefix}-${timestampForFile()}.json`);
   try {
-    const content = JSON.stringify(data, null, 2) + '\n';
-    appendFileSync(filePath, content, 'utf-8');
+    const content = JSON.stringify(data, null, 2) + "\n";
+    appendFileSync(filePath, content, "utf-8");
   } catch {
     // Non-fatal
   }
@@ -243,7 +254,7 @@ export function writeTextLog(prefix, content) {
   mkdirSync(logDir, { recursive: true });
   const filePath = resolve(logDir, `${prefix}-${timestampForFile()}.log`);
   try {
-    appendFileSync(filePath, content, 'utf-8');
+    appendFileSync(filePath, content, "utf-8");
   } catch {
     // Non-fatal
   }

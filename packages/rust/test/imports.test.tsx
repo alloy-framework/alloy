@@ -27,10 +27,12 @@ describe("Rust imports integration", () => {
       </Output>,
     );
 
-    expect(findFile(output, "lib.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(
+      d`
       pub struct User;
       type UserAlias = User;
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("generates crate use for same-crate references across modules", () => {
@@ -55,10 +57,12 @@ describe("Rust imports integration", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::User;
       type UserAlias = User;
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("groups multiple imports from same module path with braces", () => {
@@ -74,7 +78,12 @@ describe("Rust imports integration", () => {
                 pub struct User;
               </Declaration>
               <hbr />
-              <Declaration name="Account" refkey={accountRef} nameKind="struct" pub>
+              <Declaration
+                name="Account"
+                refkey={accountRef}
+                nameKind="struct"
+                pub
+              >
                 pub struct Account;
               </Declaration>
             </SourceFile>
@@ -90,11 +99,13 @@ describe("Rust imports integration", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::{Account, User};
       type UserAlias = User;
       type AccountAlias = Account;
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("sorts imports by std, external, then crate groups with blank lines", () => {
@@ -116,7 +127,12 @@ describe("Rust imports integration", () => {
         <CrateDirectory name="serde">
           <ModuleDirectory path="de">
             <SourceFile path="mod.rs">
-              <Declaration name="DeserializeOwned" refkey={deserializeRef} nameKind="trait" pub>
+              <Declaration
+                name="DeserializeOwned"
+                refkey={deserializeRef}
+                nameKind="trait"
+                pub
+              >
                 pub trait DeserializeOwned {}
               </Declaration>
             </SourceFile>
@@ -143,7 +159,8 @@ describe("Rust imports integration", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use std::collections::HashMap;
 
       use serde::de::DeserializeOwned;
@@ -152,7 +169,8 @@ describe("Rust imports integration", () => {
       type MapAlias = HashMap;
       type DeserializeAlias = DeserializeOwned;
       type UserAlias = User;
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("generates use statements for same-crate types that shadow prelude names", () => {
@@ -187,11 +205,13 @@ describe("Rust imports integration", () => {
       </Output>,
     );
 
-    expect(findFile(output, "lib.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "lib.rs").contents.trim()).toBe(
+      d`
       use crate::types::{Option, Result, Vec};
       type OptionAlias = Option;
       type ResultAlias = Result;
       type VecAlias = Vec;
-    `.trim());
+    `.trim(),
+    );
   });
 });

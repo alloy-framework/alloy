@@ -1,17 +1,17 @@
 # T031: Dependency Tracking
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T031                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | feature                                                                                 |
-| **Status**       | done                                                                                    |
-| **Priority**     | high                                                                                    |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T005, T022, T028                                                                        |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T031                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | feature                                                                             |
+| **Status**        | done                                                                                |
+| **Priority**      | high                                                                                |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T005, T022, T028                                                                    |
+| **Blocks**        | —                                                                                   |
 
 ---
 

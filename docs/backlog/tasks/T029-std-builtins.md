@@ -1,17 +1,17 @@
 # T029: Standard Library Builtins
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T029                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | feature                                                                                 |
-| **Status**       | blocked                                                                                 |
-| **Priority**     | P0 — required for v1                                                                    |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T028, T036                                                                              |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T029                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | feature                                                                             |
+| **Status**        | blocked                                                                             |
+| **Priority**      | P0 — required for v1                                                                |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T028, T036                                                                          |
+| **Blocks**        | —                                                                                   |
 
 ---
 
@@ -59,6 +59,7 @@ Provide a ready-to-use `std` crate descriptor so that generated code can referen
 
 1. **File**: `packages/rust/src/builtins/std.ts`.
 2. **Crate descriptor**:
+
    ```ts
    import { createCrate } from "../create-crate.js";
 
@@ -72,39 +73,59 @@ Provide a ready-to-use `std` crate descriptor so that generated code can referen
          String: { kind: "struct" },
          Box: { kind: "struct" },
        },
-       "rc": { Rc: { kind: "struct" } },
-       "sync": { Arc: { kind: "struct" } },
-       "collections": {
+       rc: { Rc: { kind: "struct" } },
+       sync: { Arc: { kind: "struct" } },
+       collections: {
          HashMap: { kind: "struct" },
          HashSet: { kind: "struct" },
          BTreeMap: { kind: "struct" },
          BTreeSet: { kind: "struct" },
        },
-       "fmt": {
+       fmt: {
          Display: { kind: "trait" },
          Debug: { kind: "trait" },
          Formatter: { kind: "struct" },
        },
-       "io": {
+       io: {
          Read: { kind: "trait" },
          Write: { kind: "trait" },
        },
-       "clone": { Clone: { kind: "trait" } },
-       "default": { Default: { kind: "trait" } },
-       "convert": {
+       clone: { Clone: { kind: "trait" } },
+       default: { Default: { kind: "trait" } },
+       convert: {
          From: { kind: "trait" },
          Into: { kind: "trait" },
        },
      },
    });
    ```
+
 3. **PRELUDE_TYPES**:
    ```ts
    export const PRELUDE_TYPES = new Set([
-     "Option", "Some", "None", "Result", "Ok", "Err",
-     "Vec", "String", "Box", "Clone", "Default",
-     "From", "Into", "Drop", "Fn", "FnMut", "FnOnce",
-     "Iterator", "Send", "Sync", "Sized", "Copy", "ToString",
+     "Option",
+     "Some",
+     "None",
+     "Result",
+     "Ok",
+     "Err",
+     "Vec",
+     "String",
+     "Box",
+     "Clone",
+     "Default",
+     "From",
+     "Into",
+     "Drop",
+     "Fn",
+     "FnMut",
+     "FnOnce",
+     "Iterator",
+     "Send",
+     "Sync",
+     "Sized",
+     "Copy",
+     "ToString",
    ]);
    ```
 4. **Barrel export**: `src/builtins/index.ts` re-exports `std` and `PRELUDE_TYPES`.

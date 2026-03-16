@@ -36,8 +36,12 @@ describe("Module structure integration", () => {
         mod routes;
       `.trim(),
     );
-    expect(findFile(output, "models/mod.rs").contents.trim()).toBe(d`pub struct User;`);
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`pub fn list() {}`);
+    expect(findFile(output, "models/mod.rs").contents.trim()).toBe(
+      d`pub struct User;`,
+    );
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`pub fn list() {}`,
+    );
   });
 
   it("renders nested module directories with expected file tree", () => {
@@ -56,8 +60,12 @@ describe("Module structure integration", () => {
     );
 
     expect(findFile(output, "lib.rs").contents.trim()).toBe(d`mod models;`);
-    expect(findFile(output, "models/mod.rs").contents.trim()).toBe(d`mod user;`);
-    expect(findFile(output, "models/user/mod.rs").contents.trim()).toBe(d`pub struct User;`);
+    expect(findFile(output, "models/mod.rs").contents.trim()).toBe(
+      d`mod user;`,
+    );
+    expect(findFile(output, "models/user/mod.rs").contents.trim()).toBe(
+      d`pub struct User;`,
+    );
   });
 
   it("auto-generates lib.rs mod declarations for top-level modules", () => {
@@ -122,7 +130,9 @@ describe("Module structure integration", () => {
     );
 
     expect(findFile(output, "lib.rs").contents.trim()).toBe(d`mod user;`);
-    expect(findFile(output, "user.rs").contents.trim()).toBe(d`pub struct User;`);
+    expect(findFile(output, "user.rs").contents.trim()).toBe(
+      d`pub struct User;`,
+    );
   });
 
   it("supports pub mod declarations for standalone root source files", () => {
@@ -136,7 +146,9 @@ describe("Module structure integration", () => {
     );
 
     expect(findFile(output, "lib.rs").contents.trim()).toBe(d`pub mod api;`);
-    expect(findFile(output, "api.rs").contents.trim()).toBe(d`pub fn ping() {}`);
+    expect(findFile(output, "api.rs").contents.trim()).toBe(
+      d`pub fn ping() {}`,
+    );
   });
 
   it("does not self-register module-root files", () => {

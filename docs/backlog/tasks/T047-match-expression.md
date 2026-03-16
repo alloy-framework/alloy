@@ -1,17 +1,17 @@
 # T047 — MatchExpression + MatchArm Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T047 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T047                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -20,13 +20,15 @@
 `match` is one of Rust's most distinctive and heavily-used constructs. The sample has 2 match expressions written as raw code, but any non-trivial Rust code generator will produce many more. Currently:
 
 ```tsx
-{code`
+{
+  code`
   match self {
       Self::NotFound => write!(f, "key not found"),
       Self::StorageFull => write!(f, "storage is full"),
       Self::SerializationError(msg) => write!(f, "serialization error: {}", msg),
   }
-`}
+`;
+}
 ```
 
 ---
@@ -75,14 +77,14 @@ Provide `MatchExpression` and `MatchArm` components for Rust pattern matching.
 
 ```typescript
 interface MatchExpressionProps {
-  expression: Children;  // The value being matched
-  children: Children;    // MatchArm children
+  expression: Children; // The value being matched
+  children: Children; // MatchArm children
 }
 
 interface MatchArmProps {
-  pattern: Children;     // The pattern (e.g., "Some(x)", "None", "_")
-  guard?: Children;      // Optional guard clause ("if condition")
-  children: Children;    // Arm body expression or block
+  pattern: Children; // The pattern (e.g., "Some(x)", "None", "_")
+  guard?: Children; // Optional guard clause ("if condition")
+  children: Children; // Arm body expression or block
 }
 ```
 

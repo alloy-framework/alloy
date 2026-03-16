@@ -20,13 +20,13 @@ Do not update changelogs, these are managed by `npx chronus`.
 ## TypeScript/Symbol Patterns - Known Gotchas
 
 - For exported components that attach subcomponents (for example, `Component.Call = ...`), avoid private type aliases in public exported const annotations; API Extractor can fail. Prefer `export function Component(...) { ... }` and attach subcomponents as properties after declaration.
-**Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
-**For SourceFile/CrateDirectory loop changes:** run `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` first for fast debugging, then run full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
-**For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
-**For import/reference integration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/imports.test.tsx test/reference.test.tsx` before full-suite validation to iterate faster.
-**For Cargo.toml generation loops:** keep `CrateDirectory` Cargo.toml emission opt-in (`includeCargoToml`) so existing single-file `toRenderTo()` tests keep stable output.
+  **Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
+  **For SourceFile/CrateDirectory loop changes:** run `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` first for fast debugging, then run full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+  **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
+  **For import/reference integration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/imports.test.tsx test/reference.test.tsx` before full-suite validation to iterate faster.
+  **For Cargo.toml generation loops:** keep `CrateDirectory` Cargo.toml emission opt-in (`includeCargoToml`) so existing single-file `toRenderTo()` tests keep stable output.
 - For `CargoTomlFile` targets, emit explicit sections (`[lib] path = "lib.rs"` for libs, `[[bin]]` with `name`/`path` for bins) before `[dependencies]`; expect snapshot updates in cargo-toml/golden/stc tests.
-**Validation workflow tip:** use `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` as the Rust package correctness gate; also run `pnpm --filter rust-example build` when touching sample crate exports, and fix TS2742 by replacing inferred exported `createCrate(...)` values with explicit descriptor constants (`as const`) plus exported type aliases.
+  **Validation workflow tip:** use `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` as the Rust package correctness gate; also run `pnpm --filter rust-example build` when touching sample crate exports, and fix TS2742 by replacing inferred exported `createCrate(...)` values with explicit descriptor constants (`as const`) plus exported type aliases.
 - In components using `scope.enclosingModule`, narrow to `RustModuleScope` (for example, `instanceof RustModuleScope`) before accessing `.types` or `.values`; `enclosingModule` is typed as `RustScopeBase`.
 - Avoid whitespace-only `code` template literals (for example, ``code` ` ``); they can crash core code rendering. Use plain string literals like `" "` for standalone spaces.
 - For `ModuleDirectory`, derive the module name from the last `path` segment before calling `addChildModule`, so nested paths register the correct child module.
@@ -49,6 +49,7 @@ Do not update changelogs, these are managed by `npx chronus`.
 - Ensure `DocComment`/`ModuleDocComment` end with a trailing line break before declarations; otherwise generated output can concatenate comment text and the next declaration.
 
 Critical rules:
+
 1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.
 2. Prefer concrete evidence over broad summaries.
 3. Distinguish clearly between:
@@ -65,6 +66,7 @@ Critical rules:
 11. For symbol-model changes (like Rust T003), always validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` before moving to dependent tasks.
 
 Quality bar:
+
 - Precise
 - Evidence-based
 - Dependency-aware

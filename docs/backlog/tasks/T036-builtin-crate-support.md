@@ -1,17 +1,17 @@
 # T036 — Builtin Crate Support in createCrate / ref
 
-| Field | Value |
-|-------|-------|
-| **ID** | T036 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P0 — blocks T029 (std builtins) |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T028 (createCrate factory) |
-| **Blocks** | T029 (std builtins) |
+| Field                     | Value                                               |
+| ------------------------- | --------------------------------------------------- |
+| **ID**                    | T036                                                |
+| **Epic**                  | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Type**                  | feature                                             |
+| **Status**                | done                                                |
+| **Priority**              | P0 — blocks T029 (std builtins)                     |
+| **Owner Role**            | AI coding agent                                     |
+| **AI Executable**         | Yes                                                 |
+| **Human Review Required** | Yes                                                 |
+| **Dependencies**          | T028 (createCrate factory)                          |
+| **Blocks**                | T029 (std builtins)                                 |
 
 ---
 
@@ -51,13 +51,13 @@ After this task, `createCrate({ name: "std", builtin: true, ... })` creates a cr
 
 ## Context Files
 
-| File | Relevance |
-|------|-----------|
-| `packages/rust/src/create-crate.ts` | Add `builtin` to descriptor and state |
-| `packages/rust/src/symbols/reference.ts` | Conditional `addDependency()` on line ~101 |
-| `packages/rust/src/scopes/rust-crate-scope.ts` | Where dependencies are stored |
-| `packages/go/src/create-module.ts` | Go's builtin pattern (lines 102-113) |
-| `packages/rust/test/create-crate.test.tsx` | Add builtin test cases |
+| File                                           | Relevance                                  |
+| ---------------------------------------------- | ------------------------------------------ |
+| `packages/rust/src/create-crate.ts`            | Add `builtin` to descriptor and state      |
+| `packages/rust/src/symbols/reference.ts`       | Conditional `addDependency()` on line ~101 |
+| `packages/rust/src/scopes/rust-crate-scope.ts` | Where dependencies are stored              |
+| `packages/go/src/create-module.ts`             | Go's builtin pattern (lines 102-113)       |
+| `packages/rust/test/create-crate.test.tsx`     | Add builtin test cases                     |
 
 ---
 
@@ -84,7 +84,7 @@ In `CrateFactoryState`:
 interface CrateFactoryState {
   name: string;
   version?: string;
-  builtin: boolean;  // NEW
+  builtin: boolean; // NEW
   scopes: WeakMap<Binder, RustCrateScope>;
 }
 ```
@@ -110,7 +110,7 @@ sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
 // After:
 import { isBuiltinCrate, type ExternalCrate } from "../create-crate.js";
 // ... in the external crate branch:
-if (!isBuiltinCrate(/* the external crate object */)) {
+if (!(isBuiltinCrate(/* the external crate object */))) {
   sourceCrate.addDependency(targetCrate.name, targetCrate.version ?? "*");
 }
 ```
@@ -118,6 +118,7 @@ if (!isBuiltinCrate(/* the external crate object */)) {
 **Key challenge:** The `ref()` function resolves symbols via the binder and gets a `ResolutionResult`. It needs access to the `ExternalCrate` object to check if it's builtin. The crate scope is available via `targetCrate` (a `RustCrateScope`). The factory state stores `scopes: WeakMap<Binder, RustCrateScope>` — but we need the reverse lookup: from `RustCrateScope` to `ExternalCrate`.
 
 **Approach options:**
+
 1. Store `builtin` on `RustCrateScope` itself (simplest — add `builtin: boolean` constructor param)
 2. Maintain a reverse map from scope to factory state
 

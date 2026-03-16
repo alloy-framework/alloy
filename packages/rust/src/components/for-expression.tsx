@@ -42,14 +42,16 @@ function renderBlock(children: Children | undefined) {
   return (
     <>
       {"{"}
-      {statements.length > 0 ? (
+      {statements.length > 0 ?
         <>
           <Indent>
-            <For each={statements} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={statements} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );
@@ -58,18 +60,16 @@ function renderBlock(children: Children | undefined) {
 export function ForExpression(props: ForExpressionProps) {
   return (
     <>
-      {props.label ? (
+      {props.label ?
         <>
           {props.label}
           {": "}
         </>
-      ) : null}
+      : null}
       {"for "}
       {props.pattern}
       {" in "}
-      {props.iterator}
-      {" "}
-      {renderBlock(props.children)}
+      {props.iterator} {renderBlock(props.children)}
     </>
   );
 }

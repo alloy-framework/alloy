@@ -1,17 +1,17 @@
 # T028: createCrate Factory
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T028                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | feature                                                                                 |
-| **Status**       | done                                                                                    |
-| **Priority**     | high                                                                                    |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T003, T005, T006                                                                        |
-| **Blocks**       | T029, T031                                                                              |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T028                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | feature                                                                             |
+| **Status**        | done                                                                                |
+| **Priority**      | high                                                                                |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T003, T005, T006                                                                    |
+| **Blocks**        | T029, T031                                                                          |
 
 ---
 
@@ -65,7 +65,10 @@ Enable declarative description of external crates so that referencing their symb
      version: "1.0",
      modules: {
        "": { Serialize: { kind: "trait" }, Deserialize: { kind: "trait" } },
-       "json": { to_string: { kind: "function" }, from_str: { kind: "function" } },
+       json: {
+         to_string: { kind: "function" },
+         from_str: { kind: "function" },
+       },
      },
    });
    // serde[""].Serialize → Refkey

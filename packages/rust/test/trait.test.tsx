@@ -8,7 +8,11 @@ import {
   SourceFile,
   TraitDeclaration,
 } from "../src/components/index.js";
-import { RustTraitScope, useRustModuleScope, useRustScope } from "../src/scopes/index.js";
+import {
+  RustTraitScope,
+  useRustModuleScope,
+  useRustScope,
+} from "../src/scopes/index.js";
 import { NamedTypeSymbol } from "../src/symbols/named-type-symbol.js";
 
 function TraitKindProbe(props: { name: string }) {
@@ -85,7 +89,10 @@ describe("TraitDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <TraitDeclaration name="Printable" supertraits={["Display", "Debug"]} />
+            <TraitDeclaration
+              name="Printable"
+              supertraits={["Display", "Debug"]}
+            />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -99,7 +106,10 @@ describe("TraitDeclaration", () => {
           <SourceFile path="lib.rs">
             <TraitDeclaration
               name="Sink"
-              typeParameters={[{ name: "T" }, { name: "E", constraint: "Display" }]}
+              typeParameters={[
+                { name: "T" },
+                { name: "E", constraint: "Display" },
+              ]}
               whereClause="T: Clone"
             />
           </SourceFile>
@@ -197,7 +207,12 @@ describe("TraitDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <TraitDeclaration name="Serialize" pub={true} pub_crate={true} pub_super={true} />
+            <TraitDeclaration
+              name="Serialize"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+            />
             <hbr />
             <TraitVisibilityProbe name="Serialize" />
           </SourceFile>

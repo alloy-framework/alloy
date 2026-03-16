@@ -5,19 +5,24 @@ import { FunctionCallExpression } from "../src/components/function-call-expressi
 
 describe("FunctionCallExpression", () => {
   it("renders no-arg calls", () => {
-    expect(<FunctionCallExpression target="self.data.len" />).toRenderTo(d`self.data.len()`);
+    expect(<FunctionCallExpression target="self.data.len" />).toRenderTo(
+      d`self.data.len()`,
+    );
   });
 
   it("renders calls with arguments", () => {
-    expect(<FunctionCallExpression target="self.data.insert" args={["key", "entry"]} />).toRenderTo(
-      d`self.data.insert(key, entry)`,
-    );
+    expect(
+      <FunctionCallExpression
+        target="self.data.insert"
+        args={["key", "entry"]}
+      />,
+    ).toRenderTo(d`self.data.insert(key, entry)`);
   });
 
   it("renders turbofish type arguments without call arguments", () => {
-    expect(<FunctionCallExpression target="collect" typeArgs={["Vec<_>"]} />).toRenderTo(
-      d`collect::<Vec<_>>()`,
-    );
+    expect(
+      <FunctionCallExpression target="collect" typeArgs={["Vec<_>"]} />,
+    ).toRenderTo(d`collect::<Vec<_>>()`);
   });
 
   it("renders turbofish type arguments with call arguments", () => {

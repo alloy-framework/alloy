@@ -1,6 +1,14 @@
-import { Scope, SourceDirectory, createScope, type Children } from "@alloy-js/core";
+import {
+  Scope,
+  SourceDirectory,
+  createScope,
+  type Children,
+} from "@alloy-js/core";
 import { CrateContext, CrateContextValue } from "../context/crate-context.js";
-import { type CrateDependency, RustCrateScope } from "../scopes/rust-crate-scope.js";
+import {
+  RustCrateScope,
+  type CrateDependency,
+} from "../scopes/rust-crate-scope.js";
 import { CargoTomlFile } from "./cargo-toml-file.js";
 
 export interface CrateDirectoryProps {
@@ -28,14 +36,14 @@ export function CrateDirectory(props: CrateDirectoryProps) {
       <Scope value={scope}>
         <CrateContext.Provider value={context}>
           {props.children}
-          {props.includeCargoToml ? (
+          {props.includeCargoToml ?
             <CargoTomlFile
               name={props.name}
               version={props.version}
               edition={props.edition}
               dependencies={props.dependencies}
             />
-          ) : null}
+          : null}
         </CrateContext.Provider>
       </Scope>
     </SourceDirectory>

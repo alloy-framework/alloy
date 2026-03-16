@@ -30,12 +30,21 @@ describe("lifetime parameter integration", () => {
             <hbr />
             <StructDeclaration
               name="Ref"
-              typeParameters={[{ lifetime: "'a" }, { name: "T", constraint: "'a + Clone" }]}
+              typeParameters={[
+                { lifetime: "'a" },
+                { name: "T", constraint: "'a + Clone" },
+              ]}
             />
             <hbr />
-            <EnumDeclaration name="EitherRef" typeParameters={[{ lifetime: "'a" }, { name: "T" }]} />
+            <EnumDeclaration
+              name="EitherRef"
+              typeParameters={[{ lifetime: "'a" }, { name: "T" }]}
+            />
             <hbr />
-            <TraitDeclaration name="Reader" typeParameters={[{ lifetime: "'a" }, { name: "T" }]} />
+            <TraitDeclaration
+              name="Reader"
+              typeParameters={[{ lifetime: "'a" }, { name: "T" }]}
+            />
             <hbr />
             <ImplBlock
               type="Ref<'a, T>"

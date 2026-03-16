@@ -1,5 +1,6 @@
 import {
   Children,
+  Indent,
   Refkey,
   Scope,
   code,
@@ -8,12 +9,19 @@ import {
   isRefkey,
   unresolvedRefkey,
 } from "@alloy-js/core";
-import { Reference } from "./reference.js";
-import { RustImplScope, RustModuleScope, useRustScope } from "../scopes/index.js";
+import {
+  RustImplScope,
+  RustModuleScope,
+  useRustScope,
+} from "../scopes/index.js";
 import { NamedTypeSymbol } from "../symbols/named-type-symbol.js";
 import { RustOutputSymbol } from "../symbols/rust-output-symbol.js";
-import { Indent } from "@alloy-js/core";
-import { TypeParameterProp, TypeParameters, WhereClause } from "./type-parameters.js";
+import { Reference } from "./reference.js";
+import {
+  TypeParameterProp,
+  TypeParameters,
+  WhereClause,
+} from "./type-parameters.js";
 
 export type TypeParameterProps = TypeParameterProp;
 
@@ -64,7 +72,9 @@ function findTypeSymbolFromInline(
   return undefined;
 }
 
-function inferredTypeParametersForImpl(symbol: NamedTypeSymbol | undefined): TypeParameterProp[] {
+function inferredTypeParametersForImpl(
+  symbol: NamedTypeSymbol | undefined,
+): TypeParameterProp[] {
   if (!symbol) {
     return [];
   }
@@ -87,7 +97,9 @@ function renderTypeWithInferredTypeParameters(
     return renderedType;
   }
 
-  const names = inferredTypeParameters.map((param) => param.name).filter((name) => Boolean(name));
+  const names = inferredTypeParameters
+    .map((param) => param.name)
+    .filter((name) => Boolean(name));
   if (names.length === 0) {
     return renderedType;
   }
@@ -99,7 +111,9 @@ export function ImplBlock(props: ImplBlockProps) {
   const parentScope = useRustScope();
 
   const renderedType =
-    isRefkey(props.type) ? resolveSymbolNameFromRefkey(props.type, parentScope) : props.type;
+    isRefkey(props.type) ?
+      resolveSymbolNameFromRefkey(props.type, parentScope)
+    : props.type;
   const targetTypeSymbol =
     isRefkey(props.type) ?
       resolveTypeSymbolFromRefkey(props.type, parentScope)
@@ -120,7 +134,8 @@ export function ImplBlock(props: ImplBlockProps) {
   const implScope = createScope(RustImplScope, implTargetSymbol, parentScope, {
     binder: parentScope.binder,
   });
-  const inferredTypeParameters = inferredTypeParametersForImpl(targetTypeSymbol);
+  const inferredTypeParameters =
+    inferredTypeParametersForImpl(targetTypeSymbol);
   const implTypeParameters = props.typeParameters ?? inferredTypeParameters;
   const renderedTypeWithTypeParameters = renderTypeWithInferredTypeParameters(
     renderedType,
@@ -130,22 +145,21 @@ export function ImplBlock(props: ImplBlockProps) {
   return (
     <>
       {code`impl`}
-      <TypeParameters params={implTypeParameters} />
-      {" "}
-      {renderedTrait ? (
+      <TypeParameters params={implTypeParameters} />{" "}
+      {renderedTrait ?
         <>
           {renderedTrait}
           {code` for `}
         </>
-      ) : null}
+      : null}
       {renderedTypeWithTypeParameters}
-      {props.whereClause ? (
+      {props.whereClause ?
         <>
           {" "}
           <WhereClause>{props.whereClause}</WhereClause>
         </>
-      ) : null}
-      {props.children ? (
+      : null}
+      {props.children ?
         <>
           {code` {`}
           <Scope value={implScope}>
@@ -154,7 +168,7 @@ export function ImplBlock(props: ImplBlockProps) {
           <hbr />
           {code`}`}
         </>
-      ) : code` {}`}
+      : code` {}`}
     </>
   );
 }

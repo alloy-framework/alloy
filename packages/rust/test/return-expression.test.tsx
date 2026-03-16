@@ -2,7 +2,11 @@ import { Children, Output } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { CrateDirectory, ReturnExpression, SourceFile } from "../src/components/index.js";
+import {
+  CrateDirectory,
+  ReturnExpression,
+  SourceFile,
+} from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
 function inFile(children: Children) {
@@ -21,12 +25,14 @@ describe("ReturnExpression", () => {
   });
 
   it("renders return with value", () => {
-    expect(inFile(<ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>)).toRenderTo(
-      d`return Err(StoreError::NotFound)`,
-    );
+    expect(
+      inFile(<ReturnExpression>Err(StoreError::NotFound)</ReturnExpression>),
+    ).toRenderTo(d`return Err(StoreError::NotFound)`);
   });
 
   it("stc wrapper renders correctly", () => {
-    expect(inFile(Stc.ReturnExpression({}).children(["Ok(())"]))).toRenderTo(d`return Ok(())`);
+    expect(inFile(Stc.ReturnExpression({}).children(["Ok(())"]))).toRenderTo(
+      d`return Ok(())`,
+    );
   });
 });

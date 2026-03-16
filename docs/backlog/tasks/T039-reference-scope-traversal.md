@@ -1,17 +1,17 @@
 # T039 — Reference Component Scope Traversal
 
-| Field | Value |
-|-------|-------|
-| **ID** | T039 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P0 — critical |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T010 (Declaration & Reference), T022 (Reference Resolution) |
-| **Blocks** | — |
+| Field                     | Value                                                       |
+| ------------------------- | ----------------------------------------------------------- |
+| **ID**                    | T039                                                        |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                          |
+| **Type**                  | bug                                                         |
+| **Status**                | done                                                        |
+| **Priority**              | P0 — critical                                               |
+| **Owner Role**            | AI coding agent                                             |
+| **AI Executable**         | Yes                                                         |
+| **Human Review Required** | Yes                                                         |
+| **Dependencies**          | T010 (Declaration & Reference), T022 (Reference Resolution) |
+| **Blocks**                | —                                                           |
 
 ---
 
@@ -20,6 +20,7 @@
 The `Reference` component (and the underlying `ref()` function in `symbols/reference.ts`) unconditionally calls `useRustModuleScope()` at line 64, which throws `"Expected a Rust module scope"` when used inside any non-module scope — including `RustFunctionScope`, `RustImplScope`, `RustTraitScope`, and struct/enum member scopes.
 
 This makes `Reference` unusable in:
+
 - Struct field types (`<Field type={<Reference refkey={...} />} />`)
 - Function parameter types and return types
 - Impl block and trait block contents

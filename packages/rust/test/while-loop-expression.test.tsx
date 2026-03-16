@@ -66,9 +66,7 @@ describe("WhileExpression + LoopExpression", () => {
   it("renders loop expression", () => {
     expect(
       inFile(
-        <LoopExpression>
-          {code`if done { break result; }`}
-        </LoopExpression>,
+        <LoopExpression>{code`if done { break result; }`}</LoopExpression>,
       ),
     ).toRenderTo(d`
       loop {
@@ -80,9 +78,7 @@ describe("WhileExpression + LoopExpression", () => {
   it("renders loop expression with label", () => {
     expect(
       inFile(
-        <LoopExpression label="'outer">
-          {code`run_once();`}
-        </LoopExpression>,
+        <LoopExpression label="'outer">{code`run_once();`}</LoopExpression>,
       ),
     ).toRenderTo(d`
       'outer: loop {
@@ -95,9 +91,10 @@ describe("WhileExpression + LoopExpression", () => {
     expect(
       inFile(
         <>
-          {Stc.WhileExpression({ condition: "let Some(item) = queue.pop_front()", label: "'retry" }).children([
-            "process(item);",
-          ])}
+          {Stc.WhileExpression({
+            condition: "let Some(item) = queue.pop_front()",
+            label: "'retry",
+          }).children(["process(item);"])}
           <hbr />
           {Stc.LoopExpression({ label: "'outer" }).children(["break;"])}
         </>,

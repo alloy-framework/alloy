@@ -14,7 +14,10 @@ export interface FieldInitProps {
 export function StructExpression(props: StructExpressionProps) {
   const fields =
     props.children ?
-      (Array.isArray(props.children) ? props.children : [props.children]).filter(
+      (Array.isArray(props.children) ?
+        props.children
+      : [props.children]
+      ).filter(
         (child) => !(typeof child === "string" && child.trim().length === 0),
       )
     : [];
@@ -23,21 +26,27 @@ export function StructExpression(props: StructExpressionProps) {
     <>
       {props.type}
       {" {"}
-      {fields.length > 0 || props.spread ? (
+      {fields.length > 0 || props.spread ?
         <>
           <Indent>
-            {fields.length > 0 ? <For each={fields} joiner={<hbr />}>{(field) => field}</For> : null}
-            {props.spread ? (
+            {fields.length > 0 ?
+              <For each={fields} joiner={<hbr />}>
+                {(field) => field}
+              </For>
+            : null}
+            {props.spread ?
               <>
-                {fields.length > 0 ? <hbr /> : null}
+                {fields.length > 0 ?
+                  <hbr />
+                : null}
                 {".."}
                 {props.spread}
               </>
-            ) : null}
+            : null}
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );

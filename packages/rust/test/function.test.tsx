@@ -3,14 +3,18 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
-  FunctionDeclaration,
   CrateDirectory,
+  FunctionDeclaration,
   ImplBlock,
   SourceFile,
   StructDeclaration,
   TraitDeclaration,
 } from "../src/components/index.js";
-import { RustFunctionScope, useRustModuleScope, useRustScope } from "../src/scopes/index.js";
+import {
+  RustFunctionScope,
+  useRustModuleScope,
+  useRustScope,
+} from "../src/scopes/index.js";
 import { FunctionSymbol } from "../src/symbols/function-symbol.js";
 
 function FunctionFlagsProbe(props: { name: string }) {
@@ -70,7 +74,13 @@ describe("FunctionDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <FunctionDeclaration name="work" pub_super={true} async={true} unsafe={true} const={true} />
+            <FunctionDeclaration
+              name="work"
+              pub_super={true}
+              async={true}
+              unsafe={true}
+              const={true}
+            />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -85,7 +95,12 @@ describe("FunctionDeclaration", () => {
             <FunctionDeclaration
               name="process"
               parameters={[
-                { name: "input-value", type: "String", mutable: true, refType: "&mut" },
+                {
+                  name: "input-value",
+                  type: "String",
+                  mutable: true,
+                  refType: "&mut",
+                },
                 { name: "count", type: "usize" },
               ]}
             />
@@ -104,7 +119,10 @@ describe("FunctionDeclaration", () => {
               name="map"
               parameters={[{ name: "item", type: "T" }]}
               returnType="U"
-              typeParameters={[{ name: "T" }, { name: "U", constraint: "Display" }]}
+              typeParameters={[
+                { name: "T" },
+                { name: "U", constraint: "Display" },
+              ]}
               whereClause="U: Clone"
             />
           </SourceFile>
@@ -169,7 +187,12 @@ describe("FunctionDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <FunctionDeclaration name="run-work" pub={true} pub_crate={true} pub_super={true} />
+            <FunctionDeclaration
+              name="run-work"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+            />
             <hbr />
             <FunctionFlagsProbe name="run-work" />
           </SourceFile>
@@ -285,7 +308,10 @@ describe("FunctionDeclaration", () => {
             <ImplBlock type={itemRef}>
               <FunctionDeclaration
                 name="set"
-                parameters={[{ name: "x", type: "i32" }, { name: "y", type: "i32" }]}
+                parameters={[
+                  { name: "x", type: "i32" },
+                  { name: "y", type: "i32" },
+                ]}
               />
             </ImplBlock>
           </SourceFile>
@@ -323,7 +349,9 @@ describe("FunctionDeclaration", () => {
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
             <TraitDeclaration name="Runner">
-              <FunctionDeclaration name="run">{"println!(\"default\");"}</FunctionDeclaration>
+              <FunctionDeclaration name="run">
+                {'println!("default");'}
+              </FunctionDeclaration>
             </TraitDeclaration>
           </SourceFile>
         </CrateDirectory>

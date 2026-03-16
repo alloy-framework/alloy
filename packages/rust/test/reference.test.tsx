@@ -9,7 +9,6 @@ import {
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { useCrateContext } from "../src/context/crate-context.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
 import { Declaration } from "../src/components/declaration.js";
 import { FunctionDeclaration } from "../src/components/function-declaration.js";
@@ -17,10 +16,14 @@ import { ImplBlock } from "../src/components/impl-block.js";
 import { ModuleDirectory } from "../src/components/module-directory.js";
 import { Reference } from "../src/components/reference.js";
 import { SourceFile } from "../src/components/source-file.js";
-import { Field, StructDeclaration } from "../src/components/struct-declaration.js";
+import {
+  Field,
+  StructDeclaration,
+} from "../src/components/struct-declaration.js";
 import { TraitDeclaration } from "../src/components/trait-declaration.js";
-import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
+import { useCrateContext } from "../src/context/crate-context.js";
 import { RustModuleScope, useRustModuleScope } from "../src/scopes/index.js";
+import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { findFile } from "./utils.js";
 
 interface ScopeCaptureProps {
@@ -63,7 +66,12 @@ describe("Rust reference resolution", () => {
                 moduleScope = capturedModuleScope;
               }}
             >
-              <Declaration name="UserType" refkey={userType} nameKind="struct" pub>
+              <Declaration
+                name="UserType"
+                refkey={userType}
+                nameKind="struct"
+                pub
+              >
                 pub struct UserType;
               </Declaration>
               <hbr />
@@ -87,7 +95,12 @@ describe("Rust reference resolution", () => {
         <CrateDirectory name="my_crate">
           <SourceFile path="types">
             <NestedModule name="nested">
-              <Declaration name="NestedType" refkey={nestedType} nameKind="struct" pub>
+              <Declaration
+                name="NestedType"
+                refkey={nestedType}
+                nameKind="struct"
+                pub
+              >
                 pub struct NestedType;
               </Declaration>
             </NestedModule>
@@ -106,7 +119,9 @@ describe("Rust reference resolution", () => {
     );
 
     expect(consumerModuleScope).toBeDefined();
-    expect(consumerModuleScope!.imports.get("crate::types::nested")?.size).toBe(1);
+    expect(consumerModuleScope!.imports.get("crate::types::nested")?.size).toBe(
+      1,
+    );
   });
 
   it("resolves refkey to external crate symbol and tracks dependency", () => {
@@ -118,7 +133,12 @@ describe("Rust reference resolution", () => {
       <Output>
         <CrateDirectory name="serde">
           <SourceFile path="types">
-            <Declaration name="Serialize" refkey={externalType} nameKind="trait" pub>
+            <Declaration
+              name="Serialize"
+              refkey={externalType}
+              nameKind="trait"
+              pub
+            >
               pub trait Serialize {}
             </Declaration>
           </SourceFile>
@@ -152,7 +172,12 @@ describe("Rust reference resolution", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="types">
-            <Declaration name="Option" refkey={preludeLikeType} nameKind="struct" pub>
+            <Declaration
+              name="Option"
+              refkey={preludeLikeType}
+              nameKind="struct"
+              pub
+            >
               pub struct Option;
             </Declaration>
           </SourceFile>
@@ -182,7 +207,11 @@ describe("Rust reference resolution", () => {
         <Output>
           <CrateDirectory name="my_crate">
             <SourceFile path="models">
-              <Declaration name="PrivateModel" refkey={privateType} nameKind="struct">
+              <Declaration
+                name="PrivateModel"
+                refkey={privateType}
+                nameKind="struct"
+              >
                 struct PrivateModel;
               </Declaration>
             </SourceFile>
@@ -221,12 +250,14 @@ describe("Rust reference nested scope traversal", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::User;
       struct Response {
         user: User,
       }
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("resolves Reference inside function parameters and returnType", () => {
@@ -246,7 +277,9 @@ describe("Rust reference nested scope traversal", () => {
             <SourceFile path="mod.rs">
               <FunctionDeclaration
                 name="lookup"
-                parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                parameters={[
+                  { name: "user", type: <Reference refkey={userType} /> },
+                ]}
                 returnType={<Reference refkey={userType} />}
               />
             </SourceFile>
@@ -255,10 +288,12 @@ describe("Rust reference nested scope traversal", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::User;
       fn lookup(user: User) -> User {}
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("resolves Reference inside ImplBlock method signatures", () => {
@@ -283,7 +318,9 @@ describe("Rust reference nested scope traversal", () => {
                 <FunctionDeclaration
                   name="from_user"
                   receiver="none"
-                  parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                  parameters={[
+                    { name: "user", type: <Reference refkey={userType} /> },
+                  ]}
                   returnType={<Reference refkey={userType} />}
                 />
               </ImplBlock>
@@ -293,13 +330,15 @@ describe("Rust reference nested scope traversal", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::User;
       struct Router {}
       impl Router {
         fn from_user(user: User) -> User {}
       }
-    `.trim());
+    `.trim(),
+    );
   });
 
   it("resolves Reference inside TraitDeclaration method signatures", () => {
@@ -321,7 +360,9 @@ describe("Rust reference nested scope traversal", () => {
                 <FunctionDeclaration
                   name="map_user"
                   receiver="none"
-                  parameters={[{ name: "user", type: <Reference refkey={userType} /> }]}
+                  parameters={[
+                    { name: "user", type: <Reference refkey={userType} /> },
+                  ]}
                   returnType={<Reference refkey={userType} />}
                 />
               </TraitDeclaration>
@@ -331,11 +372,13 @@ describe("Rust reference nested scope traversal", () => {
       </Output>,
     );
 
-    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(d`
+    expect(findFile(output, "routes/mod.rs").contents.trim()).toBe(
+      d`
       use crate::models::User;
       trait UserMapper {
         fn map_user(user: User) -> User;
       }
-    `.trim());
+    `.trim(),
+    );
   });
 });

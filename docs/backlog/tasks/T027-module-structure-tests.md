@@ -1,17 +1,17 @@
 # T027: Module Structure Tests
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T027                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | test                                                                        |
-| **Status**       | done                                                                        |
-| **Priority**     | medium                                                                      |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T024, T025, T026                                                            |
-| **Blocks**       | —                                                                           |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T027                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | test                                                                     |
+| **Status**        | done                                                                     |
+| **Priority**      | medium                                                                   |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T024, T025, T026                                                         |
+| **Blocks**        | —                                                                        |
 
 ---
 

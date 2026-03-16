@@ -1,17 +1,17 @@
 # T025: Mod Declarations
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T025                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | feature                                                                     |
-| **Status**       | done                                                                        |
-| **Priority**     | medium                                                                      |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T009, T024                                                                  |
-| **Blocks**       | T027                                                                        |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T025                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | feature                                                                  |
+| **Status**        | done                                                                     |
+| **Priority**      | medium                                                                   |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T009, T024                                                               |
+| **Blocks**        | T027                                                                     |
 
 ---
 

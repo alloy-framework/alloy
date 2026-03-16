@@ -1,17 +1,17 @@
 # T058 — TupleStruct Declaration
 
-| Field | Value |
-|-------|-------|
-| **ID** | T058 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T011 (StructDeclaration) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T058                                           |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T011 (StructDeclaration)                       |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -39,6 +39,7 @@ Tuple structs are common for newtype patterns, wrapper types, and simple data co
 ## Proposed API
 
 Option A — Extend `StructDeclaration` with a `tuple` mode:
+
 ```tsx
 <StructDeclaration name="Point" pub tuple types={["i32", "i32"]} />
 // Renders: pub struct Point(i32, i32);
@@ -48,6 +49,7 @@ Option A — Extend `StructDeclaration` with a `tuple` mode:
 ```
 
 Option B — Separate component:
+
 ```tsx
 <TupleStructDeclaration name="Point" pub types={["i32", "i32"]} />
 ```
@@ -58,9 +60,9 @@ Option B — Separate component:
 // Extend existing StructDeclarationProps:
 interface StructDeclarationProps {
   // ... existing props ...
-  tuple?: boolean;       // Render as tuple struct
-  types?: Children[];    // Tuple field types (when tuple=true)
-  unit?: boolean;        // Render as unit struct (no body)
+  tuple?: boolean; // Render as tuple struct
+  types?: Children[]; // Tuple field types (when tuple=true)
+  unit?: boolean; // Render as unit struct (no body)
 }
 ```
 

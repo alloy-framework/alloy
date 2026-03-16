@@ -3,13 +3,16 @@ import {
   createSymbol,
   Namekey,
   OutputSpace,
-  TrackOpTypes,
-  TriggerOpTypes,
   track,
+  TrackOpTypes,
   trigger,
+  TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
-import { RustOutputSymbol, RustOutputSymbolOptions } from "./rust-output-symbol.js";
+import {
+  RustOutputSymbol,
+  RustOutputSymbolOptions,
+} from "./rust-output-symbol.js";
 
 export interface FunctionSymbolOptions extends RustOutputSymbolOptions {
   receiverType?: Children;

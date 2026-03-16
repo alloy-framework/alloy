@@ -1,17 +1,17 @@
 # T062 — pub(super) Visibility + Visibility Prop Refactor
 
-| Field | Value |
-|-------|-------|
-| **ID** | T062 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T011 (StructDeclaration), T012 (EnumDeclaration), T013 (FunctionDeclaration) |
-| **Blocks** | — |
+| Field                     | Value                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| **ID**                    | T062                                                                         |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md)                               |
+| **Type**                  | feature                                                                      |
+| **Status**                | done                                                                         |
+| **Priority**              | P2 — should-have                                                             |
+| **Owner Role**            | AI coding agent                                                              |
+| **AI Executable**         | Yes                                                                          |
+| **Human Review Required** | Yes                                                                          |
+| **Dependencies**          | T011 (StructDeclaration), T012 (EnumDeclaration), T013 (FunctionDeclaration) |
+| **Blocks**                | —                                                                            |
 
 ---
 

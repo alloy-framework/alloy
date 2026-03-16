@@ -1,17 +1,17 @@
 # T059 — StaticDeclaration Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T059 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T014 (TypeAlias + ConstDeclaration) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T059                                           |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T014 (TypeAlias + ConstDeclaration)            |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -46,9 +46,9 @@ interface StaticDeclarationProps {
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
-  mutable?: boolean;     // static mut
+  mutable?: boolean; // static mut
   type: Children;
-  children?: Children;   // Initializer
+  children?: Children; // Initializer
 }
 ```
 

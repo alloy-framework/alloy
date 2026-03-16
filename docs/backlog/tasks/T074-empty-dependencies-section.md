@@ -1,17 +1,17 @@
 # T074 — Cargo.toml Renders Empty [dependencies] Section
 
-| Field | Value |
-|-------|-------|
-| **ID** | T074 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P3 — cosmetic |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T030 (CargoTomlFile), T031 (Dependency tracking) |
-| **Blocks** | — |
+| Field                     | Value                                            |
+| ------------------------- | ------------------------------------------------ |
+| **ID**                    | T074                                             |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)               |
+| **Type**                  | bug                                              |
+| **Status**                | done                                             |
+| **Priority**              | P3 — cosmetic                                    |
+| **Owner Role**            | AI coding agent                                  |
+| **AI Executable**         | Yes                                              |
+| **Human Review Required** | No                                               |
+| **Dependencies**          | T030 (CargoTomlFile), T031 (Dependency tracking) |
+| **Blocks**                | —                                                |
 
 ---
 

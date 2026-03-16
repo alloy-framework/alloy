@@ -1,54 +1,60 @@
 import { stc } from "@alloy-js/core";
+import { AssociatedType as AssociatedTypeComponent } from "../associated-type.js";
 import {
   Attribute as AttributeComponent,
   DeriveAttribute as DeriveAttributeComponent,
   InnerAttribute as InnerAttributeComponent,
 } from "../attribute.js";
-import { AssociatedType as AssociatedTypeComponent } from "../associated-type.js";
 import { AwaitExpression as AwaitExpressionComponent } from "../await-expression.js";
 import { BlockExpression as BlockExpressionComponent } from "../block-expression.js";
+import { BreakExpression as BreakExpressionComponent } from "../break-expression.js";
 import { CargoTomlFile as CargoTomlFileComponent } from "../cargo-toml-file.js";
 import { ClosureExpression as ClosureExpressionComponent } from "../closure-expression.js";
 import { ConstDeclaration as ConstDeclarationComponent } from "../const-declaration.js";
-import { StaticDeclaration as StaticDeclarationComponent } from "../static-declaration.js";
 import { ContinueExpression as ContinueExpressionComponent } from "../continue-expression.js";
 import { CrateDirectory as CrateDirectoryComponent } from "../crate-directory.js";
-import { BreakExpression as BreakExpressionComponent } from "../break-expression.js";
-import { MacroCall as MacroCallComponent } from "../macro-call.js";
-import { DocComment as DocCommentComponent, ModuleDocComment as ModuleDocCommentComponent } from "../doc-comment.js";
+import {
+  DocComment as DocCommentComponent,
+  ModuleDocComment as ModuleDocCommentComponent,
+} from "../doc-comment.js";
 import {
   EnumDeclaration as EnumDeclarationComponent,
   EnumVariant as EnumVariantComponent,
 } from "../enum-declaration.js";
+import { ForExpression as ForExpressionComponent } from "../for-expression.js";
+import { FunctionCallExpression as FunctionCallExpressionComponent } from "../function-call-expression.js";
 import { FunctionDeclaration as FunctionDeclarationComponent } from "../function-declaration.js";
 import {
   ElseClause as ElseClauseComponent,
   ElseIfClause as ElseIfClauseComponent,
   IfExpression as IfExpressionComponent,
 } from "../if-expression.js";
-import { FunctionCallExpression as FunctionCallExpressionComponent } from "../function-call-expression.js";
-import { ForExpression as ForExpressionComponent } from "../for-expression.js";
-import { LoopExpression as LoopExpressionComponent } from "../loop-expression.js";
-import {
-  MethodChainCall as MethodChainCallComponent,
-  MethodChainExpression as MethodChainExpressionComponent,
-} from "../method-chain-expression.js";
-import { LetBinding as LetBindingComponent } from "../let-binding.js";
 import { ImplBlock as ImplBlockComponent } from "../impl-block.js";
+import { LetBinding as LetBindingComponent } from "../let-binding.js";
+import { LoopExpression as LoopExpressionComponent } from "../loop-expression.js";
+import { MacroCall as MacroCallComponent } from "../macro-call.js";
 import {
   MatchArm as MatchArmComponent,
   MatchExpression as MatchExpressionComponent,
 } from "../match-expression.js";
+import {
+  MethodChainCall as MethodChainCallComponent,
+  MethodChainExpression as MethodChainExpressionComponent,
+} from "../method-chain-expression.js";
 import { ModuleDirectory as ModuleDirectoryComponent } from "../module-directory.js";
 import { Parameters as ParametersComponent } from "../parameters.js";
 import { Reference as ReferenceComponent } from "../reference.js";
 import { ReturnExpression as ReturnExpressionComponent } from "../return-expression.js";
 import { SourceFile as SourceFileComponent } from "../source-file.js";
+import { StaticDeclaration as StaticDeclarationComponent } from "../static-declaration.js";
+import {
+  Field as FieldComponent,
+  StructDeclaration as StructDeclarationComponent,
+} from "../struct-declaration.js";
 import {
   FieldInit as FieldInitComponent,
   StructExpression as StructExpressionComponent,
 } from "../struct-expression.js";
-import { Field as FieldComponent, StructDeclaration as StructDeclarationComponent } from "../struct-declaration.js";
 import { TraitDeclaration as TraitDeclarationComponent } from "../trait-declaration.js";
 import { TryExpression as TryExpressionComponent } from "../try-expression.js";
 import { TypeAlias as TypeAliasComponent } from "../type-alias.js";

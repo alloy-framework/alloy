@@ -142,7 +142,12 @@ describe("EnumDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <EnumDeclaration name="Status" pub={true} pub_crate={true} pub_super={true} />
+            <EnumDeclaration
+              name="Status"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+            />
             <hbr />
             <EnumVisibilityProbe name="Status" />
           </SourceFile>

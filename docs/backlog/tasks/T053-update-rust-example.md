@@ -1,17 +1,17 @@
 # T053 — Update rust-example Sample with Expression Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T053 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | test |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T039 (Reference scope traversal), T040 (Missing newlines), T041 (Trait abstract methods), T042 (Enum tuple variants), T043 (Standalone SourceFile registration), T046 (StructExpression), T047 (MatchExpression), T048 (IfExpression), T049 (LetBinding), T050 (FunctionCallExpression), T051 (ClosureExpression), T052 (ReturnExpression + MacroCall) |
-| **Blocks** | — |
+| Field                     | Value                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **ID**                    | T053                                                                                                                                                                                                                                                                                                                                                   |
+| **Epic**                  | [E008](../epics/E008-expression-components.md)                                                                                                                                                                                                                                                                                                         |
+| **Type**                  | test                                                                                                                                                                                                                                                                                                                                                   |
+| **Status**                | done                                                                                                                                                                                                                                                                                                                                                   |
+| **Priority**              | P2 — should-have                                                                                                                                                                                                                                                                                                                                       |
+| **Owner Role**            | AI coding agent                                                                                                                                                                                                                                                                                                                                        |
+| **AI Executable**         | Yes                                                                                                                                                                                                                                                                                                                                                    |
+| **Human Review Required** | Yes                                                                                                                                                                                                                                                                                                                                                    |
+| **Dependencies**          | T039 (Reference scope traversal), T040 (Missing newlines), T041 (Trait abstract methods), T042 (Enum tuple variants), T043 (Standalone SourceFile registration), T046 (StructExpression), T047 (MatchExpression), T048 (IfExpression), T049 (LetBinding), T050 (FunctionCallExpression), T051 (ClosureExpression), T052 (ReturnExpression + MacroCall) |
+| **Blocks**                | —                                                                                                                                                                                                                                                                                                                                                      |
 
 ---
 

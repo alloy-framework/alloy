@@ -57,14 +57,16 @@ function renderBlock(children: Children | undefined) {
   return (
     <>
       {"{"}
-      {statements.length > 0 ? (
+      {statements.length > 0 ?
         <>
           <Indent>
-            <For each={statements} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={statements} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );
@@ -78,9 +80,7 @@ export function IfExpression(props: IfExpressionProps) {
   return (
     <>
       {"if "}
-      {props.condition}
-      {" "}
-      {renderBlock(bodyChildren)}
+      {props.condition} {renderBlock(bodyChildren)}
       {clauses}
     </>
   );
@@ -90,9 +90,7 @@ export function ElseIfClause(props: ElseIfClauseProps) {
   return (
     <>
       {" else if "}
-      {props.condition}
-      {" "}
-      {renderBlock(props.children)}
+      {props.condition} {renderBlock(props.children)}
     </>
   );
 }

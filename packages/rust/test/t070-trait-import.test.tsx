@@ -23,7 +23,12 @@ describe("T070 - ImplBlock Trait Name Missing Use Import", () => {
         <CrateDirectory name="std">
           <ModuleDirectory path="fmt">
             <SourceFile path="mod.rs">
-              <Declaration name="Display" refkey={displayRef} nameKind="trait" pub>
+              <Declaration
+                name="Display"
+                refkey={displayRef}
+                nameKind="trait"
+                pub
+              >
                 pub trait Display {}
               </Declaration>
             </SourceFile>
@@ -118,9 +123,18 @@ describe("T070 - ImplBlock Trait Name Missing Use Import", () => {
         </CrateDirectory>
         <CrateDirectory name="my_app">
           <SourceFile path="lib.rs">
-            <StructDeclaration name="MyType" refkey={genericRef} pub typeParameters={[{ name: "T" }]} />
+            <StructDeclaration
+              name="MyType"
+              refkey={genericRef}
+              pub
+              typeParameters={[{ name: "T" }]}
+            />
             <hbr />
-            <ImplBlock type={genericRef} trait={displayRef} typeParameters={[{ name: "T" }]} />
+            <ImplBlock
+              type={genericRef}
+              trait={displayRef}
+              typeParameters={[{ name: "T" }]}
+            />
           </SourceFile>
         </CrateDirectory>
       </Output>,

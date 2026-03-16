@@ -53,14 +53,16 @@ function renderBlock(children: Children[]) {
   return (
     <>
       {"{"}
-      {children.length > 0 ? (
+      {children.length > 0 ?
         <>
           <Indent>
-            <For each={children} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={children} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );
@@ -80,23 +82,22 @@ export function ClosureExpression(props: ClosureExpressionProps) {
         {(parameter) => (
           <>
             {parameter.name}
-            {parameter.type ? <>: {parameter.type}</> : null}
+            {parameter.type ?
+              <>: {parameter.type}</>
+            : null}
           </>
         )}
       </For>
       {"|"}
-      {hasReturnType ? <> {"->"} {props.returnType}</> : null}
-      {renderAsBlock ? (
+      {hasReturnType ?
         <>
           {" "}
-          {renderBlock(bodyStatements)}
+          {"->"} {props.returnType}
         </>
-      ) : (
-        <>
-          {" "}
-          {bodyStatements[0]}
-        </>
-      )}
+      : null}
+      {renderAsBlock ?
+        <> {renderBlock(bodyStatements)}</>
+      : <> {bodyStatements[0]}</>}
     </>
   );
 }

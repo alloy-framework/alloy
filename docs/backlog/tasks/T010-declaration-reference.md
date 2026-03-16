@@ -5,7 +5,7 @@
 | **Task ID** | T010                                             |
 | **Epic**    | E003 — Core Declaration Components               |
 | **Deps**    | T006 (Symbol factories), T009 (SourceFile/Crate) |
-| **Blocks**  | T011, T012, T013, T014, T015, T016, T017, T018  |
+| **Blocks**  | T011, T012, T013, T014, T015, T016, T017, T018   |
 | **Status**  | Done                                             |
 
 ## Description
@@ -46,12 +46,12 @@ interface ReferenceProps {
 
 ## Context Files
 
-| File                                                    | Why                                        |
-| ------------------------------------------------------- | ------------------------------------------ |
-| `packages/go/src/symbols/reference.ts`                   | Reference pattern for symbol name resolution |
-| `packages/typescript/src/components/Declaration.tsx`      | Core Declaration wrapping pattern            |
-| `packages/core/src/components/Declaration.tsx`            | Core Declaration being wrapped               |
-| `packages/csharp/src/components/CSharpDeclaration.tsx`   | Visibility modifier pattern                  |
+| File                                                   | Why                                          |
+| ------------------------------------------------------ | -------------------------------------------- |
+| `packages/go/src/symbols/reference.ts`                 | Reference pattern for symbol name resolution |
+| `packages/typescript/src/components/Declaration.tsx`   | Core Declaration wrapping pattern            |
+| `packages/core/src/components/Declaration.tsx`         | Core Declaration being wrapped               |
+| `packages/csharp/src/components/CSharpDeclaration.tsx` | Visibility modifier pattern                  |
 
 ## Implementation Guidance
 
@@ -69,10 +69,20 @@ interface ReferenceProps {
 ```tsx
 // Pseudocode
 function Declaration(props: DeclarationProps) {
-  const visibility = props.pub ? "pub " : props.pub_crate ? "pub(crate) " : "";
-  return <CoreDeclaration name={props.name} refkey={props.refkey} nameKind={props.nameKind}>
-    {visibility}{props.children}
-  </CoreDeclaration>;
+  const visibility =
+    props.pub ? "pub "
+    : props.pub_crate ? "pub(crate) "
+    : "";
+  return (
+    <CoreDeclaration
+      name={props.name}
+      refkey={props.refkey}
+      nameKind={props.nameKind}
+    >
+      {visibility}
+      {props.children}
+    </CoreDeclaration>
+  );
 }
 ```
 

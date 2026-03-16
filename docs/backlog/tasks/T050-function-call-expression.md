@@ -1,17 +1,17 @@
 # T050 — FunctionCallExpression Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T050 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T050                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -51,9 +51,9 @@ Provide a `FunctionCallExpression` component for function and method invocations
 
 ```typescript
 interface FunctionCallExpressionProps {
-  target: Children;          // Function/method path
-  args?: Children[];         // Arguments
-  typeArgs?: Children[];     // Optional turbofish type arguments
+  target: Children; // Function/method path
+  args?: Children[]; // Arguments
+  typeArgs?: Children[]; // Optional turbofish type arguments
 }
 ```
 

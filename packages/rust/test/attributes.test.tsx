@@ -28,7 +28,11 @@ describe("Attribute", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="my_custom_attribute" refkey={attributeName} nameKind="function">
+            <Declaration
+              name="my_custom_attribute"
+              refkey={attributeName}
+              nameKind="function"
+            >
               fn my_custom_attribute() {`{}`}
             </Declaration>
             <hbr />
@@ -45,7 +49,9 @@ describe("Attribute", () => {
 
 describe("DeriveAttribute", () => {
   it("renders single derive trait", () => {
-    expect(<DeriveAttribute traits={["Debug"]} />).toRenderTo(d`#[derive(Debug)]`);
+    expect(<DeriveAttribute traits={["Debug"]} />).toRenderTo(
+      d`#[derive(Debug)]`,
+    );
   });
 
   it("renders multiple derive traits", () => {
@@ -60,7 +66,11 @@ describe("DeriveAttribute", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="Serialize" refkey={serializeTrait} nameKind="trait">
+            <Declaration
+              name="Serialize"
+              refkey={serializeTrait}
+              nameKind="trait"
+            >
               trait Serialize {`{}`}
             </Declaration>
             <hbr />
@@ -101,12 +111,14 @@ describe("InnerAttribute", () => {
   });
 
   it("renders inner attribute with args", () => {
-    expect(<InnerAttribute name="cfg" args="test" />).toRenderTo(d`#![cfg(test)]`);
+    expect(<InnerAttribute name="cfg" args="test" />).toRenderTo(
+      d`#![cfg(test)]`,
+    );
   });
 
   it("renders stc inner attribute wrapper", () => {
-    expect(Stc.InnerAttribute({ name: "cfg", args: "feature = \"cli\"" })).toRenderTo(
-      d`#![cfg(feature = "cli")]`,
-    );
+    expect(
+      Stc.InnerAttribute({ name: "cfg", args: 'feature = "cli"' }),
+    ).toRenderTo(d`#![cfg(feature = "cli")]`);
   });
 });

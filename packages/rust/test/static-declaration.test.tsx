@@ -84,11 +84,15 @@ describe("StaticDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            {Stc.StaticDeclaration({ name: "SHARED", type: "usize" }).children(["10"])}
-            <hbr />
-            {DirectStaticDeclaration({ name: "LOCAL", mutable: true, type: "usize" }).children([
-              "11",
+            {Stc.StaticDeclaration({ name: "SHARED", type: "usize" }).children([
+              "10",
             ])}
+            <hbr />
+            {DirectStaticDeclaration({
+              name: "LOCAL",
+              mutable: true,
+              type: "usize",
+            }).children(["11"])}
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -103,7 +107,11 @@ describe("StaticDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StaticDeclaration name="WORKER_COUNT" pub_crate={true} type="usize">
+            <StaticDeclaration
+              name="WORKER_COUNT"
+              pub_crate={true}
+              type="usize"
+            >
               4
             </StaticDeclaration>
             <hbr />
@@ -122,7 +130,13 @@ describe("StaticDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StaticDeclaration name="WORKER_COUNT" pub={true} pub_crate={true} pub_super={true} type="usize">
+            <StaticDeclaration
+              name="WORKER_COUNT"
+              pub={true}
+              pub_crate={true}
+              pub_super={true}
+              type="usize"
+            >
               4
             </StaticDeclaration>
             <hbr />
@@ -143,7 +157,11 @@ describe("StaticDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StaticDeclaration name="GLOBAL_FLAG" refkey={staticRef} type="bool">
+            <StaticDeclaration
+              name="GLOBAL_FLAG"
+              refkey={staticRef}
+              type="bool"
+            >
               true
             </StaticDeclaration>
             <hbr />

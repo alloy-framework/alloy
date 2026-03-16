@@ -2,7 +2,11 @@ import { Children, Output, code } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { CrateDirectory, SourceFile, UnsafeBlock } from "../src/components/index.js";
+import {
+  CrateDirectory,
+  SourceFile,
+  UnsafeBlock,
+} from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
 function inFile(children: Children) {
@@ -17,13 +21,7 @@ function inFile(children: Children) {
 
 describe("UnsafeBlock", () => {
   it("renders a simple unsafe block", () => {
-    expect(
-      inFile(
-        <UnsafeBlock>
-          {code`*ptr`}
-        </UnsafeBlock>,
-      ),
-    ).toRenderTo(d`
+    expect(inFile(<UnsafeBlock>{code`*ptr`}</UnsafeBlock>)).toRenderTo(d`
       unsafe {
         *ptr
       }
@@ -69,7 +67,8 @@ describe("UnsafeBlock", () => {
   });
 
   it("stc wrapper renders the same output", () => {
-    expect(inFile(Stc.UnsafeBlock().children(["libc::free(ptr);"]))).toRenderTo(d`
+    expect(inFile(Stc.UnsafeBlock().children(["libc::free(ptr);"])))
+      .toRenderTo(d`
       unsafe {
         libc::free(ptr);
       }

@@ -1,4 +1,8 @@
-import { Children, Declaration as CoreDeclaration, Refkey } from "@alloy-js/core";
+import {
+  Children,
+  Declaration as CoreDeclaration,
+  Refkey,
+} from "@alloy-js/core";
 import { createAssociatedTypeSymbol } from "../symbols/factories.js";
 
 export interface AssociatedTypeProps {
@@ -17,17 +21,17 @@ export function AssociatedType(props: AssociatedTypeProps) {
     <CoreDeclaration symbol={associatedTypeSymbol}>
       {"type "}
       {associatedTypeSymbol.name}
-      {props.children ? (
+      {props.children ?
         <>
           {" = "}
           {props.children}
         </>
-      ) : props.constraint ? (
+      : props.constraint ?
         <>
           {": "}
           {props.constraint}
         </>
-      ) : null}
+      : null}
       {";"}
     </CoreDeclaration>
   );

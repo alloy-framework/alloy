@@ -4,7 +4,6 @@ You are working inside the Alloy monorepo.
 
 Your task is to generate a complete, execution-ready project backlog from the Rust language package PRD and documentation @docs/language-packages/rust
 
-
 The backlog will be consumed primarily by AI coding agents, so it must be:
 
 - precise
@@ -14,17 +13,16 @@ The backlog will be consumed primarily by AI coding agents, so it must be:
 - testable
 - safe for autonomous execution
 
-
 Write the output to:
 
 <BACKLOG_DOC>
 
 Use the following planning inputs as required context:
+
 - <CORE_DOC>
 - <PATTERNS_DOC>
 - <DESIGN_DOC>
 - <PRD_DOC>
-
 
 These documents may include:
 
@@ -44,6 +42,7 @@ If some files are clearly obsolete, contradictory, or overlapping:
 - do not silently ignore meaningful conflicts
 
 # Objective
+
 Produce a backlog that translates the product and architecture into a practical development plan from foundation to production-ready system.
 
 The output must be suitable for:
@@ -52,8 +51,6 @@ The output must be suitable for:
 - AI coding agents that execute one task at a time with limited context
 
 ---
-
-
 
 ## What you must do
 
@@ -73,7 +70,6 @@ The output must be suitable for:
 8. Identify assumptions, missing information, or decisions that block implementation.
 9. Prefer vertical slices where possible, but include foundational platform work where necessary.
 10. Optimize for AI coding agents that will execute one task at a time with limited context.
-
 
 ## Backlog design rules
 
@@ -106,7 +102,6 @@ Avoid Placeholder tasks:
 Each task document must be executable in isolation by an AI coding agent. That means it must contain enough context, scope boundaries, dependencies, acceptance criteria, and validation guidance that the agent can implement it without needing to infer the intended work from the PRD alone.
 
 ---
-
 
 ## Backlog artifact organization
 

@@ -2,13 +2,13 @@ import { Output, code, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { useCrateContext } from "../src/context/crate-context.js";
-import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
-import { useRustModuleScope } from "../src/scopes/index.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
-import { ModuleDirectory } from "../src/components/module-directory.js";
 import { ModuleDocComment } from "../src/components/doc-comment.js";
+import { ModuleDirectory } from "../src/components/module-directory.js";
 import { SourceFile } from "../src/components/source-file.js";
+import { useCrateContext } from "../src/context/crate-context.js";
+import { useRustModuleScope } from "../src/scopes/index.js";
+import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { findFile } from "./utils.js";
 
 function CrateContextProbe() {
@@ -60,7 +60,10 @@ describe("SourceFile", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
-          <SourceFile path="lib.rs" headerComment={<ModuleDocComment>Crate docs</ModuleDocComment>}>
+          <SourceFile
+            path="lib.rs"
+            headerComment={<ModuleDocComment>Crate docs</ModuleDocComment>}
+          >
             {code`fn main() {}`}
           </SourceFile>
         </CrateDirectory>

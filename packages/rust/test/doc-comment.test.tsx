@@ -1,7 +1,12 @@
 import { Output } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { CrateDirectory, DocComment, ModuleDocComment, SourceFile } from "../src/components/index.js";
+import {
+  CrateDirectory,
+  DocComment,
+  ModuleDocComment,
+  SourceFile,
+} from "../src/components/index.js";
 
 describe("DocComment", () => {
   it("renders a single line", () => {

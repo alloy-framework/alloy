@@ -1,17 +1,17 @@
 # T030: Cargo.toml File Generation
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T030                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | feature                                                                                 |
-| **Status**       | done                                                                                    |
-| **Priority**     | high                                                                                    |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T009, T031                                                                              |
-| **Blocks**       | T034                                                                                    |
+| Field             | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| **ID**            | T030                                                                                |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md) |
+| **Type**          | feature                                                                             |
+| **Status**        | done                                                                                |
+| **Priority**      | high                                                                                |
+| **Owner**         | AI coding agent                                                                     |
+| **AI Executable** | yes                                                                                 |
+| **Human Review**  | yes                                                                                 |
+| **Dependencies**  | T009, T031                                                                          |
+| **Blocks**        | T034                                                                                |
 
 ---
 
@@ -59,6 +59,7 @@ Enable automatic `Cargo.toml` generation with correct package metadata and depen
 1. **File**: `packages/rust/src/components/cargo-toml-file.tsx`.
 2. **Props**: Do NOT destructure — use `props.name`, `props.version`, etc.
 3. **TOML rendering**: Use `code` template tag to render TOML format. Do NOT use a TOML library — the output is simple enough to template directly:
+
    ```toml
    [package]
    name = "my-crate"
@@ -69,6 +70,7 @@ Enable automatic `Cargo.toml` generation with correct package metadata and depen
    serde = "1.0"
    tokio = { version = "1.0", features = ["full"] }
    ```
+
 4. **Dependency merging**: Combine `props.dependencies` (explicit) with `crateScope.dependencies` (auto-tracked). If a dependency appears in both, the explicit one takes precedence.
 5. **Dependency rendering**:
    - Simple version: `name = "version"`

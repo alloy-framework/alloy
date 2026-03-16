@@ -1,17 +1,17 @@
 # T066 — InnerAttribute Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T066 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P3 — nice-to-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T015 (Attribute) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T066                                           |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P3 — nice-to-have                              |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T015 (Attribute)                               |
+| **Blocks**                | —                                              |
 
 ---
 

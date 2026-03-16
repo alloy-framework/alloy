@@ -1,12 +1,12 @@
 # T017: TypeParameters and WhereClause
 
-| Field       | Value                                    |
-| ----------- | ---------------------------------------- |
-| **Task ID** | T017                                     |
-| **Epic**    | E003 — Core Declaration Components       |
-| **Deps**    | T001 (Package scaffold)                  |
-| **Blocks**  | —                                        |
-| **Status**  | done                                     |
+| Field       | Value                              |
+| ----------- | ---------------------------------- |
+| **Task ID** | T017                               |
+| **Epic**    | E003 — Core Declaration Components |
+| **Deps**    | T001 (Package scaffold)            |
+| **Blocks**  | —                                  |
+| **Status**  | done                               |
 
 ## Description
 
@@ -47,11 +47,11 @@ interface WhereClauseProps {
 
 ## Context Files
 
-| File                                                           | Why                                     |
-| -------------------------------------------------------------- | --------------------------------------- |
-| `packages/typescript/src/components/TypeParameterDeclaration.tsx`| TypeScript generic parameter pattern    |
-| `packages/csharp/src/components/GenericParameters.tsx`          | C# generic parameter pattern             |
-| `packages/go/src/components/TypeParameters.tsx`                 | Go type parameter pattern                |
+| File                                                              | Why                                  |
+| ----------------------------------------------------------------- | ------------------------------------ |
+| `packages/typescript/src/components/TypeParameterDeclaration.tsx` | TypeScript generic parameter pattern |
+| `packages/csharp/src/components/GenericParameters.tsx`            | C# generic parameter pattern         |
+| `packages/go/src/components/TypeParameters.tsx`                   | Go type parameter pattern            |
 
 ## Implementation Guidance
 
@@ -70,6 +70,7 @@ function TypeParameters(props: TypeParametersProps) {
 ```
 
 Examples:
+
 - `[{name: "T"}]` → `<T>`
 - `[{name: "T", constraint: "Display"}]` → `<T: Display>`
 - `[{name: "T"}, {name: "U", constraint: "Display + Clone"}]` → `<T, U: Display + Clone>`
@@ -93,8 +94,11 @@ function WhereClause(props: WhereClauseProps) {
 Used by declaration components:
 
 ```tsx
-<StructDeclaration name="Foo" typeParameters={[{name: "T", constraint: "Display"}]}
-  whereClause={<>T: Clone</>}>
+<StructDeclaration
+  name="Foo"
+  typeParameters={[{ name: "T", constraint: "Display" }]}
+  whereClause={<>T: Clone</>}
+>
   ...
 </StructDeclaration>
 // Renders:

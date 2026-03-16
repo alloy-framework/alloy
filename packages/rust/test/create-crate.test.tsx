@@ -7,13 +7,17 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { useCrateContext } from "../src/context/crate-context.js";
 import { CrateDirectory } from "../src/components/crate-directory.js";
 import { Reference } from "../src/components/reference.js";
 import { SourceFile } from "../src/components/source-file.js";
-import { createCrate, getCrateInfo, getCrateScope } from "../src/create-crate.js";
-import { RustCrateScope, RustModuleScope } from "../src/scopes/index.js";
+import { useCrateContext } from "../src/context/crate-context.js";
+import {
+  createCrate,
+  getCrateInfo,
+  getCrateScope,
+} from "../src/create-crate.js";
 import { useRustModuleScope } from "../src/scopes/contexts.js";
+import { RustCrateScope, RustModuleScope } from "../src/scopes/index.js";
 import { findFile } from "./utils.js";
 
 interface ScopeCaptureProps {
@@ -83,10 +87,16 @@ describe("createCrate", () => {
     expect(crateScope).toBeDefined();
     expect(findChildModule(crateScope, "json")).toBeDefined();
 
-    const rootResolution = binder.resolveDeclarationByKey(undefined, serde[""].Serialize).value;
+    const rootResolution = binder.resolveDeclarationByKey(
+      undefined,
+      serde[""].Serialize,
+    ).value;
     expect(rootResolution?.symbol.name).toBe("Serialize");
 
-    const jsonResolution = binder.resolveDeclarationByKey(undefined, serde.json.to_string).value;
+    const jsonResolution = binder.resolveDeclarationByKey(
+      undefined,
+      serde.json.to_string,
+    ).value;
     expect(jsonResolution?.symbol.name).toBe("to_string");
     expect(jsonResolution?.pathDown.map((scope) => scope.name)).toEqual([
       "serde",

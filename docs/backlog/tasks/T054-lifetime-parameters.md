@@ -1,17 +1,17 @@
 # T054 — Lifetime Parameter Support
 
-| Field | Value |
-|-------|-------|
-| **ID** | T054 |
-| **Epic** | [E009](../epics/E009-language-feature-gaps.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T017 (TypeParameters) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T054                                           |
+| **Epic**                  | [E009](../epics/E009-language-feature-gaps.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T017 (TypeParameters)                          |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -80,9 +80,9 @@ Extend `TypeParameters` and `TypeParameterProp` to support lifetime parameters a
 
 ```typescript
 interface TypeParameterProp {
-  name?: string;           // Type parameter name (existing)
-  lifetime?: string;       // Lifetime name (e.g., "'a") — new
-  constraint?: string;     // Bounds (existing, works for both)
+  name?: string; // Type parameter name (existing)
+  lifetime?: string; // Lifetime name (e.g., "'a") — new
+  constraint?: string; // Bounds (existing, works for both)
 }
 ```
 

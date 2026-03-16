@@ -1,12 +1,12 @@
 # T018: Value Component
 
-| Field       | Value                                    |
-| ----------- | ---------------------------------------- |
-| **Task ID** | T018                                     |
-| **Epic**    | E003 — Core Declaration Components       |
-| **Deps**    | T001 (Package scaffold)                  |
-| **Blocks**  | —                                        |
-| **Status**  | Done                                     |
+| Field       | Value                              |
+| ----------- | ---------------------------------- |
+| **Task ID** | T018                               |
+| **Epic**    | E003 — Core Declaration Components |
+| **Deps**    | T001 (Package scaffold)            |
+| **Blocks**  | —                                  |
+| **Status**  | Done                               |
 
 ## Description
 
@@ -31,15 +31,15 @@ interface ValueProps {
 
 ### Conversion Table
 
-| JS Type          | Rust Output         | Example                    |
-| ---------------- | ------------------- | -------------------------- |
-| `string`         | `"str"`             | `"hello"` → `"hello"`     |
-| `number` (int)   | `42`                | `42` → `42`               |
-| `number` (float) | `42.0`              | `42.5` → `42.5`           |
-| `boolean`        | `true` / `false`    | `true` → `true`           |
-| `null`           | `None`              | `null` → `None`           |
-| `undefined`      | `None`              | `undefined` → `None`      |
-| `Array`          | `vec![a, b, c]`     | `[1, 2]` → `vec![1, 2]`  |
+| JS Type          | Rust Output      | Example                 |
+| ---------------- | ---------------- | ----------------------- |
+| `string`         | `"str"`          | `"hello"` → `"hello"`   |
+| `number` (int)   | `42`             | `42` → `42`             |
+| `number` (float) | `42.0`           | `42.5` → `42.5`         |
+| `boolean`        | `true` / `false` | `true` → `true`         |
+| `null`           | `None`           | `null` → `None`         |
+| `undefined`      | `None`           | `undefined` → `None`    |
+| `Array`          | `vec![a, b, c]`  | `[1, 2]` → `vec![1, 2]` |
 
 ## Out of Scope
 
@@ -52,11 +52,11 @@ interface ValueProps {
 
 ## Context Files
 
-| File                                              | Why                                     |
-| ------------------------------------------------- | --------------------------------------- |
-| `packages/java/src/components/Value.tsx`           | Java value conversion pattern            |
-| `packages/python/src/components/Atom.tsx`          | Python literal conversion pattern        |
-| `packages/typescript/src/components/Value.tsx`     | TypeScript value conversion pattern      |
+| File                                           | Why                                 |
+| ---------------------------------------------- | ----------------------------------- |
+| `packages/java/src/components/Value.tsx`       | Java value conversion pattern       |
+| `packages/python/src/components/Atom.tsx`      | Python literal conversion pattern   |
+| `packages/typescript/src/components/Value.tsx` | TypeScript value conversion pattern |
 
 ## Implementation Guidance
 

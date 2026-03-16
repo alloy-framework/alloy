@@ -1,17 +1,17 @@
 # T024: Module Directory
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T024                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | feature                                                                     |
-| **Status**       | done                                                                        |
-| **Priority**     | medium                                                                      |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T009, T005                                                                  |
-| **Blocks**       | T025                                                                        |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T024                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | feature                                                                  |
+| **Status**        | done                                                                     |
+| **Priority**      | medium                                                                   |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T009, T005                                                               |
+| **Blocks**        | T025                                                                     |
 
 ---
 

@@ -8,7 +8,12 @@ import {
   SymbolCreator,
 } from "@alloy-js/core";
 import { RustCrateScope, RustModuleScope } from "./scopes/index.js";
-import { FunctionSymbol, NamedTypeSymbol, RustOutputSymbol, type RustSymbolKind } from "./symbols/index.js";
+import {
+  FunctionSymbol,
+  NamedTypeSymbol,
+  RustOutputSymbol,
+  type RustSymbolKind,
+} from "./symbols/index.js";
 
 export interface SymbolDescriptor {
   kind: RustSymbolKind;
@@ -34,7 +39,9 @@ export type CrateRef<TDescriptor extends CrateDescriptor = CrateDescriptor> = {
   };
 };
 
-const crateFactoryStateSymbol: unique symbol = Symbol("RustCreateCrateFactoryState");
+const crateFactoryStateSymbol: unique symbol = Symbol(
+  "RustCreateCrateFactoryState",
+);
 
 interface CrateFactoryState {
   name: string;
@@ -80,7 +87,9 @@ interface BinderState {
   createdSymbols: Map<Refkey, RustOutputSymbol>;
 }
 
-export function createCrate<const TModules extends Record<string, Record<string, SymbolDescriptor>>>(
+export function createCrate<
+  const TModules extends Record<string, Record<string, SymbolDescriptor>>,
+>(
   descriptor: CrateDescriptor<TModules>,
 ): CrateRef<CrateDescriptor<TModules>> & SymbolCreator & ExternalCrate {
   const binderStates = new WeakMap<Binder, BinderState>();
@@ -103,7 +112,11 @@ export function createCrate<const TModules extends Record<string, Record<string,
           continue;
         }
 
-        const moduleScope = ensureModuleScope(state, entry.modulePath, descriptor.name);
+        const moduleScope = ensureModuleScope(
+          state,
+          entry.modulePath,
+          descriptor.name,
+        );
         const symbol = createSymbolFromDescriptor(
           binder,
           moduleScope,
@@ -133,7 +146,9 @@ export function createCrate<const TModules extends Record<string, Record<string,
     crateRef[modulePath] = moduleRefs;
   }
 
-  return crateRef as CrateRef<CrateDescriptor<TModules>> & SymbolCreator & ExternalCrate;
+  return crateRef as CrateRef<CrateDescriptor<TModules>> &
+    SymbolCreator &
+    ExternalCrate;
 }
 
 function getFactoryState(crate: ExternalCrate): CrateFactoryState {
@@ -145,14 +160,19 @@ function createBinderState(
   descriptor: CrateDescriptor,
   crateFactoryState: CrateFactoryState,
 ): BinderState {
-  const crateScope = createScope(RustCrateScope, descriptor.name, descriptor.version, {
-    binder,
-    builtin: crateFactoryState.builtin,
-    metadata: {
-      external: true,
+  const crateScope = createScope(
+    RustCrateScope,
+    descriptor.name,
+    descriptor.version,
+    {
+      binder,
       builtin: crateFactoryState.builtin,
+      metadata: {
+        external: true,
+        builtin: crateFactoryState.builtin,
+      },
     },
-  });
+  );
   crateFactoryState.scopes.set(binder, crateScope);
 
   return {
@@ -179,7 +199,8 @@ function ensureModuleScope(
     let currentParent: RustCrateScope | RustModuleScope = state.crateScope;
     let currentPath = "";
     for (const segment of segments) {
-      currentPath = currentPath.length === 0 ? segment : `${currentPath}::${segment}`;
+      currentPath =
+        currentPath.length === 0 ? segment : `${currentPath}::${segment}`;
       currentParent = mapGet(state.moduleScopes, currentPath, () => {
         currentParent.addChildModule(segment, "pub");
         return createScope(RustModuleScope, segment, currentParent, {
@@ -217,12 +238,28 @@ function createSymbolFromDescriptor(
     case "enum":
     case "trait":
     case "type-alias":
-      return createSymbol(NamedTypeSymbol, symbolName, moduleScope.types, descriptor.kind, options);
+      return createSymbol(
+        NamedTypeSymbol,
+        symbolName,
+        moduleScope.types,
+        descriptor.kind,
+        options,
+      );
     case "function":
     case "method":
-      return createSymbol(FunctionSymbol, symbolName, moduleScope.values, options);
+      return createSymbol(
+        FunctionSymbol,
+        symbolName,
+        moduleScope.values,
+        options,
+      );
     default:
-      return createSymbol(RustOutputSymbol, symbolName, moduleScope.values, options);
+      return createSymbol(
+        RustOutputSymbol,
+        symbolName,
+        moduleScope.values,
+        options,
+      );
   }
 }
 

@@ -1,17 +1,17 @@
 # T057 — BreakExpression + ContinueExpression Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T057 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T055 (ForExpression), T056 (WhileExpression + LoopExpression) |
-| **Blocks** | — |
+| Field                     | Value                                                         |
+| ------------------------- | ------------------------------------------------------------- |
+| **ID**                    | T057                                                          |
+| **Epic**                  | [E008](../epics/E008-expression-components.md)                |
+| **Type**                  | feature                                                       |
+| **Status**                | done                                                          |
+| **Priority**              | P2 — should-have                                              |
+| **Owner Role**            | AI coding agent                                               |
+| **AI Executable**         | Yes                                                           |
+| **Human Review Required** | No                                                            |
+| **Dependencies**          | T055 (ForExpression), T056 (WhileExpression + LoopExpression) |
+| **Blocks**                | —                                                             |
 
 ---
 
@@ -46,12 +46,12 @@ continue 'outer;
 
 ```typescript
 interface BreakExpressionProps {
-  label?: string;        // Optional loop label
-  children?: Children;   // Optional break value
+  label?: string; // Optional loop label
+  children?: Children; // Optional break value
 }
 
 interface ContinueExpressionProps {
-  label?: string;        // Optional loop label
+  label?: string; // Optional loop label
 }
 ```
 

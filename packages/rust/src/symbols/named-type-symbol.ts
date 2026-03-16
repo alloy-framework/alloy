@@ -2,19 +2,25 @@ import {
   createSymbol,
   Namekey,
   OutputSpace,
-  TrackOpTypes,
-  TriggerOpTypes,
   track,
+  TrackOpTypes,
   trigger,
+  TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
-import { RustOutputSymbol, RustOutputSymbolOptions } from "./rust-output-symbol.js";
+import {
+  RustOutputSymbol,
+  RustOutputSymbolOptions,
+} from "./rust-output-symbol.js";
 
 export type NamedTypeTypeKind = "struct" | "enum" | "trait" | "type-alias";
 export interface NamedTypeSymbolOptions extends RustOutputSymbolOptions {}
 
 export class NamedTypeSymbol extends RustOutputSymbol {
-  static readonly memberSpaces: readonly string[] = ["members", "type-parameters"];
+  static readonly memberSpaces: readonly string[] = [
+    "members",
+    "type-parameters",
+  ];
 
   #typeKind: NamedTypeTypeKind;
   get typeKind() {
@@ -45,15 +51,21 @@ export class NamedTypeSymbol extends RustOutputSymbol {
   copy() {
     const options = this.getCopyOptions();
     const binder = this.binder;
-    const copy = createSymbol(NamedTypeSymbol, this.name, undefined, this.#typeKind, {
-      ...options,
-      binder,
-      visibility: this.visibility,
-      symbolKind: this.symbolKind,
-      isAsync: this.isAsync,
-      isUnsafe: this.isUnsafe,
-      isConst: this.isConst,
-    });
+    const copy = createSymbol(
+      NamedTypeSymbol,
+      this.name,
+      undefined,
+      this.#typeKind,
+      {
+        ...options,
+        binder,
+        visibility: this.visibility,
+        symbolKind: this.symbolKind,
+        isAsync: this.isAsync,
+        isUnsafe: this.isUnsafe,
+        isConst: this.isConst,
+      },
+    );
     this.initializeCopy(copy);
 
     watch(

@@ -1,17 +1,17 @@
 # T065 — UnsafeBlock Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T065 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P3 — nice-to-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T065                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P3 — nice-to-have                              |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -33,9 +33,7 @@ unsafe {
 ## Proposed API
 
 ```tsx
-<UnsafeBlock>
-  {code`*ptr`}
-</UnsafeBlock>
+<UnsafeBlock>{code`*ptr`}</UnsafeBlock>
 // Renders: unsafe { *ptr }
 ```
 

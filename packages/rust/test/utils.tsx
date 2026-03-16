@@ -30,10 +30,7 @@ import { SourceFile } from "../src/components/source-file.js";
  * expect(code).toContain("fn main");
  * ```
  */
-export function toSourceText(
-  c: Children,
-  options?: PrintTreeOptions,
-): string {
+export function toSourceText(c: Children, options?: PrintTreeOptions): string {
   const res = render(
     <Output>
       <CrateDirectory name="test_crate">
@@ -99,12 +96,10 @@ export function findFile(
   if (!result) {
     const available = collectPaths(res);
     const hint =
-      available.length > 0
-        ? `Available files: ${available.join(", ")}`
-        : "No files found in output";
-    throw new Error(
-      `Expected to find file "${path}" in output. ${hint}`,
-    );
+      available.length > 0 ?
+        `Available files: ${available.join(", ")}`
+      : "No files found in output";
+    throw new Error(`Expected to find file "${path}" in output. ${hint}`);
   }
   return result as ContentOutputFile;
 

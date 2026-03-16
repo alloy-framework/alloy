@@ -1,28 +1,28 @@
-import { render, Output, writeOutput } from "@alloy-js/core";
-import { execSync } from "child_process";
-import { existsSync, mkdirSync, rmSync } from "fs";
-import { tmpdir } from "os";
-import { join } from "path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Output, render, writeOutput } from "@alloy-js/core";
 import {
   CrateDirectory,
   ModuleDocComment,
   SourceFile,
   createRustNamePolicy,
 } from "@alloy-js/rust";
-import { stdCrate } from "../src/externals.js";
-import { ErrorModule } from "../src/components/error-module.js";
-import { TraitsModule } from "../src/components/traits-module.js";
-import { StoreModule } from "../src/components/store-module.js";
+import { execSync } from "child_process";
+import { existsSync, rmSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { ConfigFile } from "../src/components/config-file.js";
+import { ErrorModule } from "../src/components/error-module.js";
+import { StoreModule } from "../src/components/store-module.js";
+import { TraitsModule } from "../src/components/traits-module.js";
+import { stdCrate } from "../src/externals.js";
 
 function hasRustToolchain(): boolean {
   try {
     // Check standard PATH first, then common cargo install location
     const cargoPath =
-      process.env.CARGO_HOME
-        ? join(process.env.CARGO_HOME, "bin", "cargo")
-        : join(process.env.HOME ?? "", ".cargo", "bin", "cargo");
+      process.env.CARGO_HOME ?
+        join(process.env.CARGO_HOME, "bin", "cargo")
+      : join(process.env.HOME ?? "", ".cargo", "bin", "cargo");
     const cmd = existsSync(cargoPath) ? cargoPath : "cargo";
     execSync(`${cmd} --version`, { stdio: "pipe" });
     return true;
@@ -33,9 +33,9 @@ function hasRustToolchain(): boolean {
 
 function getCargoBin(): string {
   const cargoPath =
-    process.env.CARGO_HOME
-      ? join(process.env.CARGO_HOME, "bin", "cargo")
-      : join(process.env.HOME ?? "", ".cargo", "bin", "cargo");
+    process.env.CARGO_HOME ?
+      join(process.env.CARGO_HOME, "bin", "cargo")
+    : join(process.env.HOME ?? "", ".cargo", "bin", "cargo");
   return existsSync(cargoPath) ? cargoPath : "cargo";
 }
 
@@ -67,7 +67,10 @@ function postProcessRustOutput(content: string): string {
   );
 
   // Fix semicolons running into next statements
-  content = content.replace(/;(pub |fn |let |self\.|Ok\(|\/\/\/|#\[)/g, ";\n$1");
+  content = content.replace(
+    /;(pub |fn |let |self\.|Ok\(|\/\/\/|#\[)/g,
+    ";\n$1",
+  );
 
   // Fix return value with semicolon on separate line
   content = content.replace(/(return [^;\n]+)\n\s*;/g, "$1;");
@@ -130,10 +133,7 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
 
   it("generates proper use statements from References", () => {
     const { readFileSync } = require("fs");
-    const storeMod = readFileSync(
-      join(outputDir, "store", "mod.rs"),
-      "utf-8",
-    );
+    const storeMod = readFileSync(join(outputDir, "store", "mod.rs"), "utf-8");
 
     // References should generate proper use statements
     expect(storeMod).toContain("use std::collections::HashMap");
@@ -162,10 +162,7 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
 
   it("generates correct enum variant syntax", () => {
     const { readFileSync } = require("fs");
-    const errorMod = readFileSync(
-      join(outputDir, "error", "mod.rs"),
-      "utf-8",
-    );
+    const errorMod = readFileSync(join(outputDir, "error", "mod.rs"), "utf-8");
 
     // Enum variants should be tuple variants, not struct variants
     expect(errorMod).toContain("SerializationError(String)");
@@ -175,10 +172,7 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
 
   it("generates method chain for remove", () => {
     const { readFileSync } = require("fs");
-    const storeMod = readFileSync(
-      join(outputDir, "store", "mod.rs"),
-      "utf-8",
-    );
+    const storeMod = readFileSync(join(outputDir, "store", "mod.rs"), "utf-8");
 
     // MethodChainExpression should generate proper chain
     expect(storeMod).toMatch(/\.remove\(key\)/);
@@ -187,7 +181,12 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
   });
 
   it("compiles with cargo check after post-processing", async () => {
-    const { readFileSync, writeFileSync, readdirSync, statSync } = require("fs");
+    const {
+      readFileSync,
+      writeFileSync,
+      readdirSync,
+      statSync,
+    } = require("fs");
 
     // Post-process all .rs files to fix known framework formatting issues
     function processDir(dir: string) {
@@ -204,10 +203,13 @@ describe.skipIf(!hasCargo)("rust smoke test", () => {
     processDir(outputDir);
 
     const cargo = getCargoBin();
-    const result = execSync(`${cargo} check --manifest-path ${join(outputDir, "Cargo.toml")} 2>&1`, {
-      encoding: "utf-8",
-      timeout: 60_000,
-    });
+    const result = execSync(
+      `${cargo} check --manifest-path ${join(outputDir, "Cargo.toml")} 2>&1`,
+      {
+        encoding: "utf-8",
+        timeout: 60_000,
+      },
+    );
     expect(result).toContain("Finished");
   }, 60_000);
 });

@@ -1,5 +1,5 @@
-import { createCrate, type CrateRef, type ExternalCrate } from "@alloy-js/rust";
 import type { SymbolCreator } from "@alloy-js/core";
+import { createCrate, type CrateRef, type ExternalCrate } from "@alloy-js/rust";
 
 const stdDescriptor = {
   name: "std",

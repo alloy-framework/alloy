@@ -26,9 +26,9 @@ describe("BreakExpression + ContinueExpression", () => {
   });
 
   it("break with label and value", () => {
-    expect(inFile(<BreakExpression label="'outer">result</BreakExpression>)).toRenderTo(
-      d`break 'outer result`,
-    );
+    expect(
+      inFile(<BreakExpression label="'outer">result</BreakExpression>),
+    ).toRenderTo(d`break 'outer result`);
   });
 
   it("continue simple", () => {
@@ -36,7 +36,9 @@ describe("BreakExpression + ContinueExpression", () => {
   });
 
   it("continue with label", () => {
-    expect(inFile(<ContinueExpression label="'outer" />)).toRenderTo(d`continue 'outer`);
+    expect(inFile(<ContinueExpression label="'outer" />)).toRenderTo(
+      d`continue 'outer`,
+    );
   });
 
   it("stc wrappers exported and render correctly", () => {

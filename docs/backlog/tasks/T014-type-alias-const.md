@@ -1,12 +1,12 @@
 # T014: TypeAlias and ConstDeclaration
 
-| Field       | Value                                          |
-| ----------- | ---------------------------------------------- |
-| **Task ID** | T014                                           |
-| **Epic**    | E003 — Core Declaration Components             |
+| Field       | Value                                                 |
+| ----------- | ----------------------------------------------------- |
+| **Task ID** | T014                                                  |
+| **Epic**    | E003 — Core Declaration Components                    |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference) |
-| **Blocks**  | —                                              |
-| **Status**  | done                                           |
+| **Blocks**  | —                                                     |
+| **Status**  | done                                                  |
 
 ## Description
 
@@ -52,11 +52,11 @@ interface ConstDeclarationProps {
 
 ## Context Files
 
-| File                                                        | Why                                     |
-| ----------------------------------------------------------- | --------------------------------------- |
-| `packages/typescript/src/components/TypeAliasDeclaration.tsx` | TypeScript type alias pattern           |
-| `packages/go/src/components/TypeDeclaration.tsx`             | Go type alias pattern                    |
-| `packages/rust/src/symbols/` (from T003–T006)               | Symbol factories, NamedTypeSymbol        |
+| File                                                          | Why                               |
+| ------------------------------------------------------------- | --------------------------------- |
+| `packages/typescript/src/components/TypeAliasDeclaration.tsx` | TypeScript type alias pattern     |
+| `packages/go/src/components/TypeDeclaration.tsx`              | Go type alias pattern             |
+| `packages/rust/src/symbols/` (from T003–T006)                 | Symbol factories, NamedTypeSymbol |
 
 ## Implementation Guidance
 

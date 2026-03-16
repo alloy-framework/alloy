@@ -51,13 +51,13 @@ interface CrateDirectoryProps {
 
 ## Context Files
 
-| File                                             | Why                                          |
-| ------------------------------------------------ | -------------------------------------------- |
-| `packages/go/src/components/SourceFile.tsx`       | Reference pattern for wrapping core SourceFile |
-| `packages/go/src/components/ModuleDirectory.tsx`  | Reference pattern for directory + scope       |
-| `packages/core/src/components/SourceFile.tsx`     | Core SourceFile being wrapped                 |
-| `packages/core/src/components/SourceDirectory.tsx`| Core SourceDirectory being wrapped            |
-| `packages/go/src/context.ts`                      | Reference for language-level context           |
+| File                                               | Why                                            |
+| -------------------------------------------------- | ---------------------------------------------- |
+| `packages/go/src/components/SourceFile.tsx`        | Reference pattern for wrapping core SourceFile |
+| `packages/go/src/components/ModuleDirectory.tsx`   | Reference pattern for directory + scope        |
+| `packages/core/src/components/SourceFile.tsx`      | Core SourceFile being wrapped                  |
+| `packages/core/src/components/SourceDirectory.tsx` | Core SourceDirectory being wrapped             |
+| `packages/go/src/context.ts`                       | Reference for language-level context           |
 
 ## Implementation Guidance
 

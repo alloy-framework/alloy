@@ -39,14 +39,16 @@ function renderBlock(children: Children | undefined) {
   return (
     <>
       {"{"}
-      {statements.length > 0 ? (
+      {statements.length > 0 ?
         <>
           <Indent>
-            <For each={statements} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={statements} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );

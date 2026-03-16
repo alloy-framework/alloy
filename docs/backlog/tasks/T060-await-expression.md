@@ -1,17 +1,17 @@
 # T060 — AwaitExpression Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T060 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T060                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -41,8 +41,8 @@ let data = response.json().await?;
 
 ```typescript
 interface AwaitExpressionProps {
-  try?: boolean;         // Append ? operator
-  children: Children;    // The future expression
+  try?: boolean; // Append ? operator
+  children: Children; // The future expression
 }
 ```
 

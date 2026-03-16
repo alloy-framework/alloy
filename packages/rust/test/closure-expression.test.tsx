@@ -2,7 +2,11 @@ import { Children, Output, code } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { ClosureExpression, CrateDirectory, SourceFile } from "../src/components/index.js";
+import {
+  ClosureExpression,
+  CrateDirectory,
+  SourceFile,
+} from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
 function inFile(children: Children) {
@@ -76,7 +80,10 @@ describe("ClosureExpression", () => {
   it("renders return type closures with a block body", () => {
     expect(
       inFile(
-        <ClosureExpression parameters={[{ name: "value", type: "i32" }]} returnType="bool">
+        <ClosureExpression
+          parameters={[{ name: "value", type: "i32" }]}
+          returnType="bool"
+        >
           {code`value > 0`}
         </ClosureExpression>,
       ),
@@ -90,7 +97,9 @@ describe("ClosureExpression", () => {
   it("stc wrappers render the same output", () => {
     expect(
       inFile(
-        Stc.ClosureExpression({ parameters: [{ name: "value" }] }).children([code`value * 2`]),
+        Stc.ClosureExpression({ parameters: [{ name: "value" }] }).children([
+          code`value * 2`,
+        ]),
       ),
     ).toRenderTo(d`
       |value| value * 2

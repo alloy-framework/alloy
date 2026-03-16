@@ -41,14 +41,16 @@ function renderBlock(children: Children | undefined) {
   return (
     <>
       {"{"}
-      {statements.length > 0 ? (
+      {statements.length > 0 ?
         <>
           <Indent>
-            <For each={statements} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={statements} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );
@@ -57,16 +59,14 @@ function renderBlock(children: Children | undefined) {
 export function WhileExpression(props: WhileExpressionProps) {
   return (
     <>
-      {props.label ? (
+      {props.label ?
         <>
           {props.label}
           {": "}
         </>
-      ) : null}
+      : null}
       {"while "}
-      {props.condition}
-      {" "}
-      {renderBlock(props.children)}
+      {props.condition} {renderBlock(props.children)}
     </>
   );
 }

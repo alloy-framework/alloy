@@ -1,17 +1,17 @@
 # T026: Import Integration Tests
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T026                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | test                                                                        |
-| **Status**       | done                                                                        |
-| **Priority**     | high                                                                        |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T022, T023, T025                                                            |
-| **Blocks**       | —                                                                           |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T026                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | test                                                                     |
+| **Status**        | done                                                                     |
+| **Priority**      | high                                                                     |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T022, T023, T025                                                         |
+| **Blocks**        | —                                                                        |
 
 ---
 

@@ -29,14 +29,16 @@ export function MatchExpression(props: MatchExpressionProps) {
       {"match "}
       {props.expression}
       {" {"}
-      {arms.length > 0 ? (
+      {arms.length > 0 ?
         <>
           <Indent>
-            <For each={arms} joiner={<hbr />}>{(arm) => arm}</For>
+            <For each={arms} joiner={<hbr />}>
+              {(arm) => arm}
+            </For>
           </Indent>
           <hbr />
         </>
-      ) : null}
+      : null}
       {"}"}
     </>
   );
@@ -49,28 +51,29 @@ export function MatchArm(props: MatchArmProps) {
   return (
     <>
       {props.pattern}
-      {props.guard ? (
+      {props.guard ?
         <>
           {" if "}
           {props.guard}
         </>
-      ) : null}
+      : null}
       {" => "}
-      {renderInline ? (
+      {renderInline ?
         <>
           {statements[0]}
           {","}
         </>
-      ) : (
-        <>
+      : <>
           {"{"}
           <Indent>
-            <For each={statements} joiner={<hbr />}>{(statement) => statement}</For>
+            <For each={statements} joiner={<hbr />}>
+              {(statement) => statement}
+            </For>
           </Indent>
           <hbr />
           {"},"}
         </>
-      )}
+      }
     </>
   );
 }

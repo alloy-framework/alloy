@@ -24,8 +24,8 @@ function ModDeclarationLine(props: ModDeclaration) {
 
 export function ModDeclarations(props: ModDeclarationsProps) {
   return memo(() => {
-    const declarations = Array.from(props.scope.childModules.values()).sort((left, right) =>
-      left.name.localeCompare(right.name),
+    const declarations = Array.from(props.scope.childModules.values()).sort(
+      (left, right) => left.name.localeCompare(right.name),
     );
 
     if (declarations.length === 0) {
@@ -36,8 +36,13 @@ export function ModDeclarations(props: ModDeclarationsProps) {
       <>
         {declarations.map((declaration, index) => (
           <>
-            <ModDeclarationLine name={declaration.name} visibility={declaration.visibility} />
-            {index < declarations.length - 1 ? <hbr /> : null}
+            <ModDeclarationLine
+              name={declaration.name}
+              visibility={declaration.visibility}
+            />
+            {index < declarations.length - 1 ?
+              <hbr />
+            : null}
           </>
         ))}
       </>

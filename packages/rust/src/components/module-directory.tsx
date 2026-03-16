@@ -25,7 +25,10 @@ function getModuleName(path: string): string {
 export function ModuleDirectory(props: ModuleDirectoryProps) {
   const parentScope = useScope();
   const scopeParent =
-    parentScope instanceof RustCrateScope || parentScope instanceof RustModuleScope ?
+    (
+      parentScope instanceof RustCrateScope ||
+      parentScope instanceof RustModuleScope
+    ) ?
       parentScope
     : undefined;
   const moduleName = getModuleName(props.path);

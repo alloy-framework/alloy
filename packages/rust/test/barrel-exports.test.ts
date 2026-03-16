@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import {
   Attribute,
   CrateContext,
@@ -23,6 +22,7 @@ import {
   useCrateContext,
 } from "@alloy-js/rust";
 import * as rustStc from "@alloy-js/rust/stc";
+import { describe, expect, it } from "vitest";
 
 describe("@alloy-js/rust barrel exports", () => {
   it("resolves key public API exports from package root", () => {

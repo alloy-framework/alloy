@@ -1,17 +1,17 @@
 # T023: Use Statements
 
-| Field            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| **ID**           | T023                                                                        |
-| **Epic**         | [E005 — Module System & Imports](../epics/E005-module-system-imports.md)    |
-| **Type**         | feature                                                                     |
-| **Status**       | done                                                                        |
-| **Priority**     | high                                                                        |
-| **Owner**        | AI coding agent                                                             |
-| **AI Executable**| yes                                                                         |
-| **Human Review** | yes                                                                         |
-| **Dependencies** | T022                                                                        |
-| **Blocks**       | T026                                                                        |
+| Field             | Value                                                                    |
+| ----------------- | ------------------------------------------------------------------------ |
+| **ID**            | T023                                                                     |
+| **Epic**          | [E005 — Module System & Imports](../epics/E005-module-system-imports.md) |
+| **Type**          | feature                                                                  |
+| **Status**        | done                                                                     |
+| **Priority**      | high                                                                     |
+| **Owner**         | AI coding agent                                                          |
+| **AI Executable** | yes                                                                      |
+| **Human Review**  | yes                                                                      |
+| **Dependencies**  | T022                                                                     |
+| **Blocks**        | T026                                                                     |
 
 ---
 

@@ -4,10 +4,10 @@ import {
   OutputSpace,
   OutputSymbol,
   OutputSymbolOptions,
-  TrackOpTypes,
-  TriggerOpTypes,
   track,
+  TrackOpTypes,
   trigger,
+  TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
 

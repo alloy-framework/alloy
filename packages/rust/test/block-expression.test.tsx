@@ -2,7 +2,12 @@ import { Children, Output, code } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { BlockExpression, CrateDirectory, LetBinding, SourceFile } from "../src/components/index.js";
+import {
+  BlockExpression,
+  CrateDirectory,
+  LetBinding,
+  SourceFile,
+} from "../src/components/index.js";
 import * as Stc from "../src/components/stc/index.js";
 
 function inFile(children: Children) {
@@ -17,13 +22,8 @@ function inFile(children: Children) {
 
 describe("BlockExpression", () => {
   it("renders a block with a final expression", () => {
-    expect(
-      inFile(
-        <BlockExpression>
-          {code`x + y`}
-        </BlockExpression>,
-      ),
-    ).toRenderTo(d`
+    expect(inFile(<BlockExpression>{code`x + y`}</BlockExpression>))
+      .toRenderTo(d`
       {
         x + y
       }

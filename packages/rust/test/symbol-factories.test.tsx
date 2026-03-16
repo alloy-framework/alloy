@@ -25,7 +25,15 @@ import { FunctionSymbol } from "../src/symbols/function-symbol.js";
 import { NamedTypeSymbol } from "../src/symbols/named-type-symbol.js";
 import { RustOutputSymbol } from "../src/symbols/rust-output-symbol.js";
 
-function runInScope<T>(scope: RustCrateScope | RustModuleScope | RustFunctionScope | RustImplScope | RustTraitScope, run: () => T): T {
+function runInScope<T>(
+  scope:
+    | RustCrateScope
+    | RustModuleScope
+    | RustFunctionScope
+    | RustImplScope
+    | RustTraitScope,
+  run: () => T,
+): T {
   let result: T | undefined;
 
   function Probe() {
@@ -49,9 +57,15 @@ describe("Rust symbol factories", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("my-module", crateScope);
 
-    const structSymbol = runInScope(moduleScope, () => createStructSymbol("my-struct"));
-    const enumSymbol = runInScope(moduleScope, () => createEnumSymbol("status-kind"));
-    const traitSymbol = runInScope(moduleScope, () => createTraitSymbol("display-item"));
+    const structSymbol = runInScope(moduleScope, () =>
+      createStructSymbol("my-struct"),
+    );
+    const enumSymbol = runInScope(moduleScope, () =>
+      createEnumSymbol("status-kind"),
+    );
+    const traitSymbol = runInScope(moduleScope, () =>
+      createTraitSymbol("display-item"),
+    );
     const typeAliasSymbol = runInScope(moduleScope, () =>
       createTypeAliasSymbol("response-value"),
     );
@@ -82,7 +96,9 @@ describe("Rust symbol factories", () => {
     const functionSymbol = runInScope(moduleScope, () =>
       createFunctionSymbol("run-work"),
     );
-    const constSymbol = runInScope(moduleScope, () => createConstSymbol("max-items"));
+    const constSymbol = runInScope(moduleScope, () =>
+      createConstSymbol("max-items"),
+    );
 
     expect(functionSymbol).toBeInstanceOf(FunctionSymbol);
     expect(functionSymbol.name).toBe("run_work");
@@ -98,16 +114,26 @@ describe("Rust symbol factories", () => {
   it("creates member symbols in owner member spaces", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("my-module", crateScope);
-    const structOwner = runInScope(moduleScope, () => createStructSymbol("service"));
+    const structOwner = runInScope(moduleScope, () =>
+      createStructSymbol("service"),
+    );
     const enumOwner = runInScope(moduleScope, () => createEnumSymbol("status"));
-    const traitOwner = runInScope(moduleScope, () => createTraitSymbol("runner"));
+    const traitOwner = runInScope(moduleScope, () =>
+      createTraitSymbol("runner"),
+    );
     const structImplScope = new RustImplScope(structOwner, moduleScope);
     const enumImplScope = new RustImplScope(enumOwner, moduleScope);
     const traitScope = new RustTraitScope(traitOwner, moduleScope);
 
-    const methodSymbol = runInScope(traitScope, () => createMethodSymbol("run-task"));
-    const fieldSymbol = runInScope(structImplScope, () => createFieldSymbol("user-name"));
-    const variantSymbol = runInScope(enumImplScope, () => createVariantSymbol("waiting-state"));
+    const methodSymbol = runInScope(traitScope, () =>
+      createMethodSymbol("run-task"),
+    );
+    const fieldSymbol = runInScope(structImplScope, () =>
+      createFieldSymbol("user-name"),
+    );
+    const variantSymbol = runInScope(enumImplScope, () =>
+      createVariantSymbol("waiting-state"),
+    );
 
     expect(methodSymbol.name).toBe("run_task");
     expect(methodSymbol.symbolKind).toBe("method");
@@ -146,7 +172,9 @@ describe("Rust symbol factories", () => {
   it("creates type parameter symbols for named type owners", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("my-module", crateScope);
-    const traitOwner = runInScope(moduleScope, () => createTraitSymbol("cache-item"));
+    const traitOwner = runInScope(moduleScope, () =>
+      createTraitSymbol("cache-item"),
+    );
     const traitScope = new RustTraitScope(traitOwner, moduleScope);
 
     const typeParameterSymbol = runInScope(traitScope, () =>
@@ -185,28 +213,34 @@ describe("Rust symbol factories", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("my-module", crateScope);
     const functionScope = new RustFunctionScope("run", moduleScope);
-    const structOwner = runInScope(moduleScope, () => createStructSymbol("service"));
-    const traitOwner = runInScope(moduleScope, () => createTraitSymbol("runner"));
+    const structOwner = runInScope(moduleScope, () =>
+      createStructSymbol("service"),
+    );
+    const traitOwner = runInScope(moduleScope, () =>
+      createTraitSymbol("runner"),
+    );
     const traitScope = new RustTraitScope(traitOwner, moduleScope);
     const structScope = new RustImplScope(structOwner, moduleScope);
 
-    expect(() => runInScope(functionScope, () => createStructSymbol("inner"))).toThrow(
-      "Can't create struct symbol outside of a crate or module scope.",
-    );
-    expect(() => runInScope(moduleScope, () => createMethodSymbol("run"))).toThrow(
-      "Can't create method symbol outside of an impl or trait scope.",
-    );
-    expect(() => runInScope(moduleScope, () => createParameterSymbol("value"))).toThrow(
-      "Can't create parameter symbol outside of a function scope.",
-    );
-    expect(() => runInScope(moduleScope, () => createTypeParameterSymbol("item"))).toThrow(
+    expect(() =>
+      runInScope(functionScope, () => createStructSymbol("inner")),
+    ).toThrow("Can't create struct symbol outside of a crate or module scope.");
+    expect(() =>
+      runInScope(moduleScope, () => createMethodSymbol("run")),
+    ).toThrow("Can't create method symbol outside of an impl or trait scope.");
+    expect(() =>
+      runInScope(moduleScope, () => createParameterSymbol("value")),
+    ).toThrow("Can't create parameter symbol outside of a function scope.");
+    expect(() =>
+      runInScope(moduleScope, () => createTypeParameterSymbol("item")),
+    ).toThrow(
       "Can't create type parameter symbol outside of a function or named type scope.",
     );
     expect(() => runInScope(traitScope, () => createFieldSymbol("x"))).toThrow(
       "Can't create field symbol for non-struct type trait.",
     );
-    expect(() => runInScope(structScope, () => createVariantSymbol("x"))).toThrow(
-      "Can't create variant symbol for non-enum type struct.",
-    );
+    expect(() =>
+      runInScope(structScope, () => createVariantSymbol("x")),
+    ).toThrow("Can't create variant symbol for non-enum type struct.");
   });
 });

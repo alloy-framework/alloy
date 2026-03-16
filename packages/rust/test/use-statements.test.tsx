@@ -4,7 +4,10 @@ import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { CrateDirectory } from "../src/components/crate-directory.js";
 import { SourceFile } from "../src/components/source-file.js";
-import { UseStatement, UseStatements } from "../src/components/use-statement.js";
+import {
+  UseStatement,
+  UseStatements,
+} from "../src/components/use-statement.js";
 import { RustCrateScope } from "../src/scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../src/scopes/rust-module-scope.js";
 import { RustOutputSymbol } from "../src/symbols/rust-output-symbol.js";
@@ -21,7 +24,11 @@ describe("UseStatements", () => {
   it("reads imports from RustModuleScope", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("lib.rs", crateScope);
-    const display = createSymbol(RustOutputSymbol, "Display", moduleScope.values);
+    const display = createSymbol(
+      RustOutputSymbol,
+      "Display",
+      moduleScope.values,
+    );
     moduleScope.addUse("std::fmt", display);
 
     expect(
@@ -36,7 +43,11 @@ describe("UseStatements", () => {
   it("renders grouped statements for multiple symbols from same path", () => {
     const crateScope = new RustCrateScope("my_crate");
     const moduleScope = new RustModuleScope("lib.rs", crateScope);
-    const display = createSymbol(RustOutputSymbol, "Display", moduleScope.values);
+    const display = createSymbol(
+      RustOutputSymbol,
+      "Display",
+      moduleScope.values,
+    );
     const debug = createSymbol(RustOutputSymbol, "Debug", moduleScope.values);
     moduleScope.addUse("std::fmt", display);
     moduleScope.addUse("std::fmt", debug);

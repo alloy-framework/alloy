@@ -1,17 +1,17 @@
 # T049 — LetBinding Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T049 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T049                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -53,10 +53,10 @@ Provide a `LetBinding` component for Rust variable declarations.
 
 ```typescript
 interface LetBindingProps {
-  name: string;          // Variable name or destructuring pattern
-  mutable?: boolean;     // let mut
-  type?: Children;       // Optional type annotation
-  children?: Children;   // Initializer expression
+  name: string; // Variable name or destructuring pattern
+  mutable?: boolean; // let mut
+  type?: Children; // Optional type annotation
+  children?: Children; // Initializer expression
 }
 ```
 

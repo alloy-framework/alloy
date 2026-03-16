@@ -5,10 +5,10 @@ import { describe, expect, it } from "vitest";
 import {
   CrateDirectory,
   DocComment,
-  ModuleDocComment,
-  SourceFile,
   EnumDeclaration,
   EnumVariant,
+  ModuleDocComment,
+  SourceFile,
   StructDeclaration,
 } from "../src/index.js";
 

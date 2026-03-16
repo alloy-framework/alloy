@@ -1,17 +1,17 @@
 # T048 — IfExpression + ElseIfClause + ElseClause Components
 
-| Field | Value |
-|-------|-------|
-| **ID** | T048 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T048                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | Yes                                            |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -58,8 +58,8 @@ Provide `IfExpression`, `ElseIfClause`, and `ElseClause` components for Rust if-
 
 ```typescript
 interface IfExpressionProps {
-  condition: Children;   // Condition or "let pattern = expr"
-  children: Children;    // Body + optional ElseIfClause/ElseClause
+  condition: Children; // Condition or "let pattern = expr"
+  children: Children; // Body + optional ElseIfClause/ElseClause
 }
 
 interface ElseIfClauseProps {

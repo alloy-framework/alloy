@@ -25,6 +25,7 @@ Four language packages already exist: TypeScript, Java, Python, and C#. Each fol
 7. **Test utilities** — `toSourceText()` helper and per-component test files.
 
 Full analysis is available in:
+
 - [`01-core-understanding.md`](./01-core-understanding.md) — core architecture deep dive.
 - [`02-existing-language-patterns.md`](./02-existing-language-patterns.md) — cross-language comparison.
 - [`03-rust-design-notes.md`](./03-rust-design-notes.md) — Rust-specific design decisions.
@@ -83,11 +84,11 @@ The following are explicitly **out of scope** for the MVP:
 
 # 7. Users / Stakeholders
 
-| Role | Description |
-|---|---|
+| Role                             | Description                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **SDK/API generator developers** | Primary users building tools that output Rust code (e.g., API clients, data model generators). |
-| **Alloy framework maintainers** | Maintain and review the package for consistency with core and other language packages. |
-| **Code generation tool authors** | Use `@alloy-js/rust` as a library to produce Rust source files programmatically. |
+| **Alloy framework maintainers**  | Maintain and review the package for consistency with core and other language packages.         |
+| **Code generation tool authors** | Use `@alloy-js/rust` as a library to produce Rust source files programmatically.               |
 
 ---
 
@@ -124,6 +125,7 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-2: Symbol System
 
 **FR-2.1:** `RustOutputSymbol` extends `OutputSymbol` with properties:
+
 - `visibility: "pub" | "pub(crate)" | "pub(super)" | undefined` (undefined = private).
 - `symbolKind: "function" | "struct" | "enum" | "trait" | "type-alias" | "const" | "static" | "module" | "field" | "variant" | "method" | "associated-type" | "parameter" | "type-parameter"`.
 - `isAsync: boolean`.
@@ -132,10 +134,12 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 - `static readonly memberSpaces = ["members"]`.
 
 **FR-2.2:** `NamedTypeSymbol` extends `RustOutputSymbol` with:
+
 - `typeKind: "struct" | "enum" | "trait" | "type-alias"`.
 - `static readonly memberSpaces = ["members", "type-parameters"]`.
 
 **FR-2.3:** `FunctionSymbol` extends `RustOutputSymbol` with:
+
 - `receiverType?: Children` (for method receiver: `&self`, `&mut self`, `self`).
 
 **FR-2.4:** All symbols implement `copy()` following the pattern in `BasicSymbol` and existing language packages.
@@ -143,21 +147,25 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-3: Scope Hierarchy
 
 **FR-3.1:** `RustCrateScope` extends `OutputScope`:
+
 - `declarationSpaces = ["types", "values"]`.
 - Tracks child module declarations (for auto-generating `mod` statements).
 - Tracks external crate dependencies (for `Cargo.toml`).
 - Has `addChildModule(name, visibility)` and `addDependency(crate)` methods.
 
 **FR-3.2:** `RustModuleScope` extends `OutputScope`:
+
 - `declarationSpaces = ["types", "values"]`.
 - Tracks `use` imports via `addUse(targetSymbol, sourcePath)`.
 - Tracks child module declarations (for submodule `mod` statements).
 - Has `imports` getter returning tracked use records.
 
 **FR-3.3:** `RustFunctionScope` extends `OutputScope`:
+
 - `declarationSpaces = ["parameters", "type-parameters", "local-variables"]`.
 
 **FR-3.4:** `RustLexicalScope` extends `OutputScope`:
+
 - `declarationSpaces = ["local-variables"]`.
 
 **FR-3.5:** `RustImplScope` is a member scope (has `ownerSymbol`) for impl blocks. Methods declared inside are added to the target type's `"members"` space.
@@ -169,6 +177,7 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 **FR-4.1:** `createRustNamePolicy()` returns a `NamePolicy<RustElements>` where `RustElements` includes: `"function"`, `"method"`, `"struct"`, `"enum"`, `"enum-variant"`, `"trait"`, `"type-alias"`, `"type-parameter"`, `"field"`, `"variable"`, `"parameter"`, `"constant"`, `"module"`.
 
 **FR-4.2:** Naming transformations:
+
 - `PascalCase`: struct, enum, enum-variant, trait, type-alias, type-parameter.
 - `snake_case`: function, method, field, variable, parameter, module.
 - `SCREAMING_SNAKE_CASE`: constant.
@@ -180,6 +189,7 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-5: File / Module / Crate Structure
 
 **FR-5.1:** `CrateDirectory` component:
+
 - Props: `name: string`, `version?: string` (default `"0.1.0"`), `edition?: string` (default `"2021"`), `children: Children`.
 - Creates `RustCrateScope`.
 - Renders `Cargo.toml` via `CargoTomlFile`.
@@ -187,6 +197,7 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 - Provides crate context to descendants.
 
 **FR-5.2:** `SourceFile` component:
+
 - Props: `path: string`, `children?: Children`, `header?: Children`, `headerComment?: string`.
 - Creates `RustModuleScope`.
 - Wraps core `SourceFile` with `filetype="rust"` and the Rust `Reference` component.
@@ -194,12 +205,14 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 - For crate root files (`lib.rs`, `main.rs`): auto-generates `mod` declarations for child modules.
 
 **FR-5.3:** `ModuleDirectory` component:
+
 - Props: `path: string`, `children?: Children`.
 - Creates a `SourceDirectory` with a corresponding module scope.
 - Generates `mod.rs` if submodule files exist.
 - Registers itself as a child module in the parent scope.
 
 **FR-5.4:** `CargoTomlFile` component:
+
 - Props: `name: string`, `version: string`, `edition: string`, `dependencies?: Record<string, CrateDependency>`.
 - Renders `[package]` section with name, version, edition.
 - Renders `[dependencies]` section from crate scope's tracked dependencies + explicit props.
@@ -232,22 +245,26 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-8: Declarations
 
 **FR-8.1: `StructDeclaration`**
+
 - Props: `name`, `refkey?`, `pub?`, `pub_crate?`, `derives?: (string | Refkey)[]`, `attributes?: AttributeProp[]`, `doc?: Children`, `typeParameters?: TypeParameterProp[]`, `whereClause?: Children`, `children: Children`.
 - Creates a `NamedTypeSymbol` with `typeKind: "struct"`.
 - Creates a member scope for fields.
 - Renders: `[attributes]\n[pub] struct Name<params> [where ...] {\n  fields\n}`.
 
 **FR-8.2: `Field`** (child of `StructDeclaration`)
+
 - Props: `name`, `type: Children`, `refkey?`, `pub?`, `pub_crate?`, `doc?: Children`.
 - Creates a member symbol in the struct's member space.
 - Renders: `[pub] name: type,`.
 
 **FR-8.3: `EnumDeclaration`**
+
 - Props: `name`, `refkey?`, `pub?`, `pub_crate?`, `derives?: (string | Refkey)[]`, `attributes?: AttributeProp[]`, `doc?: Children`, `typeParameters?: TypeParameterProp[]`, `children: Children`.
 - Creates a `NamedTypeSymbol` with `typeKind: "enum"`.
 - Renders: `[attributes]\n[pub] enum Name<params> {\n  variants\n}`.
 
 **FR-8.4: `EnumVariant`** (child of `EnumDeclaration`)
+
 - Props: `name`, `refkey?`, `doc?: Children`.
 - For unit variant: `name,`.
 - For tuple variant: `fields?: Children[]` → `name(Type1, Type2),`.
@@ -255,6 +272,7 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 - Creates a member symbol in the enum's member space.
 
 **FR-8.5: `FunctionDeclaration`**
+
 - Props: `name`, `refkey?`, `pub?`, `pub_crate?`, `async?`, `unsafe?`, `const?`, `parameters?: ParameterDescriptor[]`, `returnType?: Children`, `typeParameters?: TypeParameterProp[]`, `whereClause?: Children`, `doc?: Children`, `children?: Children`.
 - Creates a `FunctionSymbol`.
 - When inside an `ImplBlock`, auto-injects `&self` as first parameter (configurable via `receiver` prop: `"&self" | "&mut self" | "self" | "none"`).
@@ -262,23 +280,27 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 - Empty body renders `{}`.
 
 **FR-8.6: `TraitDeclaration`**
+
 - Props: `name`, `refkey?`, `pub?`, `typeParameters?: TypeParameterProp[]`, `supertraits?: Children[]`, `whereClause?: Children`, `doc?: Children`, `children: Children`.
 - Creates a `NamedTypeSymbol` with `typeKind: "trait"`.
 - Creates `RustTraitScope` for body.
 - Renders: `[pub] trait Name<params>[: Supertrait1 + Supertrait2] [where ...] {\n  methods\n}`.
 
 **FR-8.7: `ImplBlock`**
+
 - Props: `type: Refkey | Children`, `trait?: Refkey | Children`, `typeParameters?: TypeParameterProp[]`, `whereClause?: Children`, `children: Children`.
 - Creates `RustImplScope` with the target type as owner.
 - Methods declared inside are added to the target type's `"members"` space.
 - Renders: `impl<params> [Trait for] Type [where ...] {\n  methods\n}`.
 
 **FR-8.8: `TypeAlias`**
+
 - Props: `name`, `refkey?`, `pub?`, `typeParameters?: TypeParameterProp[]`, `children: Children`.
 - Creates a symbol with `symbolKind: "type-alias"`.
 - Renders: `[pub] type Name<params> = children;`.
 
 **FR-8.9: `ConstDeclaration`**
+
 - Props: `name`, `refkey?`, `pub?`, `type: Children`, `children: Children`.
 - Creates a symbol with `symbolKind: "const"`.
 - Renders: `[pub] const NAME: Type = value;`.
@@ -292,10 +314,12 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-10: Attributes
 
 **FR-10.1:** `Attribute` component:
+
 - Props: `name: string | Refkey`, `args?: Children`.
 - Renders: `#[name]` or `#[name(args)]`.
 
 **FR-10.2:** `DeriveAttribute` component:
+
 - Props: `traits: (string | Refkey)[]`.
 - Renders: `#[derive(Trait1, Trait2, ...)]`.
 - When a trait is a `Refkey`, resolves the symbol name and tracks the crate dependency.
@@ -305,11 +329,13 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-11: Comments
 
 **FR-11.1:** `DocComment` component:
+
 - Props: `children: Children`.
 - Renders each line prefixed with `/// `.
 - Supports multi-line content.
 
 **FR-11.2:** `ModuleDocComment` component:
+
 - Props: `children: Children`.
 - Renders each line prefixed with `//! `.
 - Used at the top of module files.
@@ -319,12 +345,13 @@ The MVP delivers a fully functional `@alloy-js/rust` package that generates **co
 ## FR-12: Parameter Descriptors
 
 **FR-12.1:** `ParameterDescriptor` interface:
+
 ```typescript
 interface ParameterDescriptor {
   name: string;
   type?: Children;
-  mutable?: boolean;       // mut binding
-  refType?: "&" | "&mut";  // reference type
+  mutable?: boolean; // mut binding
+  refType?: "&" | "&mut"; // reference type
 }
 ```
 
@@ -345,26 +372,30 @@ interface ParameterDescriptor {
 ## FR-14: External Crate Descriptors
 
 **FR-14.1:** `createCrate()` factory function:
+
 ```typescript
 function createCrate<T>(props: {
   name: string;
   version: string;
   features?: string[];
   descriptor: T;
-}): CrateRefkeys<T> & SymbolCreator
+}): CrateRefkeys<T> & SymbolCreator;
 ```
 
 **FR-14.2:** Descriptor maps module paths to named exports:
+
 ```typescript
 { ".": { named: ["Symbol1", "Symbol2"] }, "submod": { named: ["Symbol3"] } }
 ```
 
 **FR-14.3:** When a symbol from an external crate is referenced:
+
 - A `use <crate>::Symbol;` is added.
 - The crate is added to `RustCrateScope.dependencies`.
 - `Cargo.toml` renders the dependency.
 
 **FR-14.4:** `std` builtin crate descriptor provided in `src/builtins/std.ts` covering at minimum:
+
 - `Option`, `Some`, `None`, `Result`, `Ok`, `Err`
 - `Vec`, `String`, `Box`, `Rc`, `Arc`
 - `HashMap`, `HashSet`, `BTreeMap`, `BTreeSet`
@@ -375,6 +406,7 @@ function createCrate<T>(props: {
 ## FR-15: Value / Literal Rendering
 
 **FR-15.1:** `Value` component converts JavaScript values to Rust literals:
+
 - `string` → `"string"`
 - `number` (integer) → `42`
 - `number` (float) → `42.0`
@@ -385,12 +417,14 @@ function createCrate<T>(props: {
 ## FR-16: Tests
 
 **FR-16.1:** `test/utils.tsx` provides:
+
 - `toSourceText(children, options?)` — wraps in `Output` + `CrateDirectory` + `SourceFile` and renders.
 - `toSourceTextMultiple(children)` — multi-file variant.
 - `findFile(output, path)` — extracts a file from output.
 - `assertFileContents(output, expected)` — batch validation.
 
 **FR-16.2:** Minimum test files:
+
 - `struct.test.tsx` — struct declaration, fields, visibility, derives.
 - `enum.test.tsx` — enum with all variant kinds.
 - `function.test.tsx` — function with params, return type, async, pub.
@@ -487,6 +521,7 @@ packages/rust/
 ```
 
 **Dependency graph (internal):**
+
 ```
 index.ts
   └── components/index.ts
@@ -513,6 +548,7 @@ index.ts
 **Goal:** Package scaffold, symbol system, scope hierarchy, name policy.
 
 **Deliverables:**
+
 - `package.json`, `tsconfig.json`, `vitest.config.ts` configured.
 - `RustOutputSymbol`, `NamedTypeSymbol`, `FunctionSymbol` classes.
 - All 6 scope classes (`RustCrateScope`, `RustModuleScope`, `RustFunctionScope`, `RustLexicalScope`, `RustImplScope`, `RustTraitScope`).
@@ -528,6 +564,7 @@ index.ts
 **Goal:** Basic declaration components render correct Rust syntax.
 
 **Deliverables:**
+
 - `SourceFile`, `CrateDirectory`, `Declaration`, `Reference`.
 - `StructDeclaration` + `Field`.
 - `EnumDeclaration` + `EnumVariant`.
@@ -545,6 +582,7 @@ index.ts
 **Goal:** Trait declarations and impl blocks work correctly.
 
 **Deliverables:**
+
 - `TraitDeclaration` with method signatures and default impls.
 - `ImplBlock` for inherent and trait implementations.
 - `FunctionDeclaration` handles `receiver` prop (self parameter) inside impl blocks.
@@ -556,6 +594,7 @@ index.ts
 **Goal:** Multi-module crates with automatic `use` and `mod` generation.
 
 **Deliverables:**
+
 - `ModuleDirectory` component.
 - `UseStatement` / `UseStatements` with path grouping and sorting.
 - `RustModuleScope.addUse()` and import tracking.
@@ -569,6 +608,7 @@ index.ts
 **Goal:** External crate support and `Cargo.toml` generation.
 
 **Deliverables:**
+
 - `createCrate()` factory.
 - `std` builtin descriptor.
 - `CargoTomlFile` component.
@@ -582,6 +622,7 @@ index.ts
 **Goal:** Final cleanup, STC wrappers, documentation, full test suite green.
 
 **Deliverables:**
+
 - STC wrappers for all key components.
 - Barrel exports verified complete.
 - All test files passing.
@@ -621,6 +662,7 @@ The MVP is complete when **all** of the following are true:
 Each component gets a dedicated test file. Tests use `toSourceText()` to render a single component and compare against expected output via `toRenderTo()` + `d` template tag.
 
 **Coverage per component:**
+
 - Basic rendering (minimal props).
 - All modifier combinations (`pub`, `async`, `const`, `unsafe`).
 - With and without type parameters.
@@ -642,26 +684,27 @@ Each golden test validates the exact string output of every generated file.
 
 ## 14.3 Scenario Coverage
 
-| Scenario | Tests |
-|---|---|
-| Symbol creation | Factory functions create correct symbol types with correct properties |
-| Name policy | All element types transform correctly; reserved words get `r#` |
-| Single-file struct | Struct with fields, derives, visibility, doc comments |
-| Single-file enum | Enum with unit, tuple, struct variants |
-| Single-file function | Function with params, return type, async, modifiers |
-| Trait | Trait with methods, default impls, supertraits |
-| Impl block | Inherent impl, trait impl, self receiver |
-| Cross-module import | Symbol in module A referenced in module B generates `use` |
-| External crate | External crate symbol generates `use` + dependency tracking |
-| Cargo.toml | Metadata + dependencies rendered correctly |
-| Module structure | `mod` declarations auto-generated in parent modules |
-| Attributes | `#[derive(...)]`, custom attributes |
-| Type parameters | `<T: Bound>`, where clauses |
-| Constants | `const NAME: Type = value;` |
+| Scenario             | Tests                                                                 |
+| -------------------- | --------------------------------------------------------------------- |
+| Symbol creation      | Factory functions create correct symbol types with correct properties |
+| Name policy          | All element types transform correctly; reserved words get `r#`        |
+| Single-file struct   | Struct with fields, derives, visibility, doc comments                 |
+| Single-file enum     | Enum with unit, tuple, struct variants                                |
+| Single-file function | Function with params, return type, async, modifiers                   |
+| Trait                | Trait with methods, default impls, supertraits                        |
+| Impl block           | Inherent impl, trait impl, self receiver                              |
+| Cross-module import  | Symbol in module A referenced in module B generates `use`             |
+| External crate       | External crate symbol generates `use` + dependency tracking           |
+| Cargo.toml           | Metadata + dependencies rendered correctly                            |
+| Module structure     | `mod` declarations auto-generated in parent modules                   |
+| Attributes           | `#[derive(...)]`, custom attributes                                   |
+| Type parameters      | `<T: Bound>`, where clauses                                           |
+| Constants            | `const NAME: Type = value;`                                           |
 
 ## 14.4 Regression Coverage
 
 Tests should be added for any bug found during development. Key regression areas:
+
 - Import deduplication (same symbol referenced twice should produce one `use`).
 - `use` path grouping (`use path::{A, B}` not two separate `use` statements).
 - `mod` declaration ordering and visibility.
@@ -672,20 +715,20 @@ Tests should be added for any bug found during development. Key regression areas
 
 # 15. Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| **Module `mod` declaration auto-generation is complex** | Incorrect `mod` declarations break compilation | Implement `mod` generation as a separate concern with dedicated tests. Start with simple cases (flat module tree) then handle nesting. |
-| **`use` path construction from `ResolutionResult` is error-prone** | Wrong import paths | Study Go's `ref()` implementation closely. Unit test every path scenario: same module, sibling module, nested module, parent module, external crate. |
-| **Impl blocks adding to existing type's member space** | Symbol conflicts if multiple impl blocks for same type | Each impl block appends to the type's `"members"` space. Use name deconfliction (inherent from `SymbolTable`). Test with multiple impl blocks. |
-| **`Cargo.toml` TOML formatting** | Incorrect TOML syntax | Use simple string-based rendering. TOML is straightforward for the sections we need. Test against expected TOML strings. |
-| **Rust's `r#` reserved word syntax is unusual** | Other packages use `_` suffix; agents may forget `r#` | Implement in name policy from Phase 1. Test explicitly. |
-| **No `cargo check` validation in CI** | Generated code may have subtle syntax errors | Rely on string comparison tests with carefully validated golden outputs. Consider adding optional `cargo check` integration test later. |
+| Risk                                                               | Impact                                                 | Mitigation                                                                                                                                           |
+| ------------------------------------------------------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Module `mod` declaration auto-generation is complex**            | Incorrect `mod` declarations break compilation         | Implement `mod` generation as a separate concern with dedicated tests. Start with simple cases (flat module tree) then handle nesting.               |
+| **`use` path construction from `ResolutionResult` is error-prone** | Wrong import paths                                     | Study Go's `ref()` implementation closely. Unit test every path scenario: same module, sibling module, nested module, parent module, external crate. |
+| **Impl blocks adding to existing type's member space**             | Symbol conflicts if multiple impl blocks for same type | Each impl block appends to the type's `"members"` space. Use name deconfliction (inherent from `SymbolTable`). Test with multiple impl blocks.       |
+| **`Cargo.toml` TOML formatting**                                   | Incorrect TOML syntax                                  | Use simple string-based rendering. TOML is straightforward for the sections we need. Test against expected TOML strings.                             |
+| **Rust's `r#` reserved word syntax is unusual**                    | Other packages use `_` suffix; agents may forget `r#`  | Implement in name policy from Phase 1. Test explicitly.                                                                                              |
+| **No `cargo check` validation in CI**                              | Generated code may have subtle syntax errors           | Rely on string comparison tests with carefully validated golden outputs. Consider adding optional `cargo check` integration test later.              |
 
 ---
 
 # 16. Open Questions
 
-*Questions 1, 3, 4, 5, and 6 have been resolved. Remaining open questions:*
+_Questions 1, 3, 4, 5, and 6 have been resolved. Remaining open questions:_
 
 1. ~~**Self receiver auto-injection**~~ **RESOLVED:** Methods inside `ImplBlock` or `TraitDeclaration` default to `receiver="&self"`. Standalone functions default to `receiver="none"`. Overridable via prop. `receiver="none"` inside an impl block creates an associated function.
 
@@ -713,6 +756,7 @@ Tests should be added for any bug found during development. Key regression areas
 # 17. Recommended Next Step
 
 **Convert this PRD into a phased implementation backlog** (`05-rust-backlog.md`) with:
+
 - Individual work items derived from each functional requirement.
 - Dependencies between items.
 - Clear acceptance criteria per item.

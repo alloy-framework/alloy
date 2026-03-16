@@ -29,7 +29,8 @@
     "clean": "rimraf dist/ .temp/ alloy-output/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch": "alloy build --watch"
+    "watch": "alloy build --watch",
+    "generate": "node dist/src/index.js"
   },
   "exports": {
     ".": {

@@ -1,5 +1,5 @@
-import { isNamekey } from "@alloy-js/core";
 import type { Children, Namekey } from "@alloy-js/core";
+import { isNamekey } from "@alloy-js/core";
 
 export interface ParameterDescriptor {
   readonly name: string | Namekey;
@@ -11,7 +11,11 @@ export interface ParameterDescriptor {
 export function isParameterDescriptor(
   value: unknown,
 ): value is ParameterDescriptor {
-  if (typeof value !== "object" || value === null || !Object.hasOwn(value, "name")) {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !Object.hasOwn(value, "name")
+  ) {
     return false;
   }
 

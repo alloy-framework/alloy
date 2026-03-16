@@ -33,14 +33,16 @@ function AttributeBase(props: AttributeBaseProps) {
   return (
     <>
       {props.marker}
-      {typeof props.name === "string" ? props.name : <Reference refkey={props.name} />}
-      {props.args !== undefined ? (
+      {typeof props.name === "string" ?
+        props.name
+      : <Reference refkey={props.name} />}
+      {props.args !== undefined ?
         <>
           {"("}
           {props.args}
           {")"}
         </>
-      ) : null}
+      : null}
       {"]"}
     </>
   );
@@ -52,7 +54,9 @@ export function DeriveAttribute(props: DeriveAttributeProps) {
       name="derive"
       args={
         <For each={props.traits} joiner={", "}>
-          {(item) => typeof item === "string" ? item : <Reference refkey={item} />}
+          {(item) =>
+            typeof item === "string" ? item : <Reference refkey={item} />
+          }
         </For>
       }
     />

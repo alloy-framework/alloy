@@ -1,16 +1,16 @@
 import {
-  Show,
-  Scope,
   SourceFile as CoreSourceFile,
   createScope,
+  Scope,
+  Show,
   useScope,
   type Children,
 } from "@alloy-js/core";
+import { RustCrateScope } from "../scopes/rust-crate-scope.js";
+import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { ModDeclarations } from "./mod-declarations.js";
 import { Reference } from "./reference.js";
 import { UseStatements } from "./use-statement.js";
-import { RustCrateScope } from "../scopes/rust-crate-scope.js";
-import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { toRustVisibility } from "./visibility.js";
 
 export interface SourceFileProps {
@@ -25,7 +25,9 @@ export interface SourceFileProps {
 
 function isModuleRootPath(path: string): boolean {
   const fileName = path.split("/").pop() ?? path;
-  return fileName === "lib.rs" || fileName === "main.rs" || fileName === "mod.rs";
+  return (
+    fileName === "lib.rs" || fileName === "main.rs" || fileName === "mod.rs"
+  );
 }
 
 function getDeclarationScope(
@@ -41,7 +43,10 @@ function getDeclarationScope(
     return parent;
   }
 
-  if ((path.endsWith("lib.rs") || path.endsWith("main.rs")) && parent instanceof RustCrateScope) {
+  if (
+    (path.endsWith("lib.rs") || path.endsWith("main.rs")) &&
+    parent instanceof RustCrateScope
+  ) {
     return parent;
   }
 
@@ -61,7 +66,10 @@ function isStandaloneModulePath(path: string): boolean {
 export function SourceFile(props: SourceFileProps) {
   const parentScope = useScope();
   const scopeParent =
-    parentScope instanceof RustCrateScope || parentScope instanceof RustModuleScope ?
+    (
+      parentScope instanceof RustCrateScope ||
+      parentScope instanceof RustModuleScope
+    ) ?
       parentScope
     : undefined;
   const visibility = toRustVisibility(props);
@@ -89,10 +97,14 @@ export function SourceFile(props: SourceFileProps) {
       header={header}
     >
       <Scope value={scope}>
-        {declarationScope ? <ModDeclarations scope={declarationScope} /> : null}
-        {declarationScope &&
-        declarationScope.childModules.size > 0 &&
-        (scope.imports.size > 0 || props.children !== undefined) ?
+        {declarationScope ?
+          <ModDeclarations scope={declarationScope} />
+        : null}
+        {(
+          declarationScope &&
+          declarationScope.childModules.size > 0 &&
+          (scope.imports.size > 0 || props.children !== undefined)
+        ) ?
           <hbr />
         : null}
         <UseStatements />

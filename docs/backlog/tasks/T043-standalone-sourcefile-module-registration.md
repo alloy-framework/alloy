@@ -1,17 +1,17 @@
 # T043 — Standalone SourceFile Module Registration
 
-| Field | Value |
-|-------|-------|
-| **ID** | T043 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T009 (SourceFile / CrateDirectory), T025 (ModDeclarations) |
-| **Blocks** | — |
+| Field                     | Value                                                      |
+| ------------------------- | ---------------------------------------------------------- |
+| **ID**                    | T043                                                       |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                         |
+| **Type**                  | bug                                                        |
+| **Status**                | done                                                       |
+| **Priority**              | P1 — must-have                                             |
+| **Owner Role**            | AI coding agent                                            |
+| **AI Executable**         | Yes                                                        |
+| **Human Review Required** | Yes                                                        |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory), T025 (ModDeclarations) |
+| **Blocks**                | —                                                          |
 
 ---
 

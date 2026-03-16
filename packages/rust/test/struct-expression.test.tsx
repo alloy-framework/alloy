@@ -2,7 +2,10 @@ import { code } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { FieldInit, StructExpression } from "../src/components/struct-expression.js";
+import {
+  FieldInit,
+  StructExpression,
+} from "../src/components/struct-expression.js";
 
 describe("StructExpression", () => {
   it("renders field initializers", () => {

@@ -1,17 +1,17 @@
 # T020: ImplBlock Component
 
-| Field            | Value                                                                 |
-| ---------------- | --------------------------------------------------------------------- |
-| **ID**           | T020                                                                  |
-| **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
-| **Type**         | feature                                                               |
-| **Status**       | done                                                                  |
-| **Priority**     | high                                                                  |
-| **Owner**        | AI coding agent                                                       |
-| **AI Executable**| yes                                                                   |
-| **Human Review** | yes                                                                   |
-| **Dependencies** | T006, T010, T013, T017, T019                                         |
-| **Blocks**       | T021                                                                  |
+| Field             | Value                                                             |
+| ----------------- | ----------------------------------------------------------------- |
+| **ID**            | T020                                                              |
+| **Epic**          | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md) |
+| **Type**          | feature                                                           |
+| **Status**        | done                                                              |
+| **Priority**      | high                                                              |
+| **Owner**         | AI coding agent                                                   |
+| **AI Executable** | yes                                                               |
+| **Human Review**  | yes                                                               |
+| **Dependencies**  | T006, T010, T013, T017, T019                                      |
+| **Blocks**        | T021                                                              |
 
 ---
 

@@ -1,12 +1,12 @@
 # T013: FunctionDeclaration and Parameters
 
-| Field       | Value                                                                          |
-| ----------- | ------------------------------------------------------------------------------ |
-| **Task ID** | T013                                                                           |
-| **Epic**    | E003 — Core Declaration Components                                             |
+| Field       | Value                                                                                                    |
+| ----------- | -------------------------------------------------------------------------------------------------------- |
+| **Task ID** | T013                                                                                                     |
+| **Epic**    | E003 — Core Declaration Components                                                                       |
 | **Deps**    | T006 (Symbol factories), T008 (ParameterDescriptor), T010 (Declaration/Reference), T017 (TypeParameters) |
-| **Blocks**  | —                                                                              |
-| **Status**  | done                                                                           |
+| **Blocks**  | —                                                                                                        |
+| **Status**  | done                                                                                                     |
 
 ## Description
 
@@ -62,12 +62,12 @@ interface ParameterDescriptor {
 
 ## Context Files
 
-| File                                                      | Why                                        |
-| --------------------------------------------------------- | ------------------------------------------ |
-| `packages/go/src/components/FunctionDeclaration.tsx`       | Go function declaration pattern             |
-| `packages/typescript/src/components/FunctionDeclaration.tsx`| TypeScript function pattern                |
-| `packages/csharp/src/components/MethodDeclaration.tsx`     | Method with qualifiers pattern              |
-| `packages/rust/src/symbols/` (from T003–T006)             | FunctionSymbol, RustFunctionScope            |
+| File                                                         | Why                               |
+| ------------------------------------------------------------ | --------------------------------- |
+| `packages/go/src/components/FunctionDeclaration.tsx`         | Go function declaration pattern   |
+| `packages/typescript/src/components/FunctionDeclaration.tsx` | TypeScript function pattern       |
+| `packages/csharp/src/components/MethodDeclaration.tsx`       | Method with qualifiers pattern    |
+| `packages/rust/src/symbols/` (from T003–T006)                | FunctionSymbol, RustFunctionScope |
 
 ## Implementation Guidance
 

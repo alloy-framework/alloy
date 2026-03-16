@@ -1,17 +1,17 @@
 # T055 — ForExpression Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T055 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | — |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T055                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P1 — must-have                                 |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | —                                              |
 
 ---
 
@@ -52,10 +52,10 @@ for (i, val) in list.iter().enumerate() {
 
 ```typescript
 interface ForExpressionProps {
-  pattern: Children;     // Loop variable or destructuring pattern
-  iterator: Children;    // The iterable expression
-  label?: string;        // Optional loop label ('outer)
-  children: Children;    // Loop body
+  pattern: Children; // Loop variable or destructuring pattern
+  iterator: Children; // The iterable expression
+  label?: string; // Optional loop label ('outer)
+  children: Children; // Loop body
 }
 ```
 

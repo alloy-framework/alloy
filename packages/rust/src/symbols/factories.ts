@@ -1,4 +1,9 @@
-import { createSymbol, Namekey, NamePolicyGetter, useBinder } from "@alloy-js/core";
+import {
+  createSymbol,
+  Namekey,
+  NamePolicyGetter,
+  useBinder,
+} from "@alloy-js/core";
 import { RustElements, useRustNamePolicy } from "../name-policy.js";
 import { useRustScope } from "../scopes/contexts.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
@@ -7,8 +12,14 @@ import { RustImplScope } from "../scopes/rust-impl-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { RustTraitScope } from "../scopes/rust-trait-scope.js";
 import { FunctionSymbol, FunctionSymbolOptions } from "./function-symbol.js";
-import { NamedTypeSymbol, NamedTypeSymbolOptions } from "./named-type-symbol.js";
-import { RustOutputSymbol, RustOutputSymbolOptions } from "./rust-output-symbol.js";
+import {
+  NamedTypeSymbol,
+  NamedTypeSymbolOptions,
+} from "./named-type-symbol.js";
+import {
+  RustOutputSymbol,
+  RustOutputSymbolOptions,
+} from "./rust-output-symbol.js";
 
 export function createStructSymbol(
   originalName: string | Namekey,
@@ -68,7 +79,9 @@ export function createMethodSymbol(
 ) {
   const scope = useRustScope();
   if (!(scope instanceof RustImplScope) && !(scope instanceof RustTraitScope)) {
-    throw new Error("Can't create method symbol outside of an impl or trait scope.");
+    throw new Error(
+      "Can't create method symbol outside of an impl or trait scope.",
+    );
   }
 
   const binder = options.binder ?? scope.binder ?? useBinder();
@@ -85,7 +98,9 @@ export function createAssociatedTypeSymbol(
 ) {
   const scope = useRustScope();
   if (!(scope instanceof RustImplScope) && !(scope instanceof RustTraitScope)) {
-    throw new Error("Can't create associated type symbol outside of an impl or trait scope.");
+    throw new Error(
+      "Can't create associated type symbol outside of an impl or trait scope.",
+    );
   }
 
   const binder = options.binder ?? scope.binder ?? useBinder();
@@ -124,7 +139,7 @@ export function createConstSymbol(
   return createSymbol(RustOutputSymbol, originalName, scope.values, {
     ...withNamePolicy(options, "constant"),
     binder,
-      symbolKind: "const",
+    symbolKind: "const",
   });
 }
 
@@ -147,7 +162,9 @@ export function createFieldSymbol(
 ) {
   const scope = useRustScope();
   if (!(scope.ownerSymbol instanceof NamedTypeSymbol)) {
-    throw new Error("Can't create field symbol outside of a named type member scope.");
+    throw new Error(
+      "Can't create field symbol outside of a named type member scope.",
+    );
   }
   if (scope.ownerSymbol.typeKind !== "struct") {
     throw new Error(
@@ -156,11 +173,16 @@ export function createFieldSymbol(
   }
 
   const binder = options.binder ?? scope.binder ?? useBinder();
-  return createSymbol(RustOutputSymbol, originalName, scope.ownerSymbol.members, {
-    ...withNamePolicy(options, "field"),
-    binder,
-    symbolKind: "field",
-  });
+  return createSymbol(
+    RustOutputSymbol,
+    originalName,
+    scope.ownerSymbol.members,
+    {
+      ...withNamePolicy(options, "field"),
+      binder,
+      symbolKind: "field",
+    },
+  );
 }
 
 export function createVariantSymbol(
@@ -180,11 +202,16 @@ export function createVariantSymbol(
   }
 
   const binder = options.binder ?? scope.binder ?? useBinder();
-  return createSymbol(RustOutputSymbol, originalName, scope.ownerSymbol.members, {
-    ...withNamePolicy(options, "enum-variant"),
-    binder,
-    symbolKind: "variant",
-  });
+  return createSymbol(
+    RustOutputSymbol,
+    originalName,
+    scope.ownerSymbol.members,
+    {
+      ...withNamePolicy(options, "enum-variant"),
+      binder,
+      symbolKind: "variant",
+    },
+  );
 }
 
 export function createParameterSymbol(
@@ -193,7 +220,9 @@ export function createParameterSymbol(
 ) {
   const scope = useRustScope();
   if (!(scope instanceof RustFunctionScope)) {
-    throw new Error("Can't create parameter symbol outside of a function scope.");
+    throw new Error(
+      "Can't create parameter symbol outside of a function scope.",
+    );
   }
 
   const binder = options.binder ?? scope.binder ?? useBinder();
@@ -210,8 +239,7 @@ export function createTypeParameterSymbol(
 ) {
   const scope = useRustScope();
   const typeParameterSpace =
-    scope instanceof RustFunctionScope ?
-      scope.typeParameters
+    scope instanceof RustFunctionScope ? scope.typeParameters
     : scope.ownerSymbol instanceof NamedTypeSymbol ?
       scope.ownerSymbol.typeParameters
     : undefined;
@@ -236,7 +264,9 @@ function useTypeValueScope(kind: string): RustCrateScope | RustModuleScope {
     return scope;
   }
 
-  throw new Error(`Can't create ${kind} symbol outside of a crate or module scope.`);
+  throw new Error(
+    `Can't create ${kind} symbol outside of a crate or module scope.`,
+  );
 }
 
 function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(

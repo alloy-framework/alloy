@@ -1,17 +1,17 @@
 # T038 — CrateDirectory crateType Prop
 
-| Field | Value |
-|-------|-------|
-| **ID** | T038 |
-| **Epic** | [E006](../epics/E006-external-deps-build-polish.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P3 — nice-to-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (CrateDirectory / SourceFile) |
-| **Blocks** | — |
+| Field                     | Value                                               |
+| ------------------------- | --------------------------------------------------- |
+| **ID**                    | T038                                                |
+| **Epic**                  | [E006](../epics/E006-external-deps-build-polish.md) |
+| **Type**                  | feature                                             |
+| **Status**                | done                                                |
+| **Priority**              | P3 — nice-to-have                                   |
+| **Owner Role**            | AI coding agent                                     |
+| **AI Executable**         | Yes                                                 |
+| **Human Review Required** | No                                                  |
+| **Dependencies**          | T009 (CrateDirectory / SourceFile)                  |
+| **Blocks**                | —                                                   |
 
 ---
 
@@ -46,12 +46,12 @@ Add a `crateType` prop to `CrateDirectory` to distinguish library crates from bi
 
 ## Context Files
 
-| File | Relevance |
-|------|-----------|
-| `packages/rust/src/components/crate-directory.tsx` | Add prop |
-| `packages/rust/src/context/crate-context.tsx` | Add to context value |
-| `packages/rust/src/components/source-file.tsx` | Already handles main.rs/lib.rs |
-| `packages/rust/test/source-file-crate-directory.test.tsx` | Add test |
+| File                                                      | Relevance                      |
+| --------------------------------------------------------- | ------------------------------ |
+| `packages/rust/src/components/crate-directory.tsx`        | Add prop                       |
+| `packages/rust/src/context/crate-context.tsx`             | Add to context value           |
+| `packages/rust/src/components/source-file.tsx`            | Already handles main.rs/lib.rs |
+| `packages/rust/test/source-file-crate-directory.test.tsx` | Add test                       |
 
 ---
 
@@ -64,7 +64,7 @@ export interface CrateDirectoryProps {
   name: string;
   version?: string;
   edition?: string;
-  crateType?: "lib" | "bin";  // NEW
+  crateType?: "lib" | "bin"; // NEW
   dependencies?: Record<string, CrateDependency>;
   includeCargoToml?: boolean;
   children?: Children;
@@ -79,7 +79,7 @@ export interface CrateContextValue {
   name: string;
   version?: string;
   edition: string;
-  crateType: "lib" | "bin";  // NEW
+  crateType: "lib" | "bin"; // NEW
 }
 ```
 

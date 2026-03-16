@@ -1,12 +1,12 @@
 # T012: EnumDeclaration and EnumVariant
 
-| Field       | Value                                                                                    |
-| ----------- | ---------------------------------------------------------------------------------------- |
-| **Task ID** | T012                                                                                     |
-| **Epic**    | E003 — Core Declaration Components                                                       |
+| Field       | Value                                                                                                               |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Task ID** | T012                                                                                                                |
+| **Epic**    | E003 — Core Declaration Components                                                                                  |
 | **Deps**    | T006 (Symbol factories), T010 (Declaration/Reference), T015 (Attributes), T016 (DocComments), T017 (TypeParameters) |
-| **Blocks**  | —                                                                                        |
-| **Status**  | done                                                                                     |
+| **Blocks**  | —                                                                                                                   |
+| **Status**  | done                                                                                                                |
 
 ## Description
 
@@ -59,11 +59,11 @@ interface EnumVariantProps {
 
 ## Context Files
 
-| File                                              | Why                                     |
-| ------------------------------------------------- | --------------------------------------- |
-| `packages/csharp/src/components/enum/`             | Similar enum concept in C#               |
-| `packages/typescript/src/components/EnumDeclaration.tsx` | TypeScript enum pattern             |
-| `packages/rust/src/symbols/` (from T003–T006)     | NamedTypeSymbol, symbol factories        |
+| File                                                     | Why                               |
+| -------------------------------------------------------- | --------------------------------- |
+| `packages/csharp/src/components/enum/`                   | Similar enum concept in C#        |
+| `packages/typescript/src/components/EnumDeclaration.tsx` | TypeScript enum pattern           |
+| `packages/rust/src/symbols/` (from T003–T006)            | NamedTypeSymbol, symbol factories |
 
 ## Implementation Guidance
 

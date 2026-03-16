@@ -1,17 +1,17 @@
 # T041 — Trait Methods Should Render as Abstract Signatures
 
-| Field | Value |
-|-------|-------|
-| **ID** | T041 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T013 (FunctionDeclaration), T019 (TraitDeclaration) |
-| **Blocks** | — |
+| Field                     | Value                                               |
+| ------------------------- | --------------------------------------------------- |
+| **ID**                    | T041                                                |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md)                  |
+| **Type**                  | bug                                                 |
+| **Status**                | done                                                |
+| **Priority**              | P1 — must-have                                      |
+| **Owner Role**            | AI coding agent                                     |
+| **AI Executable**         | Yes                                                 |
+| **Human Review Required** | No                                                  |
+| **Dependencies**          | T013 (FunctionDeclaration), T019 (TraitDeclaration) |
+| **Blocks**                | —                                                   |
 
 ---
 

@@ -1,5 +1,12 @@
-import { type OutputScopeOptions, type OutputSpace, shallowReactive } from "@alloy-js/core";
-import { type RustOutputSymbol, type RustVisibility } from "../symbols/rust-output-symbol.js";
+import {
+  type OutputScopeOptions,
+  type OutputSpace,
+  shallowReactive,
+} from "@alloy-js/core";
+import {
+  type RustOutputSymbol,
+  type RustVisibility,
+} from "../symbols/rust-output-symbol.js";
 import { RustCrateScope } from "./rust-crate-scope.js";
 import { RustScopeBase } from "./rust-scope.js";
 
@@ -12,7 +19,9 @@ export class RustModuleScope extends RustScopeBase {
   public static readonly declarationSpaces = ["types", "values"];
 
   #imports = shallowReactive<Map<string, Set<RustOutputSymbol>>>(new Map());
-  #childModules = shallowReactive<Map<string, RustModuleDeclaration>>(new Map());
+  #childModules = shallowReactive<Map<string, RustModuleDeclaration>>(
+    new Map(),
+  );
 
   constructor(
     name: string,

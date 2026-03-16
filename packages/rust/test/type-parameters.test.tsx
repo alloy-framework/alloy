@@ -1,7 +1,10 @@
 import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { TypeParameters, WhereClause } from "../src/components/type-parameters.js";
+import {
+  TypeParameters,
+  WhereClause,
+} from "../src/components/type-parameters.js";
 
 describe("TypeParameters", () => {
   it("renders a single type parameter", () => {
@@ -23,16 +26,15 @@ describe("TypeParameters", () => {
   it("renders mixed constrained and unconstrained parameters", () => {
     expect(
       <TypeParameters
-        params={[
-          { name: "T" },
-          { name: "U", constraint: "Display + Clone" },
-        ]}
+        params={[{ name: "T" }, { name: "U", constraint: "Display + Clone" }]}
       />,
     ).toRenderTo(d`<T, U: Display + Clone>`);
   });
 
   it("renders a single lifetime parameter", () => {
-    expect(<TypeParameters params={[{ lifetime: "'a" }]} />).toRenderTo(d`<'a>`);
+    expect(<TypeParameters params={[{ lifetime: "'a" }]} />).toRenderTo(
+      d`<'a>`,
+    );
   });
 
   it("renders lifetimes before type parameters", () => {
@@ -50,13 +52,17 @@ describe("TypeParameters", () => {
 
   it("renders lifetime bounds", () => {
     expect(
-      <TypeParameters params={[{ lifetime: "'a" }, { lifetime: "'b", constraint: "'a" }]} />,
+      <TypeParameters
+        params={[{ lifetime: "'a" }, { lifetime: "'b", constraint: "'a" }]}
+      />,
     ).toRenderTo(d`<'a, 'b: 'a>`);
   });
 
   it("renders type parameter lifetime bounds", () => {
     expect(
-      <TypeParameters params={[{ lifetime: "'a" }, { name: "T", constraint: "'a + Clone" }]} />,
+      <TypeParameters
+        params={[{ lifetime: "'a" }, { name: "T", constraint: "'a + Clone" }]}
+      />,
     ).toRenderTo(d`<'a, T: 'a + Clone>`);
   });
 
@@ -87,9 +93,9 @@ describe("WhereClause", () => {
   });
 
   it("renders multiple where clause constraints", () => {
-    expect(
-      <WhereClause>T: Display + Clone, U: Debug</WhereClause>,
-    ).toRenderTo(d`where T: Display + Clone, U: Debug`);
+    expect(<WhereClause>T: Display + Clone, U: Debug</WhereClause>).toRenderTo(
+      d`where T: Display + Clone, U: Debug`,
+    );
   });
 
   it("renders nothing when children are missing", () => {

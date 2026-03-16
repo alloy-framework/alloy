@@ -1,17 +1,17 @@
 # T035: Edge Case Tests
 
-| Field            | Value                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| **ID**           | T035                                                                                    |
-| **Epic**         | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)    |
-| **Type**         | test                                                                                    |
-| **Status**       | done                                                                                    |
-| **Priority**     | medium                                                                                  |
-| **Owner**        | AI coding agent                                                                         |
-| **AI Executable**| yes                                                                                     |
-| **Human Review** | yes                                                                                     |
-| **Dependencies** | T011, T012, T013, T014, T015, T016, T017, T018, T019, T020, T021, T022, T023, T024, T025 |
-| **Blocks**       | —                                                                                       |
+| Field             | Value                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| **ID**            | T035                                                                                     |
+| **Epic**          | [E006 — External Deps, Build & Polish](../epics/E006-external-deps-build-polish.md)      |
+| **Type**          | test                                                                                     |
+| **Status**        | done                                                                                     |
+| **Priority**      | medium                                                                                   |
+| **Owner**         | AI coding agent                                                                          |
+| **AI Executable** | yes                                                                                      |
+| **Human Review**  | yes                                                                                      |
+| **Dependencies**  | T011, T012, T013, T014, T015, T016, T017, T018, T019, T020, T021, T022, T023, T024, T025 |
+| **Blocks**        | —                                                                                        |
 
 ---
 
@@ -28,26 +28,32 @@ Validate that all components handle edge cases gracefully — empty content, sin
 - Create `test/edge-cases.test.tsx` with tests for:
 
 ### Empty constructs
+
 1. **Empty struct**: `struct Empty {}` — struct with no fields.
 2. **Empty enum**: `enum Never {}` — enum with no variants.
 3. **Function with no params and no return type**: `fn noop() {}`.
 
 ### Minimal constructs
+
 4. **Struct with single field**: `struct Wrapper { value: i32 }`.
 5. **Enum with single unit variant**: `enum Unit { Only }`.
 
 ### Reserved words
+
 6. **Reserved word as identifier**: Using `type` as a field name should render as `r#type`.
 7. **Other reserved words**: `self`, `super`, `crate`, `fn`, `struct`, `enum`, `trait`, `impl` — ensure the name policy escapes them with `r#` prefix.
 
 ### Import deduplication
+
 8. **Duplicate references**: Referencing the same symbol from multiple locations in the same file should produce only one `use` statement.
 9. **Multiple references, same path**: Referencing two symbols from the same module should produce a grouped import, not two separate ones.
 
 ### Multiple impl blocks
+
 10. **Multiple impl blocks for same type**: Two separate `ImplBlock` components targeting the same type should both render correctly without conflict.
 
 ### Visibility and prelude
+
 11. **Negative test: private symbol cross-module reference**: Reference to a private symbol from another module should produce a diagnostic error or warning.
 12. **Test: prelude types**: `Option`, `Vec`, `String` referenced without generating `use`.
 

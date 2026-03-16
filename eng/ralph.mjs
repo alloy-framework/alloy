@@ -1,12 +1,18 @@
 #!/usr/bin/env node
 
-import { spawn, execSync } from 'child_process';
-import { readFileSync, mkdirSync, writeFileSync, readdirSync, statSync, unlinkSync, existsSync, appendFileSync } from 'fs';
-import { resolve } from 'path';
-import { setLogDir, setRetentionDays, rotateAllLogs } from './ralph-logger.mjs';
+import { execSync, spawn } from "child_process";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
+import { resolve } from "path";
+import { rotateAllLogs, setLogDir, setRetentionDays } from "./ralph-logger.mjs";
 
-const packageRoot = execSync('npm prefix', { encoding: 'utf-8' }).trim();
-const logsDir = resolve(packageRoot, 'eng/logs');
+const packageRoot = execSync("npm prefix", { encoding: "utf-8" }).trim();
+const logsDir = resolve(packageRoot, "eng/logs");
 
 // ── Argument parsing ──────────────────────────────────────────────────
 
@@ -17,21 +23,21 @@ function getArg(name) {
   return idx !== -1 && args[idx + 1] ? args[idx + 1] : undefined;
 }
 
-const iterationsStr = getArg('--iterations') ?? '50';
+const iterationsStr = getArg("--iterations") ?? "50";
 const iterations = parseInt(iterationsStr, 10);
 if (isNaN(iterations) || iterations <= 0) {
-  console.error('Error: --iterations must be a positive number');
+  console.error("Error: --iterations must be a positive number");
   process.exit(1);
 }
 
-const model = getArg('--model');
-const promptFlag = getArg('--prompt') ?? 'eng/ralph.md';
+const model = getArg("--model");
+const promptFlag = getArg("--prompt") ?? "eng/ralph.md";
 const promptPath = resolve(packageRoot, promptFlag);
-const prompt = readFileSync(promptPath, 'utf-8');
+const prompt = readFileSync(promptPath, "utf-8");
 
-const logRetentionDaysStr = getArg('--log-retention-days') ?? '7';
+const logRetentionDaysStr = getArg("--log-retention-days") ?? "7";
 const logRetentionDays = parseInt(logRetentionDaysStr, 10);
-const autoStash = args.includes('--auto-stash');
+const autoStash = args.includes("--auto-stash");
 const progressMaxLines = 500;
 const progressKeepEntries = 10;
 
@@ -47,22 +53,24 @@ function formatDuration(ms) {
 }
 
 function timestampForFile() {
-  return new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  return new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 }
 
 // ── Git state check ──────────────────────────────────────────────────
 
 function checkGitState(label) {
   try {
-    const status = execSync('git status --porcelain', {
-      encoding: 'utf-8',
+    const status = execSync("git status --porcelain", {
+      encoding: "utf-8",
       cwd: packageRoot,
     }).trim();
     if (status) {
-      const fileCount = status.split('\n').length;
-      console.warn(`⚠️  [${label}] Working tree is dirty — ${fileCount} file(s) with uncommitted changes.`);
+      const fileCount = status.split("\n").length;
+      console.warn(
+        `⚠️  [${label}] Working tree is dirty — ${fileCount} file(s) with uncommitted changes.`,
+      );
       if (autoStash) {
-        console.log('📦 Auto-stashing uncommitted changes…');
+        console.log("📦 Auto-stashing uncommitted changes…");
         execSync('git stash push -m "ralph-auto-stash"', { cwd: packageRoot });
       }
       return true;
@@ -80,18 +88,20 @@ function cleanOldLogs() {
   setRetentionDays(logRetentionDays);
   const deleted = rotateAllLogs();
   if (deleted > 0) {
-    console.log(`🧹 Cleaned ${deleted} log file(s) older than ${logRetentionDays} days.`);
+    console.log(
+      `🧹 Cleaned ${deleted} log file(s) older than ${logRetentionDays} days.`,
+    );
   }
 }
 
 // ── Progress rotation ───────────────────────────────────────────────
 
 function rotateProgress() {
-  const progressPath = resolve(packageRoot, 'progress.md');
+  const progressPath = resolve(packageRoot, "progress.md");
   if (!existsSync(progressPath)) return;
 
-  const content = readFileSync(progressPath, 'utf-8');
-  const lineCount = content.split('\n').length;
+  const content = readFileSync(progressPath, "utf-8");
+  const lineCount = content.split("\n").length;
   if (lineCount <= progressMaxLines) return;
 
   const parts = content.split(/^(## .+)$/m);
@@ -100,7 +110,7 @@ function rotateProgress() {
   const entries = [];
   for (let i = 1; i < parts.length; i += 2) {
     const heading = parts[i];
-    const body = i + 1 < parts.length ? parts[i + 1] : '';
+    const body = i + 1 < parts.length ? parts[i + 1] : "";
     entries.push(heading + body);
   }
 
@@ -109,21 +119,35 @@ function rotateProgress() {
   const archiveEntries = entries.slice(0, -progressKeepEntries);
   const recentEntries = entries.slice(-progressKeepEntries);
 
-  const archiveDir = resolve(packageRoot, 'eng/progress-archive');
+  const archiveDir = resolve(packageRoot, "eng/progress-archive");
   mkdirSync(archiveDir, { recursive: true });
 
   const month = new Date().toISOString().slice(0, 7); // YYYY-MM
   const archivePath = resolve(archiveDir, `${month}.md`);
 
   if (existsSync(archivePath)) {
-    appendFileSync(archivePath, '\n' + archiveEntries.join('\n') + '\n', 'utf-8');
+    appendFileSync(
+      archivePath,
+      "\n" + archiveEntries.join("\n") + "\n",
+      "utf-8",
+    );
   } else {
-    writeFileSync(archivePath, `# Progress Archive — ${month}\n\n` + archiveEntries.join('\n') + '\n', 'utf-8');
+    writeFileSync(
+      archivePath,
+      `# Progress Archive — ${month}\n\n` + archiveEntries.join("\n") + "\n",
+      "utf-8",
+    );
   }
 
-  writeFileSync(progressPath, header + recentEntries.join('\n') + '\n', 'utf-8');
+  writeFileSync(
+    progressPath,
+    header + recentEntries.join("\n") + "\n",
+    "utf-8",
+  );
 
-  console.log(`📋 Rotated ${archiveEntries.length} progress entries to eng/progress-archive/${month}.md`);
+  console.log(
+    `📋 Rotated ${archiveEntries.length} progress entries to eng/progress-archive/${month}.md`,
+  );
 }
 
 // ── Ensure logs directory exists ─────────────────────────────────────
@@ -132,7 +156,7 @@ mkdirSync(logsDir, { recursive: true });
 
 // ── Startup housekeeping ─────────────────────────────────────────────
 
-checkGitState('startup');
+checkGitState("startup");
 cleanOldLogs();
 
 // ── Signal handling ──────────────────────────────────────────────────
@@ -149,45 +173,45 @@ function handleSignal(signal) {
   }
 }
 
-process.on('SIGINT', () => handleSignal('SIGINT'));
-process.on('SIGTERM', () => handleSignal('SIGTERM'));
+process.on("SIGINT", () => handleSignal("SIGINT"));
+process.on("SIGTERM", () => handleSignal("SIGTERM"));
 
 // ── Core runner ──────────────────────────────────────────────────────
 
 function runCopilot(promptText) {
-  const copilotArgs = ['--yolo', '-p', promptText];
+  const copilotArgs = ["--yolo", "-p", promptText];
   if (model) {
-    copilotArgs.push('--model', model);
+    copilotArgs.push("--model", model);
   }
 
   return new Promise((resolve, reject) => {
-    const child = spawn('copilot', copilotArgs, {
-      stdio: ['inherit', 'pipe', 'pipe'],
+    const child = spawn("copilot", copilotArgs, {
+      stdio: ["inherit", "pipe", "pipe"],
       env: process.env,
     });
 
     activeChild = child;
-    let combined = '';
+    let combined = "";
 
-    child.stdout.setEncoding('utf8');
-    child.stderr.setEncoding('utf8');
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
 
-    child.stdout.on('data', (chunk) => {
+    child.stdout.on("data", (chunk) => {
       combined += chunk;
       process.stdout.write(chunk);
     });
 
-    child.stderr.on('data', (chunk) => {
+    child.stderr.on("data", (chunk) => {
       combined += chunk;
       process.stderr.write(chunk);
     });
 
-    child.on('error', (err) => {
+    child.on("error", (err) => {
       activeChild = null;
       reject(err);
     });
 
-    child.on('close', (code) => {
+    child.on("close", (code) => {
       activeChild = null;
       resolve({ code, output: combined });
     });
@@ -200,7 +224,9 @@ const globalStart = Date.now();
 let completed = 0;
 let prdCompleted = false;
 
-console.log(`\n🔁 Ralph Loop — ${iterations} iterations, prompt: ${promptFlag}`);
+console.log(
+  `\n🔁 Ralph Loop — ${iterations} iterations, prompt: ${promptFlag}`,
+);
 if (model) console.log(`   Model: ${model}`);
 console.log();
 
@@ -216,7 +242,7 @@ for (let i = 1; i <= iterations; i++) {
   try {
     ({ code, output } = await runCopilot(prompt));
   } catch (err) {
-    console.error('\n❌ Failed to run copilot:', err?.message ?? err);
+    console.error("\n❌ Failed to run copilot:", err?.message ?? err);
     output = err?.message ?? String(err);
     code = 1;
   }
@@ -230,17 +256,20 @@ for (let i = 1; i <= iterations; i++) {
   );
 
   // Write iteration log file
-  const logFile = resolve(logsDir, `ralph-${timestampForFile()}-iteration-${i}.log`);
+  const logFile = resolve(
+    logsDir,
+    `ralph-${timestampForFile()}-iteration-${i}.log`,
+  );
   try {
-    writeFileSync(logFile, output, 'utf-8');
+    writeFileSync(logFile, output, "utf-8");
     console.log(`📄 Log: ${logFile}`);
   } catch (err) {
     console.warn(`⚠️  Could not write log file: ${err.message}`);
   }
 
-  if (output.includes('<promise>COMPLETED</promise>')) {
+  if (output.includes("<promise>COMPLETED</promise>")) {
     prdCompleted = true;
-    console.log('\n✅ PRD is complete! Exiting.');
+    console.log("\n✅ PRD is complete! Exiting.");
     break;
   }
 
@@ -256,11 +285,11 @@ for (let i = 1; i <= iterations; i++) {
 // ── Summary ──────────────────────────────────────────────────────────
 
 const totalTime = Date.now() - globalStart;
-console.log('\n' + '═'.repeat(50));
-console.log('  Ralph Loop Summary');
-console.log('═'.repeat(50));
+console.log("\n" + "═".repeat(50));
+console.log("  Ralph Loop Summary");
+console.log("═".repeat(50));
 console.log(`  Iterations completed: ${completed} / ${iterations}`);
 console.log(`  Total time:           ${formatDuration(totalTime)}`);
-console.log(`  PRD completed:        ${prdCompleted ? '✅ Yes' : '❌ No'}`);
-if (interrupted) console.log('  Stopped by:           signal (SIGINT/SIGTERM)');
-console.log('═'.repeat(50) + '\n');
+console.log(`  PRD completed:        ${prdCompleted ? "✅ Yes" : "❌ No"}`);
+if (interrupted) console.log("  Stopped by:           signal (SIGINT/SIGTERM)");
+console.log("═".repeat(50) + "\n");

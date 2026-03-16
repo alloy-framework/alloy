@@ -37,7 +37,14 @@ describe("Value", () => {
   });
 
   it("renders nested arrays", () => {
-    expect(<Value value={[[1, 2], [3, 4]]} />).toRenderTo(d`vec![vec![1, 2], vec![3, 4]]`);
+    expect(
+      <Value
+        value={[
+          [1, 2],
+          [3, 4],
+        ]}
+      />,
+    ).toRenderTo(d`vec![vec![1, 2], vec![3, 4]]`);
   });
 
   it("renders empty arrays", () => {

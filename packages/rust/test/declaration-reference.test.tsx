@@ -69,7 +69,12 @@ describe("Declaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="thing" nameKind="struct" pub_crate={true} pub_super={true}>
+            <Declaration
+              name="thing"
+              nameKind="struct"
+              pub_crate={true}
+              pub_super={true}
+            >
               struct Thing;
             </Declaration>
           </SourceFile>
@@ -126,7 +131,11 @@ describe("Reference", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="ResponseType" refkey={responseType} nameKind="struct">
+            <Declaration
+              name="ResponseType"
+              refkey={responseType}
+              nameKind="struct"
+            >
               struct ResponseType;
             </Declaration>
             <hbr />

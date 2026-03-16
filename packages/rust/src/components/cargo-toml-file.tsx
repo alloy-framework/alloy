@@ -41,15 +41,15 @@ export function CargoTomlFile(props: CargoTomlFileProps) {
       mergedDependencies.set(name, dependency);
     }
 
-    const sortedDependencies = [...mergedDependencies.entries()].sort(([left], [right]) =>
-      left.localeCompare(right),
+    const sortedDependencies = [...mergedDependencies.entries()].sort(
+      ([left], [right]) => left.localeCompare(right),
     );
     const crateType = crate?.crateType ?? "lib";
     const crateName = crate?.name ?? props.name;
     const targetLines =
-      crateType === "bin"
-        ? ["[[bin]]", `name = "${crateName}"`, 'path = "main.rs"']
-        : ["[lib]", 'path = "lib.rs"'];
+      crateType === "bin" ?
+        ["[[bin]]", `name = "${crateName}"`, 'path = "main.rs"']
+      : ["[lib]", 'path = "lib.rs"'];
 
     const lines = [
       "[package]",

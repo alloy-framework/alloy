@@ -7,6 +7,7 @@ This document defines the implementation design for `@alloy-js/rust`, a new Allo
 **How it feeds the PRD:** A subsequent planning agent will convert this design brief into a prioritized backlog of implementation tasks. This document provides the "what and how" — the PRD will add "in what order and to what acceptance criteria."
 
 **Constraints:**
+
 - This is a design brief, not a task backlog.
 - Rust language semantics are stated precisely, not hand-waved.
 - All Alloy architecture decisions are grounded in repository evidence.
@@ -27,6 +28,7 @@ Rust's code organization is hierarchical with three levels:
 3. **Items** — declarations within a module: functions, structs, enums, traits, impls, type aliases, constants, statics, macros.
 
 **Key constraints for Alloy:**
+
 - Every `.rs` file is a module. The file path determines the module path.
 - The crate root (`lib.rs` or `main.rs`) must declare all top-level modules with `mod` statements.
 - Submodules must be declared by their parent module.
@@ -45,6 +47,7 @@ use self::submod::Thing;             // From child module
 ```
 
 **Path roots:**
+
 - `crate::` — absolute path from crate root.
 - `super::` — parent module.
 - `self::` — current module.
@@ -55,6 +58,7 @@ use self::submod::Thing;             // From child module
 **Glob imports:** `use std::collections::*;` (generally discouraged in generated code).
 
 **Key constraints for Alloy:**
+
 - Import paths are `::` separated, not `/` or `.`.
 - Imports from the same crate use `crate::`, not the crate name.
 - The import system must distinguish: same-module (no import needed), same-crate-different-module (`use crate::...`), external-crate (`use <crate>::...`).
@@ -64,34 +68,37 @@ use self::submod::Thing;             // From child module
 
 Rust items (declarations) at module level:
 
-| Item | Syntax | Notes |
-|---|---|---|
-| **Function** | `fn name(params) -> ReturnType { body }` | Can be `pub`, `async`, `const`, `unsafe`, `extern` |
-| **Struct** | `struct Name { fields }` or `struct Name(types);` (tuple) or `struct Name;` (unit) | Can be `pub`, fields can have individual visibility |
-| **Enum** | `enum Name { Variant1, Variant2(T), Variant3 { field: T } }` | Variants can be unit, tuple, or struct-like |
-| **Trait** | `trait Name { methods/associated types }` | Can have default method implementations |
-| **Impl block** | `impl Type { methods }` or `impl Trait for Type { methods }` | Not a declaration in the symbol sense — it adds methods to an existing type |
-| **Type alias** | `type Name = OtherType;` | `pub type` for re-exports |
-| **Constant** | `const NAME: Type = value;` | Must be compile-time evaluable |
-| **Static** | `static NAME: Type = value;` | Global variable, can be `mut` |
-| **Module** | `mod name;` or `mod name { ... }` | File-backed or inline |
-| **Use** | `use path::to::item;` | Import statement |
-| **Extern crate** | `extern crate name;` | Rarely needed in edition 2021+ |
+| Item             | Syntax                                                                             | Notes                                                                       |
+| ---------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Function**     | `fn name(params) -> ReturnType { body }`                                           | Can be `pub`, `async`, `const`, `unsafe`, `extern`                          |
+| **Struct**       | `struct Name { fields }` or `struct Name(types);` (tuple) or `struct Name;` (unit) | Can be `pub`, fields can have individual visibility                         |
+| **Enum**         | `enum Name { Variant1, Variant2(T), Variant3 { field: T } }`                       | Variants can be unit, tuple, or struct-like                                 |
+| **Trait**        | `trait Name { methods/associated types }`                                          | Can have default method implementations                                     |
+| **Impl block**   | `impl Type { methods }` or `impl Trait for Type { methods }`                       | Not a declaration in the symbol sense — it adds methods to an existing type |
+| **Type alias**   | `type Name = OtherType;`                                                           | `pub type` for re-exports                                                   |
+| **Constant**     | `const NAME: Type = value;`                                                        | Must be compile-time evaluable                                              |
+| **Static**       | `static NAME: Type = value;`                                                       | Global variable, can be `mut`                                               |
+| **Module**       | `mod name;` or `mod name { ... }`                                                  | File-backed or inline                                                       |
+| **Use**          | `use path::to::item;`                                                              | Import statement                                                            |
+| **Extern crate** | `extern crate name;`                                                               | Rarely needed in edition 2021+                                              |
 
 ## 2.4 Expression and Statement Model
 
 Rust is expression-oriented. Most constructs are expressions:
+
 - `if/else` returns a value: `let x = if cond { a } else { b };`
 - `match` returns a value: `let x = match val { ... };`
 - Block expressions: `{ stmt; stmt; expr }` — last expression is the return value.
 - `loop`, `while`, `for` are expressions (with `break value`).
 
 **Statements:**
+
 - `let` bindings: `let x: Type = value;` or `let mut x = value;`
 - Expression statements: `expr;` (expression followed by semicolon)
 - Item declarations (at statement position)
 
 **Key constraints for Alloy:**
+
 - Semicolons are significant: `expr` (expression, returns value) vs `expr;` (statement, discards value).
 - The `let` keyword is always required for variable binding.
 - Pattern matching is pervasive (`let (a, b) = tuple;`, `if let Some(x) = opt { ... }`).
@@ -101,6 +108,7 @@ Rust is expression-oriented. Most constructs are expressions:
 **Generics:** `fn foo<T: Display>(x: T)`, `struct Foo<T> { field: T }`.
 
 **Lifetimes:** `fn foo<'a>(x: &'a str) -> &'a str`, `struct Foo<'a> { s: &'a str }`. Lifetimes annotate borrow durations. They appear in:
+
 - Function signatures
 - Struct/enum definitions
 - Impl blocks
@@ -114,6 +122,7 @@ Rust is expression-oriented. Most constructs are expressions:
 **Reference types:** `&T` (shared borrow), `&mut T` (mutable borrow), `Box<T>`, `Rc<T>`, `Arc<T>`.
 
 **Key constraints for Alloy:**
+
 - Lifetimes are a first-class concern in signatures. A `ParameterDescriptor` must support `&'a T`, `&'a mut T`, etc.
 - Generic parameters can be types (`T`) or lifetimes (`'a`). They share the `<>` syntax.
 - Trait bounds appear both inline (`T: Bound`) and in `where` clauses.
@@ -127,9 +136,10 @@ Rust is expression-oriented. Most constructs are expressions:
 //! Inner doc comment (applies to the enclosing item, e.g., module-level)
 ```
 
-Doc comments support markdown, code examples (with ```` ``` ````), and attribute annotations like `# Examples`, `# Panics`, `# Safety`, `# Errors`.
+Doc comments support markdown, code examples (with ` ``` `), and attribute annotations like `# Examples`, `# Panics`, `# Safety`, `# Errors`.
 
 **Key constraints for Alloy:**
+
 - `///` is the standard doc comment prefix. Each line is a separate `///` line.
 - `//!` is used at the top of files for module/crate documentation.
 - Doc comments are line-based, not block-based (unlike JSDoc or Python docstrings).
@@ -137,6 +147,7 @@ Doc comments support markdown, code examples (with ```` ``` ````), and attribute
 ## 2.7 Formatting Conventions
 
 Rust has an official formatter: `rustfmt`. Conventions:
+
 - **Indent:** 4 spaces.
 - **Line width:** 100 characters (rustfmt default).
 - **Braces:** Opening brace on same line, closing brace on own line.
@@ -146,15 +157,16 @@ Rust has an official formatter: `rustfmt`. Conventions:
 
 ## 2.8 Visibility / Modifier Rules
 
-| Visibility | Syntax | Meaning |
-|---|---|---|
-| Private (default) | *(no keyword)* | Visible only within the current module and its children |
-| Public | `pub` | Visible everywhere |
-| Crate-public | `pub(crate)` | Visible within the current crate |
-| Super-public | `pub(super)` | Visible to the parent module |
-| Path-restricted | `pub(in path)` | Visible within the specified module path |
+| Visibility        | Syntax         | Meaning                                                 |
+| ----------------- | -------------- | ------------------------------------------------------- |
+| Private (default) | _(no keyword)_ | Visible only within the current module and its children |
+| Public            | `pub`          | Visible everywhere                                      |
+| Crate-public      | `pub(crate)`   | Visible within the current crate                        |
+| Super-public      | `pub(super)`   | Visible to the parent module                            |
+| Path-restricted   | `pub(in path)` | Visible within the specified module path                |
 
 **Other modifiers:**
+
 - `async` — async function
 - `unsafe` — unsafe block/function
 - `const` — const function/context
@@ -162,6 +174,7 @@ Rust has an official formatter: `rustfmt`. Conventions:
 - `mut` — mutable binding/reference
 
 **Key constraints for Alloy:**
+
 - Visibility is path-scoped, not just keyword-based. The `pub(in crate::foo)` form requires access to the module path.
 - Default visibility is private. This is unlike Java/C# where the default varies by context.
 - `pub` on struct fields is independent of `pub` on the struct itself.
@@ -171,13 +184,14 @@ Rust has an official formatter: `rustfmt`. Conventions:
 **Derive macros:** `#[derive(Debug, Clone, PartialEq, Serialize)]` is extremely common. These are attributes that generate trait implementations at compile time.
 
 **Attributes:** `#[attr]` (outer) and `#![attr]` (inner). Used for:
+
 - `#[derive(...)]` — derive trait impls
 - `#[cfg(...)]` — conditional compilation
 - `#[allow(...)]`, `#[warn(...)]`, `#[deny(...)]` — lint control
 - `#[serde(rename_all = "camelCase")]` — crate-specific attributes
 - `#[test]`, `#[bench]` — test markers
 
-**Impl blocks are not declarations.** They are *extensions* that add methods to an existing type. A struct can have multiple impl blocks, and trait impls are separate from inherent impls. This has no direct analog in any existing Alloy language package.
+**Impl blocks are not declarations.** They are _extensions_ that add methods to an existing type. A struct can have multiple impl blocks, and trait impls are separate from inherent impls. This has no direct analog in any existing Alloy language package.
 
 **Pattern matching** (`match`, `if let`, `let...else`) is pervasive but complex. For MVP, basic `match` support is sufficient.
 
@@ -194,6 +208,7 @@ Rust has an official formatter: `rustfmt`. Conventions:
 **Maps cleanly** with adaptations.
 
 Rust symbols need:
+
 - `visibility: RustVisibility` — `"pub" | "pub(crate)" | "pub(super)" | "pub(in <path>)" | undefined` (private). Modeled as a property on the symbol (like C#'s `accessibility`), not as separate member spaces.
 - `symbolKind: RustSymbolKind` — `"function" | "struct" | "enum" | "trait" | "type-alias" | "const" | "static" | "module" | "field" | "variant" | "method" | "associated-type" | "parameter" | "lifetime" | "type-parameter"`.
 - `isAsync: boolean` — for async functions.
@@ -208,14 +223,14 @@ Rust symbols need:
 
 **Needs adaptation.** Rust's scope model is:
 
-| Alloy Scope | Rust Concept | Declaration Spaces | Notes |
-|---|---|---|---|
-| `RustCrateScope` | Crate root | `["types", "values"]` | Top-level scope. Tracks `mod` declarations. |
-| `RustModuleScope` | Module (file) | `["types", "values"]` | Tracks `use` imports. Creates `mod` declarations in parent. |
-| `RustImplScope` | `impl` block | — (member scope) | Owner is the target type symbol. |
-| `RustTraitScope` | `trait` body | — (member scope) | Owner is the trait symbol. |
-| `RustFunctionScope` | Function body | `["parameters", "type-parameters", "local-variables"]` | Parameters include lifetimes. |
-| `RustLexicalScope` | Block `{ ... }` | `["local-variables"]` | For inner blocks. |
+| Alloy Scope         | Rust Concept    | Declaration Spaces                                     | Notes                                                       |
+| ------------------- | --------------- | ------------------------------------------------------ | ----------------------------------------------------------- |
+| `RustCrateScope`    | Crate root      | `["types", "values"]`                                  | Top-level scope. Tracks `mod` declarations.                 |
+| `RustModuleScope`   | Module (file)   | `["types", "values"]`                                  | Tracks `use` imports. Creates `mod` declarations in parent. |
+| `RustImplScope`     | `impl` block    | — (member scope)                                       | Owner is the target type symbol.                            |
+| `RustTraitScope`    | `trait` body    | — (member scope)                                       | Owner is the trait symbol.                                  |
+| `RustFunctionScope` | Function body   | `["parameters", "type-parameters", "local-variables"]` | Parameters include lifetimes.                               |
+| `RustLexicalScope`  | Block `{ ... }` | `["local-variables"]`                                  | For inner blocks.                                           |
 
 **Key design decisions:**
 
@@ -232,12 +247,14 @@ Rust symbols need:
 **Maps cleanly** with adaptations.
 
 The `Reference` component must:
+
 1. Resolve the refkey via the binder.
 2. Determine the relationship: same-module, same-crate-different-module, external-crate.
 3. If different module: add a `use` entry to the current module scope.
 4. Render the symbol name.
 
 **Use path construction:** Given a `ResolutionResult`, the reference component needs to:
+
 - Walk `pathDown` to build the module path from the common scope to the declaration.
 - Prefix with `crate::` for same-crate references, or the crate name for external crates.
 - Handle `super::` for parent module references (optimization over `crate::full::path`).
@@ -252,17 +269,17 @@ The `Reference` component must:
 
 Rust naming conventions (enforced by `clippy` lints):
 
-| Element | Convention | Example |
-|---|---|---|
-| `type`, `struct`, `enum`, `trait` | `PascalCase` (UpperCamelCase) | `MyStruct` |
-| `function`, `method` | `snake_case` | `my_function` |
-| `variable`, `parameter` | `snake_case` | `my_var` |
-| `constant`, `static` | `SCREAMING_SNAKE_CASE` | `MAX_SIZE` |
-| `module`, `crate` | `snake_case` | `my_module` |
-| `lifetime` | `'lowercase` | `'a`, `'static` |
-| `type-parameter` | `PascalCase` (usually single letter) | `T`, `E`, `Item` |
-| `enum-variant` | `PascalCase` | `Some`, `None`, `Ok` |
-| `field` | `snake_case` | `my_field` |
+| Element                           | Convention                           | Example              |
+| --------------------------------- | ------------------------------------ | -------------------- |
+| `type`, `struct`, `enum`, `trait` | `PascalCase` (UpperCamelCase)        | `MyStruct`           |
+| `function`, `method`              | `snake_case`                         | `my_function`        |
+| `variable`, `parameter`           | `snake_case`                         | `my_var`             |
+| `constant`, `static`              | `SCREAMING_SNAKE_CASE`               | `MAX_SIZE`           |
+| `module`, `crate`                 | `snake_case`                         | `my_module`          |
+| `lifetime`                        | `'lowercase`                         | `'a`, `'static`      |
+| `type-parameter`                  | `PascalCase` (usually single letter) | `T`, `E`, `Item`     |
+| `enum-variant`                    | `PascalCase`                         | `Some`, `None`, `Ok` |
+| `field`                           | `snake_case`                         | `my_field`           |
 
 **Reserved words:** `as`, `async`, `await`, `break`, `const`, `continue`, `crate`, `dyn`, `else`, `enum`, `extern`, `false`, `fn`, `for`, `if`, `impl`, `in`, `let`, `loop`, `match`, `mod`, `move`, `mut`, `pub`, `ref`, `return`, `self`, `Self`, `static`, `struct`, `super`, `trait`, `true`, `type`, `unsafe`, `use`, `where`, `while`, `yield`. (37 keywords)
 
@@ -273,6 +290,7 @@ Raw identifier syntax (`r#keyword`) is Rust's escape for reserved words — e.g.
 **Maps cleanly.** Rust uses `{ ... }` blocks like TypeScript, Java, and C#. Core's `Block` component works directly. Core's intrinsic elements (`<indent>`, `<hardline>`, `<group>`) provide all needed formatting.
 
 **Format options:**
+
 - `printWidth: 100` (rustfmt default)
 - `tabWidth: 4` (Rust convention)
 - `useTabs: false`
@@ -282,14 +300,16 @@ Raw identifier syntax (`r#keyword`) is Rust's escape for reserved words — e.g.
 **Needs a package-specific abstraction.** No existing Alloy language package has a concept analogous to Rust's `impl` blocks.
 
 An `ImplBlock` component would:
+
 1. Accept a target type (by refkey or inline) and optional trait.
 2. Create a member scope on the target type symbol.
 3. Render `impl [Trait for] Type { ... }`.
 4. Children are methods, associated types, etc.
 
-**Key difference from classes:** In Java/TS/C#, methods are declared *inside* the class declaration. In Rust, methods are declared in *separate* impl blocks. A struct can have multiple impl blocks.
+**Key difference from classes:** In Java/TS/C#, methods are declared _inside_ the class declaration. In Rust, methods are declared in _separate_ impl blocks. A struct can have multiple impl blocks.
 
 **Proposed component:**
+
 ```tsx
 <ImplBlock type={structRefkey}>
   <FunctionDeclaration name="new" pub receiver="none" returnType="Self">
@@ -311,6 +331,7 @@ An `ImplBlock` component would:
 **Needs adaptation.** Traits are closest to TypeScript interfaces / C# interfaces, but with default implementations and associated types.
 
 A `TraitDeclaration` component would:
+
 1. Create a type symbol.
 2. Create a member scope (for method signatures and associated types).
 3. Render `trait Name { ... }`.
@@ -329,6 +350,7 @@ enum Shape {
 ```
 
 An `EnumDeclaration` component needs variant sub-components:
+
 - `EnumVariant` — unit variant
 - `EnumVariant` with `fields` — tuple or struct variant
 
@@ -356,7 +378,7 @@ const serde = createCrate({
   version: "1.0",
   descriptor: {
     ".": { named: ["Serialize", "Deserialize", "Serializer", "Deserializer"] },
-    "json": { named: ["to_string", "from_str", "Value"] },
+    json: { named: ["to_string", "from_str", "Value"] },
   },
 });
 ```
@@ -390,6 +412,7 @@ The crate scope tracks dependencies (added when external crate symbols are refer
 **No precedent in existing packages.** Lifetimes are a Rust-specific concept.
 
 For MVP, lifetimes can be handled as:
+
 - String parameters in generic parameter lists: `<'a, T: 'a>`.
 - Inline strings in type annotations: `&'a str`.
 
@@ -424,6 +447,7 @@ This list is maintained as a `PRELUDE_TYPES: Set<string>` constant in the refere
 Rust needs a custom name conflict resolver (not core's default). When imported symbols (`use` aliases) conflict with local declarations, the imported symbol should be renamed — not the local declaration. This follows TypeScript's pattern where `LocalImportSymbol` flagged symbols are renamed first.
 
 The resolver should:
+
 1. Keep local declarations unchanged.
 2. Rename `use`-imported symbols with `_2`, `_3` suffixes on conflict.
 3. Treat symbols created as local `use` aliases as import symbols (e.g., alias symbols from `addUse`), so deconfliction targets imports before declarations.
@@ -522,6 +546,7 @@ export * from "./utils.js";
 ```
 
 **Consumer usage:**
+
 ```tsx
 import * as rust from "@alloy-js/rust";
 
@@ -534,7 +559,7 @@ import * as rust from "@alloy-js/rust";
       </rust.StructDeclaration>
     </rust.SourceFile>
   </rust.CrateDirectory>
-</Output>
+</Output>;
 ```
 
 ## 4.3 Major Internal Areas of Responsibility
@@ -550,6 +575,7 @@ import * as rust from "@alloy-js/rust";
 ## 4.4 Relationship to Alloy Core
 
 The package depends on `@alloy-js/core` and uses:
+
 - `OutputSymbol`, `OutputScope` (subclassing)
 - `createSymbol()`, `createScope()` (factories)
 - `createNamePolicy()` (naming)
@@ -571,6 +597,7 @@ The MVP should enable generation of a complete, compilable Rust crate with basic
 ## 5.1 In Scope
 
 ### File / Module Generation
+
 - `CrateDirectory` — creates crate root with `Cargo.toml`.
 - `SourceFile` — creates `.rs` files with module scope.
 - `ModuleDirectory` — creates subdirectory-based modules.
@@ -578,6 +605,7 @@ The MVP should enable generation of a complete, compilable Rust crate with basic
 - `CargoTomlFile` — generates `Cargo.toml` with metadata and dependencies.
 
 ### Imports / Use Statements
+
 - Automatic `use` statement generation when referencing cross-module symbols.
 - `use crate::path::Item;` for same-crate references.
 - `use <crate>::Item;` for external crate references.
@@ -585,12 +613,14 @@ The MVP should enable generation of a complete, compilable Rust crate with basic
 - Import sorting: `std` → external → `crate::`.
 
 ### Identifiers and References
+
 - `Reference` component resolving refkeys to symbol names.
 - Name policy with `snake_case`, `PascalCase`, `SCREAMING_SNAKE_CASE` transformations.
 - Reserved word handling with `r#` prefix.
 - `RustOutputSymbol` with visibility property.
 
 ### Declarations
+
 - `StructDeclaration` — named structs with fields (field-level visibility).
 - `EnumDeclaration` — enums with unit, tuple, and struct variants.
 - `FunctionDeclaration` — functions with parameters, return type, async, pub.
@@ -600,28 +630,34 @@ The MVP should enable generation of a complete, compilable Rust crate with basic
 - `ConstDeclaration` — `const NAME: Type = value;`.
 
 ### Type System (Basic)
+
 - `TypeParameters` — `<T, U>` with basic bounds (`T: Display`).
 - `WhereClause` — `where T: Display + Clone`.
 - Inline type annotations via `code` template.
 
 ### Attributes
+
 - `Attribute` — `#[name(args)]`.
 - `DeriveAttribute` — `#[derive(Trait1, Trait2)]`.
 
 ### Comments
+
 - `DocComment` — `///` doc comments.
 - `ModuleDocComment` — `//!` inner doc comments (for file headers).
 
 ### Formatting
+
 - 4-space indent, 100-char width.
 - Trailing commas in multi-line contexts.
 - Blank lines between top-level items.
 
 ### External Dependencies
+
 - `createCrate()` factory for external crate descriptors.
 - `std` builtin descriptor covering: `Option`, `Result`, `Vec`, `String`, `Box`, `HashMap`, `HashSet`, `io::{Read, Write}`, `fmt::Display`, `fmt::Debug`, `clone::Clone`, `default::Default`.
 
 ### Tests
+
 - `test/utils.tsx` with `toSourceText()`.
 - Tests for each declaration component.
 - Cross-module reference tests.
@@ -631,6 +667,7 @@ The MVP should enable generation of a complete, compilable Rust crate with basic
 ## 5.2 What MVP Produces
 
 A compilable Rust crate with:
+
 - Multiple modules in a directory hierarchy.
 - Structs, enums, traits, and functions with correct syntax.
 - Automatic `use` statements for cross-module and cross-crate references.
@@ -643,30 +680,30 @@ A compilable Rust crate with:
 
 # 6. Deferred / Out-of-Scope Features
 
-| Feature | Why Deferred |
-|---|---|
-| **Lifetimes** (`'a` annotations) | Complex, Rust-specific. Can be rendered inline with `code` template for now. |
-| **Pattern matching** (`match` expressions with complex patterns) | Rich expression syntax. Basic `match` can be inline. |
-| **Closures** (`\|x\| expr`) | Can be rendered inline with `code` template. |
-| **Async/await expressions** | `async fn` is in MVP; complex async expressions (`async { }`, `.await`) are deferred. |
-| **Unsafe blocks/functions** | `unsafe fn` modifier is in MVP; full unsafe block semantics are deferred. |
-| **Macro definitions** (`macro_rules!`) | Complex, rarely needed in code generation. |
-| **Proc macro crates** | Separate crate type, advanced use case. |
-| **Tuple structs** (`struct Foo(T1, T2)`) | Less common. Named structs are MVP. |
-| **Unit structs** (`struct Foo;`) | Rare in code generation. |
-| **Static declarations** | Less common than `const`. |
-| **`pub(in path)` visibility** | Rare. `pub`, `pub(crate)`, and private cover most cases. |
-| **Re-exports** (`pub use`) | Advanced module organization. |
-| **Glob imports** (`use path::*`) | Generally discouraged. |
-| **Conditional compilation** (`#[cfg(...)]`) | Advanced feature. |
-| **Feature flags** in `Cargo.toml` | Advanced dependency management. |
-| **Workspace support** | Multi-crate projects. |
-| **`impl Trait` in function signatures** | Can be rendered inline. |
-| **`dyn Trait` / trait objects** | Can be rendered inline. |
-| **Associated types** in traits | Can be rendered inline for now. |
-| **Complex `where` clauses** | Basic `where` is MVP; higher-ranked trait bounds are deferred. |
-| **If/else, loop, for, while expressions** | Imperative control flow. Can use `code` template. |
-| **Let bindings with patterns** | Can use `code` template. |
+| Feature                                                          | Why Deferred                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Lifetimes** (`'a` annotations)                                 | Complex, Rust-specific. Can be rendered inline with `code` template for now.          |
+| **Pattern matching** (`match` expressions with complex patterns) | Rich expression syntax. Basic `match` can be inline.                                  |
+| **Closures** (`\|x\| expr`)                                      | Can be rendered inline with `code` template.                                          |
+| **Async/await expressions**                                      | `async fn` is in MVP; complex async expressions (`async { }`, `.await`) are deferred. |
+| **Unsafe blocks/functions**                                      | `unsafe fn` modifier is in MVP; full unsafe block semantics are deferred.             |
+| **Macro definitions** (`macro_rules!`)                           | Complex, rarely needed in code generation.                                            |
+| **Proc macro crates**                                            | Separate crate type, advanced use case.                                               |
+| **Tuple structs** (`struct Foo(T1, T2)`)                         | Less common. Named structs are MVP.                                                   |
+| **Unit structs** (`struct Foo;`)                                 | Rare in code generation.                                                              |
+| **Static declarations**                                          | Less common than `const`.                                                             |
+| **`pub(in path)` visibility**                                    | Rare. `pub`, `pub(crate)`, and private cover most cases.                              |
+| **Re-exports** (`pub use`)                                       | Advanced module organization.                                                         |
+| **Glob imports** (`use path::*`)                                 | Generally discouraged.                                                                |
+| **Conditional compilation** (`#[cfg(...)]`)                      | Advanced feature.                                                                     |
+| **Feature flags** in `Cargo.toml`                                | Advanced dependency management.                                                       |
+| **Workspace support**                                            | Multi-crate projects.                                                                 |
+| **`impl Trait` in function signatures**                          | Can be rendered inline.                                                               |
+| **`dyn Trait` / trait objects**                                  | Can be rendered inline.                                                               |
+| **Associated types** in traits                                   | Can be rendered inline for now.                                                       |
+| **Complex `where` clauses**                                      | Basic `where` is MVP; higher-ranked trait bounds are deferred.                        |
+| **If/else, loop, for, while expressions**                        | Imperative control flow. Can use `code` template.                                     |
+| **Let bindings with patterns**                                   | Can use `code` template.                                                              |
 
 ---
 
@@ -675,6 +712,7 @@ A compilable Rust crate with:
 ## 7.1 Basic Struct with Impl
 
 **Input (Alloy JSX):**
+
 ```tsx
 <rust.CrateDirectory name="example" edition="2021">
   <rust.SourceFile path="lib.rs">
@@ -684,17 +722,23 @@ A compilable Rust crate with:
     </rust.StructDeclaration>
 
     <rust.ImplBlock type={pointRefkey}>
-      <rust.FunctionDeclaration name="new" pub parameters={[
-        { name: "x", type: "f64" },
-        { name: "y", type: "f64" },
-      ]} returnType="Self">
+      <rust.FunctionDeclaration
+        name="new"
+        pub
+        parameters={[
+          { name: "x", type: "f64" },
+          { name: "y", type: "f64" },
+        ]}
+        returnType="Self"
+      >
         {code`Self { x, y }`}
       </rust.FunctionDeclaration>
 
-      <rust.FunctionDeclaration name="distance" parameters={[
-        { name: "&self" },
-        { name: "other", type: "&Point" },
-      ]} returnType="f64">
+      <rust.FunctionDeclaration
+        name="distance"
+        parameters={[{ name: "&self" }, { name: "other", type: "&Point" }]}
+        returnType="f64"
+      >
         {code`((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()`}
       </rust.FunctionDeclaration>
     </rust.ImplBlock>
@@ -703,6 +747,7 @@ A compilable Rust crate with:
 ```
 
 **Expected output (`lib.rs`):**
+
 ```rust
 #[derive(Debug, Clone)]
 pub struct Point {
@@ -724,6 +769,7 @@ impl Point {
 ## 7.2 Multi-Module Crate with Imports
 
 **Input (Alloy JSX):**
+
 ```tsx
 const userRefkey = refkey();
 const greetRefkey = refkey();
@@ -732,36 +778,56 @@ const greetRefkey = refkey();
   <rust.SourceFile path="lib.rs" />
   <rust.ModuleDirectory path="models">
     <rust.SourceFile path="user.rs">
-      <rust.StructDeclaration name="User" pub refkey={userRefkey} derives={["Debug"]}>
+      <rust.StructDeclaration
+        name="User"
+        pub
+        refkey={userRefkey}
+        derives={["Debug"]}
+      >
         <rust.Field name="name" type="String" pub />
         <rust.Field name="age" type="u32" pub />
       </rust.StructDeclaration>
     </rust.SourceFile>
   </rust.ModuleDirectory>
   <rust.SourceFile path="greet.rs">
-    <rust.FunctionDeclaration name="greet" pub refkey={greetRefkey}
-      parameters={[{ name: "user", type: <><rust.Reference refkey={userRefkey} /></> }]}
+    <rust.FunctionDeclaration
+      name="greet"
+      pub
+      refkey={greetRefkey}
+      parameters={[
+        {
+          name: "user",
+          type: (
+            <>
+              <rust.Reference refkey={userRefkey} />
+            </>
+          ),
+        },
+      ]}
     >
       {code`println!("Hello, {}! Age: {}", user.name, user.age);`}
     </rust.FunctionDeclaration>
   </rust.SourceFile>
-</rust.CrateDirectory>
+</rust.CrateDirectory>;
 ```
 
 **Expected output:**
 
 `lib.rs`:
+
 ```rust
 pub mod greet;
 pub mod models;
 ```
 
 `models/mod.rs`:
+
 ```rust
 pub mod user;
 ```
 
 `models/user.rs`:
+
 ```rust
 #[derive(Debug)]
 pub struct User {
@@ -771,6 +837,7 @@ pub struct User {
 ```
 
 `greet.rs`:
+
 ```rust
 use crate::models::user::User;
 
@@ -782,6 +849,7 @@ pub fn greet(user: User) {
 ## 7.3 Trait and Impl
 
 **Expected output:**
+
 ```rust
 pub trait Greetable {
     fn greeting(&self) -> String;
@@ -801,6 +869,7 @@ impl Greetable for User {
 ## 7.4 Enum with Variants
 
 **Expected output:**
+
 ```rust
 #[derive(Debug, Clone)]
 pub enum Shape {
@@ -816,6 +885,7 @@ pub enum Shape {
 ## 7.5 Cargo.toml
 
 **Expected output:**
+
 ```toml
 [package]
 name = "myapp"
@@ -834,33 +904,35 @@ tokio = { version = "1", features = ["full"] }
 ## 8.1 Design Questions
 
 1. **How should `mod` declarations be auto-generated?** Options:
-   - (a) `SourceFile` for `lib.rs`/`main.rs` auto-scans child modules from the scope and renders `mod` declarations. *(Recommended — similar to TS barrel files.)*
+   - (a) `SourceFile` for `lib.rs`/`main.rs` auto-scans child modules from the scope and renders `mod` declarations. _(Recommended — similar to TS barrel files.)_
    - (b) User explicitly places `<ModDeclaration>` components.
    - (c) Hybrid: auto-generate by default, allow manual override.
 
 2. **How should `self` parameters be represented?** Options:
    - (a) Magic first parameter: `{ name: "&self" }` or `{ name: "&mut self" }`.
    - (b) Dedicated `receiver` prop on `FunctionDeclaration`: `receiver="&self"`.
-   - (c) Auto-injected when inside an `ImplBlock` (like Python auto-injects `self`). *(Recommended — least verbose for users.)*
+   - (c) Auto-injected when inside an `ImplBlock` (like Python auto-injects `self`). _(Recommended — least verbose for users.)_
 
-3. **Should `ImplBlock` create a member scope on the target type?** If yes, methods declared inside an impl block would be discoverable as members of the type. This enables `memberRefkey(typeRefkey, "method_name")` references. *(Recommended: yes.)*
+3. **Should `ImplBlock` create a member scope on the target type?** If yes, methods declared inside an impl block would be discoverable as members of the type. This enables `memberRefkey(typeRefkey, "method_name")` references. _(Recommended: yes.)_
 
 4. **How should field-level visibility work?** Struct fields in Rust have independent visibility from the struct. Options:
-   - (a) `pub` prop on `Field` component. *(Recommended — mirrors Rust syntax.)*
+   - (a) `pub` prop on `Field` component. _(Recommended — mirrors Rust syntax.)_
    - (b) Visibility property on the field symbol.
    - (c) Both (prop sets symbol property).
 
 5. **How should `use` statement grouping work?** Rust idiom groups by path tree:
+
    ```rust
    use std::io::{self, Read, Write};
    ```
+
    Options:
    - (a) Always flatten: one `use` per item. Simple to implement.
-   - (b) Group by common prefix: `use path::{A, B};`. More idiomatic. *(Recommended for MVP.)*
+   - (b) Group by common prefix: `use path::{A, B};`. More idiomatic. _(Recommended for MVP.)_
 
 6. **Should lifetimes be modeled as symbols?** Options:
    - (a) Yes — `LifetimeSymbol` in a `"lifetimes"` declaration space. Enables refkey-based lifetime references.
-   - (b) No — lifetimes are inline strings for MVP. *(Recommended for MVP.)*
+   - (b) No — lifetimes are inline strings for MVP. _(Recommended for MVP.)_
 
 ## 8.2 Risks
 

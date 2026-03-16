@@ -1,17 +1,17 @@
 # T071 — Prelude Type Shadowing Causes Missing Imports
 
-| Field | Value |
-|-------|-------|
-| **ID** | T071 |
-| **Epic** | [E007](../epics/E007-bug-fixes.md) |
-| **Type** | bug |
-| **Status** | done |
-| **Priority** | P1 — must-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | Yes |
-| **Dependencies** | T022 (Reference resolution) |
-| **Blocks** | — |
+| Field                     | Value                              |
+| ------------------------- | ---------------------------------- |
+| **ID**                    | T071                               |
+| **Epic**                  | [E007](../epics/E007-bug-fixes.md) |
+| **Type**                  | bug                                |
+| **Status**                | done                               |
+| **Priority**              | P1 — must-have                     |
+| **Owner Role**            | AI coding agent                    |
+| **AI Executable**         | Yes                                |
+| **Human Review Required** | Yes                                |
+| **Dependencies**          | T022 (Reference resolution)        |
+| **Blocks**                | —                                  |
 
 ---
 

@@ -1,17 +1,17 @@
 # T051 — ClosureExpression Component
 
-| Field | Value |
-|-------|-------|
-| **ID** | T051 |
-| **Epic** | [E008](../epics/E008-expression-components.md) |
-| **Type** | feature |
-| **Status** | done |
-| **Priority** | P2 — should-have |
-| **Owner Role** | AI coding agent |
-| **AI Executable** | Yes |
-| **Human Review Required** | No |
-| **Dependencies** | T009 (SourceFile / CrateDirectory) |
-| **Blocks** | T053 (Update rust-example sample) |
+| Field                     | Value                                          |
+| ------------------------- | ---------------------------------------------- |
+| **ID**                    | T051                                           |
+| **Epic**                  | [E008](../epics/E008-expression-components.md) |
+| **Type**                  | feature                                        |
+| **Status**                | done                                           |
+| **Priority**              | P2 — should-have                               |
+| **Owner Role**            | AI coding agent                                |
+| **AI Executable**         | Yes                                            |
+| **Human Review Required** | No                                             |
+| **Dependencies**          | T009 (SourceFile / CrateDirectory)             |
+| **Blocks**                | T053 (Update rust-example sample)              |
 
 ---
 
@@ -62,9 +62,9 @@ interface ClosureParam {
 
 interface ClosureExpressionProps {
   parameters: ClosureParam[];
-  move?: boolean;            // move keyword for ownership capture
-  returnType?: Children;     // Optional return type annotation
-  children: Children;        // Closure body
+  move?: boolean; // move keyword for ownership capture
+  returnType?: Children; // Optional return type annotation
+  children: Children; // Closure body
 }
 ```
 
@@ -105,6 +105,7 @@ interface ClosureExpressionProps {
 1 closure in `samples/rust-example/store-module.tsx` — `.retain(|_, entry| { ... })` in evict_expired method. Closures are ubiquitous in idiomatic Rust iterator chains.
 
 Implemented in:
+
 - `packages/rust/src/components/closure-expression.tsx`
 - `packages/rust/src/components/index.ts`
 - `packages/rust/src/components/stc/index.ts`

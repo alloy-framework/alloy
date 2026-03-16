@@ -1,17 +1,17 @@
 # T021: Self Receiver in FunctionDeclaration
 
-| Field            | Value                                                                 |
-| ---------------- | --------------------------------------------------------------------- |
-| **ID**           | T021                                                                  |
-| **Epic**         | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md)    |
-| **Type**         | feature                                                               |
-| **Status**       | done                                                                  |
-| **Priority**     | high                                                                  |
-| **Owner**        | AI coding agent                                                       |
-| **AI Executable**| yes                                                                   |
-| **Human Review** | yes                                                                   |
-| **Dependencies** | T013, T020                                                            |
-| **Blocks**       | —                                                                     |
+| Field             | Value                                                             |
+| ----------------- | ----------------------------------------------------------------- |
+| **ID**            | T021                                                              |
+| **Epic**          | [E004 — Traits and Impl Blocks](../epics/E004-traits-and-impl.md) |
+| **Type**          | feature                                                           |
+| **Status**        | done                                                              |
+| **Priority**      | high                                                              |
+| **Owner**         | AI coding agent                                                   |
+| **AI Executable** | yes                                                               |
+| **Human Review**  | yes                                                               |
+| **Dependencies**  | T013, T020                                                        |
+| **Blocks**        | —                                                                 |
 
 ---
 

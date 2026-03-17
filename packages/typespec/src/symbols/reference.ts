@@ -24,8 +24,7 @@ export function ref(refkey: Refkey): Ref<Optional<OutputSymbol>> {
       return undefined;
     }
     const result = resolveResult.value;
-    const { commonScope, pathUp, pathDown, memberPath, lexicalDeclaration } =
-      result;
+    const { commonScope, pathUp, pathDown, lexicalDeclaration } = result;
 
     if (!validateSymbolReachable(pathDown)) {
       return undefined;

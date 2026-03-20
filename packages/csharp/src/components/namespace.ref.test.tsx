@@ -162,3 +162,32 @@ it("can be referenced by refkey", () => {
     TestClass;
   `);
 });
+
+it("references types across sibling namespaces under the same parent", () => {
+  const classRef = refkey();
+
+  const tree = (
+    <Output>
+      <SourceFile path="test.cs">
+        <Namespace name="Parent">
+          <Namespace name="Models">
+            <ClassDeclaration name="User" refkey={classRef} />
+          </Namespace>
+          <hbr />
+          <Namespace name="Services">{classRef};</Namespace>
+        </Namespace>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(`
+    namespace Parent {
+        namespace Models {
+            class User;
+        }
+        namespace Services {
+            Models.User;
+        }
+    }
+  `);
+});

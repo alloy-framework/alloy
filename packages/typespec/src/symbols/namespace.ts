@@ -1,4 +1,4 @@
-import { Namekey } from "@alloy-js/core";
+import { Namekey, OutputSpace } from "@alloy-js/core";
 import { NamedTypeSymbol } from "./named-type.js";
 import {
   TypeSpecSymbol,
@@ -14,12 +14,10 @@ export class NamespaceSymbol extends NamedTypeSymbol {
 
   constructor(
     name: string | Namekey,
-    parentNamespace?: NamespaceSymbol,
+    spaces: OutputSpace[] | OutputSpace | undefined,
     options?: NamespaceSymbolOptions,
   ) {
-    const space = parentNamespace?.members;
-
-    super(name, space, "namespace", options);
+    super(name, spaces, "namespace", options);
 
     this.#isGlobal = options?.isGlobal ?? false;
   }

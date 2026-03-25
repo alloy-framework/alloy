@@ -1,1 +1,1 @@
-export * from "./global-namespace.js";
+export * from "./program.js";

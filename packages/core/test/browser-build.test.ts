@@ -45,7 +45,10 @@ async function bundleForBrowser(): Promise<string> {
     },
   });
 
-  const output = (Array.isArray(result) ? result[0] : result) as Rollup.RollupOutput;
+  const output = (
+    Array.isArray(result) ?
+      result[0]
+    : result) as Rollup.RollupOutput;
   const chunks = output.output.filter(
     (o): o is Rollup.OutputChunk => o.type === "chunk",
   );
@@ -79,4 +82,3 @@ describe("browser build", () => {
     expect(code).not.toMatch(/require\(\s*["']node:/);
   }, 30_000);
 });
-

@@ -1,12 +1,13 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { createAssociatedTypeSymbol } from "../symbols/factories.js";
 
 export interface AssociatedTypeProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   constraint?: Children;
   children?: Children;

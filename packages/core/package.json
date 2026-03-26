@@ -49,8 +49,12 @@
   "browser": {
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
     "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
+    "./dist/src/host/node-host.js": "./dist/src/host/node-host.browser.js",
+    "./src/host/node-host.ts": "./src/host/node-host.browser.ts",
     "./dist/src/inspect.js": "./dist/src/inspect.browser.js",
     "./src/inspect.ts": "./src/inspect.browser.ts",
+    "./dist/src/debug/source-map.js": "./dist/src/debug/source-map.browser.js",
+    "./src/debug/source-map.ts": "./src/debug/source-map.browser.ts",
     "./dist/src/devtools/devtools-server.js": "./dist/src/devtools/devtools-server.browser.js",
     "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts"
   },

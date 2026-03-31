@@ -3,6 +3,7 @@
  */
 import type { ServerToClientMessage } from "../devtools/devtools-protocol.js";
 import { isDevtoolsEnabled } from "../devtools/devtools-server.js";
+import { env, sourceMapsEnabled } from "../host/node-host.js";
 import { untrack } from "../reactivity.js";
 import { initTrace, isTraceEnabled } from "./trace-writer.js";
 
@@ -21,12 +22,12 @@ export function isDebugEnabled(): boolean {
 // Environment configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-const traceEnv = process.env.ALLOY_TRACE ?? "";
+const traceEnv = env("ALLOY_TRACE") ?? "";
 const tracePhases = new Set<string>(
   traceEnv === "" ? [] : traceEnv.split(",").map((t) => t.trim()),
 );
 
-const debuggerIdsEnv = process.env.ALLOY_BREAK_ON_DID ?? "";
+const debuggerIdsEnv = env("ALLOY_BREAK_ON_DID") ?? "";
 const debuggerIds = new Set<number>();
 debuggerIdsEnv.split(",").forEach((id) => {
   const num = parseInt(id, 10);
@@ -37,9 +38,9 @@ debuggerIdsEnv.split(",").forEach((id) => {
 
 /** Parse the ALLOY_BREAK_ON_DID environment variable into a set of IDs. */
 export function parseBreakOnIds(): Set<number> {
-  const env = process.env.ALLOY_BREAK_ON_DID ?? "";
+  const raw = env("ALLOY_BREAK_ON_DID") ?? "";
   const ids = new Set<number>();
-  env.split(",").forEach((id) => {
+  raw.split(",").forEach((id) => {
     const num = parseInt(id, 10);
     if (!isNaN(num)) {
       ids.add(num);
@@ -65,7 +66,7 @@ if (tracePhases.size > 0) {
 }
 
 // Initialize SQLite trace writer if ALLOY_DEBUG_TRACE is set
-const traceDbEnv = process.env.ALLOY_DEBUG_TRACE;
+const traceDbEnv = env("ALLOY_DEBUG_TRACE");
 if (traceDbEnv) {
   const traceDbPath =
     traceDbEnv === "1" || traceDbEnv === "true" ? "alloy-trace.db" : traceDbEnv;
@@ -82,7 +83,7 @@ if (traceDbEnv) {
 if (import.meta.url.includes("/dist/dev/")) {
   // eslint-disable-next-line no-console
   console.log("Alloy debug build loaded.");
-  if (process.sourceMapsEnabled) {
+  if (sourceMapsEnabled()) {
     // eslint-disable-next-line no-console
     console.log("  Source maps enabled.");
   } else {

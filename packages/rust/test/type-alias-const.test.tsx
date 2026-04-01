@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   ConstDeclaration,
   CrateDirectory,
   SourceFile,
@@ -141,6 +142,27 @@ describe("TypeAlias", () => {
       type-alias|type-alias|pub
     `);
   });
+
+  it("renders attributes before type alias", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TypeAlias
+              name="Result"
+              pub
+              attributes={<Attribute name="allow" args="dead_code" />}
+            >
+              std::result::Result&lt;T, MyError&gt;
+            </TypeAlias>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[allow(dead_code)]
+      pub type Result = std::result::Result<T, MyError>;
+    `);
+  });
 });
 
 describe("ConstDeclaration", () => {
@@ -249,6 +271,27 @@ describe("ConstDeclaration", () => {
     ).toRenderTo(d`
       pub const MAX_ITEMS: usize = 16;
       const|pub
+    `);
+  });
+
+  it("renders attributes before const declaration", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <ConstDeclaration
+              name="MAX"
+              type="u32"
+              attributes={<Attribute name="allow" args="dead_code" />}
+            >
+              100
+            </ConstDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[allow(dead_code)]
+      const MAX: u32 = 100;
     `);
   });
 });

@@ -40,6 +40,7 @@ export interface FunctionDeclarationProps {
   typeParameters?: TypeParameterProp[];
   whereClause?: Children;
   receiver?: "&self" | "&mut self" | "self" | "none";
+  attributes?: Children;
   doc?: string;
   children?: Children;
 }
@@ -82,6 +83,12 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
+        </>
+      : null}
+      {props.attributes ?
+        <>
+          {props.attributes}
+          <hbr />
         </>
       : null}
       <CoreDeclaration symbol={functionSymbol}>

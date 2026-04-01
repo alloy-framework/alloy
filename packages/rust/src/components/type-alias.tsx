@@ -13,6 +13,7 @@ export interface TypeAliasProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
+  attributes?: Children;
   typeParameters?: TypeParameterProp[];
   children?: Children;
 }
@@ -27,14 +28,22 @@ export function TypeAlias(props: TypeAliasProps) {
   const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
-    <CoreDeclaration symbol={typeAliasSymbol}>
-      {visibilityPrefix}
-      {"type "}
-      {typeAliasSymbol.name}
-      <TypeParameters params={props.typeParameters} />
-      {" = "}
-      {props.children}
-      {";"}
-    </CoreDeclaration>
+    <>
+      {props.attributes ?
+        <>
+          {props.attributes}
+          <hbr />
+        </>
+      : null}
+      <CoreDeclaration symbol={typeAliasSymbol}>
+        {visibilityPrefix}
+        {"type "}
+        {typeAliasSymbol.name}
+        <TypeParameters params={props.typeParameters} />
+        {" = "}
+        {props.children}
+        {";"}
+      </CoreDeclaration>
+    </>
   );
 }

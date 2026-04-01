@@ -30,6 +30,7 @@ export interface ImplBlockProps {
   trait?: Refkey | Children;
   typeParameters?: TypeParameterProps[];
   whereClause?: Children;
+  attributes?: Children;
   children?: Children;
 }
 
@@ -144,6 +145,12 @@ export function ImplBlock(props: ImplBlockProps) {
 
   return (
     <>
+      {props.attributes ?
+        <>
+          {props.attributes}
+          <hbr />
+        </>
+      : null}
       {code`impl`}
       <TypeParameters params={implTypeParameters} />{" "}
       {renderedTrait ?

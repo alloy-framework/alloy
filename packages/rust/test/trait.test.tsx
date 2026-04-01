@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   Reference,
   SourceFile,
@@ -221,6 +222,45 @@ describe("TraitDeclaration", () => {
     ).toRenderTo(d`
       pub trait Serialize {}
       pub
+    `);
+  });
+
+  it("renders attributes before trait declaration", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration
+              name="MyTrait"
+              pub
+              attributes={<Attribute name="deprecated" />}
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[deprecated]
+      pub trait MyTrait {}
+    `);
+  });
+
+  it("renders attributes with doc comment", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration
+              name="Handler"
+              doc="Handles events."
+              attributes={<Attribute name="async_trait" />}
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      /// Handles events.
+      #[async_trait]
+      trait Handler {}
     `);
   });
 });

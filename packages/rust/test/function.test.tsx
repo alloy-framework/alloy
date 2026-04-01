@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   FunctionDeclaration,
   ImplBlock,
@@ -375,5 +376,75 @@ describe("FunctionDeclaration", () => {
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`fn utility() {}`);
+  });
+
+  it("renders attributes before function declaration", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <FunctionDeclaration
+              name="test_it"
+              receiver="none"
+              attributes={<Attribute name="test" />}
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[test]
+      fn test_it() {}
+    `);
+  });
+
+  it("renders attributes with doc comment", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <FunctionDeclaration
+              name="run"
+              doc="Runs the process."
+              attributes={<Attribute name="inline" />}
+            >
+              {"todo!()"}
+            </FunctionDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      /// Runs the process.
+      #[inline]
+      fn run() {
+        todo!()
+      }
+    `);
+  });
+
+  it("renders multiple attributes", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <FunctionDeclaration
+              name="handler"
+              pub
+              async
+              attributes={
+                <>
+                  <Attribute name="cfg" args={'feature = "server"'} />
+                  <hbr />
+                  <Attribute name="allow" args="unused_variables" />
+                </>
+              }
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[cfg(feature = "server")]
+      #[allow(unused_variables)]
+      pub async fn handler() {}
+    `);
   });
 });

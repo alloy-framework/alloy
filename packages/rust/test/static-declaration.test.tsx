@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   SourceFile,
   StaticDeclaration,
@@ -172,6 +173,56 @@ describe("StaticDeclaration", () => {
     ).toRenderTo(d`
       static GLOBAL_FLAG: bool = true;
       GLOBAL_FLAG
+    `);
+  });
+
+  it("renders attributes before static declaration", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StaticDeclaration
+              name="GLOBAL"
+              type="u32"
+              attributes={<Attribute name="no_mangle" />}
+            >
+              0
+            </StaticDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[no_mangle]
+      static GLOBAL: u32 = 0;
+    `);
+  });
+
+  it("renders attributes with mutable static", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StaticDeclaration
+              name="BUFFER"
+              mutable
+              type="Vec<u8>"
+              attributes={
+                <>
+                  <Attribute name="no_mangle" />
+                  <hbr />
+                  <Attribute name="used" />
+                </>
+              }
+            >
+              Vec::new()
+            </StaticDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      #[no_mangle]
+      #[used]
+      static mut BUFFER: Vec<u8> = Vec::new();
     `);
   });
 });

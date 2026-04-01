@@ -12,6 +12,7 @@ export interface ConstDeclarationProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
+  attributes?: Children;
   type: Children;
   children?: Children;
 }
@@ -26,15 +27,23 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
   const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
-    <CoreDeclaration symbol={constSymbol}>
-      {visibilityPrefix}
-      {"const "}
-      {constSymbol.name}
-      {": "}
-      {props.type}
-      {" = "}
-      {props.children}
-      {";"}
-    </CoreDeclaration>
+    <>
+      {props.attributes ?
+        <>
+          {props.attributes}
+          <hbr />
+        </>
+      : null}
+      <CoreDeclaration symbol={constSymbol}>
+        {visibilityPrefix}
+        {"const "}
+        {constSymbol.name}
+        {": "}
+        {props.type}
+        {" = "}
+        {props.children}
+        {";"}
+      </CoreDeclaration>
+    </>
   );
 }

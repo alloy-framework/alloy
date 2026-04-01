@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   EnumDeclaration,
   EnumVariant,
@@ -308,6 +309,77 @@ describe("EnumVariant", () => {
         Pending,
       }
       Pending
+    `);
+  });
+
+  it("renders attributes on enum variant", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Status">
+              <EnumVariant
+                name="Active"
+                attributes={<Attribute name="deprecated" />}
+              />
+              <EnumVariant name="Inactive" />
+            </EnumDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      enum Status {
+        #[deprecated]
+        Active,
+        Inactive,
+      }
+    `);
+  });
+
+  it("renders attributes with doc on enum variant", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Color">
+              <EnumVariant
+                name="Red"
+                doc="The red color."
+                attributes={<Attribute name="serde" args={'rename = "red"'} />}
+              />
+            </EnumDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      enum Color {
+        /// The red color.
+        #[serde(rename = "red")]
+        Red,
+      }
+    `);
+  });
+
+  it("renders attributes on tuple variant", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <EnumDeclaration name="Message">
+              <EnumVariant
+                name="Data"
+                fields={["Vec<u8>"]}
+                attributes={<Attribute name="allow" args="dead_code" />}
+              />
+            </EnumDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      enum Message {
+        #[allow(dead_code)]
+        Data(Vec<u8>),
+      }
     `);
   });
 });

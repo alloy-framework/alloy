@@ -45,6 +45,7 @@ export interface FieldProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
+  attributes?: Children;
   doc?: string;
 }
 
@@ -170,6 +171,12 @@ export function Field(props: FieldProps) {
       {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
+        </>
+      : null}
+      {props.attributes ?
+        <>
+          {props.attributes}
+          <hbr />
         </>
       : null}
       {visibilityPrefix}

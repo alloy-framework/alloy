@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   EnumDeclaration,
   FunctionDeclaration,
@@ -270,6 +271,61 @@ describe("ImplBlock", () => {
     ).toRenderTo(d`
       enum Result<T, E> {}
       impl<T, E> Result<T, E> where T: Clone {}
+    `);
+  });
+
+  it("renders attributes before impl block", () => {
+    const typeRef = refkey("foo-type");
+
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Foo" refkey={typeRef} />
+            <hbr />
+            <ImplBlock
+              type={typeRef}
+              attributes={<Attribute name="automatically_derived" />}
+            />
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      struct Foo {}
+      #[automatically_derived]
+      impl Foo {}
+    `);
+  });
+
+  it("renders attributes on trait impl", () => {
+    const typeRef = refkey("foo-type");
+    const traitRef = refkey("display-trait");
+
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <TraitDeclaration name="Display" refkey={traitRef} />
+            <hbr />
+            <StructDeclaration name="Foo" refkey={typeRef} />
+            <hbr />
+            <ImplBlock
+              type={typeRef}
+              trait={traitRef}
+              attributes={<Attribute name="automatically_derived" />}
+            >
+              <FunctionDeclaration name="fmt" />
+            </ImplBlock>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      trait Display {}
+      struct Foo {}
+      #[automatically_derived]
+      impl Display for Foo {
+        fn fmt(&self) {}
+      }
     `);
   });
 });

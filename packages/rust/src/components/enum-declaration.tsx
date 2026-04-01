@@ -3,6 +3,7 @@ import {
   Declaration as CoreDeclaration,
   For,
   Indent,
+  Namekey,
   Refkey,
   Scope,
   createScope,
@@ -18,7 +19,7 @@ import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface EnumDeclarationProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;
@@ -31,7 +32,7 @@ export interface EnumDeclarationProps {
 }
 
 export interface EnumVariantProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   doc?: string;
   kind?: "unit" | "tuple" | "struct";

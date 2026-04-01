@@ -7,7 +7,7 @@ import {
   DocComment,
   EnumDeclaration,
   EnumVariant,
-  ModuleDocComment,
+  InnerDocComment,
   SourceFile,
   StructDeclaration,
 } from "../src/index.js";
@@ -34,12 +34,12 @@ describe("T073: doc comment declaration line breaks", () => {
     `);
   });
 
-  it("should insert line break between ModuleDocComment and StructDeclaration without explicit hbr", () => {
+  it("should insert line break between InnerDocComment and StructDeclaration without explicit hbr", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <ModuleDocComment>{"Module docs\nSecond line"}</ModuleDocComment>
+            <InnerDocComment>{"Module docs\nSecond line"}</InnerDocComment>
             <StructDeclaration name="Response" />
           </SourceFile>
         </CrateDirectory>

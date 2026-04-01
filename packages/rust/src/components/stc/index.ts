@@ -14,8 +14,12 @@ import { ConstDeclaration as ConstDeclarationComponent } from "../const-declarat
 import { ContinueExpression as ContinueExpressionComponent } from "../continue-expression.js";
 import { CrateDirectory as CrateDirectoryComponent } from "../crate-directory.js";
 import {
+  BlockComment as BlockCommentComponent,
   DocComment as DocCommentComponent,
-  ModuleDocComment as ModuleDocCommentComponent,
+  InnerBlockDocComment as InnerBlockDocCommentComponent,
+  InnerDocComment as InnerDocCommentComponent,
+  LineComment as LineCommentComponent,
+  OuterBlockDocComment as OuterBlockDocCommentComponent,
 } from "../doc-comment.js";
 import {
   EnumDeclaration as EnumDeclarationComponent,
@@ -76,6 +80,7 @@ export const ContinueExpression = stc(ContinueExpressionComponent);
 export const CrateDirectory = stc(CrateDirectoryComponent);
 export const BreakExpression = stc(BreakExpressionComponent);
 export const DeriveAttribute = stc(DeriveAttributeComponent);
+export const BlockComment = stc(BlockCommentComponent);
 export const DocComment = stc(DocCommentComponent);
 export const EnumDeclaration = stc(EnumDeclarationComponent);
 export const EnumVariant = stc(EnumVariantComponent);
@@ -95,7 +100,10 @@ export const LetBinding = stc(LetBindingComponent);
 export const MatchArm = stc(MatchArmComponent);
 export const MatchExpression = stc(MatchExpressionComponent);
 export const ModuleDirectory = stc(ModuleDirectoryComponent);
-export const ModuleDocComment = stc(ModuleDocCommentComponent);
+export const InnerBlockDocComment = stc(InnerBlockDocCommentComponent);
+export const InnerDocComment = stc(InnerDocCommentComponent);
+export const LineComment = stc(LineCommentComponent);
+export const OuterBlockDocComment = stc(OuterBlockDocCommentComponent);
 export const Parameters = stc(ParametersComponent);
 export const Reference = stc(ReferenceComponent);
 export const ReturnExpression = stc(ReturnExpressionComponent);

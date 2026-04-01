@@ -240,9 +240,9 @@ export function createTypeParameterSymbol(
   const scope = useRustScope();
   const typeParameterSpace =
     scope instanceof RustFunctionScope ? scope.typeParameters
-    : scope.ownerSymbol instanceof NamedTypeSymbol ?
-      scope.ownerSymbol.typeParameters
-    : undefined;
+      : scope.ownerSymbol instanceof NamedTypeSymbol ?
+        scope.ownerSymbol.typeParameters
+        : undefined;
 
   if (!typeParameterSpace) {
     throw new Error(

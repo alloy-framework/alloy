@@ -2,6 +2,7 @@ import {
   Children,
   Declaration as CoreDeclaration,
   Indent,
+  Namekey,
   Refkey,
   Scope,
   createScope,
@@ -27,7 +28,7 @@ import {
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface FunctionDeclarationProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;

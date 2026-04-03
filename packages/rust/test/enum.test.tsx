@@ -307,7 +307,7 @@ describe("EnumVariant", () => {
       enum Status {
         Pending,
       }
-      Pending
+      Status::Pending
     `);
   });
 });

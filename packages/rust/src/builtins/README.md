@@ -33,6 +33,7 @@ Each crate is generated independently from its own rustdoc JSON. The `std` descr
 ## What's encoded
 
 Each symbol has:
+
 - **`kind`**: `struct`, `enum`, `trait`, `function`, `type-alias`, `const`, `symbol`
 - **`metadata.since`**: minimum Rust version (e.g., `"1.80.0"`) from stability attributes
 - **`members`**: inherent methods/associated functions on types (structs, enums, traits)
@@ -42,22 +43,25 @@ Each symbol has:
 
 ## Usage
 
-```ts
+```tsx
 import { std, core, alloc } from "@alloy-js/rust";
 
-// Normal crate — use std
-<Reference refkey={std.fmt.Display} />             // → use std::fmt::Display;
-<Reference refkey={std.collections.HashMap} />     // → use std::collections::HashMap;
+// Use directly as JSX children or in props — no <Reference> wrapper needed
+<Field type={std.fmt.Display} />                   // → use std::fmt::Display;
+<Field type={std.collections.HashMap} />           // → use std::collections::HashMap;
+
+// Composing generic types
+<Field type={<>{"Option<"}{std.time.Duration}{">"}</>} />
 
 // Access member refkeys
 std.collections.HashMap.insert   // Refkey for the insert method
 std.collections.HashMap.new      // Refkey for the new associated function
 
 // #![no_std] — use core directly
-<Reference refkey={core.fmt.Display} />            // → use core::fmt::Display;
+<Field type={core.fmt.Display} />                  // → use core::fmt::Display;
 
 // #![no_std] + alloc
-<Reference refkey={alloc.vec.Vec} />               // → use alloc::vec::Vec;
+<Field type={alloc.vec.Vec} />                     // → use alloc::vec::Vec;
 ```
 
 ### Edition-aware preludes
@@ -180,13 +184,13 @@ npx tsx generate-crate-descriptor.ts <rustdoc.json> [options]
 
 Standard library crates automatically skip:
 
-| Module | Reason |
-|--------|--------|
-| `os`, `arch`, `simd` | Platform-specific |
-| `f16`, `f128`, `bstr`, `autodiff` | Nightly-only |
-| `intrinsics`, `field`, `hint` | Compiler internals |
-| `prelude`, `primitive`, `index` | Meta-modules or naming conflicts |
-| `unsafe_binder`, `from`, `async_iter` | Nightly-only |
+| Module                                | Reason                           |
+| ------------------------------------- | -------------------------------- |
+| `os`, `arch`, `simd`                  | Platform-specific                |
+| `f16`, `f128`, `bstr`, `autodiff`     | Nightly-only                     |
+| `intrinsics`, `field`, `hint`         | Compiler internals               |
+| `prelude`, `primitive`, `index`       | Meta-modules or naming conflicts |
+| `unsafe_binder`, `from`, `async_iter` | Nightly-only                     |
 
 Override with `--skip` for other crates.
 
@@ -203,13 +207,13 @@ Currently uses format version 57. The format is documented at https://github.com
 
 The following data is available in rustdoc JSON but not yet extracted:
 
-| Data | Available in rustdoc | Potential use |
-|---|---|---|
-| Generic parameters (`<K, V>`) | Yes | Type-safe generic instantiation |
-| Parameter types on functions | Yes | Type-checked JSX props |
-| Return types | Yes | Type-checked output |
-| Trait implementations | Yes | Derive validation, trait bounds |
-| Enum variants | Yes | Match arm generation |
-| Struct fields | Yes | Struct literal generation |
-| Documentation strings | Yes | Doc comments in generated code |
-| Where clauses | Yes | Constraint rendering |
+| Data                          | Available in rustdoc | Potential use                   |
+| ----------------------------- | -------------------- | ------------------------------- |
+| Generic parameters (`<K, V>`) | Yes                  | Type-safe generic instantiation |
+| Parameter types on functions  | Yes                  | Type-checked JSX props          |
+| Return types                  | Yes                  | Type-checked output             |
+| Trait implementations         | Yes                  | Derive validation, trait bounds |
+| Enum variants                 | Yes                  | Match arm generation            |
+| Struct fields                 | Yes                  | Struct literal generation       |
+| Documentation strings         | Yes                  | Doc comments in generated code  |
+| Where clauses                 | Yes                  | Constraint rendering            |

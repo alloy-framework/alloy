@@ -3,7 +3,6 @@ import {
   DocComment,
   FunctionDeclaration,
   ModuleDirectory,
-  Reference,
   SourceFile,
   TraitDeclaration,
   std,
@@ -36,7 +35,7 @@ export function TraitsModule(props: TraitsModuleProps) {
             receiver="&self"
             returnType={
               <>
-                <Reference refkey={resultAliasKey} />
+                {resultAliasKey}
                 {"<Vec<u8>>"}
               </>
             }
@@ -50,7 +49,7 @@ export function TraitsModule(props: TraitsModuleProps) {
             parameters={[{ name: "bytes", type: "&[u8]" }]}
             returnType={
               <>
-                <Reference refkey={resultAliasKey} />
+                {resultAliasKey}
                 {"<Self>"}
               </>
             }
@@ -67,7 +66,16 @@ export function TraitsModule(props: TraitsModuleProps) {
           name="Cacheable"
           refkey={cacheableKey}
           pub
-          typeParameters={[{ name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> }]}
+          typeParameters={[
+            {
+              name: "V",
+              constraint: (
+                <>
+                  {std.clone.Clone} + {std.marker.Send} + {std.marker.Sync}
+                </>
+              ),
+            },
+          ]}
         >
           <FunctionDeclaration
             name="cache_key"

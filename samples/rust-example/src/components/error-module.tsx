@@ -9,7 +9,6 @@ import {
   MatchArm,
   MatchExpression,
   ModuleDirectory,
-  Reference,
   SourceFile,
   TypeAlias,
   std,
@@ -64,13 +63,13 @@ export function ErrorModule(props: ErrorModuleProps) {
                 type: (
                   <>
                     {"&mut "}
-                    <Reference refkey={std.fmt.Formatter} />
+                    {std.fmt.Formatter}
                     {"<'_>"}
                   </>
                 ),
               },
             ]}
-            returnType={<Reference refkey={std.fmt.Result} />}
+            returnType={std.fmt.Result}
           >
             <MatchExpression expression="self">
               <MatchArm pattern="Self::NotFound">
@@ -104,7 +103,8 @@ export function ErrorModule(props: ErrorModuleProps) {
           pub
           typeParameters={[{ name: "T" }]}
         >
-          <Reference refkey={std.result.Result} />{"<T, StoreError>"}
+          {std.result.Result}
+          {"<T, StoreError>"}
         </TypeAlias>
       </SourceFile>
     </ModuleDirectory>

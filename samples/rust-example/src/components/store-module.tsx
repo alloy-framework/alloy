@@ -16,7 +16,6 @@ import {
   MatchExpression,
   MethodChainExpression,
   ModuleDirectory,
-  Reference,
   ReturnExpression,
   SourceFile,
   StructDeclaration,
@@ -67,22 +66,18 @@ export function StoreModule(props: StoreModuleProps) {
           refkey={entryKey}
           pub
           derives={["Debug", "Clone"]}
-          typeParameters={[{ name: "V", constraint: <Reference refkey={std.clone.Clone} /> }]}
+          typeParameters={[{ name: "V", constraint: std.clone.Clone }]}
           doc="A single entry in the store, holding a value and metadata."
         >
           <Field name="value" pub type="V" />
-          <Field
-            name="created_at"
-            pub
-            type={<Reference refkey={std.time.Instant} />}
-          />
+          <Field name="created_at" pub type={std.time.Instant} />
           <Field
             name="ttl"
             pub
             type={
               <>
                 {"Option<"}
-                <Reference refkey={std.time.Duration} />
+                {std.time.Duration}
                 {">"}
               </>
             }
@@ -97,8 +92,22 @@ export function StoreModule(props: StoreModuleProps) {
           refkey={storeKey}
           pub
           typeParameters={[
-            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
-            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
+            {
+              name: "K",
+              constraint: (
+                <>
+                  {std.cmp.Eq} + {std.hash.Hash} + {std.clone.Clone}
+                </>
+              ),
+            },
+            {
+              name: "V",
+              constraint: (
+                <>
+                  {std.clone.Clone} + {std.marker.Send} + {std.marker.Sync}
+                </>
+              ),
+            },
           ]}
           doc="A generic key-value store with capacity limits and TTL support."
         >
@@ -106,7 +115,7 @@ export function StoreModule(props: StoreModuleProps) {
             name="data"
             type={
               <>
-                <Reference refkey={std.collections.HashMap} />
+                {std.collections.HashMap}
                 {"<K, Entry<V>>"}
               </>
             }
@@ -117,7 +126,7 @@ export function StoreModule(props: StoreModuleProps) {
             type={
               <>
                 {"Option<"}
-                <Reference refkey={std.time.Duration} />
+                {std.time.Duration}
                 {">"}
               </>
             }
@@ -129,8 +138,22 @@ export function StoreModule(props: StoreModuleProps) {
         <ImplBlock
           type={storeKey}
           typeParameters={[
-            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
-            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
+            {
+              name: "K",
+              constraint: (
+                <>
+                  {std.cmp.Eq} + {std.hash.Hash} + {std.clone.Clone}
+                </>
+              ),
+            },
+            {
+              name: "V",
+              constraint: (
+                <>
+                  {std.clone.Clone} + {std.marker.Send} + {std.marker.Sync}
+                </>
+              ),
+            },
           ]}
         >
           <DocComment>
@@ -145,8 +168,7 @@ export function StoreModule(props: StoreModuleProps) {
           >
             <StructExpression type="Self">
               <FieldInit name="data">
-                <Reference refkey={std.collections.HashMap} />
-                ::new()
+                {std.collections.HashMap}::new()
               </FieldInit>
               <FieldInit name="max_capacity" />
               <FieldInit name="default_ttl">None</FieldInit>
@@ -160,12 +182,7 @@ export function StoreModule(props: StoreModuleProps) {
             name="with_default_ttl"
             pub
             receiver="self"
-            parameters={[
-              {
-                name: "ttl",
-                type: <Reference refkey={std.time.Duration} />,
-              },
-            ]}
+            parameters={[{ name: "ttl", type: std.time.Duration }]}
             returnType="Self"
           >
             <StructExpression type="Self" spread="self">
@@ -188,7 +205,7 @@ export function StoreModule(props: StoreModuleProps) {
             ]}
             returnType={
               <>
-                <Reference refkey={resultAliasKey} />
+                {resultAliasKey}
                 {"<()>"}
               </>
             }
@@ -205,8 +222,7 @@ export function StoreModule(props: StoreModuleProps) {
               <StructExpression type="Entry">
                 <FieldInit name="value" />
                 <FieldInit name="created_at">
-                  <Reference refkey={std.time.Instant} />
-                  ::now()
+                  {std.time.Instant}::now()
                 </FieldInit>
                 <FieldInit name="ttl">self.default_ttl</FieldInit>
                 <FieldInit name="status">EntryStatus::Active</FieldInit>
@@ -227,7 +243,7 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "key", type: "&K" }]}
             returnType={
               <>
-                <Reference refkey={resultAliasKey} />
+                {resultAliasKey}
                 {"<&V>"}
               </>
             }
@@ -268,7 +284,7 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[{ name: "key", type: "&K" }]}
             returnType={
               <>
-                <Reference refkey={resultAliasKey} />
+                {resultAliasKey}
                 {"<V>"}
               </>
             }
@@ -285,12 +301,7 @@ export function StoreModule(props: StoreModuleProps) {
               />
               <MethodChainExpression.Call
                 name="ok_or"
-                args={[
-                  <>
-                    <Reference refkey={storeErrorKey} />
-                    ::NotFound
-                  </>,
-                ]}
+                args={[<>{storeErrorKey}::NotFound</>]}
               />
             </MethodChainExpression>
           </FunctionDeclaration>
@@ -348,13 +359,27 @@ export function StoreModule(props: StoreModuleProps) {
           type={storeKey}
           trait={
             <>
-              <Reference refkey={cacheableKey} />
+              {cacheableKey}
               {"<V>"}
             </>
           }
           typeParameters={[
-            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
-            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
+            {
+              name: "K",
+              constraint: (
+                <>
+                  {std.cmp.Eq} + {std.hash.Hash} + {std.clone.Clone}
+                </>
+              ),
+            },
+            {
+              name: "V",
+              constraint: (
+                <>
+                  {std.clone.Clone} + {std.marker.Send} + {std.marker.Sync}
+                </>
+              ),
+            },
           ]}
         >
           <FunctionDeclaration

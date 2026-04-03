@@ -12,8 +12,8 @@ import {
   Reference,
   SourceFile,
   TypeAlias,
+  std,
 } from "@alloy-js/rust";
-import { stdCrate } from "../externals.js";
 
 export const storeErrorKey = refkey();
 export const resultAliasKey = refkey();
@@ -54,7 +54,7 @@ export function ErrorModule(props: ErrorModuleProps) {
 
         <hbr />
 
-        <ImplBlock type={storeErrorKey} trait={stdCrate.fmt.Display}>
+        <ImplBlock type={storeErrorKey} trait={std.fmt.Display}>
           <FunctionDeclaration
             name="fmt"
             receiver="&self"
@@ -64,13 +64,13 @@ export function ErrorModule(props: ErrorModuleProps) {
                 type: (
                   <>
                     {"&mut "}
-                    <Reference refkey={stdCrate.fmt.Formatter} />
+                    <Reference refkey={std.fmt.Formatter} />
                     {"<'_>"}
                   </>
                 ),
               },
             ]}
-            returnType="std::fmt::Result"
+            returnType={<Reference refkey={std.fmt.Result} />}
           >
             <MatchExpression expression="self">
               <MatchArm pattern="Self::NotFound">
@@ -104,7 +104,7 @@ export function ErrorModule(props: ErrorModuleProps) {
           pub
           typeParameters={[{ name: "T" }]}
         >
-          std::result::Result&lt;T, StoreError&gt;
+          <Reference refkey={std.result.Result} />{"<T, StoreError>"}
         </TypeAlias>
       </SourceFile>
     </ModuleDirectory>

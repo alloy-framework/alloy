@@ -21,8 +21,8 @@ import {
   SourceFile,
   StructDeclaration,
   StructExpression,
+  std,
 } from "@alloy-js/rust";
-import { stdCrate } from "../externals.js";
 import { resultAliasKey, storeErrorKey } from "./error-module.js";
 import { cacheableKey } from "./traits-module.js";
 
@@ -67,14 +67,14 @@ export function StoreModule(props: StoreModuleProps) {
           refkey={entryKey}
           pub
           derives={["Debug", "Clone"]}
-          typeParameters={[{ name: "V", constraint: "Clone" }]}
+          typeParameters={[{ name: "V", constraint: <Reference refkey={std.clone.Clone} /> }]}
           doc="A single entry in the store, holding a value and metadata."
         >
           <Field name="value" pub type="V" />
           <Field
             name="created_at"
             pub
-            type={<Reference refkey={stdCrate.time.Instant} />}
+            type={<Reference refkey={std.time.Instant} />}
           />
           <Field
             name="ttl"
@@ -82,7 +82,7 @@ export function StoreModule(props: StoreModuleProps) {
             type={
               <>
                 {"Option<"}
-                <Reference refkey={stdCrate.time.Duration} />
+                <Reference refkey={std.time.Duration} />
                 {">"}
               </>
             }
@@ -97,8 +97,8 @@ export function StoreModule(props: StoreModuleProps) {
           refkey={storeKey}
           pub
           typeParameters={[
-            { name: "K", constraint: "Eq + std::hash::Hash + Clone" },
-            { name: "V", constraint: "Clone + Send + Sync" },
+            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
+            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
           ]}
           doc="A generic key-value store with capacity limits and TTL support."
         >
@@ -106,7 +106,7 @@ export function StoreModule(props: StoreModuleProps) {
             name="data"
             type={
               <>
-                <Reference refkey={stdCrate.collections.HashMap} />
+                <Reference refkey={std.collections.HashMap} />
                 {"<K, Entry<V>>"}
               </>
             }
@@ -117,7 +117,7 @@ export function StoreModule(props: StoreModuleProps) {
             type={
               <>
                 {"Option<"}
-                <Reference refkey={stdCrate.time.Duration} />
+                <Reference refkey={std.time.Duration} />
                 {">"}
               </>
             }
@@ -129,8 +129,8 @@ export function StoreModule(props: StoreModuleProps) {
         <ImplBlock
           type={storeKey}
           typeParameters={[
-            { name: "K", constraint: "Eq + std::hash::Hash + Clone" },
-            { name: "V", constraint: "Clone + Send + Sync" },
+            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
+            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
           ]}
         >
           <DocComment>
@@ -145,7 +145,7 @@ export function StoreModule(props: StoreModuleProps) {
           >
             <StructExpression type="Self">
               <FieldInit name="data">
-                <Reference refkey={stdCrate.collections.HashMap} />
+                <Reference refkey={std.collections.HashMap} />
                 ::new()
               </FieldInit>
               <FieldInit name="max_capacity" />
@@ -163,7 +163,7 @@ export function StoreModule(props: StoreModuleProps) {
             parameters={[
               {
                 name: "ttl",
-                type: <Reference refkey={stdCrate.time.Duration} />,
+                type: <Reference refkey={std.time.Duration} />,
               },
             ]}
             returnType="Self"
@@ -205,7 +205,7 @@ export function StoreModule(props: StoreModuleProps) {
               <StructExpression type="Entry">
                 <FieldInit name="value" />
                 <FieldInit name="created_at">
-                  <Reference refkey={stdCrate.time.Instant} />
+                  <Reference refkey={std.time.Instant} />
                   ::now()
                 </FieldInit>
                 <FieldInit name="ttl">self.default_ttl</FieldInit>
@@ -353,8 +353,8 @@ export function StoreModule(props: StoreModuleProps) {
             </>
           }
           typeParameters={[
-            { name: "K", constraint: "Eq + std::hash::Hash + Clone" },
-            { name: "V", constraint: "Clone + Send + Sync" },
+            { name: "K", constraint: <><Reference refkey={std.cmp.Eq} /> + <Reference refkey={std.hash.Hash} /> + <Reference refkey={std.clone.Clone} /></> },
+            { name: "V", constraint: <><Reference refkey={std.clone.Clone} /> + <Reference refkey={std.marker.Send} /> + <Reference refkey={std.marker.Sync} /></> },
           ]}
         >
           <FunctionDeclaration

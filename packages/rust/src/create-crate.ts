@@ -3,7 +3,9 @@ import {
   createScope,
   createSymbol,
   getSymbolCreatorSymbol,
+  REFKEYABLE,
   type Refkey,
+  type RefkeyableObject,
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
@@ -15,10 +17,19 @@ import {
   type RustSymbolKind,
 } from "./symbols/index.js";
 
+export interface MemberDescriptor {
+  kind: RustSymbolKind;
+  name?: string;
+  /** True for associated functions (no self receiver, called with `::`). */
+  associated?: boolean;
+  metadata?: Record<string, unknown>;
+}
+
 export interface SymbolDescriptor {
   kind: RustSymbolKind;
   name?: string;
   metadata?: Record<string, unknown>;
+  members?: Record<string, MemberDescriptor>;
 }
 
 export interface CrateDescriptor<
@@ -33,9 +44,16 @@ export interface CrateDescriptor<
   modules: TModules;
 }
 
+type SymbolRef<TSymbol extends SymbolDescriptor> =
+  TSymbol extends { members: infer M extends Record<string, MemberDescriptor> }
+    ? RefkeyableObject & { [K in keyof M]: Refkey }
+    : Refkey;
+
 export type CrateRef<TDescriptor extends CrateDescriptor = CrateDescriptor> = {
   [P in keyof TDescriptor["modules"]]: {
-    [S in keyof TDescriptor["modules"][P]]: Refkey;
+    [S in keyof TDescriptor["modules"][P]]: SymbolRef<
+      TDescriptor["modules"][P][S]
+    >;
   };
 };
 
@@ -79,6 +97,7 @@ interface DescriptorEntry {
   exportName: string;
   descriptor: SymbolDescriptor;
   symbolRefkey: Refkey;
+  modules: object; // reference to descriptor.modules for stable refkey derivation
 }
 
 interface BinderState {
@@ -120,9 +139,7 @@ export function createCrate<
         const symbol = createSymbolFromDescriptor(
           binder,
           moduleScope,
-          entry.exportName,
-          entry.symbolRefkey,
-          entry.descriptor,
+          entry,
         );
         state.createdSymbols.set(entry.symbolRefkey, symbol);
       }
@@ -131,15 +148,37 @@ export function createCrate<
   } as Record<string | symbol, unknown>;
 
   for (const [modulePath, symbols] of Object.entries(descriptor.modules)) {
-    const moduleRefs: Record<string, Refkey> = {};
+    const moduleRefs: Record<string, unknown> = {};
     for (const [exportName, symbolDescriptor] of Object.entries(symbols)) {
       const symbolRefkey = refkey(descriptor.modules, modulePath, exportName);
-      moduleRefs[exportName] = symbolRefkey;
+
+      // If the symbol has members, create a RefkeyableObject with member refkeys
+      if (symbolDescriptor.members) {
+        const symbolWithMembers: Record<string | symbol, unknown> = {
+          [REFKEYABLE]() {
+            return symbolRefkey;
+          },
+        };
+        for (const memberName of Object.keys(symbolDescriptor.members)) {
+          const memberRefkey = refkey(
+            descriptor.modules,
+            modulePath,
+            exportName,
+            memberName,
+          );
+          symbolWithMembers[memberName] = memberRefkey;
+        }
+        moduleRefs[exportName] = symbolWithMembers;
+      } else {
+        moduleRefs[exportName] = symbolRefkey;
+      }
+
       entries.push({
         modulePath,
         exportName,
         descriptor: symbolDescriptor,
         symbolRefkey,
+        modules: descriptor.modules,
       });
     }
 
@@ -219,10 +258,9 @@ function ensureModuleScope(
 function createSymbolFromDescriptor(
   binder: Binder,
   moduleScope: RustModuleScope,
-  exportName: string,
-  symbolRefkey: Refkey,
-  descriptor: SymbolDescriptor,
+  entry: DescriptorEntry,
 ) {
+  const { descriptor, symbolRefkey, exportName } = entry;
   const symbolName = descriptor.name ?? exportName;
   const options = {
     binder,
@@ -233,34 +271,95 @@ function createSymbolFromDescriptor(
     ignoreNameConflict: true,
   } as const;
 
+  let symbol: RustOutputSymbol;
+
   switch (descriptor.kind) {
     case "struct":
     case "enum":
     case "trait":
     case "type-alias":
-      return createSymbol(
+      symbol = createSymbol(
         NamedTypeSymbol,
         symbolName,
         moduleScope.types,
         descriptor.kind,
         options,
       );
+      break;
     case "function":
     case "method":
-      return createSymbol(
+      symbol = createSymbol(
         FunctionSymbol,
         symbolName,
         moduleScope.values,
         options,
       );
+      break;
     default:
-      return createSymbol(
+      symbol = createSymbol(
         RustOutputSymbol,
         symbolName,
         moduleScope.values,
         options,
       );
+      break;
   }
+
+  // Create member symbols on the type's member space
+  if (descriptor.members) {
+    for (const [memberName, memberDesc] of Object.entries(
+      descriptor.members,
+    )) {
+      const memberRefkey = refkey(
+        entry.modules,
+        entry.modulePath,
+        exportName,
+        memberName,
+      );
+      const memberSymbolName = memberDesc.name ?? memberName;
+      const memberOptions = {
+        binder,
+        refkeys: memberRefkey,
+        symbolKind: memberDesc.kind,
+        metadata: memberDesc.metadata,
+        ignoreNamePolicy: true,
+        ignoreNameConflict: true,
+      } as const;
+
+      switch (memberDesc.kind) {
+        case "function":
+        case "method": // legacy compat
+          createSymbol(
+            FunctionSymbol,
+            memberSymbolName,
+            symbol.members,
+            memberDesc.associated
+              ? memberOptions
+              : { ...memberOptions, receiverType: "&self" },
+          );
+          break;
+        case "field":
+        case "variant":
+          createSymbol(
+            RustOutputSymbol,
+            memberSymbolName,
+            symbol.members,
+            memberOptions,
+          );
+          break;
+        default:
+          createSymbol(
+            RustOutputSymbol,
+            memberSymbolName,
+            symbol.members,
+            memberOptions,
+          );
+          break;
+      }
+    }
+  }
+
+  return symbol;
 }
 
 function normalizeModulePath(path: string) {

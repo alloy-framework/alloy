@@ -27,7 +27,7 @@ export interface TraitDeclarationProps {
   typeParameters?: TypeParameterProp[];
   supertraits?: Children[];
   whereClause?: Children;
-  attributes?: Children;
+  attributes?: Children[];
   doc?: Children;
   children?: Children;
 }
@@ -51,9 +51,11 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
           <DocComment>{props.doc}</DocComment>
         </>
       : null}
-      {props.attributes ?
+      {props.attributes && props.attributes.length > 0 ?
         <>
-          {props.attributes}
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
           <hbr />
         </>
       : null}

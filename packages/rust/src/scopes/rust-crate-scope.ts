@@ -17,7 +17,7 @@ export type CrateDependency = string | CrateDependencyDetails;
 export interface RustChildModuleDeclaration {
   name: string;
   visibility: RustVisibility;
-  attributes?: Children;
+  attributes?: Children[];
 }
 
 export interface RustCrateScopeOptions extends OutputScopeOptions {
@@ -62,7 +62,7 @@ export class RustCrateScope extends RustScopeBase {
   addChildModule(
     name: string,
     visibility: RustVisibility,
-    attributes?: Children,
+    attributes?: Children[],
   ) {
     const childModule = this.#childModules.get(name);
     if (childModule) {

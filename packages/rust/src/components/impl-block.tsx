@@ -1,5 +1,6 @@
 import {
   Children,
+  For,
   Indent,
   Refkey,
   Scope,
@@ -30,7 +31,7 @@ export interface ImplBlockProps {
   trait?: Refkey | Children;
   typeParameters?: TypeParameterProps[];
   whereClause?: Children;
-  attributes?: Children;
+  attributes?: Children[];
   children?: Children;
 }
 
@@ -145,9 +146,11 @@ export function ImplBlock(props: ImplBlockProps) {
 
   return (
     <>
-      {props.attributes ?
+      {props.attributes && props.attributes.length > 0 ?
         <>
-          {props.attributes}
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
           <hbr />
         </>
       : null}

@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  For,
   Refkey,
 } from "@alloy-js/core";
 import { createTypeAliasSymbol } from "../symbols/factories.js";
@@ -13,7 +14,7 @@ export interface TypeAliasProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
-  attributes?: Children;
+  attributes?: Children[];
   typeParameters?: TypeParameterProp[];
   children?: Children;
 }
@@ -29,9 +30,11 @@ export function TypeAlias(props: TypeAliasProps) {
 
   return (
     <>
-      {props.attributes ?
+      {props.attributes && props.attributes.length > 0 ?
         <>
-          {props.attributes}
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
           <hbr />
         </>
       : null}

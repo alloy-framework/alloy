@@ -91,7 +91,7 @@ describe("DeriveAttribute", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration
               name="Foo"
-              attributes={<Attribute name="repr" args="C" />}
+              attributes={[<Attribute name="repr" args="C" />]}
               derives={["Debug", "Clone"]}
             />
           </SourceFile>

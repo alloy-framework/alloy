@@ -18,7 +18,7 @@ export interface SourceFileProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
-  attributes?: Children;
+  attributes?: Children[];
   children?: Children;
   header?: Children;
   headerComment?: Children;

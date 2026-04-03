@@ -14,7 +14,7 @@ export interface ModuleDirectoryProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
-  attributes?: Children;
+  attributes?: Children[];
   children?: Children;
 }
 

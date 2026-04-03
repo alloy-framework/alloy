@@ -233,7 +233,7 @@ describe("TraitDeclaration", () => {
             <TraitDeclaration
               name="MyTrait"
               pub
-              attributes={<Attribute name="deprecated" />}
+              attributes={[<Attribute name="deprecated" />]}
             />
           </SourceFile>
         </CrateDirectory>
@@ -252,7 +252,7 @@ describe("TraitDeclaration", () => {
             <TraitDeclaration
               name="Handler"
               doc="Handles events."
-              attributes={<Attribute name="async_trait" />}
+              attributes={[<Attribute name="async_trait" />]}
             />
           </SourceFile>
         </CrateDirectory>

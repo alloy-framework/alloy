@@ -184,7 +184,7 @@ describe("StaticDeclaration", () => {
             <StaticDeclaration
               name="GLOBAL"
               type="u32"
-              attributes={<Attribute name="no_mangle" />}
+              attributes={[<Attribute name="no_mangle" />]}
             >
               0
             </StaticDeclaration>
@@ -206,13 +206,10 @@ describe("StaticDeclaration", () => {
               name="BUFFER"
               mutable
               type="Vec<u8>"
-              attributes={
-                <>
-                  <Attribute name="no_mangle" />
-                  <hbr />
-                  <Attribute name="used" />
-                </>
-              }
+              attributes={[
+                <Attribute name="no_mangle" />,
+                <Attribute name="used" />,
+              ]}
             >
               Vec::new()
             </StaticDeclaration>

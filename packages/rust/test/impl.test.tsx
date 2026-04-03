@@ -285,7 +285,7 @@ describe("ImplBlock", () => {
             <hbr />
             <ImplBlock
               type={typeRef}
-              attributes={<Attribute name="automatically_derived" />}
+              attributes={[<Attribute name="automatically_derived" />]}
             />
           </SourceFile>
         </CrateDirectory>
@@ -312,7 +312,7 @@ describe("ImplBlock", () => {
             <ImplBlock
               type={typeRef}
               trait={traitRef}
-              attributes={<Attribute name="automatically_derived" />}
+              attributes={[<Attribute name="automatically_derived" />]}
             >
               <FunctionDeclaration name="fmt" />
             </ImplBlock>

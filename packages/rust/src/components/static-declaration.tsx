@@ -2,13 +2,14 @@ import {
   Children,
   Declaration as CoreDeclaration,
   For,
+  Namekey,
   Refkey,
 } from "@alloy-js/core";
 import { createStaticSymbol } from "../symbols/factories.js";
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface StaticDeclarationProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;

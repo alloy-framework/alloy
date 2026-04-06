@@ -5,6 +5,7 @@ import {
   createScope,
   For,
   Indent,
+  Namekey,
   Refkey,
   Scope,
 } from "@alloy-js/core";
@@ -19,7 +20,7 @@ import {
 import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
 
 export interface TraitDeclarationProps {
-  name: string;
+  name: string | Namekey;
   refkey?: Refkey;
   pub?: boolean;
   pub_crate?: boolean;

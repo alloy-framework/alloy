@@ -17,7 +17,7 @@ import {
   FunctionDeclaration,
   ImplBlock,
   ModuleDirectory,
-  ModuleDocComment,
+  InnerDocComment,
   Parameters,
   Reference,
   SourceFile,
@@ -211,12 +211,12 @@ describe("STC wrappers", () => {
     );
   });
 
-  it("ModuleDocComment wrapper supports .children and matches JSX output", () => {
+  it("InnerDocComment wrapper supports .children and matches JSX output", () => {
     expect(
-      inFile(<ModuleDocComment>Hello module</ModuleDocComment>),
+      inFile(<InnerDocComment>Hello module</InnerDocComment>),
     ).toRenderTo("//! Hello module\n\n");
     expect(
-      inFile(Stc.ModuleDocComment().children(["Hello module"])),
+      inFile(Stc.InnerDocComment().children(["Hello module"])),
     ).toRenderTo("//! Hello module\n\n");
   });
 

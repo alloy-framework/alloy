@@ -1,9 +1,5 @@
 import { type Children } from "@alloy-js/core";
 
-export interface DocCommentProps {
-  children?: Children;
-}
-
 function renderCommentLines(children: Children, prefix: string) {
   const lines = String(children).split("\n");
   return lines.map((line) => (
@@ -15,30 +11,104 @@ function renderCommentLines(children: Children, prefix: string) {
   ));
 }
 
-export function DocComment(props: DocCommentProps) {
-  if (props.children === undefined || props.children === null) {
-    return <></>;
-  }
-
-  if (String(props.children).length === 0) {
-    return <></>;
-  }
-
-  return renderCommentLines(props.children, "/// ");
+function renderBlockComment(children: Children, openDelim: string, closeDelim: string) {
+  const lines = String(children).split("\n");
+  return (
+    <>
+      {openDelim}
+      <hbr />
+      {lines.map((line) => (
+        <>
+          {" * "}
+          {line}
+          <hbr />
+        </>
+      ))}
+      {" "}
+      {closeDelim}
+      <hbr />
+    </>
+  );
 }
 
-export interface ModuleDocCommentProps {
+function isEmptyChildren(children: Children): boolean {
+  return children === undefined || children === null || String(children).length === 0;
+}
+
+// --- Line comments ---
+
+export interface LineCommentProps {
   children?: Children;
 }
 
-export function ModuleDocComment(props: ModuleDocCommentProps) {
-  if (props.children === undefined || props.children === null) {
+export function LineComment(props: LineCommentProps) {
+  if (isEmptyChildren(props.children)) {
     return <></>;
   }
+  return renderCommentLines(props.children, "// ");
+}
 
-  if (String(props.children).length === 0) {
+// --- Block comments ---
+
+export interface BlockCommentProps {
+  children?: Children;
+}
+
+export function BlockComment(props: BlockCommentProps) {
+  if (isEmptyChildren(props.children)) {
     return <></>;
   }
+  return renderBlockComment(props.children, "/*", "*/");
+}
 
+// --- Outer doc comments (///) ---
+
+export interface DocCommentProps {
+  children?: Children;
+}
+
+export function DocComment(props: DocCommentProps) {
+  if (isEmptyChildren(props.children)) {
+    return <></>;
+  }
+  return renderCommentLines(props.children, "/// ");
+}
+
+// --- Inner doc comments (//!) ---
+
+export interface InnerDocCommentProps {
+  children?: Children;
+}
+
+export function InnerDocComment(props: InnerDocCommentProps) {
+  if (isEmptyChildren(props.children)) {
+    return <></>;
+  }
   return renderCommentLines(props.children, "//! ");
+}
+
+// --- Outer block doc comments (/** */) ---
+
+export interface OuterBlockDocCommentProps {
+  children?: Children;
+}
+
+export function OuterBlockDocComment(props: OuterBlockDocCommentProps) {
+  if (isEmptyChildren(props.children)) {
+    return <></>;
+  }
+  return renderBlockComment(props.children, "/**", "*/");
+}
+
+// --- Inner block doc comments (/*! */) ---
+
+export interface InnerBlockDocCommentProps {
+  children?: Children;
+}
+
+export function InnerBlockDocComment(props: InnerBlockDocCommentProps) {
+  if (isEmptyChildren(props.children)) {
+    return <></>;
+  }
+  return renderBlockComment(props.children, "/*!", "*/");
 }

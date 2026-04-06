@@ -18,6 +18,7 @@ export interface SourceFileProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
+  attributes?: Children[];
   children?: Children;
   header?: Children;
   headerComment?: Children;
@@ -74,7 +75,11 @@ export function SourceFile(props: SourceFileProps) {
     : undefined;
   const visibility = toRustVisibility(props);
   if (scopeParent && isStandaloneModulePath(props.path)) {
-    scopeParent.addChildModule(getStandaloneModuleName(props.path), visibility);
+    scopeParent.addChildModule(
+      getStandaloneModuleName(props.path),
+      visibility,
+      props.attributes,
+    );
   }
   const scope = createScope(RustModuleScope, props.path, scopeParent, {
     binder: scopeParent?.binder,

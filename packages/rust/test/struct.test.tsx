@@ -3,6 +3,7 @@ import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import {
+  Attribute,
   CrateDirectory,
   Field,
   SourceFile,
@@ -66,7 +67,7 @@ describe("StructDeclaration", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration
               name="Foo"
-              attributes="#[repr(C)]"
+              attributes={["#[repr(C)]"]}
               derives={["Debug", "Clone"]}
             />
           </SourceFile>
@@ -198,7 +199,7 @@ describe("StructDeclaration", () => {
               name="Foo"
               unit={true}
               doc="Represents foo."
-              attributes="#[repr(C)]"
+              attributes={["#[repr(C)]"]}
               derives={["Debug", "Clone"]}
             />
           </SourceFile>
@@ -292,6 +293,58 @@ describe("Field", () => {
     ).toRenderTo(d`
       struct Foo {
         pub id: u64,
+      }
+    `);
+  });
+
+  it("renders attributes on field", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Config">
+              <Field
+                name="name"
+                type="String"
+                attributes={[
+                  <Attribute name="serde" args={'rename = "user_name"'} />,
+                ]}
+              />
+              <Field name="age" type="u32" />
+            </StructDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      struct Config {
+        #[serde(rename = "user_name")]
+        name: String,
+        age: u32,
+      }
+    `);
+  });
+
+  it("renders attributes with doc comment on field", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <StructDeclaration name="Config">
+              <Field
+                name="port"
+                type="u16"
+                doc="The port number."
+                attributes={[<Attribute name="serde" args="default" />]}
+              />
+            </StructDeclaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`
+      struct Config {
+        /// The port number.
+        #[serde(default)]
+        port: u16,
       }
     `);
   });

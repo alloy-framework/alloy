@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  For,
   Namekey,
   Refkey,
 } from "@alloy-js/core";
@@ -14,6 +15,7 @@ export interface StaticDeclarationProps {
   pub_crate?: boolean;
   pub_super?: boolean;
   mutable?: boolean;
+  attributes?: Children[];
   type: Children;
   children?: Children;
 }
@@ -30,16 +32,26 @@ export function StaticDeclaration(props: StaticDeclarationProps) {
   const mutabilityPrefix = props.mutable ? "mut " : "";
 
   return (
-    <CoreDeclaration symbol={staticSymbol}>
-      {visibilityPrefix}
-      {"static "}
-      {mutabilityPrefix}
-      {staticSymbol.name}
-      {": "}
-      {props.type}
-      {" = "}
-      {props.children}
-      {";"}
-    </CoreDeclaration>
+    <>
+      {props.attributes && props.attributes.length > 0 ?
+        <>
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
+          <hbr />
+        </>
+      : null}
+      <CoreDeclaration symbol={staticSymbol}>
+        {visibilityPrefix}
+        {"static "}
+        {mutabilityPrefix}
+        {staticSymbol.name}
+        {": "}
+        {props.type}
+        {" = "}
+        {props.children}
+        {";"}
+      </CoreDeclaration>
+    </>
   );
 }

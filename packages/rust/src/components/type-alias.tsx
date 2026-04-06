@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  For,
   Namekey,
   Refkey,
 } from "@alloy-js/core";
@@ -14,6 +15,7 @@ export interface TypeAliasProps {
   pub?: boolean;
   pub_crate?: boolean;
   pub_super?: boolean;
+  attributes?: Children[];
   typeParameters?: TypeParameterProp[];
   children?: Children;
 }
@@ -28,14 +30,24 @@ export function TypeAlias(props: TypeAliasProps) {
   const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
-    <CoreDeclaration symbol={typeAliasSymbol}>
-      {visibilityPrefix}
-      {"type "}
-      {typeAliasSymbol.name}
-      <TypeParameters params={props.typeParameters} />
-      {" = "}
-      {props.children}
-      {";"}
-    </CoreDeclaration>
+    <>
+      {props.attributes && props.attributes.length > 0 ?
+        <>
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
+          <hbr />
+        </>
+      : null}
+      <CoreDeclaration symbol={typeAliasSymbol}>
+        {visibilityPrefix}
+        {"type "}
+        {typeAliasSymbol.name}
+        <TypeParameters params={props.typeParameters} />
+        {" = "}
+        {props.children}
+        {";"}
+      </CoreDeclaration>
+    </>
   );
 }

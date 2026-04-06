@@ -25,7 +25,7 @@ export interface EnumDeclarationProps {
   pub_crate?: boolean;
   pub_super?: boolean;
   derives?: (string | Refkey)[];
-  attributes?: Children;
+  attributes?: Children[];
   doc?: string;
   typeParameters?: TypeParameterProp[];
   children?: Children;
@@ -34,6 +34,7 @@ export interface EnumDeclarationProps {
 export interface EnumVariantProps {
   name: string | Namekey;
   refkey?: Refkey;
+  attributes?: Children[];
   doc?: string;
   kind?: "unit" | "tuple" | "struct";
   fields?: Children[];
@@ -80,9 +81,11 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
           <DocComment>{props.doc}</DocComment>
         </>
       : null}
-      {props.attributes ?
+      {props.attributes && props.attributes.length > 0 ?
         <>
-          {props.attributes}
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
           <hbr />
         </>
       : null}
@@ -154,6 +157,14 @@ export function EnumVariant(props: EnumVariantProps) {
       {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
+        </>
+      : null}
+      {props.attributes && props.attributes.length > 0 ?
+        <>
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
+          <hbr />
         </>
       : null}
       {variantSymbol.name}

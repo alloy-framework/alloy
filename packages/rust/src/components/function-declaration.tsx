@@ -1,6 +1,7 @@
 import {
   Children,
   Declaration as CoreDeclaration,
+  For,
   Indent,
   Namekey,
   Refkey,
@@ -41,6 +42,7 @@ export interface FunctionDeclarationProps {
   typeParameters?: TypeParameterProp[];
   whereClause?: Children;
   receiver?: "&self" | "&mut self" | "self" | "none";
+  attributes?: Children[];
   doc?: string;
   children?: Children;
 }
@@ -83,6 +85,14 @@ export function FunctionDeclaration(props: FunctionDeclarationProps) {
       {props.doc ?
         <>
           <DocComment>{props.doc}</DocComment>
+        </>
+      : null}
+      {props.attributes && props.attributes.length > 0 ?
+        <>
+          <For each={props.attributes} line>
+            {(attr) => attr}
+          </For>
+          <hbr />
         </>
       : null}
       <CoreDeclaration symbol={functionSymbol}>

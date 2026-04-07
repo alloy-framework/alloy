@@ -1,5 +1,5 @@
 ---
-name: debugger
+name: alloy-debugger
 description: >
   Diagnoses and debugs issues in Alloy codebases using trace files and deep knowledge
   of common Alloy error patterns. Guides users through systematic debugging workflows

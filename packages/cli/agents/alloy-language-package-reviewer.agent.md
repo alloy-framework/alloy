@@ -1,5 +1,5 @@
 ---
-name: language-package-reviewer
+name: alloy-language-package-reviewer
 description: >
   Stateless adversarial reviewer for Alloy language package implementation slices.
   Reviews components, symbols, scopes, tests, and other language package code against

@@ -64,7 +64,7 @@ describe("EnumDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <EnumDeclaration name="Foo" pub_super={true} />
+            <EnumDeclaration name="Foo" pub="super" />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -138,7 +138,7 @@ describe("EnumDeclaration", () => {
     `);
   });
 
-  it("applies visibility precedence on enum symbols", () => {
+  it("applies pub visibility on enum symbols", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -146,8 +146,6 @@ describe("EnumDeclaration", () => {
             <EnumDeclaration
               name="Status"
               pub={true}
-              pub_crate={true}
-              pub_super={true}
             />
             <hbr />
             <EnumVisibilityProbe name="Status" />

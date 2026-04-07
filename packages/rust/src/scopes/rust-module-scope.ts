@@ -4,16 +4,13 @@ import {
   type OutputSpace,
   shallowReactive,
 } from "@alloy-js/core";
-import {
-  type RustOutputSymbol,
-  type RustVisibility,
-} from "../symbols/rust-output-symbol.js";
+import { type RustOutputSymbol } from "../symbols/rust-output-symbol.js";
+import { type RustVisibilityProps } from "../components/visibility.js";
 import { RustCrateScope } from "./rust-crate-scope.js";
 import { RustScopeBase } from "./rust-scope.js";
 
-export interface RustModuleDeclaration {
+export interface RustModuleDeclaration extends RustVisibilityProps {
   name: string;
-  visibility: RustVisibility;
   attributes?: Children[];
 }
 
@@ -63,18 +60,13 @@ export class RustModuleScope extends RustScopeBase {
     return this.#childModules;
   }
 
-  addChildModule(
-    name: string,
-    visibility: RustVisibility,
-    attributes?: Children[],
-  ) {
-    const childModule = this.#childModules.get(name);
-    if (childModule) {
-      return childModule;
+  addChildModule(declaration: RustModuleDeclaration) {
+    const existing = this.#childModules.get(declaration.name);
+    if (existing) {
+      return existing;
     }
 
-    const declaration = { name, visibility, attributes };
-    this.#childModules.set(name, declaration);
+    this.#childModules.set(declaration.name, declaration);
     return declaration;
   }
 

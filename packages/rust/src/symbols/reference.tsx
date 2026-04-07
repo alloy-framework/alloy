@@ -12,7 +12,7 @@ import { useRustScope } from "../scopes/contexts.js";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { RustScopeBase } from "../scopes/rust-scope.js";
-import { RustOutputSymbol } from "./rust-output-symbol.js";
+import { RustOutputSymbol, type RustVisibility } from "./rust-output-symbol.js";
 
 const PRELUDE_BY_EDITION: Record<string, Set<string>> = {
   "2015": PRELUDE_TYPES_2015,
@@ -73,7 +73,7 @@ export function ref(
       ) {
         if (targetModule !== currentModuleScope) {
           if (targetCrate === sourceCrate) {
-            if (lexicalDeclaration.visibility === undefined) {
+            if (!isVisibleFrom(lexicalDeclaration.visibility, result.fullReferencePath)) {
               throw new Error(
                 `Cannot reference private symbol '${declarationName}' from module '${currentModuleScope.name}'.`,
               );
@@ -136,7 +136,24 @@ function buildReferenceChildren(
   return <>{parts}</>;
 }
 
-function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {
+function isVisibleFrom(
+  visibility: RustVisibility,
+  referencePath: RustScopeBase[],
+): boolean {
+  if (visibility === undefined) {
+    return false;
+  }
+
+  if (typeof visibility === "string" && visibility.startsWith("pub(in ")) {
+    const allowedPath = visibility.slice("pub(in ".length, -")".length);
+    const refPath = buildUsePath("crate", referencePath);
+    return refPath === allowedPath || refPath.startsWith(allowedPath + "::");
+  }
+
+  return true;
+}
+
+export function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {
   const moduleSegments: string[] = [];
 
   for (const scope of pathDown) {
@@ -148,7 +165,7 @@ function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {
   return [prefix, ...moduleSegments].join("::");
 }
 
-function moduleNameSegments(moduleName: string): string[] {
+export function moduleNameSegments(moduleName: string): string[] {
   const normalized = moduleName
     .split("/")
     .map((segment) => segment.trim())

@@ -6,14 +6,15 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { createConstSymbol } from "../symbols/factories.js";
-import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
+import {
+  type RustVisibilityProps,
+  toRustVisibility,
+  VisibilityPrefix,
+} from "./visibility.js";
 
-export interface ConstDeclarationProps {
+export interface ConstDeclarationProps extends RustVisibilityProps {
   name: string | Namekey;
   refkey?: Refkey;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   attributes?: Children[];
   type: Children;
   children?: Children;
@@ -24,9 +25,7 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
     refkeys: props.refkey ? [props.refkey] : [],
   });
 
-  constSymbol.visibility = toRustVisibility(props);
-
-  const visibilityPrefix = toVisibilityPrefix(props);
+  constSymbol.visibility = toRustVisibility(props.pub);
 
   return (
     <>
@@ -39,7 +38,7 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
         </>
       : null}
       <CoreDeclaration symbol={constSymbol}>
-        {visibilityPrefix}
+        <VisibilityPrefix pub={props.pub} />
         {"const "}
         {constSymbol.name}
         {": "}

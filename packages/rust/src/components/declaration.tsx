@@ -13,15 +13,16 @@ import {
   RustOutputSymbol,
   RustSymbolKind,
 } from "../symbols/rust-output-symbol.js";
-import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
+import {
+  type RustVisibilityProps,
+  toRustVisibility,
+  VisibilityPrefix,
+} from "./visibility.js";
 
-export interface DeclarationProps {
+export interface DeclarationProps extends RustVisibilityProps {
   name: string;
   refkey?: Refkey;
   nameKind?: string;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   children?: Children;
 }
 
@@ -91,15 +92,14 @@ export function Declaration(props: DeclarationProps) {
       refkeys: props.refkey ? [props.refkey] : [],
       namePolicy: useRustNamePolicy().for(rustNameKind),
       symbolKind: toRustSymbolKind(rustNameKind),
-      visibility: toRustVisibility(props),
+      visibility: toRustVisibility(props.pub),
       metadata: props.nameKind ? { nameKind: props.nameKind } : undefined,
     },
   );
-  const visibilityPrefix = toVisibilityPrefix(props);
 
   return (
     <CoreDeclaration symbol={symbol}>
-      {visibilityPrefix}
+      <VisibilityPrefix pub={props.pub} />
       {props.children}
     </CoreDeclaration>
   );

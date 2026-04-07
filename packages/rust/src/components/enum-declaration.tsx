@@ -16,14 +16,15 @@ import {
 } from "../symbols/factories.js";
 import { DocComment } from "./doc-comment.js";
 import { TypeParameterProp, TypeParameters } from "./type-parameters.js";
-import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
+import {
+  type RustVisibilityProps,
+  toRustVisibility,
+  VisibilityPrefix,
+} from "./visibility.js";
 
-export interface EnumDeclarationProps {
+export interface EnumDeclarationProps extends RustVisibilityProps {
   name: string | Namekey;
   refkey?: Refkey;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   derives?: (string | Refkey)[];
   attributes?: Children[];
   doc?: string;
@@ -62,8 +63,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   const enumScope = createScope(RustImplScope, enumSymbol, parentScope, {
     binder: parentScope.binder,
   });
-  enumSymbol.visibility = toRustVisibility(props);
-  const visibilityPrefix = toVisibilityPrefix(props);
+  enumSymbol.visibility = toRustVisibility(props.pub);
   const variants =
     props.children ?
       (Array.isArray(props.children) ?
@@ -105,7 +105,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
             typeParameters={props.typeParameters}
           />
         </Scope>
-        {visibilityPrefix}
+        <VisibilityPrefix pub={props.pub} />
         {"enum "}
         {enumSymbol.name}
         <TypeParameters params={props.typeParameters} />

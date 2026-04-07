@@ -53,7 +53,7 @@ describe("StructDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <StructDeclaration name="Foo" pub_super={true} />
+            <StructDeclaration name="Foo" pub="super" />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -239,8 +239,8 @@ describe("Field", () => {
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo">
               <Field name="name" type="String" pub={true} />
-              <Field name="id" type="u64" pub_crate={true} />
-              <Field name="owner" type="String" pub_super={true} />
+              <Field name="id" type="u64" pub="crate" />
+              <Field name="owner" type="String" pub="super" />
             </StructDeclaration>
           </SourceFile>
         </CrateDirectory>
@@ -273,19 +273,13 @@ describe("Field", () => {
     `);
   });
 
-  it("applies visibility precedence for fields", () => {
+  it("renders pub visibility on field", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
             <StructDeclaration name="Foo">
-              <Field
-                name="id"
-                type="u64"
-                pub={true}
-                pub_crate={true}
-                pub_super={true}
-              />
+              <Field name="id" type="u64" pub={true} />
             </StructDeclaration>
           </SourceFile>
         </CrateDirectory>

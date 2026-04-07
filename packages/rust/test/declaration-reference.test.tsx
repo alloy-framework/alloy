@@ -41,7 +41,7 @@ describe("Declaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="thing" nameKind="struct" pub_crate={true}>
+            <Declaration name="thing" nameKind="struct" pub="crate">
               struct Thing;
             </Declaration>
           </SourceFile>
@@ -55,52 +55,13 @@ describe("Declaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <Declaration name="thing" nameKind="struct" pub_super={true}>
+            <Declaration name="thing" nameKind="struct" pub="super">
               struct Thing;
             </Declaration>
           </SourceFile>
         </CrateDirectory>
       </Output>,
     ).toRenderTo(d`pub(super) struct Thing;`);
-  });
-
-  it("prefers pub(crate) over pub(super) when both are set", () => {
-    expect(
-      <Output>
-        <CrateDirectory name="my_crate">
-          <SourceFile path="lib.rs">
-            <Declaration
-              name="thing"
-              nameKind="struct"
-              pub_crate={true}
-              pub_super={true}
-            >
-              struct Thing;
-            </Declaration>
-          </SourceFile>
-        </CrateDirectory>
-      </Output>,
-    ).toRenderTo(d`pub(crate) struct Thing;`);
-  });
-
-  it("prefers pub over pub(crate) when both are set", () => {
-    expect(
-      <Output>
-        <CrateDirectory name="my_crate">
-          <SourceFile path="lib.rs">
-            <Declaration
-              name="thing"
-              nameKind="struct"
-              pub={true}
-              pub_crate={true}
-              pub_super={true}
-            >
-              struct Thing;
-            </Declaration>
-          </SourceFile>
-        </CrateDirectory>
-      </Output>,
-    ).toRenderTo(d`pub struct Thing;`);
   });
 });
 

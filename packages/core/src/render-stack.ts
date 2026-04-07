@@ -2,6 +2,7 @@ import pc from "picocolors";
 import { contextsByKey } from "./context.js";
 import { SourceDirectoryContext } from "./context/source-directory.js";
 import { SourceFileContext } from "./context/source-file.js";
+import { cwd } from "./host/node-host.js";
 import { Context, getContext } from "./reactivity.js";
 import { Component, Props, SourceLocation } from "./runtime/component.js";
 
@@ -125,12 +126,12 @@ function formatValue(value: unknown): string {
 }
 
 function formatSourceLocation(source: SourceLocation): string {
-  const cwd = process.cwd();
+  const currentCwd = cwd();
   let filePath = source.fileName;
 
   // Convert to relative path if under cwd
-  if (filePath.startsWith(cwd)) {
-    filePath = filePath.slice(cwd.length + 1); // +1 to remove leading slash
+  if (currentCwd && filePath.startsWith(currentCwd)) {
+    filePath = filePath.slice(currentCwd.length + 1); // +1 to remove leading slash
   }
 
   return `${filePath}:${source.lineNumber}:${source.columnNumber}`;

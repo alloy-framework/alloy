@@ -7,6 +7,11 @@ import {
 } from "node:fs";
 import { join, resolve } from "pathe";
 import pc from "picocolors";
+import {
+  collectAlloySearchDirs,
+  findGitRoot,
+  findProjectRoot,
+} from "../workspace.js";
 
 type Platform = "copilot" | "claude";
 
@@ -17,14 +22,17 @@ interface AgentFileInfo {
 }
 
 export async function installAgentsCommand() {
-  const projectRoot = findProjectRoot();
+  const cwd = process.cwd();
+  const projectRoot = findProjectRoot(cwd);
   if (!projectRoot) {
     // eslint-disable-next-line no-console
     console.log(pc.red("Could not find project root (no package.json found)."));
     process.exit(1);
   }
 
-  const platforms = detectPlatforms(projectRoot);
+  // Detect platforms at git root (where .github/ and .claude/ live)
+  const rootDir = findGitRoot(cwd) ?? projectRoot;
+  const platforms = detectPlatforms(rootDir);
   if (platforms.length === 0) {
     // eslint-disable-next-line no-console
     console.log(
@@ -35,7 +43,7 @@ export async function installAgentsCommand() {
     process.exit(1);
   }
 
-  const agents = discoverAgents(projectRoot);
+  const agents = discoverAgents(cwd);
   if (agents.length === 0) {
     // eslint-disable-next-line no-console
     console.log(
@@ -45,11 +53,11 @@ export async function installAgentsCommand() {
   }
 
   for (const platform of platforms) {
-    installAgentsForPlatform(projectRoot, platform, agents);
+    installAgentsForPlatform(rootDir, platform, agents);
   }
 
   // Check if AGENTS.md has alloy docs section
-  const agentsPath = resolve(projectRoot, "AGENTS.md");
+  const agentsPath = resolve(rootDir, "AGENTS.md");
   if (
     !existsSync(agentsPath) ||
     !readFileSync(agentsPath, "utf-8").includes("<!-- BEGIN:alloy-docs -->")
@@ -61,54 +69,50 @@ export async function installAgentsCommand() {
   }
 }
 
-function findProjectRoot(): string | undefined {
-  let dir = process.cwd();
-  while (true) {
-    if (existsSync(join(dir, "package.json"))) {
-      return dir;
-    }
-    const parent = resolve(dir, "..");
-    if (parent === dir) return undefined;
-    dir = parent;
-  }
-}
-
-function detectPlatforms(projectRoot: string): Platform[] {
+function detectPlatforms(rootDir: string): Platform[] {
   const platforms: Platform[] = [];
 
-  if (existsSync(join(projectRoot, ".github"))) {
+  if (existsSync(join(rootDir, ".github"))) {
     platforms.push("copilot");
   }
 
-  if (existsSync(join(projectRoot, ".claude"))) {
+  if (existsSync(join(rootDir, ".claude"))) {
     platforms.push("claude");
   }
 
   return platforms;
 }
 
-function discoverAgents(projectRoot: string): AgentFileInfo[] {
-  const scopeDir = join(projectRoot, "node_modules", "@alloy-js");
-  if (!existsSync(scopeDir)) return [];
-
+function discoverAgents(cwd: string): AgentFileInfo[] {
+  const searchDirs = collectAlloySearchDirs(cwd);
   const agents: AgentFileInfo[] = [];
+  const seen = new Set<string>();
 
-  for (const entry of readdirSync(scopeDir, { withFileTypes: true })) {
-    if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
+  for (const searchDir of searchDirs) {
+    const scopeDir = join(searchDir, "node_modules", "@alloy-js");
+    if (!existsSync(scopeDir)) continue;
 
-    const pkgDir = join(scopeDir, entry.name);
-    const agentsDir = join(pkgDir, "agents");
-    if (!existsSync(agentsDir)) continue;
+    for (const entry of readdirSync(scopeDir, { withFileTypes: true })) {
+      if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
 
-    for (const agentFile of readdirSync(agentsDir)) {
-      if (!agentFile.endsWith(".agent.md")) continue;
+      const pkgDir = join(scopeDir, entry.name);
+      const agentsDir = join(pkgDir, "agents");
+      if (!existsSync(agentsDir)) continue;
 
-      const name = agentFile.replace(/\.agent\.md$/, "");
-      agents.push({
-        sourcePath: join(agentsDir, agentFile),
-        name,
-        packageName: `@alloy-js/${entry.name}`,
-      });
+      for (const agentFile of readdirSync(agentsDir)) {
+        if (!agentFile.endsWith(".agent.md")) continue;
+
+        const name = agentFile.replace(/\.agent\.md$/, "");
+        // De-duplicate by agent name
+        if (seen.has(name)) continue;
+        seen.add(name);
+
+        agents.push({
+          sourcePath: join(agentsDir, agentFile),
+          name,
+          packageName: `@alloy-js/${entry.name}`,
+        });
+      }
     }
   }
 

@@ -1,6 +1,12 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "pathe";
+import { parseArgs } from "node:util";
+import { join, relative, resolve } from "pathe";
 import pc from "picocolors";
+import {
+  collectAlloySearchDirs,
+  findGitRoot,
+  findProjectRoot,
+} from "../workspace.js";
 
 const BEGIN_MARKER = "<!-- BEGIN:alloy-docs -->";
 const END_MARKER = "<!-- END:alloy-docs -->";
@@ -8,108 +14,116 @@ const END_MARKER = "<!-- END:alloy-docs -->";
 interface PackageDocInfo {
   name: string;
   description: string;
-  docsPath: string;
-  indexPath: string;
+  /** Absolute path to the docs directory */
+  docsAbsPath: string;
+  /** Relative path from AGENTS.md to the doc index */
+  indexRelPath: string;
 }
 
 export async function installDocsCommand() {
-  const projectRoot = findProjectRoot();
+  const args = parseArgs({
+    args: process.argv.slice(3),
+    allowPositionals: false,
+    strict: false,
+    options: {
+      output: { type: "string" },
+    },
+  });
+
+  const cwd = process.cwd();
+  const projectRoot = findProjectRoot(cwd);
   if (!projectRoot) {
     // eslint-disable-next-line no-console
     console.log(pc.red("Could not find project root (no package.json found)."));
     process.exit(1);
   }
 
-  const packages = discoverAlloyPackages(projectRoot);
+  // Determine where AGENTS.md should go
+  const outputDir =
+    args.values.output ?
+      resolve(String(args.values.output))
+    : (findGitRoot(cwd) ?? projectRoot);
+
+  const packages = discoverAlloyPackages(cwd, outputDir);
   if (packages.length === 0) {
     // eslint-disable-next-line no-console
-    console.log(
-      pc.yellow("No @alloy-js packages with docs found in node_modules."),
-    );
+    console.log(pc.yellow("No @alloy-js packages with docs found."));
     return;
   }
 
   const section = generateDocsSection(packages);
-  const agentsPath = resolve(projectRoot, "AGENTS.md");
+  const agentsPath = resolve(outputDir, "AGENTS.md");
   updateAgentsMd(agentsPath, section);
 
   // eslint-disable-next-line no-console
   console.log(
-    `${pc.green("✔")} Updated ${pc.cyan("AGENTS.md")} with ${packages.length} package doc link(s):`,
+    `${pc.green("✔")} Updated ${pc.cyan(relative(cwd, agentsPath) || "AGENTS.md")} with ${packages.length} package doc link(s):`,
   );
   for (const pkg of packages) {
     // eslint-disable-next-line no-console
-    console.log(`  ${pc.dim("•")} ${pkg.name} → ${pc.dim(pkg.indexPath)}`);
+    console.log(`  ${pc.dim("•")} ${pkg.name} → ${pc.dim(pkg.indexRelPath)}`);
   }
 }
 
-function findProjectRoot(): string | undefined {
-  let dir = process.cwd();
-  while (true) {
-    if (existsSync(join(dir, "package.json"))) {
-      return dir;
-    }
-    const parent = resolve(dir, "..");
-    if (parent === dir) return undefined;
-    dir = parent;
-  }
-}
+function discoverAlloyPackages(
+  cwd: string,
+  outputDir: string,
+): PackageDocInfo[] {
+  const searchDirs = collectAlloySearchDirs(cwd);
+  const packages = new Map<string, PackageDocInfo>();
 
-function discoverAlloyPackages(projectRoot: string): PackageDocInfo[] {
-  const scopeDir = join(projectRoot, "node_modules", "@alloy-js");
-  if (!existsSync(scopeDir)) return [];
+  for (const searchDir of searchDirs) {
+    const scopeDir = join(searchDir, "node_modules", "@alloy-js");
+    if (!existsSync(scopeDir)) continue;
 
-  const packages: PackageDocInfo[] = [];
+    for (const entry of readdirSync(scopeDir, { withFileTypes: true })) {
+      if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
 
-  for (const entry of readdirSync(scopeDir, { withFileTypes: true })) {
-    if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
+      const pkgDir = join(scopeDir, entry.name);
+      const docsDir = join(pkgDir, "docs");
+      if (!existsSync(docsDir)) continue;
 
-    const pkgDir = join(scopeDir, entry.name);
-    const docsDir = join(pkgDir, "docs");
-    if (!existsSync(docsDir)) continue;
+      const indexFile = findDocIndex(docsDir);
+      if (!indexFile) continue;
 
-    // Find the best doc index
-    const indexPath = findDocIndex(docsDir);
-    if (!indexPath) continue;
+      const pkgJsonPath = join(pkgDir, "package.json");
+      let name = `@alloy-js/${entry.name}`;
+      let description = "";
 
-    const pkgJsonPath = join(pkgDir, "package.json");
-    let name = `@alloy-js/${entry.name}`;
-    let description = "";
-
-    if (existsSync(pkgJsonPath)) {
-      try {
-        const pkgJson = JSON.parse(readFileSync(pkgJsonPath, "utf-8"));
-        name = pkgJson.name ?? name;
-        description = pkgJson.description ?? "";
-      } catch {
-        // ignore parse errors
+      if (existsSync(pkgJsonPath)) {
+        try {
+          const pkgJson = JSON.parse(readFileSync(pkgJsonPath, "utf-8"));
+          name = pkgJson.name ?? name;
+          description = pkgJson.description ?? "";
+        } catch {
+          // ignore parse errors
+        }
       }
+
+      // Skip if we already found this package (prefer first found — closest to cwd)
+      if (packages.has(name)) continue;
+
+      const absIndexPath = resolve(docsDir, indexFile);
+      const relPath = relative(outputDir, absIndexPath);
+
+      packages.set(name, {
+        name,
+        description,
+        docsAbsPath: docsDir,
+        indexRelPath: relPath,
+      });
     }
-
-    const relativeIndexPath = join(
-      "node_modules",
-      "@alloy-js",
-      entry.name,
-      "docs",
-      indexPath,
-    );
-
-    packages.push({
-      name,
-      description,
-      docsPath: join("node_modules", "@alloy-js", entry.name, "docs"),
-      indexPath: relativeIndexPath,
-    });
   }
 
   // Sort: core first, then alphabetically
-  packages.sort((a, b) => {
+  const sorted = [...packages.values()];
+  sorted.sort((a, b) => {
     if (a.name === "@alloy-js/core") return -1;
     if (b.name === "@alloy-js/core") return 1;
     return a.name.localeCompare(b.name);
   });
 
-  return packages;
+  return sorted;
 }
 
 function findDocIndex(docsDir: string): string | undefined {
@@ -138,7 +152,7 @@ function generateDocsSection(packages: PackageDocInfo[]): string {
 
   for (const pkg of packages) {
     const desc = pkg.description ? ` — ${pkg.description}` : "";
-    lines.push(`- [${pkg.name}](./${pkg.indexPath})${desc}`);
+    lines.push(`- [${pkg.name}](./${pkg.indexRelPath})${desc}`);
   }
 
   lines.push(END_MARKER);

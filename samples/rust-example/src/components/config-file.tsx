@@ -7,12 +7,11 @@ import {
   FieldInit,
   FunctionDeclaration,
   ImplBlock,
-  Reference,
   SourceFile,
   StructDeclaration,
   StructExpression,
+  std,
 } from "@alloy-js/rust";
-import { stdCrate } from "../externals.js";
 
 export const configKey = refkey();
 export const maxEntriesKey = refkey();
@@ -65,7 +64,7 @@ export function ConfigFile(props: ConfigFileProps) {
           type={
             <>
               {"Option<"}
-              <Reference refkey={stdCrate.time.Duration} />
+              {std.time.Duration}
               {">"}
             </>
           }
@@ -83,8 +82,7 @@ export function ConfigFile(props: ConfigFileProps) {
             <FieldInit name="max_capacity">MAX_ENTRIES</FieldInit>
             <FieldInit name="default_ttl">
               {"Some("}
-              <Reference refkey={stdCrate.time.Duration} />
-              ::from_secs(DEFAULT_TTL_SECS){")"}
+              {std.time.Duration}::from_secs(DEFAULT_TTL_SECS){")"}
             </FieldInit>
             <FieldInit name="enable_eviction">true</FieldInit>
             <FieldInit name="name">String::from("default")</FieldInit>
@@ -115,12 +113,7 @@ export function ConfigFile(props: ConfigFileProps) {
           name="with_ttl"
           pub
           receiver="self"
-          parameters={[
-            {
-              name: "ttl",
-              type: <Reference refkey={stdCrate.time.Duration} />,
-            },
-          ]}
+          parameters={[{ name: "ttl", type: std.time.Duration }]}
           returnType="Self"
         >
           <StructExpression type="Self" spread="self">

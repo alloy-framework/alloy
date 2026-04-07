@@ -2,6 +2,7 @@ import {
   createOutputBinder,
   getSymbolCreator,
   isRefkey,
+  isRefkeyable,
   Output,
   render,
   type Children,
@@ -196,5 +197,48 @@ describe("createCrate", () => {
     );
     expect(consumerCrateScope).toBeDefined();
     expect(consumerCrateScope!.dependencies.has("std")).toBe(false);
+  });
+
+  it("creates member symbols and exposes member refkeys on types with members", () => {
+    const std = createCrate({
+      name: "std",
+      builtin: true,
+      modules: {
+        collections: {
+          HashMap: {
+            kind: "struct",
+            members: {
+              new: { kind: "function", associated: true },
+              insert: { kind: "function" },
+              get: { kind: "function" },
+              len: { kind: "function" },
+            },
+          },
+        },
+      },
+    });
+
+    // The type itself is refkeyable (can be passed to <Reference>)
+    expect(isRefkeyable(std.collections.HashMap)).toBe(true);
+    // Member refkeys are proper refkeys
+    expect(isRefkey(std.collections.HashMap.new)).toBe(true);
+    expect(isRefkey(std.collections.HashMap.insert)).toBe(true);
+    expect(isRefkey(std.collections.HashMap.get)).toBe(true);
+    expect(isRefkey(std.collections.HashMap.len)).toBe(true);
+
+    // The type refkey itself should still work for references
+    const output = render(
+      <Output externals={[std]}>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib">
+            type Map = <Reference refkey={std.collections.HashMap} />;
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "lib").contents.trim()).toBe(
+      ["use std::collections::HashMap;", "type Map = HashMap;"].join("\n"),
+    );
   });
 });

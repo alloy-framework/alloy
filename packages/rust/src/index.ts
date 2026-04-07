@@ -1,3 +1,4 @@
+export * from "./builtins/index.js";
 export * from "./components/index.js";
 export * from "./context/index.js";
 export * from "./create-crate.js";

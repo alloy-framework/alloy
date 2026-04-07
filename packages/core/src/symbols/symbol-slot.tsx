@@ -1,4 +1,5 @@
 import { Ref, ShallowReactive, shallowRef } from "@vue/reactivity";
+import { emitDiagnostic } from "../diagnostics.js";
 import { effect, onCleanup } from "../reactivity.js";
 import type { Children, Component } from "../runtime/component.js";
 import { OutputSymbol } from "./output-symbol.js";
@@ -35,6 +36,13 @@ export function createSymbolSlot(): SymbolSlot {
   const symbolSlotRef: Ref<ShallowReactive<Set<OutputSymbol>> | undefined> =
     shallowRef();
   function SymbolSlot(props: { children: Children }) {
+    if (symbolSlotRef.value !== undefined) {
+      emitDiagnostic({
+        message:
+          "SymbolSlot rendered more than once. The second render will overwrite symbols captured by the first render.",
+        severity: "error",
+      });
+    }
     const set = takeSymbols();
     symbolSlotRef.value = set;
 

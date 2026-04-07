@@ -125,6 +125,90 @@ debugger.
 All render errors include a component stack trace showing the path through your
 component tree to the error site, with file locations when built in dev mode.
 
+## Diagnosing hangs (reactive cycles)
+
+If your program hangs during rendering, the most likely cause is a **reactive
+cycle** — an effect that writes to a ref it also reads (directly or
+transitively), causing it to re-trigger infinitely. Common patterns:
+
+- A `computed` or render effect that reads a reactive value and also writes to
+  one that triggers the same effect.
+- Using `createContentSlot()` and then conditionally rendering content *inside*
+  the slot based on its `hasContent`/`isEmpty` signal — the content changes what
+  the slot observes, which changes what renders, creating a loop. Use `<Block>`
+  instead, which encapsulates this pattern safely.
+
+### Step 1: Capture a trace
+
+Run your program or test with `ALLOY_DEBUG_TRACE` to write a trace database:
+
+```sh
+ALLOY_DEBUG_TRACE=1 npx vitest run my-component.test.tsx
+# or for a standalone script:
+ALLOY_DEBUG_TRACE=./hang-trace.db node my-app.js
+```
+
+If the process hangs, kill it after a few seconds (`Ctrl-C`). The trace database
+is written incrementally, so you'll still have data.
+
+### Step 2: Find the runaway effect
+
+```sh
+# Show the most active effects — a runaway effect will be at the top
+alloy-trace effect hotspots --db ./trace.db
+```
+
+The effect with an anomalously high `triggers` count is your cycle.
+
+### Step 3: Filter to your component
+
+If `hotspots` is noisy, narrow by component or source file:
+
+```sh
+# Filter by component name
+alloy-trace effect list --component ObjectExpression --db ./trace.db
+
+# Filter by source file
+alloy-trace effect list --source-file object-expression.tsx --db ./trace.db
+
+# Filter by effect name
+alloy-trace effect list --name spacing --db ./trace.db
+
+# Filter by output file (find effects in context of a specific generated file)
+alloy-trace effect list --output-file my-output.ts --db ./trace.db
+```
+
+### Step 4: Trace the cycle
+
+Once you have the effect ID, trace its dependency chain:
+
+```sh
+# Show what triggers this effect and what it writes to
+alloy-trace effect show <id> --db ./trace.db
+
+# Walk the trigger chain: who wrote the ref that triggered this effect?
+alloy-trace effect chain <id> --db ./trace.db
+
+# Walk up the component ownership chain
+alloy-trace effect ancestry <id> --db ./trace.db
+```
+
+`effect chain` will show the cycle: effect A is triggered by ref X, which is
+written by effect A (or by effect B, which is triggered by a ref that effect A
+writes to).
+
+### Step 5: Live debugging
+
+For interactive debugging, use `ALLOY_TRACE` with a breakpoint:
+
+```sh
+# Trace all effect activity to the console
+ALLOY_TRACE=effect npx vitest run my-component.test.tsx
+
+# Break on a specific trace event ID
+ALLOY_TRACE=effect ALLOY_BREAK_ON_DID=<id> node --inspect my-app.js
+```
+
 ## Diagnostics API
 
 Components can emit diagnostics (info, warning, error) via the diagnostics

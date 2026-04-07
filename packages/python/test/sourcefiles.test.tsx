@@ -312,7 +312,7 @@ it("only futureImports before definition", () => {
   const content = (
     <py.SourceFile
       path="test.py"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
     </py.SourceFile>
@@ -333,7 +333,7 @@ it("only futureImports before non-definition", () => {
   const content = (
     <py.SourceFile
       path="test.py"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.VariableDeclaration name="x" initializer={42} />
     </py.SourceFile>
@@ -393,7 +393,7 @@ it("doc + futureImports before definition", () => {
     <py.SourceFile
       path="test.py"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
     </py.SourceFile>
@@ -423,7 +423,7 @@ it("doc + futureImports before non-definition", () => {
     <py.SourceFile
       path="test.py"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.VariableDeclaration name="x" initializer={42} />
     </py.SourceFile>
@@ -498,7 +498,7 @@ it("futureImports + imports before definition", () => {
   const content = (
     <py.SourceFile
       path="test.py"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.DataclassDeclaration name="User">
         <py.VariableDeclaration name="name" type="str" />
@@ -525,7 +525,7 @@ it("futureImports + imports before non-definition", () => {
   const content = (
     <py.SourceFile
       path="test.py"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.VariableDeclaration
         name="x"
@@ -552,7 +552,7 @@ it("doc + futureImports + imports before definition", () => {
     <py.SourceFile
       path="test.py"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.DataclassDeclaration name="User">
         <py.VariableDeclaration name="name" type="str" />
@@ -588,7 +588,7 @@ it("doc + futureImports + imports before non-definition", () => {
     <py.SourceFile
       path="test.py"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.VariableDeclaration
         name="x"
@@ -642,7 +642,7 @@ it("only futureImports in file (no children)", () => {
   const content = (
     <py.SourceFile
       path="test.py"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     />
   );
 
@@ -661,7 +661,7 @@ it("doc + futureImports in file (no children)", () => {
     <py.SourceFile
       path="test.py"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     />
   );
 
@@ -743,7 +743,7 @@ it("headerComment + futureImports before definition", () => {
     <py.SourceFile
       path="test.py"
       headerComment="Copyright 2024 My Company"
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
     </py.SourceFile>
@@ -797,7 +797,7 @@ it("headerComment + doc + futureImports before definition", () => {
       path="test.py"
       headerComment="Copyright 2024 My Company"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
     </py.SourceFile>
@@ -829,7 +829,7 @@ it("headerComment + doc + futureImports + imports before definition", () => {
       path="test.py"
       headerComment="Copyright 2024 My Company"
       doc={moduleDoc}
-      futureImports={<py.FutureStatement feature="annotations" />}
+      futureImports={[<py.FutureStatement feature="annotations" />]}
     >
       <py.DataclassDeclaration name="User">
         <py.VariableDeclaration name="name" type="str" />

@@ -12,9 +12,30 @@ import { expect } from "vitest";
 import { flushJobs, flushJobsAsync } from "../src/scheduler.js";
 import { dedent } from "./render.js";
 
-interface ToRenderToOptions {
+/**
+ * Print options passed to `toRenderTo` / `toRenderToAsync`. These override
+ * the per-`SourceFile` print settings for the duration of the assertion,
+ * which is useful when forcing line-breaking with a narrow `printWidth` in
+ * tests without needing extremely long inputs.
+ *
+ * @example
+ * ```ts
+ * expect(<MyList items={["a", "b", "c"]} />).toRenderTo(
+ *   `
+ *   a,
+ *   b,
+ *   c
+ *   `,
+ *   { printWidth: 10 }
+ * );
+ * ```
+ */
+export interface ToRenderToOptions {
+  /** Maximum line width before the formatter wraps output. */
   printWidth?: number;
+  /** Number of spaces per indentation level. */
   tabWidth?: number;
+  /** Use tab characters instead of spaces. */
   useTabs?: boolean;
 }
 

@@ -1,8 +1,10 @@
 import type { VariableApi } from "../../build-json.js";
+import { cleanExcerpt } from "../../utils.js";
 import {
+  Code,
   DocSourceFile,
   Examples,
-  Excerpt,
+  MdxParagraph,
   Remarks,
   SeeAlso,
   Summary,
@@ -19,7 +21,9 @@ export function VariableDoc(props: VariableDocProps) {
 
   return DocSourceFile({ title, declares: apiVariable }).children(
     Summary({ type: apiVariable }),
-    Excerpt({ excerpt: apiVariable.excerpt, context: apiVariable }),
+    MdxParagraph().children(
+      Code({ language: "ts" }).children(cleanExcerpt(apiVariable.excerpt.text)),
+    ),
     Remarks({ type: apiVariable }),
     Examples({ type: apiVariable }),
     SeeAlso({ type: apiVariable }),

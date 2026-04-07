@@ -14,6 +14,10 @@ import type { Output } from "../components/Output.js";
 export const BinderContext: ComponentContext<Binder> =
   createNamedContext("Binder");
 
+/**
+ * Returns the current {@link Binder} from context, or `undefined` if no
+ * binder is available. The binder is provided by the {@link Output} component.
+ */
 export function useBinder() {
   return useContext(BinderContext);
 }

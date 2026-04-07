@@ -21,7 +21,18 @@ export function resolveExcerptReference(
 }
 
 export function cleanExcerpt(excerpt: string) {
-  return excerpt.replace(/^(export |declare )*/, "");
+  return excerpt
+    .replace(/^(export |declare )*/, "")
+    .replace(/`/g, "\\`")
+    .replace(/\$\{/g, "\\${");
+}
+
+export function mdxEscape(text: string): string {
+  return text
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\{/g, "&#123;")
+    .replace(/\}/g, "&#125;");
 }
 
 export function flattenedMembers(iface: ApiInterface) {

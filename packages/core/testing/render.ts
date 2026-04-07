@@ -2,10 +2,19 @@ import { Children, printTree, renderTree } from "../src/index.js";
 
 export { printTree } from "../src/index.js";
 
+/**
+ * Render a JSX element tree to a string. Convenience wrapper combining
+ * `renderTree` and `printTree`.
+ */
 export function renderToString(element: Children) {
   return printTree(renderTree(element));
 }
 
+/**
+ * Dedented template literal tag. Strips leading/trailing blank lines and
+ * removes the common leading whitespace from all lines — useful for
+ * multi-line expected output in tests.
+ */
 export function d(strings: TemplateStringsArray, ...values: any[]): string {
   // Combine the strings and values
   const result = strings.reduce(

@@ -1,91 +1,84 @@
-import { execSync } from "child_process";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
+import { build, type Rolldown } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-const testDir = join(__dirname, ".temp", "vite-test-project");
+const tempDir = join(__dirname, ".temp", "browser-build-test");
+const entryFile = join(tempDir, "entry.js");
 
-describe("Browser Build Test", () => {
-  beforeAll(() => {
-    // Cleanup previous runs
-    if (existsSync(testDir)) {
-      rmSync(testDir, { recursive: true, force: true });
-    }
-
-    // Create a temporary Vite project
-    mkdirSync(testDir, { recursive: true });
-
-    execSync("npm init -y", { cwd: testDir });
-    execSync("npm install vite", { cwd: testDir });
-    execSync("npm install ../../..", { cwd: testDir });
-
-    // Create a minimal Vite app
-    writeFileSync(
-      join(testDir, "index.js"),
-      `
-        import { writeOutput } from "@alloy-js/core";
-        console.log("Alloy-js core imported successfully!", writeOutput);
-      `,
-    );
-
-    writeFileSync(
-      join(testDir, "vite.config.js"),
-      `
-        import { defineConfig } from "vite";
-    
-        export default defineConfig({
-          build: {
-            outDir: "dist",
-            target: "esnext",
-          }
-        });
-      `,
-    );
-
-    // Create an index.html file
-    writeFileSync(
-      join(testDir, "index.html"),
-      `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Vite Test</title>
-      </head>
-      <body>
-        <script type="module" src="/index.js"></script>
-      </body>
-      </html>
-      `,
-    );
-
-    writeFileSync(
-      join(testDir, "package.json"),
-      JSON.stringify(
-        {
-          type: "module",
-          scripts: {
-            build: "vite build",
-          },
+/**
+ * Bundles `@alloy-js/core` for the browser using Vite and returns
+ * the concatenated output code.
+ *
+ * Uses the `browser` export condition from the package exports map,
+ * which resolves to the compiled browser entry. This requires the
+ * package to be built first (the CI pipeline and `pnpm build` handle
+ * this automatically).
+ */
+async function bundleForBrowser(): Promise<string> {
+  const result = await build({
+    configFile: false,
+    logLevel: "silent",
+    resolve: {
+      conditions: ["browser", "import"],
+    },
+    // Disable automatic process.env replacement so we can detect leaks
+    define: {},
+    build: {
+      write: false,
+      minify: false,
+      rollupOptions: {
+        input: entryFile,
+        output: { format: "es" },
+        // Disable tree-shaking so we catch process.* references in ANY
+        // code path, even if it would be removed in a production build.
+        treeshake: false,
+        external: (id) => {
+          // Bundle @alloy-js packages — these are what we're validating
+          if (id.startsWith("@alloy-js/")) return false;
+          // Bundle relative/absolute imports (intra-package)
+          if (id.startsWith(".") || id.startsWith("/")) return false;
+          // Externalize third-party deps (vue, pathe, picocolors, …)
+          return true;
         },
-        null,
-        2,
-      ),
-    );
-  }, 30_000);
+      },
+    },
+  });
 
-  it("Vite should build successfully", () => {
-    // Run Vite build process and wait for completion
-    expect(() => {
-      execSync("npm run build", { cwd: testDir, stdio: "inherit" });
-    }).not.toThrow();
-  }, 10000);
+  const output = (
+    Array.isArray(result) ?
+      result[0]
+    : result) as Rolldown.RolldownOutput;
+  const chunks = output.output.filter(
+    (o): o is Rolldown.OutputChunk => o.type === "chunk",
+  );
+  return chunks.map((c) => c.code).join("\n");
+}
+
+describe("browser build", () => {
+  beforeAll(() => {
+    if (existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+    mkdirSync(tempDir, { recursive: true });
+    writeFileSync(entryFile, 'export * from "@alloy-js/core";\n');
+  });
 
   afterAll(() => {
-    // Ensure testDir exists before attempting to remove it
-    if (existsSync(testDir)) {
-      rmSync(testDir, { recursive: true, force: true });
+    if (existsSync(tempDir)) {
+      rmSync(tempDir, { recursive: true, force: true });
     }
   });
+
+  it("should bundle for browser without Node.js polyfills", async () => {
+    const code = await bundleForBrowser();
+
+    // The browser bundle must not reference the Node.js `process` global.
+    // If this fails, a file is using process.env / process.cwd / etc.
+    // without going through host/node-host.ts (or another browser-overridden module).
+    expect(code).not.toMatch(/\bprocess\./);
+
+    // Should not contain static require("node:…") calls
+    expect(code).not.toMatch(/require\(\s*["']node:/);
+  }, 30_000);
 });

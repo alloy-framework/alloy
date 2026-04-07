@@ -1,7 +1,9 @@
 import { code, mapJoin, type Children } from "@alloy-js/core";
-import type {
-  ApiInterface,
-  HeritageType,
+import {
+  ApiClass,
+  ApiItemKind,
+  type ApiInterface,
+  type HeritageType,
 } from "@microsoft/api-extractor-model";
 import {
   Excerpt,
@@ -11,15 +13,22 @@ import {
 } from "../stc/index.js";
 
 export interface TypeMembersProps {
-  type: ApiInterface;
+  type: ApiInterface | ApiClass;
 }
 
 export function TypeMembers(props: TypeMembersProps) {
   let extendsInfo: Children = "";
 
-  if (props.type.extendsTypes.length > 0) {
+  const extendsTypes: HeritageType[] =
+    props.type.kind === ApiItemKind.Class ?
+      (props.type as ApiClass).extendsType ?
+        [(props.type as ApiClass).extendsType!]
+      : []
+    : (props.type as ApiInterface).extendsTypes.slice();
+
+  if (extendsTypes.length > 0) {
     const extendsItems = mapJoin(
-      () => props.type.extendsTypes as HeritageType[],
+      () => extendsTypes,
       (type) => Excerpt({ excerpt: type.excerpt, context: props.type }),
       { joiner: "," },
     );
@@ -28,6 +37,6 @@ export function TypeMembers(props: TypeMembersProps) {
   }
   return MdxSection({ title: "Members" }).children(
     extendsInfo && MdxParagraph().children(extendsInfo),
-    InterfaceMembers({ iface: props.type }),
+    InterfaceMembers({ iface: props.type as ApiInterface }),
   );
 }

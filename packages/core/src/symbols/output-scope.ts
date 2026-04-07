@@ -54,6 +54,11 @@ export interface OutputScopeOptions {
  * within a reactive context.
  */
 export abstract class OutputScope {
+  /**
+   * The declaration space keys for this scope type. Subclasses override this
+   * to declare which declaration spaces are created on construction (e.g.,
+   * `["types", "values"]`).
+   */
   static readonly declarationSpaces: Readonly<string[]> = [] as const;
 
   #name: string;
@@ -125,7 +130,8 @@ export abstract class OutputScope {
   #spaces: Record<string, OutputDeclarationSpace>;
 
   /**
-   * Get the declaration space for the given key.
+   * Get the declaration space for the given key (e.g., `"types"`, `"values"`).
+   * Returns `undefined` when no space with that key exists on this scope.
    */
   spaceFor(key: string): OutputSpace | undefined {
     return this.#spaces[key];
@@ -153,6 +159,32 @@ export abstract class OutputScope {
 
   [ReactiveFlags.SKIP] = true;
 
+  /**
+   * Subclasses must forward all three positional arguments to `super`. See
+   * {@link createScope} for the preferred instantiation path.
+   *
+   * @param name - A descriptive name for this scope (used in debugging and
+   * diagnostics).
+   * @param parentScope - The parent scope in the scope tree, or `undefined`
+   * for root scopes. Inside a component, obtain this via `useScope()`.
+   * @param options - Additional scope options; see {@link OutputScopeOptions}.
+   *
+   * @example
+   * ```ts
+   * class MyScope extends OutputScope {
+   *   constructor(
+   *     name: string,
+   *     parent: OutputScope | undefined,
+   *     options?: OutputScopeOptions,
+   *   ) {
+   *     super(name, parent, options);
+   *   }
+   * }
+   *
+   * // Inside a component:
+   * const scope = createScope(MyScope, "my-scope", useScope());
+   * ```
+   */
   constructor(
     name: string,
     parentScope: OutputScope | undefined,

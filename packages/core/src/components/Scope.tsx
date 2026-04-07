@@ -47,6 +47,12 @@ export type ScopeProps = ScopePropsWithValue | ScopePropsWithInfo;
  * Declare a scope for this component's children. Any symbols and scopes
  * declared in the children of this component will be in this scope.
  *
+ * @remarks
+ *
+ * When called with `name` (without `value`), this creates a `BasicScope`. The
+ * parent scope must also be a `BasicScope`; for custom scope types, create your
+ * scope and pass it via the `value` prop instead.
+ *
  * @see {@link ScopeContext}
  */
 export function Scope(props: ScopeProps) {

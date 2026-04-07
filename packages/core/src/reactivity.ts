@@ -200,6 +200,21 @@ export function findCurrentEffectId(): number | undefined {
   return undefined;
 }
 
+/**
+ * Returns a getter caching the result of `fn`. Re-evaluates when reactive
+ * dependencies change. See the [Reactivity docs](../../reactivity.md) for details.
+ *
+ * @param fn - Function to memoize.
+ * @param equal - Skip updates when value is unchanged.
+ * @param name - Debug label for traces.
+ * @returns A zero-argument getter returning the cached value.
+ *
+ * @example
+ * ```ts
+ * const fullName = memo(() => `${first.value} ${last.value}`);
+ * fullName(); // cached; re-evaluates when first or last changes
+ * ```
+ */
 export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
   const memoLabel = name ? `memo:${name}` : "memo";
   const o = shallowRef<T>(undefined as T, {

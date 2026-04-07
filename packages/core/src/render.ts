@@ -282,12 +282,14 @@ const {
 
 export interface OutputDirectory {
   kind: "directory";
+  /** Full path from the output root, e.g. `"generated-client/src"`. Do not prepend parent directory paths when walking the tree. */
   path: string;
   contents: (OutputDirectory | OutputFile)[];
 }
 
 export interface OutputFileBase {
   kind: "file";
+  /** Full path from the output root, e.g. `"generated-client/src/models.ext"`. Do not prepend parent directory paths when walking the tree. */
   path: string;
 }
 

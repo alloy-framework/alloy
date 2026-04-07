@@ -35,6 +35,10 @@ export class FunctionSymbol extends RustOutputSymbol {
     trigger(this, TriggerOpTypes.SET, "receiverType", value, old);
   }
 
+  get isInstanceMemberSymbol(): boolean {
+    return this.receiverType !== undefined;
+  }
+
   constructor(
     name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,

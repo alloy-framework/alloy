@@ -1,4 +1,4 @@
-import { Refkey, memo, resolve, unresolvedRefkey } from "@alloy-js/core";
+import { Children, Refkey, memo, resolve, unresolvedRefkey } from "@alloy-js/core";
 import {
   PRELUDE_TYPES,
   PRELUDE_TYPES_2015,
@@ -23,7 +23,7 @@ const PRELUDE_BY_EDITION: Record<string, Set<string>> = {
 
 export function ref(
   refkey: Refkey,
-): () => [string, RustOutputSymbol | undefined] {
+): () => [Children, RustOutputSymbol | undefined] {
   const currentScope = useRustScope();
   const currentModuleScope = currentScope.enclosingModule;
   if (!(currentModuleScope instanceof RustModuleScope)) {
@@ -47,10 +47,11 @@ export function ref(
     }
 
     const result = resolveResult.value;
-    const targetName = result.symbol.name;
+    const { symbol, lexicalDeclaration, commonScope, memberPath } = result;
+    const declarationName = lexicalDeclaration.name;
 
     const sourceCrate = currentModuleScope.enclosingCrate;
-    const declarationScope = result.lexicalDeclaration.scope as
+    const declarationScope = lexicalDeclaration.scope as
       | RustScopeBase
       | undefined;
     const targetModule = declarationScope?.enclosingModule;
@@ -64,46 +65,75 @@ export function ref(
       sourceCrate instanceof RustCrateScope &&
       targetCrate === sourceCrate;
 
-    if (prelude.has(targetName) && !isLocalSymbol) {
-      return [targetName, result.symbol];
-    }
+    if (!(prelude.has(declarationName) && !isLocalSymbol)) {
+      if (
+        targetModule instanceof RustModuleScope &&
+        targetCrate instanceof RustCrateScope &&
+        sourceCrate instanceof RustCrateScope
+      ) {
+        if (targetModule !== currentModuleScope) {
+          if (targetCrate === sourceCrate) {
+            if (lexicalDeclaration.visibility === undefined) {
+              throw new Error(
+                `Cannot reference private symbol '${declarationName}' from module '${currentModuleScope.name}'.`,
+              );
+            }
 
-    if (
-      targetModule instanceof RustModuleScope &&
-      targetCrate instanceof RustCrateScope &&
-      sourceCrate instanceof RustCrateScope
-    ) {
-      if (targetModule !== currentModuleScope) {
-        if (targetCrate === sourceCrate) {
-          if (result.lexicalDeclaration.visibility === undefined) {
-            throw new Error(
-              `Cannot reference private symbol '${targetName}' from module '${currentModuleScope.name}'.`,
-            );
-          }
-
-          const sameCratePath = buildUsePath("crate", result.pathDown);
-          currentModuleScope.addUse(sameCratePath, result.lexicalDeclaration);
-        } else {
-          const externalCratePath = buildUsePath(
-            targetCrate.name,
-            result.pathDown,
-          );
-          currentModuleScope.addUse(
-            externalCratePath,
-            result.lexicalDeclaration,
-          );
-          if (!isBuiltinCrate(targetCrate)) {
-            sourceCrate.addDependency(
+            const sameCratePath = buildUsePath("crate", result.pathDown);
+            currentModuleScope.addUse(sameCratePath, lexicalDeclaration);
+          } else {
+            const externalCratePath = buildUsePath(
               targetCrate.name,
-              targetCrate.version ?? "*",
+              result.pathDown,
             );
+            currentModuleScope.addUse(externalCratePath, lexicalDeclaration);
+            if (!isBuiltinCrate(targetCrate)) {
+              sourceCrate.addDependency(
+                targetCrate.name,
+                targetCrate.version ?? "*",
+              );
+            }
           }
         }
       }
     }
 
-    return [targetName, result.symbol];
+    return [
+      buildReferenceChildren(commonScope, lexicalDeclaration, memberPath),
+      symbol,
+    ];
   });
+}
+
+function buildReferenceChildren(
+  commonScope: RustScopeBase | undefined,
+  lexicalDeclaration: RustOutputSymbol,
+  memberPath: RustOutputSymbol[],
+): Children {
+  const parts: Children[] = [];
+
+  if (commonScope && commonScope.isMemberScope) {
+    // Referencing a member of a type we are inside
+    if (lexicalDeclaration.isInstanceMemberSymbol) {
+      // Instance member: self.member
+      parts.push("self.", lexicalDeclaration.name);
+    } else {
+      // Associated item: Type::member
+      parts.push(commonScope.ownerSymbol!.name, "::", lexicalDeclaration.name);
+    }
+  } else {
+    parts.push(lexicalDeclaration.name);
+  }
+
+  for (const member of memberPath) {
+    if (member.isInstanceMemberSymbol) {
+      parts.push(".", member.name);
+    } else {
+      parts.push("::", member.name);
+    }
+  }
+
+  return <>{parts}</>;
 }
 
 function buildUsePath(prefix: string, pathDown: RustScopeBase[]): string {

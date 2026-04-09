@@ -5,7 +5,16 @@ import { OutputScope } from "./output-scope.js";
 import { OutputSymbol } from "./output-symbol.js";
 import { SymbolTable } from "./symbol-table.js";
 
+/**
+ * A symbol table that belongs to either a scope (declaration space) or a symbol
+ * (member space).
+ */
 export type OutputSpace = OutputDeclarationSpace | OutputMemberSpace;
+
+/**
+ * A symbol table attached to an {@link OutputScope}. Holds lexical declarations
+ * visible within that scope (e.g., "types" or "values" in a TypeScript module).
+ */
 export class OutputDeclarationSpace extends SymbolTable {
   constructor(scope: OutputScope, key: string, binder?: Binder) {
     super(key, binder);
@@ -27,6 +36,10 @@ export class OutputDeclarationSpace extends SymbolTable {
   }
 }
 
+/**
+ * A symbol table attached to an {@link OutputSymbol}. Holds member declarations
+ * belonging to that symbol (e.g., "static" or "instance" members of a class).
+ */
 export class OutputMemberSpace extends SymbolTable {
   constructor(symbol: OutputSymbol, key: string, binder?: Binder) {
     super(key, binder);

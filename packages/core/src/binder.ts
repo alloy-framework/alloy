@@ -102,7 +102,9 @@ export interface Binder {
  * * **commonScope**: global scope, because this is the most specific scope that contains both the declaration and the reference.
  * * **pathUp**: [namespace scope 2], because this is the scope between the reference and the common scope.
  * * **pathDown**: [namespace scope 1], because this is the scope between the common scope and the declaration
- * * **memberPath**: [foo, bar], because we resolved a member symbol and these are the symbols that lead from the base declaration to the member symbol.
+ * * **memberPath**: [bar]
+ * * **lexicalDeclaration**: foo
+ * For deeper chains (e.g., foo.bar.baz where bar and baz are member symbols, foo is not): memberPath = [bar, baz], lexicalDeclaration = foo.
  */
 export interface ResolutionResult<
   TScope extends OutputScope,
@@ -149,8 +151,8 @@ export interface ResolutionResult<
   commonScope: TScope | undefined;
 
   /**
-   * When resolving a member symbol, this is the path of symbols that lead from
-   * the lexical declaration to the member symbol.
+   * Member symbols from the lexical declaration (exclusive) to the resolved symbol
+   * (inclusive). Empty when resolving a non-member symbol.
    */
   memberPath: TSymbol[];
 }
@@ -164,6 +166,36 @@ export interface MemberDescriptor {
   isMemberAccess: boolean;
 }
 
+/**
+ * A callable interface invoked by the binder when two or more symbols in the
+ * same scope share a name. The resolver mutates symbol names to eliminate
+ * conflicts (e.g., appending `_2`, `_3`).
+ *
+ * @remarks
+ * The resolver is called with the shared `name` and all symbols in the scope
+ * that have that original name. Rename a symbol by assigning to `symbol.name`.
+ * Symbols with `ignoreNameConflict: true` are excluded. The default resolver
+ * keeps the first symbol unchanged and renames subsequent ones
+ * `originalName + "_2"`, `originalName + "_3"`, etc.
+ *
+ * Assigned names pass through the active name policy before being stored;
+ * design suffixes to produce the correct final name after policy
+ * transformation, or set `ignoreNamePolicy` on the symbol after resolution.
+ *
+ * Conflict detection is keyed on `originalName`
+ * (see {@link OutputSymbol.originalName}). Symbols that differ in original
+ * name but normalize to the same policy-applied name are never detected as
+ * conflicting.
+ *
+ * @example
+ * ```ts
+ * const resolver: NameConflictResolver = (name, symbols) => {
+ *   for (let i = 1; i < symbols.length; i++) {
+ *     symbols[i].name = symbols[i].originalName + "_" + (i + 1);
+ *   }
+ * };
+ * ```
+ */
 export interface NameConflictResolver {
   (name: string, symbols: OutputSymbol[]): void;
 }
@@ -187,7 +219,28 @@ export interface MemberResolutionContext<TScope extends OutputScope> {
 }
 
 /**
+ * A callback that performs access-control filtering during member resolution.
  *
+ * @remarks
+ *
+ * When provided to {@link ResolveDeclarationByKeyOptions}, it entirely replaces
+ * the default checks (ownership assertion and `isMemberSymbol` assertion).
+ *
+ * **Contract:**
+ * - **Return `void`** to accept the member.
+ * - **Throw an error** to reject the member — the error propagates to the caller,
+ *   matching the behavior of the default checks.
+ *
+ * @example
+ * ```ts
+ * const resolver: MemberResolver<MyScope, MySymbol> = (owner, member, ctx) => {
+ *   if (member.isPrivate && !ctx.isMemberAccess) {
+ *     throw new Error(`${member.name} is not accessible here`);
+ *   }
+ * };
+ * ```
+ *
+ * @see {@link MemberResolutionContext} for available context properties.
  */
 export interface MemberResolver<
   TScope extends OutputScope,
@@ -209,6 +262,30 @@ export interface BinderOptions {
   nameConflictResolver?: NameConflictResolver;
 }
 
+/**
+ * Construct a scope instance and register it with devtools. Prefer this over
+ * calling `new` directly so that debugging tools can track the scope.
+ *
+ * @remarks
+ *
+ * Inside a component, obtain the current scope with `useScope()` and pass it
+ * as the `parentScope` constructor argument so the new scope is wired into
+ * the scope tree.
+ *
+ * @example
+ * ```tsx
+ * function MyScope(props) {
+ *   const parentScope = useScope();
+ *   const scope = createScope(MyScope, "scope-name", parentScope);
+ *   return <Scope value={scope}>{props.children}</Scope>;
+ * }
+ * ```
+ *
+ * @param ctor - The scope subclass constructor.
+ * @param args - Positional arguments forwarded directly to the scope
+ * constructor; see {@link OutputScope} for the base-class constructor
+ * signature.
+ */
 export function createScope<TScope extends OutputScope, Args extends unknown[]>(
   ctor: new (...args: Args) => TScope,
   ...args: Args
@@ -218,6 +295,19 @@ export function createScope<TScope extends OutputScope, Args extends unknown[]>(
   return scope;
 }
 
+/**
+ * Construct a symbol instance and register it with devtools. Prefer this over
+ * calling `new` directly so that debugging tools can track the symbol.
+ *
+ * @remarks
+ *
+ * Binder registration (via `useBinder()` + `notifySymbolCreated()`) happens
+ * inside the `OutputSymbol` constructor regardless of whether you use
+ * `createSymbol` or `new`. This helper only adds devtools registration.
+ *
+ * @param ctor - The symbol subclass constructor.
+ * @param args - Arguments forwarded to the constructor.
+ */
 export function createSymbol<
   TSymbol extends OutputSymbol,
   Args extends unknown[],
@@ -803,6 +893,20 @@ export function getSymbolCreatorSymbol(): typeof createSymbolsSymbol {
   return createSymbolsSymbol;
 }
 
+/**
+ * An object that can register symbols into a binder. Pass instances to the
+ * `externals` prop of `<Output>` to make library symbols resolvable.
+ *
+ * @remarks
+ * `SymbolCreator` is a low-level core mechanism for eager symbol registration.
+ * The recommended pattern for language packages is lazy self-registration:
+ * implement `[TO_SYMBOL]()` on descriptors to call `useBinder()`, create and
+ * cache symbols per binder via a `WeakMap`, and register them into the
+ * appropriate scope automatically. This approach does not require `externals`.
+ * See the C# package's `createLibrary()` for a reference implementation.
+ *
+ * See {@link TO_SYMBOL} and {@link REFKEYABLE}.
+ */
 export interface SymbolCreator {
   [createSymbolsSymbol](binder: Binder): void;
 }

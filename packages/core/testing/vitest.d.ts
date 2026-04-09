@@ -1,10 +1,5 @@
 import "vitest";
-
-interface ToRenderToRenderOptions {
-  printWidth?: number;
-  tabWidth?: number;
-  useTabs?: boolean;
-}
+import type { ToRenderToOptions } from "./extend-expect.js";
 
 interface ExpectedDiagnostic {
   message: string | RegExp;
@@ -14,11 +9,11 @@ interface ExpectedDiagnostic {
 interface CustomMatchers<R = unknown> {
   toRenderTo: (
     str: string | Record<string, string>,
-    options?: ToRenderToRenderOptions,
+    options?: ToRenderToOptions,
   ) => R;
   toRenderToAsync: (
     str: string | Record<string, string>,
-    options?: ToRenderToRenderOptions,
+    options?: ToRenderToOptions,
   ) => Promise<R>;
   toHaveDiagnostics: (expectedDiagnostics: ExpectedDiagnostic[]) => R;
   toHaveDiagnosticsAsync: (

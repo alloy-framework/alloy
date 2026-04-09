@@ -142,4 +142,7 @@ packages/*/tsdoc-metadata.json
 packages/docs/src/content/docs/reference
 packages/docs/dist-build
 
+# Generated agent docs (produced by generate-agent-docs, published in npm packages)
+packages/*/docs/api
+
 alloy-output/

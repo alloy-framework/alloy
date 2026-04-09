@@ -7,7 +7,10 @@
   "license": "MIT",
   "author": "Microsoft",
   "files": [
-    "dist"
+    "dist",
+    "cmd",
+    "agents",
+    "docs"
   ],
   "bin": {
     "alloy": "./cmd/alloy.js"

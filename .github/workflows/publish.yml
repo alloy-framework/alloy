@@ -43,6 +43,18 @@ jobs:
           git diff --no-ext-diff --quiet --exit-code
         name: Check not out of date generated files
 
+      - name: Generate docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-docs
+
+      - name: Build docs site
+        working-directory: ./packages/docs
+        run: pnpm astro build
+
+      - name: Generate agent docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-agent-docs
+
       - run: pnpm chronus pack --pack-destination ./artifacts
         name: Pack
 

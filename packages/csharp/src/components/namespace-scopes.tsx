@@ -19,17 +19,41 @@ export function NamespaceScope(props: NamespaceScopProps) {
 }
 
 export interface NamespaceScopesProps {
+  /**
+   * Target namespace whose scope chain should be established for `children`.
+   *
+   * For dotted namespaces, this is typically the most nested segment symbol.
+   */
   symbol: NamespaceSymbol;
+
+  /**
+   * Optional ancestor namespace that is already in scope.
+   *
+   * Wrapping stops before this symbol to avoid duplicating existing namespace
+   * scopes in the reference chain.
+   */
+  stopAt?: NamespaceSymbol;
   children: Children;
 }
 
+/**
+ * Applies `NamespaceScope` wrappers from `symbol` up through its enclosing
+ * namespaces until the root (or `stopAt`, when provided).
+ */
 export function NamespaceScopes(props: NamespaceScopesProps) {
   function wrapWithScope(symbol: NamespaceSymbol, children: Children) {
+    if (symbol === props.stopAt) {
+      return children;
+    }
+
     const scopeChildren = (
       <NamespaceScope symbol={symbol}>{children}</NamespaceScope>
     );
 
-    if (symbol.enclosingNamespace) {
+    if (
+      symbol.enclosingNamespace &&
+      symbol.enclosingNamespace !== props.stopAt
+    ) {
       return wrapWithScope(symbol.enclosingNamespace, scopeChildren);
     }
 

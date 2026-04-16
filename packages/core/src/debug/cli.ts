@@ -1,6 +1,7 @@
 import Table from "cli-table3";
 import pc from "picocolors";
 import { contextsByKey } from "../context.js";
+import { stdoutWrite } from "../host/node-host.js";
 import { getContext, untrack } from "../reactivity.js";
 import { isReactiveTarget } from "./effects.js";
 
@@ -143,7 +144,7 @@ export function debugStack() {
         currentContext.componentOwner &&
         currentContext.componentOwner.component.name !== "Provider"
       ) {
-        process.stdout.write(
+        stdoutWrite(
           style.component.name(currentContext.componentOwner.component.name) +
             "\n",
         );
@@ -164,7 +165,7 @@ export function debugStack() {
           : pc.gray("(none)"),
         ]);
 
-        process.stdout.write(table.toString() + "\n\n");
+        stdoutWrite(table.toString() + "\n\n");
         foundContexts = [];
       }
 

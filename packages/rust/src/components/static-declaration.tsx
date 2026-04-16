@@ -6,14 +6,15 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { createStaticSymbol } from "../symbols/factories.js";
-import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
+import {
+  type RustVisibilityProps,
+  toRustVisibility,
+  VisibilityPrefix,
+} from "./visibility.js";
 
-export interface StaticDeclarationProps {
+export interface StaticDeclarationProps extends RustVisibilityProps {
   name: string | Namekey;
   refkey?: Refkey;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   mutable?: boolean;
   attributes?: Children[];
   type: Children;
@@ -25,9 +26,7 @@ export function StaticDeclaration(props: StaticDeclarationProps) {
     refkeys: props.refkey ? [props.refkey] : [],
   });
 
-  staticSymbol.visibility = toRustVisibility(props);
-
-  const visibilityPrefix = toVisibilityPrefix(props);
+  staticSymbol.visibility = toRustVisibility(props.pub);
 
   const mutabilityPrefix = props.mutable ? "mut " : "";
 
@@ -42,7 +41,7 @@ export function StaticDeclaration(props: StaticDeclarationProps) {
         </>
       : null}
       <CoreDeclaration symbol={staticSymbol}>
-        {visibilityPrefix}
+        <VisibilityPrefix pub={props.pub} />
         {"static "}
         {mutabilityPrefix}
         {staticSymbol.name}

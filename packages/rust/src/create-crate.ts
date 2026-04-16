@@ -241,7 +241,7 @@ function ensureModuleScope(
       currentPath =
         currentPath.length === 0 ? segment : `${currentPath}::${segment}`;
       currentParent = mapGet(state.moduleScopes, currentPath, () => {
-        currentParent.addChildModule(segment, "pub");
+        currentParent.addChildModule({ name: segment, pub: true });
         return createScope(RustModuleScope, segment, currentParent, {
           binder: state.crateScope.binder,
           metadata: {

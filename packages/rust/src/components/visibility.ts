@@ -1,28 +1,50 @@
+import {
+  type Children,
+  type Refkey,
+  isRefkey,
+  memo,
+  resolve,
+} from "@alloy-js/core";
 import { type RustVisibility } from "../symbols/rust-output-symbol.js";
+import { buildUsePath } from "../symbols/reference.js";
+import { type RustScopeBase } from "../scopes/rust-scope.js";
 
 export interface RustVisibilityProps {
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
+  pub?: boolean | "crate" | "super" | RustVisibility | Refkey;
 }
 
-export function toRustVisibility(props: RustVisibilityProps): RustVisibility {
-  if (props.pub) {
-    return "pub";
+export function toRustVisibility(
+  pub: RustVisibilityProps["pub"],
+): RustVisibility {
+  switch (pub) {
+    case true:
+      return "pub";
+    case "crate":
+      return "pub(crate)";
+    case "super":
+      return "pub(super)";
+    case "pub":
+    case "pub(crate)":
+    case "pub(super)":
+      return pub;
+    default:
+      if (typeof pub === "string" && pub.startsWith("pub(in ")) {
+        return pub as RustVisibility;
+      }
+      return undefined;
   }
-
-  if (props.pub_crate) {
-    return "pub(crate)";
-  }
-
-  if (props.pub_super) {
-    return "pub(super)";
-  }
-
-  return undefined;
 }
 
-export function toVisibilityPrefix(props: RustVisibilityProps): string {
-  const visibility = toRustVisibility(props);
+export function VisibilityPrefix(props: RustVisibilityProps): Children {
+  if (isRefkey(props.pub)) {
+    const resolveResult = resolve<RustScopeBase, any>(props.pub);
+    return memo(() => {
+      if (!resolveResult.value) return "";
+      const path = buildUsePath("crate", resolveResult.value.pathDown);
+      return `pub(in ${path}) `;
+    });
+  }
+
+  const visibility = toRustVisibility(props.pub);
   return visibility ? `${visibility} ` : "";
 }

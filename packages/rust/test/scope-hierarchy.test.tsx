@@ -18,8 +18,8 @@ describe("Rust scope hierarchy", () => {
   it("tracks crate modules and dependencies", () => {
     const crateScope = new RustCrateScope("my_crate");
 
-    crateScope.addChildModule("net", "pub");
-    crateScope.addChildModule("net", "pub(super)");
+    crateScope.addChildModule({ name: "net", pub: true });
+    crateScope.addChildModule({ name: "net", pub: "super" });
     crateScope.addDependency("serde", "1.0");
     crateScope.addDependency("tokio", { version: "1.42", features: ["rt"] });
 
@@ -28,7 +28,7 @@ describe("Rust scope hierarchy", () => {
     expect(crateScope.childModules.size).toBe(1);
     expect(crateScope.childModules.get("net")).toEqual({
       name: "net",
-      visibility: "pub",
+      pub: true,
     });
     expect(crateScope.dependencies.get("serde")).toBe("1.0");
     expect(crateScope.dependencies.get("tokio")).toEqual({
@@ -54,16 +54,14 @@ describe("Rust scope hierarchy", () => {
     moduleScope.addUse("crate::types", request);
     moduleScope.addUse("crate::types", response);
     moduleScope.addUse("crate::types", request);
-    moduleScope.addChildModule("client", "pub(crate)");
+    moduleScope.addChildModule({ name: "client", pub: "crate" });
 
     expect(moduleScope.types).toBeDefined();
     expect(moduleScope.values).toBeDefined();
     expect(moduleScope.imports.get("crate::types")?.has(request)).toBe(true);
     expect(moduleScope.imports.get("crate::types")?.has(response)).toBe(true);
     expect(moduleScope.imports.get("crate::types")?.size).toBe(2);
-    expect(moduleScope.childModules.get("client")?.visibility).toBe(
-      "pub(crate)",
-    );
+    expect(moduleScope.childModules.get("client")?.pub).toBe("crate");
   });
 
   it("defines lexical and function declaration spaces", () => {

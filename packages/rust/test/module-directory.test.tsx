@@ -55,7 +55,7 @@ describe("ModuleDirectory", () => {
     expect(crateScope).toBeDefined();
     expect(crateScope!.childModules.get("net")).toEqual({
       name: "net",
-      visibility: "pub",
+      pub: true,
     });
   });
 
@@ -91,7 +91,7 @@ describe("ModuleDirectory", () => {
     expect(sourceFileScope).toBeDefined();
     expect(crateScope!.childModules.get("net")).toEqual({
       name: "net",
-      visibility: undefined,
+      pub: undefined,
     });
 
     const innerDirectoryScope = sourceFileScope!.parent;
@@ -99,7 +99,7 @@ describe("ModuleDirectory", () => {
     expect(innerDirectoryScope!.name).toBe("http");
     expect(innerDirectoryScope!.childModules.get("client")).toEqual({
       name: "client",
-      visibility: undefined,
+      pub: undefined,
     });
 
     const outerDirectoryScope = innerDirectoryScope!.parent;
@@ -112,7 +112,7 @@ describe("ModuleDirectory", () => {
     expect(outerDirectoryScope.name).toBe("net");
     expect(outerDirectoryScope.childModules.get("http")).toEqual({
       name: "http",
-      visibility: "pub",
+      pub: true,
     });
   });
 
@@ -127,12 +127,12 @@ describe("ModuleDirectory", () => {
     render(
       <Output>
         <CrateDirectory name="my_crate">
-          <ModuleDirectory path="net" pub_super={true}>
+          <ModuleDirectory path="net" pub="super">
             <SourceFile path="client.rs">
               <CrateScopeCapture />
             </SourceFile>
           </ModuleDirectory>
-          <ModuleDirectory path="api" pub_crate={true} pub_super={true}>
+          <ModuleDirectory path="api" pub="crate">
             <SourceFile path="mod.rs">
               <CrateScopeCapture />
             </SourceFile>
@@ -144,11 +144,11 @@ describe("ModuleDirectory", () => {
     expect(crateScope).toBeDefined();
     expect(crateScope!.childModules.get("net")).toEqual({
       name: "net",
-      visibility: "pub(super)",
+      pub: "super",
     });
     expect(crateScope!.childModules.get("api")).toEqual({
       name: "api",
-      visibility: "pub(crate)",
+      pub: "crate",
     });
   });
 });

@@ -11,13 +11,10 @@ import { RustModuleScope } from "../scopes/rust-module-scope.js";
 import { ModDeclarations } from "./mod-declarations.js";
 import { Reference } from "./reference.js";
 import { UseStatements } from "./use-statement.js";
-import { toRustVisibility } from "./visibility.js";
+import { type RustVisibilityProps } from "./visibility.js";
 
-export interface SourceFileProps {
+export interface SourceFileProps extends RustVisibilityProps {
   path: string;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   attributes?: Children[];
   children?: Children;
   header?: Children;
@@ -73,13 +70,12 @@ export function SourceFile(props: SourceFileProps) {
     ) ?
       parentScope
     : undefined;
-  const visibility = toRustVisibility(props);
   if (scopeParent && isStandaloneModulePath(props.path)) {
-    scopeParent.addChildModule(
-      getStandaloneModuleName(props.path),
-      visibility,
-      props.attributes,
-    );
+    scopeParent.addChildModule({
+      name: getStandaloneModuleName(props.path),
+      pub: props.pub,
+      attributes: props.attributes,
+    });
   }
   const scope = createScope(RustModuleScope, props.path, scopeParent, {
     binder: scopeParent?.binder,

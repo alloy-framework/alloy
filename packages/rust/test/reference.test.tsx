@@ -223,6 +223,84 @@ describe("Rust reference resolution", () => {
       ),
     ).toThrowError("Cannot reference private symbol 'PrivateModel'");
   });
+
+  it("renders pub(in path) visibility on a declaration", () => {
+    expect(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <SourceFile path="lib.rs">
+            <Declaration
+              name="InternalThing"
+              nameKind="struct"
+              pub="pub(in crate::models)"
+            >
+              struct InternalThing;
+            </Declaration>
+          </SourceFile>
+        </CrateDirectory>
+      </Output>,
+    ).toRenderTo(d`pub(in crate::models) struct InternalThing;`);
+  });
+
+  it("allows pub(in path) reference from within the specified path", () => {
+    const internalType = refkey("internal-type");
+
+    const output = render(
+      <Output>
+        <CrateDirectory name="my_crate">
+          <ModuleDirectory path="models" pub>
+            <SourceFile path="mod.rs">
+              <ModuleDirectory path="inner" pub>
+                <SourceFile path="mod.rs">
+                  <Declaration
+                    name="InternalModel"
+                    refkey={internalType}
+                    nameKind="struct"
+                    pub="pub(in crate::models)"
+                  >
+                    struct InternalModel;
+                  </Declaration>
+                </SourceFile>
+              </ModuleDirectory>
+              type Alias = <Reference refkey={internalType} />;
+            </SourceFile>
+          </ModuleDirectory>
+        </CrateDirectory>
+      </Output>,
+    );
+
+    expect(findFile(output, "models/mod.rs").contents).toContain(
+      "use crate::inner::InternalModel;",
+    );
+  });
+
+  it("throws on pub(in path) reference from outside the specified path", () => {
+    const internalType = refkey("internal-type");
+
+    expect(() =>
+      render(
+        <Output>
+          <CrateDirectory name="my_crate">
+            <ModuleDirectory path="models" pub>
+              <SourceFile path="mod.rs">
+                <Declaration
+                  name="InternalModel"
+                  refkey={internalType}
+                  nameKind="struct"
+                  pub="pub(in crate::models)"
+                >
+                  pub(in crate::models) struct InternalModel;
+                </Declaration>
+              </SourceFile>
+            </ModuleDirectory>
+            <SourceFile path="routes">
+              type Alias = <Reference refkey={internalType} />;
+            </SourceFile>
+          </CrateDirectory>
+        </Output>,
+      ),
+    ).toThrowError(/Cannot reference.*InternalModel/);
+  });
 });
 
 describe("Rust reference nested scope traversal", () => {

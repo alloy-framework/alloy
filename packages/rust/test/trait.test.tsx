@@ -73,9 +73,9 @@ describe("TraitDeclaration", () => {
       <Output>
         <CrateDirectory name="my_crate">
           <SourceFile path="lib.rs">
-            <TraitDeclaration name="CrateVisible" pub_crate={true} />
+            <TraitDeclaration name="CrateVisible" pub="crate" />
             <hbr />
-            <TraitDeclaration name="ParentVisible" pub_super={true} />
+            <TraitDeclaration name="ParentVisible" pub="super" />
           </SourceFile>
         </CrateDirectory>
       </Output>,
@@ -203,7 +203,7 @@ describe("TraitDeclaration", () => {
     `);
   });
 
-  it("applies visibility precedence on trait symbols", () => {
+  it("applies pub visibility on trait symbols", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -211,8 +211,6 @@ describe("TraitDeclaration", () => {
             <TraitDeclaration
               name="Serialize"
               pub={true}
-              pub_crate={true}
-              pub_super={true}
             />
             <hbr />
             <TraitVisibilityProbe name="Serialize" />

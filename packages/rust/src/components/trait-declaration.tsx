@@ -17,14 +17,15 @@ import {
   TypeParameters,
   WhereClause,
 } from "./type-parameters.js";
-import { toRustVisibility, toVisibilityPrefix } from "./visibility.js";
+import {
+  type RustVisibilityProps,
+  toRustVisibility,
+  VisibilityPrefix,
+} from "./visibility.js";
 
-export interface TraitDeclarationProps {
+export interface TraitDeclarationProps extends RustVisibilityProps {
   name: string | Namekey;
   refkey?: Refkey;
-  pub?: boolean;
-  pub_crate?: boolean;
-  pub_super?: boolean;
   typeParameters?: TypeParameterProp[];
   supertraits?: Children[];
   whereClause?: Children;
@@ -42,8 +43,7 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
     binder: parentScope.binder,
   });
 
-  traitSymbol.visibility = toRustVisibility(props);
-  const visibilityPrefix = toVisibilityPrefix(props);
+  traitSymbol.visibility = toRustVisibility(props.pub);
 
   return (
     <>
@@ -61,7 +61,7 @@ export function TraitDeclaration(props: TraitDeclarationProps) {
         </>
       : null}
       <CoreDeclaration symbol={traitSymbol}>
-        {visibilityPrefix}
+        <VisibilityPrefix pub={props.pub} />
         {code`trait `}
         {traitSymbol.name}
         <TypeParameters params={props.typeParameters} />

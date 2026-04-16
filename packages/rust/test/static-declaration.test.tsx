@@ -61,11 +61,11 @@ describe("StaticDeclaration", () => {
               AtomicUsize::new(0)
             </StaticDeclaration>
             <hbr />
-            <StaticDeclaration name="BUFFER" pub_crate={true} type="Vec<u8>">
+            <StaticDeclaration name="BUFFER" pub="crate" type="Vec<u8>">
               Vec::new()
             </StaticDeclaration>
             <hbr />
-            <StaticDeclaration name="OWNER" pub_super={true} type="usize">
+            <StaticDeclaration name="OWNER" pub="super" type="usize">
               7
             </StaticDeclaration>
           </SourceFile>
@@ -110,7 +110,7 @@ describe("StaticDeclaration", () => {
           <SourceFile path="lib.rs">
             <StaticDeclaration
               name="WORKER_COUNT"
-              pub_crate={true}
+              pub="crate"
               type="usize"
             >
               4
@@ -126,7 +126,7 @@ describe("StaticDeclaration", () => {
     `);
   });
 
-  it("applies visibility precedence for static declarations", () => {
+  it("applies pub visibility for static declarations", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -134,8 +134,6 @@ describe("StaticDeclaration", () => {
             <StaticDeclaration
               name="WORKER_COUNT"
               pub={true}
-              pub_crate={true}
-              pub_super={true}
               type="usize"
             >
               4

@@ -1,10 +1,10 @@
 import { type Children, code, For, memo } from "@alloy-js/core";
 import { RustCrateScope } from "../scopes/rust-crate-scope.js";
 import { RustModuleScope } from "../scopes/rust-module-scope.js";
+import { type RustVisibilityProps, VisibilityPrefix } from "./visibility.js";
 
-interface ModDeclaration {
+interface ModDeclaration extends RustVisibilityProps {
   name: string;
-  visibility: "pub" | "pub(crate)" | "pub(super)" | undefined;
   attributes?: Children[];
 }
 
@@ -23,7 +23,7 @@ function ModDeclarationLine(props: ModDeclaration) {
           <hbr />
         </>
       : null}
-      {props.visibility ? `${props.visibility} ` : ""}
+      <VisibilityPrefix pub={props.pub} />
       {code`mod `}
       {props.name}
       {code`;`}
@@ -47,7 +47,7 @@ export function ModDeclarations(props: ModDeclarationsProps) {
           <>
             <ModDeclarationLine
               name={declaration.name}
-              visibility={declaration.visibility}
+              pub={declaration.pub}
               attributes={declaration.attributes}
             />
             {index < declarations.length - 1 ?

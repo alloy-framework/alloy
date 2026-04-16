@@ -59,7 +59,7 @@ describe("FunctionDeclaration", () => {
           <SourceFile path="lib.rs">
             <FunctionDeclaration
               name="work"
-              pub_crate={true}
+              pub="crate"
               async={true}
               unsafe={true}
               const={true}
@@ -77,7 +77,7 @@ describe("FunctionDeclaration", () => {
           <SourceFile path="lib.rs">
             <FunctionDeclaration
               name="work"
-              pub_super={true}
+              pub="super"
               async={true}
               unsafe={true}
               const={true}
@@ -162,7 +162,7 @@ describe("FunctionDeclaration", () => {
           <SourceFile path="lib.rs">
             <FunctionDeclaration
               name="run-work"
-              pub_crate={true}
+              pub="crate"
               async={true}
               unsafe={true}
               const={true}
@@ -183,7 +183,7 @@ describe("FunctionDeclaration", () => {
     `);
   });
 
-  it("applies visibility precedence on function symbols", () => {
+  it("applies pub visibility on function symbols", () => {
     expect(
       <Output>
         <CrateDirectory name="my_crate">
@@ -191,8 +191,6 @@ describe("FunctionDeclaration", () => {
             <FunctionDeclaration
               name="run-work"
               pub={true}
-              pub_crate={true}
-              pub_super={true}
             />
             <hbr />
             <FunctionFlagsProbe name="run-work" />

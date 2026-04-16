@@ -1,0 +1,41 @@
+{
+  "name": "rust-example",
+  "version": "1.0.0",
+  "description": "Example of generating Rust code using @alloy-js/rust",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@alloy-js/core": "workspace:~",
+    "@alloy-js/rust": "workspace:~"
+  },
+  "devDependencies": {
+    "@alloy-js/cli": "workspace:~",
+    "@alloy-js/rollup-plugin": "workspace:~",
+    "@types/node": "catalog:",
+    "concurrently": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "alloy build",
+    "clean": "rimraf dist/ .temp/ alloy-output/",
+    "test": "vitest run",
+    "test:watch": "vitest -w",
+    "watch": "alloy build --watch",
+    "generate": "node dist/src/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "dist",
+    "types": ["@alloy-js/core/testing/matchers"],
+    "paths": {
+      "#components/*": ["./src/components/*"]
+    }
+  },
+  "references": [{ "path": "../core" }],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts", "test/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

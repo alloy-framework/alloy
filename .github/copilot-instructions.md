@@ -16,3 +16,59 @@ This repository is built on alloy which use JSX to define components. This is NO
   - DO NOT destructure props in the component definition
 
 Do not update changelogs, these are managed by `npx chronus`.
+
+## TypeScript/Symbol Patterns - Known Gotchas
+
+- For exported components that attach subcomponents (for example, `Component.Call = ...`), avoid private type aliases in public exported const annotations; API Extractor can fail. Prefer `export function Component(...) { ... }` and attach subcomponents as properties after declaration.
+  **Static memberSpaces in Symbol subclasses:** When subclassing symbols with custom `memberSpaces`, declare static `memberSpaces` as `readonly string[]` in both base and subclass. TypeScript tuple widening/narrowing on the static side causes incompatibility errors without explicit readonly string[] typing. Always validate symbol changes with: `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` (`pnpm --filter @alloy-js/rust build` runs `alloy build --with-dev` and `generate-docs`, so it also checks API surface generation).
+  **For SourceFile/CrateDirectory loop changes:** run `pnpm --filter @alloy-js/rust exec vitest run test/source-file-crate-directory.test.tsx` first for fast debugging, then run full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+  **For TypeAlias/ConstDeclaration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/type-alias-const.test.tsx` first, then run `pnpm --filter @alloy-js/rust test`.
+  **For import/reference integration loops:** run `pnpm --filter @alloy-js/rust exec vitest run test/imports.test.tsx test/reference.test.tsx` before full-suite validation to iterate faster.
+  **For Cargo.toml generation loops:** keep `CrateDirectory` Cargo.toml emission opt-in (`includeCargoToml`) so existing single-file `toRenderTo()` tests keep stable output.
+- For `CargoTomlFile` targets, emit explicit sections (`[lib] path = "lib.rs"` for libs, `[[bin]]` with `name`/`path` for bins) before `[dependencies]`; expect snapshot updates in cargo-toml/golden/stc tests.
+  **Validation workflow tip:** use `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` as the Rust package correctness gate; also run `pnpm --filter rust-example build` when touching sample crate exports, and fix TS2742 by replacing inferred exported `createCrate(...)` values with explicit descriptor constants (`as const`) plus exported type aliases.
+- In components using `scope.enclosingModule`, narrow to `RustModuleScope` (for example, `instanceof RustModuleScope`) before accessing `.types` or `.values`; `enclosingModule` is typed as `RustScopeBase`.
+- Avoid whitespace-only `code` template literals (for example, ``code` ` ``); they can crash core code rendering. Use plain string literals like `" "` for standalone spaces.
+- For `ModuleDirectory`, derive the module name from the last `path` segment before calling `addChildModule`, so nested paths register the correct child module.
+- For exported Rust APIs, avoid exposing private helper types through symbol-keyed fields on exported interfaces; API Extractor treats them as public and fails build with `ae-forgotten-export`.
+- For public builtins exports (for example `export const std = createCrate(...)` in `packages/rust/src/builtins/std.ts`), avoid relying on inferred/private descriptor shapes; this can trigger TS2742/API Extractor portability errors. Prefer explicit exported type aliases/interfaces for the export surface, then validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+- In `packages/rust/src/components/stc/index.ts`, prefer explicit named component imports (alias if needed) and `stc(ComponentAlias)` for exported wrappers; avoid `import * as base` + `stc(base.X)`, which can trigger API Extractor `ae-forgotten-export` private type leakage.
+- `Parameters` rendering requires `RustFunctionScope`; when testing `Parameters`/`Stc.Parameters`, render within a `FunctionDeclaration` instead of at module/root scope to avoid `Can't create parameter symbol outside of a function scope.`
+- For enum/struct sibling rendering, always insert explicit `<hbr />` separators between repeated children (variants/fields) and between doc comments and declaration attributes; debug quickly with `pnpm --filter @alloy-js/rust exec vitest run test/enum.test.tsx test/struct.test.tsx`, then confirm with full `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test`.
+- For braced expression components that use `<Indent>` (for example `StructExpression`), do not add a leading `<hbr />` right after `" {"`; it introduces an extra blank line before the first indented entry.
+- In `TraitDeclaration`, a self-closing `FunctionDeclaration` is an abstract signature and must render with `;` (not `{}`); a trait method with children is a default implementation and renders with braces. For fast regression checks, run `pnpm --filter @alloy-js/rust exec vitest run test/function.test.tsx test/reference.test.tsx`.
+- In `SourceFile`/module registration flows, standalone non-root files should self-register with parent module declarations, but module-root files (`lib.rs`, `main.rs`, `mod.rs`) must never self-register.
+- In `ImplBlock`/`TraitDeclaration`, `FunctionDeclaration` defaults receiver to `&self`; set `receiver="none"` for associated functions like `new()`.
+- For `ModDeclarations` render-order regressions, first run `pnpm --filter @alloy-js/rust exec vitest run test/t045-render-order.test.tsx test/mod-declarations.test.tsx`, then run full rust validation.
+- For Rust generic rendering, keep lifetime parameters and type parameters in the same `TypeParameterProp[]`, but always render lifetimes first (`<'a, 'b, T>`), and quickly verify with `pnpm --filter @alloy-js/rust exec vitest run test/type-parameters.test.tsx test/lifetime-parameters.test.tsx`.
+- For `ImplBlock` generic forwarding, ensure `StructDeclaration`/`EnumDeclaration` register named type parameter symbols on `NamedTypeSymbol.typeParameters` whenever `typeParameters` are provided.
+- For trait-import tests that depend on `Reference` auto-use behavior, avoid Rust prelude traits (for example `Clone`) because prelude symbols intentionally skip `use` generation; assert imports with non-prelude traits like `std::fmt::Display`.
+- `LetBinding` intentionally does **not** register symbols in scope (T049 exclusions); treat it as syntax-only statement rendering with optional type/initializer and a trailing `;`.
+- In `FunctionCallExpression`-style components using `<group>` + `Wrap` (`when={args.length > 1}`), expect stable multiline output for multi-arg calls, and turbofish type-arg lists may also line-break under the same group; snapshot tests should assert multiline form.
+- For components using `<Wrap when={...}>`, line breaks occur only after print-width overflow; include at least one long argument in multi-arg tests when asserting multiline wrapping.
+- Ensure `DocComment`/`ModuleDocComment` end with a trailing line break before declarations; otherwise generated output can concatenate comment text and the next declaration.
+
+Critical rules:
+
+1. Do not invent architecture. Ground every important claim in actual repository code, file structure, symbols, or tests.
+2. Prefer concrete evidence over broad summaries.
+3. Distinguish clearly between:
+   - observed facts from the repo
+   - inferences from patterns
+   - proposals for the new language package
+4. When something is unclear, say so explicitly under "Open Questions" or "Ambiguities".
+5. Do not start implementing code unless explicitly asked. This phase is documentation and planning only.
+6. Write output directly to the requested markdown file.
+7. Use clear headings and bullet points where useful.
+8. When referencing repository files, include repository-relative paths.
+9. Focus only on the parts of the repo relevant to Alloy core and existing language packages.
+10. Optimize for future AI coding agents that will consume these documents.
+11. For symbol-model changes (like Rust T003), always validate with `pnpm --filter @alloy-js/rust build && pnpm --filter @alloy-js/rust test` before moving to dependent tasks.
+
+Quality bar:
+
+- Precise
+- Evidence-based
+- Dependency-aware
+- Implementation-oriented
+- Not generic

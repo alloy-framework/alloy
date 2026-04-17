@@ -22,8 +22,6 @@ async function runBuild(
 it("reports correct error count when there are type errors", async () => {
   const { stdout, exitCode } = await runBuild("project-with-type-error");
   expect(exitCode).not.toBe(0);
-  // The key assertion: the error count must reflect the actual type errors,
-  // not 0 (which was the bug when using emitResult.diagnostics.length).
   expect(stdout).toMatch(/Build completed with \d+ errors?\./);
   expect(stdout).toContain("Build completed with 1 error");
 });

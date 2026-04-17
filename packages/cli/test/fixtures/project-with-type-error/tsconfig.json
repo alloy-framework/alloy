@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "rootDir": "src",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}

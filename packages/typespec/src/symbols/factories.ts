@@ -83,6 +83,26 @@ export function createNamedTypeSymbol(
   );
 }
 
+export function createModelPropertySymbol(
+  name: string | Namekey,
+  options: OutputSymbolOptions = {},
+) {
+  const scope = useScope();
+  if (!(scope instanceof NamedTypeScope)) {
+    throw new Error(
+      "Can't create a model property symbol outside of a named type scope.",
+    );
+  }
+  const modelSymbol = scope.ownerSymbol;
+  return withCleanup(
+    new TypeSpecSymbol(
+      name,
+      modelSymbol.members,
+      withNamePolicy(options, "model-property"),
+    ),
+  );
+}
+
 export function createTemplateParameterSymbol(
   name: string | Namekey,
   options: OutputSymbolOptions = {},

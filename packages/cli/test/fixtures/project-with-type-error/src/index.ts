@@ -1,1 +1,1 @@
-const x: number = "this is not a number";
+const _: number = "this is not a number";

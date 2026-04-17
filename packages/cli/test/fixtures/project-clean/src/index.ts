@@ -1,1 +1,1 @@
-const x: number = 42;
+const _: number = 42;

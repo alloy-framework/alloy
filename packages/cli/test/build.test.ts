@@ -37,4 +37,3 @@ describe("alloy build", () => {
     expect(stdout).toContain("Build completed successfully");
   });
 });
-

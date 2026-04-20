@@ -83,6 +83,66 @@ export function createNamedTypeSymbol(
   );
 }
 
+export function createModelPropertySymbol(
+  name: string | Namekey,
+  options: OutputSymbolOptions = {},
+) {
+  const scope = useScope();
+  if (!(scope instanceof NamedTypeScope)) {
+    throw new Error(
+      "Can't create a model property symbol outside of a named type scope.",
+    );
+  }
+  const modelSymbol = scope.ownerSymbol;
+  return withCleanup(
+    new TypeSpecSymbol(
+      name,
+      modelSymbol.members,
+      withNamePolicy(options, "model-property"),
+    ),
+  );
+}
+
+export function createEnumMemberSymbol(
+  name: string | Namekey,
+  options: OutputSymbolOptions = {},
+) {
+  const scope = useScope();
+  if (!(scope instanceof NamedTypeScope)) {
+    throw new Error(
+      "Can't create an enum member symbol outside of a named type scope.",
+    );
+  }
+  const enumSymbol = scope.ownerSymbol;
+  return withCleanup(
+    new TypeSpecSymbol(
+      name,
+      enumSymbol.members,
+      withNamePolicy(options, "enum"),
+    ),
+  );
+}
+
+export function createUnionVariantSymbol(
+  name: string | Namekey,
+  options: OutputSymbolOptions = {},
+) {
+  const scope = useScope();
+  if (!(scope instanceof NamedTypeScope)) {
+    throw new Error(
+      "Can't create a union variant symbol outside of a named type scope.",
+    );
+  }
+  const unionSymbol = scope.ownerSymbol;
+  return withCleanup(
+    new TypeSpecSymbol(
+      name,
+      unionSymbol.members,
+      withNamePolicy(options, "union"),
+    ),
+  );
+}
+
 export function createTemplateParameterSymbol(
   name: string | Namekey,
   options: OutputSymbolOptions = {},

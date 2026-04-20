@@ -39,7 +39,17 @@ export interface BaseListProps {
   ender?: Children;
 
   /**
-   * Place the join punctuation at the end, but without a line break.
+   * Place the join punctuation at the end, without a line break. The punctuation
+   * is emitted unconditionally in flat and broken modes.
+   *
+   * To add trailing punctuation only in broken mode, use `ender` with `<ifBreak>`
+   * inside a `<group>` with a non-hardline joiner (e.g. `line`):
+   *
+   * ```tsx
+   * <group>
+   *   <List comma line ender={<ifBreak>,</ifBreak>}>...</List>
+   * </group>
+   * ```
    */
   enderPunctuation?: boolean;
 }
@@ -57,10 +67,13 @@ export interface ListProps extends BaseListProps {
  */
 export function List(props: ListProps) {
   const [rest, forProps] = splitProps(props, ["children"]);
-  const resolvedChildren = memo(() =>
-    childrenArray(() => rest.children, {
-      preserveFragments: true,
-    }),
+  const resolvedChildren = memo(
+    () =>
+      childrenArray(() => rest.children, {
+        preserveFragments: true,
+      }),
+    undefined,
+    "List:children",
   );
   return (
     <For each={resolvedChildren} {...forProps} skipFalsy>

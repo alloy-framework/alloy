@@ -20,8 +20,8 @@ export function useContext<T>(context: ComponentContext<T>): T | undefined {
   // context must come from a parent
   let current = getContext();
   while (current) {
-    if (Object.hasOwn(current.context!, context.id)) {
-      return current.context![context.id] as T | undefined;
+    if (current.context && Object.hasOwn(current.context, context.id)) {
+      return current.context[context.id] as T | undefined;
     }
     current = current.owner;
   }
@@ -38,12 +38,22 @@ export function createContext<T = unknown>(
   const id = Symbol(name ?? "context");
   function Provider(props: ContextProviderProps<T>) {
     const context = getContext();
+    const contextName = name ?? "anonymous";
 
     const rendered = shallowRef();
-    effect(() => {
-      context!.context![id] = props.value;
-      rendered.value = () => props.children;
-    }, undefined);
+    effect(
+      () => {
+        (context!.context ??= {})[id] = props.value;
+        rendered.value = () => props.children;
+      },
+      undefined,
+      {
+        debug: {
+          name: `context:provider:${contextName}`,
+          type: "context",
+        },
+      },
+    );
 
     return rendered.value;
   }
@@ -54,6 +64,7 @@ export function createContext<T = unknown>(
     Provider,
     ProviderStc: stc(Provider),
   };
+  (Provider as any).contextName = name;
   contextsByKey.set(id, ctx);
   return ctx;
 }

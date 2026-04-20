@@ -80,15 +80,19 @@ export function For<
   const cb = props.children;
   const options = baseListPropsToMapJoinArgs(props);
   options.skipFalsy = props.skipFalsy;
-  return memo(() => {
-    const maybeRef = props.each;
+  return memo(
+    () => {
+      const maybeRef = props.each;
 
-    return (mapJoin as any)(
-      typeof maybeRef === "function" ? maybeRef : (
-        () => (isRef(maybeRef) ? maybeRef.value : maybeRef)
-      ),
-      cb,
-      options,
-    );
-  });
+      return (mapJoin as any)(
+        typeof maybeRef === "function" ? maybeRef : (
+          () => (isRef(maybeRef) ? maybeRef.value : maybeRef)
+        ),
+        cb,
+        options,
+      );
+    },
+    undefined,
+    "For",
+  );
 }

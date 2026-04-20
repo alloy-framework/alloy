@@ -1,4 +1,4 @@
-import { Output } from "@alloy-js/core";
+import { Output, OutputSymbol } from "@alloy-js/core";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
 import {
@@ -10,11 +10,11 @@ import {
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 
 it("handles custom name conflict resolver based on metadata", () => {
-  function resolver(name: string, symbols: TSOutputSymbol[]) {
-    const goodNamedSymbols = symbols.filter(
+  function resolver(name: string, symbols: OutputSymbol[]) {
+    const goodNamedSymbols = (symbols as TSOutputSymbol[]).filter(
       (s) => ~s.tsFlags & TSSymbolFlags.LocalImportSymbol,
     );
-    const badNamedSymbols = symbols.filter(
+    const badNamedSymbols = (symbols as TSOutputSymbol[]).filter(
       (s) => s.tsFlags & TSSymbolFlags.LocalImportSymbol,
     );
     let nameCount = 1;

@@ -27,13 +27,17 @@ import * as stc from "./stc/index.js";
 export interface TsDocProps {
   node: DocNode;
   context?: ApiItem;
+  inline?: boolean;
 }
 
 export function TsDoc(props: TsDocProps): Children {
   let content;
   switch (props.node.kind) {
     case DocNodeKind.Paragraph:
-      content = stc.TsDocParagraph({ node: props.node as DocParagraph });
+      content = stc.TsDocParagraph({
+        node: props.node as DocParagraph,
+        inline: props.inline,
+      });
       break;
     case DocNodeKind.CodeSpan:
       content = stc.TsDocCodeSpan({ node: props.node as DocCodeSpan });
@@ -45,11 +49,15 @@ export function TsDoc(props: TsDocProps): Children {
       content = stc.TsDocPlainText({ node: props.node as DocPlainText });
       break;
     case DocNodeKind.Section:
-      content = stc.TsDocSection({ node: props.node as DocSection });
+      content = stc.TsDocSection({
+        node: props.node as DocSection,
+        inline: props.inline,
+      });
       break;
     case DocNodeKind.Block:
       content = stc.TsDocSection({
         node: (props.node as DocBlock).content,
+        inline: props.inline,
       });
       break;
     case DocNodeKind.ParamBlock:
@@ -58,19 +66,22 @@ export function TsDoc(props: TsDocProps): Children {
     case DocNodeKind.BlockTag:
       // ignore?
       break;
-    case DocNodeKind.FencedCode:
-      content = stc
-        .Code({
-          language: (props.node as DocFencedCode).language,
-        })
-        .children(
-          (props.node as DocFencedCode).code
-            .replace(/`/g, "\\`") // escape template literals
-            .replace(/\$\{/g, "\\${"), // escape template literal substitutions
-        );
+    case DocNodeKind.FencedCode: {
+      const lang = (props.node as DocFencedCode).language;
+      // Escape for a JS double-quoted string inside JSX
+      const codeContent = (props.node as DocFencedCode).code
+        .replace(/\\/g, "\\\\")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, "\\n");
+      // Use <pre><code> HTML instead of the <Code> Astro component or
+      // markdown fenced blocks. Template literals in <Code code={`...`}/>
+      // break MDX parsing inside <td>, and markdown fenced blocks create
+      // paragraph boundaries that also break <td>.
+      content = ` <pre><code class="language-${lang}">{"${codeContent}"}</code></pre>`;
       break;
+    }
     case DocNodeKind.SoftBreak:
-      content = "\n";
+      content = props.inline ? " " : "\n";
       break;
     case DocNodeKind.EscapedText:
       content = (props.node as DocEscapedText).encodedText;
@@ -91,6 +102,7 @@ export function TsDoc(props: TsDocProps): Children {
 
 export interface TsDocParagraphProps {
   node: DocParagraph;
+  inline?: boolean;
 }
 export function TsDocParagraph(props: TsDocParagraphProps) {
   let trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
@@ -102,7 +114,9 @@ export function TsDocParagraph(props: TsDocParagraphProps) {
     contentStartIndex++;
   }
 
-  return trimmed.nodes.slice(contentStartIndex).map((node) => TsDoc({ node }));
+  return trimmed.nodes
+    .slice(contentStartIndex)
+    .map((node) => TsDoc({ node, inline: props.inline }));
 }
 
 export interface TsDocPlainTextProps {
@@ -114,14 +128,15 @@ export function TsDocPlainText(props: TsDocPlainTextProps) {
 
 export interface TsDocSectionProps {
   node: DocSection;
+  inline?: boolean;
 }
 
 export function TsDocSection(props: TsDocSectionProps) {
   return mapJoin(
     () => props.node.nodes as DocNode[],
-    (node) => stc.TsDoc({ node }),
+    (node) => stc.TsDoc({ node, inline: props.inline }),
     {
-      joiner: "\n\n",
+      joiner: props.inline ? " " : "\n\n",
     },
   );
 }
@@ -152,7 +167,10 @@ export interface TsDocCodeSpanProps {
 }
 
 export function TsDocCodeSpan(props: TsDocCodeSpanProps) {
-  return `\`${props.node.code}\``;
+  // Use <code> HTML instead of backticks to avoid MDX parser conflicts
+  // when inline code appears alongside <Code code={`...`}/> template literals.
+  const escaped = props.node.code.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return `<code>{"${escaped}"}</code>`;
 }
 
 export function resolveCodeDestination(

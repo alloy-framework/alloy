@@ -27,15 +27,19 @@ export function Switch(props: SwitchProps) {
   const children = childrenArray(() => props.children);
   const matches = findKeyedChildren(children, matchTag);
 
-  return memo(() => {
-    for (const match of matches) {
-      if (match.props.when || match.props.else) {
-        return match.props.children;
+  return memo(
+    () => {
+      for (const match of matches) {
+        if (match.props.when || match.props.else) {
+          return match.props.children;
+        }
       }
-    }
 
-    return undefined;
-  });
+      return undefined;
+    },
+    undefined,
+    "Switch",
+  );
 }
 
 export interface MatchProps {

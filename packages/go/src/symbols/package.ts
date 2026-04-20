@@ -1,4 +1,4 @@
-import { OutputSymbolOptions } from "@alloy-js/core";
+import { OutputSymbolOptions, createSymbol } from "@alloy-js/core";
 import { join } from "pathe";
 import { NamedTypeSymbol } from "./named-type.js";
 
@@ -44,7 +44,7 @@ export class PackageSymbol extends NamedTypeSymbol {
 
   copy() {
     const options = this.getGoCopyOptions();
-    const copy = new PackageSymbol(this.name, undefined, {
+    const copy = createSymbol(PackageSymbol, this.name, undefined, {
       ...options,
       path: this.#path,
     });

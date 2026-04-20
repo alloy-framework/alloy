@@ -1,14 +1,13 @@
 import {
   ITERATE_KEY,
   ReactiveFlags,
-  shallowReactive,
   shallowReadonly,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
-import { effect, untrack } from "./reactivity.js";
+import { effect, root, shallowReactive, untrack } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {
   onAdd?: OnReactiveSetAddCallback<T>;
@@ -129,28 +128,49 @@ export class ReactiveUnionSet<T> extends Set<T> {
      * that were added to the parent set.
      */
     const prevValues = new Map<T, T>();
+    const itemDisposers = new Map<T, () => void>();
 
-    effect(() => {
-      for (const [prevSourceValue, prevTargetValue] of prevValues) {
-        if (!subset.has(prevSourceValue)) {
-          untrack(() => onDelete?.(prevSourceValue));
-          prevValues.delete(prevSourceValue);
-          this.delete(prevTargetValue);
-        }
-      }
-
-      for (const value of subset) {
-        if (!prevValues.has(value)) {
-          if (onAdd) {
-            const added = untrack(() => onAdd(value));
-            prevValues.set(value, added);
-          } else {
-            this.add(value);
-            prevValues.set(value, value);
+    effect(
+      () => {
+        for (const [prevSourceValue, prevTargetValue] of prevValues) {
+          if (!subset.has(prevSourceValue)) {
+            untrack(() => onDelete?.(prevSourceValue));
+            prevValues.delete(prevSourceValue);
+            this.delete(prevTargetValue);
+            const disposer = itemDisposers.get(prevSourceValue);
+            if (disposer) {
+              disposer();
+              itemDisposers.delete(prevSourceValue);
+            }
           }
         }
-      }
-    });
+
+        for (const value of subset) {
+          if (!prevValues.has(value)) {
+            if (onAdd) {
+              const added = untrack(() =>
+                root((disposer) => {
+                  const result = onAdd(value);
+                  itemDisposers.set(value, disposer);
+                  return result;
+                }),
+              );
+              prevValues.set(value, added);
+            } else {
+              this.add(value);
+              prevValues.set(value, value);
+            }
+          }
+        }
+      },
+      undefined,
+      {
+        debug: {
+          name: "reactiveUnionSet:subsetSync",
+          type: "collection",
+        },
+      },
+    );
   }
 
   createDerivedSet<U>(mapper: (value: T) => U | U[]) {
@@ -184,18 +204,27 @@ export class ReactiveUnionSet<T> extends Set<T> {
 
     this._indexes.push({
       add: (value: T) => {
-        effect((prev: U[] | U | undefined) => {
-          for (const id of [prev].flat()) {
-            unref(id as any);
-          }
+        effect(
+          (prev: U[] | U | undefined) => {
+            for (const id of [prev].flat()) {
+              unref(id as any);
+            }
 
-          const mappedValue = mapper(value);
-          for (const id of [mappedValue].flat()) {
-            ref(id as any);
-          }
+            const mappedValue = mapper(value);
+            for (const id of [mappedValue].flat()) {
+              ref(id as any);
+            }
 
-          return mappedValue;
-        });
+            return mappedValue;
+          },
+          undefined,
+          {
+            debug: {
+              name: `reactiveUnionSet:derived:${mapper.name || "mapper"}`,
+              type: "collection",
+            },
+          },
+        );
       },
       delete: (value: T) => {
         const mappedValue = mapper(value);
@@ -212,24 +241,36 @@ export class ReactiveUnionSet<T> extends Set<T> {
     const index = shallowReactive(new Map<U, T>());
     this._indexes.push({
       add: (value: T) => {
-        effect((oldValue) => {
-          if (oldValue) {
-            for (const id of [oldValue].flat()) {
-              index.delete(id as U);
+        type MappedValue = U extends readonly (infer InnerArr)[] ? InnerArr : U;
+        effect<MappedValue[]>(
+          (oldValue) => {
+            if (oldValue) {
+              for (const id of [oldValue].flat()) {
+                index.delete(id as U);
+              }
             }
-          }
 
-          // we filter to avoid overwriting existing values (first wins)
-          const mappedValues = [mapper(value)]
-            .flat()
-            .filter((v) => untrack(() => !index.has(v as U)));
+            // we filter to avoid overwriting existing values (first wins)
+            const mappedValues = [mapper(value)]
+              .flat()
+              .filter((v) =>
+                untrack(() => !index.has(v as U)),
+              ) as MappedValue[];
 
-          for (const id of mappedValues) {
-            index.set(id as U, value as any);
-          }
+            for (const id of mappedValues) {
+              index.set(id as U, value as any);
+            }
 
-          return mappedValues;
-        });
+            return mappedValues;
+          },
+          undefined as MappedValue[] | undefined,
+          {
+            debug: {
+              name: `reactiveUnionSet:index:${mapper.name || "mapper"}`,
+              type: "collection",
+            },
+          },
+        );
       },
       delete: (value: T) => {
         const mappedValue = mapper(value);

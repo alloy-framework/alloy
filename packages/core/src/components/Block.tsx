@@ -1,5 +1,5 @@
-import { computed } from "@vue/reactivity";
 import { createContentSlot } from "../content-slot.jsx";
+import { computed } from "../reactivity.js";
 import type { Children } from "../runtime/component.js";
 import { Indent } from "./Indent.jsx";
 
@@ -31,6 +31,18 @@ export interface BlockProps {
  * Create an indented block of source text. The block has `opener` text which is
  * added prior to the block, which defaults to `"{"`, and `closer` text which is
  * added after the block, which defaults to `"}"`.
+ *
+ * @remarks
+ *
+ * When `children` is empty, `Block` renders as `{}` (opener immediately followed
+ * by closer) with no indented content — no explicit empty check is needed before
+ * passing children.
+ *
+ * @example
+ * ```tsx
+ * // Safe even when props.members is empty — renders `{}`
+ * <Block>{props.members}</Block>
+ * ```
  */
 export function Block(props: BlockProps) {
   const ContentSlot = createContentSlot();

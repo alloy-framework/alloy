@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { getConfig, getNumberedId, registerImportMethod } from "../shared/utils";
+import { describeExpression, getConfig, getNumberedId, registerImportMethod } from "../shared/utils";
 import { setAttr } from "./element";
 
 export function createTemplate(path, result, wrap) {
@@ -29,7 +29,14 @@ export function createTemplate(path, result, wrap) {
     }
   }
   if (wrap && result.dynamic && config.memoWrapper) {
-    return t.callExpression(registerImportMethod(path, config.memoWrapper), [result.exprs[0]]);
+    const args = [result.exprs[0]];
+    if (config.addSourceInfo) {
+      const name = describeExpression(
+        t.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
+      );
+      if (name) args.push(t.booleanLiteral(false), t.stringLiteral(name));
+    }
+    return t.callExpression(registerImportMethod(path, config.memoWrapper), args);
   }
   return result.exprs[0];
 }

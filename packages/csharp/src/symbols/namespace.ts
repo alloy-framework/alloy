@@ -1,4 +1,4 @@
-import { Namekey, OutputSymbolOptions } from "@alloy-js/core";
+import { Namekey, OutputSymbolOptions, createSymbol } from "@alloy-js/core";
 import { NamedTypeSymbol } from "./named-type.js";
 
 export interface NamespaceSymbolOptions extends OutputSymbolOptions {
@@ -52,11 +52,21 @@ export class NamespaceSymbol extends NamedTypeSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new NamespaceSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(NamespaceSymbol, this.name, undefined, {
       ...options,
+      binder,
       isGlobal: this.#isGlobal,
     });
     this.initializeCopy(copy);
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      isGlobal: this.isGlobal,
+      fullyQualifiedName: this.getFullyQualifiedName(),
+    };
   }
 }

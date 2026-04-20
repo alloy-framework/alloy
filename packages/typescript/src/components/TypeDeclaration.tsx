@@ -5,18 +5,18 @@ import { ensureTypeRefContext } from "./TypeRefContext.jsx";
 
 export interface TypeDeclarationProps extends CommonDeclarationProps {}
 
-export const TypeDeclaration = ensureTypeRefContext(
-  (props: TypeDeclarationProps) => {
-    return (
-      <>
-        <Show when={Boolean(props.doc)}>
-          <JSDoc children={props.doc} />
-          <hbr />
-        </Show>
-        <Declaration {...props} kind="type" nameKind="type">
-          type <Name /> = {props.children};
-        </Declaration>
-      </>
-    );
-  },
-);
+export const TypeDeclaration = ensureTypeRefContext(function TypeDeclaration(
+  props: TypeDeclarationProps,
+) {
+  return (
+    <>
+      <Show when={Boolean(props.doc)}>
+        <JSDoc children={props.doc} />
+        <hbr />
+      </Show>
+      <Declaration {...props} kind="type" nameKind="type">
+        type <Name /> = {props.children};
+      </Declaration>
+    </>
+  );
+});

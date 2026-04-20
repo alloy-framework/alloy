@@ -2,21 +2,26 @@
   "name": "docs",
   "type": "module",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "private": true,
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build-production": "pnpm generate-docs && astro check && astro build",
+    "build-production": "pnpm generate-docs && astro check && astro build && pnpm generate-agent-docs",
     "generate-docs": "pnpm check-scripts && tsx scripts/build-json.ts",
+    "generate-agent-docs": "tsx scripts/generate-agent-docs.ts",
     "check-scripts": "tsc -p scripts.tsconfig.json",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/starlight": "^0.35.2",
-    "astro": "^5.6.1",
-    "astro-expressive-code": "^0.41.3",
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/starlight": "^0.37.6",
+    "astro": "^5.17.1",
+    "astro-expressive-code": "^0.41.6",
     "sharp": "^0.34.1",
     "tsx": "catalog:",
     "typescript": "catalog:"
@@ -30,6 +35,7 @@
     "@microsoft/api-extractor": "catalog:",
     "@microsoft/api-extractor-model": "catalog:",
     "@microsoft/tsdoc": "catalog:",
-    "redent": "^4.0.0"
+    "redent": "^4.0.0",
+    "starlight-llms-txt": "^0.7.0"
   }
 }

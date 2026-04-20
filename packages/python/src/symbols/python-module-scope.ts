@@ -1,6 +1,30 @@
-import { reactive, shallowReactive } from "@alloy-js/core";
+import { createSymbol, reactive, shallowReactive } from "@alloy-js/core";
 import { PythonLexicalScope } from "./python-lexical-scope.js";
 import { PythonOutputSymbol } from "./python-output-symbol.js";
+
+// Internal typing module for TYPE_CHECKING imports
+let _typingModuleScope: PythonModuleScope | undefined;
+let _typeCheckingSymbol: PythonOutputSymbol | undefined;
+
+/**
+ * Get the internal typing module scope and TYPE_CHECKING symbol.
+ * Used by addTypeImport() to add TYPE_CHECKING imports without
+ * going through the binder's refkey resolution.
+ */
+function getTypingModuleInternal(): {
+  scope: PythonModuleScope;
+  TYPE_CHECKING: PythonOutputSymbol;
+} {
+  if (!_typingModuleScope) {
+    _typingModuleScope = new PythonModuleScope("typing", undefined);
+    _typeCheckingSymbol = new PythonOutputSymbol(
+      "TYPE_CHECKING",
+      _typingModuleScope.symbols,
+      {},
+    );
+  }
+  return { scope: _typingModuleScope, TYPE_CHECKING: _typeCheckingSymbol! };
+}
 
 export class ImportedSymbol {
   local: PythonOutputSymbol;
@@ -22,6 +46,14 @@ export interface ImportRecordProps {
 
 export class ImportRecords extends Map<PythonModuleScope, ImportRecordProps> {}
 
+export interface AddImportOptions {
+  /**
+   * If true, this import is only used in type annotation contexts.
+   * Such imports will be guarded with `if TYPE_CHECKING:`.
+   */
+  type?: boolean;
+}
+
 export class PythonModuleScope extends PythonLexicalScope {
   #importedSymbols: Map<PythonOutputSymbol, PythonOutputSymbol> =
     shallowReactive(new Map());
@@ -34,9 +66,17 @@ export class PythonModuleScope extends PythonLexicalScope {
     return this.#importedModules;
   }
 
-  addImport(targetSymbol: PythonOutputSymbol, targetModule: PythonModuleScope) {
+  addImport(
+    targetSymbol: PythonOutputSymbol,
+    targetModule: PythonModuleScope,
+    options?: AddImportOptions,
+  ) {
     const existing = this.importedSymbols.get(targetSymbol);
     if (existing) {
+      // If existing is type-only but now used as value, upgrade it
+      if (!options?.type && existing.isTypeOnly) {
+        existing.markAsValue();
+      }
       return existing;
     }
 
@@ -46,10 +86,15 @@ export class PythonModuleScope extends PythonLexicalScope {
       });
     }
 
-    const localSymbol = new PythonOutputSymbol(
+    const localSymbol = createSymbol(
+      PythonOutputSymbol,
       targetSymbol.name,
       this.symbols,
-      { binder: this.binder, aliasTarget: targetSymbol },
+      {
+        binder: this.binder,
+        aliasTarget: targetSymbol,
+        typeOnly: options?.type,
+      },
     );
 
     this.importedSymbols.set(targetSymbol, localSymbol);
@@ -59,5 +104,22 @@ export class PythonModuleScope extends PythonLexicalScope {
     });
 
     return localSymbol;
+  }
+
+  /**
+   * Add TYPE_CHECKING import from the typing module.
+   * Returns the local symbol for use in the if block opener.
+   */
+  addTypeImport(): PythonOutputSymbol {
+    const typing = getTypingModuleInternal();
+    return this.addImport(typing.TYPE_CHECKING, typing.scope);
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      importedSymbolCount: this.#importedSymbols.size,
+      importedModuleCount: this.#importedModules.size,
+    };
   }
 }

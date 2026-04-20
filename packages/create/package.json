@@ -2,10 +2,14 @@
   "name": "@alloy-js/create",
   "version": "0.22.0",
   "description": "Create an Alloy project with npm init @alloy-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "build": "node scripts/gen-deps.js && alloy build",
+    "build": "node scripts/gen-deps.js && alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",

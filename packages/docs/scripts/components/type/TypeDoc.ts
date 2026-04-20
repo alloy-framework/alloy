@@ -1,9 +1,15 @@
-import { ApiInterface, ApiItemKind } from "@microsoft/api-extractor-model";
-import type { TypeApi } from "../../build-json.js";
 import {
+  ApiClass,
+  ApiInterface,
+  ApiItemKind,
+} from "@microsoft/api-extractor-model";
+import type { TypeApi } from "../../build-json.js";
+import { cleanExcerpt } from "../../utils.js";
+import {
+  Code,
   DocSourceFile,
   Examples,
-  Excerpt,
+  MdxParagraph,
   Remarks,
   SeeAlso,
   Summary,
@@ -21,8 +27,10 @@ export function TypeDoc(props: TypeDocProps) {
   return DocSourceFile({ title, declares: [apiType] }).children(
     Summary({ type: apiType }),
     apiType.kind === ApiItemKind.TypeAlias ?
-      Excerpt({ excerpt: apiType.excerpt, context: apiType })
-    : TypeMembers({ type: apiType as ApiInterface }),
+      MdxParagraph().children(
+        Code({ language: "ts" }).children(cleanExcerpt(apiType.excerpt.text)),
+      )
+    : TypeMembers({ type: apiType as ApiInterface | ApiClass }),
     Remarks({ type: apiType }),
     Examples({ type: apiType }),
     SeeAlso({ type: apiType }),

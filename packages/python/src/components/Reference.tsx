@@ -1,4 +1,5 @@
 import { computed, emitSymbol, Refkey } from "@alloy-js/core";
+import { isTypeRefContext } from "../context/type-ref-context.js";
 import { ref } from "../symbols/index.js";
 
 export interface ReferenceProps {
@@ -13,7 +14,8 @@ export interface ReferenceProps {
  * It takes a `refkey` prop which is the key of the symbol to reference.
  */
 export function Reference({ refkey }: ReferenceProps) {
-  const reference = ref(refkey);
+  const inTypeRef = isTypeRefContext();
+  const reference = ref(refkey, { type: inTypeRef });
   const symbolRef = computed(() => reference()[1]);
 
   emitSymbol(symbolRef);

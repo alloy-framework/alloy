@@ -28,15 +28,24 @@ export function TSConfigJson(props: TSConfigJsonProps) {
     }
   });
 
-  effect(() => {
-    const dirs = includeDirs();
-    if (dirs.length === 1) {
-      pkg.outFileMapper.value = (path: string) =>
-        join(outDir, relative(dirs[0], path));
-    } else {
-      pkg.outFileMapper.value = (path: string) => join(outDir, path);
-    }
-  });
+  effect(
+    () => {
+      const dirs = includeDirs();
+      if (dirs.length === 1) {
+        pkg.outFileMapper.value = (path: string) =>
+          join(outDir, relative(dirs[0], path));
+      } else {
+        pkg.outFileMapper.value = (path: string) => join(outDir, path);
+      }
+    },
+    undefined,
+    {
+      debug: {
+        name: "TsConfigJson:outFileMapper",
+        type: "render",
+      },
+    },
+  );
 
   const jsonContent = memo(() => {
     const jsonContent = {

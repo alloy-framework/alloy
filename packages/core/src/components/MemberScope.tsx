@@ -56,6 +56,11 @@ export type MemberScopeProps =
  * like. In some languages, this scope may provide symbols which are can be
  * referenced lexically, but in other languages, these members may not be in
  * scope and instead must be referenced via the owner symbol itself.
+ *
+ * When called with `name` (without `value`), this delegates to `<Scope>` which
+ * creates a `BasicScope`. The same restriction applies: the parent scope must
+ * be a `BasicScope`. For custom scope types, create your scope and pass it via
+ * the `value` prop.
  */
 export function MemberScope(props: MemberScopeProps) {
   if ("value" in props) {

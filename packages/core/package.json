@@ -2,43 +2,65 @@
   "name": "@alloy-js/core",
   "version": "0.22.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "main": "./dist/src/index.js",
   "exports": {
     ".": {
       "browser": "./dist/src/index.browser.js",
-      "development": "./src/index.ts",
+      "source": "./src/index.ts",
+      "development": "./dist/dev/src/index.js",
       "import": "./dist/src/index.js"
     },
     "./jsx-runtime": {
       "types": "./dist/src/jsx-runtime.d.ts",
-      "development": "./src/jsx-runtime.ts",
+      "source": "./src/jsx-runtime.ts",
+      "development": "./dist/dev/src/jsx-runtime.js",
       "import": "./dist/src/jsx-runtime.js"
     },
     "./testing": {
-      "development": "./testing/index.ts",
+      "source": "./testing/index.ts",
+      "development": "./dist/dev/testing/index.js",
       "import": "./dist/testing/index.js"
     },
     "./testing/matchers": {
       "types": "./testing/vitest.d.ts"
     },
     "./stc": {
-      "development": "./src/components/stc/index.ts",
+      "source": "./src/components/stc/index.ts",
+      "development": "./dist/dev/src/components/stc/index.js",
       "import": "./dist/src/components/stc/index.js"
     },
     "./components": {
-      "development": "./src/components/index.ts",
+      "source": "./src/components/index.ts",
+      "development": "./dist/dev/src/components/index.js",
       "import": "./dist/src/components/index.js"
+    },
+    "./devtools": {
+      "types": "./dist/src/devtools-entry.d.ts",
+      "browser": "./dist/src/devtools-entry.browser.js",
+      "source": "./src/devtools-entry.ts",
+      "development": "./dist/dev/src/devtools-entry.js",
+      "import": "./dist/src/devtools-entry.js"
     }
   },
   "browser": {
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
     "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
+    "./dist/src/host/node-host.js": "./dist/src/host/node-host.browser.js",
+    "./src/host/node-host.ts": "./src/host/node-host.browser.ts",
     "./dist/src/inspect.js": "./dist/src/inspect.browser.js",
-    "./src/inspect.ts": "./src/inspect.browser.ts"
+    "./src/inspect.ts": "./src/inspect.browser.ts",
+    "./dist/src/debug/source-map.js": "./dist/src/debug/source-map.browser.js",
+    "./src/debug/source-map.ts": "./src/debug/source-map.browser.ts",
+    "./dist/src/devtools/devtools-server.js": "./dist/src/devtools/devtools-server.browser.js",
+    "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts"
   },
   "scripts": {
-    "generate-docs": "api-extractor run",
-    "build": "alloy build && pnpm run generate-docs",
+    "generate-docs": "api-extractor run && api-extractor run -c api-extractor.testing.json",
+    "build": "alloy build --with-dev && pnpm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
@@ -49,11 +71,14 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "@vue/reactivity": "catalog:",
-    "picocolors": "catalog:",
     "cli-table3": "catalog:",
+    "devalue": "catalog:",
     "pathe": "catalog:",
-    "prettier": "catalog:"
+    "picocolors": "catalog:",
+    "prettier": "catalog:",
+    "ws": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",

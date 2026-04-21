@@ -38,8 +38,8 @@ export function Namespace(props: NamespaceProps) {
         <NamespaceName
           symbol={namespaceSymbol}
           relative={!!hasOuterNamespace}
-        />{" "}
-        <Block>
+        />
+        <Block newline>
           <NamespaceScopes symbol={namespaceSymbol} stopAt={nsContext?.symbol}>
             {props.children}
           </NamespaceScopes>

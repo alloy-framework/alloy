@@ -138,8 +138,10 @@ it("define nested namespace in sourcefile", () => {
   );
 
   expect(tree).toRenderTo(`
-    namespace Base {
-        namespace Namespace1.Namespace2 {
+    namespace Base
+    {
+        namespace Namespace1.Namespace2
+        {
             public class Model1;
         }
     }
@@ -170,7 +172,8 @@ it("contains a struct with a private field initialized by a constructor", () => 
   );
 
   expect(tree).toRenderTo(d`
-    namespace TestNamespace.Test {
+    namespace TestNamespace.Test
+    {
         public struct MyStruct
         {
             private int _value;

@@ -60,3 +60,67 @@ it("renders doc comment", () => {
     }
   `);
 });
+
+it("renders : base() initializer", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration public name="DerivedClass" baseType="BaseClass">
+        <Constructor
+          public
+          parameters={[{ name: "name", type: "string" }]}
+          baseConstructor={["name"]}
+        >
+          // body
+        </Constructor>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public class DerivedClass : BaseClass
+    {
+        public DerivedClass(string name) : base(name)
+        {
+            // body
+        }
+    }
+  `);
+});
+
+it("renders : this() initializer", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration public name="MyClass">
+        <Constructor public thisConstructor={["0", "0"]}>
+          // body
+        </Constructor>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public class MyClass
+    {
+        public MyClass() : this(0, 0)
+        {
+            // body
+        }
+    }
+  `);
+});
+
+it("renders : base() with no arguments", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration public name="DerivedClass" baseType="BaseClass">
+        <Constructor public baseConstructor={[]}>
+          // body
+        </Constructor>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public class DerivedClass : BaseClass
+    {
+        public DerivedClass() : base()
+        {
+            // body
+        }
+    }
+  `);
+});

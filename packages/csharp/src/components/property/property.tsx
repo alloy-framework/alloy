@@ -256,9 +256,7 @@ function Accessor(props: AccessorProps) {
   }
   return (
     <>
-      {props.keyword}{" "}
-      <Block inline>{props.body}</Block>
+      {props.keyword} <Block inline>{props.body}</Block>
     </>
   );
 }
-

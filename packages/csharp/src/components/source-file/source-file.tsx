@@ -103,7 +103,8 @@ export function SourceFile(props: SourceFileProps) {
         {nsSymbol === globalNs ?
           content
         : <>
-            namespace <NamespaceName symbol={nsSymbol} />{sourceFileScope.hasBlockNamespace ?
+            namespace <NamespaceName symbol={nsSymbol} />
+            {sourceFileScope.hasBlockNamespace ?
               <Block newline>{content}</Block>
             : <>
                 ;<hbr />

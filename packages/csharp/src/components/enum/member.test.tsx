@@ -43,3 +43,24 @@ it("takes a namekey", () => {
     Foo.MyMember;
   `);
 });
+
+it("renders doc comment", () => {
+  const res = toSourceText(
+    <EnumDeclaration public name="TestEnum">
+      <EnumMember name="One" doc="First value" />,<hbr />
+      <EnumMember name="Two" doc="Second value" />
+    </EnumDeclaration>,
+  );
+
+  expect(res).toBe(d`
+    namespace TestCode;
+
+    public enum TestEnum
+    {
+        /// First value
+        One,
+        /// Second value
+        Two
+    }
+  `);
+});

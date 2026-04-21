@@ -8,6 +8,7 @@ import {
 } from "../../modifiers.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { MethodSymbol } from "../../symbols/method.js";
+import { DocWhen } from "../doc/comment.jsx";
 import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 
 /**
@@ -16,6 +17,9 @@ import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
 export interface ConstructorProps extends AccessModifiers {
   /** Constructor parameters */
   parameters?: ParameterProps[];
+
+  /** Doc comment */
+  doc?: Children;
 
   /** Refkey */
   refkey?: Refkey;
@@ -38,6 +42,7 @@ export function Constructor(props: ConstructorProps) {
   return (
     <MemberDeclaration symbol={ctorSymbol}>
       <MethodScope>
+        <DocWhen doc={props.doc} />
         {modifiers}
         <MemberName />
         <Parameters parameters={props.parameters} />

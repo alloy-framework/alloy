@@ -39,7 +39,10 @@ it("renders doc comment", () => {
   expect(
     <TestNamespace>
       <ClassDeclaration public name="TestClass">
-        <Constructor public doc={<DocSummary>Creates a new instance</DocSummary>}>
+        <Constructor
+          public
+          doc={<DocSummary>Creates a new instance</DocSummary>}
+        >
           // body
         </Constructor>
       </ClassDeclaration>

@@ -14,11 +14,14 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 
 // properties for creating an enum
 export interface EnumDeclarationProps extends AccessModifiers {
   name: string | Namekey;
+  /** Doc comment */
+  doc?: Children;
   refkey?: Refkey | Refkey[];
   children?: Children;
 }
@@ -54,6 +57,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
 
   return (
     <Declaration symbol={symbol}>
+      <DocWhen doc={props.doc} />
       {modifiers}enum <Name />
       {!props.children && ";"}
       {props.children && (

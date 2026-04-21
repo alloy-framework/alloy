@@ -1,4 +1,5 @@
 import {
+  Children,
   createSymbol,
   MemberDeclaration,
   MemberName,
@@ -8,10 +9,13 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { CSharpSymbol } from "../../symbols/csharp.js";
+import { DocWhen } from "../doc/comment.jsx";
 
 // properties for creating a C# enum member
 export interface EnumMemberProps {
   name: string | Namekey;
+  /** Doc comment */
+  doc?: Children;
   refkey?: Refkey;
 }
 
@@ -41,6 +45,7 @@ export function EnumMember(props: EnumMemberProps) {
 
   return (
     <MemberDeclaration symbol={thisEnumValueSymbol}>
+      <DocWhen doc={props.doc} />
       <MemberName />
     </MemberDeclaration>
   );

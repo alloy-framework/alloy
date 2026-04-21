@@ -2,6 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
+import { DocSummary } from "../doc/comment.jsx";
 import { Constructor } from "./constructor.jsx";
 
 it("reference constructor parameters in body", () => {
@@ -29,6 +30,29 @@ it("reference constructor parameters in body", () => {
         {
             name;
             size;
+        }
+    }
+  `);
+});
+
+it("renders doc comment", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration public name="TestClass">
+        <Constructor public doc={<DocSummary>Creates a new instance</DocSummary>}>
+          // body
+        </Constructor>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        /// <summary>
+        /// Creates a new instance
+        /// </summary>
+        public TestClass()
+        {
+            // body
         }
     }
   `);

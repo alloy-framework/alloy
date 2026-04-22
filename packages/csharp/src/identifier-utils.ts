@@ -10,17 +10,6 @@ export function isValidCSharpIdentifier(name: string): boolean {
 }
 
 /**
- * Checks whether each segment of a dotted namespace name is a valid C# identifier.
- *
- * @param name - The dotted namespace name (e.g., "My.Service.Models").
- * @returns true if every segment is a valid identifier.
- */
-export function isValidCSharpNamespace(name: string): boolean {
-  if (name.length === 0) return false;
-  return name.split(".").every((segment) => isValidCSharpIdentifier(segment));
-}
-
-/**
  * Transforms an arbitrary string into a valid C# identifier by replacing
  * invalid characters. The result may still be a C# keyword — callers
  * should combine with keyword escaping if needed.

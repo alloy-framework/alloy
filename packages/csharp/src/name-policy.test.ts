@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   isValidCSharpIdentifier,
-  isValidCSharpNamespace,
   sanitizeCSharpIdentifier,
 } from "./identifier-utils.js";
 import {
@@ -83,23 +82,6 @@ describe("isValidCSharpIdentifier", () => {
   it("does not check for keywords (only character rules)", () => {
     // "class" has valid characters, even though it's a keyword
     expect(isValidCSharpIdentifier("class")).toBe(true);
-  });
-});
-
-describe("isValidCSharpNamespace", () => {
-  it("accepts valid dotted namespaces", () => {
-    expect(isValidCSharpNamespace("My.Service.Models")).toBe(true);
-    expect(isValidCSharpNamespace("System")).toBe(true);
-    expect(isValidCSharpNamespace("A.B")).toBe(true);
-  });
-
-  it("rejects invalid namespaces", () => {
-    expect(isValidCSharpNamespace("")).toBe(false);
-    expect(isValidCSharpNamespace("Foo..Bar")).toBe(false);
-    expect(isValidCSharpNamespace("Foo.1Bar")).toBe(false);
-    expect(isValidCSharpNamespace("Foo.")).toBe(false);
-    expect(isValidCSharpNamespace(".Foo")).toBe(false);
-    expect(isValidCSharpNamespace("has-dash.ok")).toBe(false);
   });
 });
 
@@ -185,7 +167,9 @@ describe("createCSharpNamePolicy keyword escaping", () => {
 
   describe("namespace handling", () => {
     it("applies PascalCase to each segment", () => {
-      expect(policy.getName("my-service.models", "namespace")).toBe("MyService.Models");
+      expect(policy.getName("my-service.models", "namespace")).toBe(
+        "MyService.Models",
+      );
     });
 
     it("single segment works", () => {

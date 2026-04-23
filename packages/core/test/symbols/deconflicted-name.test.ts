@@ -73,4 +73,48 @@ describe("deconflictedName", () => {
     expect(b.deconflictedName).toBeUndefined();
     expect(b.name).toBe("bar");
   });
+
+  it("detects conflict when different original names normalize to the same policy name", () => {
+    // Mirrors PR #394: under camelCase, `foo_bar` and `fooBar` both become
+    // `fooBar` — they collide on the rendered name and should be deconflicted.
+    const toCamel = (n: string) =>
+      n.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    const { scope } = setup();
+
+    const a = new BasicSymbol("foo_bar", scope.symbols, {
+      namePolicy: toCamel,
+    });
+    const b = new BasicSymbol("fooBar", scope.symbols, {
+      namePolicy: toCamel,
+    });
+    flushJobs();
+
+    expect(a.name).toBe("fooBar");
+    // Without canonical-name grouping, `b` would keep its original `fooBar`
+    // and silently collide with `a`'s policy-applied name.
+    expect(b.name).not.toBe("fooBar");
+    expect(b.name).toMatch(/^fooBar/);
+  });
+
+  it("survivor reverts when the winner is removed (canonical-name cohort lookup)", () => {
+    // After `a` is removed, the delete hook must find `b` as a member of the
+    // same canonical-name cohort so it can clear its deconflictedName.
+    const toCamel = (n: string) =>
+      n.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+    const { scope } = setup();
+
+    const a = new BasicSymbol("foo_bar", scope.symbols, {
+      namePolicy: toCamel,
+    });
+    const b = new BasicSymbol("fooBar", scope.symbols, {
+      namePolicy: toCamel,
+    });
+    flushJobs();
+    expect(b.deconflictedName).toBeDefined();
+
+    a.delete();
+    flushJobs();
+    expect(b.deconflictedName).toBeUndefined();
+    expect(b.name).toBe("fooBar");
+  });
 });

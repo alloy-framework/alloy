@@ -7,13 +7,37 @@ import { formatSymbolName, formatSymbolTableName } from "../tracer.js";
 import { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
+/**
+ * Returns the canonical requested name for a symbol: the result of applying
+ * the symbol's name policy to its original name, or the original name itself
+ * when no policy applies. This is the name the symbol would carry if there
+ * were no conflicts, and is stable across the symbol's lifetime (it depends
+ * only on the immutable `originalName` and the name policy).
+ *
+ * Conflict resolution groups symbols by this value, so that:
+ *
+ * - Two symbols with different `originalName`s that normalize to the same
+ *   policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are
+ *   correctly detected as a conflict.
+ * - Cohort identity is preserved across renames — a deconfliction rename
+ *   writes `deconflictedName` (changing `.name`) but leaves `canonicalName`
+ *   untouched, so subsequent passes (e.g. on symbol deletion) can still find
+ *   the survivors.
+ */
+export function canonicalName(symbol: OutputSymbol): string {
+  if (symbol.ignoreNamePolicy || !symbol.namePolicy) {
+    return symbol.originalName;
+  }
+  return symbol.namePolicy(symbol.originalName);
+}
+
 export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   #namesToDeconflict: Set<string> = new Set();
   #nameConflictResolver?: NameConflictResolver;
   #deconflictNames = () => {
     for (const name of this.#namesToDeconflict) {
       const conflictedSymbols = [...this].filter(
-        (sym) => sym.originalName === name && !sym.ignoreNameConflict,
+        (sym) => canonicalName(sym) === name && !sym.ignoreNameConflict,
       );
       if (this.#nameConflictResolver) {
         this.#nameConflictResolver(name, conflictedSymbols);
@@ -67,7 +91,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
             `${formatSymbolName(symbol)} added to ${formatSymbolTableName(this)}`,
         );
 
-        this.#namesToDeconflict.add(symbol.name);
+        this.#namesToDeconflict.add(canonicalName(symbol));
 
         queueJob(this.#deconflictNames);
 
@@ -79,10 +103,11 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
           () =>
             `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
         );
-        // Re-run conflict resolution for the deleted symbol's original name so
-        // that any alias suffix previously assigned to survivors (e.g. `foo_2`)
-        // can revert to the plain name now that the collision is gone.
-        this.#namesToDeconflict.add(symbol.originalName);
+        // Re-run conflict resolution for the deleted symbol's canonical name
+        // so survivors in the same cohort (those that share the canonical
+        // name) can clear any prior `deconflictedName` rename now that the
+        // collision is reduced.
+        this.#namesToDeconflict.add(canonicalName(symbol));
         queueJob(this.#deconflictNames);
       },
     });

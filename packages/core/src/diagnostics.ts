@@ -1,5 +1,9 @@
 import { getRenderNodeId } from "./debug/index.js";
-import { insertDiagnostic } from "./debug/trace-writer.js";
+import {
+  deleteDiagnostic,
+  insertDiagnostic,
+  isTraceEnabled,
+} from "./debug/trace-writer.js";
 import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
 import type { SourceLocation } from "./runtime/component.js";
@@ -31,22 +35,31 @@ export interface DiagnosticHandle {
   dismiss(): void;
 }
 
+function buildComponentStack(): DiagnosticStackEntry[] {
+  return getRenderStackSnapshot().map((entry) => ({
+    name: entry.displayName,
+    renderNodeId:
+      entry.context?.meta?.renderNode ?
+        getRenderNodeId(entry.context.meta.renderNode)
+      : undefined,
+    source: entry.source,
+  }));
+}
+
 export class DiagnosticsCollector {
   private entries = new Map<string, Diagnostic>();
   private order: string[] = [];
+  private traceRowIds = new Map<string, number>();
 
   emit(input: DiagnosticInput): DiagnosticHandle {
+    const traceEnabled = isTraceEnabled();
+    // Component stack is only required when a trace consumer will read it,
+    // or when the caller explicitly provided one. Building it walks the full
+    // render stack, which is expensive on hot paths.
     const componentStack =
       input.componentStack ??
-      getRenderStackSnapshot().map((entry) => ({
-        name: entry.displayName,
-        renderNodeId:
-          entry.context?.meta?.renderNode ?
-            getRenderNodeId(entry.context.meta.renderNode)
-          : undefined,
-        source: entry.source,
-      }));
-    const source = input.source ?? componentStack.at(-1)?.source ?? undefined;
+      (traceEnabled ? buildComponentStack() : undefined);
+    const source = input.source ?? componentStack?.at(-1)?.source ?? undefined;
     const id = `diag-${this.order.length + 1}-${Date.now()}`;
     const diagnostic: Diagnostic = {
       id,
@@ -58,28 +71,8 @@ export class DiagnosticsCollector {
     this.entries.set(id, diagnostic);
     this.order.push(id);
 
-    // Broadcast updated diagnostics
-    this.broadcast();
-
-    return {
-      dismiss: () => {
-        this.entries.delete(id);
-        // Broadcast updated diagnostics after dismissal
-        this.broadcast();
-      },
-    };
-  }
-
-  getDiagnostics() {
-    return this.order
-      .map((id) => this.entries.get(id))
-      .filter((entry): entry is Diagnostic => Boolean(entry));
-  }
-
-  private broadcast() {
-    const diagnostics = this.getDiagnostics();
-    for (const diagnostic of diagnostics) {
-      insertDiagnostic(
+    if (traceEnabled) {
+      const rowId = insertDiagnostic(
         diagnostic.message,
         diagnostic.severity,
         diagnostic.source?.fileName,
@@ -89,7 +82,27 @@ export class DiagnosticsCollector {
           JSON.stringify(diagnostic.componentStack)
         : undefined,
       );
+      if (rowId !== undefined) {
+        this.traceRowIds.set(id, rowId);
+      }
     }
+
+    return {
+      dismiss: () => {
+        if (!this.entries.delete(id)) return;
+        const rowId = this.traceRowIds.get(id);
+        if (rowId !== undefined) {
+          this.traceRowIds.delete(id);
+          if (isTraceEnabled()) deleteDiagnostic(rowId);
+        }
+      },
+    };
+  }
+
+  getDiagnostics() {
+    return this.order
+      .map((id) => this.entries.get(id))
+      .filter((entry): entry is Diagnostic => Boolean(entry));
   }
 }
 

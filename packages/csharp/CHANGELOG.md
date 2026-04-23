@@ -1,5 +1,24 @@
 # Changelog - @alloy-js/csharp
 
+## 0.23.0
+
+### Bug Fixes
+
+- [#390](https://github.com/alloy-framework/alloy/pull/390) Add support `: base()` and `:this()` with `baseConstructor` and `thisConstructor` on `Constructor` component
+- [#391](https://github.com/alloy-framework/alloy/pull/391) Fix namespace brace printed on new line(Allman brace style)
+- [#374](https://github.com/alloy-framework/alloy/pull/374) Fix namespace scope-chain construction for dotted namespaces declared inside `SourceFile` so refkey resolution no longer emits incorrect qualification or unnecessary using directives. Adds regression coverage for sibling and multi-level nested namespace scenarios.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#396](https://github.com/alloy-framework/alloy/pull/396) CSharp naming policy escape keywords with `@`
+- [#354](https://github.com/alloy-framework/alloy/pull/354) Support add doc comment at the beginning of csharp src file
+- [#391](https://github.com/alloy-framework/alloy/pull/391) Add support for custom get; set; body for property
+- [#388](https://github.com/alloy-framework/alloy/pull/388) Add `doc` property to enum declaration, enum member and constructor components
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+
+
 ## 0.22.0
 
 ### Bug Fixes

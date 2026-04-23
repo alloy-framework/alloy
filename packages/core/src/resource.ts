@@ -101,26 +101,35 @@ export function createResource<T, U>(
         }),
     );
   } else {
-    effect(() => {
-      let input: T;
-      if (isRef(getter)) {
-        input = getter.value;
-      } else {
-        input = getter();
-      }
-      const promise = (fetcher as (input: T) => Promise<U>)(input);
-      trackPromise(promise);
-      promise.then(
-        (result) => {
-          resource.data = result;
-          resource.loading = false;
+    effect(
+      () => {
+        let input: T;
+        if (isRef(getter)) {
+          input = getter.value;
+        } else {
+          input = getter();
+        }
+        const promise = (fetcher as (input: T) => Promise<U>)(input);
+        trackPromise(promise);
+        promise.then(
+          (result) => {
+            resource.data = result;
+            resource.loading = false;
+          },
+          (error) => {
+            resource.error = error;
+            resource.loading = false;
+          },
+        );
+      },
+      undefined,
+      {
+        debug: {
+          name: "resource:fetch",
+          type: "resource",
         },
-        (error) => {
-          resource.error = error;
-          resource.loading = false;
-        },
-      );
-    });
+      },
+    );
   }
 
   return resource;

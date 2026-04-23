@@ -1,5 +1,6 @@
-import { code, mapJoin } from "@alloy-js/core";
+import { code, mapJoin, type Children } from "@alloy-js/core";
 import type { ApiFunction, Parameter } from "@microsoft/api-extractor-model";
+import { mdxEscape } from "../../utils.js";
 import { MdxSection, TsDoc } from "../stc/index.js";
 
 export interface FunctionParametersProps {
@@ -9,21 +10,27 @@ export interface FunctionParametersProps {
 export function FunctionParameters(props: FunctionParametersProps) {
   const params = mapJoin(
     () => props.fn.parameters as Parameter[],
-    (param) => code`
-      <tr>
-        <td style="text-align: right;font-weight: bold;">${param.name}</td>
-        <td>${param.isOptional && `<Badge text="optional" variant="note" size="small" />`}
-        
-          \`${param.parameterTypeExcerpt.text}\`
-          
-          ${param.tsdocParamBlock && TsDoc({ node: param.tsdocParamBlock, context: props.fn })}
-        </td>
-      </tr>
-    `,
+    (param) => {
+      const summary: Children =
+        param.tsdocParamBlock ?
+          TsDoc({
+            node: param.tsdocParamBlock,
+            context: props.fn,
+            inline: true,
+          })
+        : "";
+      return code`
+        <tr>
+          <td class="api-name">${param.name}</td>
+          <td class="api-type">${param.isOptional ? `<Badge text="optional" variant="note" size="small" /> ` : ""}${mdxEscape(param.parameterTypeExcerpt.text)}</td>
+          <td>${summary}</td>
+        </tr>
+      `;
+    },
   );
 
   return MdxSection({ title: "Parameters" }).code`
-    <table>
+    <table class="api-members">
       ${params}
     </table>
   `;

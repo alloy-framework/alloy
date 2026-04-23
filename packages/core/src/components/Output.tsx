@@ -1,6 +1,7 @@
 import {
   createOutputBinder,
   getSymbolCreator,
+  NameConflictResolver,
   SymbolCreator,
 } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
@@ -28,8 +29,10 @@ export interface OutputProps extends PrintTreeOptions {
 
   /**
    * Policy for handling multiple symbols declared with the same name.
+   *
+   * @see {@link NameConflictResolver}
    */
-  nameConflictResolver?: (name: string, symbols: any[]) => void;
+  nameConflictResolver?: NameConflictResolver;
 
   /**
    * The base path for the output contents. Defaults to "."

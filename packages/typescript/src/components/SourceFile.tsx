@@ -2,6 +2,7 @@ import {
   ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  createScope,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -41,7 +42,9 @@ export function SourceFile(props: SourceFileProps) {
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
   const parent = useScope();
-  const scope = new TSModuleScope(path, parent);
+  const scope = createScope(TSModuleScope, path, parent, {
+    binder: parent?.binder,
+  });
   sdData.modules.add(scope);
   const pkg = useContext(PackageContext);
   if (pkg) {

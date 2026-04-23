@@ -151,7 +151,7 @@ function parameter(
       </Show>
       <Show when={!!(param as any).default}>
         {" = "}
-        <param.TypeSlot>{(param as any).default!}</param.TypeSlot>
+        {(param as any).default!}
       </Show>
     </group>
   );

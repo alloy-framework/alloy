@@ -2,6 +2,7 @@ import pc from "picocolors";
 import { contextsByKey } from "./context.js";
 import { SourceDirectoryContext } from "./context/source-directory.js";
 import { SourceFileContext } from "./context/source-file.js";
+import { cwd } from "./host/node-host.js";
 import { Context, getContext } from "./reactivity.js";
 import { Component, Props, SourceLocation } from "./runtime/component.js";
 
@@ -12,6 +13,14 @@ const renderStack: Array<{
   context: Context | null;
   source?: SourceLocation;
 }> = [];
+
+export interface RenderStackSnapshotEntry {
+  component: Component<any>;
+  props: Props;
+  context: Context | null;
+  source?: SourceLocation;
+  displayName: string;
+}
 
 export function pushStack(
   component: Component<any>,
@@ -25,8 +34,49 @@ export function popStack() {
   renderStack.pop();
 }
 
+export function currentComponentName(): string | undefined {
+  const entry = renderStack[renderStack.length - 1];
+  return entry?.component.name || undefined;
+}
+
 export function clearRenderStack() {
   renderStack.length = 0;
+}
+
+/**
+ * Get the current rendering path from the render stack context.
+ * Prefers SourceFileContext over SourceDirectoryContext.
+ */
+export function getCurrentRenderPath(): string | undefined {
+  let currentPath: string | undefined;
+  for (let i = renderStack.length - 1; i >= 0; i--) {
+    const { context } = renderStack[i];
+    // Prefer SourceFileContext over SourceDirectoryContext
+    if (context?.context?.[SourceFileContext.id]) {
+      const fileContext = context.context[
+        SourceFileContext.id
+      ] as SourceFileContext;
+      return fileContext.path;
+    }
+    if (!currentPath && context?.context?.[SourceDirectoryContext.id]) {
+      const dirContext = context.context[
+        SourceDirectoryContext.id
+      ] as SourceDirectoryContext;
+      currentPath = dirContext.path;
+      // Don't break - keep looking for a SourceFileContext
+    }
+  }
+  return currentPath;
+}
+
+export function getRenderStackSnapshot(): RenderStackSnapshotEntry[] {
+  return renderStack.map((entry) => ({
+    component: entry.component,
+    props: entry.props,
+    context: entry.context,
+    source: entry.source,
+    displayName: getComponentDisplayName(entry.component, entry.props),
+  }));
 }
 
 // Helper functions
@@ -76,12 +126,12 @@ function formatValue(value: unknown): string {
 }
 
 function formatSourceLocation(source: SourceLocation): string {
-  const cwd = process.cwd();
+  const currentCwd = cwd();
   let filePath = source.fileName;
 
   // Convert to relative path if under cwd
-  if (filePath.startsWith(cwd)) {
-    filePath = filePath.slice(cwd.length + 1); // +1 to remove leading slash
+  if (currentCwd && filePath.startsWith(currentCwd)) {
+    filePath = filePath.slice(currentCwd.length + 1); // +1 to remove leading slash
   }
 
   return `${filePath}:${source.lineNumber}:${source.columnNumber}`;
@@ -93,8 +143,10 @@ function formatSourceLocation(source: SourceLocation): string {
  * This differs from debug.component.stack in that this uses a purpose-built
  * stack rather than walking the context chain. When this is called, the context
  * chain has been restored. In the future this can probably be unified nicely.
+ *
+ * @param error - Optional error to print the stack trace from
  */
-export function printRenderStack() {
+export function printRenderStack(error?: unknown) {
   // Find the nearest SourceFileContext or SourceDirectoryContext from the render stack
   let currentPath: string | undefined;
   for (let i = renderStack.length - 1; i >= 0; i--) {
@@ -122,6 +174,27 @@ export function printRenderStack() {
   } else {
     // eslint-disable-next-line no-console
     console.error(pc.red("Error rendering:"));
+  }
+
+  // Print the error message and stack if provided
+  if (error) {
+    if (error instanceof Error) {
+      // eslint-disable-next-line no-console
+      console.error(pc.red(`  ${error.message}`));
+      if (error.stack) {
+        // Print stack lines (skip the first line which is the error message)
+        const stackLines = error.stack.split("\n").slice(1);
+        for (const line of stackLines) {
+          // eslint-disable-next-line no-console
+          console.error(pc.gray(line));
+        }
+      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.error(pc.red(`  ${String(error)}`));
+    }
+    // eslint-disable-next-line no-console
+    console.error(); // Empty line before component stack
   }
 
   // First pass: determine which providers should be nested vs standalone

@@ -1,0 +1,48 @@
+export type {
+  // Individual server→client message types
+  ClientToServerMessage,
+  DebuggerInfoMessage,
+  DiagnosticRow,
+  DiagnosticsReportMessage,
+  DirectoryAddedMessage,
+  DirectoryRemovedMessage,
+  EffectAddedMessage,
+  EffectEdgeUpdatedMessage,
+  EffectTrackMessage,
+  EffectTriggerMessage,
+  EffectUpdatedMessage,
+  FileAddedMessage,
+  FileRemovedMessage,
+  FileUpdatedMessage,
+  FlushJobsCompleteMessage,
+  RefAddedMessage,
+  RenderCompleteMessage,
+  RenderErrorMessage,
+  RenderNodeAddedMessage,
+  RenderNodeRemovedMessage,
+  RenderNodeUpdatedMessage,
+  RenderResetMessage,
+  // Individual client→server message types
+  RerenderBreakRequestMessage,
+  RerenderRequestMessage,
+  ScopeAddedMessage,
+  ScopeRemovedMessage,
+  ScopeUpdatedMessage,
+  ServerToClientMessage,
+  SourceLocation,
+  SubscribeMessage,
+  SymbolAddedMessage,
+  SymbolRemovedMessage,
+  SymbolUpdatedMessage,
+  UnsubscribeMessage,
+} from "./devtools/devtools-protocol.js";
+export {
+  enableDevtools,
+  enableDevtoolsAndConnect,
+  resetDevtoolsServerForTests,
+  waitForDevtoolsConnection,
+} from "./devtools/devtools-server.browser.js";
+export type {
+  DevtoolsServerInfo,
+  EnableDevtoolsOptions,
+} from "./devtools/devtools-server.browser.js";

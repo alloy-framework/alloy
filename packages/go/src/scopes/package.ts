@@ -1,4 +1,4 @@
-import { OutputScope, useScope } from "@alloy-js/core";
+import { OutputScope, createScope, useScope } from "@alloy-js/core";
 import type { PackageSymbol } from "../symbols/package.js";
 import { GoModuleScope } from "./module.js";
 import { GoNamedTypeScope } from "./named-type.js";
@@ -28,7 +28,7 @@ export function createGoPackageScope(packageSymbol: PackageSymbol) {
     throw new Error("Packages can only be created within a package or module");
   }
 
-  const scope = new GoPackageScope(packageSymbol, parentScope);
+  const scope = createScope(GoPackageScope, packageSymbol, parentScope);
 
   return scope;
 }

@@ -1,8 +1,6 @@
 import {
-  effect,
   reactive,
   ReactiveFlags,
-  shallowReactive,
   track,
   TrackOpTypes,
   trigger,
@@ -11,8 +9,7 @@ import {
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
-import { untrack } from "../reactivity.js";
-import { formatScope, trace, traceEffect, TracePhase } from "../tracer.js";
+import { effect, shallowReactive, untrack } from "../reactivity.js";
 import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
 import { OutputSymbol } from "./output-symbol.js";
 
@@ -57,6 +54,11 @@ export interface OutputScopeOptions {
  * within a reactive context.
  */
 export abstract class OutputScope {
+  /**
+   * The declaration space keys for this scope type. Subclasses override this
+   * to declare which declaration spaces are created on construction (e.g.,
+   * `["types", "values"]`).
+   */
   static readonly declarationSpaces: Readonly<string[]> = [] as const;
 
   #name: string;
@@ -128,7 +130,8 @@ export abstract class OutputScope {
   #spaces: Record<string, OutputDeclarationSpace>;
 
   /**
-   * Get the declaration space for the given key.
+   * Get the declaration space for the given key (e.g., `"types"`, `"values"`).
+   * Returns `undefined` when no space with that key exists on this scope.
    */
   spaceFor(key: string): OutputSpace | undefined {
     return this.#spaces[key];
@@ -154,8 +157,34 @@ export abstract class OutputScope {
     return this.#binder;
   }
 
-  [ReactiveFlags.SKIP] = this;
+  [ReactiveFlags.SKIP] = true;
 
+  /**
+   * Subclasses must forward all three positional arguments to `super`. See
+   * {@link createScope} for the preferred instantiation path.
+   *
+   * @param name - A descriptive name for this scope (used in debugging and
+   * diagnostics).
+   * @param parentScope - The parent scope in the scope tree, or `undefined`
+   * for root scopes. Inside a component, obtain this via `useScope()`.
+   * @param options - Additional scope options; see {@link OutputScopeOptions}.
+   *
+   * @example
+   * ```ts
+   * class MyScope extends OutputScope {
+   *   constructor(
+   *     name: string,
+   *     parent: OutputScope | undefined,
+   *     options?: OutputScopeOptions,
+   *   ) {
+   *     super(name, parent, options);
+   *   }
+   * }
+   *
+   * // Inside a component:
+   * const scope = createScope(MyScope, "my-scope", useScope());
+   * ```
+   */
   constructor(
     name: string,
     parentScope: OutputScope | undefined,
@@ -167,9 +196,20 @@ export abstract class OutputScope {
     this.#binder = options.binder ?? useBinder();
     this.#children = shallowReactive(new Set());
     this.#parent = parentScope;
-    effect(() => {
-      this.#setOwnerSymbol(options.ownerSymbol?.movedTo ?? options.ownerSymbol);
-    });
+    effect(
+      () => {
+        this.#setOwnerSymbol(
+          options.ownerSymbol?.movedTo ?? options.ownerSymbol,
+        );
+      },
+      undefined,
+      {
+        debug: {
+          name: "outputScope:ownerSymbol",
+          type: "symbol",
+        },
+      },
+    );
 
     if (this.#parent) {
       this.#parent.children.add(this);
@@ -184,12 +224,8 @@ export abstract class OutputScope {
       ]),
     );
 
+    // Notify binder so resolution tracking works even without createScope
     this.#binder?.notifyScopeCreated(this);
-
-    trace(TracePhase.scope.create, () => `${formatScope(this)}`);
-    traceEffect(TracePhase.scope.update, () => {
-      return `${formatScope(this)}`;
-    });
   }
 
   /**
@@ -213,6 +249,10 @@ export abstract class OutputScope {
   get ownerSymbol() {
     track(this, TrackOpTypes.GET, "ownerSymbol");
     return this.#ownerSymbol;
+  }
+
+  get debugInfo(): Record<string, unknown> {
+    return {};
   }
 
   #setOwnerSymbol(value: OutputSymbol | undefined) {

@@ -1,4 +1,6 @@
+import { createScope } from "../binder.js";
 import { ScopeContext, useScope } from "../context/scope.js";
+import { debug } from "../debug/index.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
 import { OutputScope } from "../symbols/output-scope.js";
@@ -45,12 +47,19 @@ export type ScopeProps = ScopePropsWithValue | ScopePropsWithInfo;
  * Declare a scope for this component's children. Any symbols and scopes
  * declared in the children of this component will be in this scope.
  *
+ * @remarks
+ *
+ * When called with `name` (without `value`), this creates a `BasicScope`. The
+ * parent scope must also be a `BasicScope`; for custom scope types, create your
+ * scope and pass it via the `value` prop instead.
+ *
  * @see {@link ScopeContext}
  */
 export function Scope(props: ScopeProps) {
   let scope: OutputScope;
   if ("value" in props) {
     scope = props.value;
+    debug.symbols.relocateScope(scope);
   } else {
     const parentScope = useScope();
     if (parentScope && !(parentScope instanceof BasicScope)) {
@@ -58,7 +67,9 @@ export function Scope(props: ScopeProps) {
         "Scope component can only make scopes within a BasicScope",
       );
     }
-    scope = new BasicScope(props.name ?? "", parentScope, {
+    const binder = parentScope?.binder;
+    scope = createScope(BasicScope, props.name ?? "", parentScope, {
+      binder,
       metadata: props.metadata,
       ownerSymbol: props.ownerSymbol,
     });

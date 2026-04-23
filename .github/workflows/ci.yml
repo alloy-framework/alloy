@@ -54,6 +54,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./packages/docs/dist
+      - name: Generate agent docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-agent-docs
 
   format:
     runs-on: ubuntu-latest

@@ -2,19 +2,25 @@
   "name": "@alloy-js/markdown",
   "version": "0.22.0",
   "description": "Alloy components for generating markdown",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     ".": {
-      "development": "./src/index.ts",
+      "source": "./src/index.ts",
+      "development": "./dist/dev/src/index.js",
       "import": "./dist/src/index.js"
     },
     "./stc": {
-      "development": "./src/components/stc/index.ts",
+      "source": "./src/components/stc/index.ts",
+      "development": "./dist/dev/src/components/stc/index.js",
       "import": "./dist/src/components/stc/index.js"
     }
   },
   "scripts": {
     "generate-docs": "api-extractor run",
-    "build": "alloy build && npm run generate-docs",
+    "build": "alloy build --with-dev && npm run generate-docs",
     "clean": "rimraf dist/ .temp/",
     "watch": "alloy build --watch",
     "test": "vitest run",

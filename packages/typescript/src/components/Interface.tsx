@@ -2,6 +2,7 @@ import {
   Block,
   Children,
   childrenArray,
+  createSymbol,
   createSymbolSlot,
   effect,
   emitSymbol,
@@ -35,20 +36,29 @@ export interface InterfaceDeclarationProps extends CommonDeclarationProps {
 }
 
 const _InterfaceDeclaration = ensureTypeRefContext(
-  (props: InterfaceDeclarationProps) => {
+  function InterfaceDeclaration(props: InterfaceDeclarationProps) {
     const ExprSlot = createSymbolSlot();
 
-    effect(() => {
-      if (ExprSlot.ref.value) {
-        const takenSymbols = ExprSlot.ref.value;
-        for (const symbol of takenSymbols) {
-          // ignore non-transient symbols (likely not the result of an expression).
-          if (symbol.isTransient) {
-            symbol.moveMembersTo(sym);
+    effect(
+      () => {
+        if (ExprSlot.ref.value) {
+          const takenSymbols = ExprSlot.ref.value;
+          for (const symbol of takenSymbols) {
+            // ignore non-transient symbols (likely not the result of an expression).
+            if (symbol.isTransient) {
+              symbol.moveMembersTo(sym);
+            }
           }
         }
-      }
-    });
+      },
+      undefined,
+      {
+        debug: {
+          name: "InterfaceDeclaration:moveExprSlotMembers",
+          type: "symbol",
+        },
+      },
+    );
 
     const children = childrenArray(() => props.children);
 
@@ -68,13 +78,15 @@ const _InterfaceDeclaration = ensureTypeRefContext(
     const filteredChildren = findUnkeyedChildren(children);
     const currentScope = useTSLexicalScope();
 
-    const sym = new TSOutputSymbol(props.name, currentScope.types, {
+    const binder = currentScope?.binder;
+    const sym = createSymbol(TSOutputSymbol, props.name, currentScope.types, {
       refkeys: props.refkey,
       default: props.default,
       export: props.export,
       metadata: props.metadata,
       tsFlags: TSSymbolFlags.TypeSymbol,
       namePolicy: useTSNamePolicy().for("interface"),
+      binder,
     });
     return (
       <>
@@ -115,9 +127,11 @@ export interface InterfaceExpressionProps {
 }
 
 export const InterfaceExpression = ensureTypeRefContext(
-  (props: InterfaceExpressionProps) => {
-    const symbol = new TSOutputSymbol("", undefined, {
+  function InterfaceExpression(props: InterfaceExpressionProps) {
+    const scope = useTSLexicalScope();
+    const symbol = createSymbol(TSOutputSymbol, "", undefined, {
       transient: true,
+      binder: scope?.binder,
     });
 
     emitSymbol(symbol);
@@ -180,25 +194,40 @@ export function InterfaceMember(props: InterfaceMemberProps) {
 
   const optionality = props.optional ? "?" : "";
   const scope = useTSMemberScope();
-  const sym = new TSOutputSymbol(props.name, scope.ownerSymbol.staticMembers, {
-    refkeys: props.refkey,
-    tsFlags:
-      TSSymbolFlags.TypeSymbol |
-      ((props.nullish ?? props.optional) ?
-        TSSymbolFlags.Nullish
-      : TSSymbolFlags.None),
-    namePolicy: useTSNamePolicy().for("interface-member"),
-  });
+  const sym = createSymbol(
+    TSOutputSymbol,
+    props.name,
+    scope.ownerSymbol.staticMembers,
+    {
+      refkeys: props.refkey,
+      tsFlags:
+        TSSymbolFlags.TypeSymbol |
+        ((props.nullish ?? props.optional) ?
+          TSSymbolFlags.Nullish
+        : TSSymbolFlags.None),
+      namePolicy: useTSNamePolicy().for("interface-member"),
+      binder: scope.binder,
+    },
+  );
 
   const taken = takeSymbols();
 
-  effect(() => {
-    if (taken.size > 1) return;
-    const symbol = Array.from(taken)[0];
-    if (symbol?.isTransient) {
-      symbol.moveMembersTo(sym!);
-    }
-  });
+  effect(
+    () => {
+      if (taken.size > 1) return;
+      const symbol = Array.from(taken)[0];
+      if (symbol?.isTransient) {
+        symbol.moveMembersTo(sym!);
+      }
+    },
+    undefined,
+    {
+      debug: {
+        name: "InterfaceMember:moveTakenMembers",
+        type: "symbol",
+      },
+    },
+  );
 
   return (
     <MemberDeclaration symbol={sym}>

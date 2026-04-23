@@ -1,9 +1,13 @@
 import { TestNamespace } from "#test/utils.jsx";
-import { Output } from "@alloy-js/core";
+import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+import { createCSharpNamePolicy } from "../../name-policy.js";
 import { ClassDeclaration } from "../class/declaration.jsx";
+import { Constructor } from "../constructor/constructor.jsx";
+import { Field } from "../field/field.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
+import { StructDeclaration } from "../struct/declaration.jsx";
 import { Namespace } from "./namespace.jsx";
 
 it("defines multiple namespaces and source files with unique content", () => {
@@ -134,9 +138,49 @@ it("define nested namespace in sourcefile", () => {
   );
 
   expect(tree).toRenderTo(`
-    namespace Base {
-        namespace Namespace1.Namespace2 {
+    namespace Base
+    {
+        namespace Namespace1.Namespace2
+        {
             public class Model1;
+        }
+    }
+  `);
+});
+
+it("contains a struct with a private field initialized by a constructor", () => {
+  const fieldRefkey = refkey();
+  const paramRefkey = refkey();
+
+  const tree = (
+    <Output namePolicy={createCSharpNamePolicy()}>
+      <SourceFile path="MyStruct.cs">
+        <Namespace name="TestNamespace.Test">
+          <StructDeclaration public name="MyStruct">
+            <Field private name="value" type="int" refkey={fieldRefkey} />
+            <hbr />
+            <Constructor
+              public
+              parameters={[{ name: "value", type: "int", refkey: paramRefkey }]}
+            >
+              {fieldRefkey} = {paramRefkey};
+            </Constructor>
+          </StructDeclaration>
+        </Namespace>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(d`
+    namespace TestNamespace.Test
+    {
+        public struct MyStruct
+        {
+            private int _value;
+            public MyStruct(int value)
+            {
+                _value = value;
+            }
         }
     }
   `);

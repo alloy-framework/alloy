@@ -99,4 +99,13 @@ export class TSPackageScope extends OutputScope {
   copyTo(): TSPackageScope {
     throw new Error("Not supported");
   }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      version: this.version,
+      path: this.path,
+      builtin: this.builtin,
+    };
+  }
 }

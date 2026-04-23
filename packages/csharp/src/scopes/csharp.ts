@@ -20,4 +20,15 @@ export class CSharpScope extends OutputScope {
   get ownerSymbol(): CSharpSymbol | undefined {
     return super.ownerSymbol as CSharpSymbol | undefined;
   }
+
+  override get debugInfo(): Record<string, unknown> {
+    const info = super.debugInfo;
+    if (this.enclosingNamespace) {
+      return {
+        ...info,
+        enclosingNamespace: this.enclosingNamespace.name,
+      };
+    }
+    return info;
+  }
 }

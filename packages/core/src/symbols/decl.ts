@@ -1,4 +1,5 @@
 import { toRef } from "@vue/reactivity";
+import { createSymbol } from "../binder.js";
 import { useScope } from "../context/scope.js";
 import { Namekey } from "../refkey.js";
 import { createComponent } from "../runtime/component.js";
@@ -18,7 +19,10 @@ export function decl(namekey: Namekey) {
         `Cannot declare symbol in non-basic scope: ${currentScope.constructor.name}. Use a language-specific 'decl' function instead.`,
       );
     }
-    const symbol = new BasicSymbol(namekey, currentScope.symbols);
+    const binder = currentScope.binder;
+    const symbol = createSymbol(BasicSymbol, namekey, currentScope.symbols, {
+      binder,
+    });
 
     return toRef(symbol, "name");
   }, {});

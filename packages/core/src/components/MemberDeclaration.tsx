@@ -60,16 +60,16 @@ export type MemberDeclarationProps =
  *
  * This component must be called in one of two ways: with a name and an optional
  * refkey, or else passing in the symbol. When called with a name and refkey, a
- * symbol will be created in the current scope (provided by
- * {@link MemberDeclarationContext}) with that name and refkey. If a refkey is not
- * provided, `refkey(props.name)` is used.
+ * `BasicSymbol` will be created in the current member space. When called with a
+ * `name`, the owning scope must be a `BasicScope`; for custom scope/symbol
+ * types, pass a pre-created `symbol` instead.
  *
  * When called with a symbol, that symbol is merely exposed via
- * {@link MemberDeclarationContext}. It is assumed that the caller of this component
- * has created the symbol with the `createSymbol` API on the
- * {@link BinderContext}.
+ * {@link MemberDeclarationContext} (not {@link DeclarationContext}). Use
+ * {@link MemberName} (not `<Name />`) to render the declared member's name.
  *
  * @see {@link BinderContext}
+ * @see {@link MemberName}
  */
 export function MemberDeclaration(props: MemberDeclarationProps) {
   const binder = useContext(BinderContext);

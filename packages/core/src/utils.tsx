@@ -1,13 +1,15 @@
-import { ref, Ref, toRaw } from "@vue/reactivity";
+import { Ref, toRaw } from "@vue/reactivity";
 import { BaseListProps } from "./components/List.jsx";
 import {
   createCustomContext,
   CustomContext,
   Disposable,
   effect,
+  ensureIsEmpty,
   getContext,
   memo,
   onCleanup,
+  ref,
   root,
   untrack,
 } from "./reactivity.js";
@@ -128,14 +130,16 @@ export function mapJoin<T, U, V>(
     }
     return slot;
   }
-  const firstNonEmptyIndex = ref(-1);
-  const lastNonEmptyIndex = ref(-1);
+  const firstNonEmptyIndex = ref(-1, { isInfrastructure: true });
+  const lastNonEmptyIndex = ref(-1, { isInfrastructure: true });
   const mapped: Children[] = [];
   let enderMemo: (() => Children) | undefined;
 
   // Creates a ref placeholder that stores the joiner node for a boundary.
   function createJoinerRef(): Ref<Children | undefined> {
-    return ref<unknown>(undefined) as Ref<Children | undefined>;
+    return ref<unknown>(undefined, { isInfrastructure: true }) as Ref<
+      Children | undefined
+    >;
   }
 
   // Makes sure we have a joiner ref at the requested boundary index.
@@ -278,9 +282,6 @@ export function mapJoin<T, U, V>(
     }
 
     const context = getContext();
-    if (context) {
-      context.isEmpty ??= ref(true);
-    }
     // this is important to access here in reactive context so we are
     // notified of new items from reactives.
     const itemsLen = items.length;
@@ -326,23 +327,32 @@ export function mapJoin<T, U, V>(
         mapped[startIndex * 2] = createCustomContext((cb) => {
           return root((disposer) => {
             const nestedContext = getContext()!;
-            const isEmptyFlag = nestedContext.isEmpty!;
+            const isEmptyFlag = ensureIsEmpty(nestedContext);
 
             slot.disposer = disposer;
             disposer();
-            effect((prev?: boolean) => {
-              const isEmpty = isEmptyFlag.value;
-              return untrack(() => {
-                if (slot.isEmpty.value !== isEmpty) {
-                  slot.isEmpty.value = isEmpty;
-                }
-                const wasEmpty = prev ?? true;
+            effect(
+              (prev?: boolean) => {
+                const isEmpty = isEmptyFlag.value;
+                return untrack(() => {
+                  if (slot.isEmpty.value !== isEmpty) {
+                    slot.isEmpty.value = isEmpty;
+                  }
+                  const wasEmpty = prev ?? true;
 
-                applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
+                  applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
 
-                return isEmpty;
-              });
-            });
+                  return isEmpty;
+                });
+              },
+              undefined,
+              {
+                debug: {
+                  name: `list:slotEmpty:${cleanupIndex}`,
+                  type: "list",
+                },
+              },
+            );
             cb(mapper(items[cleanupIndex], cleanupIndex));
           });
         });

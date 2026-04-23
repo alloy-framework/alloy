@@ -1,5 +1,6 @@
-import { code } from "@alloy-js/core";
+import { code, useContext } from "@alloy-js/core";
 import type { ApiFunction } from "@microsoft/api-extractor-model";
+import { ImportPathContext } from "../../contexts/import-path.js";
 import { cleanExcerpt } from "../../utils.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 
@@ -8,8 +9,10 @@ export interface FunctionSignatureProps {
 }
 
 export function FunctionSignature(props: FunctionSignatureProps) {
+  const importPath =
+    useContext(ImportPathContext) ?? props.fn.getAssociatedPackage()?.name;
   const c = code`
-    import { ${props.fn.name} } from "${props.fn.getAssociatedPackage()?.name}";
+    import { ${props.fn.name} } from "${importPath}";
 
     ${cleanExcerpt(props.fn.excerpt.text)}
   `;

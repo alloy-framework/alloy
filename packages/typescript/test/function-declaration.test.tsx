@@ -388,6 +388,42 @@ describe("symbols", () => {
       }
     `);
   });
+
+  it("adds symbols for members of parameters when a type and default are provided", () => {
+    const ifaceRk = refkey();
+    const ifaceMemberRk = refkey();
+    const paramRk = refkey();
+
+    const param: ParameterDescriptor = {
+      name: "myParam",
+      refkey: paramRk,
+      type: ifaceRk,
+      default: "undefined",
+    };
+
+    const decl = (
+      <List doubleHardline>
+        <InterfaceDeclaration name="IFace" refkey={ifaceRk}>
+          <InterfaceMember name="myProp" refkey={ifaceMemberRk}>
+            string
+          </InterfaceMember>
+        </InterfaceDeclaration>
+        <FunctionDeclaration name="fn" parameters={[param]}>
+          {memberRefkey(paramRk, ifaceMemberRk)}
+        </FunctionDeclaration>
+      </List>
+    );
+
+    expect(toSourceText(decl)).toBe(d`
+      interface IFace {
+        myProp: string
+      }
+
+      function fn(myParam: IFace = undefined) {
+        myParam.myProp
+      }
+    `);
+  });
 });
 
 it("has parameters and return type in type ref context", () => {

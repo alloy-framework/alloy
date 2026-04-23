@@ -43,9 +43,11 @@ it("references types in a parent namespace", () => {
   );
 
   expect(tree).toRenderTo(`
-    namespace Test {
+    namespace Test
+    {
         class TestClass;
-        namespace Nested {
+        namespace Nested
+        {
             TestClass;
         }
     }
@@ -69,9 +71,11 @@ it("references types in a child namespace", () => {
   );
 
   expect(tree).toRenderTo(`
-    namespace Test {
+    namespace Test
+    {
         Nested.TestClass;
-        namespace Nested {
+        namespace Nested
+        {
             class TestClass;
         }
     }
@@ -96,10 +100,12 @@ it("references types in a different top-level namespace declared in the same fil
   expect(tree).toRenderTo(`
     using TestCode2;
 
-    namespace TestCode1 {
+    namespace TestCode1
+    {
         TestClass
     }
-    namespace TestCode2 {
+    namespace TestCode2
+    {
         class TestClass;
     }
   `);
@@ -125,12 +131,14 @@ it("references types in a different top-level namespace declared in a different 
     "test.cs": `
       using TestCode2;
 
-      namespace TestCode1 {
+      namespace TestCode1
+      {
           TestClass;
       }
     `,
     "other.cs": `
-        namespace TestCode2 {
+        namespace TestCode2
+        {
             class TestClass;
         }
       `,
@@ -156,9 +164,42 @@ it("can be referenced by refkey", () => {
   expect(tree).toRenderTo(`
     using TestCode2;
 
-    namespace TestCode2 {
+    namespace TestCode2
+    {
         class TestClass;
     }
     TestClass;
+  `);
+});
+
+it("references types across sibling namespaces under the same parent", () => {
+  const classRef = refkey();
+
+  const tree = (
+    <Output>
+      <SourceFile path="test.cs">
+        <Namespace name="Parent">
+          <Namespace name="Models">
+            <ClassDeclaration name="User" refkey={classRef} />
+          </Namespace>
+          <hbr />
+          <Namespace name="Services">{classRef};</Namespace>
+        </Namespace>
+      </SourceFile>
+    </Output>
+  );
+
+  expect(tree).toRenderTo(`
+    namespace Parent
+    {
+        namespace Models
+        {
+            class User;
+        }
+        namespace Services
+        {
+            Models.User;
+        }
+    }
   `);
 });

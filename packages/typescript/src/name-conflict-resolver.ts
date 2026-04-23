@@ -1,13 +1,11 @@
+import { OutputSymbol } from "@alloy-js/core";
 import { TSOutputSymbol, TSSymbolFlags } from "./symbols/index.js";
 
-export function tsNameConflictResolver(
-  name: string,
-  symbols: TSOutputSymbol[],
-) {
-  const goodNamedSymbols = symbols.filter(
+export function tsNameConflictResolver(name: string, symbols: OutputSymbol[]) {
+  const goodNamedSymbols = (symbols as TSOutputSymbol[]).filter(
     (s) => ~s.tsFlags & TSSymbolFlags.LocalImportSymbol,
   );
-  const badNamedSymbols = symbols.filter(
+  const badNamedSymbols = (symbols as TSOutputSymbol[]).filter(
     (s) => s.tsFlags & TSSymbolFlags.LocalImportSymbol,
   );
   let nameCount = 1;

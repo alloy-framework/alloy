@@ -17,6 +17,7 @@ export default tsEslint.config(
       "packages/babel-plugin-jsx-dom-expressions/**/*",
       "packages/babel-plugin-alloy/**/*",
       "packages/babel-preset-alloy/**/*",
+      "packages/devtools/**/*",
       "packages/docs/**/*",
       "samples/**/*", // for some reason eslint is unhappy with some files in here
       "**/scripts/**/*",
@@ -51,6 +52,15 @@ export default tsEslint.config(
       "prefer-const": "warn",
       "@typescript-eslint/no-floating-promises": "warn",
       eqeqeq: ["warn", "always", { null: "ignore" }],
+    },
+  },
+  {
+    /**
+     * CLI packages — console.log is the primary output mechanism.
+     */
+    files: ["packages/trace-cli/**/*.ts"],
+    rules: {
+      "no-console": "off",
     },
   },
   {

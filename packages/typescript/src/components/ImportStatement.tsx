@@ -115,7 +115,14 @@ export function ImportStatement(props: ImportStatementProps) {
                   inTypeImport={allNamedImportsAreTypes}
                 />
               ),
-              { joiner: <>{","}<line /></> },
+              {
+                joiner: (
+                  <>
+                    {","}
+                    <line />
+                  </>
+                ),
+              },
             )}
             <ifBreak>{","}</ifBreak>
           </indent>

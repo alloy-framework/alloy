@@ -79,6 +79,11 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
           () =>
             `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
         );
+        // Re-run conflict resolution for the deleted symbol's original name so
+        // that any alias suffix previously assigned to survivors (e.g. `foo_2`)
+        // can revert to the plain name now that the collision is gone.
+        this.#namesToDeconflict.add(symbol.originalName);
+        queueJob(this.#deconflictNames);
       },
     });
 
@@ -135,8 +140,23 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
  * to have a suffix of _2, _3, etc.
  */
 function defaultConflictHandler(_: string, conflictedSymbols: OutputSymbol[]) {
+  if (conflictedSymbols.length === 0) return;
+  // Reset the first symbol back to its original name if its current name is a
+  // leftover auto-generated alias from a previous conflict (e.g. `foo_2`). We
+  // deliberately avoid clobbering manually-set names.
+  const first = conflictedSymbols[0];
+  if (isAutoAlias(first.name, first.originalName)) {
+    first.name = first.originalName;
+  }
   for (let i = 1; i < conflictedSymbols.length; i++) {
     conflictedSymbols[i].name =
       conflictedSymbols[i].originalName + "_" + (i + 1);
   }
+}
+
+function isAutoAlias(name: string, originalName: string): boolean {
+  if (name === originalName) return true;
+  if (!name.startsWith(originalName + "_")) return false;
+  const suffix = name.slice(originalName.length + 1);
+  return /^\d+$/.test(suffix);
 }

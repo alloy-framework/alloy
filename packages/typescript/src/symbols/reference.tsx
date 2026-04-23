@@ -3,6 +3,7 @@ import {
   MemberResolutionContext,
   MemberResolver,
   memo,
+  onCleanup,
   Refkey,
   resolve,
   unresolvedRefkey,
@@ -65,8 +66,15 @@ export function ref(
       for (const module of sourcePackage.exportedSymbols.values()) {
         for (const refkey of lexicalDeclaration.refkeys) {
           if (module.exportedSymbols.has(refkey)) {
+            const scope = sourceFile!.scope;
+            const targetModule = module;
             localSymbol = untrack(() =>
-              sourceFile!.scope.addImport(lexicalDeclaration, module, {
+              scope.addImport(lexicalDeclaration, targetModule, {
+                type: options?.type,
+              }),
+            );
+            onCleanup(() =>
+              scope.removeImport(lexicalDeclaration, {
                 type: options?.type,
               }),
             );
@@ -81,12 +89,15 @@ export function ref(
         );
       }
     } else if (targetLocation === "module") {
+      const scope = sourceFile!.scope;
+      const targetModule = pathDown[0] as TSModuleScope;
       localSymbol = untrack(() =>
-        sourceFile!.scope.addImport(
-          lexicalDeclaration,
-          pathDown[0] as TSModuleScope,
-          { type: options?.type },
-        ),
+        scope.addImport(lexicalDeclaration, targetModule, {
+          type: options?.type,
+        }),
+      );
+      onCleanup(() =>
+        scope.removeImport(lexicalDeclaration, { type: options?.type }),
       );
     }
 

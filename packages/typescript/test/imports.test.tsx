@@ -731,12 +731,7 @@ describe("import formatting", () => {
       descriptor: {
         ".": {
           default: "Big",
-          named: [
-            "alphaItem",
-            "bravoItem",
-            "charlieItem",
-            "deltaItem",
-          ],
+          named: ["alphaItem", "bravoItem", "charlieItem", "deltaItem"],
         },
       },
     });

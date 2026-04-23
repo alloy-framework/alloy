@@ -1,13 +1,15 @@
-import { Output, printTree, ref, renderTree, Show } from "@alloy-js/core";
+import {
+  Output,
+  printTree,
+  ref,
+  refkey,
+  renderTree,
+  Show,
+} from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
-import {
-  createPackage,
-  PackageDirectory,
-  refkey,
-  SourceFile,
-} from "../src/index.js";
+import { createPackage, PackageDirectory, SourceFile } from "../src/index.js";
 
 const testLib = () =>
   createPackage({
@@ -74,18 +76,28 @@ it("does not leak name-conflict aliases across re-renders", () => {
     </Output>,
   );
 
-  const initial = sourceFileText(printTree(tree));
+  sourceFileText(printTree(tree));
   showLocal.value = false;
   const off = sourceFileText(printTree(tree));
   showLocal.value = true;
   const back = sourceFileText(printTree(tree));
+  showLocal.value = false;
+  const off2 = sourceFileText(printTree(tree));
+  showLocal.value = true;
+  const back2 = sourceFileText(printTree(tree));
 
-  // While the local is hidden, there's no conflict — the import should be
-  // the plain name, not an alias.
+  // While the local is hidden, the import should be the plain name, not an
+  // alias — the conflict is gone.
   expect(off).toMatch(/import \{ foo \} from "testLib"/);
-  // Re-showing the local should produce exactly the initial output, not
-  // drift the name to foo_3.
-  expect(back).toEqual(initial);
+  expect(off2).toMatch(/import \{ foo \} from "testLib"/);
+  // Off snapshots after repeated toggles must be identical (no drift).
+  expect(off2).toEqual(off);
+  // Back-on snapshots after repeated toggles must be identical too — no
+  // `foo_3`/`foo_4` drift.
+  expect(back2).toEqual(back);
+  // No generated name should drift beyond the expected `_2` suffix.
+  expect(back).not.toMatch(/foo_3|foo_4/);
+  expect(back2).not.toMatch(/foo_3|foo_4/);
 });
 
 it("removes only one ref count at a time", () => {

@@ -28,7 +28,12 @@ export function createTypeAndValueSymbol(
   const scope = useLexicalScope();
   const spaces = scope ? [scope.types, scope.values] : [];
   const binder = options.binder ?? scope?.binder;
-  return createSymbol(TSOutputSymbol, name, spaces, { ...options, binder });
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createTypeSymbol(
@@ -43,7 +48,12 @@ export function createTypeSymbol(
   }
   const spaces = scope ? [scope.types] : [];
   const binder = options.binder ?? scope?.binder;
-  return createSymbol(TSOutputSymbol, name, spaces, { ...options, binder });
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createValueSymbol(
@@ -58,7 +68,12 @@ export function createValueSymbol(
   }
   const spaces = scope ? [scope.values] : [];
   const binder = options.binder ?? scope?.binder;
-  return createSymbol(TSOutputSymbol, name, spaces, { ...options, binder });
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createTransientValueSymbol() {

@@ -37,25 +37,12 @@ function escapeIfKeyword(name: string): string {
  * After applying the appropriate case conversion for each element kind,
  * the resulting name is checked against C# reserved and contextual keywords.
  * If it matches (case-sensitively), the name is prefixed with `@`.
- *
- * For namespace elements, each dot-separated segment is individually
- * cased and keyword-escaped.
  */
 export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
   return core.createNamePolicy((name, element) => {
-    if (element === "namespace") {
-      return name
-        .split(".")
-        .map((segment) =>
-          escapeIfKeyword(
-            sanitizeCSharpIdentifier(changecase.pascalCase(segment)),
-          ),
-        )
-        .join(".");
-    }
-
     let result: string;
     switch (element) {
+      case "namespace":
       case "class":
       case "struct":
       case "enum":

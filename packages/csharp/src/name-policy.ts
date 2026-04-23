@@ -1,5 +1,6 @@
 import * as core from "@alloy-js/core";
 import * as changecase from "change-case";
+import { sanitizeCSharpIdentifier } from "./identifier-utils.js";
 import { isCSharpKeyword } from "./keywords.js";
 
 // the context in which the name policy should be applied
@@ -45,7 +46,9 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
     if (element === "namespace") {
       return name
         .split(".")
-        .map((segment) => escapeIfKeyword(changecase.pascalCase(segment)))
+        .map((segment) =>
+          escapeIfKeyword(sanitizeCSharpIdentifier(changecase.pascalCase(segment))),
+        )
         .join(".");
     }
 
@@ -74,7 +77,7 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
         break;
     }
 
-    return escapeIfKeyword(result);
+    return escapeIfKeyword(sanitizeCSharpIdentifier(result));
   });
 }
 

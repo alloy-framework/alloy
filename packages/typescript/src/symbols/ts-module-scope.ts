@@ -123,7 +123,7 @@ export class TSModuleScope extends TSLexicalScope {
 
   /**
    * Decrement the refcount for an import previously registered via
-   * {@link addImport}. When the last live consumer goes away, the local import
+   * {@link TSModuleScope.addImport | addImport}. When the last live consumer goes away, the local import
    * symbol is deleted, which removes it from the module's name spaces and
    * triggers name-conflict-resolver reconciliation.
    */

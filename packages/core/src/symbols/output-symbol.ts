@@ -178,31 +178,113 @@ export abstract class OutputSymbol {
     return this.#originalName;
   }
 
-  // this field is set by calling the name accessor.
-  #name!: string;
+  // The user-assigned name (as set by constructor or direct `.name =`
+  // assignments). Always defined after construction.
+  #userName!: string;
+
+  // The name assigned by a name-conflict resolver, if any. When present, this
+  // takes precedence over `#userName` in the computed `name` getter. Resolvers
+  // assign via the `deconflictedName` setter; clearing (setting to undefined)
+  // causes the symbol to fall back to its user-assigned name.
+  #deconflictedName: string | undefined;
+
   /**
    * The name of this symbol. Assigning to this property applies the active
    * name policy (unless `ignoreNamePolicy` is true) before storing the value.
+   *
+   * The effective name is computed as `deconflictedName ?? userName`, so if a
+   * name-conflict resolver has assigned a {@link OutputSymbol.deconflictedName | deconflictedName}, that value
+   * is returned here; otherwise the value most recently assigned to `name` is
+   * returned.
    *
    * @reactive
    */
   get name() {
     track(this, TrackOpTypes.GET, "name");
-    return this.#name;
+    return this.#deconflictedName ?? this.#userName;
   }
 
   set name(name: string) {
-    const old = this.#name;
-
-    if (old === name) {
-      return;
-    }
-
-    this.#name =
+    const policyApplied =
       this.#namePolicy && !this.#ignoreNamePolicy ?
         this.#namePolicy(name)
       : name;
-    trigger(this, TriggerOpTypes.SET, "name", name, old);
+
+    if (this.#userName === policyApplied) {
+      return;
+    }
+
+    const old = this.#deconflictedName ?? this.#userName;
+    this.#userName = policyApplied;
+    const next = this.#deconflictedName ?? this.#userName;
+    if (next !== old) {
+      trigger(this, TriggerOpTypes.SET, "name", next, old);
+    }
+  }
+
+  /**
+   * The name assigned by a name-conflict resolver, or `undefined` when the
+   * symbol is not currently renamed by conflict resolution.
+   *
+   * Resolvers should assign to this slot (rather than `name`) to record that a
+   * rename exists only because of a conflict. On re-deconfliction (e.g. after
+   * a conflicting symbol is removed), resolvers clear this slot by assigning
+   * `undefined`; the effective {@link OutputSymbol.name | name} then falls back to the
+   * user-assigned name, which in turn falls back to the original name.
+   *
+   * Name policy is applied to values written here (unless `ignoreNamePolicy`
+   * is true), matching `name`'s behavior.
+   *
+   * @reactive
+   */
+  get deconflictedName(): string | undefined {
+    track(this, TrackOpTypes.GET, "deconflictedName");
+    return this.#deconflictedName;
+  }
+
+  set deconflictedName(value: string | undefined) {
+    const policyApplied =
+      value !== undefined && this.#namePolicy && !this.#ignoreNamePolicy ?
+        this.#namePolicy(value)
+      : value;
+
+    if (this.#deconflictedName === policyApplied) {
+      return;
+    }
+
+    const oldName = this.#deconflictedName ?? this.#userName;
+    const oldDeconflicted = this.#deconflictedName;
+    this.#deconflictedName = policyApplied;
+    trigger(
+      this,
+      TriggerOpTypes.SET,
+      "deconflictedName",
+      policyApplied,
+      oldDeconflicted,
+    );
+    const nextName = this.#deconflictedName ?? this.#userName;
+    if (nextName !== oldName) {
+      trigger(this, TriggerOpTypes.SET, "name", nextName, oldName);
+    }
+  }
+
+  /**
+   * The canonical requested name for this symbol: the result of applying the
+   * symbol's name policy to its {@link OutputSymbol.originalName | originalName}, or the original name
+   * itself when no policy applies. This is the name the symbol would carry if
+   * there were no conflicts, and is stable across the symbol's lifetime (it
+   * depends only on the immutable `originalName` and the name policy).
+   *
+   * Used by {@link SymbolTable} as the grouping key for name-conflict
+   * resolution, so that symbols whose original names normalize to the same
+   * policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are
+   * recognized as conflicting.
+   */
+  get canonicalName(): string {
+    if (this.#ignoreNamePolicy || !this.#namePolicy) {
+      return this.originalName;
+    }
+    return this.#namePolicy(this.originalName);
   }
 
   #id: number;

@@ -276,8 +276,14 @@ it("works with importing the same name many times from different files with the 
   ).toRenderTo({
     "test-import.ts": `
       import { conflict, type MyInterface } from "./test1.js";
-      import { conflict as conflict_2, type MyInterface as MyInterface_2 } from "./test2.js";
-      import { conflict as conflict_3, type MyInterface as MyInterface_3 } from "./test3.js";
+      import {
+        conflict as conflict_2,
+        type MyInterface as MyInterface_2,
+      } from "./test2.js";
+      import {
+        conflict as conflict_3,
+        type MyInterface as MyInterface_3,
+      } from "./test3.js";
 
       const one: MyInterface = conflict;
       const two: MyInterface_2 = conflict_2;
@@ -631,6 +637,134 @@ describe("type imports", () => {
 
       type A = Foo
     `,
+    });
+  });
+});
+
+describe("import formatting", () => {
+  it("breaks long imports across lines", () => {
+    const lib = createPackage({
+      name: "testLib",
+      version: "1.0.0",
+      descriptor: {
+        ".": {
+          named: [
+            "alphaItem",
+            "bravoItem",
+            "charlieItem",
+            "deltaItem",
+            "echoItem",
+            "foxtrotItem",
+          ],
+        },
+      },
+    });
+
+    expect(
+      <Output externals={[lib]} printWidth={40}>
+        <ts.SourceFile path="test.ts">
+          {lib.alphaItem};
+          <hbr />
+          {lib.bravoItem};
+          <hbr />
+          {lib.charlieItem};
+          <hbr />
+          {lib.deltaItem};
+          <hbr />
+          {lib.echoItem};
+          <hbr />
+          {lib.foxtrotItem};
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo({
+      "test.ts": `
+        import {
+          alphaItem,
+          bravoItem,
+          charlieItem,
+          deltaItem,
+          echoItem,
+          foxtrotItem,
+        } from "testLib";
+
+        alphaItem;
+        bravoItem;
+        charlieItem;
+        deltaItem;
+        echoItem;
+        foxtrotItem;
+      `,
+    });
+  });
+
+  it("keeps short imports on one line", () => {
+    const lib = createPackage({
+      name: "testLib",
+      version: "1.0.0",
+      descriptor: {
+        ".": { named: ["a", "b"] },
+      },
+    });
+
+    expect(
+      <Output externals={[lib]} printWidth={40}>
+        <ts.SourceFile path="test.ts">
+          {lib.a};
+          <hbr />
+          {lib.b};
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo({
+      "test.ts": `
+        import { a, b } from "testLib";
+
+        a;
+        b;
+      `,
+    });
+  });
+
+  it("breaks long default + named imports", () => {
+    const lib = createPackage({
+      name: "testLib",
+      version: "1.0.0",
+      descriptor: {
+        ".": {
+          default: "Big",
+          named: ["alphaItem", "bravoItem", "charlieItem", "deltaItem"],
+        },
+      },
+    });
+
+    expect(
+      <Output externals={[lib]} printWidth={40}>
+        <ts.SourceFile path="test.ts">
+          {lib.default};
+          <hbr />
+          {lib.alphaItem};
+          <hbr />
+          {lib.bravoItem};
+          <hbr />
+          {lib.charlieItem};
+          <hbr />
+          {lib.deltaItem};
+        </ts.SourceFile>
+      </Output>,
+    ).toRenderTo({
+      "test.ts": `
+        import Big, {
+          alphaItem,
+          bravoItem,
+          charlieItem,
+          deltaItem,
+        } from "testLib";
+
+        Big;
+        alphaItem;
+        bravoItem;
+        charlieItem;
+        deltaItem;
+      `,
     });
   });
 });

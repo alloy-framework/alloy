@@ -1,5 +1,7 @@
 import * as core from "@alloy-js/core";
 import * as changecase from "change-case";
+import { sanitizeCSharpIdentifier } from "./identifier-utils.js";
+import { isCSharpKeyword } from "./keywords.js";
 
 // the context in which the name policy should be applied
 export type CSharpElements =
@@ -20,10 +22,27 @@ export type CSharpElements =
   | "type-parameter"
   | "namespace";
 
-// creates the C# naming policy
+/**
+ * Prefixes the name with `@` if it is a C# keyword.
+ * This is the idiomatic C# way to use reserved words as identifiers.
+ * The check is case-sensitive, matching C# language semantics.
+ */
+function escapeIfKeyword(name: string): string {
+  return isCSharpKeyword(name) ? `@${name}` : name;
+}
+
+/**
+ * Creates the C# naming policy with case conversion and keyword escaping.
+ *
+ * After applying the appropriate case conversion for each element kind,
+ * the resulting name is checked against C# reserved and contextual keywords.
+ * If it matches (case-sensitively), the name is prefixed with `@`.
+ */
 export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
   return core.createNamePolicy((name, element) => {
+    let result: string;
     switch (element) {
+      case "namespace":
       case "class":
       case "struct":
       case "enum":
@@ -34,15 +53,20 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
       case "class-method":
       case "type-parameter":
       case "class-property":
-      case "namespace":
-        return changecase.pascalCase(name);
+        result = changecase.pascalCase(name);
+        break;
       case "constant":
-        return changecase.constantCase(name);
+        result = changecase.constantCase(name);
+        break;
       case "class-member-private":
-        return `_${changecase.camelCase(name)}`;
+        result = `_${changecase.camelCase(name)}`;
+        break;
       default:
-        return changecase.camelCase(name);
+        result = changecase.camelCase(name);
+        break;
     }
+
+    return escapeIfKeyword(sanitizeCSharpIdentifier(result));
   });
 }
 

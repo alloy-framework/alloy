@@ -175,7 +175,11 @@ it("can import static members", () => {
     </Output>,
   ).toRenderTo({
     "index.ts": `
-      import { noMembers, server, simpleName } from "@modelcontextprotocol/sdk/server/index.js";
+      import {
+        noMembers,
+        server,
+        simpleName,
+      } from "@modelcontextprotocol/sdk/server/index.js";
 
       function foo() {
         server();

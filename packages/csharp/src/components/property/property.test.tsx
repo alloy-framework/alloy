@@ -232,3 +232,92 @@ describe("format", () => {
   `);
   });
 });
+
+describe("accessor bodies", () => {
+  it("renders get with body", () => {
+    expect(
+      <Wrapper>
+        <Property public name="Name" type="string" get={<>return _name;</>} />
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+          public string Name
+          {
+              get { return _name; }
+          }
+      }
+    `);
+  });
+
+  it("renders set with body", () => {
+    expect(
+      <Wrapper>
+        <Property
+          public
+          name="Value"
+          type="int"
+          get
+          set={<>_value = value;</>}
+        />
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+          public int Value
+          {
+              get;
+              set { _value = value; }
+          }
+      }
+    `);
+  });
+
+  it("renders both get and set with bodies", () => {
+    expect(
+      <Wrapper>
+        <Property
+          public
+          name="MinValue"
+          type="T"
+          get={<>return _minValue.HasValue ? _minValue.Value : default(T);</>}
+          set={<>_minValue = value;</>}
+        />
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+          public T MinValue
+          {
+              get { return _minValue.HasValue ? _minValue.Value : default(T); }
+              set { _minValue = value; }
+          }
+      }
+    `);
+  });
+
+  it("breaks long accessor body across lines", () => {
+    expect(
+      <TestNamespace printWidth={40}>
+        <ClassDeclaration name="Test">
+          <Property
+            public
+            name="Value"
+            type="int"
+            get={<>return _someVeryLongFieldName;</>}
+          />
+        </ClassDeclaration>
+      </TestNamespace>,
+    ).toRenderTo(`
+      class Test
+      {
+          public int Value
+          {
+              get {
+                  return _someVeryLongFieldName;
+              }
+          }
+      }
+  `);
+  });
+});

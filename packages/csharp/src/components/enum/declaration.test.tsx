@@ -45,3 +45,23 @@ it("takes a namekey", () => {
     enum MyEnum;
   `);
 });
+
+it("renders doc comment", () => {
+  const res = toSourceText(
+    <EnumDeclaration public name="TestEnum" doc="This is a test enum">
+      <EnumMember name="One" />,<hbr />
+      <EnumMember name="Two" />
+    </EnumDeclaration>,
+  );
+
+  expect(res).toBe(d`
+    namespace TestCode;
+
+    /// This is a test enum
+    public enum TestEnum
+    {
+        One,
+        Two
+    }
+  `);
+});

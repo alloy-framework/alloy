@@ -13,7 +13,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   #deconflictNames = () => {
     for (const name of this.#namesToDeconflict) {
       const conflictedSymbols = [...this].filter(
-        (sym) => sym.originalName === name && !sym.ignoreNameConflict,
+        (sym) => sym.name === name && !sym.ignoreNameConflict,
       );
       if (this.#nameConflictResolver) {
         this.#nameConflictResolver(name, conflictedSymbols);

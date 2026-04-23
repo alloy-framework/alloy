@@ -207,3 +207,39 @@ describe("format", () => {
   `);
   });
 });
+
+describe("name policy deduplication", () => {
+  it("deduplicates parameters that collide after case conversion", () => {
+    const params = [
+      { name: "my-param", type: "int" },
+      { name: "myParam", type: "string" },
+    ];
+    expect(
+      <Wrapper>
+        <Method public name="MethodOne" parameters={params} />
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+          public void MethodOne(int myParam, string myParam_2) {}
+      }
+    `);
+  });
+
+  it("deduplicates parameters that are keywords", () => {
+    const params = [
+      { name: "string", type: "int" },
+      { name: "string", type: "bool" },
+    ];
+    expect(
+      <Wrapper>
+        <Method public name="MethodOne" parameters={params} />
+      </Wrapper>,
+    ).toRenderTo(`
+      public class TestClass
+      {
+          public void MethodOne(int @string, bool string_2) {}
+      }
+    `);
+  });
+});

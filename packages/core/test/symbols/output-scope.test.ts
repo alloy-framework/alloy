@@ -206,3 +206,41 @@ describe("OutputScope#children", () => {
     expect(child2.parent).toBe(parentScope);
   });
 });
+
+describe("symbol name deduplication with name policy", () => {
+  it("deduplicates symbols whose names collide after name policy", () => {
+    const scope = createScope("scope");
+    const policy = (name: string) => name.toUpperCase();
+    const [s1] = createSymbol("foo", scope, { namePolicy: policy });
+    const [s2] = createSymbol("FOO", scope, { namePolicy: policy });
+
+    flushJobs();
+
+    expect(s1.name).toBe("FOO");
+    expect(s2.name).toBe("FOO_2");
+  });
+
+  it("deduplicates symbols when policy adds a prefix", () => {
+    const scope = createScope("scope");
+    const policy = (name: string) => (name === "reserved" ? `@${name}` : name);
+    const [s1] = createSymbol("reserved", scope, { namePolicy: policy });
+    const [s2] = createSymbol("reserved", scope, { namePolicy: policy });
+
+    flushJobs();
+
+    expect(s1.name).toBe("@reserved");
+    expect(s2.name).toBe("reserved_2");
+  });
+
+  it("does not deduplicates symbols with different names after policy", () => {
+    const scope = createScope("scope");
+    const policy = (name: string) => `prefix_${name}`;
+    const [s1] = createSymbol("foo", scope, { namePolicy: policy });
+    const [s2] = createSymbol("bar", scope, { namePolicy: policy });
+
+    flushJobs();
+
+    expect(s1.name).toBe("prefix_foo");
+    expect(s2.name).toBe("prefix_bar");
+  });
+});

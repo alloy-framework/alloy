@@ -801,6 +801,8 @@ export function insertRenderError(
   });
 }
 
+let stmtDeleteDiagnostic: StatementSync | undefined;
+
 export function insertDiagnostic(
   message: string,
   severity: string | undefined,
@@ -808,10 +810,10 @@ export function insertDiagnostic(
   sourceLine: number | undefined,
   sourceCol: number | undefined,
   componentStack: string | undefined,
-): void {
-  if (!db) return;
+): number | undefined {
+  if (!db) return undefined;
   const s = nextSeq();
-  stmtInsertDiagnostic.run(
+  const info = stmtInsertDiagnostic.run(
     message,
     severity ?? null,
     sourceFile ?? null,
@@ -820,7 +822,9 @@ export function insertDiagnostic(
     componentStack ?? null,
     s,
   );
+  const id = Number(info.lastInsertRowid);
   notifyChange("diagnostics", "added", {
+    id,
     message,
     severity: severity ?? null,
     source_file: sourceFile ?? null,
@@ -829,6 +833,16 @@ export function insertDiagnostic(
     component_stack: componentStack ?? null,
     seq: s,
   });
+  return id;
+}
+
+export function deleteDiagnostic(id: number): void {
+  if (!db) return;
+  if (!stmtDeleteDiagnostic) {
+    stmtDeleteDiagnostic = db.prepare(`DELETE FROM diagnostics WHERE id = ?`);
+  }
+  stmtDeleteDiagnostic.run(id);
+  notifyChange("diagnostics", "removed", { id, seq: nextSeq() });
 }
 
 /**
@@ -946,6 +960,7 @@ export function commitTransaction(): void {
 export function closeTrace(): void {
   db?.close();
   db = null;
+  stmtDeleteDiagnostic = undefined;
 }
 
 export function resetTrace(): void {

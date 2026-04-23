@@ -268,6 +268,25 @@ export abstract class OutputSymbol {
     }
   }
 
+  /**
+   * The canonical requested name for this symbol: the result of applying the
+   * symbol's name policy to its {@link originalName}, or the original name
+   * itself when no policy applies. This is the name the symbol would carry if
+   * there were no conflicts, and is stable across the symbol's lifetime (it
+   * depends only on the immutable `originalName` and the name policy).
+   *
+   * Used by {@link SymbolTable} as the grouping key for name-conflict
+   * resolution, so that symbols whose original names normalize to the same
+   * policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are
+   * recognized as conflicting.
+   */
+  get canonicalName(): string {
+    if (this.#ignoreNamePolicy || !this.#namePolicy) {
+      return this.originalName;
+    }
+    return this.#namePolicy(this.originalName);
+  }
+
   #id: number;
   /**
    * The unique id of this symbol.

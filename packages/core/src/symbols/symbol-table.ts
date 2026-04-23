@@ -141,22 +141,11 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
  */
 function defaultConflictHandler(_: string, conflictedSymbols: OutputSymbol[]) {
   if (conflictedSymbols.length === 0) return;
-  // Reset the first symbol back to its original name if its current name is a
-  // leftover auto-generated alias from a previous conflict (e.g. `foo_2`). We
-  // deliberately avoid clobbering manually-set names.
-  const first = conflictedSymbols[0];
-  if (isAutoAlias(first.name, first.originalName)) {
-    first.name = first.originalName;
-  }
+  // The first symbol keeps its original name; clear any prior deconflict
+  // rename so it reverts after a collision is resolved.
+  conflictedSymbols[0].deconflictedName = undefined;
   for (let i = 1; i < conflictedSymbols.length; i++) {
-    conflictedSymbols[i].name =
+    conflictedSymbols[i].deconflictedName =
       conflictedSymbols[i].originalName + "_" + (i + 1);
   }
-}
-
-function isAutoAlias(name: string, originalName: string): boolean {
-  if (name === originalName) return true;
-  if (!name.startsWith(originalName + "_")) return false;
-  const suffix = name.slice(originalName.length + 1);
-  return /^\d+$/.test(suffix);
 }

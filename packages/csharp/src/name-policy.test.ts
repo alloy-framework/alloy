@@ -191,4 +191,24 @@ describe("createCSharpNamePolicy keyword escaping", () => {
       expect(policy.getName("value", "class-member-private")).toBe("_value");
     });
   });
+
+  describe("identifier sanitization", () => {
+    it("sanitizes names starting with digits", () => {
+      expect(policy.getName("123foo", "class")).toBe("_123foo");
+    });
+
+    it("sanitizes names starting with digits for camelCase elements", () => {
+      expect(policy.getName("123param", "parameter")).toBe("_123param");
+    });
+
+    it("sanitizes empty string", () => {
+      expect(policy.getName("", "class")).toBe("_");
+    });
+
+    it("sanitizes namespace segments starting with digits", () => {
+      expect(policy.getName("123service.models", "namespace")).toBe(
+        "_123service.Models",
+      );
+    });
+  });
 });

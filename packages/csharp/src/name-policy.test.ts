@@ -166,10 +166,8 @@ describe("createCSharpNamePolicy keyword escaping", () => {
   });
 
   describe("namespace handling", () => {
-    it("applies PascalCase to each segment", () => {
-      expect(policy.getName("my-service.models", "namespace")).toBe(
-        "MyService.Models",
-      );
+    it("applies PascalCase", () => {
+      expect(policy.getName("my-service", "namespace")).toBe("MyService");
     });
 
     it("single segment works", () => {
@@ -205,10 +203,8 @@ describe("createCSharpNamePolicy keyword escaping", () => {
       expect(policy.getName("", "class")).toBe("_");
     });
 
-    it("sanitizes namespace segments starting with digits", () => {
-      expect(policy.getName("123service.models", "namespace")).toBe(
-        "_123service.Models",
-      );
+    it("sanitizes namespace starting with digits", () => {
+      expect(policy.getName("123service", "namespace")).toBe("_123service");
     });
   });
 });

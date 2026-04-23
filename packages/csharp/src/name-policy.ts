@@ -47,7 +47,9 @@ export function createCSharpNamePolicy(): core.NamePolicy<CSharpElements> {
       return name
         .split(".")
         .map((segment) =>
-          escapeIfKeyword(sanitizeCSharpIdentifier(changecase.pascalCase(segment))),
+          escapeIfKeyword(
+            sanitizeCSharpIdentifier(changecase.pascalCase(segment)),
+          ),
         )
         .join(".");
     }

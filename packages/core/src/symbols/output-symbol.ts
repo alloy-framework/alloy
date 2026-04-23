@@ -193,7 +193,7 @@ export abstract class OutputSymbol {
    * name policy (unless `ignoreNamePolicy` is true) before storing the value.
    *
    * The effective name is computed as `deconflictedName ?? userName`, so if a
-   * name-conflict resolver has assigned a {@link deconflictedName}, that value
+   * name-conflict resolver has assigned a {@link OutputSymbol.deconflictedName | deconflictedName}, that value
    * is returned here; otherwise the value most recently assigned to `name` is
    * returned.
    *
@@ -229,7 +229,7 @@ export abstract class OutputSymbol {
    * Resolvers should assign to this slot (rather than `name`) to record that a
    * rename exists only because of a conflict. On re-deconfliction (e.g. after
    * a conflicting symbol is removed), resolvers clear this slot by assigning
-   * `undefined`; the effective {@link name} then falls back to the
+   * `undefined`; the effective {@link OutputSymbol.name | name} then falls back to the
    * user-assigned name, which in turn falls back to the original name.
    *
    * Name policy is applied to values written here (unless `ignoreNamePolicy`
@@ -270,7 +270,7 @@ export abstract class OutputSymbol {
 
   /**
    * The canonical requested name for this symbol: the result of applying the
-   * symbol's name policy to its {@link originalName}, or the original name
+   * symbol's name policy to its {@link OutputSymbol.originalName | originalName}, or the original name
    * itself when no policy applies. This is the name the symbol would carry if
    * there were no conflicts, and is stable across the symbol's lifetime (it
    * depends only on the immutable `originalName` and the name policy).

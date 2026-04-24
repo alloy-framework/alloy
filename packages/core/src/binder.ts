@@ -631,6 +631,12 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
         result.symbol = memberDescriptorsFromRefkey.at(-1)!.symbol as TSymbol;
       }
 
+      // Fast path: non-member refkeys have no member descriptors to validate.
+      // The inner computed below only serves to defer type-availability checks
+      // on member symbols; for non-member refkeys allDescriptors is empty so
+      // there is nothing to validate — skip the allocation entirely.
+      if (allDescriptors.length === 0) return result;
+
       // a subcomputed here ensures we don't lose the progress above When
       // we fail to resolve because a type isn't available yet.
       return computed(() => {

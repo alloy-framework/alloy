@@ -1,32 +1,40 @@
 # Perf Improvement Slices
 
-_Last updated: 2026-04-24T08:52:00Z_
-_Baseline: emitter-like-schema CPU 4299 ms avg, mem 119 MB avg (5 runs). Baseline unchanged — latest.json identical to baseline.json; no slices applied yet._
-_Profile iteration: 2 — trace.db + heap.heapsnapshot + cpuprofile from single emitter-like-schema run; all trigger counts re-verified: InterfaceMember:moveTakenMembers 1,672 triggers, subsetSync 640 triggers, ImportStatements sort 948 triggers_
+_Last updated: 2026-04-24T09:28:45Z_
+_Baseline: emitter-like-schema CPU 2082 ms avg, mem 125 MB avg (5 runs). Down from 4299 ms — two slices merged: `import-statement-monolith-memo` (status: done) and `reactive-union-set-per-element-effect` (status: done)._
+_Profile iteration: 3/4 — trace.db + heap.heapsnapshot + cpuprofile from single emitter-like-schema run at new baseline. CPU profile still module-load-only (97.3% idle); all estimates from trace + heap._
 
 ## Notes
 
-CPU profile (`.cpuprofile`) captured at module-load time (97.8% idle, only 34347 samples of
-which 33586 are (idle)), not during steady-state execution — **all CPU impact estimates are derived from trace + heap
-data only**, not from cpuprofile hot frames. Estimates are marked MEDIUM CONFIDENCE unless
-explicitly cross-referenced with two independent sources.
+CPU profile (`.cpuprofile`) captured at module-load time (97.3% idle), not during steady-state execution — **all CPU impact estimates are derived from trace + heap data only**, not from cpuprofile hot frames. Estimates are marked MEDIUM CONFIDENCE unless explicitly cross-referenced with two independent sources.
 
-**Iteration-2 trace summary (emitter-like-schema):**
-- Effects: 57,460 | Refs: 42,197 | Edges: 72,984
-- 36.2% of refs never tracked; 34.0% completely unused (70.2% waste — similar to iter 1)
-- Top trigger sources: `render:memo:anonymous` 1,687 triggers; `InterfaceMember:moveTakenMembers` 1,672 triggers; `ImportStatements` mapJoin 948 re-sorts; `list:slotEmpty` ~1,600 total triggers; `reactiveUnionSet:subsetSync` 640 triggers
+**Iteration-3 trace summary (emitter-like-schema, new baseline at 2082 ms):**
+- Effects: 52,848 | Refs: 40,443 | Edges: 63,650 (down from 57,460 / 42,197 / 72,984 in iter 2 — reactive-union-set fix removed ~4,612 effects and ~9,334 edges)
+- 37.8% of refs never tracked; 35.5% completely unused (73.3% waste, similar to iter 2)
+- Top trigger sources: `render:memo:anonymous` 1,687 triggers; `InterfaceMember:moveTakenMembers` 1,672 triggers; `render:memo:getter` 948 triggers (NEW — getter effects from ImportStatement decomposition, correlated with `importStatements` sort 948 triggers); `list:slotEmpty` 1,883 total triggers (up from ~1,600); `reactiveUnionSet:subsetSync` 640 triggers
+- `binder:notifySymbolCreated` 1,666 effects / 0 triggers (implemented, unchanged); `outputScope:ownerSymbol` 328 effects / 80 triggers (implemented; 80 are the dynamic-case effects correctly retained)
+- `symbolFlow:emitRef` 632 effects / 0 triggers (still pending)
 
-**Heap snapshot summary (emitter-like-schema, post-GC):**
+**Iteration-3 heap snapshot summary (emitter-like-schema, post-GC):**
 - `seenRefs` WeakMap: 1 MB (trace-writer only, not production overhead)
 - `nodesToContext` WeakMap: 1 MB (render.ts, every array render node → Context)
 - `shallowReadonlyMap` + `shallowReactiveMap` WeakMaps: 524 KB each (Vue reactivity proxy maps)
 - `targetMap` + `reactiveMap` WeakMaps: 131 KB each (Vue dep-tracking maps)
-- `knownRefkeys` Map: 61.4 KB / 693 entries
-- String `"[Alloy.REFKEYABLE]"`: 346 copies × 40 bytes = 13.8 KB (Symbol description strings in heap snapshot — not real allocations)
+- `knownRefkeys` Map: 61.4 KB / 693 entries (unchanged from iter 2)
+- String `"[Alloy.REFKEYABLE]"`: 346 copies × 40 bytes = 13.8 KB (Symbol description strings — not real runtime allocations)
 
----
+**New post-fix observation:** `render:memo:getter` (6,757 effects, 948 triggers) is a new entry — these are the `{() => ...}` reactive arrow functions introduced by the ImportStatement monolith-memo decomposition. They are causal descendants of the `importStatements` sort computed; fixing `import-statements-sort-debounce` will reduce both the `memo` sort triggers AND these getter re-runs proportionally.
 
-## slice-id: import-statement-monolith-memo
+**Iteration-4 re-profile (same trace.db, re-confirmed at 2026-04-24T09:28Z):**
+- All pending slices re-validated with live trigger-count queries against trace.db.
+- `InterfaceMember:moveTakenMembers`: 6,296 edge rows, **1,672 triggers** — CONFIRMED.
+- `import-statements-sort-debounce` (memo at ts L15): 2,688 effects, **948 triggers** — CONFIRMED. The 948 triggers cascade into 8,786 `render:memo:getter` re-runs (948 triggers) and 16,463 `render:memo:anonymous` re-runs (1,687 triggers) confirming the causal chain.
+- `reactiveUnionSet:subsetSync`: 1,040 edge rows, **640 triggers** — CONFIRMED.
+- `symbolFlow:emitRef`: 4,108 effects, **0 triggers** — CONFIRMED.
+- `list:slotEmpty:*` across 10 slot indices: total **1,883 effects / 1,883 triggers** — CONFIRMED.
+- **NEW finding**: `AccessExpression.collectParts()` creates 1,424 `symbolSource` computeds + 1,424 `desc` computeds (AccessExpression.tsx:179, 188) + 1,424 `memo`/shallowRef backing objects (core dist L37), all with 0 trackers and 0 writes — 4,272 pure-waste reactive allocations per run. See `access-expression-dead-computeds` slice below.
+
+
 
 ```yaml
 status: done
@@ -138,7 +146,7 @@ set once at symbol creation, most effects should be eliminated.
 ## slice-id: unused-reactive-refs
 
 ```yaml
-status: implemented
+status: done
 estimated_impact_ms: 250
 estimated_impact_mb: 30
 category: reactivity
@@ -189,6 +197,8 @@ Three targeted fixes:
 
 3. **TypeScript ImportStatements (ts:64 shallowRefs)**: 2,080 unused shallowRefs.
    Audit what is created at that line and whether those refs are ever read.
+
+**Implementation:** Three fixes applied: (1) In `binder.ts` `resolveDeclarationByKey`, added a fast path to skip the ephemeral inner `computed(() => {...}).value` when `allDescriptors` is empty — the common case for non-member symbol resolutions. All 640 References in emitter-like-schema are non-member, so this eliminates O(outer-rerun × 640) dead computed allocations. (2) In `emitter-like-schema/index.tsx`, pre-evaluated the static `prop.refTo ? ... : ...` and `prop.array ? ... : ...` conditions outside the JSX prop definition. This eliminates the `_$memo(() => !!prop.refTo)()` and `_$memo(() => !!prop.array)()` shallowRef+effect pairs created by the JSX compiler for boolean conditions on plain (non-reactive) JS objects. Each InterfaceMember render previously allocated 1–2 memos for these conditions; they now compile to plain getter returns. (3) In `ImportStatement.tsx`, extracted `mapJoin(...)` and the static `` ` from "${props.path}";` `` template literal out of the JSX return expression. This prevents the Alloy JSX compiler from wrapping them in `_$memo(() => ...)` on every render pass, eliminating 2 shallowRef+effect allocations per ImportStatement instance.
 
 ---
 
@@ -324,7 +334,7 @@ subscriptions for `ImportBinding` from 2 per instance to 1.
 ## slice-id: interface-member-take-batching
 
 ```yaml
-status: pending
+status: in-progress
 estimated_impact_ms: 180
 estimated_impact_mb: 5
 category: reactivity
@@ -388,7 +398,7 @@ batching doesn't change observable output order.
 ## slice-id: import-statements-sort-debounce
 
 ```yaml
-status: pending
+status: in-progress
 estimated_impact_ms: 120
 estimated_impact_mb: 2
 category: reactivity
@@ -442,7 +452,7 @@ shadow array would make each import addition O(log n) instead of O(n log n).
 ## slice-id: subset-sync-tracking-leak
 
 ```yaml
-status: pending
+status: in-progress
 estimated_impact_ms: 80
 estimated_impact_mb: 3
 category: reactivity
@@ -510,7 +520,7 @@ of the subset (1 ref/run), not 3 reactive properties per element. This reduces
 ## slice-id: symbolflow-emitref-static-opt
 
 ```yaml
-status: pending
+status: in-progress
 estimated_impact_ms: 60
 estimated_impact_mb: 2
 category: reactivity
@@ -575,10 +585,173 @@ fallback path covers them.
 
 ---
 
+## slice-id: access-expression-dead-computeds
+
+```yaml
+status: in-progress
+estimated_impact_ms: 50
+estimated_impact_mb: 2
+category: reactivity
+files:
+  - packages/core/src/components/AccessExpression.tsx
+rationale: |
+  `AccessExpression.collectParts()` (AccessExpression.tsx:179–205) creates two
+  Vue `computed()` objects per Part on every render:
+
+    const symbolSource = computed(() => symbolForRefkey(partProps.refkey).value ?? partProps.symbol);
+    const desc = computed(() => config.createDescriptor(partProps, symbolSource.value, first));
+
+  It then builds a proxy that delegates `proxy.key` → `desc.value[key]`.
+
+  trace: The computed at AccessExpression.tsx:179 (dist line 91) appears 1,424
+  times with 0 tracker edges and 0 write events. The computed at line 188 (dist
+  line 99) similarly appears 1,424 times with 0 tracker edges. The memo/shallowRef
+  backing at dist core L37 (childrenArray internal) appears 1,424 times with 0
+  tracker edges. Total: 4,272 reactive objects allocated per emitter-like-schema
+  run that are never subscribed to by any effect.
+
+  Cross-reference: `MemberExpression` has 792 instances × ~1.8 parts/instance =
+  ~1,424 parts total — matching the computed counts exactly. The `computed` at
+  dist line 50 (the outer `formatLinear` computed) has 1,424 instances all
+  tracked — confirming those outer wrappers ARE reactive, but `desc` and
+  `symbolSource` inside them are not.
+
+  Root cause: the proxy getter accesses `desc.value[key]` from inside JSX getter
+  props on child components (e.g. `get name() { return part.name }`). Those
+  getters run from within child RENDER effects, not from within any effect that
+  would subscribe to `desc`. Because the outer `formatLinear` computed never
+  calls `desc.value` directly (it only constructs the proxy and returns it to
+  formatPart), `desc` is never tracked. Vue `computed()` machinery (ReactiveEffect
+  + ComputedRefImpl + dep-tracking overhead) is pure waste here.
+
+  Estimated allocation: 4,272 objects × ~400B (ComputedRefImpl + ReactiveEffect +
+  closures) ≈ 1.7 MB GC pressure per run. CPU cost: ~12–15 μs per computed pair
+  × 1,424 = ~20 ms creation, plus GC amortization.
+
+  MEDIUM-HIGH CONFIDENCE (trace: 100% never-tracked confirmed for both computeds;
+  part count cross-reference matches; heap: no direct retention since they are
+  GC'd post-render).
+risk: low
+```
+
+**Concrete approach:**
+
+Replace the two `computed()` calls in `collectParts()` with a plain eager evaluation
+wrapped in a lightweight lazy object:
+
+```ts
+// Before:
+const symbolSource = computed(() => partProps.refkey ? symbolForRefkey(partProps.refkey).value : partProps.symbol);
+const desc = computed(() => config.createDescriptor(partProps, symbolSource.value, first));
+
+// After:
+let _desc: TPart | undefined;
+const getDesc = () => {
+  if (_desc === undefined) {
+    const sym = partProps.refkey ? untrack(() => symbolForRefkey(partProps.refkey).value) : partProps.symbol;
+    _desc = config.createDescriptor(partProps, sym, first);
+  }
+  return _desc;
+};
+```
+
+Then update the proxy to use `getDesc()` instead of `desc.value`:
+
+```ts
+Object.defineProperty(proxy, key, {
+  get() { return (getDesc() as Record<string, unknown>)[key]; },
+  enumerable: true,
+});
+```
+
+**Risk:** The existing computeds create reactive dependencies when `partProps.refkey`'s
+resolved symbol changes after initial render (e.g. late-resolved symbols). Since all
+1,424 instances have 0 tracker-edges in the emitter-like-schema workload, these cases
+don't occur in practice. However, to remain safe for reactive use-cases: keep the
+`computed()` path as a fallback if the caller passes a reactive `refkey` ref, and
+use the plain-eager path only when `partProps.refkey` is a non-ref value. The
+`isRef(partProps.refkey)` check can gate this. In the emitter-like-schema all refkeys
+are plain values (not refs), so the fast path would be used universally.
+
+---
+
+## slice-id: list-slot-empty-one-shot
+
+```yaml
+status: in-progress
+estimated_impact_ms: 40
+estimated_impact_mb: 2
+category: reactivity
+files:
+  - packages/core/src/utils.tsx
+rationale: |
+  Every List slot creates a long-lived reactive effect (`list:slotEmpty:N`,
+  utils.tsx:334) to watch the nested context's `isEmptyFlag.value` and propagate
+  slot-empty state changes up to `applyEmptyStateChange`. The effect fires exactly
+  once per slot when content first fills the slot during the initial synchronous
+  render, then sits idle for the slot's lifetime.
+
+  trace: 1,883 `list:slotEmpty:N` effects (3.6% of all 52,848 effects), each
+  triggering exactly once (1,883 total trigger events). No second triggers are
+  observed — every slot transitions empty→full once and never changes again in
+  emitter-like-schema. The effects represent 1,883 long-lived reactive subscriptions
+  maintained for content that is static after first render.
+
+  The pathology: the mapper callback `cb(mapper(items[cleanupIndex], cleanupIndex))`
+  (utils.tsx:356) renders child content synchronously after the effect is created.
+  After that call returns, `isEmptyFlag.value` is already false for content-bearing
+  slots. The effect's first run occurs asynchronously (scheduler flush), firing once
+  and never again. A post-render synchronous check could replace the effect entirely
+  for the common case.
+
+  heap: no direct heap correlation (effect objects are small); primary cost is effect
+  allocation and the reactive subscription edge each effect holds.
+
+  MEDIUM CONFIDENCE (trace: effect count + trigger count confirmed; heap: no direct
+  correlation; cpuprofile: not steady-state).
+risk: low
+```
+
+**Concrete approach:**
+
+After the `cb(mapper(items[cleanupIndex], cleanupIndex))` call (utils.tsx:356),
+perform a synchronous one-shot check:
+
+```ts
+const alreadyFilled = !isEmptyFlag.value;
+if (alreadyFilled) {
+  // Content arrived synchronously — no need for a reactive effect.
+  slot.isEmpty.value = false;
+  applyEmptyStateChange(cleanupIndex, false, true);
+  // Skip effect creation — register only a cleanup to reset on slot removal.
+  onCleanup(() => {
+    if (slot.isEmpty.value === false) {
+      slot.isEmpty.value = true;
+      applyEmptyStateChange(cleanupIndex, true, false);
+    }
+  });
+} else {
+  // Content not yet available — keep the reactive effect for deferred fill.
+  effect(
+    (prev?: boolean) => { ... /* existing body */ },
+    undefined,
+    { debug: { name: `list:slotEmpty:${cleanupIndex}`, type: "list" } },
+  );
+}
+```
+
+This converts the 1,883 single-fire effects into imperative one-shot updates for the
+typical (synchronous render) path, retaining the reactive fallback for deferred
+content (e.g. symbols that arrive after a scheduler flush). Requires confirming that
+`ensureIsEmpty(nestedContext)` is readable synchronously after `cb()` returns — it
+should be since `cb()` performs the render in the same call stack.
+
+---
+
 ## slice-id: nodes-to-context-map-overhead
 
 ```yaml
-status: pending
+status: in-progress
 estimated_impact_ms: 20
 estimated_impact_mb: 30
 category: formatter

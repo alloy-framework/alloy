@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-24T09:24:11.335Z",
+  "generatedAt": "2026-04-24T10:41:05.570Z",
   "runsPerScenario": 5,
   "scenarios": [
     {
@@ -8,14 +8,14 @@
       "description": "Simulates a TypeSpec-style emitter producing many TypeScript files with\n  interfaces and classes that reference each other across file boundaries.\n  Exercises the binder/symbol system, refkey resolution, automatic import\n  insertion, and fragment-heavy render trees — the hot paths typical of\n  real-world alloy consumers (js-cdk, flight-instructor).",
       "runs": 5,
       "cpu": {
-        "avgMicros": 2082646.6,
-        "avgMs": 2082.647,
-        "stddevMicros": 293868.32792051614,
-        "stddevMs": 293.868
+        "avgMicros": 1956096.8,
+        "avgMs": 1956.097,
+        "stddevMicros": 383829.8591572834,
+        "stddevMs": 383.83
       },
       "memory": {
-        "avgBytesDelta": 124611004.8,
-        "stddevBytes": 8259653.705567274
+        "avgBytesDelta": 118026558.4,
+        "stddevBytes": 10013438.414405154
       },
       "error": null
     },
@@ -25,14 +25,14 @@
       "description": "This scenario tests the rendering a long file using the Prose component, which should stress the formatter.",
       "runs": 5,
       "cpu": {
-        "avgMicros": 144034.4,
-        "avgMs": 144.034,
-        "stddevMicros": 17943.649734655435,
-        "stddevMs": 17.944
+        "avgMicros": 146926.8,
+        "avgMs": 146.927,
+        "stddevMicros": 11512.339714410795,
+        "stddevMs": 11.512
       },
       "memory": {
-        "avgBytesDelta": 11518372.8,
-        "stddevBytes": 1920132.1759970586
+        "avgBytesDelta": 11885521.6,
+        "stddevBytes": 887183.3525471496
       },
       "error": null
     },
@@ -42,14 +42,14 @@
       "description": "This scenario tests the rendering of a large number of files (10,000) with no content.",
       "runs": 5,
       "cpu": {
-        "avgMicros": 2440720.8,
-        "avgMs": 2440.721,
-        "stddevMicros": 83664.47123002692,
-        "stddevMs": 83.664
+        "avgMicros": 2440267,
+        "avgMs": 2440.267,
+        "stddevMicros": 119731.99817717902,
+        "stddevMs": 119.732
       },
       "memory": {
-        "avgBytesDelta": 239919310.4,
-        "stddevBytes": 1339704.0699426122
+        "avgBytesDelta": 240067553.6,
+        "stddevBytes": 3115774.648474565
       },
       "error": null
     },
@@ -59,14 +59,14 @@
       "description": "Convert a huge JSON object to TypeScript code. Stresses symbols pretty heavily.",
       "runs": 5,
       "cpu": {
-        "avgMicros": 6300549.2,
-        "avgMs": 6300.549,
-        "stddevMicros": 369591.83561220614,
-        "stddevMs": 369.592
+        "avgMicros": 6083254.6,
+        "avgMs": 6083.255,
+        "stddevMicros": 105936.9730844713,
+        "stddevMs": 105.937
       },
       "memory": {
-        "avgBytesDelta": 615800011.2,
-        "stddevBytes": 768456.5046293773
+        "avgBytesDelta": 615856715.2,
+        "stddevBytes": 1152844.2942996249
       },
       "error": null
     }

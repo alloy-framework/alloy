@@ -99,6 +99,30 @@ export function ImportStatement(props: ImportStatementProps) {
     );
   });
 
+  // Extracted before the JSX return so the JSX compiler emits a plain variable
+  // reference rather than wrapping it in `_$memo(() => mapJoin(...))`. Component
+  // functions in Alloy run ONCE per instance (not on every render), so this
+  // `mapJoin(...)` call executes exactly once and `namedImportsList` is stable
+  // for the lifetime of the component. The `() => sortedNamedImports.value`
+  // getter keeps the list reactive without an extra memo layer.
+  const namedImportsList = mapJoin(
+    () => sortedNamedImports.value,
+    (nis) => (
+      <ImportBinding
+        importedSymbol={nis}
+        inTypeImport={() => allNamedImportsAreTypes.value}
+      />
+    ),
+    {
+      joiner: (
+        <>
+          {","}
+          <line />
+        </>
+      ),
+    },
+  );
+
   return (
     <>
       {"import "}
@@ -121,23 +145,7 @@ export function ImportStatement(props: ImportStatementProps) {
               {"{"}
               <indent>
                 <line />
-                {mapJoin(
-                  () => sortedNamedImports.value,
-                  (nis) => (
-                    <ImportBinding
-                      importedSymbol={nis}
-                      inTypeImport={() => allNamedImportsAreTypes.value}
-                    />
-                  ),
-                  {
-                    joiner: (
-                      <>
-                        {","}
-                        <line />
-                      </>
-                    ),
-                  },
-                )}
+                {namedImportsList}
                 <ifBreak>{","}</ifBreak>
               </indent>
               <line />
@@ -146,6 +154,8 @@ export function ImportStatement(props: ImportStatementProps) {
           </>
         )
       }
+      {/* props.path is reactive (may change), so the template literal is kept
+          inline — the JSX compiler's _$memo wrapper correctly tracks it. */}
       {` from "${props.path}";`}
     </>
   );

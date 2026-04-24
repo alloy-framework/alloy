@@ -138,10 +138,10 @@ export function moveTakenMembersTo(baseSymbol: OutputSymbol) {
           symbol.moveMembersTo(baseSymbol);
         }
 
-        for (const refkey of symbol.refkeys) {
-          if (!baseSymbol.refkeys.includes(refkey)) {
-            baseSymbol.refkeys.push(refkey);
-          }
+        const currentRefkeys = baseSymbol.refkeys;
+        const toAdd = symbol.refkeys.filter((rk) => !currentRefkeys.includes(rk));
+        if (toAdd.length > 0) {
+          baseSymbol.refkeys = [...currentRefkeys, ...toAdd];
         }
       }
     },

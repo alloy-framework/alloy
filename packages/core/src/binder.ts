@@ -4,7 +4,7 @@ import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { debug, TracePhase } from "./debug/index.js";
 import { emitDiagnostic, type DiagnosticHandle } from "./diagnostics.js";
-import { effect, onCleanup } from "./reactivity.js";
+import { effect, onCleanup, untrack } from "./reactivity.js";
 import {
   inspectRefkey,
   isMemberRefkey,
@@ -76,6 +76,23 @@ export interface Binder {
    * Notifies the binder that a symbol has been deleted.
    */
   notifySymbolDeleted(symbol: OutputSymbol): void;
+
+  /**
+   * Notifies the binder that a symbol's refkeys have changed.
+   * Called directly by OutputSymbol when its refkeys setter is invoked.
+   * Optional so existing custom Binder implementations are not broken.
+   *
+   * @remarks
+   * When this method is omitted from a custom Binder implementation, only the
+   * initial refkeys set at symbol-construction time are tracked. Any subsequent
+   * setter-based refkey changes will not update `knownDeclarations` or fulfill
+   * `waitingDeclarations` entries in that custom binder.
+   */
+  notifySymbolRefkeysChanged?(
+    symbol: OutputSymbol,
+    oldRefkeys: Refkey[],
+    newRefkeys: Refkey[],
+  ): void;
 }
 
 /**
@@ -324,6 +341,7 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
     notifyScopeCreated,
     notifySymbolCreated,
     notifySymbolDeleted,
+    notifySymbolRefkeysChanged,
     nameConflictResolver: options.nameConflictResolver,
   };
 
@@ -635,7 +653,14 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       // The inner computed below only serves to defer type-availability checks
       // on member symbols; for non-member refkeys allDescriptors is empty so
       // there is nothing to validate — skip the allocation entirely.
-      if (allDescriptors.length === 0) return result;
+      if (allDescriptors.length === 0) {
+        debug.trace(
+          TracePhase.resolve.success,
+          () =>
+            `${formatRefkeys(refkey)} successfully resolved to ${formatSymbolName(symbol)}.`,
+        );
+        return result;
+      }
 
       // a subcomputed here ensures we don't lose the progress above When
       // we fail to resolve because a type isn't available yet.
@@ -739,63 +764,57 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
   }
 
   function notifySymbolCreated(symbol: OutputSymbol): void {
-    effect<Refkey[]>(
-      (oldRefkeys) => {
-        if (symbol.refkeys) {
-          debug.trace(
-            TracePhase.resolve.pending,
-            () => `Notifying resolutions for ${formatRefkeys(symbol.refkeys)}.`,
-          );
+    updateRefkeys(symbol, [], untrack(() => symbol.refkeys));
+  }
+
+  function notifySymbolRefkeysChanged(
+    symbol: OutputSymbol,
+    oldRefkeys: Refkey[],
+    newRefkeys: Refkey[],
+  ): void {
+    updateRefkeys(symbol, oldRefkeys, newRefkeys);
+  }
+
+  function updateRefkeys(
+    symbol: OutputSymbol,
+    oldRefkeys: Refkey[],
+    newRefkeys: Refkey[],
+  ): void {
+    if (newRefkeys.length > 0) {
+      debug.trace(
+        TracePhase.resolve.pending,
+        () => `Notifying resolutions for ${formatRefkeys(newRefkeys)}.`,
+      );
+    }
+
+    for (const refkey of oldRefkeys) {
+      if (!newRefkeys.includes(refkey)) {
+        knownDeclarations.delete(refkey);
+        if (waitingDeclarations.has(refkey)) {
+          waitingDeclarations.get(refkey)!.value = undefined;
         }
+      }
+    }
 
-        if (oldRefkeys) {
-          for (const refkey of oldRefkeys) {
-            if (!symbol.refkeys.includes(refkey)) {
-              // remove the old refkey from the known declarations
-              knownDeclarations.delete(refkey);
+    for (const refkey of newRefkeys) {
+      knownDeclarations.set(refkey, symbol);
+      if (waitingDeclarations.has(refkey)) {
+        waitingDeclarations.get(refkey)!.value = symbol;
+      }
 
-              // reset any waiting declarations
-              if (waitingDeclarations.has(refkey)) {
-                const signal = waitingDeclarations.get(refkey)!;
-                signal.value = undefined;
-              }
-            }
-          }
+      const scope = symbol.scope;
+      if (!scope) {
+        continue;
+      }
+
+      const waitingScope = waitingSymbolNames.get(scope);
+      if (waitingScope) {
+        const waitingName = waitingScope.get(symbol.name);
+        if (waitingName) {
+          waitingName.value = symbol;
         }
-
-        for (const refkey of symbol.refkeys) {
-          // notify those waiting for this refkey
-          knownDeclarations.set(refkey, symbol);
-          if (waitingDeclarations.has(refkey)) {
-            const signal = waitingDeclarations.get(refkey)!;
-            signal.value = symbol;
-          }
-
-          const scope = symbol.scope;
-          if (!scope) {
-            continue;
-          }
-
-          // notify those waiting for this symbol name
-          const waitingScope = waitingSymbolNames.get(scope);
-          if (waitingScope) {
-            const waitingName = waitingScope.get(symbol.name);
-            if (waitingName) {
-              waitingName.value = symbol;
-            }
-          }
-        }
-
-        return [...symbol.refkeys];
-      },
-      undefined,
-      {
-        debug: {
-          name: "binder:notifySymbolCreated",
-          type: "binder",
-        },
-      },
-    );
+      }
+    }
   }
 }
 

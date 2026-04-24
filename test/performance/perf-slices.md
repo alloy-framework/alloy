@@ -205,12 +205,13 @@ Three targeted fixes:
 ## slice-id: binder-per-symbol-notify-effect
 
 ```yaml
-status: implemented
+status: done
 estimated_impact_ms: 120
 estimated_impact_mb: 8
 category: symbols
 files:
   - packages/core/src/binder.ts
+  - packages/core/src/symbols/output-symbol.ts
 rationale: |
   `notifySymbolCreated()` (binder.ts ~line 736) creates one reactive effect per
   symbol to watch `symbol.refkeys`. The effect re-runs whenever refkeys change,

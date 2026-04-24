@@ -429,6 +429,7 @@ export abstract class OutputSymbol {
       Array.isArray(refkeys) ? refkeys : [refkeys],
     );
     trigger(this, TriggerOpTypes.SET, "refkeys", this.#refkeys, old);
+    this.#binder?.notifySymbolRefkeysChanged?.(this, old, this.#refkeys);
   }
 
   #aliasTarget?: OutputSymbol;

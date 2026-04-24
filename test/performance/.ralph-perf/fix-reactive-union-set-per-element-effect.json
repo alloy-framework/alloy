@@ -1,7 +1,0 @@
-{
-  "slice_id": "reactive-union-set-per-element-effect",
-  "status": "implemented",
-  "files_changed": ["packages/core/src/reactive-union-set.ts"],
-  "notes": "Addressed all three review issues: (1) Added JSDoc to createIndex documenting the lifetime contract — callers must ensure elements are deleted from the ReactiveUnionSet or the owning context is disposed, otherwise per-element effects persist indefinitely. This surfaces the existing cleanup mechanisms (onCleanup bulk stop + per-element stop in delete handler) and makes the invariant explicit. (2) Added a comment above the onTrack detection block explaining that onTrack fires if the mapper reads reactive deps, enabling the static vs reactive fast-path. (3) Removed the unnecessary eff.onTrack = undefined line after eff.run() — the property is never read again so zeroing it out was a no-op code smell. All 365 core tests pass; monorepo build succeeds.",
-  "followup_slices": []
-}

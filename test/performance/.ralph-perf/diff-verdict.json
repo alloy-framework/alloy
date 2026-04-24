@@ -1,8 +1,0 @@
-{
-  "accept": true,
-  "regressed": false,
-  "verdict": "ACCEPT",
-  "cpuRatio": -0.5156447703899197,
-  "memRatio": 0.0016505228366181534,
-  "primary": "emitter-like-schema"
-}

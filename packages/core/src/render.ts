@@ -56,7 +56,7 @@ import {
   RENDERABLE,
 } from "./runtime/component.js";
 import { IntrinsicElement, isIntrinsicElement } from "./runtime/intrinsic.js";
-import { flushJobs, flushJobsAsync, waitForSignal } from "./scheduler.js";
+import { clearPostFlushCallbacks, flushJobs, flushJobsAsync, waitForSignal } from "./scheduler.js";
 
 const notifiedErrors = new WeakSet<object>();
 
@@ -511,6 +511,7 @@ export function renderTree(children: Children) {
     });
   } catch (e) {
     if (isTraceEnabled()) commitTransaction();
+    clearPostFlushCallbacks();
     flushDirtyFiles();
     notifyRenderError(e);
     reportLastRenderError();

@@ -3,8 +3,8 @@ import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
 import { debug, TracePhase } from "./debug/index.js";
-import { emitDiagnostic, type DiagnosticHandle } from "./diagnostics.js";
-import { effect, onCleanup, untrack } from "./reactivity.js";
+import { captureEmitter, type DiagnosticHandle } from "./diagnostics.js";
+import { effect, onCleanup, root, untrack } from "./reactivity.js";
 import {
   inspectRefkey,
   isMemberRefkey,
@@ -14,6 +14,7 @@ import {
   Refkeyable,
   toRefkey,
 } from "./refkey.js";
+import { registerPostFlushCallback } from "./scheduler.js";
 import { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import { formatRefkeys, formatSymbolName } from "./tracer.js";
@@ -850,35 +851,63 @@ export function resolve<
   ) as any;
 
   let diagnosticHandle: DiagnosticHandle | null = null;
+  let disposeFallbackEffect: (() => void) | null = null;
+  let cancelled = false;
 
-  effect(
-    () => {
-      if (result.value === undefined) {
-        // Emit diagnostic for this specific reference site
-        if (!diagnosticHandle) {
-          diagnosticHandle = emitDiagnostic({
-            severity: "warning",
-            message: `Unresolved refkey: ${inspectRefkey(refkey)}`,
-          });
-        }
-      } else {
-        // Dismiss diagnostic when resolved
-        if (diagnosticHandle) {
-          diagnosticHandle.dismiss();
-          diagnosticHandle = null;
-        }
-      }
-    },
-    undefined,
-    {
-      debug: {
-        name: `binder:resolve:${inspectRefkey(refkey)}`,
-        type: "binder",
-      },
-    },
-  );
+  // Capture the diagnostics emitter now (while we have the component context).
+  const emitUnresolvedDiagnostic = captureEmitter();
+
+  registerPostFlushCallback(() => {
+    if (cancelled) return;
+
+    // Fast path: refkey already resolved after first flush — no effect needed.
+    if (untrack(() => result.value) !== undefined) return;
+
+    // Rare path: refkey is still unresolved after the flush.
+    if (emitUnresolvedDiagnostic && !diagnosticHandle) {
+      diagnosticHandle = emitUnresolvedDiagnostic({
+        severity: "warning",
+        message: `Unresolved refkey: ${inspectRefkey(refkey)}`,
+      });
+    }
+
+    // Watch reactively for the refkey to become resolved so we can dismiss
+    // the diagnostic. Use an isolated root so cleanup is explicit.
+    // Only create the effect when there is a diagnostic to dismiss; otherwise
+    // the subscription wastes a reactive allocation for every unresolved refkey
+    // rendered outside a diagnostics-collecting tree.
+    if (emitUnresolvedDiagnostic) {
+      disposeFallbackEffect = root<() => void>((dispose) => {
+        effect(
+          () => {
+            if (result.value !== undefined) {
+              if (diagnosticHandle) {
+                diagnosticHandle.dismiss();
+                diagnosticHandle = null;
+              }
+              dispose();
+              disposeFallbackEffect = null;
+            }
+          },
+          undefined,
+          {
+            debug: {
+              name: `binder:resolve:${inspectRefkey(refkey)}`,
+              type: "binder",
+            },
+          },
+        );
+        return dispose;
+      });
+    }
+  });
 
   onCleanup(() => {
+    cancelled = true;
+    if (disposeFallbackEffect) {
+      disposeFallbackEffect();
+      disposeFallbackEffect = null;
+    }
     if (diagnosticHandle) {
       diagnosticHandle.dismiss();
       diagnosticHandle = null;

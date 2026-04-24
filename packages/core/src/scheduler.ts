@@ -15,6 +15,33 @@ export interface QueueJob {
 }
 const immediateQueue = new Set<QueueJob>();
 const queue = new Set<QueueJob>();
+const postFlushCallbacks: (() => void)[] = [];
+
+/**
+ * Register a callback to run once after the current scheduler flush completes
+ * (after all queued reactive effects have settled). Safe to call from within
+ * a component render or effect.
+ */
+export function registerPostFlushCallback(fn: () => void): void {
+  postFlushCallbacks.push(fn);
+}
+
+/**
+ * Discard all pending post-flush callbacks. Called when a render aborts with
+ * an error so that callbacks registered during the failed render do not bleed
+ * into the next render's flush.
+ */
+export function clearPostFlushCallbacks(): void {
+  postFlushCallbacks.splice(0);
+}
+
+function runPostFlushCallbacks(): void {
+  // Splice so callbacks registered during a flush are dequeued before the next flush.
+  const cbs = postFlushCallbacks.splice(0);
+  for (const cb of cbs) {
+    cb();
+  }
+}
 
 function isJobActive(job: QueueJob): boolean {
   // ReactiveEffect uses bit 0 (flags & 1) as the ACTIVE flag.
@@ -154,6 +181,8 @@ export function flushJobs() {
   // If there are no pending promises, we're done
   if (pendingPromises.size > 0) {
     if (isTraceEnabled()) commitTransaction();
+    // Discard callbacks registered for this render; they must not bleed into a future flush.
+    postFlushCallbacks.splice(0);
     throw new Error(
       "Asynchronous jobs were found but render was called synchronously. Use `renderAsync` instead.",
     );
@@ -164,6 +193,7 @@ export function flushJobs() {
     commitTransaction();
   }
 
+  runPostFlushCallbacks();
   debug.render.flushJobsComplete();
 }
 
@@ -262,9 +292,9 @@ export async function flushJobsAsync() {
     }
   } finally {
     if (isTraceEnabled()) commitTransaction();
+    runPostFlushCallbacks();
+    debug.render.flushJobsComplete();
   }
-
-  debug.render.flushJobsComplete();
 }
 
 function takeJob() {

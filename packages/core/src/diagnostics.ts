@@ -139,6 +139,18 @@ export function emitDiagnostic(input: DiagnosticInput): DiagnosticHandle {
   return collector.emit(input);
 }
 
+/**
+ * Captures the current diagnostics collector so diagnostics can be emitted
+ * later (e.g. from a post-flush callback) without requiring an active context.
+ * Returns null when there is no active diagnostics collector.
+ * @internal
+ */
+export function captureEmitter(): ((input: DiagnosticInput) => DiagnosticHandle) | null {
+  const collector = getDiagnosticsCollectorFromContext();
+  if (!collector) return null;
+  return (input) => collector.emit(input);
+}
+
 export function reportDiagnostics(collector: DiagnosticsCollector) {
   const diagnostics = collector.getDiagnostics();
   if (diagnostics.length === 0) return;

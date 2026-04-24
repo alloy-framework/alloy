@@ -22,7 +22,17 @@ export * from "./components/index.js";
 export * from "./content-slot.js";
 export * from "./context.js";
 export * from "./context/index.js";
-export * from "./diagnostics.js";
+export {
+  DiagnosticsCollector,
+  attachDiagnosticsCollector,
+  emitDiagnostic,
+  reportDiagnostics,
+  type Diagnostic,
+  type DiagnosticHandle,
+  type DiagnosticInput,
+  type DiagnosticSeverity,
+  type DiagnosticStackEntry,
+} from "./diagnostics.js";
 export * from "./library-symbol-reference.js";
 export * from "./name-policy.js";
 export * from "./props-combinators.js";

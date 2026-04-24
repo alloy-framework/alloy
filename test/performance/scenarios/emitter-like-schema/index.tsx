@@ -1,8 +1,10 @@
 import {
+  flushJobsAsync,
   For,
   Output,
   refkey,
-  renderAsync,
+  renderTree,
+  sourceFilesForTree,
   type Refkey,
   SourceDirectory,
 } from "@alloy-js/core";
@@ -127,7 +129,13 @@ export async function runTest(): Promise<any> {
   }
   const fileEntries = [...files.entries()];
 
-  return await renderAsync(
+  // We use the lower-level renderTree + flushJobsAsync + sourceFilesForTree
+  // pipeline (instead of renderAsync) so we can return the render TREE
+  // alongside the output. The tree retains memo closures, the binder
+  // context, and the symbol graph — without it, a post-render heap snapshot
+  // sees only the output text strings (alloy's symbol/binder graph would
+  // otherwise be unreachable and collected before the snapshot is taken).
+  const tree = renderTree(
     <Output>
       <SourceDirectory path="src">
         <For each={fileEntries}>
@@ -266,4 +274,9 @@ export async function runTest(): Promise<any> {
       </SourceDirectory>
     </Output>,
   );
+  await flushJobsAsync();
+  const output = sourceFilesForTree(tree);
+  // Retain BOTH the tree (for symbols/binder/memos in heap snapshot) and the
+  // output (for realistic memory pressure).
+  return { tree, output };
 }

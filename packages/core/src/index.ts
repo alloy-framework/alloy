@@ -43,6 +43,7 @@ export * from "./render.js";
 export * from "./resource.js";
 export * from "./runtime/component.js";
 export * from "./runtime/intrinsic.js";
+export { flushJobs, flushJobsAsync } from "./scheduler.js";
 export * from "./stc.js";
 export * from "./sti.js";
 export * from "./symbols/index.js";

@@ -145,16 +145,25 @@ function sendInitialState(socket: any, channels: ChangeChannel[]): void {
 // Environment helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function isNodeEnvironment() {
-  return (
-    typeof process !== "undefined" &&
-    typeof process.versions === "object" &&
-    Boolean(process.versions?.node)
-  );
-}
+// Stable for the lifetime of the process — cache once at module load instead
+// of re-evaluating typeof+property chains on every isDevtoolsEnabled() call.
+// (isDevtoolsEnabled is called from every render-loop hot path: each effect()/
+// ref()/appendTextNode/appendPrintHook etc., so even tiny per-call overhead
+// adds up to ~10% of total CPU on emitter-like scenarios.)
+const _isNode: boolean = (() => {
+  try {
+    return (
+      typeof process !== "undefined" &&
+      typeof process.versions === "object" &&
+      Boolean(process.versions?.node)
+    );
+  } catch {
+    return false;
+  }
+})();
 
 function getCwd() {
-  if (!isNodeEnvironment()) return undefined;
+  if (!_isNode) return undefined;
   try {
     return process.cwd();
   } catch {
@@ -176,7 +185,7 @@ function resolveDebugPort() {
 
 /** Returns true when devtools are enabled (via env var or explicit call). */
 export function isDevtoolsEnabled() {
-  if (!isNodeEnvironment()) return false;
+  if (!_isNode) return false;
   return devtoolsExplicitlyEnabled || Boolean(process.env.ALLOY_DEBUG);
 }
 

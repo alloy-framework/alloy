@@ -114,6 +114,14 @@ if (process.env.ALLOY_PERF_HEAPSNAPSHOT) {
   childNodeArgs.push("--expose-gc");
 }
 
+// If a cpuprofile output dir was requested, attach --cpu-prof to the CHILD
+// process (where the scenario actually runs). Without this, --cpu-prof on
+// the parent harness profiles the spawn/wait loop, which is ~98% idle.
+if (process.env.ALLOY_PERF_CPUPROF_DIR) {
+  childNodeArgs.push("--cpu-prof");
+  childNodeArgs.push("--cpu-prof-dir", process.env.ALLOY_PERF_CPUPROF_DIR);
+}
+
 function mean(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }

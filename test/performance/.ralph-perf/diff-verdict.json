@@ -2,7 +2,7 @@
   "accept": true,
   "regressed": false,
   "verdict": "ACCEPT",
-  "cpuRatio": -0.3036102312505483,
-  "memRatio": -0.006144088708391554,
+  "cpuRatio": -0.5156447703899197,
+  "memRatio": 0.0016505228366181534,
   "primary": "emitter-like-schema"
 }

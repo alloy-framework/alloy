@@ -1,15 +1,28 @@
 # Perf Improvement Slices
 
-_Last updated: 2026-04-24T07:37:00Z_
-_Baseline: emitter-like-schema CPU 6174 ms avg, mem 125 MB avg (5 runs)_
-_Profile iteration: 1 — trace.db + heap.heapsnapshot from single emitter-like-schema run_
+_Last updated: 2026-04-24T08:52:00Z_
+_Baseline: emitter-like-schema CPU 4299 ms avg, mem 119 MB avg (5 runs). Baseline unchanged — latest.json identical to baseline.json; no slices applied yet._
+_Profile iteration: 2 — trace.db + heap.heapsnapshot + cpuprofile from single emitter-like-schema run; all trigger counts re-verified: InterfaceMember:moveTakenMembers 1,672 triggers, subsetSync 640 triggers, ImportStatements sort 948 triggers_
 
 ## Notes
 
-CPU profile (`.cpuprofile`) captured at module-load time (97.5% idle, only 9909 samples),
-not during steady-state execution — **all CPU impact estimates are derived from trace + heap
+CPU profile (`.cpuprofile`) captured at module-load time (97.8% idle, only 34347 samples of
+which 33586 are (idle)), not during steady-state execution — **all CPU impact estimates are derived from trace + heap
 data only**, not from cpuprofile hot frames. Estimates are marked MEDIUM CONFIDENCE unless
 explicitly cross-referenced with two independent sources.
+
+**Iteration-2 trace summary (emitter-like-schema):**
+- Effects: 57,460 | Refs: 42,197 | Edges: 72,984
+- 36.2% of refs never tracked; 34.0% completely unused (70.2% waste — similar to iter 1)
+- Top trigger sources: `render:memo:anonymous` 1,687 triggers; `InterfaceMember:moveTakenMembers` 1,672 triggers; `ImportStatements` mapJoin 948 re-sorts; `list:slotEmpty` ~1,600 total triggers; `reactiveUnionSet:subsetSync` 640 triggers
+
+**Heap snapshot summary (emitter-like-schema, post-GC):**
+- `seenRefs` WeakMap: 1 MB (trace-writer only, not production overhead)
+- `nodesToContext` WeakMap: 1 MB (render.ts, every array render node → Context)
+- `shallowReadonlyMap` + `shallowReactiveMap` WeakMaps: 524 KB each (Vue reactivity proxy maps)
+- `targetMap` + `reactiveMap` WeakMaps: 131 KB each (Vue dep-tracking maps)
+- `knownRefkeys` Map: 61.4 KB / 693 entries
+- String `"[Alloy.REFKEYABLE]"`: 346 copies × 40 bytes = 13.8 KB (Symbol description strings in heap snapshot — not real allocations)
 
 ---
 
@@ -70,7 +83,7 @@ only subscribes to the type-flag refs of each symbol.
 ## slice-id: reactive-union-set-per-element-effect
 
 ```yaml
-status: implemented
+status: done
 estimated_impact_ms: 300
 estimated_impact_mb: 25
 category: reactivity
@@ -117,6 +130,8 @@ depends on no reactive ref, skip the effect and register an `onDelete` cleanup.
 Only if the mapper reads a reactive ref should a per-element watchEffect be
 created. Given that refkey-based indexes are the primary use-case and refkeys are
 set once at symbol creation, most effects should be eliminated.
+
+**Implementation notes:** Replaced Alloy's `effect()` per element in `createIndex` with Vue's lighter `ReactiveEffect` directly (no Alloy `Context` allocation, no debug overhead per element). On each `add`, a `ReactiveEffect` is created and run once with `onTrack` to detect whether the mapper reads any reactive deps. If no deps were tracked (static mapper, e.g. plain object property), the effect is immediately stopped — the index is updated imperatively and `entry.lastMapped` is saved for deletion cleanup. If deps were tracked (reactive mapper, e.g. `s.refkeys`, `s.name`), the effect is kept alive with `eff.scheduler = () => queueJob(eff)` to integrate with Alloy's scheduler for future updates. The per-element `entry` (stored in a `Map<T, IndexEntry>`) holds both the effect reference and `lastMapped` array, ensuring safe deletion even when a reactive key changes between the last index update and the element's removal. A bulk `onCleanup` registered at `createIndex` call time stops all surviving effects when the owning scope is disposed. The `symbol-table.ts` file required no changes — `createIndex` is a single call site.
 
 ---
 
@@ -303,3 +318,309 @@ Merge `text` and `prefix` into a single `memo()` that returns `{text, prefix}`
 and spread both into the rendered output. This halves the number of reactive
 subscriptions for `ImportBinding` from 2 per instance to 1.
 
+
+---
+
+## slice-id: interface-member-take-batching
+
+```yaml
+status: pending
+estimated_impact_ms: 180
+estimated_impact_mb: 5
+category: reactivity
+files:
+  - packages/typescript/src/components/Interface.tsx
+  - packages/core/src/symbols/symbol-flow.ts
+rationale: |
+  The `InterfaceMember:moveTakenMembers` effect (Interface.tsx line 226) is
+  triggered 1,672 times across 640 InterfaceMember instances (2.6 triggers/instance
+  average). Each trigger runs an O(|taken|) iteration of the reactive `taken` Set,
+  reads `symbol.isTransient`, and conditionally calls `symbol.moveMembersTo(sym)`.
+
+  trace: 640 distinct effects, 1,672 total trigger edges from
+  file:///…/packages/typescript/dist/src/components/Interface.js:148.
+
+  The pathology: `takeSymbols()` returns a `shallowReactive(new Set())`. As each
+  child component (TypeRef, Reference, etc.) calls `emitSymbol()`, the symbol is
+  added to this Set one-by-one. Each `.add()` triggers Vue's SET ADD notification,
+  causing the `moveTakenMembers` effect to re-run immediately — so for an interface
+  member that takes 3 emitted symbols in sequence, the effect fires 3 times instead
+  of 1 (2 of which see `taken.size <= 1` and are cheap no-ops, but the last may
+  redundantly call `moveMembersTo`).
+
+  Cross-reference: trace `component stats` shows InterfaceMember with 11.0 effects/
+  instance (the highest of any component besides Block/Indent). The `moveTakenMembers`
+  effect accounts for 640 of those 7016 effects (one per instance), but 1,672 re-runs
+  means ~1,032 excess re-runs that add no net work.
+
+  MEDIUM CONFIDENCE (trace: trigger count; heap: not directly correlated;
+  cpuprofile: not available for steady-state).
+risk: medium
+```
+
+**Concrete approach:**
+
+Replace the reactive-effect-based `moveTakenMembers` with a `queueJob`-batched
+callback. Instead of:
+
+```ts
+effect(() => {
+  if (taken.size > 1) return;
+  const symbol = Array.from(taken)[0];
+  if (symbol?.isTransient) {
+    symbol.moveMembersTo(sym!);
+  }
+}, ...)
+```
+
+Call `takeSymbols()` with a callback parameter (the second form that symbol-flow.ts
+already supports via `symbolFlow:takeSymbols`). The callback form schedules work
+via `queueJob`, so it runs at most once per scheduler flush regardless of how many
+`emitSymbol` calls happen in the same synchronous pass. Alternatively, wrap the
+inner body of the effect with `queueJob(() => { ... })` so the first trigger enqueues
+the work and subsequent same-flush triggers are no-ops.
+
+Verify that `moveMembersTo` is idempotent (calling it twice should be safe) and that
+batching doesn't change observable output order.
+
+---
+
+## slice-id: import-statements-sort-debounce
+
+```yaml
+status: pending
+estimated_impact_ms: 120
+estimated_impact_mb: 2
+category: reactivity
+files:
+  - packages/typescript/src/components/ImportStatement.tsx
+rationale: |
+  The `ImportStatements` component builds a sorted list of import records with:
+
+    const imports = computed(() => [...props.records].sort(...));
+
+  and feeds it into a `mapJoin`. The `imports` computed re-runs each time
+  `props.records` (a reactive Set) changes. During emitter-like-schema, symbols
+  are resolved and import records are added incrementally, so this computed re-runs
+  repeatedly as each symbol's import record is registered.
+
+  trace: `memo` effects at ImportStatement.js:15 (the `mapJoin(() => imports.value, ...)`
+  call) account for 2,688 edge rows, of which 948 are trigger-type. With 8 output
+  files and ~8 ImportStatements instances, this is ~118 re-sorts per instance as
+  ~180 symbols/file are resolved one-by-one. Each re-sort is O(n log n) over the
+  growing import record set.
+
+  heap: no direct heap correlation found; the overhead is primarily CPU from repeated
+  sorting, not memory retention.
+
+  MEDIUM CONFIDENCE (trace: trigger edge count; cpuprofile: not steady-state;
+  heap: no direct correlation).
+risk: medium
+```
+
+**Concrete approach:**
+
+Two complementary approaches:
+
+1. **Batch the sort**: The `imports` computed runs `[...props.records].sort(...)` which
+   spreads the whole reactive Set on every change. Replace with a `computed` that uses
+   a stable insertion-sort approach: maintain a sorted array separately and only insert
+   the new record in the correct position when one is added. This makes each re-trigger
+   O(log n + 1) instead of O(n log n).
+
+2. **Defer via scheduler**: Wrap the `imports` computed's sort in `queueJob` so multiple
+   additions to `props.records` in the same synchronous pass collapse into a single
+   sort. Since `ImportStatements` only renders after all symbols are resolved in a flush,
+   a single deferred sort is semantically equivalent.
+
+The cleanest fix is approach 1 (sorted insertion). An incremental `computed` that
+listens to the Set's add/delete events via `watchEffect` and maintains a sorted
+shadow array would make each import addition O(log n) instead of O(n log n).
+
+---
+
+## slice-id: subset-sync-tracking-leak
+
+```yaml
+status: pending
+estimated_impact_ms: 80
+estimated_impact_mb: 3
+category: reactivity
+files:
+  - packages/core/src/reactive-union-set.ts
+  - packages/core/src/symbols/symbol-table.ts
+rationale: |
+  `reactiveUnionSet:subsetSync` effects (symbol-table.js:70 — the `moveTo`/`copyTo`
+  `addSubset` call) unexpectedly track reactive properties of the symbols in the
+  subset: `name` (output-symbol.js:92), `refkeys` (output-symbol.js:269), and
+  `spaces` (dist line ~230 → TS source ~366) for EACH symbol in the subset, on
+  every re-run.
+
+  trace: 320 subsetSync effects at symbol-table.js:70. Representative effect
+  #43566 shows 26 total track events: 1 initial run (unknown ref), then on
+  re-runs 3 reactive properties × 8 symbols = 24 tracks. Total: 2,320 track
+  edges and 640 trigger edges across all 320 effects.
+
+  The pathology: the `addSubset` effect body is:
+    for (const value of subset) {
+      if (!prevValues.has(value)) {
+        if (onAdd) {
+          const added = untrack(() => root(disposer => onAdd(value)));
+        }
+      }
+    }
+  The `onAdd` IS correctly wrapped in `untrack()`. However, `symbol.name`,
+  `symbol.refkeys`, and `symbol.spaces` are being tracked inside the effect body
+  despite the untrack wrapper — suggesting the tracking occurs in the SET
+  iteration path itself (perhaps via the `subset.has()` call on a Vue-proxied
+  SymbolTable, or via `onAdd` indirectly accessing reactive props before untrack
+  is entered). The exact tracking path requires instrumentation to confirm.
+
+  Cross-reference: trace `ref hotspots` lists output-symbol.js:92 (name) with
+  16–22 trackers each and 0 writes as top refs; these same refs are subscribed
+  to by both the subsetSync effects AND other binder effects.
+
+  MEDIUM CONFIDENCE (trace: track/trigger counts; source-code analysis of
+  untrack boundary is inconclusive without runtime confirmation; heap: no direct
+  correlation found).
+risk: medium
+```
+
+**Concrete approach:**
+
+First, add logging to confirm the exact tracking source: temporarily instrument
+the `addSubset` effect body with `console.log(getCurrentEffect())` before the
+`for` loops to confirm what reactive reads are escaping `untrack()`.
+
+If the leak is in `subset.has(prevSourceValue)` (because `subset` is a Vue-reactive
+proxy for SymbolTable): wrap `subset.has(prevSourceValue)` in `untrack(() => subset.has(...))`.
+
+If the leak is in the `for (const value of subset)` iterator (because iterating a
+SymbolTable calls `ReactiveUnionSet[Symbol.iterator]()` which tracks ITERATE_KEY):
+that is expected and intentional. The unexpected `name`/`refkeys`/`spaces` tracking
+must come from a different path — check `_handleAdd` or `_handleDelete` callbacks
+in ReactiveUnionSet for un-untracked reads.
+
+Expected outcome after fix: subsetSync effects should track only the ITERATE_KEY
+of the subset (1 ref/run), not 3 reactive properties per element. This reduces
+2,320 → ~320 tracking edges and makes re-triggers less likely.
+
+---
+
+## slice-id: symbolflow-emitref-static-opt
+
+```yaml
+status: pending
+estimated_impact_ms: 60
+estimated_impact_mb: 2
+category: reactivity
+files:
+  - packages/core/src/symbols/symbol-flow.ts
+rationale: |
+  `emitSymbol()` (symbol-flow.ts ~line 114) has two branches: a plain imperative
+  path for `OutputSymbol` values and a reactive `effect()` path for `Ref<OutputSymbol>`
+  values. The effect path is needed when the emitted symbol might be undefined at
+  call time or might change later.
+
+  trace: 632 `symbolFlow:emitRef` effects at symbol-flow.js:54, each tracking
+  an average of 7 computed refs (4108 total tracked refs), with 0 triggers across
+  all 632 effects. The 0-trigger result proves that in every case that produces
+  this effect in the emitter-like-schema workload, the Ref's value is set once at
+  creation and never changes again.
+
+  Cross-reference: the 4108 refs tracked by these effects are all `computed` kind
+  (trace query: `SELECT kind, COUNT(*) FROM refs JOIN edges ON ... WHERE effect
+  name='symbolFlow:emitRef'` → 4108 computed / 0 writes). These are
+  `createSymbol()` return values — computeds over the symbol that stabilize
+  immediately and never re-run.
+
+  The total overhead: 632 effect nodes + 4108 reactive subscriptions for
+  symbol-emit events that never fire. Allocation + subscription teardown
+  on scope cleanup is pure waste for this common code path.
+
+  MEDIUM CONFIDENCE (trace: effect count + 0 triggers confirmed; heap: not
+  directly correlated; cpuprofile: not steady-state).
+risk: low
+```
+
+**Concrete approach:**
+
+In `emitSymbol()`, before creating the reactive `effect()`, peek at `symbol.value`
+via `untrack()`. If the ref already holds a defined symbol at call time, use the
+imperative path (same as the non-Ref branch) and register a plain `onCleanup`
+to remove it from `takenSymbols`:
+
+```ts
+if (isRef(symbol)) {
+  const current = untrack(() => symbol.value);
+  if (current !== undefined) {
+    // Symbol is already set and (empirically) never changes — skip the effect.
+    symbolTaker.takenSymbols!.add(current);
+    onCleanup(() => symbolTaker.takenSymbols!.delete(current));
+    return;
+  }
+  // Fall through to the reactive effect for deferred/dynamic symbols.
+  effect<OutputSymbol | undefined>(/* ... existing code ... */);
+}
+```
+
+This eliminates the reactive effect for the ~100% of emitter-like-schema call
+sites where the symbol is already defined. The defensive fallback to the existing
+effect path handles the rare case where `symbol.value` is initially `undefined`
+(i.e. the symbol hasn't been created yet at emit time).
+
+Confirm correctness by checking whether any test emits a Ref that starts as
+`undefined` and then becomes defined mid-lifecycle. If such tests exist, the
+fallback path covers them.
+
+---
+
+## slice-id: nodes-to-context-map-overhead
+
+```yaml
+status: pending
+estimated_impact_ms: 20
+estimated_impact_mb: 30
+category: formatter
+files:
+  - packages/core/src/render.ts
+rationale: |
+  `nodesToContext` is a module-level WeakMap (render.ts:307) populated in
+  `renderWorker`: every Array (RenderedTextTree) created during rendering gets an
+  entry mapping it to the active Context. With 35,447 render nodes per
+  emitter-like-schema run, this WeakMap retains significant memory.
+
+  heap: `nodesToContext` WeakMap (@141881) retains 1 MB. The Context objects
+  referenced by the map are large (the Context system retains 379 KB overall from
+  the object-size analysis). Since WeakMap entries keep their values alive as long
+  as the key is live, every render-node array keeps its Context alive for the
+  lifetime of the render tree.
+
+  `getContextForRenderNode` is only exported and used for diagnostics / tree
+  inspection — it is not on the hot rendering path. This means 1 MB of Context
+  associations are maintained primarily for an optional diagnostic feature.
+
+  MEDIUM CONFIDENCE (heap: retained size confirmed; cpuprofile/trace: no direct
+  correlation — overhead is memory not CPU).
+risk: low
+```
+
+**Concrete approach:**
+
+Gate the `nodesToContext.set(node, getContext()!)` call in `renderWorker` behind a
+feature flag that is only enabled when diagnostics are active:
+
+```ts
+if (diagnosticsEnabled) {
+  nodesToContext.set(node, getContext()!);
+}
+```
+
+The `diagnosticsEnabled` flag can be set during `Output` component initialization
+if any `DiagnosticsCollector` is present. In normal (non-diagnostic) runs, the
+WeakMap is never populated, saving ~1 MB of retained memory and eliminating
+~35,447 WeakMap write operations.
+
+Alternatively, replace the WeakMap with a `WeakRef`-backed lazy approach: only
+populate on demand when `getContextForRenderNode` is actually called (but this
+may be too late in the render lifecycle).

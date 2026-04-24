@@ -1,0 +1,16 @@
+{
+  "slice_id": "reactive-union-set-per-element-effect",
+  "status": "implemented",
+  "files_changed": ["packages/core/src/reactive-union-set.ts"],
+  "notes": "Replaced Alloy's per-element effect() in createIndex with Vue's lighter ReactiveEffect directly. Uses onTrack during initial run to detect static vs reactive mappers: static elements (no reactive deps) skip the ongoing effect entirely; reactive elements get a Vue ReactiveEffect with eff.scheduler = () => queueJob(eff) for Alloy scheduler integration. Per-element entries store lastMapped for safe deletion (avoids stale mapper call on delete). Bulk onCleanup registered at createIndex call time for scope disposal cleanup. symbol-table.ts required no changes. Note: for production use (s.refkeys, s.name), OutputSymbol properties use manual track() so they ARE reactive — those elements get the lightweight Vue ReactiveEffect path rather than the no-effect static path. Benefit is reduced per-element allocation (no Alloy Context, no debug hooks per element) rather than eliminating effects entirely for the reactive case. Tests: 365/365 pass, build clean.",
+  "followup_slices": [
+    {
+      "title": "createDerivedSet per-element effect optimization",
+      "rationale": "createDerivedSet has the same per-element Alloy effect() pattern as createIndex. Currently only used in tests, but could benefit from the same Vue ReactiveEffect + static fast-path optimization if production usage is added."
+    },
+    {
+      "title": "OutputSymbol refkeys/name static-by-default opt-out",
+      "rationale": "Since OutputSymbol.refkeys and .name are always reactive (use manual track()), createIndex always creates Vue ReactiveEffects for them even though they rarely change. Adding a way for the mapper to declare itself static (or for OutputSymbol to expose a non-reactive read) could eliminate the remaining per-symbol effects entirely."
+    }
+  ]
+}

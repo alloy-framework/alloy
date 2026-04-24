@@ -255,13 +255,16 @@ export function effect<T>(
   };
 
   const debugInfo = options?.debug;
-  const effectId = debug.effect.register({
-    name: debugInfo?.name ?? fn.name,
-    type: debugInfo?.type,
-    createdAt: captureSourceLocation(),
-    contextId: context.id,
-    ownerContextId: resolveOwnerEffectContextId(context),
-  });
+  const effectId =
+    isDebugEnabled() ?
+      debug.effect.register({
+        name: debugInfo?.name ?? fn.name,
+        type: debugInfo?.type,
+        createdAt: captureSourceLocation(),
+        contextId: context.id,
+        ownerContextId: resolveOwnerEffectContextId(context),
+      })
+    : -1;
 
   if (effectId !== -1) {
     context.meta ??= {};
@@ -458,13 +461,15 @@ export function ref<T>(
   options?: { isInfrastructure?: boolean },
 ): Ref<T> {
   const result = vueRef(value) as Ref<T>;
-  debug.effect.registerRef({
-    id: refId(result),
-    kind: "ref",
-    createdAt: captureSourceLocation(),
-    createdByEffectId: globalContext?.meta?.effectId,
-    isInfrastructure: options?.isInfrastructure,
-  });
+  if (isDebugEnabled()) {
+    debug.effect.registerRef({
+      id: refId(result),
+      kind: "ref",
+      createdAt: captureSourceLocation(),
+      createdByEffectId: globalContext?.meta?.effectId,
+      isInfrastructure: options?.isInfrastructure,
+    });
+  }
   return result;
 }
 
@@ -492,24 +497,28 @@ export function shallowReactive<T extends object>(
 
 export function shallowRef<T>(value?: T, options?: { label?: string }): Ref<T> {
   const result = vueShallowRef(value) as Ref<T>;
-  debug.effect.registerRef({
-    id: refId(result),
-    kind: "shallowRef",
-    label: options?.label,
-    createdAt: captureSourceLocation(),
-    createdByEffectId: globalContext?.meta?.effectId,
-  });
+  if (isDebugEnabled()) {
+    debug.effect.registerRef({
+      id: refId(result),
+      kind: "shallowRef",
+      label: options?.label,
+      createdAt: captureSourceLocation(),
+      createdByEffectId: globalContext?.meta?.effectId,
+    });
+  }
   return result;
 }
 
 export function computed<T>(getter: () => T): Ref<T> {
   const result = vueComputed(getter) as Ref<T>;
-  debug.effect.registerRef({
-    id: refId(result),
-    kind: "computed",
-    createdAt: captureSourceLocation(),
-    createdByEffectId: globalContext?.meta?.effectId,
-  });
+  if (isDebugEnabled()) {
+    debug.effect.registerRef({
+      id: refId(result),
+      kind: "computed",
+      createdAt: captureSourceLocation(),
+      createdByEffectId: globalContext?.meta?.effectId,
+    });
+  }
   return result;
 }
 
@@ -522,12 +531,14 @@ export function toRef<T extends object, K extends keyof T>(
     defaultValue === undefined ?
       (vueToRef(object, key) as Ref<T[K]>)
     : (vueToRef(object, key, defaultValue) as Ref<T[K]>);
-  debug.effect.registerRef({
-    id: refId(result),
-    kind: "toRef",
-    createdAt: captureSourceLocation(),
-    createdByEffectId: globalContext?.meta?.effectId,
-  });
+  if (isDebugEnabled()) {
+    debug.effect.registerRef({
+      id: refId(result),
+      kind: "toRef",
+      createdAt: captureSourceLocation(),
+      createdByEffectId: globalContext?.meta?.effectId,
+    });
+  }
   return result;
 }
 
@@ -535,13 +546,15 @@ export function toRefs<T extends object>(
   object: T,
 ): { [K in keyof T]: Ref<T[K]> } {
   const result = vueToRefs(object) as { [K in keyof T]: Ref<T[K]> };
-  for (const refValue of Object.values(result) as Ref<unknown>[]) {
-    debug.effect.registerRef({
-      id: refId(refValue),
-      kind: "toRef",
-      createdAt: captureSourceLocation(),
-      createdByEffectId: globalContext?.meta?.effectId,
-    });
+  if (isDebugEnabled()) {
+    for (const refValue of Object.values(result) as Ref<unknown>[]) {
+      debug.effect.registerRef({
+        id: refId(refValue),
+        kind: "toRef",
+        createdAt: captureSourceLocation(),
+        createdByEffectId: globalContext?.meta?.effectId,
+      });
+    }
   }
   return result;
 }

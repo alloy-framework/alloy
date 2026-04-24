@@ -107,6 +107,12 @@ if (parsed.values.profile) {
   // eslint-disable-next-line no-console
   console.log("[perf] Profiling enabled --inspect-brk, connect with dev tools");
 }
+// If a heap snapshot path was requested, expose gc so run-scenario can force
+// a collection before writeHeapSnapshot — that way the snapshot reflects
+// genuinely-retained memory instead of ephemeral allocation noise.
+if (process.env.ALLOY_PERF_HEAPSNAPSHOT) {
+  childNodeArgs.push("--expose-gc");
+}
 
 function mean(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0) / nums.length;

@@ -2,6 +2,7 @@
 import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
+import v8 from "node:v8";
 
 interface ScenarioResult {
   name: string;
@@ -24,6 +25,7 @@ async function main() {
     heapUsedBytesDelta: 0,
   };
 
+  let _holdResult: unknown; // keep retained so heap snapshot reflects the peak graph
   try {
     const modUrl = pathToFileURL(path.resolve(scenarioPath)).href;
     const mod = await import(modUrl);
@@ -32,7 +34,7 @@ async function main() {
 
     const startUsage = process.cpuUsage();
     const startMem = process.memoryUsage();
-    const _holdThis = await mod.runTest();
+    _holdResult = await mod.runTest();
     const usage = process.cpuUsage(startUsage);
     const mem = process.memoryUsage();
     result.totalCpuMicros = usage.user + usage.system;
@@ -40,6 +42,25 @@ async function main() {
   } catch (e: any) {
     result.error = e?.message || String(e);
   }
+
+  // Optionally write a heap snapshot after runTest completes. Gated on an env
+  // var so normal benchmarking stays fast. The snapshot captures retained
+  // objects from the scenario (via _holdResult) so memlab can surface what is
+  // hanging around.
+  const snapPath = process.env.ALLOY_PERF_HEAPSNAPSHOT;
+  if (snapPath) {
+    try {
+      // Run GC if available so the snapshot reflects truly-retained memory,
+      // not ephemeral allocations. Caller should pass --expose-gc.
+      (globalThis as any).gc?.();
+      v8.writeHeapSnapshot(snapPath);
+    } catch (e: any) {
+      // eslint-disable-next-line no-console
+      console.error("[perf] writeHeapSnapshot failed:", e?.message ?? e);
+    }
+  }
+  // Reference so TS/ESLint don't drop the binding before the snapshot.
+  void _holdResult;
 
   // Emit single JSON line for parent to parse
   process.stdout.write(JSON.stringify(result) + "\n");

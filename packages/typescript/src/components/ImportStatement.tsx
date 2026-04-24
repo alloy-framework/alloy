@@ -69,78 +69,92 @@ export interface ImportStatementProps {
 }
 
 export function ImportStatement(props: ImportStatementProps) {
-  return memo(() => {
-    let defaultImportSymbol: ImportedSymbol | undefined = undefined;
-    const namedImportSymbols: ImportedSymbol[] = [];
-
+  // Split symbols into default vs. named — tracks .target.default and set membership
+  const symbolSplit = computed(() => {
+    let defaultSym: ImportedSymbol | undefined;
+    const named: ImportedSymbol[] = [];
     for (const sym of props.symbols) {
       if (sym.target.default) {
-        defaultImportSymbol = sym;
+        defaultSym = sym;
       } else {
-        namedImportSymbols.push(sym);
+        named.push(sym);
       }
     }
-
-    const parts: any[] = ["import "];
-    if (defaultImportSymbol) {
-      parts.push(
-        <ImportBinding default importedSymbol={defaultImportSymbol} />,
-      );
-      if (namedImportSymbols.length > 0) {
-        parts.push(", ");
-      }
-    }
-
-    if (namedImportSymbols.length > 0) {
-      namedImportSymbols.sort((a, b) => {
-        return a.local.name.localeCompare(b.local.name);
-      });
-      const allNamedImportsAreTypes = namedImportSymbols.every(
-        (nis) => nis.local.isTypeSymbol && !nis.local.isValueSymbol,
-      );
-
-      if (allNamedImportsAreTypes) {
-        parts.push("type ");
-      }
-      parts.push(
-        <group>
-          {"{"}
-          <indent>
-            <line />
-            {mapJoin(
-              () => namedImportSymbols,
-              (nis) => (
-                <ImportBinding
-                  importedSymbol={nis}
-                  inTypeImport={allNamedImportsAreTypes}
-                />
-              ),
-              {
-                joiner: (
-                  <>
-                    {","}
-                    <line />
-                  </>
-                ),
-              },
-            )}
-            <ifBreak>{","}</ifBreak>
-          </indent>
-          <line />
-          {"}"}
-        </group>,
-      );
-    }
-    parts.push(` from "${props.path}";`);
-
-    return parts;
+    return { defaultSym, named };
   });
+
+  // Sorted named imports — tracks .local.name for sort order only
+  const sortedNamedImports = computed(() =>
+    [...symbolSplit.value.named].sort((a, b) =>
+      a.local.name.localeCompare(b.local.name),
+    ),
+  );
+
+  // Whether all named imports are type-only — isolated to type-flag reads
+  const allNamedImportsAreTypes = computed(() => {
+    const { named } = symbolSplit.value;
+    return (
+      named.length > 0 &&
+      named.every((nis) => nis.local.isTypeSymbol && !nis.local.isValueSymbol)
+    );
+  });
+
+  return (
+    <>
+      {"import "}
+      {() =>
+        symbolSplit.value.defaultSym && (
+          <>
+            <ImportBinding
+              default
+              importedSymbol={symbolSplit.value.defaultSym}
+            />
+            {() => symbolSplit.value.named.length > 0 && ", "}
+          </>
+        )
+      }
+      {() =>
+        symbolSplit.value.named.length > 0 && (
+          <>
+            {() => allNamedImportsAreTypes.value && "type "}
+            <group>
+              {"{"}
+              <indent>
+                <line />
+                {mapJoin(
+                  () => sortedNamedImports.value,
+                  (nis) => (
+                    <ImportBinding
+                      importedSymbol={nis}
+                      inTypeImport={() => allNamedImportsAreTypes.value}
+                    />
+                  ),
+                  {
+                    joiner: (
+                      <>
+                        {","}
+                        <line />
+                      </>
+                    ),
+                  },
+                )}
+                <ifBreak>{","}</ifBreak>
+              </indent>
+              <line />
+              {"}"}
+            </group>
+          </>
+        )
+      }
+      {` from "${props.path}";`}
+    </>
+  );
 }
 
 interface ImportBindingProps {
   importedSymbol: ImportedSymbol;
   default?: boolean;
-  inTypeImport?: boolean;
+  inTypeImport?: () => boolean;
 }
 
 function ImportBinding(props: Readonly<ImportBindingProps>) {
@@ -158,7 +172,7 @@ function ImportBinding(props: Readonly<ImportBindingProps>) {
 
   const prefix = memo(() =>
     (
-      !props.inTypeImport &&
+      !props.inTypeImport?.() &&
       props.importedSymbol.local.isTypeSymbol &&
       !props.importedSymbol.local.isValueSymbol
     ) ?

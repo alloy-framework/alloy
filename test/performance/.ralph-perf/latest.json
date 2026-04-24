@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-04-24T08:22:46.213Z",
+  "runsPerScenario": 5,
+  "scenarios": [
+    {
+      "name": "emitter-like-schema",
+      "title": "emitter-like schema (cross-file refs)",
+      "description": "Simulates a TypeSpec-style emitter producing many TypeScript files with\n  interfaces and classes that reference each other across file boundaries.\n  Exercises the binder/symbol system, refkey resolution, automatic import\n  insertion, and fragment-heavy render trees — the hot paths typical of\n  real-world alloy consumers (js-cdk, flight-instructor).",
+      "runs": 5,
+      "cpu": {
+        "avgMicros": 4299833,
+        "avgMs": 4299.833,
+        "stddevMicros": 968790.2442040795,
+        "stddevMs": 968.79
+      },
+      "memory": {
+        "avgBytesDelta": 124405670.4,
+        "stddevBytes": 9023090.765503181
+      },
+      "error": null
+    },
+    {
+      "name": "render-long-file",
+      "title": "Render a very long file",
+      "description": "This scenario tests the rendering a long file using the Prose component, which should stress the formatter.",
+      "runs": 5,
+      "cpu": {
+        "avgMicros": 301511.4,
+        "avgMs": 301.511,
+        "stddevMicros": 30210.67164595981,
+        "stddevMs": 30.211
+      },
+      "memory": {
+        "avgBytesDelta": 12448545.6,
+        "stddevBytes": 63409.93345525605
+      },
+      "error": null
+    },
+    {
+      "name": "render-many-files",
+      "title": "Render 10000 files",
+      "description": "This scenario tests the rendering of a large number of files (10,000) with no content.",
+      "runs": 5,
+      "cpu": {
+        "avgMicros": 5105200.6,
+        "avgMs": 5105.201,
+        "stddevMicros": 489154.9295308185,
+        "stddevMs": 489.155
+      },
+      "memory": {
+        "avgBytesDelta": 238917928,
+        "stddevBytes": 1660848.2988930687
+      },
+      "error": null
+    },
+    {
+      "name": "ts-huge-object",
+      "title": "typescript: huge object",
+      "description": "Convert a huge JSON object to TypeScript code. Stresses symbols pretty heavily.",
+      "runs": 5,
+      "cpu": {
+        "avgMicros": 17914870.8,
+        "avgMs": 17914.871,
+        "stddevMicros": 712405.875530024,
+        "stddevMs": 712.406
+      },
+      "memory": {
+        "avgBytesDelta": 592845513.6,
+        "stddevBytes": 10236541.581640393
+      },
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "doc-gap",
+    "severity": "non-blocking",
+    "source": "packages/core/docs/symbols-and-scopes.md",
+    "description": "The Symbols section links `OutputSymbol` to `api/types/OutputSymbolOptions.md` instead of `api/types/OutputSymbol.md`, so the primary symbol type reference sends readers to the options page rather than the symbol API."
+  },
+  {
+    "kind": "doc-gap",
+    "severity": "non-blocking",
+    "source": "packages/core/docs/api/types/OutputSymbol.md",
+    "description": "The `OutputSymbol` API page still contains unresolved placeholder links in the `copyToSpace` and external-library remarks, which makes the documented copy/external-symbol workflow incomplete even though the rest of the page is usable."
+  },
+  {
+    "kind": "invalid",
+    "severity": "minor",
+    "source": "packages/core/docs/symbols-and-scopes.md",
+    "description": "Duplicate of issue #1 — identical report of the OutputSymbol → OutputSymbolOptions.md wrong-link problem."
+  },
+  {
+    "kind": "invalid",
+    "severity": "minor",
+    "source": "packages/core/docs/api/types/OutputSymbol.md",
+    "description": "Duplicate of issue #2 — identical report of the unresolved placeholder links in copyToSpace and external-library remarks."
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "severity": "minor",
+    "file": "packages/typescript/src/components/ImportStatement.tsx",
+    "line": 88,
+    "message": "Array spread in hot path allocation",
+    "details": "Line 88: `[...symbolSplit.value.named].sort(...)` creates a new array on every `sortedNamedImports` recomputation. While the sort itself is necessary, consider whether the spread allocation on every change to `symbolSplit` could be reduced with a more targeted memoization strategy. The allocation is small (typically <10 elements) but appears in render loop."
+  },
+  {
+    "severity": "minor",
+    "file": "packages/typescript/src/components/ImportStatement.tsx",
+    "line": 129,
+    "message": "Function identity instability in inTypeImport prop",
+    "details": "Line 129: `inTypeImport={() => allNamedImportsAreTypes.value}` creates a new arrow function each time the computed cell re-evaluates. This doesn't cause a bug today since ImportBinding doesn't use function identity in dependencies, but it's a potential regression vector if ImportBinding changes to memoize based on prop identity."
+  },
+  {
+    "severity": "minor",
+    "file": "packages/typescript/src/components/ImportStatement.tsx",
+    "line": 76,
+    "message": "Set iteration without deep-watching consideration",
+    "details": "Line 76: Iterates over `props.symbols: Set<ImportedSymbol>` in a computed cell. Sets are correctly iterable, but if the Set is mutated externally, the computed won't re-evaluate. This is an existing architectural concern (not new to this change), but the refactor makes it more explicit. Current code works because symbols are typically immutable post-creation."
+  }
+]

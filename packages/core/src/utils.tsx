@@ -118,14 +118,14 @@ export function mapJoin<T, U, V>(
     item?: MapJoinItem;
     disposer?: Disposable;
     joiner?: Ref<Children | undefined>;
-    isEmpty: Ref<boolean>;
+    isEmpty: boolean;
   }
   const itemSlots: MapJoinSlot[] = [];
 
   function getOrCreateSlot(index: number): MapJoinSlot {
     let slot = itemSlots[index];
     if (!slot) {
-      slot = { isEmpty: ref(true) };
+      slot = { isEmpty: true };
       itemSlots[index] = slot;
     }
     return slot;
@@ -177,7 +177,7 @@ export function mapJoin<T, U, V>(
     const shouldShow =
       previousNonEmpty !== -1 &&
       rightSlot !== undefined &&
-      rightSlot.isEmpty.value === false;
+      rightSlot.isEmpty === false;
 
     const newValue = shouldShow ? options.joiner : undefined;
     if (joinerRef.value !== newValue) {
@@ -189,7 +189,7 @@ export function mapJoin<T, U, V>(
   function findNextNonEmpty(from: number) {
     for (let i = Math.max(from, 0); i < itemSlots.length; i++) {
       const slot = itemSlots[i];
-      if (slot && slot.isEmpty.value === false) {
+      if (slot && slot.isEmpty === false) {
         return i;
       }
     }
@@ -200,7 +200,7 @@ export function mapJoin<T, U, V>(
   function findPrevNonEmpty(from: number) {
     for (let i = Math.min(from, itemSlots.length - 1); i >= 0; i--) {
       const slot = itemSlots[i];
-      if (slot && slot.isEmpty.value === false) {
+      if (slot && slot.isEmpty === false) {
         return i;
       }
     }
@@ -309,14 +309,13 @@ export function mapJoin<T, U, V>(
       for (; startIndex < itemsLen; startIndex++) {
         const slot = getOrCreateSlot(startIndex);
         slot.item = items[startIndex];
-        const emptyFlag = slot.isEmpty;
 
         if (slot.disposer) {
-          if (emptyFlag.value === false) {
+          if (slot.isEmpty === false) {
             if (context) {
               context.childrenWithContent--;
             }
-            emptyFlag.value = true;
+            slot.isEmpty = true;
             applyEmptyStateChange(startIndex, true, false);
           }
           slot.disposer();
@@ -335,8 +334,8 @@ export function mapJoin<T, U, V>(
               (prev?: boolean) => {
                 const isEmpty = isEmptyFlag.value;
                 return untrack(() => {
-                  if (slot.isEmpty.value !== isEmpty) {
-                    slot.isEmpty.value = isEmpty;
+                  if (slot.isEmpty !== isEmpty) {
+                    slot.isEmpty = isEmpty;
                   }
                   const wasEmpty = prev ?? true;
 
@@ -378,11 +377,11 @@ export function mapJoin<T, U, V>(
         }
 
         slot.disposer?.();
-        if (slot.isEmpty.value === false) {
+        if (slot.isEmpty === false) {
           if (context) {
             context.childrenWithContent--;
           }
-          slot.isEmpty.value = true;
+          slot.isEmpty = true;
           applyEmptyStateChange(startIndex, true, false);
         }
       }

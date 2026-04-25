@@ -321,7 +321,7 @@ export abstract class OutputSymbol {
     return this.#ignoreNameConflict;
   }
 
-  #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({});
+  #memberSpaces: Record<string, OutputMemberSpace> = {};
   /**
    * The member spaces of this symbol.
    *
@@ -332,10 +332,21 @@ export abstract class OutputSymbol {
   }
 
   /**
-   * Get the member space for the given key.
+   * Get the member space for the given key. Creates the space lazily on first
+   * access if the key is declared in this symbol type's `memberSpaces` list.
    */
   memberSpaceFor(spaceKey: string): OutputMemberSpace | undefined {
-    return this.#memberSpaces[spaceKey];
+    let space = this.#memberSpaces[spaceKey];
+    if (space !== undefined) {
+      return space;
+    }
+    const constructor = this.constructor as typeof OutputSymbol;
+    if (!(constructor.memberSpaces as readonly string[]).includes(spaceKey)) {
+      return undefined;
+    }
+    space = new OutputMemberSpace(this, spaceKey, this.#binder);
+    this.#memberSpaces[spaceKey] = space;
+    return space;
   }
 
   /**
@@ -698,13 +709,6 @@ export abstract class OutputSymbol {
     this.#lazyMemberInitializer = options.lazyMemberInitializer;
 
     this.#handleNewSpaces(this.#spaces);
-    const constructor = this.constructor as typeof OutputSymbol;
-    this.#memberSpaces = Object.fromEntries(
-      constructor.memberSpaces.map((spaceKey) => [
-        spaceKey,
-        new OutputMemberSpace(this, spaceKey, this.#binder),
-      ]),
-    );
 
     // Notify binder so resolution tracking works even without createSymbol
     this.#binder?.notifySymbolCreated(this);

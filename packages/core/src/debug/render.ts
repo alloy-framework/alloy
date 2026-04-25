@@ -73,6 +73,12 @@ export interface ComponentDebugSession {
 /** Any node tracked by the devtools render tree. */
 type TrackedNode = RenderedTextTree | PrintHook;
 
+const noopSession: ComponentDebugSession = {
+  recordDirectory() {},
+  recordFile() {},
+  dispose() {},
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Module state — reset in initialize()
 // ─────────────────────────────────────────────────────────────────────────────
@@ -537,11 +543,7 @@ export function beginComponent(
   } = options;
 
   if (!isDebugEnabled()) {
-    return {
-      recordDirectory() {},
-      recordFile() {},
-      dispose() {},
-    };
+    return noopSession;
   }
 
   return untrack(() => {

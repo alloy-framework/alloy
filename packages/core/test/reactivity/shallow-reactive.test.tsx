@@ -3,6 +3,7 @@ import {
   getReactiveCreationLocation,
   shallowReactive,
 } from "../../src/reactivity.js";
+import { refreshDebugState } from "../../src/devtools/devtools-server.js";
 
 describe("shallowReactive creation location", () => {
   let origDebug: string | undefined;
@@ -10,6 +11,7 @@ describe("shallowReactive creation location", () => {
   beforeEach(() => {
     origDebug = process.env.ALLOY_DEBUG;
     process.env.ALLOY_DEBUG = "1";
+    refreshDebugState();
   });
 
   afterEach(() => {
@@ -18,6 +20,7 @@ describe("shallowReactive creation location", () => {
     } else {
       process.env.ALLOY_DEBUG = origDebug;
     }
+    refreshDebugState();
   });
 
   it("stores creation location keyed by raw target when debug enabled", () => {
@@ -31,6 +34,7 @@ describe("shallowReactive creation location", () => {
 
   it("does not store location when debug is disabled", () => {
     delete process.env.ALLOY_DEBUG;
+    refreshDebugState();
     const raw = { y: 2 };
     shallowReactive(raw);
 

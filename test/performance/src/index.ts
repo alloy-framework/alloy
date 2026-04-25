@@ -17,7 +17,7 @@ interface ScenarioResult {
   name: string;
   title: string;
   description: string;
-  totalCpuMicros: number; // aggregated (avg) user + system
+  totalCpuMicros: number; // aggregated (min) user + system — see note in aggregator
   heapUsedBytesDelta: number; // aggregated (avg)
   runs: number;
   cpuStdDevMicros?: number;
@@ -126,6 +126,12 @@ function mean(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
+function min(nums: number[]): number {
+  let m = nums[0];
+  for (let i = 1; i < nums.length; i++) if (nums[i] < m) m = nums[i];
+  return m;
+}
+
 function stddev(nums: number[]): number {
   if (nums.length < 2) return 0;
   const m = mean(nums);
@@ -221,7 +227,12 @@ const tasks = new Listr<Ctx>(
         title: s.title,
         description: s.description,
         runs: cpuRuns.length || RUNS,
-        totalCpuMicros: cpuRuns.length ? mean(cpuRuns) : 0,
+        // CPU noise is unidirectional (a sample can only be slowed by other
+        // work on the host, never sped up below the true cost). The minimum
+        // sample is the most accurate estimate of true work and is robust to
+        // single-sample stalls (e.g. browser indexer, GC pause, IO blip)
+        // that otherwise dominate the mean of small N.
+        totalCpuMicros: cpuRuns.length ? min(cpuRuns) : 0,
         heapUsedBytesDelta: memRuns.length ? mean(memRuns) : 0,
         cpuStdDevMicros: cpuRuns.length > 1 ? stddev(cpuRuns) : 0,
         memStdDevBytes: memRuns.length > 1 ? stddev(memRuns) : 0,
@@ -291,8 +302,8 @@ try {
 
 const table = new Table({
   head: (baselineCompare ?
-    ["Title", "CPU (avg ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
-  : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)"]) as string[],
+    ["Title", "CPU (min ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
+  : ["Title", "CPU (min ± sd)", "Mem Δ (avg ± sd)"]) as string[],
   style: { head: [], border: [] },
   wordWrap: true,
 });

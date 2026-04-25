@@ -475,6 +475,11 @@ export function effect<T>(
 
   if (effectId !== -1) {
     effectIdMap.set(runner.effect, effectId);
+  } else {
+    const eff = runner.effect as any;
+    if (eff.deps === undefined && eff.depsTail === undefined) {
+      stop(runner);
+    }
   }
 }
 

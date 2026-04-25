@@ -87,3 +87,20 @@ Also: root() and effect() diverge at property 2 in original code anyway (compone
 ordering), so they were never sharing a hidden class chain to begin with.
 Suggest: split into EffectContext (full fields) + RootContext (minimal fields) as a followup,
 rather than fattening both to the same large size.
+
+## deconflict-names-canonical-index: IMPLEMENTED — O(1) canonical name lookup
+Added #symbolsByCanonicalName: Map<string, Set<OutputSymbol>> to SymbolTable, maintained in
+onAdd/onDelete hooks. Replaced O(n) [...this].filter(sym => sym.canonicalName === name) in
+#deconflictNames with O(1) bucket lookup. Measured: -947ms CPU (-23%) on post-bench rebench.
+
+## memo-static-short-circuit: IMPLEMENTED — bypass vueEffect() for static computations
+In non-debug mode, memo() now uses vueEffect() directly (not the effect() wrapper) to get
+access to runner.effect.deps after the first run. If deps === undefined (no reactive deps
+tracked), stops the effect and returns a plain () => val closure. CPU: -929ms (-22.5%).
+Memory: appeared +16-20MB above pre but pre had ±18MB SD so within noise. Memory impact
+is theoretically neutral-to-positive (stopped effects have no dep subscriptions, no track()
+calls on reads). Key gotcha: Vue's ReactiveEffect.deps is NOT in the public TypeScript types
+— use `(runner.effect as any).deps`. Note: vueEffect() runs its callback synchronously on
+first call, so the first run happens before vueEffect() returns. The cleanupFn closure that
+captures runner is safe because final=false on first call (short-circuit prevents stop(runner)
+from being called before runner is assigned).

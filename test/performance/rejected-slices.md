@@ -56,3 +56,42 @@ function). Rejected during review — the static-vs-reactive branch added a
 significant amount of duplicated bookkeeping for a code path that is already
 fairly cheap, and the impact estimate was not corroborated by cpuprofile
 self-time.
+
+## slice-id: scheduler-array-queue
+
+```yaml
+status: rejected
+reverted_at: 2026-04-24
+files_targeted:
+  - packages/core/src/scheduler.ts
+```
+
+Replaced `set.values().next().value` with a `for...of` loop that `break`s after
+the first item, on the theory that V8 could stack-allocate the iterator. Measured
+**+23.1% CPU regression** on emitter-like-schema. `for...of` desugars to a
+`Symbol.iterator` method lookup, a fresh iterator object, a `.next()` + `.done`
+check per pass, and a `try/finally` for the `return()` hook — more overhead
+than the plain `.values().next()` it replaced. `takeJob()` is called 120k+
+times per run, so the extra per-iteration work dominates. A genuine scheduler
+win needs structural change (circular array + dedup Set, or a FIFO free-list),
+not iterator micro-tuning on the same data structure.
+
+## slice-id: mergeprops-plain-fast-path
+
+```yaml
+status: reverted
+reverted_at: 2026-04-24
+files_targeted:
+  - packages/core/src/props-combinators.ts
+```
+
+Added a fast-path in `mergeProps` that returned a plain (non-reactive) merged
+object when **every** source was non-reactive, guarded by
+`sources.every(s => isReactive(s))`. Memory dropped ~7% (real) but CPU
+**regressed 10% (+391ms)**. The `isReactive` per-source guard runs on every
+`mergeProps` call, and in the emitter-like-schema benchmark the reactive-source
+path is the common case — so the guard is pure overhead that is never recouped
+by the fast path. The auto-verdict OR criterion (cpu ≤ -5% OR mem ≤ -5%)
+accepted this based on the memory win alone; reverted on manual review. Any
+re-proposal must use a pre-tagged flag set at object construction time (no
+per-call `isReactive` scan) and must not regress CPU.

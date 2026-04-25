@@ -220,18 +220,79 @@ export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
   const o = shallowRef<T>(undefined as T, {
     label: memoLabel,
   });
-  effect(
-    (prev) => {
-      const res = fn();
+
+  if (isDebugEnabled()) {
+    // Debug path: use the effect() wrapper to preserve all debug tracking hooks.
+    effect(
+      (prev) => {
+        const res = fn();
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        (!equal || prev !== res) && (o.value = res);
+        return res;
+      },
+      undefined as T,
+      {
+        debug: { name: memoLabel },
+      },
+    );
+  } else {
+    // Fast path: use vueEffect() directly so we can inspect runner.effect.deps
+    // after the first run and short-circuit to a plain getter for static computations.
+    const context: Context = {
+      id: contextIdCounter++,
+      owner: globalContext,
+      takesSymbols: false,
+      takenSymbols: undefined,
+      childrenWithContent: 0,
+      _lastEmpty: true,
+      isRoot: false,
+    };
+
+    let current: T = undefined as T;
+
+    // eslint-disable-next-line prefer-const
+    let runner!: ReactiveEffectRunner<void>;
+    const cleanupFn = (final: boolean) => {
+      const d = context.disposables;
+      context.disposables = undefined;
+      if (d) {
+        for (let k = 0, len = d.length; k < len; k++) untrack(d[k]);
+      }
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      (!equal || prev !== res) && (o.value = res);
-      return res;
-    },
-    undefined as T,
-    {
-      debug: { name: name ? `memo:${name}` : "memo" },
-    },
-  );
+      final && stop(runner);
+    };
+
+    onCleanup(() => cleanupFn(true));
+
+    runner = vueEffect(() => {
+      cleanupFn(false);
+      const oldContext = globalContext;
+      globalContext = context;
+      try {
+        const res = fn();
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        (!equal || current !== res) && (o.value = res);
+        current = res;
+      } finally {
+        globalContext = oldContext;
+      }
+    }, { flags: 1 | 4 | 32, scheduler: scheduler() } as any);
+
+    // Static short-circuit: if the first run tracked no reactive dependencies,
+    // the value is constant. Stop the effect and return a plain closure over the
+    // cached value, eliminating ongoing ReactiveEffect / shallowRef overhead.
+    if ((runner.effect as any).deps === undefined) {
+      stop(runner);
+      const val = o.value as T;
+      if (name) {
+        const staticGetter = () => val;
+        Object.defineProperty(staticGetter, "name", { value: name, configurable: true });
+        return staticGetter;
+      }
+      return () => val;
+    }
+  }
+
   const getter = (() => o.value as T) as () => T;
   if (name) {
     Object.defineProperty(getter, "name", { value: name, configurable: true });

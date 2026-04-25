@@ -153,3 +153,6 @@ alloy-output/
 test/performance/.ralph-perf/
 test/performance/analyzer-memory.md
 test/performance/developer-memory.md
+test/performance/perf-slices.md
+test/performance/rejected-slices.md
+test/performance/baseline.json

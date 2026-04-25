@@ -14,6 +14,23 @@ export function mergeProps<T, U, V, W>(
   source3: W,
 ): T & U & V & W;
 export function mergeProps(...sources: any): any {
+  // Fast path: all plain non-reactive objects — eager merge, no lazy getters needed.
+  // Manual loop preserves "last non-undefined wins" semantics (matching the slow path).
+  if (
+    sources.every(
+      (s: any) => s == null || (typeof s === "object" && !isReactive(s)),
+    )
+  ) {
+    const merged: any = {};
+    for (const s of sources) {
+      if (s == null) continue;
+      for (const k of Object.keys(s as object)) {
+        if ((s as any)[k] !== undefined) merged[k] = (s as any)[k];
+      }
+    }
+    return merged;
+  }
+
   const target = {};
   for (let i = 0; i < sources.length; i++) {
     let source = sources[i];

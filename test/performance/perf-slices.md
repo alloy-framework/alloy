@@ -1,385 +1,463 @@
 # Perf Improvement Slices
 
-_Last updated: 2026-04-24T21:00:00Z_
-_Baseline: emitter-like-schema CPU 4301 ms avg, mem 288 MB_
-_Also measured: ts-huge-object CPU 6148 ms, mem 598 MB; render-many-files CPU 2399 ms, mem 230 MB_
-
-## Notes
-
-CPU profile was captured during module initialization (98.7% idle), yielding no useful function-level
-execution samples. All empirical evidence comes from the trace DB and heap snapshot.
-
-The central theme across all slices is **reactive overhead for single-pass renders**:
-- 97,560 track edges (subscriptions) built but triggered 0 times (0 write_edges in trace DB).
-- 74,084/123,747 effects (59.9%) track zero refs — pure construction overhead.
-- 59,498/90,473 refs (65.8%) are never tracked or completely unused.
-
-Every subscription edge represents memory allocation (WeakMap entries in Vue's targetMap +
-sub-arrays on effects), linked-list threading, and traversal cost at render time — yet none
-ever fires in the benchmark. Reducing the subscription budget is the primary lever.
+_Last updated: 2026-04-24T23:30:00Z_
+_Baseline: emitter-like-schema CPU 3896 ms avg (±361 ms), mem 296 MB avg; render-long-file CPU 150 ms, mem 12 MB; render-many-files CPU 2287 ms, mem 233 MB; ts-huge-object CPU 5929 ms, mem 605 MB_
 
 ---
 
-## slice-id: mapjoin-static-joiner-elision
+## Profile snapshot
+
+_CPU profile: `CPU.20260424.162446.7226.0.001.cpuprofile` — PID 7226, actual scenario worker process. Total: 2120 samples. Scale: 1 sample ≈ 1.84 ms (3896 ms / 2120)._
+
+**Top 20 self-time (aggregated by function × file):**
+
+| self_hits | % total | function | source |
+|-----------|---------|----------|--------|
+| 298 | 14.1% | (garbage collector) | — |
+| **185** | **8.7%** | **isDevtoolsEnabled** | **devtools/devtools-server.js** |
+| 97 | 4.6% | renderWorker | render.js |
+| 66 | 3.1% | appendChild | render.js |
+| 64 | 3.0% | createReactiveObject | @vue/reactivity |
+| **53** | **2.5%** | **resolveOwnerEffectContextId** | **reactivity.js:L23** |
+| **52** | **2.5%** | **takeJob** | **scheduler.js:L231** |
+| 45 | 2.1% | (program) | — |
+| **42** | **2.0%** | **refId** | **reactivity.js:L385** |
+| **38** | **1.8%** | **isNodeEnvironment** | **devtools/devtools-server.js:L130** |
+| 35 | 1.7% | track | @vue/reactivity |
+| 32 | 1.5% | memo | reactivity.js:L105 |
+| 30 | 1.4% | printTreeWorker | render.js:L858 |
+| 28 | 1.3% | (anon — effect body) | reactivity.js:L254 |
+| 27 | 1.3% | compileSourceTextModule | node:esm/utils |
+| 23 | 1.1% | effect | reactivity.js:L129 |
+| **22** | **1.0%** | **mergeProps** | **props-combinators.js** |
+| 19 | 0.9% | creator | runtime/component.js |
+| 18 | 0.8% | effect.debug.name (renderWorker) | render.js:L633 |
+| **18** | **0.8%** | **splitProps** | **props-combinators.js** |
+
+Bold = actionable (has a slice below). GC (14.1%), `createReactiveObject` (3.0%), `track` (1.7%), `printTreeWorker` (1.4%), `creator` (0.9%), `compileSourceTextModule` (1.3%) are intrinsic/non-actionable.
+
+**Top alloy-relevant files by self-time:**
+
+| % total | file |
+|---------|------|
+| 10.5% | devtools/devtools-server.js |
+| 11.6% | render.js |
+| 11.0% | reactivity.js |
+| 3.1% | reactive-union-set.js |
+| 2.9% | scheduler.js |
+| 2.3% | props-combinators.js |
+
+**Heap snapshot (memlab object-size + shape, key alloy findings):**
+```
+Array:                  114 MB (189,393 instances) — disposables arrays dominate; includes all function closures
+Context objects:        ~102 MB (103,788 instances across 3 sizes) — intrinsic to Alloy per-effect context model
+nodesToContext WeakMap:   2 MB  (RenderedTextTree → Context map)
+seenRefs WeakMap:         2 MB  (90,473 entries — unconditional refId() WeakMap from debug.effect.registerRef)
+shallowReactiveMap WeakMap: 1 MB  (shallowReactive() proxy registry)
+shallowReadonlyMap WeakMap: 1 MB  (ReactiveUnionSet shallowReadonly() proxies)
+ReactiveEffect:         14.9 MB (104,886 instances)
+Object {dispose, recordDirectory, recordFile}:  12.8 MB (27,681 instances × 464 B) — noop debug session per component
+Dep (Vue dep tracking): 9.8 MB  (86,496 instances)
+OutputMemberSpace:      21.2 MB (13,296 instances)
+```
+
+---
+
+---
+
+## slice-id: devtools-check-cache
 
 ```yaml
 status: rejected
-estimated_impact_ms: 350
-estimated_impact_mb: 40
-category: reactivity
+estimated_impact_ms: 370
+estimated_impact_mb: 2
+category: other
 files:
-  - packages/core/src/utils.tsx
-  - packages/core/src/components/For.tsx
-rationale: |
-  trace: For creates 8.2 refs/instance × 2149 instances = 17,671 refs. List creates 3456
-  joiner refs with 3456 track edges. Combined: ~21,000+ reactive Ref objects from mapJoin
-  joiner slots, making For the most expensive component by ref allocation (component stats:
-  For = 17671 refs total, compared to 5664 for List which delegates here).
-  trace: 0 write_edges total — none of these refs ever updates.
-  heap: Vue's reactiveMap/targetMap WeakMaps hold 6.8 MB; each Ref<> adds a WeakMap
-  entry + sub-array overhead.
-
-  mapJoin (utils.tsx) creates a `Ref<Children | undefined>` per slot boundary via
-  `createJoinerRef()` (utils.tsx:140). These refs are reactive to support dynamic lists
-  where items appear/disappear, but for static (non-reactive) source arrays this
-  infrastructure is never exercised.
-
-  Opportunity: detect at mapJoin call time whether the source is static (a plain array
-  literal or an already-resolved non-reactive value). When static, skip joiner ref creation
-  and write plain static joiner values into `mapped[]` directly. The isEmpty tracking and
-  firstNonEmptyIndex / lastNonEmptyIndex refs (utils.tsx:133–134) can also be elided.
-  The `For` component wraps mapJoin in an outer memo already; if `props.each` is not a
-  Ref or reactive getter, the inner mapJoin never needs the reactive slot infrastructure.
-risk: medium
-```
-
-When `each` is a plain array/Map/Set (not a `Ref<>` or getter function), For's mapJoin
-executes exactly once and the result is immutable. A `isStaticSource()` predicate before
-the slot-metadata setup path enables a fast path: build `mapped[]` as a plain array of
-`[item, joiner, item, ...]` tuples with no Ref allocations. Fall back to current path when
-source is reactive.
-
----
-
-## slice-id: binder-resolve-diagnostic-effect
-
-```yaml
-status: done
-estimated_impact_ms: 250
-estimated_impact_mb: 15
-category: symbols
-files:
-  - packages/core/src/binder.ts
-rationale: |
-  trace: binder.js:523 creates 1428 reactive refs (type: reactive-property via shallowRef)
-  with 8800 total track edges (avg 6.16 trackers/ref). These are the `resolveDeclarationByKey`
-  computed refs, each then tracked by the `effect()` in the `resolve()` public API function.
-  trace: 1428 "binder" type effects — exactly one per `resolve()` call — create the
-  diagnostic subscription (binder.js dist ~line 522). Each effect tracks `result.value`
-  to detect unresolved refkeys and emit a warning.
-  trace: 0 write_edges — `result.value` never changes in the benchmark, so the
-  diagnostic effect fires once at setup, checks, finds the refkey resolved, and then sits
-  idle forever holding 1428 WeakMap entries and 1428 linked-list subscriptions.
-
-  Each `resolve()` call in binder.ts constructs:
-    1. `result = binder.resolveDeclarationByKey(scope, refkey)` — a computed (≈2 WeakMap
-       entries, allocation, initial run).
-    2. A diagnostic `effect(() => { if (result.value === undefined) emitDiagnostic(...) })`
-       — another effect object + WeakMap subscription on `result`.
-  Since refkeys resolve synchronously in this scenario, the diagnostic effect's callback
-  executes once, sees a resolved value, and the slot stays live until component cleanup.
-
-  Opportunity: replace the per-resolve reactive diagnostic effect with a post-render check.
-  After the render flush, iterate `waitingDeclarations` for any entries that are still
-  `undefined` and emit diagnostics then. This converts 1428 live effects into a single
-  scan at render-complete time, eliminating 1428 effects + their WeakMap subscriptions.
-  Edge case: incremental re-renders where a refkey temporarily goes undefined — handle by
-  registering a one-time post-flush callback from within the computed instead of a
-  persistent effect.
-risk: medium
-```
-
-The diagnostic effect's only purpose is to emit a warning when `result.value === undefined`.
-For fully-resolved renders this is pure overhead. A post-flush scan (`scheduler.onIdle` or
-`watchEffect` deferred) can replace all 1428 per-resolve effects with a single O(n) walk
-at the end of each flush.
-
----
-
-## slice-id: take-symbols-plain-set
-
-```yaml
-status: pending
-estimated_impact_ms: 180
-estimated_impact_mb: 10
-category: symbols
-files:
-  - packages/core/src/symbols/symbol-flow.ts
-rationale: |
-  trace: symbol-flow.js:10 creates 1332 refs with 6588 track edges (avg 4.95 trackers/ref).
-  The ref here is the `shallowReactive(new Set<OutputSymbol>())` returned by `takeSymbols()`.
-  Making the Set shallowReactive adds it to Vue's reactive proxy maps (reactiveMap WeakMap +
-  targetMap WeakMap), creates a proxy object, and causes every consumer that reads `.size`
-  or iterates to subscribe reactively.
-  trace: 0 write_edges — the reactive Set is populated once during symbol emission and
-  never mutated again.
-  heap: Vue shallowReactiveMap WeakMap retains 1 MB; shallowReadonlyMap retains 1 MB.
-  Each shallowReactive() call contributes entries to both.
-
-  `takeSymbols()` (symbol-flow.ts:24) always creates a shallowReactive Set, even when
-  the caller (e.g. InterfaceMember) only calls `takeSymbols()` with no callback and then
-  reads the returned Set inside an effect once. The reactive proxy is needed only when
-  the returned Set is watched reactively across time. For the no-callback case the caller
-  already puts the read inside an `effect()` manually — making the Set itself reactive
-  is redundant.
-
-  Opportunity: when `cb` is undefined (majority of call sites), return a plain
-  `new Set<OutputSymbol>()` instead of `shallowReactive(new Set())`. The `emitSymbol`
-  path only needs to call `set.add(symbol)` — it does not need to trigger Vue watchers.
-  Internal callers that run effects on the returned set (e.g. InterfaceMember's
-  moveTakenMembers effect) will still see correct results because they run after
-  symbol emission completes within the same synchronous render pass.
+  - packages/core/src/devtools/devtools-server.ts
 risk: low
 ```
 
-`shallowReactive` is needed only when the Set is observed by a Vue computed/watchEffect
-across re-renders. For one-shot symbol collection within a single component instantiation,
-a plain Set suffices. No public API change is needed — the return type `Set<OutputSymbol>`
-stays identical.
+`isDevtoolsEnabled()` calls `isNodeEnvironment()` on every invocation. `isNodeEnvironment()` performs three property accesses and a typeof check:
 
----
-
-## slice-id: reference-subscription-consolidation
-
-```yaml
-status: pending
-estimated_impact_ms: 160
-estimated_impact_mb: 12
-category: symbols
-files:
-  - packages/typescript/src/symbols/reference.tsx
-  - packages/typescript/src/components/Reference.tsx
-rationale: |
-  trace: Reference.js:13 (resolveResult memo) — 1188 refs, 7604 track edges (avg 6.4/ref).
-  trace: reference.js:14 (ref() memo result) — 1428 refs, 3092 track edges (avg 2.17/ref).
-  trace: Reference.js:15 (symbolRef = computed(() => reference()[1])) — 1428 refs,
-  3092 track edges (avg 2.17/ref).
-  Combined: 4044 refs and 13,788 subscriptions from a single 1428-instance Reference component.
-
-  In Reference.tsx, each instance creates:
-    1. `reference = ref(refkey)` → calls `resolve()` → creates resolveResult computed (7604 subs).
-    2. `symbolRef = computed(() => reference()[1])` which unwraps the tuple (3092 subs).
-    3. The render return `() => reference()[0]` adds more subscriptions via the render effect.
-  The `ref()` function in reference.tsx already wraps resolveResult in a `memo()` that
-  builds the [text, symbol] tuple. `symbolRef` then extracts `[1]` from that same memo —
-  causing the resolveResult computed to be tracked twice per instance.
-
-  Opportunity: expose `resolveResult` directly from `ref()` (or return a structured object
-  with named `.text` and `.symbol` accessors) so Reference.tsx can derive `symbolRef`
-  without an additional computed layer. This merges two subscription chains into one,
-  roughly halving the subscription count on the inner resolveResult computed.
-risk: low
+```ts
+function isNodeEnvironment() {
+  return (
+    typeof process !== "undefined" &&
+    typeof process.versions === "object" &&
+    Boolean(process.versions?.node)
+  );
+}
+export function isDevtoolsEnabled() {
+  if (!isNodeEnvironment()) return false;
+  return devtoolsExplicitlyEnabled || Boolean(process.env.ALLOY_DEBUG);
+}
 ```
 
-The `ref()` function returns `() => [text, symbol]`. Reference.tsx currently calls it once
-for text and wraps it in another `computed()` for the symbol. If `ref()` instead returns
-`{ text: () => Children, symbolRef: ShallowRef<TSOutputSymbol | undefined> }` both
-consumers share the single underlying resolveResult computed, eliminating the redundant
-layer. Public API (`ref()` return type) changes are internal to the typescript package.
+Both values are stable for the lifetime of the process: the Node.js environment is established at startup and `process.env.ALLOY_DEBUG` is conventionally set before launch. Yet `isDevtoolsEnabled()` is called on every hot path in the render loop — from `appendTextNode`, `appendPrintHook`, `appendCustomContext`, every `effect()` creation (via `isDebugEnabled()`), every `ref()` creation, and the `renderWorker` main loop — producing 223 samples (10.5% of all CPU) in a single emitter-like-schema run.
 
----
+**Evidence:**
+- cpuprofile: `isDevtoolsEnabled` = 185 self-hits (8.7% of 2120 total; ≈ 341 ms at 1.84 ms/sample). `isNodeEnvironment` = 38 self-hits (1.8%; ≈ 70 ms). Combined: **10.5%, ≈ 410 ms**.
+- heap: `seenRefs` WeakMap retains 2 MB (populated by `refId()` which is called unconditionally on every `ref()` because the `isDebugEnabled()` guard — which calls `isDevtoolsEnabled()` — comes inside `debug.effect.registerRef`, not at the call site). Eliminating the WeakMap cost is the domain of `debug-hook-gate`; this slice only caches the flag.
 
-## slice-id: output-symbol-name-track-reduce
+**Concrete approach:**
 
-```yaml
-status: pending
-estimated_impact_ms: 130
-estimated_impact_mb: 8
-category: symbols
-files:
-  - packages/core/src/symbols/output-symbol.ts
-rationale: |
-  trace: output-symbol.js:92 — 2508 refs, 3952 track edges (avg 1.58/ref).
-  trace: output-symbol.js:230 — 888 refs, 1680 track edges (avg 1.89/ref).
-  These correspond to OutputSymbol's `name` getter (track + get deconflictedName/userName)
-  and `spaces` getter (track + get spaces array), both using Vue's raw track() API.
-  Combined: 3396 tracked property refs with 5632 total subscriptions.
-  trace: 0 write_edges — symbol names and spaces never change in the benchmark after
-  initial construction. All subscribers pay continuous tracking overhead for immutable data.
-  heap: Output-symbol shapes are among the most numerous objects; shrinking per-instance
-  reactive footprint compounds across 2628 symbols (trace: symbols count = 2628).
+In `devtools-server.ts`, cache the stable values at module load:
 
-  OutputSymbol uses Vue's low-level `track(this, TrackOpTypes.GET, "name")` and
-  `trigger(this, TriggerOpTypes.SET, "name", ...)` directly. This bypasses Vue's
-  dependency-deduplication optimizations that `computed()` would apply. Every `.name` read
-  inside any reactive computation adds a fresh subscription even if the same computation
-  already subscribed — there is no memoization between reads.
+```ts
+// Cache once at module startup — both are stable for process lifetime.
+const _isNode: boolean = (() => {
+  try {
+    return (
+      typeof process !== "undefined" &&
+      typeof process.versions === "object" &&
+      Boolean(process.versions?.node)
+    );
+  } catch {
+    return false;
+  }
+})();
 
-  Opportunity: wrap the three most-tracked properties (name, deconflictedName, spaces)
-  in a single `shallowReactive({ name, deconflictedName, spaces })` sub-object and proxy
-  reads/writes through it. Vue's shallowReactive tracks object keys as a unit; a computed
-  that reads multiple properties of the same reactive object adds only one subscription
-  per key per effect rather than per-read. Alternatively, expose a single `computed`
-  for the `name` value so downstream consumers do not repeatedly subscribe.
-risk: medium
+const _envDebugEnabled: boolean = _isNode && Boolean(process.env.ALLOY_DEBUG);
+
+export function isDevtoolsEnabled(): boolean {
+  return _envDebugEnabled || devtoolsExplicitlyEnabled;
+}
 ```
 
-The current manual track/trigger is the lowest-level Vue API and loses deduplication.
-Switching to a `shallowReactive` sub-record for the mutable name properties enables Vue's
-built-in deduplication and eliminates duplicate subscriptions from the same effect.
+Remove `isNodeEnvironment()` entirely (it is not exported; the only caller is `isDevtoolsEnabled()`). The `getCwd()` helper that also calls `isNodeEnvironment()` can inline the cached constant.
+
+This reduces `isDevtoolsEnabled()` to a single boolean OR of two module-level variables — essentially free at call sites.
 
 ---
 
-## slice-id: importsatement-sort-key-cache
+
+_ralph note (rejected): developer modified benchmark scenario/harness files_
+
+## slice-id: debug-hook-gate
 
 ```yaml
-status: pending
-estimated_impact_ms: 100
-estimated_impact_mb: 5
-category: symbols
-files:
-  - packages/typescript/src/components/ImportStatement.tsx
-rationale: |
-  trace: ImportStatement.js:63 — 187 refs, 2175 track edges (avg 11.63/ref) — the
-  highest per-ref fanout in the entire subscription budget.
-  This corresponds to `sortedNamedImports = computed(() => [...symbolSplit.value.named].sort(
-    (a, b) => a.local.name.localeCompare(b.local.name)))` (ImportStatement.tsx).
-  The `.localeCompare` sort reads `a.local.name` and `b.local.name` inside the computed.
-  Each `.name` access on OutputSymbol calls `track(this, TrackOpTypes.GET, "name")`
-  (output-symbol.ts), subscribing the `sortedNamedImports` computed to every symbol's
-  `name` ref. With ~11 named imports per ImportStatement × 2 comparisons each, the
-  computed subscribes to ~11 symbol-name refs.
-  trace: 0 write_edges — no name changes occur in the benchmark.
-  Combined with the 187 ImportStatement instances: 2175 idle subscriptions on symbol names.
-
-  Opportunity: pre-extract sort keys outside the computed using `untrack()` to avoid
-  reactive subscriptions, or derive the sort order from a stable `namekey` (the string
-  passed at symbol creation time, which is inherently immutable). If the sort is based on
-  immutable keys, `sortedNamedImports` need not be a computed at all — compute it once
-  with `untrack()` and cache the result.
-risk: low
-```
-
-`symbolSplit.value.named` is already a reactive dependency; the sort order based on
-`.local.name` is determined at symbol-creation time and never changes. Wrapping the sort
-callback reads in `untrack()` removes 11 reactive subscriptions per ImportStatement
-instance while keeping the overall sort reactive to the named-import list itself.
-
----
-
-## slice-id: for-outer-memo-elision
-
-```yaml
-status: pending
-estimated_impact_ms: 90
-estimated_impact_mb: 6
-category: reactivity
-files:
-  - packages/core/src/components/For.tsx
-  - packages/core/src/utils.tsx
-rationale: |
-  trace: For.js:35 — 2149 refs (memo:For effect), 2149 track edges (avg 1/ref).
-  trace: For.js:33 — 1969 unnamed memos from mapJoin's inner memo wrappers.
-  For's implementation (For.tsx) wraps mapJoin in `memo(() => mapJoin(...), undefined, "For")`.
-  This outer memo (2149 instances) re-runs whenever `props.each` or its reactive deps change.
-  For static `each` (plain array), the memo subscribes to nothing but still pays the
-  allocation cost: a computed object, initial run, subscription link in Vue's dep graph.
-  component stats: For creates 2.9 effects/instance (highest for common list components),
-  8.2 refs/instance.
-
-  Opportunity: if `props.each` is a plain array (not a Ref<> or function), skip the outer
-  `memo()` wrapper and call `mapJoin()` directly during component construction. The inner
-  mapJoin already handles reactive updates when needed. This eliminates 2149 computed
-  objects and their associated Vue WeakMap entries.
-  Dependency: the static-source detection from slice `mapjoin-static-joiner-elision`
-  can be reused here.
-risk: low
-```
-
-For already branches on `typeof maybeRef === "function"` and `isRef(maybeRef)`. Extending
-this guard to bypass the outer memo when `each` is a plain iterable eliminates 2149
-reactive wrapper objects with no behavior change for the common static-array case.
-
----
-
-## slice-id: output-scope-owner-symbol-fanout
-
-```yaml
-status: pending
-estimated_impact_ms: 60
-estimated_impact_mb: 4
-category: symbols
-files:
-  - packages/core/src/symbols/output-scope.ts
-rationale: |
-  trace: output-scope.js:188 — 12 OutputScope instances, each ownerSymbol reactive-property
-  ref tracked by 74 effects (avg 74 trackers/ref) = 888 subscriptions on just 12 refs.
-  This is the highest single-ref tracker count in the benchmark.
-  The ownerSymbol getter (output-scope.ts ~line 188) calls Vue's `track(this, ..., "ownerSymbol")`.
-  74 effects per scope × 12 scopes = 888 subscriptions; the `ownerSymbol` is set once in
-  the constructor and never mutated (0 write_edges).
-
-  The high fanout arises because every child component that resolves a refkey through a
-  MemberScope reads `scope.ownerSymbol` reactively — the binder traverses the scope chain
-  and each MemberScope.ownerSymbol read creates a new subscription. With ~78 InterfaceMember
-  instances per scope (1200 members / 12 scopes ≈ 100), each accessing ownerSymbol through
-  resolution, the fanout grows proportionally.
-
-  Opportunity: cache the result of `scope.ownerSymbol` in a per-scope `computed()` so
-  that all consumers of a single scope's ownerSymbol share one subscription point rather
-  than each adding their own. Alternatively, mark ownerSymbol as `readonly` at the type
-  level after construction and use `markRaw()` to prevent Vue tracking entirely (valid
-  since it never changes post-construction in any supported usage).
-risk: low
-```
-
-Since ownerSymbol is set in the constructor and then only read, it qualifies as structurally
-immutable. Calling `markRaw()` on the scope object (or removing the `track()` call from the
-`ownerSymbol` getter and using a plain property read) would convert 888 subscriptions to 0
-with no behavior change for this scenario. For the reactive case (ownerSymbol that can change
-post-construction), a targeted `shallowRef` on only the mutable case is cleaner.
-
----
-
-## slice-id: vue-weakmap-per-reactive-object
-
-```yaml
-status: pending
-estimated_impact_ms: 200
-estimated_impact_mb: 30
+status: rejected
+estimated_impact_ms: 175
+estimated_impact_mb: 2
 category: reactivity
 files:
   - packages/core/src/reactivity.ts
-  - packages/core/src/symbols/output-symbol.ts
-  - packages/core/src/symbols/output-scope.ts
-rationale: |
-  heap: Vue reactivity WeakMaps retain 6.8 MB total:
-    @74989 WeakMap (seenRefs): 2 MB
-    @82829 WeakMap (nodesToContext): 2 MB
-    @75013 WeakMap (shallowReactiveMap): 1 MB
-    @75039 WeakMap (shallowReadonlyMap): 1 MB
-    @81555 WeakMap (reactiveMap): 262 KB
-    @81573 WeakMap (targetMap): 262 KB
-  Each call to `reactive()`, `shallowReactive()`, `computed()`, `ref()`, or `effect()`
-  adds at least one entry to targetMap or reactiveMap. With 123,747 effects + 90,473 refs
-  created, WeakMap churn is substantial.
-  trace: 65.8% of refs are never tracked (60% of effects track nothing). These represent
-  allocations that are pure overhead — WeakMap entries that carry no reactive payoff.
+risk: low
+```
 
-  Opportunity: audit `output-symbol.ts` and `output-scope.ts` for reactive object
-  patterns that can be replaced with `markRaw()` + explicit dirty flags. Properties
-  that are known to be set-once (e.g., `binder`, `scope` on OutputSymbol; `parent` on
-  OutputScope) should be plain fields. This reduces the number of objects registered in
-  targetMap and the corresponding sub-arrays in the dependency graph.
+Every call to `ref()`, `shallowRef()`, `computed()`, `toRef()`, and `toRefs()` in `reactivity.ts` unconditionally evaluates `refId(result)` as an argument to `debug.effect.registerRef()`, even when debug is disabled. JavaScript evaluates function arguments before calling the function, so `refId()` — which does a WeakMap lookup and conditional write — runs on every ref creation. Similarly, every `effect()` call always calls `resolveOwnerEffectContextId(context)` — a context-chain walk — as an argument to `debug.effect.register()`, even when debug is disabled.
 
-  This is a lower-confidence estimate since we lack function-level CPU data, but the
-  6.8 MB WeakMap footprint at 288 MB total (2.4%) and the known per-ref allocation cost
-  in V8's WeakMap implementation (~80 bytes per entry) make it a credible target.
+**Evidence (updated with real cpuprofile):**
+- cpuprofile: `resolveOwnerEffectContextId` = 53 self-hits (2.5%; ≈ 97 ms). `refId` = 42 self-hits (2.0%; ≈ 77 ms). Effect body at `reactivity.js:L254` = 28 self-hits (1.3%). Combined reactive debug overhead: **≈ 175 ms**.
+- heap: `seenRefs` WeakMap retains 2 MB across 90,473 entries — populated exclusively by `refId()` calls on every ref creation (reactivity.ts lines 461–544).
+- source: `reactivity.ts` lines 461–468 (`ref`), 493–502 (`shallowRef`), 505–513 (`computed`), 516–531 (`toRef`), 534–545 (`toRefs`); lines 258–264 (`effect()`).
+
+**Note:** This slice is independent of `devtools-check-cache` but ideally follows it. After `devtools-check-cache`, `isDebugEnabled()` becomes O(1) (a boolean OR), so the gate added here becomes nearly free when debug is off.
+
+**Concrete approach:**
+
+In each of `ref()`, `shallowRef()`, `computed()`, `toRef()`, and `toRefs()`, wrap the `debug.effect.registerRef(...)` call:
+
+```ts
+// Before (always runs refId()):
+debug.effect.registerRef({
+  id: refId(result),
+  kind: "ref",
+  createdAt: captureSourceLocation(),
+  createdByEffectId: globalContext?.meta?.effectId,
+});
+
+// After:
+if (isDebugEnabled()) {
+  debug.effect.registerRef({
+    id: refId(result),
+    kind: "ref",
+    createdAt: captureSourceLocation(),
+    createdByEffectId: globalContext?.meta?.effectId,
+  });
+}
+```
+
+In `effect()`, gate the `debug.effect.register()` call:
+
+```ts
+const effectId = isDebugEnabled() ? debug.effect.register({
+  name: debugInfo?.name ?? fn.name,
+  type: debugInfo?.type,
+  createdAt: captureSourceLocation(),
+  contextId: context.id,
+  ownerContextId: resolveOwnerEffectContextId(context),
+}) : -1;
+```
+
+The existing `if (effectId !== -1) { ... }` block that gates `onTrack`/`onTrigger` assignment already handles the effect side correctly.
+
+---
+
+
+_ralph note (rejected): developer modified benchmark scenario/harness files_
+
+## slice-id: scheduler-array-queue
+
+```yaml
+status: rejected
+estimated_impact_ms: 70
+estimated_impact_mb: 0
+category: scheduler
+files:
+  - packages/core/src/scheduler.ts
 risk: medium
 ```
 
-LOW CONFIDENCE (heap data only, no CPU hits). Identify the 10–20 most-allocated reactive
-objects using `memlab trace --node-id` on the largest WeakMap entries, then determine which
-fields on those objects are set-once and can be `markRaw()`-ed or converted to plain fields.
+`takeJob()` uses `Set.values().next().value` to dequeue the first item from `immediateQueue` and `queue`. Every call to `Set.values()` allocates a new iterator object in V8. With up to 122,319 effects per run being scheduled and dequeued (one `takeJob` call per effect flush), this produces constant iterator churn. At 52 self-hits (2.5% ≈ 96 ms) it is the third-highest non-intrinsic alloy hotspot in the profile.
+
+```ts
+// Current — allocates iterator on every dequeue:
+function takeJob() {
+  if (immediateQueue.size > 0) {
+    const job = immediateQueue.values().next().value!;
+    immediateQueue.delete(job);
+    return job;
+  }
+  if (queue.size > 0) {
+    const job = queue.values().next().value!;
+    queue.delete(job);
+    return job;
+  }
+  return null;
+}
+```
+
+The `Set` is retained for its **deduplication** semantics (adding the same job twice only runs it once). The dequeue-efficiency fix does not need to change that.
+
+**Evidence:**
+- cpuprofile: `takeJob` = 52 self-hits (2.5%; ≈ 96 ms). This is the entire scheduler dequeue loop — the function body is trivial, so the overhead is the iterator allocation plus `Set.delete`.
+
+**Concrete approach:**
+
+Replace the `Set.values().next().value` call with a `for...of` break pattern, which V8 can optimize to a stack-allocated iterator for built-in Set:
+
+```ts
+function firstOf<T>(set: Set<T>): T | undefined {
+  for (const item of set) return item;
+  return undefined;
+}
+
+function takeJob(): QueueJob | null {
+  if (immediateQueue.size > 0) {
+    const job = firstOf(immediateQueue)!;
+    immediateQueue.delete(job);
+    return job;
+  }
+  if (queue.size > 0) {
+    const job = firstOf(queue)!;
+    queue.delete(job);
+    return job;
+  }
+  return null;
+}
+```
+
+Risk is medium because deduplication semantics and ordering (effects triggered multiple times before flush run once in insertion order) must be preserved; verify with existing scheduler tests.
 
 ---
+
+
+_ralph note (rejected): no measurable improvement_
+
+## slice-id: mergeprops-plain-fast-path
+
+```yaml
+status: done
+estimated_impact_ms: 50
+estimated_impact_mb: 0
+category: jsx
+files:
+  - packages/core/src/props-combinators.ts
+risk: medium
+```
+
+`mergeProps()` and `splitProps()` are called on every JSX element render that spreads or splits props. The current `mergeProps` unconditionally calls `Object.getOwnPropertyDescriptors(source)` — allocating a new descriptor object per property — and wraps every key in an `Object.defineProperty` getter, even for plain non-reactive objects. `splitProps` similarly calls `getOwnPropertyDescriptors`.
+
+For plain-object (non-reactive) callers, the lazy getter is unnecessary: the values are already resolved at call time and won't change.
+
+**Evidence:**
+- cpuprofile: `mergeProps` = 22 self-hits (1.0%; ≈ 40 ms). `splitProps` = 18 self-hits (0.8%; ≈ 33 ms). Combined: **1.8%, ≈ 74 ms**.
+- source: `packages/core/src/props-combinators.ts` lines 16–40 (`mergeProps`), 51–95 (`splitProps`).
+
+**Concrete approach:**
+
+In `mergeProps`, add a plain-object fast path when all sources are non-function (non-reactive):
+
+```ts
+export function mergeProps(...sources: any): any {
+  // Fast path: all plain objects — eager assign, no lazy getters needed.
+  if (sources.every((s: any) => s == null || (typeof s === "object" && !isReactive(s)))) {
+    return Object.assign({}, ...sources.filter(Boolean));
+  }
+  // ... existing descriptor/getter path for reactive sources ...
+}
+```
+
+Risk is medium because `mergeProps` is part of the public API surface and the lazy-getter semantics are documented. A behavior change (eager vs lazy) is only safe when no source is reactive or a getter. Add a check and fall back to the existing path if any source is reactive.
+
+---
+
+## slice-id: begin-component-noop-session
+
+```yaml
+status: in-progress
+estimated_impact_ms: 8
+estimated_impact_mb: 13
+category: other
+files:
+  - packages/core/src/debug/render.ts
+risk: low
+```
+
+`beginComponent()` in `debug/render.ts` returns early with `!isDebugEnabled()`, but creates a **fresh object literal** for every component even in that no-op path:
+
+```ts
+if (!isDebugEnabled()) {
+  return {
+    recordDirectory() {},
+    recordFile() {},
+    dispose() {},
+  };
+}
+```
+
+With 27,681 components rendered per emitter-like-schema run, this allocates 27,681 identical objects × 464 bytes each ≈ **12.8 MB** of short-lived garbage that immediately becomes collectable. These objects appear as `Object { dispose, recordDirectory, recordFile }` in the heap shape report.
+
+**Evidence:**
+- heap: `Object { dispose, recordDirectory, recordFile }` retains 12.8 MB across 27,681 instances (≈ 464 B each). `[<function scope>] --debugSession-->: 27,680` edges confirm one per component render. When debug is disabled all instances are identical no-ops.
+- cpuprofile: `effect.debug.name` at `render.js:L633` = 18 self-hits (0.8%); the debug session allocation is in the per-component setup path.
+- source: `packages/core/src/debug/render.ts` lines 539–545.
+
+**Concrete approach:**
+
+Use a module-level singleton for the no-op session:
+
+```ts
+const noopSession: ComponentDebugSession = {
+  recordDirectory() {},
+  recordFile() {},
+  dispose() {},
+};
+
+export function beginComponent(options: BeginComponentOptions): ComponentDebugSession {
+  if (!isDebugEnabled()) {
+    return noopSession;
+  }
+  // ... existing debug path ...
+}
+```
+
+Low risk: the session is consumed within the same render effect scope and never mutated; returning the same object is safe.
+
+---
+
+## slice-id: access-expression-no-refkey-computed
+
+```yaml
+status: in-progress
+estimated_impact_ms: 7
+estimated_impact_mb: 0
+category: reactivity
+files:
+  - packages/core/src/components/AccessExpression.tsx
+risk: low
+```
+
+In `createAccessExpression`, the `collectParts()` function creates a `symbolSource = computed(...)` for every `Part` child. When `partProps.refkey` is `undefined` and `partProps.symbol` is a directly-supplied `OutputSymbol`, the computed reads a non-reactive value and creates no reactive dependencies. It is evaluated once, read once by the `desc` computed, and then never invalidated.
+
+**Evidence (updated):**
+- cpuprofile: `collectParts` = 4 self-hits (0.2%; ≈ 7 ms). Reduced from prior estimate; downgraded accordingly.
+- trace (corroborative): 2,616 `render:MemberExpression` effects all have zero-track (100%), consistent with static symbol resolution.
+- source: `packages/core/src/components/AccessExpression.tsx` lines 179–186.
+
+**Concrete approach:**
+
+In `collectParts()`, detect the static-symbol case and skip the `computed` wrapper:
+
+```ts
+let resolvedSymbol: OutputSymbol | undefined;
+let symbolSource: Ref<OutputSymbol | undefined> | undefined;
+
+if (partProps.refkey) {
+  symbolSource = computed(() => symbolForRefkey(partProps.refkey!).value);
+} else {
+  resolvedSymbol = partProps.symbol;
+}
+
+const desc = computed(() =>
+  config.createDescriptor(
+    partProps,
+    symbolSource ? symbolSource.value : resolvedSymbol,
+    first,
+  ),
+);
+```
+
+---
+
+## slice-id: for-static-direct-call
+
+```yaml
+status: in-progress
+estimated_impact_ms: 0
+estimated_impact_mb: 0
+category: reactivity
+files:
+  - packages/core/src/components/For.tsx
+risk: low
+```
+
+`For` always wraps `mapJoin` in a `memo()`, creating 1 `shallowRef` + 1 `effect` per `For` instance to make the list reactive to changes in `each`. When `each` is a plain static array (not a `Ref` or a function), the memo effect runs once, creates zero reactive deps, and never re-runs.
+
+**Note on rejected slice:** The previously rejected `mapjoin-static-joiner-elision` targeted infrastructure *inside* `mapJoin`. This slice targets only the outer `memo()` wrapper in `For.tsx` and does NOT modify `mapJoin` internals.
+
+**Evidence (updated — LOW CONFIDENCE):**
+- cpuprofile: `For.tsx` is not visible anywhere in the top-30 self-hit frames of the new profile. No cpuprofile self-time evidence. Estimated impact revised to 0 ms pending a profile run that shows `For` overhead.
+- trace (corroborative only): 2,149 `render:For` effects, 100% zero-track — suggests static arrays throughout. But trace-only evidence is insufficient per Evidence priority rules.
+
+**Concrete approach:**
+
+In `For`, detect the static-array case and bypass the memo:
+
+```ts
+const each = props.each;
+if (!isRef(each) && typeof each !== "function") {
+  return (mapJoin as any)(() => each, cb, options);
+}
+return memo(
+  () => (mapJoin as any)(
+    typeof each === "function" ? each : () => (each as Ref<any>).value,
+    cb, options,
+  ),
+  undefined,
+  "For",
+);
+```
+
+---
+
+## Notes
+
+**GC at 14.1% (298 samples):** GC pressure is the single largest overhead category in the profile. It is a consequence of the allocation patterns addressed by `begin-component-noop-session` (12.8 MB per run), `debug-hook-gate` (90,473 seenRefs WeakMap entries), and `scheduler-array-queue` (iterator churn). Expect GC percentage to decrease as these slices land.
+
+**`renderWorker` (4.6%) and `appendChild` (3.1%):** The render loop itself is the core path; most overhead here is intrinsic. The `debug.render.appendTextNode` → `recordTextNode` → `isDebugEnabled()` chain that fires on every text node is already addressed by `devtools-check-cache` (making `isDebugEnabled()` O(1)).
+
+**`createReactiveObject` (3.0%) and `track` (1.7%) from Vue:** Intrinsic to Vue's reactive system. Not actionable without replacing the reactivity engine.
+
+**`memo` at 1.5% (32 hits):** Creating memos allocates both a `shallowRef` and an `effect`. With ~52,845 memos per run this is intrinsic to the Alloy render model. Not actionable without changing rendering semantics.
+
+**`reactive-union-set.js` at 3.1% total:** Hot via `createIndex`, `add`, and `_handleAdd`. These are intrinsic to symbol declaration tracking. Not actionable without a significant redesign.
+
+**Context objects at ~102 MB (103,788 instances):** Each `effect()` and `root()` call creates a `Context` object. With 122,319 effects per run, this is expected. Reducing per-Context size would require profiling allocations more carefully; not addressed in this iteration.
+
+**`OutputMemberSpace` at 21.2 MB (13,296 instances):** Appears for the first time in this heap snapshot. Likely tied to the 2,628 symbols × ~5 member spaces each. Not yet corroborated by cpuprofile self-time; filed as a note to investigate in a future iteration.
+
+**shallowReactiveMap / shallowReadonlyMap WeakMaps (1 MB each):** Expected cost of the corrected `takeSymbols(cb)` implementation. Not actionable.
+
+**All 90,473 refs have 0 write edges:** In this benchmark, no ref is ever invalidated after creation. All reactive overhead is setup cost only; optimizations targeting write throughput have zero leverage here.

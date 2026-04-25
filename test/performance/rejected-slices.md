@@ -60,21 +60,29 @@ self-time.
 ## slice-id: scheduler-array-queue
 
 ```yaml
-status: rejected
+status: retry-eligible
 reverted_at: 2026-04-24
+re_eligible_at: 2026-04-24
 files_targeted:
   - packages/core/src/scheduler.ts
 ```
 
 Replaced `set.values().next().value` with a `for...of` loop that `break`s after
 the first item, on the theory that V8 could stack-allocate the iterator. Measured
-**+23.1% CPU regression** on emitter-like-schema. `for...of` desugars to a
-`Symbol.iterator` method lookup, a fresh iterator object, a `.next()` + `.done`
-check per pass, and a `try/finally` for the `return()` hook — more overhead
-than the plain `.values().next()` it replaced. `takeJob()` is called 120k+
-times per run, so the extra per-iteration work dominates. A genuine scheduler
-win needs structural change (circular array + dedup Set, or a FIFO free-list),
-not iterator micro-tuning on the same data structure.
+**+23.1% CPU regression** on emitter-like-schema **— but that measurement is
+suspect**. At the time, the cpuprofile was being captured against the wrong
+process (parent harness, not the scenario worker), trace overhead wasn't yet
+separated from clean CPU runs, and the baseline had been polluted by the
+subsequently-reverted `mergeprops-plain-fast-path` commit.
+
+**Retry is eligible now that the measurement pipeline has been fixed** (child-
+process cpuprofile via `ALLOY_PERF_CPUPROF_DIR`, separated trace / heap / clean
+CPU passes, fresh baseline). If a retry still regresses, the rejection stands:
+`takeJob` is called 120k+ times/run, so the `Symbol.iterator` lookup + per-pass
+`.done` check + `try/finally` for the `return()` hook may genuinely outweigh the
+iterator allocation savings. A genuine scheduler win likely needs structural
+change (circular array + dedup Set, or a FIFO free-list) — any retry should
+consider that shape rather than pure iterator micro-tuning.
 
 ## slice-id: mergeprops-plain-fast-path
 

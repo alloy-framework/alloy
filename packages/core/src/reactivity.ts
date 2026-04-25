@@ -262,6 +262,10 @@ export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
       final && stop(runner);
     };
 
+    // Register cleanup on parent BEFORE running the effect. fn() may create child
+    // reactive effects (e.g. inner memos) that register their own cleanup on
+    // context.disposables. The parent must always hold this hook so child effects
+    // are disposed when the parent scope is torn down — even for static memos.
     onCleanup(() => cleanupFn(true));
 
     runner = vueEffect(() => {
@@ -279,9 +283,21 @@ export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
     }, { flags: 1 | 4 | 32, scheduler: scheduler() } as any);
 
     // Static short-circuit: if the first run tracked no reactive dependencies,
-    // the value is constant. Stop the effect and return a plain closure over the
-    // cached value, eliminating ongoing ReactiveEffect / shallowRef overhead.
-    if ((runner.effect as any).deps === undefined) {
+    // the value is constant. Stop the runner and return a plain closure.
+    //
+    // Vue 3.5 uses a doubly-linked list rooted at deps/depsTail on each
+    // ReactiveEffect (internal fields, not in the public TypeScript API).
+    // Both are undefined when no deps were tracked during the run.
+    // We check BOTH fields as a defensive measure: if Vue renames only one,
+    // the other being non-undefined prevents a false-positive that would
+    // silently freeze a reactive memo's value forever.
+    // Field names to re-validate on Vue upgrade: deps, depsTail (ReactiveEffect).
+    const eff = runner.effect as any;
+    if (eff.deps === undefined && eff.depsTail === undefined) {
+      // Stop the Vue ReactiveEffect — no deps, will never re-run. Do NOT call
+      // cleanupFn(true) here: context.disposables holds child-effect cleanup
+      // hooks from fn() that must live until the parent scope disposes (handled
+      // by the onCleanup registered above).
       stop(runner);
       const val = o.value as T;
       if (name) {

@@ -76,3 +76,14 @@ on reads, and V8 has JIT-optimized that proxy call site. The createReactiveObjec
 profiler cost is SETUP time (construction), not hot-path render reads — those .get() calls
 are near-zero cost per call due to V8 inline caching of the proxy trap. DO NOT attempt to
 eliminate these proxies without concrete evidence that the proxy construction cost dominates.
+
+## context-shape-stability: REJECTED — extra object fields cost more than IC monomorphism benefit
+Fix: initialized all 13 Context fields in both root() and effect() constructors in the same
+property order. Result: +30% CPU regression (4136ms post vs 3178ms pre, SD=1041ms very noisy).
+Adding 5 extra undefined-valued property slots per Context object increases per-instance size.
+With 103,788 instances × 5 extra × ~8 bytes ≈ 4MB more heap + more GC pressure.
+The V8 IC monomorphism benefit did NOT overcome the allocation/memory overhead.
+Also: root() and effect() diverge at property 2 in original code anyway (componentOwner vs owner
+ordering), so they were never sharing a hidden class chain to begin with.
+Suggest: split into EffectContext (full fields) + RootContext (minimal fields) as a followup,
+rather than fattening both to the same large size.

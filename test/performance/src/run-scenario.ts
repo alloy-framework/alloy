@@ -6,8 +6,15 @@ import v8 from "node:v8";
 
 interface ScenarioResult {
   name: string;
+  // CPU time spent inside `await runTest()` only — narrow attribution
+  // window. Excludes module load and V8 init.
   totalCpuMicros: number;
   heapUsedBytesDelta: number;
+  // CPU time spent loading the scenario module + transitive imports
+  // (i.e. the alloy framework). A real user pays this on every fresh
+  // invocation, so it is reported separately from the inner runTest
+  // window so the harness can sum them for "real-world" cost reporting.
+  moduleLoadCpuMicros: number;
   error?: string;
 }
 
@@ -23,12 +30,16 @@ async function main() {
     name: scenarioName,
     totalCpuMicros: 0,
     heapUsedBytesDelta: 0,
+    moduleLoadCpuMicros: 0,
   };
 
   let _holdResult: unknown; // keep retained so heap snapshot reflects the peak graph
   try {
     const modUrl = pathToFileURL(path.resolve(scenarioPath)).href;
+    const loadStart = process.cpuUsage();
     const mod = await import(modUrl);
+    const loadUsage = process.cpuUsage(loadStart);
+    result.moduleLoadCpuMicros = loadUsage.user + loadUsage.system;
     if (typeof mod.runTest !== "function")
       throw new Error("runTest() export missing");
 

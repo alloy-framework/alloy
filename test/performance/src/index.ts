@@ -1,6 +1,22 @@
-// Minimal performance harness
-// Discovers scenario directories under ../scenarios/*/index.ts
-// Each scenario exports async function runTest(): Promise<void>
+// Performance harness.
+//
+// Two modes:
+//
+//   1. Single mode (default): runs each scenario N times, reports
+//      mean ± sd. Optionally compares against a stored baseline.json
+//      (single-distribution Welch test if the baseline has raw samples,
+//      else just a delta).
+//
+//   2. Paired A/B mode (--compare-with <other-scenarios-dir>): runs the
+//      *same* scenario from two scenarios trees, alternating samples
+//      A,B,A,B,... so per-sample host-load drift cancels out. Reports
+//      paired t-test with 95% CI on the difference. This is the mode the
+//      ralph loop should use to gate accept/reject decisions.
+//
+// Each sample = a fresh `node` child running run-scenario.ts, which
+// imports the scenario module, calls runTest(), and emits a JSON line
+// containing per-sample CPU (inner runTest), heap delta, module-load CPU,
+// and child wall-clock time. The harness consumes stdout and aggregates.
 
 import Table from "cli-table3";
 import { Listr } from "listr2";
@@ -13,43 +29,12 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import pc from "picocolors";
 
-interface ScenarioResult {
-  name: string;
-  title: string;
-  description: string;
-  totalCpuMicros: number; // aggregated (min) user + system — see note in aggregator
-  heapUsedBytesDelta: number; // aggregated (avg)
-  runs: number;
-  cpuStdDevMicros?: number;
-  memStdDevBytes?: number;
-  error?: string;
-}
-
-function fmtMem(bytes: number): string {
-  const sign = bytes < 0 ? "-" : "";
-  let n = Math.abs(bytes);
-  const units = ["KB", "MB", "GB"];
-  n = n / 1024; // start at KB per requirement
-  let u = 0;
-  while (u < units.length - 1 && n >= 1024) {
-    n /= 1024;
-    u++;
-  }
-  return sign + n.toFixed(2) + " " + units[u];
-}
-
-function fmtCpu(totalMicros: number): string {
-  const ms = totalMicros / 1000;
-  return ms.toFixed(2) + " ms"; // always ms
-}
+import { mean, paired, stddev, welch, type WelchResult } from "./stats.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Argument parsing using Node's built-in parseArgs
-// Supports:
-//   --write-baseline <path>
-//   --baseline <path>
+// ── CLI args ────────────────────────────────────────────────────────────────
 const parsed = parseArgs({
   options: {
     "write-baseline": { type: "string" },
@@ -57,15 +42,54 @@ const parsed = parseArgs({
     scenario: { type: "string" },
     profile: { type: "boolean" },
     samples: { type: "string" },
+    "compare-with": { type: "string" },
+    metric: { type: "string" }, // "inner" (default) | "wall" | "child-cpu"
   },
   allowPositionals: true,
 });
+
 const baselinePath: string | undefined = parsed.values["write-baseline"];
 const baselineOptionPath: string | undefined = parsed.values.baseline;
+const compareWith: string | undefined = parsed.values["compare-with"];
+const metric: "inner" | "wall" | "child-cpu" =
+  (parsed.values.metric as any) ?? "inner";
+
 const scenariosDir = path.resolve(__dirname, "..", "scenarios");
+
 const entries = await readdir(scenariosDir, { withFileTypes: true });
 const scenarioDirs = entries.filter((e) => e.isDirectory());
-// Optional single-scenario filter
+
+// In paired mode the "compare-with" arg points at an alternate alloy
+// checkout (e.g. a worktree at the slice base sha). We resolve it to its
+// built-scenarios dir using a few common shapes:
+//   - already pointing at <...>/test/performance/dist/scenarios → use as-is
+//   - pointing at a worktree root → append test/performance/dist/scenarios
+//   - pointing at <...>/test/performance → append dist/scenarios
+async function resolveAltScenarios(p: string): Promise<string> {
+  const abs = path.resolve(p);
+  const candidates = [
+    abs,
+    path.join(abs, "dist/scenarios"),
+    path.join(abs, "test/performance/dist/scenarios"),
+  ];
+  const wantedNames = new Set(scenarioDirs.map((d) => d.name));
+  for (const c of candidates) {
+    try {
+      const stat = await readdir(c, { withFileTypes: true });
+      if (stat.some((d) => d.isDirectory() && wantedNames.has(d.name)))
+        return c;
+    } catch {
+      /* try next */
+    }
+  }
+  throw new Error(
+    `--compare-with: could not resolve scenarios dir from ${p}. ` +
+      `Tried: ${candidates.join(", ")}`,
+  );
+}
+const scenariosDirAlt =
+  compareWith ? await resolveAltScenarios(compareWith) : undefined;
+
 const scenarioFilter = parsed.values.scenario as string | undefined;
 const selectedScenarioDirs =
   scenarioFilter ?
@@ -74,23 +98,20 @@ const selectedScenarioDirs =
 if (scenarioFilter && selectedScenarioDirs.length === 0) {
   // eslint-disable-next-line no-console
   console.error(
-    `Scenario '${scenarioFilter}' not found. Available scenarios: ${scenarioDirs
+    `Scenario '${scenarioFilter}' not found. Available: ${scenarioDirs
       .map((d) => d.name)
       .sort()
       .join(", ")}`,
   );
   process.exit(1);
 }
-const results: ScenarioResult[] = [];
-let RUNS = 5;
 
-// samples option (before profile override)
+let RUNS = compareWith ? 30 : 5;
 const samplesOpt = parsed.values.samples as string | undefined;
 if (samplesOpt) {
   const n = parseInt(samplesOpt, 10);
-  if (!Number.isNaN(n) && n > 0) {
-    RUNS = n;
-  } else {
+  if (!Number.isNaN(n) && n > 0) RUNS = n;
+  else {
     // eslint-disable-next-line no-console
     console.error(`[perf] Ignoring invalid --samples value: ${samplesOpt}`);
   }
@@ -103,52 +124,103 @@ if (parsed.values.profile) {
     console.log(`[perf] --profile overrides --samples (${RUNS}) -> 1`);
   }
   childNodeArgs.push("--inspect-brk");
-  RUNS = 1; // single run when profiling for easier debugging
+  RUNS = 1;
   // eslint-disable-next-line no-console
   console.log("[perf] Profiling enabled --inspect-brk, connect with dev tools");
 }
-// If a heap snapshot path was requested, expose gc so run-scenario can force
-// a collection before writeHeapSnapshot — that way the snapshot reflects
-// genuinely-retained memory instead of ephemeral allocation noise.
-if (process.env.ALLOY_PERF_HEAPSNAPSHOT) {
-  childNodeArgs.push("--expose-gc");
-}
-
-// If a cpuprofile output dir was requested, attach --cpu-prof to the CHILD
-// process (where the scenario actually runs). Without this, --cpu-prof on
-// the parent harness profiles the spawn/wait loop, which is ~98% idle.
+if (process.env.ALLOY_PERF_HEAPSNAPSHOT) childNodeArgs.push("--expose-gc");
 if (process.env.ALLOY_PERF_CPUPROF_DIR) {
   childNodeArgs.push("--cpu-prof");
   childNodeArgs.push("--cpu-prof-dir", process.env.ALLOY_PERF_CPUPROF_DIR);
 }
 
-function mean(nums: number[]): number {
-  return nums.reduce((a, b) => a + b, 0) / nums.length;
+// ── Sampling ────────────────────────────────────────────────────────────────
+
+interface SampleRaw {
+  innerCpuMicros: number; // CPU spent inside runTest()
+  moduleLoadCpuMicros: number; // CPU spent loading the scenario module
+  heapBytesDelta: number;
+  childWallMicros: number; // wall-clock duration of the child node process
+  childCpuMicros: number; // total CPU billed to child (user+system) approx
 }
 
-function stddev(nums: number[]): number {
-  if (nums.length < 2) return 0;
-  const m = mean(nums);
-  const variance =
-    nums.reduce((acc, n) => acc + (n - m) ** 2, 0) / (nums.length - 1);
-  return Math.sqrt(variance);
+const runnerPath = path.join(__dirname, "run-scenario.js");
+
+async function runOneSample(
+  scenarioPath: string,
+  scenarioName: string,
+): Promise<{ ok: true; s: SampleRaw } | { ok: false; err: string }> {
+  const child = spawn(
+    process.execPath,
+    [...childNodeArgs, runnerPath, scenarioPath, scenarioName],
+    { stdio: ["ignore", "pipe", "pipe"], env: process.env },
+  );
+  let stdout = "";
+  let stderr = "";
+  child.stdout.setEncoding("utf8");
+  child.stdout.on("data", (d) => {
+    stdout += d;
+    process.stdout.write(d);
+  });
+  child.stderr.setEncoding("utf8");
+  child.stderr.on("data", (d) => {
+    stderr += d;
+    process.stderr.write(d);
+  });
+  const wallStart = process.hrtime.bigint();
+  const exitCode: number = await new Promise((resolve) =>
+    child.on("close", (code) => resolve(code ?? -1)),
+  );
+  const wallMicros = Number((process.hrtime.bigint() - wallStart) / 1000n);
+  if (exitCode !== 0) {
+    return { ok: false, err: stderr.trim() || `Child exited with ${exitCode}` };
+  }
+  try {
+    const line = stdout.trim().split(/\n/).pop() || "";
+    const parsed = JSON.parse(line);
+    if (parsed.error) return { ok: false, err: parsed.error };
+    const inner = (parsed.totalCpuMicros as number) ?? 0;
+    const load = (parsed.moduleLoadCpuMicros as number) ?? 0;
+    const heap = (parsed.heapUsedBytesDelta as number) ?? 0;
+    return {
+      ok: true,
+      s: {
+        innerCpuMicros: inner,
+        moduleLoadCpuMicros: load,
+        heapBytesDelta: heap,
+        childWallMicros: wallMicros,
+        // Approximate child CPU: inner runTest CPU + module-load CPU.
+        // (process.cpuUsage of a *child* from outside isn't free in node;
+        // this sum captures the same window without extra overhead and is
+        // dominated by the same components.)
+        childCpuMicros: inner + load,
+      },
+    };
+  } catch (e: any) {
+    return { ok: false, err: `Failed to parse output: ${e?.message || e}` };
+  }
 }
 
-// Preload scenario metadata
+// ── Scenario discovery ─────────────────────────────────────────────────────
+
 interface ScenarioMeta {
   name: string;
-  path: string;
+  pathA: string;
+  pathB?: string; // set in paired mode
   title: string;
   description: string;
 }
+
 const scenarios: ScenarioMeta[] = [];
 for (const dir of selectedScenarioDirs) {
   const name = dir.name;
-  const scenarioPath = path.join(scenariosDir, name, "index.js");
+  const pathA = path.join(scenariosDir, name, "index.js");
+  const pathB =
+    scenariosDirAlt ? path.join(scenariosDirAlt, name, "index.js") : undefined;
   let title = name;
   let description = "";
   try {
-    const metaMod: any = await import(pathToFileURL(scenarioPath).href);
+    const metaMod: any = await import(pathToFileURL(pathA).href);
     if (typeof metaMod.title === "string" && metaMod.title.trim())
       title = metaMod.title.trim();
     if (typeof metaMod.description === "string")
@@ -156,266 +228,378 @@ for (const dir of selectedScenarioDirs) {
   } catch {
     /* ignore */
   }
-  scenarios.push({ name, path: scenarioPath, title, description });
+  scenarios.push({ name, pathA, pathB, title, description });
 }
 
-type Ctx = {};
+// ── Result types ───────────────────────────────────────────────────────────
 
-const runnerPath = path.join(__dirname, "run-scenario.js");
+interface ScenarioResult {
+  name: string;
+  title: string;
+  description: string;
+  // Single-mode aggregates (the "B" side in paired mode)
+  cpuMean: number;
+  cpuSd: number;
+  memMean: number;
+  memSd: number;
+  wallMean: number;
+  wallSd: number;
+  loadMean: number;
+  loadSd: number;
+  runs: number;
+  samplesA?: SampleRaw[]; // populated only in paired mode (alt tree)
+  samplesB: SampleRaw[];
+  paired?: { cpu: WelchResult; mem: WelchResult; wall: WelchResult };
+  error?: string;
+}
 
-const tasks = new Listr<Ctx>(
+function pickMetric(s: SampleRaw): number {
+  switch (metric) {
+    case "wall":
+      return s.childWallMicros;
+    case "child-cpu":
+      return s.childCpuMicros;
+    case "inner":
+    default:
+      return s.innerCpuMicros;
+  }
+}
+
+// ── Main loop ──────────────────────────────────────────────────────────────
+
+const results: ScenarioResult[] = [];
+
+const tasks = new Listr(
   scenarios.map((s) => ({
     title: s.title !== s.name ? `${s.title} (${s.name})` : s.title,
-    task: async (_, task) => {
-      const cpuRuns: number[] = [];
-      const memRuns: number[] = [];
+    task: async (_: unknown, task: any) => {
+      const samplesA: SampleRaw[] = [];
+      const samplesB: SampleRaw[] = [];
       let error: string | undefined;
       for (let i = 0; i < RUNS; i++) {
-        task.output = `run ${i + 1}/${RUNS}`;
-        const child = spawn(
-          process.execPath,
-          [...childNodeArgs, runnerPath, s.path, s.name],
-          {
-            stdio: ["ignore", "pipe", "pipe"],
-            env: process.env,
-          },
-        );
-        let stdout = "";
-        let stderr = "";
-        child.stdout.setEncoding("utf8");
-        child.stdout.on("data", (d) => {
-          stdout += d;
-          // Echo child stdout so user can see scenario output
-          // Avoid interfering with Listr task titles; write raw
-          process.stdout.write(d);
-        });
-        child.stderr.setEncoding("utf8");
-        child.stderr.on("data", (d) => {
-          stderr += d;
-          process.stderr.write(d);
-        });
-        const exitCode: number = await new Promise((resolve) =>
-          child.on("close", (code) => resolve(code ?? -1)),
-        );
-        if (exitCode === 0) {
-          try {
-            const line = stdout.trim().split(/\n/).pop() || "";
-            const parsed = JSON.parse(line) as ScenarioResult;
-            if (parsed.error) {
-              error = parsed.error;
+        if (compareWith && s.pathB) {
+          // For each pair, randomize which side runs first to avoid any
+          // systematic order bias (e.g. CPU governor ramp affecting whichever
+          // side is always second). Use a deterministic per-iteration coin
+          // flip seeded by iteration index so runs are reproducible.
+          const aFirst = ((i * 2654435761) >>> 0) % 2 === 0;
+          if (aFirst) {
+            task.output = `paired ${i + 1}/${RUNS} (A→B)`;
+            const a = await runOneSample(s.pathB, s.name);
+            if (!a.ok) {
+              error = `A: ${a.err}`;
               break;
             }
-            cpuRuns.push(parsed.totalCpuMicros);
-            memRuns.push(parsed.heapUsedBytesDelta);
-          } catch (e: any) {
-            error = `Failed to parse output: ${e?.message || e}`;
-            break;
+            samplesA.push(a.s);
+            const b = await runOneSample(s.pathA, s.name);
+            if (!b.ok) {
+              error = `B: ${b.err}`;
+              break;
+            }
+            samplesB.push(b.s);
+          } else {
+            task.output = `paired ${i + 1}/${RUNS} (B→A)`;
+            const b = await runOneSample(s.pathA, s.name);
+            if (!b.ok) {
+              error = `B: ${b.err}`;
+              break;
+            }
+            samplesB.push(b.s);
+            const a = await runOneSample(s.pathB, s.name);
+            if (!a.ok) {
+              error = `A: ${a.err}`;
+              break;
+            }
+            samplesA.push(a.s);
           }
         } else {
-          error = stderr.trim() || `Child exited with code ${exitCode}`;
-          break;
+          task.output = `run ${i + 1}/${RUNS}`;
+          const r = await runOneSample(s.pathA, s.name);
+          if (!r.ok) {
+            error = r.err;
+            break;
+          }
+          samplesB.push(r.s);
         }
       }
-      // Discard the first few samples as host warmup. Each sample is a
-      // fresh node process, so V8 init / module load / disk cache for
-      // alloy's dist files etc. don't contaminate the timed window
-      // (see run-scenario.ts — measurement is around runTest() only via
-      // process.cpuUsage()). However, the *host* CPU governor and thermal
-      // state warm up across the first 1–3 samples (Linux ondemand
-      // typically takes ~300ms to clock up), which inflates those
-      // samples. Drop them so the reported number reflects steady-state
-      // cold-process cost.
-      const WARMUP = Math.min(3, Math.floor(cpuRuns.length / 3));
-      const cpuMeasured = cpuRuns.slice(WARMUP);
-      const memMeasured = memRuns.slice(WARMUP);
+
+      // Discard host-warmup samples in single mode only. In paired mode the
+      // alternation cancels host drift across the pair, so keep all samples.
+      let measuredA = samplesA;
+      let measuredB = samplesB;
+      if (!compareWith) {
+        const WARMUP = Math.min(3, Math.floor(samplesB.length / 3));
+        measuredB = samplesB.slice(WARMUP);
+      }
+
+      const cpuB = measuredB.map(pickMetric);
+      const memB = measuredB.map((s) => s.heapBytesDelta);
+      const wallB = measuredB.map((s) => s.childWallMicros);
+      const loadB = measuredB.map((s) => s.moduleLoadCpuMicros);
+
       const aggregated: ScenarioResult = {
         name: s.name,
         title: s.title,
         description: s.description,
-        runs: cpuMeasured.length || RUNS,
-        totalCpuMicros: cpuMeasured.length ? mean(cpuMeasured) : 0,
-        heapUsedBytesDelta: memMeasured.length ? mean(memMeasured) : 0,
-        cpuStdDevMicros: cpuMeasured.length > 1 ? stddev(cpuMeasured) : 0,
-        memStdDevBytes: memMeasured.length > 1 ? stddev(memMeasured) : 0,
+        runs: measuredB.length || RUNS,
+        cpuMean: cpuB.length ? mean(cpuB) : 0,
+        cpuSd: cpuB.length > 1 ? stddev(cpuB) : 0,
+        memMean: memB.length ? mean(memB) : 0,
+        memSd: memB.length > 1 ? stddev(memB) : 0,
+        wallMean: wallB.length ? mean(wallB) : 0,
+        wallSd: wallB.length > 1 ? stddev(wallB) : 0,
+        loadMean: loadB.length ? mean(loadB) : 0,
+        loadSd: loadB.length > 1 ? stddev(loadB) : 0,
+        samplesB: measuredB,
+        samplesA: compareWith ? measuredA : undefined,
         error,
       };
+      if (
+        compareWith &&
+        measuredA.length === measuredB.length &&
+        measuredB.length >= 2
+      ) {
+        const cpuA = measuredA.map(pickMetric);
+        const memA = measuredA.map((s) => s.heapBytesDelta);
+        const wallA = measuredA.map((s) => s.childWallMicros);
+        aggregated.paired = {
+          cpu: paired(cpuA, cpuB),
+          mem: paired(memA, memB),
+          wall: paired(wallA, wallB),
+        };
+      }
       results.push(aggregated);
       if (error) {
         task.output = `ERROR: ${error}`;
+      } else if (aggregated.paired) {
+        const c = aggregated.paired.cpu;
+        const sig =
+          c.significant ?
+            c.diff > 0 ?
+              pc.red("REGRESS")
+            : pc.green("WIN")
+          : pc.dim("ns");
+        const pct = (c.diffPct * 100).toFixed(1);
+        const ciLo = (c.ci95Pct[0] * 100).toFixed(1);
+        const ciHi = (c.ci95Pct[1] * 100).toFixed(1);
+        task.output = `runs=${aggregated.runs} Δcpu=${pct}% [${ciLo}, ${ciHi}]% p=${c.pValue.toExponential(1)} ${sig}`;
       } else {
-        const cpu = fmtCpu(aggregated.totalCpuMicros);
-        const cpuSd =
-          aggregated.cpuStdDevMicros ?
-            fmtCpu(aggregated.cpuStdDevMicros)
-          : undefined;
-        const mem = fmtMem(aggregated.heapUsedBytesDelta);
-        const memSd =
-          aggregated.memStdDevBytes ?
-            fmtMem(aggregated.memStdDevBytes)
-          : undefined;
-        task.output = `runs=${aggregated.runs} cpu=${cpu}${cpuSd ? ` (± ${cpuSd})` : ""} memΔ=${mem}${memSd ? ` (± ${memSd})` : ""}`;
+        task.output = `runs=${aggregated.runs} cpu=${fmtCpu(aggregated.cpuMean)} ± ${fmtCpu(aggregated.cpuSd)} memΔ=${fmtMem(aggregated.memMean)} ± ${fmtMem(aggregated.memSd)} wall=${fmtCpu(aggregated.wallMean)}`;
       }
     },
     options: { persistentOutput: true },
   })),
-  {
-    concurrent: false,
-  },
+  { concurrent: false },
 );
 
 await tasks.run();
 
+// ── Reporting ──────────────────────────────────────────────────────────────
+
 /* eslint-disable no-console */
-// Attempt to load baseline for comparison.
-interface BaselineScenarioEntry {
-  name: string;
-  title?: string;
-  runs?: number;
-  cpu?: { avgMicros: number; stddevMicros?: number };
-  memory?: { avgBytesDelta: number; stddevBytes?: number };
-}
-interface BaselineFile {
-  scenarios?: BaselineScenarioEntry[];
-}
-let baselineCompare: Map<string, BaselineScenarioEntry> | undefined;
-let baselineComparePath: string | undefined;
-try {
-  const defaultBaseline = path.join(process.cwd(), "baseline.json");
-  let usePath: string | undefined;
-  // Precedence: baseline.json if exists else --baseline path
-  try {
-    await access(defaultBaseline, FS_CONSTANTS.R_OK);
-    usePath = defaultBaseline;
-  } catch {
-    if (baselineOptionPath) usePath = baselineOptionPath;
+
+function fmtMem(bytes: number): string {
+  const sign = bytes < 0 ? "-" : "";
+  let n = Math.abs(bytes) / 1024;
+  const units = ["KB", "MB", "GB"];
+  let u = 0;
+  while (u < units.length - 1 && n >= 1024) {
+    n /= 1024;
+    u++;
   }
-  if (usePath) {
-    const raw = await readFile(usePath, "utf8");
-    const parsed: BaselineFile = JSON.parse(raw);
-    if (parsed && Array.isArray(parsed.scenarios)) {
-      baselineCompare = new Map(parsed.scenarios.map((s) => [s.name, s]));
-      baselineComparePath = usePath;
-    }
-  }
-} catch {
-  // ignore baseline load errors
+  return sign + n.toFixed(2) + " " + units[u];
+}
+function fmtCpu(micros: number): string {
+  return (micros / 1000).toFixed(2) + " ms";
 }
 
-const table = new Table({
-  head: (baselineCompare ?
-    ["Title", "CPU (avg ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
-  : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)"]) as string[],
-  style: { head: [], border: [] },
-  wordWrap: true,
-});
-for (const r of results) {
-  const titleOnly = r.title;
-  if (r.error) {
-    const errTxt = pc.bold(pc.red(`ERROR: ${r.error}`));
-    table.push(
+if (compareWith) {
+  // Paired mode rendering — show A vs B with CI + verdict.
+  const t = new Table({
+    head: ["Title", "A (alt)", "B (current)", "ΔCPU%", "CI95%", "p", "Verdict"],
+    style: { head: [], border: [] },
+    wordWrap: true,
+  });
+  for (const r of results) {
+    if (r.error) {
+      t.push([
+        pc.yellow(r.title),
+        pc.bold(pc.red(r.error)),
+        "-",
+        "-",
+        "-",
+        "-",
+        "-",
+      ]);
+      continue;
+    }
+    const aMean = r.paired ? r.paired.cpu.meanA : 0;
+    const bMean = r.paired ? r.paired.cpu.meanB : r.cpuMean;
+    const c = r.paired?.cpu;
+    const verdict =
+      c ?
+        c.significant ?
+          c.diff > 0 ?
+            pc.bold(pc.red("REGRESS"))
+          : pc.bold(pc.green("WIN"))
+        : pc.dim("not sig.")
+      : pc.dim("(n<2)");
+    t.push([
+      pc.cyan(r.title),
+      pc.white(fmtCpu(aMean)),
+      pc.white(fmtCpu(bMean)),
+      c ? `${(c.diffPct * 100).toFixed(2)}%` : "-",
+      c ?
+        `[${(c.ci95Pct[0] * 100).toFixed(2)}, ${(c.ci95Pct[1] * 100).toFixed(2)}]%`
+      : "-",
+      c ? c.pValue.toExponential(2) : "-",
+      verdict,
+    ]);
+  }
+  console.log(
+    pc.dim(
+      `\nPaired A vs B (alt: ${compareWith}, metric: ${metric}, samples: ${RUNS})`,
+    ),
+  );
+  console.log(t.toString());
+} else {
+  // Single mode — keep prior shape (so existing callers / docs aren't broken).
+  // Optionally compare against a stored baseline.json.
+  let baselineCompare: Map<string, any> | undefined;
+  let baselineComparePath: string | undefined;
+  try {
+    const defaultBaseline = path.join(process.cwd(), "baseline.json");
+    let usePath: string | undefined;
+    try {
+      await access(defaultBaseline, FS_CONSTANTS.R_OK);
+      usePath = defaultBaseline;
+    } catch {
+      if (baselineOptionPath) usePath = baselineOptionPath;
+    }
+    if (usePath) {
+      const raw = await readFile(usePath, "utf8");
+      const parsed: any = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.scenarios)) {
+        baselineCompare = new Map(
+          parsed.scenarios.map((s: any) => [s.name, s]),
+        );
+        baselineComparePath = usePath;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
+  const t = new Table({
+    head:
       baselineCompare ?
-        [pc.yellow(titleOnly), errTxt, pc.dim("-"), pc.dim("-"), pc.dim("-")]
-      : [pc.yellow(titleOnly), errTxt, pc.dim("-")],
-    );
-    continue;
+        ["Title", "CPU (avg ± sd)", "CPU Δ%", "CI95%", "p", "Mem Δ"]
+      : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)", "Wall (avg)"],
+    style: { head: [], border: [] },
+    wordWrap: true,
+  });
+  for (const r of results) {
+    if (r.error) {
+      t.push([
+        pc.yellow(r.title),
+        pc.bold(pc.red(`ERROR: ${r.error}`)),
+        ...(baselineCompare ? ["-", "-", "-"] : ["-", "-"]),
+      ]);
+      continue;
+    }
+    const cpuStr = `${fmtCpu(r.cpuMean)} ± ${fmtCpu(r.cpuSd)}`;
+    const memStr = `${fmtMem(r.memMean)} ± ${fmtMem(r.memSd)}`;
+    if (baselineCompare && baselineCompare.has(r.name)) {
+      const b = baselineCompare.get(r.name)!;
+      const bSamples: number[] | undefined = b.cpuSamplesMicros;
+      let cpuDeltaPct = "-";
+      let ci = "-";
+      let p = "-";
+      if (bSamples && bSamples.length >= 2 && r.samplesB.length >= 2) {
+        const w = welch(bSamples, r.samplesB.map(pickMetric));
+        cpuDeltaPct = `${(w.diffPct * 100).toFixed(2)}%`;
+        ci = `[${(w.ci95Pct[0] * 100).toFixed(2)}, ${(w.ci95Pct[1] * 100).toFixed(2)}]%`;
+        p = w.pValue.toExponential(2);
+      } else if (b.cpu?.avgMicros) {
+        const ratio = (r.cpuMean - b.cpu.avgMicros) / b.cpu.avgMicros;
+        cpuDeltaPct = `${(ratio * 100).toFixed(2)}%`;
+        ci = pc.dim("(no raw samples)");
+      }
+      const memDelta =
+        b.memory?.avgBytesDelta != null ?
+          `${(((r.memMean - b.memory.avgBytesDelta) / Math.max(b.memory.avgBytesDelta, 1)) * 100).toFixed(1)}%`
+        : "-";
+      t.push([
+        pc.cyan(r.title),
+        pc.white(cpuStr),
+        cpuDeltaPct,
+        ci,
+        p,
+        memDelta,
+      ]);
+    } else {
+      t.push([
+        pc.cyan(r.title),
+        pc.white(cpuStr),
+        pc.white(memStr),
+        pc.white(fmtCpu(r.wallMean)),
+      ]);
+    }
   }
-  const cpuAvgMsNum = r.totalCpuMicros / 1000;
-  const cpuAvgMs = cpuAvgMsNum.toFixed(2);
-  const cpuSdMs =
-    r.cpuStdDevMicros ? (r.cpuStdDevMicros / 1000).toFixed(2) : "0.00";
-  const memAvgNum = r.heapUsedBytesDelta;
-  const memAvg = fmtMem(memAvgNum);
-  const memSd = r.memStdDevBytes ? fmtMem(r.memStdDevBytes) : "0 KB";
-  if (baselineCompare && baselineCompare.has(r.name)) {
-    const b = baselineCompare.get(r.name)!;
-    const bCpuMs = b.cpu ? b.cpu.avgMicros / 1000 : undefined;
-    const bCpuStdDevMs =
-      b.cpu?.stddevMicros ? b.cpu.stddevMicros / 1000 : undefined;
-    const bMemBytes = b.memory ? b.memory.avgBytesDelta : undefined;
-    const bMemStdDevBytes = b.memory?.stddevBytes;
-    const cpuDeltaRatio =
-      bCpuMs && bCpuMs !== 0 ? (cpuAvgMsNum - bCpuMs) / bCpuMs : undefined;
-    const memDeltaRatio =
-      bMemBytes && bMemBytes !== 0 ?
-        (memAvgNum - bMemBytes) / bMemBytes
-      : undefined;
-    const cpuDeltaPct =
-      cpuDeltaRatio !== undefined ?
-        `${cpuDeltaRatio > 0 ? "+" : ""}${(cpuDeltaRatio * 100).toFixed(1)}%`
-      : "-";
-    const memDeltaPct =
-      memDeltaRatio !== undefined ?
-        `${memDeltaRatio > 0 ? "+" : ""}${(memDeltaRatio * 100).toFixed(1)}%`
-      : "-";
-    // Determine if increase exceeds baseline error bars; only then color red
-    const cpuIncrease = cpuDeltaRatio !== undefined && cpuDeltaRatio > 0;
-    const memIncrease = memDeltaRatio !== undefined && memDeltaRatio > 0;
-    const cpuBeyondError =
-      cpuIncrease && bCpuStdDevMs !== undefined ?
-        cpuAvgMsNum - (bCpuMs ?? 0) > bCpuStdDevMs
-      : cpuIncrease;
-    const memBeyondError =
-      memIncrease && bMemStdDevBytes !== undefined ?
-        memAvgNum - (bMemBytes ?? 0) > bMemStdDevBytes
-      : memIncrease;
-    const cpuColor =
-      cpuBeyondError ?
-        (s: string) => pc.bold(pc.red(s))
-      : (s: string) => (cpuIncrease ? pc.yellow(s) : pc.green(s));
-    const memColor =
-      memBeyondError ?
-        (s: string) => pc.bold(pc.red(s))
-      : (s: string) => (memIncrease ? pc.yellow(s) : pc.green(s));
-    table.push([
-      pc.cyan(titleOnly),
-      pc.white(`${cpuAvgMs} ms ± ${cpuSdMs} ms`),
-      cpuColor(cpuDeltaPct),
-      pc.white(`${memAvg} ± ${memSd}`),
-      memColor(memDeltaPct),
-    ]);
-  } else {
-    table.push([
-      pc.cyan(titleOnly),
-      pc.white(`${cpuAvgMs} ms ± ${cpuSdMs} ms`),
-      ...(baselineCompare ?
-        [pc.dim("-"), pc.white(`${memAvg} ± ${memSd}`), pc.dim("-")]
-      : [pc.white(`${memAvg} ± ${memSd}`)]),
-    ]);
-  }
+  if (baselineComparePath)
+    console.log(pc.dim(`\nCompared against baseline: ${baselineComparePath}`));
+  console.log(t.toString());
 }
-if (baselineComparePath) {
-  console.log(pc.dim(`\nCompared against baseline: ${baselineComparePath}`));
-}
-console.log(table.toString());
-// Write baseline file if requested
+
+// ── Baseline write ─────────────────────────────────────────────────────────
+
 if (baselinePath) {
   const baseline = {
     generatedAt: new Date().toISOString(),
     runsPerScenario: RUNS,
+    metric,
+    pairedAgainst: compareWith ?? null,
     scenarios: results.map((r) => ({
       name: r.name,
       title: r.title,
       description: r.description,
       runs: r.runs,
       cpu: {
-        avgMicros: r.totalCpuMicros,
-        avgMs: Number((r.totalCpuMicros / 1000).toFixed(3)),
-        stddevMicros: r.cpuStdDevMicros ?? 0,
-        stddevMs:
-          r.cpuStdDevMicros ? Number((r.cpuStdDevMicros / 1000).toFixed(3)) : 0,
+        avgMicros: r.cpuMean,
+        avgMs: Number((r.cpuMean / 1000).toFixed(3)),
+        stddevMicros: r.cpuSd,
+        stddevMs: Number((r.cpuSd / 1000).toFixed(3)),
       },
       memory: {
-        avgBytesDelta: r.heapUsedBytesDelta,
-        stddevBytes: r.memStdDevBytes ?? 0,
+        avgBytesDelta: r.memMean,
+        stddevBytes: r.memSd,
       },
+      wall: { avgMicros: r.wallMean, stddevMicros: r.wallSd },
+      moduleLoad: { avgMicros: r.loadMean, stddevMicros: r.loadSd },
+      // Raw per-sample numbers — these unlock Welch's t-test / paired
+      // comparisons against this baseline by future runs.
+      cpuSamplesMicros: r.samplesB.map(pickMetric),
+      memSamplesBytes: r.samplesB.map((s) => s.heapBytesDelta),
+      wallSamplesMicros: r.samplesB.map((s) => s.childWallMicros),
+      loadSamplesMicros: r.samplesB.map((s) => s.moduleLoadCpuMicros),
+      paired:
+        r.paired ?
+          {
+            samplesAcpu: r.samplesA?.map(pickMetric) ?? [],
+            cpuDiffPct: r.paired.cpu.diffPct,
+            cpuCi95Pct: r.paired.cpu.ci95Pct,
+            cpuPValue: r.paired.cpu.pValue,
+            cpuSignificant: r.paired.cpu.significant,
+          }
+        : null,
       error: r.error || null,
     })),
   };
   try {
-    await writeFile(baselinePath!, JSON.stringify(baseline, null, 2) + "\n");
-    console.log(`Baseline written to ${baselinePath}`); // console output intentional
+    await writeFile(baselinePath, JSON.stringify(baseline, null, 2) + "\n");
+    console.log(`Baseline written to ${baselinePath}`);
   } catch (e: any) {
-    console.error(`Failed to write baseline file: ${e?.message || e}`); // console output intentional
+    console.error(`Failed to write baseline file: ${e?.message || e}`);
   }
 }
 /* eslint-enable no-console */

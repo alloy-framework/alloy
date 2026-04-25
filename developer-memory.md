@@ -58,3 +58,11 @@ in `effect()` is now a conditional expression returning -1 when debug is off (th
 `effectId !== -1` guard handles all downstream usage). This eliminates `refId()` WeakMap
 lookups and `resolveOwnerEffectContextId()` context-chain walks on every reactive primitive
 creation when debug is disabled.
+
+## scheduler-set-to-deque: REJECTED — has()+add() double-lookup worse than SetIterator
+Replacing `Set.values().next().value` with parallel array+index (has()-guard before add(),
+lazy delete() in takeJob) caused a +13.6% CPU regression. The has() adds a second hash
+lookup per enqueue; that overhead exceeds any iterator savings. SetIterator objects from
+`takeJob` are small/short-lived and likely GC-cheap. The 19.7% GC in the profile is NOT
+materially caused by them. Do not retry this approach without a microbenchmark to confirm
+the iterator cost is real.

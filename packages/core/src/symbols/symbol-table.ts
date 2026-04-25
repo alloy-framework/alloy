@@ -10,11 +10,13 @@ import type { OutputSymbol } from "./output-symbol.js";
 export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   #namesToDeconflict: Set<string> = new Set();
   #nameConflictResolver?: NameConflictResolver;
+  #symbolsByCanonicalName: Map<string, Set<OutputSymbol>> = new Map();
   #deconflictNames = () => {
     for (const name of this.#namesToDeconflict) {
-      const conflictedSymbols = [...this].filter(
-        (sym) => sym.canonicalName === name && !sym.ignoreNameConflict,
-      );
+      const bucket = this.#symbolsByCanonicalName.get(name);
+      const conflictedSymbols = bucket
+        ? [...bucket].filter((sym) => !sym.ignoreNameConflict)
+        : [];
       if (this.#nameConflictResolver) {
         this.#nameConflictResolver(name, conflictedSymbols);
       } else {
@@ -67,7 +69,15 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
             `${formatSymbolName(symbol)} added to ${formatSymbolTableName(this)}`,
         );
 
-        this.#namesToDeconflict.add(symbol.canonicalName);
+        const canonicalName = symbol.canonicalName;
+        const bucket = this.#symbolsByCanonicalName.get(canonicalName);
+        if (bucket) {
+          bucket.add(symbol);
+        } else {
+          this.#symbolsByCanonicalName.set(canonicalName, new Set([symbol]));
+        }
+
+        this.#namesToDeconflict.add(canonicalName);
 
         queueJob(this.#deconflictNames);
 
@@ -79,11 +89,21 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
           () =>
             `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
         );
+
+        const canonicalName = symbol.canonicalName;
+        const bucket = this.#symbolsByCanonicalName.get(canonicalName);
+        if (bucket) {
+          bucket.delete(symbol);
+          if (bucket.size === 0) {
+            this.#symbolsByCanonicalName.delete(canonicalName);
+          }
+        }
+
         // Re-run conflict resolution for the deleted symbol's canonical name
         // so survivors in the same cohort (those that share the canonical
         // name) can clear any prior `deconflictedName` rename now that the
         // collision is reduced.
-        this.#namesToDeconflict.add(symbol.canonicalName);
+        this.#namesToDeconflict.add(canonicalName);
         queueJob(this.#deconflictNames);
       },
     });

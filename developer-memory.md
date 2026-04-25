@@ -66,3 +66,13 @@ lookup per enqueue; that overhead exceeds any iterator savings. SetIterator obje
 `takeJob` are small/short-lived and likely GC-cheap. The 19.7% GC in the profile is NOT
 materially caused by them. Do not retry this approach without a microbenchmark to confirm
 the iterator cost is real.
+
+## create-index-proxy-elimination: REJECTED — shallowReadonly(shallowReactive(Map)) is FASTER than alternatives
+Attempt 1 (plain Map + manual track/trigger on indexSignal object): +21% CPU regression.
+Attempt 2 (remove shallowReadonly, keep shallowReactive): +37% CPU regression.
+The shallowReadonly(shallowReactive(Map)) combo is actually FASTER for reads than the
+shallowReactive(Map) alone. The readonly handler likely bypasses write-tracking overhead
+on reads, and V8 has JIT-optimized that proxy call site. The createReactiveObject 1.1%
+profiler cost is SETUP time (construction), not hot-path render reads — those .get() calls
+are near-zero cost per call due to V8 inline caching of the proxy trap. DO NOT attempt to
+eliminate these proxies without concrete evidence that the proxy construction cost dominates.

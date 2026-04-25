@@ -268,7 +268,7 @@ _ralph note (rejected): no measurable improvement_
 ## slice-id: mergeprops-plain-fast-path
 
 ```yaml
-status: done
+status: rejected
 estimated_impact_ms: 50
 estimated_impact_mb: 0
 category: jsx
@@ -303,6 +303,8 @@ Risk is medium because `mergeProps` is part of the public API surface and the la
 
 ---
 
+_ralph note (rejected — auto-verdict ACCEPT overridden by human): the `isReactive()` guard ran on every mergeProps call including the reactive-source majority in the emitter-like-schema benchmark. The guard itself added ~391ms of overhead (10% CPU regression, 3896ms→4287ms) that was never recouped because the fast path was rarely taken. The 7.2% memory improvement (~20MB) does not justify the CPU regression. Recommendation: retry with a cheaper guard (typeof check or pre-tagged flag) that avoids per-source `isReactive()` calls._
+
 ## slice-id: begin-component-noop-session
 
 ```yaml
@@ -330,8 +332,9 @@ if (!isDebugEnabled()) {
 With 27,681 components rendered per emitter-like-schema run, this allocates 27,681 identical objects × 464 bytes each ≈ **12.8 MB** of short-lived garbage that immediately becomes collectable. These objects appear as `Object { dispose, recordDirectory, recordFile }` in the heap shape report.
 
 **Evidence:**
-- heap: `Object { dispose, recordDirectory, recordFile }` retains 12.8 MB across 27,681 instances (≈ 464 B each). `[<function scope>] --debugSession-->: 27,680` edges confirm one per component render. When debug is disabled all instances are identical no-ops.
-- cpuprofile: `effect.debug.name` at `render.js:L633` = 18 self-hits (0.8%); the debug session allocation is in the per-component setup path.
+- heap (iteration 4, trace-off run): `Object { dispose, recordDirectory, recordFile }` retains 12.8 MB across 27,681 instances (≈ 464 B each). `[<function scope>] --debugSession-->: 27,680` edges confirm one per component render.
+- cpuprofile (iteration 5): `effect.debug.name` at `render.js:L724` = 10 self-hits (0.3%); the debug session setup path.
+- _Note: iteration 5 heap was captured with ALLOY_DEBUG_TRACE active, so `isDebugEnabled()` = true and `beginComponent` always takes the real debug path — the noop shape is not visible in the iteration 5 heap. The 12.8 MB finding is a trace-off scenario fact that remains valid for production users._
 - source: `packages/core/src/debug/render.ts` lines 539–545.
 
 **Concrete approach:**
@@ -361,7 +364,7 @@ Low risk: the session is consumed within the same render effect scope and never 
 
 ```yaml
 status: in-progress
-estimated_impact_ms: 7
+estimated_impact_ms: 30
 estimated_impact_mb: 0
 category: reactivity
 files:
@@ -371,8 +374,8 @@ risk: low
 
 In `createAccessExpression`, the `collectParts()` function creates a `symbolSource = computed(...)` for every `Part` child. When `partProps.refkey` is `undefined` and `partProps.symbol` is a directly-supplied `OutputSymbol`, the computed reads a non-reactive value and creates no reactive dependencies. It is evaluated once, read once by the `desc` computed, and then never invalidated.
 
-**Evidence (updated):**
-- cpuprofile: `collectParts` = 4 self-hits (0.2%; ≈ 7 ms). Reduced from prior estimate; downgraded accordingly.
+**Evidence (updated — iteration 5 profile):**
+- cpuprofile: `collectParts` = 27 total self-hits across multiple inline nodes (0.7%; ≈ 30 ms at 1.13 ms/sample). **Promoted** from prior 4-hit estimate — now a meaningful target.
 - trace (corroborative): 2,616 `render:MemberExpression` effects all have zero-track (100%), consistent with static symbol resolution.
 - source: `packages/core/src/components/AccessExpression.tsx` lines 179–186.
 
@@ -442,22 +445,158 @@ return memo(
 
 ---
 
+## slice-id: devtools-env-debug-cache
+
+```yaml
+status: pending
+estimated_impact_ms: 250
+estimated_impact_mb: 0
+category: other
+files:
+  - packages/core/src/devtools/devtools-server.ts
+risk: low
+```
+
+`isDevtoolsEnabled()` still reads `process.env.ALLOY_DEBUG` on **every call** even after `_isNode` was cached. In Node.js, `process.env` property access calls through a C++ getter backed by libuv's `uv_os_getenv` — it is not a plain JS variable read. When `_isNode = true` and `devtoolsExplicitlyEnabled = false` (the normal no-debug-mode case), every invocation evaluates `devtoolsExplicitlyEnabled || Boolean(process.env.ALLOY_DEBUG)`, touching the OS environment on every call.
+
+`isDevtoolsEnabled()` is called from `isDebugEnabled()` which is called from every `effect()`, `ref()`, `shallowRef()`, `computed()`, `appendTextNode`, `appendCustomContext`, `appendPrintHook`, and `beginComponent`. This amounts to hundreds of thousands of calls per benchmark run.
+
+**Evidence:**
+- cpuprofile: `devtools-server.js` aggregates **283 self-hits (7.5% of 3792 total; ≈ 320 ms)** across ≥15 inline call-site nodes of `isDevtoolsEnabled`, all at `devtools-server.js:L163`. Prior to `_isNode` caching (iteration 4), this was 223 hits (10.5%; ≈ 410 ms). The improvement from caching `_isNode` was ~90ms; the remaining ~320ms is the `process.env.ALLOY_DEBUG` access.
+- source: `packages/core/src/devtools/devtools-server.ts` line 189 — `return devtoolsExplicitlyEnabled || Boolean(process.env.ALLOY_DEBUG);`.
+
+**Concrete approach:**
+
+Add a module-level cached boolean for the env var result. Expose `refreshDebugState()` for test code that sets `process.env.ALLOY_DEBUG` dynamically in `beforeEach`:
+
+```ts
+// Cached once at module load. Stable for production. Tests must call refreshDebugState()
+// after modifying process.env.ALLOY_DEBUG.
+let _envDebugEnabled: boolean = _isNode && Boolean(process.env.ALLOY_DEBUG);
+
+/**
+ * Invalidates the cached `isDevtoolsEnabled()` result. Call this in test `beforeEach`
+ * hooks after modifying `process.env.ALLOY_DEBUG`.
+ */
+export function refreshDebugState(): void {
+  _envDebugEnabled = _isNode && Boolean(process.env.ALLOY_DEBUG);
+}
+
+export function isDevtoolsEnabled(): boolean {
+  if (!_isNode) return false;
+  return devtoolsExplicitlyEnabled || _envDebugEnabled;
+}
+```
+
+Update all test files that set `process.env.ALLOY_DEBUG` in `beforeEach`/`afterEach` to also call `refreshDebugState()`. Grep target: `process.env.ALLOY_DEBUG` in `packages/core/test/` and `packages/*/test/`.
+
+`refreshDebugState` must be exported from `packages/core/src/debug/index.ts` (or directly from `devtools-server.ts`) for test access. It does NOT need to be exported from the public `src/index.ts`.
+
+This reduces `isDevtoolsEnabled()` to two boolean OR/AND operations — effectively free at call sites.
+
+---
+
+## slice-id: formatter-doc-overhead
+
+```yaml
+status: pending
+estimated_impact_ms: 100
+estimated_impact_mb: 0
+category: formatter
+files:
+  - packages/core/src/render.ts
+risk: medium
+```
+
+Prettier's `doc.mjs` internal functions now account for a significant formatter cluster in the profile: `traverseDoc` (24 hits, 0.6%), `printDocToString` (21 hits, 0.6%), `propagateBreaks` (11 hits, 0.3%), `generateInd` (8 hits), `getDocType` (8 hits) — approximately **90 total hits (2.4%, ≈ 102 ms)**. This is Prettier's core document-to-string pipeline, invoked via `printTree()` → `doc.printer.printDocToString()` in `render.ts:L1127`. 
+
+The `render-long-file` scenario regressed from 150 ms to 282 ms (88%) between iterations 4 and 5, likely driven by this formatter cluster. Every rendered file triggers a full `propagateBreaks` pass (O(n) tree traversal) and a `printDocToString` pass — both intrinsic Prettier overhead. However, the Alloy document tree itself may be more complex than necessary, causing extra work in these passes.
+
+**Evidence:**
+- cpuprofile: doc.mjs cluster = ~90 total hits (2.4%; ≈ 102 ms). File-level: `doc.mjs` did not appear at all in the previous iteration profile — this is a newly-visible cluster, possibly because other hotspots above it were reduced.
+- Benchmark regression: `render-long-file` 150 ms → 282 ms (+88%) between iterations 4 and 5. This scenario is explicitly described as "stress the formatter."
+- source: `packages/core/src/render.ts:L1113–1155` (`printTree` and `printTreeWorker`).
+
+**Concrete approach:**
+
+Investigate whether Alloy generates unnecessarily nested or verbose Prettier document trees that cause extra traversal. Key questions:
+1. Does `printTreeWorker` produce `doc.group`/`doc.indent` wrappers that are always trivially resolved (never break)? If so, simplify to flat `doc.text` concatenation.
+2. Can `propagateBreaks` be avoided for files that are known to be pre-formatted (e.g. `Prose` component output)?
+3. Is `getDocType` being called in a hot inner loop where the type could be cached?
+
+Consult `render.ts:L1113` and `render.ts:L1137` (`printTreeWorker`) for the document tree construction logic before implementing. The medium risk comes from changing formatter behavior — all existing render snapshot tests must pass.
+
+---
+
+## slice-id: deconflict-names-no-spread
+
+```yaml
+status: pending
+estimated_impact_ms: 15
+estimated_impact_mb: 0
+category: symbols
+files:
+  - packages/core/src/symbols/symbol-table.ts
+risk: low
+```
+
+`SymbolTable.#deconflictNames()` is scheduled via `queueJob` whenever a symbol is added or removed. Its body spreads the entire `ReactiveUnionSet` into an array and filters by canonical name:
+
+```ts
+#deconflictNames = () => {
+  for (const name of this.#namesToDeconflict) {
+    const conflictedSymbols = [...this].filter(
+      (sym) => sym.canonicalName === name && !sym.ignoreNameConflict,
+    );
+    // ...
+  }
+};
+```
+
+`[...this]` allocates a new `OutputSymbol[]` array on every call by spreading the entire table. For a table with hundreds of symbols, this is O(table_size × deconflict_queue_size) allocation per render. `SymbolTable` already maintains a `#symbolNames` index (`ReadonlyMap<string, OutputSymbol>`) keyed by canonical name — yet `#deconflictNames` ignores it and does a full linear scan instead.
+
+**Evidence:**
+- cpuprofile: `#deconflictNames` = 13 self-hits (0.3%; ≈ 15 ms). Present in every iteration's profile.
+- source: `packages/core/src/symbols/symbol-table.ts` lines 13–25.
+
+**Concrete approach:**
+
+Replace the `[...this].filter(...)` spread with a direct lookup on the existing `#symbolNames` Map:
+
+```ts
+#deconflictNames = () => {
+  for (const name of this.#namesToDeconflict) {
+    // Walk the symbolNames index: only symbols with this canonical name are relevant.
+    // (Multiple symbols can share a canonical name — the index returns one; use
+    //  the full table only when the index confirms a collision exists.)
+    const conflictedSymbols = Array.from(this).filter(
+      (sym) => sym.canonicalName === name && !sym.ignoreNameConflict,
+    );
+    // ... (rest unchanged)
+  }
+};
+```
+
+A stronger optimization: build a secondary `Map<string, Set<OutputSymbol>>` in `onAdd`/`onDelete` that maps canonical name → all symbols with that name. Then `#deconflictNames` becomes a single `Map.get` per name — O(1) lookup instead of O(N) full-table scan. This is safe because `canonicalName` changes only trigger symbol re-registration (which goes through `onDelete` + `onAdd`).
+
+---
+
 ## Notes
 
-**GC at 14.1% (298 samples):** GC pressure is the single largest overhead category in the profile. It is a consequence of the allocation patterns addressed by `begin-component-noop-session` (12.8 MB per run), `debug-hook-gate` (90,473 seenRefs WeakMap entries), and `scheduler-array-queue` (iterator churn). Expect GC percentage to decrease as these slices land.
+**GC at 13.2% (499 samples, iteration 5):** GC pressure remains the single largest overhead category. It is a consequence of allocation patterns across the render loop — `begin-component-noop-session` (12.8 MB of noop objects, trace-off runs only), mapJoin tracking objects (614KB `{disposer,isEmpty,item,joiner}` + 574KB `{eff,lastMapped}`), and OutputDeclarationSpace (882KB, 13.5KB each). Expect GC to improve as `begin-component-noop-session` and `access-expression-no-refkey-computed` land.
 
-**`renderWorker` (4.6%) and `appendChild` (3.1%):** The render loop itself is the core path; most overhead here is intrinsic. The `debug.render.appendTextNode` → `recordTextNode` → `isDebugEnabled()` chain that fires on every text node is already addressed by `devtools-check-cache` (making `isDebugEnabled()` O(1)).
+**`isDevtoolsEnabled` regression from iteration 4→5:** Previous profile had 185 hits for `isDevtoolsEnabled` + 38 hits for `isNodeEnvironment` = 223 hits (10.5%). Iteration 5 has 283 hits (7.5%). The absolute hit count increased (more samples in the longer run, but devtools overhead REDUCED from 10.5%→7.5%). `_isNode` caching eliminated `isNodeEnvironment` but `process.env.ALLOY_DEBUG` access remains — see `devtools-env-debug-cache`.
 
-**`createReactiveObject` (3.0%) and `track` (1.7%) from Vue:** Intrinsic to Vue's reactive system. Not actionable without replacing the reactivity engine.
+**`takeJob` (scheduler.js) at 2.8% (106 hits):** `scheduler-array-queue` was rejected as "no measurable improvement." `takeJob` remains the #2 non-GC hotspot. The overhead is `Set.values().next().value` iterator allocation. Not re-proposed since the previous attempt showed no benefit even with a `for…of` fast path.
 
-**`memo` at 1.5% (32 hits):** Creating memos allocates both a `shallowRef` and an `effect`. With ~52,845 memos per run this is intrinsic to the Alloy render model. Not actionable without changing rendering semantics.
+**`renderWorker` (0.4%) and `createReactiveObject` (0.8%):** Intrinsic to Vue's reactive system and the Alloy render loop. Not actionable.
 
-**`reactive-union-set.js` at 3.1% total:** Hot via `createIndex`, `add`, and `_handleAdd`. These are intrinsic to symbol declaration tracking. Not actionable without a significant redesign.
+**`cleanupFn` at 0.7% (27 hits, reactivity.js:L151):** Runs during effect teardown (final cleanup of the test run). With 122,319 effects, each calling `cleanupFn(true)` once, this is ~0.25 µs per effect — intrinsic O(n) teardown cost. Not actionable.
 
-**Context objects at ~102 MB (103,788 instances):** Each `effect()` and `root()` call creates a `Context` object. With 122,319 effects per run, this is expected. Reducing per-Context size would require profiling allocations more carefully; not addressed in this iteration.
+**`OutputDeclarationSpace` at 13.5 KB per instance (N=504):** Each OutputDeclarationSpace is 13.5 KB — very large. Likely contains many reactive Maps/Arrays. Not corroborated by cpuprofile self-time yet; filed for future investigation.
 
-**`OutputMemberSpace` at 21.2 MB (13,296 instances):** Appears for the first time in this heap snapshot. Likely tied to the 2,628 symbols × ~5 member spaces each. Not yet corroborated by cpuprofile self-time; filed as a note to investigate in a future iteration.
+**`OutputMemberSpace` / `output-symbol.js` at 2.1% (81 hits):** Constructors and getters spread across many small nodes. Not yet a clear optimization target; intrinsic to symbol creation cost per emitter schema member.
 
-**shallowReactiveMap / shallowReadonlyMap WeakMaps (1 MB each):** Expected cost of the corrected `takeSymbols(cb)` implementation. Not actionable.
+**`shallowReactiveMap / shallowReadonlyMap WeakMaps (1 MB each):** Expected cost of the corrected `takeSymbols(cb)` implementation. Not actionable.
 
-**All 90,473 refs have 0 write edges:** In this benchmark, no ref is ever invalidated after creation. All reactive overhead is setup cost only; optimizations targeting write throughput have zero leverage here.
+**All refs have 0 write edges (iteration 5):** As with prior iterations, no ref is ever invalidated after creation in this benchmark. All reactive overhead is setup cost only; optimizations targeting write throughput have zero leverage here.

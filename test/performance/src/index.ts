@@ -126,12 +126,6 @@ function mean(nums: number[]): number {
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
-function min(nums: number[]): number {
-  let m = nums[0];
-  for (let i = 1; i < nums.length; i++) if (nums[i] < m) m = nums[i];
-  return m;
-}
-
 function stddev(nums: number[]): number {
   if (nums.length < 2) return 0;
   const m = mean(nums);
@@ -222,20 +216,27 @@ const tasks = new Listr<Ctx>(
           break;
         }
       }
+      // Discard the first few samples as host warmup. Each sample is a
+      // fresh node process, so V8 init / module load / disk cache for
+      // alloy's dist files etc. don't contaminate the timed window
+      // (see run-scenario.ts — measurement is around runTest() only via
+      // process.cpuUsage()). However, the *host* CPU governor and thermal
+      // state warm up across the first 1–3 samples (Linux ondemand
+      // typically takes ~300ms to clock up), which inflates those
+      // samples. Drop them so the reported number reflects steady-state
+      // cold-process cost.
+      const WARMUP = Math.min(3, Math.floor(cpuRuns.length / 3));
+      const cpuMeasured = cpuRuns.slice(WARMUP);
+      const memMeasured = memRuns.slice(WARMUP);
       const aggregated: ScenarioResult = {
         name: s.name,
         title: s.title,
         description: s.description,
-        runs: cpuRuns.length || RUNS,
-        // CPU noise is unidirectional (a sample can only be slowed by other
-        // work on the host, never sped up below the true cost). The minimum
-        // sample is the most accurate estimate of true work and is robust to
-        // single-sample stalls (e.g. browser indexer, GC pause, IO blip)
-        // that otherwise dominate the mean of small N.
-        totalCpuMicros: cpuRuns.length ? min(cpuRuns) : 0,
-        heapUsedBytesDelta: memRuns.length ? mean(memRuns) : 0,
-        cpuStdDevMicros: cpuRuns.length > 1 ? stddev(cpuRuns) : 0,
-        memStdDevBytes: memRuns.length > 1 ? stddev(memRuns) : 0,
+        runs: cpuMeasured.length || RUNS,
+        totalCpuMicros: cpuMeasured.length ? mean(cpuMeasured) : 0,
+        heapUsedBytesDelta: memMeasured.length ? mean(memMeasured) : 0,
+        cpuStdDevMicros: cpuMeasured.length > 1 ? stddev(cpuMeasured) : 0,
+        memStdDevBytes: memMeasured.length > 1 ? stddev(memMeasured) : 0,
         error,
       };
       results.push(aggregated);
@@ -302,8 +303,8 @@ try {
 
 const table = new Table({
   head: (baselineCompare ?
-    ["Title", "CPU (min ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
-  : ["Title", "CPU (min ± sd)", "Mem Δ (avg ± sd)"]) as string[],
+    ["Title", "CPU (avg ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
+  : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)"]) as string[],
   style: { head: [], border: [] },
   wordWrap: true,
 });

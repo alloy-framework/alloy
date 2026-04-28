@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/go",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Go bindings for Alloy",
   "repository": {
     "type": "git",

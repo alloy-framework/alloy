@@ -153,6 +153,19 @@ function isNodeEnvironment() {
   );
 }
 
+// Cached once at module load. Stable for production runs. Tests that modify
+// process.env.ALLOY_DEBUG dynamically must call refreshDebugState() afterward.
+let _envDebugEnabled: boolean =
+  isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
+
+/**
+ * Invalidates the cached env-var result for isDevtoolsEnabled(). Call this in
+ * test beforeEach hooks after modifying process.env.ALLOY_DEBUG.
+ */
+export function refreshDebugState(): void {
+  _envDebugEnabled = isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
+}
+
 function getCwd() {
   if (!isNodeEnvironment()) return undefined;
   try {
@@ -177,7 +190,7 @@ function resolveDebugPort() {
 /** Returns true when devtools are enabled (via env var or explicit call). */
 export function isDevtoolsEnabled() {
   if (!isNodeEnvironment()) return false;
-  return devtoolsExplicitlyEnabled || Boolean(process.env.ALLOY_DEBUG);
+  return devtoolsExplicitlyEnabled || _envDebugEnabled;
 }
 
 /** Returns true when a devtools client is currently connected. */
@@ -463,6 +476,8 @@ export async function resetDevtoolsServerForTests() {
   loggedDevtoolsLinks = false;
   subscribedPromise = null;
   resolveSubscribed = null;
+  // Re-read the env var in case tests modified process.env.ALLOY_DEBUG
+  refreshDebugState();
   // Close the trace DB so each test starts fresh
   closeTrace();
 }

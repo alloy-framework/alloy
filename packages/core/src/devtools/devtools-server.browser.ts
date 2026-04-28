@@ -60,3 +60,7 @@ export async function enableDevtoolsAndConnect(
 export async function resetDevtoolsServerForTests(): Promise<void> {
   // No-op in browser
 }
+
+export function refreshDebugState(): void {
+  // No-op in browser
+}

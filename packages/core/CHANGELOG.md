@@ -1,5 +1,39 @@
 # Changelog - @alloy-js/core
 
+## 0.23.0
+
+### Bug Fixes
+
+- [#356](https://github.com/alloy-framework/alloy/pull/356) onCleanup callbacks are now untracked, which fixes cases where cleaning up some reactive context would trigger it to run again.
+- [#395](https://github.com/alloy-framework/alloy/pull/395) Fix O(N²) overhead in `DiagnosticsCollector`. `emit()` and `dismiss()` previously re-broadcast the entire diagnostic history on every call, which dominated render time on large workloads even when debug tracing was disabled (the default). Broadcasts are now skipped when tracing is off, and the trace writer sees per-diagnostic add/remove deltas instead of duplicated inserts.
+- [#376](https://github.com/alloy-framework/alloy/pull/376) Ensure node specific api have browser override
+- [#379](https://github.com/alloy-framework/alloy/pull/379) Fix SymbolSlot in FunctionBase being rendered twice when a parameter has both type and default, which caused the type symbol to be overwritten and member resolution to fail. Also add an error diagnostic when a SymbolSlot is rendered more than once.
+- [#361](https://github.com/alloy-framework/alloy/pull/361) Reduce allocation overhead: lazy Context fields (disposables, context, elementCache, isEmpty), `_lastEmpty` boolean for cheap empty-state propagation, `ensureIsEmpty()` gating, scheduler `isJobActive` check to skip stopped effects, `ReactiveUnionSet` per-item root-scope disposers, and hoisted `defaultScheduler` closure.
+- [#396](https://github.com/alloy-framework/alloy/pull/396) Fix TypeScript import handling:
+  
+  - Long `import { ... } from "..."` statements now break across multiple lines when they exceed `printWidth`, using the layout engine.
+  - Import statements generated via `ref()` into a TypeScript `<SourceFile>` are now reference-counted and torn down (symbol deleted, statement removed) when the last live reference is disposed — e.g. when a `<Show>` that referenced an external refkey toggles off. Previously the import would linger and subsequent re-renders could drift conflicting local names to `foo_3`, `foo_4`, etc.
+  - `createValueSymbol` / `createTypeSymbol` / `createTypeAndValueSymbol` now automatically delete their symbol when the component that created it unmounts. This fixes a long-standing leak where symbols declared via `<VarDeclaration>`, `<FunctionDeclaration>`, etc. survived `<Show>` unmounts.
+  
+  Improve name-conflict resolution:
+  
+  - `OutputSymbol` now exposes a `deconflictedName` slot separate from the user-assigned name. Name-conflict resolvers write the collision rename into this slot (the public `.name` getter returns `deconflictedName ?? userAssignedName ?? originalName`), and clear it once a collision is resolved so survivors revert to their plain name. This replaces a fragile regex-based "is this an auto-generated alias?" check that hard-coded the default resolver's `foo_N` rename scheme. Custom resolvers with any rename scheme (including Python's `foo_N_module` form) now revert correctly when one of the conflicting symbols is removed.
+  - `tsNameConflictResolver` and `pythonNameConflictResolver` have been migrated to write through `deconflictedName`.
+  - `SymbolTable` now groups conflicts by each symbol's _canonical_ name — the result of applying the symbol's name policy to its `originalName`. This means two symbols whose original names normalize to the same policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are correctly detected as conflicting.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add a new diagnostics reporting interface. Diagnostics will log that an error occurred but will not stop emission. Various things that used to cause errors will now log diagnostics instead, including missing regions in AppendFile and TemplateFile. Unresolved refkeys will also produce a diagnostic.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add new `createScope` and `createSymbol` APIs which construct subclasses of `OutputScope` and `OutputSymbol`, respectively. These are necessary to register the created scopes and symbols with the new debugger interface.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added a browser-based debugger which is started when the ALLOY_DEBUG environment variable is set. The debugger shows emitted files, scopes, symbols, render nodes, effects, diagnostics, and more.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added options to `effect` to allow passing debug information that helps identify that effect.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Tracing will now capture both "trigger" and "triggered-by" events (previously we only traced triggered-by (and called it trigger).
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Print richer stack traces when rendering fails.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+- [#366](https://github.com/alloy-framework/alloy/pull/366) Add SQLite-based trace storage for debug and devtools infrastructure, enabling structured recording of render trees, effects, reactive edges, scopes, symbols, and diagnostics during development builds.
+
+
 ## 0.22.0
 
 ### Bug Fixes

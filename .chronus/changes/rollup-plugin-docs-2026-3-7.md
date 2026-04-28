@@ -1,8 +1,0 @@
----
-# Change versionKind to one of: breaking, feature, fix, internal
-changeKind: internal
-packages:
-  - "@alloy-js/rollup-plugin"
----
-
-Add TSDoc comment to the exported `alloyPlugin` function.

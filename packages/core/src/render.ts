@@ -4,19 +4,17 @@ import prettier from "prettier/doc.js";
 import { useContext } from "./context.js";
 import { SourceFileContext } from "./context/source-file.js";
 import {
+  beginTransaction,
+  closeTrace,
+  commitTransaction,
   debug,
   getRenderNodeId,
   isDevtoolsConnected,
   isDevtoolsEnabled,
+  isTraceEnabled,
+  notifyDiagnosticsReport,
   type RenderTreeNodeInfo,
 } from "./debug/index.js";
-import {
-  beginTransaction,
-  closeTrace,
-  commitTransaction,
-  notifyDiagnosticsReport,
-} from "./debug/trace-writer.js";
-import { isTraceEnabled } from "./debug/trace.js";
 import {
   attachDiagnosticsCollector,
   DiagnosticsCollector,

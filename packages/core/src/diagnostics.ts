@@ -1,9 +1,9 @@
-import { getRenderNodeId } from "./debug/index.js";
 import {
   deleteDiagnostic,
+  getRenderNodeId,
   insertDiagnostic,
   isTraceEnabled,
-} from "./debug/trace-writer.js";
+} from "./debug/index.js";
 import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
 import type { SourceLocation } from "./runtime/component.js";

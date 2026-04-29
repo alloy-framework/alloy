@@ -1,10 +1,11 @@
 import { effect } from "@vue/reactivity";
 import {
+  colorText,
   debug,
   isConsoleTraceEnabled,
+  parseBreakOnIds,
   type TracePhaseInfo,
 } from "./debug/index.js";
-import { colorText, parseBreakOnIds } from "./debug/trace.js";
 import { untrack } from "./reactivity.js";
 import { inspectRefkey, type Refkey } from "./refkey.js";
 import { scheduler } from "./scheduler.js";

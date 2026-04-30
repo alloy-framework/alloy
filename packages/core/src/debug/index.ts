@@ -63,6 +63,17 @@ export type {
   RenderErrorStackEntry,
 } from "./render.js";
 export {
+  beginTransaction,
+  closeTrace,
+  commitTransaction,
+  deleteDiagnostic,
+  insertDiagnostic,
+  insertEffectLifecycle,
+  insertSchedulerFlush,
+  insertSchedulerJob,
+  notifyDiagnosticsReport,
+} from "./trace-writer.js";
+export {
   colorText,
   isConsoleTraceEnabled,
   isDebugEnabled,
@@ -74,17 +85,6 @@ export {
   traceType,
   type TracePhaseInfo,
 } from "./trace.js";
-export {
-  beginTransaction,
-  closeTrace,
-  commitTransaction,
-  deleteDiagnostic,
-  insertDiagnostic,
-  insertEffectLifecycle,
-  insertSchedulerFlush,
-  insertSchedulerJob,
-  notifyDiagnosticsReport,
-} from "./trace-writer.js";
 
 /** The full debug runtime interface, derived from the `debug` object implementation. */
 export type DebugRuntime = typeof debug;

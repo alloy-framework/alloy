@@ -87,7 +87,11 @@ async function bundleForBrowser(): Promise<{
           return true;
         },
         onwarn(warning) {
-          warnings.push(typeof warning === "string" ? warning : (warning.message ?? String(warning)));
+          warnings.push(
+            typeof warning === "string" ? warning : (
+              (warning.message ?? String(warning))
+            ),
+          );
         },
       },
     },

@@ -7,8 +7,6 @@
 
 export type DatabaseSync = null;
 
-export async function openTraceDatabase(
-  _path: string,
-): Promise<null> {
+export async function openTraceDatabase(_path: string): Promise<null> {
   return null;
 }

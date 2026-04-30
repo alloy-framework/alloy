@@ -1,15 +1,12 @@
-import {
-  Children,
-  Diagnostic,
-  getContextForRenderNode,
-  getDiagnosticsForTree,
-  printTree,
-  RenderedTextTree,
-  renderTree,
-} from "@alloy-js/core";
+import { Children, Diagnostic } from "@alloy-js/core";
 import "vitest";
 import { expect } from "vitest";
 import { flushJobs, flushJobsAsync } from "../src/scheduler.js";
+import {
+  getDiagnosticsForTree,
+  getFilesFromTree,
+  renderTree,
+} from "../src/test-render.js";
 import { dedent } from "./render.js";
 
 /**
@@ -61,7 +58,7 @@ expect.extend({
     expectedRaw: string | Record<string, string>,
     renderOptions?: ToRenderToOptions,
   ) {
-    const tree = renderTree(received);
+    const tree = renderTree(received, { noFlush: true });
     await flushJobsAsync();
     const actual = getFilesFromTree(tree, renderOptions);
     return validateRender(actual, expectedRaw, this.isNot);
@@ -79,7 +76,7 @@ expect.extend({
     received: Children,
     expectedDiagnostics: ExpectedDiagnostic[],
   ) {
-    const tree = renderTree(received);
+    const tree = renderTree(received, { noFlush: true });
     await flushJobsAsync();
     const diagnostics = getDiagnosticsForTree(tree);
     return validateDiagnostics(diagnostics, expectedDiagnostics, this.isNot);
@@ -216,39 +213,4 @@ function validateDiagnostics(
     actual: actual.map((d) => ({ message: d.message, severity: d.severity })),
     expected,
   };
-}
-
-function getFilesFromTree(tree: RenderedTextTree, options?: ToRenderToOptions) {
-  const files: Record<string, string> = {};
-
-  collectSourceFiles(tree);
-  // If we found no source files, we return the tree as a string.
-  if (Object.keys(files).length === 0) {
-    return printTree(tree, options);
-  } else {
-    return files;
-  }
-
-  function collectSourceFiles(root: RenderedTextTree) {
-    if (!Array.isArray(root)) {
-      return;
-    }
-    const context = getContextForRenderNode(root);
-    if (context?.meta?.sourceFile) {
-      files[context.meta.sourceFile.path] = printTree(root, {
-        printWidth:
-          options?.printWidth ?? context.meta?.printOptions?.printWidth,
-        tabWidth: options?.tabWidth ?? context.meta?.printOptions?.tabWidth,
-        useTabs: options?.useTabs ?? context.meta?.printOptions?.useTabs,
-      });
-    } else {
-      visitChildren();
-    }
-
-    function visitChildren() {
-      for (const child of root) {
-        collectSourceFiles(child as RenderedTextTree);
-      }
-    }
-  }
 }

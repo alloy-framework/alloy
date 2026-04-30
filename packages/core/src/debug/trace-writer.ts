@@ -124,7 +124,7 @@ export function queryChannel(
   const table = channelTableMap[channel];
   if (!table) return [];
   if (!/^[a-z_]+$/.test(table)) return [];
-  return db.prepare(`SELECT * FROM ${table}`).all() as Record<
+  return db.prepare(`SELECT * FROM ${table} ORDER BY seq`).all() as Record<
     string,
     unknown
   >[];
@@ -536,6 +536,10 @@ export function insertSchedulerFlush(jobsRun: number): void {
   stmtInsertSchedulerFlush.run(nextSeq(), jobsRun);
 }
 
+// Track live render IDs and parent -> children edges so duplicate removals are
+// ignored and child sets stay consistent with render-layer lifecycle events.
+const renderChildren = new Map<number, Set<number>>();
+const liveRenderIds = new Set<number>();
 export function insertRenderNode(
   id: number,
   parentId: number | null,
@@ -550,6 +554,15 @@ export function insertRenderNode(
 ): void {
   if (!db) return;
   const s = nextSeq();
+  if (parentId !== null) {
+    let set = renderChildren.get(parentId);
+    if (!set) {
+      set = new Set();
+      renderChildren.set(parentId, set);
+    }
+    set.add(id);
+  }
+  liveRenderIds.add(id);
   stmtInsertRenderNode.run(
     id,
     parentId,
@@ -595,6 +608,11 @@ export function updateRenderNodeContext(id: number, contextId: number): void {
 
 export function deleteRenderNode(id: number): void {
   if (!db) return;
+  if (!liveRenderIds.has(id)) return;
+  liveRenderIds.delete(id);
+  // Detach from parent's child set.
+  for (const set of renderChildren.values()) set.delete(id);
+  renderChildren.delete(id);
   stmtDeleteRenderNode.run(id);
   notifyChange("render", "removed", { id });
 }
@@ -939,10 +957,14 @@ export function closeTrace(): void {
   db?.close();
   db = null;
   stmtDeleteDiagnostic = undefined;
+  renderChildren.clear();
+  liveRenderIds.clear();
 }
 
 export function resetTrace(): void {
   seq = 0;
+  renderChildren.clear();
+  liveRenderIds.clear();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

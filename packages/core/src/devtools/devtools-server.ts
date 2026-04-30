@@ -158,12 +158,24 @@ function isNodeEnvironment() {
 let _envDebugEnabled: boolean =
   isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
 
+// Cached value of `devtoolsExplicitlyEnabled || _envDebugEnabled`. This
+// function is called on hot paths (every effect/scheduler tick), so we
+// avoid recomputing the OR + the `isNodeEnvironment` check on every call.
+// The cache is invalidated whenever either underlying flag mutates.
+let _devtoolsEnabledCache: boolean = isNodeEnvironment() && _envDebugEnabled;
+
+function refreshDevtoolsEnabledCache(): void {
+  _devtoolsEnabledCache =
+    isNodeEnvironment() && (devtoolsExplicitlyEnabled || _envDebugEnabled);
+}
+
 /**
  * Invalidates the cached env-var result for isDevtoolsEnabled(). Call this in
  * test beforeEach hooks after modifying process.env.ALLOY_DEBUG.
  */
 export function refreshDebugState(): void {
   _envDebugEnabled = isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
+  refreshDevtoolsEnabledCache();
 }
 
 function getCwd() {
@@ -189,8 +201,7 @@ function resolveDebugPort() {
 
 /** Returns true when devtools are enabled (via env var or explicit call). */
 export function isDevtoolsEnabled() {
-  if (!isNodeEnvironment()) return false;
-  return devtoolsExplicitlyEnabled || _envDebugEnabled;
+  return _devtoolsEnabledCache;
 }
 
 /** Returns true when a devtools client is currently connected. */
@@ -371,6 +382,7 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
  */
 export async function waitForDevtoolsConnection(): Promise<void> {
   devtoolsExplicitlyEnabled = true;
+  refreshDevtoolsEnabledCache();
   const server = await ensureServer();
   if (!server.connected) {
     await server.ready;
@@ -392,6 +404,7 @@ export async function enableDevtools(
   options?: EnableDevtoolsOptions,
 ): Promise<DevtoolsServerInfo> {
   devtoolsExplicitlyEnabled = true;
+  refreshDevtoolsEnabledCache();
   devtoolsInitialized = true;
   if (options?.port !== undefined) {
     configuredPort = options.port;
@@ -471,6 +484,7 @@ export async function resetDevtoolsServerForTests() {
   transportState = null;
   transportPromise = null;
   devtoolsExplicitlyEnabled = false;
+  refreshDevtoolsEnabledCache();
   devtoolsInitialized = false;
   configuredPort = undefined;
   loggedDevtoolsLinks = false;

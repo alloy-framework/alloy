@@ -4,7 +4,8 @@ import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { CopyFile } from "../../src/components/CopyFile.jsx";
 import { SourceDirectory } from "../../src/components/SourceDirectory.jsx";
-import { CopyOutputFile, render } from "../../src/render.js";
+import type { CopyOutputFile } from "../../src/output-types.js";
+import { render } from "../../src/render-output.js";
 import { writeOutput } from "../../src/write-output.js";
 import "../../testing/extend-expect.js";
 

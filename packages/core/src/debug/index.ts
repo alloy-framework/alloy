@@ -27,15 +27,13 @@ import {
   updated,
 } from "./files.js";
 import {
-  appendCustomContext,
-  appendFragmentChild,
-  appendPrintHook,
-  appendTextNode,
   beginComponent,
   complete,
   error,
   flushJobsComplete,
   initialize,
+  nodeAttached,
+  nodeDetached,
   prepareMemoNode,
 } from "./render.js";
 import {
@@ -94,10 +92,8 @@ export const debug = {
   },
   render: {
     initialize,
-    appendTextNode,
-    appendCustomContext,
-    appendPrintHook,
-    appendFragmentChild,
+    nodeAttached,
+    nodeDetached,
     beginComponent,
     prepareMemoNode,
     error,

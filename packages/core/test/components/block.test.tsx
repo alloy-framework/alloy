@@ -1,7 +1,7 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { Block } from "../../src/components/Block.jsx";
-import { printTree, renderTree } from "../../src/render.js";
+import { printTree, renderTree } from "../../src/test-render.js";
 import "../../testing/extend-expect.js";
 it("renders properly with no children", () => {
   const template = (

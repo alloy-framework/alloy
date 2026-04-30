@@ -57,8 +57,6 @@ function defaultNameForKind(kind: RenderTreeNodeKind) {
       return "Root";
     case "memo":
       return "Memo";
-    case "printHook":
-      return "PrintHook";
     case "customContext":
       return "CustomContext";
     case "intrinsic":
@@ -99,10 +97,12 @@ export function applyRenderTreeMessage(
     const id = String(message.id);
     const rawParentId =
       message.parent_id === null ? null : String(message.parent_id);
-    const parentId =
-      rawParentId && state.hiddenParents.has(rawParentId) ?
-        (state.hiddenParents.get(rawParentId) ?? null)
-      : rawParentId;
+    // Transitively resolve hidden (memo) parents so that nested memos
+    // don't break the parent chain.
+    let parentId: string | null = rawParentId;
+    while (parentId !== null && state.hiddenParents.has(parentId)) {
+      parentId = state.hiddenParents.get(parentId) ?? null;
+    }
     const kind = message.kind;
     if (kind === "memo") {
       state.hiddenParents.set(id, parentId ?? null);

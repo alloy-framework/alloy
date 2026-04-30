@@ -13,7 +13,7 @@ import {
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
 import { ref } from "../reactivity.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 import { flushJobsAsync } from "../scheduler.js";
 
 /**
@@ -263,7 +263,8 @@ describe("render tree node orphans", () => {
 
   it("no orphans when For with separators re-renders and keeps some items", async () => {
     // mapJoin creates separator/joiner slots between items. These separators
-    // contain printHook subtrees that are part of the cached element tree.
+    // contain nested formatter-control subtrees that are part of the cached
+    // element tree.
     // When items change, the cached subtree is re-added but separator fragments
     // from previous renders must be properly cascade-deleted.
     //
@@ -285,8 +286,8 @@ describe("render tree node orphans", () => {
     const items = ref(["a", "b", "c", "d"]);
     const collector = await createMessageCollector(socket!);
 
-    // Nested blocks simulate the deeply nested printHook trees
-    // found in real emitters (e.g., flight-instructor)
+    // Nested blocks simulate the deeply nested formatter-control trees found in
+    // real emitters (e.g., flight-instructor).
     function Item(props: { value: string }) {
       return (
         <Block>

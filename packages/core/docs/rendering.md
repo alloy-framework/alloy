@@ -5,13 +5,13 @@ Alloy renders a component tree into output files. The pipeline has three layers.
 ## Pipeline
 
 ```
-Component Tree  →  Rendered Text Tree  →  Output Files
-   (JSX)           (strings + hooks)       (formatted text)
+Component Tree  →  AlloyNode Tree  →  Output Files
+   (JSX)          (DOM-like nodes)    (formatted text)
 ```
 
 1. [**`render(children, options?)`**](api/functions/render.md) — entry point. Returns an [`OutputDirectory`](api/types/OutputDirectory.md).
-2. [**`renderTree(children)`**](api/functions/renderTree.md) — evaluates components into a [`RenderedTextTree`](api/types/RenderedTextTree.md). Components run inside reactive effects and re-execute when dependencies change.
-3. **`sourceFilesForTree(tree)`** — walks the rendered tree, calling [`printTree()`](api/functions/printTree.md) per file to produce a formatted string for each source file.
+2. [**`renderTree(children)`**](api/functions/renderTree.md) — evaluates components into an `ElementNode` root containing DOM-like `AlloyNode` children.
+3. **`sourceFilesForTree(tree)`** — walks the AlloyNode tree, calling [`printTree()`](api/functions/printTree.md) per file to produce a formatted string for each source file.
 
 `renderTree()`, `printTree()`, and `sourceFilesForTree()` are available individually for advanced use cases.
 

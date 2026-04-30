@@ -1,7 +1,7 @@
 import { shallowRef } from "@vue/reactivity";
 import { expect, it } from "vitest";
-import { getDiagnosticsForTree, renderTree } from "../render.js";
 import { flushJobs } from "../scheduler.js";
+import { getDiagnosticsForTree, renderTree } from "../test-render.js";
 import { BasicSymbol } from "./basic-symbol.js";
 import { emitSymbol } from "./symbol-flow.js";
 import { createSymbolSlot } from "./symbol-slot.jsx";

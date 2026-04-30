@@ -11,7 +11,7 @@ import {
   enableDevtools,
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 
 let socket: WebSocket | undefined;
 

@@ -6,6 +6,8 @@ import alloyPreset from "@alloy-js/babel-preset";
 import typescriptPreset from "@babel/preset-typescript";
 import { babel } from "@rollup/plugin-babel";
 
+export interface AlloyPluginOptions {}
+
 /**
  * Rollup/Vite plugin that handles Alloy's JSX syntax transformation.
  *
@@ -13,7 +15,7 @@ import { babel } from "@rollup/plugin-babel";
  * Do not set `esbuild.jsx: "automatic"` or `jsxImportSource` — esbuild must
  * defer JSX processing to this plugin (set `esbuild.jsx: "preserve"`).
  */
-export default function alloyPlugin(): any {
+export default function alloyPlugin(options: AlloyPluginOptions = {}): any {
   return babel({
     inputSourceMap: true as any,
     sourceMaps: "both",

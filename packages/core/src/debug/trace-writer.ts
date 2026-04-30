@@ -5,12 +5,10 @@
  * built-in `node:sqlite` module. The database can be queried by the
  * `alloy-trace` CLI or the devtools WebSocket server.
  */
-import type {
-  DatabaseSync as DatabaseSyncType,
-  StatementSync,
-} from "node:sqlite";
+import type { StatementSync } from "node:sqlite";
+import { type DatabaseSync, openTraceDatabase } from "./trace-db.js";
 
-let db: DatabaseSyncType | null = null;
+let db: DatabaseSync | null = null;
 let seq = 0;
 
 // Prepared statements (initialized in initTrace)
@@ -133,28 +131,8 @@ export function queryChannel(
 }
 
 export async function initTrace(path: string): Promise<void> {
-  // Dynamic import to avoid failing in environments without node:sqlite
-  const { DatabaseSync } = await import("node:sqlite");
-  const fs = await import("node:fs");
-  // Remove existing trace file so each run starts fresh
-  try {
-    fs.unlinkSync(path);
-  } catch {
-    /* ignore missing */
-  }
-  try {
-    fs.unlinkSync(path + "-wal");
-  } catch {
-    /* ignore missing */
-  }
-  try {
-    fs.unlinkSync(path + "-shm");
-  } catch {
-    /* ignore missing */
-  }
-  db = new DatabaseSync(path);
-  db.exec("PRAGMA journal_mode=WAL");
-  db.exec("PRAGMA synchronous=NORMAL");
+  db = await openTraceDatabase(path);
+  if (!db) return;
   createSchema();
   prepareStatements();
 }

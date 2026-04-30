@@ -63,26 +63,11 @@ export type {
   RenderErrorStackEntry,
 } from "./render.js";
 export {
-  beginTransaction,
-  closeTrace,
-  commitTransaction,
-  deleteDiagnostic,
-  insertDiagnostic,
-  insertEffectLifecycle,
-  insertSchedulerFlush,
-  insertSchedulerJob,
-  notifyDiagnosticsReport,
-} from "./trace-writer.js";
-export {
-  colorText,
   isConsoleTraceEnabled,
   isDebugEnabled,
   isDevtoolsEnabled,
-  isTraceEnabled,
-  parseBreakOnIds,
   trace,
   TracePhase,
-  traceType,
   type TracePhaseInfo,
 } from "./trace.js";
 

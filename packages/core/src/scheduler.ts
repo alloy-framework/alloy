@@ -1,13 +1,13 @@
 import { ReactiveEffect } from "@vue/reactivity";
+import { debug } from "./debug/index.js";
 import {
   beginTransaction,
   commitTransaction,
-  debug,
   insertEffectLifecycle,
   insertSchedulerFlush,
   insertSchedulerJob,
-  isTraceEnabled,
-} from "./debug/index.js";
+} from "./debug/trace-writer.js";
+import { isTraceEnabled } from "./debug/trace.js";
 import { getEffectDebugId } from "./reactivity.js";
 
 export interface QueueJob {

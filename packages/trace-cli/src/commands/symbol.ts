@@ -42,7 +42,12 @@ function symbolList(db: Db, opts: Opts) {
   }
   if (opts.component) {
     conditions.push(
-      "s.render_node_id IN (SELECT rn.id FROM render_nodes rn WHERE rn.kind = 'component' AND rn.name LIKE ?)",
+      `s.render_node_id IN (
+        SELECT cr.render_node_id
+        FROM component_roots cr
+        JOIN component_instances ci ON ci.id = cr.component_id
+        WHERE ci.name LIKE ?
+      )`,
     );
     params.push(`%${opts.component}%`);
   }

@@ -351,15 +351,20 @@ function buildComponentStack(db: Db, nodeId: number): any[] {
   let currentId: number | null = nodeId;
 
   while (currentId !== null) {
-    const node = db
+    const components = db
       .prepare(
-        "SELECT id, parent_id, kind, name, props, source_file, source_line, source_col FROM render_nodes WHERE id = ?",
+        `SELECT ci.id, ci.parent_id, ci.name, ci.props, ci.source_file, ci.source_line, ci.source_col
+         FROM component_roots cr
+         JOIN component_instances ci ON ci.id = cr.component_id
+         WHERE cr.render_node_id = ?
+         ORDER BY cr.ordinal`,
       )
+      .all(currentId) as any[];
+    stack.push(...components);
+    const node = db
+      .prepare("SELECT id, parent_id FROM render_nodes WHERE id = ?")
       .get(currentId) as any;
     if (!node) break;
-    if (node.kind === "component") {
-      stack.push(node);
-    }
     currentId = node.parent_id;
   }
 

@@ -4,20 +4,12 @@
  *
  * # Tree shape
  *
- * The trace tree mirrors the AlloyNode tree, with two additions:
+ * The trace tree mirrors the real AlloyNode tree. Component invocations
+ * are recorded separately as canonical metadata (`component_instances`
+ * and `component_roots`) so devtools can derive presentation groupings
+ * without storing UI artifacts as render nodes.
  *
- *  - **Component scopes.** Every `<Foo />` produces a synthetic trace
- *    node (kind `"component"`) with the component name, serialized
- *    props, and JSX source location. Whatever AlloyNode(s) the
- *    component thunk produces become children of this scope.
- *  - **Memo scopes.** Each reactive child slot in `insertReactive`
- *    produces a synthetic node (kind `"memo"`) bracketing its
- *    `slot:start` / `slot:end` `CommentNode` pair. The dynamic
- *    children inside become children of the memo scope; on rerun
- *    the old children are removed from the trace and the new ones
- *    are added under the same memo id.
- *
- * Within those scopes, real AlloyNodes are exposed as:
+ * Real AlloyNodes are exposed as:
  *
  *  - `TextNode` → `kind: "text"`, with `value: data`
  *  - `ElementNode` with a marker `localName` (`alloy:source-file`,
@@ -45,14 +37,9 @@
  *  - `error(info, stack)` — emits `render:error` and writes a
  *    `render_errors` row.
  *
- * Scope hooks:
- *  - `beginComponent(opts)` — pushes a component scope. The returned
- *    `ComponentDebugSession` exposes `recordFile` / `recordDirectory`
- *    (used to attach file/dir metadata to the scope) and `dispose()`
- *    (pops the scope; called from `insertComponent`'s finally).
- *  - `prepareMemoNode(start, end)` — registers a memo scope keyed by
- *    the start `CommentNode`. Subsequent attaches inside the
- *    `start..end` range are reparented under the memo scope id.
+ * Component hooks:
+ *  - `beginComponent(opts)` — records a component instance and captures
+ *    the real top-level AlloyNodes it emits.
  *
  * Each hook short-circuits when neither devtools nor the trace DB
  * are enabled.
@@ -69,6 +56,7 @@ import {
   registerDevtoolsMessageHandler,
 } from "../devtools/devtools-server.js";
 import { getContext, untrack } from "../reactivity.js";
+import { getContextForNode } from "../render/node-context.js";
 import {
   AlloyNode,
   CommentNode,
@@ -89,6 +77,10 @@ import {
 import { sanitizeRecord } from "./serialize.js";
 import { resolveComponentSource } from "./source-map.js";
 import {
+  deleteComponentInstance,
+  deleteComponentRoot,
+  insertComponentInstance,
+  insertComponentRoot,
   insertDirectory,
   insertOutputFile,
   insertRenderError,
@@ -98,15 +90,13 @@ import {
   notifyRenderReset,
   deleteRenderNode as traceDeleteRenderNode,
   insertRenderNode as traceInsertRenderNode,
-  updateRenderNodeProps as traceUpdateRenderNodeProps,
+  updateComponentInstanceProps,
   updateEffectComponentByContext,
-  updateRenderNodeContext,
 } from "./trace-writer.js";
 import { isDebugEnabled, logDevtoolsMessage } from "./trace.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Public types — kept compatible with `main` so callers that import
-// these names don't break.
+// Public debug types used by runtime and devtools integration.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** The kind discriminant for render tree nodes. */
@@ -160,14 +150,10 @@ export interface RenderErrorStackEntry extends ProtocolRenderErrorStackEntry {
 let nodeIds = new WeakMap<AlloyNode, number>();
 /** AlloyNodes that have been emitted to the trace tree. */
 let tracked = new WeakSet<AlloyNode>();
-/** When a node is attached at a not-yet-rooted location, the scope frame
- * (if any) that was active is stamped here. On later root-time flush,
- * this scope id is used instead of the AlloyNode's parent id. */
-let pendingScope = new WeakMap<AlloyNode, ScopeFrame>();
-/** Node id → ancestor scope frame whose refcount tracks this node. */
-let scopeOfNode = new Map<number, ScopeFrame>();
-/** All scope frames keyed by id (for lookup after they leave the stack). */
-let scopesById = new Map<number, ScopeFrame>();
+/** Component owner captured while a subtree is built before being rooted. */
+let pendingOwnerComponent = new WeakMap<AlloyNode, ComponentFrame>();
+/** Component roots captured while a subtree is built before being rooted. */
+let pendingRootComponents = new WeakMap<AlloyNode, ComponentFrame[]>();
 /** Sidecar metadata per node id — kind + name + source for cleanup re-emit. */
 let nodeKinds = new Map<
   number,
@@ -181,52 +167,33 @@ let nodeProps = new Map<number, string | undefined>();
 /** Devtools-side rerender bindings keyed by render-tree node id. */
 let rerenderActions = new Map<number, RenderNodeActions>();
 
-/**
- * Active scope stack. Each frame redirects the parent_id of subsequently
- * attached nodes to the synthetic scope id. Frames are pushed by
- * `beginComponent` / memo region setup and popped by their `dispose()` /
- * effect cleanup.
- *
- * The top frame's `parentId` is the AlloyNode parent's id at the time
- * the scope was created.
- */
-type ScopeFrame = {
-  /** Synthetic id for this scope (used as parent_id of attached nodes). */
+type ComponentFrame = {
   id: number;
-  /** AlloyNode at whose insertion site this scope lives. */
+  parentComponentId: number | null;
   hostParent: AlloyNode;
-  /** For memo scopes, the start comment; everything between start..end
-   *  belongs to this scope when the scope is the active top frame. */
-  memoStart?: CommentNode;
-  memoEnd?: CommentNode;
-  /** Whether `insertRenderNode` has been called for this scope. */
-  emitted: boolean;
-  /** Captured arguments for deferred emission. */
-  emit: () => void;
-  /** Number of live emitted children — when 0 and disposed, remove. */
-  refcount: number;
-  /** Whether `dispose()` has been called. */
-  disposed: boolean;
-  /** Set true once the scope has been emitRemoved — it can no longer
-   *  serve as a parent for any new emission. Pending `emit()` calls
-   *  must short-circuit when this is true. */
-  defunct?: boolean;
+  name: string;
+  propsSerialized: string | undefined;
+  source: RenderTreeNodeInfo["source"] | undefined;
+  contextId: number | null;
+  roots: number[];
+  rootSet: Set<number>;
+  file?: { path: string; filetype: string };
+  directory?: { path: string };
+  actions?: RenderNodeActions;
+  stopWatch?: () => void;
 };
-let scopeStack: ScopeFrame[] = [];
-/**
- * Memo scope index keyed by start CommentNode. Lookup is needed when a
- * node is attached inside an existing memo region but no scope is
- * currently active (e.g. nested reactive reruns).
- */
-let memoScopesByStart = new WeakMap<CommentNode, ScopeFrame>();
+let componentStack: ComponentFrame[] = [];
+let componentsById = new Map<number, ComponentFrame>();
+let componentByContextId = new Map<number, ComponentFrame>();
+let ownerComponentByNodeId = new Map<number, number>();
+let childComponentsById = new Map<number, Set<number>>();
+let rootComponentsByNodeId = new Map<number, Set<number>>();
 
 /**
  * Reverse index: parent render-tree id → set of currently-emitted child
  * render-tree ids. Maintained by every `insertRenderNode` call in this
  * module, and used by `emitRemoved` to cascade-remove descendants whose
- * lifetime is bound to the removed parent (in particular, child scopes
- * whose `parent_id` is the removed scope's id but whose AlloyNodes
- * aren't part of the removed parent's AlloyNode subtree).
+ * lifetime is bound to the removed parent.
  */
 let renderChildIds = new Map<number, Set<number>>();
 
@@ -273,6 +240,9 @@ let handlerRegistered = false;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function initialize(root: AlloyNode) {
+  for (const frame of componentsById.values()) {
+    frame.stopWatch?.();
+  }
   if (!isDebugEnabled()) {
     setMutationListener(null);
     return;
@@ -280,17 +250,20 @@ export function initialize(root: AlloyNode) {
   ensureDevtoolsHandler();
   nodeIds = new WeakMap();
   tracked = new WeakSet();
-  pendingScope = new WeakMap();
-  scopeOfNode = new Map();
-  scopesById = new Map();
+  pendingOwnerComponent = new WeakMap();
+  pendingRootComponents = new WeakMap();
   renderChildIds = new Map();
   nodeKinds = new Map();
   fileNodes = new Map();
   directoryNodes = new Map();
   nodeProps = new Map();
   rerenderActions = new Map();
-  scopeStack = [];
-  memoScopesByStart = new WeakMap();
+  componentStack = [];
+  componentsById = new Map();
+  componentByContextId = new Map();
+  ownerComponentByNodeId = new Map();
+  childComponentsById = new Map();
+  rootComponentsByNodeId = new Map();
   nextId = 1;
   resetFileStreaming();
   setMutationListener({ attached: nodeAttached, detached: nodeDetached });
@@ -391,80 +364,123 @@ function classifyNode(node: AlloyNode): {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Scope resolution
+// Component ownership resolution
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ensureScopeEmitted(frame: ScopeFrame): boolean {
-  if (frame.defunct) return false;
-  if (frame.emitted) return true;
-  // Need parent's id first.
-  const parentId = resolveScopeParentId(frame);
-  if (parentId === undefined) return false;
-  frame.emit();
-  frame.emitted = true;
-  return true;
+function currentComponentFrame(): ComponentFrame | undefined {
+  return componentStack[componentStack.length - 1];
 }
 
-/**
- * Eagerly "track" an alloy:* wrapper ElementNode (alloy:directory,
- * alloy:source-file, alloy:copy-file) currently being constructed inside
- * a component thunk's body. The wrapper does NOT get its own render-tree
- * node — it's collapsed onto the enclosing component scope (which is
- * already a SourceDirectory / SourceFile / CopyFile component). Children
- * attached to the wrapper resolve their parent_id to that scope's id.
- */
-function ensureWrapperHostTracked(host: AlloyNode): boolean {
-  if (tracked.has(host)) return true;
-  if (!(host instanceof ElementNode)) return false;
-  const ln = host.localName;
-  if (
-    ln !== "alloy:directory" &&
-    ln !== "alloy:source-file" &&
-    ln !== "alloy:copy-file"
-  ) {
-    return false;
-  }
-  let enclosing: ScopeFrame | undefined;
-  for (let i = scopeStack.length - 1; i >= 0; i--) {
-    const f = scopeStack[i];
-    if (f.hostParent !== host) {
-      enclosing = f;
-      break;
-    }
-  }
-  if (enclosing === undefined) return false;
-  if (!ensureScopeEmitted(enclosing)) return false;
-  // Alias: wrapper id == enclosing scope id (no separate node emitted).
-  nodeIds.set(host, enclosing.id);
-  tracked.add(host);
-  return true;
+function currentContextComponentFrame(): ComponentFrame | undefined {
+  const ctx = getContext();
+  return ctx ? componentByContextId.get(ctx.id) : undefined;
 }
 
-function resolveScopeParentId(frame: ScopeFrame): number | null | undefined {
-  // Only consider frames pushed BEFORE this one — ancestors. Same-host
-  // siblings later on the stack don't dominate this frame.
-  const idx = scopeStack.indexOf(frame);
-  for (let i = (idx === -1 ? scopeStack.length : idx) - 1; i >= 0; i--) {
-    const f = scopeStack[i];
-    if (f.defunct) continue;
-    if (f.hostParent === frame.hostParent) {
-      if (!ensureScopeEmitted(f)) return undefined;
-      return f.id;
-    }
+function findRootComponentsForAttach(parent: AlloyNode): ComponentFrame[] {
+  const frames: ComponentFrame[] = [];
+  for (let i = componentStack.length - 1; i >= 0; i--) {
+    const frame = componentStack[i];
+    if (frame.hostParent === parent) frames.unshift(frame);
   }
-  if (tracked.has(frame.hostParent)) {
-    return nodeIds.get(frame.hostParent) ?? null;
-  }
-  if (ensureWrapperHostTracked(frame.hostParent)) {
-    return nodeIds.get(frame.hostParent) ?? null;
+  return frames;
+}
+
+function ownerFrameForAttach(
+  parentId: number | null,
+  inheritedOwner: ComponentFrame | undefined,
+): ComponentFrame | undefined {
+  if (inheritedOwner) return inheritedOwner;
+  const active = currentComponentFrame();
+  if (active) return active;
+  const contextFrame = currentContextComponentFrame();
+  if (contextFrame) return contextFrame;
+  if (parentId !== null) {
+    const parentOwner = ownerComponentByNodeId.get(parentId);
+    if (parentOwner !== undefined) return componentsById.get(parentOwner);
   }
   return undefined;
 }
 
+function recordComponentRoot(
+  frame: ComponentFrame,
+  renderNodeId: number,
+): void {
+  if (frame.rootSet.has(renderNodeId)) return;
+  frame.rootSet.add(renderNodeId);
+  const ordinal = frame.roots.length;
+  frame.roots.push(renderNodeId);
+  let components = rootComponentsByNodeId.get(renderNodeId);
+  if (!components) {
+    components = new Set();
+    rootComponentsByNodeId.set(renderNodeId, components);
+  }
+  components.add(frame.id);
+  insertComponentRoot(frame.id, renderNodeId, ordinal);
+  if (ordinal === 0) {
+    if (frame.file) {
+      fileNodes.set(renderNodeId, frame.file);
+      insertOutputFile(frame.file.path, frame.file.filetype, renderNodeId);
+    }
+    if (frame.directory) {
+      directoryNodes.set(renderNodeId, frame.directory);
+    }
+  }
+  if (frame.actions) rerenderActions.set(renderNodeId, frame.actions);
+}
+
+function removeComponentRoot(
+  frame: ComponentFrame,
+  renderNodeId: number,
+  deleteWhenEmpty = true,
+): void {
+  if (!frame.rootSet.delete(renderNodeId)) return;
+  frame.roots = frame.roots.filter((id) => id !== renderNodeId);
+  const components = rootComponentsByNodeId.get(renderNodeId);
+  if (components) {
+    components.delete(frame.id);
+    if (components.size === 0) rootComponentsByNodeId.delete(renderNodeId);
+  }
+  deleteComponentRoot(frame.id, renderNodeId);
+  if (deleteWhenEmpty && frame.rootSet.size === 0) {
+    deleteComponentFrame(frame);
+  }
+}
+
+function deleteComponentFrame(frame: ComponentFrame): void {
+  if (!componentsById.delete(frame.id)) return;
+
+  const children = childComponentsById.get(frame.id);
+  if (children) {
+    childComponentsById.delete(frame.id);
+    for (const childId of [...children]) {
+      const child = componentsById.get(childId);
+      if (child) deleteComponentFrame(child);
+    }
+  }
+
+  for (const rootId of [...frame.roots]) {
+    removeComponentRoot(frame, rootId, false);
+  }
+
+  if (frame.parentComponentId !== null) {
+    const siblings = childComponentsById.get(frame.parentComponentId);
+    siblings?.delete(frame.id);
+  }
+  if (
+    frame.contextId !== null &&
+    componentByContextId.get(frame.contextId)?.id === frame.id
+  ) {
+    componentByContextId.delete(frame.contextId);
+  }
+  nodeProps.delete(frame.id);
+  frame.stopWatch?.();
+  deleteComponentInstance(frame.id);
+}
+
 /**
  * Decide whether `attachedParent` is currently part of the live trace
- * tree (rooted at the initialized root or under an active scope), and
- * if so, which trace node id should be the new node's parent.
+ * tree (rooted at the initialized root), and if so which trace node id
+ * should be the new node's parent.
  *
  * Returns `undefined` when `attachedParent` isn't tracked — the caller
  * should defer emission until the subtree is later attached at a
@@ -474,39 +490,9 @@ function resolveParentId(
   node: AlloyNode,
   attachedParent: AlloyNode,
 ): number | null | undefined {
-  // Active scope match — the scope's hostParent IS the attach site.
-  for (let i = scopeStack.length - 1; i >= 0; i--) {
-    const frame = scopeStack[i];
-    if (frame.defunct) continue;
-    if (frame.hostParent === attachedParent) {
-      if (!ensureScopeEmitted(frame)) return undefined;
-      return frame.id;
-    }
-  }
-  // Memo region: walk siblings backward looking for a slot:start with
-  // a registered memo scope.
-  for (
-    let sib: AlloyNode | null = node.previousSibling;
-    sib !== null;
-    sib = sib.previousSibling
-  ) {
-    if (sib instanceof CommentNode) {
-      if (sib.data === "slot:start") {
-        const frame = memoScopesByStart.get(sib);
-        if (frame !== undefined && !frame.defunct) {
-          if (!ensureScopeEmitted(frame)) return undefined;
-          return frame.id;
-        }
-      }
-      if (sib.data === "slot:end" || sib.data === "slot:start") break;
-    }
-  }
   if (tracked.has(attachedParent)) {
     const id = nodeIds.get(attachedParent);
     return id === undefined ? null : id;
-  }
-  if (ensureWrapperHostTracked(attachedParent)) {
-    return nodeIds.get(attachedParent) ?? null;
   }
   return undefined;
 }
@@ -520,50 +506,54 @@ function resolveParentId(
  * `added` event for `node` itself (if exposed) and recursively for any
  * descendants it brought with it (move / fragment splice / cached subtree).
  *
- * If `parent` isn't part of the live tree yet, stamps the active scope
- * onto `node` and defers emission until the subtree finally attaches.
+ * If `parent` isn't part of the live tree yet, stamps the active component
+ * ownership onto `node` and defers emission until the subtree finally attaches.
  */
 export function nodeAttached(node: AlloyNode, parent: AlloyNode): void {
   if (!isDebugEnabled()) return;
   markFileDirtyForNode(parent);
   const parentId = resolveParentId(node, parent);
+  const ownerFrame = currentComponentFrame() ?? currentContextComponentFrame();
+  let rootFrames = findRootComponentsForAttach(parent);
+  if (
+    rootFrames.length === 0 &&
+    ownerFrame !== undefined &&
+    parentId !== undefined &&
+    (parentId === null ||
+      ownerComponentByNodeId.get(parentId) !== ownerFrame.id)
+  ) {
+    rootFrames = [ownerFrame];
+  }
   if (parentId === undefined) {
-    // Not rooted — record the active scope (if any) so that when this
-    // subtree later flushes we know which scope to attribute it to.
-    if (scopeStack.length > 0) {
-      // Find the topmost scope whose hostParent === parent.
-      for (let i = scopeStack.length - 1; i >= 0; i--) {
-        if (scopeStack[i].hostParent === parent) {
-          pendingScope.set(node, scopeStack[i]);
-          break;
-        }
-      }
-    }
+    if (ownerFrame) pendingOwnerComponent.set(node, ownerFrame);
+    if (rootFrames.length > 0) pendingRootComponents.set(node, rootFrames);
     return;
   }
-  attachWithSelf(node, parent, parentId);
+  attachWithSelf(node, parentId, ownerFrame, rootFrames);
 }
 
 function attachWithSelf(
   node: AlloyNode,
-  parent: AlloyNode,
   parentId: number | null,
+  inheritedOwner: ComponentFrame | undefined,
+  inheritedRoots: ComponentFrame[],
 ): void {
-  let owningScope: ScopeFrame | undefined;
-  // Honour any deferred scope stamp.
-  const stamped = pendingScope.get(node);
-  if (stamped !== undefined) {
-    pendingScope.delete(node);
-    if (ensureScopeEmitted(stamped)) {
-      parentId = stamped.id;
-      owningScope = stamped;
-    }
-  } else if (parentId !== null && scopesById.has(parentId)) {
-    owningScope = scopesById.get(parentId);
+  const pendingOwner = pendingOwnerComponent.get(node);
+  if (pendingOwner !== undefined) {
+    pendingOwnerComponent.delete(node);
   }
+  const pendingRoots = pendingRootComponents.get(node);
+  if (pendingRoots !== undefined) {
+    pendingRootComponents.delete(node);
+  }
+  const ownerFrame = ownerFrameForAttach(
+    parentId,
+    pendingOwner ?? inheritedOwner,
+  );
+  const rootFrames = pendingRoots ?? inheritedRoots;
   if (!shouldExposeNode(node)) {
     for (let c = node.firstChild; c !== null; c = c.nextSibling) {
-      attachWithSelf(c, node, parentId);
+      attachWithSelf(c, parentId, ownerFrame, rootFrames);
     }
     return;
   }
@@ -573,19 +563,23 @@ function attachWithSelf(
     // just walk newly-attached children that may not have been seen yet.
     const existingId = nodeIds.get(node)!;
     for (let c = node.firstChild; c !== null; c = c.nextSibling) {
-      if (!tracked.has(c)) attachWithSelf(c, node, existingId);
+      if (!tracked.has(c)) {
+        attachWithSelf(c, existingId, ownerFrame, []);
+      }
     }
     return;
   }
   const id = getOrCreateNodeId(node);
   emitAdded(node, id, parentId);
   tracked.add(node);
-  if (owningScope !== undefined) {
-    scopeOfNode.set(id, owningScope);
-    owningScope.refcount++;
+  if (ownerFrame !== undefined) {
+    ownerComponentByNodeId.set(id, ownerFrame.id);
+  }
+  for (const rootFrame of rootFrames) {
+    recordComponentRoot(rootFrame, id);
   }
   for (let c = node.firstChild; c !== null; c = c.nextSibling) {
-    if (!tracked.has(c)) attachWithSelf(c, node, id);
+    if (!tracked.has(c)) attachWithSelf(c, id, ownerFrame, []);
   }
 }
 
@@ -611,7 +605,7 @@ function emitAdded(node: AlloyNode, id: number, parentId: number | null): void {
     entry.source?.fileName,
     entry.source?.lineNumber,
     entry.source?.columnNumber,
-    null,
+    getContextForNode(node)?.id ?? null,
     cls.value,
   );
 }
@@ -630,31 +624,6 @@ function detachRecursive(node: AlloyNode): void {
   for (let c = node.firstChild; c !== null; c = c.nextSibling) {
     detachRecursive(c);
   }
-  // If this node is a memo-region start marker, tear down the scope.
-  if (node instanceof CommentNode) {
-    const frame = memoScopesByStart.get(node);
-    if (frame !== undefined) {
-      memoScopesByStart.delete(node);
-      if (!frame.disposed) {
-        frame.disposed = true;
-        if (frame.emitted) {
-          if (frame.refcount === 0) {
-            // emitRemoved sets defunct + deletes from scopesById.
-            emitRemoved(frame.id);
-          }
-          // else: refcount > 0 — siblings between start..end will be
-          // detached next; their emitRemoved decrements refcount and
-          // triggers cleanup once it hits zero.
-        } else {
-          // Never emitted — drop registration and mark defunct so any
-          // pending eager-emission attempts short-circuit.
-          frame.defunct = true;
-          scopesById.delete(frame.id);
-          nodeKinds.delete(frame.id);
-        }
-      }
-    }
-  }
   if (!tracked.has(node)) return;
   tracked.delete(node);
   if (!shouldExposeNode(node)) return;
@@ -664,6 +633,13 @@ function detachRecursive(node: AlloyNode): void {
 }
 
 function emitRemoved(id: number): void {
+  const componentIds = rootComponentsByNodeId.get(id);
+  if (componentIds) {
+    for (const componentId of [...componentIds]) {
+      const component = componentsById.get(componentId);
+      if (component) removeComponentRoot(component, id);
+    }
+  }
   traceDeleteRenderNode(id);
   rerenderActions.delete(id);
   nodeProps.delete(id);
@@ -671,20 +647,8 @@ function emitRemoved(id: number): void {
   // Files & directories owned by this node.
   fileNodes.delete(id);
   directoryNodes.delete(id);
-  // If this id corresponds to a scope frame, that scope is now gone
-  // from the trace tree — mark it defunct and remove from the index so
-  // any later emit() that would have resolved to this id short-circuits
-  // and no orphans are produced.
-  const ownScope = scopesById.get(id);
-  if (ownScope !== undefined) {
-    ownScope.defunct = true;
-    ownScope.disposed = true;
-    scopesById.delete(id);
-  }
-  // Cascade to any descendants currently registered as children of
-  // this id. This catches scopes (memo / component) whose AlloyNodes
-  // aren't part of the removed parent's AlloyNode subtree, and so
-  // wouldn't be torn down by `detachRecursive` alone.
+  ownerComponentByNodeId.delete(id);
+  // Cascade to any descendants currently registered as children of this id.
   const children = renderChildIds.get(id);
   if (children !== undefined) {
     renderChildIds.delete(id);
@@ -692,31 +656,10 @@ function emitRemoved(id: number): void {
       emitRemoved(childId);
     }
   }
-  // Detach from the parent's child set so a later cascade doesn't
-  // re-visit us.
-  const scope = scopeOfNode.get(id);
-  if (scope !== undefined) {
-    scopeOfNode.delete(id);
-    const sset = renderChildIds.get(scope.id);
-    if (sset !== undefined) {
-      sset.delete(id);
-      if (sset.size === 0) renderChildIds.delete(scope.id);
-    }
-    scope.refcount--;
-    if (scope.refcount === 0 && scope.disposed && scope.emitted) {
-      // Remove the scope itself; propagate up the scope-chain so an
-      // outer scope's refcount stays consistent.
-      emitRemoved(scope.id);
-    }
-  } else {
-    // Non-scope node — still need to detach from parent maps if present.
-    // Cheap: leave stale entries in renderChildIds; they self-clean
-    // when the parent itself is emitRemoved (above).
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Component scope
+// Component lifecycle
 // ─────────────────────────────────────────────────────────────────────────────
 
 function serializeRenderTreeProps(input: Record<string, unknown> | undefined) {
@@ -759,59 +702,47 @@ export function beginComponent(
     const resolvedSource = resolveComponentSource(source);
 
     const id = nextId++;
-    nodeKinds.set(id, {
-      kind: "component",
-      name: componentName,
-      source: resolvedSource,
-    });
-    if (propsSerialized !== undefined) nodeProps.set(id, propsSerialized);
-    if (actions) rerenderActions.set(id, actions);
-
-    const frame: ScopeFrame = {
+    const ctx = getContext();
+    const parentComponent =
+      componentStack[componentStack.length - 1] ??
+      (ctx?.owner ? componentByContextId.get(ctx.owner.id) : undefined);
+    const frame: ComponentFrame = {
       id,
+      parentComponentId: parentComponent?.id ?? null,
       hostParent: parent,
-      emitted: false,
-      refcount: 0,
-      disposed: false,
-      emit: () => {
-        if (frame.defunct) return;
-        const parentId = resolveScopeParentId(frame);
-        if (parentId === undefined) return;
-        insertRenderNode(
-          id,
-          parentId,
-          "component",
-          componentName,
-          propsSerialized,
-          resolvedSource?.fileName,
-          resolvedSource?.lineNumber,
-          resolvedSource?.columnNumber,
-          null,
-          undefined,
-        );
-        if (isTraceEnabled()) {
-          const ctx = getContext();
-          if (ctx) {
-            updateRenderNodeContext(id, ctx.id);
-            updateEffectComponentByContext(ctx.id, componentName);
-          }
-        }
-        // If the scope's parent is itself a scope, count ourselves
-        // toward its refcount so it doesn't tear down beneath us.
-        if (parentId !== null && parentId !== undefined) {
-          const ps = scopesById.get(parentId);
-          if (ps !== undefined) {
-            scopeOfNode.set(id, ps);
-            ps.refcount++;
-          }
-        }
-      },
+      name: componentName,
+      propsSerialized,
+      source: resolvedSource,
+      contextId: ctx?.id ?? null,
+      roots: [],
+      rootSet: new Set(),
+      actions,
     };
-    scopesById.set(id, frame);
-    scopeStack.push(frame);
-    // Eager emission attempt — preserves "scope before child" ordering
-    // when the host parent is already in the live tree.
-    ensureScopeEmitted(frame);
+    componentsById.set(id, frame);
+    if (frame.parentComponentId !== null) {
+      let children = childComponentsById.get(frame.parentComponentId);
+      if (!children) {
+        children = new Set();
+        childComponentsById.set(frame.parentComponentId, children);
+      }
+      children.add(id);
+    }
+    componentStack.push(frame);
+    if (ctx) componentByContextId.set(ctx.id, frame);
+    if (propsSerialized !== undefined) nodeProps.set(id, propsSerialized);
+    insertComponentInstance(
+      id,
+      frame.parentComponentId,
+      componentName,
+      propsSerialized,
+      resolvedSource?.fileName,
+      resolvedSource?.lineNumber,
+      resolvedSource?.columnNumber,
+      frame.contextId,
+    );
+    if (isTraceEnabled() && ctx) {
+      updateEffectComponentByContext(ctx.id, componentName);
+    }
 
     // Watch reactive props and re-emit on change.
     let stopWatch: (() => void) | undefined;
@@ -825,140 +756,36 @@ export function beginComponent(
             const previous = nodeProps.get(id);
             if (previous === next) return;
             nodeProps.set(id, next);
-            traceUpdateRenderNodeProps(id, next);
+            updateComponentInstanceProps(id, next);
           },
         );
       }
     }
+    frame.stopWatch = stopWatch;
 
     let disposed = false;
     return {
       recordDirectory(path: string) {
-        if (directoryNodes.has(id)) return;
-        directoryNodes.set(id, { path });
+        if (frame.directory) return;
+        frame.directory = { path };
         insertDirectory(path);
       },
       recordFile(path: string, filetype: string) {
-        if (fileNodes.has(id)) return;
-        fileNodes.set(id, { path, filetype });
-        insertOutputFile(path, filetype, id);
+        if (frame.file) return;
+        frame.file = { path, filetype };
       },
       dispose() {
         if (disposed) return;
         disposed = true;
-        frame.disposed = true;
-        // Remove this scope from the stack (could be non-top if a
-        // child component disposed out-of-order; tolerate it).
-        for (let i = scopeStack.length - 1; i >= 0; i--) {
-          if (scopeStack[i].id === id) {
-            scopeStack.splice(i, 1);
+        for (let i = componentStack.length - 1; i >= 0; i--) {
+          if (componentStack[i].id === id) {
+            componentStack.splice(i, 1);
             break;
           }
         }
-        // If the scope was emitted but never received any children,
-        // remove it now — otherwise it sticks around as a ghost.
-        if (frame.emitted && frame.refcount === 0) {
-          emitRemoved(frame.id);
-        }
-        stopWatch?.();
       },
     };
   });
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Memo scope
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Register a memo scope between two slot-marker `CommentNode`s. Returns
- * a controller that pushes the scope on each effect run and pops on
- * cleanup. The `start` comment's id is the scope id.
- */
-export function prepareMemoNode(
-  start: CommentNode,
-  end: CommentNode,
-): { enter(): void; leave(): void; clearChildren(): void; dispose(): void } {
-  if (!isDebugEnabled()) {
-    return {
-      enter() {},
-      leave() {},
-      clearChildren() {},
-      dispose() {},
-    };
-  }
-  const id = nextId++;
-  nodeKinds.set(id, { kind: "memo" });
-
-  const frame: ScopeFrame = {
-    id,
-    hostParent: start.parentNode!,
-    memoStart: start,
-    memoEnd: end,
-    emitted: false,
-    refcount: 0,
-    disposed: false,
-    emit: () => {
-      if (frame.defunct) return;
-      const parentId = resolveScopeParentId(frame);
-      if (parentId === undefined) return;
-      insertRenderNode(
-        id,
-        parentId,
-        "memo",
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        null,
-        undefined,
-      );
-      // If our parent is itself a scope, register ourselves as a child
-      // of that scope so it doesn't tear down beneath us.
-      if (parentId !== null && parentId !== undefined) {
-        const ps = scopesById.get(parentId);
-        if (ps !== undefined) {
-          scopeOfNode.set(id, ps);
-          ps.refcount++;
-        }
-      }
-    },
-  };
-  scopesById.set(id, frame);
-  memoScopesByStart.set(start, frame);
-
-  return {
-    enter() {
-      // Refresh hostParent in case the start comment was moved.
-      if (start.parentNode !== null) frame.hostParent = start.parentNode;
-      scopeStack.push(frame);
-    },
-    leave() {
-      for (let i = scopeStack.length - 1; i >= 0; i--) {
-        if (scopeStack[i] === frame) {
-          scopeStack.splice(i, 1);
-          break;
-        }
-      }
-    },
-    clearChildren() {
-      // Walk the live region (start..end) and emit removed for any
-      // exposed descendant ids that were tracked. This is invoked
-      // before insertReactive replaces the bracketed range.
-      let n = start.nextSibling;
-      while (n !== null && n !== end) {
-        detachRecursive(n);
-        n = n.nextSibling;
-      }
-    },
-    dispose() {
-      // Memo region is permanently torn down (e.g. enclosing scope
-      // cleared the bracketed range). Emit removed for the scope.
-      memoScopesByStart.delete(start);
-      emitRemoved(id);
-    },
-  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

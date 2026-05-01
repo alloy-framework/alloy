@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, it } from "vitest";
+import * as devalue from "devalue";
 import WebSocket from "ws";
 import {
   createMessageCollector,
@@ -7,6 +8,7 @@ import {
 } from "../../testing/devtools-utils.js";
 import { For } from "../components/For.jsx";
 import { Output } from "../components/Output.jsx";
+import { Show } from "../components/Show.jsx";
 import {
   enableDevtools,
   resetDevtoolsServerForTests,
@@ -16,6 +18,10 @@ import { renderAsync } from "../render-output.js";
 import { flushJobsAsync } from "../scheduler.js";
 
 let socket: WebSocket | undefined;
+
+function componentMessages(messages: DevtoolsMessage[]) {
+  return messages.filter((m) => m.type.startsWith("component:"));
+}
 
 beforeEach(async () => {
   const server = await enableDevtools({ port: 0 });
@@ -106,20 +112,36 @@ it("sends render tree messages during render", async () => {
     type: "render:node_added",
     parent_id: null,
   });
-  // Verify the major component scopes are present somewhere in the
-  // tree. Exact ordering is not contractual on the AlloyNode renderer.
-  const names = nodeAdded.map((m) => m.name);
-  expect(names).toContain("Output");
-  expect(names).toContain("Context Binder");
+  expect(nodeAdded.map((m) => m.kind)).not.toContain("component");
+  expect(nodeAdded.map((m) => m.kind)).not.toContain("memo");
+
+  // Component invocations are canonical component messages, not
+  // render-node rows. Exact ordering is not contractual.
+  const components = componentMessages(messages);
+  const componentNames = components
+    .filter((m) => m.type === "component:added")
+    .map((m) => m.name);
+  expect(componentNames).toContain("Output");
+  expect(componentNames).toContain("Context Binder");
   expect(
-    names.some(
+    componentNames.some(
       (n) => typeof n === "string" && n.startsWith("Context FormatOptions"),
     ),
   ).toBe(true);
-  expect(names).toContain("SourceDirectory");
-  expect(names).toContain("Context SourceDirectory");
-  expect(names).toContain("Foo");
-  expect(names).toContain("br");
+  expect(componentNames).toContain("SourceDirectory");
+  expect(componentNames).toContain("Context SourceDirectory");
+  expect(componentNames).toContain("Foo");
+  expect(nodeAdded.map((m) => m.name)).toContain("br");
+
+  const foo = components.find(
+    (m) => m.type === "component:added" && m.name === "Foo",
+  );
+  expect(foo).toBeDefined();
+  const fooRoots = components.filter(
+    (m) => m.type === "component:root_added" && m.component_id === foo!.id,
+  );
+  expect(fooRoots.length).toBeGreaterThan(1);
+
   // Text content from Foo's body is also exposed as text nodes.
   const values = nodeAdded.map((m) => m.value);
   expect(values).toContain("Hello");
@@ -149,12 +171,16 @@ it("sends render tree messages during render with For component", async () => {
   collector.stop();
 
   expect(renderMessages[0]).toMatchObject({ type: "render:reset" });
-  expect(renderMessages).toEqual(
+  expect(componentMessages(messages)).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
-        type: "render:node_added",
+        type: "component:added",
         name: "For",
       }),
+    ]),
+  );
+  expect(renderMessages).toEqual(
+    expect.arrayContaining([
       expect.objectContaining({
         type: "render:node_added",
         value: "a",
@@ -167,7 +193,7 @@ it("sends render tree messages during render with For component", async () => {
   );
 });
 
-it("emits nodeUpdated during render for context updates", async () => {
+it("emits component metadata separately from render nodes", async () => {
   const collector = await createMessageCollector(socket!);
 
   function Counter(props: { value: number }) {
@@ -182,17 +208,107 @@ it("emits nodeUpdated during render for context updates", async () => {
 
   const messages = await collector.waitForRender();
   const renderMessages = filterRenderTreeMessages(messages);
+  const components = componentMessages(messages);
 
-  // Context updates during the initial render produce render:node_updated messages
-  const nodeUpdated = renderMessages.filter(
-    (m: DevtoolsMessage) => m.type === "render:node_updated",
+  expect(
+    renderMessages.some(
+      (m: DevtoolsMessage) =>
+        m.type === "render:node_added" &&
+        (m.kind === "component" || m.kind === "memo"),
+    ),
+  ).toBe(false);
+  expect(components).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:added",
+        name: "Counter",
+      }),
+      expect.objectContaining({
+        type: "component:root_added",
+      }),
+    ]),
+  );
+  collector.stop();
+});
+
+it("removes component metadata when its render roots are removed", async () => {
+  const show = ref(true);
+  const collector = await createMessageCollector(socket!);
+
+  function Child() {
+    return "visible";
+  }
+
+  await renderAsync(<Output>{() => (show.value ? <Child /> : null)}</Output>);
+
+  const initialMessages = await collector.waitForRender();
+  const child = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Child",
+  );
+  expect(child).toBeDefined();
+  expect(componentMessages(initialMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_added",
+        component_id: child!.id,
+      }),
+    ]),
   );
 
-  expect(nodeUpdated.length).toBeGreaterThan(0);
-  expect(nodeUpdated[0]).toMatchObject({
-    type: "render:node_updated",
-    id: expect.any(Number),
+  show.value = false;
+  await flushJobsAsync();
+
+  const updateMessages = await collector.waitForFlush();
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: child!.id,
+      }),
+      expect.objectContaining({
+        type: "component:removed",
+        id: child!.id,
+      }),
+    ]),
+  );
+  collector.stop();
+});
+
+it("emits component prop updates while reactive children update", async () => {
+  const visible = ref(true);
+  const collector = await createMessageCollector(socket!);
+
+  await renderAsync(
+    <Output>
+      <Show when={visible.value}>visible</Show>
+    </Output>,
+  );
+
+  const initialMessages = await collector.waitForRender();
+  const show = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Show",
+  );
+  expect(show).toBeDefined();
+
+  visible.value = false;
+  await flushJobsAsync();
+
+  const updateMessages = await collector.waitForFlush();
+  const showUpdate = componentMessages(updateMessages).find(
+    (m) => m.type === "component:updated" && m.id === show!.id,
+  );
+  expect(showUpdate).toBeDefined();
+  expect(devalue.parse(showUpdate!.props as string)).toMatchObject({
+    when: false,
   });
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: show!.id,
+      }),
+    ]),
+  );
   collector.stop();
 });
 

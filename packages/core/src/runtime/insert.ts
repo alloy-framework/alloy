@@ -14,7 +14,7 @@
 import { isRef, type Ref } from "@vue/reactivity";
 import { useContext } from "../context.js";
 import { SourceFileContext } from "../context/source-file.js";
-import { debug, isDebugEnabled } from "../debug/index.js";
+import { debug } from "../debug/index.js";
 import {
   contentAdded,
   contentRemoved,
@@ -251,8 +251,6 @@ function insertReactive(
   const end: CommentNode = createComment("slot:end");
   insertNode(parent, start, marker);
   insertNode(parent, end, marker);
-  const memo =
-    isDebugEnabled() ? debug.render.prepareMemoNode(start, end) : null;
 
   // Tracks the previous accessor result when it was an array, so we can
   // do identity-keyed reconciliation rather than clear-and-reinsert.
@@ -263,12 +261,7 @@ function insertReactive(
 
     if (Array.isArray(value)) {
       untrack(() => {
-        memo?.enter();
-        try {
-          reconcileArray(parent, start, end, value);
-        } finally {
-          memo?.leave();
-        }
+        reconcileArray(parent, start, end, value);
       });
       return;
     }
@@ -289,12 +282,7 @@ function insertReactive(
         for (let i = 0; i < removedCount; i++) contentRemoved();
         notifyContentState();
       }
-      memo?.enter();
-      try {
-        insert(parent, value, end);
-      } finally {
-        memo?.leave();
-      }
+      insert(parent, value, end);
     });
   });
 

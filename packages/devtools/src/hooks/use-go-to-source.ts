@@ -3,6 +3,7 @@ import type { OpenTab } from "@/hooks/use-tabs";
 import {
   findFileIdForRenderNode,
   findFirstTextNodeId,
+  resolveRenderNodeId,
 } from "@/lib/render-tree-utils";
 import { useCallback } from "react";
 
@@ -42,7 +43,7 @@ export function useGoToSource({
   const goToSourceForNode = useCallback(
     (node: RenderTreeNode) => {
       const fileId = findFileIdForRenderNode(
-        node.id,
+        resolveRenderNodeId(node) ?? node.id,
         fileNodeToId,
         parentById,
         liftedFromMap,

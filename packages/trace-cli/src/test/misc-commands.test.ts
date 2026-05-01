@@ -26,7 +26,7 @@ describe("stats", () => {
     expect(stdout).toContain("Refs: 3");
     expect(stdout).toContain("Edges: 5");
     expect(stdout).toContain("Components: 2");
-    expect(stdout).toContain("Render nodes: 8");
+    expect(stdout).toContain("Render nodes: 6");
     expect(stdout).toContain("Symbols: 3");
     expect(stdout).toContain("Scopes: 2");
     expect(stdout).toContain("Output files: 2");
@@ -71,7 +71,7 @@ describe("stats", () => {
     expect(parsed.refs).toBe(3);
     expect(parsed.edges).toBe(5);
     expect(parsed.components).toBe(2);
-    expect(parsed.renderNodes).toBe(8);
+    expect(parsed.renderNodes).toBe(6);
     expect(parsed.symbols).toBe(3);
     expect(parsed.scopes).toBe(2);
     expect(parsed.outputFiles).toBe(2);
@@ -153,8 +153,8 @@ describe("file", () => {
         fileCommand(db, "search", ["src/models.ts", "interface", "Foo"], {}),
       );
       expect(stdout).toContain("interface Foo");
-      expect(stdout).toContain("at Declaration #3");
-      expect(stdout).toContain("at SourceFile #2");
+      expect(stdout).toContain("at Declaration #11");
+      expect(stdout).toContain("at SourceFile #10");
     });
 
     it("finds cross-node text", () => {
@@ -170,9 +170,9 @@ describe("file", () => {
           allFrames: true,
         }),
       );
-      expect(stdout).toContain("at Declaration #3");
+      expect(stdout).toContain("at Declaration #11");
       expect(stdout).toContain("declaration.tsx:25:3)");
-      expect(stdout).toContain("at SourceFile #2");
+      expect(stdout).toContain("at SourceFile #10");
       expect(stdout).toContain("source-file.tsx:10:5)");
     });
 
@@ -198,7 +198,7 @@ describe("file", () => {
         fileCommand(db, "search", ["src/models.ts", "import"], {}),
       );
       expect(stdout).toContain("import { Bar }");
-      expect(stdout).toContain("at SourceFile #2");
+      expect(stdout).toContain("at SourceFile #10");
     });
 
     it("reports no match", () => {
@@ -224,12 +224,12 @@ describe("file", () => {
     it("maps text nodes correctly when seq differs from DFS order", () => {
       // Add a type reference text node with a high seq (created late, e.g. via
       // reactive resolution) that renders BETWEEN existing text nodes in the tree.
-      //   Declaration(3) -> TypeRef(10) -> text(11, "Bar", seq=100)
+      //   Declaration(3) -> TypeRef intrinsic(10) -> text(11, "Bar", seq=100)
       // In the file content "Bar" appears as the type in "bar: Bar" which is
       // between "interface Foo {" and "}".  The text node's seq (100) is higher
       // than closing "}" text node (seq=6), but DFS order places it correctly.
       db.exec(`
-        INSERT INTO render_nodes VALUES (10, 3, 'component', 'TypeRef', NULL,
+        INSERT INTO render_nodes VALUES (10, 3, 'intrinsic', 'TypeRef', NULL,
           '/home/user/packages/typescript/src/components/type-ref.tsx', 5, 1, NULL, NULL, 100);
         INSERT INTO render_nodes VALUES (11, 10, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'string', 101);
       `);
@@ -249,10 +249,10 @@ describe("file", () => {
 
     it("resolves correct node when same text appears in multiple tree branches", () => {
       // Simulate: "Foo" appears both in the declaration (node 4, under Declaration)
-      // and as a type reference (node 12, under a sibling MemberExpr).
+      // and as a type reference (node 12, under a sibling MemberExpr intrinsic).
       // Search for "interface Foo" should match the declaration, not the reference.
       db.exec(`
-        INSERT INTO render_nodes VALUES (10, 2, 'component', 'MemberExpr', NULL, NULL, NULL, NULL, NULL, NULL, 200);
+        INSERT INTO render_nodes VALUES (10, 2, 'intrinsic', 'MemberExpr', NULL, NULL, NULL, NULL, NULL, NULL, 200);
         INSERT INTO render_nodes VALUES (12, 10, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'Foo', 201);
       `);
       // File content has "interface Foo" only once, at the declaration site

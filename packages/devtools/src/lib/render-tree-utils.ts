@@ -45,6 +45,13 @@ export function invertFileToRenderNode(
   return map;
 }
 
+export function resolveRenderNodeId(
+  node: Pick<RenderTreeNode, "id" | "renderNodeId">,
+): string | undefined {
+  if (node.renderNodeId) return node.renderNodeId;
+  return /^\d+$/.test(node.id) ? node.id : undefined;
+}
+
 export function findFileIdForRenderNode(
   nodeId: string,
   fileNodeToId: Map<string, string>,

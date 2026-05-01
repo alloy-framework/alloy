@@ -34,7 +34,6 @@ import {
   initialize,
   nodeAttached,
   nodeDetached,
-  prepareMemoNode,
 } from "./render.js";
 import {
   registerScope,
@@ -95,7 +94,6 @@ export const debug = {
     nodeAttached,
     nodeDetached,
     beginComponent,
-    prepareMemoNode,
     error,
     complete,
     flushJobsComplete,

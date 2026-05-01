@@ -23,6 +23,11 @@ let stmtInsertRenderNode: StatementSync;
 let stmtUpdateRenderNode: StatementSync;
 let stmtUpdateRenderNodeContext: StatementSync;
 let stmtDeleteRenderNode: StatementSync;
+let stmtInsertComponentInstance: StatementSync;
+let stmtUpdateComponentInstanceProps: StatementSync;
+let stmtDeleteComponentInstance: StatementSync;
+let stmtInsertComponentRoot: StatementSync;
+let stmtDeleteComponentRoot: StatementSync;
 let stmtInsertSymbol: StatementSync;
 let stmtUpdateSymbol: StatementSync;
 let stmtDeleteSymbol: StatementSync;
@@ -63,7 +68,9 @@ export type ChangeChannel =
   | "diagnostics"
   | "errors"
   | "lifecycle"
-  | "scheduler";
+  | "scheduler"
+  | "components"
+  | "component_roots";
 
 export const ALL_CHANNELS: ChangeChannel[] = [
   "render",
@@ -78,6 +85,8 @@ export const ALL_CHANNELS: ChangeChannel[] = [
   "errors",
   "lifecycle",
   "scheduler",
+  "components",
+  "component_roots",
 ];
 
 export interface ChangeEvent {
@@ -115,6 +124,8 @@ const channelTableMap: Record<string, string> = {
   diagnostics: "diagnostics",
   errors: "render_errors",
   scheduler: "scheduler_jobs",
+  components: "component_instances",
+  component_roots: "component_roots",
 };
 
 export function queryChannel(
@@ -214,6 +225,31 @@ function createSchema(): void {
     CREATE INDEX IF NOT EXISTS idx_render_nodes_name ON render_nodes(name);
     CREATE INDEX IF NOT EXISTS idx_render_nodes_parent ON render_nodes(parent_id);
     CREATE INDEX IF NOT EXISTS idx_render_nodes_context ON render_nodes(context_id);
+
+    CREATE TABLE IF NOT EXISTS component_instances (
+      id                   INTEGER PRIMARY KEY,
+      parent_id            INTEGER,
+      name                 TEXT NOT NULL,
+      props                TEXT,
+      source_file          TEXT,
+      source_line          INTEGER,
+      source_col           INTEGER,
+      context_id           INTEGER,
+      seq                  INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_component_instances_parent ON component_instances(parent_id);
+    CREATE INDEX IF NOT EXISTS idx_component_instances_name ON component_instances(name);
+    CREATE INDEX IF NOT EXISTS idx_component_instances_context ON component_instances(context_id);
+
+    CREATE TABLE IF NOT EXISTS component_roots (
+      component_id         INTEGER NOT NULL,
+      render_node_id       INTEGER NOT NULL,
+      ordinal              INTEGER NOT NULL,
+      seq                  INTEGER,
+      PRIMARY KEY (component_id, render_node_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_component_roots_component ON component_roots(component_id);
+    CREATE INDEX IF NOT EXISTS idx_component_roots_node ON component_roots(render_node_id);
 
     CREATE TABLE IF NOT EXISTS symbols (
       id                   INTEGER PRIMARY KEY,
@@ -339,6 +375,23 @@ function prepareStatements(): void {
     `UPDATE render_nodes SET context_id = ? WHERE id = ?`,
   );
   stmtDeleteRenderNode = db!.prepare(`DELETE FROM render_nodes WHERE id = ?`);
+  stmtInsertComponentInstance = db!.prepare(
+    `INSERT OR REPLACE INTO component_instances (id, parent_id, name, props, source_file, source_line, source_col, context_id, seq)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  );
+  stmtUpdateComponentInstanceProps = db!.prepare(
+    `UPDATE component_instances SET props = ? WHERE id = ?`,
+  );
+  stmtDeleteComponentInstance = db!.prepare(
+    `DELETE FROM component_instances WHERE id = ?`,
+  );
+  stmtInsertComponentRoot = db!.prepare(
+    `INSERT OR REPLACE INTO component_roots (component_id, render_node_id, ordinal, seq)
+     VALUES (?, ?, ?, ?)`,
+  );
+  stmtDeleteComponentRoot = db!.prepare(
+    `DELETE FROM component_roots WHERE component_id = ? AND render_node_id = ?`,
+  );
   stmtInsertSymbol = db!.prepare(
     `INSERT OR REPLACE INTO symbols (id, name, original_name, scope_id, owner_symbol_id, render_node_id, is_member, is_transient, is_alias, metadata, seq)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -615,6 +668,85 @@ export function deleteRenderNode(id: number): void {
   renderChildren.delete(id);
   stmtDeleteRenderNode.run(id);
   notifyChange("render", "removed", { id });
+}
+
+export function insertComponentInstance(
+  id: number,
+  parentId: number | null,
+  name: string,
+  props: string | undefined,
+  sourceFile: string | undefined,
+  sourceLine: number | undefined,
+  sourceCol: number | undefined,
+  contextId: number | null,
+): void {
+  if (!db) return;
+  const s = nextSeq();
+  stmtInsertComponentInstance.run(
+    id,
+    parentId,
+    name,
+    props ?? null,
+    sourceFile ?? null,
+    sourceLine ?? null,
+    sourceCol ?? null,
+    contextId,
+    s,
+  );
+  notifyChange("components", "added", {
+    id,
+    parent_id: parentId,
+    name,
+    props: props ?? null,
+    source_file: sourceFile ?? null,
+    source_line: sourceLine ?? null,
+    source_col: sourceCol ?? null,
+    context_id: contextId,
+    seq: s,
+  });
+}
+
+export function updateComponentInstanceProps(
+  id: number,
+  props: string | undefined,
+): void {
+  if (!db) return;
+  stmtUpdateComponentInstanceProps.run(props ?? null, id);
+  notifyChange("components", "updated", { id, props: props ?? null });
+}
+
+export function deleteComponentInstance(id: number): void {
+  if (!db) return;
+  stmtDeleteComponentInstance.run(id);
+  notifyChange("components", "removed", { id });
+}
+
+export function insertComponentRoot(
+  componentId: number,
+  renderNodeId: number,
+  ordinal: number,
+): void {
+  if (!db) return;
+  const s = nextSeq();
+  stmtInsertComponentRoot.run(componentId, renderNodeId, ordinal, s);
+  notifyChange("component_roots", "added", {
+    component_id: componentId,
+    render_node_id: renderNodeId,
+    ordinal,
+    seq: s,
+  });
+}
+
+export function deleteComponentRoot(
+  componentId: number,
+  renderNodeId: number,
+): void {
+  if (!db) return;
+  stmtDeleteComponentRoot.run(componentId, renderNodeId);
+  notifyChange("component_roots", "removed", {
+    component_id: componentId,
+    render_node_id: renderNodeId,
+  });
 }
 
 export function insertSymbol(

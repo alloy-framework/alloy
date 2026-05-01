@@ -181,7 +181,7 @@ describe("printPaginationFooter", () => {
     const { stdout } = captureOutput(() =>
       printPaginationFooter(
         db,
-        "SELECT COUNT(*) as n FROM render_nodes WHERE kind = 'component'",
+        "SELECT COUNT(*) as n FROM component_instances",
         [],
         1,
         1,
@@ -194,7 +194,7 @@ describe("printPaginationFooter", () => {
     const { stdout } = captureOutput(() =>
       printPaginationFooter(
         db,
-        "SELECT COUNT(*) as n FROM render_nodes WHERE kind = 'component'",
+        "SELECT COUNT(*) as n FROM component_instances",
         [],
         10,
         2,
@@ -239,7 +239,7 @@ describe("outputFileRenderNodesCte", () => {
     const cte = outputFileRenderNodesCte();
     const sql = `SELECT * FROM render_nodes WHERE id IN ${cte}`;
     const rows = db.prepare(sql).all("%models%") as any[];
-    // SourceFile (node 2) and all descendants: 3, 4, 5, 6, 7, 8
-    expect(rows.length).toBeGreaterThanOrEqual(6);
+    // SourceFile (node 2) and all descendants: 3, 4, 5, 6
+    expect(rows.length).toBeGreaterThanOrEqual(5);
   });
 });

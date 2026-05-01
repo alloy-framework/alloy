@@ -56,7 +56,10 @@ afterEach(async () => {
 describe("subscriptions", () => {
   it("only receives messages for subscribed channels", async () => {
     // Subscribe to render only — should NOT see effects, refs, etc.
-    const collector = await createMessageCollector(socket!, ["render"]);
+    const collector = await createMessageCollector(socket!, [
+      "render",
+      "components",
+    ]);
     await renderAsync(<Output>hello</Output>);
     const messages = await collector.waitForRender();
     collector.stop();
@@ -107,7 +110,10 @@ describe("subscriptions", () => {
 
 describe("render:node_added", () => {
   it("root node has null parent_id and kind 'root'", async () => {
-    const collector = await createMessageCollector(socket!, ["render"]);
+    const collector = await createMessageCollector(socket!, [
+      "render",
+      "components",
+    ]);
     await renderAsync(<Output />);
     const messages = await collector.waitForRender();
     collector.stop();
@@ -124,20 +130,22 @@ describe("render:node_added", () => {
     });
   });
 
-  it("component node has numeric id, parent_id, and name", async () => {
-    const collector = await createMessageCollector(socket!, ["render"]);
+  it("component instance has numeric id, parent_id, and name", async () => {
+    const collector = await createMessageCollector(socket!, [
+      "render",
+      "components",
+    ]);
     await renderAsync(<Output />);
     const messages = await collector.waitForRender();
     collector.stop();
 
     const output = messages.find(
-      (m) => m.type === "render:node_added" && m.name === "Output",
+      (m) => m.type === "component:added" && m.name === "Output",
     );
     expect(output).toMatchObject({
-      type: "render:node_added",
+      type: "component:added",
       id: expect.any(Number),
-      parent_id: expect.any(Number),
-      kind: "component",
+      parent_id: null,
       name: "Output",
     });
   });
@@ -156,23 +164,26 @@ describe("render:node_added", () => {
     expect(text!.parent_id).toEqual(expect.any(Number));
   });
 
-  it("non-text node has null value (not undefined)", async () => {
+  it("non-text render node has null value (not undefined)", async () => {
     const collector = await createMessageCollector(socket!, ["render"]);
     await renderAsync(<Output>hello</Output>);
     const messages = await collector.waitForRender();
     collector.stop();
 
-    const component = messages.find(
-      (m) => m.type === "render:node_added" && m.kind === "component",
+    const nonText = messages.find(
+      (m) => m.type === "render:node_added" && m.kind === "directory",
     );
-    expect(component!.value).toBeNull();
+    expect(nonText!.value).toBeNull();
   });
 });
 
 describe("render:node_removed", () => {
   it("is emitted when a reactive component removes children", async () => {
     const show = ref(true);
-    const collector = await createMessageCollector(socket!, ["render"]);
+    const collector = await createMessageCollector(socket!, [
+      "render",
+      "components",
+    ]);
 
     function Conditional() {
       return () => (show.value ? "visible" : "");
@@ -691,7 +702,10 @@ describe("debugger:info", () => {
 
 describe("null vs undefined contract", () => {
   it("nullable fields arrive as null (not undefined or missing)", async () => {
-    const collector = await createMessageCollector(socket!, ["render"]);
+    const collector = await createMessageCollector(socket!, [
+      "render",
+      "components",
+    ]);
     await renderAsync(<Output>hello</Output>);
     const messages = await collector.waitForRender();
     collector.stop();
@@ -705,14 +719,13 @@ describe("null vs undefined contract", () => {
     expect(root!.parent_id).toBeNull();
     expect("parent_id" in root!).toBe(true);
 
-    // Component node: value should be null, not undefined
+    // Component facts are not render nodes.
     const component = messages.find(
       (m: DevtoolsMessage) =>
-        m.type === "render:node_added" && m.kind === "component",
+        m.type === "component:added" && m.name === "Output",
     );
     expect(component).toBeDefined();
-    expect(component!.value).toBeNull();
-    expect("value" in component!).toBe(true);
+    expect(component!.parent_id).toBeNull();
 
     // source_file is nullable
     expect("source_file" in root!).toBe(true);

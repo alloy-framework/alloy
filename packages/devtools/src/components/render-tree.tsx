@@ -9,7 +9,10 @@ import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { findFileIdForRenderNode } from "@/lib/render-tree-utils";
+import {
+  findFileIdForRenderNode,
+  resolveRenderNodeId,
+} from "@/lib/render-tree-utils";
 import { cn } from "@/lib/utils";
 import type { SourceLocation } from "@alloy-js/core/devtools";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -33,6 +36,9 @@ export interface RenderTreeNode {
   fileId?: string; // Maps to a file in the file tree
   kind?: string;
   liftedFrom?: string;
+  componentId?: string;
+  renderNodeId?: string;
+  rootIds?: string[];
   source?: SourceLocation;
 }
 
@@ -187,7 +193,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
       (node: RenderTreeNode) => {
         if (node.text !== undefined) {
           const fileId = findFileIdForRenderNode(
-            node.id,
+            resolveRenderNodeId(node) ?? node.id,
             fileNodeToId,
             parentById,
             liftedFromMap,
@@ -261,7 +267,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
 
     const handleRerender = useCallback(
       (node: RenderTreeNode, withBreak: boolean) => {
-        const id = Number(node.id);
+        const id = Number(resolveRenderNodeId(node));
         if (!Number.isFinite(id)) return;
         sendMessage({
           type: withBreak ? "render:rerenderAndBreak" : "render:rerender",

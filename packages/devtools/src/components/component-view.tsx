@@ -1,6 +1,9 @@
 import { ComponentDetails } from "@/components/detail-views/component-details.tsx";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
-import { findRenderNodeInTree } from "@/lib/render-tree-utils";
+import {
+  findRenderNodeInTree,
+  resolveRenderNodeId,
+} from "@/lib/render-tree-utils";
 
 export interface ComponentViewProps {
   nodeId: string;
@@ -17,7 +20,7 @@ export function ComponentView({ nodeId }: ComponentViewProps) {
     );
   }
   const sendRerender = (withBreak: boolean) => {
-    const id = Number(node.id);
+    const id = Number(resolveRenderNodeId(node));
     if (!Number.isFinite(id)) return;
     sendMessage({
       type: withBreak ? "render:rerenderAndBreak" : "render:rerender",

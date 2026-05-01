@@ -73,6 +73,15 @@ function eventToMessageType(event: ChangeEvent): string {
       removed: "render:node_removed",
       reset: "render:reset",
     },
+    components: {
+      added: "component:added",
+      updated: "component:updated",
+      removed: "component:removed",
+    },
+    component_roots: {
+      added: "component:root_added",
+      removed: "component:root_removed",
+    },
     effects: { added: "effect:added", updated: "effect:updated" },
     refs: { added: "ref:added" },
     edges: { added: `edge:${(event.data as any).edge_type ?? "track"}` },
@@ -108,6 +117,8 @@ function channelToInitialMessageType(
 ): string {
   const map: Record<string, string> = {
     render: "render:node_added",
+    components: "component:added",
+    component_roots: "component:root_added",
     effects: "effect:added",
     refs: "ref:added",
     symbols: "symbol:added",

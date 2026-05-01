@@ -20,10 +20,6 @@ export function ComponentDetails({
     node.componentId ?
       `Component #${node.componentId}`
     : `Render node #${node.id}`;
-  const renderNodeLabel =
-    node.renderNodeId && node.renderNodeId !== node.id ?
-      `Render root #${node.renderNodeId}`
-    : undefined;
   const sourceLabel =
     source && source.fileName ?
       `${formatPath(source.fileName)}:${source.lineNumber}:${source.columnNumber}`
@@ -31,14 +27,6 @@ export function ComponentDetails({
   return (
     <div className="p-4 text-sm">
       <div className="text-muted-foreground">{title}</div>
-      {renderNodeLabel && (
-        <div className="text-muted-foreground">{renderNodeLabel}</div>
-      )}
-      {node.rootIds && node.rootIds.length > 1 && (
-        <div className="text-muted-foreground">
-          Roots: {node.rootIds.map((id) => `#${id}`).join(", ")}
-        </div>
-      )}
       <div className="mt-3">
         <div>
           <span className="font-medium">Source:</span>{" "}

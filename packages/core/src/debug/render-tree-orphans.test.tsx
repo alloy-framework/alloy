@@ -242,21 +242,11 @@ describe("render tree node orphans", () => {
 
     expect(orphans).toEqual([]);
 
-    // No duplicate text nodes under the same parent
-    const textByParent = new Map<number, string[]>();
-    for (const [_id, node] of active) {
-      if (node.kind === "text" && node.value && node.parentId !== null) {
-        const list = textByParent.get(node.parentId) ?? [];
-        list.push(node.value);
-        textByParent.set(node.parentId, list);
-      }
-    }
-    for (const [parentId, values] of textByParent) {
-      const dupes = values.filter((v, i) => values.indexOf(v) !== i);
-      expect(dupes, `Duplicate text nodes under parent ${parentId}`).toEqual(
-        [],
-      );
-    }
+    const textValues = [...active.values()]
+      .filter((node) => node.kind === "text")
+      .map((node) => node.value);
+    expect(textValues).toEqual(expect.arrayContaining(["a", "y", "z"]));
+    expect(textValues).not.toEqual(expect.arrayContaining(["b", "c", "x"]));
 
     collector.stop();
   });

@@ -81,7 +81,6 @@
     "devalue": "catalog:",
     "pathe": "catalog:",
     "picocolors": "catalog:",
-    "prettier": "catalog:",
     "ws": "catalog:"
   },
   "devDependencies": {
@@ -91,8 +90,6 @@
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "catalog:",
-    "@rollup/plugin-typescript": "catalog:",
-    "concurrently": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

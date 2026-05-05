@@ -10,6 +10,7 @@ import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
 import {
+  canRerenderNode,
   findFileIdForRenderNode,
   resolveRenderNodeId,
 } from "@/lib/render-tree-utils";
@@ -326,7 +327,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
             Show details
           </ContextMenuItem>
           <ContextMenuItem
-            disabled={!menuNode}
+            disabled={!menuNode || !canRerenderNode(menuNode)}
             onSelect={() => {
               if (menuNode) {
                 handleRerender(menuNode, false);
@@ -336,7 +337,7 @@ export const RenderTree = forwardRef<RenderTreeHandle, RenderTreeProps>(
             Rerender
           </ContextMenuItem>
           <ContextMenuItem
-            disabled={!menuNode}
+            disabled={!menuNode || !canRerenderNode(menuNode)}
             onSelect={() => {
               if (menuNode) {
                 handleRerender(menuNode, true);

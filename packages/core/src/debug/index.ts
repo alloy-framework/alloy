@@ -32,6 +32,7 @@ import {
   error,
   flushJobsComplete,
   initialize,
+  isRerenderEnabled,
   nodeAttached,
   nodeDetached,
 } from "./render.js";
@@ -52,7 +53,11 @@ export type {
   EffectEdgeDebugInfo,
   RefDebugInfo,
 } from "./effects.js";
-export { getRenderNodeId, type RenderTreeNodeInfo } from "./render.js";
+export {
+  getRenderNodeId,
+  type RenderNodeActions,
+  type RenderTreeNodeInfo,
+} from "./render.js";
 export type {
   BeginComponentOptions,
   ComponentDebugSession,
@@ -94,6 +99,7 @@ export const debug = {
     nodeAttached,
     nodeDetached,
     beginComponent,
+    isRerenderEnabled,
     error,
     complete,
     flushJobsComplete,

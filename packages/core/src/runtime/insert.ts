@@ -14,7 +14,7 @@
 import { isRef, type Ref } from "@vue/reactivity";
 import { useContext } from "../context.js";
 import { SourceFileContext } from "../context/source-file.js";
-import { debug } from "../debug/index.js";
+import { debug, type RenderNodeActions } from "../debug/index.js";
 import {
   contentAdded,
   contentRemoved,
@@ -23,8 +23,10 @@ import {
   isCustomContext,
   notifyContentState,
   runInContext,
+  runInContextWithDisposer,
   untrack,
   type CustomContext,
+  type Disposable,
 } from "../reactivity.js";
 import { isRefkey, isRefkeyable, toRefkey, type Refkey } from "../refkey.js";
 import { notifyRenderError } from "../render-error.js";
@@ -156,79 +158,158 @@ function insertComponent(
   thunk: ComponentCreator,
   marker: AlloyNode | null,
 ): void {
+  if (!debug.render.isRerenderEnabled()) {
+    renderComponent(parent, thunk, marker);
+    return;
+  }
+
+  const start: CommentNode = createComment("component:start");
+  const end: CommentNode = createComment("component:end");
+  insertNode(parent, start, marker);
+  insertNode(parent, end, marker);
+
+  let disposeCurrentContext: Disposable | undefined;
+  const rerender = (withBreak: boolean) => {
+    if (withBreak) {
+      // eslint-disable-next-line no-debugger
+      debugger;
+    }
+    if (start.parentNode !== parent || end.parentNode !== parent) return;
+    untrack(() => {
+      disposeCurrentContext?.();
+      disposeCurrentContext = undefined;
+      clearRange(start, end);
+      disposeCurrentContext = renderComponent(
+        parent,
+        thunk,
+        end,
+        actions,
+        true,
+      );
+    });
+  };
+  const actions: RenderNodeActions = {
+    rerender: () => rerender(false),
+    rerenderAndBreak: () => rerender(true),
+  };
+
+  disposeCurrentContext = renderComponent(parent, thunk, end, actions, true);
+}
+
+function renderComponent(
+  parent: AlloyNode,
+  thunk: ComponentCreator,
+  marker: AlloyNode | null,
+  actions?: RenderNodeActions,
+  captureDisposer = false,
+): Disposable | undefined {
+  let disposeComponentContext: Disposable | undefined;
+  const execute = (dispose?: Disposable) => {
+    disposeComponentContext = dispose;
+    renderComponentBody(parent, thunk, marker, actions);
+  };
+
   // Keep the component's pushed Context live while children are
   // recursively inserted: any reactive bindings (effects) created for
   // children must capture the component's context as their owner so
   // that `useContext(...)` walks find values set by Context.Providers
   // and other parent components.
-  runInContext(() => {
-    pushStack(thunk.component, thunk.props, thunk.source);
-    const session = debug.render.beginComponent({
-      component: thunk as ComponentCreator<unknown>,
-      propsSource: thunk.props as Record<string, unknown> | undefined,
-      source: thunk.source,
-      parent,
-    });
-    let result: unknown;
-    try {
-      result = untrack(thunk);
-    } catch (error) {
-      notifyRenderError(error);
-      session.dispose();
-      popStack();
-      throw error;
+  if (captureDisposer) {
+    runInContextWithDisposer(execute);
+  } else {
+    runInContext(() => execute());
+  }
+  return disposeComponentContext;
+}
+
+function renderComponentBody(
+  parent: AlloyNode,
+  thunk: ComponentCreator,
+  marker: AlloyNode | null,
+  actions?: RenderNodeActions,
+): void {
+  pushStack(thunk.component, thunk.props, thunk.source);
+  const session = debug.render.beginComponent({
+    component: thunk as ComponentCreator<unknown>,
+    propsSource: thunk.props as Record<string, unknown> | undefined,
+    source: thunk.source,
+    parent,
+    actions,
+  });
+  let result: unknown;
+  try {
+    result = untrack(thunk);
+  } catch (error) {
+    notifyRenderError(error);
+    session.dispose();
+    popStack();
+    throw error;
+  }
+  try {
+    const ctx = getContext()!;
+    // Carry component identity for error stacks.
+    if (ctx.meta && result instanceof AlloyNode) {
+      (ctx.meta as { renderNode?: AlloyNode }).renderNode = result;
     }
-    try {
-      const ctx = getContext()!;
-      // Carry component identity for error stacks.
-      if (ctx.meta && result instanceof AlloyNode) {
-        (ctx.meta as { renderNode?: AlloyNode }).renderNode = result;
+    const meta = ctx.meta as
+      | { sourceFile?: unknown; directory?: unknown; copyFile?: unknown }
+      | undefined;
+    if (meta?.sourceFile || meta?.directory || meta?.copyFile) {
+      if (meta.sourceFile) {
+        const sf = meta.sourceFile as { path: string; filetype: string };
+        session.recordFile(sf.path, sf.filetype);
+      } else if (meta.directory) {
+        const d = meta.directory as { path: string };
+        session.recordDirectory(d.path);
       }
-      const meta = ctx.meta as
-        | { sourceFile?: unknown; directory?: unknown; copyFile?: unknown }
-        | undefined;
-      if (meta?.sourceFile || meta?.directory || meta?.copyFile) {
-        if (meta.sourceFile) {
-          const sf = meta.sourceFile as { path: string; filetype: string };
-          session.recordFile(sf.path, sf.filetype);
-        } else if (meta.directory) {
-          const d = meta.directory as { path: string };
-          session.recordDirectory(d.path);
-        }
-        const localName =
-          meta.sourceFile ? "alloy:source-file"
-          : meta.directory ? "alloy:directory"
-          : "alloy:copy-file";
-        if (result instanceof ElementNode && result.localName === localName) {
-          setContextForNode(result, ctx);
-          insertNode(parent, result, marker);
-          return;
-        }
-        const wrapper: ElementNode = createElement(localName);
-        setContextForNode(wrapper, ctx);
-        try {
-          insert(wrapper, result as Children, null);
-        } catch (error) {
-          notifyRenderError(error);
-          throw error;
-        }
-        insertNode(parent, wrapper, marker);
+      const localName =
+        meta.sourceFile ? "alloy:source-file"
+        : meta.directory ? "alloy:directory"
+        : "alloy:copy-file";
+      if (result instanceof ElementNode && result.localName === localName) {
+        setContextForNode(result, ctx);
+        insertNode(parent, result, marker);
         return;
       }
-      if (result instanceof AlloyNode) {
-        setContextForNode(result, ctx);
-      }
+      const wrapper: ElementNode = createElement(localName);
+      setContextForNode(wrapper, ctx);
       try {
-        insert(parent, result as Children, marker);
+        insert(wrapper, result as Children, null);
       } catch (error) {
         notifyRenderError(error);
         throw error;
       }
-    } finally {
-      session.dispose();
-      popStack();
+      insertNode(parent, wrapper, marker);
+      return;
     }
-  });
+    if (result instanceof AlloyNode) {
+      setContextForNode(result, ctx);
+    }
+    try {
+      insert(parent, result as Children, marker);
+    } catch (error) {
+      notifyRenderError(error);
+      throw error;
+    }
+  } finally {
+    session.dispose();
+    popStack();
+  }
+}
+
+function clearRange(start: CommentNode, end: CommentNode): void {
+  let n = start.nextSibling;
+  let removedCount = 0;
+  while (n !== null && n !== end) {
+    const next = n.nextSibling;
+    if (countsAsContent(n)) removedCount++;
+    n.remove();
+    n = next;
+  }
+  if (removedCount > 0) {
+    for (let i = 0; i < removedCount; i++) contentRemoved();
+    notifyContentState();
+  }
 }
 
 /**

@@ -14,9 +14,7 @@
  * NOT provided.
  */
 
-// ─────────────────────────────────────────────────────────────────────────────
-// nodeType constants — same numeric codes as DOM
-// ─────────────────────────────────────────────────────────────────────────────
+// #region nodeType constants
 
 export const ELEMENT_NODE = 1 as const;
 export const TEXT_NODE = 3 as const;
@@ -31,9 +29,9 @@ export type NodeType = 1 | 3 | 8 | 11;
  */
 export type Insertable = AlloyNode | string | number;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Base Node — tree pointers + modern mutation API
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Base Node
 
 export abstract class AlloyNode {
   abstract readonly nodeType: NodeType;
@@ -51,7 +49,7 @@ export abstract class AlloyNode {
    */
   isEmpty = true;
 
-  // ───── Modern DOM mutation API ─────────────────────────────────────────
+  // #region Modern DOM mutation API
 
   /** Append nodes (or strings) to the end of children. */
   append(...nodes: Insertable[]): void {
@@ -135,9 +133,11 @@ export abstract class AlloyNode {
   protected abstract cloneShallow(): AlloyNode;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Concrete Node types
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #endregion
+
+// #region Concrete Node types
 
 /** Text node — analog of DOM Text / CharacterData. */
 export class TextNode extends AlloyNode {
@@ -236,9 +236,9 @@ export class FragmentNode extends AlloyNode {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constructors — `document.create*`-style names
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Constructors
 
 export function createTextNode(data: string): TextNode {
   return new TextNode(data);
@@ -256,9 +256,9 @@ export function createFragment(): FragmentNode {
   return new FragmentNode();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Eager break-propagation
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Eager break propagation
 
 /**
  * Element local-names whose mere presence forces the innermost enclosing
@@ -349,9 +349,9 @@ function propagateBreakDelta(start: AlloyNode | null, delta: number): void {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Core mutation primitives (private)
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Core mutation primitives
 
 function normalize(input: Insertable): AlloyNode {
   if (typeof input === "string") return new TextNode(input);
@@ -438,3 +438,5 @@ function detach(node: AlloyNode): void {
   node.nextSibling = null;
   if (mutationListener !== null) mutationListener.detached(node, parent);
 }
+
+// #endregion

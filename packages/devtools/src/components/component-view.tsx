@@ -1,6 +1,7 @@
 import { ComponentDetails } from "@/components/detail-views/component-details.tsx";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import {
+  canRerenderNode,
   findRenderNodeInTree,
   resolveRenderNodeId,
 } from "@/lib/render-tree-utils";
@@ -31,6 +32,7 @@ export function ComponentView({ nodeId }: ComponentViewProps) {
   return (
     <ComponentDetails
       node={node}
+      canRerender={canRerenderNode(node)}
       onRerender={() => sendRerender(false)}
       onRerenderAndBreak={() => sendRerender(true)}
     />

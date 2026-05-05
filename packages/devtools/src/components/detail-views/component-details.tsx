@@ -5,12 +5,14 @@ import { NoneText } from "./none-text";
 
 export interface ComponentDetailsProps {
   node: RenderTreeNode;
+  canRerender: boolean;
   onRerender: () => void;
   onRerenderAndBreak: () => void;
 }
 
 export function ComponentDetails({
   node,
+  canRerender,
   onRerender,
   onRerenderAndBreak,
 }: ComponentDetailsProps) {
@@ -77,28 +79,30 @@ export function ComponentDetails({
           </div>
         }
       </div>
-      <div className="mt-3 flex gap-2">
-        <a
-          className="px-2 py-1 rounded border border-border hover:bg-accent"
-          href="#"
-          onClick={(event) => {
-            event.preventDefault();
-            onRerender();
-          }}
-        >
-          Rerender
-        </a>
-        <a
-          className="px-2 py-1 rounded border border-border hover:bg-accent"
-          href="#"
-          onClick={(event) => {
-            event.preventDefault();
-            onRerenderAndBreak();
-          }}
-        >
-          Rerender + Break
-        </a>
-      </div>
+      {canRerender && (
+        <div className="mt-3 flex gap-2">
+          <a
+            className="px-2 py-1 rounded border border-border hover:bg-accent"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              onRerender();
+            }}
+          >
+            Rerender
+          </a>
+          <a
+            className="px-2 py-1 rounded border border-border hover:bg-accent"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              onRerenderAndBreak();
+            }}
+          >
+            Rerender + Break
+          </a>
+        </div>
+      )}
     </div>
   );
 }

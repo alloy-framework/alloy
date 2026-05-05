@@ -52,6 +52,14 @@ export function resolveRenderNodeId(
   return /^\d+$/.test(node.id) ? node.id : undefined;
 }
 
+export function canRerenderNode(
+  node: Pick<RenderTreeNode, "componentId" | "id" | "renderNodeId">,
+): boolean {
+  if (!node.componentId) return false;
+  const id = Number(resolveRenderNodeId(node));
+  return Number.isFinite(id);
+}
+
 export function findFileIdForRenderNode(
   nodeId: string,
   fileNodeToId: Map<string, string>,

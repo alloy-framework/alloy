@@ -95,9 +95,7 @@ import {
 } from "./trace-writer.js";
 import { isDebugEnabled, logDevtoolsMessage } from "./trace.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public debug types used by runtime and devtools integration.
-// ─────────────────────────────────────────────────────────────────────────────
+// #region Public debug types used by runtime and devtools integration
 
 /** The kind discriminant for render tree nodes. */
 export type RenderTreeNodeKind = RenderTreeNode["kind"];
@@ -126,6 +124,10 @@ export interface BeginComponentOptions {
   actions?: RenderNodeActions;
 }
 
+export function isRerenderEnabled(): boolean {
+  return isDevtoolsEnabled();
+}
+
 export interface ComponentDebugSession {
   recordDirectory(path: string): void;
   recordFile(path: string, filetype: string): void;
@@ -142,9 +144,9 @@ export interface RenderErrorStackEntry extends ProtocolRenderErrorStackEntry {
   props?: Record<string, unknown> | undefined;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Module state — reset in initialize()
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Module state
 
 /** Map AlloyNode → trace node id (assigned when first emitted). */
 let nodeIds = new WeakMap<AlloyNode, number>();
@@ -235,9 +237,9 @@ let nextId = 1;
 let nextErrorId = 1;
 let handlerRegistered = false;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Lifecycle
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Lifecycle
 
 export function initialize(root: AlloyNode) {
   for (const frame of componentsById.values()) {
@@ -296,9 +298,9 @@ export function flushJobsComplete() {
   notifyFlushComplete();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Node-id management
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Node-id management
 
 function getOrCreateNodeId(node: AlloyNode): number {
   const existing = nodeIds.get(node);
@@ -314,9 +316,9 @@ export function getRenderNodeId(node: AlloyNode | unknown): number | undefined {
   return nodeIds.get(node);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Kind classification
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Kind classification
 
 const SKIPPED_COMMENT_DATAS = new Set([
   "slot:start",
@@ -325,6 +327,8 @@ const SKIPPED_COMMENT_DATAS = new Set([
   "slot:item:end",
   "ctx:start",
   "ctx:end",
+  "component:start",
+  "component:end",
 ]);
 
 function shouldExposeNode(node: AlloyNode): boolean {
@@ -363,9 +367,9 @@ function classifyNode(node: AlloyNode): {
   return { kind: "comment", value: (node as CommentNode).data };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component ownership resolution
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Component ownership resolution
 
 function currentComponentFrame(): ComponentFrame | undefined {
   return componentStack[componentStack.length - 1];
@@ -497,9 +501,9 @@ function resolveParentId(
   return undefined;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Tree-mutation hooks (called from render/node.ts)
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Tree-mutation hooks
 
 /**
  * Called after `node` is attached as a child of `parent`. Emits an
@@ -658,9 +662,9 @@ function emitRemoved(id: number): void {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component lifecycle
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Component lifecycle
 
 function serializeRenderTreeProps(input: Record<string, unknown> | undefined) {
   return untrack(() => {
@@ -788,9 +792,9 @@ export function beginComponent(
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Devtools rerender bridge
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Devtools rerender bridge
 
 function ensureDevtoolsHandler() {
   if (handlerRegistered || !isDevtoolsEnabled()) return;
@@ -817,9 +821,9 @@ function ensureDevtoolsHandler() {
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Errors
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Errors
 
 export function error(
   err: RenderErrorInfo,
@@ -849,3 +853,5 @@ export function error(
     JSON.stringify(serializedStack),
   );
 }
+
+// #endregion

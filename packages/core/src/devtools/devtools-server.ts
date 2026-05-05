@@ -20,9 +20,7 @@ import {
   type DevtoolsTransportState,
 } from "./devtools-transport.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public types
-// ─────────────────────────────────────────────────────────────────────────────
+// #region Public types
 
 export interface DevtoolsIncomingMessage {
   type: string;
@@ -39,9 +37,9 @@ export interface EnableDevtoolsOptions {
   port?: number;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Session state
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Session state
 
 let transportState: DevtoolsTransportState | null = null;
 let transportPromise: Promise<DevtoolsTransportState> | null = null;
@@ -55,9 +53,9 @@ let tempDbPath: string | null = null;
 let subscribedPromise: Promise<void> | null = null;
 let resolveSubscribed: (() => void) | null = null;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Per-client subscription state
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Per-client subscription state
 
 interface ClientState {
   subscriptions: Set<ChangeChannel>;
@@ -152,9 +150,9 @@ function sendInitialState(socket: any, channels: ChangeChannel[]): void {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Environment helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Environment helpers
 
 function isNodeEnvironment() {
   return (
@@ -206,9 +204,9 @@ function resolveDebugPort() {
   return parsed;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Query functions
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Query functions
 
 /** Returns true when devtools are enabled (via env var or explicit call). */
 export function isDevtoolsEnabled() {
@@ -226,9 +224,9 @@ export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
   return { port: transportState.port, connected: transportState.connected };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Temp SQLite for devtools
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Temp SQLite for devtools
 
 async function ensureSqliteForDevtools(): Promise<void> {
   if (isTraceEnabled()) return;
@@ -258,9 +256,9 @@ async function ensureSqliteForDevtools(): Promise<void> {
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Server lifecycle
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Server lifecycle
 
 async function ensureServer(): Promise<DevtoolsTransportState> {
   if (transportState) return transportState;
@@ -372,9 +370,9 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
   return transportPromise;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public API
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Public API
 
 /**
  * Wait for a devtools client to connect before proceeding.
@@ -459,9 +457,9 @@ export async function enableDevtoolsAndConnect(
   return { port: transportState!.port, connected: true };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Messaging
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Messaging
 
 /** Register a handler for incoming devtools messages. Returns an unsubscribe function. */
 export function registerDevtoolsMessageHandler(
@@ -481,9 +479,9 @@ export function assertDevtoolsConnectedForSyncRender() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test utilities
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Test utilities
 
 /** Reset all devtools state. For use in tests only. */
 export async function resetDevtoolsServerForTests() {
@@ -506,3 +504,5 @@ export async function resetDevtoolsServerForTests() {
   // Close the trace DB so each test starts fresh
   closeTrace();
 }
+
+// #endregion

@@ -52,9 +52,7 @@ export function nextSeq(): number {
   return seq++;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Change notification bus — streams SQLite changes to devtools WS server
-// ─────────────────────────────────────────────────────────────────────────────
+// #region Change notification bus
 
 export type ChangeChannel =
   | "render"
@@ -438,9 +436,9 @@ function prepareStatements(): void {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Insert methods
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Insert methods
 
 export function insertEffect(
   id: number,
@@ -1071,9 +1069,9 @@ export function insertSourceMap(
   stmtInsertSourceMap.run(outputPath, mapJson, outputText ?? null);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Transaction helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Transaction helpers
 
 export function beginTransaction(): void {
   if (!db) return;
@@ -1099,9 +1097,9 @@ export function resetTrace(): void {
   liveRenderIds.clear();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Lifecycle signals — broadcast to all WS clients regardless of subscription
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Lifecycle signals
 
 export function notifyRenderReset(): void {
   notifyChange("render", "reset", { _signal: "render:reset" } as any);
@@ -1114,3 +1112,5 @@ export function notifyRenderComplete(): void {
 export function notifyFlushComplete(): void {
   notifyChange("lifecycle", "added", { _signal: "flushJobs:complete" } as any);
 }
+
+// #endregion

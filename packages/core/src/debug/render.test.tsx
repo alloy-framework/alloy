@@ -148,11 +148,82 @@ it("sends render tree messages during render", async () => {
   expect(values).toContain("World");
 });
 
-it.skip("rerenders when devtools requests rerender", async () => {
-  // Per-component rerender is not supported on the AlloyNode-based
-  // renderer (components run as plain functions, not effects). The
-  // devtools `render:rerender` message remains a no-op until a
-  // re-render mechanism is reintroduced.
+it("rerenders when devtools requests rerender", async () => {
+  let value = "before";
+  const collector = await createMessageCollector(socket!);
+
+  function Rerendered() {
+    return value;
+  }
+
+  await renderAsync(
+    <Output>
+      <Rerendered />
+    </Output>,
+  );
+
+  const initialMessages = await collector.waitForRender();
+  const component = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Rerendered",
+  );
+  expect(component).toBeDefined();
+  const root = componentMessages(initialMessages).find(
+    (m) =>
+      m.type === "component:root_added" && m.component_id === component!.id,
+  );
+  expect(root).toBeDefined();
+
+  value = "after";
+  socket!.send(
+    JSON.stringify({
+      type: "render:rerender",
+      id: root!.render_node_id,
+    }),
+  );
+
+  const updateMessages = await collector.waitForFlush();
+  const renderMessages = filterRenderTreeMessages(updateMessages);
+  expect(renderMessages).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "render:node_removed",
+        id: root!.render_node_id,
+      }),
+      expect.objectContaining({
+        type: "render:node_added",
+        value: "after",
+      }),
+    ]),
+  );
+  expect(renderMessages).not.toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "render:node_added",
+        value: "before",
+      }),
+    ]),
+  );
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: component!.id,
+        render_node_id: root!.render_node_id,
+      }),
+      expect.objectContaining({
+        type: "component:removed",
+        id: component!.id,
+      }),
+      expect.objectContaining({
+        type: "component:added",
+        name: "Rerendered",
+      }),
+      expect.objectContaining({
+        type: "component:root_added",
+      }),
+    ]),
+  );
+  collector.stop();
 });
 
 it("sends render tree messages during render with For component", async () => {

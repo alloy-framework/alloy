@@ -320,9 +320,6 @@ importers:
       picocolors:
         specifier: 'catalog:'
         version: 1.1.1
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
       ws:
         specifier: 'catalog:'
         version: 8.19.0
@@ -345,12 +342,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.52.9(@types/node@24.10.9)
-      '@rollup/plugin-typescript':
-        specifier: 'catalog:'
-        version: 12.1.4(rollup@4.46.2)(tslib@2.8.1)(typescript@5.9.3)
-      concurrently:
-        specifier: 'catalog:'
-        version: 9.2.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

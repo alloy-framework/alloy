@@ -517,6 +517,36 @@ export function runInContext<T>(fn: () => T): T {
   }
 }
 
+export function runInContextWithDisposer<T>(fn: (dispose: Disposable) => T): T {
+  const context: InternalContext = {
+    id: contextIdCounter++,
+    owner: globalContext,
+    takesSymbols: false,
+    takenSymbols: undefined,
+    childrenWithContent: 0,
+    lastEmpty: true,
+    isRoot: false,
+  };
+
+  const dispose = () => {
+    const d = context.disposables;
+    context.disposables = undefined;
+    if (d) {
+      for (let k = 0, len = d.length; k < len; k++) untrack(d[k]);
+    }
+  };
+
+  onCleanup(dispose);
+
+  const oldContext = globalContext;
+  globalContext = context;
+  try {
+    return fn(dispose);
+  } finally {
+    globalContext = oldContext;
+  }
+}
+
 /**
  * Register a cleanup function which is called when the current reactive scope
  * is recalculated or disposed. This is useful to clean up any side effects

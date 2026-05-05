@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/rollup-plugin",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Rollup/Vite plugin for Alloy JSX/TSX transformation via the Babel preset",
   "homepage": "https://github.com/alloy-framework/alloy",

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/trace-cli
 
+## 0.3.0
+
+### Features
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Add trace CLI support for Alloy's canonical component debug model, including component root data in component queries and a `component for-node` command for finding component owners of a render node.
+
+
 
 
 ## 0.2.0

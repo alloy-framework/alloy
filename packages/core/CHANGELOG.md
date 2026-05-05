@@ -1,5 +1,22 @@
 # Changelog - @alloy-js/core
 
+## 0.24.0
+
+### Bug Fixes
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Honor `insertFinalNewLine` when it is passed to `<Output>`, so root-level formatting options are consistently propagated to source file printing.
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Reduce debugging overhead when debug is off.
+
+### Features
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Export the public AlloyNode model from `@alloy-js/core`: node classes, DOM-aligned node type constants, node factory helpers, `Insertable`, and `NodeType`. This enables direct inspection and construction of Alloy render trees where low-level tree access is needed.
+
+### Breaking Changes
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Alloy's render tree is now a DOM-like `AlloyNode` tree instead of `RenderedTextTree`. Tree-facing APIs such as `renderTree`, `printTree`, `sourceFilesForTree`, `getDiagnosticsForTree`, and `getContextForNode` now operate on `AlloyNode` instances. The old print-hook APIs (`RenderedTextTree`, `PrintHook`, `createRenderTreeHook`, `printHookTag`, and `isPrintHook`) are removed. `getContextForRenderNode` remains as a deprecated alias for `getContextForNode`.
+- [#402](https://github.com/alloy-framework/alloy/pull/402) `PrintTreeOptions` now contains only formatting options used by production rendering. Test-only scheduler flushing control moved to `RenderTreeOptions`; `printTree` and `getFilesFromTree` accept the combined test helper options where needed.
+
+
 ## 0.23.1
 
 ### Bug Fixes

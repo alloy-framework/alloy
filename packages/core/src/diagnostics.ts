@@ -3,6 +3,7 @@ import {
   deleteDiagnostic,
   insertDiagnostic,
   isTraceEnabled,
+  notifyDiagnosticsReport,
 } from "./debug/trace-writer.js";
 import { getContext } from "./reactivity.js";
 import { getRenderStackSnapshot } from "./render-stack.js";
@@ -107,6 +108,36 @@ export class DiagnosticsCollector {
 }
 
 const DIAGNOSTICS_META_KEY = "diagnostics";
+const diagnosticsByTree = new WeakMap<object, DiagnosticsCollector>();
+
+export function registerDiagnosticsForTree(
+  tree: object,
+  collector: DiagnosticsCollector,
+): void {
+  diagnosticsByTree.set(tree, collector);
+}
+
+export function getRegisteredDiagnosticsForTree(tree: object): Diagnostic[] {
+  return diagnosticsByTree.get(tree)?.getDiagnostics() ?? [];
+}
+
+export function emitDiagnosticForTree(
+  tree: object,
+  input: DiagnosticInput,
+): DiagnosticHandle {
+  return diagnosticsByTree.get(tree)?.emit(input) ?? emitDiagnostic(input);
+}
+
+export function reportDiagnosticsForTree(tree: object): void {
+  const collector = diagnosticsByTree.get(tree);
+  if (!collector) return;
+
+  const diagnostics = collector.getDiagnostics();
+  if (diagnostics.length === 0) return;
+
+  reportDiagnostics(collector);
+  notifyDiagnosticsReport(diagnostics);
+}
 
 export function attachDiagnosticsCollector(collector: DiagnosticsCollector) {
   const context = getContext();

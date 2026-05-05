@@ -11,7 +11,7 @@ import {
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
 import { effect, memo, ref } from "../reactivity.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 import { flushJobsAsync } from "../scheduler.js";
 import { debug } from "./index.js";
 

@@ -28,14 +28,14 @@ alloy-trace <command> [subcommand] [options]
 
 ### Entity commands
 
-| Command     | Subcommands                                                                        | Description            |
-| ----------- | ---------------------------------------------------------------------------------- | ---------------------- |
-| `component` | `list`, `show <id>`, `tree [id]`, `stats`                                          | Render tree components |
-| `effect`    | `list`, `show <id>`, `chain <id>`, `hotspots`, `ancestry <id>`, `subtree <ctx-id>` | Reactive effects       |
-| `ref`       | `list`, `show <id>`, `chain <id>`, `hotspots`, `fanout <id>`, `ownership <id>`     | Reactive refs          |
-| `symbol`    | `list`, `show <id>`                                                                | Output symbols         |
-| `scope`     | `list`, `show <id>`                                                                | Output scopes          |
-| `file`      | `list`, `show <path>`                                                              | Generated output files |
+| Command     | Subcommands                                                                        | Description                  |
+| ----------- | ---------------------------------------------------------------------------------- | ---------------------------- |
+| `component` | `list`, `show <id>`, `tree [id]`, `for-node <render-node-id>`, `stats`             | Component invocation records |
+| `effect`    | `list`, `show <id>`, `chain <id>`, `hotspots`, `ancestry <id>`, `subtree <ctx-id>` | Reactive effects             |
+| `ref`       | `list`, `show <id>`, `chain <id>`, `hotspots`, `fanout <id>`, `ownership <id>`     | Reactive refs                |
+| `symbol`    | `list`, `show <id>`                                                                | Output symbols               |
+| `scope`     | `list`, `show <id>`                                                                | Output scopes                |
+| `file`      | `list`, `show <path>`                                                              | Generated output files       |
 
 ### Analysis commands
 
@@ -74,6 +74,9 @@ alloy-trace component list --source-file=models
 # Show the full render tree
 alloy-trace component tree
 
+# Find components rooted at or above a render node
+alloy-trace component for-node 42
+
 # Find the most active effects
 alloy-trace effect hotspots
 
@@ -90,7 +93,7 @@ alloy-trace ref list --unused
 alloy-trace effect ancestry 15
 
 # Raw SQL query
-alloy-trace query "SELECT name, COUNT(*) as n FROM render_nodes WHERE kind='component' GROUP BY name ORDER BY n DESC"
+alloy-trace query "SELECT name, COUNT(*) as n FROM component_instances GROUP BY name ORDER BY n DESC"
 
 # JSON output for scripting
 alloy-trace effect list --json | jq '.name'
@@ -103,7 +106,9 @@ The trace database contains these tables:
 - **effects** — Reactive computations (render effects, content effects, memos, binder effects)
 - **refs** — Reactive values (refs, computed, shallow reactive)
 - **edges** — Reactive graph edges (track, trigger, triggered-by)
-- **render_nodes** — Render tree (components, fragments, text nodes, memos, custom contexts)
+- **render_nodes** — Current real render nodes (root, intrinsics, fragments, text, comments)
+- **component_instances** — Component invocation records with props, source, context, and parent component
+- **component_roots** — Links from component instances to their top-level real render node roots
 - **symbols** — Output symbol declarations
 - **scopes** — Output naming scopes
 - **output_files** — Generated file paths and content

@@ -14,6 +14,8 @@ const ALL_CHANNELS = [
   "scopes",
   "files",
   "directories",
+  "components",
+  "component_roots",
   "scheduler",
   "diagnostics",
   "errors",

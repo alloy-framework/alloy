@@ -1,24 +1,26 @@
-// Much of the implementations in this file are inspired by vuerx-js
-// See: https://github.com/ryansolid/vuerx-jsx.
+/**
+ * JSX runtime.
+ *
+ * Imported by code compiled with `@alloy-js/babel-preset` (which sets the
+ * babel plugin's `moduleName` to `@alloy-js/core/jsx-runtime`). The
+ * auto-imported runtime helpers (`createComponent`, `createIntrinsic`,
+ * `memo`, `mergeProps`) resolve here, plus the `Children` type for
+ * manual imports.
+ */
+
 import type {
   Children,
   Component,
   ComponentDefinition,
   IntrinsicElements as CoreIntrinsicElements,
 } from "@alloy-js/core";
-import { createComponent } from "@alloy-js/core";
-export {
-  createComponent,
-  createIntrinsic,
-  memo,
-  mergeProps,
-  type Children,
-} from "@alloy-js/core";
+import { createComponent } from "./runtime/component.js";
+export type { Children } from "@alloy-js/core";
+export { mergeProps } from "./props-combinators.js";
+export { memo } from "./reactivity.js";
+export { createComponent } from "./runtime/component.js";
+export { createIntrinsic } from "./runtime/create-intrinsic.js";
 
-/**
- * This namespace is predominantly for interop with React tooling in VSCode
- * and controls the type of JSX elements, components, and the like.
- */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace JSX {
   export type IntrinsicElements = CoreIntrinsicElements;

@@ -236,6 +236,8 @@ export function useDebugConnection(): DebugConnectionState {
             "scopes",
             "files",
             "directories",
+            "components",
+            "component_roots",
             "scheduler",
             "diagnostics",
             "errors",

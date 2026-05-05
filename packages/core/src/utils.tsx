@@ -1,20 +1,19 @@
 import { Ref, toRaw } from "@vue/reactivity";
 import { BaseListProps } from "./components/List.jsx";
+import { OutputDirectory, OutputFile } from "./output-types.js";
 import {
   createCustomContext,
   CustomContext,
   Disposable,
-  effect,
-  ensureIsEmpty,
   getContext,
   memo,
   onCleanup,
   ref,
   root,
+  setContextEmptyChangeListener,
   untrack,
 } from "./reactivity.js";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { OutputDirectory, OutputFile, render } from "./render.js";
+import { AlloyNode, FRAGMENT_NODE } from "./render/node.js";
 import {
   Children,
   ComponentCreator,
@@ -118,14 +117,25 @@ export function mapJoin<T, U, V>(
     item?: MapJoinItem;
     disposer?: Disposable;
     joiner?: Ref<Children | undefined>;
-    isEmpty: Ref<boolean>;
+    /**
+     * Mirror of the slot's nested-context empty state, kept as a plain
+     * primitive. Written by:
+     *  1. The empty-change callback installed on the nested context
+     *     (on real content transitions while the slot is live).
+     *  2. The outer thunk's recycle/truncate paths, which manually
+     *     reset to `true` before disposing the old slot.
+     * Read inside the outer thunk's `untrack` region. No Ref/Dep
+     * tracking required — replaces what was previously a `Ref<boolean>`
+     * plus a per-slot `effect()`.
+     */
+    empty: boolean;
   }
   const itemSlots: MapJoinSlot[] = [];
 
   function getOrCreateSlot(index: number): MapJoinSlot {
     let slot = itemSlots[index];
     if (!slot) {
-      slot = { isEmpty: ref(true) };
+      slot = { empty: true };
       itemSlots[index] = slot;
     }
     return slot;
@@ -177,7 +187,7 @@ export function mapJoin<T, U, V>(
     const shouldShow =
       previousNonEmpty !== -1 &&
       rightSlot !== undefined &&
-      rightSlot.isEmpty.value === false;
+      rightSlot.empty === false;
 
     const newValue = shouldShow ? options.joiner : undefined;
     if (joinerRef.value !== newValue) {
@@ -189,7 +199,7 @@ export function mapJoin<T, U, V>(
   function findNextNonEmpty(from: number) {
     for (let i = Math.max(from, 0); i < itemSlots.length; i++) {
       const slot = itemSlots[i];
-      if (slot && slot.isEmpty.value === false) {
+      if (slot && slot.empty === false) {
         return i;
       }
     }
@@ -200,7 +210,7 @@ export function mapJoin<T, U, V>(
   function findPrevNonEmpty(from: number) {
     for (let i = Math.min(from, itemSlots.length - 1); i >= 0; i--) {
       const slot = itemSlots[i];
-      if (slot && slot.isEmpty.value === false) {
+      if (slot && slot.empty === false) {
         return i;
       }
     }
@@ -309,14 +319,13 @@ export function mapJoin<T, U, V>(
       for (; startIndex < itemsLen; startIndex++) {
         const slot = getOrCreateSlot(startIndex);
         slot.item = items[startIndex];
-        const emptyFlag = slot.isEmpty;
 
         if (slot.disposer) {
-          if (emptyFlag.value === false) {
+          if (slot.empty === false) {
             if (context) {
               context.childrenWithContent--;
             }
-            emptyFlag.value = true;
+            slot.empty = true;
             applyEmptyStateChange(startIndex, true, false);
           }
           slot.disposer();
@@ -327,32 +336,25 @@ export function mapJoin<T, U, V>(
         mapped[startIndex * 2] = createCustomContext((cb) => {
           return root((disposer) => {
             const nestedContext = getContext()!;
-            const isEmptyFlag = ensureIsEmpty(nestedContext);
 
             slot.disposer = disposer;
             disposer();
-            effect(
-              (prev?: boolean) => {
-                const isEmpty = isEmptyFlag.value;
-                return untrack(() => {
-                  if (slot.isEmpty.value !== isEmpty) {
-                    slot.isEmpty.value = isEmpty;
-                  }
-                  const wasEmpty = prev ?? true;
 
-                  applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
+            // Single-subscriber callback: fires synchronously on every
+            // empty↔non-empty transition of this slot's nested context.
+            // No Ref/effect allocation per slot; cleared via
+            // `onCleanup` so a recycled slot's old context can never
+            // mutate the new slot's bookkeeping.
+            setContextEmptyChangeListener(nestedContext, (isEmpty) => {
+              const wasEmpty = slot.empty;
+              if (wasEmpty === isEmpty) return;
+              slot.empty = isEmpty;
+              applyEmptyStateChange(cleanupIndex, isEmpty, wasEmpty);
+            });
+            onCleanup(() => {
+              setContextEmptyChangeListener(nestedContext, undefined);
+            });
 
-                  return isEmpty;
-                });
-              },
-              undefined,
-              {
-                debug: {
-                  name: `list:slotEmpty:${cleanupIndex}`,
-                  type: "list",
-                },
-              },
-            );
             cb(mapper(items[cleanupIndex], cleanupIndex));
           });
         });
@@ -378,11 +380,11 @@ export function mapJoin<T, U, V>(
         }
 
         slot.disposer?.();
-        if (slot.isEmpty.value === false) {
+        if (slot.empty === false) {
           if (context) {
             context.childrenWithContent--;
           }
-          slot.isEmpty.value = true;
+          slot.empty = true;
           applyEmptyStateChange(startIndex, true, false);
         }
       }
@@ -502,6 +504,22 @@ export function children(
       !isComponentCreator(children)
     ) {
       return collectChildren(children());
+    } else if (children instanceof AlloyNode) {
+      // A FragmentNode is the AlloyNode equivalent of an array — flatten
+      // by walking its sibling list. Other node kinds are opaque leaves.
+      if (children.nodeType === FRAGMENT_NODE) {
+        const out: Children[] = [];
+        for (let n = children.firstChild; n !== null; n = n.nextSibling) {
+          const collected = collectChildren(n);
+          if (Array.isArray(collected)) {
+            out.push(...collected);
+          } else {
+            out.push(collected);
+          }
+        }
+        return out;
+      }
+      return children;
     } else {
       return children;
     }

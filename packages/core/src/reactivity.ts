@@ -15,7 +15,6 @@ import {
   toRefs as vueToRefs,
 } from "@vue/reactivity";
 import { captureSourceLocation, debug, isDebugEnabled } from "./debug/index.js";
-import { RenderedTextTree } from "./render.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler, setLastTriggerRef } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
@@ -26,18 +25,6 @@ if ((globalThis as any).__ALLOY__) {
   );
 }
 (globalThis as any).__ALLOY__ = true;
-
-export function getElementCache() {
-  const ctx = getContext()!;
-  return (ctx.elementCache ??= new Map());
-}
-
-export type ElementCacheKey =
-  | ComponentCreator
-  | (() => unknown)
-  | CustomContext;
-
-export type ElementCache = Map<ElementCacheKey, RenderedTextTree>;
 
 export interface Disposable {
   (): void;
@@ -57,11 +44,6 @@ export interface Context {
   // store random info about the node
   meta?: Record<string, any>;
 
-  /**
-   * A cache of RenderTextTree nodes created within this context,
-   * indexed by the component or function which created them.
-   */
-  elementCache?: ElementCache;
   /**
    * When this context was created by a component, this will
    * be the component that created it.
@@ -86,16 +68,10 @@ export interface Context {
 
   /**
    * A ref that indicates whether the component is empty.
-   * Only allocated when reactively observed (ContentSlot, mapJoin).
+   * Only allocated when reactively observed (e.g. by `ContentSlot`).
+   * mapJoin uses an internal empty-change callback instead.
    */
   isEmpty?: Ref<boolean>;
-
-  /**
-   * Cheap boolean tracking the last propagated empty state.
-   * Used by notifyContentState() for early-return optimization
-   * without requiring a reactive ref on every context.
-   */
-  _lastEmpty: boolean;
 
   /**
    * Whether this context is a root context
@@ -103,8 +79,21 @@ export interface Context {
   isRoot: boolean;
 }
 
-let globalContext: Context | null = null;
-export function getContext() {
+interface InternalContext extends Context {
+  owner: InternalContext | null;
+  /**
+   * Internal single-subscriber callback fired synchronously by
+   * notifyContentState on every empty/non-empty transition.
+   */
+  onEmptyChange?: (isEmpty: boolean) => void;
+  /**
+   * Cheap boolean tracking the last propagated empty state.
+   */
+  lastEmpty: boolean;
+}
+
+let globalContext: InternalContext | null = null;
+export function getContext(): Context | null {
   return globalContext;
 }
 
@@ -128,7 +117,8 @@ function resolveOwnerEffectContextId(context: Context): number | null {
 /**
  * Ensure that a context has an isEmpty ref, creating one if needed.
  * Only call this when you need to reactively observe isEmpty (e.g.,
- * ContentSlot, mapJoin). Most contexts don't need an isEmpty ref.
+ * `ContentSlot`). `mapJoin` does not call this — it uses an internal
+ * empty-change callback directly so most slots never allocate a Ref at all.
  */
 export function ensureIsEmpty(context: Context): Ref<boolean> {
   context.isEmpty ??= ref(context.childrenWithContent === 0, {
@@ -137,19 +127,100 @@ export function ensureIsEmpty(context: Context): Ref<boolean> {
   return context.isEmpty;
 }
 
+/**
+ * Increment the current context's `childrenWithContent` counter. Caller
+ * should follow with {@link notifyContentState} so that observers
+ * (`ContentSlot.isEmpty`, etc.) and ancestor counters stay in sync.
+ */
+export function contentAdded() {
+  const context = globalContext;
+  if (context) context.childrenWithContent++;
+}
+
+/**
+ * Decrement the current context's `childrenWithContent` counter (clamped
+ * at zero). Pair with {@link notifyContentState} to propagate.
+ */
+export function contentRemoved() {
+  const context = globalContext;
+  if (context && context.childrenWithContent > 0) {
+    context.childrenWithContent--;
+  }
+}
+
+export function setContextEmptyChangeListener(
+  context: Context,
+  listener: ((isEmpty: boolean) => void) | undefined,
+): void {
+  (context as InternalContext).onEmptyChange = listener;
+}
+
+/**
+ * Reconcile the current context's last-empty flag and `isEmpty` ref
+ * with its current `childrenWithContent` count, propagating changes up
+ * the owner chain.
+ *
+ * Call after mutating `childrenWithContent`. Safe to call when there is no
+ * active context — it just no-ops.
+ *
+ * On every transition, both write the (lazily-allocated) `isEmpty` Ref
+ * (if present) AND invoke the internal empty-change callback (if present).
+ * Order is ref-first so external observers see the new Ref value
+ * before any internal mapJoin bookkeeping mutates dependent Refs.
+ */
+export function notifyContentState() {
+  const startContext = globalContext;
+  if (!startContext) return;
+
+  untrack(() => {
+    if (startContext.childrenWithContent === 0) {
+      if (startContext.lastEmpty) return;
+      startContext.lastEmpty = true;
+      if (startContext.isEmpty) startContext.isEmpty.value = true;
+      startContext.onEmptyChange?.(true);
+
+      let current = startContext.owner;
+      while (current) {
+        if (current.childrenWithContent === 0) break;
+        current.childrenWithContent--;
+        if (current.childrenWithContent > 0) break;
+        current.lastEmpty = true;
+        if (current.isEmpty) current.isEmpty.value = true;
+        current.onEmptyChange?.(true);
+        current = current.owner;
+      }
+    } else {
+      if (!startContext.lastEmpty) return;
+      startContext.lastEmpty = false;
+      if (startContext.isEmpty) startContext.isEmpty.value = false;
+      startContext.onEmptyChange?.(false);
+
+      let current = startContext.owner;
+      while (current) {
+        current.childrenWithContent++;
+        if (current.childrenWithContent > 1) break;
+        current.lastEmpty = false;
+        if (current.isEmpty) current.isEmpty.value = false;
+        current.onEmptyChange?.(false);
+        current = current.owner;
+      }
+    }
+  });
+}
+
 export interface RootOptions {
   componentOwner?: ComponentCreator<any>;
 }
 
 export function root<T>(fn: (d: Disposable) => T, options?: RootOptions): T {
-  const context: Context = {
+  const context: InternalContext = {
     id: contextIdCounter++,
     componentOwner: options?.componentOwner,
     owner: globalContext,
     takesSymbols: false,
     takenSymbols: undefined,
     childrenWithContent: 0,
-    _lastEmpty: true,
+    lastEmpty: true,
     isRoot: true,
   };
 
@@ -216,10 +287,11 @@ export function findCurrentEffectId(): number | undefined {
  * ```
  */
 export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
-  const memoLabel = name ? `memo:${name}` : "memo";
-  const o = shallowRef<T>(undefined as T, {
-    label: memoLabel,
-  });
+  const dbg = isDebugEnabled();
+  const o =
+    dbg ?
+      shallowRef<T>(undefined as T, { label: name ? `memo:${name}` : "memo" })
+    : shallowRef<T>(undefined as T);
   effect(
     (prev) => {
       const res = fn();
@@ -228,9 +300,7 @@ export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
       return res;
     },
     undefined as T,
-    {
-      debug: { name: name ? `memo:${name}` : "memo" },
-    },
+    dbg ? { debug: { name: name ? `memo:${name}` : "memo" } } : undefined,
   );
   const getter = (() => o.value as T) as () => T;
   if (name) {
@@ -244,13 +314,13 @@ export function effect<T>(
   current?: T,
   options?: EffectOptions,
 ) {
-  const context: Context = {
+  const context: InternalContext = {
     id: contextIdCounter++,
     owner: globalContext,
     takesSymbols: false,
     takenSymbols: undefined,
     childrenWithContent: 0,
-    _lastEmpty: true,
+    lastEmpty: true,
     isRoot: false,
   };
 
@@ -402,6 +472,82 @@ export function effect<T>(
 }
 
 /**
+ * Run `fn` in a fresh child Context (just like {@link effect}) but **without**
+ * a tracking ReactiveEffect wrapper. Use this when the caller knows the body
+ * does not establish reactive subscriptions at its top level (e.g. it wraps
+ * its only reactive reads in `untrack()` or function children) — typically
+ * for component-invocation plumbing where the outer "effect" never re-fires.
+ *
+ * Compared to {@link effect}:
+ * - No `vueEffect` allocation, no scheduler binding.
+ * - The body runs synchronously to completion exactly once.
+ * - Disposables registered via `onCleanup` inside `fn` (or its descendants)
+ *   are still registered on the new context, and disposed via the parent
+ *   context's cleanup chain.
+ *
+ * Returns the value returned by `fn`.
+ */
+export function runInContext<T>(fn: () => T): T {
+  const context: InternalContext = {
+    id: contextIdCounter++,
+    owner: globalContext,
+    takesSymbols: false,
+    takenSymbols: undefined,
+    childrenWithContent: 0,
+    lastEmpty: true,
+    isRoot: false,
+  };
+
+  // Hook this context's disposables into the parent's cleanup chain so
+  // when the parent disposes, our disposables run too.
+  onCleanup(() => {
+    const d = context.disposables;
+    context.disposables = undefined;
+    if (d) {
+      for (let k = 0, len = d.length; k < len; k++) untrack(d[k]);
+    }
+  });
+
+  const oldContext = globalContext;
+  globalContext = context;
+  try {
+    return fn();
+  } finally {
+    globalContext = oldContext;
+  }
+}
+
+export function runInContextWithDisposer<T>(fn: (dispose: Disposable) => T): T {
+  const context: InternalContext = {
+    id: contextIdCounter++,
+    owner: globalContext,
+    takesSymbols: false,
+    takenSymbols: undefined,
+    childrenWithContent: 0,
+    lastEmpty: true,
+    isRoot: false,
+  };
+
+  const dispose = () => {
+    const d = context.disposables;
+    context.disposables = undefined;
+    if (d) {
+      for (let k = 0, len = d.length; k < len; k++) untrack(d[k]);
+    }
+  };
+
+  onCleanup(dispose);
+
+  const oldContext = globalContext;
+  globalContext = context;
+  try {
+    return fn(dispose);
+  } finally {
+    globalContext = oldContext;
+  }
+}
+
+/**
  * Register a cleanup function which is called when the current reactive scope
  * is recalculated or disposed. This is useful to clean up any side effects
  * created in the reactive scope.
@@ -448,7 +594,7 @@ export function createCustomContext(
   };
 }
 
-export function isCustomContext(child: Children): child is CustomContext {
+export function isCustomContext(child: unknown): child is CustomContext {
   return (
     typeof child === "object" &&
     child !== null &&

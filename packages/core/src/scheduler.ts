@@ -13,8 +13,21 @@ import { getEffectDebugId } from "./reactivity.js";
 export interface QueueJob {
   run(): void;
 }
-const immediateQueue = new Set<QueueJob>();
-const queue = new Set<QueueJob>();
+// Dedup membership set + ordered drain array with a moving head pointer.
+// Using `Set.values().next().value` per takeJob (the prior impl) allocated
+// a fresh iterator + result object on every pop, which dominated CPU and
+// GC for scenarios with many queued effects (~31% of CPU on render-imports).
+// The hybrid below keeps O(1) dedup via the Set while making takeJob
+// allocation-free in the steady state.
+const inQueueSet = new Set<QueueJob>();
+const immediateArr: QueueJob[] = [];
+let immediateHead = 0;
+const queueArr: QueueJob[] = [];
+let queueHead = 0;
+
+function queueSize(): number {
+  return immediateArr.length - immediateHead + (queueArr.length - queueHead);
+}
 
 function isJobActive(job: QueueJob): boolean {
   // ReactiveEffect uses bit 0 (flags & 1) as the ACTIVE flag.
@@ -63,21 +76,18 @@ export function queueJob(job: QueueJob | (() => void), immediate = false) {
   if (typeof job === "function") {
     job = { run: job };
   }
+  if (inQueueSet.has(job)) return;
+  inQueueSet.add(job);
   if (immediate) {
-    immediateQueue.add(job);
+    immediateArr.push(job);
   } else {
-    queue.add(job);
+    queueArr.push(job);
   }
 
   if (isTraceEnabled()) {
     const effectId = getEffectDebugId(job as object);
     if (effectId !== undefined) {
-      insertSchedulerJob(
-        "queue",
-        effectId,
-        immediate,
-        immediateQueue.size + queue.size,
-      );
+      insertSchedulerJob("queue", effectId, immediate, queueSize());
     }
   }
 
@@ -108,12 +118,7 @@ export function flushJobs() {
     if (isTraceEnabled()) {
       const effectId = getEffectDebugId(job as object);
       if (effectId !== undefined) {
-        insertSchedulerJob(
-          "run",
-          effectId,
-          false,
-          immediateQueue.size + queue.size,
-        );
+        insertSchedulerJob("run", effectId, false, queueSize());
       }
     }
     if (!isJobActive(job)) {
@@ -267,17 +272,27 @@ export async function flushJobsAsync() {
   debug.render.flushJobsComplete();
 }
 
-function takeJob() {
-  if (immediateQueue.size > 0) {
-    // return first item in immediateQueue
-    const job = immediateQueue.values().next().value!;
-    immediateQueue.delete(job);
+function takeJob(): QueueJob | null {
+  if (immediateHead < immediateArr.length) {
+    const job = immediateArr[immediateHead];
+    immediateArr[immediateHead] = undefined as any; // release ref for GC
+    immediateHead++;
+    inQueueSet.delete(job);
+    if (immediateHead === immediateArr.length) {
+      immediateArr.length = 0;
+      immediateHead = 0;
+    }
     return job;
   }
-  if (queue.size > 0) {
-    // return first item in queue
-    const job = queue.values().next().value!;
-    queue.delete(job);
+  if (queueHead < queueArr.length) {
+    const job = queueArr[queueHead];
+    queueArr[queueHead] = undefined as any;
+    queueHead++;
+    inQueueSet.delete(job);
+    if (queueHead === queueArr.length) {
+      queueArr.length = 0;
+      queueHead = 0;
+    }
     return job;
   }
   return null;

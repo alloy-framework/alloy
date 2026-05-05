@@ -1,4 +1,5 @@
 import { code, text } from "./code.js";
+import { _registerStcImpl } from "./context.js";
 import {
   Children,
   ComponentCreator,
@@ -72,3 +73,5 @@ export function stc<T extends {}>(
     return fn;
   };
 }
+
+_registerStcImpl(stc);

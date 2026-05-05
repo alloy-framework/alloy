@@ -1,7 +1,7 @@
 import { Ref } from "@vue/reactivity";
 import { CustomContext } from "../reactivity.js";
 import { Refkey, RefkeyableObject } from "../refkey.js";
-import { IntrinsicElement } from "./intrinsic.js";
+import type { AlloyNode } from "../render/node.js";
 
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");
 
@@ -46,7 +46,7 @@ export type Child =
   | Ref
   | Refkey
   | CustomContext
-  | IntrinsicElement;
+  | AlloyNode;
 
 export type Children = Child | Children[];
 export type Props = Record<string, any>;

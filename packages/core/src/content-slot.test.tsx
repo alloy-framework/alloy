@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import "../testing/extend-expect.js";
 import { Show } from "./components/Show.jsx";
 import { createContentSlot } from "./content-slot.jsx";
-import { printTree, renderTree } from "./render.js";
+import { printTree, renderTree } from "./test-render.js";
 
 it("knows when its empty", () => {
   const ContentSlot = createContentSlot();

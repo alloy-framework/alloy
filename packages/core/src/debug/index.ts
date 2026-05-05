@@ -27,16 +27,14 @@ import {
   updated,
 } from "./files.js";
 import {
-  appendCustomContext,
-  appendFragmentChild,
-  appendPrintHook,
-  appendTextNode,
   beginComponent,
   complete,
   error,
   flushJobsComplete,
   initialize,
-  prepareMemoNode,
+  isRerenderEnabled,
+  nodeAttached,
+  nodeDetached,
 } from "./render.js";
 import {
   registerScope,
@@ -55,7 +53,11 @@ export type {
   EffectEdgeDebugInfo,
   RefDebugInfo,
 } from "./effects.js";
-export { getRenderNodeId, type RenderTreeNodeInfo } from "./render.js";
+export {
+  getRenderNodeId,
+  type RenderNodeActions,
+  type RenderTreeNodeInfo,
+} from "./render.js";
 export type {
   BeginComponentOptions,
   ComponentDebugSession,
@@ -94,12 +96,10 @@ export const debug = {
   },
   render: {
     initialize,
-    appendTextNode,
-    appendCustomContext,
-    appendPrintHook,
-    appendFragmentChild,
+    nodeAttached,
+    nodeDetached,
     beginComponent,
-    prepareMemoNode,
+    isRerenderEnabled,
     error,
     complete,
     flushJobsComplete,

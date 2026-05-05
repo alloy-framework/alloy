@@ -2,13 +2,16 @@
   "name": "@alloy-js/rollup-plugin",
   "version": "0.1.1",
   "type": "module",
-  "description": "Prettier plugin for Alloy JSX/TSX files that disable formatting for JSX elements",
+  "description": "Rollup/Vite plugin for Alloy JSX/TSX transformation via the Babel preset",
   "homepage": "https://github.com/alloy-framework/alloy",
   "license": "MIT",
   "author": "Microsoft",
   "main": "dist/index.js",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
   },
   "files": [
     "dist"

@@ -20,9 +20,7 @@ import {
   type DevtoolsTransportState,
 } from "./devtools-transport.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public types
-// ─────────────────────────────────────────────────────────────────────────────
+// #region Public types
 
 export interface DevtoolsIncomingMessage {
   type: string;
@@ -39,9 +37,9 @@ export interface EnableDevtoolsOptions {
   port?: number;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Session state
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Session state
 
 let transportState: DevtoolsTransportState | null = null;
 let transportPromise: Promise<DevtoolsTransportState> | null = null;
@@ -55,9 +53,9 @@ let tempDbPath: string | null = null;
 let subscribedPromise: Promise<void> | null = null;
 let resolveSubscribed: (() => void) | null = null;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Per-client subscription state
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Per-client subscription state
 
 interface ClientState {
   subscriptions: Set<ChangeChannel>;
@@ -72,6 +70,15 @@ function eventToMessageType(event: ChangeEvent): string {
       updated: "render:node_updated",
       removed: "render:node_removed",
       reset: "render:reset",
+    },
+    components: {
+      added: "component:added",
+      updated: "component:updated",
+      removed: "component:removed",
+    },
+    component_roots: {
+      added: "component:root_added",
+      removed: "component:root_removed",
     },
     effects: { added: "effect:added", updated: "effect:updated" },
     refs: { added: "ref:added" },
@@ -108,6 +115,8 @@ function channelToInitialMessageType(
 ): string {
   const map: Record<string, string> = {
     render: "render:node_added",
+    components: "component:added",
+    component_roots: "component:root_added",
     effects: "effect:added",
     refs: "ref:added",
     symbols: "symbol:added",
@@ -141,9 +150,9 @@ function sendInitialState(socket: any, channels: ChangeChannel[]): void {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Environment helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Environment helpers
 
 function isNodeEnvironment() {
   return (
@@ -158,12 +167,24 @@ function isNodeEnvironment() {
 let _envDebugEnabled: boolean =
   isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
 
+// Cached value of `devtoolsExplicitlyEnabled || _envDebugEnabled`. This
+// function is called on hot paths (every effect/scheduler tick), so we
+// avoid recomputing the OR + the `isNodeEnvironment` check on every call.
+// The cache is invalidated whenever either underlying flag mutates.
+let _devtoolsEnabledCache: boolean = isNodeEnvironment() && _envDebugEnabled;
+
+function refreshDevtoolsEnabledCache(): void {
+  _devtoolsEnabledCache =
+    isNodeEnvironment() && (devtoolsExplicitlyEnabled || _envDebugEnabled);
+}
+
 /**
  * Invalidates the cached env-var result for isDevtoolsEnabled(). Call this in
  * test beforeEach hooks after modifying process.env.ALLOY_DEBUG.
  */
 export function refreshDebugState(): void {
   _envDebugEnabled = isNodeEnvironment() && Boolean(process.env.ALLOY_DEBUG);
+  refreshDevtoolsEnabledCache();
 }
 
 function getCwd() {
@@ -183,14 +204,13 @@ function resolveDebugPort() {
   return parsed;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Query functions
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Query functions
 
 /** Returns true when devtools are enabled (via env var or explicit call). */
 export function isDevtoolsEnabled() {
-  if (!isNodeEnvironment()) return false;
-  return devtoolsExplicitlyEnabled || _envDebugEnabled;
+  return _devtoolsEnabledCache;
 }
 
 /** Returns true when a devtools client is currently connected. */
@@ -204,9 +224,9 @@ export function getDevtoolsServerInfo(): DevtoolsServerInfo | null {
   return { port: transportState.port, connected: transportState.connected };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Temp SQLite for devtools
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Temp SQLite for devtools
 
 async function ensureSqliteForDevtools(): Promise<void> {
   if (isTraceEnabled()) return;
@@ -236,9 +256,9 @@ async function ensureSqliteForDevtools(): Promise<void> {
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Server lifecycle
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Server lifecycle
 
 async function ensureServer(): Promise<DevtoolsTransportState> {
   if (transportState) return transportState;
@@ -350,9 +370,9 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
   return transportPromise;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Public API
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Public API
 
 /**
  * Wait for a devtools client to connect before proceeding.
@@ -371,6 +391,7 @@ async function ensureServer(): Promise<DevtoolsTransportState> {
  */
 export async function waitForDevtoolsConnection(): Promise<void> {
   devtoolsExplicitlyEnabled = true;
+  refreshDevtoolsEnabledCache();
   const server = await ensureServer();
   if (!server.connected) {
     await server.ready;
@@ -392,6 +413,7 @@ export async function enableDevtools(
   options?: EnableDevtoolsOptions,
 ): Promise<DevtoolsServerInfo> {
   devtoolsExplicitlyEnabled = true;
+  refreshDevtoolsEnabledCache();
   devtoolsInitialized = true;
   if (options?.port !== undefined) {
     configuredPort = options.port;
@@ -435,9 +457,9 @@ export async function enableDevtoolsAndConnect(
   return { port: transportState!.port, connected: true };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Messaging
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Messaging
 
 /** Register a handler for incoming devtools messages. Returns an unsubscribe function. */
 export function registerDevtoolsMessageHandler(
@@ -457,9 +479,9 @@ export function assertDevtoolsConnectedForSyncRender() {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Test utilities
-// ─────────────────────────────────────────────────────────────────────────────
+// #endregion
+
+// #region Test utilities
 
 /** Reset all devtools state. For use in tests only. */
 export async function resetDevtoolsServerForTests() {
@@ -471,6 +493,7 @@ export async function resetDevtoolsServerForTests() {
   transportState = null;
   transportPromise = null;
   devtoolsExplicitlyEnabled = false;
+  refreshDevtoolsEnabledCache();
   devtoolsInitialized = false;
   configuredPort = undefined;
   loggedDevtoolsLinks = false;
@@ -481,3 +504,5 @@ export async function resetDevtoolsServerForTests() {
   // Close the trace DB so each test starts fresh
   closeTrace();
 }
+
+// #endregion

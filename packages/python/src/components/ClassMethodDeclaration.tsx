@@ -1,3 +1,4 @@
+import { For } from "@alloy-js/core";
 import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
@@ -17,6 +18,10 @@ import { MethodDeclarationBase } from "./MethodBase.js";
  * def create(cls, value: str) -> None:
  *     return cls(value)
  * ```
+ *
+ * @remarks
+ * Use **`decorators`** for decorators that must appear above `@classmethod`
+ * (for example Pydantic `@field_validator`).
  */
 export interface ClassMethodDeclarationProps extends CommonFunctionProps {
   abstract?: boolean;
@@ -24,11 +29,20 @@ export interface ClassMethodDeclarationProps extends CommonFunctionProps {
 
 export function ClassMethodDeclaration(props: ClassMethodDeclarationProps) {
   const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
+  const { decorators, ...rest } = props;
   return (
     <>
+      <For each={decorators ?? []} skipFalsy>
+        {(dec) => (
+          <>
+            {dec}
+            <hbr />
+          </>
+        )}
+      </For>
       {"@classmethod"}
       <hbr />
-      <MethodDeclarationBase functionType="class" {...props} sym={sym} />
+      <MethodDeclarationBase functionType="class" {...rest} sym={sym} />
     </>
   );
 }

@@ -1,4 +1,10 @@
-import { createContentSlot, Name, Show } from "@alloy-js/core";
+import {
+  For,
+  Show,
+  createContentSlot,
+  Name,
+  type Children,
+} from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
@@ -19,6 +25,11 @@ export interface CommonFunctionProps
     CallSignatureProps {
   /** Indicates that the function is async. */
   async?: boolean;
+  /**
+   * Decorators applied above `def`, top-to-bottom order (each item should render a
+   * full decorator line, typically starting with `@`).
+   */
+  decorators?: Children[];
 }
 
 /**
@@ -54,6 +65,7 @@ export interface BaseFunctionDeclarationProps extends CommonFunctionProps {
  * ```
  */
 export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
+  const { decorators, sym, ...declarationProps } = props;
   const asyncKwd = props.async ? "async " : "";
   let parameters;
   switch (props.functionType) {
@@ -66,11 +78,18 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
     default:
       parameters = props.parameters;
   }
-  const sym: PythonOutputSymbol = props.sym;
   const ContentSlot = createContentSlot();
   return (
     <>
-      <Declaration {...props} nameKind="function" symbol={sym}>
+      <For each={decorators ?? []} skipFalsy>
+        {(dec) => (
+          <>
+            {dec}
+            <hbr />
+          </>
+        )}
+      </For>
+      <Declaration {...declarationProps} nameKind="function" symbol={sym}>
         {asyncKwd}def <Name />
         <LexicalScope name={sym.name}>
           <CallSignature

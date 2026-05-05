@@ -1,3 +1,4 @@
+import { For } from "@alloy-js/core";
 import { abcModule } from "../builtins/python.js";
 import {
   BaseFunctionDeclaration,
@@ -36,8 +37,10 @@ export function MethodDeclarationBase(
   props: MethodDeclarationBaseProps &
     Pick<BaseFunctionDeclarationProps, "functionType" | "sym">,
 ) {
+  const { decorators, abstract, ...rest } = props;
+
   const abstractMethod =
-    props.abstract ?
+    abstract ?
       <>
         @{abcModule["."].abstractmethod}
         <hbr />
@@ -46,8 +49,16 @@ export function MethodDeclarationBase(
 
   return (
     <>
+      <For each={decorators ?? []} skipFalsy>
+        {(dec) => (
+          <>
+            {dec}
+            <hbr />
+          </>
+        )}
+      </For>
       {abstractMethod}
-      <BaseFunctionDeclaration {...props} />
+      <BaseFunctionDeclaration {...rest} />
     </>
   );
 }

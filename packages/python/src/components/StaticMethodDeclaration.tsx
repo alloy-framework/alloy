@@ -1,3 +1,4 @@
+import { For } from "@alloy-js/core";
 import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
@@ -17,6 +18,9 @@ import { MethodDeclarationBase } from "./MethodBase.js";
  * def identity(value: int) -> None:
  *     return value
  * ```
+ *
+ * @remarks
+ * Use **`decorators`** for decorators that must appear above `@staticmethod`.
  */
 export interface StaticMethodDeclarationProps extends CommonFunctionProps {
   abstract?: boolean;
@@ -24,11 +28,20 @@ export interface StaticMethodDeclarationProps extends CommonFunctionProps {
 
 export function StaticMethodDeclaration(props: StaticMethodDeclarationProps) {
   const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
+  const { decorators, ...rest } = props;
   return (
     <>
+      <For each={decorators ?? []} skipFalsy>
+        {(dec) => (
+          <>
+            {dec}
+            <hbr />
+          </>
+        )}
+      </For>
       {"@staticmethod"}
       <hbr />
-      <MethodDeclarationBase functionType="static" {...props} sym={sym} />
+      <MethodDeclarationBase functionType="static" {...rest} sym={sym} />
     </>
   );
 }

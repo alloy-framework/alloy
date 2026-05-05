@@ -5,6 +5,28 @@ import { abcModule } from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
 describe("Method-like Declarations", () => {
+  it("renders decorators above def", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration name="MyClass">
+        <py.MethodDeclaration
+          name="with_decorator"
+          decorators={["@some_decorator"]}
+        >
+          pass
+        </py.MethodDeclaration>
+      </py.ClassDeclaration>,
+    ]);
+    expect(result).toRenderTo(d`
+      class MyClass:
+          @some_decorator
+          def with_decorator(self):
+              pass
+
+
+              
+    `);
+  });
+
   it("renders an instance function with a body", () => {
     const result = toSourceText([
       <py.ClassDeclaration name="MyClass">

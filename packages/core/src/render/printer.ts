@@ -52,11 +52,7 @@ import {
   trimOut,
 } from "./printer-support.js";
 
-// ---------------------------------------------------------------------------
-// Frame: one work item on the command stack. Use a discriminated union
-// over AlloyNode (the common case) plus a small set of synthetic
-// shapes that have no AlloyNode counterpart.
-// ---------------------------------------------------------------------------
+// #region Frame types
 
 const SYNTH = Symbol("alloy:synthetic-frame");
 
@@ -85,9 +81,9 @@ interface Cmd {
   frame: Frame;
 }
 
-// ---------------------------------------------------------------------------
-// Group "broken" predicate
-// ---------------------------------------------------------------------------
+// #endregion
+
+// #region Group broken predicate
 
 /**
  * O(1) replacement for Prettier's `propagateBreaks` prepass — the
@@ -102,9 +98,9 @@ function isGroupBroken(el: ElementNode): boolean {
   return data?.shouldBreak === true;
 }
 
-// ---------------------------------------------------------------------------
-// fits — continuation-aware width measurement
-// ---------------------------------------------------------------------------
+// #endregion
+
+// #region fits
 
 function fits(
   next: Cmd,
@@ -307,9 +303,9 @@ function fits(
   return false;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+// #endregion
+
+// #region Helpers
 
 function isSynth(f: Frame): f is SynthFrame {
   return typeof f === "object" && f !== null && (f as any)[SYNTH] === true;
@@ -353,9 +349,9 @@ function expandMultilineText(text: string): Frame[] {
   return out;
 }
 
-// ---------------------------------------------------------------------------
-// Main entry point
-// ---------------------------------------------------------------------------
+// #endregion
+
+// #region Main entry point
 
 export interface PrintNodeResult {
   formatted: string;
@@ -467,10 +463,7 @@ export function printNodeToString(
 
   return { formatted: joinOut(out) };
 
-  // ---------------------------------------------------------------
-  // Closures (captured: cmds, out, lineSuffix, pos, shouldRemeasure,
-  // groupModeMap, options, newLine, width)
-  // ---------------------------------------------------------------
+  // #region Closures
 
   function pushChildrenReversed(
     el: ElementNode,
@@ -817,4 +810,8 @@ export function printNodeToString(
         break;
     }
   }
+
+  // #endregion
 }
+
+// #endregion

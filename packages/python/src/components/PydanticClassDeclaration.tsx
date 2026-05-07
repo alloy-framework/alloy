@@ -35,7 +35,7 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
    * kwargs or dynamic config). Takes precedence over structured `modelConfig`.
    *
    * @example
-   * `modelConfigExpression={code\`${pydanticModule["."].ConfigDict}(frozen=True, extra="forbid")\`}`
+   * A typical value emits `ConfigDict(frozen=True, extra="forbid")`.
    */
   modelConfigExpression?: Children;
 }
@@ -55,7 +55,6 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
  *
  * @example
  * ```tsx
- * import { code } from "@alloy-js/core";
  * import { pydanticModule } from "@alloy-js/python";
  * import * as py from "@alloy-js/python";
  *
@@ -65,7 +64,7 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
  *     instanceVariable
  *     name="name"
  *     type="str"
- *     initializer={code`${pydanticModule["."].Field}(default="anonymous")`}
+ *     initializer={"Field(default=\"anonymous\")"}
  *   />
  * </py.PydanticClassDeclaration>
  * ```

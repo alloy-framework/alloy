@@ -1,8 +1,8 @@
 import {
-  For,
-  Show,
   createContentSlot,
+  For,
   Name,
+  Show,
   type Children,
 } from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";

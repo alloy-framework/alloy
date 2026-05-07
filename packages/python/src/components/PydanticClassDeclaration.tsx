@@ -1,9 +1,4 @@
-import {
-  For,
-  List,
-  childrenArray,
-  type Children,
-} from "@alloy-js/core";
+import { For, List, childrenArray, type Children } from "@alloy-js/core";
 import { snakeCase } from "change-case";
 import { pydanticModule } from "../builtins/python.js";
 import { Atom } from "./Atom.jsx";

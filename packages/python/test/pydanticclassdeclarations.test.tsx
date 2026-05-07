@@ -110,9 +110,7 @@ describe("PydanticClassDeclaration", () => {
             <py.VariableDeclaration
               instanceVariable
               name="notes"
-              type={
-                <py.UnionTypeExpression children={["str", "None"]} />
-              }
+              type={<py.UnionTypeExpression children={["str", "None"]} />}
             />
             <py.VariableDeclaration
               instanceVariable

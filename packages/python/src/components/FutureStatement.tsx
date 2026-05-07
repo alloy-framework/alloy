@@ -18,7 +18,7 @@ export interface FutureStatementProps {
  *
  * @example
  * ```tsx
- * <SourceFile path="models.py" futureImports={<FutureStatement feature="annotations" />}>
+ * <SourceFile path="models.py" futureImports={[<FutureStatement feature="annotations" />]}>
  *   <ClassDeclaration name="User">
  *     <PropertyDeclaration name="manager" type="User" />
  *   </ClassDeclaration>

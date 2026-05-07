@@ -479,7 +479,7 @@ describe("Pydantic ecosystem emitters", () => {
       [
         <py.SourceFile
           path="models.py"
-          futureImports={<py.FutureStatement feature="annotations" />}
+          futureImports={[<py.FutureStatement feature="annotations" />]}
         >
           <py.PydanticClassDeclaration name="Node">
             <py.VariableDeclaration

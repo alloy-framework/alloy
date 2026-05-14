@@ -1,6 +1,7 @@
 import { Children, List, Name, Show, createContentSlot } from "@alloy-js/core";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { DecoratorList } from "./DecoratorList.jsx";
 import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
@@ -9,6 +10,27 @@ export interface ClassDeclarationProps extends BaseDeclarationProps {
    * The base classes that this class inherits from.
    */
   bases?: Children[];
+  /**
+   * Decorators rendered above the `class` keyword, in source order —
+   * `decorators[0]` is topmost. By Python's bottom-up application order, the
+   * topmost entry is the outermost decorator (applied last).
+   *
+   * Each entry should produce a complete decorator line (typically starting
+   * with `@`). Falsy entries are skipped, so conditional decorators can be
+   * provided inline when needed.
+   *
+   * Wrappers like `DataclassDeclaration` build their intrinsic decorator
+   * (e.g. `@dataclass(...)`) and append it to this list at the position that
+   * keeps `@dataclass` closest to the class — i.e. user `decorators` end up
+   * **above** the intrinsic one, matching how Pydantic's `@field_validator`
+   * sits above `@classmethod` on methods.
+   *
+   * Do **not** pass a wrapper's intrinsic decorator here. For example, when
+   * using `DataclassDeclaration`, do not include `@dataclass(...)` in
+   * `decorators` — the component renders it for you, and stacking it twice
+   * would produce invalid Python.
+   */
+  decorators?: Children[];
 }
 
 /**
@@ -57,6 +79,7 @@ export function ClassDeclaration(props: ClassDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      <DecoratorList decorators={props.decorators} />
       class <Name />
       <MemberScope ownerSymbol={sym}>
         {basesPart}

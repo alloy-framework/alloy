@@ -1,4 +1,4 @@
-import { Prose } from "@alloy-js/core";
+import { Prose, code } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
@@ -143,6 +143,71 @@ describe("PropertyDeclaration", () => {
               Deleter documentation.
               """
               some other thing
+
+
+    `);
+  });
+
+  it("renders decorators above @property in source order", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.PropertyDeclaration
+              name="area"
+              type="float"
+              decorators={[
+                code`@computed_field`,
+                code`@deprecated("use width**2")`,
+              ]}
+            >
+              return self.width ** 2
+            </py.PropertyDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+      class MyClass:
+          @computed_field
+          @deprecated("use width**2")
+          @property
+          def area(self) -> float:
+              return self.width ** 2
+
+
+    `);
+  });
+
+  it("stacks decorators above @property and @abstractmethod below it", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.PropertyDeclaration
+              name="area"
+              type="float"
+              abstract
+              decorators={[code`@computed_field`]}
+            >
+              return self.width ** 2
+            </py.PropertyDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+      from abc import abstractmethod
+
+
+      class MyClass:
+          @computed_field
+          @property
+          @abstractmethod
+          def area(self) -> float:
+              return self.width ** 2
 
 
     `);

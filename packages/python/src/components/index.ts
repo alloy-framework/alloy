@@ -19,6 +19,7 @@ export * from "./MemberScope.jsx";
 export type { MethodDeclarationBaseProps } from "./MethodBase.js";
 export * from "./MethodDeclaration.js";
 export * from "./PropertyDeclaration.js";
+export * from "./PydanticClassDeclaration.js";
 export * from "./PyDoc.js";
 export * from "./PythonBlock.js";
 export * from "./Reference.js";

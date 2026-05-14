@@ -5,6 +5,76 @@ import { abcModule } from "../src/index.js";
 import { toSourceText } from "./utils.js";
 
 describe("Method-like Declarations", () => {
+  it("renders decorators above def", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration name="MyClass">
+        <py.MethodDeclaration
+          name="with_decorator"
+          decorators={["@some_decorator"]}
+        >
+          pass
+        </py.MethodDeclaration>
+      </py.ClassDeclaration>,
+    ]);
+    expect(result).toRenderTo(d`
+      class MyClass:
+          @some_decorator
+          def with_decorator(self):
+              pass
+
+
+              
+    `);
+  });
+
+  it("renders multiple decorators above def without blank lines", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration name="MyClass">
+        <py.MethodDeclaration
+          name="with_decorators"
+          decorators={["@outer", "@middle", "@inner"]}
+        >
+          pass
+        </py.MethodDeclaration>
+      </py.ClassDeclaration>,
+    ]);
+    expect(result).toRenderTo(d`
+      class MyClass:
+          @outer
+          @middle
+          @inner
+          def with_decorators(self):
+              pass
+
+
+              
+    `);
+  });
+
+  it("renders multiple decorators above @classmethod without blank lines", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration name="MyClass">
+        <py.ClassMethodDeclaration
+          name="with_decorators"
+          decorators={["@outer", "@inner"]}
+        >
+          pass
+        </py.ClassMethodDeclaration>
+      </py.ClassDeclaration>,
+    ]);
+    expect(result).toRenderTo(d`
+      class MyClass:
+          @outer
+          @inner
+          @classmethod
+          def with_decorators(cls):
+              pass
+
+
+              
+    `);
+  });
+
   it("renders an instance function with a body", () => {
     const result = toSourceText([
       <py.ClassDeclaration name="MyClass">

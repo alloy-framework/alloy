@@ -32,3 +32,61 @@ export const requestsModule = createModule({
     models: ["Response", "Request"],
   },
 });
+
+export const pydanticModule = createModule({
+  name: "pydantic",
+  descriptor: {
+    ".": [
+      "AfterValidator",
+      "BaseModel",
+      "BeforeValidator",
+      "ConfigDict",
+      "EmailStr",
+      "Field",
+      "HttpUrl",
+      "PlainSerializer",
+      "RootModel",
+      "SecretStr",
+      "TypeAdapter",
+      "ValidationError",
+      "WrapValidator",
+      "computed_field",
+      "field_serializer",
+      "field_validator",
+      "model_serializer",
+      "model_validator",
+    ],
+    alias_generators: ["to_camel", "to_pascal", "to_snake"],
+    types: ["PositiveFloat", "PositiveInt"],
+  },
+});
+
+/** `typing` stdlib symbols used heavily with Pydantic generics and annotations. */
+export const typingModule = createModule({
+  name: "typing",
+  descriptor: {
+    ".": [
+      "Annotated",
+      "Any",
+      "ClassVar",
+      "Generic",
+      "Literal",
+      "Optional",
+      "Protocol",
+      "TypeVar",
+      "Union",
+      // Class- and method-level decorators commonly stacked above the
+      // intrinsic `class` / `def`.
+      "final",
+      "override",
+      "runtime_checkable",
+    ],
+  },
+});
+
+export const pydanticSettingsModule = createModule({
+  name: "pydantic_settings",
+  descriptor: {
+    ".": ["BaseSettings", "SettingsConfigDict"],
+  },
+});

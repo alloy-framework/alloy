@@ -10,6 +10,31 @@ import {
 } from "./utils.jsx";
 
 describe("DataclassDeclaration", () => {
+  it("stacks user decorators above @dataclass", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="user.py">
+          <py.DataclassDeclaration name="User" frozen decorators={["@final"]} />
+        </py.SourceFile>,
+      ],
+      { externals: [dataclassesModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from dataclasses import dataclass
+
+
+        @final
+        @dataclass(frozen=True)
+        class User:
+            pass
+
+
+      `,
+    );
+  });
+
   it("Creates a dataclass with a class doc", () => {
     const doc = (
       <py.ClassDoc description={[<Prose>Represents a user.</Prose>]} />

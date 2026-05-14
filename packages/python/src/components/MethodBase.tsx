@@ -1,4 +1,5 @@
 import { abcModule } from "../builtins/python.js";
+import { DecoratorList } from "./DecoratorList.jsx";
 import {
   BaseFunctionDeclaration,
   BaseFunctionDeclarationProps,
@@ -36,8 +37,10 @@ export function MethodDeclarationBase(
   props: MethodDeclarationBaseProps &
     Pick<BaseFunctionDeclarationProps, "functionType" | "sym">,
 ) {
+  const { decorators, abstract, ...rest } = props;
+
   const abstractMethod =
-    props.abstract ?
+    abstract ?
       <>
         @{abcModule["."].abstractmethod}
         <hbr />
@@ -46,8 +49,9 @@ export function MethodDeclarationBase(
 
   return (
     <>
+      <DecoratorList decorators={decorators} />
       {abstractMethod}
-      <BaseFunctionDeclaration {...props} />
+      <BaseFunctionDeclaration {...rest} />
     </>
   );
 }

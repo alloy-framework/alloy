@@ -130,6 +130,7 @@ export function PydanticClassDeclaration(props: PydanticClassDeclarationProps) {
       bases={bases}
       doc={rest.doc}
       refkey={rest.refkey}
+      decorators={rest.decorators}
     >
       <List hardline>
         <For each={bodyItems}>{(item) => item}</For>

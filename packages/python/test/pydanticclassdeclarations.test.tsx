@@ -14,6 +14,41 @@ import {
 } from "./utils.jsx";
 
 describe("PydanticClassDeclaration", () => {
+  it("forwards class-level decorators above `class`", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="models.py">
+          <py.PydanticClassDeclaration
+            name="User"
+            decorators={[code`@${typingModule["."].final}`]}
+          >
+            <py.VariableDeclaration
+              instanceVariable
+              omitNone
+              name="id"
+              type="int"
+            />
+          </py.PydanticClassDeclaration>
+        </py.SourceFile>,
+      ],
+      { externals: [pydanticModule, typingModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from pydantic import BaseModel
+        from typing import final
+
+
+        @final
+        class User(BaseModel):
+            id: int
+
+
+      `,
+    );
+  });
+
   it("emits a pydantic model with BaseModel, fields, and Field import", () => {
     const res = toSourceText(
       [
@@ -565,6 +600,49 @@ describe("Pydantic ecosystem emitters", () => {
             pass
 
 
+      `,
+    );
+  });
+
+  it("emits @computed_field above @property via PropertyDeclaration", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="models.py">
+          <py.PydanticClassDeclaration name="Square">
+            <py.VariableDeclaration
+              instanceVariable
+              omitNone
+              name="width"
+              type="float"
+            />
+            <py.PropertyDeclaration
+              name="area"
+              type="float"
+              decorators={[code`@${pydanticModule["."].computed_field}`]}
+            >
+              {"return self.width ** 2"}
+            </py.PropertyDeclaration>
+          </py.PydanticClassDeclaration>
+        </py.SourceFile>,
+      ],
+      { externals: [pydanticModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from pydantic import BaseModel
+        from pydantic import computed_field
+
+
+        class Square(BaseModel):
+            width: float
+            @computed_field
+            @property
+            def area(self) -> float:
+                return self.width ** 2
+
+
+      
       `,
     );
   });

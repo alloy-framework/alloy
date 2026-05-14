@@ -75,6 +75,11 @@ export const typingModule = createModule({
       "Protocol",
       "TypeVar",
       "Union",
+      // Class- and method-level decorators commonly stacked above the
+      // intrinsic `class` / `def`.
+      "final",
+      "override",
+      "runtime_checkable",
     ],
   },
 });

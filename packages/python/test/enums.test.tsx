@@ -6,6 +6,35 @@ import * as py from "../src/index.js";
 import { toSourceText } from "./utils.jsx";
 
 describe("Python Enum", () => {
+  it("renders class-level decorators above ClassEnumDeclaration", () => {
+    const result = toSourceText(
+      [
+        <py.ClassEnumDeclaration
+          name="Color"
+          baseType="IntEnum"
+          decorators={["@final"]}
+          members={[
+            { name: "RED", value: 1 },
+            { name: "GREEN", value: 2 },
+          ]}
+        />,
+      ],
+      { externals: [enumModule] },
+    );
+
+    expect(result).toRenderTo(d`
+      from enum import IntEnum
+
+
+      @final
+      class Color(IntEnum):
+          RED = 1
+          GREEN = 2
+
+
+    `);
+  });
+
   it("class enum with explicit values", () => {
     const result = toSourceText(
       [

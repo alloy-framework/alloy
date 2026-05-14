@@ -9,6 +9,33 @@ import {
 } from "./utils.jsx";
 
 describe("Python Class", () => {
+  it("renders class-level decorators above `class`", () => {
+    const result = toSourceText([
+      <py.ClassDeclaration
+        name="Foo"
+        decorators={["@final", "@deprecated('use Bar')"]}
+      />,
+    ]);
+    expect(result).toRenderTo(d`
+      @final
+      @deprecated('use Bar')
+      class Foo:
+          pass
+
+
+    `);
+  });
+
+  it("renders nothing extra when decorators is undefined", () => {
+    const result = toSourceText([<py.ClassDeclaration name="Foo" />]);
+    expect(result).toRenderTo(d`
+      class Foo:
+          pass
+
+
+    `);
+  });
+
   it("renders a class with no body as 'pass'", () => {
     const result = toSourceText([<py.ClassDeclaration name="Foo" />]);
     expect(result).toRenderTo(d`

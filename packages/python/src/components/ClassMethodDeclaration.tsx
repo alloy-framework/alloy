@@ -1,5 +1,5 @@
-import { For } from "@alloy-js/core";
 import { createMethodSymbol } from "../symbols/factories.js";
+import { DecoratorList } from "./DecoratorList.jsx";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -32,14 +32,7 @@ export function ClassMethodDeclaration(props: ClassMethodDeclarationProps) {
   const { decorators, ...rest } = props;
   return (
     <>
-      <For each={decorators ?? []} skipFalsy>
-        {(dec) => (
-          <>
-            {dec}
-            <hbr />
-          </>
-        )}
-      </For>
+      <DecoratorList decorators={decorators} />
       {"@classmethod"}
       <hbr />
       <MethodDeclarationBase functionType="class" {...rest} sym={sym} />

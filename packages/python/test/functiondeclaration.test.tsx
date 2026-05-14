@@ -10,6 +10,23 @@ import {
 } from "./utils.js";
 
 describe("Function Declaration", () => {
+  it("renders multiple decorators above def without blank lines", () => {
+    const result = toSourceText([
+      <py.FunctionDeclaration name="f" decorators={["@a", "@b", "@c"]}>
+        pass
+      </py.FunctionDeclaration>,
+    ]);
+    expect(result).toRenderTo(d`
+      @a
+      @b
+      @c
+      def f():
+          pass
+
+        
+    `);
+  });
+
   it("renders a function with no body as 'pass'", () => {
     const result = toSourceText([<py.FunctionDeclaration name="foo" />]);
     expect(result).toRenderTo(d`

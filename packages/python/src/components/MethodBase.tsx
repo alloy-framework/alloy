@@ -1,5 +1,5 @@
-import { For } from "@alloy-js/core";
 import { abcModule } from "../builtins/python.js";
+import { DecoratorList } from "./DecoratorList.jsx";
 import {
   BaseFunctionDeclaration,
   BaseFunctionDeclarationProps,
@@ -49,14 +49,7 @@ export function MethodDeclarationBase(
 
   return (
     <>
-      <For each={decorators ?? []} skipFalsy>
-        {(dec) => (
-          <>
-            {dec}
-            <hbr />
-          </>
-        )}
-      </For>
+      <DecoratorList decorators={decorators} />
       {abstractMethod}
       <BaseFunctionDeclaration {...rest} />
     </>

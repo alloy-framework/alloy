@@ -150,11 +150,14 @@ export interface InterfaceFunctionProps {
   refkey?: Refkey;
   /** Doc comment */
   doc?: Children;
+  /** Whether function should be public (exported) or private (unexported) */
+  public?: boolean;
 }
 
 export function InterfaceFunction(props: InterfaceFunctionProps) {
   const symbol = createInterfaceMemberSymbol(props.name, {
     refkeys: props.refkey,
+    public: props.public,
   });
   const functionScope = createFunctionScope();
 

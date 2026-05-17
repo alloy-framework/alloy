@@ -144,11 +144,14 @@ export interface StructMemberProps {
   tag?: string | Record<string, string>;
   /** Doc comment */
   doc?: Children;
+  /** Whether member should be public (exported) or private (unexported) */
+  public?: boolean;
 }
 
 export function StructMember(props: StructMemberProps) {
   const symbol = createStructMemberSymbol(props.name, {
     refkeys: props.refkey,
+    public: props.public,
   });
 
   const tagString = computed(() => {

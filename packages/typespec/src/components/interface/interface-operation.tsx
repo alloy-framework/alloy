@@ -9,17 +9,15 @@ import {
 } from "@alloy-js/core";
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
-import { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { ParameterDescriptor } from "../operation/parameters.jsx";
+import { Parameters } from "../operation/parameters.jsx";
 import {
   TemplateParameterDescriptor,
   TemplateParameters,
 } from "../template-parameters/template-parameters.jsx";
-import { type ParameterDescriptor, Parameters } from "./parameters.jsx";
 
-export type { ParameterDescriptor } from "./parameters.jsx";
-
-export interface OperationDeclarationProps {
+export interface InterfaceOperationDeclarationProps {
   name: string | Namekey;
   refkey?: Refkey;
   templateParameters?: (string | TemplateParameterDescriptor)[];
@@ -28,7 +26,9 @@ export interface OperationDeclarationProps {
   is?: Children;
 }
 
-export function OperationDeclaration(props: OperationDeclarationProps) {
+export function InterfaceOperationDeclaration(
+  props: InterfaceOperationDeclarationProps,
+) {
   if (props.is && (props.parameters || props.returnType)) {
     throw new Error(
       "An operation declaration cannot have both 'is' and 'parameters'/'returnType' properties.",
@@ -40,13 +40,13 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
     namePolicy: useTypeSpecNamePolicy().for("operation"),
   });
 
-  const parentScope = useScope() as NamespaceScope;
-  const namedTypeScope = new NamedTypeScope(sym, parentScope);
+  const parentScope = useScope() as NamedTypeScope;
+  const operationScope = new NamedTypeScope(sym, parentScope);
 
   return (
     <Declaration symbol={sym}>
-      <Scope value={namedTypeScope}>
-        op <Name />
+      <Scope value={operationScope}>
+        <Name />
         {props.templateParameters && (
           <TemplateParameters parameters={props.templateParameters} />
         )}

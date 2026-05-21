@@ -1,6 +1,5 @@
 import { OutputScope, OutputScopeOptions, OutputSpace } from "@alloy-js/core";
 import { NamedTypeSymbol } from "../symbols/named-type.js";
-import { NamespaceScope } from "./namespace.js";
 
 export interface NamedTypeScopeOptions extends OutputScopeOptions {}
 
@@ -9,7 +8,7 @@ export class NamedTypeScope extends OutputScope {
 
   constructor(
     symbol: NamedTypeSymbol,
-    parent: NamespaceScope,
+    parent: OutputScope,
     options?: NamedTypeScopeOptions,
   ) {
     super(symbol.name, parent, {

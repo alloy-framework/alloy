@@ -10,8 +10,7 @@ import {
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
-import { ParameterDescriptor } from "../operation/parameters.jsx";
-import { Parameters } from "../operation/parameters.jsx";
+import { ParameterDescriptor, Parameters } from "../operation/parameters.jsx";
 import {
   TemplateParameterDescriptor,
   TemplateParameters,

@@ -1,4 +1,5 @@
 import {
+  Block,
   Children,
   Declaration,
   Name,
@@ -15,29 +16,19 @@ import {
   TemplateParameterDescriptor,
   TemplateParameters,
 } from "../template-parameters/template-parameters.jsx";
-import { type ParameterDescriptor, Parameters } from "./parameters.jsx";
 
-export type { ParameterDescriptor } from "./parameters.jsx";
-
-export interface OperationDeclarationProps {
+export interface InterfaceDeclarationProps {
   name: string | Namekey;
   refkey?: Refkey;
   templateParameters?: (string | TemplateParameterDescriptor)[];
-  parameters?: ParameterDescriptor[];
-  returnType?: Children;
-  is?: Children;
+  extends?: Children;
+  children?: Children;
 }
 
-export function OperationDeclaration(props: OperationDeclarationProps) {
-  if (props.is && (props.parameters || props.returnType)) {
-    throw new Error(
-      "An operation declaration cannot have both 'is' and 'parameters'/'returnType' properties.",
-    );
-  }
-
-  const sym = createNamedTypeSymbol(props.name, "operation", {
+export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
+  const sym = createNamedTypeSymbol(props.name, "interface", {
     refkeys: props.refkey,
-    namePolicy: useTypeSpecNamePolicy().for("operation"),
+    namePolicy: useTypeSpecNamePolicy().for("interface"),
   });
 
   const parentScope = useScope() as NamespaceScope;
@@ -46,17 +37,12 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <Scope value={namedTypeScope}>
-        op <Name />
+        interface <Name />
         {props.templateParameters && (
           <TemplateParameters parameters={props.templateParameters} />
         )}
-        {props.is && <> is {props.is}</>}
-        {!props.is && (
-          <>
-            <Parameters parameters={props.parameters} />:{" "}
-            {props.returnType ?? "void"}
-          </>
-        )}
+        {props.extends && <> extends {props.extends}</>}{" "}
+        <Block>{props.children}</Block>
       </Scope>
     </Declaration>
   );

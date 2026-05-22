@@ -2,10 +2,10 @@ import { Output, refkey, StatementList } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { OperationDeclaration } from "../operation/operation-declaration.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { InterfaceDeclaration } from "./interface-declaration.jsx";
-import { InterfaceOperationDeclaration } from "./interface-operation.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -30,7 +30,7 @@ it("renders an interface with operations", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration name="bar" />
+          <OperationDeclaration name="bar" />
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
@@ -62,7 +62,7 @@ it("renders an interface with extends and operations", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Bar" extends="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="extra"
             parameters={[{ name: "id", type: "string" }]}
             returnType="void"
@@ -121,7 +121,7 @@ it("resolves template parameter references within the interface", () => {
           name="ResourceOps"
           templateParameters={[{ name: "T", refkey: tKey }]}
         >
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="get"
             parameters={[{ name: "id", type: "string" }]}
             returnType={<Reference refkey={tKey} />}

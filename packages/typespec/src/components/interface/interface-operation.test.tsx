@@ -3,10 +3,10 @@ import { renderToString } from "@alloy-js/core/testing";
 import { beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { OperationDeclaration } from "../operation/operation-declaration.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { InterfaceDeclaration } from "./interface-declaration.jsx";
-import { InterfaceOperationDeclaration } from "./interface-operation.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -17,7 +17,7 @@ it("renders an operation with no parameters", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration name="ping" />
+          <OperationDeclaration name="ping" />
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
@@ -35,7 +35,7 @@ it("renders an operation with parameters and return type", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="getPet"
             parameters={[{ name: "name", type: "string" }]}
             returnType="Pet"
@@ -57,7 +57,7 @@ it("renders an operation with 'is'", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration name="deletePet" is="Delete" />
+          <OperationDeclaration name="deletePet" is="Delete" />
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
@@ -78,7 +78,7 @@ it("throws if both 'is' and 'parameters' are provided", () => {
       <Output namePolicy={createTypeSpecNamePolicy()}>
         <SourceFile path="main.tsp">
           <InterfaceDeclaration name="Foo">
-            <InterfaceOperationDeclaration
+            <OperationDeclaration
               name="bar"
               is="Delete"
               parameters={[{ name: "id", type: "string" }]}
@@ -99,7 +99,7 @@ it("applies the operation name policy", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration name="model" />
+          <OperationDeclaration name="model" />
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
@@ -117,7 +117,7 @@ it("renders an operation with multiple parameters", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="createPet"
             parameters={[
               { name: "name", type: "string" },
@@ -142,7 +142,7 @@ it("renders in multiple lines if parameters exceed line length limit", () => {
     <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="createPet"
             parameters={[
               { name: "name", type: "string" },
@@ -170,7 +170,7 @@ it("renders an operation with an optional parameter", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="listPets"
             parameters={[{ name: "filter", type: "string", optional: true }]}
             returnType="Pet[]"
@@ -192,7 +192,7 @@ it("renders an operation with template parameters", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="ReadResource"
             templateParameters={["T"]}
             parameters={[{ name: "id", type: "string" }]}
@@ -215,7 +215,7 @@ it("renders an operation with constrained template parameters", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="ReadResource"
             templateParameters={[
               { name: "T", extends: "BaseModel", default: "DefaultModel" },
@@ -241,7 +241,7 @@ it("resolves template parameter references within the operation", () => {
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
-          <InterfaceOperationDeclaration
+          <OperationDeclaration
             name="ReadResource"
             templateParameters={[{ name: "T", refkey: tKey }]}
             parameters={[{ name: "id", type: "string" }]}
@@ -266,13 +266,13 @@ it("does not resolve template parameter references outside the operation", () =>
       <SourceFile path="main.tsp">
         <InterfaceDeclaration name="Foo">
           <StatementList>
-            <InterfaceOperationDeclaration
+            <OperationDeclaration
               name="ReadResource"
               templateParameters={[{ name: "T", refkey: tKey }]}
               parameters={[{ name: "id", type: "string" }]}
               returnType="T"
             />
-            <InterfaceOperationDeclaration
+            <OperationDeclaration
               name="other"
               returnType={<Reference refkey={tKey} />}
             />

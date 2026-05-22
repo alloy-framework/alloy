@@ -9,7 +9,6 @@ import {
 } from "@alloy-js/core";
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
-import { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import {
   TemplateParameterDescriptor,
@@ -40,13 +39,17 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
     namePolicy: useTypeSpecNamePolicy().for("operation"),
   });
 
-  const parentScope = useScope() as NamespaceScope;
+  const parentScope = useScope();
   const namedTypeScope = new NamedTypeScope(sym, parentScope);
+  const isInsideInterface =
+    parentScope instanceof NamedTypeScope &&
+    parentScope.ownerSymbol.kind === "interface";
 
   return (
     <Declaration symbol={sym}>
       <Scope value={namedTypeScope}>
-        op <Name />
+        {!isInsideInterface && <>op </>}
+        <Name />
         {props.templateParameters && (
           <TemplateParameters parameters={props.templateParameters} />
         )}

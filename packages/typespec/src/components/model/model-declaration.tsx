@@ -23,6 +23,7 @@ export interface ModelDeclarationProps {
   templateParameters?: (string | TemplateParameterDescriptor)[];
   extends?: Children;
   is?: Children;
+  decorators?: Children;
   children?: Children;
 }
 
@@ -43,6 +44,7 @@ export function ModelDeclaration(props: ModelDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Scope value={namedTypeScope}>
         model <Name />
         {props.templateParameters && (

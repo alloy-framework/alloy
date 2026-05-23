@@ -7,6 +7,7 @@ import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { EnumDeclaration } from "./enum-declaration.jsx";
 import { EnumMember } from "./enum-member.jsx";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -201,6 +202,40 @@ it("resolves an enum member reference", () => {
         North
       }
       North
+    `,
+  });
+});
+
+it("renders an enum with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <EnumDeclaration
+          name="Direction"
+          decorators={
+            <DecoratorApplication decorator="doc" args={['"Cardinal directions"']} />
+          }
+        >
+          <List comma hardline enderPunctuation>
+            <EnumMember
+              name="North"
+              decorators={
+                <DecoratorApplication decorator="doc" args={['"Up"']} />
+              }
+            />
+            <EnumMember name="South" />
+          </List>
+        </EnumDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("Cardinal directions")
+      enum Direction {
+        @doc("Up")
+        North,
+        South,
+      }
     `,
   });
 });

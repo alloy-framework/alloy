@@ -7,6 +7,7 @@ import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { OperationDeclaration } from "./operation-declaration.jsx";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -291,5 +292,31 @@ it("does not resolve template parameter references outside the operation", () =>
     </Output>,
   ).toRenderTo({
     "main.tsp": expect.stringContaining("Unresolved Symbol"),
+  });
+});
+
+it("renders an operation with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[{ name: "id", type: "string" }]}
+          returnType="Pet"
+          decorators={
+            <>
+              <DecoratorApplication decorator="doc" args={['"Get a pet"']} />
+              <DecoratorApplication decorator="tag" args={['"pets"']} />
+            </>
+          }
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("Get a pet")
+      @tag("pets")
+      op getPet(id: string): Pet
+    `,
   });
 });

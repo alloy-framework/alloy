@@ -21,6 +21,7 @@ export interface UnionDeclarationProps {
   name: string | Namekey;
   refkey?: Refkey;
   templateParameters?: (string | TemplateParameterDescriptor)[];
+  decorators?: Children;
   children?: Children;
 }
 
@@ -35,6 +36,7 @@ export function UnionDeclaration(props: UnionDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Scope value={namedTypeScope}>
         union <Name />
         {props.templateParameters && (

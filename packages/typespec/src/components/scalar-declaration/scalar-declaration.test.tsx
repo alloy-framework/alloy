@@ -7,6 +7,7 @@ import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { ScalarDeclaration } from "./scalar-declaration.jsx";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -211,5 +212,26 @@ it("does not resolve template parameter references outside the scalar", () => {
     </Output>,
   ).toRenderTo({
     "main.tsp": expect.stringContaining("Unresolved Symbol"),
+  });
+});
+
+it("renders a scalar with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ScalarDeclaration
+          name="myString"
+          extends="string"
+          decorators={
+            <DecoratorApplication decorator="doc" args={['"Custom string"']} />
+          }
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("Custom string")
+      scalar myString extends string
+    `,
   });
 });

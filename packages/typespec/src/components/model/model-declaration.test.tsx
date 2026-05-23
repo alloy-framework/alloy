@@ -9,6 +9,7 @@ import { SourceFile } from "../source-file/source-file.jsx";
 import { ModelDeclaration } from "./model-declaration.jsx";
 import { ModelExpression } from "./model-expression.jsx";
 import { ModelProperty } from "./model-property.jsx";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -402,6 +403,44 @@ it("renders a model expression as 'is'", () => {
     "main.tsp": `
       model Foo is {
         id: string
+      }
+    `,
+  });
+});
+
+it("renders a model with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration
+          name="Pet"
+          decorators={
+            <>
+              <DecoratorApplication decorator="doc" args={['"A pet model"']} />
+              <DecoratorApplication decorator="tag" args={['"pets"']} />
+            </>
+          }
+        >
+          <ModelProperty
+            name="name"
+            type="string"
+            decorators={
+              <DecoratorApplication
+                decorator="doc"
+                args={['"The pet name"']}
+              />
+            }
+          />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("A pet model")
+      @tag("pets")
+      model Pet {
+        @doc("The pet name")
+        name: string
       }
     `,
   });

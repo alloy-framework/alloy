@@ -128,10 +128,7 @@ it("renders a decorator with a qualified decorator name", () => {
         <ModelDeclaration
           name="Pet"
           decorators={
-            <DecoratorApplication
-              decorator="TypeSpec.doc"
-              args={['"A pet"']}
-            />
+            <DecoratorApplication decorator="TypeSpec.doc" args={['"A pet"']} />
           }
         />
       </SourceFile>

@@ -3,11 +3,11 @@ import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { OperationDeclaration } from "./operation-declaration.jsx";
-import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();

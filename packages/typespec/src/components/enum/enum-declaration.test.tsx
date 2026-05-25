@@ -2,12 +2,12 @@ import { List, Output, refkey, StatementList } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { EnumDeclaration } from "./enum-declaration.jsx";
 import { EnumMember } from "./enum-member.jsx";
-import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 
 beforeEach(() => {
   resetProgram();
@@ -213,7 +213,10 @@ it("renders an enum with decorators", () => {
         <EnumDeclaration
           name="Direction"
           decorators={
-            <DecoratorApplication decorator="doc" args={['"Cardinal directions"']} />
+            <DecoratorApplication
+              decorator="doc"
+              args={['"Cardinal directions"']}
+            />
           }
         >
           <List comma hardline enderPunctuation>

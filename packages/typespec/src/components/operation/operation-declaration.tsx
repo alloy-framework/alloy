@@ -1,8 +1,6 @@
 import {
   Children,
   Declaration,
-  For,
-  Indent,
   Name,
   Namekey,
   Refkey,
@@ -11,18 +9,14 @@ import {
 } from "@alloy-js/core";
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
-import { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import {
   TemplateParameterDescriptor,
   TemplateParameters,
 } from "../template-parameters/template-parameters.jsx";
+import { type ParameterDescriptor, Parameters } from "./parameters.jsx";
 
-export interface ParameterDescriptor {
-  name: string;
-  type: Children;
-  optional?: boolean;
-}
+export type { ParameterDescriptor } from "./parameters.jsx";
 
 export interface OperationDeclarationProps {
   name: string | Namekey;
@@ -45,13 +39,17 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
     namePolicy: useTypeSpecNamePolicy().for("operation"),
   });
 
-  const parentScope = useScope() as NamespaceScope;
+  const parentScope = useScope();
   const namedTypeScope = new NamedTypeScope(sym, parentScope);
+  const isInsideInterface =
+    parentScope instanceof NamedTypeScope &&
+    parentScope.ownerSymbol.kind === "interface";
 
   return (
     <Declaration symbol={sym}>
       <Scope value={namedTypeScope}>
-        op <Name />
+        {!isInsideInterface && <>op </>}
+        <Name />
         {props.templateParameters && (
           <TemplateParameters parameters={props.templateParameters} />
         )}
@@ -64,26 +62,5 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
         )}
       </Scope>
     </Declaration>
-  );
-}
-
-function Parameters(props: { parameters?: ParameterDescriptor[] }) {
-  return (
-    <group>
-      (
-      {props.parameters && props.parameters.length > 0 && (
-        <Indent softline trailingBreak>
-          <For each={props.parameters} comma line>
-            {(param) => (
-              <>
-                {param.name}
-                {param.optional ? "?" : ""}: {param.type}
-              </>
-            )}
-          </For>
-        </Indent>
-      )}
-      )
-    </group>
   );
 }

@@ -1,5 +1,6 @@
 export * from "./enum/enum-declaration.jsx";
 export * from "./enum/enum-member.jsx";
+export * from "./interface/interface-declaration.jsx";
 export * from "./model/model-declaration.jsx";
 export * from "./model/model-expression.jsx";
 export * from "./model/model-property.jsx";

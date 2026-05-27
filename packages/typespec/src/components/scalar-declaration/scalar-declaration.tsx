@@ -22,6 +22,7 @@ export interface ScalarDeclarationProps {
   templateParameters?: (string | TemplateParameterDescriptor)[];
   is?: Children;
   extends?: Children;
+  decorators?: Children;
 }
 
 export function ScalarDeclaration(props: ScalarDeclarationProps) {
@@ -39,17 +40,16 @@ export function ScalarDeclaration(props: ScalarDeclarationProps) {
   const namedTypeScope = new NamedTypeScope(sym, parentScope);
 
   return (
-    <>
-      <Declaration symbol={sym}>
-        <Scope value={namedTypeScope}>
-          scalar <Name />
-          {props.templateParameters && (
-            <TemplateParameters parameters={props.templateParameters} />
-          )}
-          {props.is && <> is {props.is}</>}
-          {props.extends && <> extends {props.extends}</>}
-        </Scope>
-      </Declaration>
-    </>
+    <Declaration symbol={sym}>
+      {props.decorators}
+      <Scope value={namedTypeScope}>
+        scalar <Name />
+        {props.templateParameters && (
+          <TemplateParameters parameters={props.templateParameters} />
+        )}
+        {props.is && <> is {props.is}</>}
+        {props.extends && <> extends {props.extends}</>}
+      </Scope>
+    </Declaration>
   );
 }

@@ -5,6 +5,7 @@ export interface UnionVariantProps {
   type: Children;
   name?: string | Namekey;
   refkey?: Refkey;
+  decorators?: Children;
 }
 
 export function UnionVariant(props: UnionVariantProps) {
@@ -18,6 +19,7 @@ export function UnionVariant(props: UnionVariantProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Name />: {props.type}
     </Declaration>
   );

@@ -2,6 +2,7 @@ import { List, Output, refkey, StatementList } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
@@ -254,6 +255,41 @@ it("resolves a named union variant reference", () => {
         success: string
       }
       success
+    `,
+  });
+});
+
+it("renders a union with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <UnionDeclaration
+          name="Pet"
+          decorators={
+            <DecoratorApplication decorator="doc" args={['"A pet type"']} />
+          }
+        >
+          <List comma hardline enderPunctuation>
+            <UnionVariant
+              name="cat"
+              type="Cat"
+              decorators={
+                <DecoratorApplication decorator="doc" args={['"A cat"']} />
+              }
+            />
+            <UnionVariant name="dog" type="Dog" />
+          </List>
+        </UnionDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("A pet type")
+      union Pet {
+        @doc("A cat")
+        cat: Cat,
+        dog: Dog,
+      }
     `,
   });
 });

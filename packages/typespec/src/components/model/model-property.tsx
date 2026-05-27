@@ -6,6 +6,7 @@ export interface ModelPropertyProps {
   refkey?: Refkey;
   type: Children;
   optional?: boolean;
+  decorators?: Children;
 }
 
 export function ModelProperty(props: ModelPropertyProps) {
@@ -15,6 +16,7 @@ export function ModelProperty(props: ModelPropertyProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Name />
       {props.optional ? "?" : ""}: {props.type}
     </Declaration>

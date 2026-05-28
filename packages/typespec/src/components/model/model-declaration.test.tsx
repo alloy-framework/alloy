@@ -442,3 +442,39 @@ it("renders a model with decorators", () => {
     `,
   });
 });
+
+it("renders a model property with a default value", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration name="Dog">
+          <ModelProperty name="name" type="string" optional default={`"Rex"`} />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      model Dog {
+        name?: string = "Rex"
+      }
+    `,
+  });
+});
+
+it("renders a model property with a numeric default value", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration name="Dog">
+          <ModelProperty name="age" type="uint8" default="0" />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      model Dog {
+        age: uint8 = 0
+      }
+    `,
+  });
+});

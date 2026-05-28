@@ -12,7 +12,7 @@ export interface SpreadExpressionProps {
  * @example
  * ```tsx
  * <ModelDeclaration name="Dog">
- *   <SpreadExpression type={<Reference refkey={animalKey} />} />
+ *   <SpreadExpression type="Animal" />
  * </ModelDeclaration>
  * ```
  * This will produce:

@@ -1,4 +1,4 @@
-import { List, Output, refkey } from "@alloy-js/core";
+import { List, Output, refkey, StatementList } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
@@ -6,6 +6,7 @@ import { EnumDeclaration } from "../enum/enum-declaration.jsx";
 import { EnumMember } from "../enum/enum-member.jsx";
 import { ModelDeclaration } from "../model/model-declaration.jsx";
 import { ModelProperty } from "../model/model-property.jsx";
+import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { SpreadExpression } from "./spread-expression.jsx";
@@ -53,6 +54,28 @@ it("renders a spread expression with a reference", () => {
       }
       model Dog {
         ...Animal
+      }
+    `,
+  });
+});
+
+it("renders a spread expression with additional properties in a statement list", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration name="Dog">
+          <StatementList>
+            <SpreadExpression type="Animal" />
+            <ModelProperty name="breed" type="string" />
+          </StatementList>
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      model Dog {
+        ...Animal;
+        breed: string;
       }
     `,
   });
@@ -119,6 +142,43 @@ it("renders a spread expression inside an enum", () => {
         ...Direction,
         NorthEast,
         SouthWest,
+      }
+    `,
+  });
+});
+
+it("resolves a cross-file spread reference with import", () => {
+  const animalKey = refkey();
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="animal.tsp">
+        <Namespace name="Animals">
+          <ModelDeclaration name="Animal" refkey={animalKey}>
+            <ModelProperty name="species" type="string" />
+          </ModelDeclaration>
+        </Namespace>
+      </SourceFile>
+      <SourceFile path="dog.tsp">
+        <ModelDeclaration name="Dog">
+          <SpreadExpression type={<Reference refkey={animalKey} />} />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "animal.tsp": `
+      namespace Animals;
+
+      model Animal {
+        species: string
+      }
+    `,
+    "dog.tsp": `
+      import "./animal.tsp";
+
+      using Animals;
+
+      model Dog {
+        ...Animal
       }
     `,
   });

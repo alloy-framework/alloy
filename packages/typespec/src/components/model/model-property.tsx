@@ -22,8 +22,10 @@ export interface ModelPropertyProps {
  * @example
  * ```tsx
  * <ModelDeclaration name="Dog">
- *   <ModelProperty name="name" type="string" />
- *   <ModelProperty name="age" type="uint8" optional default="0" />
+ *   <StatementList>
+ *     <ModelProperty name="name" type="string" />
+ *     <ModelProperty name="age" type="uint8" optional default="0" />
+ *   </StatementList>
  * </ModelDeclaration>
  * ```
  * This will produce:

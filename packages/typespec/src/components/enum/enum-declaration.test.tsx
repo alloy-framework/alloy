@@ -2,6 +2,7 @@ import { List, Output, refkey, StatementList } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
@@ -201,6 +202,43 @@ it("resolves an enum member reference", () => {
         North
       }
       North
+    `,
+  });
+});
+
+it("renders an enum with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <EnumDeclaration
+          name="Direction"
+          decorators={
+            <DecoratorApplication
+              decorator="doc"
+              args={['"Cardinal directions"']}
+            />
+          }
+        >
+          <List comma hardline enderPunctuation>
+            <EnumMember
+              name="North"
+              decorators={
+                <DecoratorApplication decorator="doc" args={['"Up"']} />
+              }
+            />
+            <EnumMember name="South" />
+          </List>
+        </EnumDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("Cardinal directions")
+      enum Direction {
+        @doc("Up")
+        North,
+        South,
+      }
     `,
   });
 });

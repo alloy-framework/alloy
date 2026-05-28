@@ -16,6 +16,7 @@ import { createNamedTypeSymbol } from "../../symbols/factories.js";
 export interface EnumDeclarationProps {
   name: string | Namekey;
   refkey?: Refkey;
+  decorators?: Children;
   children?: Children;
 }
 
@@ -30,6 +31,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Scope value={namedTypeScope}>
         enum <Name /> <Block>{props.children}</Block>
       </Scope>

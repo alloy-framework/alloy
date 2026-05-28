@@ -25,6 +25,7 @@ export interface OperationDeclarationProps {
   parameters?: ParameterDescriptor[];
   returnType?: Children;
   is?: Children;
+  decorators?: Children;
 }
 
 export function OperationDeclaration(props: OperationDeclarationProps) {
@@ -47,6 +48,7 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Scope value={namedTypeScope}>
         {!isInsideInterface && <>op </>}
         <Name />

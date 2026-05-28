@@ -1,4 +1,6 @@
 export * from "./alias/alias-declaration.jsx";
+export * from "./decorator/augment-decorator.jsx";
+export * from "./decorator/decorator-application.jsx";
 export * from "./enum/enum-declaration.jsx";
 export * from "./enum/enum-member.jsx";
 export * from "./interface/interface-declaration.jsx";

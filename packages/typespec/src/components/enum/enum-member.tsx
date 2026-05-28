@@ -5,6 +5,7 @@ export interface EnumMemberProps {
   name: string | Namekey;
   refkey?: Refkey;
   value?: Children;
+  decorators?: Children;
 }
 
 export function EnumMember(props: EnumMemberProps) {
@@ -14,6 +15,7 @@ export function EnumMember(props: EnumMemberProps) {
 
   return (
     <Declaration symbol={sym}>
+      {props.decorators}
       <Name />
       {props.value !== undefined && <>: {props.value}</>}
     </Declaration>

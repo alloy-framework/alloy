@@ -3,6 +3,7 @@ import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
@@ -211,5 +212,26 @@ it("does not resolve template parameter references outside the scalar", () => {
     </Output>,
   ).toRenderTo({
     "main.tsp": expect.stringContaining("Unresolved Symbol"),
+  });
+});
+
+it("renders a scalar with decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ScalarDeclaration
+          name="myString"
+          extends="string"
+          decorators={
+            <DecoratorApplication decorator="doc" args={['"Custom string"']} />
+          }
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      @doc("Custom string")
+      scalar myString extends string
+    `,
   });
 });

@@ -48,8 +48,7 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
     <Declaration symbol={sym}>
       <Scope value={namedTypeScope}>
         const <Name />
-        {props.type && <>: {props.type}</>}
-        {" "}= {props.value}
+        {props.type && <>: {props.type}</>} = {props.value}
       </Scope>
     </Declaration>
   );

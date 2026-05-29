@@ -18,5 +18,9 @@ export interface ArrayValueProps {
  * ```
  */
 export function ArrayValue(props: ArrayValueProps) {
-  return <>#[<List joiner=", ">{props.values}</List>]</>;
+  return (
+    <>
+      #[<List joiner=", ">{props.values}</List>]
+    </>
+  );
 }

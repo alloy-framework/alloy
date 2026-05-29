@@ -49,5 +49,9 @@ export interface ObjectValuePropertyProps {
  * ```
  */
 export function ObjectValueProperty(props: ObjectValuePropertyProps) {
-  return <>{props.name}: {props.value}</>;
+  return (
+    <>
+      {props.name}: {props.value}
+    </>
+  );
 }

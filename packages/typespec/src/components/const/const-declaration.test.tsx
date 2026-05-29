@@ -78,7 +78,7 @@ it("renders a const with an object value expression", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
-        <ConstDeclaration name="origin" value={'#{ x: 0, y: 0 }'} />
+        <ConstDeclaration name="origin" value={"#{ x: 0, y: 0 }"} />
       </SourceFile>
     </Output>,
   ).toRenderTo({

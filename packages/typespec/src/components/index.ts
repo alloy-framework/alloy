@@ -1,3 +1,4 @@
+export * from "./alias/alias-declaration.jsx";
 export * from "./array/array-expression.jsx";
 export * from "./decorator/augment-decorator.jsx";
 export * from "./decorator/decorator-application.jsx";

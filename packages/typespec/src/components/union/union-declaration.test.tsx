@@ -293,3 +293,31 @@ it("renders a union with decorators", () => {
     `,
   });
 });
+
+it("renders a union with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <UnionDeclaration name="Pet" doc="A pet type">
+          <List comma hardline enderPunctuation>
+            <UnionVariant name="cat" type="Cat" doc="A cat" />
+            <UnionVariant name="dog" type="Dog" />
+          </List>
+        </UnionDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * A pet type
+       */
+      union Pet {
+        /**
+         * A cat
+         */
+        cat: Cat,
+        dog: Dog,
+      }
+    `,
+  });
+});

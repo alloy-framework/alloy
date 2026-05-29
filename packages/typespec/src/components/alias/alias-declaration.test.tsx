@@ -192,3 +192,24 @@ it("resolves an alias reference across namespaces", () => {
     `,
   });
 });
+
+it("renders an alias with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <AliasDeclaration
+          name="Options"
+          type={'"one" | "two"'}
+          doc="Available options"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * Available options
+       */
+      alias Options = "one" | "two"
+    `,
+  });
+});

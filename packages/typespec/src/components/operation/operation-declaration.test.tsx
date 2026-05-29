@@ -320,3 +320,25 @@ it("renders an operation with decorators", () => {
     `,
   });
 });
+
+it("renders an operation with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          doc="Get a pet by ID"
+          parameters={[{ name: "id", type: "string" }]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * Get a pet by ID
+       */
+      op getPet(id: string): Pet
+    `,
+  });
+});

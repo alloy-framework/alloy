@@ -235,3 +235,20 @@ it("renders a scalar with decorators", () => {
     `,
   });
 });
+
+it("renders a scalar with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ScalarDeclaration name="ipv4" extends="string" doc="An IPv4 address" />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * An IPv4 address
+       */
+      scalar ipv4 extends string
+    `,
+  });
+});

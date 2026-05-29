@@ -442,3 +442,73 @@ it("renders a model with decorators", () => {
     `,
   });
 });
+
+it("renders a model with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration name="Pet" doc="A pet in the store">
+          <ModelProperty name="name" type="string" />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * A pet in the store
+       */
+      model Pet {
+        name: string
+      }
+    `,
+  });
+});
+
+it("renders a model property with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration name="Pet">
+          <ModelProperty name="name" type="string" doc="The pet name" />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      model Pet {
+        /**
+         * The pet name
+         */
+        name: string
+      }
+    `,
+  });
+});
+
+it("renders a model with doc and decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <ModelDeclaration
+          name="Pet"
+          doc="A pet in the store"
+          decorators={
+            <DecoratorApplication decorator="tag" args={['"pets"']} />
+          }
+        >
+          <ModelProperty name="name" type="string" />
+        </ModelDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * A pet in the store
+       */
+      @tag("pets")
+      model Pet {
+        name: string
+      }
+    `,
+  });
+});

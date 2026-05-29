@@ -10,6 +10,7 @@ import {
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { DocWhen } from "../doc/doc-comment.jsx";
 import {
   TemplateParameterDescriptor,
   TemplateParameters,
@@ -19,15 +20,42 @@ import { type ParameterDescriptor, Parameters } from "./parameters.jsx";
 export type { ParameterDescriptor } from "./parameters.jsx";
 
 export interface OperationDeclarationProps {
+  /** The operation name. */
   name: string | Namekey;
+  /** Refkey for referencing this operation from other declarations. */
   refkey?: Refkey;
+  /** Template parameters for the operation. */
   templateParameters?: (string | TemplateParameterDescriptor)[];
+  /** Operation parameters. */
   parameters?: ParameterDescriptor[];
+  /** The return type of the operation. */
   returnType?: Children;
+  /** The operation this declaration aliases via `is`. */
   is?: Children;
+  /** Doc comment rendered as `/** ... *\/` above the declaration. */
+  doc?: Children;
+  /** Decorators to apply to the operation. */
   decorators?: Children;
 }
 
+/**
+ * A TypeSpec operation declaration.
+ *
+ * @example
+ * ```tsx
+ * <OperationDeclaration
+ *   name="getPet"
+ *   doc="Get a pet by ID"
+ *   parameters={[{ name: "id", type: "string" }]}
+ *   returnType="Pet"
+ * />
+ * ```
+ * This will produce:
+ * ```typespec
+ * /** Get a pet by ID *\/
+ * op getPet(id: string): Pet
+ * ```
+ */
 export function OperationDeclaration(props: OperationDeclarationProps) {
   if (props.is && (props.parameters || props.returnType)) {
     throw new Error(
@@ -48,6 +76,7 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      <DocWhen doc={props.doc} />
       {props.decorators}
       <Scope value={namedTypeScope}>
         {!isInsideInterface && <>op </>}

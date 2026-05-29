@@ -242,3 +242,31 @@ it("renders an enum with decorators", () => {
     `,
   });
 });
+
+it("renders an enum with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <EnumDeclaration name="Direction" doc="Cardinal directions">
+          <List comma hardline enderPunctuation>
+            <EnumMember name="North" doc="Points north" />
+            <EnumMember name="South" />
+          </List>
+        </EnumDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * Cardinal directions
+       */
+      enum Direction {
+        /**
+         * Points north
+         */
+        North,
+        South,
+      }
+    `,
+  });
+});

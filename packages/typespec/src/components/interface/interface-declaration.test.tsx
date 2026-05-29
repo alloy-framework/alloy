@@ -209,3 +209,24 @@ it("resolves an interface reference from another declaration", () => {
     `,
   });
 });
+
+it("renders an interface with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <InterfaceDeclaration name="PetStore" doc="Pet store API">
+          <OperationDeclaration name="getPet" returnType="Pet" />
+        </InterfaceDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      /**
+       * Pet store API
+       */
+      interface PetStore {
+        getPet(): Pet
+      }
+    `,
+  });
+});

@@ -11,12 +11,14 @@ export type TypeSpecElements =
   | "namespace"
   | "operation"
   | "template"
+  | "const"
   | "union";
 
 export function createTypeSpecNamePolicy(): NamePolicy<TypeSpecElements> {
   return createNamePolicy<TypeSpecElements>((name, element) => {
     switch (element) {
       case "alias":
+      case "const":
       case "scalar":
       case "enum":
       case "interface":

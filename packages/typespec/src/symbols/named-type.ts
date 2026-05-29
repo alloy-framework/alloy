@@ -14,6 +14,7 @@ export type NamedTypeKind =
   | "alias"
   | "operation"
   | "scalar"
+  | "const"
   | "decorator";
 
 export class NamedTypeSymbol extends TypeSpecSymbol {

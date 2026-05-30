@@ -39,3 +39,5 @@ export function jsx(type: Component<any>, props: Record<string, unknown>) {
 }
 
 export const jsxs = jsx;
+
+export { Fragment } from "./runtime/fragment.js";

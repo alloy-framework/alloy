@@ -43,7 +43,7 @@ export function SourceFile(props: SourceFileProps) {
           {(importPath) => <>import "{importPath}";</>}
         </For>
         <For each={usings.value} hardline ender>
-          {(using) => <>using {using.name};</>}
+          {(using) => <>using {using};</>}
         </For>
       </List>
       <Scope value={scope}>

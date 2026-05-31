@@ -17,7 +17,7 @@ export interface SourceFileScopeOptions extends OutputScopeOptions {}
 export class SourceFileScope extends OutputScope {
   static readonly declarationSpaces: readonly string[] = ["members"];
 
-  #using = shallowReactive<Set<NamespaceSymbol>>(new Set());
+  #using = shallowReactive<Set<string>>(new Set());
   #imports = shallowReactive<Set<string>>(new Set());
 
   constructor(
@@ -36,8 +36,9 @@ export class SourceFileScope extends OutputScope {
     return this.#using;
   }
 
-  addUsing(using: NamespaceSymbol) {
-    this.#using.add(using);
+  addUsing(using: NamespaceSymbol | string) {
+    const name = typeof using === "string" ? using : using.name;
+    this.#using.add(name);
   }
 
   get imports() {

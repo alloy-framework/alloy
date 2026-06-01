@@ -21,12 +21,11 @@ it("renders a single using statement", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      using TypeSpec.Http;
+  ).toRenderTo(`
+    using TypeSpec.Http;
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });
 
 it("renders multiple using statements", () => {
@@ -38,13 +37,12 @@ it("renders multiple using statements", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      using TypeSpec.Http;
-      using TypeSpec.Rest;
+  ).toRenderTo(`
+    using TypeSpec.Http;
+    using TypeSpec.Rest;
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });
 
 it("deduplicates usings with auto-generated ones", () => {
@@ -63,18 +61,17 @@ it("deduplicates usings with auto-generated ones", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      using A;
+  ).toRenderTo(`
+    using A;
 
-      namespace A {
-        scalar Bar
-      }
+    namespace A {
+      scalar Bar
+    }
 
-      namespace B {
-        Bar
-      }`,
-  });
+    namespace B {
+      Bar
+    }
+  `);
 });
 
 it("renders using alongside import", () => {
@@ -86,14 +83,13 @@ it("renders using alongside import", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      import "@typespec/http";
+  ).toRenderTo(`
+    import "@typespec/http";
 
-      using TypeSpec.Http;
+    using TypeSpec.Http;
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });
 
 it("auto-generates fully qualified using for nested namespaces across files", () => {

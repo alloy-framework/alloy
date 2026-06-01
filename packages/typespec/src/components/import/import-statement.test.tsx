@@ -20,12 +20,11 @@ it("renders a single import statement", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      import "./models.tsp";
+  ).toRenderTo(`
+    import "./models.tsp";
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });
 
 it("renders multiple import statements", () => {
@@ -37,13 +36,12 @@ it("renders multiple import statements", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      import "./models.tsp";
-      import "@typespec/rest";
+  ).toRenderTo(`
+    import "./models.tsp";
+    import "@typespec/rest";
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });
 
 it("deduplicates imports with auto-generated ones", () => {
@@ -82,10 +80,9 @@ it("renders an import for a library package", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      import "@typespec/http";
+  ).toRenderTo(`
+    import "@typespec/http";
 
-      scalar Foo`,
-  });
+    scalar Foo
+  `);
 });

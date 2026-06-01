@@ -1,3 +1,4 @@
+import { splitProps } from "@alloy-js/core";
 import { createMethodSymbol } from "../symbols/factories.js";
 import { DecoratorList } from "./DecoratorList.jsx";
 import type { CommonFunctionProps } from "./FunctionBase.js";
@@ -29,10 +30,10 @@ export interface ClassMethodDeclarationProps extends CommonFunctionProps {
 
 export function ClassMethodDeclaration(props: ClassMethodDeclarationProps) {
   const sym = createMethodSymbol(props.name, { refkeys: props.refkey });
-  const { decorators, ...rest } = props;
+  const [decoratorProps, rest] = splitProps(props, ["decorators"]);
   return (
     <>
-      <DecoratorList decorators={decorators} />
+      <DecoratorList decorators={decoratorProps.decorators} />
       {"@classmethod"}
       <hbr />
       <MethodDeclarationBase functionType="class" {...rest} sym={sym} />

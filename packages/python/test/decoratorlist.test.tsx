@@ -18,7 +18,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe("pass");
+    ).toRenderTo("pass");
   });
 
   it("renders nothing when decorators is an empty array", () => {
@@ -29,7 +29,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe("pass");
+    ).toRenderTo("pass");
   });
 
   it("renders a single decorator followed by exactly one hardline", () => {
@@ -40,7 +40,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe(d`
+    ).toRenderTo(d`
       @one
       pass
     `);
@@ -54,7 +54,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe(d`
+    ).toRenderTo(d`
       @one
       @two
       @three
@@ -70,7 +70,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe(d`
+    ).toRenderTo(d`
       @outer
       @middle
       @inner
@@ -86,7 +86,7 @@ describe("DecoratorList", () => {
           pass
         </>,
       ]),
-    ).toBe(d`
+    ).toRenderTo(d`
       @one
       @two
       pass

@@ -269,6 +269,43 @@ describe("PydanticClassDeclaration", () => {
     });
   });
 
+  it("emits model_config = ConfigDict(...) from top-level config props", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="models.py">
+          <py.PydanticClassDeclaration
+            name="User"
+            frozen
+            extra="forbid"
+            validateAssignment
+          >
+            <py.VariableDeclaration
+              instanceVariable
+              omitNone
+              name="id"
+              type="int"
+            />
+          </py.PydanticClassDeclaration>
+        </py.SourceFile>,
+      ],
+      { externals: [pydanticModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from pydantic import BaseModel
+        from pydantic import ConfigDict
+
+
+        class User(BaseModel):
+            model_config = ConfigDict(frozen=True, extra="forbid", validate_assignment=True)
+            id: int
+
+
+      `,
+    );
+  });
+
   it("emits model_config = ConfigDict(...) from modelConfig", () => {
     const res = toSourceText(
       [
@@ -302,6 +339,35 @@ describe("PydanticClassDeclaration", () => {
         class User(BaseModel):
             model_config = ConfigDict(frozen=True, extra="forbid", validate_assignment=True)
             id: int
+
+
+      `,
+    );
+  });
+
+  it("gives precedence to top-level config props over modelConfig", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="models.py">
+          <py.PydanticClassDeclaration
+            name="User"
+            modelConfig={{ frozen: false, extra: "allow" }}
+            frozen
+            extra="forbid"
+          />
+        </py.SourceFile>,
+      ],
+      { externals: [pydanticModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from pydantic import BaseModel
+        from pydantic import ConfigDict
+
+
+        class User(BaseModel):
+            model_config = ConfigDict(frozen=True, extra="forbid")
 
 
       `,

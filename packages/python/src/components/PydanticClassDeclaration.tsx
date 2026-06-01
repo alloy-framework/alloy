@@ -1,4 +1,4 @@
-import { For, List, childrenArray, type Children } from "@alloy-js/core";
+import { For, List, childrenArray, splitProps, type Children } from "@alloy-js/core";
 import { snakeCase } from "change-case";
 import { pydanticModule } from "../builtins/python.js";
 import { Atom } from "./Atom.jsx";
@@ -11,28 +11,53 @@ import { ClassDeclaration } from "./ClassDeclaration.js";
  * `validate_assignment`).
  */
 export interface PydanticModelConfigDictProps {
+  /** Allow non-pydantic/arbitrary Python types in field annotations. */
   arbitraryTypesAllowed?: boolean;
+  /** Behavior for unknown input keys: allow, forbid, or ignore. */
   extra?: "allow" | "forbid" | "ignore";
+  /** Populate models from object attributes (ORM-style) instead of mapping keys. */
   fromAttributes?: boolean;
+  /** Make models immutable (`frozen=True`). */
   frozen?: boolean;
+  /** Allow population by field name even when aliases are defined. */
   populateByName?: boolean;
+  /** Strip leading/trailing whitespace from all `str` fields. */
   strStripWhitespace?: boolean;
+  /** Enable strict validation globally for the model. */
   strict?: boolean;
+  /** Re-validate when attributes are assigned after model creation. */
   validateAssignment?: boolean;
+  /** Validate default values in addition to provided input values. */
   validateDefault?: boolean;
 }
 
-export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
+const PydanticModelConfigKeys = [
+  "arbitraryTypesAllowed",
+  "frozen",
+  "extra",
+  "fromAttributes",
+  "populateByName",
+  "strStripWhitespace",
+  "strict",
+  "validateAssignment",
+  "validateDefault",
+] as const satisfies readonly (keyof PydanticModelConfigDictProps)[];
+
+export interface PydanticClassDeclarationProps
+  extends ClassDeclarationProps,
+    PydanticModelConfigDictProps {
   /**
-   * Emits `model_config = ConfigDict(...)` before field declarations, using the
-   * given flags. Omitted keys are not passed to `ConfigDict`.
+   * Canonical structured config object for `ConfigDict(...)`. Values here are
+   * merged with top-level config props.
    *
-   * Ignored when {@link PydanticClassDeclarationProps.modelConfigExpression} is set.
+   * Top-level config props take precedence over `modelConfig` when the same key
+   * is provided in both places.
    */
   modelConfig?: PydanticModelConfigDictProps;
   /**
    * Emits `model_config = <expression>` verbatim (use for arbitrary `ConfigDict`
-   * kwargs or dynamic config). Takes precedence over structured `modelConfig`.
+   * kwargs or dynamic config). Takes precedence over both `modelConfig` and
+   * top-level config props.
    *
    * @example
    * A typical value emits `ConfigDict(frozen=True, extra="forbid")`.
@@ -47,8 +72,10 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
  * When `bases` is omitted, the class extends `pydanticModule["."].BaseModel`.
  * Pass `bases` to inherit from another generated class (or to combine bases explicitly).
  *
- * Optional **`modelConfig`** emits `model_config = ConfigDict(...)` for common
+ * Optional `modelConfig={{...}}` and top-level config props (for example
+ * `frozen`, `strict`, `extra`) emit `model_config = ConfigDict(...)` for common
  * Pydantic v2 model settings (see {@link PydanticModelConfigDictProps}).
+ * When both are used, top-level props override `modelConfig` keys.
  *
  * Fields are ordinary class body declarations; use `pydanticModule["."].Field` in
  * initializers when you need `Field(...)`.
@@ -58,7 +85,7 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
  * import { pydanticModule } from "@alloy-js/python";
  * import * as py from "@alloy-js/python";
  *
- * <py.PydanticClassDeclaration name="User" modelConfig={{ frozen: true }}>
+ * <py.PydanticClassDeclaration name="User" frozen>
  *   <py.VariableDeclaration instanceVariable omitNone name="id" type="int" />
  *   <py.VariableDeclaration
  *     instanceVariable
@@ -81,16 +108,20 @@ export interface PydanticClassDeclarationProps extends ClassDeclarationProps {
  * ```
  */
 export function PydanticClassDeclaration(props: PydanticClassDeclarationProps) {
-  const { modelConfig, modelConfigExpression, children, ...rest } = props;
+  const [modelConfigProps, bodyProps, rest] = splitProps(
+    props,
+    PydanticModelConfigKeys,
+    ["modelConfig", "modelConfigExpression", "children"],
+  );
   const bases = rest.bases ?? [pydanticModule["."].BaseModel];
+  const { modelConfig, modelConfigExpression, children } = bodyProps;
 
   const configEntries: Array<[string, unknown]> = [];
-  if (modelConfig && modelConfigExpression === undefined) {
-    for (const key of Object.keys(modelConfig)) {
-      const value = (modelConfig as Record<string, unknown>)[key];
-      if (value !== undefined) {
-        configEntries.push([snakeCase(key), value]);
-      }
+  if (modelConfigExpression === undefined) {
+    for (const key of PydanticModelConfigKeys) {
+      const value = modelConfigProps[key] ?? modelConfig?.[key];
+      if (value === undefined) continue;
+      configEntries.push([snakeCase(key), value]);
     }
   }
   const hasStructuredModelConfig =

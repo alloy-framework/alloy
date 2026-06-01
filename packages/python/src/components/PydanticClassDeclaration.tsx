@@ -17,36 +17,81 @@ import { ClassDeclaration } from "./ClassDeclaration.js";
  * `validate_assignment`).
  */
 export interface PydanticModelConfigDictProps {
+  /** Resolve field aliases from a configured alias generator. */
+  aliasGenerator?: string;
   /** Allow non-pydantic/arbitrary Python types in field annotations. */
   arbitraryTypesAllowed?: boolean;
+  /** Coerce numeric input values to strings for `str` fields. */
+  coerceNumbersToStr?: boolean;
   /** Behavior for unknown input keys: allow, forbid, or ignore. */
   extra?: "allow" | "forbid" | "ignore";
   /** Populate models from object attributes (ORM-style) instead of mapping keys. */
   fromAttributes?: boolean;
   /** Make models immutable (`frozen=True`). */
   frozen?: boolean;
+  /** Hide input values in validation error messages. */
+  hideInputInErrors?: boolean;
+  /** Include JSON schema extras via a plain JSON-serializable object. */
+  jsonSchemaExtra?: Record<string, unknown>;
+  /** Use aliases in error locations instead of field names. */
+  locByAlias?: boolean;
   /** Allow population by field name even when aliases are defined. */
   populateByName?: boolean;
+  /** Re-validate model/dataclass instances on assignment boundaries. */
+  revalidateInstances?: "always" | "never" | "subclass-instances";
+  /** JSON serialization format for bytes values. */
+  serJsonBytes?: "utf8" | "base64" | "hex";
+  /** JSON serialization behavior for Infinity/NaN values. */
+  serJsonInfNan?: "null" | "constants" | "strings";
+  /** Upper-bound for constrained string lengths at model level. */
+  strMaxLength?: number;
+  /** Lower-bound for constrained string lengths at model level. */
+  strMinLength?: number;
   /** Strip leading/trailing whitespace from all `str` fields. */
   strStripWhitespace?: boolean;
+  /** Convert all `str` values to lowercase. */
+  strToLower?: boolean;
+  /** Convert all `str` values to uppercase. */
+  strToUpper?: boolean;
   /** Enable strict validation globally for the model. */
   strict?: boolean;
+  /** Use enum `.value` instead of enum instances during serialization. */
+  useEnumValues?: boolean;
+  /** JSON validation format for bytes values. */
+  valJsonBytes?: "utf8" | "base64" | "hex";
   /** Re-validate when attributes are assigned after model creation. */
   validateAssignment?: boolean;
   /** Validate default values in addition to provided input values. */
   validateDefault?: boolean;
+  /** Validate return values for call validators. */
+  validateReturn?: boolean;
 }
 
 const PydanticModelConfigKeys = [
+  "aliasGenerator",
   "arbitraryTypesAllowed",
+  "coerceNumbersToStr",
   "frozen",
   "extra",
   "fromAttributes",
+  "hideInputInErrors",
+  "jsonSchemaExtra",
+  "locByAlias",
   "populateByName",
+  "revalidateInstances",
+  "serJsonBytes",
+  "serJsonInfNan",
+  "strMinLength",
+  "strMaxLength",
   "strStripWhitespace",
+  "strToLower",
+  "strToUpper",
   "strict",
+  "useEnumValues",
+  "valJsonBytes",
   "validateAssignment",
   "validateDefault",
+  "validateReturn",
 ] as const satisfies readonly (keyof PydanticModelConfigDictProps)[];
 
 export interface PydanticClassDeclarationProps

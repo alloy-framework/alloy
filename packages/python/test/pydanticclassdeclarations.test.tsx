@@ -374,6 +374,39 @@ describe("PydanticClassDeclaration", () => {
     );
   });
 
+  it("supports additional typed ConfigDict props", () => {
+    const res = toSourceText(
+      [
+        <py.SourceFile path="models.py">
+          <py.PydanticClassDeclaration
+            name="User"
+            useEnumValues
+            coerceNumbersToStr
+            validateReturn
+            strMinLength={1}
+            strMaxLength={128}
+            serJsonBytes="base64"
+            valJsonBytes="hex"
+          />
+        </py.SourceFile>,
+      ],
+      { externals: [pydanticModule] },
+    );
+
+    expect(res).toRenderTo(
+      d`
+        from pydantic import BaseModel
+        from pydantic import ConfigDict
+
+
+        class User(BaseModel):
+            model_config = ConfigDict(coerce_numbers_to_str=True, ser_json_bytes="base64", str_min_length=1, str_max_length=128, use_enum_values=True, val_json_bytes="hex", validate_return=True)
+
+
+      `,
+    );
+  });
+
   it("imports SecretStr when used as a field type", () => {
     const res = toSourceText(
       [

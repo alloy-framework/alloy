@@ -17,11 +17,9 @@ it("renders a const declaration with a value", () => {
         <ConstDeclaration name="maxAge" value="255" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       const maxAge = 255
-    `,
-  });
+  `);
 });
 
 it("renders a const declaration with a type annotation", () => {

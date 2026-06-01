@@ -186,26 +186,13 @@ const pydanticDescriptor = {
     "validate_call",
     "validate_email",
     "validator",
-    "with_config"
+    "with_config",
   ],
-  "alias_generators": [
-    "to_camel",
-    "to_pascal",
-    "to_snake"
-  ],
-  "aliases": [
-    "AliasChoices",
-    "AliasGenerator",
-    "AliasPath"
-  ],
-  "annotated_handlers": [
-    "GetCoreSchemaHandler",
-    "GetJsonSchemaHandler"
-  ],
-  "class_validators": [
-    "getattr_migration"
-  ],
-  "color": [
+  alias_generators: ["to_camel", "to_pascal", "to_snake"],
+  aliases: ["AliasChoices", "AliasGenerator", "AliasPath"],
+  annotated_handlers: ["GetCoreSchemaHandler", "GetJsonSchemaHandler"],
+  class_validators: ["getattr_migration"],
+  color: [
     "Any",
     "COLORS_BY_NAME",
     "COLORS_BY_VALUE",
@@ -242,44 +229,25 @@ const pydanticDescriptor = {
     "rads",
     "re",
     "repeat_colors",
-    "rgb_to_hls"
+    "rgb_to_hls",
   ],
-  "config": [
-    "ConfigDict",
-    "with_config"
-  ],
-  "dataclasses": [
-    "dataclass",
-    "rebuild_dataclass"
-  ],
-  "datetime_parse": [
-    "getattr_migration"
-  ],
-  "decorator": [
-    "getattr_migration"
-  ],
-  "env_settings": [
-    "getattr_migration"
-  ],
-  "error_wrappers": [
-    "getattr_migration"
-  ],
-  "errors": [
+  config: ["ConfigDict", "with_config"],
+  dataclasses: ["dataclass", "rebuild_dataclass"],
+  datetime_parse: ["getattr_migration"],
+  decorator: ["getattr_migration"],
+  env_settings: ["getattr_migration"],
+  error_wrappers: ["getattr_migration"],
+  errors: [
     "PydanticErrorCodes",
     "PydanticForbiddenQualifier",
     "PydanticImportError",
     "PydanticInvalidForJsonSchema",
     "PydanticSchemaGenerationError",
     "PydanticUndefinedAnnotation",
-    "PydanticUserError"
+    "PydanticUserError",
   ],
-  "fields": [
-    "Field",
-    "FieldInfo",
-    "PrivateAttr",
-    "computed_field"
-  ],
-  "functional_serializers": [
+  fields: ["Field", "FieldInfo", "PrivateAttr", "computed_field"],
+  functional_serializers: [
     "Annotated",
     "Any",
     "AnyType",
@@ -305,9 +273,9 @@ const pydanticDescriptor = {
     "model_serializer",
     "overload",
     "partial",
-    "partialmethod"
+    "partialmethod",
   ],
-  "functional_validators": [
+  functional_validators: [
     "AfterValidator",
     "Annotated",
     "Any",
@@ -350,15 +318,11 @@ const pydanticDescriptor = {
     "partialmethod",
     "sys",
     "version_short",
-    "warnings"
+    "warnings",
   ],
-  "generics": [
-    "getattr_migration"
-  ],
-  "json": [
-    "getattr_migration"
-  ],
-  "json_schema": [
+  generics: ["getattr_migration"],
+  json: ["getattr_migration"],
+  json_schema: [
     "Annotated",
     "Any",
     "AnyType",
@@ -422,13 +386,10 @@ const pydanticDescriptor = {
     "pydantic_core",
     "re",
     "to_jsonable_python",
-    "warnings"
+    "warnings",
   ],
-  "main": [
-    "BaseModel",
-    "create_model"
-  ],
-  "networks": [
+  main: ["BaseModel", "create_model"],
+  networks: [
     "AmqpDsn",
     "AnyHttpUrl",
     "AnyUrl",
@@ -453,12 +414,10 @@ const pydanticDescriptor = {
     "SnowflakeDsn",
     "UrlConstraints",
     "WebsocketUrl",
-    "validate_email"
+    "validate_email",
   ],
-  "parse": [
-    "getattr_migration"
-  ],
-  "plugin": [
+  parse: ["getattr_migration"],
+  plugin: [
     "BaseValidateHandlerProtocol",
     "NewSchemaReturns",
     "PydanticPluginProtocol",
@@ -466,18 +425,12 @@ const pydanticDescriptor = {
     "SchemaTypePath",
     "ValidateJsonHandlerProtocol",
     "ValidatePythonHandlerProtocol",
-    "ValidateStringsHandlerProtocol"
+    "ValidateStringsHandlerProtocol",
   ],
-  "root_model": [
-    "RootModel"
-  ],
-  "schema": [
-    "getattr_migration"
-  ],
-  "tools": [
-    "getattr_migration"
-  ],
-  "type_adapter": [
+  root_model: ["RootModel"],
+  schema: ["getattr_migration"],
+  tools: ["getattr_migration"],
+  type_adapter: [
     "Any",
     "BaseModel",
     "Callable",
@@ -514,9 +467,9 @@ const pydanticDescriptor = {
     "is_typeddict",
     "overload",
     "sys",
-    "types"
+    "types",
   ],
-  "types": [
+  types: [
     "AllowInfNan",
     "AwareDatetime",
     "Base64Bytes",
@@ -580,15 +533,11 @@ const pydanticDescriptor = {
     "conint",
     "conlist",
     "conset",
-    "constr"
+    "constr",
   ],
-  "typing": [
-    "getattr_migration"
-  ],
-  "utils": [
-    "getattr_migration"
-  ],
-  "v1": [
+  typing: ["getattr_migration"],
+  utils: ["getattr_migration"],
+  v1: [
     "AmqpDsn",
     "AnyHttpUrl",
     "AnyUrl",
@@ -682,19 +631,12 @@ const pydanticDescriptor = {
     "validate_arguments",
     "validate_email",
     "validate_model",
-    "validator"
+    "validator",
   ],
-  "validate_call_decorator": [
-    "validate_call"
-  ],
-  "validators": [
-    "getattr_migration"
-  ],
-  "version": [
-    "VERSION",
-    "version_info"
-  ],
-  "warnings": [
+  validate_call_decorator: ["validate_call"],
+  validators: ["getattr_migration"],
+  version: ["VERSION", "version_info"],
+  warnings: [
     "ArbitraryTypeWarning",
     "PydanticDeprecatedSince20",
     "PydanticDeprecatedSince210",
@@ -705,8 +647,8 @@ const pydanticDescriptor = {
     "PydanticDeprecationWarning",
     "PydanticExperimentalWarning",
     "TypedDictExtraConfigWarning",
-    "UnsupportedFieldAttributeWarning"
-  ]
+    "UnsupportedFieldAttributeWarning",
+  ],
 } as const satisfies ModuleDescriptor;
 
 export const pydanticModule = createModule({

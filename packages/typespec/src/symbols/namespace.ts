@@ -1,4 +1,4 @@
-import { Namekey, OutputSpace } from "@alloy-js/core";
+import { Namekey, OutputSpace, OutputSymbol } from "@alloy-js/core";
 import { NamedTypeSymbol } from "./named-type.js";
 import {
   TypeSpecSymbol,
@@ -29,6 +29,20 @@ export class NamespaceSymbol extends NamedTypeSymbol {
 
   get members() {
     return this.memberSpaceFor("members")!;
+  }
+
+  /**
+   * Returns the fully qualified dotted name of this namespace, walking up
+   * the owner chain and omitting the global namespace.
+   */
+  getFullyQualifiedName(): string {
+    const parts: string[] = [];
+    let current: OutputSymbol | undefined = this;
+    while (current instanceof NamespaceSymbol && !current.isGlobal) {
+      parts.unshift(current.name);
+      current = current.ownerSymbol;
+    }
+    return parts.join(".");
   }
 }
 

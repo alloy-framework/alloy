@@ -16,7 +16,7 @@ export interface ImportStatementProps {
  * ```tsx
  * <SourceFile path="main.tsp">
  *   <ImportStatement path="./models.tsp" />
- *   <ImportStatement path={"@typespec/rest"} />
+ *   <ImportStatement path="@typespec/rest" />
  * </SourceFile>
  * ```
  *

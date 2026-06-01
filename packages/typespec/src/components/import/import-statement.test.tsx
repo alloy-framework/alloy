@@ -3,9 +3,9 @@ import { beforeEach, expect, it } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { Namespace } from "../namespace/namespace.jsx";
+import { Reference } from "../reference/reference.jsx";
 import { ScalarDeclaration } from "../scalar-declaration/scalar-declaration.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
-import { Reference } from "../reference/reference.jsx";
 import { ImportStatement } from "./import-statement.jsx";
 
 beforeEach(() => {

@@ -37,7 +37,8 @@ export class SourceFileScope extends OutputScope {
   }
 
   addUsing(using: NamespaceSymbol | string) {
-    const name = typeof using === "string" ? using : using.name;
+    const name =
+      typeof using === "string" ? using : using.getFullyQualifiedName();
     this.#using.add(name);
   }
 

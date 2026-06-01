@@ -1,4 +1,5 @@
 export * from "./alias/alias-declaration.jsx";
+export * from "./const/const-declaration.jsx";
 export * from "./decorator/augment-decorator.jsx";
 export * from "./decorator/decorator-application.jsx";
 export * from "./enum/enum-declaration.jsx";
@@ -14,3 +15,5 @@ export * from "./template-parameters/template-parameters.jsx";
 export * from "./union/union-declaration.jsx";
 export * from "./union/union-expression.jsx";
 export * from "./union/union-variant.jsx";
+export * from "./value/array-value.jsx";
+export * from "./value/object-value.jsx";

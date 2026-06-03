@@ -18,11 +18,9 @@ it("renders an empty interface", () => {
         <InterfaceDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo {}
-    `,
-  });
+    `);
 });
 
 it("renders an interface with operations", () => {
@@ -34,13 +32,11 @@ it("renders an interface with operations", () => {
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo {
         bar(): void
       }
-    `,
-  });
+    `);
 });
 
 it("renders an interface with extends", () => {
@@ -50,11 +46,9 @@ it("renders an interface with extends", () => {
         <InterfaceDeclaration name="Bar" extends="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Bar extends Foo {}
-    `,
-  });
+    `);
 });
 
 it("renders an interface with extends and operations", () => {
@@ -70,13 +64,11 @@ it("renders an interface with extends and operations", () => {
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Bar extends Foo {
         extra(id: string): void
       }
-    `,
-  });
+    `);
 });
 
 it("renders an interface with template parameters", () => {
@@ -86,11 +78,9 @@ it("renders an interface with template parameters", () => {
         <InterfaceDeclaration name="Foo" templateParameters={["T"]} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo<T> {}
-    `,
-  });
+    `);
 });
 
 it("renders an interface with constrained template parameters", () => {
@@ -105,11 +95,9 @@ it("renders an interface with constrained template parameters", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo<T extends BaseModel = DefaultModel> {}
-    `,
-  });
+    `);
 });
 
 it("resolves template parameter references within the interface", () => {
@@ -129,13 +117,11 @@ it("resolves template parameter references within the interface", () => {
         </InterfaceDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface ResourceOps<T> {
         get(id: string): T
       }
-    `,
-  });
+    `);
 });
 
 it("does not resolve template parameter references outside the interface", () => {
@@ -163,11 +149,9 @@ it("applies the interface name policy", () => {
         <InterfaceDeclaration name="model" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface \`model\` {}
-    `,
-  });
+    `);
 });
 
 it("deconflicts duplicate interface names within the same namespace", () => {
@@ -180,12 +164,10 @@ it("deconflicts duplicate interface names within the same namespace", () => {
         </StatementList>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo {};
       interface Foo_2 {};
-    `,
-  });
+    `);
 });
 
 it("resolves an interface reference from another declaration", () => {
@@ -202,10 +184,27 @@ it("resolves an interface reference from another declaration", () => {
         </StatementList>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       interface Foo {};
       interface Bar extends Foo {};
-    `,
-  });
+    `);
+});
+
+it("renders an interface with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <InterfaceDeclaration name="PetStore" doc="Pet store API">
+          <OperationDeclaration name="getPet" returnType="Pet" />
+        </InterfaceDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+      /**
+       * Pet store API
+       */
+      interface PetStore {
+        getPet(): Pet
+      }
+    `);
 });

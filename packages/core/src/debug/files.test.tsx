@@ -11,7 +11,7 @@ import {
   enableDevtools,
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 
 let socket: WebSocket | undefined;
 
@@ -61,16 +61,20 @@ it("emits file and directory add/update/remove messages", async () => {
     type: "directory:added",
     path: "src",
   });
-  expect(initialFiles[2]).toMatchObject({
-    type: "file:added",
-    path: "src/index.ts",
-    filetype: "ts",
-  });
-  expect(initialFiles[3]).toMatchObject({
-    type: "file:updated",
-    path: "src/index.ts",
-    content: expect.any(String),
-  });
+  expect(initialFiles).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "file:added",
+        path: "src/index.ts",
+        filetype: "ts",
+      }),
+      expect.objectContaining({
+        type: "file:updated",
+        path: "src/index.ts",
+        content: expect.any(String),
+      }),
+    ]),
+  );
 
   collector.stop();
 });

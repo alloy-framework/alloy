@@ -40,3 +40,4 @@ versionPolicies:
 changedFiles:
   - "!**/*.md"
   - "!**/*.test.ts"
+  - "!**/*.test.tsx"

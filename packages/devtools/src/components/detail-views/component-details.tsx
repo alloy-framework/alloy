@@ -5,24 +5,30 @@ import { NoneText } from "./none-text";
 
 export interface ComponentDetailsProps {
   node: RenderTreeNode;
+  canRerender: boolean;
   onRerender: () => void;
   onRerenderAndBreak: () => void;
 }
 
 export function ComponentDetails({
   node,
+  canRerender,
   onRerender,
   onRerenderAndBreak,
 }: ComponentDetailsProps) {
   const { formatPath } = useDebugConnectionContext();
   const source = node.source;
+  const title =
+    node.componentId ?
+      `Component #${node.componentId}`
+    : `Render node #${node.id}`;
   const sourceLabel =
     source && source.fileName ?
       `${formatPath(source.fileName)}:${source.lineNumber}:${source.columnNumber}`
     : undefined;
   return (
     <div className="p-4 text-sm">
-      <div className="text-muted-foreground">Render node #{node.id}</div>
+      <div className="text-muted-foreground">{title}</div>
       <div className="mt-3">
         <div>
           <span className="font-medium">Source:</span>{" "}
@@ -73,28 +79,30 @@ export function ComponentDetails({
           </div>
         }
       </div>
-      <div className="mt-3 flex gap-2">
-        <a
-          className="px-2 py-1 rounded border border-border hover:bg-accent"
-          href="#"
-          onClick={(event) => {
-            event.preventDefault();
-            onRerender();
-          }}
-        >
-          Rerender
-        </a>
-        <a
-          className="px-2 py-1 rounded border border-border hover:bg-accent"
-          href="#"
-          onClick={(event) => {
-            event.preventDefault();
-            onRerenderAndBreak();
-          }}
-        >
-          Rerender + Break
-        </a>
-      </div>
+      {canRerender && (
+        <div className="mt-3 flex gap-2">
+          <a
+            className="px-2 py-1 rounded border border-border hover:bg-accent"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              onRerender();
+            }}
+          >
+            Rerender
+          </a>
+          <a
+            className="px-2 py-1 rounded border border-border hover:bg-accent"
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              onRerenderAndBreak();
+            }}
+          >
+            Rerender + Break
+          </a>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/core",
-  "version": "0.22.0",
+  "version": "0.23.1",
   "description": "",
   "repository": {
     "type": "git",
@@ -56,7 +56,11 @@
     "./dist/src/debug/source-map.js": "./dist/src/debug/source-map.browser.js",
     "./src/debug/source-map.ts": "./src/debug/source-map.browser.ts",
     "./dist/src/devtools/devtools-server.js": "./dist/src/devtools/devtools-server.browser.js",
-    "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts"
+    "./src/devtools/devtools-server.ts": "./src/devtools/devtools-server.browser.ts",
+    "./dist/src/debug/trace-db.js": "./dist/src/debug/trace-db.browser.js",
+    "./src/debug/trace-db.ts": "./src/debug/trace-db.browser.ts",
+    "./dist/src/debug/cli.js": "./dist/src/debug/cli.browser.js",
+    "./src/debug/cli.ts": "./src/debug/cli.browser.ts"
   },
   "scripts": {
     "generate-docs": "api-extractor run && api-extractor run -c api-extractor.testing.json",
@@ -77,15 +81,15 @@
     "devalue": "catalog:",
     "pathe": "catalog:",
     "picocolors": "catalog:",
-    "prettier": "catalog:",
     "ws": "catalog:"
   },
   "devDependencies": {
+    "@alloy-js/babel-preset": "workspace:~",
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@babel/core": "catalog:",
+    "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "catalog:",
-    "@rollup/plugin-typescript": "catalog:",
-    "concurrently": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

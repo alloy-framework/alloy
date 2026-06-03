@@ -197,26 +197,6 @@ export const TracePhase = {
       subarea: "appendChild",
       bg: { r: 100, g: 50, b: 0 },
     },
-    appendTextNode: {
-      area: "render",
-      subarea: "appendChild.textNode",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-    appendCachedFragment: {
-      area: "render",
-      subarea: "appendChild.cachedFragment",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-    appendCustomContext: {
-      area: "render",
-      subarea: "appendChild.customContext",
-      bg: { r: 100, g: 50, b: 0 },
-    },
-    appendPrintHook: {
-      area: "render",
-      subarea: "appendChild.printHook",
-      bg: { r: 100, g: 50, b: 0 },
-    },
     appendComponent: {
       area: "render",
       subarea: "appendChild.component",

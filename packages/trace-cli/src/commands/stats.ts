@@ -6,11 +6,7 @@ export function statsCommand(db: Db, _args: string[], opts: Opts) {
   const refs = (db.prepare("SELECT COUNT(*) as n FROM refs").get() as any).n;
   const edges = (db.prepare("SELECT COUNT(*) as n FROM edges").get() as any).n;
   const components = (
-    db
-      .prepare(
-        "SELECT COUNT(*) as n FROM render_nodes WHERE kind = 'component'",
-      )
-      .get() as any
+    db.prepare("SELECT COUNT(*) as n FROM component_instances").get() as any
   ).n;
   const symbols = (db.prepare("SELECT COUNT(*) as n FROM symbols").get() as any)
     .n;
@@ -138,7 +134,7 @@ export function statsCommand(db: Db, _args: string[], opts: Opts) {
     .prepare(
       `
     SELECT name, COUNT(*) as instances
-    FROM render_nodes WHERE kind = 'component'
+    FROM component_instances
     GROUP BY name ORDER BY instances DESC LIMIT 15
   `,
     )

@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import { Show } from "../src/components/Show.jsx";
 import { createContentSlot } from "../src/content-slot.jsx";
 import { Context, ensureIsEmpty, getContext } from "../src/reactivity.js";
-import { printTree, renderTree } from "../src/render.js";
+import { printTree, renderTree } from "../src/test-render.js";
 import "../testing/extend-expect.js";
 
-describe("lazy isEmpty / _lastEmpty", () => {
+describe("lazy isEmpty", () => {
   it("context starts without isEmpty ref allocated", () => {
     let ctx: Context | null = null;
 
@@ -20,7 +20,7 @@ describe("lazy isEmpty / _lastEmpty", () => {
     // The isEmpty ref should NOT be allocated unless someone observes it.
     expect(ctx).not.toBeNull();
     expect(ctx!.isEmpty).toBeUndefined();
-    expect(ctx!._lastEmpty).toBe(false);
+    expect(ctx!.childrenWithContent).toBe(1);
   });
 
   it("ensureIsEmpty lazily allocates the isEmpty ref", () => {
@@ -39,7 +39,7 @@ describe("lazy isEmpty / _lastEmpty", () => {
     expect(isEmptyRef).toBe(ctx!.isEmpty);
   });
 
-  it("_lastEmpty is true for empty component, false for non-empty", () => {
+  it("tracks content count for empty and non-empty components", () => {
     let emptyCtx: Context | null = null;
     let fullCtx: Context | null = null;
 
@@ -60,8 +60,8 @@ describe("lazy isEmpty / _lastEmpty", () => {
       </>,
     );
 
-    expect(emptyCtx!._lastEmpty).toBe(true);
-    expect(fullCtx!._lastEmpty).toBe(false);
+    expect(emptyCtx!.childrenWithContent).toBe(0);
+    expect(fullCtx!.childrenWithContent).toBe(1);
   });
 
   it("ContentSlot triggers ensureIsEmpty and tracks reactively", () => {

@@ -13,7 +13,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
   #deconflictNames = () => {
     for (const name of this.#namesToDeconflict) {
       const conflictedSymbols = [...this].filter(
-        (sym) => sym.originalName === name && !sym.ignoreNameConflict,
+        (sym) => sym.canonicalName === name && !sym.ignoreNameConflict,
       );
       if (this.#nameConflictResolver) {
         this.#nameConflictResolver(name, conflictedSymbols);
@@ -67,7 +67,7 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
             `${formatSymbolName(symbol)} added to ${formatSymbolTableName(this)}`,
         );
 
-        this.#namesToDeconflict.add(symbol.name);
+        this.#namesToDeconflict.add(symbol.canonicalName);
 
         queueJob(this.#deconflictNames);
 
@@ -79,6 +79,12 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
           () =>
             `${formatSymbolName(symbol)} removed from ${formatSymbolTableName(this)}`,
         );
+        // Re-run conflict resolution for the deleted symbol's canonical name
+        // so survivors in the same cohort (those that share the canonical
+        // name) can clear any prior `deconflictedName` rename now that the
+        // collision is reduced.
+        this.#namesToDeconflict.add(symbol.canonicalName);
+        queueJob(this.#deconflictNames);
       },
     });
 
@@ -135,8 +141,12 @@ export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {
  * to have a suffix of _2, _3, etc.
  */
 function defaultConflictHandler(_: string, conflictedSymbols: OutputSymbol[]) {
+  if (conflictedSymbols.length === 0) return;
+  // The first symbol keeps its original name; clear any prior deconflict
+  // rename so it reverts after a collision is resolved.
+  conflictedSymbols[0].deconflictedName = undefined;
   for (let i = 1; i < conflictedSymbols.length; i++) {
-    conflictedSymbols[i].name =
+    conflictedSymbols[i].deconflictedName =
       conflictedSymbols[i].originalName + "_" + (i + 1);
   }
 }

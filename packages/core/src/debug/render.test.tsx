@@ -1,3 +1,4 @@
+import * as devalue from "devalue";
 import { afterEach, beforeEach, expect, it } from "vitest";
 import WebSocket from "ws";
 import {
@@ -7,15 +8,20 @@ import {
 } from "../../testing/devtools-utils.js";
 import { For } from "../components/For.jsx";
 import { Output } from "../components/Output.jsx";
+import { Show } from "../components/Show.jsx";
 import {
   enableDevtools,
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
 import { ref } from "../reactivity.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 import { flushJobsAsync } from "../scheduler.js";
 
 let socket: WebSocket | undefined;
+
+function componentMessages(messages: DevtoolsMessage[]) {
+  return messages.filter((m) => m.type.startsWith("component:"));
+}
 
 beforeEach(async () => {
   const server = await enableDevtools({ port: 0 });
@@ -106,89 +112,117 @@ it("sends render tree messages during render", async () => {
     type: "render:node_added",
     parent_id: null,
   });
-  expect(nodeAdded[1]).toMatchObject({
-    type: "render:node_added",
-    name: "Output",
-  });
-  expect(nodeAdded[2]).toMatchObject({
-    type: "render:node_added",
-    name: "Context Binder",
-  });
-  expect(nodeAdded[3]).toMatchObject({
-    type: "render:node_added",
-  });
-  expect(nodeAdded[4]).toMatchObject({
-    type: "render:node_added",
-    name: expect.stringMatching(/^Context FormatOptions/),
-  });
-  expect(nodeAdded[5]).toMatchObject({
-    type: "render:node_added",
-  });
-  expect(nodeAdded[6]).toMatchObject({
-    type: "render:node_added",
-    name: "SourceDirectory",
-  });
-  expect(nodeAdded[7]).toMatchObject({
-    type: "render:node_added",
-    name: "Context SourceDirectory",
-  });
-  expect(nodeAdded[8]).toMatchObject({
-    type: "render:node_added",
-  });
-  expect(nodeAdded[9]).toMatchObject({
-    type: "render:node_added",
-    name: "Foo",
-  });
-  expect(nodeAdded[10]).toMatchObject({
-    type: "render:node_added",
-    value: "Hello",
-  });
-  expect(nodeAdded[11]).toMatchObject({
-    type: "render:node_added",
-    name: "br",
-  });
-  expect(nodeAdded[12]).toMatchObject({
-    type: "render:node_added",
-  });
-  expect(nodeAdded[13]).toMatchObject({
-    type: "render:node_added",
-    value: "World",
-  });
+  expect(nodeAdded.map((m) => m.kind)).not.toContain("component");
+  expect(nodeAdded.map((m) => m.kind)).not.toContain("memo");
+
+  // Component invocations are canonical component messages, not
+  // render-node rows. Exact ordering is not contractual.
+  const components = componentMessages(messages);
+  const componentNames = components
+    .filter((m) => m.type === "component:added")
+    .map((m) => m.name);
+  expect(componentNames).toContain("Output");
+  expect(componentNames).toContain("Context Binder");
+  expect(
+    componentNames.some(
+      (n) => typeof n === "string" && n.startsWith("Context FormatOptions"),
+    ),
+  ).toBe(true);
+  expect(componentNames).toContain("SourceDirectory");
+  expect(componentNames).toContain("Context SourceDirectory");
+  expect(componentNames).toContain("Foo");
+  expect(nodeAdded.map((m) => m.name)).toContain("br");
+
+  const foo = components.find(
+    (m) => m.type === "component:added" && m.name === "Foo",
+  );
+  expect(foo).toBeDefined();
+  const fooRoots = components.filter(
+    (m) => m.type === "component:root_added" && m.component_id === foo!.id,
+  );
+  expect(fooRoots.length).toBeGreaterThan(1);
+
+  // Text content from Foo's body is also exposed as text nodes.
+  const values = nodeAdded.map((m) => m.value);
+  expect(values).toContain("Hello");
+  expect(values).toContain("World");
 });
 
 it("rerenders when devtools requests rerender", async () => {
-  let renderCount = 0;
-
-  function Display() {
-    renderCount += 1;
-    return "Hi";
-  }
-
+  let value = "before";
   const collector = await createMessageCollector(socket!);
+
+  function Rerendered() {
+    return value;
+  }
 
   await renderAsync(
     <Output>
-      <Display />
+      <Rerendered />
     </Output>,
   );
 
-  const messages = await collector.waitForRender();
-  const renderMessages = filterRenderTreeMessages(messages);
-  const displayNode = renderMessages.find(
-    (message: DevtoolsMessage) =>
-      message.type === "render:node_added" && message.name === "Display",
+  const initialMessages = await collector.waitForRender();
+  const component = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Rerendered",
   );
+  expect(component).toBeDefined();
+  const root = componentMessages(initialMessages).find(
+    (m) =>
+      m.type === "component:root_added" && m.component_id === component!.id,
+  );
+  expect(root).toBeDefined();
 
-  expect(renderCount).toBe(1);
-  expect(displayNode?.id).toEqual(expect.any(Number));
-
+  value = "after";
   socket!.send(
-    JSON.stringify({ type: "render:rerender", id: displayNode!.id }),
+    JSON.stringify({
+      type: "render:rerender",
+      id: root!.render_node_id,
+    }),
   );
 
-  await collector.waitForFlush();
-
-  expect(renderCount).toBe(2);
+  const updateMessages = await collector.waitForFlush();
+  const renderMessages = filterRenderTreeMessages(updateMessages);
+  expect(renderMessages).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "render:node_removed",
+        id: root!.render_node_id,
+      }),
+      expect.objectContaining({
+        type: "render:node_added",
+        value: "after",
+      }),
+    ]),
+  );
+  expect(renderMessages).not.toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "render:node_added",
+        value: "before",
+      }),
+    ]),
+  );
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: component!.id,
+        render_node_id: root!.render_node_id,
+      }),
+      expect.objectContaining({
+        type: "component:removed",
+        id: component!.id,
+      }),
+      expect.objectContaining({
+        type: "component:added",
+        name: "Rerendered",
+      }),
+      expect.objectContaining({
+        type: "component:root_added",
+      }),
+    ]),
+  );
   collector.stop();
 });
 
@@ -208,12 +242,16 @@ it("sends render tree messages during render with For component", async () => {
   collector.stop();
 
   expect(renderMessages[0]).toMatchObject({ type: "render:reset" });
-  expect(renderMessages).toEqual(
+  expect(componentMessages(messages)).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
-        type: "render:node_added",
+        type: "component:added",
         name: "For",
       }),
+    ]),
+  );
+  expect(renderMessages).toEqual(
+    expect.arrayContaining([
       expect.objectContaining({
         type: "render:node_added",
         value: "a",
@@ -226,7 +264,7 @@ it("sends render tree messages during render with For component", async () => {
   );
 });
 
-it("emits nodeUpdated during render for context updates", async () => {
+it("emits component metadata separately from render nodes", async () => {
   const collector = await createMessageCollector(socket!);
 
   function Counter(props: { value: number }) {
@@ -241,17 +279,107 @@ it("emits nodeUpdated during render for context updates", async () => {
 
   const messages = await collector.waitForRender();
   const renderMessages = filterRenderTreeMessages(messages);
+  const components = componentMessages(messages);
 
-  // Context updates during the initial render produce render:node_updated messages
-  const nodeUpdated = renderMessages.filter(
-    (m: DevtoolsMessage) => m.type === "render:node_updated",
+  expect(
+    renderMessages.some(
+      (m: DevtoolsMessage) =>
+        m.type === "render:node_added" &&
+        (m.kind === "component" || m.kind === "memo"),
+    ),
+  ).toBe(false);
+  expect(components).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:added",
+        name: "Counter",
+      }),
+      expect.objectContaining({
+        type: "component:root_added",
+      }),
+    ]),
+  );
+  collector.stop();
+});
+
+it("removes component metadata when its render roots are removed", async () => {
+  const show = ref(true);
+  const collector = await createMessageCollector(socket!);
+
+  function Child() {
+    return "visible";
+  }
+
+  await renderAsync(<Output>{() => (show.value ? <Child /> : null)}</Output>);
+
+  const initialMessages = await collector.waitForRender();
+  const child = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Child",
+  );
+  expect(child).toBeDefined();
+  expect(componentMessages(initialMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_added",
+        component_id: child!.id,
+      }),
+    ]),
   );
 
-  expect(nodeUpdated.length).toBeGreaterThan(0);
-  expect(nodeUpdated[0]).toMatchObject({
-    type: "render:node_updated",
-    id: expect.any(Number),
+  show.value = false;
+  await flushJobsAsync();
+
+  const updateMessages = await collector.waitForFlush();
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: child!.id,
+      }),
+      expect.objectContaining({
+        type: "component:removed",
+        id: child!.id,
+      }),
+    ]),
+  );
+  collector.stop();
+});
+
+it("emits component prop updates while reactive children update", async () => {
+  const visible = ref(true);
+  const collector = await createMessageCollector(socket!);
+
+  await renderAsync(
+    <Output>
+      <Show when={visible.value}>visible</Show>
+    </Output>,
+  );
+
+  const initialMessages = await collector.waitForRender();
+  const show = componentMessages(initialMessages).find(
+    (m) => m.type === "component:added" && m.name === "Show",
+  );
+  expect(show).toBeDefined();
+
+  visible.value = false;
+  await flushJobsAsync();
+
+  const updateMessages = await collector.waitForFlush();
+  const showUpdate = componentMessages(updateMessages).find(
+    (m) => m.type === "component:updated" && m.id === show!.id,
+  );
+  expect(showUpdate).toBeDefined();
+  expect(devalue.parse(showUpdate!.props as string)).toMatchObject({
+    when: false,
   });
+  expect(componentMessages(updateMessages)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        type: "component:root_removed",
+        component_id: show!.id,
+      }),
+    ]),
+  );
   collector.stop();
 });
 

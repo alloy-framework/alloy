@@ -3,9 +3,9 @@ import { useContext } from "../context.js";
 import { useFormatOptions } from "../context/format-options.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
+import { PrintTreeOptions } from "../output-types.js";
 import { getContext } from "../reactivity.js";
 import { Refkey } from "../refkey.js";
-import { PrintTreeOptions } from "../render.js";
 import type { Children, ComponentDefinition } from "../runtime/component.js";
 import { Show } from "./Show.jsx";
 

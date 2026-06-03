@@ -5,8 +5,8 @@ import {
   createAccessExpression,
 } from "../components/AccessExpression.jsx";
 import { code } from "../index.js";
-import { printTree, renderTree } from "../render.js";
 import { Children } from "../runtime/component.js";
+import { printTree, renderTree } from "../test-render.js";
 
 interface TestPartProps extends BasePartProps {
   name?: string;

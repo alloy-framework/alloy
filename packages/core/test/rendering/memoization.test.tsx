@@ -1,8 +1,8 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { memo } from "../../src/reactivity.js";
-import { renderTree } from "../../src/render.js";
 import { flushJobs } from "../../src/scheduler.js";
+import { renderTree } from "../../src/test-render.js";
 
 it("memoizes child components", () => {
   let renderCount = 0;
@@ -28,5 +28,10 @@ it("memoizes child components", () => {
   renderTree(template);
   doThing.value = true;
   flushJobs();
+  // Without element-cache (legacy), each component creator is invoked on
+  // every reactive re-evaluation, except when the same ComponentCreator
+  // instance reappears at a slot — reconcileArray keeps the existing
+  // subtree intact. child1 is invoked once initially and reused on the
+  // memo re-fire; child2 is invoked once when added.
   expect(renderCount).toBe(2);
 });

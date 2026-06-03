@@ -1,7 +1,7 @@
 import { shallowReactive } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { For } from "../../src/index.js";
-import { printTree, renderTree } from "../../src/render.js";
+import { printTree, renderTree } from "../../src/test-render.js";
 import { d } from "../../testing/render.js";
 
 it("it should work with circular reactives", () => {

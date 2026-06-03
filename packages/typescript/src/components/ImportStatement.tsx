@@ -102,20 +102,34 @@ export function ImportStatement(props: ImportStatementProps) {
       if (allNamedImportsAreTypes) {
         parts.push("type ");
       }
-      parts.push("{ ");
       parts.push(
-        mapJoin(
-          () => namedImportSymbols,
-          (nis) => (
-            <ImportBinding
-              importedSymbol={nis}
-              inTypeImport={allNamedImportsAreTypes}
-            />
-          ),
-          { joiner: ", " },
-        ),
+        <group>
+          {"{"}
+          <indent>
+            <line />
+            {mapJoin(
+              () => namedImportSymbols,
+              (nis) => (
+                <ImportBinding
+                  importedSymbol={nis}
+                  inTypeImport={allNamedImportsAreTypes}
+                />
+              ),
+              {
+                joiner: (
+                  <>
+                    {","}
+                    <line />
+                  </>
+                ),
+              },
+            )}
+            <ifBreak>{","}</ifBreak>
+          </indent>
+          <line />
+          {"}"}
+        </group>,
       );
-      parts.push(" }");
     }
     parts.push(` from "${props.path}";`);
 

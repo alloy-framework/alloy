@@ -209,6 +209,44 @@ export interface RenderNodeRemovedMessage {
   id: number;
 }
 
+export interface ComponentAddedMessage {
+  type: "component:added";
+  id: number;
+  parent_id: number | null;
+  name: string;
+  props?: string;
+  source_file?: string;
+  source_line?: number;
+  source_col?: number;
+  context_id?: number | null;
+  seq: number;
+}
+
+export interface ComponentUpdatedMessage {
+  type: "component:updated";
+  id: number;
+  props?: string;
+}
+
+export interface ComponentRemovedMessage {
+  type: "component:removed";
+  id: number;
+}
+
+export interface ComponentRootAddedMessage {
+  type: "component:root_added";
+  component_id: number;
+  render_node_id: number;
+  ordinal: number;
+  seq: number;
+}
+
+export interface ComponentRootRemovedMessage {
+  type: "component:root_removed";
+  component_id: number;
+  render_node_id: number;
+}
+
 export interface RenderErrorMessage {
   type: "render:error";
   name?: string;
@@ -443,6 +481,11 @@ export type ServerToClientMessage =
   | RenderNodeAddedMessage
   | RenderNodeUpdatedMessage
   | RenderNodeRemovedMessage
+  | ComponentAddedMessage
+  | ComponentUpdatedMessage
+  | ComponentRemovedMessage
+  | ComponentRootAddedMessage
+  | ComponentRootRemovedMessage
   | RenderErrorMessage
   | RenderCompleteMessage
   | FlushJobsCompleteMessage

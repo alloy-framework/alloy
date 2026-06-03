@@ -102,7 +102,7 @@ Usage: alloy-trace <command> [subcommand] [options]
 Entity commands:
   effect <list|show|chain|hotspots|ancestry|subtree> [id]  Effects (reactive computations)
   ref <list|show|chain|hotspots|fanout|ownership> [id]     Refs (reactive values)
-  component <list|show|tree|stats> [id]                    Components (render tree nodes)
+  component <list|show|tree|for-node|stats> [id]           Components and render-node roots
   symbol <list|show> [id]                                  Symbols (output symbols)
   scope <list|show> [id]                                   Scopes (output scopes)
   file <list|show|search> [path] [substring]          Output files

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-preset
 
+## 0.3.0
+
+### Features
+
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Emit source location information for components in dev builds.
+
+
 ## 0.2.1
 
 No changes, version bump only.

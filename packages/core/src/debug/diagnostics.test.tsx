@@ -10,7 +10,7 @@ import {
   resetDevtoolsServerForTests,
 } from "../devtools/devtools-server.js";
 import { DiagnosticsCollector } from "../diagnostics.js";
-import { renderAsync } from "../render.js";
+import { renderAsync } from "../render-output.js";
 
 let socket: WebSocket | undefined;
 

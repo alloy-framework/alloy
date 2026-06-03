@@ -1,6 +1,11 @@
 export type {
   // Individual server→client message types
   ClientToServerMessage,
+  ComponentAddedMessage,
+  ComponentRemovedMessage,
+  ComponentRootAddedMessage,
+  ComponentRootRemovedMessage,
+  ComponentUpdatedMessage,
   DebuggerInfoMessage,
   DiagnosticRow,
   DiagnosticsReportMessage,

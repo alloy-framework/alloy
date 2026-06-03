@@ -2,7 +2,7 @@ import "@alloy-js/core/testing";
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { Match, Switch } from "../../src/components/Switch.jsx";
-import { printTree, renderTree } from "../../src/render.js";
+import { printTree, renderTree } from "../../src/test-render.js";
 
 it("selects the true branch", () => {
   const template = (

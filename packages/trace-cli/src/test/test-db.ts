@@ -26,6 +26,16 @@ const SCHEMA = `
     name TEXT, props TEXT, source_file TEXT, source_line INTEGER,
     source_col INTEGER, context_id INTEGER, value TEXT, seq INTEGER
   );
+  CREATE TABLE component_instances (
+    id INTEGER PRIMARY KEY, parent_id INTEGER, name TEXT NOT NULL,
+    props TEXT, source_file TEXT, source_line INTEGER, source_col INTEGER,
+    context_id INTEGER, seq INTEGER
+  );
+  CREATE TABLE component_roots (
+    component_id INTEGER NOT NULL, render_node_id INTEGER NOT NULL,
+    ordinal INTEGER NOT NULL, seq INTEGER,
+    PRIMARY KEY (component_id, render_node_id)
+  );
   CREATE TABLE symbols (
     id INTEGER PRIMARY KEY, name TEXT NOT NULL, original_name TEXT,
     scope_id INTEGER, owner_symbol_id INTEGER, render_node_id INTEGER,
@@ -67,8 +77,10 @@ const SCHEMA = `
 
 /**
  * Creates an in-memory SQLite database with the trace schema and seed data.
- * Seed data models a small render tree:
- *   root -> SourceFile(comp) -> Declaration(comp) -> text node
+ * Seed data models a small render tree plus component metadata:
+ *   root -> source-file node -> declaration node -> text node
+ *   SourceFile component root -> source-file node
+ *   Declaration component root -> declaration node
  *   Effects own contexts and track/trigger refs.
  */
 export function createTestDb(): DatabaseSync {
@@ -79,23 +91,30 @@ export function createTestDb(): DatabaseSync {
 }
 
 function seedData(db: DatabaseSync) {
-  // Render tree: root(1) -> SourceFile(2) -> Declaration(3) -> text(4)
-  //                                       -> Fragment(5) -> text(6)
+  // Render tree: root(1) -> source-file(2) -> declaration intrinsic(3) -> text(4)
+  //                                      -> Fragment(5) -> text(6)
   db.exec(`
     INSERT INTO render_nodes VALUES (1, NULL, 'root', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-    INSERT INTO render_nodes VALUES (2, 1, 'component', 'SourceFile', '{"path":"src/models.ts"}',
-      '/home/user/packages/typescript/src/components/source-file.tsx', 10, 5, 100, NULL, 2);
-    INSERT INTO render_nodes VALUES (3, 2, 'component', 'Declaration', NULL,
-      '/home/user/packages/typescript/src/components/declaration.tsx', 25, 3, 200, NULL, 5);
+    INSERT INTO render_nodes VALUES (2, 1, 'source-file', 'alloy:source-file', NULL,
+      NULL, NULL, NULL, 100, NULL, 2);
+    INSERT INTO render_nodes VALUES (3, 2, 'intrinsic', 'declaration', NULL,
+      NULL, NULL, NULL, 200, NULL, 5);
     INSERT INTO render_nodes VALUES (4, 3, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'export interface Foo {
   bar: string;
 }', 6);
     INSERT INTO render_nodes VALUES (5, 2, 'fragment', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3);
     INSERT INTO render_nodes VALUES (6, 5, 'text', NULL, NULL, NULL, NULL, NULL, NULL, 'import { Bar } from "bar";
 ', 4);
-    INSERT INTO render_nodes VALUES (7, 2, 'memo', 'mapJoin', NULL,
-      '/home/user/packages/core/src/utils.tsx', 100, 1, 300, NULL, 7);
-    INSERT INTO render_nodes VALUES (8, 7, 'customContext', 'NamePolicy', NULL, NULL, NULL, NULL, NULL, NULL, 8);
+  `);
+
+  // Component metadata.
+  db.exec(`
+    INSERT INTO component_instances VALUES (10, NULL, 'SourceFile', '{"path":"src/models.ts"}',
+      '/home/user/packages/typescript/src/components/source-file.tsx', 10, 5, 100, 2);
+    INSERT INTO component_instances VALUES (11, 10, 'Declaration', NULL,
+      '/home/user/packages/typescript/src/components/declaration.tsx', 25, 3, 200, 5);
+    INSERT INTO component_roots VALUES (10, 2, 0, 3);
+    INSERT INTO component_roots VALUES (11, 3, 0, 6);
   `);
 
   // Effects: render effects for the components, plus a computed memo

@@ -8,7 +8,7 @@ import { BinderContext } from "../context/binder.js";
 import { FormatOptions } from "../context/format-options.js";
 import { NamePolicyContext } from "../context/name-policy.js";
 import { NamePolicy } from "../name-policy.js";
-import { PrintTreeOptions } from "../render.js";
+import { PrintTreeOptions } from "../output-types.js";
 import type { Children } from "../runtime/component.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 
@@ -70,6 +70,7 @@ export function Output(props: OutputProps) {
           printWidth: props.printWidth,
           tabWidth: props.tabWidth,
           useTabs: props.useTabs,
+          insertFinalNewLine: props.insertFinalNewLine,
         }}
       >
         {props.namePolicy ?

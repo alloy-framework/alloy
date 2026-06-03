@@ -1,6 +1,6 @@
 # Formatting
 
-Alloy uses [Prettier's document IR](https://github.com/prettier/prettier/blob/main/commands.md) as its layout engine.
+Alloy uses intrinsic formatting elements such as `<group>`, `<indent>`, and line breaks to describe layout in the AlloyNode tree. The direct printer walks that tree and applies Prettier-compatible layout semantics without exposing a separate document IR.
 
 Format options ([`printWidth`, `tabWidth`, `useTabs`](api/types/CommonFormatOptions.md)) are set on [`<Output>`](api/components/Output.md) and overridable per [`<SourceFile>`](api/components/SourceFile.md).
 

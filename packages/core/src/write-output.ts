@@ -1,7 +1,7 @@
 import { dirname, relative, resolve } from "pathe";
 import { AlloyHost } from "./host/alloy-host.js";
 import { cwd } from "./host/node-host.js";
-import { OutputDirectory } from "./render.js";
+import { OutputDirectory } from "./output-types.js";
 import { traverseOutput } from "./utils.js";
 /**
  * Write the output from {@link render} to the file system.

@@ -30,6 +30,20 @@ export class NamespaceSymbol extends NamedTypeSymbol {
   get members() {
     return this.memberSpaceFor("members")!;
   }
+
+  /**
+   * Returns the fully qualified dotted name of this namespace, walking up
+   * the owner chain and omitting the global namespace.
+   */
+  getFullyQualifiedName(): string {
+    const parts: string[] = [this.name];
+    let owner = this.ownerSymbol;
+    while (owner instanceof NamespaceSymbol && !owner.isGlobal) {
+      parts.unshift(owner.name);
+      owner = owner.ownerSymbol;
+    }
+    return parts.join(".");
+  }
 }
 
 export function isNamespaceSymbol(

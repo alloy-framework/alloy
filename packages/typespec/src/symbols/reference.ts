@@ -6,7 +6,7 @@ import {
   Refkey,
   resolve,
 } from "@alloy-js/core";
-import { NamespaceSymbol } from "../index.js";
+import { isNamespaceSymbol, NamespaceSymbol } from "../index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
 import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
@@ -44,11 +44,30 @@ export function ref(refkey: Refkey): Ref<Optional<OutputSymbol>> {
       scope!.addImport(importPath);
     }
     if (lexicalDeclaration instanceof NamespaceSymbol) {
-      scope.addUsing(lexicalDeclaration);
+      // Find the innermost namespace containing the target symbol for FQN.
+      const containingNs = findContainingNamespace(result.symbol);
+      scope.addUsing(containingNs ?? lexicalDeclaration);
     }
 
     return result.symbol;
   });
+}
+
+/**
+ * Finds the innermost namespace that contains the given symbol by walking
+ * up the owner chain.
+ */
+function findContainingNamespace(
+  symbol: OutputSymbol,
+): NamespaceSymbol | undefined {
+  let current = symbol.ownerSymbol;
+  while (current) {
+    if (isNamespaceSymbol(current as TypeSpecSymbol)) {
+      return current as NamespaceSymbol;
+    }
+    current = current.ownerSymbol;
+  }
+  return undefined;
 }
 
 /**

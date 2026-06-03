@@ -11,6 +11,7 @@ import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
 import { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { DocWhen } from "../doc/doc-comment.jsx";
 import {
   TemplateParameterDescriptor,
   TemplateParameters,
@@ -36,6 +37,8 @@ export interface AliasDeclarationProps {
   templateParameters?: (string | TemplateParameterDescriptor)[];
   /** The type expression the alias is bound to. */
   type: Children;
+  /** Doc comment rendered as `/** ... *\/` above the declaration. */
+  doc?: Children;
 }
 
 /**
@@ -43,10 +46,11 @@ export interface AliasDeclarationProps {
  *
  * @example
  * ```tsx
- * <AliasDeclaration name="Options" type={'"one" | "two"'} />
+ * <AliasDeclaration name="Options" type={'"one" | "two"'} doc="Available options" />
  * ```
  * This will produce:
  * ```typespec
+ * /** Available options *\/
  * alias Options = "one" | "two"
  * ```
  */
@@ -61,6 +65,7 @@ export function AliasDeclaration(props: AliasDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      <DocWhen doc={props.doc} />
       <Scope value={namedTypeScope}>
         alias <Name />
         {props.templateParameters && (

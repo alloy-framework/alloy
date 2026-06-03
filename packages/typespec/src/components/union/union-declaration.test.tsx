@@ -25,14 +25,12 @@ it("renders a union with anonymous variants", () => {
         </UnionDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union StringOrInt {
         string,
         int32,
       }
-    `,
-  });
+    `);
 });
 
 it("renders a union with named variants", () => {
@@ -47,14 +45,12 @@ it("renders a union with named variants", () => {
         </UnionDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Result {
         success: string,
         failure: int32,
       }
-    `,
-  });
+    `);
 });
 
 it("renders a union with mixed anonymous and named variants", () => {
@@ -69,14 +65,12 @@ it("renders a union with mixed anonymous and named variants", () => {
         </UnionDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Mixed {
         string,
         nothing: null,
       }
-    `,
-  });
+    `);
 });
 
 it("renders an empty union", () => {
@@ -86,11 +80,9 @@ it("renders an empty union", () => {
         <UnionDeclaration name="Empty" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Empty {}
-    `,
-  });
+    `);
 });
 
 it("renders a union with template parameters", () => {
@@ -126,14 +118,12 @@ it("resolves template parameter references within the union", () => {
         </UnionDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Maybe<T> {
         value: T,
         null,
       }
-    `,
-  });
+    `);
 });
 
 it("does not resolve template parameter references outside the union", () => {
@@ -161,11 +151,9 @@ it("applies the union name policy", () => {
         <UnionDeclaration name="model" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union \`model\` {}
-    `,
-  });
+    `);
 });
 
 it("does not deconflict union names across namespaces", () => {
@@ -182,8 +170,7 @@ it("does not deconflict union names across namespaces", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A {
         union Result {}
       }
@@ -191,8 +178,7 @@ it("does not deconflict union names across namespaces", () => {
       namespace B {
         union Result {}
       }
-    `,
-  });
+    `);
 });
 
 it("deconflicts duplicate union names within the same namespace", () => {
@@ -207,14 +193,12 @@ it("deconflicts duplicate union names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       union Result {};
       union Result_2 {};
-    `,
-  });
+    `);
 });
 
 it("resolves a union reference from another declaration", () => {
@@ -229,12 +213,10 @@ it("resolves a union reference from another declaration", () => {
         <Reference refkey={resultKey} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Result {};
       Result
-    `,
-  });
+    `);
 });
 
 it("resolves a named union variant reference", () => {
@@ -249,14 +231,12 @@ it("resolves a named union variant reference", () => {
         <Reference refkey={successKey} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       union Result {
         success: string
       }
       success
-    `,
-  });
+    `);
 });
 
 it("renders a union with decorators", () => {
@@ -282,14 +262,38 @@ it("renders a union with decorators", () => {
         </UnionDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       @doc("A pet type")
       union Pet {
         @doc("A cat")
         cat: Cat,
         dog: Dog,
       }
-    `,
-  });
+    `);
+});
+
+it("renders a union with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <UnionDeclaration name="Pet" doc="A pet type">
+          <List comma hardline enderPunctuation>
+            <UnionVariant name="cat" type="Cat" doc="A cat" />
+            <UnionVariant name="dog" type="Dog" />
+          </List>
+        </UnionDeclaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+      /**
+       * A pet type
+       */
+      union Pet {
+        /**
+         * A cat
+         */
+        cat: Cat,
+        dog: Dog,
+      }
+    `);
 });

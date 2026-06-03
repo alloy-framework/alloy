@@ -3,6 +3,7 @@ export * from "./array/array-expression.jsx";
 export * from "./const/const-declaration.jsx";
 export * from "./decorator/augment-decorator.jsx";
 export * from "./decorator/decorator-application.jsx";
+export * from "./doc/doc-comment.jsx";
 export * from "./enum/enum-declaration.jsx";
 export * from "./enum/enum-member.jsx";
 export * from "./import/import-statement.jsx";

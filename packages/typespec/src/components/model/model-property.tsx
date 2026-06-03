@@ -1,5 +1,6 @@
 import { Children, Declaration, Name, Namekey, Refkey } from "@alloy-js/core";
 import { createModelPropertySymbol } from "../../symbols/factories.js";
+import { DocWhen } from "../doc/doc-comment.jsx";
 
 export interface ModelPropertyProps {
   /** The property name. */
@@ -12,6 +13,8 @@ export interface ModelPropertyProps {
   optional?: boolean;
   /** Default value for the property. */
   default?: Children;
+  /** Doc comment rendered as `/** ... *\/` above the property. */
+  doc?: Children;
   /** Decorators to apply to the property. */
   decorators?: Children;
 }
@@ -23,7 +26,7 @@ export interface ModelPropertyProps {
  * ```tsx
  * <ModelDeclaration name="Dog">
  *   <StatementList>
- *     <ModelProperty name="name" type="string" />
+ *     <ModelProperty name="name" type="string" doc="The dog's name" />
  *     <ModelProperty name="age" type="uint8" optional default="0" />
  *   </StatementList>
  * </ModelDeclaration>
@@ -31,6 +34,7 @@ export interface ModelPropertyProps {
  * This will produce:
  * ```typespec
  * model Dog {
+ *   /** The dog's name *\/
  *   name: string;
  *   age?: uint8 = 0;
  * }
@@ -43,6 +47,7 @@ export function ModelProperty(props: ModelPropertyProps) {
 
   return (
     <Declaration symbol={sym}>
+      <DocWhen doc={props.doc} />
       {props.decorators}
       <Name />
       {props.optional ? "?" : ""}: {props.type}

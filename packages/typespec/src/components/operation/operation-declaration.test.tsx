@@ -22,12 +22,10 @@ it("renders an operation with no parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op ping(): void`,
-  });
+      op ping(): void`);
 });
 
 it("renders an operation with parameters and return type", () => {
@@ -43,12 +41,10 @@ it("renders an operation with parameters and return type", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op getPet(name: string): Pet`,
-  });
+      op getPet(name: string): Pet`);
 });
 
 it("renders an operation with 'is'", () => {
@@ -60,12 +56,10 @@ it("renders an operation with 'is'", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op deletePet is Delete`,
-  });
+      op deletePet is Delete`);
 });
 
 it("throws if both 'is' and 'parameters' are provided", () => {
@@ -103,12 +97,10 @@ it("applies the operation name policy", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op \`model\`(): void`,
-  });
+      op \`model\`(): void`);
 });
 
 it("deconflicts duplicate operation names within the same namespace", () => {
@@ -123,13 +115,11 @@ it("deconflicts duplicate operation names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       op ping(): void;
-      op ping_2(): void;`,
-  });
+      op ping_2(): void;`);
 });
 
 it("renders an operation with multiple parameters", () => {
@@ -148,12 +138,10 @@ it("renders an operation with multiple parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op createPet(name: string, age: int32): Pet`,
-  });
+      op createPet(name: string, age: int32): Pet`);
 });
 
 it("renders an operation in multiple lines if parameters exceed line length limit", () => {
@@ -172,15 +160,13 @@ it("renders an operation in multiple lines if parameters exceed line length limi
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       op createPet(
         name: string,
         age: int32
-      ): Pet`,
-  });
+      ): Pet`);
 });
 
 it("renders an operation with an optional parameter", () => {
@@ -196,12 +182,10 @@ it("renders an operation with an optional parameter", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op listPets(filter?: string): Pet[]`,
-  });
+      op listPets(filter?: string): Pet[]`);
 });
 
 it("renders an operation with template parameters", () => {
@@ -218,12 +202,10 @@ it("renders an operation with template parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op ReadResource<T>(id: string): T`,
-  });
+      op ReadResource<T>(id: string): T`);
 });
 
 it("renders an operation with constrained template parameters", () => {
@@ -242,12 +224,10 @@ it("renders an operation with constrained template parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op ReadResource<T extends BaseModel = DefaultModel>(id: string): T`,
-  });
+      op ReadResource<T extends BaseModel = DefaultModel>(id: string): T`);
 });
 
 it("resolves template parameter references within the operation", () => {
@@ -265,12 +245,10 @@ it("resolves template parameter references within the operation", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      op ReadResource<T>(id: string): T`,
-  });
+      op ReadResource<T>(id: string): T`);
 });
 
 it("does not resolve template parameter references outside the operation", () => {
@@ -312,13 +290,11 @@ it("renders an operation with decorators", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       @doc("Get a pet")
       @tag("pets")
       op getPet(id: string): Pet
-    `,
-  });
+    `);
 });
 
 it("renders an operation with a doc comment", () => {
@@ -333,12 +309,10 @@ it("renders an operation with a doc comment", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * Get a pet by ID
        */
       op getPet(id: string): Pet
-    `,
-  });
+    `);
 });

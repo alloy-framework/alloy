@@ -20,11 +20,9 @@ it("renders a scalar", () => {
         <ScalarDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       scalar Foo
-    `,
-  });
+    `);
 });
 
 it("renders a scalar with 'is'", () => {
@@ -34,11 +32,9 @@ it("renders a scalar with 'is'", () => {
         <ScalarDeclaration name="Foo" is="string" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       scalar Foo is string
-    `,
-  });
+    `);
 });
 
 it("renders a scalar with 'extends'", () => {
@@ -48,11 +44,9 @@ it("renders a scalar with 'extends'", () => {
         <ScalarDeclaration name="Foo" extends="Bar" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       scalar Foo extends Bar
-    `,
-  });
+    `);
 });
 
 it("throws if both 'is' and 'extends' are provided", () => {
@@ -82,11 +76,9 @@ it("applies the scalar name policy", () => {
         <ScalarDeclaration name="model" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       scalar \`model\`
-    `,
-  });
+    `);
 });
 
 it("does not deconflict names across namespaces", () => {
@@ -103,16 +95,14 @@ it("does not deconflict names across namespaces", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A {
         scalar Foo
       }
 
       namespace B {
         scalar Foo
-      }`,
-  });
+      }`);
 });
 
 it("deconflicts duplicate names within the same namespace", () => {
@@ -127,13 +117,11 @@ it("deconflicts duplicate names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       scalar Foo;
-      scalar Foo_2;`,
-  });
+      scalar Foo_2;`);
 });
 
 it("renders a scalar with template parameters", () => {
@@ -145,12 +133,10 @@ it("renders a scalar with template parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      scalar Unreal<Type>`,
-  });
+      scalar Unreal<Type>`);
 });
 
 it("renders a scalar with constrained template parameters", () => {
@@ -165,12 +151,10 @@ it("renders a scalar with constrained template parameters", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      scalar Unreal<Type extends string>`,
-  });
+      scalar Unreal<Type extends string>`);
 });
 
 it("resolves template parameter references within the scalar", () => {
@@ -187,12 +171,10 @@ it("resolves template parameter references within the scalar", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
-      scalar Wrapped<T> extends T`,
-  });
+      scalar Wrapped<T> extends T`);
 });
 
 it("does not resolve template parameter references outside the scalar", () => {
@@ -228,12 +210,10 @@ it("renders a scalar with decorators", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       @doc("Custom string")
       scalar myString extends string
-    `,
-  });
+    `);
 });
 
 it("renders a scalar with a doc comment", () => {
@@ -243,12 +223,10 @@ it("renders a scalar with a doc comment", () => {
         <ScalarDeclaration name="ipv4" extends="string" doc="An IPv4 address" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * An IPv4 address
        */
       scalar ipv4 extends string
-    `,
-  });
+    `);
 });

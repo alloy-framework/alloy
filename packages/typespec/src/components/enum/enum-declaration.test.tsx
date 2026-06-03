@@ -27,16 +27,14 @@ it("renders a basic enum", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Direction {
         North,
         South,
         East,
         West,
       }
-    `,
-  });
+    `);
 });
 
 it("renders an enum with string values", () => {
@@ -52,15 +50,13 @@ it("renders an enum with string values", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Color {
         Red: "red",
         Green: "green",
         Blue: "blue",
       }
-    `,
-  });
+    `);
 });
 
 it("renders an enum with numeric values", () => {
@@ -75,14 +71,12 @@ it("renders an enum with numeric values", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Status {
         Ok: 200,
         NotFound: 404,
       }
-    `,
-  });
+    `);
 });
 
 it("renders an empty enum", () => {
@@ -92,11 +86,9 @@ it("renders an empty enum", () => {
         <EnumDeclaration name="Empty" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Empty {}
-    `,
-  });
+    `);
 });
 
 it("applies the enum name policy", () => {
@@ -106,11 +98,9 @@ it("applies the enum name policy", () => {
         <EnumDeclaration name="model" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum \`model\` {}
-    `,
-  });
+    `);
 });
 
 it("does not deconflict enum names across namespaces", () => {
@@ -127,8 +117,7 @@ it("does not deconflict enum names across namespaces", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A {
         enum Direction {}
       }
@@ -136,8 +125,7 @@ it("does not deconflict enum names across namespaces", () => {
       namespace B {
         enum Direction {}
       }
-    `,
-  });
+    `);
 });
 
 it("deconflicts duplicate enum names within the same namespace", () => {
@@ -152,14 +140,12 @@ it("deconflicts duplicate enum names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       enum Direction {};
       enum Direction_2 {};
-    `,
-  });
+    `);
 });
 
 it("resolves an enum reference from another declaration", () => {
@@ -175,13 +161,11 @@ it("resolves an enum reference from another declaration", () => {
         <Reference refkey={directionKey} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Direction {};
       enum ExtendedDirection {};
       Direction
-    `,
-  });
+    `);
 });
 
 it("resolves an enum member reference", () => {
@@ -196,14 +180,12 @@ it("resolves an enum member reference", () => {
         <Reference refkey={northKey} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       enum Direction {
         North
       }
       North
-    `,
-  });
+    `);
 });
 
 it("renders an enum with decorators", () => {
@@ -231,16 +213,14 @@ it("renders an enum with decorators", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       @doc("Cardinal directions")
       enum Direction {
         @doc("Up")
         North,
         South,
       }
-    `,
-  });
+    `);
 });
 
 it("renders an enum with a doc comment", () => {
@@ -255,8 +235,7 @@ it("renders an enum with a doc comment", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * Cardinal directions
        */
@@ -267,6 +246,5 @@ it("renders an enum with a doc comment", () => {
         North,
         South,
       }
-    `,
-  });
+    `);
 });

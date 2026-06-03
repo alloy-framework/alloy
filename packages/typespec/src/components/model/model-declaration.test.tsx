@@ -22,11 +22,9 @@ it("renders an empty model", () => {
         <ModelDeclaration name="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {}
-    `,
-  });
+    `);
 });
 
 it("renders a model with properties", () => {
@@ -41,14 +39,12 @@ it("renders a model with properties", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {
         name: string;
         age?: int32;
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model with 'extends'", () => {
@@ -58,11 +54,9 @@ it("renders a model with 'extends'", () => {
         <ModelDeclaration name="Bar" extends="Foo" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Bar extends Foo {}
-    `,
-  });
+    `);
 });
 
 it("renders a model with 'extends' and properties", () => {
@@ -74,13 +68,11 @@ it("renders a model with 'extends' and properties", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Bar extends Foo {
         extra: boolean
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model with 'is'", () => {
@@ -90,11 +82,9 @@ it("renders a model with 'is'", () => {
         <ModelDeclaration name="MyString" is="string" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model MyString is string
-    `,
-  });
+    `);
 });
 
 it("throws if 'is' and 'extends' are both provided", () => {
@@ -146,11 +136,9 @@ it("applies the model name policy", () => {
         <ModelDeclaration name="model" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model \`model\` {}
-    `,
-  });
+    `);
 });
 
 it("applies the model-property name policy", () => {
@@ -162,13 +150,11 @@ it("applies the model-property name policy", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {
         \`model\`: string
       }
-    `,
-  });
+    `);
 });
 
 it("does not deconflict model names across namespaces", () => {
@@ -185,8 +171,7 @@ it("does not deconflict model names across namespaces", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A {
         model Foo {}
       }
@@ -194,8 +179,7 @@ it("does not deconflict model names across namespaces", () => {
       namespace B {
         model Foo {}
       }
-    `,
-  });
+    `);
 });
 
 it("deconflicts duplicate model names within the same namespace", () => {
@@ -210,14 +194,12 @@ it("deconflicts duplicate model names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       model Foo {};
       model Foo_2 {};
-    `,
-  });
+    `);
 });
 
 it("renders a model with template parameters", () => {
@@ -227,11 +209,9 @@ it("renders a model with template parameters", () => {
         <ModelDeclaration name="Container" templateParameters={["T"]} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Container<T> {}
-    `,
-  });
+    `);
 });
 
 it("renders a model with constrained template parameters", () => {
@@ -244,11 +224,9 @@ it("renders a model with constrained template parameters", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Wrapper<T extends BaseModel> {}
-    `,
-  });
+    `);
 });
 
 it("resolves template parameter references within the model", () => {
@@ -264,13 +242,11 @@ it("resolves template parameter references within the model", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Container<T> {
         value: T
       }
-    `,
-  });
+    `);
 });
 
 it("does not resolve template parameter references outside the model", () => {
@@ -305,12 +281,10 @@ it("resolves a model reference from another declaration", () => {
         </StatementList>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {};
       model Bar extends Foo {};
-    `,
-  });
+    `);
 });
 
 it("resolves a model property reference", () => {
@@ -325,14 +299,12 @@ it("resolves a model property reference", () => {
         <Reference refkey={propKey} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {
         id: string
       }
       id
-    `,
-  });
+    `);
 });
 
 it("renders a model expression as a property type", () => {
@@ -351,15 +323,13 @@ it("renders a model expression as a property type", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo {
         nested: {
           x: int32
         }
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model expression as 'extends'", () => {
@@ -376,13 +346,11 @@ it("renders a model expression as 'extends'", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo extends {
         id: string
       } {}
-    `,
-  });
+    `);
 });
 
 it("renders a model expression as 'is'", () => {
@@ -399,13 +367,11 @@ it("renders a model expression as 'is'", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Foo is {
         id: string
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model with decorators", () => {
@@ -431,16 +397,14 @@ it("renders a model with decorators", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       @doc("A pet model")
       @tag("pets")
       model Pet {
         @doc("The pet name")
         name: string
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model with a doc comment", () => {
@@ -452,16 +416,14 @@ it("renders a model with a doc comment", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * A pet in the store
        */
       model Pet {
         name: string
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model property with a doc comment", () => {
@@ -473,16 +435,14 @@ it("renders a model property with a doc comment", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Pet {
         /**
          * The pet name
          */
         name: string
       }
-    `,
-  });
+    `);
 });
 
 it("renders a model with doc and decorators", () => {
@@ -500,8 +460,7 @@ it("renders a model with doc and decorators", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * A pet in the store
        */
@@ -509,6 +468,5 @@ it("renders a model with doc and decorators", () => {
       model Pet {
         name: string
       }
-    `,
-  });
+    `);
 });

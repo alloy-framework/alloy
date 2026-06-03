@@ -20,11 +20,9 @@ it("renders a basic alias", () => {
         <AliasDeclaration name="StringOrInt" type={`string | int32`} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias StringOrInt = string | int32
-    `,
-  });
+    `);
 });
 
 it("renders an alias with union expression children", () => {
@@ -41,11 +39,9 @@ it("renders an alias with union expression children", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias Breed = Beagle | GermanShepherd | GoldenRetriever
-    `,
-  });
+    `);
 });
 
 it("renders an alias with template parameters", () => {
@@ -55,11 +51,9 @@ it("renders an alias with template parameters", () => {
         <AliasDeclaration name="Response" templateParameters={["T"]} type="T" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias Response<T> = T
-    `,
-  });
+    `);
 });
 
 it("renders an alias with constrained template parameters", () => {
@@ -73,11 +67,9 @@ it("renders an alias with constrained template parameters", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias StringAlias<T extends string> = T
-    `,
-  });
+    `);
 });
 
 it("renders an alias with default template parameter", () => {
@@ -93,11 +85,9 @@ it("renders an alias with default template parameter", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias Options<T extends string = "default"> = T
-    `,
-  });
+    `);
 });
 
 it("applies the alias name policy", () => {
@@ -107,11 +97,9 @@ it("applies the alias name policy", () => {
         <AliasDeclaration name="model" type="string" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias \`model\` = string
-    `,
-  });
+    `);
 });
 
 it("deconflicts duplicate alias names within the same namespace", () => {
@@ -126,14 +114,12 @@ it("deconflicts duplicate alias names within the same namespace", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       namespace A;
 
       alias Options = string;
       alias Options_2 = int32;
-    `,
-  });
+    `);
 });
 
 it("resolves an alias reference from another declaration", () => {
@@ -153,14 +139,12 @@ it("resolves an alias reference from another declaration", () => {
         </StatementList>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       alias Options = "one" | "two";
       model Foo {
         Options
       };
-    `,
-  });
+    `);
 });
 
 it("resolves an alias reference across namespaces", () => {
@@ -178,8 +162,7 @@ it("resolves an alias reference across namespaces", () => {
         </Namespace>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       using A;
 
       namespace A {
@@ -189,8 +172,7 @@ it("resolves an alias reference across namespaces", () => {
       namespace B {
         Options
       }
-    `,
-  });
+    `);
 });
 
 it("renders an alias with a doc comment", () => {
@@ -204,12 +186,10 @@ it("renders an alias with a doc comment", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * Available options
        */
       alias Options = "one" | "two"
-    `,
-  });
+    `);
 });

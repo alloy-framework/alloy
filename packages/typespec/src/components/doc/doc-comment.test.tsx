@@ -96,16 +96,14 @@ it("renders a doc comment before a model declaration", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * A pet in the store
        */
       model Pet {
         name: string
       }
-    `,
-  });
+    `);
 });
 
 it("renders DocWhen when doc is provided", () => {
@@ -116,14 +114,12 @@ it("renders DocWhen when doc is provided", () => {
         <ModelDeclaration name="Pet" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       /**
        * A pet in the store
        */
       model Pet {}
-    `,
-  });
+    `);
 });
 
 it("renders nothing for DocWhen when doc is undefined", () => {
@@ -134,9 +130,7 @@ it("renders nothing for DocWhen when doc is undefined", () => {
         <ModelDeclaration name="Pet" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
+  ).toRenderTo(`
       model Pet {}
-    `,
-  });
+    `);
 });

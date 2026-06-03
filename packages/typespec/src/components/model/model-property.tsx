@@ -3,10 +3,16 @@ import { createModelPropertySymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/doc-comment.jsx";
 
 export interface ModelPropertyProps {
+  /** The property name. */
   name: string | Namekey;
+  /** Refkey for referencing this property from other declarations. */
   refkey?: Refkey;
+  /** The type of the property. */
   type: Children;
+  /** Whether the property is optional (`?`). */
   optional?: boolean;
+  /** Default value for the property. */
+  default?: Children;
   /** Doc comment rendered as `/** ... *\/` above the property. */
   doc?: Children;
   /** Decorators to apply to the property. */
@@ -45,6 +51,7 @@ export function ModelProperty(props: ModelPropertyProps) {
       {props.decorators}
       <Name />
       {props.optional ? "?" : ""}: {props.type}
+      {props.default && <> = {props.default}</>}
     </Declaration>
   );
 }

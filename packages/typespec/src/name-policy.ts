@@ -1,10 +1,12 @@
 import { createNamePolicy, NamePolicy, useNamePolicy } from "@alloy-js/core";
+import { isTypeSpecKeyword } from "./keywords.js";
 
 export type TypeSpecElements =
   | "alias"
   | "scalar"
   | "decorator"
   | "enum"
+  | "enum-member"
   | "interface"
   | "model-property"
   | "model"
@@ -14,31 +16,34 @@ export type TypeSpecElements =
   | "const"
   | "union";
 
+/**
+ * Regex matching characters that are invalid in a TypeSpec identifier.
+ * Valid identifiers start with a letter, `_`, or `$` and continue with
+ * letters, digits, `_`, or `$`.
+ *
+ * @see https://typespec.io/docs/language-basics/identifiers
+ */
+const invalidIdentifierRegex = /[^a-zA-Z0-9_$]/;
+const invalidStartRegex = /^[^a-zA-Z_$]/;
+
+/**
+ * Returns whether a name needs backtick escaping — either because it is a
+ * keyword or because it contains characters not allowed in a bare identifier.
+ */
+function needsEscaping(name: string): boolean {
+  return (
+    isTypeSpecKeyword(name) ||
+    invalidStartRegex.test(name) ||
+    invalidIdentifierRegex.test(name)
+  );
+}
+
 export function createTypeSpecNamePolicy(): NamePolicy<TypeSpecElements> {
-  return createNamePolicy<TypeSpecElements>((name, element) => {
-    switch (element) {
-      case "alias":
-      case "const":
-      case "scalar":
-      case "enum":
-      case "interface":
-      case "model-property":
-      case "model":
-      case "decorator":
-      case "namespace":
-      case "operation":
-      case "template":
-      case "union": {
-        const invalidNameRegex =
-          /(?:^model$)|(?:^enum$)|(?:^never$)|(?:^null$)|(?:^unknown$)|[-./[\]]/;
-        if (invalidNameRegex.test(name)) {
-          return `\`${name}\``;
-        }
-        return name;
-      }
-      default:
-        throw new Error(`Unhandled TypeSpec element: ${element}`);
+  return createNamePolicy<TypeSpecElements>((name) => {
+    if (needsEscaping(name)) {
+      return `\`${name}\``;
     }
+    return name;
   });
 }
 

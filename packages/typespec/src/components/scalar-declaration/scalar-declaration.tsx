@@ -1,4 +1,5 @@
 import {
+  Block,
   Children,
   Declaration,
   Name,
@@ -32,6 +33,8 @@ export interface ScalarDeclarationProps {
   doc?: Children;
   /** Decorators to apply to the scalar. */
   decorators?: Children;
+  /** Body content such as `ScalarInitializer` components. */
+  children?: Children;
 }
 
 /**
@@ -46,6 +49,19 @@ export interface ScalarDeclarationProps {
  * /** An IPv4 address *\/
  * scalar ipv4 extends string
  * ```
+ *
+ * @example Scalar with initializers
+ * ```tsx
+ * <ScalarDeclaration name="ipv4" extends="string">
+ *   <ScalarInitializer name="fromInt" parameters={[{ name: "value", type: "uint32" }]} />
+ * </ScalarDeclaration>
+ * ```
+ * This will produce:
+ * ```typespec
+ * scalar ipv4 extends string {
+ *   init fromInt(value: uint32);
+ * }
+ * ```
  */
 export function ScalarDeclaration(props: ScalarDeclarationProps) {
   const sym = createNamedTypeSymbol(props.name, "scalar", {
@@ -55,6 +71,12 @@ export function ScalarDeclaration(props: ScalarDeclarationProps) {
   if (props.is && props.extends) {
     throw new Error(
       "A scalar declaration cannot have both 'is' and 'extends' properties.",
+    );
+  }
+
+  if (props.is && props.children) {
+    throw new Error(
+      "A scalar declaration cannot have both 'is' and 'children' properties.",
     );
   }
 
@@ -72,6 +94,12 @@ export function ScalarDeclaration(props: ScalarDeclarationProps) {
         )}
         {props.is && <> is {props.is}</>}
         {props.extends && <> extends {props.extends}</>}
+        {props.children && (
+          <>
+            {" "}
+            <Block>{props.children}</Block>
+          </>
+        )}
       </Scope>
     </Declaration>
   );

@@ -1,9 +1,5 @@
 import { dirname, join, relative } from "pathe";
 
-export type ValueOrArray<T> = T | T[];
-
-export type Optional<T> = T | undefined;
-
 export function joinPath(...parts: string[]) {
   if (parts.length === 0) {
     return "";

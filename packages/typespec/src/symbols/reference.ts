@@ -10,10 +10,10 @@ import { isNamespaceSymbol, NamespaceSymbol } from "../index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
 import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
-import { Optional, relativePath } from "../util.js";
+import { relativePath } from "../util.js";
 import { TypeSpecSymbol } from "./typespec.js";
 
-export function ref(refkey: Refkey): Ref<Optional<OutputSymbol>> {
+export function ref(refkey: Refkey): Ref<OutputSymbol | undefined> {
   const scope = useSourceFileScope();
   if (!scope) {
     throw new Error("Reference used outside of a source file scope.");

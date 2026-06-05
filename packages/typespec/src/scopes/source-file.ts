@@ -9,7 +9,6 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { NamespaceSymbol } from "../symbols/index.js";
-import { Optional } from "../util.js";
 import { ProgramScope } from "./program.js";
 
 export interface SourceFileScopeOptions extends OutputScopeOptions {}
@@ -67,7 +66,7 @@ export class SourceFileScope extends OutputScope {
 }
 
 export function useSourceFileScope() {
-  let scope: Optional<OutputScope> = useScope();
+  let scope: OutputScope | undefined = useScope();
   while (scope) {
     if (scope instanceof SourceFileScope) {
       return scope;

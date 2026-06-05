@@ -10,13 +10,12 @@ import { Children } from "@alloy-js/core/jsx-runtime";
 import { NamespaceScope } from "../../scopes/namespace.js";
 import { SourceFileScope } from "../../scopes/source-file.js";
 import { createNamespaceSymbol } from "../../symbols/factories.js";
-import { ValueOrArray } from "../../util.js";
 import { NamespaceName } from "./namespace-name.jsx";
 import { NamespaceScopeComponent } from "./namespace-scope.jsx";
 
 export interface NamespaceProps {
-  name: ValueOrArray<string | Namekey>;
-  refkey?: ValueOrArray<Refkey>;
+  name: string | Namekey | (string | Namekey)[];
+  refkey?: Refkey | Refkey[];
   children?: Children;
 }
 

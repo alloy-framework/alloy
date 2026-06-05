@@ -9,12 +9,11 @@ import { useNamespaceContext } from "../contexts/namespace.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
 import { SourceFileScope } from "../scopes/index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
-import { ValueOrArray } from "../util.js";
 import { NamedTypeKind, NamedTypeSymbol, TypeSpecSymbol } from "./index.js";
 import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
 
 export function createNamespaceSymbol(
-  name: ValueOrArray<string | Namekey>,
+  name: (string | Namekey) | (string | Namekey)[],
   options: NamespaceSymbolOptions = {},
 ): NamespaceSymbol {
   const scope = useScope();
@@ -35,7 +34,7 @@ export function createNamespaceSymbol(
 }
 
 function normalizeNamespaceName(
-  name: ValueOrArray<string | Namekey>,
+  name: (string | Namekey) | (string | Namekey)[],
 ): Array<string | Namekey> {
   if (Array.isArray(name)) {
     return name;

@@ -9,6 +9,8 @@ export interface ModelPropertyProps {
   optional?: boolean;
   /** Doc comment rendered as `/** ... *\/` above the property. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the property. */
+  directives?: Children;
   /** Decorators to apply to the property. */
   decorators?: Children;
 }
@@ -42,6 +44,7 @@ export function ModelProperty(props: ModelPropertyProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Name />
       {props.optional ? "?" : ""}: {props.type}

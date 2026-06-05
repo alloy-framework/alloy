@@ -30,6 +30,8 @@ export interface ScalarDeclarationProps {
   extends?: Children;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the scalar. */
+  directives?: Children;
   /** Decorators to apply to the scalar. */
   decorators?: Children;
 }
@@ -64,6 +66,7 @@ export function ScalarDeclaration(props: ScalarDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Scope value={namedTypeScope}>
         scalar <Name />

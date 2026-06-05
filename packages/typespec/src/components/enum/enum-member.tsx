@@ -11,6 +11,8 @@ export interface EnumMemberProps {
   value?: Children;
   /** Doc comment rendered as `/** ... *\/` above the member. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the member. */
+  directives?: Children;
   /** Decorators to apply to the member. */
   decorators?: Children;
 }
@@ -36,6 +38,7 @@ export function EnumMember(props: EnumMemberProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Name />
       {props.value !== undefined && <>: {props.value}</>}

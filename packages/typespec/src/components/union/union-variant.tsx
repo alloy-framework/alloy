@@ -11,6 +11,8 @@ export interface UnionVariantProps {
   refkey?: Refkey;
   /** Doc comment rendered as `/** ... *\/` above the variant. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the variant. */
+  directives?: Children;
   /** Decorators to apply to the variant. */
   decorators?: Children;
 }
@@ -40,6 +42,7 @@ export function UnionVariant(props: UnionVariantProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Name />: {props.type}
     </Declaration>

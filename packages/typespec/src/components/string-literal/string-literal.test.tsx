@@ -11,13 +11,26 @@ beforeEach(() => {
   resetProgram();
 });
 
-it("renders a simple string literal", () => {
+it("renders a simple string literal via value prop", () => {
+  expect(<StringLiteral value="hello world" />).toRenderTo(`"hello world"`);
+});
+
+it("renders a simple string literal via children", () => {
   expect(<StringLiteral>hello world</StringLiteral>).toRenderTo(
     `"hello world"`,
   );
 });
 
-it("renders a multi-line string literal", () => {
+it("renders a multi-line string via value prop", () => {
+  expect(<StringLiteral value={"line one\nline two"} multiline />).toRenderTo(`
+    """
+      line one
+      line two
+      """
+  `);
+});
+
+it("renders a multi-line string via children", () => {
   expect(
     <StringLiteral multiline>
       {code`
@@ -56,13 +69,31 @@ it("renders a multi-line string template with interpolation", () => {
   `);
 });
 
+it("renders a multi-line string as an alias type", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <AliasDeclaration
+          name="Greeting"
+          type={<StringLiteral value={"line one\nline two"} multiline />}
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    alias Greeting = """
+      line one
+      line two
+      """
+  `);
+});
+
 it("renders a string literal as an alias type", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <AliasDeclaration
           name="Greeting"
-          type={<StringLiteral>hello world</StringLiteral>}
+          type={<StringLiteral value="hello world" />}
         />
       </SourceFile>
     </Output>,

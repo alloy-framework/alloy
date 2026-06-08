@@ -2,10 +2,17 @@ import { Children } from "@alloy-js/core";
 
 export interface StringLiteralProps {
   /**
-   * The string content. May include {@link StringTemplateExpr} children
-   * for interpolation.
+   * The string value. For multi-line strings, newlines in the value are
+   * rendered as line breaks. Use this for simple strings without interpolation.
    */
-  children: Children;
+  value?: string;
+
+  /**
+   * The string content as children. Use this for template expressions
+   * with {@link StringTemplateExpr} interpolation. If both `value` and
+   * `children` are provided, `children` takes precedence.
+   */
+  children?: Children;
 
   /**
    * Render as a triple-quoted multi-line string (`""" ... """`).
@@ -17,32 +24,25 @@ export interface StringLiteralProps {
 /**
  * A TypeSpec string literal or string template literal.
  *
- * @example Simple string
+ * @example Simple string via value prop
  * ```tsx
- * <StringLiteral>hello world</StringLiteral>
+ * <StringLiteral value="hello world" />
  * ```
  * Produces: `"hello world"`
  *
- * @example Multi-line string
+ * @example Multi-line string via value prop
  * ```tsx
- * <StringLiteral multiline>
- *   {code`
- *     This is a multi line string
- *     - opt 1
- *     - opt 2
- *   `}
- * </StringLiteral>
+ * <StringLiteral value={"line one\nline two"} multiline />
  * ```
  * Produces:
  * ```typespec
  * """
- *   This is a multi line string
- *   - opt 1
- *   - opt 2
+ *   line one
+ *   line two
  *   """
  * ```
  *
- * @example Template literal with interpolation
+ * @example Template literal with interpolation via children
  * ```tsx
  * <StringLiteral>
  *   hello <StringTemplateExpr>{refkey(greeting)}</StringTemplateExpr>!
@@ -51,13 +51,15 @@ export interface StringLiteralProps {
  * Produces: `"hello ${greeting}!"`
  */
 export function StringLiteral(props: StringLiteralProps) {
+  const content = props.children ?? valueToChildren(props.value ?? "");
+
   if (props.multiline) {
     return (
       <>
         {'"""'}
         <indent>
           <hbr />
-          {props.children}
+          {content}
           <hbr />
           {'"""'}
         </indent>
@@ -65,5 +67,20 @@ export function StringLiteral(props: StringLiteralProps) {
     );
   }
 
-  return <>"{props.children}"</>;
+  return <>"{content}"</>;
+}
+
+function valueToChildren(value: string): Children {
+  const lines = value.split("\n");
+  if (lines.length === 1) {
+    return value;
+  }
+  const result: Children[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (i > 0) {
+      result.push(<hbr />);
+    }
+    result.push(lines[i]);
+  }
+  return result;
 }

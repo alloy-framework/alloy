@@ -61,9 +61,7 @@ export function StringLiteral(props: StringLiteralProps) {
   // When single-line, emit value as-is (even if it contains \n).
   const content =
     props.children ??
-    (isMultiline
-      ? valueToChildren(props.value ?? "")
-      : (props.value ?? ""));
+    (isMultiline ? valueToChildren(props.value ?? "") : (props.value ?? ""));
 
   if (isMultiline) {
     return (

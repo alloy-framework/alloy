@@ -66,11 +66,9 @@ it("renders a string literal as an alias type", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      alias Greeting = "hello world"
-    `,
-  });
+  ).toRenderTo(`
+    alias Greeting = "hello world"
+  `);
 });
 
 it("renders a StringTemplateExpr", () => {

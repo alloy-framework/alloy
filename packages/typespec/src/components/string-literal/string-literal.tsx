@@ -16,7 +16,9 @@ export interface StringLiteralProps {
 
   /**
    * Render as a triple-quoted multi-line string (`""" ... """`).
-   * When true, content is indented and wrapped in triple-quote delimiters.
+   * When omitted, auto-detects based on the `value` prop: if the value
+   * contains newlines, multiline is used automatically since TypeSpec has
+   * no `\n` escape sequences. Set explicitly to override auto-detection.
    */
   multiline?: boolean;
 }
@@ -51,9 +53,19 @@ export interface StringLiteralProps {
  * Produces: `"hello ${greeting}!"`
  */
 export function StringLiteral(props: StringLiteralProps) {
-  const content = props.children ?? valueToChildren(props.value ?? "");
+  const isMultiline =
+    props.multiline ??
+    (props.value !== undefined && props.value.includes("\n"));
 
-  if (props.multiline) {
+  // When multiline, split value on \n into hbr-separated lines.
+  // When single-line, emit value as-is (even if it contains \n).
+  const content =
+    props.children ??
+    (isMultiline
+      ? valueToChildren(props.value ?? "")
+      : (props.value ?? ""));
+
+  if (isMultiline) {
     return (
       <>
         {'"""'}

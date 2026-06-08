@@ -21,13 +21,19 @@ it("renders a simple string literal via children", () => {
   );
 });
 
-it("renders a multi-line string via value prop", () => {
-  expect(<StringLiteral value={"line one\nline two"} multiline />).toRenderTo(`
+it("auto-detects multiline when value contains newlines", () => {
+  expect(<StringLiteral value={"line one\nline two"} />).toRenderTo(`
     """
       line one
       line two
       """
   `);
+});
+
+it("emits value as-is when multiline is explicitly false", () => {
+  expect(
+    <StringLiteral value={"line one\nline two"} multiline={false} />,
+  ).toRenderTo(`"line one\nline two"`);
 });
 
 it("renders a multi-line string via children", () => {
@@ -75,7 +81,7 @@ it("renders a multi-line string as an alias type", () => {
       <SourceFile path="main.tsp">
         <AliasDeclaration
           name="Greeting"
-          type={<StringLiteral value={"line one\nline two"} multiline />}
+          type={<StringLiteral value={"line one\nline two"} />}
         />
       </SourceFile>
     </Output>,

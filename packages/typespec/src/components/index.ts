@@ -13,6 +13,8 @@ export * from "./model/model-property.jsx";
 export * from "./namespace/namespace.jsx";
 export * from "./operation/operation-declaration.jsx";
 export * from "./source-file/source-file.jsx";
+export * from "./string-literal/string-literal.jsx";
+export * from "./string-literal/string-template-expr.jsx";
 export * from "./template-parameters/template-parameters.jsx";
 export * from "./union/union-declaration.jsx";
 export * from "./union/union-expression.jsx";

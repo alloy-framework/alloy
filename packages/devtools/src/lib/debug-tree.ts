@@ -244,7 +244,6 @@ export function applyRenderTreeMessage(
 
     if (parentId === null) {
       if (kind !== "root") {
-        // eslint-disable-next-line no-console
         console.warn("Unparented render tree node received:", {
           id,
           kind,
@@ -258,7 +257,6 @@ export function applyRenderTreeMessage(
 
     const parent = state.nodes.get(parentId);
     if (!parent) {
-      // eslint-disable-next-line no-console
       console.warn("Render tree node parent missing:", {
         id,
         kind,

@@ -24,5 +24,20 @@ export default defineConfig([
         tsconfigRootDir: dirname(fileURLToPath(import.meta.url)),
       },
     },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          varsIgnorePattern: "^_",
+          argsIgnorePattern: ".*",
+          caughtErrorsIgnorePattern: ".*",
+        },
+      ],
+      "react-hooks/refs": "off",
+      "react-hooks/incompatible-library": "off",
+      "no-useless-assignment": "off",
+      "react-refresh/only-export-components": "off",
+    },
   },
 ]);

@@ -2,29 +2,22 @@ import { Constructor } from "#components/constructor/constructor.jsx";
 import { EnumDeclaration } from "#components/enum/declaration.jsx";
 import { EnumMember } from "#components/enum/member.jsx";
 import {
-  Children,
   code,
   createNamePolicy,
   List,
   NamePolicyContext,
-  Output,
   refkey,
+  render,
 } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
-import { TestNamespace, toSourceText } from "../../../test/utils.jsx";
-import { createCSharpNamePolicy } from "../../name-policy.js";
+import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { SourceFile } from "../source-file/source-file.jsx";
 import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { ClassDeclaration } from "./declaration.jsx";
-
-function Wrapper({ children }: { children: Children }) {
-  return <TestNamespace>{children}</TestNamespace>;
-}
 
 it("declares class with no members", () => {
   expect(
@@ -181,37 +174,35 @@ it("uses refkeys for members, params, and return type", () => {
   ];
 
   expect(
-    <Output namePolicy={createCSharpNamePolicy()}>
-      <SourceFile path="Test.cs">
-        <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
-          <List comma hardline>
-            <EnumMember name="One" />
-            <EnumMember name="Two" />
-          </List>
-        </EnumDeclaration>
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum" refkey={enumTypeRefkey}>
+        <List comma hardline>
+          <EnumMember name="One" />
+          <EnumMember name="Two" />
+        </List>
+      </EnumDeclaration>
+      <hbr />
+      <ClassDeclaration public name="TestInput" refkey={inputTypeRefkey} />
+      <hbr />
+      <ClassDeclaration
+        public
+        name="TestResult"
+        refkey={testResultTypeRefkey}
+      />
+      <hbr />
+      <ClassDeclaration public name="TestClass">
+        <Field private name="MemberOne" type={enumTypeRefkey} />
         <hbr />
-        <ClassDeclaration public name="TestInput" refkey={inputTypeRefkey} />
-        <hbr />
-        <ClassDeclaration
+        <Method
           public
-          name="TestResult"
-          refkey={testResultTypeRefkey}
-        />
-        <hbr />
-        <ClassDeclaration public name="TestClass">
-          <Field private name="MemberOne" type={enumTypeRefkey} />
-          <hbr />
-          <Method
-            public
-            name="MethodOne"
-            parameters={params}
-            returns={testResultTypeRefkey}
-          >
-            return new {testResultTypeRefkey}();
-          </Method>
-        </ClassDeclaration>
-      </SourceFile>
-    </Output>,
+          name="MethodOne"
+          parameters={params}
+          returns={testResultTypeRefkey}
+        >
+          return new {testResultTypeRefkey}();
+        </Method>
+      </ClassDeclaration>
+    </TestNamespace>,
   ).toRenderTo(`
     public enum TestEnum
     {
@@ -307,7 +298,7 @@ it("declares class with invalid members", () => {
     </ClassDeclaration>
   );
 
-  expect(() => toSourceText(decl)).toThrow(
+  expect(() => render(<TestNamespace>{decl}</TestNamespace>)).toThrow(
     "EnumMember must be used within an EnumDeclaration.",
   );
 });
@@ -398,7 +389,7 @@ describe("constructor", () => {
     ];
 
     expect(
-      <Wrapper>
+      <TestNamespace>
         <ClassDeclaration
           public
           name="TestClass"
@@ -411,7 +402,7 @@ describe("constructor", () => {
             initializer={code`$"{${paramNameRefkey}} {${paramSizeRefkey}}"`}
           />
         </ClassDeclaration>
-      </Wrapper>,
+      </TestNamespace>,
     ).toRenderTo(`
       public class TestClass(string name, int size)
       {
@@ -424,7 +415,7 @@ describe("constructor", () => {
     const ctorParams = [{ name: "name", type: "string" }];
 
     expect(
-      <Wrapper>
+      <TestNamespace>
         <NamePolicyContext.Provider value={createNamePolicy((x) => x)}>
           <ClassDeclaration
             public
@@ -434,7 +425,7 @@ describe("constructor", () => {
             <Field name="name" type="string" />
           </ClassDeclaration>
         </NamePolicyContext.Provider>
-      </Wrapper>,
+      </TestNamespace>,
     ).toRenderTo(`
       public class TestClass(string name)
       {

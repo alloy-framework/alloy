@@ -39,6 +39,8 @@ export interface AliasDeclarationProps {
   type: Children;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the alias. */
+  directives?: Children;
 }
 
 /**
@@ -66,6 +68,7 @@ export function AliasDeclaration(props: AliasDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       <Scope value={namedTypeScope}>
         alias <Name />
         {props.templateParameters && (

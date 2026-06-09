@@ -27,6 +27,8 @@ export interface UnionDeclarationProps {
   templateParameters?: (string | TemplateParameterDescriptor)[];
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the union. */
+  directives?: Children;
   /** Decorators to apply to the union. */
   decorators?: Children;
   /** Union body (variants). */
@@ -66,6 +68,7 @@ export function UnionDeclaration(props: UnionDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Scope value={namedTypeScope}>
         union <Name />

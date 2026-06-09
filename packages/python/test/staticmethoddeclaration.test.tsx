@@ -1,7 +1,6 @@
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 describe("StaticMethodDeclaration", () => {
   it("renders async static method", () => {
@@ -17,7 +16,7 @@ describe("StaticMethodDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @staticmethod
           async def util() -> str:
@@ -37,7 +36,7 @@ describe("StaticMethodDeclaration", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @staticmethod
           def foo(x: int):

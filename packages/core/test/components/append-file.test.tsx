@@ -3,7 +3,6 @@ import { tmpdir } from "os";
 import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AppendFile, AppendRegion } from "../../src/components/AppendFile.jsx";
-import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
 describe("AppendFile", () => {

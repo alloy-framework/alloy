@@ -1,7 +1,6 @@
 import { stc } from "@alloy-js/core";
 import { hbr, indent, Indent } from "@alloy-js/core/stc";
 import { describe, expect, it } from "vitest";
-import "../testing/extend-expect.js";
 
 it("is applied by output", () => {
   function Foo() {

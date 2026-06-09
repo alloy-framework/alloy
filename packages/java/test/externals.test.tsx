@@ -1,7 +1,8 @@
-import { Output, StatementList } from "@alloy-js/core";
+import { StatementList } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
 import { createLibrary } from "../src/index.js";
+import { TestPackage } from "./utils.js";
 
 it("uses import from external library", () => {
   const testLib = createLibrary({
@@ -15,25 +16,21 @@ it("uses import from external library", () => {
   });
 
   expect(
-    <Output externals={[testLib]}>
-      <jv.PackageDirectory package="me.test.code">
-        <jv.SourceFile path="TestImport.java">
-          <jv.Class public name="TestImport">
-            <StatementList>
-              <jv.ObjectDeclaration
-                type={testLib["TestModel"]}
-                name="myTestModel"
-              />
-              <jv.ObjectDeclaration
-                type={testLib["TestClass"]}
-                name="myTestClass"
-              />
-              <jv.ObjectDeclaration type={testLib["Tester"]} name="myTester" />
-            </StatementList>
-          </jv.Class>
-        </jv.SourceFile>
-      </jv.PackageDirectory>
-    </Output>,
+    <TestPackage externals={[testLib]}>
+      <jv.Class public name="TestImport">
+        <StatementList>
+          <jv.ObjectDeclaration
+            type={testLib["TestModel"]}
+            name="myTestModel"
+          />
+          <jv.ObjectDeclaration
+            type={testLib["TestClass"]}
+            name="myTestClass"
+          />
+          <jv.ObjectDeclaration type={testLib["Tester"]} name="myTester" />
+        </StatementList>
+      </jv.Class>
+    </TestPackage>,
   ).toRenderTo(`
     package me.test.code;
 

@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { effect, memo, onCleanup } from "../../src/reactivity.js";
 import type { Children } from "../../src/runtime/component.js";
 import { flushJobs } from "../../src/scheduler.js";
-import { renderTree } from "../../src/test-render.js";
 
 describe("memo cleanup", () => {
   it("cleans up when memo value is recomputed", () => {
@@ -60,7 +59,7 @@ describe("element cleanup", () => {
     }
     const el = ref<unknown>(<Component />);
     const template = <>{el}</>;
-    renderTree(template);
+    expect(template).toRenderTo("hi!");
     el.value = "";
     flushJobs();
     expect(cleanedUp).toBe(true);
@@ -88,7 +87,7 @@ describe("element cleanup", () => {
       </C1>,
     );
     const template = <>{el}</>;
-    renderTree(template);
+    expect(template).toRenderTo("");
     el.value = "";
     flushJobs();
     expect(cleanedUpC1).toBe(true);

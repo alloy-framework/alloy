@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { Output } from "../../src/components/Output.jsx";
-import { Declaration, ref, renderTree, Scope } from "../../src/index.js";
+import { Declaration, ref, Scope } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
 
@@ -17,7 +17,7 @@ it("creates and cleans up a symbol", () => {
     </Output>
   );
 
-  renderTree(template);
+  expect(template).toRenderTo("");
 
   expect(scope.symbols.size).toBe(1);
   doDecl.value = false;

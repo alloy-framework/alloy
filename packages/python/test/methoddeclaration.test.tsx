@@ -1,44 +1,47 @@
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { abcModule } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 describe("Method-like Declarations", () => {
   it("renders decorators above def", () => {
-    const result = toSourceText([
-      <py.ClassDeclaration name="MyClass">
-        <py.MethodDeclaration
-          name="with_decorator"
-          decorators={["@some_decorator"]}
-        >
-          pass
-        </py.MethodDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-    expect(result).toRenderTo(d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="MyClass">
+          <py.MethodDeclaration
+            name="with_decorator"
+            decorators={["@some_decorator"]}
+          >
+            pass
+          </py.MethodDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           @some_decorator
           def with_decorator(self):
               pass
 
 
-              
-    `);
+    `,
+    );
   });
 
   it("renders multiple decorators above def without blank lines", () => {
-    const result = toSourceText([
-      <py.ClassDeclaration name="MyClass">
-        <py.MethodDeclaration
-          name="with_decorators"
-          decorators={["@outer", "@middle", "@inner"]}
-        >
-          pass
-        </py.MethodDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-    expect(result).toRenderTo(d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="MyClass">
+          <py.MethodDeclaration
+            name="with_decorators"
+            decorators={["@outer", "@middle", "@inner"]}
+          >
+            pass
+          </py.MethodDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           @outer
           @middle
@@ -47,22 +50,24 @@ describe("Method-like Declarations", () => {
               pass
 
 
-              
-    `);
+    `,
+    );
   });
 
   it("renders multiple decorators above @classmethod without blank lines", () => {
-    const result = toSourceText([
-      <py.ClassDeclaration name="MyClass">
-        <py.ClassMethodDeclaration
-          name="with_decorators"
-          decorators={["@outer", "@inner"]}
-        >
-          pass
-        </py.ClassMethodDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-    expect(result).toRenderTo(d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="MyClass">
+          <py.ClassMethodDeclaration
+            name="with_decorators"
+            decorators={["@outer", "@inner"]}
+          >
+            pass
+          </py.ClassMethodDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           @outer
           @inner
@@ -71,24 +76,26 @@ describe("Method-like Declarations", () => {
               pass
 
 
-              
-    `);
+    `,
+    );
   });
 
   it("renders an instance function with a body", () => {
-    const result = toSourceText([
-      <py.ClassDeclaration name="MyClass">
-        <py.MethodDeclaration name="bar">print('hi')</py.MethodDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-    expect(result).toRenderTo(d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="MyClass">
+          <py.MethodDeclaration name="bar">print('hi')</py.MethodDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           def bar(self):
               print('hi')
 
 
-              
-    `);
+    `,
+    );
   });
 
   it("can be an async method", () => {
@@ -104,13 +111,15 @@ describe("Method-like Declarations", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           async def my_method(self) -> str:
               return "async result"
 
 
-    `);
+    `,
+    );
   });
 
   it("can be an async class method", () => {
@@ -130,14 +139,16 @@ describe("Method-like Declarations", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           @classmethod
           async def create_async(cls) -> MyClass:
               return cls()
 
 
-    `);
+    `,
+    );
   });
 
   it("can be an async static method", () => {
@@ -153,14 +164,16 @@ describe("Method-like Declarations", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           @staticmethod
           async def utility() -> str:
               return "utility result"
 
 
-    `);
+    `,
+    );
   });
 
   it("renders method with parameters", () => {
@@ -173,13 +186,15 @@ describe("Method-like Declarations", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           def foo(self, x: int):
               self.attribute = "value"
 
 
-    `);
+    `,
+    );
   });
 
   it("renders class method with parameters", () => {
@@ -192,14 +207,16 @@ describe("Method-like Declarations", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           @classmethod
           def foo(cls, x: int):
               self.attribute = "value"
 
 
-    `);
+    `,
+    );
   });
 
   it("renders static method with parameters", () => {
@@ -212,14 +229,16 @@ describe("Method-like Declarations", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
+      `
       class MyClass:
           @staticmethod
           def foo(x: int):
               attribute = "value"
 
 
-    `);
+    `,
+    );
   });
 
   it("renders abstract methods", () => {
@@ -248,7 +267,8 @@ describe("Method-like Declarations", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(
+      `
       from abc import abstractmethod
 
 
@@ -268,6 +288,7 @@ describe("Method-like Declarations", () => {
               pass
 
 
-    `);
+    `,
+    );
   });
 });

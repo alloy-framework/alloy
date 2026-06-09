@@ -1,8 +1,8 @@
-import { memo, printTree, renderTree } from "@alloy-js/core";
+import { memo } from "@alloy-js/core";
 import { computed, reactive, ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+import { flushJobs } from "../../src/scheduler.js";
 import { mapJoin } from "../../src/utils.js";
-import { d } from "../../testing/render.js";
 
 it("splices in new nodes", () => {
   const r = ref(["one"]);
@@ -14,11 +14,11 @@ it("splices in new nodes", () => {
     return <>{mapped.value} done</>;
   }
 
-  const tree = renderTree(<Foo />);
-  expect(printTree(tree)).toEqual("mapped one done");
+  const tree = <Foo />;
+  expect(tree).toRenderTo("mapped one done");
   r.value = [...r.value, "two"];
 
-  expect(printTree(tree)).toEqual("mapped one mapped two done");
+  expect(tree).toRenderTo("mapped one mapped two done");
 });
 
 it("works with a complex case", () => {
@@ -56,20 +56,20 @@ it("works with a complex case", () => {
       `import { ${[...props.types.values()].join(", ")} } from "${props.path}";`;
   }
 
-  const tree = renderTree(<ImportStatements records={importRecords} />);
+  const tree = <ImportStatements records={importRecords} />;
   // the tree is empty.
 
-  expect(printTree(tree)).toEqual("");
+  expect(tree).toRenderTo("");
 
   addImport("./foo.js", "hi");
-  printTree(tree);
-  expect(printTree(tree)).toEqual('import { hi } from "./foo.js";');
+  flushJobs();
+  expect(tree).toRenderTo('import { hi } from "./foo.js";');
 
   addImport("./foo.js", "bye");
-  expect(printTree(tree)).toEqual('import { hi, bye } from "./foo.js";');
+  expect(tree).toRenderTo('import { hi, bye } from "./foo.js";');
 
   addImport("node:assert", "strictEqual");
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     import { hi, bye } from "./foo.js";
     import { strictEqual } from "node:assert";
   `);
@@ -77,8 +77,8 @@ it("works with a complex case", () => {
 
 it("works with memos of memos", () => {
   const test = ref(1);
-  const tree = renderTree(memo(() => memo(() => test.value)));
-  expect(printTree(tree)).toEqual("1");
+  const tree = memo(() => memo(() => test.value));
+  expect(tree).toRenderTo("1");
   test.value = 2;
-  expect(printTree(tree)).toEqual("2");
+  expect(tree).toRenderTo("2");
 });

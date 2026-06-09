@@ -1,19 +1,20 @@
 import { refkey, StatementList } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestFile } from "./utils.js";
 
 it("renders a function declaration with documentation", () => {
-  const res = toSourceText(
-    <ts.FunctionDeclaration
-      name="greet"
-      doc="A function that greets a person"
-      parameters={[{ name: "name", type: "string" }]}
-      returnType="string"
-    />,
+  const res = (
+    <TestFile>
+      <ts.FunctionDeclaration
+        name="greet"
+        doc="A function that greets a person"
+        parameters={[{ name: "name", type: "string" }]}
+        returnType="string"
+      />
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * A function that greets a person
      *
@@ -24,19 +25,21 @@ it("renders a function declaration with documentation", () => {
 });
 
 it("With documented parameters", () => {
-  const res = toSourceText(
-    <ts.FunctionDeclaration
-      export
-      name="calculateTotal"
-      doc="Calculates the total price including tax"
-      parameters={[
-        { name: "price", type: "number" },
-        { name: "taxRate", type: "number", optional: true },
-      ]}
-      returnType="number"
-    />,
+  const res = (
+    <TestFile>
+      <ts.FunctionDeclaration
+        export
+        name="calculateTotal"
+        doc="Calculates the total price including tax"
+        parameters={[
+          { name: "price", type: "number" },
+          { name: "taxRate", type: "number", optional: true },
+        ]}
+        returnType="number"
+      />
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * Calculates the total price including tax
      *
@@ -50,8 +53,8 @@ it("With documented parameters", () => {
 it("renders a function with a reference", () => {
   const userRef = refkey();
 
-  const res = toSourceText(
-    <>
+  const res = (
+    <TestFile>
       <ts.InterfaceDeclaration name="User" refkey={userRef}>
         <StatementList>
           <ts.InterfaceMember name="id" type="number" />
@@ -72,9 +75,9 @@ it("renders a function with a reference", () => {
         ]}
         returnType="void"
       />
-    </>,
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     interface User {
       id: number;
       name: string;

@@ -1,21 +1,18 @@
-import { TestNamespace, toSourceText } from "#test/utils.jsx";
+import { TestNamespace } from "#test/utils.jsx";
 import { namekey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { EnumDeclaration } from "./declaration.jsx";
 import { EnumMember } from "./member.jsx";
 
 it("declares enum with members", () => {
-  const res = toSourceText(
-    <EnumDeclaration public name="TestEnum">
-      <EnumMember name="One" />,<hbr />
-      <EnumMember name="Two" />
-    </EnumDeclaration>,
-  );
-
-  expect(res).toBe(d`
-    namespace TestCode;
-
+  expect(
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum">
+        <EnumMember name="One" />,<hbr />
+        <EnumMember name="Two" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
     public enum TestEnum
     {
         One,
@@ -45,16 +42,14 @@ it("takes a namekey", () => {
 });
 
 it("renders doc comment", () => {
-  const res = toSourceText(
-    <EnumDeclaration public name="TestEnum">
-      <EnumMember name="One" doc="First value" />,<hbr />
-      <EnumMember name="Two" doc="Second value" />
-    </EnumDeclaration>,
-  );
-
-  expect(res).toBe(d`
-    namespace TestCode;
-
+  expect(
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum">
+        <EnumMember name="One" doc="First value" />,<hbr />
+        <EnumMember name="Two" doc="Second value" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
     public enum TestEnum
     {
         /// First value

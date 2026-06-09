@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { Prose } from "../../src/components/Prose.jsx";
-import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
 describe("Prose", () => {

@@ -9,13 +9,13 @@ import { createSymbolSlot } from "./symbol-slot.jsx";
 it("captures firstSymbol", async () => {
   const Slot = createSymbolSlot();
 
-  renderTree(
+  expect(
     <Slot>
       {() => {
         emitSymbol(new BasicSymbol("a", undefined));
       }}
     </Slot>,
-  );
+  ).toRenderTo("");
   await flushJobs();
   expect(Slot.firstSymbol.value).toBeDefined();
   expect(Slot.firstSymbol.value!.name).toBe("a");
@@ -52,13 +52,13 @@ it("captures firstSymbol when emitting a ref to a symbol", async () => {
   const Slot = createSymbolSlot();
   const symref = shallowRef<BasicSymbol | undefined>();
 
-  renderTree(
+  expect(
     <Slot>
       {() => {
         emitSymbol(symref);
       }}
     </Slot>,
-  );
+  ).toRenderTo("");
   await flushJobs();
   expect(Slot.firstSymbol.value).toBeUndefined();
   symref.value = new BasicSymbol("a", undefined);

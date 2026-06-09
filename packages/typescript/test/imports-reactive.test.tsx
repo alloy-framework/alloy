@@ -1,13 +1,7 @@
-import {
-  Output,
-  printTree,
-  ref,
-  refkey,
-  renderTree,
-  Show,
-} from "@alloy-js/core";
-import "@alloy-js/core/testing";
+import { Output, ref, refkey, renderTree, Show } from "@alloy-js/core";
+import { getFilesFromTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+import { flushJobs } from "../../core/src/scheduler.js";
 import * as ts from "../src/components/index.js";
 import { createPackage, PackageDirectory, SourceFile } from "../src/index.js";
 
@@ -20,13 +14,10 @@ const testLib = () =>
     },
   });
 
-function sourceFileText(printed: string): string {
-  // Strip the surrounding package.json / tsconfig.json blobs and keep the
-  // text from index.ts onwards. The file content follows the last tsconfig
-  // closing brace.
-  const marker = "\n}";
-  const idx = printed.lastIndexOf(marker);
-  return idx === -1 ? printed : printed.slice(idx + marker.length);
+function sourceFileText(tree: ReturnType<typeof renderTree>): string {
+  flushJobs();
+  const files = getFilesFromTree(tree);
+  return typeof files === "string" ? files : (files["index.ts"] ?? "");
 }
 
 it("removes an import when the reference is removed", () => {
@@ -43,11 +34,11 @@ it("removes an import when the reference is removed", () => {
     </Output>,
   );
 
-  const initial = sourceFileText(printTree(tree));
+  const initial = sourceFileText(tree);
   showIt.value = false;
-  const off = sourceFileText(printTree(tree));
+  const off = sourceFileText(tree);
   showIt.value = true;
-  const back = sourceFileText(printTree(tree));
+  const back = sourceFileText(tree);
 
   // With no live reference, the import line should not be in the file.
   expect(off).not.toMatch(/import .* from "testLib"/);
@@ -76,15 +67,15 @@ it("does not leak name-conflict aliases across re-renders", () => {
     </Output>,
   );
 
-  sourceFileText(printTree(tree));
+  sourceFileText(tree);
   showLocal.value = false;
-  const off = sourceFileText(printTree(tree));
+  const off = sourceFileText(tree);
   showLocal.value = true;
-  const back = sourceFileText(printTree(tree));
+  const back = sourceFileText(tree);
   showLocal.value = false;
-  const off2 = sourceFileText(printTree(tree));
+  const off2 = sourceFileText(tree);
   showLocal.value = true;
-  const back2 = sourceFileText(printTree(tree));
+  const back2 = sourceFileText(tree);
 
   // While the local is hidden, the import should be the plain name, not an
   // alias — the conflict is gone.
@@ -118,11 +109,11 @@ it("removes only one ref count at a time", () => {
 
   // Hide only one of the two references — the import must still be present.
   showA.value = false;
-  const oneHidden = sourceFileText(printTree(tree));
+  const oneHidden = sourceFileText(tree);
   expect(oneHidden).toMatch(/import \{ foo \} from "testLib"/);
 
   // Hide the second — now the import should go away.
   showB.value = false;
-  const bothHidden = sourceFileText(printTree(tree));
+  const bothHidden = sourceFileText(tree);
   expect(bothHidden).not.toMatch(/import .* from "testLib"/);
 });

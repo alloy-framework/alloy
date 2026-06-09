@@ -1,6 +1,7 @@
 import { Children, Diagnostic } from "@alloy-js/core";
 import "vitest";
 import { expect } from "vitest";
+import { ElementNode } from "../src/render/node.js";
 import { flushJobs, flushJobsAsync } from "../src/scheduler.js";
 import {
   getDiagnosticsForTree,
@@ -8,6 +9,28 @@ import {
   renderTree,
 } from "../src/test-render.js";
 import { dedent } from "./render.js";
+
+// Cache rendered trees so the same Children reference reuses its tree across
+// multiple toRenderTo assertions (enables reactive test patterns without
+// explicit renderTree calls).
+const renderedTrees = new WeakMap<object, ElementNode>();
+
+function getOrRenderTree(received: Children): ElementNode {
+  if (received instanceof ElementNode) {
+    return received;
+  }
+  // If received is an object (array/JSX node), check cache
+  if (typeof received === "object" && received !== null) {
+    const cached = renderedTrees.get(received as object);
+    if (cached) {
+      return cached;
+    }
+    const tree = renderTree(received);
+    renderedTrees.set(received as object, tree);
+    return tree;
+  }
+  return renderTree(received);
+}
 
 /**
  * Print options passed to `toRenderTo` / `toRenderToAsync`. These override
@@ -47,7 +70,7 @@ expect.extend({
     expectedRaw: string | Record<string, string>,
     renderOptions?: ToRenderToOptions,
   ) {
-    const tree = renderTree(received);
+    const tree = getOrRenderTree(received);
     flushJobs();
     const actual = getFilesFromTree(tree, renderOptions);
 

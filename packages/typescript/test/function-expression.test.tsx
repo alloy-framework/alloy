@@ -1,25 +1,36 @@
-import { Props, refkey, StatementList } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { Props, refkey, render, StatementList } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { FunctionExpression } from "../src/components/FunctionExpression.jsx";
 import { VarDeclaration } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
-import { toSourceText } from "./utils.jsx";
+import { TestFile } from "./utils.js";
 
 it("create basic function", () => {
-  expect(toSourceText(<FunctionExpression />)).toBe(d`
+  expect(
+    <TestFile>
+      <FunctionExpression />
+    </TestFile>,
+  ).toRenderTo(`
       function () {}
     `);
 });
 
 it("can be an async function", () => {
-  expect(toSourceText(<FunctionExpression async />)).toBe(d`
+  expect(
+    <TestFile>
+      <FunctionExpression async />
+    </TestFile>,
+  ).toRenderTo(`
     async function () {}
   `);
 });
 
 it("can be an async function with returnType", () => {
-  expect(toSourceText(<FunctionExpression async returnType="Foo" />)).toBe(d`
+  expect(
+    <TestFile>
+      <FunctionExpression async returnType="Foo" />
+    </TestFile>,
+  ).toRenderTo(`
     async function (): Promise<Foo> {}
   `);
 });
@@ -28,8 +39,11 @@ it("can be an async function with returnType element", () => {
   function Foo(_props?: Props) {
     return <>Foo</>;
   }
-  expect(toSourceText(<FunctionExpression async returnType={<Foo />} />))
-    .toBe(d`
+  expect(
+    <TestFile>
+      <FunctionExpression async returnType={<Foo />} />
+    </TestFile>,
+  ).toRenderTo(`
     async function (): Promise<Foo> {}
   `);
 });
@@ -42,7 +56,7 @@ it("supports parameters by element", () => {
     </FunctionExpression>
   );
 
-  expect(toSourceText(decl)).toBe(d`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     function (a, b) {
       return a + b;
     }
@@ -59,7 +73,7 @@ it("supports type parameters by descriptor object", () => {
     ></FunctionExpression>
   );
 
-  expect(toSourceText(decl)).toBe(d`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     function <a extends any, b extends any>() {}
   `);
 });
@@ -69,7 +83,7 @@ it("supports type parameters by descriptor array", () => {
     <FunctionExpression typeParameters={["a", "b"]}></FunctionExpression>
   );
 
-  expect(toSourceText(decl)).toBe(d`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     function <a, b>() {}
   `);
 });
@@ -83,7 +97,7 @@ it("supports type parameters by element", () => {
     </FunctionExpression>
   );
 
-  expect(toSourceText(decl)).toBe(d`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     function <a, b>() {}
   `);
 });
@@ -108,7 +122,7 @@ describe("symbols", () => {
         {outerRefkey}
       </StatementList>
     );
-    expect(toSourceText(decl)).toBe(d`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       function () {
         refme;
         const refme = 1;
@@ -130,23 +144,23 @@ describe("symbols", () => {
         ;{innerRefkey}
       </>
     );
-    expect(() => toSourceText(decl)).toThrow(/Cannot reference a symbol/);
+    expect(() =>
+      render(<TestFile>{decl}</TestFile>, { insertFinalNewLine: false }),
+    ).toThrow(/Cannot reference a symbol/);
   });
 
   it("creates symbols for parameters", () => {
     const rk = refkey();
 
     const decl = (
-      <>
-        <FunctionExpression
-          parameters={[{ name: "sym", type: "any", refkey: rk }]}
-        >
-          <FunctionExpression>{rk}</FunctionExpression>
-        </FunctionExpression>
-      </>
+      <FunctionExpression
+        parameters={[{ name: "sym", type: "any", refkey: rk }]}
+      >
+        <FunctionExpression>{rk}</FunctionExpression>
+      </FunctionExpression>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       function (sym: any) {
         function () {
           sym
@@ -157,14 +171,12 @@ describe("symbols", () => {
 
   it("creates symbols for parameters and addresses conflicts", () => {
     const decl = (
-      <>
-        <FunctionExpression parameters={[{ name: "conflict", type: "any" }]}>
-          <VarDeclaration name="conflict">1</VarDeclaration>;
-        </FunctionExpression>
-      </>
+      <FunctionExpression parameters={[{ name: "conflict", type: "any" }]}>
+        <VarDeclaration name="conflict">1</VarDeclaration>;
+      </FunctionExpression>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       function (conflict: any) {
         const conflict_2 = 1;
       }
@@ -179,14 +191,12 @@ describe("symbols", () => {
       optional: true,
     };
     const decl = (
-      <>
-        <FunctionExpression parameters={[paramDesc]}>
-          console.log(foo);
-        </FunctionExpression>
-      </>
+      <FunctionExpression parameters={[paramDesc]}>
+        console.log(foo);
+      </FunctionExpression>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       function (foo?: any) {
         console.log(foo);
       }
@@ -201,14 +211,12 @@ describe("symbols", () => {
       rest: true,
     };
     const decl = (
-      <>
-        <FunctionExpression parameters={[paramDesc]}>
-          console.log(foo);
-        </FunctionExpression>
-      </>
+      <FunctionExpression parameters={[paramDesc]}>
+        console.log(foo);
+      </FunctionExpression>
     );
 
-    expect(toSourceText(decl)).toBe(d`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       function (...foo: any[]) {
         console.log(foo);
       }

@@ -426,7 +426,7 @@ const main = async () => {
       </Show>
     </Output>
   );
-  writeOutput(render(files));
+  await writeOutput(render(files));
 };
 
 // Execute main function

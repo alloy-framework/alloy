@@ -1,5 +1,4 @@
 import { jsonTest } from "#test/utils.jsx";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 
 it.each([

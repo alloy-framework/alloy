@@ -1,8 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { Wrap } from "../../src/components/Wrap.jsx";
-import { printTree, renderTree } from "../../src/test-render.js";
-import "../../testing/extend-expect.js";
 
 function Wrapper(props: any) {
   return <>[{props.children}]</>;
@@ -33,10 +31,10 @@ it("works reactively", () => {
     </>
   );
 
-  const tree = renderTree(template);
-  expect(printTree(tree)).toEqual(`testing`);
+  const tree = template;
+  expect(tree).toRenderTo("testing");
 
   doWrap.value = true;
 
-  expect(printTree(tree)).toEqual(`testing`);
+  expect(tree).toRenderTo("testing");
 });

@@ -1,15 +1,14 @@
 import { code, refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { TestOutput } from "./utils.js";
 
 describe("TypeReference", () => {
   it("renders a Python TypeReference with a refkey and type arguments", () => {
     const classRefkey = refkey();
 
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.ClassDeclaration
             name="Bar"
@@ -17,15 +16,17 @@ describe("TypeReference", () => {
           ></py.ClassDeclaration>
           <py.TypeReference refkey={classRefkey} typeArgs={["T", "P"]} />
           <py.TypeReference name="dict" typeArgs={["str", "int"]} />
-        </py.StatementList>,
-      ]),
-    ).toRenderTo(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class Bar:
             pass
 
         Bar[T, P]
         dict[str, int]
-    `);
+    `,
+    );
   });
 
   it("renders a Python list expression with a reference", () => {
@@ -33,20 +34,22 @@ describe("TypeReference", () => {
     const type = code`list[${classRefkey}]`;
 
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.ClassDeclaration
             name="Foo"
             refkey={classRefkey}
           ></py.ClassDeclaration>
           <py.TypeReference name={type} />
-        </py.StatementList>,
-      ]),
-    ).toRenderTo(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class Foo:
             pass
 
         list[Foo]
-    `);
+    `,
+    );
   });
 });

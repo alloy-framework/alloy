@@ -1,6 +1,4 @@
 import { reactive, renderTree } from "@alloy-js/core";
-import "@alloy-js/core/testing";
-import { d, printTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { jsonTest } from "../../test/utils.jsx";
 
@@ -38,24 +36,28 @@ it("works reactively", () => {
   const arr = reactive([] as (number | string)[]);
 
   const template = jsonTest(arr);
+
+  expect(template).toRenderTo(`[]`);
+
   const tree = renderTree(template);
 
-  expect(printTree(tree)).toEqual(`[]`);
-
   arr.push(1);
-  expect(printTree(tree)).toEqual(`[1]`);
+  expect(tree).toRenderTo(`[1]`);
 
   arr.push(2);
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     [1, 2]
   `);
 
   arr.push("this is a long item that should be wrapped");
-  expect(printTree(tree, { printWidth: 20 })).toEqual(d`
+  expect(tree).toRenderTo(
+    `
     [
       1,
       2,
       "this is a long item that should be wrapped"
     ]
-  `);
+  `,
+    { printWidth: 20 },
+  );
 });

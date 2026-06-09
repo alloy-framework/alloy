@@ -1,6 +1,5 @@
 import { children, Children } from "@alloy-js/core";
 import { expect, it } from "vitest";
-import "../testing/extend-expect.js";
 
 it("handles a single element", () => {
   function Foo(props: { children?: Children }) {

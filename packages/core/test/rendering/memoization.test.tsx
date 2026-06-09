@@ -2,13 +2,12 @@ import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { memo } from "../../src/reactivity.js";
 import { flushJobs } from "../../src/scheduler.js";
-import { renderTree } from "../../src/test-render.js";
 
 it("memoizes child components", () => {
   let renderCount = 0;
   function Child() {
     renderCount++;
-    return "hi " + String(Math.random());
+    return "hi";
   }
 
   const doThing = ref();
@@ -25,7 +24,7 @@ it("memoizes child components", () => {
 
   const template = <>{items}</>;
 
-  renderTree(template);
+  expect(template).toRenderTo("hi");
   doThing.value = true;
   flushJobs();
   // Without element-cache (legacy), each component creator is invoked on

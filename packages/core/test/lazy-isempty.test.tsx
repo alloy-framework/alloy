@@ -3,8 +3,6 @@ import { describe, expect, it } from "vitest";
 import { Show } from "../src/components/Show.jsx";
 import { createContentSlot } from "../src/content-slot.jsx";
 import { Context, ensureIsEmpty, getContext } from "../src/reactivity.js";
-import { printTree, renderTree } from "../src/test-render.js";
-import "../testing/extend-expect.js";
 
 describe("lazy isEmpty", () => {
   it("context starts without isEmpty ref allocated", () => {
@@ -15,7 +13,7 @@ describe("lazy isEmpty", () => {
       return "content";
     }
 
-    renderTree(<Capture />);
+    expect(<Capture />).toRenderTo("content");
 
     // The isEmpty ref should NOT be allocated unless someone observes it.
     expect(ctx).not.toBeNull();
@@ -31,7 +29,7 @@ describe("lazy isEmpty", () => {
       return "content";
     }
 
-    renderTree(<Capture />);
+    expect(<Capture />).toRenderTo("content");
 
     expect(ctx!.isEmpty).toBeUndefined();
     const isEmptyRef = ensureIsEmpty(ctx!);
@@ -53,12 +51,12 @@ describe("lazy isEmpty", () => {
       return "has content";
     }
 
-    renderTree(
+    expect(
       <>
         <EmptyCapture />
         <FullCapture />
       </>,
-    );
+    ).toRenderTo("has content");
 
     expect(emptyCtx!.childrenWithContent).toBe(0);
     expect(fullCtx!.childrenWithContent).toBe(1);
@@ -68,39 +66,39 @@ describe("lazy isEmpty", () => {
     const ContentSlot = createContentSlot();
     const showContent = ref(false);
 
-    const tree = renderTree(
+    const tree = (
       <>
         {ContentSlot.isEmpty && "empty"}
         <ContentSlot>
           <Show when={showContent.value}>content</Show>
         </ContentSlot>
-      </>,
+      </>
     );
 
-    expect(printTree(tree)).toBe("empty");
+    expect(tree).toRenderTo("empty");
 
     showContent.value = true;
-    expect(printTree(tree)).toBe("content");
+    expect(tree).toRenderTo("content");
   });
 
   it("propagates empty state up through parent contexts", () => {
     const OuterSlot = createContentSlot();
     const showContent = ref(false);
 
-    const tree = renderTree(
+    const tree = (
       <>
         {OuterSlot.isEmpty && "outer-empty"}
         <OuterSlot>
           <Show when={showContent.value}>content</Show>
         </OuterSlot>
-      </>,
+      </>
     );
 
     // Outer should be empty initially.
-    expect(printTree(tree)).toBe("outer-empty");
+    expect(tree).toRenderTo("outer-empty");
 
     // Show content — outer should become non-empty.
     showContent.value = true;
-    expect(printTree(tree)).toBe("content");
+    expect(tree).toRenderTo("content");
   });
 });

@@ -1,4 +1,4 @@
-import { reactive, renderTree } from "@alloy-js/core";
+import { reactive } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { jsonTest } from "../../test/utils.jsx";
 
@@ -39,7 +39,7 @@ it("works reactively", () => {
 
   expect(template).toRenderTo(`[]`);
 
-  const tree = renderTree(template);
+  const tree = template;
 
   arr.push(1);
   expect(tree).toRenderTo(`[1]`);

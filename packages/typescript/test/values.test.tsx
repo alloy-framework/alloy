@@ -1,4 +1,4 @@
-import { List, mapJoin, Output, reactive, refkey, renderTree, StatementList } from "@alloy-js/core";
+import { List, mapJoin, Output, reactive, refkey, StatementList } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import * as ts from "../src/index.js";
@@ -45,7 +45,7 @@ it("renders an object with properties, mapped", () => {
 it("is reactive", () => {
   const jsValue = reactive(new Map());
 
-  const tree = renderTree(<ts.ObjectExpression jsValue={jsValue} />);
+  const tree = <ts.ObjectExpression jsValue={jsValue} />;
 
   expect(tree).toRenderTo("{}");
   jsValue.set("hi", 1);

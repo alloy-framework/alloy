@@ -6,7 +6,6 @@ import {
   TemplateFile,
   TemplateVariable,
 } from "../../src/components/TemplateFile.jsx";
-import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
 describe("TemplateFile", () => {

@@ -1,7 +1,7 @@
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
 import { TestNamespace } from "#test/utils.jsx";
-import { List, namekey, renderTree } from "@alloy-js/core";
+import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { CSharpSymbol } from "../../symbols/csharp.js";
 import { AccessExpression } from "./access-expression.jsx";
@@ -58,7 +58,7 @@ it("makes an id part from a symbol reactively", () => {
 
   expect(template).toRenderTo("Foo.Symbol");
 
-  const tree = renderTree(template);
+  const tree = template;
   symbol.name = "Bar";
   expect(tree).toRenderTo("Foo.Bar");
 });

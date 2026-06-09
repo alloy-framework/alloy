@@ -1,4 +1,4 @@
-import { List, Output, reactive, renderTree } from "@alloy-js/core";
+import { List, Output, reactive } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import { jsonTest } from "../../test/utils.jsx";
 import { JsonObject, JsonObjectProperty } from "./json-object.jsx";
@@ -64,7 +64,7 @@ it("works reactively", () => {
     }
   `);
 
-  const tree = renderTree(template);
+  const tree = template;
 
   (obj.a as any)++;
 

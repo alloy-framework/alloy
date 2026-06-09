@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import "../../testing/extend-expect.js";
 import {
   BasePartProps,
   createAccessExpression,

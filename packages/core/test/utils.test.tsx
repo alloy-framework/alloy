@@ -2,9 +2,7 @@ import { computed, ref, triggerRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
 import { Children } from "../src/index.js";
 import { flushJobs } from "../src/scheduler.js";
-import { renderTree } from "../src/test-render.js";
 import { children, join, mapJoin } from "../src/utils.js";
-import "../testing/extend-expect.js";
 
 describe("mapJoin", () => {
   it("can map a map", () => {
@@ -107,7 +105,10 @@ describe("mapJoin", () => {
       },
     );
 
-    renderTree(joined);
+    expect(joined).toRenderTo(`
+      Value: 1
+      Value: 2
+    `);
 
     expect(callCount).toBe(2);
     arr.value.push(3);
@@ -246,34 +247,34 @@ describe("children", () => {
   }
 
   it("resolves a single child", () => {
-    renderTree(<ResolveChildren>1</ResolveChildren>);
+    expect(<ResolveChildren>1</ResolveChildren>).toRenderTo("");
     expect(resolvedChildren).toEqual("1");
   });
 
   it("resolves multiple children", () => {
-    renderTree(<ResolveChildren>1{"2"}3</ResolveChildren>);
+    expect(<ResolveChildren>1{"2"}3</ResolveChildren>).toRenderTo("");
     expect(resolvedChildren).toEqual(["1", "2", "3"]);
   });
 
   it("resolves fragments by default", () => {
-    renderTree(
+    expect(
       <ResolveChildren>
         <>1</>
         <>2</>
         <>3</>
       </ResolveChildren>,
-    );
+    ).toRenderTo("");
     expect(resolvedChildren).toEqual(["1", "2", "3"]);
   });
 
   it("preserves fragments if asked", () => {
-    renderTree(
+    expect(
       <ResolveChildren preserveFragments>
         <>1</>
         <>2</>
         <>3</>
       </ResolveChildren>,
-    );
+    ).toRenderTo("");
     expect(resolvedChildren).toEqual([["1"], ["2"], ["3"]]);
   });
 });

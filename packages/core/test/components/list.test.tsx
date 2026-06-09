@@ -2,13 +2,9 @@ import { expect, it } from "vitest";
 import {
   createContentSlot,
   List,
-  printTree,
   ref,
-  renderTree,
   Show,
 } from "../../src/index.js";
-import "../../testing/extend-expect.js";
-import { d } from "../../testing/render.js";
 
 it("creates a list with default options", () => {
   const template = (
@@ -73,14 +69,14 @@ it("is useful for statements", () => {
     return "console.log(true)";
   }
   const includeStatement = ref(false);
-  const tree = renderTree(
+  const tree = (
     <List semicolon hardline ender>
       <Statement />
       {includeStatement.value && <Statement />}
       <Statement />
-    </List>,
+    </List>
   );
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     console.log(true);
     console.log(true);
 
@@ -88,7 +84,7 @@ it("is useful for statements", () => {
 
   includeStatement.value = true;
 
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     console.log(true);
     console.log(true);
     console.log(true);
@@ -113,37 +109,37 @@ it("It add joiners when items are become non-empty", () => {
   const item2 = ref("");
   const item3 = ref("");
 
-  const tree = renderTree(
+  const tree = (
     <group>
       <List comma line ender=";">
         <>{item1}</>
         <>{item2}</>
         <>{item3}</>
       </List>
-    </group>,
+    </group>
   );
 
-  expect(printTree(tree)).toBe(``);
+  expect(tree).toRenderTo("");
   item1.value = "hi";
-  expect(printTree(tree)).toBe(`hi;`);
+  expect(tree).toRenderTo("hi;");
   item2.value = "there";
-  expect(printTree(tree)).toBe(`hi, there;`);
+  expect(tree).toRenderTo("hi, there;");
   item3.value = "friend";
-  expect(printTree(tree)).toBe(`hi, there, friend;`);
+  expect(tree).toRenderTo("hi, there, friend;");
 
   item1.value = "";
-  expect(printTree(tree)).toBe(`there, friend;`);
+  expect(tree).toRenderTo("there, friend;");
   item3.value = "";
-  expect(printTree(tree)).toBe(`there;`);
+  expect(tree).toRenderTo("there;");
   item2.value = "";
-  expect(printTree(tree)).toBe(``);
+  expect(tree).toRenderTo("");
 });
 
 it("works with show", () => {
   const ContentSlot = createContentSlot();
   const showFirst = ref(false);
   const showSecond = ref(false);
-  const tree = renderTree(
+  const tree = (
     <>
       <ContentSlot.WhenEmpty>Empty list!</ContentSlot.WhenEmpty>
       <ContentSlot>
@@ -152,14 +148,14 @@ it("works with show", () => {
           <Show when={showSecond.value}>Two</Show>
         </List>
       </ContentSlot>
-    </>,
+    </>
   );
-  expect(printTree(tree)).toBe(`Empty list!`);
+  expect(tree).toRenderTo("Empty list!");
   showFirst.value = true;
-  expect(printTree(tree)).toBe(`One`);
+  expect(tree).toRenderTo("One");
   showSecond.value = true;
-  expect(printTree(tree)).toBe(`One, Two`);
+  expect(tree).toRenderTo("One, Two");
   showFirst.value = false;
   showSecond.value = false;
-  expect(printTree(tree)).toBe(`Empty list!`);
+  expect(tree).toRenderTo("Empty list!");
 });

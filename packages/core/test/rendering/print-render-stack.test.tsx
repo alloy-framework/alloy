@@ -12,7 +12,6 @@ import {
   resetDevtoolsServerForTests,
 } from "../../src/devtools/devtools-server.js";
 import { clearRenderStack } from "../../src/render-stack.js";
-import "../../testing/extend-expect.js";
 
 // Strip ANSI escape codes from a string for consistent testing across environments
 function stripAnsi(str: string): string {

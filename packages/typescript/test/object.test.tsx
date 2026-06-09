@@ -1,12 +1,19 @@
-import { List, namekey } from "@alloy-js/core"; import { expect, it } from "vitest"; import { CommaList, ObjectExpression, ObjectProperty, ObjectSpreadProperty } from "../src/index.js";
+import { List, namekey } from "@alloy-js/core";
+import { expect, it } from "vitest";
+import {
+  CommaList,
+  ObjectExpression,
+  ObjectProperty,
+  ObjectSpreadProperty,
+} from "../src/index.js";
 import { TestFile } from "./utils.js";
 
 it("from js value", () => {
-  expect((
+  expect(
     <TestFile>
-        <ObjectExpression jsValue={{ a: 1, b: 2 }} />
-    </TestFile>
-  )).toRenderTo(`
+      <ObjectExpression jsValue={{ a: 1, b: 2 }} />
+    </TestFile>,
+  ).toRenderTo(`
   {
     a: 1,
     b: 2,
@@ -23,11 +30,7 @@ it("from object property", () => {
       </List>
     </ObjectExpression>
   );
-  expect((
-    <TestFile>
-        {comp}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     a: 1,
     b: 2
@@ -41,11 +44,7 @@ it("spread property", () => {
       <ObjectSpreadProperty>abc</ObjectSpreadProperty>
     </ObjectExpression>
   );
-  expect((
-    <TestFile>
-        {comp}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     ...abc
   }
@@ -58,11 +57,7 @@ it("Works with both children and jsvalue", () => {
       <ObjectProperty name="c" value={3} />
     </ObjectExpression>
   );
-  expect((
-    <TestFile>
-        {comp}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     a: 1,
     b: 2,
@@ -85,11 +80,7 @@ it("Handles name conflicts and namekeys", () => {
       </CommaList>
     </ObjectExpression>
   );
-  expect((
-    <TestFile>
-        {comp}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
     {
       a: 3,
       a_2: 1,

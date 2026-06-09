@@ -8,10 +8,7 @@ import {
   SourceFile,
   VariableDeclaration,
 } from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
@@ -446,9 +443,7 @@ describe("with refkeys", () => {
       </py.StatementList>
     );
 
-    expect(
-      <TestOutput>{template}</TestOutput>,
-    ).toRenderTo(
+    expect(<TestOutput>{template}</TestOutput>).toRenderTo(
       `
       class Model1:
           foo: str
@@ -504,9 +499,7 @@ describe("with refkeys", () => {
       </py.StatementList>
     );
 
-    expect(
-      <TestOutput>{template}</TestOutput>,
-    ).toRenderTo(
+    expect(<TestOutput>{template}</TestOutput>).toRenderTo(
       `
       class Model:
           bar: str
@@ -625,16 +618,14 @@ describe("with refkeys", () => {
           </py.StatementList>
         </SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "index.py": `
+    ).toRenderTo({
+      "index.py": `
           from source import import_me
 
           import_me.foo
         `,
-        "source.py": "import_me = None",
-      },
-    );
+      "source.py": "import_me = None",
+    });
   });
 });
 

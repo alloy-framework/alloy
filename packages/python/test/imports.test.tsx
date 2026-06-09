@@ -8,9 +8,9 @@ import * as py from "../src/index.js";
 import { createPythonSymbol } from "../src/symbol-creation.js";
 import { ImportedSymbol, ImportRecords } from "../src/symbols/index.js";
 import {
+  createPythonModuleScope,
   TestOutput,
   TestOutputDirectory,
-  createPythonModuleScope,
 } from "./utils.jsx";
 
 describe("ImportStatement", () => {
@@ -129,9 +129,8 @@ describe("Imports being used", () => {
           </py.StatementList>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "test.py": `
+    ).toRenderTo({
+      "test.py": `
           from test_1 import conflict
           from test_2 import conflict as conflict_3_test_2
           from test_3 import conflict as conflict_2_test_3
@@ -140,11 +139,10 @@ describe("Imports being used", () => {
           three = conflict_2_test_3
           two = conflict_3_test_2
         `,
-        "test_1.py": "conflict = None",
-        "test_2.py": "conflict = None",
-        "test_3.py": "conflict = None",
-      },
-    );
+      "test_1.py": "conflict = None",
+      "test_2.py": "conflict = None",
+      "test_3.py": "conflict = None",
+    });
   });
 
   it("works with importing the same name many times from different files and with the correct order", () => {
@@ -185,9 +183,8 @@ describe("Imports being used", () => {
           </py.StatementList>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "test.py": `
+    ).toRenderTo({
+      "test.py": `
           from test_1 import conflict
           from test_1 import something_else as something_else_2_test_1
           from test_2 import conflict as conflict_2_test_2
@@ -204,18 +201,17 @@ describe("Imports being used", () => {
           something = something_2_test_2
           something_two = something_3_test_3
         `,
-        "test_1.py": `conflict = None
+      "test_1.py": `conflict = None
 
 something_else = None`,
-        "test_2.py": `conflict = None
+      "test_2.py": `conflict = None
 
 something = None
 
 something_else = None`,
-        "test_3.py": `conflict = None
+      "test_3.py": `conflict = None
 
 something = None`,
-      },
-    );
+    });
   });
 });

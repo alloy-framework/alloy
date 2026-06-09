@@ -18,11 +18,7 @@ describe("Dunder/Constructor Declarations", () => {
       </py.ClassDeclaration>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           def __init__(self, x: int):
               self.attribute = "value"
@@ -45,11 +41,7 @@ describe("Dunder/Constructor Declarations", () => {
       </py.ClassDeclaration>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           def __new__(cls, *args, **kwargs):
               pass

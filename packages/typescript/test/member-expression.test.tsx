@@ -1,4 +1,11 @@
-import { render, code, List, Output, refkey, StatementList } from "@alloy-js/core";
+import {
+  code,
+  List,
+  Output,
+  refkey,
+  render,
+  StatementList,
+} from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { InterfaceMember, ObjectExpression } from "../src/components/index.js";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
@@ -16,14 +23,12 @@ import { TestFile } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" />
         <MemberExpression.Part id="property" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj.property
   `);
@@ -31,15 +36,13 @@ it("renders basic member expression with dot notation", () => {
 
 it("renders basic member expression with numeric id", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="arr" />
         <MemberExpression.Part id={0} />
         <MemberExpression.Part id="foo-bar" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     arr[0]["foo-bar"]
   `);
@@ -47,15 +50,13 @@ it("renders basic member expression with numeric id", () => {
 
 it("renders basic member expression with index", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="arr" />
         <MemberExpression.Part index={0} />
         <MemberExpression.Part id="foo-bar" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     arr[0]["foo-bar"]
   `);
@@ -63,15 +64,13 @@ it("renders basic member expression with index", () => {
 
 it("renders basic member expression with numeric children", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="arr" />
         <MemberExpression.Part>0</MemberExpression.Part>
         <MemberExpression.Part id="foo-bar" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     arr[0]["foo-bar"]
   `);
@@ -79,15 +78,13 @@ it("renders basic member expression with numeric children", () => {
 
 it("renders basic member expression with string children", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="arr" />
         <MemberExpression.Part>"0"</MemberExpression.Part>
         <MemberExpression.Part id="foo-bar" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     arr["0"]["foo-bar"]
   `);
@@ -96,9 +93,8 @@ it("renders basic member expression with string children", () => {
 it("renders basic member expression with an expression index", () => {
   const xRefkey = refkey();
   expect(
-    (
-      <TestFile>
-          <StatementList>
+    <TestFile>
+      <StatementList>
         <VarDeclaration name="x" initializer={1} refkey={xRefkey} />
         <MemberExpression>
           <MemberExpression.Part id="arr" />
@@ -106,8 +102,7 @@ it("renders basic member expression with an expression index", () => {
           <MemberExpression.Part id="foo-bar" />
         </MemberExpression>
       </StatementList>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     const x = 1;
     arr[x + 1]["foo-bar"];
@@ -116,17 +111,15 @@ it("renders basic member expression with an expression index", () => {
 
 it("renders basic member expression with an expression id", () => {
   expect(
-    (
-      <TestFile>
-          <StatementList>
+    <TestFile>
+      <StatementList>
         <MemberExpression>
           <MemberExpression.Part id="arr" />
           <MemberExpression.Part>"foo" + 1</MemberExpression.Part>
           <MemberExpression.Part id="foo-bar" />
         </MemberExpression>
       </StatementList>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     arr["foo" + 1]["foo-bar"];
   `);
@@ -134,14 +127,12 @@ it("renders basic member expression with an expression id", () => {
 
 it("renders member expression with bracket notation for invalid identifiers", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" />
         <MemberExpression.Part id="property-name" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj["property-name"]
   `);
@@ -149,14 +140,12 @@ it("renders member expression with bracket notation for invalid identifiers", ()
 
 it("renders member expressions with quotes", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" />
         <MemberExpression.Part id={`property-"name"`} />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj["property-\\"name\\""]
   `);
@@ -164,14 +153,12 @@ it("renders member expressions with quotes", () => {
 
 it("handles nullish chaining", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" nullish={true} />
         <MemberExpression.Part id="property" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj?.property
   `);
@@ -179,16 +166,14 @@ it("handles nullish chaining", () => {
 
 it("supports multiple levels of nesting", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="a" />
         <MemberExpression.Part id="b" />
         <MemberExpression.Part id="c" />
         <MemberExpression.Part id="d" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     a.b.c.d
   `);
@@ -196,14 +181,12 @@ it("supports multiple levels of nesting", () => {
 
 it("ignores non-part children", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" />
         <MemberExpression.Part id="property" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj.property
   `);
@@ -211,14 +194,12 @@ it("ignores non-part children", () => {
 
 it("ignores allows parts to define children", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part>well</MemberExpression.Part>
         <MemberExpression.Part>hello</MemberExpression.Part>
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     well.hello
   `);
@@ -226,9 +207,8 @@ it("ignores allows parts to define children", () => {
 
 it("flattens nested member expressions", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="outer" />
         <MemberExpression>
           <MemberExpression.Part id="inner" />
@@ -236,8 +216,7 @@ it("flattens nested member expressions", () => {
         </MemberExpression>
         <MemberExpression.Part id="last" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     outer.inner.prop.last
   `);
@@ -245,16 +224,14 @@ it("flattens nested member expressions", () => {
 
 it("handles a mix of dot and bracket notation", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="obj" />
         <MemberExpression.Part id="normalProp" />
         <MemberExpression.Part id="special-prop" />
         <MemberExpression.Part id="123" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     obj.normalProp["special-prop"]["123"]
   `);
@@ -262,17 +239,15 @@ it("handles a mix of dot and bracket notation", () => {
 
 it("handles nullish chaining at multiple levels", () => {
   expect(
-    (
-      <TestFile>
-          <MemberExpression>
+    <TestFile>
+      <MemberExpression>
         <MemberExpression.Part id="a" />
         <MemberExpression.Part id="b" nullish={true} />
         <MemberExpression.Part id="c" />
         <MemberExpression.Part id="d" nullish={true} />
         <MemberExpression.Part id="e" />
       </MemberExpression>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     a.b?.c.d?.e
   `);
@@ -282,10 +257,10 @@ it("throws an error when providing conflicting part props", () => {
   expect(() =>
     render(
       <TestFile>
-          <MemberExpression>
-        <MemberExpression.Part id="obj" />
-        <MemberExpression.Part id="property" nullish={true} args={[1, 2]} />
-      </MemberExpression>
+        <MemberExpression>
+          <MemberExpression.Part id="obj" />
+          <MemberExpression.Part id="property" nullish={true} args={[1, 2]} />
+        </MemberExpression>
       </TestFile>,
       { insertFinalNewLine: false },
     ),
@@ -296,9 +271,8 @@ it("throws an error when providing conflicting part props", () => {
 
 it("takes children for the id part", () => {
   expect(
-    (
-      <TestFile>
-          <List>
+    <TestFile>
+      <List>
         <MemberExpression>
           <MemberExpression.Part>child1</MemberExpression.Part>
           <MemberExpression.Part quoteId>child2</MemberExpression.Part>
@@ -315,8 +289,7 @@ it("takes children for the id part", () => {
           <MemberExpression.Part args />
         </MemberExpression>
       </List>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
     child1["child2"]
     child1["child2"]()["child3"]?.()["foo" + 1]()
@@ -328,9 +301,8 @@ describe("with refkeys", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     expect(
-      (
-        <TestFile>
-            <StatementList>
+      <TestFile>
+        <StatementList>
           <VarDeclaration name="test1" refkey={rk1} initializer={1} />
           <VarDeclaration name="test1" refkey={rk2} initializer={2} />
           <MemberExpression>
@@ -338,8 +310,7 @@ describe("with refkeys", () => {
             <MemberExpression.Part refkey={rk2} />
           </MemberExpression>
         </StatementList>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       const test1 = 1;
       const test1_2 = 2;
@@ -352,9 +323,8 @@ describe("with refkeys", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     expect(
-      (
-        <TestFile>
-            <StatementList>
+      <TestFile>
+        <StatementList>
           <VarDeclaration name="test1" refkey={rk1} initializer={1} nullish />
           <VarDeclaration name="test1" refkey={rk2} initializer={2} nullish />
           <MemberExpression>
@@ -362,8 +332,7 @@ describe("with refkeys", () => {
             <MemberExpression.Part refkey={rk2} />
           </MemberExpression>
         </StatementList>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       const test1 = 1;
       const test1_2 = 2;
@@ -402,11 +371,7 @@ describe("with refkeys", () => {
       </List>
     );
 
-    expect((
-      <TestFile>
-          {template}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{template}</TestFile>).toRenderTo(`
       interface Model {
         bar: string
       }
@@ -453,11 +418,7 @@ describe("with refkeys", () => {
       </List>
     );
 
-    expect((
-      <TestFile>
-          {template}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{template}</TestFile>).toRenderTo(`
       interface Model {
         bar: string
       }
@@ -475,9 +436,8 @@ describe("with refkeys", () => {
     const classMemberRefkey = refkey();
     const instanceRefkey = refkey();
     expect(
-      (
-        <TestFile>
-            <List hardline>
+      <TestFile>
+        <List hardline>
           <InterfaceDeclaration name="Bar" refkey={interfaceRefkey}>
             <InterfaceMember
               name="prop1"
@@ -504,8 +464,7 @@ describe("with refkeys", () => {
             <MemberExpression.Part refkey={interfaceMemberRefkey} />
           </MemberExpression>
         </List>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
        interface Bar {
          prop1: string
@@ -522,9 +481,8 @@ describe("with refkeys", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     expect(
-      (
-        <TestFile>
-            <StatementList>
+      <TestFile>
+        <StatementList>
           <MemberExpression>
             <MemberExpression.Part refkey={rk1} />
             <MemberExpression.Part refkey={rk2} />
@@ -532,8 +490,7 @@ describe("with refkeys", () => {
           <VarDeclaration name="test1" refkey={rk1} initializer={1} />
           <VarDeclaration name="test1" refkey={rk2} initializer={2} />
         </StatementList>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       test1.test1_2;
       const test1 = 1;
@@ -580,14 +537,12 @@ describe("with refkeys", () => {
 describe("with function calls", () => {
   it("handles simple function calls correctly", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="myFunction" />
           <MemberExpression.Part args={[1, 2]} />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       myFunction(1, 2)
     `);
@@ -595,9 +550,8 @@ describe("with function calls", () => {
 
   it("handles nullish function calls correctly", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="method1" nullish />
           <MemberExpression.Part nullish args={[1, 2]} />
           <MemberExpression.Part nullish args={[]} />
@@ -605,8 +559,7 @@ describe("with function calls", () => {
           <MemberExpression.Part args={[]} />
           <MemberExpression.Part id="prop" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       method1?.(1, 2)?.()?.method2?.().prop
     `);
@@ -614,15 +567,13 @@ describe("with function calls", () => {
 
   it("handles function calls returning nullish correctly", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="myFunction" />
           <MemberExpression.Part args={[1, 2]} nullish />
           <MemberExpression.Part id="prop" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       myFunction(1, 2)?.prop
     `);
@@ -630,15 +581,13 @@ describe("with function calls", () => {
 
   it("handles function calls returning nullish correctly", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="myFunction" />
           <MemberExpression.Part args={[1, 2]} nullish />
           <MemberExpression.Part id="prop" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       myFunction(1, 2)?.prop
     `);
@@ -649,9 +598,8 @@ describe("formatting", () => {
   describe("simple chains", () => {
     it("just dots", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="four" />
             <MemberExpression.Part id="four" />
             <MemberExpression.Part id="four" />
@@ -659,59 +607,62 @@ describe("formatting", () => {
             <MemberExpression.Part id="four" />
             <MemberExpression.Part id="four" />
           </MemberExpression>
-          </TestFile>
-        ),
-      ).toRenderTo(`
+        </TestFile>,
+      ).toRenderTo(
+        `
         four.four
           .four.four
           .four.four
-      `, { printWidth: 12 });
+      `,
+        { printWidth: 12 },
+      );
     });
 
     it("bracket breaks", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="obj" />
             <MemberExpression.Part id="property-name" />
             <MemberExpression.Part id="prop" />
           </MemberExpression>
-          </TestFile>
-        ),
-      ).toRenderTo(`
+        </TestFile>,
+      ).toRenderTo(
+        `
         obj[
           "property-name"
         ].prop
-      `, { printWidth: 12 });
+      `,
+        { printWidth: 12 },
+      );
     });
   });
 
   describe("call chains", () => {
     it("handles single calls", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part id="object" />
             <MemberExpression.Part
               args={[<ObjectExpression jsValue={{ x: 1 }} />]}
             />
           </MemberExpression>
-          </TestFile>
-        ),
-      ).toRenderTo(`
+        </TestFile>,
+      ).toRenderTo(
+        `
         z.object({
           x: 1,
         })
-      `, { printWidth: 12 });
+      `,
+        { printWidth: 12 },
+      );
     });
     it("handles single calls with multiple parameters", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part id="object" />
             <MemberExpression.Part
@@ -721,9 +672,9 @@ describe("formatting", () => {
               ]}
             />
           </MemberExpression>
-          </TestFile>
-        ),
-      ).toRenderTo(`
+        </TestFile>,
+      ).toRenderTo(
+        `
         z.object(
           {
             x: 1,
@@ -732,13 +683,14 @@ describe("formatting", () => {
             y: 2,
           }
         )
-      `, { printWidth: 12 });
+      `,
+        { printWidth: 12 },
+      );
     });
     it("handles multiple calls", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part id="object" />
             <MemberExpression.Part
@@ -747,22 +699,23 @@ describe("formatting", () => {
             <MemberExpression.Part id="partial" />
             <MemberExpression.Part args={[]} />
           </MemberExpression>
-          </TestFile>
-        ),
-      ).toRenderTo(`
+        </TestFile>,
+      ).toRenderTo(
+        `
         z
           .object({
             x: 1,
           })
           .partial()
-      `, { printWidth: 12 });
+      `,
+        { printWidth: 12 },
+      );
     });
 
     it("renders multiple calls on the same line when there are no breaks and they fit", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part id="object" />
             <MemberExpression.Part args />
@@ -771,17 +724,15 @@ describe("formatting", () => {
             <MemberExpression.Part id="optional" />
             <MemberExpression.Part args />
           </MemberExpression>
-          </TestFile>
-        ),
+        </TestFile>,
       ).toRenderTo(`
         z.object().partial().optional()
       `);
     });
     it("handles multiple calls with id parts", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part id="z1" nullish />
             <MemberExpression.Part id="object" />
@@ -792,8 +743,7 @@ describe("formatting", () => {
             <MemberExpression.Part id="partial" />
             <MemberExpression.Part args={[]} />
           </MemberExpression>
-          </TestFile>
-        ),
+        </TestFile>,
       ).toRenderTo(`
         z.z1
           ?.object({
@@ -805,9 +755,8 @@ describe("formatting", () => {
 
     it("handles the first part being a call", () => {
       expect(
-        (
-          <TestFile>
-              <MemberExpression>
+        <TestFile>
+          <MemberExpression>
             <MemberExpression.Part id="z" />
             <MemberExpression.Part args />
             <MemberExpression.Part id="z1" nullish />
@@ -819,8 +768,7 @@ describe("formatting", () => {
             <MemberExpression.Part id="partial" />
             <MemberExpression.Part args={[]} />
           </MemberExpression>
-          </TestFile>
-        ),
+        </TestFile>,
       ).toRenderTo(`
         z()
           .z1?.object({
@@ -835,16 +783,14 @@ describe("formatting", () => {
 describe("with await", () => {
   it("renders member expression with await", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="foo" />
           <MemberExpression.Part id="bar" />
           <MemberExpression.Part args await />
           <MemberExpression.Part id="baz" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       (await foo.bar()).baz
     `);
@@ -852,15 +798,13 @@ describe("with await", () => {
 
   it("renders member expression with await at the end", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="foo" />
           <MemberExpression.Part id="bar" />
           <MemberExpression.Part args await />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       await foo.bar()
     `);
@@ -868,15 +812,13 @@ describe("with await", () => {
 
   it("renders member expression with await in the middle of property access", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="foo" />
           <MemberExpression.Part id="bar" await />
           <MemberExpression.Part id="baz" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       (await foo.bar).baz
     `);
@@ -884,16 +826,14 @@ describe("with await", () => {
 
   it("renders member expression with multiple awaits", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="foo" />
           <MemberExpression.Part id="bar" await />
           <MemberExpression.Part id="baz" await />
           <MemberExpression.Part id="qux" />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       (await (await foo.bar).baz).qux
     `);
@@ -901,9 +841,8 @@ describe("with await", () => {
 
   it("renders member expression with await and call chain (disables formatting)", () => {
     expect(
-      (
-        <TestFile>
-            <MemberExpression>
+      <TestFile>
+        <MemberExpression>
           <MemberExpression.Part id="foo" />
           <MemberExpression.Part id="bar" />
           <MemberExpression.Part args />
@@ -912,8 +851,7 @@ describe("with await", () => {
           <MemberExpression.Part id="qux" />
           <MemberExpression.Part args />
         </MemberExpression>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       (await foo.bar().baz()).qux()
     `);

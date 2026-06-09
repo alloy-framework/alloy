@@ -19,11 +19,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self):
@@ -60,11 +56,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self) -> int:
@@ -128,11 +120,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self) -> int:
@@ -179,11 +167,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @computed_field
           @deprecated("use width**2")
@@ -213,11 +197,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       from abc import abstractmethod
 
 
@@ -251,11 +231,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput externals={[abcModule]}>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       from abc import abstractmethod
 
 

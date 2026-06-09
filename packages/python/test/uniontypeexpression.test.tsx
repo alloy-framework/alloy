@@ -1,10 +1,7 @@
 import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("UnionTypeExpression", () => {
   it("renders a Python union expression - 1 item", () => {
@@ -145,14 +142,13 @@ describe("UnionTypeExpression", () => {
           </py.StatementList>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "defs.py": `
+    ).toRenderTo({
+      "defs.py": `
           class Bar:
               pass
 
         `,
-        "use.py": `
+      "use.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -160,8 +156,7 @@ describe("UnionTypeExpression", () => {
 
           v: Bar[T] = None
         `,
-      },
-    );
+    });
   });
 });
 

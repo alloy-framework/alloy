@@ -1,4 +1,10 @@
-import { namekey, NamePolicyContext, Props, refkey, StatementList } from "@alloy-js/core";
+import {
+  namekey,
+  NamePolicyContext,
+  Props,
+  refkey,
+  StatementList,
+} from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { ParameterDescriptor } from "../src/components/index.js";
@@ -9,7 +15,7 @@ import { TestFile } from "./utils.js";
 it("declares interfaces", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" />
+      <ts.InterfaceDeclaration name="Foo" />
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -20,7 +26,7 @@ it("declares interfaces", () => {
 it("accepts export and default", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" export default />
+      <ts.InterfaceDeclaration name="Foo" export default />
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -31,7 +37,7 @@ it("accepts export and default", () => {
 it("creates extends", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" extends="string" />
+      <ts.InterfaceDeclaration name="Foo" extends="string" />
     </TestFile>
   );
 
@@ -43,16 +49,16 @@ it("creates extends", () => {
 it("can create members", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
-      <StatementList>
-        <ts.InterfaceMember name="member" type="string" />
-        <ts.InterfaceMember
-          name="circular"
-          type={<Reference refkey={refkey("Foo")} />}
-        />
-        <ts.InterfaceMember indexer="str: string" type="number" />
-      </StatementList>
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember name="member" type="string" />
+          <ts.InterfaceMember
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+          />
+          <ts.InterfaceMember indexer="str: string" type="number" />
+        </StatementList>
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -68,17 +74,17 @@ it("can create members", () => {
 it("can create optional members", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
-      <StatementList>
-        <ts.InterfaceMember name="member" type="string" />
-        <ts.InterfaceMember
-          optional
-          name="circular"
-          type={<Reference refkey={refkey("Foo")} />}
-        />
-        <ts.InterfaceMember indexer="str: string" type="number" />
-      </StatementList>
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember name="member" type="string" />
+          <ts.InterfaceMember
+            optional
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+          />
+          <ts.InterfaceMember indexer="str: string" type="number" />
+        </StatementList>
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -94,16 +100,16 @@ it("can create optional members", () => {
 it("can create readonly members", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
-      <StatementList>
-        <ts.InterfaceMember readonly name="member" type="string" />
-        <ts.InterfaceMember
-          name="circular"
-          type={<Reference refkey={refkey("Foo")} />}
-        />
-        <ts.InterfaceMember readonly indexer="str: string" type="number" />
-      </StatementList>
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo" refkey={refkey("Foo")}>
+        <StatementList>
+          <ts.InterfaceMember readonly name="member" type="string" />
+          <ts.InterfaceMember
+            name="circular"
+            type={<Reference refkey={refkey("Foo")} />}
+          />
+          <ts.InterfaceMember readonly indexer="str: string" type="number" />
+        </StatementList>
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -144,9 +150,9 @@ describe("interface expressions", () => {
   it("basic", () => {
     const res = (
       <TestFile>
-          <ts.InterfaceExpression>
-        <ts.InterfaceMember name="member" type="string" />;
-      </ts.InterfaceExpression>
+        <ts.InterfaceExpression>
+          <ts.InterfaceMember name="member" type="string" />;
+        </ts.InterfaceExpression>
       </TestFile>
     );
 
@@ -160,13 +166,13 @@ describe("interface expressions", () => {
   it("nested", () => {
     const res = (
       <TestFile>
-          <ts.InterfaceExpression>
-        <ts.InterfaceMember name="outer">
-          <ts.InterfaceExpression>
-            <ts.InterfaceMember name="inner" type="string" />;
-          </ts.InterfaceExpression>
-        </ts.InterfaceMember>
-      </ts.InterfaceExpression>
+        <ts.InterfaceExpression>
+          <ts.InterfaceMember name="outer">
+            <ts.InterfaceExpression>
+              <ts.InterfaceMember name="inner" type="string" />;
+            </ts.InterfaceExpression>
+          </ts.InterfaceMember>
+        </ts.InterfaceExpression>
       </TestFile>
     );
 
@@ -214,11 +220,11 @@ it("supports the naming policy", () => {
   const policy = createTSNamePolicy();
   const res = (
     <TestFile>
-        <NamePolicyContext.Provider value={policy}>
-      <ts.InterfaceDeclaration name="interface_name">
-        <ts.InterfaceMember name="member_property" type="string" />;
-      </ts.InterfaceDeclaration>
-    </NamePolicyContext.Provider>
+      <NamePolicyContext.Provider value={policy}>
+        <ts.InterfaceDeclaration name="interface_name">
+          <ts.InterfaceMember name="member_property" type="string" />;
+        </ts.InterfaceDeclaration>
+      </NamePolicyContext.Provider>
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -231,9 +237,9 @@ it("supports the naming policy", () => {
 it("handles invalid identifier names", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceExpression>
-      <ts.InterfaceMember name="invalid-name" type="string" />;
-    </ts.InterfaceExpression>
+      <ts.InterfaceExpression>
+        <ts.InterfaceMember name="invalid-name" type="string" />;
+      </ts.InterfaceExpression>
     </TestFile>
   );
 
@@ -254,15 +260,15 @@ it("accepts type parameters by descriptors", () => {
 
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" typeParameters={typeParams}>
-      <ts.InterfaceMember name="member" type={typeParams[0].refkey} />;
-      <hbr />
-      <ts.InterfaceMember name="member2" type={typeParams[1].refkey} />;
-      <hbr />
-      <ts.InterfaceMember name="member3" type={typeParams[2].refkey} />;
-      <hbr />
-      <ts.InterfaceMember name="member4" type={typeParams[3].refkey} />;
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo" typeParameters={typeParams}>
+        <ts.InterfaceMember name="member" type={typeParams[0].refkey} />;
+        <hbr />
+        <ts.InterfaceMember name="member2" type={typeParams[1].refkey} />;
+        <hbr />
+        <ts.InterfaceMember name="member3" type={typeParams[2].refkey} />;
+        <hbr />
+        <ts.InterfaceMember name="member4" type={typeParams[3].refkey} />;
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -279,9 +285,9 @@ it("accepts type parameters by descriptors", () => {
 it("accepts type parameters with extends", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo" typeParameters={["T"]} extends="Bar">
-      <ts.InterfaceMember name="member" type="T" />;
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo" typeParameters={["T"]} extends="Bar">
+        <ts.InterfaceMember name="member" type="T" />;
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -295,18 +301,18 @@ it("accepts type parameters with extends", () => {
 it("accepts type parameters children", () => {
   const res = (
     <TestFile>
-        <ts.InterfaceDeclaration name="Foo">
-      <ts.InterfaceDeclaration.TypeParameters>
-        T, U extends number, V = object, W extends string = "test"
-      </ts.InterfaceDeclaration.TypeParameters>
-      <ts.InterfaceMember name="member" type={"T"} />;
-      <hbr />
-      <ts.InterfaceMember name="member2" type="U" />;
-      <hbr />
-      <ts.InterfaceMember name="member3" type="V" />;
-      <hbr />
-      <ts.InterfaceMember name="member4" type="W" />;
-    </ts.InterfaceDeclaration>
+      <ts.InterfaceDeclaration name="Foo">
+        <ts.InterfaceDeclaration.TypeParameters>
+          T, U extends number, V = object, W extends string = "test"
+        </ts.InterfaceDeclaration.TypeParameters>
+        <ts.InterfaceMember name="member" type={"T"} />;
+        <hbr />
+        <ts.InterfaceMember name="member2" type="U" />;
+        <hbr />
+        <ts.InterfaceMember name="member3" type="V" />;
+        <hbr />
+        <ts.InterfaceMember name="member4" type="W" />;
+      </ts.InterfaceDeclaration>
     </TestFile>
   );
 
@@ -351,13 +357,11 @@ it("takes namekeys for all its elements", () => {
 describe("method members", () => {
   it("render basic", () => {
     expect(
-      (
-        <TestFile>
-            <ts.InterfaceDeclaration name="Foo">
+      <TestFile>
+        <ts.InterfaceDeclaration name="Foo">
           <ts.InterfaceMethod name="foo" />
         </ts.InterfaceDeclaration>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       interface Foo {
         foo(): void
@@ -367,13 +371,11 @@ describe("method members", () => {
 
   it("render in interface", () => {
     expect(
-      (
-        <TestFile>
-            <ts.InterfaceDeclaration name="Foo">
+      <TestFile>
+        <ts.InterfaceDeclaration name="Foo">
           <ts.InterfaceMethod name="foo" />
         </ts.InterfaceDeclaration>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
       interface Foo {
         foo(): void
@@ -383,13 +385,11 @@ describe("method members", () => {
 
   it("can be an async function", () => {
     expect(
-      (
-        <TestFile>
-            <ts.InterfaceDeclaration name="Foo">
+      <TestFile>
+        <ts.InterfaceDeclaration name="Foo">
           <ts.InterfaceMethod async name="foo" />
         </ts.InterfaceDeclaration>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
     interface Foo {
       foo(): Promise<void>
@@ -399,13 +399,11 @@ describe("method members", () => {
 
   it("can be an async function with returnType", () => {
     expect(
-      (
-        <TestFile>
-            <ts.InterfaceDeclaration name="Foo">
+      <TestFile>
+        <ts.InterfaceDeclaration name="Foo">
           <ts.InterfaceMethod async name="foo" returnType="Foo" />
         </ts.InterfaceDeclaration>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
     interface Foo {
       foo(): Promise<Foo>
@@ -418,13 +416,11 @@ describe("method members", () => {
       return <>Foo</>;
     }
     expect(
-      (
-        <TestFile>
-            <ts.InterfaceDeclaration name="Foo">
+      <TestFile>
+        <ts.InterfaceDeclaration name="Foo">
           <ts.InterfaceMethod async name="foo" returnType={<Foo />} />
         </ts.InterfaceDeclaration>
-        </TestFile>
-      ),
+      </TestFile>,
     ).toRenderTo(`
     interface Foo {
       foo(): Promise<Foo>
@@ -441,11 +437,7 @@ describe("method members", () => {
       </ts.InterfaceDeclaration>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     interface Foo {
       foo(a, b): void
     }
@@ -465,11 +457,7 @@ describe("method members", () => {
       </ts.InterfaceDeclaration>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     interface Foo {
       foo<a extends any, b extends any>(): void
     }
@@ -486,11 +474,7 @@ describe("method members", () => {
       </ts.InterfaceDeclaration>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       interface Foo {
         foo<a, b>(): void
       }
@@ -508,11 +492,7 @@ describe("method members", () => {
       </ts.InterfaceDeclaration>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     interface Foo {
       foo<a, b>(): void
     }
@@ -533,11 +513,7 @@ describe("method members", () => {
         </ts.InterfaceDeclaration>
       );
 
-      expect((
-        <TestFile>
-            {decl}
-        </TestFile>
-      )).toRenderTo(`
+      expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       interface Foo {
         foo(foo?: any): void
       }

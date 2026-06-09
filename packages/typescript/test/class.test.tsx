@@ -1,4 +1,11 @@
-import { render, List, namekey, Output, refkey, StatementList } from "@alloy-js/core";
+import {
+  List,
+  namekey,
+  Output,
+  refkey,
+  render,
+  StatementList,
+} from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { TestFile } from "./utils.js";
@@ -6,7 +13,7 @@ import { TestFile } from "./utils.js";
 it("declares classes", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo" />
+      <ts.ClassDeclaration name="Foo" />
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -17,7 +24,7 @@ it("declares classes", () => {
 it("accepts export and default", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo" export default />
+      <ts.ClassDeclaration name="Foo" export default />
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -28,7 +35,7 @@ it("accepts export and default", () => {
 it("creates extends", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo" extends="string" />
+      <ts.ClassDeclaration name="Foo" extends="string" />
     </TestFile>
   );
 
@@ -40,7 +47,7 @@ it("creates extends", () => {
 it("creates implements", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo" implements={["SomeInterface"]} />
+      <ts.ClassDeclaration name="Foo" implements={["SomeInterface"]} />
     </TestFile>
   );
 
@@ -52,10 +59,10 @@ it("creates implements", () => {
 it("creates implements with multiple", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration
-      name="Foo"
-      implements={["SomeInterface", "OtherInterface"]}
-    />
+      <ts.ClassDeclaration
+        name="Foo"
+        implements={["SomeInterface", "OtherInterface"]}
+      />
     </TestFile>
   );
 
@@ -67,11 +74,11 @@ it("creates implements with multiple", () => {
 it("creates implements with extends", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration
-      name="Foo"
-      extends="string"
-      implements={["SomeInterface"]}
-    />
+      <ts.ClassDeclaration
+        name="Foo"
+        extends="string"
+        implements={["SomeInterface"]}
+      />
     </TestFile>
   );
 
@@ -83,12 +90,12 @@ it("creates implements with extends", () => {
 it("takes namekeys for all elements", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name={namekey("foo")}>
-      <StatementList>
-        <ts.ClassField name={namekey("myField")} />
-        <ts.ClassMethod name={namekey("myMethod")} />
-      </StatementList>
-    </ts.ClassDeclaration>
+      <ts.ClassDeclaration name={namekey("foo")}>
+        <StatementList>
+          <ts.ClassField name={namekey("myField")} />
+          <ts.ClassMethod name={namekey("myMethod")} />
+        </StatementList>
+      </ts.ClassDeclaration>
     </TestFile>
   );
 
@@ -104,19 +111,19 @@ describe("instance members", () => {
   it("can be created", () => {
     const res = (
       <TestFile>
-          <ts.ClassDeclaration name="Foo">
-        <StatementList>
-          <ts.ClassField name="one" />
-          <ts.ClassField name="two" public />
-          <ts.ClassField name="three" private />
-          <ts.ClassField name="four" protected />
-          <ts.ClassField name="five" type="number" />
-          <ts.ClassField name="six" type="number">
-            12
-          </ts.ClassField>
-          <ts.ClassField name="seven" jsPrivate />
-        </StatementList>
-      </ts.ClassDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <StatementList>
+            <ts.ClassField name="one" />
+            <ts.ClassField name="two" public />
+            <ts.ClassField name="three" private />
+            <ts.ClassField name="four" protected />
+            <ts.ClassField name="five" type="number" />
+            <ts.ClassField name="six" type="number">
+              12
+            </ts.ClassField>
+            <ts.ClassField name="seven" jsPrivate />
+          </StatementList>
+        </ts.ClassDeclaration>
       </TestFile>
     );
 
@@ -139,18 +146,18 @@ describe("instance members", () => {
 
     const res = (
       <TestFile>
-          <ts.ClassDeclaration name="Foo">
-        <StatementList>
-          <ts.ClassField name="one" refkey={one}>
-            1
-          </ts.ClassField>
-          <ts.ClassField name="two">{one} + 1</ts.ClassField>
-          <ts.ClassField name="one" refkey={privateOne} jsPrivate>
-            1
-          </ts.ClassField>
-          <ts.ClassField name="three">{privateOne} + 1</ts.ClassField>
-        </StatementList>
-      </ts.ClassDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <StatementList>
+            <ts.ClassField name="one" refkey={one}>
+              1
+            </ts.ClassField>
+            <ts.ClassField name="two">{one} + 1</ts.ClassField>
+            <ts.ClassField name="one" refkey={privateOne} jsPrivate>
+              1
+            </ts.ClassField>
+            <ts.ClassField name="three">{privateOne} + 1</ts.ClassField>
+          </StatementList>
+        </ts.ClassDeclaration>
       </TestFile>
     );
 
@@ -232,14 +239,14 @@ describe("instance members", () => {
 
     const res = (
       <TestFile>
-          <ts.ClassDeclaration name="Foo">
-        <StatementList>
-          <ts.ClassField name="o-n-e" refkey={one}>
-            1
-          </ts.ClassField>
-          <ts.ClassField name="t-w-o">{one} + 1</ts.ClassField>
-        </StatementList>
-      </ts.ClassDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <StatementList>
+            <ts.ClassField name="o-n-e" refkey={one}>
+              1
+            </ts.ClassField>
+            <ts.ClassField name="t-w-o">{one} + 1</ts.ClassField>
+          </StatementList>
+        </ts.ClassDeclaration>
       </TestFile>
     );
 
@@ -255,18 +262,18 @@ describe("instance members", () => {
     const rk = refkey();
     const res = (
       <TestFile>
-          <List>
-        <ts.VarDeclaration name="one">1;</ts.VarDeclaration>
-        <ts.VarDeclaration name="two">2;</ts.VarDeclaration>
-        <ts.ClassDeclaration name="Foo">
-          <StatementList>
-            <ts.ClassField name="one" refkey={rk}>
-              1
-            </ts.ClassField>
-            <ts.ClassMethod name="two">{rk} + 1</ts.ClassMethod>
-          </StatementList>
-        </ts.ClassDeclaration>
-      </List>
+        <List>
+          <ts.VarDeclaration name="one">1;</ts.VarDeclaration>
+          <ts.VarDeclaration name="two">2;</ts.VarDeclaration>
+          <ts.ClassDeclaration name="Foo">
+            <StatementList>
+              <ts.ClassField name="one" refkey={rk}>
+                1
+              </ts.ClassField>
+              <ts.ClassMethod name="two">{rk} + 1</ts.ClassMethod>
+            </StatementList>
+          </ts.ClassDeclaration>
+        </List>
       </TestFile>
     );
     expect(res).toRenderTo(`
@@ -334,17 +341,17 @@ describe("static members", () => {
     const one = refkey();
     const res = (
       <TestFile>
-          <ts.ClassDeclaration name="Foo">
-        <StatementList>
-          <ts.ClassField static name="one" refkey={one}>
-            1
-          </ts.ClassField>
+        <ts.ClassDeclaration name="Foo">
+          <StatementList>
+            <ts.ClassField static name="one" refkey={one}>
+              1
+            </ts.ClassField>
 
-          <ts.ClassField static name="two" jsPrivate>
-            2
-          </ts.ClassField>
-        </StatementList>
-      </ts.ClassDeclaration>
+            <ts.ClassField static name="two" jsPrivate>
+              2
+            </ts.ClassField>
+          </StatementList>
+        </ts.ClassDeclaration>
       </TestFile>
     );
 
@@ -419,32 +426,32 @@ describe("instance methods", () => {
 
     const res = (
       <TestFile>
-          <ts.ClassDeclaration name="Foo">
-        <List hardline>
-          <ts.ClassMethod name="one" refkey={one} />
-          <ts.ClassMethod name="two" public />
-          <ts.ClassMethod name="three" private />
-          <ts.ClassMethod name="four" protected />
-          <ts.ClassMethod
-            name="five"
-            parameters={[
-              { name: "a", type: "string" },
-              { name: "b", type: "string" },
-            ]}
-          />
-          <ts.ClassMethod
-            name="six"
-            parameters={[
-              { name: "a", type: "number", refkey: a },
-              { name: "b", type: "number", refkey: b },
-            ]}
-            returnType="number"
-          >
-            {one} = {a} + {b};
-          </ts.ClassMethod>
-          <ts.ClassMethod name="seven" jsPrivate />
-        </List>
-      </ts.ClassDeclaration>
+        <ts.ClassDeclaration name="Foo">
+          <List hardline>
+            <ts.ClassMethod name="one" refkey={one} />
+            <ts.ClassMethod name="two" public />
+            <ts.ClassMethod name="three" private />
+            <ts.ClassMethod name="four" protected />
+            <ts.ClassMethod
+              name="five"
+              parameters={[
+                { name: "a", type: "string" },
+                { name: "b", type: "string" },
+              ]}
+            />
+            <ts.ClassMethod
+              name="six"
+              parameters={[
+                { name: "a", type: "number", refkey: a },
+                { name: "b", type: "number", refkey: b },
+              ]}
+              returnType="number"
+            >
+              {one} = {a} + {b};
+            </ts.ClassMethod>
+            <ts.ClassMethod name="seven" jsPrivate />
+          </List>
+        </ts.ClassDeclaration>
       </TestFile>
     );
 
@@ -467,15 +474,15 @@ describe("instance methods", () => {
 it("renders a class with docs for the class and its members", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo" doc="This is a class documentation">
-      <ts.ClassField name="bar" doc="This is a field documentation">
-        123
-      </ts.ClassField>
-      ;<hbr />
-      <ts.ClassMethod name="baz" doc="This is a method documentation">
-        return 123;
-      </ts.ClassMethod>
-    </ts.ClassDeclaration>
+      <ts.ClassDeclaration name="Foo" doc="This is a class documentation">
+        <ts.ClassField name="bar" doc="This is a field documentation">
+          123
+        </ts.ClassField>
+        ;<hbr />
+        <ts.ClassMethod name="baz" doc="This is a method documentation">
+          return 123;
+        </ts.ClassMethod>
+      </ts.ClassDeclaration>
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -500,24 +507,25 @@ it("renders a class with docs for the class and its members", () => {
 it("renders a method with parameter docs", () => {
   const res = (
     <TestFile>
-        <ts.ClassDeclaration name="Foo">
-      <ts.ClassMethod
-        name="bar"
-        doc="Method documentation"
-        returnType="void"
-        parameters={[
-          { name: "a", type: "number", doc: "Parameter a doc" },
-          {
-            name: "b",
-            type: "string",
-            doc: "Line 1 for b. This is a long description that should continue in the next line.",
-          },
-        ]}
-      />
-    </ts.ClassDeclaration>
+      <ts.ClassDeclaration name="Foo">
+        <ts.ClassMethod
+          name="bar"
+          doc="Method documentation"
+          returnType="void"
+          parameters={[
+            { name: "a", type: "number", doc: "Parameter a doc" },
+            {
+              name: "b",
+              type: "string",
+              doc: "Line 1 for b. This is a long description that should continue in the next line.",
+            },
+          ]}
+        />
+      </ts.ClassDeclaration>
     </TestFile>
   );
-  expect(res).toRenderTo(`
+  expect(res).toRenderTo(
+    `
     class Foo {
       /**
        * Method documentation
@@ -529,5 +537,7 @@ it("renders a method with parameter docs", () => {
        */
       bar(a: number, b: string): void {}
     }
-  `, { printWidth: 40 });
+  `,
+    { printWidth: 40 },
+  );
 });

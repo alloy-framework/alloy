@@ -2,10 +2,7 @@ import { Prose } from "@alloy-js/core";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { dataclassesModule } from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.jsx";
+import { TestOutput, TestOutputDirectory } from "./utils.jsx";
 
 /**
  * TestOutputDirectory wraps content in an Output component without a default
@@ -165,12 +162,13 @@ it("renders module documentation correctly", () => {
       <py.SourceFile path="test.py" doc={moduleDoc}>
         <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
         <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
-        <py.FunctionDeclaration name="process_data">pass</py.FunctionDeclaration>
+        <py.FunctionDeclaration name="process_data">
+          pass
+        </py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     This module provides utility functions for data processing. It includes
     functions for validation, transformation, and analysis.
@@ -193,8 +191,7 @@ it("renders module documentation correctly", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("renders source file without documentation correctly", () => {
@@ -206,15 +203,13 @@ it("renders source file without documentation correctly", () => {
         </py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     def hello_world():
         print("Hello, World!")
 
   `,
-    },
-  );
+  });
 });
 
 it("nothing before top-level definition", () => {
@@ -224,15 +219,13 @@ it("nothing before top-level definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     def hello():
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("nothing before non-definition", () => {
@@ -256,9 +249,8 @@ it("only doc before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -268,8 +260,7 @@ it("only doc before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("only doc before non-definition", () => {
@@ -283,16 +274,14 @@ it("only doc before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
     x = 42`,
-    },
-  );
+  });
 });
 
 it("only header before definition", () => {
@@ -302,9 +291,8 @@ it("only header before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
 
@@ -312,8 +300,7 @@ it("only header before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("only header before non-definition", () => {
@@ -323,14 +310,12 @@ it("only header before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
     x = 42`,
-    },
-  );
+  });
 });
 
 it("only futureImports before definition", () => {
@@ -343,9 +328,8 @@ it("only futureImports before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
 
@@ -353,8 +337,7 @@ it("only futureImports before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("only futureImports before non-definition", () => {
@@ -367,14 +350,12 @@ it("only futureImports before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
     x = 42`,
-    },
-  );
+  });
 });
 
 it("only imports before definition", () => {
@@ -386,9 +367,8 @@ it("only imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from dataclasses import dataclass
 
 
@@ -397,8 +377,7 @@ it("only imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("only imports before non-definition", () => {
@@ -407,18 +386,18 @@ it("only imports before non-definition", () => {
       <py.SourceFile path="test.py">
         <py.VariableDeclaration
           name="x"
-          initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
         />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from dataclasses import dataclass
 
     x = dataclass`,
-    },
-  );
+  });
 });
 
 it("doc + futureImports before definition", () => {
@@ -436,9 +415,8 @@ it("doc + futureImports before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -450,8 +428,7 @@ it("doc + futureImports before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("doc + futureImports before non-definition", () => {
@@ -469,9 +446,8 @@ it("doc + futureImports before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -479,8 +455,7 @@ it("doc + futureImports before non-definition", () => {
     from __future__ import annotations
 
     x = 42`,
-    },
-  );
+  });
 });
 
 it("doc + imports before definition", () => {
@@ -496,9 +471,8 @@ it("doc + imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -511,8 +485,7 @@ it("doc + imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("doc + imports before non-definition", () => {
@@ -525,13 +498,14 @@ it("doc + imports before non-definition", () => {
       <py.SourceFile path="test.py" doc={moduleDoc}>
         <py.VariableDeclaration
           name="x"
-          initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
         />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -539,8 +513,7 @@ it("doc + imports before non-definition", () => {
     from dataclasses import dataclass
 
     x = dataclass`,
-    },
-  );
+  });
 });
 
 it("futureImports + imports before definition", () => {
@@ -555,9 +528,8 @@ it("futureImports + imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
     from dataclasses import dataclass
@@ -568,8 +540,7 @@ it("futureImports + imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("futureImports + imports before non-definition", () => {
@@ -581,20 +552,20 @@ it("futureImports + imports before non-definition", () => {
       >
         <py.VariableDeclaration
           name="x"
-          initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
         />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
     from dataclasses import dataclass
 
     x = dataclass`,
-    },
-  );
+  });
 });
 
 it("doc + futureImports + imports before definition", () => {
@@ -614,9 +585,8 @@ it("doc + futureImports + imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -631,8 +601,7 @@ it("doc + futureImports + imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("doc + futureImports + imports before non-definition", () => {
@@ -649,13 +618,14 @@ it("doc + futureImports + imports before non-definition", () => {
       >
         <py.VariableDeclaration
           name="x"
-          initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
         />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -665,8 +635,7 @@ it("doc + futureImports + imports before non-definition", () => {
     from dataclasses import dataclass
 
     x = dataclass`,
-    },
-  );
+  });
 });
 
 it("only doc in file (no children)", () => {
@@ -678,16 +647,14 @@ it("only doc in file (no children)", () => {
     <TestOutputDirectory>
       <py.SourceFile path="test.py" doc={moduleDoc} />
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
   `,
-    },
-  );
+  });
 });
 
 it("only header in file (no children)", () => {
@@ -695,14 +662,12 @@ it("only header in file (no children)", () => {
     <TestOutputDirectory>
       <py.SourceFile path="test.py" header="#!/usr/bin/env python3" />
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
   `,
-    },
-  );
+  });
 });
 
 it("only futureImports in file (no children)", () => {
@@ -713,11 +678,9 @@ it("only futureImports in file (no children)", () => {
         futureImports={[<py.FutureStatement feature="annotations" />]}
       />
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": "from __future__ import annotations",
-    },
-  );
+  ).toRenderTo({
+    "test.py": "from __future__ import annotations",
+  });
 });
 
 it("doc + futureImports in file (no children)", () => {
@@ -733,17 +696,15 @@ it("doc + futureImports in file (no children)", () => {
         futureImports={[<py.FutureStatement feature="annotations" />]}
       />
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
     from __future__ import annotations
   `,
-    },
-  );
+  });
 });
 
 // headerComment tests
@@ -754,9 +715,8 @@ it("only headerComment before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
 
@@ -764,8 +724,7 @@ it("only headerComment before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("only headerComment before non-definition", () => {
@@ -775,14 +734,12 @@ it("only headerComment before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
     x = 42`,
-    },
-  );
+  });
 });
 
 it("headerComment + doc before definition", () => {
@@ -800,9 +757,8 @@ it("headerComment + doc before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -813,8 +769,7 @@ it("headerComment + doc before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("headerComment + futureImports before definition", () => {
@@ -828,9 +783,8 @@ it("headerComment + futureImports before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
     from __future__ import annotations
@@ -840,8 +794,7 @@ it("headerComment + futureImports before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("headerComment + imports before definition", () => {
@@ -853,9 +806,8 @@ it("headerComment + imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
     from dataclasses import dataclass
@@ -866,8 +818,7 @@ it("headerComment + imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("headerComment + doc + futureImports before definition", () => {
@@ -886,9 +837,8 @@ it("headerComment + doc + futureImports before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -901,8 +851,7 @@ it("headerComment + doc + futureImports before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("headerComment + doc + futureImports + imports before definition", () => {
@@ -923,9 +872,8 @@ it("headerComment + doc + futureImports + imports before definition", () => {
         </py.DataclassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -941,8 +889,7 @@ it("headerComment + doc + futureImports + imports before definition", () => {
         name: str = None
 
   `,
-    },
-  );
+  });
 });
 
 it("only headerComment in file (no children)", () => {
@@ -950,11 +897,9 @@ it("only headerComment in file (no children)", () => {
     <TestOutputDirectory>
       <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company" />
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": "# Copyright 2024 My Company",
-    },
-  );
+  ).toRenderTo({
+    "test.py": "# Copyright 2024 My Company",
+  });
 });
 
 it("header + headerComment before definition", () => {
@@ -968,9 +913,8 @@ it("header + headerComment before definition", () => {
         <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
@@ -979,8 +923,7 @@ it("header + headerComment before definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("header + headerComment before class definition", () => {
@@ -994,9 +937,8 @@ it("header + headerComment before class definition", () => {
         <py.ClassDeclaration name="MyClass">pass</py.ClassDeclaration>
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
@@ -1005,8 +947,7 @@ it("header + headerComment before class definition", () => {
         pass
 
   `,
-    },
-  );
+  });
 });
 
 it("header + headerComment before non-definition", () => {
@@ -1020,13 +961,11 @@ it("header + headerComment before non-definition", () => {
         <py.VariableDeclaration name="x" initializer={42} />
       </py.SourceFile>
     </TestOutputDirectory>,
-  ).toRenderTo(
-    {
-      "test.py": `
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
     x = 42`,
-    },
-  );
+  });
 });

@@ -1,4 +1,5 @@
-import { expect, it } from "vitest"; import { ValueExpression } from "../src/index.js";
+import { expect, it } from "vitest";
+import { ValueExpression } from "../src/index.js";
 import { TestFile } from "./utils.js";
 
 it.each([
@@ -36,11 +37,9 @@ it.each([
     `,
   ],
 ])("works - %o => %s", (jsValue, expectedSource) => {
-  expect((
+  expect(
     <TestFile>
-        <ValueExpression jsValue={jsValue} />
-    </TestFile>
-  )).toRenderTo(
-    expectedSource,
-  );
+      <ValueExpression jsValue={jsValue} />
+    </TestFile>,
+  ).toRenderTo(expectedSource);
 });

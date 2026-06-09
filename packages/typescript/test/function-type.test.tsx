@@ -6,24 +6,22 @@ import { ParameterDescriptor } from "../src/components/index.js";
 import { TestFile } from "./utils.js";
 
 it("render basic", () => {
-  expect((
+  expect(
     <TestFile>
-        <FunctionType />
-    </TestFile>
-  )).toRenderTo(`
+      <FunctionType />
+    </TestFile>,
+  ).toRenderTo(`
     () => void
     `);
 });
 
 it("render in interface", () => {
   expect(
-    (
-      <TestFile>
-          <ts.InterfaceDeclaration name="Foo">
+    <TestFile>
+      <ts.InterfaceDeclaration name="Foo">
         <ts.InterfaceMember name="foo" type={<FunctionType />} />
       </ts.InterfaceDeclaration>
-      </TestFile>
-    ),
+    </TestFile>,
   ).toRenderTo(`
       interface Foo {
         foo: () => void
@@ -33,21 +31,21 @@ it("render in interface", () => {
 
 describe("marking it as async", () => {
   it("no return type change to Promise<void>", () => {
-    expect((
+    expect(
       <TestFile>
-          <FunctionType async />
-      </TestFile>
-    )).toRenderTo(`
+        <FunctionType async />
+      </TestFile>,
+    ).toRenderTo(`
       () => Promise<void>
     `);
   });
 
   it("explicit returnType change to Promise<T>", () => {
-    expect((
+    expect(
       <TestFile>
-          <FunctionType async returnType="Foo" />
-      </TestFile>
-    )).toRenderTo(`
+        <FunctionType async returnType="Foo" />
+      </TestFile>,
+    ).toRenderTo(`
       () => Promise<Foo>
     `);
   });
@@ -56,11 +54,11 @@ describe("marking it as async", () => {
     function Foo(_props?: Props) {
       return <>Foo</>;
     }
-    expect((
+    expect(
       <TestFile>
-          <FunctionType async returnType={<Foo />} />
-      </TestFile>
-    )).toRenderTo(`
+        <FunctionType async returnType={<Foo />} />
+      </TestFile>,
+    ).toRenderTo(`
     () => Promise<Foo>
   `);
   });
@@ -73,11 +71,7 @@ it("supports parameters by element", () => {
     </FunctionType>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     (a, b) => void
   `);
 });
@@ -92,11 +86,7 @@ it("supports type parameters by descriptor object", () => {
     ></FunctionType>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a extends any, b extends any>() => void
   `);
 });
@@ -104,11 +94,7 @@ it("supports type parameters by descriptor object", () => {
 it("supports type parameters by descriptor array", () => {
   const decl = <FunctionType typeParameters={["a", "b"]}></FunctionType>;
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a, b>() => void
   `);
 });
@@ -120,11 +106,7 @@ it("supports type parameters by element", () => {
     </FunctionType>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a, b>() => void
   `);
 });
@@ -137,15 +119,9 @@ describe("symbols", () => {
       type: "any",
       optional: true,
     };
-    const decl = (
-      <FunctionType parameters={[paramDesc]}></FunctionType>
-    );
+    const decl = <FunctionType parameters={[paramDesc]}></FunctionType>;
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (foo?: any) => void
     `);
   });
@@ -156,15 +132,9 @@ describe("symbols", () => {
       type: "any[]",
       rest: true,
     };
-    const decl = (
-      <FunctionType parameters={[paramDesc]}></FunctionType>
-    );
+    const decl = <FunctionType parameters={[paramDesc]}></FunctionType>;
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (...foo: any[]) => void
     `);
   });

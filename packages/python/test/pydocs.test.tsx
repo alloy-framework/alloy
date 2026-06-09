@@ -2,10 +2,7 @@ import { Prose } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.jsx";
+import { TestOutput, TestOutputDirectory } from "./utils.jsx";
 
 describe("PyDoc", () => {
   it("formats properly", () => {
@@ -154,7 +151,9 @@ describe("SimpleInlineComment", () => {
         {[
           <>
             x = 42
-            <py.SimpleInlineComment>This is an inline comment</py.SimpleInlineComment>
+            <py.SimpleInlineComment>
+              This is an inline comment
+            </py.SimpleInlineComment>
           </>,
         ]}
       </TestOutput>,
@@ -167,13 +166,13 @@ describe("SimpleInlineComment", () => {
         {[
           <>
             result = calculate()
-            <py.SimpleInlineComment>TODO: Add error handling here</py.SimpleInlineComment>
+            <py.SimpleInlineComment>
+              TODO: Add error handling here
+            </py.SimpleInlineComment>
           </>,
         ]}
       </TestOutput>,
-    ).toRenderTo(
-      `result = calculate()  # TODO: Add error handling here`,
-    );
+    ).toRenderTo(`result = calculate()  # TODO: Add error handling here`);
   });
 });
 
@@ -341,7 +340,9 @@ describe("New Documentation Components", () => {
       <TestOutput>
         <py.ExceptionDoc
           description={[
-            <Prose>Exceptions are documented in the same way as classes.</Prose>,
+            <Prose>
+              Exceptions are documented in the same way as classes.
+            </Prose>,
           ]}
           parameters={[
             {
@@ -502,7 +503,11 @@ describe("New Documentation Components", () => {
       <TestOutput>
         <py.ModuleDoc
           description={[<Prose>Module with pending tasks.</Prose>]}
-          todo={["Implement feature X", "Add more tests", "Update documentation"]}
+          todo={[
+            "Implement feature X",
+            "Add more tests",
+            "Update documentation",
+          ]}
         />
       </TestOutput>,
     ).toRenderTo(
@@ -636,8 +641,8 @@ describe("New Documentation Components", () => {
           description={[
             <Prose>A custom exception for authentication failures.</Prose>,
             <Prose>
-              This exception is raised when authentication credentials are invalid
-              or when authentication tokens have expired.
+              This exception is raised when authentication credentials are
+              invalid or when authentication tokens have expired.
             </Prose>,
           ]}
           parameters={[
@@ -1153,9 +1158,8 @@ describe("Full example", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "utils.py": `
+    ).toRenderTo({
+      "utils.py": `
           """
           This module provides utility functions for data processing. It includes
           functions for validation, transformation, and analysis.
@@ -1178,8 +1182,7 @@ describe("Full example", () => {
               pass
 
           `,
-      },
-    );
+    });
   });
 
   it("GeneratorDoc with FunctionDeclaration integration", () => {

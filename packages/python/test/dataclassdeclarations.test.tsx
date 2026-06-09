@@ -2,10 +2,7 @@ import { Prose, namekey, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { dataclassesModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("DataclassDeclaration", () => {
   it("stacks user decorators above @dataclass", () => {
@@ -550,9 +547,8 @@ describe("DataclassDeclaration", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           from dataclasses import dataclass
 
 
@@ -562,7 +558,7 @@ describe("DataclassDeclaration", () => {
               name: str
 
           `,
-        "services.py": `
+      "services.py": `
           from models import User
 
 
@@ -571,7 +567,6 @@ describe("DataclassDeclaration", () => {
               return user
 
           `,
-      },
-    );
+    });
   });
 });

@@ -1,4 +1,6 @@
-import { expect, it } from "vitest"; import { BlockScope } from "../src/components/BlockScope.jsx"; import { VarDeclaration } from "../src/index.js";
+import { expect, it } from "vitest";
+import { BlockScope } from "../src/components/BlockScope.jsx";
+import { VarDeclaration } from "../src/index.js";
 import { TestFile } from "./utils.js";
 
 it("creates a scope", () => {
@@ -22,7 +24,7 @@ it("creates a scope", () => {
 it("renders an empty block properly", () => {
   const text = (
     <TestFile>
-        <BlockScope></BlockScope>
+      <BlockScope></BlockScope>
     </TestFile>
   );
 

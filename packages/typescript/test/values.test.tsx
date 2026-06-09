@@ -1,4 +1,11 @@
-import { List, mapJoin, Output, reactive, refkey, StatementList } from "@alloy-js/core";
+import {
+  List,
+  mapJoin,
+  Output,
+  reactive,
+  refkey,
+  StatementList,
+} from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import * as ts from "../src/index.js";

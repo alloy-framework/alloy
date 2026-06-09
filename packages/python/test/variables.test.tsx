@@ -1,10 +1,7 @@
 import { namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("Python Variable", () => {
   it("declares a python variable", () => {
@@ -94,9 +91,7 @@ describe("Python Variable", () => {
           initializer={<py.Atom jsValue={{ John: 123, Doe: 234 }} />}
         />
       </TestOutput>,
-    ).toRenderTo(
-      `name_id_pairs = {"John": 123, "Doe": 234}`,
-    );
+    ).toRenderTo(`name_id_pairs = {"John": 123, "Doe": 234}`);
   });
 
   it("declares a python variable with omitNone", () => {
@@ -200,14 +195,13 @@ describe("Python Variable", () => {
           <py.VariableDeclaration name="my_var" type={classKey} />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "classes.py": `
+    ).toRenderTo({
+      "classes.py": `
           class MyClass:
               pass
 
         `,
-        "usage.py": `
+      "usage.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -215,8 +209,7 @@ describe("Python Variable", () => {
 
           my_var: MyClass = None
         `,
-      },
-    );
+    });
   });
 
   it("declares a python variable receiving other variable as value", () => {

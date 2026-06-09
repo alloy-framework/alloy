@@ -1,11 +1,7 @@
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
-import {
-  onCleanup,
-  reactive,
-  ref,
-} from "../../src/index.js";
+import { onCleanup, reactive, ref } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
 
 it("works", () => {

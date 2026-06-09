@@ -16,11 +16,7 @@ describe("StaticMethodDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @staticmethod
           async def util() -> str:
@@ -40,11 +36,7 @@ describe("StaticMethodDeclaration", () => {
       </py.ClassDeclaration>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @staticmethod
           def foo(x: int):

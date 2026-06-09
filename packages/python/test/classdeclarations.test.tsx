@@ -1,10 +1,7 @@
 import { memberRefkey, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("Python Class", () => {
   it("renders class-level decorators above `class`", () => {
@@ -142,14 +139,13 @@ describe("Python Class", () => {
           <py.ClassDeclaration name="C" bases={[refkey("B")]} />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "mod1.py": `
+    ).toRenderTo({
+      "mod1.py": `
           class A:
               pass
 
         `,
-        "folder/mod2.py": `
+      "folder/mod2.py": `
           from mod1 import A
 
 
@@ -157,7 +153,7 @@ describe("Python Class", () => {
               pass
 
         `,
-        "mod3.py": `
+      "mod3.py": `
           from folder.mod2 import B
 
 
@@ -165,8 +161,7 @@ describe("Python Class", () => {
               pass
 
         `,
-      },
-    );
+    });
   });
 
   it("renders a class with class variables like foo: str, and also bar: A where A is another class", () => {
@@ -326,16 +321,15 @@ describe("Python Class - VariableDeclaration", () => {
           </py.ClassDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "inst.py": `
+    ).toRenderTo({
+      "inst.py": `
           from decl import Bar
 
           one: Bar = Bar()
           one.instance_prop
           one.instance_method()
         `,
-        "decl.py": `
+      "decl.py": `
           class Bar:
               instance_prop = 42
               def instance_method(self) -> int:
@@ -343,8 +337,7 @@ describe("Python Class - VariableDeclaration", () => {
 
 
         `,
-      },
-    );
+    });
   });
 });
 

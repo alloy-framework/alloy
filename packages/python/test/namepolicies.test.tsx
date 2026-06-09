@@ -73,9 +73,7 @@ it("correct formatting of call signature parameters names", () => {
         ]}
       />
     </TestOutput>,
-  ).toRenderTo(
-    `this_is_a_number: int, and_this_is_a_dict: dict`,
-  );
+  ).toRenderTo(`this_is_a_number: int, and_this_is_a_dict: dict`);
 });
 
 it("correct formatting of call statement vars", () => {
@@ -99,9 +97,7 @@ it("correct formatting of call statement vars", () => {
         />
       </py.StatementList>
     </TestOutput>,
-  ).toRenderTo(
-    `test(this_is_a_long_name="A name", and_this_is_a_number=42)`,
-  );
+  ).toRenderTo(`test(this_is_a_long_name="A name", and_this_is_a_number=42)`);
 });
 
 it("correct formatting of variable name", () => {

@@ -6,18 +6,12 @@ import {
   typingModule,
 } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("PydanticClassDeclaration", () => {
   it("forwards class-level decorators above `class`", () => {
     expect(
-      <TestOutput
-        path="models.py"
-        externals={[pydanticModule, typingModule]}
-      >
+      <TestOutput path="models.py" externals={[pydanticModule, typingModule]}>
         <py.PydanticClassDeclaration
           name="User"
           decorators={[code`@${typingModule["."].final}`]}
@@ -214,9 +208,8 @@ describe("PydanticClassDeclaration", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           from pydantic import BaseModel
 
 
@@ -224,7 +217,7 @@ describe("PydanticClassDeclaration", () => {
               id: int
 
           `,
-        "service.py": `
+      "service.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -235,8 +228,7 @@ describe("PydanticClassDeclaration", () => {
               return User(id=user_id)
 
           `,
-      },
-    );
+    });
   });
 
   it("emits model_config = ConfigDict(...) from top-level config props", () => {
@@ -540,9 +532,8 @@ describe("Pydantic ecosystem emitters", () => {
           </py.PydanticClassDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           from __future__ import annotations
 
           from pydantic import BaseModel
@@ -553,8 +544,7 @@ describe("Pydantic ecosystem emitters", () => {
               child: "Node" | None = None
 
         `,
-      },
-    );
+    });
   });
 
   it("model_config can use pydantic.alias_generators", () => {

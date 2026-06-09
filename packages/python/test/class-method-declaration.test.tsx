@@ -20,11 +20,7 @@ describe("ClassMethodDeclaration", () => {
       </py.StatementList>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @classmethod
           async def create(cls) -> MyClass:
@@ -44,11 +40,7 @@ describe("ClassMethodDeclaration", () => {
       </py.ClassDeclaration>
     );
 
-        expect(
-      <TestOutput>
-      {decl}
-      </TestOutput>,
-    ).toRenderTo(`
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @classmethod
           def foo(cls, x: int):

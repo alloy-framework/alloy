@@ -1,8 +1,8 @@
 import { refkey, StatementList } from "@alloy-js/core";
 import { expect, it } from "vitest";
+import { TestFile } from "../../test/utils.js";
 import { CatchClause, FinallyClause, TryStatement } from "./TryStatement.jsx";
 import { VarDeclaration } from "./VarDeclaration.jsx";
-import { TestFile } from "../../test/utils.js";
 
 it("works with try-catch", () => {
   expect(

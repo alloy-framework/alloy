@@ -23,14 +23,13 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
           `,
-        "service.py": `
+      "service.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -41,8 +40,7 @@ describe("TYPE_CHECKING imports", () => {
               pass
 
           `,
-      },
-    );
+    });
   });
 
   it("imports value references outside TYPE_CHECKING block", () => {
@@ -62,14 +60,13 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
           `,
-        "service.py": `
+      "service.py": `
           from models import User
 
 
@@ -77,8 +74,7 @@ describe("TYPE_CHECKING imports", () => {
               user = User()
 
           `,
-      },
-    );
+    });
   });
 
   it("upgrades type-only import to regular import when also used as value", () => {
@@ -105,14 +101,13 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
           `,
-        "service.py": `
+      "service.py": `
           from models import User
 
 
@@ -121,8 +116,7 @@ describe("TYPE_CHECKING imports", () => {
               return user
 
           `,
-      },
-    );
+    });
   });
 
   it("handles mixed type-only and regular imports from same module", () => {
@@ -147,9 +141,8 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
@@ -158,7 +151,7 @@ describe("TYPE_CHECKING imports", () => {
               pass
 
           `,
-        "service.py": `
+      "service.py": `
           from models import helper
           from typing import TYPE_CHECKING
 
@@ -170,8 +163,7 @@ describe("TYPE_CHECKING imports", () => {
               helper()
 
           `,
-      },
-    );
+    });
   });
 
   it("handles return type as type-only import", () => {
@@ -188,14 +180,13 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "types.py": `
+    ).toRenderTo({
+      "types.py": `
           class Result:
               pass
 
           `,
-        "main.py": `
+      "main.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -206,8 +197,7 @@ describe("TYPE_CHECKING imports", () => {
               pass
 
           `,
-      },
-    );
+    });
   });
 
   it("handles variable type annotation as type-only import", () => {
@@ -219,21 +209,16 @@ describe("TYPE_CHECKING imports", () => {
           <py.ClassDeclaration name="Config" refkey={configTypeRef} />
         </py.SourceFile>
         <py.SourceFile path="main.py">
-          <py.VariableDeclaration
-            name="config"
-            type={configTypeRef}
-            omitNone
-          />
+          <py.VariableDeclaration name="config" type={configTypeRef} omitNone />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "types.py": `
+    ).toRenderTo({
+      "types.py": `
           class Config:
               pass
 
           `,
-        "main.py": `
+      "main.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -241,8 +226,7 @@ describe("TYPE_CHECKING imports", () => {
 
           config: Config
           `,
-      },
-    );
+    });
   });
 
   it("handles TypeReference component as type-only import", () => {
@@ -261,14 +245,13 @@ describe("TYPE_CHECKING imports", () => {
           />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "types.py": `
+    ).toRenderTo({
+      "types.py": `
           class MyType:
               pass
 
           `,
-        "main.py": `
+      "main.py": `
           from typing import TYPE_CHECKING
 
           if TYPE_CHECKING:
@@ -276,8 +259,7 @@ describe("TYPE_CHECKING imports", () => {
 
           value: MyType
           `,
-      },
-    );
+    });
   });
 
   it("handles class bases as regular import (runtime requirement)", () => {
@@ -292,14 +274,13 @@ describe("TYPE_CHECKING imports", () => {
           <py.ClassDeclaration name="DerivedClass" bases={[baseClassRef]} />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "base.py": `
+    ).toRenderTo({
+      "base.py": `
           class BaseClass:
               pass
 
           `,
-        "derived.py": `
+      "derived.py": `
           from base import BaseClass
 
 
@@ -307,8 +288,7 @@ describe("TYPE_CHECKING imports", () => {
               pass
 
           `,
-      },
-    );
+    });
   });
 
   it("renders regular imports before TYPE_CHECKING block", () => {
@@ -346,14 +326,13 @@ describe("TYPE_CHECKING imports", () => {
           </py.FunctionDeclaration>
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
           `,
-        "service.py": `
+      "service.py": `
           from requests import get
           from typing import cast
           from typing import TYPE_CHECKING
@@ -367,7 +346,6 @@ describe("TYPE_CHECKING imports", () => {
               return cast(str, user)
 
           `,
-      },
-    );
+    });
   });
 });

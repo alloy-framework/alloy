@@ -21,19 +21,17 @@ describe("Reference", () => {
           />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "models.py": `
+    ).toRenderTo({
+      "models.py": `
           class User:
               pass
 
           `,
-        "services.py": `
+      "services.py": `
           from models import User
 
           current_user: User = User("Marvin")
           `,
-      },
-    );
+    });
   });
 });

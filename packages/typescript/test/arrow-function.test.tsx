@@ -1,33 +1,36 @@
-import { render, Props, refkey, StatementList } from "@alloy-js/core"; import { describe, expect, it } from "vitest"; import { ArrowFunction } from "../src/components/ArrowFunction.jsx"; import { VarDeclaration } from "../src/index.js";
+import { Props, refkey, render, StatementList } from "@alloy-js/core";
+import { describe, expect, it } from "vitest";
+import { ArrowFunction } from "../src/components/ArrowFunction.jsx";
+import { VarDeclaration } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { TestFile } from "./utils.js";
 
 it("create basic function", () => {
-  expect((
+  expect(
     <TestFile>
-        <ArrowFunction />
-    </TestFile>
-  )).toRenderTo(`
+      <ArrowFunction />
+    </TestFile>,
+  ).toRenderTo(`
         () => {}
     `);
 });
 
 it("can be an async function", () => {
-  expect((
+  expect(
     <TestFile>
-        <ArrowFunction async />
-    </TestFile>
-  )).toRenderTo(`
+      <ArrowFunction async />
+    </TestFile>,
+  ).toRenderTo(`
     async () => {}
   `);
 });
 
 it("can be an async with returnType", () => {
-  expect((
+  expect(
     <TestFile>
-        <ArrowFunction async returnType="Foo" />
-    </TestFile>
-  )).toRenderTo(`
+      <ArrowFunction async returnType="Foo" />
+    </TestFile>,
+  ).toRenderTo(`
     async (): Promise<Foo> => {}
   `);
 });
@@ -36,11 +39,11 @@ it("can be an async with returnType element", () => {
   function Foo(_props?: Props) {
     return <>Foo</>;
   }
-  expect((
+  expect(
     <TestFile>
-        <ArrowFunction async returnType={<Foo />} />
-    </TestFile>
-  )).toRenderTo(`
+      <ArrowFunction async returnType={<Foo />} />
+    </TestFile>,
+  ).toRenderTo(`
     async (): Promise<Foo> => {}
   `);
 });
@@ -53,11 +56,7 @@ it("supports parameters by element", () => {
     </ArrowFunction>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     (a, b) => {
       return a + b;
     }
@@ -74,11 +73,7 @@ it("supports type parameters by descriptor object", () => {
     ></ArrowFunction>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a extends any, b extends any>() => {}
   `);
 });
@@ -86,11 +81,7 @@ it("supports type parameters by descriptor object", () => {
 it("supports type parameters by descriptor array", () => {
   const decl = <ArrowFunction typeParameters={["a", "b"]}></ArrowFunction>;
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a, b>() => {}
   `);
 });
@@ -102,11 +93,7 @@ it("supports type parameters by element", () => {
     </ArrowFunction>
   );
 
-  expect((
-    <TestFile>
-        {decl}
-    </TestFile>
-  )).toRenderTo(`
+  expect(<TestFile>{decl}</TestFile>).toRenderTo(`
     <a, b>() => {}
   `);
 });
@@ -131,11 +118,7 @@ describe("symbols", () => {
         {outerRefkey}
       </StatementList>
     );
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       () => {
         refme;
         const refme = 1;
@@ -157,12 +140,9 @@ describe("symbols", () => {
         ;{innerRefkey}
       </>
     );
-    expect(() => render(
-      <TestFile>
-          {decl}
-      </TestFile>,
-      { insertFinalNewLine: false },
-    )).toThrow(/Cannot reference a symbol/);
+    expect(() =>
+      render(<TestFile>{decl}</TestFile>, { insertFinalNewLine: false }),
+    ).toThrow(/Cannot reference a symbol/);
   });
 
   it("creates symbols for parameters", () => {
@@ -174,11 +154,7 @@ describe("symbols", () => {
       </ArrowFunction>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (sym: any) => {
         () => {
           sym
@@ -194,11 +170,7 @@ describe("symbols", () => {
       </ArrowFunction>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (conflict: any) => {
         const conflict_2 = 1;
       }
@@ -213,16 +185,10 @@ describe("symbols", () => {
       optional: true,
     };
     const decl = (
-      <ArrowFunction parameters={[paramDesc]}>
-        console.log(foo);
-      </ArrowFunction>
+      <ArrowFunction parameters={[paramDesc]}>console.log(foo);</ArrowFunction>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (foo?: any) => {
         console.log(foo);
       }
@@ -237,16 +203,10 @@ describe("symbols", () => {
       rest: true,
     };
     const decl = (
-      <ArrowFunction parameters={[paramDesc]}>
-        console.log(foo);
-      </ArrowFunction>
+      <ArrowFunction parameters={[paramDesc]}>console.log(foo);</ArrowFunction>
     );
 
-    expect((
-      <TestFile>
-          {decl}
-      </TestFile>
-    )).toRenderTo(`
+    expect(<TestFile>{decl}</TestFile>).toRenderTo(`
       (...foo: any[]) => {
         console.log(foo);
       }

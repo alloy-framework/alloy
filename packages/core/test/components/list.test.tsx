@@ -1,10 +1,5 @@
 import { expect, it } from "vitest";
-import {
-  createContentSlot,
-  List,
-  ref,
-  Show,
-} from "../../src/index.js";
+import { createContentSlot, List, ref, Show } from "../../src/index.js";
 
 it("creates a list with default options", () => {
   const template = (

@@ -2,10 +2,7 @@ import { code, namekey, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { abcModule } from "../src/index.js";
-import {
-  TestOutput,
-  TestOutputDirectory,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 describe("Function Declaration", () => {
   it("renders multiple decorators above def without blank lines", () => {
@@ -495,14 +492,13 @@ describe("Function Declaration", () => {
           />
         </py.SourceFile>
       </TestOutputDirectory>,
-    ).toRenderTo(
-      {
-        "mod1.py": `
+    ).toRenderTo({
+      "mod1.py": `
             class Foo:
                 pass
 
             `,
-        "mod2.py": `
+      "mod2.py": `
             class A:
                 pass
 
@@ -511,7 +507,7 @@ describe("Function Declaration", () => {
                 pass
 
             `,
-        "usage.py": `
+      "usage.py": `
             from typing import TYPE_CHECKING
 
             if TYPE_CHECKING:
@@ -524,8 +520,7 @@ describe("Function Declaration", () => {
                 pass
 
             `,
-      },
-    );
+    });
   });
 
   it("throws error when PropertyDeclaration is used outside of a class", () => {

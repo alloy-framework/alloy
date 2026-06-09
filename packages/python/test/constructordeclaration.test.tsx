@@ -16,9 +16,7 @@ describe("ConstructorDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(
-      <TestOutput>{decl}</TestOutput>,
-    ).toRenderTo(
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
       `
       class MyClass:
           async def __new__(cls) -> MyClass:
@@ -40,9 +38,7 @@ describe("ConstructorDeclaration", () => {
       </py.ClassDeclaration>
     );
 
-    expect(
-      <TestOutput>{decl}</TestOutput>,
-    ).toRenderTo(
+    expect(<TestOutput>{decl}</TestOutput>).toRenderTo(
       `
       class MyClass:
           def __new__(cls, *args, **kwargs):

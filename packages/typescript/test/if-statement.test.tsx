@@ -1,5 +1,9 @@
 import { expect, it } from "vitest";
-import { ElseClause, ElseIfClause, IfStatement } from "../src/components/IfStatement.jsx";
+import {
+  ElseClause,
+  ElseIfClause,
+  IfStatement,
+} from "../src/components/IfStatement.jsx";
 import { TestFile } from "./utils.js";
 
 it("works with blocks", () => {

@@ -6,12 +6,12 @@ import { TestFile } from "./utils.js";
 it("renders a function declaration with documentation", () => {
   const res = (
     <TestFile>
-        <ts.FunctionDeclaration
-      name="greet"
-      doc="A function that greets a person"
-      parameters={[{ name: "name", type: "string" }]}
-      returnType="string"
-    />
+      <ts.FunctionDeclaration
+        name="greet"
+        doc="A function that greets a person"
+        parameters={[{ name: "name", type: "string" }]}
+        returnType="string"
+      />
     </TestFile>
   );
   expect(res).toRenderTo(`
@@ -27,16 +27,16 @@ it("renders a function declaration with documentation", () => {
 it("With documented parameters", () => {
   const res = (
     <TestFile>
-        <ts.FunctionDeclaration
-      export
-      name="calculateTotal"
-      doc="Calculates the total price including tax"
-      parameters={[
-        { name: "price", type: "number" },
-        { name: "taxRate", type: "number", optional: true },
-      ]}
-      returnType="number"
-    />
+      <ts.FunctionDeclaration
+        export
+        name="calculateTotal"
+        doc="Calculates the total price including tax"
+        parameters={[
+          { name: "price", type: "number" },
+          { name: "taxRate", type: "number", optional: true },
+        ]}
+        returnType="number"
+      />
     </TestFile>
   );
   expect(res).toRenderTo(`

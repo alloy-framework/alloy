@@ -16,8 +16,7 @@ import { PythonBlock } from "./PythonBlock.jsx";
  * metadata with call signature shape.
  */
 export interface CommonFunctionProps
-  extends BaseDeclarationProps,
-    CallSignatureProps {
+  extends BaseDeclarationProps, CallSignatureProps {
   /** Indicates that the function is async. */
   async?: boolean;
   /**

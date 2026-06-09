@@ -14,7 +14,12 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
-import { captureSourceLocation, debug, isDebugEnabled, type DebugSourceLocation } from "./debug/index.js";
+import {
+  captureSourceLocation,
+  debug,
+  isDebugEnabled,
+  type DebugSourceLocation,
+} from "./debug/index.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler, setLastTriggerRef } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
@@ -626,7 +631,9 @@ const reactiveCreationLocations = new WeakMap<
   ReturnType<typeof captureSourceLocation>
 >();
 
-export function getReactiveCreationLocation(target: object): DebugSourceLocation | undefined {
+export function getReactiveCreationLocation(
+  target: object,
+): DebugSourceLocation | undefined {
   return reactiveCreationLocations.get(target);
 }
 

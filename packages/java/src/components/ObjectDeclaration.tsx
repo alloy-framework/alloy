@@ -5,8 +5,7 @@ import { ModifierProps } from "./Modifiers.jsx";
 import { Variable } from "./Variable.js";
 
 export interface ObjectDeclarationProps
-  extends CommonDeclarationProps,
-    ModifierProps {
+  extends CommonDeclarationProps, ModifierProps {
   type: Children;
   args?: Children[];
 }

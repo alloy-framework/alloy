@@ -22,7 +22,7 @@
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "prompts": "^2.4.2"
+    "prompts": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/babel-plugin": "workspace:~",
@@ -30,9 +30,9 @@
     "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
-    "@types/prompts": "^2.4.9",
+    "@types/prompts": "catalog:",
     "concurrently": "catalog:",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

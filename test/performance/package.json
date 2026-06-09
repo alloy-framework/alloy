@@ -22,7 +22,7 @@
     "@types/node": "catalog:",
     "cli-table3": "catalog:",
     "concurrently": "catalog:",
-    "listr2": "^9.0.3",
+    "listr2": "catalog:",
     "typescript": "catalog:"
   },
   "keywords": [],

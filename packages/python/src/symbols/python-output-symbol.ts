@@ -16,8 +16,7 @@ export interface PythonOutputSymbolOptions extends OutputSymbolOptions {
   typeOnly?: boolean;
 }
 
-export interface CreatePythonSymbolFunctionOptions
-  extends PythonOutputSymbolOptions {
+export interface CreatePythonSymbolFunctionOptions extends PythonOutputSymbolOptions {
   name: string;
 }
 

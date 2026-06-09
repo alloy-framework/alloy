@@ -95,8 +95,7 @@ const PydanticModelConfigKeys = [
 ] as const satisfies readonly (keyof PydanticModelConfigDictProps)[];
 
 export interface PydanticClassDeclarationProps
-  extends ClassDeclarationProps,
-    PydanticModelConfigDictProps {
+  extends ClassDeclarationProps, PydanticModelConfigDictProps {
   /**
    * Canonical structured config object for `ConfigDict(...)`. Values here are
    * merged with top-level config props.

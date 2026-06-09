@@ -31,7 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
-    "yaml": "^2.7.1"
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",

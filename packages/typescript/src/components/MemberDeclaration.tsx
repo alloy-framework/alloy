@@ -10,8 +10,7 @@ import {
   TSSymbolFlags,
 } from "../symbols/index.js";
 
-export interface MemberDeclarationPropsWithInfo
-  extends CoreMemberDeclarationPropsWithInfo {
+export interface MemberDeclarationPropsWithInfo extends CoreMemberDeclarationPropsWithInfo {
   /**
    * The name policy kind to apply to the memberdeclaration.
    */
@@ -22,8 +21,7 @@ export interface MemberDeclarationPropsWithInfo
   nullish?: boolean;
 }
 
-export interface MemberDeclarationPropsWithSymbol
-  extends CoreMemberDeclarationPropsWithSymbol {
+export interface MemberDeclarationPropsWithSymbol extends CoreMemberDeclarationPropsWithSymbol {
   /**
    * The symbol for the member declaration.
    */

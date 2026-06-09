@@ -64,6 +64,7 @@ export {
 } from "./reactivity.js";
 export * from "./refkey.js";
 
+export type { DebugSourceLocation } from "./debug/index.js";
 export {
   getContextForNode,
   getContextForRenderNode,
@@ -105,4 +106,3 @@ export {
 export * from "./utils.js";
 export * from "./write-output.js";
 import "./debug/index.js";
-export type { DebugSourceLocation } from "./debug/index.js";

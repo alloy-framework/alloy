@@ -50,8 +50,7 @@ export interface StructDeclarationProps {
  * This is a combination of `StructDeclarationProps` and `TypeDeclarationProps`.
  */
 export interface StructTypeDeclarationProps
-  extends StructDeclarationProps,
-    TypeDeclarationProps {}
+  extends StructDeclarationProps, TypeDeclarationProps {}
 
 /**
  * Wrapper for creating a named struct type declaration.

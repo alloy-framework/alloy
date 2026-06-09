@@ -7,11 +7,9 @@ import {
 import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface BlockScopePropsWithScopeValue
-  extends ScopePropsWithValue,
-    BlockProps {}
+  extends ScopePropsWithValue, BlockProps {}
 export interface BlockScopePropsWithScopeInfo
-  extends ScopePropsWithInfo,
-    BlockProps {}
+  extends ScopePropsWithInfo, BlockProps {}
 
 export type BlockScopeProps =
   | BlockScopePropsWithScopeValue

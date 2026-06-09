@@ -21,8 +21,7 @@ import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface FunctionDeclarationProps
-  extends CommonDeclarationProps,
-    CallSignatureProps {
+  extends CommonDeclarationProps, CallSignatureProps {
   async?: boolean;
   children?: Children;
 }

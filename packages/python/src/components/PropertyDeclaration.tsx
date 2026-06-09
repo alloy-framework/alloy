@@ -178,8 +178,10 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
   );
 }
 
-export interface PropertyMethodDeclarationProps
-  extends Omit<CommonFunctionProps, "name"> {
+export interface PropertyMethodDeclarationProps extends Omit<
+  CommonFunctionProps,
+  "name"
+> {
   abstract?: boolean;
 }
 
@@ -206,8 +208,10 @@ function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
   );
 }
 
-interface PropertyMethodBaseProps
-  extends Omit<PropertyMethodDeclarationProps, "name"> {
+interface PropertyMethodBaseProps extends Omit<
+  PropertyMethodDeclarationProps,
+  "name"
+> {
   decoratorType: "setter" | "deleter";
   parameters?: (ParameterDescriptor | string)[];
 }

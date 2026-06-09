@@ -57,6 +57,7 @@
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "@types/js-yaml": "^4.0.9",
+    "@types/node": "catalog:",
     "concurrently": "catalog:",
     "fast-xml-parser": "catalog:",
     "js-yaml": "^4.1.0",

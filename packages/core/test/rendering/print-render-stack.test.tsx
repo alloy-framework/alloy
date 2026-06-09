@@ -24,8 +24,8 @@ function expectErrorContaining(
   spy: ReturnType<typeof vi.spyOn>,
   substring: string,
 ) {
-  const calls = spy.mock.calls.map((call) => stripAnsi(String(call[0])));
-  expect(calls.some((msg) => msg.includes(substring))).toBe(true);
+  const calls = spy.mock.calls.map((call: any[]) => stripAnsi(String(call[0])));
+  expect(calls.some((msg: string) => msg.includes(substring))).toBe(true);
 }
 
 describe("printRenderStack", () => {

@@ -7,7 +7,7 @@
     "url": "git+https://github.com/alloy-framework/alloy.git"
   },
   "type": "module",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@11.5.2",
   "scripts": {
     "build": "pnpm -r --workspace-concurrency=Infinity build",
     "watch": "tsc --build ./tsconfig.ws.json --watch",
@@ -38,14 +38,5 @@
     "typedoc": "^0.28.8",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@microsoft/tsdoc@0.15.1": "patches/@microsoft__tsdoc@0.15.1.patch"
-    },
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.2.5",
-      "astro>vite": "^7.3.1"
-    }
   }
 }

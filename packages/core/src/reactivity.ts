@@ -14,7 +14,7 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
-import { captureSourceLocation, debug, isDebugEnabled } from "./debug/index.js";
+import { captureSourceLocation, debug, isDebugEnabled, type DebugSourceLocation } from "./debug/index.js";
 import { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler, setLastTriggerRef } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
@@ -626,7 +626,7 @@ const reactiveCreationLocations = new WeakMap<
   ReturnType<typeof captureSourceLocation>
 >();
 
-export function getReactiveCreationLocation(target: object) {
+export function getReactiveCreationLocation(target: object): DebugSourceLocation | undefined {
   return reactiveCreationLocations.get(target);
 }
 
@@ -676,7 +676,7 @@ export function toRef<T extends object, K extends keyof T>(
   const result =
     defaultValue === undefined ?
       (vueToRef(object, key) as Ref<T[K]>)
-    : (vueToRef(object, key, defaultValue) as Ref<T[K]>);
+    : (vueToRef(object, key, defaultValue as any) as Ref<T[K]>);
   if (isDebugEnabled()) {
     debug.effect.registerRef({
       id: refId(result),

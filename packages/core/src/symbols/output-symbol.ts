@@ -321,7 +321,7 @@ export abstract class OutputSymbol {
     return this.#ignoreNameConflict;
   }
 
-  #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({});
+  #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({}) as Record<string, OutputMemberSpace>;
   /**
    * The member spaces of this symbol.
    *

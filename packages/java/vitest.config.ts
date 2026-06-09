@@ -15,6 +15,7 @@ export default defineConfig({
     sourcemap: "both",
   },
   test: {
+    exclude: ["**/dist/**", "**/node_modules/**"],
     setupFiles: ["./test/vitest.setup.ts"],
   },
   plugins: [alloyPlugin()],

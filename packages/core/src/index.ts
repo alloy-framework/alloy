@@ -105,3 +105,4 @@ export {
 export * from "./utils.js";
 export * from "./write-output.js";
 import "./debug/index.js";
+export type { DebugSourceLocation } from "./debug/index.js";

@@ -90,6 +90,7 @@
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "catalog:",
+    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

@@ -52,6 +52,7 @@ export type {
   EffectDebugInfo,
   EffectEdgeDebugInfo,
   RefDebugInfo,
+  SourceLocation as DebugSourceLocation,
 } from "./effects.js";
 export {
   getRenderNodeId,

@@ -6,7 +6,6 @@ import {
 } from "../components/AccessExpression.jsx";
 import { code } from "../index.js";
 import { Children } from "../runtime/component.js";
-import { printTree, renderTree } from "../test-render.js";
 
 interface TestPartProps extends BasePartProps {
   name?: string;
@@ -105,28 +104,22 @@ describe("createAccessExpression", () => {
 
 describe("createAccessExpression: call chain formatting", () => {
   it("uses linear format with only one call", () => {
-    const tree = renderTree(
+    expect(
       <Expression>
         <Part name="foo" />
         <Part name="bar" args="x" />
       </Expression>,
-    );
-    // Single call → linear, no grouping.
-    expect(printTree(tree)).toBe("foo.bar(x)");
+    ).toRenderTo("foo.bar(x)");
   });
 
   it("uses call chain format with multiple calls", () => {
-    const tree = renderTree(
+    // Multiple calls → call chain with group/indent wrapping.
+    expect(
       <Expression>
         <Part name="foo" />
         <Part name="bar" args="x" />
         <Part name="baz" args="y" />
       </Expression>,
-    );
-    // Multiple calls → call chain with group/indent wrapping.
-    const result = printTree(tree);
-    // Should contain both calls.
-    expect(result).toContain("bar(x)");
-    expect(result).toContain("baz(y)");
+    ).toRenderTo("foo.bar(x).baz(y)");
   });
 });

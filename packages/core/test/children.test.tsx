@@ -1,13 +1,13 @@
-import { children, Children, printTree, renderTree } from "@alloy-js/core";
+import { children, Children } from "@alloy-js/core";
 import { expect, it } from "vitest";
+import "../testing/extend-expect.js";
 
 it("handles a single element", () => {
   function Foo(props: { children?: Children }) {
     return children(() => props.children);
   }
 
-  const res = renderTree(<Foo>a b c</Foo>);
-  expect(printTree(res)).toBe("a b c");
+  expect(<Foo>a b c</Foo>).toRenderTo("a b c");
 });
 
 it("handles a multiple elements", () => {
@@ -20,12 +20,10 @@ it("handles a multiple elements", () => {
     return "Bar";
   }
 
-  const res = renderTree(
+  expect(
     <Foo>
       <Bar />
       <Bar />
     </Foo>,
-  );
-
-  expect(printTree(res)).toBe(`BarBar`);
+  ).toRenderTo(`BarBar`);
 });

@@ -1,10 +1,8 @@
-import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
 import {
   onCleanup,
-  printTree,
   reactive,
   ref,
   renderTree,
@@ -110,7 +108,7 @@ it("doesn't rerender mappers", () => {
   flushJobs();
 
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -127,7 +125,7 @@ it("doesn't rerender mappers with sets", () => {
   messages.add("maybe");
   flushJobs();
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -150,7 +148,7 @@ it("doesn't rerender mappers with maps", () => {
   messages.set("maybe", "three");
   flushJobs();
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -175,7 +173,7 @@ it("doesn't rerender mappers (with splice)", () => {
   // but for now we re-render everything after the splice point.
   expect(count).toBe(4);
 
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 3
   `);
@@ -199,7 +197,7 @@ it("cleans up things which end up removed (with push)", () => {
   const tree = renderTree(template);
 
   expect(cleanups).toEqual([]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter b
   `);
@@ -207,14 +205,14 @@ it("cleans up things which end up removed (with push)", () => {
   items.pop();
   flushJobs();
   expect(cleanups).toEqual(["b"]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
   `);
 
   items.pop();
   flushJobs();
   expect(cleanups).toEqual(["b", "a"]);
-  expect(printTree(tree)).toBe("");
+  expect(tree).toRenderTo("");
 });
 
 it("cleans up things which end up removed (with splice)", () => {
@@ -235,7 +233,7 @@ it("cleans up things which end up removed (with splice)", () => {
   const tree = renderTree(template);
 
   expect(cleanups).toEqual([]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter b
     Letter c
@@ -246,7 +244,7 @@ it("cleans up things which end up removed (with splice)", () => {
   // A sufficiently smart mapJoin would be able to handle this case...
   // but for now we re-render everything after the splice point.
   expect(cleanups).toEqual(["b", "c"]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter c
   `);
@@ -257,7 +255,7 @@ it("doesn't render empty content", () => {
   const tree = renderTree(
     <For each={items}>{(item) => (item > 2 ? item : null)}</For>,
   );
-  expect(printTree(tree)).toBe(`3`);
+  expect(tree).toRenderTo("3");
 });
 
 it("updates joiners appropriately when items get/lose content", () => {
@@ -275,8 +273,8 @@ it("updates joiners appropriately when items get/lose content", () => {
     </For>,
   );
 
-  expect(printTree(tree)).toBe(`hello`);
+  expect(tree).toRenderTo("hello");
   items[1].content.value = "hi";
   flushJobs();
-  expect(printTree(tree)).toBe(`hi, hello`);
+  expect(tree).toRenderTo("hi, hello");
 });

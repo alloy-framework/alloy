@@ -1,8 +1,8 @@
+import "../../testing/extend-expect.js";
 import { shallowReactive } from "@vue/reactivity";
 import { expect, it } from "vitest";
 import { For } from "../../src/index.js";
-import { printTree, renderTree } from "../../src/test-render.js";
-import { d } from "../../testing/render.js";
+import { renderTree } from "../../src/test-render.js";
 
 it("it should work with circular reactives", () => {
   const items: string[] = shallowReactive([]);
@@ -25,7 +25,7 @@ it("it should work with circular reactives", () => {
   );
   const tree = renderTree(template);
   items.push("item start");
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item start
     item 1
   `);
@@ -45,7 +45,7 @@ it("should work with immediately recursive reactives", () => {
   );
   const tree = renderTree(template);
   items.add("item start");
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item start
     item 1
   `);

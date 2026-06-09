@@ -1,7 +1,6 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { assertFileContents } from "../../../test/utils.js";
 import * as go from "../index.js";
 
 it("works variable", () => {
@@ -82,7 +81,7 @@ it("works const group", () => {
 it("works end-to-end", () => {
   const TestType = refkey("TestType");
 
-  const res = render(
+  expect(
     <Output>
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path=".">
@@ -99,9 +98,7 @@ it("works end-to-end", () => {
         </go.SourceDirectory>
       </go.ModuleDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "types.go": `
       package alloy
 
@@ -147,7 +144,7 @@ it("throws end-to-end cross-package with unexported type", () => {
 it("works end-to-end cross-package", () => {
   const TestType = refkey("TestType");
 
-  const res = render(
+  expect(
     <Output>
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path="hello">
@@ -166,9 +163,7 @@ it("works end-to-end cross-package", () => {
         </go.SourceDirectory>
       </go.ModuleDirectory>
     </Output>,
-  );
-
-  assertFileContents(res, {
+  ).toRenderTo({
     "hello/types.go": `
       package hello
 
@@ -188,7 +183,7 @@ it("works with conflict resolution", () => {
   const TestType1 = refkey("TestType1");
   const TestType2 = refkey("TestType2");
 
-  const res = render(
+  expect(
     <Output>
       <go.ModuleDirectory name="github.com/alloy-framework/alloy">
         <go.SourceDirectory path="hello" name="hello">
@@ -218,9 +213,17 @@ it("works with conflict resolution", () => {
         </go.SourceDirectory>
       </go.ModuleDirectory>
     </Output>,
-  );
+  ).toRenderTo({
+    "hello/types.go": `
+      package hello
 
-  assertFileContents(res, {
+      type TestType string
+    `,
+    "hello2/types.go": `
+      package hello
+
+      type TestType string
+    `,
     "world/test.go": `
       package world
 

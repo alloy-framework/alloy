@@ -11,6 +11,11 @@ import {
 const BEGIN_MARKER = "<!-- BEGIN:alloy-docs -->";
 const END_MARKER = "<!-- END:alloy-docs -->";
 
+// Markdown supports H1–H6. The section emits two nested heading levels, so the
+// shallowest one (the top) can be at most H5 to keep the deeper one within H6.
+const MIN_TOP_HEADING_LEVEL = 1;
+const MAX_TOP_HEADING_LEVEL = 5;
+
 interface PackageDocInfo {
   name: string;
   description: string;
@@ -27,8 +32,20 @@ export async function installDocsCommand() {
     strict: false,
     options: {
       output: { type: "string" },
+      "top-heading-level": { type: "string" },
     },
   });
+
+  let topHeadingLevel: number;
+  try {
+    topHeadingLevel = parseTopHeadingLevel(
+      args.values["top-heading-level"] as string | undefined,
+    );
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(pc.red((err as Error).message));
+    process.exit(1);
+  }
 
   const cwd = process.cwd();
   const projectRoot = findProjectRoot(cwd);
@@ -51,7 +68,7 @@ export async function installDocsCommand() {
     return;
   }
 
-  const section = generateDocsSection(packages);
+  const section = generateDocsSection(packages, { topHeadingLevel });
   const agentsPath = resolve(outputDir, "AGENTS.md");
   updateAgentsMd(agentsPath, section);
 
@@ -137,16 +154,21 @@ function findDocIndex(docsDir: string): string | undefined {
   return undefined;
 }
 
-function generateDocsSection(packages: PackageDocInfo[]): string {
+export function generateDocsSection(
+  packages: PackageDocInfo[],
+  options: { topHeadingLevel: number },
+): string {
+  const top = "#".repeat(options.topHeadingLevel);
+  const sub = "#".repeat(options.topHeadingLevel + 1);
   const lines = [
     BEGIN_MARKER,
-    "# Alloy Framework",
+    `${top} Alloy Framework`,
     "",
     "Alloy is a code generation framework using JSX components.",
     "Before working with Alloy code, read the relevant docs from installed packages.",
     "Your training data may be outdated — these docs match your installed version.",
     "",
-    "## Installed Package Documentation",
+    `${sub} Installed Package Documentation`,
     "",
   ];
 
@@ -157,6 +179,22 @@ function generateDocsSection(packages: PackageDocInfo[]): string {
 
   lines.push(END_MARKER);
   return lines.join("\n");
+}
+
+export function parseTopHeadingLevel(raw: string | undefined): number {
+  if (raw === undefined || raw === "") return MIN_TOP_HEADING_LEVEL;
+
+  const value = Number(raw);
+  if (Number.isNaN(value) || !Number.isInteger(value)) {
+    throw new Error(`--top-heading-level must be an integer, got: ${raw}`);
+  }
+
+  if (value < MIN_TOP_HEADING_LEVEL || value > MAX_TOP_HEADING_LEVEL) {
+    throw new Error(
+      `--top-heading-level must be between ${MIN_TOP_HEADING_LEVEL} and ${MAX_TOP_HEADING_LEVEL}, got: ${value}`,
+    );
+  }
+  return value;
 }
 
 function updateAgentsMd(filePath: string, section: string) {

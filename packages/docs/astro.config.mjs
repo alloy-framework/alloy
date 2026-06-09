@@ -77,35 +77,65 @@ export default defineConfig({
         },
         {
           label: "@alloy-js/core",
-          items: [{ autogenerate: { directory: "reference/core", collapsed: true } }],
+          items: [
+            { autogenerate: { directory: "reference/core", collapsed: true } },
+          ],
         },
         {
           label: "@alloy-js/core/testing",
-          items: [{ autogenerate: { directory: "reference/core/testing", collapsed: true } }],
+          items: [
+            {
+              autogenerate: {
+                directory: "reference/core/testing",
+                collapsed: true,
+              },
+            },
+          ],
         },
         {
           label: "@alloy-js/typescript",
-          items: [{ autogenerate: { directory: "reference/typescript", collapsed: true } }],
+          items: [
+            {
+              autogenerate: {
+                directory: "reference/typescript",
+                collapsed: true,
+              },
+            },
+          ],
         },
         {
           label: "@alloy-js/python",
-          items: [{ autogenerate: { directory: "reference/python", collapsed: true } }],
+          items: [
+            {
+              autogenerate: { directory: "reference/python", collapsed: true },
+            },
+          ],
         },
         {
           label: "@alloy-js/csharp",
-          items: [{ autogenerate: { directory: "reference/csharp", collapsed: true } }],
+          items: [
+            {
+              autogenerate: { directory: "reference/csharp", collapsed: true },
+            },
+          ],
         },
         {
           label: "@alloy-js/go",
-          items: [{ autogenerate: { directory: "reference/go", collapsed: true } }],
+          items: [
+            { autogenerate: { directory: "reference/go", collapsed: true } },
+          ],
         },
         {
           label: "@alloy-js/java",
-          items: [{ autogenerate: { directory: "reference/java", collapsed: true } }],
+          items: [
+            { autogenerate: { directory: "reference/java", collapsed: true } },
+          ],
         },
         {
           label: "@alloy-js/json",
-          items: [{ autogenerate: { directory: "reference/json", collapsed: true } }],
+          items: [
+            { autogenerate: { directory: "reference/json", collapsed: true } },
+          ],
         },
       ],
     }),

@@ -933,7 +933,7 @@ describe("Full example", () => {
                       nickname, or even a codename (e.g., 'Agent X'). It's used primarily
                       for display purposes, logging, or greeting messages and is not
                       required to be unique or validated unless specified by the caller.
-                      Defaults to \"John Doe\".
+                      Defaults to "John Doe".
 
                   somebody2 (str): Somebody's name. This can be any string representing a
                       person, whether it's a first name, full name, nickname, or even a
@@ -1030,7 +1030,7 @@ describe("Full example", () => {
                       nickname, or even a codename (e.g., 'Agent X'). It's used primarily
                       for display purposes, logging, or greeting messages and is not
                       required to be unique or validated unless specified by the caller.
-                      Defaults to \"John Doe\".
+                      Defaults to "John Doe".
 
                   somebody2 (str): Somebody's name. This can be any string representing a
                       person, whether it's a first name, full name, nickname, or even a

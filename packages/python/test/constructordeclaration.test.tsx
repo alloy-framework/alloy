@@ -1,7 +1,6 @@
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 describe("ConstructorDeclaration", () => {
   it("renders async constructor with return type", () => {
@@ -17,13 +16,17 @@ describe("ConstructorDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(
+      <TestOutput>{decl}</TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           async def __new__(cls) -> MyClass:
               return super().__new__(cls)
 
 
-    `);
+    `,
+    );
   });
 
   it("renders __new__ with spread args", () => {
@@ -37,12 +40,16 @@ describe("ConstructorDeclaration", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+    expect(
+      <TestOutput>{decl}</TestOutput>,
+    ).toRenderTo(
+      `
       class MyClass:
           def __new__(cls, *args, **kwargs):
               pass
 
 
-    `);
+    `,
+    );
   });
 });

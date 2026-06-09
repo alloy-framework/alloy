@@ -1,9 +1,8 @@
 import { code, refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { createModule } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 it("uses import from external library", () => {
   const requestsLib = createModule({
@@ -14,19 +13,18 @@ it("uses import from external library", () => {
       "models.anothermodule": ["something"],
     },
   });
-  const result = toSourceText(
-    [
+  expect(
+    <TestOutput externals={[requestsLib]}>
       <py.StatementList>
         {requestsLib["."].get}
         {requestsLib["."].post}
         {requestsLib["models"].Request}
         {requestsLib["models"].Response}
         {requestsLib["models.anothermodule"].something}
-      </py.StatementList>,
-    ],
-    { externals: [requestsLib] },
-  );
-  const expected = d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     from requests import get
     from requests import post
     from requests.models import Request
@@ -38,8 +36,8 @@ it("uses import from external library", () => {
     Request
     Response
     something
-  `;
-  expect(result).toRenderTo(expected);
+  `,
+  );
 });
 
 it("uses import from external library in multiple functions", () => {
@@ -86,10 +84,12 @@ it("uses import from external library in multiple functions", () => {
     </py.FunctionDeclaration>,
   ];
 
-  const result = toSourceText(functionDeclarations, {
-    externals: [py.requestsModule],
-  });
-  const expected = d`
+  expect(
+    <TestOutput externals={[py.requestsModule]}>
+      {functionDeclarations}
+    </TestOutput>,
+  ).toRenderTo(
+    `
     from requests import get
     from requests import post
     from typing import TYPE_CHECKING
@@ -107,9 +107,8 @@ it("uses import from external library in multiple functions", () => {
         response = post(1)
         return response.json()
 
-
-  `;
-  expect(result).toRenderTo(expected);
+  `,
+  );
 });
 
 it("uses import from external library in multiple class methods", () => {
@@ -166,10 +165,12 @@ it("uses import from external library in multiple class methods", () => {
     </py.ClassDeclaration>,
   ];
 
-  const result = toSourceText(functionDeclarations, {
-    externals: [py.requestsModule],
-  });
-  const expected = d`
+  expect(
+    <TestOutput externals={[py.requestsModule]}>
+      {functionDeclarations}
+    </TestOutput>,
+  ).toRenderTo(
+    `
     from requests import get
     from requests import post
     from typing import TYPE_CHECKING
@@ -189,7 +190,6 @@ it("uses import from external library in multiple class methods", () => {
             return response.json()
 
 
-
-  `;
-  expect(result).toRenderTo(expected);
+  `,
+  );
 });

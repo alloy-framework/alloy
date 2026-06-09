@@ -1,27 +1,31 @@
 import { refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import {
-  assertFileContents,
-  toSourceText,
-  toSourceTextMultiple,
-} from "./utils.jsx";
+  TestOutput,
+  TestOutputDirectory,
+} from "./utils.js";
 
 describe("UnionTypeExpression", () => {
   it("renders a Python union expression - 1 item", () => {
     expect(
-      toSourceText([<py.UnionTypeExpression children={["int"]} />]),
+      <TestOutput>
+        <py.UnionTypeExpression children={["int"]} />
+      </TestOutput>,
     ).toRenderTo("int");
   });
+
   it("renders a Python union expression - 2 items", () => {
     expect(
-      toSourceText([<py.UnionTypeExpression children={["int", "str"]} />]),
+      <TestOutput>
+        <py.UnionTypeExpression children={["int", "str"]} />
+      </TestOutput>,
     ).toRenderTo("int | str");
   });
+
   it("renders a Python union expression - N items", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.UnionTypeExpression
           children={[
             "int",
@@ -38,9 +42,10 @@ describe("UnionTypeExpression", () => {
             "memoryview",
             "complex",
           ]}
-        />,
-      ]),
-    ).toRenderTo(d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         (
             int
             | str
@@ -55,31 +60,36 @@ describe("UnionTypeExpression", () => {
             | bytearray
             | memoryview
             | complex
-        )`);
+        )`,
+    );
   });
+
   it("renders a Python union expression - 2 items again", () => {
     expect(
-      toSourceText([<py.UnionTypeExpression children={["int", "str"]} />]),
+      <TestOutput>
+        <py.UnionTypeExpression children={["int", "str"]} />
+      </TestOutput>,
     ).toRenderTo("int | str");
   });
+
   it("renders a Python union expression - 2 items with None", () => {
     expect(
-      toSourceText([
-        <py.UnionTypeExpression children={["int", "str", "None"]} />,
-      ]),
+      <TestOutput>
+        <py.UnionTypeExpression children={["int", "str", "None"]} />
+      </TestOutput>,
     ).toRenderTo("int | str | None");
   });
 
   it("renders a Python union with generic types", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.UnionTypeExpression
           children={[
             <py.TypeReference name="list" typeArgs={["int"]} />,
             <py.TypeReference name="dict" typeArgs={["str", "int"]} />,
           ]}
-        />,
-      ]),
+        />
+      </TestOutput>,
     ).toRenderTo("list[int] | dict[str, int]");
   });
 
@@ -88,7 +98,7 @@ describe("UnionTypeExpression", () => {
     const otherClassRefkey = refkey();
 
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.ClassDeclaration
             name="Bar"
@@ -104,9 +114,10 @@ describe("UnionTypeExpression", () => {
               <py.Reference refkey={otherClassRefkey} />,
             ]}
           />
-        </py.StatementList>,
-      ]),
-    ).toRenderTo(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class Bar:
             pass
 
@@ -114,39 +125,43 @@ describe("UnionTypeExpression", () => {
             pass
 
         Bar | Foo
-    `);
+    `,
+    );
   });
 
   it("emits import for TypeReference with refkey and typeArgs across files", () => {
     const classRefkey = refkey();
-    const res = toSourceTextMultiple([
-      <py.SourceFile path="defs.py">
-        <py.ClassDeclaration name="Bar" refkey={classRefkey} />
-      </py.SourceFile>,
-      <py.SourceFile path="use.py">
-        <py.StatementList>
-          <py.VariableDeclaration
-            name="v"
-            type={<py.TypeReference refkey={classRefkey} typeArgs={["T"]} />}
-          />
-        </py.StatementList>
-      </py.SourceFile>,
-    ]);
-    assertFileContents(res, {
-      "defs.py": `
-        class Bar:
-            pass
+    expect(
+      <TestOutputDirectory>
+        <py.SourceFile path="defs.py">
+          <py.ClassDeclaration name="Bar" refkey={classRefkey} />
+        </py.SourceFile>
+        <py.SourceFile path="use.py">
+          <py.StatementList>
+            <py.VariableDeclaration
+              name="v"
+              type={<py.TypeReference refkey={classRefkey} typeArgs={["T"]} />}
+            />
+          </py.StatementList>
+        </py.SourceFile>
+      </TestOutputDirectory>,
+    ).toRenderTo(
+      {
+        "defs.py": `
+          class Bar:
+              pass
 
-      `,
-      "use.py": `
-        from typing import TYPE_CHECKING
+        `,
+        "use.py": `
+          from typing import TYPE_CHECKING
 
-        if TYPE_CHECKING:
-            from defs import Bar
+          if TYPE_CHECKING:
+              from defs import Bar
 
-        v: Bar[T] = None
-      `,
-    });
+          v: Bar[T] = None
+        `,
+      },
+    );
   });
 });
 
@@ -159,11 +174,11 @@ describe("TypeExpression in different scenarios", () => {
       />
     );
     expect(
-      toSourceText([
+      <TestOutput>
         <py.ClassDeclaration
           name="Foo"
           refkey={classRefkey}
-        ></py.ClassDeclaration>,
+        ></py.ClassDeclaration>
         <py.FunctionDeclaration
           name="fooFunction"
           parameters={[
@@ -175,9 +190,10 @@ describe("TypeExpression in different scenarios", () => {
           args={true}
           kwargs={true}
           returnType={type}
-        />,
-      ]),
-    ).toRenderTo(d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class Foo:
             pass
 
@@ -185,9 +201,10 @@ describe("TypeExpression in different scenarios", () => {
         def foo_function(x: int | str | Foo, *args, **kwargs) -> int | str | Foo:
             pass
 
-
-    `);
+    `,
+    );
   });
+
   it("renders an UnionTypeExpression as a variable type", () => {
     const classRefkey = refkey();
     const type = (
@@ -196,20 +213,21 @@ describe("TypeExpression in different scenarios", () => {
       />
     );
     expect(
-      toSourceText([
+      <TestOutput>
         <py.ClassDeclaration
           name="Foo"
           refkey={classRefkey}
-        ></py.ClassDeclaration>,
-        <py.VariableDeclaration name="fooVariable" type={type} />,
-      ]),
-    ).toRenderTo(d`
+        ></py.ClassDeclaration>
+        <py.VariableDeclaration name="fooVariable" type={type} />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class Foo:
             pass
 
 
         foo_variable: int | str | Foo = None
-
-    `);
+    `,
+    );
   });
 });

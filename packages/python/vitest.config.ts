@@ -14,5 +14,8 @@ export default defineConfig({
     jsx: "preserve",
     sourcemap: "both",
   },
+  test: {
+    setupFiles: ["./test/vitest.setup.ts"],
+  },
   plugins: [alloyPlugin()],
 });

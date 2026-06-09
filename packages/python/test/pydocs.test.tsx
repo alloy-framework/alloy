@@ -1,18 +1,16 @@
 import { Prose } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
 import {
-  assertFileContents,
-  toSourceText,
-  toSourceTextMultiple,
+  TestOutput,
+  TestOutputDirectory,
 } from "./utils.jsx";
 
 describe("PyDoc", () => {
   it("formats properly", () => {
-    const res = toSourceText(
-      [
+    expect(
+      <TestOutput>
         <py.PyDoc>
           <Prose>
             This is an example of a long docstring that will be broken in lines.
@@ -21,13 +19,10 @@ describe("PyDoc", () => {
           <Prose>
             This is another paragraph, and there's a line break before it.
           </Prose>
-        </py.PyDoc>,
-      ],
-      { printOptions: { printWidth: 40 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.PyDoc>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         This is an example of a long docstring
         that will be broken in lines. We will
@@ -38,26 +33,23 @@ describe("PyDoc", () => {
         line break before it.
         """
 
-        
       `,
+      { tabWidth: 4, printWidth: 40 },
     );
   });
 });
 
 describe("PyDocExample", () => {
   it("creates docstring with a code sample", () => {
-    const res = toSourceText(
-      [
+    expect(
+      <TestOutput>
         <py.PyDoc>
           <Prose>This is an example of a docstring with a code sample.</Prose>
           <py.PyDocExample>print("Hello world!")</py.PyDocExample>
-        </py.PyDoc>,
-      ],
-      { printOptions: { printWidth: 40 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.PyDoc>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       """
       This is an example of a docstring with a
       code sample.
@@ -65,25 +57,22 @@ describe("PyDocExample", () => {
       >> print("Hello world!")
       """
 
-
       `,
+      { tabWidth: 4, printWidth: 40 },
     );
   });
 
   it("creates docstring with more than one code sample", () => {
-    const res = toSourceText(
-      [
+    expect(
+      <TestOutput>
         <py.PyDoc>
           <Prose>This is an example of a docstring with a code sample.</Prose>
           <py.PyDocExample>print("Hello world!")</py.PyDocExample>
           <py.PyDocExample>print("Hello world again!")</py.PyDocExample>
-        </py.PyDoc>,
-      ],
-      { printOptions: { printWidth: 40 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.PyDoc>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       """
       This is an example of a docstring with a
       code sample.
@@ -93,26 +82,23 @@ describe("PyDocExample", () => {
       >> print("Hello world again!")
       """
 
-
       `,
+      { tabWidth: 4, printWidth: 40 },
     );
   });
 
   it("creates docstring with a multiline code sample", () => {
-    const res = toSourceText(
-      [
+    expect(
+      <TestOutput>
         <py.PyDoc>
           <Prose>This is an example of a docstring with a code sample.</Prose>
           <py.PyDocExample>
             {`print("Hello world!")\nx = "Hello"\nprint(x)`}
           </py.PyDocExample>
-        </py.PyDoc>,
-      ],
-      { printOptions: { printWidth: 40 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.PyDoc>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       """
       This is an example of a docstring with a
       code sample.
@@ -122,40 +108,40 @@ describe("PyDocExample", () => {
       >> print(x)
       """
 
-
       `,
+      { tabWidth: 4, printWidth: 40 },
     );
   });
 });
 
 describe("SimpleCommentBlock", () => {
   it("renders simple comment block", () => {
-    const res = toSourceText([
-      <py.SimpleCommentBlock>
-        This is a simple comment block that spans multiple lines and should be
-        split automatically.
-      </py.SimpleCommentBlock>,
-    ]);
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.SimpleCommentBlock>
+          This is a simple comment block that spans multiple lines and should be
+          split automatically.
+        </py.SimpleCommentBlock>
+      </TestOutput>,
+    ).toRenderTo(
+      `
           # This is a simple comment block that spans multiple lines and should be split
           # automatically.
-          
           `,
     );
   });
 
   it("renders comment block with line breaks", () => {
-    const res = toSourceText([
-      <py.SimpleCommentBlock>
-        First line of comment.\nSecond line of comment.
-      </py.SimpleCommentBlock>,
-    ]);
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.SimpleCommentBlock>
+          First line of comment.\nSecond line of comment.
+        </py.SimpleCommentBlock>
+      </TestOutput>,
+    ).toRenderTo(
+      `
           # First line of comment.
           # Second line of comment.
-          
           `,
     );
   });
@@ -163,68 +149,64 @@ describe("SimpleCommentBlock", () => {
 
 describe("SimpleInlineComment", () => {
   it("renders inline comment", () => {
-    const res = toSourceText([
-      <>
-        x = 42
-        <py.SimpleInlineComment>
-          This is an inline comment
-        </py.SimpleInlineComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          x = 42  # This is an inline comment
-          `,
-    );
+    expect(
+      <TestOutput>
+        {[
+          <>
+            x = 42
+            <py.SimpleInlineComment>This is an inline comment</py.SimpleInlineComment>
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(`x = 42  # This is an inline comment`);
   });
 
   it("renders inline comment with complex text", () => {
-    const res = toSourceText([
-      <>
-        result = calculate()
-        <py.SimpleInlineComment>
-          TODO: Add error handling here
-        </py.SimpleInlineComment>
-      </>,
-    ]);
-    expect(res).toRenderTo(
-      d`
-          result = calculate()  # TODO: Add error handling here
-          `,
+    expect(
+      <TestOutput>
+        {[
+          <>
+            result = calculate()
+            <py.SimpleInlineComment>TODO: Add error handling here</py.SimpleInlineComment>
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(
+      `result = calculate()  # TODO: Add error handling here`,
     );
   });
 });
 
 describe("New Documentation Components", () => {
   it("ModuleDoc renders correctly", () => {
-    const res = toSourceText([
-      <py.ModuleDoc
-        description={[
-          <Prose>
-            This module demonstrates documentation as specified by the Google
-            Python Style Guide.
-          </Prose>,
-        ]}
-        attributes={[
-          {
-            name: "module_level_variable1",
-            type: "int",
-            children: "Module level variables may be documented.",
-          },
-        ]}
-        examples={[<py.PyDocExample>print("mod")</py.PyDocExample>]}
-        seeAlso={["another_module.func", "RelatedClass"]}
-        warning="Internal API."
-        deprecated="Use new_module instead."
-        todo={[
-          "For module TODOs",
-          "You have to also use sphinx.ext.todo extension",
-        ]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ModuleDoc
+          description={[
+            <Prose>
+              This module demonstrates documentation as specified by the Google
+              Python Style Guide.
+            </Prose>,
+          ]}
+          attributes={[
+            {
+              name: "module_level_variable1",
+              type: "int",
+              children: "Module level variables may be documented.",
+            },
+          ]}
+          examples={[<py.PyDocExample>print("mod")</py.PyDocExample>]}
+          seeAlso={["another_module.func", "RelatedClass"]}
+          warning="Internal API."
+          deprecated="Use new_module instead."
+          todo={[
+            "For module TODOs",
+            "You have to also use sphinx.ext.todo extension",
+          ]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         This module demonstrates documentation as specified by the Google Python Style
         Guide.
@@ -250,30 +232,29 @@ describe("New Documentation Components", () => {
             * You have to also use sphinx.ext.todo extension
         """
 
-
         `,
     );
   });
 
   it("PropertyDoc renders correctly", () => {
-    const res = toSourceText([
-      <py.PropertyDoc
-        description={[
-          <Prose>
-            Properties should be documented in their getter method.
-          </Prose>,
-        ]}
-        returns="str: The readonly property value."
-        examples={[<py.PyDocExample>print(obj.name)</py.PyDocExample>]}
-        seeAlso={["other_property"]}
-        warning="Access may be slow."
-        deprecated="Use full_name instead."
-        note="If the setter method contains notable behavior, it should be mentioned here."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.PropertyDoc
+          description={[
+            <Prose>
+              Properties should be documented in their getter method.
+            </Prose>,
+          ]}
+          returns="str: The readonly property value."
+          examples={[<py.PyDocExample>print(obj.name)</py.PyDocExample>]}
+          seeAlso={["other_property"]}
+          warning="Access may be slow."
+          deprecated="Use full_name instead."
+          note="If the setter method contains notable behavior, it should be mentioned here."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Properties should be documented in their getter method.
 
@@ -296,37 +277,36 @@ describe("New Documentation Components", () => {
             If the setter method contains notable behavior, it should be mentioned here.
         """
 
-
         `,
     );
   });
 
   it("GeneratorDoc renders correctly", () => {
-    const res = toSourceText([
-      <py.GeneratorDoc
-        description={[
-          <Prose>
-            Generators have a Yields section instead of a Returns section.
-          </Prose>,
-        ]}
-        parameters={[
-          {
-            name: "n",
-            type: "int",
-            doc: "The upper limit of the range to generate, from 0 to n - 1.",
-          },
-        ]}
-        yields="int: The next number in the range of 0 to n - 1."
-        examples={[<py.PyDocExample>print(next(gen))</py.PyDocExample>]}
-        seeAlso={["make_generator"]}
-        warning="Do not consume in tight loops without sleep."
-        deprecated="Use new_generator instead."
-        note="Examples should be written in doctest format."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.GeneratorDoc
+          description={[
+            <Prose>
+              Generators have a Yields section instead of a Returns section.
+            </Prose>,
+          ]}
+          parameters={[
+            {
+              name: "n",
+              type: "int",
+              doc: "The upper limit of the range to generate, from 0 to n - 1.",
+            },
+          ]}
+          yields="int: The next number in the range of 0 to n - 1."
+          examples={[<py.PyDocExample>print(next(gen))</py.PyDocExample>]}
+          seeAlso={["make_generator"]}
+          warning="Do not consume in tight loops without sleep."
+          deprecated="Use new_generator instead."
+          note="Examples should be written in doctest format."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Generators have a Yields section instead of a Returns section.
 
@@ -352,50 +332,49 @@ describe("New Documentation Components", () => {
             Examples should be written in doctest format.
         """
 
-
         `,
     );
   });
 
   it("ExceptionDoc renders correctly", () => {
-    const res = toSourceText([
-      <py.ExceptionDoc
-        description={[
-          <Prose>Exceptions are documented in the same way as classes.</Prose>,
-        ]}
-        parameters={[
-          {
-            name: "msg",
-            type: "str",
-            doc: "Human readable string describing the exception.",
-          },
-          {
-            name: "code",
-            type: "int",
-            default: undefined,
-            doc: "Error code.",
-          },
-        ]}
-        attributes={[
-          {
-            name: "msg",
-            type: "str",
-            children: "Human readable string describing the exception.",
-          },
-          {
-            name: "code",
-            type: "int",
-            children: "Exception error code.",
-          },
-        ]}
-        seeAlso={["BaseException"]}
-        deprecated="Use NewException instead."
-        note="Do not include the 'self' parameter in the Args section."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ExceptionDoc
+          description={[
+            <Prose>Exceptions are documented in the same way as classes.</Prose>,
+          ]}
+          parameters={[
+            {
+              name: "msg",
+              type: "str",
+              doc: "Human readable string describing the exception.",
+            },
+            {
+              name: "code",
+              type: "int",
+              default: undefined,
+              doc: "Error code.",
+            },
+          ]}
+          attributes={[
+            {
+              name: "msg",
+              type: "str",
+              children: "Human readable string describing the exception.",
+            },
+            {
+              name: "code",
+              type: "int",
+              children: "Exception error code.",
+            },
+          ]}
+          seeAlso={["BaseException"]}
+          deprecated="Use NewException instead."
+          note="Do not include the 'self' parameter in the Args section."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Exceptions are documented in the same way as classes.
 
@@ -419,34 +398,33 @@ describe("New Documentation Components", () => {
             Do not include the 'self' parameter in the Args section.
         """
 
-
         `,
     );
   });
 
   it("MethodDoc renders correctly without default note", () => {
-    const res = toSourceText([
-      <py.MethodDoc
-        description={[
-          <Prose>Class methods are similar to regular functions.</Prose>,
-        ]}
-        parameters={[
-          {
-            name: "param1",
-            doc: "The first parameter.",
-          },
-          {
-            name: "param2",
-            doc: "The second parameter.",
-          },
-        ]}
-        returns="True if successful, False otherwise."
-        overrides="Base.method"
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.MethodDoc
+          description={[
+            <Prose>Class methods are similar to regular functions.</Prose>,
+          ]}
+          parameters={[
+            {
+              name: "param1",
+              doc: "The first parameter.",
+            },
+            {
+              name: "param2",
+              doc: "The second parameter.",
+            },
+          ]}
+          returns="True if successful, False otherwise."
+          overrides="Base.method"
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Class methods are similar to regular functions.
 
@@ -462,30 +440,29 @@ describe("New Documentation Components", () => {
             Base.method
         """
 
-
         `,
     );
   });
 
   it("MethodDoc renders correctly with custom note", () => {
-    const res = toSourceText([
-      <py.MethodDoc
-        description={[
-          <Prose>Class methods are similar to regular functions.</Prose>,
-        ]}
-        parameters={[
-          {
-            name: "param1",
-            doc: "The first parameter.",
-          },
-        ]}
-        returns="True if successful, False otherwise."
-        note="This method has special behavior when called multiple times."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.MethodDoc
+          description={[
+            <Prose>Class methods are similar to regular functions.</Prose>,
+          ]}
+          parameters={[
+            {
+              name: "param1",
+              doc: "The first parameter.",
+            },
+          ]}
+          returns="True if successful, False otherwise."
+          note="This method has special behavior when called multiple times."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Class methods are similar to regular functions.
 
@@ -499,39 +476,37 @@ describe("New Documentation Components", () => {
             This method has special behavior when called multiple times.
         """
 
-
         `,
     );
   });
 
   it("ModuleDoc with minimal content", () => {
-    const res = toSourceText([
-      <py.ModuleDoc
-        description={[<Prose>Simple module description.</Prose>]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ModuleDoc
+          description={[<Prose>Simple module description.</Prose>]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Simple module description.
         """
-
 
         `,
     );
   });
 
   it("ModuleDoc with only todo items", () => {
-    const res = toSourceText([
-      <py.ModuleDoc
-        description={[<Prose>Module with pending tasks.</Prose>]}
-        todo={["Implement feature X", "Add more tests", "Update documentation"]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ModuleDoc
+          description={[<Prose>Module with pending tasks.</Prose>]}
+          todo={["Implement feature X", "Add more tests", "Update documentation"]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Module with pending tasks.
 
@@ -541,45 +516,43 @@ describe("New Documentation Components", () => {
             * Update documentation
         """
 
-
         `,
     );
   });
 
   it("PropertyDoc minimal (description only)", () => {
-    const res = toSourceText([
-      <py.PropertyDoc
-        description={[<Prose>A simple readonly property.</Prose>]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.PropertyDoc
+          description={[<Prose>A simple readonly property.</Prose>]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         A simple readonly property.
         """
-
 
         `,
     );
   });
 
   it("PropertyDoc with getter and setter info", () => {
-    const res = toSourceText([
-      <py.PropertyDoc
-        description={[
-          <Prose>
-            Properties with both a getter and setter should only be documented
-            in their getter method.
-          </Prose>,
-        ]}
-        returns=":obj:`list` of :obj:`str`: The property value."
-        note="If the setter method contains notable behavior, it should be mentioned here."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.PropertyDoc
+          description={[
+            <Prose>
+              Properties with both a getter and setter should only be documented
+              in their getter method.
+            </Prose>,
+          ]}
+          returns=":obj:`list` of :obj:`str`: The property value."
+          note="If the setter method contains notable behavior, it should be mentioned here."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Properties with both a getter and setter should only be documented in their
         getter method.
@@ -591,48 +564,47 @@ describe("New Documentation Components", () => {
             If the setter method contains notable behavior, it should be mentioned here.
         """
 
-
         `,
     );
   });
 
   it("GeneratorDoc with complex parameters", () => {
-    const res = toSourceText([
-      <py.GeneratorDoc
-        description={[
-          <Prose>
-            A more complex generator example with multiple parameters.
-          </Prose>,
-        ]}
-        parameters={[
-          {
-            name: "start",
-            type: "int",
-            default: "0",
-            doc: "Starting value for the sequence.",
-          },
-          {
-            name: "stop",
-            type: "int",
-            doc: "Ending value for the sequence (exclusive).",
-          },
-          {
-            name: "step",
-            type: "int",
-            default: "1",
-            doc: "Step size between values.",
-          },
-        ]}
-        yields="int: The next number in the sequence."
-        raises={[
-          "ValueError: If step is zero.",
-          "TypeError: If parameters are not integers.",
-        ]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.GeneratorDoc
+          description={[
+            <Prose>
+              A more complex generator example with multiple parameters.
+            </Prose>,
+          ]}
+          parameters={[
+            {
+              name: "start",
+              type: "int",
+              default: "0",
+              doc: "Starting value for the sequence.",
+            },
+            {
+              name: "stop",
+              type: "int",
+              doc: "Ending value for the sequence (exclusive).",
+            },
+            {
+              name: "step",
+              type: "int",
+              default: "1",
+              doc: "Step size between values.",
+            },
+          ]}
+          yields="int: The next number in the sequence."
+          raises={[
+            "ValueError: If step is zero.",
+            "TypeError: If parameters are not integers.",
+          ]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         A more complex generator example with multiple parameters.
 
@@ -653,63 +625,62 @@ describe("New Documentation Components", () => {
             TypeError: If parameters are not integers.
         """
 
-
         `,
     );
   });
 
   it("ExceptionDoc with comprehensive documentation", () => {
-    const res = toSourceText([
-      <py.ExceptionDoc
-        description={[
-          <Prose>A custom exception for authentication failures.</Prose>,
-          <Prose>
-            This exception is raised when authentication credentials are invalid
-            or when authentication tokens have expired.
-          </Prose>,
-        ]}
-        parameters={[
-          {
-            name: "message",
-            type: "str",
-            doc: "Human readable error message describing the authentication failure.",
-          },
-          {
-            name: "error_code",
-            type: "int",
-            default: "401",
-            doc: "HTTP error code associated with the authentication failure.",
-          },
-          {
-            name: "retry_after",
-            type: "int",
-            default: undefined,
-            doc: "Number of seconds to wait before retrying authentication.",
-          },
-        ]}
-        attributes={[
-          {
-            name: "message",
-            type: "str",
-            children: "The error message.",
-          },
-          {
-            name: "error_code",
-            type: "int",
-            children: "HTTP status code.",
-          },
-          {
-            name: "retry_after",
-            type: "int",
-            children: "Retry delay in seconds, if applicable.",
-          },
-        ]}
-        note="This exception should be caught and handled gracefully in production code."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ExceptionDoc
+          description={[
+            <Prose>A custom exception for authentication failures.</Prose>,
+            <Prose>
+              This exception is raised when authentication credentials are invalid
+              or when authentication tokens have expired.
+            </Prose>,
+          ]}
+          parameters={[
+            {
+              name: "message",
+              type: "str",
+              doc: "Human readable error message describing the authentication failure.",
+            },
+            {
+              name: "error_code",
+              type: "int",
+              default: "401",
+              doc: "HTTP error code associated with the authentication failure.",
+            },
+            {
+              name: "retry_after",
+              type: "int",
+              default: undefined,
+              doc: "Number of seconds to wait before retrying authentication.",
+            },
+          ]}
+          attributes={[
+            {
+              name: "message",
+              type: "str",
+              children: "The error message.",
+            },
+            {
+              name: "error_code",
+              type: "int",
+              children: "HTTP status code.",
+            },
+            {
+              name: "retry_after",
+              type: "int",
+              children: "Retry delay in seconds, if applicable.",
+            },
+          ]}
+          note="This exception should be caught and handled gracefully in production code."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         A custom exception for authentication failures.
 
@@ -736,35 +707,34 @@ describe("New Documentation Components", () => {
             This exception should be caught and handled gracefully in production code.
         """
 
-
         `,
     );
   });
 
   it("MethodDoc with raises but no returns", () => {
-    const res = toSourceText([
-      <py.MethodDoc
-        description={[
-          <Prose>
-            A method that performs an action but doesn't return a value.
-          </Prose>,
-        ]}
-        parameters={[
-          {
-            name: "data",
-            type: "bytes",
-            doc: "Raw data to process.",
-          },
-        ]}
-        raises={[
-          "ValueError: If data is empty or invalid.",
-          "IOError: If processing fails due to I/O issues.",
-        ]}
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.MethodDoc
+          description={[
+            <Prose>
+              A method that performs an action but doesn't return a value.
+            </Prose>,
+          ]}
+          parameters={[
+            {
+              name: "data",
+              type: "bytes",
+              doc: "Raw data to process.",
+            },
+          ]}
+          raises={[
+            "ValueError: If data is empty or invalid.",
+            "IOError: If processing fails due to I/O issues.",
+          ]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         A method that performs an action but doesn't return a value.
 
@@ -778,24 +748,23 @@ describe("New Documentation Components", () => {
             IOError: If processing fails due to I/O issues.
         """
 
-
         `,
     );
   });
 
   it("MethodDoc with no parameters", () => {
-    const res = toSourceText([
-      <py.MethodDoc
-        description={[
-          <Prose>A simple method with no parameters (except self).</Prose>,
-        ]}
-        returns="bool: True if the operation was successful."
-        note="This is a parameterless method that only operates on instance state."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.MethodDoc
+          description={[
+            <Prose>A simple method with no parameters (except self).</Prose>,
+          ]}
+          returns="bool: True if the operation was successful."
+          note="This is a parameterless method that only operates on instance state."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         A simple method with no parameters (except self).
 
@@ -806,57 +775,55 @@ describe("New Documentation Components", () => {
             This is a parameterless method that only operates on instance state.
         """
 
-
         `,
     );
   });
 
   it("AttributeDoc standalone usage", () => {
-    const res = toSourceText([
-      <py.PyDoc>
-        <py.AttributeDoc name="connection_timeout" type="float">
-          Maximum time in seconds to wait for a connection to be established.
-        </py.AttributeDoc>
-      </py.PyDoc>,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.PyDoc>
+          <py.AttributeDoc name="connection_timeout" type="float">
+            Maximum time in seconds to wait for a connection to be established.
+          </py.AttributeDoc>
+        </py.PyDoc>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         connection_timeout (float): Maximum time in seconds to wait for a connection to
             be established.
         """
-
 
         `,
     );
   });
 
   it("GeneratorDoc with examples in description", () => {
-    const res = toSourceText([
-      <py.GeneratorDoc
-        description={[
-          <Prose>
-            Generators have a Yields section instead of a Returns section.
-          </Prose>,
-          <py.PyDocExample>
-            {`print([i for i in example_generator(4)])\n[0, 1, 2, 3]`}
-          </py.PyDocExample>,
-        ]}
-        parameters={[
-          {
-            name: "n",
-            type: "int",
-            doc: "The upper limit of the range to generate, from 0 to n - 1.",
-          },
-        ]}
-        yields="int: The next number in the range of 0 to n - 1."
-        note="Examples should be written in doctest format, and should illustrate how to use the function."
-      />,
-    ]);
-
-    expect(res).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.GeneratorDoc
+          description={[
+            <Prose>
+              Generators have a Yields section instead of a Returns section.
+            </Prose>,
+            <py.PyDocExample>
+              {`print([i for i in example_generator(4)])\n[0, 1, 2, 3]`}
+            </py.PyDocExample>,
+          ]}
+          parameters={[
+            {
+              name: "n",
+              type: "int",
+              doc: "The upper limit of the range to generate, from 0 to n - 1.",
+            },
+          ]}
+          yields="int: The next number in the range of 0 to n - 1."
+          note="Examples should be written in doctest format, and should illustrate how to use the function."
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
         """
         Generators have a Yields section instead of a Returns section.
 
@@ -872,7 +839,6 @@ describe("New Documentation Components", () => {
         Note:
             Examples should be written in doctest format, and should illustrate how to use the function.
         """
-
 
         `,
     );
@@ -925,8 +891,9 @@ describe("Full example", () => {
         style="google"
       />
     );
-    const res = toSourceText(
-      [
+
+    expect(
+      <TestOutput>
         <py.ClassDeclaration name="A" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
@@ -937,13 +904,10 @@ describe("Full example", () => {
               initializer={12}
             />
           </py.StatementList>
-        </py.ClassDeclaration>,
-      ],
-      { printOptions: { printWidth: 80, tabWidth: 4 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
           class A:
               """
               This is an example of a long docstring that will be broken in lines. We will
@@ -993,7 +957,6 @@ describe("Full example", () => {
               name_and_type: int = None
               name_type_and_value: int = 12
 
-
           `,
     );
   });
@@ -1030,8 +993,9 @@ describe("Full example", () => {
         style="google"
       />
     );
-    const res = toSourceText(
-      [
+
+    expect(
+      <TestOutput>
         <py.FunctionDeclaration name="some_function" doc={doc}>
           <py.StatementList>
             <py.VariableDeclaration name="just_name" />
@@ -1042,13 +1006,10 @@ describe("Full example", () => {
               initializer={12}
             />
           </py.StatementList>
-        </py.FunctionDeclaration>,
-      ],
-      { printOptions: { printWidth: 80, tabWidth: 4 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        </py.FunctionDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
           def some_function():
               """
               This is an example of a long docstring that will be broken in lines. We will
@@ -1088,25 +1049,21 @@ describe("Full example", () => {
               name_and_type: number = None
               name_type_and_value: number = 12
 
-
           `,
     );
   });
 
   it("renders correctly in a Variable", () => {
-    const res = toSourceText(
-      [
+    expect(
+      <TestOutput>
         <py.VariableDeclaration
           name="myVar"
           initializer={42}
           doc="This is a very long docstring that will be broken in two lines when rendered. This part of the docstring will be in the second line."
-        />,
-      ],
-      { printOptions: { printWidth: 80, tabWidth: 4 } },
-    );
-
-    expect(res).toRenderTo(
-      d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
             # This is a very long docstring that will be broken in two lines when rendered.
             # This part of the docstring will be in the second line.
             my_var = 42
@@ -1120,8 +1077,8 @@ describe("Full example", () => {
         description={[<Prose>An enum representing colors.</Prose>]}
       />
     );
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.ClassEnumDeclaration
           name="Color"
           baseType="IntEnum"
@@ -1131,11 +1088,10 @@ describe("Full example", () => {
             { name: "BLUE", value: "3", doc: "The color blue." },
           ]}
           doc={doc}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import IntEnum
 
 
@@ -1157,9 +1113,8 @@ describe("Full example", () => {
           The color blue.
           """
 
-
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("ModuleDoc with SourceFile integration", () => {
@@ -1188,48 +1143,43 @@ describe("Full example", () => {
       />
     );
 
-    const content = (
-      <py.SourceFile path="utils.py" doc={moduleDoc}>
-        <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
-        <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
-        <py.FunctionDeclaration name="process_data">
-          pass
-        </py.FunctionDeclaration>
-      </py.SourceFile>
-    );
-
-    const res = toSourceTextMultiple([content]);
-    const file = res.contents.find(
-      (f) => f.kind === "file" && f.path === "utils.py",
-    );
-    expect(file).toBeDefined();
-
-    assertFileContents(res, {
-      "utils.py": d`
-        """
-        This module provides utility functions for data processing. It includes
-        functions for validation, transformation, and analysis.
-
-        Attributes:
-            DEFAULT_TIMEOUT (int): Default timeout value in seconds.
-
-            MAX_RETRIES (int): Maximum number of retry attempts.
-
-        Todo:
-            * Add caching functionality
-            * Improve error messages
-        """
-
-        default_timeout = 30
-
-        max_retries = 3
-
-        def process_data():
+    expect(
+      <TestOutputDirectory>
+        <py.SourceFile path="utils.py" doc={moduleDoc}>
+          <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
+          <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
+          <py.FunctionDeclaration name="process_data">
             pass
+          </py.FunctionDeclaration>
+        </py.SourceFile>
+      </TestOutputDirectory>,
+    ).toRenderTo(
+      {
+        "utils.py": `
+          """
+          This module provides utility functions for data processing. It includes
+          functions for validation, transformation, and analysis.
 
+          Attributes:
+              DEFAULT_TIMEOUT (int): Default timeout value in seconds.
 
-        `,
-    });
+              MAX_RETRIES (int): Maximum number of retry attempts.
+
+          Todo:
+              * Add caching functionality
+              * Improve error messages
+          """
+
+          default_timeout = 30
+
+          max_retries = 3
+
+          def process_data():
+              pass
+
+          `,
+      },
+    );
   });
 
   it("GeneratorDoc with FunctionDeclaration integration", () => {
@@ -1253,14 +1203,14 @@ describe("Full example", () => {
       />
     );
 
-    const result = toSourceText([
-      <py.FunctionDeclaration name="fibonacci_generator" doc={generatorDoc}>
-        yield 0
-      </py.FunctionDeclaration>,
-    ]);
-
-    expect(result).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.FunctionDeclaration name="fibonacci_generator" doc={generatorDoc}>
+          yield 0
+        </py.FunctionDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         def fibonacci_generator():
             """
             A generator function that yields fibonacci numbers. This is an efficient way
@@ -1273,7 +1223,6 @@ describe("Full example", () => {
                 int: The next fibonacci number in the sequence.
             """
             yield 0
-
 
         `,
     );
@@ -1304,21 +1253,21 @@ describe("Full example", () => {
       />
     );
 
-    const result = toSourceText([
-      <py.ClassDeclaration
-        name="ValidationError"
-        bases={["Exception"]}
-        doc={exceptionDoc}
-      >
-        <py.StatementList>
-          <py.VariableDeclaration name="field_name" type="str" />
-          <py.VariableDeclaration name="error_code" type="int" />
-        </py.StatementList>
-      </py.ClassDeclaration>,
-    ]);
-
-    expect(result).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration
+          name="ValidationError"
+          bases={["Exception"]}
+          doc={exceptionDoc}
+        >
+          <py.StatementList>
+            <py.VariableDeclaration name="field_name" type="str" />
+            <py.VariableDeclaration name="error_code" type="int" />
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class ValidationError(Exception):
             """
             Custom exception raised when data validation fails. This exception includes
@@ -1332,7 +1281,6 @@ describe("Full example", () => {
 
             field_name: str = None
             error_code: int = None
-
 
         `,
     );
@@ -1351,15 +1299,16 @@ describe("Full example", () => {
       />
     );
 
-    const result = toSourceText([
-      <py.ClassDeclaration name="Person">
-        <py.PropertyDeclaration name="full_name" doc={propertyDoc} type="str">
-          return "John Doe"
-        </py.PropertyDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-
-    expect(result).toRenderTo(`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="Person">
+          <py.PropertyDeclaration name="full_name" doc={propertyDoc} type="str">
+            return "John Doe"
+          </py.PropertyDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       class Person:
           @property
           def full_name(self) -> str:
@@ -1370,7 +1319,8 @@ describe("Full example", () => {
               return "John Doe"
       
       
-    `);
+    `,
+    );
   });
 
   it("MethodDoc with FunctionDeclaration (inside class) integration", () => {
@@ -1402,24 +1352,24 @@ describe("Full example", () => {
       />
     );
 
-    const result = toSourceText([
-      <py.ClassDeclaration name="DataValidator">
-        <py.MethodDeclaration
-          name="validate"
-          doc={methodDoc}
-          parameters={[
-            { name: "data", type: "dict" },
-            { name: "strict", type: "bool", default: true },
-          ]}
-          returnType="bool"
-        >
-          return self.validate(data, strict)
-        </py.MethodDeclaration>
-      </py.ClassDeclaration>,
-    ]);
-
-    expect(result).toRenderTo(
-      d`
+    expect(
+      <TestOutput>
+        <py.ClassDeclaration name="DataValidator">
+          <py.MethodDeclaration
+            name="validate"
+            doc={methodDoc}
+            parameters={[
+              { name: "data", type: "dict" },
+              { name: "strict", type: "bool", default: true },
+            ]}
+            returnType="bool"
+          >
+            return self.validate(data, strict)
+          </py.MethodDeclaration>
+        </py.ClassDeclaration>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         class DataValidator:
             def validate(self, data: dict, strict: bool = True) -> bool:
                 """
@@ -1442,7 +1392,6 @@ describe("Full example", () => {
                     This method modifies the internal validation state.
                 """
                 return self.validate(data, strict)
-
 
 
         `,

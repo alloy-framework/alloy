@@ -1,7 +1,6 @@
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { DecoratorList } from "../src/components/DecoratorList.jsx";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 /**
  * Direct contract tests for `DecoratorList`. The component is exercised
@@ -12,84 +11,104 @@ import { toSourceText } from "./utils.js";
 describe("DecoratorList", () => {
   it("renders nothing when decorators is undefined", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList />
-          pass
-        </>,
-      ]),
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
     ).toRenderTo("pass");
   });
 
   it("renders nothing when decorators is an empty array", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList decorators={[]} />
-          pass
-        </>,
-      ]),
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList decorators={[]} />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
     ).toRenderTo("pass");
   });
 
   it("renders a single decorator followed by exactly one hardline", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList decorators={["@one"]} />
-          pass
-        </>,
-      ]),
-    ).toRenderTo(d`
-      @one
-      pass
-    `);
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList decorators={["@one"]} />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(
+      `
+        @one
+        pass
+      `,
+    );
   });
 
   it("renders multiple decorators with no blank lines between adjacent entries", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList decorators={["@one", "@two", "@three"]} />
-          pass
-        </>,
-      ]),
-    ).toRenderTo(d`
-      @one
-      @two
-      @three
-      pass
-    `);
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList decorators={["@one", "@two", "@three"]} />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(
+      `
+        @one
+        @two
+        @three
+        pass
+      `,
+    );
   });
 
   it("preserves source order: first entry is topmost (= applied last)", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList decorators={["@outer", "@middle", "@inner"]} />
-          pass
-        </>,
-      ]),
-    ).toRenderTo(d`
-      @outer
-      @middle
-      @inner
-      pass
-    `);
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList decorators={["@outer", "@middle", "@inner"]} />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(
+      `
+        @outer
+        @middle
+        @inner
+        pass
+      `,
+    );
   });
 
   it("skips falsy entries without emitting blank lines", () => {
     expect(
-      toSourceText([
-        <>
-          <DecoratorList decorators={["@one", false, undefined, "@two"]} />
-          pass
-        </>,
-      ]),
-    ).toRenderTo(d`
-      @one
-      @two
-      pass
-    `);
+      <TestOutput>
+        {[
+          <>
+            <DecoratorList decorators={["@one", false, undefined, "@two"]} />
+            pass
+          </>,
+        ]}
+      </TestOutput>,
+    ).toRenderTo(
+      `
+        @one
+        @two
+        pass
+      `,
+    );
   });
 });

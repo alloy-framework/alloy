@@ -1,7 +1,6 @@
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 describe("Dunder/Constructor Declarations", () => {
   it("renders dunder methods with parameters", () => {
@@ -19,7 +18,11 @@ describe("Dunder/Constructor Declarations", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+        expect(
+      <TestOutput>
+      {decl}
+      </TestOutput>,
+    ).toRenderTo(`
       class MyClass:
           def __init__(self, x: int):
               self.attribute = "value"
@@ -42,7 +45,11 @@ describe("Dunder/Constructor Declarations", () => {
       </py.ClassDeclaration>
     );
 
-    expect(toSourceText([decl])).toBe(d`
+        expect(
+      <TestOutput>
+      {decl}
+      </TestOutput>,
+    ).toRenderTo(`
       class MyClass:
           def __new__(cls, *args, **kwargs):
               pass

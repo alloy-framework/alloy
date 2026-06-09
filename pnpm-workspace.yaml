@@ -10,7 +10,7 @@ allowBuilds:
 
 catalog:
   "@astrojs/check": ^0.9.6
-  "@astrojs/starlight": ^0.37.6
+  "@astrojs/starlight": ^0.39.3
   "@babel/cli": ^7.24.7
   "@babel/core": 7.29.7
   "@babel/generator": ^7.29.7
@@ -19,7 +19,7 @@ catalog:
   "@babel/preset-typescript": 7.29.7
   "@babel/types": ^7.29.7
   "@eslint/js": ^10.0.1
-  "@microsoft/api-extractor": ~7.58.7
+  "@microsoft/api-extractor": ~7.58.8
   "@microsoft/api-extractor-model": ~7.33.8
   "@microsoft/tsdoc": 0.16.0
   "@radix-ui/react-context-menu": ^2.2.6
@@ -44,11 +44,11 @@ catalog:
   "@types/ws": ^8.18.1
   "@typespec/compiler": ^1.0.0
   "@typespec/http": ^1.0.1
-  "@vitejs/plugin-react": ^5.1.1
+  "@vitejs/plugin-react": ^6.0.2
   "@vitest/eslint-plugin": ^1.6.19
   "@vue/reactivity": ^3.5.35
-  astro: ^5.17.1
-  astro-expressive-code: ^0.41.6
+  astro: ^6.4.4
+  astro-expressive-code: ^0.43.0
   babel-plugin-tester: ^12.0.0
   change-case: ^5.4.4
   class-variance-authority: ^0.7.1
@@ -60,13 +60,13 @@ catalog:
   diff-match-patch: ^1.0.5
   eslint: ^10.4.1
   eslint-plugin-react-hooks: ^7.0.1
-  eslint-plugin-react-refresh: ^0.4.24
+  eslint-plugin-react-refresh: ^0.5.2
   fast-xml-parser: ^5.8.0
-  globals: ^16.5.0
+  globals: ^17.6.0
   html-entities: 2.6.0
   js-yaml: ^4.1.0
-  listr2: ^9.0.3
-  lucide-react: ^0.562.0
+  listr2: ^10.2.1
+  lucide-react: ^1.17.0
   marked: ^18.0.5
   pathe: ^2.0.3
   picocolors: ^1.1.1
@@ -80,7 +80,7 @@ catalog:
   rimraf: ^6.1.3
   rollup: ^4.61.1
   sharp: ^0.34.1
-  starlight-llms-txt: ^0.7.0
+  starlight-llms-txt: ^0.10.0
   tailwind-merge: ^3.4.0
   tailwindcss: ^4.1.18
   tsx: ^4.22.4
@@ -88,7 +88,7 @@ catalog:
   typescript: ^6.0.3
   typescript-eslint: ^8.60.1
   validate-html-nesting: ^1.2.4
-  vite: ^7.0.6
+  vite: ^8.0.16
   vite-plugin-singlefile: ^2.3.0
   vitest: 4.1.8
   ws: ^8.21.0

@@ -20,12 +20,12 @@
     "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
-    "@actions/github": "^6.0.1",
+    "@actions/github": "^9.1.1",
     "@alloy-js/cli": "workspace:~",
-    "@eslint/js": "catalog:",
     "@chronus/chronus": "^1.1.0",
     "@chronus/github": "^1.0.3",
     "@chronus/github-pr-commenter": "^1.0.3",
+    "@eslint/js": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "concurrently": "catalog:",
     "eslint": "catalog:",

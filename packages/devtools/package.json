@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "@radix-ui/react-context-menu": "catalog:",
-    "@tanstack/react-virtual": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-tabs": "catalog:",
     "@radix-ui/react-toast": "catalog:",
     "@tailwindcss/vite": "catalog:",
+    "@tanstack/react-virtual": "catalog:",
     "@types/dagre": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
@@ -48,7 +48,7 @@
     "tw-animate-css": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
-    "vite": "npm:rolldown-vite@7.2.5",
+    "vite": "npm:rolldown-vite@7.3.1",
     "vite-plugin-singlefile": "catalog:",
     "vitest": "catalog:"
   }

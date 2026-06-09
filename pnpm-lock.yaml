@@ -733,6 +733,9 @@ importers:
       '@microsoft/tsdoc':
         specifier: 'catalog:'
         version: 0.16.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.2
       redent:
         specifier: 'catalog:'
         version: 4.0.0
@@ -8726,7 +8729,7 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 24.13.1
+      '@types/node': 25.9.2
 
   '@types/unist@2.0.11': {}
 

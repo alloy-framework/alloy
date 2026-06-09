@@ -157,19 +157,25 @@ function parameter(
   );
 }
 
-interface DeclaredParameterDescriptor
-  extends Omit<ParameterDescriptor, "name"> {
+interface DeclaredParameterDescriptor extends Omit<
+  ParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
   TypeSlot: SymbolSlot;
 }
-interface DeclaredFunctionTypeParameterDescriptor
-  extends Omit<FunctionTypeParameterDescriptor, "name"> {
+interface DeclaredFunctionTypeParameterDescriptor extends Omit<
+  FunctionTypeParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
   TypeSlot: SymbolSlot;
 }
 
-interface DeclaredTypeParameterDescriptor
-  extends Omit<TypeParameterDescriptor, "name"> {
+interface DeclaredTypeParameterDescriptor extends Omit<
+  TypeParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
 }
 

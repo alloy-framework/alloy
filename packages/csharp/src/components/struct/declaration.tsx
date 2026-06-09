@@ -32,7 +32,8 @@ const getStructModifiers = makeModifiers<StructModifiers>([
 
 // properties for creating a class
 export interface StructDeclarationProps
-  extends Omit<core.DeclarationProps, "nameKind">,
+  extends
+    Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     StructModifiers {
   name: string | core.Namekey;

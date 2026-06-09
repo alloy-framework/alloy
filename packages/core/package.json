@@ -75,7 +75,7 @@
   "author": "brian.terlson@microsoft.com",
   "license": "MIT",
   "dependencies": {
-    "@types/ws": "^8.18.1",
+    "@types/ws": "catalog:",
     "@vue/reactivity": "catalog:",
     "cli-table3": "catalog:",
     "devalue": "catalog:",
@@ -90,6 +90,7 @@
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
     "@microsoft/api-extractor": "catalog:",
+    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

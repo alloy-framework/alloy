@@ -56,8 +56,7 @@ export interface InterfaceDeclarationProps {
  * This is a combination of `InterfaceDeclarationProps` and `TypeDeclarationProps`.
  */
 export interface InterfaceTypeDeclarationProps
-  extends InterfaceDeclarationProps,
-    TypeDeclarationProps {}
+  extends InterfaceDeclarationProps, TypeDeclarationProps {}
 
 /**
  * Wrapper for creating a named interface type declaration.

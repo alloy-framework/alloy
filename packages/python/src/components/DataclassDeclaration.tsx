@@ -109,8 +109,7 @@ export type DataclassDecoratorKwargs = Partial<
 >;
 
 export interface DataclassDeclarationProps
-  extends ClassDeclarationProps,
-    DataclassDecoratorKwargs {}
+  extends ClassDeclarationProps, DataclassDecoratorKwargs {}
 
 /**
  * Renders a Python dataclass.

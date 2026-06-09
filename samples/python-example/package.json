@@ -14,8 +14,8 @@
     "@alloy-js/core": "workspace:~",
     "@alloy-js/python": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "@typespec/compiler": "^1.0.0",
-    "@typespec/http": "^1.0.1"
+    "@typespec/compiler": "catalog:",
+    "@typespec/http": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",

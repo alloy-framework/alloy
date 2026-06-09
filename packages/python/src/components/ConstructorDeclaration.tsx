@@ -18,8 +18,10 @@ import { MethodDeclarationBase } from "./MethodBase.js";
  *     pass
  * ```
  */
-export interface ConstructorDeclarationProps
-  extends Omit<CommonFunctionProps, "name"> {
+export interface ConstructorDeclarationProps extends Omit<
+  CommonFunctionProps,
+  "name"
+> {
   abstract?: boolean;
 }
 

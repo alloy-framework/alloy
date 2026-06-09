@@ -92,8 +92,10 @@ function parameter(param: DeclaredParameterDescriptor) {
   );
 }
 
-interface DeclaredParameterDescriptor
-  extends Omit<ParameterDescriptor, "name"> {
+interface DeclaredParameterDescriptor extends Omit<
+  ParameterDescriptor,
+  "name"
+> {
   symbol: PythonOutputSymbol;
   TypeSlot?: SymbolSlot;
 }

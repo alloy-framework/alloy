@@ -12,8 +12,7 @@ import { createVariableSymbol } from "../../symbols/factories.js";
 
 /** Props for {@link VarDeclaration} component */
 export interface VarDeclarationProps
-  extends Omit<DeclarationProps, "nameKind">,
-    VarModifiers {
+  extends Omit<DeclarationProps, "nameKind">, VarModifiers {
   /** Variable name */
   name: string | Namekey;
   /** Type of the variable declaration. If not specified, defaults to "var" */

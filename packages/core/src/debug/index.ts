@@ -49,6 +49,7 @@ import { trace, type TracePhaseInfo } from "./trace.js";
 export { isDevtoolsConnected } from "../devtools/devtools-server.js";
 export { captureSourceLocation } from "./effects.js";
 export type {
+  SourceLocation as DebugSourceLocation,
   EffectDebugInfo,
   EffectEdgeDebugInfo,
   RefDebugInfo,

@@ -23,7 +23,8 @@ const getRecordModifiers = makeModifiers<RecordModifiers>(["partial"]);
 
 /** Props to use the {@link RecordDeclaration} component */
 export interface RecordDeclarationProps
-  extends Omit<core.DeclarationProps, "nameKind">,
+  extends
+    Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     RecordModifiers {
   name: string | core.Namekey;

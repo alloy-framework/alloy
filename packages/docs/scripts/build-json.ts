@@ -316,8 +316,15 @@ function queryPackageApis(
         if (isComponent(member as ApiFunction)) {
           let componentPropTypes: ApiInterface[] = [];
           if ((member as ApiFunction).parameters.length > 0) {
-            const propsTypeRef = (member as ApiFunction).parameters[0]
-              .parameterTypeExcerpt.spannedTokens[0].canonicalReference;
+            const spannedTokens = (member as ApiFunction).parameters[0]
+              .parameterTypeExcerpt.spannedTokens;
+            if (spannedTokens.length === 0) {
+              console.log(
+                `warn: Cannot find props type tokens for ${member.displayName}`,
+              );
+              continue;
+            }
+            const propsTypeRef = spannedTokens[0].canonicalReference;
             if (propsTypeRef === undefined) {
               // https://github.com/alloy-framework/alloy/issues/128
               console.log(

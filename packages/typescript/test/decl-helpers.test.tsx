@@ -1,6 +1,4 @@
 import { code, namekey, Output } from "@alloy-js/core";
-import "@alloy-js/core/testing";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
 import { decl, declMember, declType } from "../src/symbols/index.js";
@@ -19,11 +17,11 @@ it("declares variables", () => {
       <ts.SourceFile path="test2.ts">{hi};</ts.SourceFile>
     </Output>,
   ).toRenderTo({
-    "test1.ts": d`
+    "test1.ts": `
       const hi = 12;
       console.log(hi);
     `,
-    "test2.ts": d`
+    "test2.ts": `
       import { hi } from "./test1.js";
 
       hi;
@@ -48,12 +46,12 @@ it("declares types", () => {
       </ts.SourceFile>
     </Output>,
   ).toRenderTo({
-    "test1.ts": d`
+    "test1.ts": `
       interface hi {
         value: number;
       }
     `,
-    "test2.ts": d`
+    "test2.ts": `
       import type { hi } from "./test1.js";
 
       const test: hi
@@ -78,12 +76,12 @@ it("declares variables", () => {
       </ts.SourceFile>
     </Output>,
   ).toRenderTo({
-    "test1.ts": d`
+    "test1.ts": `
       interface hi {
         value: number;
       }
     `,
-    "test2.ts": d`
+    "test2.ts": `
       import type { hi } from "./test1.js";
 
       const test: hi
@@ -114,7 +112,7 @@ it("declares members", () => {
         {staticMethod}();
       </ts.SourceFile>
     </Output>,
-  ).toRenderTo(d`
+  ).toRenderTo(`
     class Foo {
       public publicMember = 12;
       #privateMember = 34;

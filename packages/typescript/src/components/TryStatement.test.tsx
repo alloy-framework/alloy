@@ -1,19 +1,16 @@
 import { refkey, StatementList } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
-import { toSourceText } from "../../test/utils.jsx";
 import { CatchClause, FinallyClause, TryStatement } from "./TryStatement.jsx";
 import { VarDeclaration } from "./VarDeclaration.jsx";
+import { TestFile } from "../../test/utils.js";
 
 it("works with try-catch", () => {
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <CatchClause parameter="error">// handle error</CatchClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } catch (error) {
@@ -23,15 +20,13 @@ it("works with try-catch", () => {
 });
 
 it("works with try-catch-finally", () => {
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <CatchClause parameter="error">// handle error</CatchClause>
       <FinallyClause>// cleanup</FinallyClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } catch (error) {
@@ -43,14 +38,12 @@ it("works with try-catch-finally", () => {
 });
 
 it("works with try-finally", () => {
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <FinallyClause>// cleanup</FinallyClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } finally {
@@ -60,14 +53,12 @@ it("works with try-finally", () => {
 });
 
 it("works with catch without parameter", () => {
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <CatchClause>// handle error without parameter</CatchClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } catch {
@@ -77,16 +68,14 @@ it("works with catch without parameter", () => {
 });
 
 it("works with typed catch parameter", () => {
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <CatchClause parameter={{ name: "error", type: "Error" }}>
         // handle typed error
       </CatchClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } catch (error: Error) {
@@ -98,8 +87,8 @@ it("works with typed catch parameter", () => {
 it("creates symbols for catch parameters", () => {
   const rk = refkey();
 
-  const text = toSourceText(
-    <>
+  expect(
+    <TestFile>
       <TryStatement>// try something</TryStatement>
       <CatchClause parameter={{ name: "error", type: "Error", refkey: rk }}>
         <StatementList>
@@ -109,10 +98,8 @@ it("creates symbols for catch parameters", () => {
           </VarDeclaration>
         </StatementList>
       </CatchClause>
-    </>,
-  );
-
-  expect(text).toBe(d`
+    </TestFile>,
+  ).toRenderTo(`
     try {
       // try something
     } catch (error: Error) {

@@ -5,7 +5,6 @@ import {
   StatementList,
   refkey,
 } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";

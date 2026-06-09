@@ -1,11 +1,10 @@
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestFile } from "./utils.js";
 
 it("renders a variable declaration with documentation", () => {
-  const res = toSourceText(
-    <>
+  const res = (
+    <TestFile>
       <ts.VarDeclaration
         name="myVar"
         const
@@ -14,9 +13,9 @@ it("renders a variable declaration with documentation", () => {
         123
       </ts.VarDeclaration>
       ;
-    </>,
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * This is a variable documentation
      */
@@ -25,8 +24,8 @@ it("renders a variable declaration with documentation", () => {
 });
 
 it("renders a let declaration with documentation", () => {
-  const res = toSourceText(
-    <>
+  const res = (
+    <TestFile>
       <ts.VarDeclaration
         let
         name="counter"
@@ -36,9 +35,9 @@ it("renders a let declaration with documentation", () => {
         0
       </ts.VarDeclaration>
       ;
-    </>,
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * A counter variable that can be changed
      */
@@ -47,8 +46,8 @@ it("renders a let declaration with documentation", () => {
 });
 
 it("renders an exported variable declaration with documentation", () => {
-  const res = toSourceText(
-    <>
+  const res = (
+    <TestFile>
       <ts.VarDeclaration
         export
         name="API_URL"
@@ -59,9 +58,9 @@ it("renders an exported variable declaration with documentation", () => {
         "https://api.example.com"
       </ts.VarDeclaration>
       ;
-    </>,
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * The base URL for API calls
      */

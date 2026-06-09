@@ -1,11 +1,11 @@
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestFile } from "./utils.js";
 
 it("renders an enum declaration with documentation", () => {
-  const res = toSourceText(
-    <ts.EnumDeclaration
+  const res = (
+    <TestFile>
+        <ts.EnumDeclaration
       name="Color"
       doc="Color enumeration for the application"
     >
@@ -14,9 +14,10 @@ it("renders an enum declaration with documentation", () => {
         <ts.EnumMember name="Green" />
         <ts.EnumMember name="Blue" />
       </ts.CommaList>
-    </ts.EnumDeclaration>,
+    </ts.EnumDeclaration>
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * Color enumeration for the application
      */
@@ -29,8 +30,9 @@ it("renders an enum declaration with documentation", () => {
 });
 
 it("renders an enum declaration with documented members", () => {
-  const res = toSourceText(
-    <ts.EnumDeclaration
+  const res = (
+    <TestFile>
+        <ts.EnumDeclaration
       name="Direction"
       doc="Represents cardinal directions. Used for navigation purposes"
     >
@@ -44,9 +46,10 @@ it("renders an enum declaration with documented members", () => {
         <ts.EnumMember name="South" jsValue={2} doc="Opposite to North" />
         <ts.EnumMember name="West" jsValue={3} doc="Going west!" />
       </ts.CommaList>
-    </ts.EnumDeclaration>,
+    </ts.EnumDeclaration>
+    </TestFile>
   );
-  expect(res).toEqual(d`
+  expect(res).toRenderTo(`
     /**
      * Represents cardinal directions. Used for navigation purposes
      */

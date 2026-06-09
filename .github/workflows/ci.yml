@@ -35,7 +35,7 @@ jobs:
 
       - name: Publish preview versions
         if: github.event_name == 'pull_request'
-        run: pnpm tsx eng/pkg-pr-new.ts
+        run: node eng/pkg-pr-new.ts
 
       - name: Generate docs
         working-directory: ./packages/docs

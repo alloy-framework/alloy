@@ -1,5 +1,4 @@
 import { List, Output, refkey } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { TestPackage } from "../../../test/utils.js";
 import { ModuleDirectory } from "../ModuleDirectory.jsx";

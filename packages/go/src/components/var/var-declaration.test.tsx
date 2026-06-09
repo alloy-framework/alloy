@@ -1,5 +1,4 @@
 import { Output, refkey, render } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as go from "../index.js";
 

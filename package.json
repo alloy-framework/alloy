@@ -36,7 +36,7 @@
     "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
     "tsx": "^4.20.3",
-    "typedoc": "^0.28.8",
+    "typedoc": "catalog:",
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }

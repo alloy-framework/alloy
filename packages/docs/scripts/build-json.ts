@@ -233,10 +233,7 @@ function queryMembers(members: ApiItem[], model: ApiModel): PackageStructure {
   const propTypes = new Set<ApiItem>();
 
   for (const member of members) {
-    if (
-      member.kind === ApiItemKind.Variable ||
-      member.kind === (ApiItemKind.Enum as any)
-    ) {
+    if (member.kind === ApiItemKind.Variable) {
       const variable = member as ApiVariable;
       const nameMatch = variable.displayName.match(/(\w+)Context/);
       if (!nameMatch) continue;
@@ -259,10 +256,8 @@ function queryMembers(members: ApiItem[], model: ApiModel): PackageStructure {
       );
 
       let contextInterface: ApiItem | string;
-      if (refToken?.canonicalReference) {
-        const resolved = model.resolveReference(
-          parseInt(refToken.canonicalReference),
-        );
+      if (refToken?.referenceId) {
+        const resolved = model.resolveReference(refToken.referenceId);
         contextInterface = resolved ?? refToken.text;
       } else {
         // Primitive or inline type
@@ -338,7 +333,6 @@ function queryMembers(members: ApiItem[], model: ApiModel): PackageStructure {
         break;
       }
       case ApiItemKind.Variable:
-      case ApiItemKind.Enum:
         packageRecord.variables.push({
           kind: "variable",
           variable: member as ApiVariable,
@@ -379,11 +373,9 @@ function findComponentPropTypes(
   const refToken = propsParam.parameterTypeExcerpt.spannedTokens.find(
     (t) => t.kind === ExcerptTokenKind.Reference,
   );
-  if (!refToken?.canonicalReference) return [];
+  if (!refToken?.referenceId) return [];
 
-  const resolved = model.resolveReference(
-    parseInt(refToken.canonicalReference),
-  );
+  const resolved = model.resolveReference(refToken.referenceId);
   if (!resolved) return [];
 
   if (resolved.kind === ApiItemKind.Interface) {
@@ -394,8 +386,8 @@ function findComponentPropTypes(
     const result: ApiInterface[] = [];
     for (const token of ta.typeExcerpt.spannedTokens) {
       if (token.kind !== ExcerptTokenKind.Reference) continue;
-      if (!token.canonicalReference) continue;
-      const ref = model.resolveReference(parseInt(token.canonicalReference));
+      if (!token.referenceId) continue;
+      const ref = model.resolveReference(token.referenceId);
       if (ref && ref.kind === ApiItemKind.Interface) {
         result.push(ref as ApiInterface);
       }

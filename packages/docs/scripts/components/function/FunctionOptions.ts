@@ -10,12 +10,12 @@ export interface FunctionOptionsProps {
 export function FunctionOptions(props: FunctionOptionsProps) {
   const lastParam = props.fn.parameters.at(-1);
   if (!lastParam || lastParam.name !== "options") return "";
-  if (!lastParam.parameterTypeExcerpt.spannedTokens[0]?.canonicalReference) {
+  if (!lastParam.parameterTypeExcerpt.spannedTokens[0]?.referenceId) {
     return "";
   }
   const apiModel = useContext(ApiModelContext)!;
   const optionsType = apiModel.resolveReference(
-    parseInt(lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference!),
+    lastParam.parameterTypeExcerpt.spannedTokens[0].referenceId!,
   );
 
   if (!optionsType) return "";

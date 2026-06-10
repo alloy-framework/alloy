@@ -1,17 +1,13 @@
 /**
- * This module defines a documentation model that mirrors the subset of
- * @microsoft/api-extractor-model used by the rendering components.
- * The model is populated from TypeDoc's reflection data.
+ * Documentation model types populated from TypeDoc's reflection data.
  */
 
-// Re-export enums and types that match the API Extractor interface
 export enum ApiItemKind {
   Variable = "Variable",
   Function = "Function",
   Interface = "Interface",
   TypeAlias = "TypeAlias",
   Class = "Class",
-  Enum = "Enum",
   PropertySignature = "PropertySignature",
   Property = "Property",
   MethodSignature = "MethodSignature",
@@ -29,7 +25,8 @@ export enum ExcerptTokenKind {
 export interface ExcerptToken {
   kind: ExcerptTokenKind;
   text: string;
-  canonicalReference?: string;
+  /** TypeDoc reflection ID this token refers to */
+  referenceId?: number;
 }
 
 export interface Excerpt {
@@ -40,7 +37,6 @@ export interface Excerpt {
 
 /**
  * TSDoc-compatible comment model.
- * This matches the subset of @microsoft/tsdoc's DocNode tree used by rendering.
  */
 export type DocNodeKind =
   | "Paragraph"
@@ -108,7 +104,8 @@ export interface DocParamBlock extends DocNode {
 
 export interface DocLinkTag extends DocNode {
   kind: "LinkTag";
-  codeDestination?: string; // Reference ID
+  /** TypeDoc reflection ID for code links */
+  referenceId?: number;
   urlDestination?: string;
   linkText?: string;
 }
@@ -143,8 +140,9 @@ export interface ApiItem {
   tsdocComment?: DocComment;
   fileUrlPath?: string;
   excerpt: Excerpt;
-  /** Unique ID for refkey generation */
+  /** Unique TypeDoc reflection ID */
   id: number;
+  isProtected?: boolean;
   getAssociatedPackage(): ApiPackage | undefined;
   getMergedSiblings(): ApiItem[];
 }
@@ -157,7 +155,7 @@ export interface ApiFunction extends ApiItem {
 }
 
 export interface ApiVariable extends ApiItem {
-  kind: ApiItemKind.Variable | ApiItemKind.Enum;
+  kind: ApiItemKind.Variable;
   variableTypeExcerpt: Excerpt;
 }
 
@@ -181,20 +179,17 @@ export interface ApiClass extends ApiItem {
 export interface ApiPropertySignature extends ApiItem {
   kind: ApiItemKind.PropertySignature;
   isOptional: boolean;
-  isProtected: boolean;
   propertyTypeExcerpt: Excerpt;
 }
 
 export interface ApiProperty extends ApiItem {
   kind: ApiItemKind.Property;
   isOptional: boolean;
-  isProtected: boolean;
   propertyTypeExcerpt: Excerpt;
 }
 
 export interface ApiMethod extends ApiItem {
   kind: ApiItemKind.Method | ApiItemKind.MethodSignature;
-  isProtected: boolean;
   parameters: Parameter[];
   returnTypeExcerpt: Excerpt;
 }
@@ -225,5 +220,5 @@ export interface ApiPackage {
  */
 export interface ApiModel {
   packages: Map<string, ApiPackage>;
-  resolveReference(id: number | string | undefined): ApiItem | undefined;
+  resolveReference(id: number | undefined): ApiItem | undefined;
 }

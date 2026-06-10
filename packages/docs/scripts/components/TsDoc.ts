@@ -138,11 +138,9 @@ export interface TsDocLinkTagProps {
 
 export function TsDocLinkTag(props: TsDocLinkTagProps) {
   const docContext = useTsDoccontext();
-  if (props.node.codeDestination) {
+  if (props.node.referenceId) {
     const apiModel = useContext(ApiModelContext)!;
-    const apiItem = apiModel.resolveReference(
-      parseInt(props.node.codeDestination),
-    );
+    const apiItem = apiModel.resolveReference(props.node.referenceId);
 
     return stc.Reference({
       refkey: refkey(apiItem),

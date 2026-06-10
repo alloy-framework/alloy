@@ -12,9 +12,9 @@ export function resolveExcerptReference(
   context: ApiItem,
 ) {
   const apiModel = useContext(ApiModelContext)!;
-  if (!excerpt.canonicalReference) return;
+  if (!excerpt.referenceId) return;
 
-  return apiModel.resolveReference(parseInt(excerpt.canonicalReference));
+  return apiModel.resolveReference(excerpt.referenceId);
 }
 
 export function cleanExcerpt(excerpt: string) {
@@ -36,15 +36,12 @@ export function flattenedMembers(iface: ApiInterface) {
   const members = [...iface.members];
 
   for (const extendsType of iface.extendsTypes ?? []) {
-    // Look for reference tokens in the extends type excerpt
     const refToken = extendsType.excerpt.spannedTokens.find(
-      (t) => t.canonicalReference,
+      (t) => t.referenceId !== undefined,
     );
     if (!refToken) continue;
     const apiModel = useContext(ApiModelContext)!;
-    const refType = apiModel.resolveReference(
-      parseInt(refToken.canonicalReference!),
-    );
+    const refType = apiModel.resolveReference(refToken.referenceId);
     if (!refType) continue;
     if (refType.kind !== ApiItemKind.Interface) continue;
 
@@ -61,4 +58,3 @@ export function flattenedMembers(iface: ApiInterface) {
     return 0;
   });
 }
-

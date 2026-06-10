@@ -103,6 +103,7 @@ interface TDType {
   refersToTypeParameter?: boolean;
   asserts?: boolean;
   targetType?: TDType;
+  queryType?: TDType;
   constraint?: TDType;
   head?: string;
   tail?: [TDType, string][];
@@ -175,10 +176,9 @@ function createModel(project: TDReflection): ApiModel {
 
   const model: ApiModel = {
     packages,
-    resolveReference(id: number | string | undefined): ApiItem | undefined {
+    resolveReference(id: number | undefined): ApiItem | undefined {
       if (id === undefined) return undefined;
-      const numId = typeof id === "string" ? parseInt(id) : id;
-      return itemMap.get(numId);
+      return itemMap.get(id);
     },
   };
 
@@ -334,7 +334,7 @@ function createVariable(
   _itemMap: Map<number, ApiItem>,
 ): ApiVariable {
   return {
-    kind: Kind.Variable as any,
+    kind: Kind.Variable,
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
@@ -454,9 +454,9 @@ function createEnum(
   _idMap: Map<number, TDReflection>,
   _itemMap: Map<number, ApiItem>,
 ): ApiVariable {
-  // Treat enums as variables (same as API Extractor did)
+  // Treat enums as variables for rendering purposes
   return {
-    kind: Kind.Enum as any,
+    kind: Kind.Variable,
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
@@ -468,7 +468,7 @@ function createEnum(
     variableTypeExcerpt: emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [],
-  } as ApiVariable;
+  };
 }
 
 function createMember(
@@ -550,7 +550,7 @@ function createMethodMember(
   const sig = reflection.signatures?.[0];
   const comment = sig?.comment ?? reflection.comment;
   return {
-    kind: Kind.Method as any,
+    kind: Kind.Method,
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
@@ -744,7 +744,7 @@ function renderType(
         tokens.push({
           kind: ExcerptTokenKind.Reference,
           text: type.name ?? "unknown",
-          canonicalReference: String(targetId),
+          referenceId: targetId,
         });
       } else {
         pushContent(tokens, type.name ?? "unknown");
@@ -858,15 +858,15 @@ function renderType(
       pushContent(tokens, `${type.operator ?? "keyof"} `);
       if (type.target && typeof type.target !== "number") {
         pushContent(tokens, "unknown");
-      } else if ((type as any).targetType) {
-        renderType((type as any).targetType, tokens, idMap);
+      } else if (type.targetType) {
+        renderType(type.targetType, tokens, idMap);
       }
       break;
 
     case "query":
       pushContent(tokens, "typeof ");
-      if ((type as any).queryType) {
-        renderType((type as any).queryType, tokens, idMap);
+      if (type.queryType) {
+        renderType(type.queryType, tokens, idMap);
       }
       break;
 
@@ -1133,7 +1133,7 @@ function convertCommentParts(parts: TDCommentPart[]): DocNode[] {
             linkText: part.tsLinkText || part.text,
           };
           if (typeof part.target === "number") {
-            linkTag.codeDestination = String(part.target);
+            linkTag.referenceId = part.target;
           } else if (typeof part.target === "object" && part.target) {
             // External reference
             linkTag.urlDestination = undefined;

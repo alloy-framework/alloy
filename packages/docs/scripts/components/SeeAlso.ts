@@ -27,13 +27,11 @@ export function SeeAlso(props: SeeAlsoProps) {
       seeBlock.content.nodes[0].kind === "Paragraph" &&
       (seeBlock.content.nodes[0] as DocParagraph).nodes[2]?.kind === "LinkTag" &&
       ((seeBlock.content.nodes[0] as DocParagraph).nodes[2] as DocLinkTag)
-        .codeDestination
+        .referenceId
     ) {
       const linkTag = (seeBlock.content.nodes[0] as DocParagraph)
         .nodes[2] as DocLinkTag;
-      const resolvedType = apiModel.resolveReference(
-        parseInt(linkTag.codeDestination!),
-      );
+      const resolvedType = apiModel.resolveReference(linkTag.referenceId);
 
       if (resolvedType && resolvedType.displayName.indexOf("Context") > -1) {
         contextsProvided.push(seeBlock);

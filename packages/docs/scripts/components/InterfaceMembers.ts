@@ -31,8 +31,7 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
       case ApiItemKind.PropertySignature:
       case ApiItemKind.Property: {
         const prop = member as ApiPropertySignature | ApiProperty;
-        const isProtected =
-          (prop as any).isProtected;
+        const isProtected = prop.isProtected;
         const summary: Children =
           prop.tsdocComment?.summarySection ?
             TsDoc({
@@ -61,8 +60,7 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
       case ApiItemKind.MethodSignature:
       case ApiItemKind.Method: {
         const method = member as ApiFunction | ApiMethod;
-        const isProtected =
-          (method as any).isProtected;
+        const isProtected = method.isProtected;
         const sig = mdxEscape(
           `(${method.parameters
             .map((param) => `${param.name}: ${param.parameterTypeExcerpt.text}`)

@@ -1,9 +1,9 @@
+import type { TypeApi } from "../../build-json.js";
 import {
   ApiItemKind,
   type ApiClass,
   type ApiInterface,
 } from "../../model/index.js";
-import type { TypeApi } from "../../build-json.js";
 import { cleanExcerpt } from "../../utils.js";
 import {
   Code,

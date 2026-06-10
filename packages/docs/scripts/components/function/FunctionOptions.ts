@@ -1,6 +1,6 @@
 import { useContext } from "@alloy-js/core";
-import type { ApiFunction, ApiInterface } from "../../model/index.js";
 import { ApiModelContext } from "../../contexts/api-model.js";
+import type { ApiFunction, ApiInterface } from "../../model/index.js";
 import { InterfaceMembers, MdxSection } from "../stc/index.js";
 
 export interface FunctionOptionsProps {

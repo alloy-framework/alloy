@@ -1,6 +1,6 @@
 import { code, useContext } from "@alloy-js/core";
-import type { ApiFunction } from "../../model/index.js";
 import { ImportPathContext } from "../../contexts/import-path.js";
+import type { ApiFunction } from "../../model/index.js";
 import { cleanExcerpt } from "../../utils.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 

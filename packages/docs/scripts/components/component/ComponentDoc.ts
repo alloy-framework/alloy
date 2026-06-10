@@ -1,6 +1,6 @@
 import { mapJoin, type Children } from "@alloy-js/core";
-import type { ApiItem } from "../../model/index.js";
 import type { ComponentApi } from "../../build-json.js";
+import type { ApiItem } from "../../model/index.js";
 import {
   ComponentProps,
   ComponentSignature,

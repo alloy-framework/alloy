@@ -185,10 +185,7 @@ function createModel(project: TDReflection): ApiModel {
   return model;
 }
 
-function buildIdMap(
-  reflection: TDReflection,
-  map: Map<number, TDReflection>,
-) {
+function buildIdMap(reflection: TDReflection, map: Map<number, TDReflection>) {
   map.set(reflection.id, reflection);
   for (const child of reflection.children ?? []) {
     buildIdMap(child, map);
@@ -283,15 +280,21 @@ function createFunction(
     excerpt: createFunctionExcerpt(reflection, idMap),
     parameters: sig?.parameters?.map((p) => createParameter(p, comment)) ?? [],
     overloadIndex: 1,
-    returnTypeExcerpt: sig?.type
-      ? typeToExcerpt(sig.type, idMap)
-      : emptyExcerpt(),
+    returnTypeExcerpt:
+      sig?.type ? typeToExcerpt(sig.type, idMap) : emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => {
       // Collect all overloads
       return (reflection.signatures ?? []).map((s, i) => {
         if (i === 0) return fn;
-        return createOverloadFunction(reflection, s, i + 1, pkg, idMap, itemMap);
+        return createOverloadFunction(
+          reflection,
+          s,
+          i + 1,
+          pkg,
+          idMap,
+          itemMap,
+        );
       });
     },
   };
@@ -318,9 +321,8 @@ function createOverloadFunction(
     excerpt: createSignatureExcerpt(reflection.name, sig, idMap),
     parameters: sig.parameters?.map((p) => createParameter(p, comment)) ?? [],
     overloadIndex: index,
-    returnTypeExcerpt: sig.type
-      ? typeToExcerpt(sig.type, idMap)
-      : emptyExcerpt(),
+    returnTypeExcerpt:
+      sig.type ? typeToExcerpt(sig.type, idMap) : emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [overload],
   };
@@ -338,14 +340,12 @@ function createVariable(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: createVariableExcerpt(reflection, idMap),
-    variableTypeExcerpt: reflection.type
-      ? typeToExcerpt(reflection.type, idMap)
-      : emptyExcerpt(),
+    variableTypeExcerpt:
+      reflection.type ? typeToExcerpt(reflection.type, idMap) : emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [],
   } as ApiVariable;
@@ -362,9 +362,8 @@ function createInterface(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
     members: [],
@@ -399,14 +398,12 @@ function createTypeAlias(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: createTypeAliasExcerpt(reflection, idMap),
-    typeExcerpt: reflection.type
-      ? typeToExcerpt(reflection.type, idMap)
-      : emptyExcerpt(),
+    typeExcerpt:
+      reflection.type ? typeToExcerpt(reflection.type, idMap) : emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [],
   } as ApiTypeAlias;
@@ -423,14 +420,14 @@ function createClass(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
     members: [],
-    extendsType: reflection.extendedTypes?.[0]
-      ? { excerpt: typeToExcerpt(reflection.extendedTypes[0], idMap) }
+    extendsType:
+      reflection.extendedTypes?.[0] ?
+        { excerpt: typeToExcerpt(reflection.extendedTypes[0], idMap) }
       : undefined,
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [cls],
@@ -460,9 +457,8 @@ function createEnum(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
     variableTypeExcerpt: emptyExcerpt(),
@@ -529,12 +525,10 @@ function createPropertyMember(
     name: reflection.name,
     isOptional: !!reflection.flags.isOptional,
     isProtected: !!reflection.flags.isProtected,
-    propertyTypeExcerpt: reflection.type
-      ? typeToExcerpt(reflection.type, idMap)
-      : emptyExcerpt(),
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    propertyTypeExcerpt:
+      reflection.type ? typeToExcerpt(reflection.type, idMap) : emptyExcerpt(),
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
     getAssociatedPackage: () => pkg,
@@ -556,9 +550,8 @@ function createMethodMember(
     name: reflection.name,
     isProtected: !!reflection.flags.isProtected,
     parameters: sig?.parameters?.map((p) => createParameter(p, comment)) ?? [],
-    returnTypeExcerpt: sig?.type
-      ? typeToExcerpt(sig.type, idMap)
-      : emptyExcerpt(),
+    returnTypeExcerpt:
+      sig?.type ? typeToExcerpt(sig.type, idMap) : emptyExcerpt(),
     tsdocComment: comment ? convertComment(comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
@@ -606,11 +599,10 @@ function createAccessorMember(
     isOptional: !!reflection.flags.isOptional,
     isProtected: !!reflection.flags.isProtected,
     propertyTypeExcerpt: type ? typeToExcerpt(type, idMap) : emptyExcerpt(),
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : getSig?.comment
-        ? convertComment(getSig.comment)
-        : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment)
+      : getSig?.comment ? convertComment(getSig.comment)
+      : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
     getAssociatedPackage: () => pkg,
@@ -628,9 +620,8 @@ function createIndexSignatureMember(
     id: reflection.id,
     displayName: reflection.name,
     name: reflection.name,
-    tsdocComment: reflection.comment
-      ? convertComment(reflection.comment)
-      : undefined,
+    tsdocComment:
+      reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(), // TODO: render index signature excerpt
     getAssociatedPackage: () => pkg,
@@ -644,9 +635,9 @@ function createCallSignatureMember(
   idMap: Map<number, TDReflection>,
 ): ApiCallSignature {
   const sig =
-    reflection.kind === TDKind.CallSignature
-      ? (reflection as unknown as TDSignature)
-      : reflection.signatures?.[0];
+    reflection.kind === TDKind.CallSignature ?
+      (reflection as unknown as TDSignature)
+    : reflection.signatures?.[0];
   return {
     kind: Kind.CallSignature,
     id: reflection.id,
@@ -654,9 +645,8 @@ function createCallSignatureMember(
     name: reflection.name,
     parameters:
       sig?.parameters?.map((p) => createParameter(p, sig.comment)) ?? [],
-    returnTypeExcerpt: sig?.type
-      ? typeToExcerpt(sig.type, idMap)
-      : emptyExcerpt(),
+    returnTypeExcerpt:
+      sig?.type ? typeToExcerpt(sig.type, idMap) : emptyExcerpt(),
     tsdocComment: sig?.comment ? convertComment(sig.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
     excerpt: emptyExcerpt(),
@@ -675,9 +665,8 @@ function createParameter(
   return {
     name: param.name,
     isOptional: !!param.flags.isOptional || param.defaultValue !== undefined,
-    parameterTypeExcerpt: param.type
-      ? typeToExcerpt(param.type, new Map())
-      : emptyExcerpt(),
+    parameterTypeExcerpt:
+      param.type ? typeToExcerpt(param.type, new Map()) : emptyExcerpt(),
     tsdocParamBlock: paramBlock,
   };
 }
@@ -998,8 +987,9 @@ function createTypeAliasExcerpt(
 // --- Comment conversion ---
 
 function convertComment(comment: TDComment): DocComment {
-  const summarySection: DocSection | undefined = comment.summary
-    ? { kind: "Section", nodes: convertCommentParts(comment.summary) }
+  const summarySection: DocSection | undefined =
+    comment.summary ?
+      { kind: "Section", nodes: convertCommentParts(comment.summary) }
     : undefined;
 
   let remarksBlock: DocBlock | undefined;

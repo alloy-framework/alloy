@@ -1,11 +1,11 @@
 import { useContext } from "@alloy-js/core";
+import { ApiModelContext } from "./contexts/api-model.js";
 import {
   ApiItemKind,
   type ApiInterface,
   type ApiItem,
   type ExcerptToken,
 } from "./model/index.js";
-import { ApiModelContext } from "./contexts/api-model.js";
 
 export function resolveExcerptReference(
   excerpt: ExcerptToken,

@@ -1,8 +1,8 @@
 import { refkey, type Children } from "@alloy-js/core";
 import {
   ExcerptTokenKind,
-  type ApiItem,
   type Excerpt as AEExcerpt,
+  type ApiItem,
 } from "../model/index.js";
 import { mdxEscape, resolveExcerptReference } from "../utils.js";
 

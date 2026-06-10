@@ -22,16 +22,15 @@ import { ImportPathContext } from "./contexts/import-path.js";
 import {
   ApiItemKind,
   ExcerptTokenKind,
+  loadTypedocJson,
   type ApiClass,
   type ApiFunction,
   type ApiInterface,
   type ApiItem,
   type ApiModel,
-  type ApiPackage,
   type ApiTypeAlias,
   type ApiVariable,
 } from "./model/index.js";
-import { loadTypedocJson } from "./model/index.js";
 
 const rootDir = resolve(import.meta.dirname, "../src/content/docs");
 const docPath = resolve(rootDir, "reference");

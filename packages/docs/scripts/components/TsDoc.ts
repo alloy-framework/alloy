@@ -5,7 +5,8 @@ import {
   useContext,
   type Children,
 } from "@alloy-js/core";
-import { type ApiItem } from "../model/index.js";
+import { ApiModelContext } from "../contexts/api-model.js";
+import { TsDocContext, useTsDoccontext } from "../contexts/ts-doc.js";
 import type {
   DocBlock,
   DocCodeSpan,
@@ -17,8 +18,8 @@ import type {
   DocPlainText,
   DocSection,
 } from "../model/index.js";
-import { ApiModelContext } from "../contexts/api-model.js";
-import { TsDocContext, useTsDoccontext } from "../contexts/ts-doc.js";
+import { type ApiItem } from "../model/index.js";
+import { mdxEscape } from "../utils.js";
 import * as stc from "./stc/index.js";
 export interface TsDocProps {
   node: DocNode;
@@ -75,7 +76,7 @@ export function TsDoc(props: TsDocProps): Children {
       content = props.inline ? " " : "\n";
       break;
     case "EscapedText":
-      content = (props.node as DocEscapedText).encodedText;
+      content = mdxEscape((props.node as DocEscapedText).encodedText);
       break;
     default:
       console.log("Unknown TSDoc kind " + props.node.kind);
@@ -114,7 +115,7 @@ export interface TsDocPlainTextProps {
   node: DocPlainText;
 }
 export function TsDocPlainText(props: TsDocPlainTextProps) {
-  return props.node.text;
+  return mdxEscape(props.node.text);
 }
 
 export interface TsDocSectionProps {
@@ -161,4 +162,3 @@ export function TsDocCodeSpan(props: TsDocCodeSpanProps) {
   const escaped = props.node.code.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   return `<code>{"${escaped}"}</code>`;
 }
-

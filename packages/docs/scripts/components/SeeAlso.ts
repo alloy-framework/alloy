@@ -1,6 +1,11 @@
 import { code, mapJoin, useContext } from "@alloy-js/core";
-import type { ApiItem, DocBlock, DocLinkTag, DocParagraph } from "../model/index.js";
 import { ApiModelContext } from "../contexts/api-model.js";
+import type {
+  ApiItem,
+  DocBlock,
+  DocLinkTag,
+  DocParagraph,
+} from "../model/index.js";
 import { MdxSection, TsDoc } from "./stc/index.js";
 
 export interface SeeAlsoProps {
@@ -25,7 +30,8 @@ export function SeeAlso(props: SeeAlsoProps) {
       props.splitContexts &&
       seeBlock.content.nodes.length === 1 &&
       seeBlock.content.nodes[0].kind === "Paragraph" &&
-      (seeBlock.content.nodes[0] as DocParagraph).nodes[2]?.kind === "LinkTag" &&
+      (seeBlock.content.nodes[0] as DocParagraph).nodes[2]?.kind ===
+        "LinkTag" &&
       ((seeBlock.content.nodes[0] as DocParagraph).nodes[2] as DocLinkTag)
         .referenceId
     ) {
@@ -71,4 +77,3 @@ export function SeeAlso(props: SeeAlsoProps) {
 
   return [contextsProvidedList, seeAlsoList];
 }
-

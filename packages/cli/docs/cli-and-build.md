@@ -66,8 +66,7 @@ Mode is determined by: CLI flags > `BABEL_ENV` > `NODE_ENV` > default (prod, or 
 ```jsonc
 {
   "scripts": {
-    "generate-docs": "api-extractor run", // or your preferred API doc tool
-    "build": "alloy build --with-dev && pnpm run generate-docs",
+    "build": "alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",

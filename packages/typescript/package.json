@@ -31,8 +31,7 @@
     }
   },
   "scripts": {
-    "generate-docs": "api-extractor run",
-    "build": "alloy build --with-dev && pnpm run generate-docs",
+    "build": "alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",
@@ -50,7 +49,6 @@
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
-    "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
     "concurrently": "catalog:",

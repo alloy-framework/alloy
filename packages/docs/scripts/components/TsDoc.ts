@@ -5,22 +5,18 @@ import {
   useContext,
   type Children,
 } from "@alloy-js/core";
-import { type ApiItem } from "@microsoft/api-extractor-model";
-import {
+import { type ApiItem } from "../model/index.js";
+import type {
   DocBlock,
   DocCodeSpan,
-  DocDeclarationReference,
   DocEscapedText,
   DocFencedCode,
   DocLinkTag,
   DocNode,
-  DocNodeKind,
-  DocNodeTransforms,
   DocParagraph,
   DocPlainText,
   DocSection,
-} from "@microsoft/tsdoc";
-import type { DeclarationReference } from "@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference.js";
+} from "../model/index.js";
 import { ApiModelContext } from "../contexts/api-model.js";
 import { TsDocContext, useTsDoccontext } from "../contexts/ts-doc.js";
 import * as stc from "./stc/index.js";
@@ -33,57 +29,52 @@ export interface TsDocProps {
 export function TsDoc(props: TsDocProps): Children {
   let content;
   switch (props.node.kind) {
-    case DocNodeKind.Paragraph:
+    case "Paragraph":
       content = stc.TsDocParagraph({
         node: props.node as DocParagraph,
         inline: props.inline,
       });
       break;
-    case DocNodeKind.CodeSpan:
+    case "CodeSpan":
       content = stc.TsDocCodeSpan({ node: props.node as DocCodeSpan });
       break;
-    case DocNodeKind.LinkTag:
+    case "LinkTag":
       content = stc.TsDocLinkTag({ node: props.node as DocLinkTag });
       break;
-    case DocNodeKind.PlainText:
+    case "PlainText":
       content = stc.TsDocPlainText({ node: props.node as DocPlainText });
       break;
-    case DocNodeKind.Section:
+    case "Section":
       content = stc.TsDocSection({
         node: props.node as DocSection,
         inline: props.inline,
       });
       break;
-    case DocNodeKind.Block:
+    case "Block":
       content = stc.TsDocSection({
         node: (props.node as DocBlock).content,
         inline: props.inline,
       });
       break;
-    case DocNodeKind.ParamBlock:
-      // ignore?
+    case "ParamBlock":
+      // ignore
       break;
-    case DocNodeKind.BlockTag:
-      // ignore?
+    case "BlockTag":
+      // ignore
       break;
-    case DocNodeKind.FencedCode: {
+    case "FencedCode": {
       const lang = (props.node as DocFencedCode).language;
-      // Escape for a JS double-quoted string inside JSX
       const codeContent = (props.node as DocFencedCode).code
         .replace(/\\/g, "\\\\")
         .replace(/"/g, '\\"')
         .replace(/\n/g, "\\n");
-      // Use <pre><code> HTML instead of the <Code> Astro component or
-      // markdown fenced blocks. Template literals in <Code code={`...`}/>
-      // break MDX parsing inside <td>, and markdown fenced blocks create
-      // paragraph boundaries that also break <td>.
       content = ` <pre><code class="language-${lang}">{"${codeContent}"}</code></pre>`;
       break;
     }
-    case DocNodeKind.SoftBreak:
+    case "SoftBreak":
       content = props.inline ? " " : "\n";
       break;
-    case DocNodeKind.EscapedText:
+    case "EscapedText":
       content = (props.node as DocEscapedText).encodedText;
       break;
     default:
@@ -105,16 +96,16 @@ export interface TsDocParagraphProps {
   inline?: boolean;
 }
 export function TsDocParagraph(props: TsDocParagraphProps) {
-  let trimmed = DocNodeTransforms.trimSpacesInParagraph(props.node);
+  // Trim leading soft breaks
   let contentStartIndex = 0;
   while (
-    contentStartIndex < trimmed.nodes.length &&
-    trimmed.nodes[contentStartIndex].kind === DocNodeKind.SoftBreak
+    contentStartIndex < props.node.nodes.length &&
+    props.node.nodes[contentStartIndex].kind === "SoftBreak"
   ) {
     contentStartIndex++;
   }
 
-  return trimmed.nodes
+  return props.node.nodes
     .slice(contentStartIndex)
     .map((node) => TsDoc({ node, inline: props.inline }));
 }
@@ -148,17 +139,19 @@ export interface TsDocLinkTagProps {
 export function TsDocLinkTag(props: TsDocLinkTagProps) {
   const docContext = useTsDoccontext();
   if (props.node.codeDestination) {
-    const apiItem = resolveCodeDestination(
-      props.node.codeDestination,
-      docContext,
+    const apiModel = useContext(ApiModelContext)!;
+    const apiItem = apiModel.resolveReference(
+      parseInt(props.node.codeDestination),
     );
 
     return stc.Reference({
       refkey: refkey(apiItem),
       linkText: props.node.linkText,
     });
+  } else if (props.node.urlDestination) {
+    return `<a href="${props.node.urlDestination}">${props.node.linkText ?? props.node.urlDestination}</a>`;
   } else {
-    return `<a href="${props.node.urlDestination}">${props.node.linkText}</a>`;
+    return props.node.linkText ?? "";
   }
 }
 
@@ -167,17 +160,7 @@ export interface TsDocCodeSpanProps {
 }
 
 export function TsDocCodeSpan(props: TsDocCodeSpanProps) {
-  // Use <code> HTML instead of backticks to avoid MDX parser conflicts
-  // when inline code appears alongside <Code code={`...`}/> template literals.
   const escaped = props.node.code.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
   return `<code>{"${escaped}"}</code>`;
 }
 
-export function resolveCodeDestination(
-  decl: DeclarationReference | DocDeclarationReference,
-  context: ApiItem | undefined,
-) {
-  const apiModel = useContext(ApiModelContext)!;
-
-  return apiModel.resolveDeclarationReference(decl, context).resolvedApiItem;
-}

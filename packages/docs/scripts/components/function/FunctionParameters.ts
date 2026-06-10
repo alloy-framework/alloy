@@ -1,5 +1,5 @@
 import { code, mapJoin, type Children } from "@alloy-js/core";
-import type { ApiFunction, Parameter } from "@microsoft/api-extractor-model";
+import type { ApiFunction, Parameter } from "../../model/index.js";
 import { mdxEscape } from "../../utils.js";
 import { MdxSection, TsDoc } from "../stc/index.js";
 

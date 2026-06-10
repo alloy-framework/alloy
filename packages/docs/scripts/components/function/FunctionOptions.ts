@@ -1,6 +1,7 @@
-import type { ApiFunction, ApiInterface } from "@microsoft/api-extractor-model";
+import { useContext } from "@alloy-js/core";
+import type { ApiFunction, ApiInterface } from "../../model/index.js";
+import { ApiModelContext } from "../../contexts/api-model.js";
 import { InterfaceMembers, MdxSection } from "../stc/index.js";
-import { resolveCodeDestination } from "../TsDoc.js";
 
 export interface FunctionOptionsProps {
   fn: ApiFunction;
@@ -9,14 +10,15 @@ export interface FunctionOptionsProps {
 export function FunctionOptions(props: FunctionOptionsProps) {
   const lastParam = props.fn.parameters.at(-1);
   if (!lastParam || lastParam.name !== "options") return "";
-  if (!lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference) {
-    // we couldn't find a reference, so probably the type is more complex than a simple type reference.
+  if (!lastParam.parameterTypeExcerpt.spannedTokens[0]?.canonicalReference) {
     return "";
   }
-  const optionsType = resolveCodeDestination(
-    lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference!,
-    undefined,
+  const apiModel = useContext(ApiModelContext)!;
+  const optionsType = apiModel.resolveReference(
+    parseInt(lastParam.parameterTypeExcerpt.spannedTokens[0].canonicalReference!),
   );
+
+  if (!optionsType) return "";
 
   return MdxSection({ title: "Options" }).children(
     InterfaceMembers({ iface: optionsType as ApiInterface, flatten: true }),

@@ -1,9 +1,9 @@
 import { refkey, type Children } from "@alloy-js/core";
 import {
-  ApiItem,
   ExcerptTokenKind,
+  type ApiItem,
   type Excerpt as AEExcerpt,
-} from "@microsoft/api-extractor-model";
+} from "../model/index.js";
 import { mdxEscape, resolveExcerptReference } from "../utils.js";
 
 export interface ExcerptProps {

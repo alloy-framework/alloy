@@ -1,6 +1,6 @@
 import { type Children } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/core/stc";
-import { ApiItem } from "@microsoft/api-extractor-model";
+import type { ApiItem } from "../model/index.js";
 import { Reference } from "./Reference.js";
 import { DocDeclaration, Frontmatter } from "./stc/index.js";
 
@@ -46,5 +46,11 @@ export function DocSourceFile(props: DocSourceFileProps) {
 }
 
 function isApiItem(type: unknown): type is ApiItem {
-  return type instanceof ApiItem;
+  return (
+    typeof type === "object" &&
+    type !== null &&
+    "kind" in type &&
+    "displayName" in type &&
+    !("apiItem" in type)
+  );
 }

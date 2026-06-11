@@ -1,10 +1,10 @@
 import { code, mapJoin, type Children } from "@alloy-js/core";
 import {
-  ApiClass,
   ApiItemKind,
+  type ApiClass,
   type ApiInterface,
   type HeritageType,
-} from "@microsoft/api-extractor-model";
+} from "../../model/index.js";
 import {
   Excerpt,
   InterfaceMembers,

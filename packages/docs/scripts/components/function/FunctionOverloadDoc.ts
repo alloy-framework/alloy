@@ -1,4 +1,4 @@
-import type { ApiFunction } from "@microsoft/api-extractor-model";
+import type { ApiFunction } from "../../model/index.js";
 import {
   Examples,
   FunctionOptions,

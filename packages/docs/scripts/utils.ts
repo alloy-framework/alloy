@@ -1,23 +1,20 @@
 import { useContext } from "@alloy-js/core";
+import { ApiModelContext } from "./contexts/api-model.js";
 import {
   ApiItemKind,
   type ApiInterface,
   type ApiItem,
   type ExcerptToken,
-} from "@microsoft/api-extractor-model";
-import { ApiModelContext } from "./contexts/api-model.js";
+} from "./model/index.js";
 
 export function resolveExcerptReference(
   excerpt: ExcerptToken,
   context: ApiItem,
 ) {
   const apiModel = useContext(ApiModelContext)!;
-  if (!excerpt.canonicalReference) return;
+  if (!excerpt.referenceId) return;
 
-  return apiModel.resolveDeclarationReference(
-    excerpt.canonicalReference,
-    context,
-  ).resolvedApiItem;
+  return apiModel.resolveReference(excerpt.referenceId);
 }
 
 export function cleanExcerpt(excerpt: string) {
@@ -39,14 +36,16 @@ export function flattenedMembers(iface: ApiInterface) {
   const members = [...iface.members];
 
   for (const extendsType of iface.extendsTypes ?? []) {
-    const refType = resolveExcerptReference(
-      extendsType.excerpt.spannedTokens[0],
-      iface,
+    const refToken = extendsType.excerpt.spannedTokens.find(
+      (t) => t.referenceId !== undefined,
     );
+    if (!refToken) continue;
+    const apiModel = useContext(ApiModelContext)!;
+    const refType = apiModel.resolveReference(refToken.referenceId);
     if (!refType) continue;
     if (refType.kind !== ApiItemKind.Interface) continue;
 
-    members.push(...refType.members);
+    members.push(...(refType as ApiInterface).members);
   }
 
   return members.sort((a, b) => {

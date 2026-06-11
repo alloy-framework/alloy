@@ -1,17 +1,16 @@
 import { code, join, type Children } from "@alloy-js/core";
 import {
-  ApiCallSignature,
-  ApiConstructor,
-  ApiFunction,
-  ApiIndexSignature,
-  ApiItem,
   ApiItemKind,
-  ApiMethod,
-  ApiProperty,
-  ApiPropertySignature,
-  ApiProtectedMixin,
+  type ApiCallSignature,
+  type ApiConstructor,
+  type ApiFunction,
+  type ApiIndexSignature,
   type ApiInterface,
-} from "@microsoft/api-extractor-model";
+  type ApiItem,
+  type ApiMethod,
+  type ApiProperty,
+  type ApiPropertySignature,
+} from "../model/index.js";
 import { flattenedMembers, mdxEscape } from "../utils.js";
 import { Excerpt, TsDoc } from "./stc/index.js";
 
@@ -32,8 +31,7 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
       case ApiItemKind.PropertySignature:
       case ApiItemKind.Property: {
         const prop = member as ApiPropertySignature | ApiProperty;
-        const isProtected =
-          ApiProtectedMixin.isBaseClassOf(prop) && prop.isProtected;
+        const isProtected = prop.isProtected;
         const summary: Children =
           prop.tsdocComment?.summarySection ?
             TsDoc({
@@ -62,8 +60,7 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
       case ApiItemKind.MethodSignature:
       case ApiItemKind.Method: {
         const method = member as ApiFunction | ApiMethod;
-        const isProtected =
-          ApiProtectedMixin.isBaseClassOf(method) && method.isProtected;
+        const isProtected = method.isProtected;
         const sig = mdxEscape(
           `(${method.parameters
             .map((param) => `${param.name}: ${param.parameterTypeExcerpt.text}`)

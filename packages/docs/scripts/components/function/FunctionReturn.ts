@@ -1,4 +1,4 @@
-import type { ApiFunction } from "@microsoft/api-extractor-model";
+import type { ApiFunction } from "../../model/index.js";
 import { Excerpt, MdxSection, TsDoc } from "../stc/index.js";
 
 export interface FunctionReturnProps {

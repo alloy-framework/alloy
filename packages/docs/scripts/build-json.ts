@@ -5,20 +5,8 @@ import {
   type OutputDirectory,
 } from "@alloy-js/core";
 import { Output, SourceDirectory } from "@alloy-js/core/stc";
-import {
-  ApiClass,
-  ApiEnum,
-  ApiFunction,
-  ApiInterface,
-  ApiItem,
-  ApiItemKind,
-  ApiModel,
-  ApiPackage,
-  ApiTypeAlias,
-  ApiVariable,
-  ExcerptTokenKind,
-} from "@microsoft/api-extractor-model";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   ComponentDoc,
@@ -31,130 +19,44 @@ import {
 import { ApiModelContext } from "./contexts/api-model.js";
 import { ContentRootDir } from "./contexts/content-root-dir.js";
 import { ImportPathContext } from "./contexts/import-path.js";
+import {
+  ApiItemKind,
+  ExcerptTokenKind,
+  loadTypedocJson,
+  type ApiClass,
+  type ApiFunction,
+  type ApiInterface,
+  type ApiItem,
+  type ApiModel,
+  type ApiTypeAlias,
+  type ApiVariable,
+} from "./model/index.js";
 
 const rootDir = resolve(import.meta.dirname, "../src/content/docs");
-
 const docPath = resolve(rootDir, "reference");
+const repoRoot = resolve(import.meta.dirname, "../../..");
 
-const packagesPath = resolve(import.meta.dirname, "../../");
+// Step 1: Run TypeDoc to generate JSON
+const typedocOut = resolve(import.meta.dirname, "../.typedoc-out/api.json");
+const typedocOutDir = resolve(import.meta.dirname, "../.typedoc-out");
 
-const apiModel: ApiModel = new ApiModel();
-const apiPackages: Record<string, ApiPackage> = {
-  core: apiModel.loadPackage(apiPath(resolve(packagesPath, "core"))),
-  typescript: apiModel.loadPackage(
-    apiPath(resolve(packagesPath, "typescript")),
-  ),
-  csharp: apiModel.loadPackage(apiPath(resolve(packagesPath, "csharp"))),
-  java: apiModel.loadPackage(apiPath(resolve(packagesPath, "java"))),
-  json: apiModel.loadPackage(apiPath(resolve(packagesPath, "json"))),
-  python: apiModel.loadPackage(apiPath(resolve(packagesPath, "python"))),
-  go: apiModel.loadPackage(apiPath(resolve(packagesPath, "go"))),
-};
-
-// Additional entry points within packages (e.g., @alloy-js/core/testing)
-interface EntryPoint {
-  parentPackage: string;
-  importPath: string;
-  subdirectory: string;
-  apiPackage: ApiPackage;
+if (!existsSync(typedocOutDir)) {
+  mkdirSync(typedocOutDir, { recursive: true });
 }
 
-const entryPoints: EntryPoint[] = [];
+console.time("typedoc");
+execSync("npx typedoc", { cwd: repoRoot, stdio: "pipe" });
+console.timeEnd("typedoc");
 
-const coreTestingApiPath = resolve(
-  packagesPath,
-  "core",
-  "temp/api-testing.json",
-);
-if (existsSync(coreTestingApiPath)) {
-  const testingModel = new ApiModel();
-  entryPoints.push({
-    parentPackage: "core",
-    importPath: "@alloy-js/core/testing",
-    subdirectory: "testing",
-    apiPackage: testingModel.loadPackage(coreTestingApiPath),
-  });
-}
+// Step 2: Load the TypeDoc JSON into our model
+console.time("loadModel");
+const apiModel = loadTypedocJson(typedocOut);
+console.timeEnd("loadModel");
 
-function apiPath(packagePath: string) {
-  return resolve(packagePath, "temp/api.json");
-}
+// Clean up TypeDoc output
+rmSync(typedocOutDir, { recursive: true });
 
-console.time("queryApis");
-const apis = queryApis(apiModel);
-const entryPointApis = entryPoints.map((ep) => ({
-  ...ep,
-  record: queryPackageApis(ep.apiPackage, ep.subdirectory + "/"),
-}));
-console.timeEnd("queryApis");
-
-function renderPackageRecord(record: PackageStructure) {
-  return [
-    SourceDirectory({ path: "components" }).children(
-      record.components.map((component) => ComponentDoc({ component })),
-    ),
-    SourceDirectory({ path: "functions" }).children(
-      record.functions.map((fn) => FunctionDoc({ fn })),
-    ),
-    SourceDirectory({ path: "contexts" }).children(
-      record.contexts.map((context) => ContextDoc({ context })),
-    ),
-    SourceDirectory({ path: "types" }).children(
-      record.types.map((type) => TypeDoc({ type })),
-    ),
-    SourceDirectory({ path: "variables" }).children(
-      record.variables.map((variable) => VariableDoc({ variable })),
-    ),
-  ];
-}
-
-console.time("render");
-const sfs = render(
-  Output({ basePath: docPath }).children(
-    stc(ApiModelContext.Provider)({ value: apiModel }).children(
-      stc(ContentRootDir.Provider)({ value: rootDir }).children(
-        Object.entries(apis.packages).map(([name, record]) => {
-          // Find entry points that belong to this package
-          const pkgEntryPoints = entryPointApis.filter(
-            (ep) => ep.parentPackage === name,
-          );
-
-          return PackageDocs({ name }).children(
-            renderPackageRecord(record),
-            // Render additional entry points as subdirectories with import path override
-            pkgEntryPoints.map((ep) =>
-              SourceDirectory({ path: ep.subdirectory }).children(
-                stc(ImportPathContext.Provider)({
-                  value: ep.importPath,
-                }).children(renderPackageRecord(ep.record)),
-              ),
-            ),
-          );
-        }),
-      ),
-    ),
-  ),
-);
-console.timeEnd("render");
-
-console.time("writeFiles");
-writeSourceFiles(sfs);
-console.timeEnd("writeFiles");
-
-function writeSourceFiles(sfs: OutputDirectory) {
-  for (const item of sfs.contents) {
-    switch (item.kind) {
-      case "directory":
-        mkdirSync(item.path, { recursive: true });
-        writeSourceFiles(item);
-        break;
-      case "file":
-        writeFileSync(item.path, (item as ContentOutputFile).contents);
-        break;
-    }
-  }
-}
-
+// Step 3: Query the model (same logic as before)
 export type DocumentationApi =
   | FunctionApi
   | VariableApi
@@ -169,7 +71,7 @@ export interface FunctionApi {
 
 export interface VariableApi {
   kind: "variable";
-  variable: ApiVariable | ApiEnum;
+  variable: ApiVariable;
 }
 
 export interface ComponentApi {
@@ -204,20 +106,118 @@ interface DocumentationStructure {
   packages: Record<string, PackageStructure>;
 }
 
-function queryApis(apiModel: ApiModel): DocumentationStructure {
+// Additional entry points within packages (e.g., @alloy-js/core/testing)
+interface EntryPoint {
+  parentPackage: string;
+  importPath: string;
+  subdirectory: string;
+  record: PackageStructure;
+}
+
+console.time("queryApis");
+const apis = queryApis(apiModel);
+// Handle the core/testing entry point
+const entryPoints: EntryPoint[] = [];
+// TypeDoc already includes testing exports in core. We filter by file path.
+const corePackage = apiModel.packages.get("core");
+if (corePackage) {
+  const testingMembers = corePackage.members.filter(
+    (m) => m.fileUrlPath && m.fileUrlPath.includes("testing/"),
+  );
+  if (testingMembers.length > 0) {
+    const testingRecord = queryMembers(testingMembers, apiModel);
+    entryPoints.push({
+      parentPackage: "core",
+      importPath: "@alloy-js/core/testing",
+      subdirectory: "testing",
+      record: testingRecord,
+    });
+  }
+}
+console.timeEnd("queryApis");
+
+function renderPackageRecord(record: PackageStructure) {
+  return [
+    SourceDirectory({ path: "components" }).children(
+      record.components.map((component) => ComponentDoc({ component })),
+    ),
+    SourceDirectory({ path: "functions" }).children(
+      record.functions.map((fn) => FunctionDoc({ fn })),
+    ),
+    SourceDirectory({ path: "contexts" }).children(
+      record.contexts.map((context) => ContextDoc({ context })),
+    ),
+    SourceDirectory({ path: "types" }).children(
+      record.types.map((type) => TypeDoc({ type })),
+    ),
+    SourceDirectory({ path: "variables" }).children(
+      record.variables.map((variable) => VariableDoc({ variable })),
+    ),
+  ];
+}
+
+console.time("render");
+const sfs = render(
+  Output({ basePath: docPath }).children(
+    stc(ApiModelContext.Provider)({ value: apiModel }).children(
+      stc(ContentRootDir.Provider)({ value: rootDir }).children(
+        Object.entries(apis.packages).map(([name, record]) => {
+          const pkgEntryPoints = entryPoints.filter(
+            (ep) => ep.parentPackage === name,
+          );
+
+          return PackageDocs({ name }).children(
+            renderPackageRecord(record),
+            pkgEntryPoints.map((ep) =>
+              SourceDirectory({ path: ep.subdirectory }).children(
+                stc(ImportPathContext.Provider)({
+                  value: ep.importPath,
+                }).children(renderPackageRecord(ep.record)),
+              ),
+            ),
+          );
+        }),
+      ),
+    ),
+  ),
+);
+console.timeEnd("render");
+
+console.time("writeFiles");
+writeSourceFiles(sfs);
+console.timeEnd("writeFiles");
+
+function writeSourceFiles(sfs: OutputDirectory) {
+  for (const item of sfs.contents) {
+    switch (item.kind) {
+      case "directory":
+        mkdirSync(item.path, { recursive: true });
+        writeSourceFiles(item);
+        break;
+      case "file":
+        writeFileSync(item.path, (item as ContentOutputFile).contents);
+        break;
+    }
+  }
+}
+
+// --- Query logic ---
+
+function queryApis(model: ApiModel): DocumentationStructure {
   const apis: DocumentationStructure = { packages: {} };
 
-  for (const [name, apiPackage] of Object.entries(apiPackages)) {
-    apis.packages[name] = queryPackageApis(apiPackage);
+  for (const [name, pkg] of model.packages) {
+    // Exclude testing members from main (they get their own entry point)
+    const mainMembers = pkg.members.filter(
+      (m) => !m.fileUrlPath || !m.fileUrlPath.includes("testing/"),
+    );
+    apis.packages[name] = queryMembers(mainMembers, model);
   }
 
   return apis;
 }
 
-function queryPackageApis(
-  apiPackage: ApiPackage,
-  sourcePrefix?: string,
-): PackageStructure {
+function queryMembers(members: ApiItem[], model: ApiModel): PackageStructure {
   const packageRecord: PackageStructure = {
     contexts: [],
     functions: [],
@@ -226,17 +226,9 @@ function queryPackageApis(
     types: [],
   };
 
-  const members = apiPackage.members[0].members.filter((m) => {
-    if (!sourcePrefix) return true;
-    const path = (m as any).fileUrlPath as string | undefined;
-    return path ? path.startsWith(sourcePrefix) : true;
-  });
-
-  // Phase 1: discover contexts, because we need do avoid creating separate
-  // documentation items for anything context related.
-
+  // Phase 1: discover contexts
   const contextsByName = new Map<string, ContextApi>();
-  const contextApis = new Map<ApiItem, ContextApi>();
+  const contextApis = new Set<ApiItem>();
   const propTypes = new Set<ApiItem>();
 
   for (const member of members) {
@@ -244,19 +236,33 @@ function queryPackageApis(
       const variable = member as ApiVariable;
       const nameMatch = variable.displayName.match(/(\w+)Context/);
       if (!nameMatch) continue;
+
       const contextName = nameMatch[1];
-      const instantiationStart = variable.variableTypeExcerpt.spannedTokens[1];
-      if (!instantiationStart) continue;
+      // Check if the variable type references ComponentContext
+      const typeExcerpt = variable.variableTypeExcerpt;
+      const hasComponentContext = typeExcerpt.spannedTokens.some(
+        (t) =>
+          t.kind === ExcerptTokenKind.Reference &&
+          t.text === "ComponentContext",
+      );
+      if (!hasComponentContext) continue;
+
+      // Find the type argument (context interface)
+      const refToken = typeExcerpt.spannedTokens.find(
+        (t) =>
+          t.kind === ExcerptTokenKind.Reference &&
+          t.text !== "ComponentContext",
+      );
+
       let contextInterface: ApiItem | string;
-      if (instantiationStart.text.match(/<.*>/)) {
-        // primitive type
-        contextInterface = instantiationStart.text.slice(1, -1);
+      if (refToken?.referenceId) {
+        const resolved = model.resolveReference(refToken.referenceId);
+        contextInterface = resolved ?? refToken.text;
       } else {
-        const refToken = variable.variableTypeExcerpt.spannedTokens[2];
-        contextInterface = apiModel.resolveDeclarationReference(
-          refToken.canonicalReference!,
-          variable,
-        ).resolvedApiItem!;
+        // Primitive or inline type
+        const typeText = typeExcerpt.text;
+        const match = typeText.match(/ComponentContext<(.+)>/);
+        contextInterface = match ? match[1] : "unknown";
       }
 
       const record: ContextApi = {
@@ -267,131 +273,65 @@ function queryPackageApis(
       };
 
       packageRecord.contexts.push(record);
-
       contextsByName.set(contextName, record);
-      contextApis.set(variable, record);
-      // Only consume the interface when it's dedicated to this context
-      // (e.g., SourceFileContext interface for SourceFile context). Shared
-      // types like OutputSymbol or OutputScope that happen to be used as a
-      // context value type should still get their own standalone type page.
+      contextApis.add(variable);
       if (
         typeof contextInterface !== "string" &&
         contextInterface.displayName === variable.displayName
       ) {
-        contextApis.set(contextInterface, record);
+        contextApis.add(contextInterface);
       }
     }
   }
 
-  // Phase 2: collect functions, components, variables, and enums
+  // Phase 2: collect functions, components, variables
   for (const member of members) {
-    if (contextApis.has(member)) {
-      continue;
-    }
+    if (contextApis.has(member)) continue;
+
     switch (member.kind) {
-      case ApiItemKind.Function:
-        if (member.displayName.startsWith("use")) {
-          // possiblely part of context
-          const contextName = member.displayName.slice(3);
+      case ApiItemKind.Function: {
+        const fn = member as ApiFunction;
+        if (fn.displayName.startsWith("use")) {
+          const contextName = fn.displayName.slice(3);
           const contextRecord = contextsByName.get(contextName);
           if (contextRecord) {
-            contextRecord.contextAccessor = member as ApiFunction;
+            contextRecord.contextAccessor = fn;
             continue;
           }
         }
 
         const contextFactoryMatch =
-          member.displayName.match(/^create(\w+)Context$/);
+          fn.displayName.match(/^create(\w+)Context$/);
         if (contextFactoryMatch) {
           const contextRecord = contextsByName.get(contextFactoryMatch[1]);
           if (contextRecord) {
-            contextRecord.contextFactory = member as ApiFunction;
+            contextRecord.contextFactory = fn;
             continue;
           }
         }
 
-        // skip these as we merge these from the first definition
-        if ((member as ApiFunction).overloadIndex > 1) continue;
+        if (fn.overloadIndex > 1) continue;
 
-        if (isComponent(member as ApiFunction)) {
-          let componentPropTypes: ApiInterface[] = [];
-          if ((member as ApiFunction).parameters.length > 0) {
-            const spannedTokens = (member as ApiFunction).parameters[0]
-              .parameterTypeExcerpt.spannedTokens;
-            if (spannedTokens.length === 0) {
-              console.log(
-                `warn: Cannot find props type tokens for ${member.displayName}`,
-              );
-              continue;
-            }
-            const propsTypeRef = spannedTokens[0].canonicalReference;
-            if (propsTypeRef === undefined) {
-              // https://github.com/alloy-framework/alloy/issues/128
-              console.log(
-                `warn: Cannot find props type reference for ${member.displayName}`,
-              );
-              continue;
-            }
-            const model = apiModel.resolveDeclarationReference(
-              propsTypeRef!,
-              undefined,
-            );
-
-            const resolvedPropType = model.resolvedApiItem;
-            if (!resolvedPropType) {
-              throw new Error(
-                `Cannot resolve prop type for ${member.displayName}: ${model.errorMessage}`,
-              );
-            }
-            if (resolvedPropType.kind === ApiItemKind.Interface) {
-              componentPropTypes.push(resolvedPropType as ApiInterface);
-              propTypes.add(resolvedPropType as ApiInterface);
-            } else if (resolvedPropType.kind === ApiItemKind.TypeAlias) {
-              for (const token of (resolvedPropType as ApiTypeAlias).typeExcerpt
-                .tokens) {
-                if (token.kind !== ExcerptTokenKind.Reference) {
-                  continue;
-                }
-
-                const aliasRef = apiModel.resolveDeclarationReference(
-                  token.canonicalReference!,
-                  resolvedPropType,
-                ).resolvedApiItem;
-
-                if (!aliasRef) continue;
-                if (aliasRef.kind !== ApiItemKind.Interface) {
-                  console.log(
-                    "Warning: type alias for component props has unknown type reference kind " +
-                      ApiItemKind[aliasRef.kind],
-                  );
-                  continue;
-                }
-                propTypes.add(aliasRef as ApiInterface);
-                componentPropTypes.push(aliasRef as ApiInterface);
-              }
-            } else {
-              throw new Error(
-                "Cannot create props reference for kind " +
-                  ApiItemKind[resolvedPropType.kind],
-              );
-            }
+        if (isComponent(fn)) {
+          const componentPropTypes = findComponentPropTypes(fn, members, model);
+          for (const pt of componentPropTypes) {
+            propTypes.add(pt);
           }
-
           packageRecord.components.push({
             kind: "component",
-            componentFunction: member as ApiFunction,
+            componentFunction: fn,
             componentProps: componentPropTypes,
           });
         } else {
-          const fns = member.getMergedSiblings() as ApiFunction[];
+          const fns = fn.getMergedSiblings() as ApiFunction[];
           packageRecord.functions.push({
             kind: "function",
             functions: fns,
           });
         }
         break;
+      }
       case ApiItemKind.Variable:
-      case ApiItemKind.Enum:
         packageRecord.variables.push({
           kind: "variable",
           variable: member as ApiVariable,
@@ -400,12 +340,9 @@ function queryPackageApis(
     }
   }
 
-  // phase 3: collect interfaces, type aliases, and classes that aren't
-  // context APIs or prop types
+  // Phase 3: collect types
   for (const member of members) {
-    if (contextApis.has(member) || propTypes.has(member)) {
-      continue;
-    }
+    if (contextApis.has(member) || propTypes.has(member)) continue;
     switch (member.kind) {
       case ApiItemKind.Interface:
       case ApiItemKind.TypeAlias:
@@ -422,4 +359,40 @@ function queryPackageApis(
 
 function isComponent(fn: ApiFunction) {
   return fn.fileUrlPath && fn.fileUrlPath.indexOf("components") > -1;
+}
+
+function findComponentPropTypes(
+  fn: ApiFunction,
+  members: ApiItem[],
+  model: ApiModel,
+): ApiInterface[] {
+  if (fn.parameters.length === 0) return [];
+
+  const propsParam = fn.parameters[0];
+  const refToken = propsParam.parameterTypeExcerpt.spannedTokens.find(
+    (t) => t.kind === ExcerptTokenKind.Reference,
+  );
+  if (!refToken?.referenceId) return [];
+
+  const resolved = model.resolveReference(refToken.referenceId);
+  if (!resolved) return [];
+
+  if (resolved.kind === ApiItemKind.Interface) {
+    return [resolved as ApiInterface];
+  } else if (resolved.kind === ApiItemKind.TypeAlias) {
+    // Type alias - look for interfaces it references
+    const ta = resolved as ApiTypeAlias;
+    const result: ApiInterface[] = [];
+    for (const token of ta.typeExcerpt.spannedTokens) {
+      if (token.kind !== ExcerptTokenKind.Reference) continue;
+      if (!token.referenceId) continue;
+      const ref = model.resolveReference(token.referenceId);
+      if (ref && ref.kind === ApiItemKind.Interface) {
+        result.push(ref as ApiInterface);
+      }
+    }
+    return result;
+  }
+
+  return [];
 }

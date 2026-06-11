@@ -1,18 +1,15 @@
-import type { ApiItem } from "@microsoft/api-extractor-model";
-import { StandardTags, type DocBlock, type DocComment } from "@microsoft/tsdoc";
+import type { ApiItem, DocBlock } from "../model/index.js";
 import { MdxParagraph, MdxSection, TsDoc } from "./stc/index.js";
 
 export interface ExamplesProps {
-  type: ApiItem & { tsdocComment?: DocComment };
+  type: ApiItem;
 }
 
 export function Examples(props: ExamplesProps) {
   if (!props.type.tsdocComment) return "";
 
   const exampleBlocks: DocBlock[] = props.type.tsdocComment.customBlocks.filter(
-    (x) =>
-      x.blockTag.tagNameWithUpperCase ===
-      StandardTags.example.tagNameWithUpperCase,
+    (x) => x.blockTag?.tagNameWithUpperCase === "@EXAMPLE",
   );
 
   if (exampleBlocks.length === 0) return "";

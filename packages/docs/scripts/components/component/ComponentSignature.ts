@@ -9,12 +9,9 @@ import {
   sbr,
   Show,
 } from "@alloy-js/core/stc";
-import type {
-  ApiInterface,
-  ApiPropertySignature,
-} from "@microsoft/api-extractor-model";
 import type { ComponentApi } from "../../build-json.js";
 import { ImportPathContext } from "../../contexts/import-path.js";
+import type { ApiInterface, ApiPropertySignature } from "../../model/index.js";
 import { flattenedMembers } from "../../utils.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 

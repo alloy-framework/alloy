@@ -3,7 +3,7 @@ import {
   useContext,
   type ComponentContext,
 } from "@alloy-js/core";
-import type { ApiItem } from "@microsoft/api-extractor-model";
+import type { ApiItem } from "../model/index.js";
 
 export const TsDocContext: ComponentContext<ApiItem> = createContext();
 export function useTsDoccontext() {

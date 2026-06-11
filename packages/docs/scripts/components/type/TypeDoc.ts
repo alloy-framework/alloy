@@ -1,9 +1,9 @@
-import {
-  ApiClass,
-  ApiInterface,
-  ApiItemKind,
-} from "@microsoft/api-extractor-model";
 import type { TypeApi } from "../../build-json.js";
+import {
+  ApiItemKind,
+  type ApiClass,
+  type ApiInterface,
+} from "../../model/index.js";
 import { cleanExcerpt } from "../../utils.js";
 import {
   Code,

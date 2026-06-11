@@ -451,7 +451,15 @@ function createEnum(
   _idMap: Map<number, TDReflection>,
   _itemMap: Map<number, ApiItem>,
 ): ApiVariable {
-  // Treat enums as variables for rendering purposes
+  // Build a synthetic excerpt showing enum members
+  const members = (reflection.children ?? []).map((c) => c.name);
+  const enumText = `enum ${reflection.name} {\n  ${members.join(",\n  ")}\n}`;
+  const enumExcerpt: Excerpt = {
+    text: enumText,
+    spannedTokens: [{ kind: ExcerptTokenKind.Content, text: enumText }],
+    tokens: [{ kind: ExcerptTokenKind.Content, text: enumText }],
+  };
+
   return {
     kind: Kind.Variable,
     id: reflection.id,
@@ -460,7 +468,7 @@ function createEnum(
     tsdocComment:
       reflection.comment ? convertComment(reflection.comment) : undefined,
     fileUrlPath: getFileUrlPath(reflection),
-    excerpt: emptyExcerpt(),
+    excerpt: enumExcerpt,
     variableTypeExcerpt: emptyExcerpt(),
     getAssociatedPackage: () => pkg,
     getMergedSiblings: () => [],

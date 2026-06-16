@@ -29,6 +29,8 @@ export interface InterfaceDeclarationProps {
   extends?: Children;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the interface. */
+  directives?: Children;
   /** Interface body (operations). */
   children?: Children;
 }
@@ -62,6 +64,7 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       <Scope value={namedTypeScope}>
         interface <Name />
         {props.templateParameters && (

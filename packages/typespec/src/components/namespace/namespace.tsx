@@ -14,7 +14,7 @@ import { NamespaceName } from "./namespace-name.jsx";
 import { NamespaceScopeComponent } from "./namespace-scope.jsx";
 
 export interface NamespaceProps {
-  name: string | Namekey | (string | Namekey)[];
+  name: (string | Namekey) | (string | Namekey)[];
   refkey?: Refkey | Refkey[];
   children?: Children;
 }

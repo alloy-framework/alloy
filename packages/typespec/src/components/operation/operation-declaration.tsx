@@ -34,6 +34,8 @@ export interface OperationDeclarationProps {
   is?: Children;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the operation. */
+  directives?: Children;
   /** Decorators to apply to the operation. */
   decorators?: Children;
 }
@@ -77,6 +79,7 @@ export function OperationDeclaration(props: OperationDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Scope value={namedTypeScope}>
         {!isInsideInterface && <>op </>}

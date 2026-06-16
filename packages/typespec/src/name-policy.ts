@@ -1,5 +1,8 @@
 import { createNamePolicy, NamePolicy, useNamePolicy } from "@alloy-js/core";
-import { isTypeSpecKeyword } from "./keywords.js";
+import {
+  needsEscapingInDeclaration,
+  needsEscapingInMember,
+} from "./keywords.js";
 
 export type TypeSpecElements =
   | "alias"
@@ -27,22 +30,48 @@ const invalidIdentifierRegex = /[^a-zA-Z0-9_$]/;
 const invalidStartRegex = /^[^a-zA-Z_$]/;
 
 /**
- * Returns whether a name needs backtick escaping — either because it is a
- * keyword or because it contains characters not allowed in a bare identifier.
+ * Element types that are in "member" positions where reserved keywords
+ * don't need escaping (matching TypeSpec formatter's "allow-reserved" context).
+ *
+ * These correspond to the node types in the TypeSpec printer that call
+ * `printIdentifier(id, "allow-reserved")`:
+ * - model properties (`printModelProperty`)
+ * - enum members (`printEnumMember`)
+ * - union variants (`printUnionVariant`)
+ * - decorator names (`printDecorator`, `printAugmentDecorator`)
+ *
+ * @see https://github.com/microsoft/typespec/blob/main/packages/compiler/src/formatter/print/printer.ts
  */
-function needsEscaping(name: string): boolean {
-  return (
-    isTypeSpecKeyword(name) ||
-    invalidStartRegex.test(name) ||
-    invalidIdentifierRegex.test(name)
-  );
+const memberElements: ReadonlySet<TypeSpecElements> = new Set([
+  "model-property",
+  "enum",
+  "enum-member",
+  "union",
+  "decorator",
+]);
+
+function hasInvalidChars(name: string): boolean {
+  return invalidStartRegex.test(name) || invalidIdentifierRegex.test(name);
 }
 
 export function createTypeSpecNamePolicy(): NamePolicy<TypeSpecElements> {
-  return createNamePolicy<TypeSpecElements>((name) => {
-    if (needsEscaping(name)) {
+  return createNamePolicy<TypeSpecElements>((name, element) => {
+    if (hasInvalidChars(name)) {
       return `\`${name}\``;
     }
+
+    // Member positions only escape active keywords (not reserved/modifier)
+    if (memberElements.has(element)) {
+      if (needsEscapingInMember(name)) {
+        return `\`${name}\``;
+      }
+    } else {
+      // Declaration positions escape both active and reserved keywords
+      if (needsEscapingInDeclaration(name)) {
+        return `\`${name}\``;
+      }
+    }
+
     return name;
   });
 }

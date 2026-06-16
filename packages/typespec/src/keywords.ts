@@ -1,10 +1,7 @@
 /**
- * TypeSpec keywords that must be backtick-escaped when used as identifiers.
+ * Active TypeSpec keywords that always require backtick-escaping when used
+ * as identifiers in any position.
  *
- * This includes both active keywords and reserved keywords from the TypeSpec
- * compiler scanner.
- *
- * @see https://typespec.io/docs/language-basics/identifiers
  * @see https://github.com/microsoft/typespec/blob/main/packages/compiler/src/core/scanner.ts
  */
 export const typespecKeywords: ReadonlySet<string> = new Set([
@@ -27,10 +24,6 @@ export const typespecKeywords: ReadonlySet<string> = new Set([
   "const",
   "init",
 
-  // Modifier keywords
-  "extern",
-  "internal",
-
   // Other keywords
   "extends",
   "fn",
@@ -42,8 +35,15 @@ export const typespecKeywords: ReadonlySet<string> = new Set([
   "unknown",
   "valueof",
   "typeof",
+]);
 
-  // Reserved keywords (reserved for future use)
+/**
+ * Reserved keywords that only need escaping in declaration positions (not in
+ * member positions like model properties, enum members, union variants).
+ *
+ * @see https://github.com/microsoft/typespec/blob/main/packages/compiler/src/core/helpers/syntax-utils.ts
+ */
+export const typespecReservedKeywords: ReadonlySet<string> = new Set([
   "statemachine",
   "macro",
   "package",
@@ -85,8 +85,37 @@ export const typespecKeywords: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Tests whether a name is a TypeSpec keyword that requires escaping.
+ * Modifier keywords that are contextual and don't need escaping in any
+ * position (they are only keywords in modifier context).
+ *
+ * @see https://github.com/microsoft/typespec/blob/main/packages/compiler/src/core/helpers/syntax-utils.ts
+ */
+export const typespecModifierKeywords: ReadonlySet<string> = new Set([
+  "extern",
+  "internal",
+]);
+
+/**
+ * Tests whether a name is an active TypeSpec keyword (always needs escaping).
  */
 export function isTypeSpecKeyword(name: string): boolean {
+  return typespecKeywords.has(name);
+}
+
+/**
+ * Tests whether a name needs escaping in a declaration position.
+ * In declaration positions, both active and reserved keywords need escaping.
+ */
+export function needsEscapingInDeclaration(name: string): boolean {
+  return typespecKeywords.has(name) || typespecReservedKeywords.has(name);
+}
+
+/**
+ * Tests whether a name needs escaping in a member position (model property,
+ * enum member, union variant, decorator name).
+ * In member positions, only active keywords need escaping — reserved and
+ * modifier keywords are valid identifiers.
+ */
+export function needsEscapingInMember(name: string): boolean {
   return typespecKeywords.has(name);
 }

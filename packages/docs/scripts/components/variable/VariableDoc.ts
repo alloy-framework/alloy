@@ -18,12 +18,13 @@ export function VariableDoc(props: VariableDocProps) {
   const apiVariable = props.variable.variable;
 
   const title = props.variable.variable.displayName;
+  const excerptText = cleanExcerpt(apiVariable.excerpt.text);
 
   return DocSourceFile({ title, declares: apiVariable }).children(
     Summary({ type: apiVariable }),
-    MdxParagraph().children(
-      Code({ language: "ts" }).children(cleanExcerpt(apiVariable.excerpt.text)),
-    ),
+    excerptText ?
+      MdxParagraph().children(Code({ language: "ts" }).children(excerptText))
+    : "",
     Remarks({ type: apiVariable }),
     Examples({ type: apiVariable }),
     SeeAlso({ type: apiVariable }),

@@ -32,11 +32,7 @@
     "@alloy-js/java": "workspace:~",
     "@alloy-js/python": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "@microsoft/api-extractor": "catalog:",
-    "@microsoft/api-extractor-model": "catalog:",
-    "@microsoft/tsdoc": "catalog:",
     "@types/node": "catalog:",
-    "redent": "catalog:",
     "starlight-llms-txt": "catalog:"
   }
 }

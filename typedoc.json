@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "packages/core",
+    "packages/typescript",
+    "packages/csharp",
+    "packages/java",
+    "packages/json",
+    "packages/python",
+    "packages/go"
+  ],
+  "json": "packages/docs/.typedoc-out/api.json",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "excludeNotDocumented": false
+}

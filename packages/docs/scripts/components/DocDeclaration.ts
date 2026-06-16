@@ -6,7 +6,7 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { Declaration } from "@alloy-js/core/stc";
-import type { ApiItem } from "@microsoft/api-extractor-model";
+import type { ApiItem } from "../model/index.js";
 import { DocSymbol } from "../symbols/doc-symbol.js";
 
 export interface DocDeclarationProps {

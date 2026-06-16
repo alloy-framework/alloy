@@ -63,8 +63,7 @@
     "./src/debug/cli.ts": "./src/debug/cli.browser.ts"
   },
   "scripts": {
-    "generate-docs": "api-extractor run && api-extractor run -c api-extractor.testing.json",
-    "build": "alloy build --with-dev && pnpm run generate-docs",
+    "build": "alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
@@ -89,7 +88,6 @@
     "@alloy-js/rollup-plugin": "workspace:~",
     "@babel/core": "catalog:",
     "@babel/preset-typescript": "catalog:",
-    "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

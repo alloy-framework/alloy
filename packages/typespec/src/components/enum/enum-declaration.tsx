@@ -21,6 +21,8 @@ export interface EnumDeclarationProps {
   refkey?: Refkey;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the enum. */
+  directives?: Children;
   /** Decorators to apply to the enum. */
   decorators?: Children;
   /** Enum body (members, spread expressions, etc.). */
@@ -60,6 +62,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Scope value={namedTypeScope}>
         enum <Name /> <Block>{props.children}</Block>

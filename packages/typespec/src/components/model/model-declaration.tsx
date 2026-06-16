@@ -31,6 +31,8 @@ export interface ModelDeclarationProps {
   is?: Children;
   /** Doc comment rendered as `/** ... *\/` above the declaration. */
   doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the model. */
+  directives?: Children;
   /** Decorators to apply to the model. */
   decorators?: Children;
   /** Model body (properties, spread expressions, etc.). */
@@ -74,6 +76,7 @@ export function ModelDeclaration(props: ModelDeclarationProps) {
   return (
     <Declaration symbol={sym}>
       <DocWhen doc={props.doc} />
+      {props.directives}
       {props.decorators}
       <Scope value={namedTypeScope}>
         model <Name />

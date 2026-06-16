@@ -11,6 +11,7 @@ import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
 import { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { DocWhen } from "../doc/doc-comment.jsx";
 
 export interface ConstDeclarationProps {
   /** The const name. */
@@ -21,6 +22,10 @@ export interface ConstDeclarationProps {
   type?: Children;
   /** The value expression. */
   value: Children;
+  /** Doc comment rendered as `/** ... *\/` above the declaration. */
+  doc?: Children;
+  /** Directives (`#suppress`, `#deprecated`) to apply to the const. */
+  directives?: Children;
 }
 
 /**
@@ -46,6 +51,8 @@ export function ConstDeclaration(props: ConstDeclarationProps) {
 
   return (
     <Declaration symbol={sym}>
+      <DocWhen doc={props.doc} />
+      {props.directives}
       <Scope value={namedTypeScope}>
         const <Name />
         {props.type && <>: {props.type}</>} = {props.value}

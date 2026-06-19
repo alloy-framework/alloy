@@ -480,13 +480,11 @@ it("renders a model property with a default value", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        name?: string = "Rex"
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      name?: string = "Rex"
+    }
+  `);
 });
 
 it("renders a model property with a numeric default value", () => {
@@ -498,11 +496,9 @@ it("renders a model property with a numeric default value", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        age: uint8 = 0
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      age: uint8 = 0
+    }
+  `);
 });

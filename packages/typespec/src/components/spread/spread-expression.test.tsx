@@ -24,13 +24,11 @@ it("renders a spread expression with a string type", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        ...Animal
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      ...Animal
+    }
+  `);
 });
 
 it("renders a spread expression with a reference", () => {
@@ -47,16 +45,14 @@ it("renders a spread expression with a reference", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Animal {
-        species: string
-      }
-      model Dog {
-        ...Animal
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Animal {
+      species: string
+    }
+    model Dog {
+      ...Animal
+    }
+  `);
 });
 
 it("renders a spread expression with additional properties in a statement list", () => {
@@ -71,14 +67,12 @@ it("renders a spread expression with additional properties in a statement list",
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        ...Animal;
-        breed: string;
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      ...Animal;
+      breed: string;
+    }
+  `);
 });
 
 it("renders a spread expression with additional properties", () => {
@@ -92,14 +86,12 @@ it("renders a spread expression with additional properties", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        ...Animal
-        breed: string
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      ...Animal
+      breed: string
+    }
+  `);
 });
 
 it("renders multiple spread expressions", () => {
@@ -113,14 +105,12 @@ it("renders multiple spread expressions", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        ...Animal
-        ...Pet
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      ...Animal
+      ...Pet
+    }
+  `);
 });
 
 it("renders a spread expression inside an enum", () => {
@@ -136,15 +126,13 @@ it("renders a spread expression inside an enum", () => {
         </EnumDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      enum DirectionExt {
-        ...Direction,
-        NorthEast,
-        SouthWest,
-      }
-    `,
-  });
+  ).toRenderTo(`
+    enum DirectionExt {
+      ...Direction,
+      NorthEast,
+      SouthWest,
+    }
+  `);
 });
 
 it("resolves a cross-file spread reference with import", () => {

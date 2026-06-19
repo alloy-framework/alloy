@@ -19,9 +19,7 @@ it("renders an array expression with a simple type", () => {
         <ArrayExpression type="string" />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `string[]`,
-  });
+  ).toRenderTo(`string[]`);
 });
 
 it("renders an array expression with a reference", () => {
@@ -34,12 +32,10 @@ it("renders an array expression with a reference", () => {
         <ArrayExpression type={<Reference refkey={petKey} />} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Pet {}
-      Pet[]
-    `,
-  });
+  ).toRenderTo(`
+    model Pet {}
+    Pet[]
+  `);
 });
 
 it("renders an array expression as a model property type", () => {
@@ -54,11 +50,9 @@ it("renders an array expression as a model property type", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Page {
-        items: string[]
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Page {
+      items: string[]
+    }
+  `);
 });

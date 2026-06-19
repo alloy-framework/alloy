@@ -19,9 +19,7 @@ it("renders an intersection expression with two types", () => {
         <IntersectionExpression types={["Animal", "Pet"]} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `Animal & Pet`,
-  });
+  ).toRenderTo(`Animal & Pet`);
 });
 
 it("renders an intersection expression with more than two types", () => {
@@ -31,9 +29,7 @@ it("renders an intersection expression with more than two types", () => {
         <IntersectionExpression types={["Animal", "Pet", "Named"]} />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `Animal & Pet & Named`,
-  });
+  ).toRenderTo(`Animal & Pet & Named`);
 });
 
 it("renders an intersection expression with a reference", () => {
@@ -48,12 +44,10 @@ it("renders an intersection expression with a reference", () => {
         />
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Animal {}
-      Pet & Animal
-    `,
-  });
+  ).toRenderTo(`
+    model Animal {}
+    Pet & Animal
+  `);
 });
 
 it("renders an intersection expression as a model property type", () => {
@@ -68,11 +62,9 @@ it("renders an intersection expression as a model property type", () => {
         </ModelDeclaration>
       </SourceFile>
     </Output>,
-  ).toRenderTo({
-    "main.tsp": `
-      model Dog {
-        traits: Animal & Pet
-      }
-    `,
-  });
+  ).toRenderTo(`
+    model Dog {
+      traits: Animal & Pet
+    }
+  `);
 });

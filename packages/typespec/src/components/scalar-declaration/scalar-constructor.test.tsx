@@ -4,20 +4,20 @@ import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { Namespace } from "../namespace/namespace.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
+import { ScalarConstructor } from "./scalar-constructor.jsx";
 import { ScalarDeclaration } from "./scalar-declaration.jsx";
-import { ScalarInitializer } from "./scalar-initializer.jsx";
 
 beforeEach(() => {
   resetProgram();
 });
 
-it("renders a scalar initializer", () => {
+it("renders a scalar constructor", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="ipv4" extends="string">
           <StatementList>
-            <ScalarInitializer
+            <ScalarConstructor
               name="fromInt"
               parameters={[{ name: "value", type: "uint32" }]}
             />
@@ -32,17 +32,17 @@ it("renders a scalar initializer", () => {
     `);
 });
 
-it("renders multiple scalar initializers", () => {
+it("renders multiple scalar constructors", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="ipv4" extends="string">
           <StatementList>
-            <ScalarInitializer
+            <ScalarConstructor
               name="fromInt"
               parameters={[{ name: "value", type: "uint32" }]}
             />
-            <ScalarInitializer
+            <ScalarConstructor
               name="fromString"
               parameters={[{ name: "value", type: "string" }]}
             />
@@ -58,13 +58,13 @@ it("renders multiple scalar initializers", () => {
     `);
 });
 
-it("renders a scalar initializer with multiple parameters", () => {
+it("renders a scalar constructor with multiple parameters", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="point" extends="string">
           <StatementList>
-            <ScalarInitializer
+            <ScalarConstructor
               name="fromCoords"
               parameters={[
                 { name: "x", type: "float64" },
@@ -82,13 +82,13 @@ it("renders a scalar initializer with multiple parameters", () => {
     `);
 });
 
-it("renders a scalar initializer with no parameters", () => {
+it("renders a scalar constructor with no parameters", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="myScalar" extends="string">
           <StatementList>
-            <ScalarInitializer name="create" />
+            <ScalarConstructor name="create" />
           </StatementList>
         </ScalarDeclaration>
       </SourceFile>
@@ -106,7 +106,7 @@ it("renders a scalar body without extends", () => {
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="myScalar">
           <StatementList>
-            <ScalarInitializer
+            <ScalarConstructor
               name="fromInt"
               parameters={[{ name: "value", type: "int32" }]}
             />
@@ -121,14 +121,14 @@ it("renders a scalar body without extends", () => {
     `);
 });
 
-it("renders a scalar initializer inside a namespace", () => {
+it("renders a scalar constructor inside a namespace", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <Namespace name="Network">
           <ScalarDeclaration name="ipv4" extends="string">
             <StatementList>
-              <ScalarInitializer
+              <ScalarConstructor
                 name="fromInt"
                 parameters={[{ name: "value", type: "uint32" }]}
               />
@@ -146,13 +146,13 @@ it("renders a scalar initializer inside a namespace", () => {
     `);
 });
 
-it("renders a scalar initializer with optional parameter", () => {
+it("renders a scalar constructor with optional parameter", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
         <ScalarDeclaration name="myScalar" extends="string">
           <StatementList>
-            <ScalarInitializer
+            <ScalarConstructor
               name="parse"
               parameters={[
                 { name: "value", type: "string" },

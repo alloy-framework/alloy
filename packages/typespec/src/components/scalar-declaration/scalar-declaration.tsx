@@ -35,7 +35,7 @@ export interface ScalarDeclarationProps {
   directives?: Children;
   /** Decorators to apply to the scalar. */
   decorators?: Children;
-  /** Body content such as `ScalarInitializer` components. */
+  /** Body content such as `ScalarConstructor` components. */
   children?: Children;
 }
 
@@ -55,7 +55,7 @@ export interface ScalarDeclarationProps {
  * @example Scalar with initializers
  * ```tsx
  * <ScalarDeclaration name="ipv4" extends="string">
- *   <ScalarInitializer name="fromInt" parameters={[{ name: "value", type: "uint32" }]} />
+ *   <ScalarConstructor name="fromInt" parameters={[{ name: "value", type: "uint32" }]} />
  * </ScalarDeclaration>
  * ```
  * This will produce:

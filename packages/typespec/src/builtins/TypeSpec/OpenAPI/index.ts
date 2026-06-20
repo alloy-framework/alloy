@@ -1,19 +1,19 @@
 import { LibrarySymbolReference } from "@alloy-js/core";
-import { createLibrary } from "../../index.js";
+import { createLibrary } from "../../../index.js";
 import dataTypes, { LibraryDataTypes } from "./data-types.js";
 import decorators, { LibraryDecorators } from "./decorators.js";
 
-type TypeSpecLibrary = LibrarySymbolReference &
+type OpenAPILibrary = LibrarySymbolReference &
   LibraryDecorators &
   LibraryDataTypes;
 
-const TypeSpec: TypeSpecLibrary = createLibrary(
-  "TypeSpec",
+const OpenAPI: OpenAPILibrary = createLibrary(
+  "TypeSpec.OpenAPI",
   {
     ...decorators,
     ...dataTypes,
   },
-  { implicitlyUsed: true },
+  { packageImport: "@typespec/openapi" },
 );
 
-export default TypeSpec;
+export default OpenAPI;

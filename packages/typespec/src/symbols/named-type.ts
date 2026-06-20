@@ -40,6 +40,8 @@ export class NamedTypeSymbol extends TypeSpecSymbol {
     const options = this.getCopyOptions();
     const copy = new NamedTypeSymbol(this.name, this.spaces, this.#kind, {
       ...options,
+      packageImport: this.packageImport,
+      implicitlyUsed: this.implicitlyUsed,
     });
     this.initializeCopy(copy);
     return copy;

@@ -303,7 +303,7 @@ it("resolves a model property reference", () => {
       model Foo {
         id: string
       }
-      id
+      Foo.id
     `);
 });
 

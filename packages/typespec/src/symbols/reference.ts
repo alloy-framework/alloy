@@ -43,10 +43,15 @@ export function ref(refkey: Refkey): Ref<OutputSymbol | undefined> {
       const importPath = relativePath(originPath!, targetPath!);
       scope!.addImport(importPath);
     }
-    if (lexicalDeclaration instanceof NamespaceSymbol) {
+    if (
+      lexicalDeclaration instanceof NamespaceSymbol &&
+      !lexicalDeclaration.isGlobal
+    ) {
       // Find the innermost namespace containing the target symbol for FQN.
       const containingNs = findContainingNamespace(result.symbol);
-      scope.addUsing(containingNs ?? lexicalDeclaration);
+      if (containingNs) {
+        scope.addUsing(containingNs);
+      }
     }
 
     return result.symbol;
@@ -62,7 +67,10 @@ function findContainingNamespace(
 ): NamespaceSymbol | undefined {
   let current = symbol.ownerSymbol;
   while (current) {
-    if (isNamespaceSymbol(current as TypeSpecSymbol)) {
+    if (
+      isNamespaceSymbol(current as TypeSpecSymbol) &&
+      !(current as NamespaceSymbol).isGlobal
+    ) {
       return current as NamespaceSymbol;
     }
     current = current.ownerSymbol;

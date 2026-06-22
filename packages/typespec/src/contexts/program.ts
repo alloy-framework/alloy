@@ -3,8 +3,8 @@ import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope } from "../scopes/source-file.js";
 import { NamespaceSymbol } from "../symbols/index.js";
 
-export function createGlobalNamespace(parent: SourceFileScope | ProgramScope) {
-  return new NamespaceSymbol("global", undefined, { isGlobal: true });
+export function createGlobalNamespace(parent: SourceFileScope) {
+  return new NamespaceSymbol("global", parent.members, { isGlobal: true });
 }
 
 const programs = new WeakMap<Binder, ProgramScope>();

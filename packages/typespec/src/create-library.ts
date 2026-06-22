@@ -21,9 +21,9 @@ export interface MemberDescriptor {
   kind: string;
   /**
    * The type of this member. Can be:
-   * - A {@link LibrarySymbolReference} pointing to another library symbol
-   * - A function returning a {@link LibrarySymbolReference} (for circular refs)
-   * - An inline {@link Descriptor} for anonymous types (e.g. inline unions)
+   * - A `LibrarySymbolReference` pointing to another library symbol
+   * - A function returning a `LibrarySymbolReference` (for circular refs)
+   * - An inline `Descriptor` for anonymous types (e.g. inline unions)
    *
    * Inline descriptors are not materialized as referenceable symbols; they
    * serve as documentation of the member's type shape.

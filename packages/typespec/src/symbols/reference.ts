@@ -87,7 +87,10 @@ export function ref(refkey: Refkey): Ref<RefResult | undefined> {
         (s) => s instanceof SourceFileScope,
       );
       if (originFileScope && targetFileScope) {
-        const importPath = relativePath(originFileScope.name, targetFileScope.name);
+        const importPath = relativePath(
+          originFileScope.name,
+          targetFileScope.name,
+        );
         scope!.addImport(importPath);
       }
     }

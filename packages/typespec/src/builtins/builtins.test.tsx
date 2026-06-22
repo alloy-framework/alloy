@@ -1,17 +1,17 @@
-import { Output, toRefkey } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
-import { resetProgram } from "../contexts/program.js";
-import { createLibrary } from "../create-library.js";
-import { createTypeSpecNamePolicy } from "../name-policy.js";
 import { ModelDeclaration } from "../components/model/model-declaration.jsx";
 import { Reference } from "../components/reference/reference.jsx";
 import { ScalarDeclaration } from "../components/scalar-declaration/scalar-declaration.jsx";
 import { SourceFile } from "../components/source-file/source-file.jsx";
-import TypeSpec from "./TypeSpec/index.js";
+import { resetProgram } from "../contexts/program.js";
+import { createLibrary } from "../create-library.js";
+import { createTypeSpecNamePolicy } from "../name-policy.js";
 import Http from "./TypeSpec/Http/index.js";
+import TypeSpec from "./TypeSpec/index.js";
+import OpenAPI3 from "./TypeSpec/OpenAPI/openapi3.js";
 import Reflection from "./TypeSpec/Reflection/index.js";
 import Versioning from "./TypeSpec/Versioning/index.js";
-import OpenAPI3 from "./TypeSpec/OpenAPI/openapi3.js";
 
 beforeEach(() => {
   resetProgram();
@@ -31,7 +31,10 @@ it("references to implicitly-used scalars emit no import or using", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
-        <ScalarDeclaration name="MyId" extends={<Reference refkey={TypeSpec.string} />} />
+        <ScalarDeclaration
+          name="MyId"
+          extends={<Reference refkey={TypeSpec.string} />}
+        />
       </SourceFile>
     </Output>,
   ).toRenderTo(`scalar MyId extends string`);
@@ -103,8 +106,7 @@ it("deduplicates using when referencing multiple symbols from same namespace", (
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
-        <Reference refkey={Http.OkResponse} />
-        {" "}
+        <Reference refkey={Http.OkResponse} />{" "}
         <Reference refkey={Http.NotFoundResponse} />
       </SourceFile>
     </Output>,
@@ -225,7 +227,9 @@ it("accessing a member whose type is a library symbol reference works", () => {
   expect(
     <Output namePolicy={createTypeSpecNamePolicy()}>
       <SourceFile path="main.tsp">
-        <Reference refkey={TypeSpec.DiscriminatedOptions.discriminatorPropertyName} />
+        <Reference
+          refkey={TypeSpec.DiscriminatedOptions.discriminatorPropertyName}
+        />
       </SourceFile>
     </Output>,
   ).toRenderTo(`DiscriminatedOptions.discriminatorPropertyName`);

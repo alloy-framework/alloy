@@ -1,6 +1,7 @@
 export * from "./alias/alias-declaration.jsx";
 export * from "./array/array-expression.jsx";
 export * from "./const/const-declaration.jsx";
+export * from "./decorator-declaration/decorator-declaration.jsx";
 export * from "./decorator/augment-decorator.jsx";
 export * from "./decorator/decorator-application.jsx";
 export * from "./directive/directive.jsx";

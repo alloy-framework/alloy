@@ -95,7 +95,7 @@ export function ref(refkey: Refkey): Ref<RefResult | undefined> {
       }
     }
 
-    if (nsToUse) {
+    if (nsToUse && !nsToUse.isGlobal) {
       scope.addUsing(nsToUse);
     }
 

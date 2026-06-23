@@ -8,6 +8,7 @@ export const ArrayValue = core.stc(base.ArrayValue);
 export const AugmentDecorator = core.stc(base.AugmentDecorator);
 export const ConstDeclaration = core.stc(base.ConstDeclaration);
 export const DecoratorApplication = core.stc(base.DecoratorApplication);
+export const DecoratorDeclaration = core.stc(base.DecoratorDeclaration);
 export const DeprecatedDirective = core.stc(base.DeprecatedDirective);
 export const DocComment = core.stc(base.DocComment);
 export const DocParam = core.stc(base.DocParam);

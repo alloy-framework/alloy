@@ -1,5 +1,4 @@
 import { List, Output, refkey, SourceFile } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";

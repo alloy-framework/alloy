@@ -1,13 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  ContentOutputFile,
-  For,
-  Output,
-  render,
-  SourceFile,
-} from "../../src/index.js";
-import "../../testing/extend-expect.js";
-import { d } from "../../testing/render.js";
+import { For, Output, SourceFile } from "../../src/index.js";
 
 describe("group", () => {
   it("breaks when shouldBreak is passed", () => {
@@ -459,16 +451,16 @@ it("formats based on the output component props", () => {
     </Output>
   );
 
-  const tree = render(template);
-  expect((tree.contents[0] as ContentOutputFile).contents).toEqual(d`
-    1
-    2
-    3
-    4
-    5
-    6
-    
-  `);
+  expect(template).toRenderTo(
+    `
+      1
+      2
+      3
+      4
+      5
+      6
+    `,
+  );
 });
 
 it("formats based on the source file component props", () => {
@@ -482,14 +474,14 @@ it("formats based on the source file component props", () => {
     </Output>
   );
 
-  const tree = render(template);
-  expect((tree.contents[0] as ContentOutputFile).contents).toEqual(d`
-    1
-    2
-    3
-    4
-    5
-    6
-
-  `);
+  expect(template).toRenderTo(
+    `
+      1
+      2
+      3
+      4
+      5
+      6
+    `,
+  );
 });

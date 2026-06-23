@@ -37,8 +37,9 @@ export interface NamekeyOptions {
   ignoreNameConflict?: boolean;
 }
 
-export interface Namekey<TOptions extends NamekeyOptions = NamekeyOptions>
-  extends SymbolRefkey {
+export interface Namekey<
+  TOptions extends NamekeyOptions = NamekeyOptions,
+> extends SymbolRefkey {
   name: string;
   options: TOptions;
 }

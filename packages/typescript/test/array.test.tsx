@@ -1,107 +1,128 @@
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { ArrayExpression } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestFile } from "./utils.js";
 
 it("works", () => {
-  expect(toSourceText(<ArrayExpression jsValue={[1, 2, 3]} />)).toBe(d`
+  expect(
+    <TestFile>
+      <ArrayExpression jsValue={[1, 2, 3]} />
+    </TestFile>,
+  ).toRenderTo(`
     [1, 2, 3]
   `);
 
   expect(
-    toSourceText(<ArrayExpression jsValue={[1, 2, 3, "foo".repeat(10)]} />, {
-      printWidth: 20,
-    }),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[1, 2, 3, "foo".repeat(10)]} />
+    </TestFile>,
+  ).toRenderTo(
+    `
     [
       1,
       2,
       3,
       "foofoofoofoofoofoofoofoofoofoo"
     ]
-  `);
+  `,
+    {
+      printWidth: 20,
+    },
+  );
 });
 
 it("accepts children", () => {
   expect(
-    toSourceText(
+    <TestFile>
       <ArrayExpression jsValue={[1, 2, 3]}>
         <ArrayExpression jsValue={[4, 5, 6]} />
-      </ArrayExpression>,
-    ),
-  ).toBe(d`
+      </ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [1, 2, 3, [4, 5, 6]]
   `);
 });
 
 it("accepts only children", () => {
   expect(
-    toSourceText(
+    <TestFile>
       <ArrayExpression>
         <ArrayExpression jsValue={[4, 5, 6]} />
-      </ArrayExpression>,
-    ),
-  ).toBe(d`
+      </ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [[4, 5, 6]]
   `);
 });
 
 it("renders a falsy jsValue", () => {
   expect(
-    toSourceText(<ArrayExpression jsValue={[undefined]}></ArrayExpression>),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[undefined]}></ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [undefined]
   `);
 });
 
 it("renders a falsy jsValue with no leading comma", () => {
-  expect(toSourceText(<ArrayExpression jsValue={[null]}></ArrayExpression>))
-    .toBe(d`
+  expect(
+    <TestFile>
+      <ArrayExpression jsValue={[null]}></ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [null]
   `);
 });
 
 it("renders a falsy jsValue and children", () => {
   expect(
-    toSourceText(<ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [false, "Hello"]
   `);
 });
 
 it("renders a falsy jsValue but not invisible children", () => {
   expect(
-    toSourceText(
+    <TestFile>
       <ArrayExpression jsValue={[false]}>
         {null}
         {undefined}
-      </ArrayExpression>,
-    ),
-  ).toBe(d`
+      </ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [false]
   `);
 });
 
 it("renders a falsy jsValue and visible children", () => {
   expect(
-    toSourceText(<ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[false]}>"Hello"</ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
     [false, "Hello"]
   `);
 });
 
 it("renders a falsy jsValue and visible falsy children", () => {
   expect(
-    toSourceText(<ArrayExpression jsValue={[false]}>false</ArrayExpression>),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[false]}>false</ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
       [false, false]
     `);
 });
 
 it("renders a falsy jsValue but not invisible falsy children", () => {
   expect(
-    toSourceText(<ArrayExpression jsValue={[false]}>{false}</ArrayExpression>),
-  ).toBe(d`
+    <TestFile>
+      <ArrayExpression jsValue={[false]}>{false}</ArrayExpression>
+    </TestFile>,
+  ).toRenderTo(`
       [false]
     `);
 });

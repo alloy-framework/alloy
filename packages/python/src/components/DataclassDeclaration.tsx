@@ -109,8 +109,7 @@ export type DataclassDecoratorKwargs = Partial<
 >;
 
 export interface DataclassDeclarationProps
-  extends ClassDeclarationProps,
-    DataclassDecoratorKwargs {}
+  extends ClassDeclarationProps, DataclassDecoratorKwargs {}
 
 /**
  * Renders a Python dataclass.
@@ -160,7 +159,7 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
     validateDataclassDecoratorArgs(kwargs);
   }
 
-  return (
+  const dataclassDecorator = (
     <>
       {"@"}
       {dataclassesModule["."].dataclass}
@@ -175,16 +174,23 @@ export function DataclassDeclaration(props: DataclassDeclarationProps) {
         </For>
         )
       </Show>
-      <hbr />
-      <ClassDeclaration
-        name={props.name}
-        bases={props.bases}
-        doc={props.doc}
-        refkey={props.refkey}
-      >
-        <StatementList>{props.children}</StatementList>
-        {validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs)}
-      </ClassDeclaration>
     </>
+  );
+
+  // User decorators stack above the intrinsic `@dataclass(...)`, mirroring
+  // how Pydantic's `@field_validator` sits above `@classmethod` on methods.
+  const decorators = [...(props.decorators ?? []), dataclassDecorator];
+
+  return (
+    <ClassDeclaration
+      name={props.name}
+      bases={props.bases}
+      doc={props.doc}
+      refkey={props.refkey}
+      decorators={decorators}
+    >
+      <StatementList>{props.children}</StatementList>
+      {validateDataclassMemberConflicts(kwargs as DataclassDecoratorKwargs)}
+    </ClassDeclaration>
   );
 }

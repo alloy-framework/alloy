@@ -1,14 +1,40 @@
 import { refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { enumModule } from "../src/builtins/python.js";
 import * as py from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { TestOutput } from "./utils.js";
 
 describe("Python Enum", () => {
+  it("renders class-level decorators above ClassEnumDeclaration", () => {
+    expect(
+      <TestOutput externals={[enumModule]}>
+        <py.ClassEnumDeclaration
+          name="Color"
+          baseType="IntEnum"
+          decorators={["@final"]}
+          members={[
+            { name: "RED", value: 1 },
+            { name: "GREEN", value: 2 },
+          ]}
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
+      from enum import IntEnum
+
+
+      @final
+      class Color(IntEnum):
+          RED = 1
+          GREEN = 2
+
+    `,
+    );
+  });
+
   it("class enum with explicit values", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.ClassEnumDeclaration
           name="Color"
           baseType="IntEnum"
@@ -17,11 +43,10 @@ describe("Python Enum", () => {
             { name: "GREEN", value: "2" },
             { name: "BLUE", value: "3" },
           ]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import IntEnum
 
 
@@ -30,14 +55,13 @@ describe("Python Enum", () => {
           GREEN = 2
           BLUE = 3
 
-        
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("class enum with jsValues", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.ClassEnumDeclaration
           name="Color"
           baseType="IntEnum"
@@ -46,11 +70,10 @@ describe("Python Enum", () => {
             { name: "GREEN", jsValue: 2 },
             { name: "BLUE", jsValue: "3" },
           ]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import IntEnum
 
 
@@ -59,14 +82,13 @@ describe("Python Enum", () => {
           GREEN = 2
           BLUE = "3"
 
-
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("class enum with a refkey as jsValue", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.StatementList>
           <py.ClassDeclaration name="Dog" refkey={refkey("Dog")} />
           <py.ClassDeclaration name="Cat" refkey={refkey("Cat")} />
@@ -78,11 +100,10 @@ describe("Python Enum", () => {
               { name: "CAT", value: refkey("Cat") },
             ]}
           />
-        </py.StatementList>,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import Enum
 
 
@@ -96,23 +117,21 @@ describe("Python Enum", () => {
           DOG = Dog
           CAT = Cat
 
-
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("class enum with auto() values", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.ClassEnumDeclaration
           name="Animal"
           auto
           members={[{ name: "DOG" }, { name: "CAT" }, { name: "RABBIT" }]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import auto
       from enum import Enum
 
@@ -122,14 +141,13 @@ describe("Python Enum", () => {
           CAT = auto()
           RABBIT = auto()
 
-
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("class enum with mixed manual and auto() values", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.ClassEnumDeclaration
           name="Permission"
           baseType="Flag"
@@ -139,12 +157,10 @@ describe("Python Enum", () => {
             { name: "WRITE" },
             { name: "EXECUTE" },
           ]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import auto
       from enum import Flag
 
@@ -154,14 +170,13 @@ describe("Python Enum", () => {
           WRITE = auto()
           EXECUTE = auto()
 
-
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("functional enum with list", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.FunctionalEnumDeclaration
           name="Direction"
           members={[
@@ -170,22 +185,21 @@ describe("Python Enum", () => {
             { name: "EAST" },
             { name: "WEST" },
           ]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import Enum
 
 
       Direction = Enum('Direction', ['NORTH', 'SOUTH', 'EAST', 'WEST'])
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 
   it("functional enum with mapping", () => {
-    const result = toSourceText(
-      [
+    expect(
+      <TestOutput externals={[enumModule]}>
         <py.FunctionalEnumDeclaration
           name="Priority"
           members={[
@@ -193,16 +207,15 @@ describe("Python Enum", () => {
             { name: "MEDIUM", value: 2 },
             { name: "LOW", value: 3 },
           ]}
-        />,
-      ],
-      { externals: [enumModule] },
-    );
-    const expected = d`
+        />
+      </TestOutput>,
+    ).toRenderTo(
+      `
       from enum import Enum
 
 
       Priority = Enum('Priority', {'HIGH' : 1, 'MEDIUM' : 2, 'LOW' : 3})
-    `;
-    expect(result).toRenderTo(expected);
+    `,
+    );
   });
 });

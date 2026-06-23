@@ -1,5 +1,4 @@
-import { code, memberRefkey, refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { code, memberRefkey, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import {
@@ -9,43 +8,43 @@ import {
   SourceFile,
   VariableDeclaration,
 } from "../src/index.js";
-import {
-  assertFileContents,
-  toSourceText,
-  toSourceTextMultiple,
-} from "./utils.js";
+import { TestOutput, TestOutputDirectory } from "./utils.js";
 
 it("renders basic member expression with dot notation", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="obj" />
         <py.MemberExpression.Part id="property" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     obj.property
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with key", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part key={12345} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[12345].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with key with reference", () => {
   const rk1 = refkey();
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.VariableDeclaration name="test1" refkey={rk1} initializer={1} />
         <py.MemberExpression>
@@ -53,33 +52,37 @@ it("renders basic member expression with key with reference", () => {
           <py.MemberExpression.Part key={rk1} />
           <py.MemberExpression.Part id="foo-bar" />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     test1 = 1
     arr[test1].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with keys", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part keys={[1, 2]} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[1, 2].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with keys with references", () => {
   const rk1 = refkey();
   const rk2 = refkey();
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.VariableDeclaration name="test1" refkey={rk1} initializer={1} />
         <py.VariableDeclaration name="test2" refkey={rk2} initializer={2} />
@@ -88,27 +91,31 @@ it("renders basic member expression with keys with references", () => {
           <py.MemberExpression.Part keys={[rk1, rk2]} />
           <py.MemberExpression.Part id="foo-bar" />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     test1 = 1
     test2 = 2
     arr[test1, test2].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 1", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part slice={{ start: 1, stop: 3, step: 2 }} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[1:3:2].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 1 with references", () => {
@@ -116,7 +123,7 @@ it("renders basic member expression with slice - 1 with references", () => {
   const rk2 = refkey();
   const rk3 = refkey();
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.VariableDeclaration name="test1" refkey={rk1} initializer={1} />
         <py.VariableDeclaration name="test2" refkey={rk2} initializer={3} />
@@ -128,76 +135,86 @@ it("renders basic member expression with slice - 1 with references", () => {
           />
           <py.MemberExpression.Part id="foo-bar" />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     test1 = 1
     test2 = 3
     test3 = 2
     arr[test1:test2:test3].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 2", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part slice={{ stop: 3 }} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[:3].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 3", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part slice={{ step: 2 }} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[::2].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 4", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part slice={{ start: 1 }} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[1:].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with slice - 5", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="arr" />
         <py.MemberExpression.Part slice={{ start: 1, step: 2 }} />
         <py.MemberExpression.Part id="foo-bar" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr[1::2].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with an expression index - 1", () => {
   const xRefkey = refkey();
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.VariableDeclaration name="x" initializer={1} refkey={xRefkey} />
         <py.MemberExpression>
@@ -205,79 +222,91 @@ it("renders basic member expression with an expression index - 1", () => {
           <py.MemberExpression.Part key={code`${xRefkey} + 1`} />
           <py.MemberExpression.Part id="foo-bar" />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     x = 1
     arr[x + 1].foo-bar
-  `);
+  `,
+  );
 });
 
 it("renders basic member expression with an expression index - 2", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.MemberExpression>
           <py.MemberExpression.Part id="arr" />
           <py.MemberExpression.Part key={code`"foo" + 1`} />
           <py.MemberExpression.Part id="foo-bar" />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     arr["foo" + 1].foo-bar
-  `);
+  `,
+  );
 });
 
 it("throws an error for invalid identifiers with quotes", () => {
   expect(() =>
-    toSourceText([
-      <py.MemberExpression>
-        <py.MemberExpression.Part id="obj" />
-        <py.MemberExpression.Part id={`property-"name"`} />
-      </py.MemberExpression>,
-    ]),
+    render(
+      <TestOutput>
+        <py.MemberExpression>
+          <py.MemberExpression.Part id="obj" />
+          <py.MemberExpression.Part id={`property-"name"`} />
+        </py.MemberExpression>
+      </TestOutput>,
+    ),
   ).toThrowError(/Invalid identifier: property-"name"/);
 });
 
 it("supports multiple levels of nesting", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="a" />
         <py.MemberExpression.Part id="b" />
         <py.MemberExpression.Part id="c" />
         <py.MemberExpression.Part id="d" />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     a.b.c.d
-  `);
+  `,
+  );
 });
 
 it("handles a mix of dot and bracket notation", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.MemberExpression>
         <py.MemberExpression.Part id="obj" />
         <py.MemberExpression.Part id="normalProp" />
         <py.MemberExpression.Part key={"special-prop"} />
         <py.MemberExpression.Part key={"123"} />
-      </py.MemberExpression>,
-    ]),
-  ).toBe(d`
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     obj.normalProp["special-prop"]["123"]
-  `);
+  `,
+  );
 });
 
 it("throws an error when providing conflicting part props", () => {
   expect(() =>
-    toSourceText([
-      <py.MemberExpression>
-        <py.MemberExpression.Part id="obj" />
-        <py.MemberExpression.Part id="property" args={[1, 2]} />
-      </py.MemberExpression>,
-    ]),
+    render(
+      <TestOutput>
+        <py.MemberExpression>
+          <py.MemberExpression.Part id="obj" />
+          <py.MemberExpression.Part id="property" args={[1, 2]} />
+        </py.MemberExpression>
+      </TestOutput>,
+    ),
   ).toThrowError(
     `Only one of args, id can be used for a MemberExpression part at a time`,
   );
@@ -285,29 +314,33 @@ it("throws an error when providing conflicting part props", () => {
 
 it("throws an error when providing an empty slice", () => {
   expect(() =>
-    toSourceText([
-      <py.MemberExpression>
-        <py.MemberExpression.Part id="obj" />
-        <py.MemberExpression.Part slice={{}} />
-      </py.MemberExpression>,
-    ]),
+    render(
+      <TestOutput>
+        <py.MemberExpression>
+          <py.MemberExpression.Part id="obj" />
+          <py.MemberExpression.Part slice={{}} />
+        </py.MemberExpression>
+      </TestOutput>,
+    ),
   ).toThrowError(`MemberExpression.Part: slice object cannot be empty`);
 });
 
 it("throws an error when providing an empty array", () => {
   expect(() =>
-    toSourceText([
-      <py.MemberExpression>
-        <py.MemberExpression.Part id="obj" />
-        <py.MemberExpression.Part keys={[]} />
-      </py.MemberExpression>,
-    ]),
+    render(
+      <TestOutput>
+        <py.MemberExpression>
+          <py.MemberExpression.Part id="obj" />
+          <py.MemberExpression.Part keys={[]} />
+        </py.MemberExpression>
+      </TestOutput>,
+    ),
   ).toThrowError(`MemberExpression.Part: keys array cannot be empty`);
 });
 
 it("takes children for the id part", () => {
   expect(
-    toSourceText([
+    <TestOutput>
       <py.StatementList>
         <py.MemberExpression>
           <py.MemberExpression.Part id="child1" />
@@ -322,12 +355,14 @@ it("takes children for the id part", () => {
           <py.MemberExpression.Part key={code`"foo" + 1`} />
           <py.MemberExpression.Part args />
         </py.MemberExpression>
-      </py.StatementList>,
-    ]),
-  ).toBe(d`
+      </py.StatementList>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     child1["child1"]
     child1["child2"]()["child3"]()["foo" + 1]()
-  `);
+  `,
+  );
 });
 
 describe("with refkeys", () => {
@@ -335,7 +370,7 @@ describe("with refkeys", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.VariableDeclaration name="test1" refkey={rk1} initializer={1} />
           <py.VariableDeclaration name="test1" refkey={rk2} initializer={2} />
@@ -343,13 +378,15 @@ describe("with refkeys", () => {
             <py.MemberExpression.Part refkey={rk1} />
             <py.MemberExpression.Part refkey={rk2} />
           </py.MemberExpression>
-        </py.StatementList>,
-      ]),
-    ).toBe(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
         test1 = 1
         test1_2_test = 2
         test1.test1_2_test
-      `);
+      `,
+    );
   });
 
   it("Correctly resolves member expressions from 2 different classes", () => {
@@ -406,7 +443,8 @@ describe("with refkeys", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([template])).toBe(d`
+    expect(<TestOutput>{template}</TestOutput>).toRenderTo(
+      `
       class Model1:
           foo: str
 
@@ -417,7 +455,8 @@ describe("with refkeys", () => {
       model2_instance: Model2 = Model2()
       model1_instance.foo
       model2_instance.bar
-    `);
+    `,
+    );
   });
 
   it("handles optional parameters correctly", () => {
@@ -460,7 +499,8 @@ describe("with refkeys", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([template])).toBe(d`
+    expect(<TestOutput>{template}</TestOutput>).toRenderTo(
+      `
       class Model:
           bar: str
 
@@ -468,7 +508,8 @@ describe("with refkeys", () => {
           message = foo.bar
           print(message)
 
-    `);
+    `,
+    );
   });
 
   it("handles class member correctly", () => {
@@ -479,7 +520,7 @@ describe("with refkeys", () => {
     const classMemberRefkey = refkey();
     const instanceRefkey = refkey();
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <ClassDeclaration name="Bar" refkey={interfaceRefkey}>
             <VariableDeclaration
@@ -518,9 +559,10 @@ describe("with refkeys", () => {
             <py.MemberExpression.Part refkey={classMethodRefkey} />
             <py.MemberExpression.Part args={[]} />
           </py.MemberExpression>
-        </py.StatementList>,
-      ]),
-    ).toBe(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
        class Bar:
            prop1: str
 
@@ -533,14 +575,15 @@ describe("with refkeys", () => {
        inst = Foo()
        inst.test1.prop1
        inst.test_method()
-    `);
+    `,
+    );
   });
 
   it("handles late resolved refkeys correctly", () => {
     const rk1 = refkey();
     const rk2 = refkey();
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.MemberExpression>
             <py.MemberExpression.Part refkey={rk1} />
@@ -548,37 +591,40 @@ describe("with refkeys", () => {
           </py.MemberExpression>
           <py.VariableDeclaration name="test1" refkey={rk1} initializer={1} />
           <py.VariableDeclaration name="test1" refkey={rk2} initializer={2} />
-        </py.StatementList>,
-      ]),
-    ).toBe(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       test1.test1_2_test
       test1 = 1
       test1_2_test = 2
-    `);
+    `,
+    );
   });
 
   it("creates a full reference to the first refkey", () => {
     const rk1 = refkey();
-    const res = toSourceTextMultiple([
-      <SourceFile path="source.py">
-        <py.VariableDeclaration name="importMe" refkey={rk1} />
-      </SourceFile>,
-      <SourceFile path="index.py">
-        <py.StatementList>
-          <py.MemberExpression>
-            <py.MemberExpression.Part refkey={rk1} />
-            <py.MemberExpression.Part id="foo" />
-          </py.MemberExpression>
-        </py.StatementList>
-      </SourceFile>,
-    ]);
+    expect(
+      <TestOutputDirectory>
+        <SourceFile path="source.py">
+          <py.VariableDeclaration name="importMe" refkey={rk1} />
+        </SourceFile>
+        <SourceFile path="index.py">
+          <py.StatementList>
+            <py.MemberExpression>
+              <py.MemberExpression.Part refkey={rk1} />
+              <py.MemberExpression.Part id="foo" />
+            </py.MemberExpression>
+          </py.StatementList>
+        </SourceFile>
+      </TestOutputDirectory>,
+    ).toRenderTo({
+      "index.py": `
+          from source import import_me
 
-    assertFileContents(res, {
-      "index.py": d`
-        from source import import_me
-
-        import_me.foo
-      `,
+          import_me.foo
+        `,
+      "source.py": "import_me = None",
     });
   });
 });
@@ -586,22 +632,24 @@ describe("with refkeys", () => {
 describe("with function calls", () => {
   it("handles simple function calls correctly", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.MemberExpression>
           <py.MemberExpression.Part id="myFunction" />
           <py.MemberExpression.Part args={[1, 2]} />
-        </py.MemberExpression>,
-      ]),
-    ).toBe(d`
+        </py.MemberExpression>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       myFunction(1, 2)
-    `);
+    `,
+    );
   });
 
   it("handles function calls with references correctly", () => {
     const xRefkey = refkey();
     const yRefkey = refkey();
     expect(
-      toSourceText([
+      <TestOutput>
         <py.StatementList>
           <py.VariableDeclaration name="x" initializer={1} refkey={xRefkey} />
           <py.VariableDeclaration name="y" initializer={2} refkey={yRefkey} />
@@ -609,18 +657,20 @@ describe("with function calls", () => {
             <py.MemberExpression.Part id="myFunction" />
             <py.MemberExpression.Part args={[xRefkey, yRefkey]} />
           </py.MemberExpression>
-        </py.StatementList>,
-      ]),
-    ).toBe(d`
+        </py.StatementList>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       x = 1
       y = 2
       myFunction(x, y)
-    `);
+    `,
+    );
   });
 
   it("handles method calls correctly", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.MemberExpression>
           <py.MemberExpression.Part id="method1" />
           <py.MemberExpression.Part args={[1, 2]} />
@@ -628,39 +678,45 @@ describe("with function calls", () => {
           <py.MemberExpression.Part id="method2" />
           <py.MemberExpression.Part args={[]} />
           <py.MemberExpression.Part id="prop" />
-        </py.MemberExpression>,
-      ]),
-    ).toBe(d`
+        </py.MemberExpression>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       method1(1, 2)().method2().prop
-    `);
+    `,
+    );
   });
 
   it("handles function calls correctly", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.MemberExpression>
           <py.MemberExpression.Part id="myFunction" />
           <py.MemberExpression.Part args={[1, 2]} />
           <py.MemberExpression.Part id="prop" />
-        </py.MemberExpression>,
-      ]),
-    ).toBe(d`
+        </py.MemberExpression>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       myFunction(1, 2).prop
-    `);
+    `,
+    );
   });
 
   it("handles function calls correctly", () => {
     expect(
-      toSourceText([
+      <TestOutput>
         <py.MemberExpression>
           <py.MemberExpression.Part id="myFunction" />
           <py.MemberExpression.Part args={[1, 2]} />
           <py.MemberExpression.Part id="prop" />
-        </py.MemberExpression>,
-      ]),
-    ).toBe(d`
+        </py.MemberExpression>
+      </TestOutput>,
+    ).toRenderTo(
+      `
       myFunction(1, 2).prop
-    `);
+    `,
+    );
   });
 });
 
@@ -668,50 +724,50 @@ describe("formatting", () => {
   describe("simple chains", () => {
     it("just dots", () => {
       expect(
-        toSourceText(
-          [
-            <py.MemberExpression>
-              <py.MemberExpression.Part id="four" />
-              <py.MemberExpression.Part id="four" />
-              <py.MemberExpression.Part id="two" />
-              <py.MemberExpression.Part id="two" />
-              <py.MemberExpression.Part id="two" />
-              <py.MemberExpression.Part id="two" />
-            </py.MemberExpression>,
-          ],
-          { printOptions: { printWidth: 14 } },
-        ),
-      ).toBe(d`
+        <TestOutput>
+          <py.MemberExpression>
+            <py.MemberExpression.Part id="four" />
+            <py.MemberExpression.Part id="four" />
+            <py.MemberExpression.Part id="two" />
+            <py.MemberExpression.Part id="two" />
+            <py.MemberExpression.Part id="two" />
+            <py.MemberExpression.Part id="two" />
+          </py.MemberExpression>
+        </TestOutput>,
+      ).toRenderTo(
+        `
         four.four \\
             .two.two \\
             .two.two
-      `);
+      `,
+        { tabWidth: 4, printWidth: 14 },
+      );
     });
 
     it("bracket breaks", () => {
       expect(
-        toSourceText(
-          [
-            <py.MemberExpression>
-              <py.MemberExpression.Part id="obj" />
-              <py.MemberExpression.Part key={"property-name"} />
-              <py.MemberExpression.Part id="prop" />
-            </py.MemberExpression>,
-          ],
-          { printOptions: { printWidth: 12 } },
-        ),
-      ).toBe(d`
+        <TestOutput>
+          <py.MemberExpression>
+            <py.MemberExpression.Part id="obj" />
+            <py.MemberExpression.Part key={"property-name"} />
+            <py.MemberExpression.Part id="prop" />
+          </py.MemberExpression>
+        </TestOutput>,
+      ).toRenderTo(
+        `
         obj[
             "property-name"
         ].prop
-      `);
+      `,
+        { tabWidth: 4, printWidth: 12 },
+      );
     });
   });
 
   describe("call chains", () => {
     it("renders multiple calls on the same line when there are no breaks and they fit", () => {
       expect(
-        toSourceText([
+        <TestOutput>
           <py.MemberExpression>
             <py.MemberExpression.Part id="z" />
             <py.MemberExpression.Part id="object" />
@@ -720,11 +776,13 @@ describe("formatting", () => {
             <py.MemberExpression.Part args />
             <py.MemberExpression.Part id="optional" />
             <py.MemberExpression.Part args />
-          </py.MemberExpression>,
-        ]),
-      ).toBe(d`
+          </py.MemberExpression>
+        </TestOutput>,
+      ).toRenderTo(
+        `
         z.object().partial().optional()
-      `);
+      `,
+      );
     });
   });
 });

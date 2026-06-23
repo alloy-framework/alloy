@@ -65,8 +65,7 @@ export interface ParameterDescriptor extends ParameterDescriptorBase {
 /**
  * Information for a TypeScript type function parameter.
  */
-export interface FunctionTypeParameterDescriptor
-  extends ParameterDescriptorBase {}
+export interface FunctionTypeParameterDescriptor extends ParameterDescriptorBase {}
 
 /**
  * Information for a TypeScript generic type parameter.

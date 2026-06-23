@@ -1,8 +1,9 @@
-import { createContentSlot, Name, Show } from "@alloy-js/core";
+import { createContentSlot, Name, Show, type Children } from "@alloy-js/core";
 import { PythonOutputSymbol } from "../index.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import { DecoratorList } from "./DecoratorList.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
@@ -15,10 +16,38 @@ import { PythonBlock } from "./PythonBlock.jsx";
  * metadata with call signature shape.
  */
 export interface CommonFunctionProps
-  extends BaseDeclarationProps,
-    CallSignatureProps {
+  extends BaseDeclarationProps, CallSignatureProps {
   /** Indicates that the function is async. */
   async?: boolean;
+  /**
+   * Decorators rendered above `def`, in source order — `decorators[0]` is
+   * topmost. By Python's bottom-up application order, the topmost entry is
+   * the **outermost** decorator (applied last) and wraps the result of every
+   * decorator below it.
+   *
+   * Each entry should produce a complete decorator line (typically starting
+   * with `@`). Falsy entries (other than `0`) are skipped, so conditional
+   * decorators can be provided inline when needed.
+   *
+   * When used through wrappers that emit an intrinsic decorator
+   * (`ClassMethodDeclaration` → `@classmethod`,
+   * `StaticMethodDeclaration` → `@staticmethod`,
+   * `PropertyDeclaration` → `@property`), these decorators are rendered
+   * **above** the intrinsic line — the correct position for Pydantic's
+   * `@field_validator` / `@model_validator` and other wrappers that must
+   * see the underlying function, not a descriptor.
+   *
+   * When used on plain `MethodDeclaration` / `FunctionDeclaration`, these
+   * decorators are rendered above `@abstractmethod` (if `abstract` is set)
+   * and above `def`.
+   *
+   * Do **not** pass intrinsic decorators here — i.e. `@classmethod`,
+   * `@staticmethod`, `@property`, or `@abstractmethod`. Those are emitted by
+   * the matching component (`ClassMethodDeclaration`, `StaticMethodDeclaration`,
+   * `PropertyDeclaration`, or the `abstract` flag) and would otherwise be
+   * stacked twice in the output, producing invalid Python.
+   */
+  decorators?: Children[];
 }
 
 /**
@@ -54,6 +83,7 @@ export interface BaseFunctionDeclarationProps extends CommonFunctionProps {
  * ```
  */
 export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
+  const { decorators, sym, ...declarationProps } = props;
   const asyncKwd = props.async ? "async " : "";
   let parameters;
   switch (props.functionType) {
@@ -66,11 +96,11 @@ export function BaseFunctionDeclaration(props: BaseFunctionDeclarationProps) {
     default:
       parameters = props.parameters;
   }
-  const sym: PythonOutputSymbol = props.sym;
   const ContentSlot = createContentSlot();
   return (
     <>
-      <Declaration {...props} nameKind="function" symbol={sym}>
+      <DecoratorList decorators={decorators} />
+      <Declaration {...declarationProps} nameKind="function" symbol={sym}>
         {asyncKwd}def <Name />
         <LexicalScope name={sym.name}>
           <CallSignature

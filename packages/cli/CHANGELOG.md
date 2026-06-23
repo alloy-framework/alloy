@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/cli
 
+## 0.24.0
+
+### Bug Fixes
+
+- [#407](https://github.com/alloy-framework/alloy/pull/407) Adds a `--top-heading-level <N>` option to `install-docs` so callers can control the heading depth of the generated AGENTS.md section.
+
+
 ## 0.23.0
 
 ### Bug Fixes

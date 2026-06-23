@@ -8,9 +8,7 @@ import { Name } from "./Name.js";
 import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
 
 export interface ClassProps
-  extends CommonDeclarationProps,
-    ModifierProps,
-    TypeParametersProps {
+  extends CommonDeclarationProps, ModifierProps, TypeParametersProps {
   extends?: Children;
   implements?: Children[];
 }

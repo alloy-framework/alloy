@@ -1,101 +1,102 @@
 import { Prose } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { dataclassesModule } from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { TestOutput, TestOutputDirectory } from "./utils.jsx";
 
 /**
- * toSourceText wraps the children in a SourceFile component
- * and renders it to a string.
+ * TestOutputDirectory wraps content in an Output component without a default
+ * SourceFile, so SourceFile components with their own path/props can be used.
  */
 it("renders an empty source file", () => {
-  const result = toSourceText([]);
-  expect(result).toRenderTo(d`
+  expect(<TestOutput></TestOutput>).toRenderTo(
+    `
 
-
-  `);
+  `,
+  );
 });
 
 it("correct formatting of source file", () => {
-  const result = toSourceText([
-    <py.ClassDeclaration name="someClass">
-      <py.StatementList>
-        <py.FunctionDeclaration name="someMethod" returnType="str">
-          <py.StatementList>
-            <py.VariableDeclaration
-              name="x"
-              type="int"
-              initializer={<py.Atom jsValue={42} />}
-            />
-            <py.VariableDeclaration
-              name="y"
-              type="int"
-              initializer={<py.Atom jsValue={42} />}
-            />
-            <py.FunctionCallExpression target="foo" args={["a", "b"]} />
-            <py.MemberExpression>
-              <py.MemberExpression.Part id="a" />
-              <py.MemberExpression.Part id="b" />
-              <py.MemberExpression.Part key={"special-prop"} />
-            </py.MemberExpression>
-            <py.VariableDeclaration
-              name="z"
-              type="int"
-              initializer={<py.Atom jsValue={42} />}
-            />
-          </py.StatementList>
-        </py.FunctionDeclaration>
-        <py.VariableDeclaration
-          name="someVar"
-          type="int"
-          initializer={<py.Atom jsValue={42} />}
-        />
-        <py.FunctionDeclaration name="someOtherMethod" returnType="str" />
-        <py.VariableDeclaration
-          name="someOtherVar"
-          type="int"
-          initializer={<py.Atom jsValue={42} />}
-        />
-      </py.StatementList>
-    </py.ClassDeclaration>,
-    <py.FunctionDeclaration name="someFunction">
-      <py.StatementList>
-        <py.VariableDeclaration
-          name="x"
-          type="int"
-          initializer={<py.Atom jsValue={42} />}
-        />
-        <py.VariableDeclaration
-          name="y"
-          type="int"
-          initializer={<py.Atom jsValue={42} />}
-        />
-        <py.FunctionCallExpression target="foo" args={["a", "b"]} />
-        <py.MemberExpression>
-          <py.MemberExpression.Part id="a" />
-          <py.MemberExpression.Part id="b" />
-          <py.MemberExpression.Part key={"special-prop"} />
-        </py.MemberExpression>
-        <py.VariableDeclaration
-          name="z"
-          type="int"
-          initializer={<py.Atom jsValue={42} />}
-        />
-      </py.StatementList>
-    </py.FunctionDeclaration>,
-    <py.ClassDeclaration name="someOtherClass">
-      <py.StatementList>
-        <py.FunctionDeclaration name="someMethod" returnType="str" />
-      </py.StatementList>
-    </py.ClassDeclaration>,
-    <py.MemberExpression>
-      <py.MemberExpression.Part id="a" />
-      <py.MemberExpression.Part id="b" />
-      <py.MemberExpression.Part key={"special-prop"} />
-    </py.MemberExpression>,
-  ]);
-  expect(result).toRenderTo(d`
+  expect(
+    <TestOutput>
+      <py.ClassDeclaration name="someClass">
+        <py.StatementList>
+          <py.FunctionDeclaration name="someMethod" returnType="str">
+            <py.StatementList>
+              <py.VariableDeclaration
+                name="x"
+                type="int"
+                initializer={<py.Atom jsValue={42} />}
+              />
+              <py.VariableDeclaration
+                name="y"
+                type="int"
+                initializer={<py.Atom jsValue={42} />}
+              />
+              <py.FunctionCallExpression target="foo" args={["a", "b"]} />
+              <py.MemberExpression>
+                <py.MemberExpression.Part id="a" />
+                <py.MemberExpression.Part id="b" />
+                <py.MemberExpression.Part key={"special-prop"} />
+              </py.MemberExpression>
+              <py.VariableDeclaration
+                name="z"
+                type="int"
+                initializer={<py.Atom jsValue={42} />}
+              />
+            </py.StatementList>
+          </py.FunctionDeclaration>
+          <py.VariableDeclaration
+            name="someVar"
+            type="int"
+            initializer={<py.Atom jsValue={42} />}
+          />
+          <py.FunctionDeclaration name="someOtherMethod" returnType="str" />
+          <py.VariableDeclaration
+            name="someOtherVar"
+            type="int"
+            initializer={<py.Atom jsValue={42} />}
+          />
+        </py.StatementList>
+      </py.ClassDeclaration>
+      <py.FunctionDeclaration name="someFunction">
+        <py.StatementList>
+          <py.VariableDeclaration
+            name="x"
+            type="int"
+            initializer={<py.Atom jsValue={42} />}
+          />
+          <py.VariableDeclaration
+            name="y"
+            type="int"
+            initializer={<py.Atom jsValue={42} />}
+          />
+          <py.FunctionCallExpression target="foo" args={["a", "b"]} />
+          <py.MemberExpression>
+            <py.MemberExpression.Part id="a" />
+            <py.MemberExpression.Part id="b" />
+            <py.MemberExpression.Part key={"special-prop"} />
+          </py.MemberExpression>
+          <py.VariableDeclaration
+            name="z"
+            type="int"
+            initializer={<py.Atom jsValue={42} />}
+          />
+        </py.StatementList>
+      </py.FunctionDeclaration>
+      <py.ClassDeclaration name="someOtherClass">
+        <py.StatementList>
+          <py.FunctionDeclaration name="someMethod" returnType="str" />
+        </py.StatementList>
+      </py.ClassDeclaration>
+      <py.MemberExpression>
+        <py.MemberExpression.Part id="a" />
+        <py.MemberExpression.Part id="b" />
+        <py.MemberExpression.Part key={"special-prop"} />
+      </py.MemberExpression>
+    </TestOutput>,
+  ).toRenderTo(
+    `
     class SomeClass:
         def some_method() -> str:
             x: int = 42
@@ -126,8 +127,8 @@ it("correct formatting of source file", () => {
 
 
     a.b["special-prop"]
-
-  `);
+  `,
+  );
 });
 
 it("renders module documentation correctly", () => {
@@ -156,15 +157,18 @@ it("renders module documentation correctly", () => {
     />
   );
 
-  const content = (
-    <py.SourceFile path="test.py" doc={moduleDoc}>
-      <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
-      <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
-      <py.FunctionDeclaration name="process_data">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" doc={moduleDoc}>
+        <py.VariableDeclaration name="DEFAULT_TIMEOUT" initializer={30} />
+        <py.VariableDeclaration name="MAX_RETRIES" initializer={3} />
+        <py.FunctionDeclaration name="process_data">
+          pass
+        </py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     This module provides utility functions for data processing. It includes
     functions for validation, transformation, and analysis.
@@ -186,50 +190,52 @@ it("renders module documentation correctly", () => {
     def process_data():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("renders source file without documentation correctly", () => {
-  const content = (
-    <py.SourceFile path="test.py">
-      <py.FunctionDeclaration name="hello_world">
-        print("Hello, World!")
-      </py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py">
+        <py.FunctionDeclaration name="hello_world">
+          print("Hello, World!")
+        </py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     def hello_world():
         print("Hello, World!")
 
-
-  `);
+  `,
+  });
 });
 
 it("nothing before top-level definition", () => {
-  const content = (
-    <py.SourceFile path="test.py">
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py">
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("nothing before non-definition", () => {
-  const content = (
-    <py.SourceFile path="test.py">
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo("x = 42");
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py">
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({ "test.py": "x = 42" });
 });
 
 it("only doc before definition", () => {
@@ -237,13 +243,14 @@ it("only doc before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile path="test.py" doc={moduleDoc}>
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" doc={moduleDoc}>
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -252,8 +259,8 @@ it("only doc before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("only doc before non-definition", () => {
@@ -261,101 +268,107 @@ it("only doc before non-definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile path="test.py" doc={moduleDoc}>
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" doc={moduleDoc}>
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
-    x = 42`);
+    x = 42`,
+  });
 });
 
 it("only header before definition", () => {
-  const content = (
-    <py.SourceFile path="test.py" header="#!/usr/bin/env python3">
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  // 2 blank lines before definition (PEP 8)
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" header="#!/usr/bin/env python3">
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
 
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("only header before non-definition", () => {
-  const content = (
-    <py.SourceFile path="test.py" header="#!/usr/bin/env python3">
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  // 1 blank line for non-definition
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" header="#!/usr/bin/env python3">
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
-    x = 42`);
+    x = 42`,
+  });
 });
 
 it("only futureImports before definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
 
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("only futureImports before non-definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
-    x = 42`);
+    x = 42`,
+  });
 });
 
 it("only imports before definition", () => {
-  const content = (
-    <py.SourceFile path="test.py">
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile path="test.py">
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from dataclasses import dataclass
 
 
@@ -363,25 +376,28 @@ it("only imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("only imports before non-definition", () => {
-  const content = (
-    <py.SourceFile path="test.py">
-      <py.VariableDeclaration
-        name="x"
-        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
-      />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile path="test.py">
+        <py.VariableDeclaration
+          name="x"
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
+        />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from dataclasses import dataclass
 
-    x = dataclass`);
+    x = dataclass`,
+  });
 });
 
 it("doc + futureImports before definition", () => {
@@ -389,17 +405,18 @@ it("doc + futureImports before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -410,8 +427,8 @@ it("doc + futureImports before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("doc + futureImports before non-definition", () => {
@@ -419,24 +436,26 @@ it("doc + futureImports before non-definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
     from __future__ import annotations
 
-    x = 42`);
+    x = 42`,
+  });
 });
 
 it("doc + imports before definition", () => {
@@ -444,16 +463,16 @@ it("doc + imports before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile path="test.py" doc={moduleDoc}>
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile path="test.py" doc={moduleDoc}>
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -465,8 +484,8 @@ it("doc + imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("doc + imports before non-definition", () => {
@@ -474,40 +493,43 @@ it("doc + imports before non-definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile path="test.py" doc={moduleDoc}>
-      <py.VariableDeclaration
-        name="x"
-        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
-      />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile path="test.py" doc={moduleDoc}>
+        <py.VariableDeclaration
+          name="x"
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
+        />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
     from dataclasses import dataclass
 
-    x = dataclass`);
+    x = dataclass`,
+  });
 });
 
 it("futureImports + imports before definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile
+        path="test.py"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
     from dataclasses import dataclass
@@ -517,30 +539,33 @@ it("futureImports + imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("futureImports + imports before non-definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.VariableDeclaration
-        name="x"
-        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
-      />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile
+        path="test.py"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.VariableDeclaration
+          name="x"
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
+        />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     from __future__ import annotations
 
     from dataclasses import dataclass
 
-    x = dataclass`);
+    x = dataclass`,
+  });
 });
 
 it("doc + futureImports + imports before definition", () => {
@@ -548,20 +573,20 @@ it("doc + futureImports + imports before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile
+        path="test.py"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -575,8 +600,8 @@ it("doc + futureImports + imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("doc + futureImports + imports before non-definition", () => {
@@ -584,21 +609,23 @@ it("doc + futureImports + imports before non-definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.VariableDeclaration
-        name="x"
-        initializer={<py.Reference refkey={dataclassesModule["."].dataclass} />}
-      />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile
+        path="test.py"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.VariableDeclaration
+          name="x"
+          initializer={
+            <py.Reference refkey={dataclassesModule["."].dataclass} />
+          }
+        />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
@@ -607,7 +634,8 @@ it("doc + futureImports + imports before non-definition", () => {
 
     from dataclasses import dataclass
 
-    x = dataclass`);
+    x = dataclass`,
+  });
 });
 
 it("only doc in file (no children)", () => {
@@ -615,41 +643,44 @@ it("only doc in file (no children)", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = <py.SourceFile path="test.py" doc={moduleDoc} />;
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" doc={moduleDoc} />
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
-
-  `);
+  `,
+  });
 });
 
 it("only header in file (no children)", () => {
-  const content = (
-    <py.SourceFile path="test.py" header="#!/usr/bin/env python3" />
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" header="#!/usr/bin/env python3" />
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
 
-
-  `);
+  `,
+  });
 });
 
 it("only futureImports in file (no children)", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    />
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
-    from __future__ import annotations
-
-  `);
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      />
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": "from __future__ import annotations",
+  });
 });
 
 it("doc + futureImports in file (no children)", () => {
@@ -657,55 +688,58 @@ it("doc + futureImports in file (no children)", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    />
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      />
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     """
     Module description.
     """
 
     from __future__ import annotations
-
-  `);
+  `,
+  });
 });
 
 // headerComment tests
 it("only headerComment before definition", () => {
-  const content = (
-    <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  // 2 blank lines before definition (PEP 8)
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
 
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("only headerComment before non-definition", () => {
-  const content = (
-    <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
-    x = 42`);
+    x = 42`,
+  });
 });
 
 it("headerComment + doc before definition", () => {
@@ -713,18 +747,18 @@ it("headerComment + doc before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      headerComment="Copyright 2024 My Company"
-      doc={moduleDoc}
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  // headerComment and doc adjacent, then PEP 8 spacing before definition
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        headerComment="Copyright 2024 My Company"
+        doc={moduleDoc}
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -734,23 +768,23 @@ it("headerComment + doc before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("headerComment + futureImports before definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      headerComment="Copyright 2024 My Company"
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  // headerComment and futureImports adjacent, then PEP 8 spacing
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        headerComment="Copyright 2024 My Company"
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
     from __future__ import annotations
@@ -759,21 +793,21 @@ it("headerComment + futureImports before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("headerComment + imports before definition", () => {
-  const content = (
-    <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company">
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
 
     from dataclasses import dataclass
@@ -783,8 +817,8 @@ it("headerComment + imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("headerComment + doc + futureImports before definition", () => {
@@ -792,18 +826,19 @@ it("headerComment + doc + futureImports before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      headerComment="Copyright 2024 My Company"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        headerComment="Copyright 2024 My Company"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -815,8 +850,8 @@ it("headerComment + doc + futureImports before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("headerComment + doc + futureImports + imports before definition", () => {
@@ -824,21 +859,21 @@ it("headerComment + doc + futureImports + imports before definition", () => {
     <py.ModuleDoc description={[<Prose>Module description.</Prose>]} />
   );
 
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      headerComment="Copyright 2024 My Company"
-      doc={moduleDoc}
-      futureImports={[<py.FutureStatement feature="annotations" />]}
-    >
-      <py.DataclassDeclaration name="User">
-        <py.VariableDeclaration name="name" type="str" />
-      </py.DataclassDeclaration>
-    </py.SourceFile>
-  );
-
-  expect(toSourceText(content, { externals: [dataclassesModule] }))
-    .toRenderTo(d`
+  expect(
+    <TestOutputDirectory externals={[dataclassesModule]}>
+      <py.SourceFile
+        path="test.py"
+        headerComment="Copyright 2024 My Company"
+        doc={moduleDoc}
+        futureImports={[<py.FutureStatement feature="annotations" />]}
+      >
+        <py.DataclassDeclaration name="User">
+          <py.VariableDeclaration name="name" type="str" />
+        </py.DataclassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     # Copyright 2024 My Company
     """
     Module description.
@@ -853,34 +888,33 @@ it("headerComment + doc + futureImports + imports before definition", () => {
     class User:
         name: str = None
 
-
-  `);
+  `,
+  });
 });
 
 it("only headerComment in file (no children)", () => {
-  const content = (
-    <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company" />
-  );
-
-  expect(toSourceText(content)).toRenderTo(d`
-    # Copyright 2024 My Company
-
-  `);
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile path="test.py" headerComment="Copyright 2024 My Company" />
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": "# Copyright 2024 My Company",
+  });
 });
 
 it("header + headerComment before definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      header="#!/usr/bin/env python3"
-      headerComment="Copyright 2024 My Company"
-    >
-      <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
-    </py.SourceFile>
-  );
-
-  // 2 blank lines before definition (PEP 8)
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        header="#!/usr/bin/env python3"
+        headerComment="Copyright 2024 My Company"
+      >
+        <py.FunctionDeclaration name="hello">pass</py.FunctionDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
@@ -888,23 +922,23 @@ it("header + headerComment before definition", () => {
     def hello():
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("header + headerComment before class definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      header="#!/usr/bin/env python3"
-      headerComment="Copyright 2024 My Company"
-    >
-      <py.ClassDeclaration name="MyClass">pass</py.ClassDeclaration>
-    </py.SourceFile>
-  );
-
-  // 2 blank lines before definition (PEP 8)
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        header="#!/usr/bin/env python3"
+        headerComment="Copyright 2024 My Company"
+      >
+        <py.ClassDeclaration name="MyClass">pass</py.ClassDeclaration>
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
@@ -912,25 +946,26 @@ it("header + headerComment before class definition", () => {
     class MyClass:
         pass
 
-
-  `);
+  `,
+  });
 });
 
 it("header + headerComment before non-definition", () => {
-  const content = (
-    <py.SourceFile
-      path="test.py"
-      header="#!/usr/bin/env python3"
-      headerComment="Copyright 2024 My Company"
-    >
-      <py.VariableDeclaration name="x" initializer={42} />
-    </py.SourceFile>
-  );
-
-  // 1 blank line for non-definition
-  expect(toSourceText(content)).toRenderTo(d`
+  expect(
+    <TestOutputDirectory>
+      <py.SourceFile
+        path="test.py"
+        header="#!/usr/bin/env python3"
+        headerComment="Copyright 2024 My Company"
+      >
+        <py.VariableDeclaration name="x" initializer={42} />
+      </py.SourceFile>
+    </TestOutputDirectory>,
+  ).toRenderTo({
+    "test.py": `
     #!/usr/bin/env python3
     # Copyright 2024 My Company
 
-    x = 42`);
+    x = 42`,
+  });
 });

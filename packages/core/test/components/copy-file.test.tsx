@@ -7,7 +7,6 @@ import { SourceDirectory } from "../../src/components/SourceDirectory.jsx";
 import type { CopyOutputFile } from "../../src/output-types.js";
 import { render } from "../../src/render-output.js";
 import { writeOutput } from "../../src/write-output.js";
-import "../../testing/extend-expect.js";
 
 describe("CopyFile", () => {
   let testDir: string;

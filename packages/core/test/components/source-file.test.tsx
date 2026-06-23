@@ -8,13 +8,11 @@ import {
   Output,
   Prose,
   render,
-  renderTree,
   SourceFile,
   useContext,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { SourceDirectoryContext } from "../../src/context/source-directory.js";
-import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
 it("tracks its content", () => {
@@ -22,14 +20,16 @@ it("tracks its content", () => {
   function Test() {
     context = useContext(SourceDirectoryContext);
   }
-  const _ = renderTree(
+  expect(
     <Output>
       <Test />
       <SourceFile path="hi.txt" filetype="text">
         hello!
       </SourceFile>
     </Output>,
-  );
+  ).toRenderTo({
+    "hi.txt": "hello!",
+  });
   expect(context!.contents.length).toEqual(1);
 });
 

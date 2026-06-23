@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
-import { build, type Rolldown } from "vite";
+import { build, type Rollup } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const tempDir = join(__dirname, ".temp", "browser-build-test");
@@ -100,9 +100,9 @@ async function bundleForBrowser(): Promise<{
   const output = (
     Array.isArray(result) ?
       result[0]
-    : result) as Rolldown.RolldownOutput;
+    : result) as Rollup.RollupOutput;
   const chunks = output.output.filter(
-    (o): o is Rolldown.OutputChunk => o.type === "chunk",
+    (o): o is Rollup.OutputChunk => o.type === "chunk",
   );
   return { code: chunks.map((c) => c.code).join("\n"), warnings };
 }

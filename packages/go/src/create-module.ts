@@ -42,26 +42,30 @@ export interface NamedTypeDescriptor<M extends Record<string, Descriptor>> {
   members: M;
 }
 
-export interface TypeDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface TypeDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "type";
 }
 
-export interface PackageDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface PackageDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "package";
   path?: string;
   name?: string;
   members: M;
 }
 
-export interface StructDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface StructDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "struct";
 }
 
-export interface InterfaceDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface InterfaceDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "interface";
 }
 

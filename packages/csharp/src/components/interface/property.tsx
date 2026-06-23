@@ -26,8 +26,7 @@ const getModifiers = makeModifiers<InterfacePropertyModifiers>(["new"]);
 
 // properties for creating a method
 export interface InterfacePropertyProps
-  extends AccessModifiers,
-    InterfacePropertyModifiers {
+  extends AccessModifiers, InterfacePropertyModifiers {
   name: string | Namekey;
   refkey?: Refkey;
 

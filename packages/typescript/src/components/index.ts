@@ -14,6 +14,7 @@ export {
   type FunctionBodyProps,
   type FunctionParametersProps,
   type FunctionTypeParametersProps,
+  type TypeParametersProps,
 } from "./FunctionBase.js";
 export * from "./FunctionCallExpression.js";
 export * from "./FunctionDeclaration.js";

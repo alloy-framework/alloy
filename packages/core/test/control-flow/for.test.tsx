@@ -1,14 +1,7 @@
-import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 import { For } from "../../src/components/For.jsx";
-import {
-  onCleanup,
-  printTree,
-  reactive,
-  ref,
-  renderTree,
-} from "../../src/index.js";
+import { onCleanup, reactive, ref } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
 
 it("works", () => {
@@ -103,14 +96,18 @@ it("doesn't rerender mappers", () => {
   const messages = reactive(["hi", "bye"]);
   let count = 0;
   const template = <For each={messages}>{() => <>item {count++}</>}</For>;
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
+  expect(tree).toRenderTo(`
+    item 0
+    item 1
+  `);
   expect(count).toBe(2);
 
   messages.push("maybe");
   flushJobs();
 
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -121,13 +118,17 @@ it("doesn't rerender mappers with sets", () => {
   const messages = reactive(new Set(["hi", "bye"]));
   let count = 0;
   const template = <For each={messages}>{() => <>item {count++}</>}</For>;
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
+  expect(tree).toRenderTo(`
+    item 0
+    item 1
+  `);
   expect(count).toBe(2);
 
   messages.add("maybe");
   flushJobs();
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -144,13 +145,17 @@ it("doesn't rerender mappers with maps", () => {
 
   let count = 0;
   const template = <For each={messages}>{() => <>item {count++}</>}</For>;
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
+  expect(tree).toRenderTo(`
+    item 0
+    item 1
+  `);
   expect(count).toBe(2);
 
   messages.set("maybe", "three");
   flushJobs();
   expect(count).toBe(3);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 1
     item 2
@@ -167,7 +172,12 @@ it("doesn't rerender mappers (with splice)", () => {
       }}
     </For>
   );
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
+  expect(tree).toRenderTo(`
+    item 0
+    item 1
+    item 2
+  `);
   expect(count).toBe(3);
   messages.splice(1, 1);
   flushJobs();
@@ -175,7 +185,7 @@ it("doesn't rerender mappers (with splice)", () => {
   // but for now we re-render everything after the splice point.
   expect(count).toBe(4);
 
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     item 0
     item 3
   `);
@@ -196,10 +206,10 @@ it("cleans up things which end up removed (with push)", () => {
 
   const template = <For each={items}>{(item) => <Letter letter={item} />}</For>;
 
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
 
   expect(cleanups).toEqual([]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter b
   `);
@@ -207,14 +217,14 @@ it("cleans up things which end up removed (with push)", () => {
   items.pop();
   flushJobs();
   expect(cleanups).toEqual(["b"]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
   `);
 
   items.pop();
   flushJobs();
   expect(cleanups).toEqual(["b", "a"]);
-  expect(printTree(tree)).toBe("");
+  expect(tree).toRenderTo("");
 });
 
 it("cleans up things which end up removed (with splice)", () => {
@@ -232,10 +242,10 @@ it("cleans up things which end up removed (with splice)", () => {
 
   const template = <For each={items}>{(item) => <Letter letter={item} />}</For>;
 
-  const tree = renderTree(template);
+  const tree = <>{template}</>;
 
   expect(cleanups).toEqual([]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter b
     Letter c
@@ -246,7 +256,7 @@ it("cleans up things which end up removed (with splice)", () => {
   // A sufficiently smart mapJoin would be able to handle this case...
   // but for now we re-render everything after the splice point.
   expect(cleanups).toEqual(["b", "c"]);
-  expect(printTree(tree)).toBe(d`
+  expect(tree).toRenderTo(`
     Letter a
     Letter c
   `);
@@ -254,10 +264,8 @@ it("cleans up things which end up removed (with splice)", () => {
 
 it("doesn't render empty content", () => {
   const items = [1, 2, 3];
-  const tree = renderTree(
-    <For each={items}>{(item) => (item > 2 ? item : null)}</For>,
-  );
-  expect(printTree(tree)).toBe(`3`);
+  const tree = <For each={items}>{(item) => (item > 2 ? item : null)}</For>;
+  expect(tree).toRenderTo("3");
 });
 
 it("updates joiners appropriately when items get/lose content", () => {
@@ -267,16 +275,16 @@ it("updates joiners appropriately when items get/lose content", () => {
     { content: ref("hello") },
   ];
 
-  const tree = renderTree(
+  const tree = (
     <For each={items} joiner=", ">
       {(item) => {
         return item.content;
       }}
-    </For>,
+    </For>
   );
 
-  expect(printTree(tree)).toBe(`hello`);
+  expect(tree).toRenderTo("hello");
   items[1].content.value = "hi";
   flushJobs();
-  expect(printTree(tree)).toBe(`hi, hello`);
+  expect(tree).toRenderTo("hi, hello");
 });

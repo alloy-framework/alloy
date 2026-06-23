@@ -1,5 +1,4 @@
 import { List, namekey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import {
   CommaList,
@@ -7,10 +6,14 @@ import {
   ObjectProperty,
   ObjectSpreadProperty,
 } from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { TestFile } from "./utils.js";
 
 it("from js value", () => {
-  expect(toSourceText(<ObjectExpression jsValue={{ a: 1, b: 2 }} />)).toBe(d`
+  expect(
+    <TestFile>
+      <ObjectExpression jsValue={{ a: 1, b: 2 }} />
+    </TestFile>,
+  ).toRenderTo(`
   {
     a: 1,
     b: 2,
@@ -27,7 +30,7 @@ it("from object property", () => {
       </List>
     </ObjectExpression>
   );
-  expect(toSourceText(comp)).toBe(d`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     a: 1,
     b: 2
@@ -41,7 +44,7 @@ it("spread property", () => {
       <ObjectSpreadProperty>abc</ObjectSpreadProperty>
     </ObjectExpression>
   );
-  expect(toSourceText(comp)).toBe(d`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     ...abc
   }
@@ -54,7 +57,7 @@ it("Works with both children and jsvalue", () => {
       <ObjectProperty name="c" value={3} />
     </ObjectExpression>
   );
-  expect(toSourceText(comp)).toBe(d`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
   {
     a: 1,
     b: 2,
@@ -77,7 +80,7 @@ it("Handles name conflicts and namekeys", () => {
       </CommaList>
     </ObjectExpression>
   );
-  expect(toSourceText(comp)).toBe(d`
+  expect(<TestFile>{comp}</TestFile>).toRenderTo(`
     {
       a: 3,
       a_2: 1,

@@ -16,6 +16,7 @@ import { PythonOutputSymbol } from "../index.js";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createMethodSymbol } from "../symbols/factories.js";
 import { Atom } from "./Atom.jsx";
+import { DecoratorList } from "./DecoratorList.jsx";
 import { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
@@ -72,6 +73,29 @@ const PropertyContext = createContext<Children | undefined>();
  * The property must be declared within a class. The getter method is
  * automatically generated using the `@property` decorator. Use the nested
  * `Setter` and `Deleter` components to add mutators.
+ *
+ * Use **`decorators`** for decorators that must appear **above** the intrinsic
+ * `@property` (for example Pydantic `@computed_field`, `@typing.final`,
+ * `@typing.override`). The first array entry is rendered topmost, matching
+ * Python source order.
+ *
+ * @example Pydantic computed field
+ * ```tsx
+ * <py.PropertyDeclaration
+ *   name="area"
+ *   type="float"
+ *   decorators={[code`@${pydanticModule["."].computed_field}`]}
+ * >
+ *   return self.width ** 2
+ * </py.PropertyDeclaration>
+ * ```
+ * Generates:
+ * ```python
+ * @computed_field
+ * @property
+ * def area(self) -> float:
+ *     return self.width ** 2
+ * ```
  */
 export interface PropertyDeclarationProps {
   name: string;
@@ -80,6 +104,12 @@ export interface PropertyDeclarationProps {
   refkey?: Refkey;
   abstract?: boolean;
   doc?: Children;
+  /**
+   * Decorators rendered above the intrinsic `@property` line, in source order
+   * (`decorators[0]` is topmost / applied last). Use for decorators that wrap
+   * the resulting property, e.g. Pydantic's `@computed_field`.
+   */
+  decorators?: Children[];
 }
 
 export function PropertyDeclaration(props: PropertyDeclarationProps) {
@@ -120,6 +150,7 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
             <PropertyMethodDeclaration
               abstract={props.abstract}
               doc={props.doc}
+              decorators={props.decorators}
             >
               {unkeyedChildren}
             </PropertyMethodDeclaration>
@@ -147,21 +178,25 @@ export function PropertyDeclaration(props: PropertyDeclarationProps) {
   );
 }
 
-export interface PropertyMethodDeclarationProps
-  extends Omit<CommonFunctionProps, "name"> {
+export interface PropertyMethodDeclarationProps extends Omit<
+  CommonFunctionProps,
+  "name"
+> {
   abstract?: boolean;
 }
 
 function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
   const propertySymbol = useContext(DeclarationContext) as PythonOutputSymbol;
   const propertyType = useContext(PropertyContext);
+  const { decorators, ...rest } = props;
 
   return (
     <>
+      <DecoratorList decorators={decorators} />
       {code`@property`}
       <hbr />
       <MethodDeclarationBase
-        {...props}
+        {...rest}
         name={propertySymbol.name}
         functionType="instance"
         returnType={propertyType}
@@ -173,8 +208,10 @@ function PropertyMethodDeclaration(props: PropertyMethodDeclarationProps) {
   );
 }
 
-interface PropertyMethodBaseProps
-  extends Omit<PropertyMethodDeclarationProps, "name"> {
+interface PropertyMethodBaseProps extends Omit<
+  PropertyMethodDeclarationProps,
+  "name"
+> {
   decoratorType: "setter" | "deleter";
   parameters?: (ParameterDescriptor | string)[];
 }
@@ -219,6 +256,13 @@ function PropertyMethodBase(props: PropertyMethodBaseProps) {
  * def value(self, value: int) -> None:
  *     self._value = value
  * ```
+ *
+ * @remarks
+ * The intrinsic `@<name>.setter` decorator is always rendered topmost (it must
+ * remain the outermost decorator). Any `decorators` passed to this component
+ * are rendered **between** `@<name>.setter` and `def`, which is the correct
+ * position for wrappers that should decorate the underlying function before
+ * `setter` re-binds it to the property (e.g. `@deprecated`, `@abstractmethod`).
  */
 PropertyDeclaration.Setter = taggedComponent(
   setterTag,
@@ -253,6 +297,13 @@ PropertyDeclaration.Setter = taggedComponent(
  * def value(self) -> None:
  *     del self._value
  * ```
+ *
+ * @remarks
+ * The intrinsic `@<name>.deleter` decorator is always rendered topmost (it
+ * must remain the outermost decorator). Any `decorators` passed to this
+ * component are rendered **between** `@<name>.deleter` and `def`, which is
+ * the correct position for wrappers that should decorate the underlying
+ * function before `deleter` re-binds it to the property.
  */
 PropertyDeclaration.Deleter = taggedComponent(
   deleterTag,

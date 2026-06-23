@@ -7,6 +7,7 @@ import {
   createScope,
   isComponentCreator,
   List,
+  PrintTreeOptions,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -78,7 +79,7 @@ export function useSourceFile() {
   return useContext(PythonSourceFileContext)!;
 }
 
-export interface SourceFileProps {
+export interface SourceFileProps extends PrintTreeOptions {
   /**
    * The path to the file relative to the source directory.
    */
@@ -200,6 +201,10 @@ export function SourceFile(props: SourceFileProps) {
       filetype="py"
       reference={Reference}
       header={props.header}
+      tabWidth={props.tabWidth ?? 4}
+      printWidth={props.printWidth}
+      useTabs={props.useTabs}
+      insertFinalNewLine={props.insertFinalNewLine}
     >
       {/* Extra blank line after header when followed by doc/futureImports/children (not headerComment) */}
       <Show

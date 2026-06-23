@@ -13,7 +13,6 @@ import {
   SourceFile,
   useBinder,
 } from "../../src/index.js";
-import { d, renderToString } from "../../testing/render.js";
 
 function TestWrapper(props: { children: Children }) {
   const GetBinder = createTap(() => useBinder());
@@ -47,7 +46,7 @@ describe("render the reference name if a declaration exists", () => {
       </TestWrapper>
     );
 
-    expect(renderToString(template)).toEqual(d`
+    expect(template).toRenderTo(`
       Declare A
       A
     `);
@@ -64,10 +63,10 @@ describe("render the reference name if a declaration exists", () => {
       </TestWrapper>
     );
 
-    expect(renderToString(template)).toEqual(d`
-    A
-    Declare A
-  `);
+    expect(template).toRenderTo(`
+      A
+      Declare A
+    `);
   });
 });
 
@@ -79,7 +78,7 @@ it("render content if there is not declaration attached to symbol", () => {
     </TestWrapper>
   );
 
-  expect(renderToString(template)).toEqual(d`
+  expect(template).toRenderTo(`
     No Reference A
   `);
 });
@@ -97,7 +96,7 @@ it("mixed", () => {
     </TestWrapper>
   );
 
-  expect(renderToString(template)).toEqual(d`
+  expect(template).toRenderTo(`
     Declare A
     A
     No Reference B
@@ -130,7 +129,7 @@ it("resolve ref via source file reference", () => {
     </Output>
   );
 
-  expect(renderToString(template)).toEqual(d`
+  expect(template).toRenderTo(`
     Declare A
     ViaRef.A
   `);

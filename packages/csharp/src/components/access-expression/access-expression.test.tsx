@@ -1,7 +1,7 @@
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
 import { TestNamespace } from "#test/utils.jsx";
-import { List, namekey, printTree, renderTree } from "@alloy-js/core";
+import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import { CSharpSymbol } from "../../symbols/csharp.js";
 import { AccessExpression } from "./access-expression.jsx";
@@ -49,15 +49,18 @@ it("makes an id part from a symbol", () => {
 
 it("makes an id part from a symbol reactively", () => {
   const symbol = new CSharpSymbol("Symbol", undefined);
-  const tree = renderTree(
+  const template = (
     <AccessExpression>
       <AccessExpression.Part id="Foo" />
       <AccessExpression.Part symbol={symbol} />
-    </AccessExpression>,
+    </AccessExpression>
   );
-  expect(printTree(tree)).toEqual("Foo.Symbol");
+
+  expect(template).toRenderTo("Foo.Symbol");
+
+  const tree = template;
   symbol.name = "Bar";
-  expect(printTree(tree)).toEqual("Foo.Bar");
+  expect(tree).toRenderTo("Foo.Bar");
 });
 
 it("makes an id part from refkey, where the first part is a full reference, and subsequent parts are just the id", () => {

@@ -12,7 +12,6 @@ import {
   resetDevtoolsServerForTests,
 } from "../../src/devtools/devtools-server.js";
 import { clearRenderStack } from "../../src/render-stack.js";
-import "../../testing/extend-expect.js";
 
 // Strip ANSI escape codes from a string for consistent testing across environments
 function stripAnsi(str: string): string {
@@ -25,8 +24,8 @@ function expectErrorContaining(
   spy: ReturnType<typeof vi.spyOn>,
   substring: string,
 ) {
-  const calls = spy.mock.calls.map((call) => stripAnsi(String(call[0])));
-  expect(calls.some((msg) => msg.includes(substring))).toBe(true);
+  const calls = spy.mock.calls.map((call: any[]) => stripAnsi(String(call[0])));
+  expect(calls.some((msg: string) => msg.includes(substring))).toBe(true);
 }
 
 describe("printRenderStack", () => {

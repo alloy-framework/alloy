@@ -109,7 +109,7 @@ export function defaultProps<T extends {}>(props: T, defaults: Partial<T>): T {
       ) as any;
     }
 
-    return proxyRefs(refs);
+    return proxyRefs(refs) as T;
   }
   const withDefaults = {} as T;
   const copied = new Set<string>();

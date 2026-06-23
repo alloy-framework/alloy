@@ -1,5 +1,4 @@
 import { Output, refkey, SourceDirectory } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { JsonArray, JsonArrayElement } from "./json-array.jsx";
 import { JsonObject, JsonObjectProperty } from "./json-object.jsx";

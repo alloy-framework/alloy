@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/markdown",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Alloy components for generating markdown",
   "repository": {
     "type": "git",
@@ -31,12 +31,13 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
-    "yaml": "^2.7.1"
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
+    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

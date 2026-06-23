@@ -33,6 +33,7 @@
     "@types/babel__core": "catalog:",
     "@types/babel__generator": "catalog:",
     "@types/babel__traverse": "catalog:",
+    "@types/node": "catalog:",
     "babel-plugin-tester": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"

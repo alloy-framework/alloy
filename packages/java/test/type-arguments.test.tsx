@@ -1,46 +1,46 @@
-import { code, refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
-import { it } from "vitest";
+import { Output, code, refkey } from "@alloy-js/core";
+import { expect, it } from "vitest";
 import * as jv from "../src/components/index.js";
-import { assertFileContents, testRender } from "./utils.jsx";
 
 it("passes types", () => {
-  const res = testRender(
-    <>
-      <jv.SourceFile path="TypeOne.java">
-        <jv.Declaration name="TypeOne">
-          {code`
-            public interface TypeOne {
-            }
-          `}
-        </jv.Declaration>
-      </jv.SourceFile>
-      <jv.SourceFile path="TypeTwo.java">
-        <jv.Declaration name="TypeTwo">
-          {code`
-            public interface TypeTwo {
-            }
-          `}
-        </jv.Declaration>
-      </jv.SourceFile>
-      <jv.PackageDirectory package="import">
-        <jv.SourceFile path="TestGenerics.java">
-          <jv.Class public name="TestGenerics">
+  expect(
+    <Output>
+      <jv.PackageDirectory package="me.test.code">
+        <jv.SourceFile path="TypeOne.java">
+          <jv.Declaration name="TypeOne">
             {code`
-              public TestGenerics() {
-                List${(<jv.TypeArguments args={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
-                List${(<jv.TypeArguments args={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
-                List${(<jv.TypeArguments args={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
+              public interface TypeOne {
               }
             `}
-          </jv.Class>
+          </jv.Declaration>
         </jv.SourceFile>
+        <jv.SourceFile path="TypeTwo.java">
+          <jv.Declaration name="TypeTwo">
+            {code`
+              public interface TypeTwo {
+              }
+            `}
+          </jv.Declaration>
+        </jv.SourceFile>
+        <jv.PackageDirectory package="import">
+          <jv.SourceFile path="TestGenerics.java">
+            <jv.Class public name="TestGenerics">
+              {code`
+                public TestGenerics() {
+                  List${(<jv.TypeArguments args={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
+                  List${(<jv.TypeArguments args={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
+                  List${(<jv.TypeArguments args={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
+                }
+              `}
+            </jv.Class>
+          </jv.SourceFile>
+        </jv.PackageDirectory>
       </jv.PackageDirectory>
-    </>,
-  );
-
-  assertFileContents(res, {
-    "TestGenerics.java": d`
+    </Output>,
+  ).toRenderTo({
+    "me/test/code/TypeOne.java": expect.any(String),
+    "me/test/code/TypeTwo.java": expect.any(String),
+    "me/test/code/import/TestGenerics.java": `
       package me.test.code.import;
 
       import me.test.code.TypeOne;

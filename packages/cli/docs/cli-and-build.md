@@ -128,6 +128,11 @@ Scans `node_modules/@alloy-js/` for installed packages that include a `docs/` di
 
 The managed section uses `<!-- BEGIN:alloy-docs -->` / `<!-- END:alloy-docs -->` markers so the command is idempotent — running it again updates the section without affecting other content in `AGENTS.md`.
 
+| Flag                  | Purpose                                                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--output <dir>`      | Directory for `AGENTS.md` (defaults to the git root, or the project root if not in a repo).                      |
+| `--top-heading-level` | Level (1–5) for the section's top heading. Default `1` emits `# Alloy Framework`; `2` emits `## Alloy ...`, etc. |
+
 ### `install-agents`
 
 ```sh

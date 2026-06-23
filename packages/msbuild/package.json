@@ -1,6 +1,6 @@
 {
   "name": "@alloy-js/msbuild",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Alloy components for msbuild files.",
   "repository": {
     "type": "git",
@@ -56,10 +56,11 @@
     "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@rollup/plugin-typescript": "catalog:",
-    "@types/js-yaml": "^4.0.9",
+    "@types/js-yaml": "catalog:",
+    "@types/node": "catalog:",
     "concurrently": "catalog:",
     "fast-xml-parser": "catalog:",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

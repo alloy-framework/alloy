@@ -1,5 +1,4 @@
 import { Output, SourceDirectory, SourceFile } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import * as ts from "../src/components/index.js";

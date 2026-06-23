@@ -1,9 +1,8 @@
-import { Prose } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { Prose, code } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 import * as py from "../src/index.js";
 import { abcModule } from "../src/index.js";
-import { toSourceText } from "./utils.js";
+import { TestOutput } from "./utils.js";
 
 describe("PropertyDeclaration", () => {
   it("renders empty property, setter, deleter", () => {
@@ -20,7 +19,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self):
@@ -57,7 +56,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self) -> int:
@@ -121,7 +120,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       class MyClass:
           @property
           def x(self) -> int:
@@ -148,6 +147,71 @@ describe("PropertyDeclaration", () => {
     `);
   });
 
+  it("renders decorators above @property in source order", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.PropertyDeclaration
+              name="area"
+              type="float"
+              decorators={[
+                code`@computed_field`,
+                code`@deprecated("use width**2")`,
+              ]}
+            >
+              return self.width ** 2
+            </py.PropertyDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
+      class MyClass:
+          @computed_field
+          @deprecated("use width**2")
+          @property
+          def area(self) -> float:
+              return self.width ** 2
+
+
+    `);
+  });
+
+  it("stacks decorators above @property and @abstractmethod below it", () => {
+    const decl = (
+      <py.StatementList>
+        <py.ClassDeclaration name="MyClass">
+          <py.StatementList>
+            <py.PropertyDeclaration
+              name="area"
+              type="float"
+              abstract
+              decorators={[code`@computed_field`]}
+            >
+              return self.width ** 2
+            </py.PropertyDeclaration>
+          </py.StatementList>
+        </py.ClassDeclaration>
+      </py.StatementList>
+    );
+
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
+      from abc import abstractmethod
+
+
+      class MyClass:
+          @computed_field
+          @property
+          @abstractmethod
+          def area(self) -> float:
+              return self.width ** 2
+
+
+    `);
+  });
+
   it("renders abstract property with getter, setter, deleter", () => {
     const decl = (
       <py.StatementList>
@@ -167,7 +231,7 @@ describe("PropertyDeclaration", () => {
       </py.StatementList>
     );
 
-    expect(toSourceText([decl], { externals: [abcModule] })).toBe(d`
+    expect(<TestOutput externals={[abcModule]}>{decl}</TestOutput>).toRenderTo(`
       from abc import abstractmethod
 
 

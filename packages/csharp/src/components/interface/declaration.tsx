@@ -23,7 +23,8 @@ const getInterfaceModifiers = makeModifiers<InterfaceModifiers>(["partial"]);
 
 // properties for creating a class
 export interface InterfaceDeclarationProps
-  extends Omit<core.DeclarationProps, "nameKind">,
+  extends
+    Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     InterfaceModifiers {
   name: string | core.Namekey;

@@ -1,9 +1,7 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
-import "../testing/extend-expect.js";
 import { Show } from "./components/Show.jsx";
 import { createContentSlot } from "./content-slot.jsx";
-import { printTree, renderTree } from "./test-render.js";
 
 it("knows when its empty", () => {
   const ContentSlot = createContentSlot();
@@ -31,35 +29,35 @@ it("is reactive", () => {
   const ContentSlot = createContentSlot();
   const showContent = ref(false);
 
-  const tree = renderTree(
+  const tree = (
     <>
       {ContentSlot.isEmpty && "It's empty!"}
       <ContentSlot>
         <Show when={showContent.value}>Content!</Show>
       </ContentSlot>
-    </>,
+    </>
   );
 
-  expect(printTree(tree)).toBe(`It's empty!`);
+  expect(tree).toRenderTo("It's empty!");
   showContent.value = true;
-  expect(printTree(tree)).toBe(`Content!`);
+  expect(tree).toRenderTo("Content!");
 });
 
 it("works with WhenEmpty and WhenHasContent", () => {
   const ContentSlot = createContentSlot();
   const showContent = ref(false);
 
-  const tree = renderTree(
+  const tree = (
     <>
       <ContentSlot.WhenEmpty>It's empty!</ContentSlot.WhenEmpty>
       <ContentSlot.WhenHasContent>Has content!</ContentSlot.WhenHasContent>
       <ContentSlot>
         <Show when={showContent.value}>Content!</Show>
       </ContentSlot>
-    </>,
+    </>
   );
 
-  expect(printTree(tree)).toBe(`It's empty!`);
+  expect(tree).toRenderTo("It's empty!");
   showContent.value = true;
-  expect(printTree(tree)).toBe(`Has content!Content!`);
+  expect(tree).toRenderTo("Has content!Content!");
 });

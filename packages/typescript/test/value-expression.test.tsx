@@ -1,7 +1,6 @@
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { ValueExpression } from "../src/index.js";
-import { toSourceText } from "./utils.jsx";
+import { TestFile } from "./utils.js";
 
 it.each([
   [undefined, "undefined"],
@@ -14,13 +13,13 @@ it.each([
   ["a\nb\rc\\", `"a\\nb\\rc\\\\"`],
   [
     [1, 2, 3],
-    d`
+    `
       [1, 2, 3]
     `,
   ],
   [
     { a: 1, b: 2, c: 3 },
-    d`
+    `
       {
         a: 1,
         b: 2,
@@ -30,7 +29,7 @@ it.each([
   ],
   [
     { "mangled-name": 1, "@pagination": 2 },
-    d`
+    `
       {
         "mangled-name": 1,
         "@pagination": 2,
@@ -38,7 +37,9 @@ it.each([
     `,
   ],
 ])("works - %o => %s", (jsValue, expectedSource) => {
-  expect(toSourceText(<ValueExpression jsValue={jsValue} />)).toBe(
-    expectedSource,
-  );
+  expect(
+    <TestFile>
+      <ValueExpression jsValue={jsValue} />
+    </TestFile>,
+  ).toRenderTo(expectedSource);
 });

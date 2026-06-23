@@ -1,5 +1,4 @@
 import { Output } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 import { PackageJsonFile } from "../src/components/PackageJson.jsx";
 

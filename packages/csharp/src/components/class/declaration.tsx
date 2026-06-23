@@ -40,9 +40,7 @@ const getClassModifiers = makeModifiers<ClassModifiers>([
 
 // properties for creating a class
 export interface ClassDeclarationProps
-  extends Omit<DeclarationProps, "nameKind">,
-    AccessModifiers,
-    ClassModifiers {
+  extends Omit<DeclarationProps, "nameKind">, AccessModifiers, ClassModifiers {
   name: string | Namekey;
   /** Doc comment */
   doc?: Children;

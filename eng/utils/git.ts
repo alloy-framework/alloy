@@ -1,4 +1,4 @@
-import { execa, Result } from "execa";
+import { execa, type Result } from "execa";
 
 export async function listChangedFilesSince(
   ref: string,

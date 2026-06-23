@@ -14,5 +14,9 @@ export default defineConfig({
     jsx: "preserve",
     sourcemap: "both",
   },
+  test: {
+    exclude: ["**/dist/**", "**/node_modules/**"],
+    setupFiles: ["./test/vitest.setup.ts"],
+  },
   plugins: [alloyPlugin()],
 });

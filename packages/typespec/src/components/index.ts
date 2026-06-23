@@ -18,6 +18,7 @@ export * from "./namespace/namespace.jsx";
 export * from "./operation/operation-declaration.jsx";
 export * from "./operation/parameters.jsx";
 export * from "./reference/reference.jsx";
+export * from "./scalar-declaration/scalar-constructor.jsx";
 export * from "./scalar-declaration/scalar-declaration.jsx";
 export * from "./source-file/source-file.jsx";
 export * from "./spread/spread-expression.jsx";

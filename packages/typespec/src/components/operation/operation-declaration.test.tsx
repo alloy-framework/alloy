@@ -4,6 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { DecoratorApplication } from "../decorator/decorator-application.jsx";
+import { ModelDeclaration } from "../model/model-declaration.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
@@ -315,4 +316,71 @@ it("renders an operation with a doc comment", () => {
        */
       op getPet(id: string): Pet
     `);
+});
+
+it("renders an operation with spread parameters", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getUser"
+          parameters={[
+            { spread: "CommonParams" },
+            { name: "extra", type: "boolean" },
+          ]}
+          returnType="User"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getUser(...CommonParams, extra: boolean): User
+  `);
+});
+
+it("renders an operation with only spread parameters", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getUser"
+          parameters={[{ spread: "CommonParams" }]}
+          returnType="User"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getUser(...CommonParams): User
+  `);
+});
+
+it("renders an operation with a spread reference", () => {
+  const paramsKey = refkey();
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <StatementList>
+            <ModelDeclaration name="CommonParams" refkey={paramsKey}>
+              id: string
+            </ModelDeclaration>
+            <OperationDeclaration
+              name="getUser"
+              parameters={[
+                { spread: <Reference refkey={paramsKey} /> },
+                { name: "extra", type: "boolean" },
+              ]}
+              returnType="User"
+            />
+          </StatementList>
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    namespace A;
+
+    model CommonParams {
+      id: string
+    };
+    op getUser(...CommonParams, extra: boolean): User;
+  `);
 });

@@ -7,6 +7,10 @@
       "development": "./src/index.ts",
       "import": "./dist/src/index.js"
     },
+    "./builtins": {
+      "development": "./src/builtins/index.ts",
+      "import": "./dist/src/builtins/index.js"
+    },
     "./stc": {
       "development": "./src/components/stc/index.ts",
       "import": "./dist/src/components/stc/index.js"

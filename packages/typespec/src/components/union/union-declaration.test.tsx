@@ -235,7 +235,7 @@ it("resolves a named union variant reference", () => {
       union Result {
         success: string
       }
-      success
+      Result.success
     `);
 });
 

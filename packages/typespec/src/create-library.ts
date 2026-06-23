@@ -1,5 +1,6 @@
 import {
   Binder,
+  isLibrarySymbolReference,
   LibrarySymbolReference,
   namekey,
   refkey,
@@ -18,7 +19,16 @@ import {
 
 export interface MemberDescriptor {
   kind: string;
-  type?: LibrarySymbolReference | (() => LibrarySymbolReference);
+  /**
+   * The type of this member. Can be:
+   * - A `LibrarySymbolReference` pointing to another library symbol
+   * - A function returning a `LibrarySymbolReference` (for circular refs)
+   * - An inline `Descriptor` for anonymous types (e.g. inline unions)
+   *
+   * Inline descriptors are not materialized as referenceable symbols; they
+   * serve as documentation of the member's type shape.
+   */
+  type?: LibrarySymbolReference | (() => LibrarySymbolReference) | Descriptor;
 }
 
 export interface NamedTypeDescriptor<M> {
@@ -95,10 +105,26 @@ export type LibraryFrom<T> = {
 
 interface InternalContext {
   parent(binder: Binder | undefined): NamedTypeSymbol | ProgramScope;
+  libraryOptions?: CreateLibraryOptions;
 }
+
+export interface CreateLibraryOptions {
+  /**
+   * When true, the namespace's members are implicitly available without
+   * a `using` statement (like the core `TypeSpec` namespace).
+   */
+  implicitlyUsed?: boolean;
+  /**
+   * When set, referencing a symbol from this library will automatically
+   * add an `import "<packageImport>";` to the source file.
+   */
+  packageImport?: string;
+}
+
 export function createLibrary<T extends Record<string, Descriptor>>(
   rootNs: string,
   props: T,
+  options?: CreateLibraryOptions,
 ): LibraryFrom<T> {
   const ownerSymbolPerBinder = new WeakMap<
     Binder,
@@ -144,6 +170,7 @@ export function createLibrary<T extends Record<string, Descriptor>>(
           return ownerSymbol;
         });
       },
+      libraryOptions: options,
     },
   ) as LibraryFrom<T>;
 }
@@ -158,6 +185,7 @@ function createSymbolEntry(
     parent(binder) {
       return getSymbol(binder) as NamedTypeSymbol;
     },
+    libraryOptions: context.libraryOptions,
   };
   const obj: LibrarySymbolReference & Record<string, unknown> = {
     [REFKEYABLE]() {
@@ -220,6 +248,25 @@ function createSymbolEntry(
   return obj;
 }
 
+/**
+ * Resolves a member descriptor's `type` field to a symbol, or undefined if it's
+ * an inline descriptor (anonymous type) that can't be materialized as a symbol.
+ */
+function resolveTypeRef(
+  type: MemberDescriptor["type"],
+): ReturnType<LibrarySymbolReference[typeof TO_SYMBOL]> | undefined {
+  if (type === undefined) return undefined;
+  if (typeof type === "function") {
+    const resolved = type();
+    if (isLibrarySymbolReference(resolved)) return resolved[TO_SYMBOL]();
+    // Function returned a raw descriptor (circular self-reference) — no symbol
+    return undefined;
+  }
+  if (isLibrarySymbolReference(type)) return type[TO_SYMBOL]();
+  // Inline descriptor (anonymous type) — no symbol to reference
+  return undefined;
+}
+
 function createSymbolFromDescriptor(
   name: string,
   binder: Binder | undefined,
@@ -228,6 +275,7 @@ function createSymbolFromDescriptor(
   lazyMemberInitializer: () => void,
 ): TypeSpecSymbol {
   const parent = context.parent(binder);
+  const libOpts = context.libraryOptions;
 
   switch (descriptor.kind) {
     case "namespace": {
@@ -243,6 +291,8 @@ function createSymbolFromDescriptor(
         binder,
         refkeys: refkey(),
         lazyMemberInitializer,
+        packageImport: libOpts?.packageImport,
+        implicitlyUsed: libOpts?.implicitlyUsed,
       });
     }
     case "union":
@@ -257,6 +307,8 @@ function createSymbolFromDescriptor(
           binder,
           refkeys: refkey(),
           lazyMemberInitializer,
+          packageImport: libOpts?.packageImport,
+          implicitlyUsed: libOpts?.implicitlyUsed,
         },
       );
     }
@@ -268,12 +320,10 @@ function createSymbolFromDescriptor(
       return new TypeSpecSymbol(namekey(name), parent.members, {
         binder,
         refkeys: refkey(),
-        type:
-          descriptor.type === undefined ? undefined
-          : typeof descriptor.type === "function" ?
-            descriptor.type()[TO_SYMBOL]()
-          : descriptor.type[TO_SYMBOL](),
+        type: resolveTypeRef(descriptor.type),
         lazyMemberInitializer,
+        packageImport: libOpts?.packageImport,
+        implicitlyUsed: libOpts?.implicitlyUsed,
       });
     }
     case "scalar": {
@@ -281,7 +331,12 @@ function createSymbolFromDescriptor(
         namekey(name),
         parent.members,
         descriptor.kind,
-        { binder, refkeys: refkey() },
+        {
+          binder,
+          refkeys: refkey(),
+          packageImport: libOpts?.packageImport,
+          implicitlyUsed: libOpts?.implicitlyUsed,
+        },
       );
     }
     default: {

@@ -184,7 +184,7 @@ it("resolves an enum member reference", () => {
       enum Direction {
         North
       }
-      North
+      Direction.North
     `);
 });
 

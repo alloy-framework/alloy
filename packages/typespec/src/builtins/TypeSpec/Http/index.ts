@@ -1,19 +1,19 @@
 import { LibrarySymbolReference } from "@alloy-js/core";
-import { createLibrary } from "../../index.js";
+import { createLibrary } from "../../../index.js";
 import dataTypes, { LibraryDataTypes } from "./data-types.js";
 import decorators, { LibraryDecorators } from "./decorators.js";
 
-type TypeSpecLibrary = LibrarySymbolReference &
+type HttpLibrary = LibrarySymbolReference &
   LibraryDecorators &
   LibraryDataTypes;
 
-const TypeSpec: TypeSpecLibrary = createLibrary(
-  "TypeSpec",
+const Http: HttpLibrary = createLibrary(
+  "TypeSpec.Http",
   {
     ...decorators,
     ...dataTypes,
   },
-  { implicitlyUsed: true },
+  { packageImport: "@typespec/http" },
 );
 
-export default TypeSpec;
+export default Http;

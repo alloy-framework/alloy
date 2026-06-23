@@ -8,7 +8,7 @@
     "paths": {
       "#components/*": ["./src/components/*"],
       "#createLibrary": ["./src/create-library.ts"],
-      "#builtins": ["./src/builtins.ts"]
+      "#builtins": ["./src/builtins/index.ts"]
     }
   },
   "references": [{ "path": "../core" }],

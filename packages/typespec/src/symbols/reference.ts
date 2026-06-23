@@ -13,7 +13,22 @@ import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
 import { relativePath } from "../util.js";
 import { TypeSpecSymbol } from "./typespec.js";
 
-export function ref(refkey: Refkey): Ref<OutputSymbol | undefined> {
+export interface RefResult {
+  symbol: OutputSymbol;
+  /**
+   * The access path to render for this reference. After namespace members
+   * are consumed for `using` resolution, this contains only non-namespace
+   * members that must be rendered as a dot-separated path.
+   *
+   * Examples:
+   *   - `TypeSpec.Record` → accessPath = [] (Record is directly accessible)
+   *   - `TypeSpec.Lifecycle.Read` → accessPath = [Read] (Lifecycle is the
+   *     lexical declaration, Read is a member to render)
+   */
+  accessPath: OutputSymbol[];
+}
+
+export function ref(refkey: Refkey): Ref<RefResult | undefined> {
   const scope = useSourceFileScope();
   if (!scope) {
     throw new Error("Reference used outside of a source file scope.");
@@ -24,50 +39,68 @@ export function ref(refkey: Refkey): Ref<OutputSymbol | undefined> {
       return undefined;
     }
     const result = resolveResult.value;
-    const { commonScope, pathUp, pathDown, lexicalDeclaration } = result;
+    const { commonScope, pathUp, pathDown } = result;
+    let { lexicalDeclaration } = result;
+    // Copy memberPath since we mutate it by shifting namespace members
+    const memberPath = [...result.memberPath];
 
     if (!validateSymbolReachable(pathDown)) {
       return undefined;
     }
 
+    // Shift namespace members off the front of memberPath. Each shifted
+    // namespace becomes the new lexical declaration, and the deepest
+    // namespace is the one we add a `using` for. This mirrors how C#
+    // handles nested namespace resolution.
+    let nsToUse: NamespaceSymbol | undefined;
+    while (
+      isNamespaceSymbol(lexicalDeclaration as TypeSpecSymbol) &&
+      memberPath.length > 0
+    ) {
+      nsToUse = lexicalDeclaration as NamespaceSymbol;
+      lexicalDeclaration = memberPath.shift()!;
+    }
+
+    // Library symbol resolution has three modes:
+    // 1. implicitlyUsed (e.g. TypeSpec core) — emit nothing
+    // 2. packageImport set (e.g. @typespec/http) — emit `import "pkg"` + `using Ns`
+    // 3. Neither (e.g. TypeSpec.Reflection) — falls through to the general
+    //    path below, which emits only `using` (no file import is generated
+    //    because library symbols have no SourceFileScope in their pathDown).
+    const targetSym = result.symbol as TypeSpecSymbol;
+
+    if (targetSym.implicitlyUsed) {
+      return { symbol: lexicalDeclaration, accessPath: memberPath };
+    }
+
+    if (targetSym.packageImport) {
+      scope.addImport(targetSym.packageImport);
+      if (nsToUse) {
+        scope.addUsing(nsToUse);
+      }
+      return { symbol: lexicalDeclaration, accessPath: memberPath };
+    }
+
     if (commonScope instanceof ProgramScope) {
       const originFileScope = pathUp.find((s) => s instanceof SourceFileScope);
-      const originPath = originFileScope?.name;
       const targetFileScope = pathDown.find(
         (s) => s instanceof SourceFileScope,
       );
-      const targetPath = targetFileScope?.name;
-      if (!originPath && !targetPath) {
-        throw new Error("Neither origin nor target path found for reference.");
+      if (originFileScope && targetFileScope) {
+        const importPath = relativePath(
+          originFileScope.name,
+          targetFileScope.name,
+        );
+        scope!.addImport(importPath);
       }
-      const importPath = relativePath(originPath!, targetPath!);
-      scope!.addImport(importPath);
-    }
-    if (lexicalDeclaration instanceof NamespaceSymbol) {
-      // Find the innermost namespace containing the target symbol for FQN.
-      const containingNs = findContainingNamespace(result.symbol);
-      scope.addUsing(containingNs ?? lexicalDeclaration);
     }
 
-    return result.symbol;
+    if (nsToUse) {
+      scope.addUsing(nsToUse);
+    }
+
+    return { symbol: lexicalDeclaration, accessPath: memberPath };
   });
-}
-
-/**
- * Finds the innermost namespace that contains the given symbol by walking
- * up the owner chain.
- */
-function findContainingNamespace(
-  symbol: OutputSymbol,
-): NamespaceSymbol | undefined {
-  let current = symbol.ownerSymbol;
-  while (current) {
-    if (isNamespaceSymbol(current as TypeSpecSymbol)) {
-      return current as NamespaceSymbol;
-    }
-    current = current.ownerSymbol;
-  }
-  return undefined;
 }
 
 /**

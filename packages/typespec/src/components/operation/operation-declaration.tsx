@@ -15,9 +15,13 @@ import {
   TemplateParameterDescriptor,
   TemplateParameters,
 } from "../template-parameters/template-parameters.jsx";
-import { type ParameterDescriptor, Parameters } from "./parameters.jsx";
+import { type ParameterEntry, Parameters } from "./parameters.jsx";
 
-export type { ParameterDescriptor } from "./parameters.jsx";
+export type {
+  ParameterDescriptor,
+  ParameterEntry,
+  SpreadParameterDescriptor,
+} from "./parameters.jsx";
 
 export interface OperationDeclarationProps {
   /** The operation name. */
@@ -27,7 +31,7 @@ export interface OperationDeclarationProps {
   /** Template parameters for the operation. */
   templateParameters?: (string | TemplateParameterDescriptor)[];
   /** Operation parameters. */
-  parameters?: ParameterDescriptor[];
+  parameters?: ParameterEntry[];
   /** The return type of the operation. */
   returnType?: Children;
   /** The operation this declaration aliases via `is`. */

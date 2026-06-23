@@ -6,23 +6,35 @@ export interface ParameterDescriptor {
   optional?: boolean;
 }
 
-export function Parameters(props: { parameters?: ParameterDescriptor[] }) {
+export interface SpreadParameterDescriptor {
+  spread: Children;
+}
+
+export type ParameterEntry = ParameterDescriptor | SpreadParameterDescriptor;
+
+export function Parameters(props: { parameters?: ParameterEntry[] }) {
   return (
     <group>
       (
       {props.parameters && props.parameters.length > 0 && (
         <Indent softline trailingBreak>
           <For each={props.parameters} comma line>
-            {(param) => (
-              <>
-                {param.name}
-                {param.optional ? "?" : ""}: {param.type}
-              </>
-            )}
+            {(param) =>
+              isSpread(param) ?
+                <>...{param.spread}</>
+              : <>
+                  {param.name}
+                  {param.optional ? "?" : ""}: {param.type}
+                </>
+            }
           </For>
         </Indent>
       )}
       )
     </group>
   );
+}
+
+function isSpread(param: ParameterEntry): param is SpreadParameterDescriptor {
+  return "spread" in param;
 }

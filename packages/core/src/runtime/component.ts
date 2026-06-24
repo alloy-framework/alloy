@@ -6,6 +6,33 @@ import type { AlloyNode } from "../render/node.js";
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");
 
 /**
+ * Marker placed on the thunks produced by `sti(...)` (the simple template
+ * component creators for intrinsics such as `indent`, `group`, `hbr`).
+ *
+ * Unlike a {@link ComponentCreator}, these thunks eagerly materialize an
+ * intrinsic `ElementNode` (resolving any refkey children) the moment they are
+ * invoked. Child-collection helpers such as `children()`/`childrenArray()` must
+ * therefore treat them as opaque leaves rather than invoking them during keyed
+ * child analysis — otherwise refkeys get resolved against the wrong scope
+ * before the owning component has established its own scope.
+ *
+ * @internal
+ */
+export const _INTRINSIC_CREATOR = Symbol.for("Alloy.IntrinsicCreator");
+
+/**
+ * Returns true if `item` is a thunk produced by `sti(...)` (see
+ * {@link _INTRINSIC_CREATOR}).
+ *
+ * @internal
+ */
+export function _isIntrinsicCreator(item: unknown): boolean {
+  return (
+    typeof item === "function" && (item as any)[_INTRINSIC_CREATOR] === true
+  );
+}
+
+/**
  * A renderable object is any object that has an `[ay.RENDERABLE]` method that
  * returns children. This is used to allow custom object types to be used as
  * children in Alloy components.

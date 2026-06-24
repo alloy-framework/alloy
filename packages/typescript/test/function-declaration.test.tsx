@@ -1,4 +1,5 @@
 import {
+  code,
   List,
   memberRefkey,
   namekey,
@@ -157,6 +158,38 @@ it("supports type parameters by element", () => {
   `);
 });
 
+it("resolves references to function-local symbols from deeply indented code blocks (#429)", () => {
+  const value = refkey();
+  expect(
+    <TestFile>
+      <FunctionDeclaration
+        export
+        name="serialize"
+        parameters={[{ name: "value", type: "string | null", refkey: value }]}
+        returnType="string"
+      >
+        {code`
+          if (value) {
+            if (!${value}) {
+              return ${value} as any;
+            }
+          }
+          return ${value};
+        `}
+      </FunctionDeclaration>
+    </TestFile>,
+  ).toRenderTo(`
+    export function serialize(value: string | null): string {
+      if (value) {
+        if (!value) {
+          return value as any;
+        }
+      }
+      return value;
+    }
+  `);
+});
+
 it("do not add an extra comma when there is no parameters", () => {
   expect(
     <TestFile>
@@ -165,6 +198,34 @@ it("do not add an extra comma when there is no parameters", () => {
   ).toRenderTo(`
     function thisFunctionNameIsTooLongSoTheFormatterWillInsertLineBreakAndIfBreakNodes() {
 
+    }
+  `);
+});
+
+it("resolves references to function-local symbols from indented code blocks (#429)", () => {
+  const value = refkey();
+  expect(
+    <TestFile>
+      <FunctionDeclaration
+        export
+        name="serialize"
+        parameters={[{ name: "value", type: "string | null", refkey: value }]}
+        returnType="string"
+      >
+        {code`
+          if (!${value}) {
+            return ${value} as any;
+          }
+          return ${value};
+        `}
+      </FunctionDeclaration>
+    </TestFile>,
+  ).toRenderTo(`
+    export function serialize(value: string | null): string {
+      if (!value) {
+        return value as any;
+      }
+      return value;
     }
   `);
 });

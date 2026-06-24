@@ -15,6 +15,7 @@ import {
 } from "./reactivity.js";
 import { AlloyNode, FRAGMENT_NODE } from "./render/node.js";
 import {
+  _isIntrinsicCreator,
   Children,
   ComponentCreator,
   isComponentCreator,
@@ -501,7 +502,8 @@ export function children(
       return children.map(collectChildren).flat();
     } else if (
       typeof children === "function" &&
-      !isComponentCreator(children)
+      !isComponentCreator(children) &&
+      !_isIntrinsicCreator(children)
     ) {
       return collectChildren(children());
     } else if (children instanceof AlloyNode) {

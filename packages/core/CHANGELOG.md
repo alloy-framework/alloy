@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/core
 
+## 0.24.1
+
+### Bug Fixes
+
+- [#430](https://github.com/alloy-framework/alloy/pull/430) Fix references to function-local symbols (e.g. parameters) resolving against the wrong scope when emitted from an indented line of a `code` template. Child collection no longer eagerly invokes intrinsic (`indent`/`group`/...) creators, so their refkeys resolve at render time inside the correct scope.
+
+
 ## 0.24.0
 
 ### Bug Fixes

@@ -13,8 +13,7 @@
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch": "alloy build --watch",
-    "prepack": "node ../../scripts/strip-dev-exports.js"
+    "watch": "alloy build --watch"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

@@ -72,31 +72,38 @@ Mode is determined by: CLI flags > `BABEL_ENV` > `NODE_ENV` > default (prod, or 
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",
     "test": "vitest run",
-    "prepack": "node scripts/strip-dev-exports.js", // see Publishing below
   },
 }
 ```
 
 #### Publishing
 
-Before publishing, strip the `"source"` export condition — it is required for local Vitest resolution but must not be present for consumers. Create `scripts/strip-dev-exports.js` in your package root:
+The `"source"` export condition is required for local Vitest resolution but must not be present for consumers. Rather than mutating `package.json` with a prepack script, declare the consumer-facing `exports` (and `imports`) under [pnpm's `publishConfig`](https://pnpm.io/package_json#publishconfig). pnpm swaps these in when packing (`pnpm pack`/`pnpm publish`), so the published manifest has no `"source"` condition:
 
-```js
-import { readFileSync, writeFileSync } from "fs";
-const pkg = JSON.parse(readFileSync("package.json", "utf-8"));
-function strip(obj) {
-  if (typeof obj !== "object" || obj === null) return obj;
-  delete obj.source;
-  for (const val of Object.values(obj)) strip(val);
-  return obj;
+```jsonc
+{
+  "exports": {
+    ".": {
+      "source": "./src/index.ts", // local dev only
+      "development": "./dist/dev/index.js",
+      "import": "./dist/index.js",
+    },
+  },
+  "publishConfig": {
+    // pnpm replaces the whole `exports` field with this on publish
+    "exports": {
+      ".": {
+        "development": "./dist/dev/index.js",
+        "import": "./dist/index.js",
+      },
+    },
+  },
 }
-if (pkg.exports) strip(pkg.exports);
-if (pkg.imports) strip(pkg.imports);
-writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
-console.log("Stripped source exports from package.json.");
 ```
 
-The `prepack` script above runs this automatically before `npm publish`.
+`publishConfig.exports` is a whole-field replacement, so it must contain the complete export map minus the `"source"` condition. The same applies to `imports` if your package uses it. This override only takes effect when packing with pnpm.
+
+You don't have to hand-maintain the `publishConfig` copy. The repo's `eng/sync-publish-config.ts` regenerates it from each package's top-level `exports`/`imports` (stripping `"source"`). Run `pnpm sync-publish-config` to update it, and `pnpm sync-publish-config:check` (run in CI) to fail if it drifts.
 
 > **Note:** Export paths in `package.json` must match your actual output directory (see [Build Pipeline](#build-pipeline) below). Update all compiled output paths in your `exports` accordingly (e.g., `"./dist/dev/index.js"` and `"./dist/index.js"`). The `"source"` condition path (`./src/index.ts`) is unchanged.
 

@@ -14,6 +14,8 @@
     "change": "chronus",
     "clean": "pnpm -r run clean && rimraf **/.temp/",
     "test": "vitest run",
+    "sync-publish-config": "node eng/sync-publish-config.ts",
+    "sync-publish-config:check": "node eng/sync-publish-config.ts --check",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint . --max-warnings=0",

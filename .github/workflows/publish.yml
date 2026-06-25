@@ -72,8 +72,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - run: node node_modules/.bin/chronus version --prerelease
+      - run: pnpm chronus version --prerelease
         name: Bump prerelease version
 
-      - run: NODE_AUTH_TOKEN="" node node_modules/.bin/chronus publish --access public --tag next
+      - run: NODE_AUTH_TOKEN="" pnpm chronus publish --access public --tag next
         name: Publish Dev versions

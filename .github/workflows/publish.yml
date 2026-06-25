@@ -72,8 +72,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - run: pnpm chronus version --prerelease
+      # Invoke the chronus bin directly (not via `pnpm`) so pnpm's frozen-lockfile
+      # deps check doesn't run: `chronus version --prerelease` rewrites `workspace:`
+      # specifiers in the manifests, which would otherwise make the lockfile look
+      # out of date. `node node_modules/.bin/chronus` cannot be used because that
+      # entry is a shell shim, not a JS file.
+      - run: node_modules/.bin/chronus version --prerelease
         name: Bump prerelease version
 
-      - run: NODE_AUTH_TOKEN="" pnpm chronus publish --access public --tag next
+      - run: NODE_AUTH_TOKEN="" node_modules/.bin/chronus publish --access public --tag next
         name: Publish Dev versions

@@ -1,0 +1,73 @@
+import { Declaration, Output } from "@alloy-js/core";
+import { renderToString } from "@alloy-js/core/testing";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+import { resetProgram } from "../../contexts/index.js";
+import { createTypeSpecNamePolicy } from "../../name-policy.js";
+import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import { SourceFile } from "../source-file/source-file.jsx";
+import { Name } from "./name.jsx";
+
+beforeEach(() => {
+  resetProgram();
+});
+
+it("throws when used without a declaration context", () => {
+  const consoleMock = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  afterEach(() => {
+    consoleMock.mockReset();
+  });
+  expect(() =>
+    renderToString(
+      <Output>
+        <SourceFile path="main.tsp">
+          <Name />
+        </SourceFile>
+      </Output>,
+    ),
+  ).toThrow("missing declaration context");
+});
+
+it("renders the current declaration's name", () => {
+  const policy = createTypeSpecNamePolicy();
+
+  expect(
+    <Output namePolicy={policy}>
+      <SourceFile path="main.tsp">
+        <Declaration
+          symbol={createNamedTypeSymbol("Foo", "scalar", {
+            namePolicy: policy.for("scalar"),
+          })}
+        >
+          <Name />
+        </Declaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      Foo
+    `,
+  });
+});
+
+it("renders the policy-adjusted name", () => {
+  const policy = createTypeSpecNamePolicy();
+
+  expect(
+    <Output namePolicy={policy}>
+      <SourceFile path="main.tsp">
+        <Declaration
+          symbol={createNamedTypeSymbol("model", "scalar", {
+            namePolicy: policy.for("scalar"),
+          })}
+        >
+          <Name />
+        </Declaration>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "main.tsp": `
+      \`model\`
+    `,
+  });
+});

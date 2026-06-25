@@ -146,3 +146,6 @@ packages/docs/dist-build
 packages/*/docs/api
 
 alloy-output/
+
+# pnpm store
+.pnpm-store/

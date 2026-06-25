@@ -13,6 +13,13 @@
       "default": "./dist/index.js"
     }
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "default": "./dist/index.js"
+      }
+    }
+  },
   "files": [
     "dist"
   ],

@@ -46,6 +46,41 @@
       "import": "./dist/src/devtools-entry.js"
     }
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "browser": "./dist/src/index.browser.js",
+        "development": "./dist/dev/src/index.js",
+        "import": "./dist/src/index.js"
+      },
+      "./jsx-runtime": {
+        "types": "./dist/src/jsx-runtime.d.ts",
+        "development": "./dist/dev/src/jsx-runtime.js",
+        "import": "./dist/src/jsx-runtime.js"
+      },
+      "./testing": {
+        "development": "./dist/dev/testing/index.js",
+        "import": "./dist/testing/index.js"
+      },
+      "./testing/matchers": {
+        "types": "./testing/vitest.d.ts"
+      },
+      "./stc": {
+        "development": "./dist/dev/src/components/stc/index.js",
+        "import": "./dist/src/components/stc/index.js"
+      },
+      "./components": {
+        "development": "./dist/dev/src/components/index.js",
+        "import": "./dist/src/components/index.js"
+      },
+      "./devtools": {
+        "types": "./dist/src/devtools-entry.d.ts",
+        "browser": "./dist/src/devtools-entry.browser.js",
+        "development": "./dist/dev/src/devtools-entry.js",
+        "import": "./dist/src/devtools-entry.js"
+      }
+    }
+  },
   "browser": {
     "./dist/src/host/alloy-host.js": "./dist/src/host/alloy-host.browser.js",
     "./src/host/alloy-host.ts": "./src/host/alloy-host.browser.ts",
@@ -68,8 +103,7 @@
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch": "alloy build --watch",
-    "prepack": "node ../../scripts/strip-dev-exports.js"
+    "watch": "alloy build --watch"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",

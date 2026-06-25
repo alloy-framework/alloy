@@ -31,6 +31,29 @@
       "default": "./dist/src/builtins.js"
     }
   },
+  "publishConfig": {
+    "exports": {
+      "./components": {
+        "development": "./dist/dev/src/components/index.js",
+        "import": "./dist/src/components/index.js"
+      }
+    },
+    "imports": {
+      "#test/*": "./test/*",
+      "#components/*": {
+        "development": "./dist/dev/src/components/*",
+        "default": "./dist/src/components/*"
+      },
+      "#createLibrary": {
+        "development": "./dist/dev/src/create-library.js",
+        "default": "./dist/src/create-library.js"
+      },
+      "#builtins": {
+        "development": "./dist/dev/src/builtins.js",
+        "default": "./dist/src/builtins.js"
+      }
+    }
+  },
   "scripts": {
     "generate-docs": "api-extractor run",
     "build": "alloy build --with-dev && pnpm run generate-docs",
@@ -38,8 +61,7 @@
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",
     "test": "vitest run",
-    "generate:components": "node ./dist/scripts/generate-msbuild-components.js",
-    "prepack": "node ../../scripts/strip-dev-exports.js"
+    "generate:components": "node ./dist/scripts/generate-msbuild-components.js"
   },
   "keywords": [],
   "author": "jhendrix@microsoft.com",

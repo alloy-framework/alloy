@@ -7,10 +7,12 @@ import { SourceFile } from "../components/source-file/source-file.jsx";
 import { resetProgram } from "../contexts/program.js";
 import { createLibrary } from "../create-library.js";
 import { createTypeSpecNamePolicy } from "../name-policy.js";
+import Events from "./TypeSpec/Events/index.js";
 import Http from "./TypeSpec/Http/index.js";
 import TypeSpec from "./TypeSpec/index.js";
 import OpenAPI3 from "./TypeSpec/OpenAPI/openapi3.js";
 import Reflection from "./TypeSpec/Reflection/index.js";
+import SSE from "./TypeSpec/SSE/index.js";
 import Versioning from "./TypeSpec/Versioning/index.js";
 
 beforeEach(() => {
@@ -243,4 +245,52 @@ it("renders enum member with parent type path (e.g. Lifecycle.Read)", () => {
       </SourceFile>
     </Output>,
   ).toRenderTo(`Lifecycle.Read`);
+});
+
+it("references to events decorators emit package import and using", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Reference refkey={Events.events} />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    import "@typespec/events";
+
+    using TypeSpec.Events;
+
+    events
+  `);
+});
+
+it("references to SSE types emit package import and using", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Reference refkey={SSE.SSEStream} />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    import "@typespec/sse";
+
+    using TypeSpec.SSE;
+
+    SSEStream
+  `);
+});
+
+it("references to SSE decorators emit package import and using", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Reference refkey={SSE.terminalEvent} />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    import "@typespec/sse";
+
+    using TypeSpec.SSE;
+
+    terminalEvent
+  `);
 });

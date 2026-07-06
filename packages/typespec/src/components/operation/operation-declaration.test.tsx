@@ -4,6 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { DecoratorApplication } from "../decorator/decorator-application.jsx";
+import { SuppressDirective } from "../directive/directive.jsx";
 import { ModelDeclaration } from "../model/model-declaration.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
 import { Reference } from "../reference/reference.jsx";
@@ -382,5 +383,182 @@ it("renders an operation with a spread reference", () => {
       id: string
     };
     op getUser(...CommonParams, extra: boolean): User;
+  `);
+});
+
+it("renders a parameter with a decorator", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              decorators: <DecoratorApplication decorator="path" />,
+            },
+          ]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getPet(
+      @path
+      id: string
+    ): Pet
+  `);
+});
+
+it("renders a decorated parameter on multiple lines at default print width", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              decorators: <DecoratorApplication decorator="path" />,
+            },
+          ]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getPet(
+      @path
+      id: string
+    ): Pet
+  `);
+});
+
+it("renders a parameter with multiple decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="listPets"
+          parameters={[
+            {
+              name: "limit",
+              type: "int32",
+              optional: true,
+              decorators: (
+                <>
+                  <DecoratorApplication decorator="query" />
+                  <DecoratorApplication decorator="minValue" args={["1"]} />
+                </>
+              ),
+            },
+          ]}
+          returnType="Pet[]"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op listPets(
+      @query
+      @minValue(
+        1
+      )
+      limit?: int32
+    ): Pet[]
+  `);
+});
+
+it("renders a parameter with a doc comment", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              doc: "The pet identifier",
+            },
+          ]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getPet(
+      /**
+       * The pet identifier
+       */
+      id: string
+    ): Pet
+  `);
+});
+
+it("renders a parameter with a directive", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              directives: (
+                <SuppressDirective
+                  code="deprecated"
+                  message="Not ready to migrate yet"
+                />
+              ),
+            },
+          ]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getPet(
+      #suppress "deprecated" "Not ready to migrate yet"
+      id: string
+    ): Pet
+  `);
+});
+
+it("renders a parameter with doc, directives, and decorators", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()} printWidth={10}>
+      <SourceFile path="main.tsp">
+        <OperationDeclaration
+          name="getPet"
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              doc: "The pet identifier",
+              directives: (
+                <SuppressDirective
+                  code="deprecated"
+                  message="Not ready to migrate"
+                />
+              ),
+              decorators: <DecoratorApplication decorator="path" />,
+            },
+          ]}
+          returnType="Pet"
+        />
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    op getPet(
+      /**
+       * The pet identifier
+       */
+      #suppress "deprecated" "Not ready to migrate"
+      @path
+      id: string
+    ): Pet
   `);
 });

@@ -5,8 +5,10 @@ import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { Namespace } from "../namespace/namespace.jsx";
+import { OperationDeclaration } from "../operation/operation-declaration.jsx";
 import { Reference } from "../reference/reference.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
+import { UnionExpression } from "../union/union-expression.jsx";
 import { ModelDeclaration } from "./model-declaration.jsx";
 import { ModelExpression } from "./model-expression.jsx";
 import { ModelProperty } from "./model-property.jsx";
@@ -499,6 +501,54 @@ it("renders a model property with a numeric default value", () => {
   ).toRenderTo(`
     model Dog {
       age: uint8 = 0
+    }
+  `);
+});
+
+it("does not deconflict property names across separate model expressions", () => {
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="main.tsp">
+        <Namespace name="A">
+          <OperationDeclaration
+            name="listThings"
+            parameters={[]}
+            returnType={
+              <UnionExpression
+                types={[
+                  <ModelExpression>
+                    <ModelProperty name="data" type="string[]" />
+                  </ModelExpression>,
+                  <ModelExpression>
+                    <StatementList>
+                      <ModelProperty name="statusCode" type="int32" />
+                      <ModelProperty name="body" type="ErrorResponse" />
+                    </StatementList>
+                  </ModelExpression>,
+                  <ModelExpression>
+                    <StatementList>
+                      <ModelProperty name="statusCode" type="int32" />
+                      <ModelProperty name="body" type="ErrorResponse" />
+                    </StatementList>
+                  </ModelExpression>,
+                ]}
+              />
+            }
+          />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    namespace A;
+
+    op listThings(): {
+      data: string[]
+    } | {
+      statusCode: int32;
+      body: ErrorResponse;
+    } | {
+      statusCode: int32;
+      body: ErrorResponse;
     }
   `);
 });

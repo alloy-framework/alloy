@@ -52,6 +52,78 @@ it("specify doc comment", () => {
   `);
 });
 
+it("applies explicit public prop - public=true with lowercase name for struct members", () => {
+  expect(
+    <TestPackage>
+      <TypeDeclaration name="TestStruct">
+        <StructDeclaration>
+          <StructMember name="myField" type="string" public={true} />
+        </StructDeclaration>
+      </TypeDeclaration>
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    type TestStruct struct{
+      MyField string
+    }
+  `);
+});
+
+it("applies explicit public prop - public=false with uppercase name for struct members", () => {
+  expect(
+    <TestPackage>
+      <TypeDeclaration name="TestStruct">
+        <StructDeclaration>
+          <StructMember name="MyField" type="string" public={false} />
+        </StructDeclaration>
+      </TypeDeclaration>
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    type TestStruct struct{
+      myField string
+    }
+  `);
+});
+
+it("preserves original case when public prop is not specified for struct members", () => {
+  expect(
+    <TestPackage>
+      <TypeDeclaration name="TestStruct">
+        <StructDeclaration>
+          <StructMember name="MixedCaseField" type="string" />
+        </StructDeclaration>
+      </TypeDeclaration>
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    type TestStruct struct{
+      MixedCaseField string
+    }
+  `);
+});
+
+it("handles reserved words with public prop for struct members", () => {
+  expect(
+    <TestPackage>
+      <TypeDeclaration name="TestStruct">
+        <StructDeclaration>
+          <StructMember name="type" type="string" public={true} />
+        </StructDeclaration>
+      </TypeDeclaration>
+    </TestPackage>,
+  ).toRenderTo(`
+    package alloy
+
+    type TestStruct struct{
+      Type_ string
+    }
+  `);
+});
+
 it("defines fields", () => {
   expect(
     <TestPackage>

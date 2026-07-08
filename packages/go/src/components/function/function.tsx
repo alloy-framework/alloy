@@ -60,6 +60,9 @@ export interface FunctionProps {
    */
   singleLine?: boolean;
 
+  /** Whether the function should be public (exported) or private (unexported) */
+  public?: boolean;
+
   children?: Children;
 }
 
@@ -73,6 +76,7 @@ export function FunctionDeclaration(props: FunctionProps) {
 
   const functionSymbol = createFunctionSymbol(props.name, !!props.receiver, {
     refkeys: props.refkey,
+    public: props.public,
   });
 
   // scope for function declaration

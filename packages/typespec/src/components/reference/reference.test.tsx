@@ -59,6 +59,35 @@ it("properly resolves types in the same file and namespace", () => {
   });
 });
 
+it("does not emit a redundant using for cross-file references in the same namespace", () => {
+  const barRefkey = refkey();
+  expect(
+    <Output namePolicy={createTypeSpecNamePolicy()}>
+      <SourceFile path="a.tsp">
+        <Namespace name="A">
+          <ScalarDeclaration name="Bar" refkey={barRefkey} />
+        </Namespace>
+      </SourceFile>
+      <SourceFile path="b.tsp">
+        <Namespace name="A">
+          <Reference refkey={barRefkey} />
+        </Namespace>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "a.tsp": `
+      namespace A;
+
+      scalar Bar`,
+    "b.tsp": `
+      import "./a.tsp";
+
+      namespace A;
+
+      Bar`,
+  });
+});
+
 it("properly resolves types in the same file and different namespace", () => {
   const barRefkey = refkey();
   expect(

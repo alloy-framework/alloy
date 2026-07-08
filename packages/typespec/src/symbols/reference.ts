@@ -8,6 +8,7 @@ import {
 } from "@alloy-js/core";
 import { isNamespaceSymbol, NamespaceSymbol } from "../index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
+import { NamespaceScope } from "../scopes/namespace.js";
 import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
 import { relativePath } from "../util.js";
@@ -95,7 +96,7 @@ export function ref(refkey: Refkey): Ref<RefResult | undefined> {
       }
     }
 
-    if (nsToUse && !nsToUse.isGlobal) {
+    if (nsToUse && !nsToUse.isGlobal && !isOriginInNamespace(pathUp, nsToUse)) {
       scope.addUsing(nsToUse);
     }
 
@@ -110,4 +111,21 @@ export function ref(refkey: Refkey): Ref<RefResult | undefined> {
  */
 function validateSymbolReachable(pathDown: OutputScope[]): boolean {
   return !pathDown.some((s) => s instanceof NamedTypeScope);
+}
+
+/**
+ * Checks whether the origin scope (the reference site) is already inside
+ * the given namespace. When true, a `using` statement is redundant because
+ * the namespace's members are already in scope.
+ */
+function isOriginInNamespace(
+  pathUp: OutputScope[],
+  ns: NamespaceSymbol,
+): boolean {
+  const nsFqn = ns.getFullyQualifiedName();
+  return pathUp.some(
+    (s) =>
+      s instanceof NamespaceScope &&
+      s.ownerSymbol.getFullyQualifiedName() === nsFqn,
+  );
 }

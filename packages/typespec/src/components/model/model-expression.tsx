@@ -1,6 +1,6 @@
-import { Block, Children, onCleanup, Scope, useScope } from "@alloy-js/core";
+import { Block, Children, Scope, useScope } from "@alloy-js/core";
 import { NamedTypeScope } from "../../scopes/named-type.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import { createAnonymousModelSymbol } from "../../symbols/factories.js";
 
 export interface ModelExpressionProps {
   children?: Children;
@@ -8,8 +8,7 @@ export interface ModelExpressionProps {
 
 export function ModelExpression(props: ModelExpressionProps) {
   const parentScope = useScope();
-  const sym = new NamedTypeSymbol("{anonymous}", undefined, "model");
-  onCleanup(() => sym.delete());
+  const sym = createAnonymousModelSymbol();
   const scope = new NamedTypeScope(sym, parentScope);
 
   return (

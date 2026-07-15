@@ -1,6 +1,7 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
+  "oxc.fmt.experimental": true,
   "search.exclude": {
     "**/node_modules": true,
     "**/.temp": true,

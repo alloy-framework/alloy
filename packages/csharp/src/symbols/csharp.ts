@@ -12,6 +12,7 @@ import {
   TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
+
 import { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
 import type { CSharpScope } from "../scopes/csharp.js";
 import { NamespaceSymbol } from "./namespace.js";
@@ -106,8 +107,6 @@ export class CSharpSymbol extends OutputSymbol {
       return (firstSpace.scope as CSharpScope).enclosingNamespace;
     }
     throw new Error("No place to get namespace symbol from");
-
-    return undefined;
   }
 
   #accessibility: DeclaredAccessibility | undefined;

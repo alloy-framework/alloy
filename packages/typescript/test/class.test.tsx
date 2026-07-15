@@ -7,6 +7,7 @@ import {
   StatementList,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import * as ts from "../src/components/index.js";
 import { TestFile } from "./utils.js";
 

@@ -1,5 +1,6 @@
 import { shallowReactive } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { For } from "../../src/index.js";
 
 it("it should work with circular reactives", () => {

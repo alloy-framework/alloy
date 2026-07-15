@@ -1,4 +1,3 @@
-import { MethodScope } from "#components/method-scope.jsx";
 import {
   Block,
   For,
@@ -8,6 +7,9 @@ import {
   Refkey,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
+
+import { MethodScope } from "#components/method-scope.jsx";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -86,12 +88,11 @@ export function Constructor(props: ConstructorProps) {
 
   const modifiers = computeModifiersPrefix([getAccessModifier(props)]);
 
-  const initializer =
-    props.baseConstructor ?
-      <ConstructorInitializer keyword="base" args={props.baseConstructor} />
-    : props.thisConstructor ?
-      <ConstructorInitializer keyword="this" args={props.thisConstructor} />
-    : null;
+  const initializer = props.baseConstructor ? (
+    <ConstructorInitializer keyword="base" args={props.baseConstructor} />
+  ) : props.thisConstructor ? (
+    <ConstructorInitializer keyword="this" args={props.thisConstructor} />
+  ) : null;
 
   return (
     <MemberDeclaration symbol={ctorSymbol}>

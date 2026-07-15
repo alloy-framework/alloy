@@ -1,4 +1,5 @@
 import pc from "picocolors";
+
 import { buildCommand } from "./commands/build.js";
 import { installAgentsCommand } from "./commands/install-agents.js";
 import { installDocsCommand } from "./commands/install-docs.js";

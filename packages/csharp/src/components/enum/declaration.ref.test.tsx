@@ -1,8 +1,10 @@
-import { Namespace } from "#components/namespace/namespace.jsx";
-import { SourceFile } from "#components/source-file/source-file.jsx";
 import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
+import { Namespace } from "#components/namespace/namespace.jsx";
+import { SourceFile } from "#components/source-file/source-file.jsx";
+
 import { EnumDeclaration } from "./declaration.jsx";
 import { EnumMember } from "./member.jsx";
 

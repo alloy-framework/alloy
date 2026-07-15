@@ -1,4 +1,5 @@
 import type { ApiFunction, ApiInterface } from "@microsoft/api-extractor-model";
+
 import { InterfaceMembers, MdxSection } from "../stc/index.js";
 import { resolveCodeDestination } from "../TsDoc.js";
 

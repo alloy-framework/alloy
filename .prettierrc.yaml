@@ -1,3 +1,0 @@
-experimentalTernaries: true
-plugins:
-  - ./node_modules/prettier-plugin-organize-imports/index.js

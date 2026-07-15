@@ -1,4 +1,5 @@
 import { Children, code } from "@alloy-js/core";
+
 import { ArgumentList } from "./ArgumentList.jsx";
 import { CommonDeclarationProps } from "./Declaration.js";
 import { ModifierProps } from "./Modifiers.jsx";

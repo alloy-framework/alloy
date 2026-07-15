@@ -1,7 +1,8 @@
+import { useCallback, useMemo } from "react";
+
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { findRenderNodeInTree } from "@/lib/render-tree-utils";
-import { useCallback, useMemo } from "react";
 
 export interface DetailResolvers {
   resolveSymbolName: (id: number | null | undefined) => string | undefined;

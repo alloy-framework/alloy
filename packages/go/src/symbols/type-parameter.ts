@@ -1,4 +1,5 @@
 import { Children, Namekey, OutputSpace } from "@alloy-js/core";
+
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 
 interface TypeParameterSymbolOptions extends GoSymbolOptions {

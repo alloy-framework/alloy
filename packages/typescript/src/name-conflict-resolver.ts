@@ -1,4 +1,5 @@
 import { OutputSymbol } from "@alloy-js/core";
+
 import { TSOutputSymbol, TSSymbolFlags } from "./symbols/index.js";
 
 export function tsNameConflictResolver(name: string, symbols: OutputSymbol[]) {

@@ -1,4 +1,5 @@
 import { Namekey, OutputSymbolOptions, createSymbol } from "@alloy-js/core";
+
 import { NamedTypeSymbol } from "./named-type.js";
 
 export interface NamespaceSymbolOptions extends OutputSymbolOptions {

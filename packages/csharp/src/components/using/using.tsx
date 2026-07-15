@@ -1,4 +1,5 @@
 import { computed, For } from "@alloy-js/core";
+
 import { NamespaceSymbol } from "../../symbols/namespace.js";
 
 export interface UsingsProps {
@@ -46,7 +47,7 @@ export function UsingNamespaceDirective(props: UsingNamespaceDirective) {
 }
 
 function getNamespaceName(namespace: string | NamespaceSymbol): string {
-  return typeof namespace === "string" ? namespace : (
-      namespace.getFullyQualifiedName({ omitGlobal: true })
-    );
+  return typeof namespace === "string"
+    ? namespace
+    : namespace.getFullyQualifiedName({ omitGlobal: true });
 }

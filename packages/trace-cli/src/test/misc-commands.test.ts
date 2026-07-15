@@ -1,5 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
+
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
 import { runErrors } from "../commands/errors.js";
 import { fileCommand } from "../commands/file.js";
 import { runQuery } from "../commands/query.js";

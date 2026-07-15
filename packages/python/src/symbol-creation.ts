@@ -6,6 +6,7 @@ import {
   createSymbol,
   useContext,
 } from "@alloy-js/core";
+
 import { PythonSourceFileContext } from "./components/SourceFile.js";
 import { PythonElements, usePythonNamePolicy } from "./name-policy.js";
 import {

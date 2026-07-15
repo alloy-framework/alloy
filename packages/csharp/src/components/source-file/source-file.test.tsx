@@ -1,6 +1,3 @@
-import { Attribute } from "#components/attributes/attributes.jsx";
-import { ClassDeclaration } from "#components/class/declaration.jsx";
-import { Namespace } from "#components/namespace/namespace.jsx";
 import {
   Children,
   FormatOptions,
@@ -11,6 +8,11 @@ import {
 } from "@alloy-js/core";
 import { Serialization } from "@alloy-js/csharp/global/System/Text/Json";
 import { describe, expect, it } from "vitest";
+
+import { Attribute } from "#components/attributes/attributes.jsx";
+import { ClassDeclaration } from "#components/class/declaration.jsx";
+import { Namespace } from "#components/namespace/namespace.jsx";
+
 import { CSharpFormatOptions } from "../../contexts/format-options.js";
 import { SourceFile } from "./source-file.jsx";
 

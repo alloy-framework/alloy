@@ -6,6 +6,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
+
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 import { NamedTypeSymbol } from "./named-type.js";
 

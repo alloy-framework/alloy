@@ -9,6 +9,7 @@ import {
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
+
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { debug, TracePhase } from "../debug/index.js";
@@ -206,9 +207,9 @@ export abstract class OutputSymbol {
 
   set name(name: string) {
     const policyApplied =
-      this.#namePolicy && !this.#ignoreNamePolicy ?
-        this.#namePolicy(name)
-      : name;
+      this.#namePolicy && !this.#ignoreNamePolicy
+        ? this.#namePolicy(name)
+        : name;
 
     if (this.#userName === policyApplied) {
       return;
@@ -244,9 +245,9 @@ export abstract class OutputSymbol {
 
   set deconflictedName(value: string | undefined) {
     const policyApplied =
-      value !== undefined && this.#namePolicy && !this.#ignoreNamePolicy ?
-        this.#namePolicy(value)
-      : value;
+      value !== undefined && this.#namePolicy && !this.#ignoreNamePolicy
+        ? this.#namePolicy(value)
+        : value;
 
     if (this.#deconflictedName === policyApplied) {
       return;
@@ -377,9 +378,7 @@ export abstract class OutputSymbol {
     }
 
     const spacesArray =
-      spaces === undefined ? []
-      : Array.isArray(spaces) ? spaces
-      : [spaces];
+      spaces === undefined ? [] : Array.isArray(spaces) ? spaces : [spaces];
     this.#handleNewSpaces(spacesArray, old);
 
     this.#spaces = spacesArray;
@@ -687,10 +686,11 @@ export abstract class OutputSymbol {
     }
 
     this.#id = symbolCount++;
-    this.#spaces =
-      Array.isArray(spaces) ? spaces
-      : spaces === undefined ? []
-      : [spaces];
+    this.#spaces = Array.isArray(spaces)
+      ? spaces
+      : spaces === undefined
+        ? []
+        : [spaces];
     this.#aliasTarget = options.aliasTarget;
     this.#metadata = reactive(options.metadata ?? {});
     this.#isTransient = !!options.transient;
@@ -852,9 +852,9 @@ function _formatRefkey(refkey: Refkey): string {
   if (isMemberRefkey(refkey)) {
     const base = _formatRefkey(toRefkey(refkey.base));
     const member =
-      typeof refkey.member === "string" ?
-        refkey.member
-      : _formatRefkey(toRefkey(refkey.member));
+      typeof refkey.member === "string"
+        ? refkey.member
+        : _formatRefkey(toRefkey(refkey.member));
     return `member:${base}.${member}`;
   }
   if (isSymbolRefkey(refkey)) {

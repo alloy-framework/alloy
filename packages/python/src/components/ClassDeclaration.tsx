@@ -1,4 +1,5 @@
 import { Children, List, Name, Show, createContentSlot } from "@alloy-js/core";
+
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps, Declaration } from "./Declaration.js";
 import { DecoratorList } from "./DecoratorList.jsx";

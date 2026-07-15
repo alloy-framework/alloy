@@ -17,7 +17,7 @@ export function SymbolTable({ symbols, onOpenSymbol }: SymbolTableProps) {
           return (
             <tr key={symbol.id}>
               <td className="pr-2 pb-1 align-top">
-                {onOpenSymbol ?
+                {onOpenSymbol ? (
                   <a
                     className="text-primary underline"
                     href="#"
@@ -28,7 +28,9 @@ export function SymbolTable({ symbols, onOpenSymbol }: SymbolTableProps) {
                   >
                     {label}
                   </a>
-                : <span>{label}</span>}
+                ) : (
+                  <span>{label}</span>
+                )}
               </td>
             </tr>
           );

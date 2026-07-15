@@ -8,6 +8,7 @@ import {
   TriggerOpTypes,
   useScope,
 } from "@alloy-js/core";
+
 import { NamespaceSymbol } from "../symbols/namespace.js";
 import { CSharpLexicalScope } from "./lexical.js";
 import { CSharpNamespaceScope } from "./namespace.js";

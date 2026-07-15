@@ -1,4 +1,5 @@
 import { OutputSymbol } from "@alloy-js/core";
+
 import { PythonOutputSymbol } from "./symbols/python-output-symbol.js";
 
 export function pythonNameConflictResolver(_: string, symbols: OutputSymbol[]) {

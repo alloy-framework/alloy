@@ -1,5 +1,4 @@
 import { MemberContext } from "../context/member-scope.js";
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ScopeContext } from "../context/scope.js";
 import type { Children } from "../runtime/component.js";

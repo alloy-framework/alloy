@@ -10,8 +10,8 @@ import {
   useScope,
   type Children,
 } from "@alloy-js/core";
-
 import { join } from "pathe";
+
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
@@ -65,12 +65,12 @@ export function SourceFile(props: SourceFileProps) {
   }
 
   const header =
-    props.header || props.headerComment ?
+    props.header || props.headerComment ? (
       <SourceFileHeader
         header={props.header}
         headerComment={props.headerComment}
       />
-    : undefined;
+    ) : undefined;
 
   return (
     <CoreSourceFile

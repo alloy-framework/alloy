@@ -1,3 +1,16 @@
+import type { SourceLocation } from "@alloy-js/core/devtools";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useDeferredValue,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -15,18 +28,6 @@ import {
   resolveRenderNodeId,
 } from "@/lib/render-tree-utils";
 import { cn } from "@/lib/utils";
-import type { SourceLocation } from "@alloy-js/core/devtools";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import {
-  forwardRef,
-  memo,
-  useCallback,
-  useDeferredValue,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 
 export interface RenderTreeNode {
   id: string;
@@ -433,11 +434,13 @@ const RenderTreeNodeItem = memo(function RenderTreeNodeItem({
           className="shrink-0 w-4 flex items-center justify-center mt-0.5"
           onClick={handleToggle}
         >
-          {hasChildren ?
-            isExpanded ?
+          {hasChildren ? (
+            isExpanded ? (
               <ChevronDown className="size-3" />
-            : <ChevronRight className="size-3" />
-          : null}
+            ) : (
+              <ChevronRight className="size-3" />
+            )
+          ) : null}
         </span>
 
         {/* Tag content */}
@@ -446,9 +449,9 @@ const RenderTreeNodeItem = memo(function RenderTreeNodeItem({
           <span
             className={cn(
               "font-semibold",
-              node.name.startsWith("Context ") || node.name === "Provider" ?
-                "text-indigo-600/90 dark:text-indigo-300/90"
-              : "text-blue-600 dark:text-blue-400",
+              node.name.startsWith("Context ") || node.name === "Provider"
+                ? "text-indigo-600/90 dark:text-indigo-300/90"
+                : "text-blue-600 dark:text-blue-400",
             )}
           >
             {node.name}

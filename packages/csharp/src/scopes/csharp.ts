@@ -1,4 +1,5 @@
 import { OutputScope, OutputScopeOptions } from "@alloy-js/core";
+
 import type { CSharpSymbol } from "../symbols/csharp.js";
 import { NamespaceSymbol } from "../symbols/namespace.js";
 

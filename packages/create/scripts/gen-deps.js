@@ -1,6 +1,7 @@
 import fs from "fs/promises";
-import yaml from "js-yaml";
 import path from "path";
+
+import yaml from "js-yaml";
 
 async function generateDepsVersions() {
   // Get current directory (assuming script is run from package root)

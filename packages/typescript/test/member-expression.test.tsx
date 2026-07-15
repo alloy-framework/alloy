@@ -7,6 +7,7 @@ import {
   StatementList,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { InterfaceMember, ObjectExpression } from "../src/components/index.js";
 import { MemberExpression } from "../src/components/MemberExpression.jsx";
 import { VarDeclaration } from "../src/components/VarDeclaration.jsx";

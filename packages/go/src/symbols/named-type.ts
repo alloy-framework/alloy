@@ -7,6 +7,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
+
 import { GoSymbol, GoSymbolOptions } from "./go.js";
 
 // represents a symbol from a .go file. Struct, interface, etc.

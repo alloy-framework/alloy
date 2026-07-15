@@ -1,5 +1,6 @@
 import { code, namekey, Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as ts from "../src/index.js";
 import { decl, declMember, declType } from "../src/symbols/index.js";
 

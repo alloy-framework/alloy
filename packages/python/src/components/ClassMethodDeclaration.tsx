@@ -1,4 +1,5 @@
 import { splitProps } from "@alloy-js/core";
+
 import { createMethodSymbol } from "../symbols/factories.js";
 import { DecoratorList } from "./DecoratorList.jsx";
 import type { CommonFunctionProps } from "./FunctionBase.js";

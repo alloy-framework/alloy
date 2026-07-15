@@ -39,13 +39,12 @@ export function MethodDeclarationBase(
 ) {
   const { decorators, abstract, ...rest } = props;
 
-  const abstractMethod =
-    abstract ?
-      <>
-        @{abcModule["."].abstractmethod}
-        <hbr />
-      </>
-    : undefined;
+  const abstractMethod = abstract ? (
+    <>
+      @{abcModule["."].abstractmethod}
+      <hbr />
+    </>
+  ) : undefined;
 
   return (
     <>

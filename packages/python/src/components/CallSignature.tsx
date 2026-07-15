@@ -6,6 +6,7 @@ import {
   Show,
   SymbolSlot,
 } from "@alloy-js/core";
+
 import {
   isParameterDescriptor,
   ParameterDescriptor,
@@ -45,9 +46,9 @@ export interface CallSignatureParametersProps {
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
   const parameterList = computed(() => {
     const params = (props.parameters ?? []).map((p) => {
-      return isParameterMarker(p) ? p : (
-          parameter(normalizeAndDeclareParameter(p))
-        );
+      return isParameterMarker(p)
+        ? p
+        : parameter(normalizeAndDeclareParameter(p));
     });
 
     // Add *args if specified
@@ -184,15 +185,15 @@ export function CallSignature(props: CallSignatureProps) {
       kwargs={props.kwargs}
     />
   );
-  const typeParams =
-    props.typeParameters ? `[${props.typeParameters.join(", ")}]` : "";
-  const sReturnType =
-    props.returnType ?
-      <>
-        {" -> "}
-        <TypeRefContext>{props.returnType}</TypeRefContext>
-      </>
-    : undefined;
+  const typeParams = props.typeParameters
+    ? `[${props.typeParameters.join(", ")}]`
+    : "";
+  const sReturnType = props.returnType ? (
+    <>
+      {" -> "}
+      <TypeRefContext>{props.returnType}</TypeRefContext>
+    </>
+  ) : undefined;
 
   return (
     <>

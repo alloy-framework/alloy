@@ -1,8 +1,9 @@
+import { useMemo, useState } from "react";
+
 import { EffectsList } from "@/components/effects-list";
 import { RefsList } from "@/components/refs-list";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { cn } from "@/lib/utils";
-import { useMemo, useState } from "react";
 
 export interface EffectsViewProps {
   onOpenDetailTab: (effectId: number, name: string) => void;
@@ -31,9 +32,9 @@ export function EffectsView(props: EffectsViewProps) {
   );
   const refList = useMemo(
     () =>
-      activeTab !== "refs" ?
-        []
-      : Array.from(refs.values()).sort((a, b) => a.id - b.id),
+      activeTab !== "refs"
+        ? []
+        : Array.from(refs.values()).sort((a, b) => a.id - b.id),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [refs, refsVersion, activeTab],
   );
@@ -88,9 +89,9 @@ export function EffectsView(props: EffectsViewProps) {
           onClick={() => setActiveTab("effects")}
           className={cn(
             "px-4 py-2 text-left text-sm font-medium transition-colors",
-            activeTab === "effects" ?
-              "bg-background border-r-2 border-r-primary text-foreground"
-            : "text-muted-foreground hover:bg-accent/50",
+            activeTab === "effects"
+              ? "bg-background border-r-2 border-r-primary text-foreground"
+              : "text-muted-foreground hover:bg-accent/50",
           )}
         >
           Effects
@@ -99,9 +100,9 @@ export function EffectsView(props: EffectsViewProps) {
           onClick={() => setActiveTab("refs")}
           className={cn(
             "px-4 py-2 text-left text-sm font-medium transition-colors",
-            activeTab === "refs" ?
-              "bg-background border-r-2 border-r-primary text-foreground"
-            : "text-muted-foreground hover:bg-accent/50",
+            activeTab === "refs"
+              ? "bg-background border-r-2 border-r-primary text-foreground"
+              : "text-muted-foreground hover:bg-accent/50",
           )}
         >
           Refs

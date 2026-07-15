@@ -1,5 +1,6 @@
 import { code, Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as jv from "../src/components/index.js";
 import { TestPackage } from "./utils.js";
 
@@ -9,7 +10,7 @@ it("works", () => {
       <jv.Declaration name="TestClass">
         {code`
           public class TestClass {
-            ${(<jv.Constructor public name="TestClass" />)}
+            ${<jv.Constructor public name="TestClass" />}
           }
         `}
       </jv.Declaration>
@@ -29,7 +30,7 @@ it("takes name from class", () => {
       <jv.Declaration name="TestClass">
         {code`
           public class TestClass {
-            ${(<jv.Constructor public />)}
+            ${<jv.Constructor public />}
           }
         `}
       </jv.Declaration>

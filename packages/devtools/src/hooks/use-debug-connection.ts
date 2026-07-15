@@ -1,5 +1,7 @@
-import { buildRenderTreeView } from "@/lib/debug-tree";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { buildRenderTreeView } from "@/lib/debug-tree";
+
 import {
   BATCH_FLUSH_INTERVAL,
   BATCH_FLUSH_INTERVAL_HEAVY,
@@ -56,8 +58,9 @@ export function useDebugConnection(): DebugConnectionState {
 
   const formatPath = useCallback((rawPath: string) => {
     const normalized = rawPath.replace(/^\.\/?/, "").replace(/\\/g, "/");
-    const cwdValue =
-      storeRef.current.cwd ? normalizeCwd(storeRef.current.cwd) : undefined;
+    const cwdValue = storeRef.current.cwd
+      ? normalizeCwd(storeRef.current.cwd)
+      : undefined;
     if (cwdValue) {
       if (normalized === cwdValue) return ".";
       if (normalized.startsWith(`${cwdValue}/`)) {
@@ -165,8 +168,9 @@ export function useDebugConnection(): DebugConnectionState {
     if (batchTimerRef.current !== null) return;
 
     const isHeavy = msgCountRef.current > HEAVY_LOAD_THRESHOLD;
-    const interval =
-      isHeavy ? BATCH_FLUSH_INTERVAL_HEAVY : BATCH_FLUSH_INTERVAL;
+    const interval = isHeavy
+      ? BATCH_FLUSH_INTERVAL_HEAVY
+      : BATCH_FLUSH_INTERVAL;
 
     if (typeof requestIdleCallback !== "undefined") {
       batchTimerRef.current = requestIdleCallback(

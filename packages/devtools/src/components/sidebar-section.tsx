@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 export interface SidebarSectionProps {
   title: string;
@@ -22,9 +23,11 @@ export function SidebarSection({
         onClick={onToggle}
         className="flex items-center gap-1 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-sidebar-foreground hover:bg-sidebar-accent w-full text-left shrink-0 border-b border-sidebar-border"
       >
-        {isOpen ?
+        {isOpen ? (
           <ChevronDown className="size-4" />
-        : <ChevronRight className="size-4" />}
+        ) : (
+          <ChevronRight className="size-4" />
+        )}
         {title}
       </button>
       {isOpen && <div className="flex-1 overflow-auto min-h-0">{children}</div>}

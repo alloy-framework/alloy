@@ -1,4 +1,5 @@
 import { Children, Output } from "@alloy-js/core";
+
 import * as go from "../src/index.js";
 
 export function TestPackage(props: { children: Children }): Children {

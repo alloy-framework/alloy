@@ -82,9 +82,9 @@ function refList(db: Db, opts: Opts) {
     conditions.length > 0 ? "WHERE " + conditions.join(" AND ") : "";
   const limit = opts.limit ?? 50;
   const orderBy =
-    opts.minTrackers != null ?
-      "ORDER BY (SELECT COUNT(*) FROM edges WHERE ref_id = r.id AND type = 'track') DESC"
-    : "ORDER BY r.id";
+    opts.minTrackers != null
+      ? "ORDER BY (SELECT COUNT(*) FROM edges WHERE ref_id = r.id AND type = 'track') DESC"
+      : "ORDER BY r.id";
   const sql = `
     SELECT r.id, r.kind, r.source_file, r.source_line, r.created_by_effect_id,
            (SELECT COUNT(*) FROM edges WHERE ref_id = r.id AND type = 'track') as tracked_by,
@@ -106,8 +106,9 @@ function refList(db: Db, opts: Opts) {
   }
 
   for (const r of rows) {
-    const src =
-      r.source_file ? shortPath(r.source_file) + ":" + r.source_line : "";
+    const src = r.source_file
+      ? shortPath(r.source_file) + ":" + r.source_line
+      : "";
     console.log(
       `  ${String(r.id).padStart(4)}  ${r.kind.padEnd(12)} creator: effect ${r.created_by_effect_id ?? "?"}  tracked_by: ${r.tracked_by}  triggered: ${r.triggered}`,
     );
@@ -260,12 +261,12 @@ function refHotspots(db: Db, opts: Opts) {
 
   console.log("Refs with most trackers:\n");
   for (const r of rows) {
-    const creator =
-      r.creator_name ?
-        `${r.creator_name}${r.creator_component ? ` [${r.creator_component}]` : ""}`
+    const creator = r.creator_name
+      ? `${r.creator_name}${r.creator_component ? ` [${r.creator_component}]` : ""}`
       : "?";
-    const src =
-      r.source_file ? `  ${shortPath(r.source_file)}:${r.source_line}` : "";
+    const src = r.source_file
+      ? `  ${shortPath(r.source_file)}:${r.source_line}`
+      : "";
     console.log(
       `  ${String(r.id).padStart(5)}  ${r.kind.padEnd(12)} ${String(r.tracked_by).padStart(4)} trackers, ${String(r.triggered).padStart(3)} writes  creator: ${creator}${src}`,
     );

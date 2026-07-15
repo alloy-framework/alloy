@@ -1,5 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { Match, Switch } from "../../src/components/Switch.jsx";
 
 it("selects the true branch", () => {

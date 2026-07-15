@@ -1,5 +1,6 @@
 import * as core from "@alloy-js/core";
 import { join } from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -112,9 +113,9 @@ export function StructDeclaration(props: StructDeclarationProps) {
   ]);
 
   const base =
-    props.interfaceTypes && props.interfaceTypes.length > 0 ?
+    props.interfaceTypes && props.interfaceTypes.length > 0 ? (
       <> : {join(props.interfaceTypes, { joiner: ", " })}</>
-    : null;
+    ) : null;
 
   return (
     <core.Declaration symbol={thisStructSymbol}>
@@ -128,11 +129,13 @@ export function StructDeclaration(props: StructDeclarationProps) {
       {props.typeParameters && (
         <TypeParameterConstraints parameters={props.typeParameters} />
       )}
-      {props.children ?
+      {props.children ? (
         <core.Block newline>
           <core.Scope value={thisStructScope}>{props.children}</core.Scope>
         </core.Block>
-      : ";"}
+      ) : (
+        ";"
+      )}
     </core.Declaration>
   );
 }

@@ -1,6 +1,7 @@
 import { Children, Diagnostic } from "@alloy-js/core";
 import "vitest";
 import { expect } from "vitest";
+
 import { ElementNode } from "../src/render/node.js";
 import { flushJobs, flushJobsAsync } from "../src/scheduler.js";
 import {
@@ -154,8 +155,8 @@ function validateRender(
     const pass =
       Object.keys(actual).length === Object.keys(expected).length &&
       Object.entries(actual).every(([key, value]) => {
-        return isAsymmetricMatcher(dedentExpected[key]) ?
-            dedentExpected[key].asymmetricMatch(value)
+        return isAsymmetricMatcher(dedentExpected[key])
+          ? dedentExpected[key].asymmetricMatch(value)
           : dedentExpected[key] === value;
       });
     return {
@@ -196,9 +197,9 @@ function validateDiagnostics(
     const expectedDiag = expected[i];
 
     const messageMatches =
-      expectedDiag.message instanceof RegExp ?
-        expectedDiag.message.test(actualDiag.message)
-      : actualDiag.message === expectedDiag.message;
+      expectedDiag.message instanceof RegExp
+        ? expectedDiag.message.test(actualDiag.message)
+        : actualDiag.message === expectedDiag.message;
 
     if (!messageMatches) {
       return {

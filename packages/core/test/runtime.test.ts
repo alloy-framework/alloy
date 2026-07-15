@@ -10,6 +10,7 @@
 
 import { ref, shallowRef } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
+
 import { createContentSlot } from "../src/content-slot.jsx";
 import { createCustomContext, root } from "../src/reactivity.js";
 import {

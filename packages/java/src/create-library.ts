@@ -10,6 +10,7 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
+
 import {
   JavaOutputSymbol,
   JavaPackageScope,
@@ -43,8 +44,9 @@ function createSymbols(
 }
 
 export type LibraryRefkeys<T extends LibraryDescriptor> = {
-  [S in T[keyof T] extends readonly string[] ? T[keyof T][number]
-  : never]: Refkey;
+  [S in T[keyof T] extends readonly string[]
+    ? T[keyof T][number]
+    : never]: Refkey;
 };
 
 export interface CreateLibraryProps<T extends LibraryDescriptor> {

@@ -5,6 +5,7 @@ import {
   shallowReactive,
   useScope,
 } from "@alloy-js/core";
+
 import { GoSymbol } from "../symbols/go.js";
 import { PackageSymbol } from "../symbols/package.js";
 import { GoLexicalScope } from "./lexical.js";

@@ -49,7 +49,7 @@ Run these commands scoped to the files under review and include the results in y
 
 - **Tests**: `pnpm vitest run <test-file>` — confirm the co-located test file exists and passes.
 - **Type check**: `pnpm tsc --noEmit -p <package>/tsconfig.json` — confirm no type errors.
-- **Lint**: `pnpm eslint <file>` — confirm no lint violations.
+- **Lint**: `pnpm oxlint <file>` — confirm no lint violations.
 
 If any of these fail, include the failure output as a finding.
 

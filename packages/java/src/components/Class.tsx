@@ -1,4 +1,5 @@
 import { Block, Children, Show } from "@alloy-js/core";
+
 import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import { ExtendsClause } from "./ExtendsClause.js";
 import { ImplementsClause } from "./ImplementsClause.js";

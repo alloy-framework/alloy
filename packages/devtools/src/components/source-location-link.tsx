@@ -19,9 +19,8 @@ export function SourceLocationLink({
   const { formatPath } = useDebugConnectionContext();
   const { toast } = useToast();
 
-  const sourceLabel =
-    source.fileName ?
-      `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}`
+  const sourceLabel = source.fileName
+    ? `${formatPath(source.fileName)}:${source.lineNumber ?? "?"}`
     : "";
 
   const handleClick = async (event: React.MouseEvent) => {

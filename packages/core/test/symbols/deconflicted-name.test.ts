@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { Binder, createOutputBinder } from "../../src/binder.js";
 import { flushJobs } from "../../src/scheduler.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";

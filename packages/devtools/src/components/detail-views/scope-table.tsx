@@ -17,7 +17,7 @@ export function ScopeTable({ scopes, onOpenScope }: ScopeTableProps) {
           return (
             <tr key={scope.id}>
               <td className="pr-2 pb-1 align-top">
-                {onOpenScope ?
+                {onOpenScope ? (
                   <a
                     className="text-primary underline"
                     href="#"
@@ -28,7 +28,9 @@ export function ScopeTable({ scopes, onOpenScope }: ScopeTableProps) {
                   >
                     {label}
                   </a>
-                : <span>{label}</span>}
+                ) : (
+                  <span>{label}</span>
+                )}
               </td>
             </tr>
           );

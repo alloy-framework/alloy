@@ -1,7 +1,9 @@
-import { TestNamespace } from "#test/utils.jsx";
 import { Output, refkey } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
+import { TestNamespace } from "#test/utils.jsx";
+
 import { createCSharpNamePolicy } from "../../name-policy.js";
 import { ClassDeclaration } from "../class/declaration.jsx";
 import { Constructor } from "../constructor/constructor.jsx";

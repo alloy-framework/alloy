@@ -1,6 +1,8 @@
-import { buildRenderTreeView } from "@/lib/debug-tree";
 import type { ServerToClientMessage } from "@alloy-js/core/devtools";
 import { describe, expect, it } from "vitest";
+
+import { buildRenderTreeView } from "@/lib/debug-tree";
+
 import {
   createDebugStore,
   processMessage,

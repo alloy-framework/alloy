@@ -1,5 +1,6 @@
 import Table from "cli-table3";
 import pc from "picocolors";
+
 import { contextsByKey } from "../context.js";
 import { stdoutWrite } from "../host/node-host.js";
 import { getContext, untrack } from "../reactivity.js";
@@ -153,16 +154,16 @@ export function debugStack() {
 
         table.push([
           { hAlign: "right", content: "props" },
-          props && Object.keys(props).length > 0 ?
-            dumpValue(props)
-          : pc.gray("(none)"),
+          props && Object.keys(props).length > 0
+            ? dumpValue(props)
+            : pc.gray("(none)"),
         ]);
 
         table.push([
           { hAlign: "right", content: "contexts" },
-          foundContexts.length > 0 ?
-            foundContexts.map((c) => printContext(c, true)).join("\n")
-          : pc.gray("(none)"),
+          foundContexts.length > 0
+            ? foundContexts.map((c) => printContext(c, true)).join("\n")
+            : pc.gray("(none)"),
         ]);
 
         stdoutWrite(table.toString() + "\n\n");

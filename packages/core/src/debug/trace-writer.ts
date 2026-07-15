@@ -6,6 +6,7 @@
  * `alloy-trace` CLI or the devtools WebSocket server.
  */
 import type { StatementSync } from "node:sqlite";
+
 import { type DatabaseSync, openTraceDatabase } from "./trace-db.js";
 
 let db: DatabaseSync | null = null;

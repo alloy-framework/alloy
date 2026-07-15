@@ -1,4 +1,5 @@
 import { useScope } from "@alloy-js/core";
+
 import { CSharpScope } from "./csharp.js";
 import { CSharpLexicalScope } from "./lexical.js";
 import { CSharpMethodScope } from "./method.js";

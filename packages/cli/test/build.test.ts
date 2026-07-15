@@ -1,5 +1,6 @@
-import { execa } from "execa";
 import { join } from "node:path";
+
+import { execa } from "execa";
 import { expect, it } from "vitest";
 
 const cliPath = join(import.meta.dirname, "..", "cmd", "alloy.js");

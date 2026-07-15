@@ -105,8 +105,9 @@ function componentList(db: Db, opts: Opts) {
   }
 
   for (const r of rows) {
-    const src =
-      r.source_file ? shortPath(r.source_file) + ":" + r.source_line : "";
+    const src = r.source_file
+      ? shortPath(r.source_file) + ":" + r.source_line
+      : "";
     console.log(
       `  ${String(r.id).padStart(4)}  ${(r.name || "(unnamed)").padEnd(30)} ${r.roots} roots  ${src}`,
     );
@@ -185,12 +186,11 @@ function componentForNode(db: Db, renderNodeId: number, opts: Opts) {
   console.log(`Components for render node ${renderNodeId}:`);
   for (const row of rows) {
     const distance =
-      row.distance === 0 ?
-        "direct"
-      : `ancestor root #${row.root_render_node_id}`;
-    const src =
-      row.source_file ?
-        ` ${shortPath(row.source_file)}:${row.source_line}`
+      row.distance === 0
+        ? "direct"
+        : `ancestor root #${row.root_render_node_id}`;
+    const src = row.source_file
+      ? ` ${shortPath(row.source_file)}:${row.source_line}`
       : "";
     console.log(
       `  ${String(row.id).padStart(4)}  ${row.name.padEnd(30)} ${distance}${src}`,

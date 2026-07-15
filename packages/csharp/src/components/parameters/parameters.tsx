@@ -8,6 +8,7 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+
 import { createParameterSymbol } from "../../symbols/factories.js";
 import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
 import { Name } from "../Name.jsx";
@@ -82,9 +83,11 @@ export function Parameter(props: ParameterProps) {
     );
   }
   const modifier =
-    modifiers.length === 0 ? ""
-    : modifiers[0] === "refReadonly" ? "ref readonly "
-    : modifiers[0] + " ";
+    modifiers.length === 0
+      ? ""
+      : modifiers[0] === "refReadonly"
+        ? "ref readonly "
+        : modifiers[0] + " ";
   return (
     <Declaration symbol={memberSymbol}>
       <AttributeList attributes={props.attributes} endline />

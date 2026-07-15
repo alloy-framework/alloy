@@ -102,8 +102,9 @@ function effectList(db: Db, opts: Opts) {
   }
 
   for (const r of rows) {
-    const src =
-      r.source_file ? shortPath(r.source_file) + ":" + r.source_line : "";
+    const src = r.source_file
+      ? shortPath(r.source_file) + ":" + r.source_line
+      : "";
     const comp = r.component ? ` [${r.component}]` : "";
     const stats = `tracks ${r.tracks} refs, triggers ${r.triggers}`;
     console.log(
@@ -220,9 +221,9 @@ function effectShow(db: Db, id: number, opts: Opts) {
     );
     for (const e of ranEvents) {
       const triggerInfo =
-        e.trigger_ref_id != null ?
-          ` (triggered by ref ${e.trigger_ref_id})`
-        : "";
+        e.trigger_ref_id != null
+          ? ` (triggered by ref ${e.trigger_ref_id})`
+          : "";
       console.log(`    ran at seq ${e.seq}${triggerInfo}`);
     }
   }
@@ -305,8 +306,9 @@ function effectHotspots(db: Db, opts: Opts) {
 
   console.log("Effects with highest reactive activity:\n");
   for (const r of rows) {
-    const src =
-      r.source_file ? shortPath(r.source_file) + ":" + r.source_line : "";
+    const src = r.source_file
+      ? shortPath(r.source_file) + ":" + r.source_line
+      : "";
     const comp = r.component ? ` [${r.component}]` : "";
     console.log(
       `  ${String(r.id).padStart(5)}  ${(r.name || "(anonymous)").padEnd(35)} tracks ${r.tracks}, triggers ${r.triggers}, creates ${r.refs_created} refs${comp}`,

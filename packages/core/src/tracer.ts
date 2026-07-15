@@ -1,4 +1,5 @@
 import { effect } from "@vue/reactivity";
+
 import {
   debug,
   isConsoleTraceEnabled,
@@ -128,9 +129,9 @@ export function formatScopeName(scope: OutputScope | undefined): string {
 export function formatSymbolTableName(table: SymbolTable): string {
   // avoid instance of checks here in order to not create circular module imports.
   const name =
-    "symbol" in table ?
-      formatSymbolName((table as OutputMemberSpace).symbol)
-    : formatScopeName((table as OutputDeclarationSpace).scope);
+    "symbol" in table
+      ? formatSymbolName((table as OutputMemberSpace).symbol)
+      : formatScopeName((table as OutputDeclarationSpace).scope);
   return colorText(`${name}:${table.key}`, {
     fg: {
       r: 0,

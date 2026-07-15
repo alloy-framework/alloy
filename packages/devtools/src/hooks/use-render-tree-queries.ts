@@ -1,9 +1,10 @@
+import { useCallback } from "react";
+
 import type { RenderTreeNode } from "@/components/render-tree";
 import {
   collectTextNodes,
   findRenderNodeInTree,
 } from "@/lib/render-tree-utils";
-import { useCallback } from "react";
 
 export function useRenderTreeQueries(renderTree: RenderTreeNode[]) {
   const findRenderNode = useCallback(

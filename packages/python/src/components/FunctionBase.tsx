@@ -1,4 +1,5 @@
 import { createContentSlot, Name, Show, type Children } from "@alloy-js/core";
+
 import { PythonOutputSymbol } from "../index.js";
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";

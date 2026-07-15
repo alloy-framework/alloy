@@ -1,4 +1,5 @@
 import type { ApiFunction } from "@microsoft/api-extractor-model";
+
 import {
   Examples,
   FunctionOptions,
@@ -18,10 +19,9 @@ export interface FunctionOverloadDocProps {
 }
 
 export function FunctionOverloadDoc(props: FunctionOverloadDocProps) {
-  const root =
-    props.omitOverloadIndex ? MdxParagraph() : (
-      MdxSection({ title: `Overload ${props.fn.overloadIndex}` })
-    );
+  const root = props.omitOverloadIndex
+    ? MdxParagraph()
+    : MdxSection({ title: `Overload ${props.fn.overloadIndex}` });
 
   return root.children(
     Summary({ type: props.fn }),

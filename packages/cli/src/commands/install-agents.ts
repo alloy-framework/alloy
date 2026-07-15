@@ -5,8 +5,10 @@ import {
   readFileSync,
   readdirSync,
 } from "node:fs";
+
 import { join, resolve } from "pathe";
 import pc from "picocolors";
+
 import {
   collectAlloySearchDirs,
   findGitRoot,

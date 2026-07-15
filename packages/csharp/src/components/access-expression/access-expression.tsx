@@ -6,6 +6,7 @@ import {
   Refkeyable,
   Show,
 } from "@alloy-js/core";
+
 import { CSharpSymbol } from "../../symbols/csharp.js";
 import { normalizeAttributeName } from "./part-descriptors.js";
 
@@ -72,14 +73,17 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
       id,
       indexerArgs,
       conditional: !!partProps.conditional,
-      nullable:
-        partProps.nullable ? true
-        : sym ? (sym as CSharpSymbol).isNullable
-        : false,
+      nullable: partProps.nullable
+        ? true
+        : sym
+          ? (sym as CSharpSymbol).isNullable
+          : false,
       args:
-        partProps.args === true ? []
-        : Array.isArray(partProps.args) ? partProps.args
-        : undefined,
+        partProps.args === true
+          ? []
+          : Array.isArray(partProps.args)
+            ? partProps.args
+            : undefined,
       typeArgs: partProps.typeArgs,
     };
   },

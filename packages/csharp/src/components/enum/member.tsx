@@ -6,6 +6,7 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { CSharpSymbol } from "../../symbols/csharp.js";

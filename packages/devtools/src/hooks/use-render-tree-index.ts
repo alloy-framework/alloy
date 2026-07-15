@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from "react";
+
 import type { RenderTreeNode } from "@/components/render-tree";
 import {
   buildRenderTreeIndex,
@@ -5,7 +7,6 @@ import {
   findLiftedRootForNode,
   invertFileToRenderNode,
 } from "@/lib/render-tree-utils";
-import { useCallback, useMemo } from "react";
 
 export function useRenderTreeIndex(
   renderTree: RenderTreeNode[],

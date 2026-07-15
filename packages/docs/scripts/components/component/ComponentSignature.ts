@@ -13,6 +13,7 @@ import type {
   ApiInterface,
   ApiPropertySignature,
 } from "@microsoft/api-extractor-model";
+
 import type { ComponentApi } from "../../build-json.js";
 import { ImportPathContext } from "../../contexts/import-path.js";
 import { flattenedMembers } from "../../utils.js";

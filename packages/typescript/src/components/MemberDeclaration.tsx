@@ -3,6 +3,7 @@ import {
   MemberDeclarationPropsWithInfo as CoreMemberDeclarationPropsWithInfo,
   MemberDeclarationPropsWithSymbol as CoreMemberDeclarationPropsWithSymbol,
 } from "@alloy-js/core";
+
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
 import {
   createStaticMemberSymbol,
@@ -38,8 +39,9 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
   if ("symbol" in props) {
     sym = props.symbol;
   } else {
-    const tsFlags: TSSymbolFlags =
-      props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None;
+    const tsFlags: TSSymbolFlags = props.nullish
+      ? TSSymbolFlags.Nullish
+      : TSSymbolFlags.None;
 
     sym = createStaticMemberSymbol(props.name!, {
       refkeys: props.refkey,

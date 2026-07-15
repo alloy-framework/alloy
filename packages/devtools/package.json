@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node ../core/scripts/copy-devtools-ui.mjs",
-    "lint": "eslint .",
+    "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -35,19 +35,14 @@
   },
   "devDependencies": {
     "@alloy-js/core": "workspace:~",
-    "@eslint/js": "catalog:",
     "@types/diff-match-patch": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "eslint": "catalog:",
-    "eslint-plugin-react-hooks": "catalog:",
-    "eslint-plugin-react-refresh": "catalog:",
-    "globals": "catalog:",
+    "oxlint": "catalog:",
     "tw-animate-css": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
     "vite": "npm:rolldown-vite@7.3.1",
     "vite-plugin-singlefile": "catalog:",
     "vitest": "catalog:"

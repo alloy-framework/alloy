@@ -1,3 +1,5 @@
+import { useCallback, useDeferredValue, useState } from "react";
+
 import { TreeView, type TreeNode } from "@/components/tree-view";
 import {
   ContextMenu,
@@ -10,7 +12,6 @@ import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
 import { useFileTextRanges } from "@/hooks/use-file-text-ranges";
 import { useGoToSource } from "@/hooks/use-go-to-source";
-import { useCallback, useDeferredValue, useState } from "react";
 
 export function SymbolTreePanel() {
   const {
@@ -76,9 +77,9 @@ export function SymbolTreePanel() {
 
   const getRenderNodeId = (node: TreeNode) => {
     const details =
-      node.icon === "symbol" ?
-        symbolDetails.get(node.id)
-      : scopeDetails.get(node.id);
+      node.icon === "symbol"
+        ? symbolDetails.get(node.id)
+        : scopeDetails.get(node.id);
     return details?.renderNodeId as number | null | undefined;
   };
 

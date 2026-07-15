@@ -1,4 +1,5 @@
 import { stc } from "@alloy-js/core";
+
 import { Code as CodeJsx } from "../Code.js";
 import { ComponentDoc as ComponentDocJsx } from "../component/ComponentDoc.js";
 import { ComponentProps as ComponentPropsJsx } from "../component/ComponentProps.js";

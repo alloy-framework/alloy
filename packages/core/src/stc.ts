@@ -6,15 +6,18 @@ import {
   ComponentDefinition,
 } from "./runtime/component.js";
 
-export type MakeChildrenOptional<T extends object> =
-  T extends { children?: any } ?
-    Omit<T, "children"> & Partial<Pick<T, "children">>
+export type MakeChildrenOptional<T extends object> = T extends {
+  children?: any;
+}
+  ? Omit<T, "children"> & Partial<Pick<T, "children">>
   : T;
 
 export type StcSignature<T extends {}> = (
-  ...args: unknown extends T ? []
-  : {} extends Omit<T, "children"> ? [props?: MakeChildrenOptional<T>]
-  : [props: MakeChildrenOptional<T>]
+  ...args: unknown extends T
+    ? []
+    : {} extends Omit<T, "children">
+      ? [props?: MakeChildrenOptional<T>]
+      : [props: MakeChildrenOptional<T>]
 ) => StcComponentCreator<T>;
 
 export type StcComponentCreator<T> = ComponentCreator<T> & {

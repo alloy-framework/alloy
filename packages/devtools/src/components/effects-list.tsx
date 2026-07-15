@@ -1,10 +1,11 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useCallback, useMemo, useRef, useState } from "react";
+
 import type {
   EffectDebugInfo,
   EffectEdgeDebugInfo,
 } from "@/hooks/debug-connection-types";
 import { formatSourceLocation } from "@/lib/format-source-location";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useCallback, useMemo, useRef, useState } from "react";
 
 export interface EffectsListProps {
   effectList: EffectDebugInfo[];
@@ -50,9 +51,9 @@ function edgeCounts(
   const isMemo = effect.name?.includes("memo");
   // Memos are always eagerly triggered on creation; hide that initial one
   const triggered =
-    isMemo && triggerEdges.length > 0 ?
-      triggerEdges.length - 1
-    : triggerEdges.length;
+    isMemo && triggerEdges.length > 0
+      ? triggerEdges.length - 1
+      : triggerEdges.length;
   // "Triggers": count of trigger edges where this effect is the producer (causedBy)
   const triggers = triggersByCausedBy.get(effect.id) ?? 0;
   return { track, triggered, triggers };
@@ -159,9 +160,9 @@ export function EffectsList(props: EffectsListProps) {
           <button
             onClick={() => setUserOnly(!userOnly)}
             className={`h-7 px-2 rounded border text-[10px] font-medium whitespace-nowrap transition-colors ${
-              userOnly ?
-                "border-primary bg-primary/10 text-primary"
-              : "border-border text-muted-foreground hover:bg-accent/50"
+              userOnly
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:bg-accent/50"
             }`}
           >
             User only
@@ -172,11 +173,12 @@ export function EffectsList(props: EffectsListProps) {
         </div>
         {/* Effect rows */}
         <div ref={parentRef} className="flex-1 overflow-auto">
-          {filtered.length === 0 ?
+          {filtered.length === 0 ? (
             <div className="text-muted-foreground text-xs">
               No effects match.
             </div>
-          : <>
+          ) : (
+            <>
               <div className="flex items-center text-left text-[10px] text-muted-foreground border-b border-border pb-1">
                 <div className="flex-1 pr-2 font-medium">Effect</div>
                 <div className="w-20 pr-2 font-medium">Type</div>
@@ -288,7 +290,7 @@ export function EffectsList(props: EffectsListProps) {
                 })}
               </div>
             </>
-          }
+          )}
         </div>
       </div>
     </div>
@@ -303,12 +305,7 @@ function SortableHeader(props: {
   onSort: (col: SortColumn) => void;
 }) {
   const active = props.sortCol === props.col;
-  const arrow =
-    active ?
-      props.sortDir === "desc" ?
-        " ▼"
-      : " ▲"
-    : "";
+  const arrow = active ? (props.sortDir === "desc" ? " ▼" : " ▲") : "";
   return (
     <div
       className={`w-16 pr-2 font-medium text-right cursor-pointer select-none whitespace-nowrap hover:text-foreground ${active ? "text-foreground" : ""}`}

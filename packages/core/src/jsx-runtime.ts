@@ -14,6 +14,7 @@ import type {
   ComponentDefinition,
   IntrinsicElements as CoreIntrinsicElements,
 } from "@alloy-js/core";
+
 import { createComponent } from "./runtime/component.js";
 export type { Children } from "@alloy-js/core";
 export { mergeProps } from "./props-combinators.js";

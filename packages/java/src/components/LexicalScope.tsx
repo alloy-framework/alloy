@@ -5,6 +5,7 @@ import {
   ScopePropsWithValue,
   useScope,
 } from "@alloy-js/core";
+
 import { JavaLexicalScope } from "../symbols/index.js";
 
 export interface LexicalScopePropsWithScopeValue extends ScopePropsWithValue {}

@@ -1,5 +1,6 @@
 import { code, Output, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import * as jv from "../src/components/index.js";
 import { TestPackage } from "./utils.js";
 
@@ -35,7 +36,7 @@ it("declares bodyless function", () => {
       <jv.Declaration name="Test">
         {code`
           class Test {
-            ${(<jv.Method public name="testMethod" />)}
+            ${<jv.Method public name="testMethod" />}
           }
         `}
       </jv.Declaration>
@@ -56,7 +57,7 @@ describe("can throw errors", () => {
         <jv.Declaration name="Test">
           {code`
             class Test {
-              ${(<jv.Method public name="testMethod" throws={"Exception"} />)}
+              ${<jv.Method public name="testMethod" throws={"Exception"} />}
             }
           `}
         </jv.Declaration>
@@ -78,7 +79,7 @@ describe("can throw errors", () => {
             <jv.Declaration name="Test">
               {code`
                 class Test {
-                  ${(<jv.Method public name="testMethod" throws={refkey("CustomError")} />)}
+                  ${<jv.Method public name="testMethod" throws={refkey("CustomError")} />}
                 }
               `}
             </jv.Declaration>

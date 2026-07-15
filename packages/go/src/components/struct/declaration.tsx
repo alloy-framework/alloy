@@ -15,6 +15,7 @@ import {
   useContext,
   watch,
 } from "@alloy-js/core";
+
 import { useGoScope, useNamedTypeScope } from "../../scopes/contexts.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { GoNamedTypeScope } from "../../scopes/named-type.js";
@@ -129,9 +130,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
   return (
     <>
       struct
-      {structScope ?
-        <Scope value={structScope}>{content}</Scope>
-      : content}
+      {structScope ? <Scope value={structScope}>{content}</Scope> : content}
     </>
   );
 }
@@ -169,11 +168,11 @@ export function StructMember(props: StructMemberProps) {
         <hbr />
       </Show>
       <Name /> {props.type}
-      {tagString.value === "" ?
-        ""
-      : tagString.value.includes('"') ?
-        ` \`${tagString.value}\``
-      : ` "${tagString.value}"`}
+      {tagString.value === ""
+        ? ""
+        : tagString.value.includes('"')
+          ? ` \`${tagString.value}\``
+          : ` "${tagString.value}"`}
     </Declaration>
   );
 }

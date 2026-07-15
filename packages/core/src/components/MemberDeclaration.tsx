@@ -94,9 +94,8 @@ export function MemberDeclaration(props: MemberDeclarationProps) {
         `MemberDeclaration component cannot create a symbol in a non-basic scope: ${scopeContext.ownerSymbol}`,
       );
     }
-    const space =
-      infoProps.static ?
-        scopeContext.ownerSymbol.staticMembers
+    const space = infoProps.static
+      ? scopeContext.ownerSymbol.staticMembers
       : scopeContext.ownerSymbol.instanceMembers;
     declaration = new BasicSymbol(infoProps.name, space, {
       refkeys: infoProps.refkey,

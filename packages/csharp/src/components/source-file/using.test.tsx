@@ -1,12 +1,14 @@
+import { Output, refkey } from "@alloy-js/core";
+import * as coretest from "@alloy-js/core/testing";
+import { expect, it } from "vitest";
+
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { EnumDeclaration } from "#components/enum/declaration.jsx";
 import { EnumMember } from "#components/enum/member.jsx";
 import { Method } from "#components/method/method.jsx";
 import { Namespace } from "#components/namespace/namespace.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
-import { Output, refkey } from "@alloy-js/core";
-import * as coretest from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+
 import { createCSharpNamePolicy } from "../../name-policy.js";
 
 it("using on source file are placed above file namespace statement", () => {

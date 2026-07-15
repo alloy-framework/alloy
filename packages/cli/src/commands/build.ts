@@ -1,7 +1,9 @@
 import { parseArgs } from "node:util";
+
 import { join } from "pathe";
 import pc from "picocolors";
 import ts from "typescript";
+
 import { buildAllFiles } from "../babel.js";
 import { getParseCommandLine } from "../typescript.js";
 

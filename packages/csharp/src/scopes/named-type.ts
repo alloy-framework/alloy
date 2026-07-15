@@ -1,4 +1,5 @@
 import { type OutputScopeOptions } from "@alloy-js/core";
+
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 import { CSharpScope } from "./csharp.js";
 import { CSharpSourceFileScope } from "./source-file.js";

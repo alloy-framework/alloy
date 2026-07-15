@@ -1,4 +1,5 @@
 import { Children, Namekey, Refkey, Show } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import { createStaticMemberSymbol } from "../symbols/index.js";
 import { JSDoc } from "./JSDoc.jsx";
@@ -52,9 +53,11 @@ export function EnumMember(props: EnumMemberProps) {
     namePolicy: namer.for("enum-member"),
   });
   const valueCode =
-    props.jsValue !== undefined ?
+    props.jsValue !== undefined ? (
       <ValueExpression jsValue={props.jsValue} />
-    : props.value;
+    ) : (
+      props.value
+    );
 
   return (
     <>

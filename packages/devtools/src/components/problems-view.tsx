@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { SourceLocationLink } from "@/components/source-location-link";
 import {
   ContextMenu,
@@ -8,7 +10,6 @@ import {
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
 import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
 import { useRenderTreeServices } from "@/hooks/render-tree-services-context";
-import { useState } from "react";
 
 export function ProblemsView() {
   const { diagnostics, renderErrors, formatPath } = useDebugConnectionContext();
@@ -49,9 +50,9 @@ export function ProblemsView() {
         .reverse()
         .find((entry) => entry.renderNodeId !== undefined);
       const sourceFileId =
-        componentEntry?.renderNodeId !== undefined ?
-          findFileIdForRenderNodeById(String(componentEntry.renderNodeId))
-        : undefined;
+        componentEntry?.renderNodeId !== undefined
+          ? findFileIdForRenderNodeById(String(componentEntry.renderNodeId))
+          : undefined;
       return {
         id: error.id,
         kind: "error" as const,
@@ -76,9 +77,9 @@ export function ProblemsView() {
         .reverse()
         .find((entry) => entry.renderNodeId !== undefined);
       const sourceFileId =
-        componentEntry?.renderNodeId !== undefined ?
-          findFileIdForRenderNodeById(String(componentEntry.renderNodeId))
-        : undefined;
+        componentEntry?.renderNodeId !== undefined
+          ? findFileIdForRenderNodeById(String(componentEntry.renderNodeId))
+          : undefined;
       return {
         id: diagnostic.id,
         kind: "diagnostic" as const,
@@ -101,9 +102,10 @@ export function ProblemsView() {
     >
       <ContextMenuTrigger asChild>
         <div className="h-full overflow-auto p-3 text-sm">
-          {problems.length === 0 ?
+          {problems.length === 0 ? (
             <div className="text-muted-foreground">No problems reported.</div>
-          : <div className="rounded border border-border overflow-hidden">
+          ) : (
+            <div className="rounded border border-border overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                   <tr>
@@ -116,19 +118,19 @@ export function ProblemsView() {
                 </thead>
                 <tbody>
                   {problems.map((problem) => {
-                    const location =
-                      problem.source?.fileName ?
-                        `${formatPath(problem.source.fileName)}:${problem.source.lineNumber ?? 0}:${problem.source.columnNumber ?? 0}`
+                    const location = problem.source?.fileName
+                      ? `${formatPath(problem.source.fileName)}:${problem.source.lineNumber ?? 0}:${problem.source.columnNumber ?? 0}`
                       : "";
-                    const sourceFileName =
-                      problem.sourceFileId ?
-                        (formatPath(problem.sourceFileId).split("/").pop() ??
+                    const sourceFileName = problem.sourceFileId
+                      ? (formatPath(problem.sourceFileId).split("/").pop() ??
                         problem.sourceFileId)
                       : "";
                     const severityClass =
-                      problem.severity === "error" ? "text-destructive"
-                      : problem.severity === "warning" ? "text-amber-600"
-                      : "text-muted-foreground";
+                      problem.severity === "error"
+                        ? "text-destructive"
+                        : problem.severity === "warning"
+                          ? "text-amber-600"
+                          : "text-muted-foreground";
                     return (
                       <tr
                         key={problem.id}
@@ -165,10 +167,8 @@ export function ProblemsView() {
                           {problem.message}
                         </td>
                         <td className="px-3 py-2">
-                          {(
-                            problem.componentName &&
-                            problem.componentRenderNodeId !== undefined
-                          ) ?
+                          {problem.componentName &&
+                          problem.componentRenderNodeId !== undefined ? (
                             <button
                               className="text-primary hover:underline text-left"
                               onClick={() => {
@@ -181,10 +181,12 @@ export function ProblemsView() {
                             >
                               {problem.componentName}
                             </button>
-                          : <span className="text-muted-foreground">—</span>}
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </td>
                         <td className="px-3 py-2">
-                          {problem.sourceFileId ?
+                          {problem.sourceFileId ? (
                             <button
                               className="text-primary hover:underline text-left"
                               onClick={() => {
@@ -199,14 +201,18 @@ export function ProblemsView() {
                             >
                               {sourceFileName}
                             </button>
-                          : <span className="text-muted-foreground">—</span>}
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </td>
                         <td className="px-3 py-2 text-xs">
-                          {problem.source ?
+                          {problem.source ? (
                             <SourceLocationLink source={problem.source}>
                               {location}
                             </SourceLocationLink>
-                          : <span className="text-muted-foreground">—</span>}
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -214,7 +220,7 @@ export function ProblemsView() {
                 </tbody>
               </table>
             </div>
-          }
+          )}
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>

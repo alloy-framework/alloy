@@ -1,15 +1,4 @@
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
-import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
-import { findRenderNodeInTree } from "@/lib/render-tree-utils";
-import { cn } from "@/lib/utils";
-import {
   AlertCircle,
   AlertTriangle,
   Box,
@@ -20,6 +9,18 @@ import {
   X,
 } from "lucide-react";
 import { useCallback } from "react";
+
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
+import { useDevtoolsAppStateContext } from "@/hooks/devtools-app-state-context";
+import { findRenderNodeInTree } from "@/lib/render-tree-utils";
+import { cn } from "@/lib/utils";
 
 export function TabBar() {
   const { renderTree, fileToRenderNode } = useDebugConnectionContext();
@@ -63,9 +64,8 @@ export function TabBar() {
   );
 
   const handleTabMenuGoToRenderNode = useCallback(() => {
-    const tab =
-      tabMenu?.tabId ?
-        openTabs.find((item) => item.id === tabMenu.tabId)
+    const tab = tabMenu?.tabId
+      ? openTabs.find((item) => item.id === tabMenu.tabId)
       : undefined;
     if (tab?.type === "file") {
       const renderNodeId = fileToRenderNode.get(tab.id);
@@ -86,11 +86,12 @@ export function TabBar() {
           className="flex items-center border-b border-border bg-muted/50 h-9 shrink-0 overflow-x-auto"
           onContextMenu={handleTabBarContextMenu}
         >
-          {openTabs.length === 0 ?
+          {openTabs.length === 0 ? (
             <div className="px-3 text-sm text-muted-foreground">
               No open files
             </div>
-          : openTabs.map((tab) => (
+          ) : (
+            openTabs.map((tab) => (
               <button
                 key={tab.id}
                 data-tab-id={tab.id}
@@ -100,9 +101,9 @@ export function TabBar() {
                 }}
                 className={cn(
                   "flex items-center gap-2 px-3 h-full text-sm border-r border-border hover:bg-accent/50 group",
-                  activeTabId === tab.id ?
-                    "bg-background border-b-2 border-b-primary"
-                  : "border-b-2 border-b-transparent",
+                  activeTabId === tab.id
+                    ? "bg-background border-b-2 border-b-primary"
+                    : "border-b-2 border-b-transparent",
                 )}
               >
                 <span className="text-muted-foreground">
@@ -117,14 +118,13 @@ export function TabBar() {
                 </span>
               </button>
             ))
-          }
+          )}
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
         {(() => {
-          const tab =
-            tabMenu?.tabId ?
-              openTabs.find((item) => item.id === tabMenu.tabId)
+          const tab = tabMenu?.tabId
+            ? openTabs.find((item) => item.id === tabMenu.tabId)
             : undefined;
           return (
             <>

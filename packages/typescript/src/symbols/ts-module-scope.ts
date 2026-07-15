@@ -4,6 +4,7 @@ import {
   Refkey,
   shallowReactive,
 } from "@alloy-js/core";
+
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";
 

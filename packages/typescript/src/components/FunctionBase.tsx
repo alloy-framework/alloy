@@ -10,6 +10,7 @@ import {
   taggedComponent,
   type Children,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import type {
   FunctionTypeParameterDescriptor,
@@ -218,9 +219,9 @@ function normalizeAndDeclareParameters(
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
       const nullishFlag =
-        (param.nullish ?? param.optional) ?
-          TSSymbolFlags.Nullish
-        : TSSymbolFlags.None;
+        (param.nullish ?? param.optional)
+          ? TSSymbolFlags.Nullish
+          : TSSymbolFlags.None;
       const TypeSlot = createSymbolSlot();
       const symbol = createValueSymbol(param.name, {
         refkeys: param.refkey,

@@ -4,6 +4,7 @@ import {
   ScopePropsWithInfo,
   ScopePropsWithValue,
 } from "@alloy-js/core";
+
 import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface BlockScopePropsWithScopeValue

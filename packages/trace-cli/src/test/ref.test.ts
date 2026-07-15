@@ -1,5 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
+
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
 import { refCommand } from "../commands/ref.js";
 import { captureOutput } from "./capture.js";
 import { createTestDb } from "./test-db.js";

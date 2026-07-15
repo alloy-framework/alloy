@@ -1,5 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { describe, expect, it } from "vitest";
+
 import { effect, memo, onCleanup } from "../../src/reactivity.js";
 import type { Children } from "../../src/runtime/component.js";
 import { flushJobs } from "../../src/scheduler.js";

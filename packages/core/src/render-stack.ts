@@ -1,4 +1,5 @@
 import pc from "picocolors";
+
 import { contextsByKey } from "./context.js";
 import { SourceDirectoryContext } from "./context/source-directory.js";
 import { SourceFileContext } from "./context/source-file.js";
@@ -246,8 +247,9 @@ export function printRenderStack(error?: unknown) {
     }
 
     const displayName = getComponentDisplayName(component, props);
-    const sourceStr =
-      source ? pc.gray(` (${formatSourceLocation(source)})`) : "";
+    const sourceStr = source
+      ? pc.gray(` (${formatSourceLocation(source)})`)
+      : "";
 
     // eslint-disable-next-line no-console
     console.error(`  ${pc.cyan("at")} ${pc.bold(displayName)}${sourceStr}`);
@@ -271,9 +273,8 @@ export function printRenderStack(error?: unknown) {
           providerEntry.component,
           providerEntry.props,
         );
-        const providerSourceStr =
-          providerEntry.source ?
-            pc.gray(` (${formatSourceLocation(providerEntry.source)})`)
+        const providerSourceStr = providerEntry.source
+          ? pc.gray(` (${formatSourceLocation(providerEntry.source)})`)
           : "";
 
         // eslint-disable-next-line no-console

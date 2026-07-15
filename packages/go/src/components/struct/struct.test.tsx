@@ -1,11 +1,12 @@
 import { List, Output, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { TestPackage } from "../../../test/utils.js";
+import { TypeConstraint } from "../interface/declaration.jsx";
 import { ModuleDirectory } from "../ModuleDirectory.js";
+import { Pointer } from "../pointer/pointer.js";
 import { SourceDirectory } from "../SourceDirectory.js";
 import { SourceFile } from "../SourceFile.js";
-import { TypeConstraint } from "../interface/declaration.jsx";
-import { Pointer } from "../pointer/pointer.js";
 import { TypeDeclaration } from "../type/declaration.js";
 import {
   StructDeclaration,

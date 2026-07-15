@@ -1,6 +1,7 @@
 import { Prose } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+
 import { JSDoc } from "../src/components/JSDoc.jsx";
 import { JSDocComment } from "../src/components/JSDocComment.jsx";
 import { JSDocExample } from "../src/components/JSDocExample.jsx";

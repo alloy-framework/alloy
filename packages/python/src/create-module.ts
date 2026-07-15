@@ -6,6 +6,7 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
+
 import { createPythonSymbol } from "./symbol-creation.js";
 import { PythonModuleScope } from "./symbols/index.js";
 

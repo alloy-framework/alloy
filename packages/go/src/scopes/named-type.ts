@@ -1,4 +1,5 @@
 import { type OutputScopeOptions } from "@alloy-js/core";
+
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 import { GoScope } from "./go.js";
 import { GoModuleScope } from "./module.js";

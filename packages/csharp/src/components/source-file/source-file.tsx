@@ -1,8 +1,3 @@
-import { DocComment } from "#components/doc/comment.jsx";
-import { NamespaceScopes } from "#components/namespace-scopes.jsx";
-import { NamespaceName } from "#components/namespace/namespace-name.jsx";
-import { Reference } from "#components/Reference.jsx";
-import { Usings } from "#components/using/using.jsx";
 import {
   Block,
   Children,
@@ -14,6 +9,13 @@ import {
   Show,
   useBinder,
 } from "@alloy-js/core";
+
+import { DocComment } from "#components/doc/comment.jsx";
+import { NamespaceScopes } from "#components/namespace-scopes.jsx";
+import { NamespaceName } from "#components/namespace/namespace-name.jsx";
+import { Reference } from "#components/Reference.jsx";
+import { Usings } from "#components/using/using.jsx";
+
 import {
   CSharpFormatOptions,
   useCsharpFormatOptions,
@@ -76,12 +78,12 @@ export function SourceFile(props: SourceFileProps) {
   });
 
   const header =
-    props.header || props.headerComment ?
+    props.header || props.headerComment ? (
       <SourceFileHeader
         header={props.header}
         headerComment={props.headerComment}
       />
-    : undefined;
+    ) : undefined;
 
   return (
     <CoreSourceFile
@@ -100,20 +102,22 @@ export function SourceFile(props: SourceFileProps) {
             <hbr />
           </>
         )}
-        {nsSymbol === globalNs ?
+        {nsSymbol === globalNs ? (
           content
-        : <>
+        ) : (
+          <>
             namespace <NamespaceName symbol={nsSymbol} />
-            {sourceFileScope.hasBlockNamespace ?
+            {sourceFileScope.hasBlockNamespace ? (
               <Block newline>{content}</Block>
-            : <>
+            ) : (
+              <>
                 ;<hbr />
                 <hbr />
                 {content}
               </>
-            }
+            )}
           </>
-        }
+        )}
       </Scope>
     </CoreSourceFile>
   );

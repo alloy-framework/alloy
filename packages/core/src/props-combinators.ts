@@ -1,4 +1,5 @@
 import { computed, isReactive, proxyRefs, toRefs } from "@vue/reactivity";
+
 import { untrack } from "./reactivity.js";
 
 export function mergeProps<T, U>(source: T, source1: U): T & U;
@@ -41,9 +42,9 @@ export function mergeProps(...sources: any): any {
 
 export type SplitProps<T, K extends (readonly (keyof T)[])[]> = [
   ...{
-    [P in keyof K]: P extends `${number}` ?
-      Pick<T, Extract<K[P], readonly (keyof T)[]>[number]>
-    : never;
+    [P in keyof K]: P extends `${number}`
+      ? Pick<T, Extract<K[P], readonly (keyof T)[]>[number]>
+      : never;
   },
   { [P in keyof T as Exclude<P, K[number][number]>]: T[P] },
 ];

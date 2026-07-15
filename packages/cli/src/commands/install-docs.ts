@@ -1,7 +1,9 @@
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
+
 import { join, relative, resolve } from "pathe";
 import pc from "picocolors";
+
 import {
   collectAlloySearchDirs,
   findGitRoot,
@@ -56,9 +58,8 @@ export async function installDocsCommand() {
   }
 
   // Determine where AGENTS.md should go
-  const outputDir =
-    args.values.output ?
-      resolve(String(args.values.output))
+  const outputDir = args.values.output
+    ? resolve(String(args.values.output))
     : (findGitRoot(cwd) ?? projectRoot);
 
   const packages = discoverAlloyPackages(cwd, outputDir);

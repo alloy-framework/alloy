@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as jv from "../src/components/index.js";
 
 it("emits correct package directory", () => {

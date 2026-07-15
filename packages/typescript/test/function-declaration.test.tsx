@@ -10,6 +10,7 @@ import {
   StatementList,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { ClassField } from "../src/components/stc/index.js";
 import {
   ClassDeclaration,

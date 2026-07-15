@@ -1,4 +1,5 @@
 import { beforeEach } from "vitest";
+
 import { Binder, createOutputBinder } from "../../src/binder.js";
 import { OutputSpace } from "../../src/index.js";
 import { Namekey, refkey, Refkey } from "../../src/refkey.js";

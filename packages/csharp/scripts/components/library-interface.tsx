@@ -1,10 +1,11 @@
-import { Descriptor } from "#createLibrary";
 import { For } from "@alloy-js/core";
 import {
   InterfaceExpression,
   InterfaceMember,
   TypeDeclaration,
 } from "@alloy-js/typescript";
+
+import { Descriptor } from "#createLibrary";
 
 export function LibraryInterfaceDeclaration(props: {
   name: string;
@@ -28,9 +29,11 @@ export function LibraryMembersInterface(props: {
           {([name, descriptor]) => {
             return (
               <InterfaceMember name={name}>
-                {"members" in descriptor ?
+                {"members" in descriptor ? (
                   <LibraryMembersInterface types={descriptor.members} />
-                : "LibrarySymbolReference"}
+                ) : (
+                  "LibrarySymbolReference"
+                )}
               </InterfaceMember>
             );
           }}

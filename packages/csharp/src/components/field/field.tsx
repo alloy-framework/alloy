@@ -1,4 +1,5 @@
 import { Children, Declaration, Name, Namekey, Refkey } from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,

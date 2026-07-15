@@ -1,4 +1,5 @@
 import { useDetailResolvers } from "@/hooks/use-detail-resolvers";
+
 import {
   buildDebugInfoRows,
   formatDebugLabel,
@@ -65,9 +66,9 @@ export function ScopeDetails({ details }: ScopeDetailsProps) {
                       id: details.renderNodeId ?? null,
                       name:
                         renderNodeLabel ??
-                        (details.renderNodeId != null ?
-                          `Render node #${details.renderNodeId}`
-                        : undefined),
+                        (details.renderNodeId != null
+                          ? `Render node #${details.renderNodeId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -84,9 +85,9 @@ export function ScopeDetails({ details }: ScopeDetailsProps) {
                       id: details.parentId ?? null,
                       name:
                         parentName ??
-                        (details.parentId != null ?
-                          `#${details.parentId}`
-                        : undefined),
+                        (details.parentId != null
+                          ? `#${details.parentId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -103,9 +104,9 @@ export function ScopeDetails({ details }: ScopeDetailsProps) {
                       id: details.ownerSymbolId ?? null,
                       name:
                         ownerName ??
-                        (details.ownerSymbolId != null ?
-                          `#${details.ownerSymbolId}`
-                        : undefined),
+                        (details.ownerSymbolId != null
+                          ? `#${details.ownerSymbolId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -144,9 +145,11 @@ export function ScopeDetails({ details }: ScopeDetailsProps) {
                     {formatDebugLabel(space.key)}
                   </td>
                   <td className="pr-2 py-1">
-                    {space.symbols.length > 0 ?
+                    {space.symbols.length > 0 ? (
                       renderDebugValue(space.symbols, options)
-                    : <NoneText label="none" />}
+                    ) : (
+                      <NoneText label="none" />
+                    )}
                   </td>
                 </tr>
               ))}

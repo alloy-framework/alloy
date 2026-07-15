@@ -1,4 +1,5 @@
 import { onCleanup, type Children } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import type { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createValueSymbol, TSSymbolFlags } from "../symbols/index.js";
@@ -76,9 +77,9 @@ export function CatchClause(props: CatchClauseProps) {
 
   const namePolicy = useTSNamePolicy();
   const paramDesc =
-    typeof props.parameter === "string" ?
-      { name: props.parameter }
-    : props.parameter;
+    typeof props.parameter === "string"
+      ? { name: props.parameter }
+      : props.parameter;
 
   const symbol = createValueSymbol(paramDesc.name, {
     refkeys: paramDesc.refkey,

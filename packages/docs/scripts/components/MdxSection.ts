@@ -1,4 +1,5 @@
 import type { Children } from "@alloy-js/core";
+
 import { SectionContext, useSectionContext } from "../contexts/section.js";
 import { MdxParagraph } from "./stc/index.js";
 

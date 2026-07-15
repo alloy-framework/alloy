@@ -1,5 +1,6 @@
 import * as core from "@alloy-js/core";
 import * as changecase from "change-case";
+
 import { sanitizeCSharpIdentifier } from "./identifier-utils.js";
 import { isCSharpKeyword } from "./keywords.js";
 

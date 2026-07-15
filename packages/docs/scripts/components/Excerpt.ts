@@ -4,6 +4,7 @@ import {
   ExcerptTokenKind,
   type Excerpt as AEExcerpt,
 } from "@microsoft/api-extractor-model";
+
 import { mdxEscape, resolveExcerptReference } from "../utils.js";
 
 export interface ExcerptProps {

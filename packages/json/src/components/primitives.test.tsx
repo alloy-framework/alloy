@@ -1,5 +1,6 @@
-import { jsonTest } from "#test/utils.jsx";
 import { expect, it } from "vitest";
+
+import { jsonTest } from "#test/utils.jsx";
 
 it.each([
   ["boolean (true)", true, "true"],

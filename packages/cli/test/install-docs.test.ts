@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { generateDocsSection } from "../src/commands/install-docs.js";
 
 const samplePackages = [

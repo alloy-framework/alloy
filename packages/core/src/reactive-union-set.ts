@@ -7,6 +7,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
+
 import { effect, root, shallowReactive, untrack } from "./reactivity.js";
 
 export interface ReactiveUnionSetOptions<T> {

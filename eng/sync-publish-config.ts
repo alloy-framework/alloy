@@ -12,7 +12,9 @@
 //   node eng/sync-publish-config.ts --check    # exit non-zero if anything is stale
 /* eslint-disable no-console */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "fs";
+
 import { join } from "pathe";
+
 import { repoRoot } from "./utils/constants.ts";
 
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
@@ -130,8 +132,8 @@ if (check && stale.length > 0) {
 
 if (!check) {
   console.log(
-    stale.length === 0 ?
-      "publishConfig already in sync."
-    : `Synced publishConfig for ${stale.length} package(s).`,
+    stale.length === 0
+      ? "publishConfig already in sync."
+      : `Synced publishConfig for ${stale.length} package(s).`,
   );
 }

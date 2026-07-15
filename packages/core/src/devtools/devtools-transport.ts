@@ -100,9 +100,9 @@ export async function createTransport(
 
   const address = httpServer.address();
   const actualPort =
-    typeof address === "object" && address !== null ?
-      address.port
-    : options.port;
+    typeof address === "object" && address !== null
+      ? address.port
+      : options.port;
 
   let resolveReady: (() => void) | undefined;
   const ready = new Promise<void>((resolve) => {

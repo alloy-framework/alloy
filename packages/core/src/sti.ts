@@ -5,10 +5,11 @@ import { createIntrinsic } from "./runtime/create-intrinsic.js";
 import { IntrinsicElements } from "./runtime/intrinsic.js";
 
 export type StiSignature<T extends keyof IntrinsicElements> = (
-  ...args: unknown extends T ? []
-  : {} extends Omit<IntrinsicElements[T], "children"> ?
-    [props?: IntrinsicElements[T]]
-  : [props: IntrinsicElements[T]]
+  ...args: unknown extends T
+    ? []
+    : {} extends Omit<IntrinsicElements[T], "children">
+      ? [props?: IntrinsicElements[T]]
+      : [props: IntrinsicElements[T]]
 ) => StiComponentCreator;
 
 export type StiComponentCreator = (() => ElementNode) & {

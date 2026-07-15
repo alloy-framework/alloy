@@ -1,4 +1,5 @@
 import { Scope, ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+
 import { createLexicalScope, TSLexicalScope } from "../symbols/index.js";
 
 export interface LexicalScopePropsWithScopeValue extends ScopePropsWithValue {}

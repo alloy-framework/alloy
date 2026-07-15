@@ -6,6 +6,7 @@ import {
   StatementList,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import * as ts from "../src/components/index.js";
 import { ParameterDescriptor } from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";

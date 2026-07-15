@@ -1,5 +1,6 @@
 import { List, Output, reactive } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { jsonTest } from "../../test/utils.jsx";
 import { JsonObject, JsonObjectProperty } from "./json-object.jsx";
 import { SourceFile } from "./source-file.jsx";

@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { EventBadge } from "@/components/event-badge";
 import { ReactiveChain } from "@/components/reactive-chain";
 import { SourceLocationLink } from "@/components/source-location-link";
@@ -9,7 +11,6 @@ import type {
 } from "@/hooks/debug-connection-types";
 import { formatEdgeTarget } from "@/lib/edge-utils";
 import { formatSourceLocation } from "@/lib/format-source-location";
-import { useMemo } from "react";
 
 export interface EffectDetailViewProps {
   effectId: string;
@@ -156,11 +157,13 @@ export function EffectDetailView(props: EffectDetailViewProps) {
         <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
           Lifecycle ({timeline.length} events)
         </div>
-        {timeline.length === 0 ?
+        {timeline.length === 0 ? (
           <div className="text-xs text-muted-foreground">
             No lifecycle events recorded.
           </div>
-        : <TimelineTable events={timeline} effects={effects} refs={refs} />}
+        ) : (
+          <TimelineTable events={timeline} effects={effects} refs={refs} />
+        )}
       </div>
     </div>
   );
@@ -184,9 +187,9 @@ function TimelineTable(props: {
         {props.events.map((event, i) => {
           if (event._kind === "lifecycle") {
             const triggerLabel =
-              event.triggerRefId !== undefined ?
-                formatEdgeTarget({ refId: event.triggerRefId }, props.refs)
-              : undefined;
+              event.triggerRefId !== undefined
+                ? formatEdgeTarget({ refId: event.triggerRefId }, props.refs)
+                : undefined;
             return (
               <tr
                 key={`lc-${event.id}-${i}`}
@@ -202,14 +205,14 @@ function TimelineTable(props: {
           }
           const targetLabel = formatEdgeTarget(event, props.refs);
           const causedByEffect =
-            event.type === "trigger" && event.causedBy !== undefined ?
-              props.effects.get(event.causedBy)
-            : undefined;
-          const causedByLabel =
-            causedByEffect ?
-              `← ${causedByEffect.name ?? "effect"} #${event.causedBy}`
-            : event.type === "trigger" ? "← (external)"
-            : undefined;
+            event.type === "trigger" && event.causedBy !== undefined
+              ? props.effects.get(event.causedBy)
+              : undefined;
+          const causedByLabel = causedByEffect
+            ? `← ${causedByEffect.name ?? "effect"} #${event.causedBy}`
+            : event.type === "trigger"
+              ? "← (external)"
+              : undefined;
           return (
             <tr
               key={`edge-${event.id}-${i}`}

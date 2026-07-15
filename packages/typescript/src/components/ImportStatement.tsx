@@ -6,6 +6,7 @@ import {
   useContext,
 } from "@alloy-js/core";
 import { relative } from "pathe";
+
 import {
   ImportedSymbol,
   ImportRecords,
@@ -157,13 +158,11 @@ function ImportBinding(props: Readonly<ImportBindingProps>) {
   });
 
   const prefix = memo(() =>
-    (
-      !props.inTypeImport &&
-      props.importedSymbol.local.isTypeSymbol &&
-      !props.importedSymbol.local.isValueSymbol
-    ) ?
-      "type "
-    : "",
+    !props.inTypeImport &&
+    props.importedSymbol.local.isTypeSymbol &&
+    !props.importedSymbol.local.isValueSymbol
+      ? "type "
+      : "",
   );
   return (
     <>

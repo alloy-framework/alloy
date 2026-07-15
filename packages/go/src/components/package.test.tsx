@@ -1,6 +1,7 @@
 import { Output } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
 import { ModuleDirectory } from "./ModuleDirectory.jsx";
 import { SourceDirectory } from "./SourceDirectory.jsx";
 import { SourceFile } from "./SourceFile.jsx";

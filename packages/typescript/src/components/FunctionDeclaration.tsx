@@ -7,6 +7,7 @@ import {
   Show,
   type Children,
 } from "@alloy-js/core";
+
 import { getCallSignatureProps } from "../utils.js";
 import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
 import { CommonDeclarationProps, Declaration } from "./Declaration.js";

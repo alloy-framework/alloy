@@ -1,4 +1,5 @@
 import { memo, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
+
 import { SourceFileContext } from "../components/index.js";
 import { JavaOutputSymbol } from "./java-output-symbol.js";
 import { JavaOutputScope } from "./scopes.js";

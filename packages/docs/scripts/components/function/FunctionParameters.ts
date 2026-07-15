@@ -1,5 +1,6 @@
 import { code, mapJoin, type Children } from "@alloy-js/core";
 import type { ApiFunction, Parameter } from "@microsoft/api-extractor-model";
+
 import { mdxEscape } from "../../utils.js";
 import { MdxSection, TsDoc } from "../stc/index.js";
 
@@ -11,9 +12,8 @@ export function FunctionParameters(props: FunctionParametersProps) {
   const params = mapJoin(
     () => props.fn.parameters as Parameter[],
     (param) => {
-      const summary: Children =
-        param.tsdocParamBlock ?
-          TsDoc({
+      const summary: Children = param.tsdocParamBlock
+        ? TsDoc({
             node: param.tsdocParamBlock,
             context: props.fn,
             inline: true,

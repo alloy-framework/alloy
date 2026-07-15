@@ -1,4 +1,5 @@
 import { Block, Children, List } from "@alloy-js/core";
+
 import { useJavaNamePolicy } from "../name-policy.js";
 import { ArgumentList } from "./ArgumentList.jsx";
 import { CommonDeclarationProps, Declaration } from "./Declaration.js";

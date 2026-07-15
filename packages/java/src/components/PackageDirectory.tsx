@@ -9,6 +9,7 @@ import {
   useContext,
   useScope,
 } from "@alloy-js/core";
+
 import { JavaPackageScope } from "../symbols/java-package-scope.js";
 
 export interface PackageDirectoryContext {
@@ -40,9 +41,8 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageNames = props.package.split(".");
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName =
-    parentPackage ?
-      parentPackage.qualifiedName + "." + packageName
+  const fullyQualifiedPackageName = parentPackage
+    ? parentPackage.qualifiedName + "." + packageName
     : packageName;
 
   const parentScope = useScope();

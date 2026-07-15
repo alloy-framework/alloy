@@ -23,8 +23,9 @@ export function FileView() {
     collectTextNodesForNode,
     findLiftedRootForNode: findLiftedRootForNodeById,
   });
-  const activeTab =
-    activeTabId ? openTabs.find((tab) => tab.id === activeTabId) : null;
+  const activeTab = activeTabId
+    ? openTabs.find((tab) => tab.id === activeTabId)
+    : null;
   if (!activeTab || activeTab.type !== "file") return null;
   const contents = fileContents.get(activeTab.id)?.contents ?? "";
   const ranges = fileTextRanges.get(activeTab.id) ?? [];

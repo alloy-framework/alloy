@@ -1,3 +1,5 @@
+import { execSync } from "child_process";
+
 /* eslint-disable no-console */
 // @ts-check
 import { context, getOctokit } from "@actions/github";
@@ -6,7 +8,6 @@ import {
   renderReleasePlanAsMarkdown,
   resolveCurrentReleasePlan,
 } from "@chronus/chronus";
-import { execSync } from "child_process";
 const branchName = "publish/auto-release";
 
 const plan = await resolveCurrentReleasePlan(NodeChronusHost, process.cwd());

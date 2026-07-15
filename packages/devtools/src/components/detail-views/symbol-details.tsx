@@ -1,4 +1,5 @@
 import { useDetailResolvers } from "@/hooks/use-detail-resolvers";
+
 import {
   buildDebugInfoRows,
   formatDebugLabel,
@@ -75,9 +76,9 @@ export function SymbolDetails({ details }: SymbolDetailsProps) {
                       id: details.renderNodeId ?? null,
                       name:
                         renderNodeLabel ??
-                        (details.renderNodeId != null ?
-                          `Render node #${details.renderNodeId}`
-                        : undefined),
+                        (details.renderNodeId != null
+                          ? `Render node #${details.renderNodeId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -94,9 +95,9 @@ export function SymbolDetails({ details }: SymbolDetailsProps) {
                       id: details.scopeId ?? null,
                       name:
                         scopeName ??
-                        (details.scopeId != null ?
-                          `#${details.scopeId}`
-                        : undefined),
+                        (details.scopeId != null
+                          ? `#${details.scopeId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -113,9 +114,9 @@ export function SymbolDetails({ details }: SymbolDetailsProps) {
                       id: details.ownerSymbolId ?? null,
                       name:
                         ownerName ??
-                        (details.ownerSymbolId != null ?
-                          `#${details.ownerSymbolId}`
-                        : undefined),
+                        (details.ownerSymbolId != null
+                          ? `#${details.ownerSymbolId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -132,9 +133,9 @@ export function SymbolDetails({ details }: SymbolDetailsProps) {
                       id: details.movedToId ?? null,
                       name:
                         movedName ??
-                        (details.movedToId != null ?
-                          `#${details.movedToId}`
-                        : undefined),
+                        (details.movedToId != null
+                          ? `#${details.movedToId}`
+                          : undefined),
                     },
                     options,
                   )}
@@ -170,9 +171,11 @@ export function SymbolDetails({ details }: SymbolDetailsProps) {
                     {formatDebugLabel(space.key)}
                   </td>
                   <td className="pr-2 py-1">
-                    {space.symbols.length > 0 ?
+                    {space.symbols.length > 0 ? (
                       renderDebugValue(space.symbols, options)
-                    : <NoneText label="none" />}
+                    ) : (
+                      <NoneText label="none" />
+                    )}
                   </td>
                 </tr>
               ))}

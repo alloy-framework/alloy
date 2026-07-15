@@ -1,4 +1,5 @@
 import { memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
+
 import { GoScope } from "../scopes/go.js";
 import { GoPackageScope } from "../scopes/package.js";
 import { useSourceFileScope } from "../scopes/source-file.js";

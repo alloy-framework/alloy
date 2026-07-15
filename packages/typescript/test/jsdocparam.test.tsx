@@ -1,5 +1,6 @@
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
 import { JSDocParam } from "../src/components/JSDocParam.jsx";
 import { JSDoc } from "../src/index.js";
 

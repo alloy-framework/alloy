@@ -1,5 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { Block } from "../../src/components/Block.jsx";
 it("renders properly with no children", () => {
   const template = (

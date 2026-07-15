@@ -39,9 +39,8 @@ export interface DiagnosticHandle {
 function buildComponentStack(): DiagnosticStackEntry[] {
   return getRenderStackSnapshot().map((entry) => ({
     name: entry.displayName,
-    renderNodeId:
-      entry.context?.meta?.renderNode ?
-        getRenderNodeId(entry.context.meta.renderNode)
+    renderNodeId: entry.context?.meta?.renderNode
+      ? getRenderNodeId(entry.context.meta.renderNode)
       : undefined,
     source: entry.source,
   }));
@@ -79,9 +78,9 @@ export class DiagnosticsCollector {
         diagnostic.source?.fileName,
         diagnostic.source?.lineNumber,
         diagnostic.source?.columnNumber,
-        diagnostic.componentStack ?
-          JSON.stringify(diagnostic.componentStack)
-        : undefined,
+        diagnostic.componentStack
+          ? JSON.stringify(diagnostic.componentStack)
+          : undefined,
       );
       if (rowId !== undefined) {
         this.traceRowIds.set(id, rowId);
@@ -175,9 +174,8 @@ export function reportDiagnostics(collector: DiagnosticsCollector) {
   if (diagnostics.length === 0) return;
 
   for (const diagnostic of diagnostics) {
-    const location =
-      diagnostic.source ?
-        ` (${diagnostic.source.fileName}:${diagnostic.source.lineNumber}:${diagnostic.source.columnNumber})`
+    const location = diagnostic.source
+      ? ` (${diagnostic.source.fileName}:${diagnostic.source.lineNumber}:${diagnostic.source.columnNumber})`
       : "";
     const line = `${diagnostic.message}${location}`;
     if (diagnostic.severity === "error") {

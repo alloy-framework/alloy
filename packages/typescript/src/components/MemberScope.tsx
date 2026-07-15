@@ -3,6 +3,7 @@ import {
   MemberScope as CoreMemberScope,
   createScope,
 } from "@alloy-js/core";
+
 import { useTSLexicalScopeIfPresent } from "../symbols/scopes.js";
 import { TSMemberScope } from "../symbols/ts-member-scope.js";
 import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";

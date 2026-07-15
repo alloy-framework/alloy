@@ -23,9 +23,11 @@ export function Frontmatter(props: FrontmatterProps) {
   return (
     <List>
       {"---"}
-      {props.jsValue ?
+      {props.jsValue ? (
         stringify(props.jsValue).trim()
-      : <List children={props.children} />}
+      ) : (
+        <List children={props.children} />
+      )}
       {"---"}
     </List>
   );

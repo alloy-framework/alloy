@@ -1,4 +1,5 @@
 import { join } from "pathe";
+
 import { useContext } from "../context.js";
 import { useFormatOptions } from "../context/format-options.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";

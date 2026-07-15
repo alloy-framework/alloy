@@ -1,8 +1,9 @@
+import type { RefObject } from "react";
+import { useState } from "react";
+
 import type { RenderTreeHandle } from "@/components/render-tree";
 import { useRenderTreeFocus } from "@/hooks/use-render-tree-focus";
 import { useTabs } from "@/hooks/use-tabs";
-import type { RefObject } from "react";
-import { useState } from "react";
 
 export function useDevtoolsAppState(
   renderTreeRef: RefObject<RenderTreeHandle | null>,

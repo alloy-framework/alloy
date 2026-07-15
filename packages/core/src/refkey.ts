@@ -1,4 +1,5 @@
 import { markRaw } from "@vue/reactivity";
+
 import { untrack } from "./reactivity.js";
 
 const objectIds = new WeakMap<WeakKey, string>();
@@ -220,12 +221,11 @@ export function memberRefkey(
 export function inspectRefkey(refkey: Refkey): string {
   const unwrapped = refkey[REFKEYABLE]();
 
-  const text =
-    isMemberRefkey(unwrapped) ?
-      `memberRefkey[${inspectRefkey(unwrapped.base)} -> ${
-        typeof unwrapped.member === "string" ?
-          unwrapped.member
-        : inspectRefkey(unwrapped.member)
+  const text = isMemberRefkey(unwrapped)
+    ? `memberRefkey[${inspectRefkey(unwrapped.base)} -> ${
+        typeof unwrapped.member === "string"
+          ? unwrapped.member
+          : inspectRefkey(unwrapped.member)
       }]`
     : `refkey[${unwrapped.key}]`;
 

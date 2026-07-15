@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { PackageJsonFile } from "../src/components/PackageJson.jsx";
 
 it("creates a simple package.json", () => {

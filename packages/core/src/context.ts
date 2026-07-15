@@ -1,4 +1,5 @@
 import { shallowRef } from "@vue/reactivity";
+
 import { effect, getContext } from "./reactivity.js";
 import type { Children, ComponentDefinition } from "./runtime/component.js";
 import type { StcSignature } from "./stc.js";

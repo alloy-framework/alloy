@@ -60,7 +60,8 @@ type SynthFrame = {
   [k in typeof SYNTH]: true;
 } &
   // Fill remaining state: re-print `node` but starting at `offset`.
-  (| { kind: "fill"; node: ElementNode; offset: number }
+  (
+    | { kind: "fill"; node: ElementNode; offset: number }
     // Synthesize an inline list of nodes (used for fill's
     // [content, whitespace, secondContent] measurement and for
     // text-node newline expansion). Items are popped right-to-left.
@@ -250,8 +251,9 @@ function fits(
         const data = el.data as
           | { flatNode?: ElementNode; flatText?: string; groupId?: symbol }
           | undefined;
-        const groupMode: Mode =
-          data?.groupId ? groupModeMap[data.groupId] || MODE_FLAT : mode;
+        const groupMode: Mode = data?.groupId
+          ? groupModeMap[data.groupId] || MODE_FLAT
+          : mode;
         if (groupMode === MODE_BREAK) {
           for (let c = el.lastChild; c !== null; c = c.previousSibling) {
             if (c.nodeType === COMMENT_NODE) continue;
@@ -270,8 +272,9 @@ function fits(
         const data = el.data as
           | { groupId?: symbol; negate?: boolean }
           | undefined;
-        const groupMode: Mode =
-          data?.groupId ? groupModeMap[data.groupId] || MODE_FLAT : mode;
+        const groupMode: Mode = data?.groupId
+          ? groupModeMap[data.groupId] || MODE_FLAT
+          : mode;
         // For width measurement, indent vs no-indent doesn't matter (no
         // newlines emitted in the candidate group while measuring flat,
         // and on hardline we return true). Just descend.
@@ -639,8 +642,9 @@ export function printNodeToString(
     const data = el.data as
       | { flatNode?: ElementNode; flatText?: string; groupId?: symbol }
       | undefined;
-    const groupMode: Mode | undefined =
-      data?.groupId ? groupModeMap[data.groupId] : mode;
+    const groupMode: Mode | undefined = data?.groupId
+      ? groupModeMap[data.groupId]
+      : mode;
     if (groupMode === MODE_BREAK) {
       // Push children (the breakContents).
       pushChildrenReversed(el, ind, mode);
@@ -656,8 +660,9 @@ export function printNodeToString(
 
   function handleIndentIfBreak(el: ElementNode, ind: Indent, mode: Mode): void {
     const data = el.data as { groupId?: symbol; negate?: boolean } | undefined;
-    const groupMode: Mode | undefined =
-      data?.groupId ? groupModeMap[data.groupId] : mode;
+    const groupMode: Mode | undefined = data?.groupId
+      ? groupModeMap[data.groupId]
+      : mode;
     const negate = !!data?.negate;
     if (groupMode === MODE_BREAK) {
       if (negate) {

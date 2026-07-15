@@ -7,6 +7,7 @@ import {
 } from "@alloy-js/core";
 import { Declaration } from "@alloy-js/core/stc";
 import type { ApiItem } from "@microsoft/api-extractor-model";
+
 import { DocSymbol } from "../symbols/doc-symbol.js";
 
 export interface DocDeclarationProps {

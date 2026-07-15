@@ -1,10 +1,12 @@
+import { List, memberRefkey, namekey } from "@alloy-js/core";
+import { Children } from "@alloy-js/core/jsx-runtime";
+import { expect, it } from "vitest";
+
 import { Attribute } from "#components/attributes/attributes.jsx";
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
 import { Property } from "#components/property/property.jsx";
-import { List, memberRefkey, namekey } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
-import { expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 
 const Wrapper = (props: { children: Children }) => (

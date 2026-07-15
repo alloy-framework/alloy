@@ -1,5 +1,6 @@
 import { namekey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { TypeParameters } from "./type-parameters.jsx";
 

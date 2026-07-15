@@ -1,4 +1,5 @@
 import { memo, SourceFile, useContext } from "@alloy-js/core";
+
 import { PackageMetadataContext } from "../context/package-metadata.js";
 import { modulePath } from "../utils.js";
 import { usePackage } from "./PackageDirectory.js";
@@ -133,9 +134,9 @@ export function PackageJsonFile(props: PackageJsonFileProps) {
       }
 
       pkgJson.exports =
-        exportsEntries.length === 0 ?
-          undefined
-        : Object.fromEntries(exportsEntries);
+        exportsEntries.length === 0
+          ? undefined
+          : Object.fromEntries(exportsEntries);
     }
 
     return JSON.stringify(pkgJson, null, 2);

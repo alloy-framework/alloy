@@ -1,9 +1,11 @@
-import { Descriptor, NamespaceDescriptor } from "#createLibrary";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
+
 import { refkey } from "@alloy-js/core";
 import { ArrowFunction } from "@alloy-js/typescript";
 import { load as parseYaml } from "js-yaml";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
+
+import { Descriptor, NamespaceDescriptor } from "#createLibrary";
 
 interface DocfxItem {
   uid: string;
@@ -151,9 +153,8 @@ function TypeReference(props: { type: string | undefined }) {
       break;
     }
   }
-  let typeName =
-    namespace ?
-      parts.slice(namespace.split(".").length).join(".")
+  let typeName = namespace
+    ? parts.slice(namespace.split(".").length).join(".")
     : parts.join(".");
   if (!typeName) return "undefined";
 

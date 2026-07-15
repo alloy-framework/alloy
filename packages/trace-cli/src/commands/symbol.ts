@@ -78,9 +78,9 @@ function symbolList(db: Db, opts: Opts) {
 
   for (const r of rows) {
     const orig =
-      r.original_name && r.original_name !== r.name ?
-        ` (original: ${r.original_name})`
-      : "";
+      r.original_name && r.original_name !== r.name
+        ? ` (original: ${r.original_name})`
+        : "";
     const scope = r.scope_name ? ` in scope "${r.scope_name}"` : "";
     const owner = r.owner_name ? ` member of "${r.owner_name}"` : "";
     const flags = [

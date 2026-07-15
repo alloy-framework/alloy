@@ -10,13 +10,14 @@
  *    intrinsics returning AlloyNodes eagerly).
  */
 
-// @ts-expect-error — @babel/core has no bundled types in this workspace
-import { transformSync } from "@babel/core";
 // @ts-expect-error — preset has no types
 import alloyPreset from "@alloy-js/babel-preset";
+// @ts-expect-error — @babel/core has no bundled types in this workspace
+import { transformSync } from "@babel/core";
 // @ts-expect-error — preset-typescript has no types
 import typescriptPreset from "@babel/preset-typescript";
 import { describe, expect, it } from "vitest";
+
 import { type AlloyNode } from "../src/render/index.js";
 import { createElement } from "../src/render/node.js";
 import { insert } from "../src/runtime/index.js";

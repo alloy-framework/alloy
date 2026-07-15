@@ -1,4 +1,5 @@
 import { OutputScopeOptions } from "@alloy-js/core";
+
 import { TSOutputScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSOutputSymbol } from "./ts-output-symbol.js";

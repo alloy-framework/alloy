@@ -1,4 +1,5 @@
 import { type OutputSpace } from "@alloy-js/core";
+
 import { GoScope } from "./go.js";
 
 export class GoLexicalScope extends GoScope {

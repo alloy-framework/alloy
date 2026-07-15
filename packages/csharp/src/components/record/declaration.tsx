@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -122,11 +123,13 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
           <Parameters parameters={props.primaryConstructor} />
         </core.Scope>
       )}
-      {props.children ?
+      {props.children ? (
         <core.Block newline>
           <core.Scope value={thisRecordScope}>{props.children}</core.Scope>
         </core.Block>
-      : ";"}
+      ) : (
+        ";"
+      )}
     </core.Declaration>
   );
 }

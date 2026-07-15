@@ -1,6 +1,7 @@
 import { Output, ref, refkey, renderTree, Show } from "@alloy-js/core";
 import { getFilesFromTree } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
 import { flushJobs } from "../../core/src/scheduler.js";
 import * as ts from "../src/components/index.js";
 import { createPackage, PackageDirectory, SourceFile } from "../src/index.js";

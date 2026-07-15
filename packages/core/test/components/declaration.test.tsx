@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+
 import { Output } from "../../src/components/Output.jsx";
 import { Declaration, ref, Scope } from "../../src/index.js";
 import { flushJobs } from "../../src/scheduler.js";
@@ -10,9 +11,7 @@ it("creates and cleans up a symbol", () => {
   const template = (
     <Output>
       <Scope value={scope}>
-        {doDecl.value ?
-          <Declaration name="foo"></Declaration>
-        : ""}
+        {doDecl.value ? <Declaration name="foo"></Declaration> : ""}
       </Scope>
     </Output>
   );

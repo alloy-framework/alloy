@@ -1,4 +1,5 @@
 import { Name, Show } from "@alloy-js/core";
+
 import { CommonDeclarationProps, Declaration } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { ensureTypeRefContext } from "./TypeRefContext.jsx";

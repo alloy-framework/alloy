@@ -1,4 +1,5 @@
 import { Children, code, For, Indent } from "@alloy-js/core";
+
 import { TypeParameterProps } from "./type-parameter.jsx";
 import { normalizeParameters } from "./type-parameters.jsx";
 

@@ -1,4 +1,5 @@
 import { SymbolCreator } from "@alloy-js/core";
+
 import { createModule, type ModuleDescriptor } from "../create-module.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

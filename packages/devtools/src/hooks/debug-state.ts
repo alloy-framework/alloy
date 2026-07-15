@@ -1,3 +1,9 @@
+import type {
+  DiagnosticRow,
+  ServerToClientMessage,
+  SourceLocation,
+} from "@alloy-js/core/devtools";
+
 import type { TreeNode } from "@/components/tree-view";
 import {
   applyRenderTreeMessage,
@@ -6,11 +12,7 @@ import {
   type RenderTreeState,
 } from "@/lib/debug-tree";
 import { normalizePath } from "@/lib/utils";
-import type {
-  DiagnosticRow,
-  ServerToClientMessage,
-  SourceLocation,
-} from "@alloy-js/core/devtools";
+
 import {
   type DebugConnectionStatus,
   type DiagnosticInfo,
@@ -229,13 +231,13 @@ function tryParseComponentStack(
         name: entry.name ?? entry.component,
         renderNodeId: entry.renderNodeId ?? entry.render_node_id,
         source:
-          (entry.source_file ?? entry.source?.fileName) ?
-            {
-              fileName: entry.source_file ?? entry.source?.fileName,
-              lineNumber: entry.source_line ?? entry.source?.lineNumber,
-              columnNumber: entry.source_col ?? entry.source?.columnNumber,
-            }
-          : entry.source,
+          (entry.source_file ?? entry.source?.fileName)
+            ? {
+                fileName: entry.source_file ?? entry.source?.fileName,
+                lineNumber: entry.source_line ?? entry.source?.lineNumber,
+                columnNumber: entry.source_col ?? entry.source?.columnNumber,
+              }
+            : entry.source,
       }));
     }
   } catch {
@@ -276,17 +278,15 @@ function handleDiagnosticsReport(
       id: `diag-${Date.now()}-${i}`,
       message: row.message,
       severity: row.severity ?? "info",
-      source:
-        row.source_file ?
-          {
+      source: row.source_file
+        ? {
             fileName: row.source_file,
             lineNumber: row.source_line,
             columnNumber: row.source_col,
           }
         : undefined,
-      componentStack:
-        row.component_stack ?
-          tryParseComponentStack(row.component_stack)
+      componentStack: row.component_stack
+        ? tryParseComponentStack(row.component_stack)
         : undefined,
     }),
   );
@@ -359,9 +359,8 @@ function handleEffectAddedOrUpdated(
     id,
     name: message.name,
     type: message.effect_type,
-    createdAt:
-      message.source_file ?
-        {
+    createdAt: message.source_file
+      ? {
           fileName: message.source_file,
           lineNumber: message.source_line,
           columnNumber: message.source_col,
@@ -394,9 +393,8 @@ function handleRefAdded(
     id,
     kind: message.kind,
     label: message.label,
-    createdAt:
-      message.source_file ?
-        {
+    createdAt: message.source_file
+      ? {
           fileName: message.source_file,
           lineNumber: message.source_line,
           columnNumber: message.source_col,

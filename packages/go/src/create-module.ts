@@ -9,6 +9,7 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { basename } from "pathe";
+
 import { FunctionSymbol, GoSymbol, PackageSymbol } from "./index.js";
 import { NamedTypeSymbol } from "./symbols/named-type.js";
 
@@ -92,9 +93,9 @@ export type StrictDescriptor =
   | EmbedDescriptor;
 
 export type ResolveDescriptor<D> =
-  D extends NamedTypeDescriptor<infer M> ?
-    LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
-  : LibrarySymbolReference;
+  D extends NamedTypeDescriptor<infer M>
+    ? LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
+    : LibrarySymbolReference;
 
 export type LibraryFrom<T> = ResolveDescriptor<T> & LibrarySymbolReference;
 
@@ -258,17 +259,18 @@ function createSymbolFromDescriptor(
         NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
-        ownerSymbol.typeKind === "interface" ?
-          "interface-member"
-        : "struct-member",
+        ownerSymbol.typeKind === "interface"
+          ? "interface-member"
+          : "struct-member",
         {
           binder,
           refkeys: refkey(),
           type:
-            descriptor.type === undefined ? undefined
-            : typeof descriptor.type === "function" ?
-              descriptor.type()[TO_SYMBOL]()
-            : descriptor.type[TO_SYMBOL](),
+            descriptor.type === undefined
+              ? undefined
+              : typeof descriptor.type === "function"
+                ? descriptor.type()[TO_SYMBOL]()
+                : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
         },
       );
@@ -282,17 +284,18 @@ function createSymbolFromDescriptor(
         NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
-        ownerSymbol.typeKind === "interface" ?
-          "interface-member"
-        : "struct-member",
+        ownerSymbol.typeKind === "interface"
+          ? "interface-member"
+          : "struct-member",
         {
           binder,
           refkeys: refkey(),
           type:
-            descriptor.type === undefined ? undefined
-            : typeof descriptor.type === "function" ?
-              descriptor.type()[TO_SYMBOL]()
-            : descriptor.type[TO_SYMBOL](),
+            descriptor.type === undefined
+              ? undefined
+              : typeof descriptor.type === "function"
+                ? descriptor.type()[TO_SYMBOL]()
+                : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
         },
       );
@@ -309,10 +312,11 @@ function createSymbolFromDescriptor(
         binder,
         refkeys: refkey(),
         type:
-          descriptor.type === undefined ? undefined
-          : typeof descriptor.type === "function" ?
-            descriptor.type()[TO_SYMBOL]()
-          : descriptor.type[TO_SYMBOL](),
+          descriptor.type === undefined
+            ? undefined
+            : typeof descriptor.type === "function"
+              ? descriptor.type()[TO_SYMBOL]()
+              : descriptor.type[TO_SYMBOL](),
       });
     default:
       throw "Unsupported";

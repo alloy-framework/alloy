@@ -82,10 +82,13 @@ export function renderDebugLink(
   }
   const kind = value.type ?? value.kind;
   const onOpen =
-    kind === "symbol" ? options.onOpenSymbol
-    : kind === "scope" ? options.onOpenScope
-    : kind === "renderNode" ? options.onOpenRenderNode
-    : undefined;
+    kind === "symbol"
+      ? options.onOpenSymbol
+      : kind === "scope"
+        ? options.onOpenScope
+        : kind === "renderNode"
+          ? options.onOpenRenderNode
+          : undefined;
 
   if (!onOpen) return <span>{label}</span>;
   return (

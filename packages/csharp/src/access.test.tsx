@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+
 import { access } from "./access.jsx";
 
 it("makes a member access expression", () => {

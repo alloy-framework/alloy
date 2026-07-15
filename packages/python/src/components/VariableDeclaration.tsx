@@ -6,6 +6,7 @@ import {
   createSymbolSlot,
   memo,
 } from "@alloy-js/core";
+
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
 import { BaseDeclarationProps } from "./Declaration.jsx";
@@ -104,9 +105,9 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
 
   // If we receive a symbol, resolve it to a name
   const value =
-    typeof props.initializer === "object" ?
-      memo(() => props.initializer)
-    : props.initializer;
+    typeof props.initializer === "object"
+      ? memo(() => props.initializer)
+      : props.initializer;
   const assignmentOperator = props.callStatementVar ? "=" : " = ";
   const getRightSide = () => {
     // Early return for omitNone case

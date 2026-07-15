@@ -37,9 +37,7 @@ export function List(props: ListProps) {
 
         return (
           <align width={alignSize}>
-            {props.ordered ?
-              <>{index + start}.</>
-            : props.bullet}{" "}
+            {props.ordered ? <>{index + start}.</> : props.bullet}{" "}
             {props.tasks && "[ ] "}
             {child}
           </align>

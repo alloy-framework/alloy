@@ -10,6 +10,7 @@ import {
   untrack,
   useContext,
 } from "@alloy-js/core";
+
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { usePackage } from "../components/PackageDirectory.jsx";
 import { SourceFileContext } from "../components/SourceFile.jsx";
@@ -48,9 +49,11 @@ export function ref(
     // * module: target symbol is in a different module
     // * local: target symbol is within the current module
     const targetLocation =
-      pathDown[0] instanceof TSPackageScope ? "package"
-      : pathDown[0] instanceof TSModuleScope ? "module"
-      : "local";
+      pathDown[0] instanceof TSPackageScope
+        ? "package"
+        : pathDown[0] instanceof TSModuleScope
+          ? "module"
+          : "local";
     let localSymbol: TSOutputSymbol | undefined;
 
     if (targetLocation === "package") {

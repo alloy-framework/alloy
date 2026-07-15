@@ -25,9 +25,8 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
   ).map((entry) => ({
     name: entry.name ?? "(anonymous)",
     renderNodeId: entry.renderNodeId,
-    source:
-      entry.source?.fileName ?
-        {
+    source: entry.source?.fileName
+      ? {
           fileName: entry.source.fileName,
           lineNumber: entry.source.lineNumber ?? 0,
           columnNumber: entry.source.columnNumber ?? 0,
@@ -40,9 +39,8 @@ export function DiagnosticView({ diagnosticId }: DiagnosticViewProps) {
     .filter(Boolean)
     .at(-1);
   const locationSource = diagnostic.source ?? stackSource;
-  const location =
-    locationSource?.fileName ?
-      `${formatPath(locationSource.fileName)}:${locationSource.lineNumber ?? 0}:${locationSource.columnNumber ?? 0}`
+  const location = locationSource?.fileName
+    ? `${formatPath(locationSource.fileName)}:${locationSource.lineNumber ?? 0}:${locationSource.columnNumber ?? 0}`
     : undefined;
 
   return (

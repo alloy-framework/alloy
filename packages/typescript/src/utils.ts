@@ -4,6 +4,7 @@ import {
   useMemberContext,
   useScope,
 } from "@alloy-js/core";
+
 import { CallSignatureProps } from "./components/CallSignature.jsx";
 import { TSLexicalScope } from "./symbols/ts-lexical-scope.js";
 import { TSOutputSymbol } from "./symbols/ts-output-symbol.js";

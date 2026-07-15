@@ -5,6 +5,7 @@ import {
   type ApiItem,
   type ExcerptToken,
 } from "@microsoft/api-extractor-model";
+
 import { ApiModelContext } from "./contexts/api-model.js";
 
 export function resolveExcerptReference(

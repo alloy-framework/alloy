@@ -12,6 +12,7 @@ import {
   taggedComponent,
   useContext,
 } from "@alloy-js/core";
+
 import { PythonOutputSymbol } from "../index.js";
 import { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createMethodSymbol } from "../symbols/factories.js";

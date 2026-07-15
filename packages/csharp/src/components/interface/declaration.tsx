@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -114,9 +115,11 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}
-        {props.children ?
+        {props.children ? (
           <core.Block newline>{props.children}</core.Block>
-        : ";"}
+        ) : (
+          ";"
+        )}
       </core.Scope>
     </core.Declaration>
   );

@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
+
 import { build, type Rollup } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -88,9 +89,9 @@ async function bundleForBrowser(): Promise<{
         },
         onwarn(warning) {
           warnings.push(
-            typeof warning === "string" ? warning : (
-              (warning.message ?? String(warning))
-            ),
+            typeof warning === "string"
+              ? warning
+              : (warning.message ?? String(warning)),
           );
         },
       },
@@ -98,9 +99,8 @@ async function bundleForBrowser(): Promise<{
   });
 
   const output = (
-    Array.isArray(result) ?
-      result[0]
-    : result) as Rollup.RollupOutput;
+    Array.isArray(result) ? result[0] : result
+  ) as Rollup.RollupOutput;
   const chunks = output.output.filter(
     (o): o is Rollup.OutputChunk => o.type === "chunk",
   );

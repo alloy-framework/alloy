@@ -1,5 +1,6 @@
 import { stc, type Children } from "@alloy-js/core";
 import { Scope, SourceDirectory } from "@alloy-js/core/stc";
+
 import { PackageDocContext } from "../contexts/package-docs.js";
 
 export interface PackageDocsProps {

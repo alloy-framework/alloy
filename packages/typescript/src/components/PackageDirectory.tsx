@@ -13,6 +13,7 @@ import {
   Wrap,
 } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { PackageMetadataContext } from "../context/package-metadata.js";
 import { ExternalPackage, getPackageScope } from "../create-package.js";
 import { TSPackageScope } from "../symbols/index.js";

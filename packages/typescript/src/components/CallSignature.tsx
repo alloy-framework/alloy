@@ -1,4 +1,5 @@
 import { type Children } from "@alloy-js/core";
+
 import {
   ParameterDescriptor,
   TypeParameterDescriptor,
@@ -45,23 +46,23 @@ export interface CallSignatureProps {
  * parameters.
  */
 export function CallSignature(props: CallSignatureProps) {
-  const sTypeParameters =
-    props.typeParametersChildren ?
-      <>
-        {"<"}
-        {props.typeParametersChildren}
-        {">"}
-      </>
-    : <FunctionDeclaration.TypeParameters parameters={props.typeParameters} />;
+  const sTypeParameters = props.typeParametersChildren ? (
+    <>
+      {"<"}
+      {props.typeParametersChildren}
+      {">"}
+    </>
+  ) : (
+    <FunctionDeclaration.TypeParameters parameters={props.typeParameters} />
+  );
 
   const sParams = props.parametersChildren ?? (
     <FunctionDeclaration.Parameters parameters={props.parameters} />
   );
 
-  const sReturnType =
-    props.returnType ?
-      <TypeRefContext>: {props.returnType}</TypeRefContext>
-    : undefined;
+  const sReturnType = props.returnType ? (
+    <TypeRefContext>: {props.returnType}</TypeRefContext>
+  ) : undefined;
 
   return (
     <>

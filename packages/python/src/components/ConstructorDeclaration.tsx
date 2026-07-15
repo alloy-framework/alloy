@@ -1,4 +1,5 @@
 import { namekey } from "@alloy-js/core";
+
 import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";

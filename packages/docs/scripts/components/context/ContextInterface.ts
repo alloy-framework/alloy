@@ -1,5 +1,6 @@
 import { refkey, type Children } from "@alloy-js/core";
 import type { ApiInterface } from "@microsoft/api-extractor-model";
+
 import type { ContextApi } from "../../build-json.js";
 import { InterfaceMembers, MdxSection } from "../stc/index.js";
 

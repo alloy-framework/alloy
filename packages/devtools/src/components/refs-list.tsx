@@ -1,3 +1,6 @@
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useCallback, useMemo, useRef, useState } from "react";
+
 import { SourceLocationLink } from "@/components/source-location-link";
 import type {
   EffectDebugInfo,
@@ -6,8 +9,6 @@ import type {
 } from "@/hooks/debug-connection-types";
 import { resolveEdgeRefId } from "@/lib/edge-utils";
 import { formatSourceLocation } from "@/lib/format-source-location";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { useCallback, useMemo, useRef, useState } from "react";
 
 export interface RefsListProps {
   refList: RefDebugInfo[];
@@ -138,9 +139,9 @@ export function RefsList(props: RefsListProps) {
           <button
             onClick={() => setUserOnly(!userOnly)}
             className={`h-7 px-2 rounded border text-[10px] font-medium whitespace-nowrap transition-colors ${
-              userOnly ?
-                "border-primary bg-primary/10 text-primary"
-              : "border-border text-muted-foreground hover:bg-accent/50"
+              userOnly
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:bg-accent/50"
             }`}
           >
             User only
@@ -150,9 +151,10 @@ export function RefsList(props: RefsListProps) {
           {filtered.length} of {allRows.length} refs
         </div>
         <div ref={parentRef} className="flex-1 overflow-auto">
-          {filtered.length === 0 ?
+          {filtered.length === 0 ? (
             <div className="text-muted-foreground text-xs">No refs match.</div>
-          : <>
+          ) : (
+            <>
               <div className="flex items-center text-left text-[10px] text-muted-foreground border-b border-border pb-1">
                 <div className="flex-1 pr-2 font-medium">Ref</div>
                 <div className="w-20 pr-2 font-medium">Kind</div>
@@ -188,9 +190,9 @@ export function RefsList(props: RefsListProps) {
                     formatPath,
                   );
                   const creator =
-                    row.createdByEffectId !== undefined ?
-                      effects.get(row.createdByEffectId)
-                    : undefined;
+                    row.createdByEffectId !== undefined
+                      ? effects.get(row.createdByEffectId)
+                      : undefined;
 
                   return (
                     <div
@@ -216,22 +218,22 @@ export function RefsList(props: RefsListProps) {
                       <div className="w-20 py-1.5 pr-2">
                         <span
                           className={`rounded px-1.5 py-0.5 text-[10px] uppercase ${
-                            row.kind === "reactive-property" ?
-                              "bg-amber-500/20 text-amber-400"
-                            : row.kind === "computed" ?
-                              "bg-purple-500/20 text-purple-400"
-                            : row.kind === "shallowRef" ?
-                              "bg-blue-500/20 text-blue-400"
-                            : "bg-muted text-foreground"
+                            row.kind === "reactive-property"
+                              ? "bg-amber-500/20 text-amber-400"
+                              : row.kind === "computed"
+                                ? "bg-purple-500/20 text-purple-400"
+                                : row.kind === "shallowRef"
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : "bg-muted text-foreground"
                           }`}
                         >
-                          {row.kind === "reactive-property" ?
-                            "reactive"
-                          : row.kind}
+                          {row.kind === "reactive-property"
+                            ? "reactive"
+                            : row.kind}
                         </span>
                       </div>
                       <div className="w-48 py-1.5 pr-2 text-muted-foreground truncate flex items-center gap-1">
-                        {sourceLabel ?
+                        {sourceLabel ? (
                           <>
                             <SourceLocationLink source={row.createdAt!}>
                               {sourceLabel}
@@ -245,12 +247,14 @@ export function RefsList(props: RefsListProps) {
                               </span>
                             )}
                           </>
-                        : "—"}
+                        ) : (
+                          "—"
+                        )}
                       </div>
                       <div className="w-36 py-1.5 pr-2 text-muted-foreground truncate">
-                        {creator ?
-                          `${creator.name ?? "effect"} #${creator.id}`
-                        : "—"}
+                        {creator
+                          ? `${creator.name ?? "effect"} #${creator.id}`
+                          : "—"}
                       </div>
                       <div className="w-20 py-1.5 pr-2 text-right text-muted-foreground tabular-nums">
                         {row.tracks || "—"}
@@ -263,7 +267,7 @@ export function RefsList(props: RefsListProps) {
                 })}
               </div>
             </>
-          }
+          )}
         </div>
       </div>
     </div>
@@ -286,12 +290,7 @@ function SortableHeader(props: {
   onSort: (col: SortColumn) => void;
 }) {
   const active = props.sortCol === props.col;
-  const arrow =
-    active ?
-      props.sortDir === "desc" ?
-        " ▼"
-      : " ▲"
-    : "";
+  const arrow = active ? (props.sortDir === "desc" ? " ▼" : " ▲") : "";
   return (
     <div
       className={`w-20 pr-2 font-medium text-right cursor-pointer select-none whitespace-nowrap hover:text-foreground ${active ? "text-foreground" : ""}`}

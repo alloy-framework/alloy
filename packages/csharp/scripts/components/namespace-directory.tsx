@@ -1,4 +1,3 @@
-import { Descriptor, NamespaceDescriptor } from "#createLibrary";
 import {
   code,
   For,
@@ -12,6 +11,9 @@ import {
   SourceFile,
   VarDeclaration,
 } from "@alloy-js/typescript";
+
+import { Descriptor, NamespaceDescriptor } from "#createLibrary";
+
 import { LibraryInterfaceDeclaration } from "./library-interface.jsx";
 
 export function NamespaceDirectory(props: {

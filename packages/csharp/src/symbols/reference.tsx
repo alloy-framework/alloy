@@ -1,4 +1,3 @@
-import { AccessExpression } from "#components/access-expression/access-expression.jsx";
 import {
   Children,
   memo,
@@ -7,6 +6,9 @@ import {
   resolve,
   unresolvedRefkey,
 } from "@alloy-js/core";
+
+import { AccessExpression } from "#components/access-expression/access-expression.jsx";
+
 import { useReferenceContext } from "../contexts/reference-context.js";
 import { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";

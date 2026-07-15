@@ -12,6 +12,7 @@
  * rewrites the bracketed range on re-fire.
  */
 import { isRef, type Ref } from "@vue/reactivity";
+
 import { useContext } from "../context.js";
 import { SourceFileContext } from "../context/source-file.js";
 import { debug, type RenderNodeActions } from "../debug/index.js";
@@ -262,10 +263,11 @@ function renderComponentBody(
         const d = meta.directory as { path: string };
         session.recordDirectory(d.path);
       }
-      const localName =
-        meta.sourceFile ? "alloy:source-file"
-        : meta.directory ? "alloy:directory"
-        : "alloy:copy-file";
+      const localName = meta.sourceFile
+        ? "alloy:source-file"
+        : meta.directory
+          ? "alloy:directory"
+          : "alloy:copy-file";
       if (result instanceof ElementNode && result.localName === localName) {
         setContextForNode(result, ctx);
         insertNode(parent, result, marker);

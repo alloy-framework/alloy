@@ -20,8 +20,8 @@ export async function runTest(): Promise<any> {
   const WIDTH = 4;
   const DEPTH = 3;
   const root = (function build(d: number): any {
-    return d ?
-        Object.fromEntries(
+    return d
+      ? Object.fromEntries(
           Array.from({ length: WIDTH }, (_, i) => [
             `k${d}_${i}`,
             Array.from({ length: WIDTH }, () => build(d - 1)),

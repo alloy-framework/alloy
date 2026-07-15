@@ -15,6 +15,7 @@ import {
   Show,
   useContext,
 } from "@alloy-js/core";
+
 import { useGoScope } from "../../scopes/contexts.js";
 import { createFunctionScope } from "../../scopes/factories.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
@@ -86,15 +87,12 @@ export function FunctionDeclaration(props: FunctionProps) {
           <LineComment children={props.doc} />
           <hbr />
         </Show>
-        func{" "}
-        {props.receiver ?
-          <>({props.receiver}) </>
-        : null}
+        func {props.receiver ? <>({props.receiver}) </> : null}
         <Name />
         <TypeParameters parameters={props.typeParameters} />
         <FunctionParameters parameters={props.parameters} />{" "}
-        {props.returns ?
-          Array.isArray(props.returns) && props.returns.length > 1 ?
+        {props.returns ? (
+          Array.isArray(props.returns) && props.returns.length > 1 ? (
             <>
               <group>
                 {"("}
@@ -118,15 +116,19 @@ export function FunctionDeclaration(props: FunctionProps) {
                 {")"}
               </group>{" "}
             </>
-          : <>{props.returns} </>
-        : null}
-        {!props.children ?
+          ) : (
+            <>{props.returns} </>
+          )
+        ) : null}
+        {!props.children ? (
           "{}"
-        : props.singleLine ?
+        ) : props.singleLine ? (
           <>
             {"{"} {props.children} {"}"}
           </>
-        : <Block>{props.children}</Block>}
+        ) : (
+          <Block>{props.children}</Block>
+        )}
       </Scope>
     </Declaration>
   );

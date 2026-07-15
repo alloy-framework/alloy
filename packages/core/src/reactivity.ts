@@ -14,6 +14,7 @@ import {
   toRef as vueToRef,
   toRefs as vueToRefs,
 } from "@vue/reactivity";
+
 import {
   captureSourceLocation,
   debug,
@@ -293,9 +294,8 @@ export function findCurrentEffectId(): number | undefined {
  */
 export function memo<T>(fn: () => T, equal?: boolean, name?: string): () => T {
   const dbg = isDebugEnabled();
-  const o =
-    dbg ?
-      shallowRef<T>(undefined as T, { label: name ? `memo:${name}` : "memo" })
+  const o = dbg
+    ? shallowRef<T>(undefined as T, { label: name ? `memo:${name}` : "memo" })
     : shallowRef<T>(undefined as T);
   effect(
     (prev) => {
@@ -330,9 +330,8 @@ export function effect<T>(
   };
 
   const debugInfo = options?.debug;
-  const effectId =
-    isDebugEnabled() ?
-      debug.effect.register({
+  const effectId = isDebugEnabled()
+    ? debug.effect.register({
         name: debugInfo?.name ?? fn.name,
         type: debugInfo?.type,
         createdAt: captureSourceLocation(),
@@ -415,9 +414,9 @@ export function effect<T>(
       // during the mutation, so globalContext still points to the producer.
       const producerEffectId = findCurrentEffectId();
       const causedBy =
-        producerEffectId !== undefined && producerEffectId !== effectId ?
-          producerEffectId
-        : undefined;
+        producerEffectId !== undefined && producerEffectId !== effectId
+          ? producerEffectId
+          : undefined;
       if (isRef(event.target)) {
         const id = refId(event.target);
         debug.effect.ensureRef({ id, kind: "ref" });
@@ -681,9 +680,9 @@ export function toRef<T extends object, K extends keyof T>(
   defaultValue?: T[K],
 ): Ref<T[K]> {
   const result =
-    defaultValue === undefined ?
-      (vueToRef(object, key) as Ref<T[K]>)
-    : (vueToRef(object, key, defaultValue as any) as Ref<T[K]>);
+    defaultValue === undefined
+      ? (vueToRef(object, key) as Ref<T[K]>)
+      : (vueToRef(object, key, defaultValue as any) as Ref<T[K]>);
   if (isDebugEnabled()) {
     debug.effect.registerRef({
       id: refId(result),

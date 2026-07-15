@@ -3,6 +3,7 @@ import {
   MemberScope as CoreMemberScope,
   createScope,
 } from "@alloy-js/core";
+
 import { PythonMemberScope } from "../symbols/python-member-scope.js";
 import { PythonOutputSymbol } from "../symbols/python-output-symbol.js";
 import { usePythonScope } from "../symbols/scopes.js";

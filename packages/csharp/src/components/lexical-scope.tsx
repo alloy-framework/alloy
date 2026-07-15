@@ -4,6 +4,7 @@ import {
   ScopePropsWithValue,
   createScope,
 } from "@alloy-js/core";
+
 import { useCSharpScope } from "../scopes/contexts.js";
 import { CSharpLexicalScope } from "../scopes/lexical.js";
 

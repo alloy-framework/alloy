@@ -1,5 +1,6 @@
 import { OutputSymbolOptions, createSymbol } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { NamedTypeSymbol } from "./named-type.js";
 
 export interface PackageSymbolOptions extends OutputSymbolOptions {

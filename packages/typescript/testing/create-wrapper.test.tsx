@@ -1,11 +1,13 @@
+import { List, Refkey } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
+import { expect, it } from "vitest";
+
 import {
   ClassDeclaration,
   ClassField,
   ClassMethod,
 } from "#components/index.js";
-import { List, Refkey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
-import { expect, it } from "vitest";
+
 import { createTSTestWrapper } from "./create-wrapper.jsx";
 
 it("should render defkey inline", async () => {

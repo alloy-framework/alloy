@@ -1,3 +1,6 @@
+import dagre from "dagre";
+import { useEffect, useMemo, useState } from "react";
+
 import type {
   EffectDebugInfo,
   EffectEdgeDebugInfo,
@@ -9,8 +12,6 @@ import {
   findAncestorWithIncomingTriggers,
   findDescendantsForTargets,
 } from "@/lib/graph-traversal";
-import dagre from "dagre";
-import { useEffect, useMemo, useState } from "react";
 
 export interface ReactiveChainProps {
   effectId: number;
@@ -504,16 +505,17 @@ function GraphEdgePath(props: {
   const mid = pts[Math.floor(pts.length / 2)];
   const isSpawn = edge.isSpawn === true;
   const ref = !isSpawn && edge.refId > 0 ? refMap.get(edge.refId) : undefined;
-  const label =
-    isSpawn ? "spawns"
-    : ref ? formatRefLabel(ref, edge.refId)
-    : edge.refId > 0 ? `ref #${edge.refId}`
-    : "";
+  const label = isSpawn
+    ? "spawns"
+    : ref
+      ? formatRefLabel(ref, edge.refId)
+      : edge.refId > 0
+        ? `ref #${edge.refId}`
+        : "";
   const clickable = !isSpawn && edge.refId > 0 && onOpenRefTab;
 
-  const handleClick =
-    clickable ?
-      () => {
+  const handleClick = clickable
+    ? () => {
         onOpenRefTab!(edge.refId, `${label || "ref"} #${edge.refId}`);
       }
     : undefined;
@@ -554,24 +556,24 @@ function GraphNode(props: {
   const isClickable = node.effectId > 0 && node.type !== "focal";
   const truncLen = node.type === "summary" ? 14 : 18;
   const displayLabel =
-    node.label.length > truncLen ?
-      node.label.slice(0, truncLen - 2) + "…"
-    : node.label;
+    node.label.length > truncLen
+      ? node.label.slice(0, truncLen - 2) + "…"
+      : node.label;
 
   return (
     <foreignObject x={x} y={y} width={node.width} height={node.height}>
       <div
         className={`h-full flex flex-col justify-center items-center rounded-lg px-2.5 text-center leading-tight shadow-sm ${
-          node.type === "focal" ?
-            "border-2 border-primary bg-primary/10 text-primary font-semibold"
-          : node.type === "summary" ?
-            "border border-dashed border-muted-foreground/30 bg-muted/10 text-muted-foreground italic"
-          : "border border-border bg-card text-foreground hover:bg-accent/50 hover:border-primary/40 transition-colors"
+          node.type === "focal"
+            ? "border-2 border-primary bg-primary/10 text-primary font-semibold"
+            : node.type === "summary"
+              ? "border border-dashed border-muted-foreground/30 bg-muted/10 text-muted-foreground italic"
+              : "border border-border bg-card text-foreground hover:bg-accent/50 hover:border-primary/40 transition-colors"
         } ${isClickable ? "cursor-pointer" : ""}`}
         onClick={
-          isClickable ?
-            () => onOpenDetailTab(node.effectId, node.label)
-          : undefined
+          isClickable
+            ? () => onOpenDetailTab(node.effectId, node.label)
+            : undefined
         }
         title={node.label + (node.effectId > 0 ? ` #${node.effectId}` : "")}
       >

@@ -13,6 +13,7 @@ import {
   Show,
   useContext,
 } from "@alloy-js/core";
+
 import { useGoScope } from "../../scopes/contexts.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createVariableSymbol } from "../../symbols/factories.js";

@@ -1,3 +1,6 @@
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import {
   render,
   stc,
@@ -18,8 +21,7 @@ import {
   ApiVariable,
   ExcerptTokenKind,
 } from "@microsoft/api-extractor-model";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+
 import {
   ComponentDoc,
   ContextDoc,

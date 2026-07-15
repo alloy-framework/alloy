@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import {
   Braces,
   ChevronDown,
@@ -9,6 +8,8 @@ import {
   Tag,
 } from "lucide-react";
 import { memo, useCallback, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 export interface TreeNode {
   id: string;
@@ -91,9 +92,11 @@ const TreeNodeItem = memo(function TreeNodeItem({
   const getIcon = () => {
     switch (node.icon) {
       case "folder":
-        return isExpanded ?
-            <FolderOpen className="size-4 text-yellow-500" />
-          : <Folder className="size-4 text-yellow-500" />;
+        return isExpanded ? (
+          <FolderOpen className="size-4 text-yellow-500" />
+        ) : (
+          <Folder className="size-4 text-yellow-500" />
+        );
       case "file":
         return <File className="size-4 text-muted-foreground" />;
       case "scope":
@@ -101,11 +104,14 @@ const TreeNodeItem = memo(function TreeNodeItem({
       case "symbol":
         return <Tag className="size-4 text-blue-500" />;
       default:
-        return (
-          hasChildren ?
-            isExpanded ? <FolderOpen className="size-4 text-yellow-500" />
-            : <Folder className="size-4 text-yellow-500" />
-          : <File className="size-4 text-muted-foreground" />
+        return hasChildren ? (
+          isExpanded ? (
+            <FolderOpen className="size-4 text-yellow-500" />
+          ) : (
+            <Folder className="size-4 text-yellow-500" />
+          )
+        ) : (
+          <File className="size-4 text-muted-foreground" />
         );
     }
   };
@@ -126,11 +132,13 @@ const TreeNodeItem = memo(function TreeNodeItem({
           className="shrink-0 w-4 flex items-center justify-center"
           onClick={handleToggle}
         >
-          {hasChildren ?
-            isExpanded ?
+          {hasChildren ? (
+            isExpanded ? (
               <ChevronDown className="size-3" />
-            : <ChevronRight className="size-3" />
-          : null}
+            ) : (
+              <ChevronRight className="size-3" />
+            )
+          ) : null}
         </span>
         <span className="shrink-0">{getIcon()}</span>
         <span className="truncate">{node.label}</span>

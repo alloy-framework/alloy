@@ -4,6 +4,7 @@ import {
   InterfaceMember,
   VarDeclaration,
 } from "@alloy-js/typescript";
+
 import { XmlAttribute, XmlSchema } from "../collect-schemas.js";
 
 export function XmlComponent(props: { schema: XmlSchema }) {

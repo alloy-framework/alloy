@@ -1,8 +1,10 @@
+import { List, memberRefkey, namekey, toRefkey } from "@alloy-js/core";
+import { beforeEach, expect, it } from "vitest";
+
 import { VarDeclaration } from "#components/index.js";
 import { InvocationExpression } from "#components/invocation-expression/invocation-expression.jsx";
 import { TestNamespace } from "#test/utils.jsx";
-import { List, memberRefkey, namekey, toRefkey } from "@alloy-js/core";
-import { beforeEach, expect, it } from "vitest";
+
 import { IO } from "./builtins/System/index.js";
 import {
   getGlobalNamespace,

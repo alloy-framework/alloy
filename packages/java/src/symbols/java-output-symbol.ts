@@ -6,6 +6,7 @@ import {
   OutputSymbolOptions,
   refkey,
 } from "@alloy-js/core";
+
 import { usePackage } from "../components/PackageDirectory.jsx";
 
 export interface JavaOutputSymbolOptions extends OutputSymbolOptions {
@@ -41,9 +42,9 @@ export class JavaOutputSymbol extends OutputSymbol {
     } else {
       const parentPackage = usePackage();
       this.#package =
-        (options.package ?? parentPackage !== null) ?
-          parentPackage?.qualifiedName
-        : "";
+        (options.package ?? parentPackage !== null)
+          ? parentPackage?.qualifiedName
+          : "";
     }
   }
 

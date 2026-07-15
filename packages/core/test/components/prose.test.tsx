@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { Prose } from "../../src/components/Prose.jsx";
 import { d } from "../../testing/render.js";
 

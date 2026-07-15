@@ -8,6 +8,7 @@ import {
   TO_SYMBOL,
   useBinder,
 } from "@alloy-js/core";
+
 import { getGlobalNamespace } from "./contexts/global-namespace.js";
 import { MethodKinds, MethodSymbol } from "./index.js";
 import { CSharpSymbol } from "./symbols/csharp.js";
@@ -89,9 +90,9 @@ export type Descriptor =
   | GenericDescriptor;
 
 export type ResolveDescriptor<D> =
-  D extends NamedTypeDescriptor<infer M> ?
-    LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
-  : LibrarySymbolReference;
+  D extends NamedTypeDescriptor<infer M>
+    ? LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
+    : LibrarySymbolReference;
 
 export type LibraryFrom<T> = {
   [K in keyof T]: ResolveDescriptor<T[K]>;
@@ -263,10 +264,11 @@ function createSymbolFromDescriptor(
         binder,
         refkeys: refkey(),
         type:
-          descriptor.type === undefined ? undefined
-          : typeof descriptor.type === "function" ?
-            descriptor.type()[TO_SYMBOL]()
-          : descriptor.type[TO_SYMBOL](),
+          descriptor.type === undefined
+            ? undefined
+            : typeof descriptor.type === "function"
+              ? descriptor.type()[TO_SYMBOL]()
+              : descriptor.type[TO_SYMBOL](),
         isNullable: descriptor.isNullable,
         lazyMemberInitializer,
       });

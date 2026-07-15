@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+
 import { BlockScope } from "../src/components/BlockScope.jsx";
 import { VarDeclaration } from "../src/index.js";
 import { TestFile } from "./utils.js";

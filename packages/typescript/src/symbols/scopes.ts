@@ -1,4 +1,5 @@
 import { useScope } from "@alloy-js/core";
+
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSMemberScope } from "./ts-member-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";

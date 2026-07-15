@@ -7,6 +7,7 @@ import {
   Refkey,
   Scope,
 } from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -142,11 +143,13 @@ export function Method(props: MethodProps) {
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}
-        {props.abstract ?
+        {props.abstract ? (
           ";"
-        : props.expression ?
+        ) : props.expression ? (
           <ExpressionBody>{props.children}</ExpressionBody>
-        : <Block newline>{props.children}</Block>}
+        ) : (
+          <Block newline>{props.children}</Block>
+        )}
       </Scope>
     </MemberDeclaration>
   );

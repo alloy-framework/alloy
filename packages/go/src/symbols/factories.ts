@@ -1,5 +1,6 @@
 import { createSymbol, Namekey, NamePolicyGetter } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { GoElements, useGoNamePolicy } from "../name-policy.js";
 import { useGoScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { GoFunctionScope } from "../scopes/function.js";

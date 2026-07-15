@@ -8,11 +8,12 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { usePackage } from "../scopes/package.js";
 import { GoSourceFileScope } from "../scopes/source-file.js";
+import { LineComment } from "./doc/comment.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { Reference } from "./Reference.js";
-import { LineComment } from "./doc/comment.js";
 
 export interface SourceFileProps {
   path: string;

@@ -1,4 +1,5 @@
 import { OutputScope } from "@alloy-js/core";
+
 import { PythonOutputSymbol } from "./python-output-symbol.js";
 
 export class PythonMemberScope extends OutputScope {

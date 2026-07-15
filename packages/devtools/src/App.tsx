@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import { ComponentView } from "@/components/component-view";
 import { DiagnosticView } from "@/components/diagnostic-view";
 import { EffectDetailView } from "@/components/effect-detail-view";
@@ -27,7 +29,6 @@ import { ToastStateProvider } from "@/hooks/toast-state-provider";
 import { useDebugConnection } from "@/hooks/use-debug-connection";
 import { useDevtoolsAppState } from "@/hooks/use-devtools-app-state";
 import { DevtoolsAppStateProvider } from "@/hooks/use-devtools-app-state-context";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 function App() {
   const [filesOpen, setFilesOpen] = useState(true);
@@ -126,9 +127,11 @@ function App() {
                         className="flex flex-col min-h-0"
                         style={{
                           flex:
-                            filesOpen && symbolsOpen ? `0 0 ${sidebarSplit}%`
-                            : filesOpen ? "1 1 auto"
-                            : "0 0 auto",
+                            filesOpen && symbolsOpen
+                              ? `0 0 ${sidebarSplit}%`
+                              : filesOpen
+                                ? "1 1 auto"
+                                : "0 0 auto",
                         }}
                       >
                         <SidebarSection
@@ -149,10 +152,11 @@ function App() {
                         className="flex flex-col min-h-0"
                         style={{
                           flex:
-                            filesOpen && symbolsOpen ?
-                              `0 0 ${100 - sidebarSplit}%`
-                            : symbolsOpen ? "1 1 auto"
-                            : "0 0 auto",
+                            filesOpen && symbolsOpen
+                              ? `0 0 ${100 - sidebarSplit}%`
+                              : symbolsOpen
+                                ? "1 1 auto"
+                                : "0 0 auto",
                         }}
                       >
                         <SidebarSection
@@ -180,16 +184,16 @@ function App() {
                         {/* Tab Content */}
                         <div className="flex-1 p-4 overflow-auto">
                           <ErrorBoundary>
-                            {activeTab ?
-                              activeTab.type === "file" ?
+                            {activeTab ? (
+                              activeTab.type === "file" ? (
                                 <FileView />
-                              : activeTab.type === "component" ?
+                              ) : activeTab.type === "component" ? (
                                 <ComponentView nodeId={activeTab.id} />
-                              : activeTab.type === "error" ?
+                              ) : activeTab.type === "error" ? (
                                 <RenderErrorView errorId={activeTab.id} />
-                              : activeTab.type === "diagnostic" ?
+                              ) : activeTab.type === "diagnostic" ? (
                                 <DiagnosticView diagnosticId={activeTab.id} />
-                              : activeTab.type === "effect" ?
+                              ) : activeTab.type === "effect" ? (
                                 <EffectDetailView
                                   effectId={activeTab.id}
                                   onOpenDetailTab={(id, name) =>
@@ -203,7 +207,7 @@ function App() {
                                     openDetailTab(`ref:${id}`, label, "ref")
                                   }
                                 />
-                              : activeTab.type === "ref" ?
+                              ) : activeTab.type === "ref" ? (
                                 <RefDetailView
                                   refId={activeTab.id}
                                   onOpenDetailTab={(id, name) =>
@@ -217,24 +221,24 @@ function App() {
                                     openDetailTab(`ref:${id}`, label, "ref")
                                   }
                                 />
-                              : (
-                                activeTab.type === "symbol" ||
-                                activeTab.type === "scope"
-                              ) ?
+                              ) : activeTab.type === "symbol" ||
+                                activeTab.type === "scope" ? (
                                 <SymbolView
                                   tabId={activeTab.id}
                                   tabType={activeTab.type}
                                 />
-                              : <div className="text-muted-foreground">
+                              ) : (
+                                <div className="text-muted-foreground">
                                   <p className="text-sm">
                                     Content for {activeTab.type}: {activeTab.id}
                                   </p>
                                 </div>
-
-                            : <div className="text-muted-foreground">
+                              )
+                            ) : (
+                              <div className="text-muted-foreground">
                                 Open a file or symbol to view its contents
                               </div>
-                            }
+                            )}
                           </ErrorBoundary>
                         </div>
                       </div>

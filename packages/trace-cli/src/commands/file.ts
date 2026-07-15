@@ -1,4 +1,5 @@
 import { DIFF_EQUAL, diff_match_patch } from "diff-match-patch";
+
 import { type Db, type Opts, formatComponentStack } from "../types.js";
 
 export function fileCommand(
@@ -325,9 +326,8 @@ function fileSearch(
             stack.map((c: any) => ({
               name: c.name ?? "(unnamed)",
               renderNodeId: c.id,
-              source:
-                c.source_file ?
-                  {
+              source: c.source_file
+                ? {
                     fileName: c.source_file,
                     lineNumber: c.source_line,
                     columnNumber: c.source_col,

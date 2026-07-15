@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+
 import * as csharp from "../src/index.js";
 
 export interface TestNamespaceProps extends csharp.CSharpFormatOptions {

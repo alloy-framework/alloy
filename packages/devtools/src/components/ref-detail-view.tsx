@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { EventBadge } from "@/components/event-badge";
 import { SourceLocationLink } from "@/components/source-location-link";
 import { useDebugConnectionContext } from "@/hooks/debug-connection-context";
@@ -7,7 +9,6 @@ import type {
 } from "@/hooks/debug-connection-types";
 import { formatRefLabel, resolveEdgeRefId } from "@/lib/edge-utils";
 import { formatSourceLocation } from "@/lib/format-source-location";
-import { useMemo } from "react";
 
 export interface RefDetailViewProps {
   refId: string;
@@ -83,9 +84,8 @@ export function RefDetailView(props: RefDetailViewProps) {
   const kind = refInfo?.kind ?? "ref";
   const displayName = formatRefLabel(refInfo, numericId);
   const isReactiveProp = kind === "reactive-property";
-  const sourceLabel =
-    refInfo?.createdAt ?
-      formatSourceLocation(refInfo.createdAt, formatPath)
+  const sourceLabel = refInfo?.createdAt
+    ? formatSourceLocation(refInfo.createdAt, formatPath)
     : undefined;
 
   return (
@@ -97,10 +97,13 @@ export function RefDetailView(props: RefDetailViewProps) {
           <span className="text-muted-foreground">#{numericId}</span>
           <span
             className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-wide ${
-              isReactiveProp ? "bg-amber-500/20 text-amber-400"
-              : kind === "computed" ? "bg-purple-500/20 text-purple-400"
-              : kind === "shallowRef" ? "bg-blue-500/20 text-blue-400"
-              : "bg-muted text-foreground"
+              isReactiveProp
+                ? "bg-amber-500/20 text-amber-400"
+                : kind === "computed"
+                  ? "bg-purple-500/20 text-purple-400"
+                  : kind === "shallowRef"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "bg-muted text-foreground"
             }`}
           >
             {isReactiveProp ? "reactive" : kind}

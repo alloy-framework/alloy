@@ -14,6 +14,7 @@ import {
   Show,
   takeSymbols,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import { TypeParameterDescriptor } from "../parameter-descriptor.js";
 import { useTSLexicalScope, useTSMemberScope } from "../symbols/scopes.js";
@@ -65,14 +66,15 @@ const _InterfaceDeclaration = ensureTypeRefContext(
     const typeParametersChildren =
       findKeyedChild(children, TypeParameters.tag) ?? undefined;
 
-    const sTypeParameters =
-      typeParametersChildren ?
-        <>
-          {"<"}
-          {typeParametersChildren}
-          {">"}
-        </>
-      : <TypeParameters parameters={props.typeParameters} />;
+    const sTypeParameters = typeParametersChildren ? (
+      <>
+        {"<"}
+        {typeParametersChildren}
+        {">"}
+      </>
+    ) : (
+      <TypeParameters parameters={props.typeParameters} />
+    );
 
     const extendsPart = props.extends ? <> extends {props.extends}</> : "";
     const filteredChildren = findUnkeyedChildren(children);
@@ -202,9 +204,9 @@ export function InterfaceMember(props: InterfaceMemberProps) {
       refkeys: props.refkey,
       tsFlags:
         TSSymbolFlags.TypeSymbol |
-        ((props.nullish ?? props.optional) ?
-          TSSymbolFlags.Nullish
-        : TSSymbolFlags.None),
+        ((props.nullish ?? props.optional)
+          ? TSSymbolFlags.Nullish
+          : TSSymbolFlags.None),
       namePolicy: useTSNamePolicy().for("interface-member"),
       binder: scope.binder,
     },

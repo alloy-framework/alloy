@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
+import fs from "fs";
+import { parseArgs } from "node:util";
+import path from "path";
+
 import {
   code,
   Output,
@@ -10,9 +14,6 @@ import {
   writeOutput,
 } from "@alloy-js/core";
 import { PackageJsonFile, SourceFile } from "@alloy-js/typescript";
-import fs from "fs";
-import { parseArgs } from "node:util";
-import path from "path";
 import prompts from "prompts";
 
 const displayHelp = () => {
@@ -68,20 +69,21 @@ function parseCommandLineArgs(): Partial<PackageInfo> & {
     version: values.version,
     description: values.description,
     repository: values.repository,
-    keywords:
-      values.keywords ?
-        values.keywords
+    keywords: values.keywords
+      ? values.keywords
           .split(",")
           .map((k: string) => k.trim())
           .filter(Boolean)
       : undefined,
     author: values.author,
     license: values.license,
-    type:
-      values.library ? "library"
-      : values.stc ? "stc-project"
-      : values.project ? "project"
-      : "project",
+    type: values.library
+      ? "library"
+      : values.stc
+        ? "stc-project"
+        : values.project
+          ? "project"
+          : "project",
   };
 }
 
@@ -217,14 +219,14 @@ const promptForPackageInfo = async (
   }
 
   const answers =
-    questions.length > 0 ?
-      await prompts(questions, {
-        onCancel: (p) => {
-          console.log("Operation canceled. No files were generated.");
-          process.exit(0);
-        },
-      })
-    : {};
+    questions.length > 0
+      ? await prompts(questions, {
+          onCancel: (p) => {
+            console.log("Operation canceled. No files were generated.");
+            process.exit(0);
+          },
+        })
+      : {};
 
   return {
     name: cmdArgs.name || answers.name || defaultName,
@@ -325,9 +327,9 @@ const main = async () => {
         scripts={scripts}
         author={packageInfo.author}
         repository={
-          packageInfo.repository ?
-            { type: "git", url: packageInfo.repository }
-          : undefined
+          packageInfo.repository
+            ? { type: "git", url: packageInfo.repository }
+            : undefined
         }
         keywords={packageInfo.keywords}
       />
@@ -343,9 +345,9 @@ const main = async () => {
           <SourceFile path="index.ts">// barrel file for components</SourceFile>
           <SourceFile
             path={
-              packageInfo.type === "stc-project" ?
-                "ExampleComponent.ts"
-              : "ExampleComponent.tsx"
+              packageInfo.type === "stc-project"
+                ? "ExampleComponent.ts"
+                : "ExampleComponent.tsx"
             }
           >
             {code`
@@ -378,9 +380,9 @@ const main = async () => {
             "composite": true,
             "incremental": true,
             "outDir": "dist"${
-              packageInfo.type === "stc-project" ?
-                ""
-              : code`
+              packageInfo.type === "stc-project"
+                ? ""
+                : code`
                 ,
                 "jsx": "preserve",
                 "jsxImportSource": "@alloy-js/core",
@@ -391,9 +393,9 @@ const main = async () => {
           "include": [
             "src/**/*.ts",
             "test/**/*.ts"${
-              packageInfo.type === "stc-project" ?
-                ""
-              : code`
+              packageInfo.type === "stc-project"
+                ? ""
+                : code`
                 ,
                 "src/**/*.tsx",
                 "test/**/*.tsx",

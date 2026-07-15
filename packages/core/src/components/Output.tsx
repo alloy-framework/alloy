@@ -11,7 +11,6 @@ import { NamePolicy } from "../name-policy.js";
 import { PrintTreeOptions } from "../output-types.js";
 import type { Children } from "../runtime/component.js";
 import { SourceDirectory } from "./SourceDirectory.js";
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SourceFile } from "./SourceFile.js";
 
@@ -73,11 +72,13 @@ export function Output(props: OutputProps) {
           insertFinalNewLine: props.insertFinalNewLine,
         }}
       >
-        {props.namePolicy ?
+        {props.namePolicy ? (
           <NamePolicyContext.Provider value={props.namePolicy}>
             {dir}
           </NamePolicyContext.Provider>
-        : dir}
+        ) : (
+          dir
+        )}
       </FormatOptions>
     </BinderContext.Provider>
   );

@@ -28,14 +28,15 @@ export function RenderErrorView({ errorId }: RenderErrorViewProps) {
 
       <div>
         <div className="text-sm font-medium">Code stack</div>
-        {error.stack ?
+        {error.stack ? (
           <pre className="text-sm mt-1 p-2 rounded bg-muted/40 overflow-auto">
             {error.stack}
           </pre>
-        : <div className="text-sm text-muted-foreground/70 mt-1">
+        ) : (
+          <div className="text-sm text-muted-foreground/70 mt-1">
             No stack available.
           </div>
-        }
+        )}
       </div>
 
       <div>
@@ -46,9 +47,8 @@ export function RenderErrorView({ errorId }: RenderErrorViewProps) {
               name: entry.name,
               renderNodeId: entry.renderNodeId,
               props: entry.props,
-              source:
-                entry.source?.fileName ?
-                  {
+              source: entry.source?.fileName
+                ? {
                     fileName: entry.source.fileName,
                     lineNumber: entry.source.lineNumber ?? 0,
                     columnNumber: entry.source.columnNumber ?? 0,

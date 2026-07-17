@@ -1,5 +1,6 @@
 import { Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { ModelDeclaration } from "../model/model-declaration.jsx";

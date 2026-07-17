@@ -8,6 +8,7 @@ import {
   TO_SYMBOL,
   useBinder,
 } from "@alloy-js/core";
+
 import { getProgram } from "./contexts/program.js";
 import { ProgramScope } from "./scopes/program.js";
 import {
@@ -95,9 +96,9 @@ export type Descriptor =
   | EnumMemberDescriptor;
 
 export type ResolveDescriptor<D> =
-  D extends NamedTypeDescriptor<infer M> ?
-    LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
-  : LibrarySymbolReference;
+  D extends NamedTypeDescriptor<infer M>
+    ? LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
+    : LibrarySymbolReference;
 
 export type LibraryFrom<T> = {
   [K in keyof T]: ResolveDescriptor<T[K]>;

@@ -1,6 +1,7 @@
 import { Output, refkey, StatementList } from "@alloy-js/core";
 import { renderToString } from "@alloy-js/core/testing";
 import { beforeEach, expect, it, vi } from "vitest";
+
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { OperationDeclaration } from "../operation/operation-declaration.jsx";

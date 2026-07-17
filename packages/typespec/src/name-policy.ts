@@ -1,4 +1,5 @@
 import { createNamePolicy, NamePolicy, useNamePolicy } from "@alloy-js/core";
+
 import {
   needsEscapingInDeclaration,
   needsEscapingInMember,

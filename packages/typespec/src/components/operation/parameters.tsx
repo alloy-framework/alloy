@@ -1,4 +1,5 @@
 import { Children, For, Indent } from "@alloy-js/core";
+
 import { DocWhen } from "../doc/doc-comment.jsx";
 
 export interface ParameterDescriptor {
@@ -27,15 +28,17 @@ export function Parameters(props: { parameters?: ParameterEntry[] }) {
         <Indent softline trailingBreak>
           <For each={props.parameters} comma line>
             {(param) =>
-              isSpread(param) ?
+              isSpread(param) ? (
                 <>...{param.spread}</>
-              : <>
+              ) : (
+                <>
                   <DocWhen doc={param.doc} />
                   {param.directives}
                   {param.decorators}
                   {param.name}
                   {param.optional ? "?" : ""}: {param.type}
                 </>
+              )
             }
           </For>
         </Indent>

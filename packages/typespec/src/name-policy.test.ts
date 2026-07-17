@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { createTypeSpecNamePolicy } from "./name-policy.js";
 
 describe("createTypeSpecNamePolicy", () => {

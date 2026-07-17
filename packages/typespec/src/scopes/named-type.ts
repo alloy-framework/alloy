@@ -1,4 +1,5 @@
 import { OutputScope, OutputScopeOptions, OutputSpace } from "@alloy-js/core";
+
 import { NamedTypeSymbol } from "../symbols/named-type.js";
 
 export interface NamedTypeScopeOptions extends OutputScopeOptions {}

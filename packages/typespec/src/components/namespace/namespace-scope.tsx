@@ -1,4 +1,5 @@
 import { Children, Scope, useScope } from "@alloy-js/core";
+
 import { NamespaceContext } from "../../contexts/namespace.js";
 import { NamespaceScope } from "../../scopes/namespace.js";
 import { SourceFileScope } from "../../scopes/source-file.js";

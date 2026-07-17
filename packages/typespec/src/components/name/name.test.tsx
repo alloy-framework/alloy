@@ -1,6 +1,7 @@
 import { Declaration, Output } from "@alloy-js/core";
 import { renderToString } from "@alloy-js/core/testing";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
+
 import { resetProgram } from "../../contexts/index.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";

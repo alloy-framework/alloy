@@ -7,6 +7,7 @@ import {
   useScope,
 } from "@alloy-js/core";
 import { Children } from "@alloy-js/core/jsx-runtime";
+
 import { NamespaceScope } from "../../scopes/namespace.js";
 import { SourceFileScope } from "../../scopes/source-file.js";
 import { createNamespaceSymbol } from "../../symbols/factories.js";

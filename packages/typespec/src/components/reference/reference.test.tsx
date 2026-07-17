@@ -1,8 +1,10 @@
+import { Output, refkey, SourceDirectory } from "@alloy-js/core";
+import { beforeEach, expect, it } from "vitest";
+
 import { Namespace } from "#components/namespace/namespace.jsx";
 import { ScalarDeclaration } from "#components/scalar-declaration/scalar-declaration.jsx";
 import { SourceFile } from "#components/source-file/source-file.jsx";
-import { Output, refkey, SourceDirectory } from "@alloy-js/core";
-import { beforeEach, expect, it } from "vitest";
+
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { Reference } from "./reference.jsx";

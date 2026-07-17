@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { AliasDeclaration } from "../alias/alias-declaration.jsx";
 import { ModelDeclaration } from "../model/model-declaration.jsx";

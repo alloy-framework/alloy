@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { DecoratorApplication } from "../decorator/decorator-application.jsx";
 import { SourceFile } from "../source-file/source-file.jsx";
 import { Namespace } from "./namespace.jsx";

@@ -1,4 +1,5 @@
 import { Children, Declaration, Name, Namekey, Refkey } from "@alloy-js/core";
+
 import { createModelPropertySymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/doc-comment.jsx";
 

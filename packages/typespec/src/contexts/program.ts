@@ -1,4 +1,5 @@
 import { Binder, useBinder } from "@alloy-js/core";
+
 import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope } from "../scopes/source-file.js";
 import { NamespaceSymbol } from "../symbols/index.js";

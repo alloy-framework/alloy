@@ -1,5 +1,6 @@
 import { List, Output } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
+
 import { resetProgram } from "../../contexts/program.js";
 import { createTypeSpecNamePolicy } from "../../name-policy.js";
 import { ConstDeclaration } from "../const/const-declaration.jsx";

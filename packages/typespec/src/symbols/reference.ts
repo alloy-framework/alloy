@@ -6,6 +6,7 @@ import {
   Refkey,
   resolve,
 } from "@alloy-js/core";
+
 import { isNamespaceSymbol, NamespaceSymbol } from "../index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
 import { NamespaceScope } from "../scopes/namespace.js";

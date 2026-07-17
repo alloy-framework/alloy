@@ -1,4 +1,3 @@
-import { Namespace } from "#components/namespace/namespace.jsx";
 import {
   Children,
   childrenArray,
@@ -13,6 +12,9 @@ import {
   Switch,
   useContext,
 } from "@alloy-js/core";
+
+import { Namespace } from "#components/namespace/namespace.jsx";
+
 import { createGlobalNamespace, useProgram } from "../../contexts/program.js";
 import { SourceFileScope } from "../../scopes/source-file.js";
 import { joinPath } from "../../util.js";

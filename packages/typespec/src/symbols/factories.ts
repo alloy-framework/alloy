@@ -5,6 +5,7 @@ import {
   OutputSymbolOptions,
   useScope,
 } from "@alloy-js/core";
+
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
 import { SourceFileScope } from "../scopes/index.js";

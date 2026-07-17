@@ -8,6 +8,7 @@ import {
   TriggerOpTypes,
   useScope,
 } from "@alloy-js/core";
+
 import { NamespaceSymbol } from "../symbols/index.js";
 import { ProgramScope } from "./program.js";
 

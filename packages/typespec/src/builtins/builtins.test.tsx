@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
+
 import { ModelDeclaration } from "../components/model/model-declaration.jsx";
 import { Reference } from "../components/reference/reference.jsx";
 import { ScalarDeclaration } from "../components/scalar-declaration/scalar-declaration.jsx";

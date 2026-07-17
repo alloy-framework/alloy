@@ -1,4 +1,5 @@
 import { Namekey, OutputSpace } from "@alloy-js/core";
+
 import { NamedTypeSymbol } from "./named-type.js";
 import {
   TypeSpecSymbol,

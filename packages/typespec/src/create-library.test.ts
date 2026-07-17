@@ -1,5 +1,6 @@
 import { toRefkey } from "@alloy-js/core";
 import { beforeEach, expect, it } from "vitest";
+
 import { getProgram, resetProgram } from "./contexts/program.js";
 import { createLibrary } from "./create-library.js";
 import { NamespaceSymbol } from "./symbols/index.js";

@@ -1,6 +1,8 @@
-import { Namespace } from "#components/namespace/namespace.jsx";
 import { Output, SourceDirectory } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
+import { Namespace } from "#components/namespace/namespace.jsx";
+
 import { SourceFile } from "./source-file.jsx";
 
 it("defines multiple directories with unique source files", () => {

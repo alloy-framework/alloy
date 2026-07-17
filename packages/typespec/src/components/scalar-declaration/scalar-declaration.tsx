@@ -8,6 +8,7 @@ import {
   Scope,
   useScope,
 } from "@alloy-js/core";
+
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
 import { NamespaceScope } from "../../scopes/namespace.js";

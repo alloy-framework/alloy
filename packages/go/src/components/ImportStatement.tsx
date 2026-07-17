@@ -1,5 +1,6 @@
 import { computed, For, Indent, memo } from "@alloy-js/core";
 import { basename, join, sep } from "pathe";
+
 import { useModule } from "../scopes/module.js";
 import { ImportRecords } from "../scopes/source-file.js";
 import { GoSymbol } from "../symbols/go.js";

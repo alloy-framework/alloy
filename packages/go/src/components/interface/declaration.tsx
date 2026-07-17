@@ -14,6 +14,7 @@ import {
   useContext,
   watch,
 } from "@alloy-js/core";
+
 import { useGoScope, useNamedTypeScope } from "../../scopes/contexts.js";
 import {
   createFunctionScope,
@@ -135,9 +136,11 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <>
       interface
-      {interfaceScope ?
+      {interfaceScope ? (
         <Scope value={interfaceScope}>{content}</Scope>
-      : content}
+      ) : (
+        content
+      )}
     </>
   );
 }
@@ -166,9 +169,7 @@ export function InterfaceFunction(props: InterfaceFunctionProps) {
         </Show>
         func <Name />
         <FunctionParameters parameters={props.parameters} />
-        {props.returns ?
-          <> {props.returns}</>
-        : null}
+        {props.returns ? <> {props.returns}</> : null}
       </Scope>
     </Declaration>
   );

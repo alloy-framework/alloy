@@ -1,7 +1,9 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
 import { afterEach, beforeEach, expect, it } from "vitest";
+
 import { DiagnosticsCollector } from "../diagnostics.js";
 import { closeTrace, initTrace, setChangeListener } from "./trace-writer.js";
 

@@ -291,9 +291,9 @@ function effectiveBreakCount(n: AlloyNode): number {
     if (nl < 0) {
       const s = t.data;
       nl =
-        s.length > 0 && (s.indexOf("\n") !== -1 || s.indexOf("\r") !== -1) ?
-          1
-        : 0;
+        s.length > 0 && (s.indexOf("\n") !== -1 || s.indexOf("\r") !== -1)
+          ? 1
+          : 0;
       t._nl = nl;
     }
     return nl;

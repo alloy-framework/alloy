@@ -5,6 +5,7 @@ import {
   createSymbol,
   moveTakenMembersTo,
 } from "@alloy-js/core";
+
 import { JsonFileContext } from "../context/JsonFileContext.js";
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { Reference } from "./reference.jsx";

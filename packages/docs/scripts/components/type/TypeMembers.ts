@@ -5,6 +5,7 @@ import {
   type ApiInterface,
   type HeritageType,
 } from "@microsoft/api-extractor-model";
+
 import {
   Excerpt,
   InterfaceMembers,
@@ -20,11 +21,11 @@ export function TypeMembers(props: TypeMembersProps) {
   let extendsInfo: Children = "";
 
   const extendsTypes: HeritageType[] =
-    props.type.kind === ApiItemKind.Class ?
-      (props.type as ApiClass).extendsType ?
-        [(props.type as ApiClass).extendsType!]
-      : []
-    : (props.type as ApiInterface).extendsTypes.slice();
+    props.type.kind === ApiItemKind.Class
+      ? (props.type as ApiClass).extendsType
+        ? [(props.type as ApiClass).extendsType!]
+        : []
+      : (props.type as ApiInterface).extendsTypes.slice();
 
   if (extendsTypes.length > 0) {
     const extendsItems = mapJoin(

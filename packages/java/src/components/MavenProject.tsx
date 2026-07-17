@@ -6,6 +6,7 @@ import {
   Show,
   SourceFile,
 } from "@alloy-js/core";
+
 import { MavenProjectConfig } from "../symbols/index.js";
 import { useProject } from "./ProjectDirectory.js";
 
@@ -163,8 +164,8 @@ export function PomFileBuild(props: PomFileProps) {
 
   return code`
     <build>
-      ${(<PomFileBuildPlugins {...props.projectConfig.build} />)}
-      ${(<PomFileBuildResources {...props.projectConfig.build} />)}
+      ${<PomFileBuildPlugins {...props.projectConfig.build} />}
+      ${<PomFileBuildResources {...props.projectConfig.build} />}
     </build>
   `;
 }
@@ -268,15 +269,15 @@ function PomFileBuildResources(props: MavenProjectConfig["build"]) {
             </excludes>
           `
           }${
-            resource.filtering !== undefined ?
-              `
+            resource.filtering !== undefined
+              ? `
 <filtering>${resource.filtering}</filtering>`
-            : undefined
+              : undefined
           }${
-            resource.targetPath !== undefined ?
-              `
+            resource.targetPath !== undefined
+              ? `
 <targetPath>${resource.targetPath}</targetPath>`
-            : undefined
+              : undefined
           }
         </resource>
       `,

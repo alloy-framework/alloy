@@ -8,7 +8,7 @@ export function makeTag<T>(tag: string) {
         {`<`}
         {tag}
         <Attributes attributes={rest} />
-        {children.children ?
+        {children.children ? (
           <>
             {`>`}
             <Indent softline trailingBreak>
@@ -16,7 +16,9 @@ export function makeTag<T>(tag: string) {
             </Indent>
             {`</${tag}>`}
           </>
-        : ` />`}
+        ) : (
+          ` />`
+        )}
       </group>
     );
   };

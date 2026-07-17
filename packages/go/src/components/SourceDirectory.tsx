@@ -6,6 +6,7 @@ import {
   useContext,
 } from "@alloy-js/core";
 import { basename, join } from "pathe";
+
 import { useModule } from "../scopes/module.js";
 import { createGoPackageScope } from "../scopes/package.js";
 import { createPackageSymbol } from "../symbols/factories.js";

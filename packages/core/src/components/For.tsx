@@ -1,17 +1,23 @@
 import { isRef, Ref } from "@vue/reactivity";
+
 import { memo } from "../reactivity.js";
 import type { Children } from "../runtime/component.js";
 import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
 import { BaseListProps } from "./List.jsx";
 
-export type ForCallbackArgs<T> =
-  number extends keyof T ? [value: T[number]]
-  : T extends Ref<infer U> ? ForCallbackArgs<U>
-  : T extends () => infer U ? ForCallbackArgs<U>
-  : T extends Map<infer U, infer V> ? [key: U, value: V]
-  : T extends Set<infer U> ? [value: U]
-  : T extends IterableIterator<infer U> ? [value: U]
-  : [];
+export type ForCallbackArgs<T> = number extends keyof T
+  ? [value: T[number]]
+  : T extends Ref<infer U>
+    ? ForCallbackArgs<U>
+    : T extends () => infer U
+      ? ForCallbackArgs<U>
+      : T extends Map<infer U, infer V>
+        ? [key: U, value: V]
+        : T extends Set<infer U>
+          ? [value: U]
+          : T extends IterableIterator<infer U>
+            ? [value: U]
+            : [];
 
 export interface ForProps<
   T extends
@@ -85,9 +91,9 @@ export function For<
       const maybeRef = props.each;
 
       return (mapJoin as any)(
-        typeof maybeRef === "function" ? maybeRef : (
-          () => (isRef(maybeRef) ? maybeRef.value : maybeRef)
-        ),
+        typeof maybeRef === "function"
+          ? maybeRef
+          : () => (isRef(maybeRef) ? maybeRef.value : maybeRef),
         cb,
         options,
       );

@@ -1,5 +1,6 @@
 import { Children } from "@alloy-js/core/jsx-runtime";
 import { expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Region } from "./region.jsx";
 

@@ -7,6 +7,7 @@ import {
   OutputSymbolOptions,
   createSymbol,
 } from "@alloy-js/core";
+
 import { GoScope } from "../scopes/go.js";
 import { PackageSymbol } from "./package.js";
 

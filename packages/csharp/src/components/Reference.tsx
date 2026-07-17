@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+
 import { ref } from "../symbols/reference.js";
 
 export interface ReferenceProps {

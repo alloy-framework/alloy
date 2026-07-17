@@ -1,5 +1,6 @@
 import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
 import { Field } from "./field.jsx";

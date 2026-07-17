@@ -1,5 +1,6 @@
 import { Children, code, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Property } from "../property/property.jsx";
 import { RecordDeclaration } from "./declaration.jsx";

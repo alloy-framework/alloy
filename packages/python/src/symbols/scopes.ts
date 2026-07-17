@@ -1,4 +1,5 @@
 import { useScope } from "@alloy-js/core";
+
 import { PythonLexicalScope } from "./python-lexical-scope.js";
 import { PythonMemberScope } from "./python-member-scope.js";
 import { PythonModuleScope } from "./python-module-scope.js";

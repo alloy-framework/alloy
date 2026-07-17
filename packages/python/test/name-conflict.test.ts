@@ -1,5 +1,6 @@
 import { createOutputBinder } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { pythonNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { createPythonSymbol } from "../src/symbol-creation.js";
 import { PythonModuleScope } from "../src/symbols/index.js";

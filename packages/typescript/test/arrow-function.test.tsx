@@ -1,5 +1,6 @@
 import { Props, refkey, render, StatementList } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { ArrowFunction } from "../src/components/ArrowFunction.jsx";
 import { VarDeclaration } from "../src/index.js";
 import { ParameterDescriptor } from "../src/parameter-descriptor.js";

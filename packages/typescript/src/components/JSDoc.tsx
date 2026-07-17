@@ -1,4 +1,5 @@
 import { List, childrenArray, type Children } from "@alloy-js/core";
+
 import { JSDocComment } from "./JSDocComment.jsx";
 
 export interface JSDocProps {

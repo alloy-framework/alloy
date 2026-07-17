@@ -1,6 +1,7 @@
-import type { OpenTab } from "@/hooks/use-tabs";
 import { DIFF_EQUAL, diff_match_patch } from "diff-match-patch";
 import { useCallback, useEffect, useState } from "react";
+
+import type { OpenTab } from "@/hooks/use-tabs";
 
 export interface TextNodeSpan {
   id: string;

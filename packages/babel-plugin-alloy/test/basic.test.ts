@@ -1,6 +1,8 @@
-import { pluginTester } from "babel-plugin-tester";
 import { join } from "node:path";
+
+import { pluginTester } from "babel-plugin-tester";
 import "vitest";
+
 import plugin from "../src/index.js";
 
 pluginTester({

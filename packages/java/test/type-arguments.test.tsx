@@ -1,5 +1,6 @@
 import { Output, code, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as jv from "../src/components/index.js";
 
 it("passes types", () => {
@@ -27,9 +28,9 @@ it("passes types", () => {
             <jv.Class public name="TestGenerics">
               {code`
                 public TestGenerics() {
-                  List${(<jv.TypeArguments args={[refkey("TypeOne")]} />)} list = new ArrayList${(<jv.TypeArguments />)}();
-                  List${(<jv.TypeArguments args={[{ extends: refkey("TypeTwo") }]} />)} list2 = new ArrayList${(<jv.TypeArguments />)}();
-                  List${(<jv.TypeArguments args={[{ wildcard: true }]} />)} list3 = new ArrayList${(<jv.TypeArguments />)}();
+                  List${<jv.TypeArguments args={[refkey("TypeOne")]} />} list = new ArrayList${<jv.TypeArguments />}();
+                  List${<jv.TypeArguments args={[{ extends: refkey("TypeTwo") }]} />} list2 = new ArrayList${<jv.TypeArguments />}();
+                  List${<jv.TypeArguments args={[{ wildcard: true }]} />} list3 = new ArrayList${<jv.TypeArguments />}();
                 }
               `}
             </jv.Class>

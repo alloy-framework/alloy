@@ -1,5 +1,6 @@
 #!/usr/bin/env -S node --experimental-sqlite --no-warnings=ExperimentalWarning
 import { parseArgs } from "node:util";
+
 import { componentCommand } from "./commands/component.js";
 import { effectCommand } from "./commands/effect.js";
 import { runErrors } from "./commands/errors.js";
@@ -48,9 +49,8 @@ const opts = {
   outputFile: values["output-file"] as string | undefined,
   name: values.name as string | undefined,
   type: values.type as string | undefined,
-  minTrackers:
-    values["min-trackers"] ?
-      parseInt(values["min-trackers"] as string, 10)
+  minTrackers: values["min-trackers"]
+    ? parseInt(values["min-trackers"] as string, 10)
     : undefined,
   unused: values.unused as boolean,
   framework: values.framework as boolean,

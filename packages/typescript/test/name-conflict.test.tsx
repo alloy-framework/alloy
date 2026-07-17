@@ -1,6 +1,7 @@
 import { Output, OutputSymbol } from "@alloy-js/core";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
+
 import {
   FunctionDeclaration,
   SourceFile,

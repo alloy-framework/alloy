@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import { Circle } from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 export type DebugStatus = "connected" | "connecting" | "error" | "disconnected";
 
@@ -49,9 +50,7 @@ export function StatusBar({
         )}
       </div>
       <div className="flex items-center gap-4">
-        {cwd ?
-          <span className="truncate max-w-[45vw]">{cwd}</span>
-        : null}
+        {cwd ? <span className="truncate max-w-[45vw]">{cwd}</span> : null}
         <span>{versionLabel ?? "Alloy v0.0.0"}</span>
       </div>
     </div>

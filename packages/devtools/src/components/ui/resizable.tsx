@@ -56,9 +56,9 @@ function ResizableHandle({
       data-slot="resizable-handle"
       className={cn(
         "bg-border focus-visible:ring-ring relative flex items-center justify-center focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden",
-        isVertical ?
-          "h-px w-full cursor-row-resize after:absolute after:inset-x-0 after:h-4 after:-translate-y-1/2 after:top-1/2"
-        : "w-px h-full cursor-col-resize after:absolute after:inset-y-0 after:w-4 after:-translate-x-1/2 after:left-1/2",
+        isVertical
+          ? "h-px w-full cursor-row-resize after:absolute after:inset-x-0 after:h-4 after:-translate-y-1/2 after:top-1/2"
+          : "w-px h-full cursor-col-resize after:absolute after:inset-y-0 after:w-4 after:-translate-x-1/2 after:left-1/2",
         className,
       )}
       {...props}
@@ -70,9 +70,11 @@ function ResizableHandle({
             isVertical ? "h-3 w-4" : "h-4 w-3",
           )}
         >
-          {isVertical ?
+          {isVertical ? (
             <GripHorizontalIcon className="size-2.5" />
-          : <GripVerticalIcon className="size-2.5" />}
+          ) : (
+            <GripVerticalIcon className="size-2.5" />
+          )}
         </div>
       )}
     </Separator>

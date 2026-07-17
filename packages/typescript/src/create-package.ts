@@ -8,6 +8,7 @@ import {
   refkey,
   SymbolCreator,
 } from "@alloy-js/core";
+
 import {
   TSModuleScope,
   TSOutputSymbol,
@@ -101,16 +102,16 @@ export type NamedMap<TDescriptor extends readonly NamedModuleDescriptor[]> =
       TDescriptor[number],
       { name: string }
     > as O["name"]]: Refkey & {
-      static: O extends (
-        { staticMembers: infer SM extends NamedModuleDescriptor[] }
-      ) ?
-        NamedMap<SM>
-      : {};
-      instance: O extends (
-        { instanceMembers: infer IM extends NamedModuleDescriptor[] }
-      ) ?
-        NamedMap<IM>
-      : {};
+      static: O extends {
+        staticMembers: infer SM extends NamedModuleDescriptor[];
+      }
+        ? NamedMap<SM>
+        : {};
+      instance: O extends {
+        instanceMembers: infer IM extends NamedModuleDescriptor[];
+      }
+        ? NamedMap<IM>
+        : {};
     };
   };
 
@@ -220,9 +221,9 @@ function createSymbols(
 
     for (const exportedName of symbols.named ?? []) {
       const namedRef =
-        typeof exportedName === "string" ?
-          { name: exportedName }
-        : exportedName;
+        typeof exportedName === "string"
+          ? { name: exportedName }
+          : exportedName;
       const key = keys[namedRef.name];
       const ownerSym = createSymbol(
         TSOutputSymbol,

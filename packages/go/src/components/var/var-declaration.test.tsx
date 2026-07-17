@@ -1,5 +1,6 @@
 import { Output, refkey, render } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as go from "../index.js";
 
 it("works variable", () => {

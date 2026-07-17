@@ -1,5 +1,6 @@
-import type { DebugConnectionState } from "@/hooks/use-debug-connection";
 import { createContext, useContext } from "react";
+
+import type { DebugConnectionState } from "@/hooks/use-debug-connection";
 
 export const DebugConnectionContext =
   createContext<DebugConnectionState | null>(null);

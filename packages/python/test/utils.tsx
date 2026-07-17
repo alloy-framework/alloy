@@ -6,6 +6,7 @@ import {
   OutputScope,
   SymbolCreator,
 } from "@alloy-js/core";
+
 import * as py from "../src/components/index.js";
 import { pythonNameConflictResolver } from "../src/name-conflict-resolver.js";
 import { createPythonNamePolicy } from "../src/name-policy.js";

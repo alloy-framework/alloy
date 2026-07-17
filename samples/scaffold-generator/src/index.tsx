@@ -1,3 +1,6 @@
+import { join } from "path";
+import { fileURLToPath } from "url";
+
 import {
   AppendFile,
   CopyFile,
@@ -10,8 +13,6 @@ import {
   writeOutput,
 } from "@alloy-js/core";
 import { Code, Heading } from "@alloy-js/markdown";
-import { join } from "path";
-import { fileURLToPath } from "url";
 
 function content(subpath: string) {
   return join(fileURLToPath(import.meta.url), "../../..", "content", subpath);

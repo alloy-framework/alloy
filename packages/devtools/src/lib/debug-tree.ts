@@ -126,9 +126,8 @@ export function applyRenderTreeMessage(
         props = undefined;
       }
     }
-    const source: SourceLocation | undefined =
-      message.source_file ?
-        {
+    const source: SourceLocation | undefined = message.source_file
+      ? {
           fileName: message.source_file,
           lineNumber: message.source_line,
           columnNumber: message.source_col,
@@ -221,9 +220,8 @@ export function applyRenderTreeMessage(
         props = undefined;
       }
     }
-    const source: SourceLocation | undefined =
-      message.source_file ?
-        {
+    const source: SourceLocation | undefined = message.source_file
+      ? {
           fileName: message.source_file,
           lineNumber: message.source_line,
           columnNumber: message.source_col,

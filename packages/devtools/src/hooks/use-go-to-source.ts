@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import type { RenderTreeNode } from "@/components/render-tree";
 import type { OpenTab } from "@/hooks/use-tabs";
 import {
@@ -5,7 +7,6 @@ import {
   findFirstTextNodeId,
   resolveRenderNodeId,
 } from "@/lib/render-tree-utils";
-import { useCallback } from "react";
 
 export interface UseGoToSourceOptions {
   nodeById: Map<string, RenderTreeNode>;

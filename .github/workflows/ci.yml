@@ -82,6 +82,9 @@ jobs:
       - run: pnpm run lint
         name: Lint
 
+      - run: pnpm run sync-publish-config:check
+        name: Check publishConfig is in sync
+
   deploy-docs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:

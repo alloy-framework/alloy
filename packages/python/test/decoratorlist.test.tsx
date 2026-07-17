@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { DecoratorList } from "../src/components/DecoratorList.jsx";
 import { TestOutput } from "./utils.js";
 

@@ -1,6 +1,7 @@
-import type { TreeNode } from "@/components/tree-view";
 import type { MouseEvent } from "react";
 import { useCallback, useMemo, useState } from "react";
+
+import type { TreeNode } from "@/components/tree-view";
 
 export interface OpenTab {
   id: string;

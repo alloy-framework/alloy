@@ -8,6 +8,7 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -183,15 +184,16 @@ export function Property(props: PropertyProps) {
       {modifiers}
       <TypeSlot>{props.type}</TypeSlot>
       {props.nullable && "?"} <MemberName />
-      {hasAccessorBody ?
+      {hasAccessorBody ? (
         <AccessorBlock get={props.get} set={props.set} init={props.init} />
-      : <AutoAccessors
+      ) : (
+        <AutoAccessors
           get={props.get}
           set={props.set}
           init={props.init}
           initializer={props.initializer}
         />
-      }
+      )}
     </MemberDeclaration>
   );
 }

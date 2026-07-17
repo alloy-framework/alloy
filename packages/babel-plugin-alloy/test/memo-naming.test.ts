@@ -1,5 +1,6 @@
-import { transformSync } from "@babel/core";
 import { join } from "node:path";
+
+import { transformSync } from "@babel/core";
 import { describe, expect, it } from "vitest";
 
 const pluginPath = join(

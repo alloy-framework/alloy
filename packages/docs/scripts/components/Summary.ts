@@ -1,5 +1,6 @@
 import type { ApiItem } from "@microsoft/api-extractor-model";
 import type { DocComment } from "@microsoft/tsdoc";
+
 import { MdxParagraph, TsDoc } from "./stc/index.js";
 
 export interface SummaryProps {

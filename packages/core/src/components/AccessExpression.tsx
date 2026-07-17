@@ -135,8 +135,8 @@ export function createAccessExpression<
     });
 
     return () => {
-      return isCallChain.value ?
-          formatCallChain(config, parts)
+      return isCallChain.value
+        ? formatCallChain(config, parts)
         : formatLinear(config, parts);
     };
   }
@@ -326,7 +326,9 @@ function formatCallChain<TPartProps extends BasePartProps, TPart>(
       }
 
       expression.push(
-        ci === 0 ? chunkExpr : (
+        ci === 0 ? (
+          chunkExpr
+        ) : (
           <>
             <sbr />
             {chunkExpr}

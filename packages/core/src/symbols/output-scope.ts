@@ -6,6 +6,7 @@ import {
   trigger,
   TriggerOpTypes,
 } from "@vue/reactivity";
+
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
@@ -288,8 +289,9 @@ export abstract class OutputScope {
   }
 
   [inspect.custom]() {
-    const ownerSymbol =
-      this.ownerSymbol ? ` for ${inspect(this.ownerSymbol)}` : "";
+    const ownerSymbol = this.ownerSymbol
+      ? ` for ${inspect(this.ownerSymbol)}`
+      : "";
     return untrack(
       () => `${this.constructor.name} ${this.name}[${this.id}]${ownerSymbol}`,
     );

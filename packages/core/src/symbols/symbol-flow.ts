@@ -1,4 +1,8 @@
 import { isRef, Ref } from "@vue/reactivity";
+
+import { MemberContext } from "../context/member-scope.js";
+import { ScopeContext } from "../context/scope.js";
+import { debug, TracePhase } from "../debug/index.js";
 import {
   Context,
   effect,
@@ -6,10 +10,6 @@ import {
   onCleanup,
   shallowReactive,
 } from "../reactivity.js";
-
-import { MemberContext } from "../context/member-scope.js";
-import { ScopeContext } from "../context/scope.js";
-import { debug, TracePhase } from "../debug/index.js";
 import { formatSymbolName } from "../tracer.js";
 import { OutputSymbol } from "./output-symbol.js";
 

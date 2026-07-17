@@ -15,6 +15,7 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { PythonModuleScope } from "../symbols/index.js";
 import {
   categorizeImportRecords,

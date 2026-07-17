@@ -30,7 +30,7 @@ A language package must provide (where the target language supports the concept)
 
 - Scaffold with `npm init @alloy-js` (library type). See [CLI & Build](cli-and-build.md).
 - Organize `src/` into: `symbols/`, `components/`, `context/` (if needed), plus top-level files for name policy, name conflict resolver, and reference component.
-- `package.json` exports must include a `"source"` condition pointing to the TypeScript sources. Vitest resolves imports via `conditions: ["source"]`; without it, tests may load a separate copy of `@alloy-js/core` and fail with "Multiple versions of Alloy loaded." The `strip-dev-exports.js` script removes `"source"` keys before publish. Example:
+- `package.json` exports must include a `"source"` condition pointing to the TypeScript sources. Vitest resolves imports via `conditions: ["source"]`; without it, tests may load a separate copy of `@alloy-js/core` and fail with "Multiple versions of Alloy loaded." The `"source"` condition must not reach published consumers; it is stripped at publish time via a `publishConfig.exports` copy kept in sync by `eng/sync-publish-config.ts` (see [CLI & Build → Publishing](cli-and-build.md#publishing)). Example:
   ```json
   "exports": {
     ".": {

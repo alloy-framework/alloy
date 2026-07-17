@@ -7,6 +7,7 @@ import {
   untrack,
   useContext,
 } from "@alloy-js/core";
+
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { PythonSourceFileContext } from "../components/SourceFile.jsx";
 import { PythonModuleScope } from "./python-module-scope.js";

@@ -1,4 +1,5 @@
 import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
+
 import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
 import { useScope } from "./context/scope.js";
@@ -376,9 +377,9 @@ export function createOutputBinder(options: BinderOptions = {}): Binder {
       scopeAndMemberChain<TScope, TSymbol>(targetDeclarationBase);
 
     let targetLexicalDeclaration =
-      targetMemberPath && targetMemberPath.length > 0 ?
-        (targetMemberPath[0].ownerSymbol! as TSymbol)
-      : targetDeclarationBase;
+      targetMemberPath && targetMemberPath.length > 0
+        ? (targetMemberPath[0].ownerSymbol! as TSymbol)
+        : targetDeclarationBase;
     // when we are resolving from a scope which is a member scope and might have
     // member scope parents, and any symbols in the member path are members of
     // the member scope's owner symbol (i.e., those symbols are in scope where

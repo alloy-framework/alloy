@@ -14,10 +14,12 @@
     "change": "chronus",
     "clean": "pnpm -r run clean && rimraf **/.temp/",
     "test": "vitest run",
-    "format": "prettier . --write",
-    "format:check": "prettier . --check",
-    "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint --fix ."
+    "sync-publish-config": "node eng/sync-publish-config.ts",
+    "sync-publish-config:check": "node eng/sync-publish-config.ts --check",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --type-aware --disable-nested-config --max-warnings=0",
+    "lint:fix": "oxlint --type-aware --disable-nested-config --fix"
   },
   "devDependencies": {
     "@actions/github": "^9.1.1",
@@ -25,18 +27,16 @@
     "@chronus/chronus": "^1.1.0",
     "@chronus/github": "^1.0.3",
     "@chronus/github-pr-commenter": "^1.0.3",
-    "@eslint/js": "catalog:",
-    "@vitest/eslint-plugin": "catalog:",
+    "@types/node": "catalog:",
     "concurrently": "catalog:",
-    "eslint": "catalog:",
     "execa": "^9.6.0",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "pathe": "^2.0.3",
-    "prettier": "catalog:",
-    "prettier-plugin-organize-imports": "catalog:",
     "rimraf": "catalog:",
     "tsx": "^4.20.3",
     "typedoc": "^0.28.8",
-    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   }
 }

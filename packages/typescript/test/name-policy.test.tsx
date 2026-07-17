@@ -1,5 +1,6 @@
 import { Output, refkey, StatementList } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as ts from "../src/components/index.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
 

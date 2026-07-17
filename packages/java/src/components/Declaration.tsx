@@ -5,6 +5,7 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+
 import { JavaElements, useJavaNamePolicy } from "../name-policy.js";
 import { JavaOutputSymbol } from "../symbols/java-output-symbol.js";
 import { useLexicalScope } from "../utils.js";

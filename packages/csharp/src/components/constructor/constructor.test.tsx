@@ -1,5 +1,6 @@
 import { refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
 import { DocSummary } from "../doc/comment.jsx";

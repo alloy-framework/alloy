@@ -1,4 +1,5 @@
 import { Ref, toRaw } from "@vue/reactivity";
+
 import { BaseListProps } from "./components/List.jsx";
 import { OutputDirectory, OutputFile } from "./output-types.js";
 import {
@@ -15,6 +16,7 @@ import {
 } from "./reactivity.js";
 import { AlloyNode, FRAGMENT_NODE } from "./render/node.js";
 import {
+  _isIntrinsicCreator,
   Children,
   ComponentCreator,
   isComponentCreator,
@@ -281,8 +283,9 @@ export function mapJoin<T, U, V>(
     const itemsSource = src();
     // need to unpack reactives for branding checks
     const itemsSourceRaw = toRaw(itemsSource);
-    let items =
-      Array.isArray(itemsSourceRaw) ? (itemsSource as T[]) : [...itemsSource];
+    let items = Array.isArray(itemsSourceRaw)
+      ? (itemsSource as T[])
+      : [...itemsSource];
 
     if (options.skipFalsy) {
       items = items.filter(
@@ -401,19 +404,17 @@ export function mapJoin<T, U, V>(
 
   // Chooses the equality function based on the collection type in use.
   function getCompareFunction(itemsSource: Map<T, U> | T[] | Iterable<T>) {
-    return Array.isArray(itemsSource) || isIterable(itemsSource) ?
-        compareArray
+    return Array.isArray(itemsSource) || isIterable(itemsSource)
+      ? compareArray
       : compareMap;
   }
 
   // Selects the mapper signature to match the collection type in use.
   function getMapperFunction(itemsSource: Map<T, U> | T[] | Iterable<T>) {
-    return (
-        Array.isArray(itemsSource) ||
-          itemsSource instanceof Set ||
-          isIterable(itemsSource)
-      ) ?
-        mapArray
+    return Array.isArray(itemsSource) ||
+      itemsSource instanceof Set ||
+      isIterable(itemsSource)
+      ? mapArray
       : mapMap;
   }
   // Strict equality check for array-like collections.
@@ -501,7 +502,8 @@ export function children(
       return children.map(collectChildren).flat();
     } else if (
       typeof children === "function" &&
-      !isComponentCreator(children)
+      !isComponentCreator(children) &&
+      !_isIntrinsicCreator(children)
     ) {
       return collectChildren(children());
     } else if (children instanceof AlloyNode) {
@@ -606,38 +608,39 @@ export function baseListPropsToMapJoinArgs(props: BaseListProps): JoinOptions {
   if ("joiner" in props) {
     joiner = props.joiner;
   } else {
-    punctuation =
-      props.comma ? ","
-      : props.semicolon ? ";"
-      : "";
+    punctuation = props.comma ? "," : props.semicolon ? ";" : "";
 
     joiner = (
       <>
         {punctuation}
-        {props.softline ?
+        {props.softline ? (
           <sbr />
-        : props.hardline ?
+        ) : props.hardline ? (
           <hbr />
-        : props.literalline ?
+        ) : props.literalline ? (
           <lbr />
-        : props.line ?
+        ) : props.line ? (
           <br />
-        : props.space ?
+        ) : props.space ? (
           <> </>
-        : props.doubleHardline ?
+        ) : props.doubleHardline ? (
           <>
             <hbr />
             <hbr />
           </>
-        : <hbr />}
+        ) : (
+          <hbr />
+        )}
       </>
     );
   }
 
   const ender =
-    "ender" in props ? props.ender
-    : props.enderPunctuation ? punctuation
-    : undefined;
+    "ender" in props
+      ? props.ender
+      : props.enderPunctuation
+        ? punctuation
+        : undefined;
 
   return { joiner, ender };
 }

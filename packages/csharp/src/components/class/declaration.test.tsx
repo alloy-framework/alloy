@@ -1,6 +1,3 @@
-import { Constructor } from "#components/constructor/constructor.jsx";
-import { EnumDeclaration } from "#components/enum/declaration.jsx";
-import { EnumMember } from "#components/enum/member.jsx";
 import {
   code,
   createNamePolicy,
@@ -11,6 +8,11 @@ import {
 } from "@alloy-js/core";
 import * as coretest from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+
+import { Constructor } from "#components/constructor/constructor.jsx";
+import { EnumDeclaration } from "#components/enum/declaration.jsx";
+import { EnumMember } from "#components/enum/member.jsx";
+
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
 import { Field } from "../field/field.jsx";

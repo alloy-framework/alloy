@@ -1,6 +1,7 @@
-import type { RenderTreeHandle } from "@/components/render-tree";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
+
+import type { RenderTreeHandle } from "@/components/render-tree";
 
 export function useRenderTreeFocus(
   renderTreeRef: RefObject<RenderTreeHandle | null>,

@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "sortImports": true,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "packages/babel-plugin-alloy/test/fixtures/**/*",
+    "packages/babel-plugin-jsx-dom-expressions/test/__*_fixtures__/**/*",
+    "packages/babel-plugin-jsx-dom-expressions/**",
+    "packages/docs/dist",
+    "packages/docs/dist-build",
+    "packages/docs/public",
+    "packages/docs/docs",
+    "packages/docs/src",
+    "packages/csharp/src/builtins",
+    ".chronus/changes/",
+    "CHANGELOG.md",
+    "*.generated.*"
+  ]
+}

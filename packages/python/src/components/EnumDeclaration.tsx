@@ -4,6 +4,7 @@ import {
   For,
   Show,
 } from "@alloy-js/core";
+
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
 import { BaseDeclarationProps } from "./Declaration.js";

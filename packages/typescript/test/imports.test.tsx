@@ -6,6 +6,7 @@ import {
   refkey,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import * as ts from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { TypeRefContext } from "../src/context/type-ref-context.js";

@@ -4,19 +4,18 @@ import {
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+
 import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
 import {
   createTypeSymbol,
   createValueSymbol,
   TSOutputSymbol,
 } from "../symbols/index.js";
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // imports for documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { TypeDeclaration } from "./TypeDeclaration.jsx";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { EnumDeclaration } from "./EnumDeclaration.jsx";
 
 export interface DeclarationPropsBase {
   children?: Children;

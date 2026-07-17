@@ -1,5 +1,6 @@
 import { reactive } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { jsonTest } from "../../test/utils.jsx";
 
 it("renders empty arrays", () => {

@@ -1,4 +1,16 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "extends": "../../api-extractor.base.json"
+  "extends": "../../api-extractor.base.json",
+
+  "messages": {
+    "extractorMessageReporting": {
+      // TypeScript 7 emits expando namespace members (e.g. `ArrowFunction.Parameters`)
+      // as re-exports in the .d.ts (`export { FunctionParameters as Parameters }`).
+      // The TypeScript engine bundled with API Extractor cannot resolve `@link`
+      // references to those re-exported members, so silence the false positives.
+      "ae-unresolved-link": {
+        "logLevel": "none"
+      }
+    }
+  }
 }

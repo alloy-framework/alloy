@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, it } from "vitest";
 import WebSocket from "ws";
+
 import { createMessageCollector } from "../../testing/devtools-utils.js";
 import { createOutputBinder, createScope, createSymbol } from "../binder.js";
 import {

@@ -13,6 +13,7 @@ import {
   Show,
   useContext,
 } from "@alloy-js/core";
+
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";

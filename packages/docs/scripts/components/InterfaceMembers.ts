@@ -12,6 +12,7 @@ import {
   ApiProtectedMixin,
   type ApiInterface,
 } from "@microsoft/api-extractor-model";
+
 import { flattenedMembers, mdxEscape } from "../utils.js";
 import { Excerpt, TsDoc } from "./stc/index.js";
 
@@ -34,17 +35,15 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
         const prop = member as ApiPropertySignature | ApiProperty;
         const isProtected =
           ApiProtectedMixin.isBaseClassOf(prop) && prop.isProtected;
-        const summary: Children =
-          prop.tsdocComment?.summarySection ?
-            TsDoc({
+        const summary: Children = prop.tsdocComment?.summarySection
+          ? TsDoc({
               node: prop.tsdocComment.summarySection,
               context: prop,
               inline: true,
             })
           : "";
-        const remarks: Children =
-          prop.tsdocComment?.remarksBlock ?
-            TsDoc({
+        const remarks: Children = prop.tsdocComment?.remarksBlock
+          ? TsDoc({
               node: prop.tsdocComment.remarksBlock,
               context: prop,
               inline: true,
@@ -69,9 +68,8 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
             .map((param) => `${param.name}: ${param.parameterTypeExcerpt.text}`)
             .join(", ")}) => ${method.returnTypeExcerpt.text}`,
         );
-        const summary: Children =
-          method.tsdocComment?.summarySection ?
-            TsDoc({
+        const summary: Children = method.tsdocComment?.summarySection
+          ? TsDoc({
               node: method.tsdocComment.summarySection,
               context: method,
               inline: true,
@@ -92,9 +90,8 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
             .map((param) => `${param.name}: ${param.parameterTypeExcerpt.text}`)
             .join(", ")}) => ${callSig.returnTypeExcerpt.text}`,
         );
-        const summary: Children =
-          callSig.tsdocComment?.summarySection ?
-            TsDoc({
+        const summary: Children = callSig.tsdocComment?.summarySection
+          ? TsDoc({
               node: callSig.tsdocComment.summarySection,
               context: callSig,
               inline: true,
@@ -113,9 +110,8 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
         const sig = mdxEscape(
           `(${ctor.parameters.map((p) => `${p.name}: ${p.parameterTypeExcerpt.text}`).join(", ")})`,
         );
-        const summary: Children =
-          ctor.tsdocComment?.summarySection ?
-            TsDoc({
+        const summary: Children = ctor.tsdocComment?.summarySection
+          ? TsDoc({
               node: ctor.tsdocComment.summarySection,
               context: ctor,
               inline: true,
@@ -131,9 +127,8 @@ export function InterfaceMembers(props: InterfaceMembersProps) {
       }
       case ApiItemKind.IndexSignature: {
         const indexer = member as ApiIndexSignature;
-        const summary: Children =
-          indexer.tsdocComment?.summarySection ?
-            TsDoc({
+        const summary: Children = indexer.tsdocComment?.summarySection
+          ? TsDoc({
               node: indexer.tsdocComment.summarySection,
               context: indexer,
               inline: true,

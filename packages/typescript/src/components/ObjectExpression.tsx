@@ -12,6 +12,7 @@ import {
   Switch,
   takeSymbols,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import {
   createStaticMemberSymbol,

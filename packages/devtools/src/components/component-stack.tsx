@@ -123,9 +123,8 @@ export function ComponentStack({ entries }: ComponentStackProps) {
   return (
     <div className="mt-2 space-y-2">
       {[...entries].reverse().map((entry, index) => {
-        const location =
-          entry.source ?
-            `${formatPath(entry.source.fileName)}:${entry.source.lineNumber}:${entry.source.columnNumber}`
+        const location = entry.source
+          ? `${formatPath(entry.source.fileName)}:${entry.source.lineNumber}:${entry.source.columnNumber}`
           : undefined;
         const canOpenNode =
           entry.renderNodeId !== undefined && entry.renderNodeId !== null;
@@ -134,9 +133,9 @@ export function ComponentStack({ entries }: ComponentStackProps) {
             <ContextMenuTrigger asChild>
               <div
                 className={
-                  canOpenNode ?
-                    "border border-border rounded p-2 cursor-pointer"
-                  : "border border-border rounded p-2"
+                  canOpenNode
+                    ? "border border-border rounded p-2 cursor-pointer"
+                    : "border border-border rounded p-2"
                 }
                 onClick={() => {
                   if (canOpenNode) {
@@ -145,14 +144,16 @@ export function ComponentStack({ entries }: ComponentStackProps) {
                 }}
               >
                 <div className="flex items-center gap-2 text-sm">
-                  {entry.renderNodeId ?
+                  {entry.renderNodeId ? (
                     <button
                       className="text-primary underline"
                       onClick={() => openComponent(entry)}
                     >
                       {entry.name}
                     </button>
-                  : <span className="font-medium">{entry.name}</span>}
+                  ) : (
+                    <span className="font-medium">{entry.name}</span>
+                  )}
                   {entry.renderNodeId && (
                     <span className="text-muted-foreground">
                       #{entry.renderNodeId}

@@ -1,4 +1,5 @@
 import { Children, Refkey, Show } from "@alloy-js/core";
+
 import { TypeArguments } from "./TypeArguments.js";
 import { TypeRefContext } from "./TypeRefContext.js";
 
@@ -22,9 +23,9 @@ export interface TypeReferenceProps {
 export function TypeReference(props: TypeReferenceProps) {
   const type = props.refkey ? props.refkey : props.name;
   const typeArgs =
-    props.typeArgs && props.typeArgs.length ?
+    props.typeArgs && props.typeArgs.length ? (
       <TypeArguments args={props.typeArgs} />
-    : undefined;
+    ) : undefined;
 
   return (
     <TypeRefContext>

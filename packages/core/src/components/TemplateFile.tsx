@@ -1,4 +1,5 @@
 import { computed } from "@vue/reactivity";
+
 import { emitDiagnostic } from "../diagnostics.js";
 import { createFileResource } from "../resource.js";
 import { Children, isComponentCreator } from "../runtime/component.js";

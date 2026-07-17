@@ -1,5 +1,6 @@
 import { List } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import {
   CaseClause,
   SwitchStatement,

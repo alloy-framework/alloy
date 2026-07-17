@@ -1,6 +1,8 @@
-import { TestNamespace } from "#test/utils.jsx";
 import { namekey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
+import { TestNamespace } from "#test/utils.jsx";
+
 import { EnumDeclaration } from "./declaration.jsx";
 import { EnumMember } from "./member.jsx";
 

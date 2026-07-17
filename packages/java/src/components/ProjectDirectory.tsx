@@ -7,6 +7,7 @@ import {
   SourceDirectory,
   useContext,
 } from "@alloy-js/core";
+
 import {
   GradleProjectConfig,
   JavaProjectScope,
@@ -63,9 +64,9 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
           <SourceDirectory path={defaultCodePath}>
             {props.children}
           </SourceDirectory>
-          {scope.mavenProjectConfig ?
+          {scope.mavenProjectConfig ? (
             <MavenProject projectConfig={scope.mavenProjectConfig} />
-          : undefined}
+          ) : undefined}
         </ProjectContext.Provider>
       </Scope>
     </>

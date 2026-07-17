@@ -6,6 +6,7 @@ import {
   OutputSymbolOptions,
   useBinder,
 } from "@alloy-js/core";
+
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
 import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";

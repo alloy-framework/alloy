@@ -1,4 +1,5 @@
 import { Namekey, OutputSpace } from "@alloy-js/core";
+
 import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
 
 export type MethodKinds = "ordinary" | "constructor";

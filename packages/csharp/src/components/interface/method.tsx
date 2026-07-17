@@ -7,6 +7,7 @@ import {
   Refkey,
   Scope,
 } from "@alloy-js/core";
+
 import {
   AccessModifiers,
   computeModifiersPrefix,
@@ -100,9 +101,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}
-        {props.children ?
-          <Block newline>{props.children}</Block>
-        : ";"}
+        {props.children ? <Block newline>{props.children}</Block> : ";"}
       </Scope>
     </MemberDeclaration>
   );

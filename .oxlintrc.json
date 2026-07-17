@@ -1,0 +1,96 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vitest"],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": [
+    "**/*.d.ts",
+    "**/dist/**/*",
+    "**/.temp/**/*",
+    "packages/*/vitest.config.ts",
+    "packages/*/babel.config.cjs",
+    "packages/babel-plugin-jsx-dom-expressions/**/*",
+    "packages/babel-plugin-alloy/**/*",
+    "packages/babel-preset-alloy/**/*",
+    "packages/devtools/**/*",
+    "packages/docs/**/*",
+    "samples/**/*",
+    "**/scripts/**/*",
+    "**/cmd/**/*"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-empty-object-type": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": ".*",
+        "caughtErrorsIgnorePattern": ".*",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "prefer-const": "warn",
+    "eqeqeq": ["warn", "always", { "null": "ignore" }],
+
+    // Rules oxlint enables by default (via the `correctness` category) that
+    // were not enforced by the previous ESLint setup. Disabled so the
+    // migration does not introduce new errors.
+    // `no-useless-catch`: the codebase intentionally re-throws in `try/catch`
+    // to preserve call stacks (previously suppressed inline everywhere).
+    "no-useless-catch": "off",
+    "no-useless-rename": "off",
+    "vitest/expect-expect": "off",
+    "vitest/no-conditional-expect": "off",
+    "vitest/require-mock-type-parameters": "off",
+    "vitest/require-to-throw-message": "off",
+    "vitest/valid-title": "off",
+
+    // Type-aware linting (via oxlint-tsgolint, enabled by `--type-aware`).
+    // We only opt into `no-floating-promises` to match the previous ESLint
+    // setup. The `--type-aware` flag only activates the type-aware rules that
+    // belong to an enabled category, so the list below is exactly the
+    // type-aware rules in `correctness` (minus `no-floating-promises`); all
+    // other type-aware rules live in categories that are off by default.
+    // Remove an entry here to progressively adopt more type-aware rules.
+    "typescript/no-floating-promises": "warn",
+    "typescript/await-thenable": "off",
+    "typescript/no-array-delete": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/no-duplicate-type-constituents": "off",
+    "typescript/no-for-in-array": "off",
+    "typescript/no-implied-eval": "off",
+    "typescript/no-meaningless-void-operator": "off",
+    "typescript/no-misused-spread": "off",
+    "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-unsafe-unary-minus": "off",
+    "typescript/no-useless-default-assignment": "off",
+    "typescript/require-array-sort-compare": "off",
+    "typescript/restrict-template-expressions": "off",
+    "typescript/triple-slash-reference": "off",
+    "typescript/unbound-method": "off"
+  },
+  "overrides": [
+    {
+      "files": ["packages/trace-cli/**/*.ts"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts"],
+      "rules": {
+        "vitest/no-focused-tests": "warn",
+        "vitest/no-identical-title": "error",
+        "vitest/no-commented-out-tests": "warn",
+        "vitest/no-import-node-test": "warn",
+        "vitest/require-local-test-context-for-concurrent-snapshots": "warn",
+        "vitest/valid-describe-callback": "warn",
+        "vitest/valid-expect": "warn",
+        "typescript/no-non-null-asserted-optional-chain": "off"
+      }
+    }
+  ]
+}

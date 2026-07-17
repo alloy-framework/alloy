@@ -1,10 +1,11 @@
-import type { TreeNode } from "@/components/tree-view";
-import type { ScopeRecord, SymbolRecord } from "@/hooks/debug-state";
-import type { RenderTreeViewNode } from "@/lib/debug-tree";
 import type {
   ClientToServerMessage,
   SourceLocation,
 } from "@alloy-js/core/devtools";
+
+import type { TreeNode } from "@/components/tree-view";
+import type { ScopeRecord, SymbolRecord } from "@/hooks/debug-state";
+import type { RenderTreeViewNode } from "@/lib/debug-tree";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 

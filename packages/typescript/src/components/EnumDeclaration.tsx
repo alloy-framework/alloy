@@ -6,6 +6,7 @@ import {
   Name,
   Show,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTypeAndValueSymbol } from "../symbols/index.js";
 import { CommonDeclarationProps } from "./Declaration.js";

@@ -1,11 +1,11 @@
 import type { Binder } from "../binder.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { Output } from "../components/Output.js";
 import {
   type ComponentContext,
   createNamedContext,
   useContext,
 } from "../context.js";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Output } from "../components/Output.js";
 
 /**
  * The binder context provides the binder instance to all components. This

@@ -31,6 +31,32 @@
       "default": "./dist/src/components/*"
     }
   },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "development": "./dist/dev/src/index.js",
+        "import": "./dist/src/index.js"
+      },
+      "./builtins": {
+        "development": "./dist/dev/src/builtins/index.js",
+        "import": "./dist/src/builtins/index.js"
+      },
+      "./stc": {
+        "development": "./dist/dev/src/components/stc/index.js",
+        "import": "./dist/src/components/stc/index.js"
+      },
+      "./testing": {
+        "development": "./dist/dev/testing/index.js",
+        "import": "./dist/testing/index.js"
+      }
+    },
+    "imports": {
+      "#components/*": {
+        "development": "./dist/dev/src/components/*",
+        "default": "./dist/src/components/*"
+      }
+    }
+  },
   "scripts": {
     "generate-docs": "api-extractor run",
     "build": "alloy build --with-dev && pnpm run generate-docs",

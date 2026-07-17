@@ -82,6 +82,12 @@ export function createNamedTypeSymbol(
   );
 }
 
+export function createAnonymousModelSymbol() {
+  return withCleanup(
+    new NamedTypeSymbol("{anonymous}", undefined, "model", { transient: true }),
+  );
+}
+
 export function createModelPropertySymbol(
   name: string | Namekey,
   options: OutputSymbolOptions = {},

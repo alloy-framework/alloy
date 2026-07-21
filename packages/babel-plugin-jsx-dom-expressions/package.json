@@ -27,7 +27,7 @@
     "@babel/core": "^7.24.7"
   },
   "devDependencies": {
-    "@babel/core": "catalog:",
+    "@babel/core": "^8.0.1",
     "@rollup/plugin-node-resolve": "catalog:",
     "rollup": "catalog:"
   },

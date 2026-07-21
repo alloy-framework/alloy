@@ -29,7 +29,7 @@
     "@chronus/github-pr-commenter": "^1.0.3",
     "@types/node": "catalog:",
     "concurrently": "catalog:",
-    "execa": "^9.6.0",
+    "execa": "^10.0.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",

@@ -21,18 +21,14 @@
   },
   "homepage": "https://github.com/alloy-framework/alloy#readme",
   "dependencies": {
-    "@babel/generator": "catalog:",
-    "@babel/helper-module-imports": "catalog:",
     "@babel/plugin-syntax-jsx": "catalog:",
     "@babel/types": "catalog:"
   },
   "peerDependencies": {
-    "@babel/core": "^7.24.7"
+    "@babel/core": "^8.0.0"
   },
   "devDependencies": {
-    "@types/babel__core": "catalog:",
-    "@types/babel__generator": "catalog:",
-    "@types/babel__traverse": "catalog:",
+    "@babel/core": "catalog:",
     "@types/node": "catalog:",
     "babel-plugin-tester": "catalog:",
     "vitest": "catalog:",

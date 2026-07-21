@@ -3,7 +3,7 @@ import System from "../index.js";
 import Reflection from "../Reflection/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as AccessControl } from "./AccessControl/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as AccessControl } from "./AccessControl/index.js";
 export { default as Authentication } from "./Authentication/index.js";
 export { default as Claims } from "./Claims/index.js";
 export { default as Cryptography } from "./Cryptography/index.js";

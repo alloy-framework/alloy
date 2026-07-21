@@ -1,9 +1,10 @@
-import { Ref, ShallowReactive, shallowRef } from "@vue/reactivity";
+import type { Ref, ShallowReactive } from "@vue/reactivity";
+import { shallowRef } from "@vue/reactivity";
 
 import { emitDiagnostic } from "../diagnostics.js";
 import { effect, onCleanup } from "../reactivity.js";
 import type { Children, Component } from "../runtime/component.js";
-import { OutputSymbol } from "./output-symbol.js";
+import type { OutputSymbol } from "./output-symbol.js";
 import { takeSymbols } from "./symbol-flow.js";
 
 export interface SymbolSlot extends Component<{}> {

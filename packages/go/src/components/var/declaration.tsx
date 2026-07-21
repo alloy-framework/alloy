@@ -1,6 +1,10 @@
-import {
+import type {
   Children,
   ComponentContext,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
+import {
   computed,
   createContext,
   Declaration,
@@ -8,8 +12,6 @@ import {
   List,
   memo,
   Name,
-  Namekey,
-  Refkey,
   Show,
   useContext,
 } from "@alloy-js/core";

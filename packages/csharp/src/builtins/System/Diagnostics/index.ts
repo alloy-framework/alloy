@@ -10,7 +10,7 @@ import Security from "../Security/index.js";
 import Text from "../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as CodeAnalysis } from "./CodeAnalysis/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as CodeAnalysis } from "./CodeAnalysis/index.js";
 export { default as Contracts } from "./Contracts/index.js";
 export { default as Metrics } from "./Metrics/index.js";
 export { default as SymbolStore } from "./SymbolStore/index.js";

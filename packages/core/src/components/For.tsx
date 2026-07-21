@@ -1,9 +1,10 @@
-import { isRef, Ref } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { isRef } from "@vue/reactivity";
 
 import { memo } from "../reactivity.js";
 import type { Children } from "../runtime/component.js";
 import { baseListPropsToMapJoinArgs, mapJoin } from "../utils.js";
-import { BaseListProps } from "./List.jsx";
+import type { BaseListProps } from "./List.jsx";
 
 export type ForCallbackArgs<T> = number extends keyof T
   ? [value: T[number]]

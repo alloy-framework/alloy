@@ -1,15 +1,12 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  For,
-  Show,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Declaration as CoreDeclaration, For, Show } from "@alloy-js/core";
 
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { BaseDeclarationProps } from "./Declaration.js";
+import type { BaseDeclarationProps } from "./Declaration.js";
 import { DecoratorList } from "./DecoratorList.jsx";
-import { EnumMember, EnumMemberProps } from "./EnumMember.js";
+import type { EnumMemberProps } from "./EnumMember.js";
+import { EnumMember } from "./EnumMember.js";
 import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 

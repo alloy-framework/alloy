@@ -1,12 +1,10 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   For,
   MemberDeclaration,
   Name,
-  Namekey,
   Prose,
-  Refkey,
   Show,
   splitProps,
 } from "@alloy-js/core";
@@ -18,8 +16,10 @@ import {
 } from "../symbols/index.js";
 import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { CommonDeclarationProps, Declaration } from "./Declaration.jsx";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
+import type { CommonDeclarationProps } from "./Declaration.jsx";
+import { Declaration } from "./Declaration.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";

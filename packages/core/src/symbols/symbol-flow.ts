@@ -1,17 +1,18 @@
-import { isRef, Ref } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { isRef } from "@vue/reactivity";
 
 import { MemberContext } from "../context/member-scope.js";
 import { ScopeContext } from "../context/scope.js";
 import { debug, TracePhase } from "../debug/index.js";
+import type { Context } from "../reactivity.js";
 import {
-  Context,
   effect,
   getContext,
   onCleanup,
   shallowReactive,
 } from "../reactivity.js";
 import { formatSymbolName } from "../tracer.js";
-import { OutputSymbol } from "./output-symbol.js";
+import type { OutputSymbol } from "./output-symbol.js";
 
 export interface TakeSymbolCallback {
   (symbol: OutputSymbol): void;

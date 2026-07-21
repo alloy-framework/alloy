@@ -3,8 +3,8 @@ import { ScopeContext, useScope } from "../context/scope.js";
 import { debug } from "../debug/index.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
-import { OutputScope } from "../symbols/output-scope.js";
-import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { OutputScope } from "../symbols/output-scope.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Declare a scope by providing an already created scope. The scope is merely

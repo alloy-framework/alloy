@@ -1,4 +1,5 @@
-import { Children, For } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For } from "@alloy-js/core";
 
 /**
  * Props for {@link DecoratorList}.

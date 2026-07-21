@@ -27,25 +27,17 @@
  *     `getStringWidth` (vendored in `get-string-width.ts`).
  */
 
-import {
-  AlloyNode,
-  COMMENT_NODE,
-  ElementNode,
-  FRAGMENT_NODE,
-  TEXT_NODE,
-  TextNode,
-} from "./node.js";
+import type { AlloyNode, ElementNode, TextNode } from "./node.js";
+import { COMMENT_NODE, FRAGMENT_NODE, TEXT_NODE } from "./node.js";
+import type { Indent, Mode, PrintNodeOptions } from "./printer-support.js";
 import {
   CURSOR_PLACEHOLDER,
   getStringWidth,
-  Indent,
   joinOut,
   makeAlign,
   makeIndent,
-  Mode,
   MODE_BREAK,
   MODE_FLAT,
-  PrintNodeOptions,
   rootIndent,
   textHasNewline,
   textWidth,

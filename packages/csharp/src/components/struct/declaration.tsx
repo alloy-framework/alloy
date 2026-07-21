@@ -1,8 +1,8 @@
 import * as core from "@alloy-js/core";
 import { join } from "@alloy-js/core";
 
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
@@ -10,11 +10,12 @@ import {
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
-import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface StructModifiers {

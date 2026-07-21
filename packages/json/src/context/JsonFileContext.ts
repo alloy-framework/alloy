@@ -1,10 +1,7 @@
-import {
-  ComponentContext,
-  createNamedContext,
-  useContext,
-} from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createNamedContext, useContext } from "@alloy-js/core";
 
-import { JsonOutputSymbol } from "../symbols/json-symbol.js";
+import type { JsonOutputSymbol } from "../symbols/json-symbol.js";
 
 export interface JsonFileContext {
   /** The path of the current JSON file. May be different from the path on disk. */

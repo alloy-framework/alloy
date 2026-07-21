@@ -1,4 +1,4 @@
-import { SymbolCreator } from "@alloy-js/core";
+import type { SymbolCreator } from "@alloy-js/core";
 
 import { createPackage } from "../create-package.js";
 

@@ -1,10 +1,10 @@
 import { abcModule } from "../builtins/python.js";
 import { DecoratorList } from "./DecoratorList.jsx";
-import {
-  BaseFunctionDeclaration,
+import type {
   BaseFunctionDeclarationProps,
   CommonFunctionProps,
 } from "./FunctionBase.js";
+import { BaseFunctionDeclaration } from "./FunctionBase.js";
 
 /**
  * Shared base props for all method-like declarations.

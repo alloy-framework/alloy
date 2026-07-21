@@ -1,6 +1,6 @@
 import { computed, For } from "@alloy-js/core";
 
-import { NamespaceSymbol } from "../../symbols/namespace.js";
+import type { NamespaceSymbol } from "../../symbols/namespace.js";
 
 export interface UsingsProps {
   /**

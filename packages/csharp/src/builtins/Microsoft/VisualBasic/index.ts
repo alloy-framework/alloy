@@ -1,7 +1,7 @@
 import System from "../../System/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as FileIO } from "./FileIO/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as FileIO } from "./FileIO/index.js";
 
 type VisualBasicLibrary = LibrarySymbolReference & {
   AppWinStyle: LibrarySymbolReference & {

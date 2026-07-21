@@ -1,14 +1,14 @@
+import type { ComponentContext, OutputSymbol } from "@alloy-js/core";
 import {
-  ComponentContext,
   SourceFile as CoreSourceFile,
   createContext,
-  OutputSymbol,
   reactive,
 } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
-import { JavaOutputSymbol } from "../symbols/index.js";
-import { ImportStatements, ImportSymbol } from "./ImportStatement.js";
+import type { JavaOutputSymbol } from "../symbols/index.js";
+import type { ImportSymbol } from "./ImportStatement.js";
+import { ImportStatements } from "./ImportStatement.js";
 import { LexicalScope } from "./LexicalScope.jsx";
 import { usePackage } from "./PackageDirectory.js";
 import { Reference } from "./Reference.js";

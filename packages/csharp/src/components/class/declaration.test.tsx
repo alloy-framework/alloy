@@ -18,7 +18,7 @@ import { Attribute } from "../attributes/attributes.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { ClassDeclaration } from "./declaration.jsx";
 
 it("declares class with no members", () => {

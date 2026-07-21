@@ -1,14 +1,12 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   computed,
   emitSymbol,
   For,
   isNamekey,
   Match,
   moveTakenMembersTo,
-  Namekey,
-  Refkey,
   Switch,
   takeSymbols,
 } from "@alloy-js/core";

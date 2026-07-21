@@ -1,6 +1,5 @@
+import type { OutputScope, OutputScopeOptions } from "@alloy-js/core";
 import {
-  OutputScope,
-  OutputScopeOptions,
   shallowReactive,
   track,
   TrackOpTypes,
@@ -9,9 +8,9 @@ import {
   useScope,
 } from "@alloy-js/core";
 
-import { NamespaceSymbol } from "../symbols/namespace.js";
+import type { NamespaceSymbol } from "../symbols/namespace.js";
 import { CSharpLexicalScope } from "./lexical.js";
-import { CSharpNamespaceScope } from "./namespace.js";
+import type { CSharpNamespaceScope } from "./namespace.js";
 
 export class CSharpSourceFileScope extends CSharpLexicalScope {
   #usings = shallowReactive<Set<NamespaceSymbol>>(new Set());

@@ -5,7 +5,7 @@ import { useMemberContext } from "../context/member-scope.js";
 import type { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { BasicSymbol } from "../symbols/basic-symbol.js";
-import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Create a member declaration by providing a symbol name and optional symbol

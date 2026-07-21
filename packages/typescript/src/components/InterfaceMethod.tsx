@@ -1,16 +1,16 @@
+import type { Namekey, Refkey } from "@alloy-js/core";
 import {
   childrenArray,
   findKeyedChild,
   MemberName,
-  Namekey,
   Prose,
-  Refkey,
   Show,
   type Children,
 } from "@alloy-js/core";
 
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
 import {
   FunctionParameters,
   FunctionTypeParameters,

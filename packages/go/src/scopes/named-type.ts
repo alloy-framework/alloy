@@ -1,9 +1,9 @@
 import { type OutputScopeOptions } from "@alloy-js/core";
 
-import { NamedTypeSymbol } from "../symbols/named-type.js";
+import type { NamedTypeSymbol } from "../symbols/named-type.js";
 import { GoScope } from "./go.js";
-import { GoModuleScope } from "./module.js";
-import { GoSourceFileScope } from "./source-file.js";
+import type { GoModuleScope } from "./module.js";
+import type { GoSourceFileScope } from "./source-file.js";
 
 /**
  * This scope contains NamedTypeSymbols for types that are declared in

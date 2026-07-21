@@ -2,7 +2,7 @@ import Generic from "../../Collections/Generic/index.js";
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type MetricsLibrary = LibrarySymbolReference & {
   Counter: LibrarySymbolReference & {

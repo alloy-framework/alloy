@@ -1,6 +1,5 @@
+import type { Children, ComponentContext } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createContext,
   createScope,
   Scope,
@@ -8,11 +7,11 @@ import {
   useContext,
 } from "@alloy-js/core";
 
-import {
+import type {
   GradleProjectConfig,
-  JavaProjectScope,
   MavenProjectConfig,
 } from "../symbols/index.js";
+import { JavaProjectScope } from "../symbols/index.js";
 import { MavenProject } from "./MavenProject.js";
 
 export interface ProjectContext {

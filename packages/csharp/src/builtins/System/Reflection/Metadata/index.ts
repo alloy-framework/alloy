@@ -4,7 +4,7 @@ import Reflection from "../index.js";
 import Text from "../../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Ecma335 } from "./Ecma335/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Ecma335 } from "./Ecma335/index.js";
 
 type MetadataLibrary = LibrarySymbolReference & {
   ArrayShape: LibrarySymbolReference & {

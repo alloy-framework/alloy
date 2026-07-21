@@ -1,5 +1,5 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   Declaration as CoreDeclaration,
   createSymbolSlot,
   Name,
@@ -9,7 +9,7 @@ import {
 import { useTSNamePolicy } from "../name-policy.js";
 import { createValueSymbol } from "../symbols/index.js";
 import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
-import { CommonDeclarationProps } from "./Declaration.js";
+import type { CommonDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 

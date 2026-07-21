@@ -1,4 +1,5 @@
-import { Children, Namekey, Refkey, Show } from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Show } from "@alloy-js/core";
 
 import { useTSNamePolicy } from "../name-policy.js";
 import { createStaticMemberSymbol } from "../symbols/index.js";

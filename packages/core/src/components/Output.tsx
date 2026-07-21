@@ -1,14 +1,10 @@
-import {
-  createOutputBinder,
-  getSymbolCreator,
-  NameConflictResolver,
-  SymbolCreator,
-} from "../binder.js";
+import type { NameConflictResolver, SymbolCreator } from "../binder.js";
+import { createOutputBinder, getSymbolCreator } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { FormatOptions } from "../context/format-options.js";
 import { NamePolicyContext } from "../context/name-policy.js";
-import { NamePolicy } from "../name-policy.js";
-import { PrintTreeOptions } from "../output-types.js";
+import type { NamePolicy } from "../name-policy.js";
+import type { PrintTreeOptions } from "../output-types.js";
 import type { Children } from "../runtime/component.js";
 import { SourceDirectory } from "./SourceDirectory.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

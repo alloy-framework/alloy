@@ -4,7 +4,7 @@ import Reflection from "../../Reflection/index.js";
 import CompilerServices from "../../Runtime/CompilerServices/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type ExpressionsLibrary = LibrarySymbolReference & {
   BinaryExpression: LibrarySymbolReference & {

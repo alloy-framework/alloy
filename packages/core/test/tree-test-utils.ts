@@ -1,4 +1,5 @@
-import { TEXT_NODE, TextNode, type AlloyNode } from "../src/render/node.js";
+import type { TextNode } from "../src/render/node.js";
+import { TEXT_NODE, type AlloyNode } from "../src/render/node.js";
 
 export function textContent(root: AlloyNode): string {
   let result = "";

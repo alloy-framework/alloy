@@ -1,7 +1,6 @@
+import type { Children, Refkey } from "@alloy-js/core";
 import {
-  Children,
   memo,
-  Refkey,
   resolve,
   unresolvedRefkey,
   untrack,
@@ -11,8 +10,8 @@ import {
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { PythonSourceFileContext } from "../components/SourceFile.jsx";
 import { PythonModuleScope } from "./python-module-scope.js";
-import { PythonOutputSymbol } from "./python-output-symbol.js";
-import { PythonOutputScope } from "./scopes.js";
+import type { PythonOutputSymbol } from "./python-output-symbol.js";
+import type { PythonOutputScope } from "./scopes.js";
 
 export interface RefOptions {
   /**

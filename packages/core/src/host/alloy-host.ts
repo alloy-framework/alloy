@@ -1,7 +1,7 @@
 import { createReadStream, createWriteStream } from "fs";
 import { access, mkdir, readFile, writeFile } from "fs/promises";
 
-import { AlloyFileInterface, AlloyHostInterface } from "./interface.js";
+import type { AlloyFileInterface, AlloyHostInterface } from "./interface.js";
 
 export const AlloyHost: AlloyHostInterface = {
   read(source: string): AlloyFileInterface {

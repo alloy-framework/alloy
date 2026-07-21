@@ -15,7 +15,7 @@ export async function buildFile(filename: string, options: BuildOptions) {
   return babel.transformFileAsync(filename, {
     sourceMaps: options.sourceMaps,
     presets: [
-      [typescriptPreset, { onlyRemoveTypeImports: false }],
+      typescriptPreset,
       [alloyPreset, { addSourceInfo: options.addSourceInfo }],
     ],
   });

@@ -1,18 +1,10 @@
-import {
-  Children,
-  computed,
-  createSymbolSlot,
-  For,
-  Show,
-  SymbolSlot,
-} from "@alloy-js/core";
+import type { Children, SymbolSlot } from "@alloy-js/core";
+import { computed, createSymbolSlot, For, Show } from "@alloy-js/core";
 
-import {
-  isParameterDescriptor,
-  ParameterDescriptor,
-} from "../parameter-descriptor.js";
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
+import { isParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { PythonOutputSymbol } from "../symbols/index.js";
+import type { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 

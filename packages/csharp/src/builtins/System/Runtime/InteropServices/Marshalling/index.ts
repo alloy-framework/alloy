@@ -2,7 +2,7 @@ import System from "../../../index.js";
 import InteropServices from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type MarshallingLibrary = LibrarySymbolReference & {
   AnsiStringMarshaller: LibrarySymbolReference & {

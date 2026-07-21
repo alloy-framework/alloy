@@ -1,4 +1,5 @@
-import { Children, code, namekey, refkey } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import { TestNamespace } from "../../../test/utils.jsx";

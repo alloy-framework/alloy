@@ -1,13 +1,11 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   Declaration,
   DeclarationContext,
   effect,
   For,
   memo,
-  Namekey,
-  Refkey,
   Scope,
   Show,
   takeSymbols,
@@ -25,15 +23,14 @@ import {
   createAnonymousTypeSymbol,
   createInterfaceMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol } from "../../symbols/go.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import type { GoSymbol } from "../../symbols/go.js";
+import type { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-import {
-  FunctionParameterProps,
-  FunctionParameters,
-} from "../parameters/parameters.js";
-import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
+import type { FunctionParameterProps } from "../parameters/parameters.js";
+import { FunctionParameters } from "../parameters/parameters.js";
+import type { TypeDeclarationProps } from "../type/declaration.jsx";
+import { TypeDeclaration } from "../type/declaration.jsx";
 
 /**
  * Properties for creating an interface declaration.

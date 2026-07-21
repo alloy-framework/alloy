@@ -58,15 +58,14 @@ import {
 } from "../devtools/devtools-server.js";
 import { getContext, untrack } from "../reactivity.js";
 import { getContextForNode } from "../render/node-context.js";
+import type { ElementNode, TextNode } from "../render/node.js";
 import {
   AlloyNode,
   CommentNode,
   ELEMENT_NODE,
-  ElementNode,
   FRAGMENT_NODE,
   setMutationListener,
   TEXT_NODE,
-  TextNode,
 } from "../render/node.js";
 import { flushJobsAsync } from "../scheduler.js";
 import type { ComponentCreator } from "./../runtime/component.js";

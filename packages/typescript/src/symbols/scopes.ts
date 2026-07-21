@@ -2,8 +2,8 @@ import { useScope } from "@alloy-js/core";
 
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSMemberScope } from "./ts-member-scope.js";
-import { TSModuleScope } from "./ts-module-scope.js";
-import { TSPackageScope } from "./ts-package-scope.js";
+import type { TSModuleScope } from "./ts-module-scope.js";
+import type { TSPackageScope } from "./ts-package-scope.js";
 
 export type TSOutputScope = TSPackageScope | TSModuleScope | TSLexicalScope;
 

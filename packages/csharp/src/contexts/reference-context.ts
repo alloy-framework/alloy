@@ -1,4 +1,5 @@
-import { ComponentContext, createContext, useContext } from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createContext, useContext } from "@alloy-js/core";
 
 /** What kind of reference.
  * - 'standard' Default reference nothing special.

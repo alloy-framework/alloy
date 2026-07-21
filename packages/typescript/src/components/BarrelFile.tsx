@@ -2,7 +2,7 @@ import { For, memo, SourceDirectoryContext, useContext } from "@alloy-js/core";
 import { basename } from "pathe";
 
 import { getSourceDirectoryData } from "../source-directory-data.js";
-import { TSModuleScope } from "../symbols/index.js";
+import type { TSModuleScope } from "../symbols/index.js";
 import { ExportStatement } from "./ExportStatement.js";
 import { SourceFile } from "./SourceFile.js";
 

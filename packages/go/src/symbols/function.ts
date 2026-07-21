@@ -1,14 +1,9 @@
-import {
-  Namekey,
-  OutputSpace,
-  track,
-  TrackOpTypes,
-  trigger,
-  TriggerOpTypes,
-} from "@alloy-js/core";
+import type { Namekey, OutputSpace } from "@alloy-js/core";
+import { track, TrackOpTypes, trigger, TriggerOpTypes } from "@alloy-js/core";
 
-import { GoSymbol, GoSymbolOptions } from "./go.js";
-import { NamedTypeSymbol } from "./named-type.js";
+import type { GoSymbolOptions } from "./go.js";
+import { GoSymbol } from "./go.js";
+import type { NamedTypeSymbol } from "./named-type.js";
 
 /**
  * A symbol for a function in Go, including receivers.

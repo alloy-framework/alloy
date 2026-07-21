@@ -1,14 +1,9 @@
-import {
-  memo,
-  OutputScope,
-  Refkey,
-  resolve,
-  unresolvedRefkey,
-} from "@alloy-js/core";
+import type { OutputScope, Refkey } from "@alloy-js/core";
+import { memo, resolve, unresolvedRefkey } from "@alloy-js/core";
 import { dirname, relative } from "pathe";
 
 import { useJsonFileContext } from "../context/JsonFileContext.js";
-import { JsonOutputSymbol } from "./json-symbol.js";
+import type { JsonOutputSymbol } from "./json-symbol.js";
 export * from "./json-symbol.js";
 
 export function ref(refkey: Refkey) {

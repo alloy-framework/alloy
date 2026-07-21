@@ -1,13 +1,15 @@
-import {
+import type {
   Children,
-  Declaration,
-  For,
   NameConflictResolver,
   Namekey,
-  namekey,
   NamePolicy,
-  Output,
   OutputSymbol,
+} from "../src/index.js";
+import {
+  Declaration,
+  For,
+  namekey,
+  Output,
   shallowReactive,
 } from "../src/index.js";
 

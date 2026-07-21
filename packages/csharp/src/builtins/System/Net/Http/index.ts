@@ -10,7 +10,7 @@ import Authentication from "../../Security/Authentication/index.js";
 import X509Certificates from "../../Security/Cryptography/X509Certificates/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Headers } from "./Headers/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Headers } from "./Headers/index.js";
 export { default as Json } from "./Json/index.js";
 export { default as Metrics } from "./Metrics/index.js";
 

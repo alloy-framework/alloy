@@ -1,8 +1,9 @@
 import { code, text } from "./code.js";
 import type { ElementNode } from "./render/node.js";
-import { Children, _INTRINSIC_CREATOR } from "./runtime/component.js";
+import type { Children } from "./runtime/component.js";
+import { _INTRINSIC_CREATOR } from "./runtime/component.js";
 import { createIntrinsic } from "./runtime/create-intrinsic.js";
-import { IntrinsicElements } from "./runtime/intrinsic.js";
+import type { IntrinsicElements } from "./runtime/intrinsic.js";
 
 export type StiSignature<T extends keyof IntrinsicElements> = (
   ...args: unknown extends T

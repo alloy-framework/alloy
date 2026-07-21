@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
 
-import { refkey, REFKEYABLE, Refkeyable } from "../src/refkey.js";
+import type { Refkeyable } from "../src/refkey.js";
+import { refkey, REFKEYABLE } from "../src/refkey.js";
 
 it("is stable when called with same values", () => {
   const obj = {};

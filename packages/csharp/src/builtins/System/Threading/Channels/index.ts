@@ -3,7 +3,7 @@ import System from "../../index.js";
 import Tasks from "../Tasks/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type ChannelsLibrary = LibrarySymbolReference & {
   BoundedChannelFullMode: LibrarySymbolReference & {

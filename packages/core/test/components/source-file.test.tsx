@@ -1,8 +1,10 @@
-import {
+import type {
   Children,
   CommonFormatOptions,
-  computed,
   ContentOutputFile,
+} from "@alloy-js/core";
+import {
+  computed,
   FormatOptions,
   Indent,
   Output,

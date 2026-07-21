@@ -1,4 +1,5 @@
-import { Children, For, Indent, Match, Switch } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Indent, Match, Switch } from "@alloy-js/core";
 
 export interface TypeArgumentsProps {
   args?: Children[] | TypeArgumentDescriptor[];

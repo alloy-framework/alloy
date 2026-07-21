@@ -1,11 +1,8 @@
-import {
-  Children,
-  MemberScope as CoreMemberScope,
-  createScope,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { MemberScope as CoreMemberScope, createScope } from "@alloy-js/core";
 
 import { PythonMemberScope } from "../symbols/python-member-scope.js";
-import { PythonOutputSymbol } from "../symbols/python-output-symbol.js";
+import type { PythonOutputSymbol } from "../symbols/python-output-symbol.js";
 import { usePythonScope } from "../symbols/scopes.js";
 export interface MemberScopeProps {
   children: Children;

@@ -6,7 +6,7 @@ import Xml from "../../../Xml/index.js";
 import Schema from "../../../Xml/Schema/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type DataContractsLibrary = LibrarySymbolReference & {
   DataContract: LibrarySymbolReference & {

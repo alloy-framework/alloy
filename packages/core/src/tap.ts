@@ -1,4 +1,5 @@
-import { ShallowRef, shallowRef } from "@vue/reactivity";
+import type { ShallowRef } from "@vue/reactivity";
+import { shallowRef } from "@vue/reactivity";
 
 import { useContext } from "./context.js";
 import { DeclarationContext } from "./context/declaration.js";
@@ -6,8 +7,8 @@ import { MemberDeclarationContext } from "./context/member-declaration.js";
 import { useScope } from "./context/scope.js";
 import { SourceFileContext } from "./context/source-file.js";
 import type { ComponentDefinition } from "./runtime/component.js";
-import { OutputScope } from "./symbols/output-scope.js";
-import { OutputSymbol } from "./symbols/output-symbol.js";
+import type { OutputScope } from "./symbols/output-scope.js";
+import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 /**
  * The return value of {@link createTap}, this holds a reference to the tapped

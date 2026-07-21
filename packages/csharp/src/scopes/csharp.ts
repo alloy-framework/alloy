@@ -1,7 +1,8 @@
-import { OutputScope, OutputScopeOptions } from "@alloy-js/core";
+import type { OutputScopeOptions } from "@alloy-js/core";
+import { OutputScope } from "@alloy-js/core";
 
 import type { CSharpSymbol } from "../symbols/csharp.js";
-import { NamespaceSymbol } from "../symbols/namespace.js";
+import type { NamespaceSymbol } from "../symbols/namespace.js";
 
 export class CSharpScope extends OutputScope {
   constructor(

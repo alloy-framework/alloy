@@ -1,7 +1,9 @@
-import { createSymbol, Namekey, NamePolicyGetter } from "@alloy-js/core";
+import type { Namekey, NamePolicyGetter } from "@alloy-js/core";
+import { createSymbol } from "@alloy-js/core";
 import { join } from "pathe";
 
-import { GoElements, useGoNamePolicy } from "../name-policy.js";
+import type { GoElements } from "../name-policy.js";
+import { useGoNamePolicy } from "../name-policy.js";
 import { useGoScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { GoFunctionScope } from "../scopes/function.js";
 import { GoLexicalScope } from "../scopes/lexical.js";
@@ -9,12 +11,13 @@ import { useModule } from "../scopes/module.js";
 import { GoNamedTypeScope } from "../scopes/named-type.js";
 import { useEnclosingPackageScope } from "../scopes/package.js";
 import { FunctionSymbol } from "./function.js";
-import { GoSymbol, GoSymbolOptions } from "./go.js";
-import {
-  NamedTypeSymbol,
+import type { GoSymbolOptions } from "./go.js";
+import { GoSymbol } from "./go.js";
+import type {
   NamedTypeSymbolOptions,
   NamedTypeTypeKind,
 } from "./named-type.js";
+import { NamedTypeSymbol } from "./named-type.js";
 import { PackageSymbol } from "./package.js";
 
 /**

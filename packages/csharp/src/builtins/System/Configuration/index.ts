@@ -1,5 +1,5 @@
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Assemblies } from "./Assemblies/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Assemblies } from "./Assemblies/index.js";
 
 type ConfigurationLibrary = LibrarySymbolReference & {
 

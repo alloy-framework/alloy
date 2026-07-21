@@ -1,6 +1,6 @@
 import { MemberDeclarationContext, memo, useContext } from "@alloy-js/core";
 
-import { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import type { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
 import { isValidJSIdentifier } from "../utils.js";
 
 export interface PropertyNameProps {

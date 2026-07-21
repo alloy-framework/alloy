@@ -1,20 +1,14 @@
-import {
-  Children,
-  memo,
-  OutputSymbol,
-  Refkey,
-  resolve,
-  unresolvedRefkey,
-} from "@alloy-js/core";
+import type { Children, OutputSymbol, Refkey } from "@alloy-js/core";
+import { memo, resolve, unresolvedRefkey } from "@alloy-js/core";
 
 import { AccessExpression } from "#components/access-expression/access-expression.jsx";
 
 import { useReferenceContext } from "../contexts/reference-context.js";
-import { CSharpScope } from "../scopes/csharp.js";
+import type { CSharpScope } from "../scopes/csharp.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
-import { CSharpSymbol } from "./csharp.js";
-import { NamespaceSymbol } from "./namespace.js";
+import type { CSharpSymbol } from "./csharp.js";
+import type { NamespaceSymbol } from "./namespace.js";
 
 // converts a refkey to its fully qualified name
 // e.g. if refkey is for bar in enum type foo, and

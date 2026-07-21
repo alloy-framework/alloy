@@ -1,8 +1,8 @@
-import { OutputScopeOptions } from "@alloy-js/core";
+import type { OutputScopeOptions } from "@alloy-js/core";
 
-import { TSOutputScope } from "./scopes.js";
+import type { TSOutputScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
-import { TSOutputSymbol } from "./ts-output-symbol.js";
+import type { TSOutputSymbol } from "./ts-output-symbol.js";
 
 /**
  * A member scope for TypeScript. Member declarations create symbols in this

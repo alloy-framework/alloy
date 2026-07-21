@@ -1,13 +1,11 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   computed,
   Declaration,
   DeclarationContext,
   effect,
   memo,
-  Namekey,
-  Refkey,
   Scope,
   Show,
   takeSymbols,
@@ -23,11 +21,12 @@ import {
   createAnonymousTypeSymbol,
   createStructMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol } from "../../symbols/go.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import type { GoSymbol } from "../../symbols/go.js";
+import type { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
+import type { TypeDeclarationProps } from "../type/declaration.jsx";
+import { TypeDeclaration } from "../type/declaration.jsx";
 
 /**
  * Properties for creating a struct declaration.

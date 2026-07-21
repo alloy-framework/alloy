@@ -1,12 +1,10 @@
-import {
+import type {
   Children,
-  createSymbolSlot,
-  Declaration,
   DeclarationProps,
-  Name,
   Namekey,
   Refkey,
 } from "@alloy-js/core";
+import { createSymbolSlot, Declaration, Name } from "@alloy-js/core";
 
 import { computeModifiersPrefix, makeModifiers } from "../../modifiers.js";
 import { createVariableSymbol } from "../../symbols/factories.js";

@@ -1,14 +1,15 @@
-import { Output, OutputSymbol } from "@alloy-js/core";
+import type { OutputSymbol } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 import { camelCase } from "change-case";
 import { expect, it } from "vitest";
 
+import type { TSOutputSymbol } from "../src/index.js";
 import {
   FunctionDeclaration,
   SourceFile,
-  TSOutputSymbol,
   TSSymbolFlags,
 } from "../src/index.js";
-import { ParameterDescriptor } from "../src/parameter-descriptor.js";
+import type { ParameterDescriptor } from "../src/parameter-descriptor.js";
 
 it("handles custom name conflict resolver based on metadata", () => {
   function resolver(name: string, symbols: OutputSymbol[]) {

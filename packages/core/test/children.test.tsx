@@ -1,6 +1,6 @@
+import type { Children } from "@alloy-js/core";
 import {
   children,
-  Children,
   childrenArray,
   code,
   isComponentCreator,

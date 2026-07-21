@@ -1,4 +1,5 @@
-import { Block, Children } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Block } from "@alloy-js/core";
 
 export interface PythonBlockProps {
   children: Children;

@@ -1,10 +1,12 @@
-import {
+import type {
   Children,
   MemberResolutionContext,
   MemberResolver,
+  Refkey,
+} from "@alloy-js/core";
+import {
   memo,
   onCleanup,
-  Refkey,
   resolve,
   unresolvedRefkey,
   untrack,
@@ -14,10 +16,10 @@ import {
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { usePackage } from "../components/PackageDirectory.jsx";
 import { SourceFileContext } from "../components/SourceFile.jsx";
-import { TSOutputScope } from "./scopes.js";
+import type { TSOutputScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
-import { TSOutputSymbol } from "./ts-output-symbol.js";
+import type { TSOutputSymbol } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
 export interface RefOptions {

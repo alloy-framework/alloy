@@ -1,7 +1,5 @@
-import {
-  CommonFormatOptions,
-  createFormatOptionsContextFor,
-} from "@alloy-js/core";
+import type { CommonFormatOptions } from "@alloy-js/core";
+import { createFormatOptionsContextFor } from "@alloy-js/core";
 
 export interface CSharpFormatOptions extends CommonFormatOptions {}
 

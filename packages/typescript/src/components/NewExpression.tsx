@@ -4,10 +4,8 @@ import {
 } from "@alloy-js/core";
 
 import { createValueSymbol } from "../symbols/index.js";
-import {
-  FunctionCallExpression,
-  FunctionCallExpressionProps,
-} from "./FunctionCallExpression.jsx";
+import type { FunctionCallExpressionProps } from "./FunctionCallExpression.jsx";
+import { FunctionCallExpression } from "./FunctionCallExpression.jsx";
 
 export interface NewExpressionProps extends FunctionCallExpressionProps {}
 

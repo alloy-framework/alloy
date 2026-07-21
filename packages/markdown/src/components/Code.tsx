@@ -1,5 +1,5 @@
 import { List } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 export interface CodeProps {
   /** Language of the code block */

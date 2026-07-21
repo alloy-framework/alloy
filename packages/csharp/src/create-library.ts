@@ -1,7 +1,6 @@
+import type { Binder, LibrarySymbolReference } from "@alloy-js/core";
 import {
-  Binder,
   createSymbol,
-  LibrarySymbolReference,
   namekey,
   refkey,
   REFKEYABLE,
@@ -10,7 +9,8 @@ import {
 } from "@alloy-js/core";
 
 import { getGlobalNamespace } from "./contexts/global-namespace.js";
-import { MethodKinds, MethodSymbol } from "./index.js";
+import type { MethodKinds } from "./index.js";
+import { MethodSymbol } from "./index.js";
 import { CSharpSymbol } from "./symbols/csharp.js";
 import { NamedTypeSymbol } from "./symbols/named-type.js";
 import { NamespaceSymbol } from "./symbols/namespace.js";

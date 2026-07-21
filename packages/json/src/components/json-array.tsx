@@ -1,5 +1,5 @@
+import type { Children, Refkey } from "@alloy-js/core";
 import {
-  Children,
   createSymbol,
   emitSymbol,
   For,
@@ -9,7 +9,6 @@ import {
   MemberScope,
   moveTakenMembersTo,
   onCleanup,
-  Refkey,
   useMemberScope,
 } from "@alloy-js/core";
 

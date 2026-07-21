@@ -1,12 +1,8 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  createSymbol,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration as CoreDeclaration, createSymbol } from "@alloy-js/core";
 
-import { JavaElements, useJavaNamePolicy } from "../name-policy.js";
+import type { JavaElements } from "../name-policy.js";
+import { useJavaNamePolicy } from "../name-policy.js";
 import { JavaOutputSymbol } from "../symbols/java-output-symbol.js";
 import { useLexicalScope } from "../utils.js";
 

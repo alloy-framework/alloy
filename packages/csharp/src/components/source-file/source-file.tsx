@@ -1,6 +1,6 @@
+import type { Children } from "@alloy-js/core";
 import {
   Block,
-  Children,
   computed,
   SourceFile as CoreSourceFile,
   createScope,
@@ -16,14 +16,12 @@ import { NamespaceName } from "#components/namespace/namespace-name.jsx";
 import { Reference } from "#components/Reference.jsx";
 import { Usings } from "#components/using/using.jsx";
 
-import {
-  CSharpFormatOptions,
-  useCsharpFormatOptions,
-} from "../../contexts/format-options.js";
+import type { CSharpFormatOptions } from "../../contexts/format-options.js";
+import { useCsharpFormatOptions } from "../../contexts/format-options.js";
 import { getGlobalNamespace } from "../../contexts/global-namespace.js";
 import { useNamespaceContext } from "../../contexts/namespace.js";
 import { CSharpSourceFileScope } from "../../scopes/source-file.js";
-import { NamespaceSymbol } from "../../symbols/namespace.js";
+import type { NamespaceSymbol } from "../../symbols/namespace.js";
 
 /**
  * Props for {@link SourceFile} component

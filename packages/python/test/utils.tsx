@@ -1,11 +1,11 @@
-import {
+import type {
   Binder,
   Children,
   NamePolicy,
-  Output,
   OutputScope,
   SymbolCreator,
 } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 
 import * as py from "../src/components/index.js";
 import { pythonNameConflictResolver } from "../src/name-conflict-resolver.js";

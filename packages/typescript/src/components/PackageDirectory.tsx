@@ -1,9 +1,7 @@
+import type { Children, ComponentContext, Ref } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createNamedContext,
   createScope,
-  Ref,
   Scope,
   shallowRef,
   SourceDirectory,
@@ -15,10 +13,12 @@ import {
 import { join } from "pathe";
 
 import { PackageMetadataContext } from "../context/package-metadata.js";
-import { ExternalPackage, getPackageScope } from "../create-package.js";
+import type { ExternalPackage } from "../create-package.js";
+import { getPackageScope } from "../create-package.js";
 import { TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
-import { PackageJsonFile, PackageJsonFileProps } from "./PackageJson.js";
+import type { PackageJsonFileProps } from "./PackageJson.js";
+import { PackageJsonFile } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {

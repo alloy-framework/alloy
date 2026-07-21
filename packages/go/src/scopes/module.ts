@@ -1,4 +1,5 @@
-import { OutputScope, createScope, useScope } from "@alloy-js/core";
+import type { OutputScope } from "@alloy-js/core";
+import { createScope, useScope } from "@alloy-js/core";
 
 import { GoScope } from "./go.js";
 

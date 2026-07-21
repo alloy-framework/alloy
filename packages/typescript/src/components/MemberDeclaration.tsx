@@ -1,15 +1,13 @@
-import {
-  MemberDeclaration as CoreMemberDeclaration,
+import type {
   MemberDeclarationPropsWithInfo as CoreMemberDeclarationPropsWithInfo,
   MemberDeclarationPropsWithSymbol as CoreMemberDeclarationPropsWithSymbol,
 } from "@alloy-js/core";
+import { MemberDeclaration as CoreMemberDeclaration } from "@alloy-js/core";
 
-import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import {
-  createStaticMemberSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import type { TypeScriptElements } from "../name-policy.js";
+import { useTSNamePolicy } from "../name-policy.js";
+import type { TSOutputSymbol } from "../symbols/index.js";
+import { createStaticMemberSymbol, TSSymbolFlags } from "../symbols/index.js";
 
 export interface MemberDeclarationPropsWithInfo extends CoreMemberDeclarationPropsWithInfo {
   /**

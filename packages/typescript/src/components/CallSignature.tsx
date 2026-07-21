@@ -1,6 +1,6 @@
 import { type Children } from "@alloy-js/core";
 
-import {
+import type {
   ParameterDescriptor,
   TypeParameterDescriptor,
 } from "../parameter-descriptor.js";

@@ -4,8 +4,9 @@ import { contextsByKey } from "./context.js";
 import { SourceDirectoryContext } from "./context/source-directory.js";
 import { SourceFileContext } from "./context/source-file.js";
 import { cwd } from "./host/node-host.js";
-import { Context, getContext } from "./reactivity.js";
-import { Component, Props, SourceLocation } from "./runtime/component.js";
+import type { Context } from "./reactivity.js";
+import { getContext } from "./reactivity.js";
+import type { Component, Props, SourceLocation } from "./runtime/component.js";
 
 // Store render stack for error diagnostics
 const renderStack: Array<{

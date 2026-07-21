@@ -1,4 +1,5 @@
-import { Children, For, Indent, Wrap } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Indent, Wrap } from "@alloy-js/core";
 
 export interface FunctionCallExpressionProps {
   target: Children;

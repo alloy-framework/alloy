@@ -6,7 +6,7 @@ import Xml from "../../Xml/index.js";
 import Schema from "../../Xml/Schema/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as DataContracts } from "./DataContracts/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as DataContracts } from "./DataContracts/index.js";
 export { default as Formatters } from "./Formatters/index.js";
 export { default as Json } from "./Json/index.js";
 

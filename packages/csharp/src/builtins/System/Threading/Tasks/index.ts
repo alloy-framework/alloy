@@ -2,7 +2,7 @@ import System from "../../index.js";
 import Threading from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Dataflow } from "./Dataflow/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Dataflow } from "./Dataflow/index.js";
 export { default as Sources } from "./Sources/index.js";
 
 type TasksLibrary = LibrarySymbolReference & {

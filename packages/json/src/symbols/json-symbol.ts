@@ -1,8 +1,7 @@
+import type { OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
   createSymbol,
-  OutputSpace,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,

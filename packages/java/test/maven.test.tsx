@@ -2,7 +2,7 @@ import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
 
 import { ProjectDirectory } from "../src/components/index.js";
-import { MavenProjectConfig } from "../src/index.js";
+import type { MavenProjectConfig } from "../src/index.js";
 
 it("generates barebones pom.xml file", () => {
   const projectConfig: MavenProjectConfig = {

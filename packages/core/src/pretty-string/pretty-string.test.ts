@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
 
-import { pret, PrettyString } from "./pretty-string.js";
+import type { PrettyString } from "./pretty-string.js";
+import { pret } from "./pretty-string.js";
 
 function expectRender(
   pretty: PrettyString,

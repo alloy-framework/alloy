@@ -1,4 +1,5 @@
-import { computed, Ref, ShallowRef, shallowRef } from "@vue/reactivity";
+import type { Ref, ShallowRef } from "@vue/reactivity";
+import { computed, shallowRef } from "@vue/reactivity";
 
 import { useBinder } from "./context/binder.js";
 import { useMemberContext } from "./context/member-scope.js";
@@ -6,16 +7,9 @@ import { useScope } from "./context/scope.js";
 import { debug, TracePhase } from "./debug/index.js";
 import { emitDiagnostic, type DiagnosticHandle } from "./diagnostics.js";
 import { effect, onCleanup } from "./reactivity.js";
-import {
-  inspectRefkey,
-  isMemberRefkey,
-  MemberRefkey,
-  refkey,
-  Refkey,
-  Refkeyable,
-  toRefkey,
-} from "./refkey.js";
-import { OutputScope } from "./symbols/output-scope.js";
+import type { MemberRefkey, Refkey, Refkeyable } from "./refkey.js";
+import { inspectRefkey, isMemberRefkey, refkey, toRefkey } from "./refkey.js";
+import type { OutputScope } from "./symbols/output-scope.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
 import { formatRefkeys, formatSymbolName } from "./tracer.js";
 export type Metadata = object;

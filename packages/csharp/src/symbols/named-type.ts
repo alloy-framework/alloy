@@ -1,6 +1,8 @@
-import { Namekey, OutputSpace, createSymbol } from "@alloy-js/core";
+import type { Namekey, OutputSpace } from "@alloy-js/core";
+import { createSymbol } from "@alloy-js/core";
 
-import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
+import type { CSharpSymbolOptions } from "./csharp.js";
+import { CSharpSymbol } from "./csharp.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
 

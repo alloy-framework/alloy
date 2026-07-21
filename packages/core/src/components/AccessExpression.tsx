@@ -1,12 +1,14 @@
-import {
+import type {
   Children,
-  childrenArray,
   ComponentCreator,
   ComponentDefinition,
-  computed,
-  isComponentCreator,
   OutputSymbol,
   Refkeyable,
+} from "../index.js";
+import {
+  childrenArray,
+  computed,
+  isComponentCreator,
   symbolForRefkey,
   takeSymbols,
 } from "../index.js";

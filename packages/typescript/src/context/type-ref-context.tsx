@@ -1,8 +1,5 @@
-import {
-  ComponentContext,
-  createNamedContext,
-  useContext,
-} from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createNamedContext, useContext } from "@alloy-js/core";
 
 interface TypeRefContext {
   /** If in a type context */

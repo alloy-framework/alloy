@@ -1,11 +1,5 @@
-import {
-  Children,
-  FormatOptions,
-  Indent,
-  List,
-  Output,
-  Prose,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { FormatOptions, Indent, List, Output, Prose } from "@alloy-js/core";
 import { Serialization } from "@alloy-js/csharp/global/System/Text/Json";
 import { describe, expect, it } from "vitest";
 

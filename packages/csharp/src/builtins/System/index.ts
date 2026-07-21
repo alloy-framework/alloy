@@ -8,7 +8,7 @@ import Text from "./Text/index.js";
 import Threading from "./Threading/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Buffers } from "./Buffers/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Buffers } from "./Buffers/index.js";
 export { default as CodeDom } from "./CodeDom/index.js";
 export { default as Collections } from "./Collections/index.js";
 export { default as ComponentModel } from "./ComponentModel/index.js";

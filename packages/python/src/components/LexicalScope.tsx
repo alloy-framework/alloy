@@ -1,4 +1,5 @@
-import { Scope, ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import type { ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { Scope } from "@alloy-js/core";
 
 import { createLexicalScope } from "../symbol-creation.js";
 import { PythonLexicalScope } from "../symbols/python-lexical-scope.js";

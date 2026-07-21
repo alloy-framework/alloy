@@ -1,4 +1,4 @@
-import { ReactiveEffect } from "@vue/reactivity";
+import type { ReactiveEffect } from "@vue/reactivity";
 
 import { debug } from "./debug/index.js";
 import {

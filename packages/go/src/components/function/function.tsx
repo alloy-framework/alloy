@@ -1,6 +1,6 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   createSymbolSlot,
   Declaration,
   DeclarationContext,
@@ -8,9 +8,7 @@ import {
   For,
   Indent,
   Name,
-  Namekey,
   onCleanup,
-  Refkey,
   Scope,
   Show,
   useContext,
@@ -24,18 +22,14 @@ import {
   createParameterSymbol,
 } from "../../symbols/factories.js";
 import { FunctionSymbol } from "../../symbols/function.js";
-import { GoSymbol } from "../../symbols/go.js";
+import type { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
-import { TypeParameterSymbol } from "../../symbols/type-parameter.js";
+import type { TypeParameterSymbol } from "../../symbols/type-parameter.js";
 import { LineComment } from "../doc/comment.jsx";
-import {
-  FunctionParameterProps,
-  FunctionParameters,
-} from "../parameters/parameters.jsx";
-import {
-  TypeParameterProps,
-  TypeParameters,
-} from "../parameters/typeparameters.jsx";
+import type { FunctionParameterProps } from "../parameters/parameters.jsx";
+import { FunctionParameters } from "../parameters/parameters.jsx";
+import type { TypeParameterProps } from "../parameters/typeparameters.jsx";
+import { TypeParameters } from "../parameters/typeparameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {

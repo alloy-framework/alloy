@@ -1,6 +1,6 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   childrenArray,
   createSymbol,
   createSymbolSlot,
@@ -9,17 +9,16 @@ import {
   findKeyedChild,
   findUnkeyedChildren,
   Name,
-  Namekey,
-  Refkey,
   Show,
   takeSymbols,
 } from "@alloy-js/core";
 
 import { useTSNamePolicy } from "../name-policy.js";
-import { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import type { TypeParameterDescriptor } from "../parameter-descriptor.js";
 import { useTSLexicalScope, useTSMemberScope } from "../symbols/scopes.js";
 import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
-import { CommonDeclarationProps, Declaration } from "./Declaration.js";
+import type { CommonDeclarationProps } from "./Declaration.js";
+import { Declaration } from "./Declaration.js";
 import { TypeParameters } from "./FunctionBase.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { MemberDeclaration } from "./MemberDeclaration.jsx";

@@ -7,7 +7,7 @@ import { Constructor } from "../constructor/constructor.jsx";
 import { Field } from "../field/field.jsx";
 import { Method } from "../method/method.jsx";
 import { Property } from "../property/property.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { StructDeclaration } from "./declaration.jsx";
 
 it("declares struct with no members", () => {

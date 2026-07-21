@@ -1,6 +1,7 @@
-import { ComponentContext, createContext, useContext } from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createContext, useContext } from "@alloy-js/core";
 
-import { NamespaceSymbol } from "../symbols/namespace.js";
+import type { NamespaceSymbol } from "../symbols/namespace.js";
 
 export interface NamespaceContext {
   symbol: NamespaceSymbol;

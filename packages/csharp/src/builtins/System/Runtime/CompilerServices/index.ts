@@ -4,7 +4,7 @@ import Expressions from "../../Linq/Expressions/index.js";
 import Tasks from "../../Threading/Tasks/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type CompilerServicesLibrary = LibrarySymbolReference & {
   AccessedThroughPropertyAttribute: LibrarySymbolReference & {

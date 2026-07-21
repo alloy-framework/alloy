@@ -1,4 +1,5 @@
-import { Binder, createSymbol, useBinder } from "@alloy-js/core";
+import type { Binder } from "@alloy-js/core";
+import { createSymbol, useBinder } from "@alloy-js/core";
 
 import { NamespaceSymbol } from "../symbols/namespace.js";
 

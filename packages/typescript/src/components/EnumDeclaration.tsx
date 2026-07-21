@@ -9,7 +9,7 @@ import {
 
 import { useTSNamePolicy } from "../name-policy.js";
 import { createTypeAndValueSymbol } from "../symbols/index.js";
-import { CommonDeclarationProps } from "./Declaration.js";
+import type { CommonDeclarationProps } from "./Declaration.js";
 import { EnumMember } from "./EnumMember.jsx";
 import { JSDoc } from "./JSDoc.jsx";
 import { MemberScope } from "./MemberScope.jsx";

@@ -1,6 +1,6 @@
-import { OutputSymbol } from "@alloy-js/core";
+import type { OutputSymbol } from "@alloy-js/core";
 
-import { PythonOutputSymbol } from "./symbols/python-output-symbol.js";
+import type { PythonOutputSymbol } from "./symbols/python-output-symbol.js";
 
 export function pythonNameConflictResolver(_: string, symbols: OutputSymbol[]) {
   if (symbols.length === 0) return;

@@ -1,4 +1,5 @@
-import { Children, For, Indent, List, splitProps } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Indent, List, splitProps } from "@alloy-js/core";
 
 export function makeTag<T>(tag: string) {
   return (props: { children?: Children } & T) => {

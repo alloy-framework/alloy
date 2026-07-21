@@ -1,13 +1,7 @@
-import {
-  Children,
-  code,
-  List,
-  mapJoin,
-  Show,
-  SourceFile,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, List, mapJoin, Show, SourceFile } from "@alloy-js/core";
 
-import { MavenProjectConfig } from "../symbols/index.js";
+import type { MavenProjectConfig } from "../symbols/index.js";
 import { useProject } from "./ProjectDirectory.js";
 
 export interface MavenProjectProps {

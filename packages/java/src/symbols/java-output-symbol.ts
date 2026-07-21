@@ -1,11 +1,5 @@
-import {
-  createSymbol,
-  Namekey,
-  OutputSpace,
-  OutputSymbol,
-  OutputSymbolOptions,
-  refkey,
-} from "@alloy-js/core";
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
+import { createSymbol, OutputSymbol, refkey } from "@alloy-js/core";
 
 import { usePackage } from "../components/PackageDirectory.jsx";
 

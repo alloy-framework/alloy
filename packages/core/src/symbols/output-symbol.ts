@@ -1,8 +1,8 @@
+import type { Ref } from "@vue/reactivity";
 import {
   isRef,
   reactive,
   ReactiveFlags,
-  Ref,
   track,
   TrackOpTypes,
   trigger,
@@ -14,23 +14,20 @@ import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { debug, TracePhase } from "../debug/index.js";
 import { inspect } from "../inspect.js";
-import { NamePolicyGetter } from "../name-policy.js";
+import type { NamePolicyGetter } from "../name-policy.js";
 import { shallowReactive, untrack } from "../reactivity.js";
+import type { Namekey } from "../refkey.js";
 import {
   isMemberRefkey,
   isNamekey,
   isSymbolRefkey,
-  Namekey,
   toRefkey,
   type Refkey,
 } from "../refkey.js";
 import { formatSymbolName } from "../tracer.js";
-import {
-  OutputDeclarationSpace,
-  OutputMemberSpace,
-  OutputSpace,
-} from "./output-space.js";
-import { SymbolTable } from "./symbol-table.js";
+import type { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
+import { OutputMemberSpace } from "./output-space.js";
+import type { SymbolTable } from "./symbol-table.js";
 
 export interface OutputSymbolOptions {
   /**

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { Children, RENDERABLE } from "../../src/runtime/component.js";
+import type { Children } from "../../src/runtime/component.js";
+import { RENDERABLE } from "../../src/runtime/component.js";
 describe("string nodes", () => {
   it("renders string nodes with substitutions", () => {
     const str = "hi";

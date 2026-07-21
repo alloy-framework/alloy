@@ -1,14 +1,16 @@
-import {
+import type {
   Children,
   ComponentContext,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
+import {
   createContext,
   createSymbol,
   Declaration,
   Indent,
   List,
   Name,
-  Namekey,
-  Refkey,
   Scope,
   Show,
   useContext,
@@ -16,13 +18,11 @@ import {
 
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createTypeSymbol } from "../../symbols/factories.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import type { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { TypeParameterSymbol } from "../../symbols/type-parameter.js";
 import { LineComment } from "../doc/comment.js";
-import {
-  TypeParameterProps,
-  TypeParameters,
-} from "../parameters/typeparameters.jsx";
+import type { TypeParameterProps } from "../parameters/typeparameters.jsx";
+import { TypeParameters } from "../parameters/typeparameters.jsx";
 
 export interface TypeDeclarationGroupProps {
   children: Children;

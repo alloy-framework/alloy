@@ -1,13 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 
+import type { Children, Refkey } from "../../src/index.js";
 import {
-  Children,
   createTap,
   Declaration,
   List,
   Output,
   ReferenceOrContent,
-  Refkey,
   refkey,
   resolve,
   Scope,

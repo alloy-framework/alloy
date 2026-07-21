@@ -1,4 +1,5 @@
-import { Children, childrenArray, For, Indent, Show } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { childrenArray, For, Indent, Show } from "@alloy-js/core";
 
 import { ValueExpression } from "./ValueExpression.js";
 

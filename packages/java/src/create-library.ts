@@ -1,14 +1,12 @@
 // Declare libraries (dependencies) that you are adding to the project.
 // Allows discovery of symbols from these libraries for use in the program
 
+import type { Binder, Refkey, SymbolCreator } from "@alloy-js/core";
 import {
-  Binder,
   createScope,
   createSymbol,
   getSymbolCreatorSymbol,
-  Refkey,
   refkey,
-  SymbolCreator,
 } from "@alloy-js/core";
 
 import {

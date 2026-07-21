@@ -2,7 +2,7 @@ import { toRef } from "@vue/reactivity";
 
 import { createSymbol } from "../binder.js";
 import { useScope } from "../context/scope.js";
-import { Namekey } from "../refkey.js";
+import type { Namekey } from "../refkey.js";
 import { createComponent } from "../runtime/component.js";
 import { BasicScope } from "./basic-scope.js";
 import { BasicSymbol } from "./basic-symbol.js";

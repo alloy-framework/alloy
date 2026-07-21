@@ -1,4 +1,4 @@
-import { Refkey } from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
 
 import { ref } from "../symbols/index.js";
 

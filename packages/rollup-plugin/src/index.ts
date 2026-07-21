@@ -19,6 +19,9 @@ export default function alloyPlugin(options: AlloyPluginOptions = {}): any {
     sourceMaps: "both",
     babelHelpers: "bundled",
     extensions: [".ts", ".tsx"],
-    presets: [typescriptPreset, [alloyPreset]],
+    presets: [
+      [typescriptPreset, { onlyRemoveTypeImports: false }],
+      [alloyPreset],
+    ],
   });
 }

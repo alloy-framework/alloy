@@ -1,14 +1,8 @@
-import {
-  Block,
-  Match,
-  Namekey,
-  Refkey,
-  Switch,
-  useScope,
-} from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Namekey, Refkey } from "@alloy-js/core";
+import { Block, Match, Switch, useScope } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
-import { NamespaceScope } from "../../scopes/namespace.js";
+import type { NamespaceScope } from "../../scopes/namespace.js";
 import { SourceFileScope } from "../../scopes/source-file.js";
 import { createNamespaceSymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/doc-comment.jsx";

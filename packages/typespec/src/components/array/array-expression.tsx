@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
 
 export interface ArrayExpressionProps {
   /** The element type of the array. */

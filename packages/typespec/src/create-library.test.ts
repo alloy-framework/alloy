@@ -3,7 +3,7 @@ import { beforeEach, expect, it } from "vitest";
 
 import { getProgram, resetProgram } from "./contexts/program.js";
 import { createLibrary } from "./create-library.js";
-import { NamespaceSymbol } from "./symbols/index.js";
+import type { NamespaceSymbol } from "./symbols/index.js";
 
 beforeEach(() => {
   resetProgram();

@@ -1,4 +1,5 @@
-import { Children, For, Indent } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Indent } from "@alloy-js/core";
 
 export interface DecoratorApplicationProps {
   /** The decorator name or a Reference to a decorator symbol. */

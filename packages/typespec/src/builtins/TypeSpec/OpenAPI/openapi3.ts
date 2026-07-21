@@ -1,6 +1,7 @@
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
-import { createLibrary, Descriptor, LibraryFrom } from "../../../index.js";
+import type { Descriptor, LibraryFrom } from "../../../index.js";
+import { createLibrary } from "../../../index.js";
 
 // These decorators are contributed to the TypeSpec.OpenAPI namespace by the
 // @typespec/openapi3 package (not @typespec/openapi). Both packages share the

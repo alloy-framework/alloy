@@ -1,11 +1,9 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
-  Children,
   Declaration,
   For,
   Indent,
   Name,
-  Namekey,
-  Refkey,
   Scope,
   useScope,
 } from "@alloy-js/core";

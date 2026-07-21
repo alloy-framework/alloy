@@ -1,9 +1,10 @@
-import { Children, Scope, useScope } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Scope, useScope } from "@alloy-js/core";
 
 import { NamespaceContext } from "../../contexts/namespace.js";
 import { NamespaceScope } from "../../scopes/namespace.js";
-import { SourceFileScope } from "../../scopes/source-file.js";
-import { NamespaceSymbol } from "../../symbols/index.js";
+import type { SourceFileScope } from "../../scopes/source-file.js";
+import type { NamespaceSymbol } from "../../symbols/index.js";
 
 /** @internal */
 export interface NamespaceScopeProps {

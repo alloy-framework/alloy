@@ -1,9 +1,5 @@
-import {
-  Namekey,
-  OutputSpace,
-  OutputSymbol,
-  OutputSymbolOptions,
-} from "@alloy-js/core";
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
+import { OutputSymbol } from "@alloy-js/core";
 
 export interface TypeSpecSymbolOptions extends OutputSymbolOptions {
   /**

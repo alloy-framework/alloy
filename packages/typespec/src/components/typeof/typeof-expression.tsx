@@ -1,4 +1,4 @@
-import { Children } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
 
 export interface TypeOfExpressionProps {
   /** The value reference to extract the type from. */

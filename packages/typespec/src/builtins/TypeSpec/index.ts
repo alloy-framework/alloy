@@ -1,8 +1,10 @@
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 import { createLibrary } from "../../index.js";
-import dataTypes, { LibraryDataTypes } from "./data-types.js";
-import decorators, { LibraryDecorators } from "./decorators.js";
+import type { LibraryDataTypes } from "./data-types.js";
+import dataTypes from "./data-types.js";
+import type { LibraryDecorators } from "./decorators.js";
+import decorators from "./decorators.js";
 
 type TypeSpecLibrary = LibrarySymbolReference &
   LibraryDecorators &

@@ -1,7 +1,8 @@
-import { Children } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
 
 import { DocWhen } from "../doc/doc-comment.jsx";
-import { ParameterDescriptor, Parameters } from "../operation/parameters.jsx";
+import type { ParameterDescriptor } from "../operation/parameters.jsx";
+import { Parameters } from "../operation/parameters.jsx";
 
 export interface ScalarConstructorProps {
   /** The name of the constructor. */

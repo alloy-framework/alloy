@@ -1,7 +1,6 @@
+import type { Binder, LibrarySymbolReference } from "@alloy-js/core";
 import {
-  Binder,
   isLibrarySymbolReference,
-  LibrarySymbolReference,
   namekey,
   refkey,
   REFKEYABLE,

@@ -1,22 +1,13 @@
-import {
-  Children,
-  Declaration,
-  Name,
-  Namekey,
-  Refkey,
-  Scope,
-  useScope,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration, Name, Scope, useScope } from "@alloy-js/core";
 
 import { useTypeSpecNamePolicy } from "../../name-policy.js";
 import { NamedTypeScope } from "../../scopes/named-type.js";
-import { NamespaceScope } from "../../scopes/namespace.js";
+import type { NamespaceScope } from "../../scopes/namespace.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/doc-comment.jsx";
-import {
-  TemplateParameterDescriptor,
-  TemplateParameters,
-} from "../template-parameters/template-parameters.jsx";
+import type { TemplateParameterDescriptor } from "../template-parameters/template-parameters.jsx";
+import { TemplateParameters } from "../template-parameters/template-parameters.jsx";
 
 export interface AliasDeclarationProps {
   /** The name of the alias. */

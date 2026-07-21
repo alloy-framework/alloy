@@ -1,4 +1,5 @@
-import { Children, For, Indent } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Indent } from "@alloy-js/core";
 
 /**
  * Descriptor for a single template argument at a usage site.

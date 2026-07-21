@@ -1,7 +1,8 @@
-import { Binder, useBinder } from "@alloy-js/core";
+import type { Binder } from "@alloy-js/core";
+import { useBinder } from "@alloy-js/core";
 
 import { ProgramScope } from "../scopes/program.js";
-import { SourceFileScope } from "../scopes/source-file.js";
+import type { SourceFileScope } from "../scopes/source-file.js";
 import { NamespaceSymbol } from "../symbols/index.js";
 
 export function createGlobalNamespace(parent: SourceFileScope) {

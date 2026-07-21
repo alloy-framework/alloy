@@ -1,19 +1,14 @@
-import {
-  computed,
-  OutputScope,
-  OutputSymbol,
-  Ref,
-  Refkey,
-  resolve,
-} from "@alloy-js/core";
+import type { OutputScope, OutputSymbol, Ref, Refkey } from "@alloy-js/core";
+import { computed, resolve } from "@alloy-js/core";
 
-import { isNamespaceSymbol, NamespaceSymbol } from "../index.js";
+import type { NamespaceSymbol } from "../index.js";
+import { isNamespaceSymbol } from "../index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
 import { NamespaceScope } from "../scopes/namespace.js";
 import { ProgramScope } from "../scopes/program.js";
 import { SourceFileScope, useSourceFileScope } from "../scopes/source-file.js";
 import { relativePath } from "../util.js";
-import { TypeSpecSymbol } from "./typespec.js";
+import type { TypeSpecSymbol } from "./typespec.js";
 
 export interface RefResult {
   symbol: OutputSymbol;

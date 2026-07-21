@@ -1,4 +1,5 @@
-import { Children, List } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { List } from "@alloy-js/core";
 
 export interface ArrayValueProps {
   /** The array items. */

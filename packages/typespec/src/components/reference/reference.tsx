@@ -1,16 +1,9 @@
-import {
-  Children,
-  computed,
-  Refkeyable,
-  toRefkey,
-  unresolvedRefkey,
-} from "@alloy-js/core";
+import type { Children, Refkeyable } from "@alloy-js/core";
+import { computed, toRefkey, unresolvedRefkey } from "@alloy-js/core";
 
 import { ref } from "../../symbols/reference.js";
-import {
-  TemplateArgumentDescriptor,
-  TemplateArguments,
-} from "../template-parameters/template-arguments.jsx";
+import type { TemplateArgumentDescriptor } from "../template-parameters/template-arguments.jsx";
+import { TemplateArguments } from "../template-parameters/template-arguments.jsx";
 
 export interface ReferenceProps {
   refkey: Refkeyable;

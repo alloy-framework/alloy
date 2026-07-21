@@ -1,0 +1,46 @@
+import { Descriptor, LibraryFrom } from "../../../index.js";
+
+const dataTypes = {
+  LinkHeader: { kind: "scalar" },
+  AcceptedResponse: { kind: "model", members: {} },
+  ApiKeyAuth: { kind: "model", members: {} },
+  AuthorizationCodeFlow: { kind: "model", members: {} },
+  BadRequestResponse: { kind: "model", members: {} },
+  BasicAuth: { kind: "model", members: {} },
+  BearerAuth: { kind: "model", members: {} },
+  Body: { kind: "model", members: {} },
+  ClientCredentialsFlow: { kind: "model", members: {} },
+  ConflictResponse: { kind: "model", members: {} },
+  CookieOptions: { kind: "model", members: {} },
+  CreatedResponse: { kind: "model", members: {} },
+  File: { kind: "model", members: {} },
+  ForbiddenResponse: { kind: "model", members: {} },
+  HeaderOptions: { kind: "model", members: {} },
+  HttpPart: { kind: "model", members: {} },
+  HttpPartOptions: { kind: "model", members: {} },
+  ImplicitFlow: { kind: "model", members: {} },
+  Link: { kind: "model", members: {} },
+  LocationHeader: { kind: "model", members: {} },
+  MovedResponse: { kind: "model", members: {} },
+  NoAuth: { kind: "model", members: {} },
+  NoContentResponse: { kind: "model", members: {} },
+  NotFoundResponse: { kind: "model", members: {} },
+  NotModifiedResponse: { kind: "model", members: {} },
+  OAuth2Auth: { kind: "model", members: {} },
+  OkResponse: { kind: "model", members: {} },
+  OpenIdConnectAuth: { kind: "model", members: {} },
+  PlainData: { kind: "model", members: {} },
+  QueryOptions: { kind: "model", members: {} },
+  PasswordFlow: { kind: "model", members: {} },
+  PatchOptions: { kind: "model", members: {} },
+  PathOptions: { kind: "model", members: {} },
+  Response: { kind: "model", members: {} },
+  UnauthorizedResponse: { kind: "model", members: {} },
+  ApiKeyLocation: { kind: "enum", members: {} },
+  AuthType: { kind: "enum", members: {} },
+  OAuth2FlowType: { kind: "enum", members: {} },
+} satisfies Record<string, Descriptor>;
+
+export type LibraryDataTypes = LibraryFrom<typeof dataTypes>;
+
+export default dataTypes;

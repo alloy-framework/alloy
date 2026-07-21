@@ -37,7 +37,6 @@
     "pathe": "catalog:"
   },
   "devDependencies": {
-    "@types/babel__core": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

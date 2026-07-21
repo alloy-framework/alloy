@@ -12,9 +12,7 @@
 
 // @ts-expect-error — preset has no types
 import alloyPreset from "@alloy-js/babel-preset";
-// @ts-expect-error — @babel/core has no bundled types in this workspace
 import { transformSync } from "@babel/core";
-// @ts-expect-error — preset-typescript has no types
 import typescriptPreset from "@babel/preset-typescript";
 import { describe, expect, it } from "vitest";
 
@@ -27,7 +25,7 @@ import { textContent } from "./tree-test-utils.js";
 function compile(src: string): string {
   const result = transformSync(src, {
     filename: "test.tsx",
-    presets: [typescriptPreset, [alloyPreset]],
+    presets: [typescriptPreset, [alloyPreset, {}]],
   });
   if (!result?.code) throw new Error("compile failed");
   return result.code;

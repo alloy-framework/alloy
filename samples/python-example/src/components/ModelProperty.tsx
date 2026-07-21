@@ -1,8 +1,9 @@
-import { Children, code } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code } from "@alloy-js/core";
 import * as py from "@alloy-js/python";
 
 import { useApi } from "../context/api.js";
-import { RestApiModelProperty } from "../schema.js";
+import type { RestApiModelProperty } from "../schema.js";
 import { castOpenAPITypeToPython, resolveRestAPIReference } from "../utils.js";
 import { Model } from "./index.js";
 

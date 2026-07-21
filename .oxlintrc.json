@@ -35,14 +35,6 @@
     "prefer-const": "warn",
     "eqeqeq": ["warn", "always", { "null": "ignore" }],
 
-    // Enforce explicit `import type` / `export type` so Babel 8's
-    // `onlyRemoveTypeImports: true` reliably strips type-only imports.
-    "typescript/consistent-type-imports": [
-      "error",
-      { "disallowTypeAnnotations": false }
-    ],
-    "typescript/consistent-type-exports": "error",
-
     // Rules oxlint enables by default (via the `correctness` category) that
     // were not enforced by the previous ESLint setup. Disabled so the
     // migration does not introduce new errors.

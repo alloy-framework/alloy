@@ -1,7 +1,11 @@
-import { Children, code, refkey } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, refkey } from "@alloy-js/core";
 
-import { ApiContext } from "./context/api.js";
-import { RestApiModelReference, RestApiNonModelReference } from "./schema.js";
+import type { ApiContext } from "./context/api.js";
+import type {
+  RestApiModelReference,
+  RestApiNonModelReference,
+} from "./schema.js";
 
 export function resolveRestAPIReference(
   reference: RestApiModelReference | RestApiNonModelReference | undefined,

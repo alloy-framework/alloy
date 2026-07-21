@@ -1,4 +1,4 @@
-import { NodePath } from "@babel/core";
+import type { NodePath } from "@babel/core";
 import SyntaxJSX from "@babel/plugin-syntax-jsx";
 import * as t from "@babel/types";
 

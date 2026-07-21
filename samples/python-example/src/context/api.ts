@@ -1,6 +1,10 @@
 import { createContext, useContext } from "@alloy-js/core";
 
-import { RestApi, RestApiModel, RestApiModelReference } from "../schema.js";
+import type {
+  RestApi,
+  RestApiModel,
+  RestApiModelReference,
+} from "../schema.js";
 
 // context interface
 export interface ApiContext {

@@ -1,18 +1,13 @@
-import {
-  Children,
-  For,
-  Output,
-  Prose,
-  render,
-  writeOutput,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, Output, Prose, render, writeOutput } from "@alloy-js/core";
 import * as py from "@alloy-js/python";
 
 import { Client } from "./components/Client.jsx";
 import { Model } from "./components/Model.jsx";
 import { Usage } from "./components/Usage.jsx";
 import { ApiContext, createApiContext } from "./context/api.js";
-import { api, RestApiModel } from "./schema.js";
+import type { RestApiModel } from "./schema.js";
+import { api } from "./schema.js";
 
 const modelsDoc = (
   <py.ModuleDoc

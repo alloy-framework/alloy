@@ -8,17 +8,19 @@ import {
   type OutputDirectory,
 } from "@alloy-js/core";
 import { Output, SourceDirectory } from "@alloy-js/core/stc";
-import {
+import type {
   ApiClass,
   ApiEnum,
   ApiFunction,
   ApiInterface,
   ApiItem,
-  ApiItemKind,
-  ApiModel,
   ApiPackage,
   ApiTypeAlias,
   ApiVariable,
+} from "@microsoft/api-extractor-model";
+import {
+  ApiItemKind,
+  ApiModel,
   ExcerptTokenKind,
 } from "@microsoft/api-extractor-model";
 

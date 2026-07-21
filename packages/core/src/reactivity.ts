@@ -1,10 +1,12 @@
+import type {
+  ReactiveEffectRunner,
+  Ref,
+  ShallowReactive,
+} from "@vue/reactivity";
 import {
   isRef,
   pauseTracking,
-  ReactiveEffectRunner,
-  Ref,
   resetTracking,
-  ShallowReactive,
   stop,
   computed as vueComputed,
   effect as vueEffect,
@@ -21,7 +23,7 @@ import {
   isDebugEnabled,
   type DebugSourceLocation,
 } from "./debug/index.js";
-import { Children, ComponentCreator } from "./runtime/component.js";
+import type { Children, ComponentCreator } from "./runtime/component.js";
 import { scheduler, setLastTriggerRef } from "./scheduler.js";
 import type { OutputSymbol } from "./symbols/output-symbol.js";
 

@@ -1,4 +1,5 @@
-import { Children, Output } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Output } from "@alloy-js/core";
 
 import * as ts from "../src/index.js";
 

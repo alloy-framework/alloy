@@ -11,8 +11,9 @@ import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
 import { inspect } from "../inspect.js";
 import { effect, shallowReactive, untrack } from "../reactivity.js";
-import { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
-import { OutputSymbol } from "./output-symbol.js";
+import type { OutputSpace } from "./output-space.js";
+import { OutputDeclarationSpace } from "./output-space.js";
+import type { OutputSymbol } from "./output-symbol.js";
 
 let scopeCount = 0;
 

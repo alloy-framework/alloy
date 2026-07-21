@@ -1,4 +1,4 @@
-import { Children, Diagnostic } from "@alloy-js/core";
+import type { Children, Diagnostic } from "@alloy-js/core";
 import "vitest";
 import { expect } from "vitest";
 

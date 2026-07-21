@@ -1,9 +1,8 @@
+import type { Children, Refkeyable } from "@alloy-js/core";
 import {
-  Children,
   findKeyedChildren,
   For,
   Indent,
-  Refkeyable,
   taggedComponent,
 } from "@alloy-js/core";
 

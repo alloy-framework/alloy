@@ -1,8 +1,7 @@
+import type { Children, Refkey } from "@alloy-js/core";
 import {
-  Children,
   DeclarationContext,
   List,
-  Refkey,
   Show,
   childrenArray,
   code,
@@ -13,12 +12,12 @@ import {
   useContext,
 } from "@alloy-js/core";
 
-import { PythonOutputSymbol } from "../index.js";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+import type { PythonOutputSymbol } from "../index.js";
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
 import { createMethodSymbol } from "../symbols/factories.js";
 import { Atom } from "./Atom.jsx";
 import { DecoratorList } from "./DecoratorList.jsx";
-import { CommonFunctionProps } from "./FunctionBase.js";
+import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
 
 const setterTag = Symbol();

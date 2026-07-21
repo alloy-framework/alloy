@@ -1,8 +1,9 @@
-import { Children, refkey } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
 
 import { useApi } from "../context/api.js";
-import { RestApiModelProperty } from "../schema.js";
+import type { RestApiModelProperty } from "../schema.js";
 import { Model } from "./Model.jsx";
 
 interface ModelPropertyProps {

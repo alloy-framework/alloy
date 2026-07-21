@@ -8,6 +8,7 @@
     "strict": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "declaration": true,
     "sourceMap": true,
     "declarationMap": true,

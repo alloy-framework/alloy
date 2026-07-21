@@ -1,6 +1,7 @@
-import { shallowReactive, SourceDirectoryContext } from "@alloy-js/core";
+import type { SourceDirectoryContext } from "@alloy-js/core";
+import { shallowReactive } from "@alloy-js/core";
 
-import { TSModuleScope } from "./symbols/index.js";
+import type { TSModuleScope } from "./symbols/index.js";
 
 export interface SourceDirectoryData {
   modules: Set<TSModuleScope>;

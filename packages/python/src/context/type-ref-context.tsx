@@ -1,4 +1,5 @@
-import { ComponentContext, createContext, useContext } from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createContext, useContext } from "@alloy-js/core";
 
 /**
  * Context for tracking whether we are in a type annotation position.

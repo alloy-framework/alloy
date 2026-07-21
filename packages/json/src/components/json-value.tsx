@@ -1,4 +1,5 @@
-import { Children, Refkey, useMemberDeclaration } from "@alloy-js/core";
+import type { Children, Refkey } from "@alloy-js/core";
+import { useMemberDeclaration } from "@alloy-js/core";
 
 import { JsonArray } from "./json-array.jsx";
 import { JsonObject } from "./json-object.jsx";

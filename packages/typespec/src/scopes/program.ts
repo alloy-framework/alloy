@@ -1,4 +1,5 @@
-import { OutputScope, OutputScopeOptions } from "@alloy-js/core";
+import type { OutputScopeOptions } from "@alloy-js/core";
+import { OutputScope } from "@alloy-js/core";
 
 export interface ProgramScopeOptions extends OutputScopeOptions {}
 

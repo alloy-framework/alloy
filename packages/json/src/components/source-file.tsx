@@ -1,5 +1,5 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   SourceFile as CoreSourceFile,
   createSourceFileTap,
   createSymbol,

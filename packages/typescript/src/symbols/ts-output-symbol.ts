@@ -1,9 +1,7 @@
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
   createSymbol,
-  Namekey,
-  OutputSpace,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
@@ -11,7 +9,7 @@ import {
   watch,
 } from "@alloy-js/core";
 
-import { TSOutputScope } from "./scopes.js";
+import type { TSOutputScope } from "./scopes.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 
 // prettier-ignore

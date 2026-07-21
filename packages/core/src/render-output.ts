@@ -29,7 +29,8 @@ import type {
 import { root as createRoot, type Context } from "./reactivity.js";
 import { notifyRenderError, resetRenderErrorState } from "./render-error.js";
 import { getContextForNode } from "./render/node-context.js";
-import { AlloyNode, createElement, ElementNode } from "./render/node.js";
+import type { AlloyNode } from "./render/node.js";
+import { createElement, ElementNode } from "./render/node.js";
 import { printNodeToString } from "./render/printer.js";
 import type { Children } from "./runtime/component.js";
 import { insert } from "./runtime/insert.js";

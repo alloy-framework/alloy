@@ -5,7 +5,7 @@ import System from "../index.js";
 import Text from "../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Compression } from "./Compression/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Compression } from "./Compression/index.js";
 export { default as Enumeration } from "./Enumeration/index.js";
 export { default as IsolatedStorage } from "./IsolatedStorage/index.js";
 export { default as MemoryMappedFiles } from "./MemoryMappedFiles/index.js";

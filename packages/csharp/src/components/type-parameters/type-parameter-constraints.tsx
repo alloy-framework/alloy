@@ -1,6 +1,7 @@
-import { Children, code, For, Indent } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, For, Indent } from "@alloy-js/core";
 
-import { TypeParameterProps } from "./type-parameter.jsx";
+import type { TypeParameterProps } from "./type-parameter.jsx";
 import { normalizeParameters } from "./type-parameters.jsx";
 
 export interface TypeParameterConstraintsProps {

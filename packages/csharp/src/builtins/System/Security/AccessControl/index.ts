@@ -2,7 +2,7 @@ import System from "../../index.js";
 import Principal from "../Principal/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type AccessControlLibrary = LibrarySymbolReference & {
   AccessControlActions: LibrarySymbolReference & {

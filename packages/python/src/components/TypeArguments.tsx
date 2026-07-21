@@ -1,4 +1,5 @@
-import { Children, For } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For } from "@alloy-js/core";
 
 export interface TypeArgumentsProps {
   args: Children[];

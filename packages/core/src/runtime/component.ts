@@ -1,7 +1,7 @@
-import { Ref } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
 
-import { CustomContext } from "../reactivity.js";
-import { Refkey, RefkeyableObject } from "../refkey.js";
+import type { CustomContext } from "../reactivity.js";
+import type { Refkey, RefkeyableObject } from "../refkey.js";
 import type { AlloyNode } from "../render/node.js";
 
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");

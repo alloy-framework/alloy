@@ -1,4 +1,4 @@
-import { Refkey } from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
 
 export interface LinkPropsWithRefkey {
   refkey: Refkey;

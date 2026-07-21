@@ -1,9 +1,10 @@
-import { Props, refkey } from "@alloy-js/core";
+import type { Props } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import { FunctionType } from "../src/components/FunctionType.jsx";
 import * as ts from "../src/components/index.js";
-import { ParameterDescriptor } from "../src/components/index.js";
+import type { ParameterDescriptor } from "../src/components/index.js";
 import { TestFile } from "./utils.js";
 
 it("render basic", () => {

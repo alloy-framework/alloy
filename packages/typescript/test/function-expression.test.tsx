@@ -1,9 +1,10 @@
-import { Props, refkey, render, StatementList } from "@alloy-js/core";
+import type { Props } from "@alloy-js/core";
+import { refkey, render, StatementList } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import { FunctionExpression } from "../src/components/FunctionExpression.jsx";
 import { VarDeclaration } from "../src/index.js";
-import { ParameterDescriptor } from "../src/parameter-descriptor.js";
+import type { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { TestFile } from "./utils.js";
 
 it("create basic function", () => {

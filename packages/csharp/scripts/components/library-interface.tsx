@@ -5,7 +5,7 @@ import {
   TypeDeclaration,
 } from "@alloy-js/typescript";
 
-import { Descriptor } from "#createLibrary";
+import type { Descriptor } from "#createLibrary";
 
 export function LibraryInterfaceDeclaration(props: {
   name: string;

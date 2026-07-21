@@ -6,7 +6,7 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { type ApiItem } from "@microsoft/api-extractor-model";
-import {
+import type {
   DocBlock,
   DocCodeSpan,
   DocDeclarationReference,
@@ -14,12 +14,11 @@ import {
   DocFencedCode,
   DocLinkTag,
   DocNode,
-  DocNodeKind,
-  DocNodeTransforms,
   DocParagraph,
   DocPlainText,
   DocSection,
 } from "@microsoft/tsdoc";
+import { DocNodeKind, DocNodeTransforms } from "@microsoft/tsdoc";
 import type { DeclarationReference } from "@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference.js";
 
 import { ApiModelContext } from "../contexts/api-model.js";

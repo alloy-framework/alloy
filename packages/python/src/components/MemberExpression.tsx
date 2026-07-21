@@ -1,11 +1,9 @@
+import type { Children, OutputSymbol, Refkey } from "@alloy-js/core";
 import {
-  Children,
   computed,
   createAccessExpression,
   For,
   List,
-  OutputSymbol,
-  Refkey,
   Show,
 } from "@alloy-js/core";
 

@@ -1,8 +1,8 @@
 import { useScope } from "@alloy-js/core";
 
 import { PythonLexicalScope } from "./python-lexical-scope.js";
-import { PythonMemberScope } from "./python-member-scope.js";
-import { PythonModuleScope } from "./python-module-scope.js";
+import type { PythonMemberScope } from "./python-member-scope.js";
+import type { PythonModuleScope } from "./python-module-scope.js";
 
 export type PythonOutputScope =
   | PythonLexicalScope

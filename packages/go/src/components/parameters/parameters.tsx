@@ -1,12 +1,5 @@
-import {
-  Children,
-  createSymbolSlot,
-  Declaration,
-  For,
-  Indent,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { createSymbolSlot, Declaration, For, Indent } from "@alloy-js/core";
 
 import { createParameterSymbol } from "../../symbols/factories.js";
 import { Name } from "../Name.jsx";

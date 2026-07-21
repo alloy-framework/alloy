@@ -1,12 +1,16 @@
-import { Block, Children, Show } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Block, Show } from "@alloy-js/core";
 
-import { CommonDeclarationProps, Declaration } from "./Declaration.js";
+import type { CommonDeclarationProps } from "./Declaration.js";
+import { Declaration } from "./Declaration.js";
 import { ExtendsClause } from "./ExtendsClause.js";
 import { ImplementsClause } from "./ImplementsClause.js";
 import { LexicalScope } from "./LexicalScope.jsx";
-import { ModifierProps, Modifiers } from "./Modifiers.jsx";
+import type { ModifierProps } from "./Modifiers.jsx";
+import { Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
-import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
+import type { TypeParametersProps } from "./TypeParameters.jsx";
+import { TypeParameters } from "./TypeParameters.jsx";
 
 export interface ClassProps
   extends CommonDeclarationProps, ModifierProps, TypeParametersProps {

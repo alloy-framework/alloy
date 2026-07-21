@@ -1,5 +1,5 @@
 import { Match, Switch } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import { NamedArgumentList } from "./NamedArgumentList.jsx";
 

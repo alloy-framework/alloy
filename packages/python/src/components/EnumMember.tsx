@@ -1,8 +1,9 @@
-import { Children, Namekey, Refkey, Show } from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Show } from "@alloy-js/core";
 
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { PythonOutputSymbol } from "../symbols/index.js";
+import type { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
 import { InlineDoc } from "./PyDoc.jsx";
 

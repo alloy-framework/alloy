@@ -1,4 +1,5 @@
-import { Children, List, Show } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { List, Show } from "@alloy-js/core";
 
 export interface DocCommentProps {
   /** The main description text for the doc comment. */

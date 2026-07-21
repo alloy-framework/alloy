@@ -1,13 +1,7 @@
-import {
-  Children,
-  computed,
-  createAccessExpression,
-  For,
-  Refkeyable,
-  Show,
-} from "@alloy-js/core";
+import type { Children, Refkeyable } from "@alloy-js/core";
+import { computed, createAccessExpression, For, Show } from "@alloy-js/core";
 
-import { CSharpSymbol } from "../../symbols/csharp.js";
+import type { CSharpSymbol } from "../../symbols/csharp.js";
 import { normalizeAttributeName } from "./part-descriptors.js";
 
 export interface AccessExpressionProps {

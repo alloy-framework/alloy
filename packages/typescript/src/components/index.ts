@@ -1,4 +1,4 @@
-export * from "../parameter-descriptor.js";
+export type * from "../parameter-descriptor.js";
 export * from "./ArrayExpression.js";
 export * from "./ArrowFunction.jsx";
 export * from "./BarrelFile.js";

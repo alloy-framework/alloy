@@ -1,6 +1,7 @@
 import { For, Indent, taggedComponent } from "@alloy-js/core";
 
-import { TypeParameter, TypeParameterProps } from "./type-parameter.jsx";
+import type { TypeParameterProps } from "./type-parameter.jsx";
+import { TypeParameter } from "./type-parameter.jsx";
 
 export const typeParametersTag = Symbol.for("csharp.type-parameters");
 

@@ -1,6 +1,6 @@
 import { defaultProps, splitProps } from "@alloy-js/core";
 
-import { CallSignatureProps } from "./components/index.js";
+import type { CallSignatureProps } from "./components/index.js";
 
 /**
  * Extract only the call signature props from a props object which extends

@@ -6,7 +6,8 @@ import {
 } from "@alloy-js/core";
 
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
 import {
   FunctionBody,
   FunctionParameters,

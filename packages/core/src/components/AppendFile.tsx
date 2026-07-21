@@ -5,7 +5,8 @@ import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { emitDiagnostic } from "../diagnostics.js";
 import { createFileResource } from "../resource.js";
-import { Children, isComponentCreator } from "../runtime/component.js";
+import type { Children } from "../runtime/component.js";
+import { isComponentCreator } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { SourceFile } from "./SourceFile.jsx";
 

@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  BasePartProps,
-  createAccessExpression,
-} from "../components/AccessExpression.jsx";
+import type { BasePartProps } from "../components/AccessExpression.jsx";
+import { createAccessExpression } from "../components/AccessExpression.jsx";
 import { code } from "../index.js";
-import { Children } from "../runtime/component.js";
+import type { Children } from "../runtime/component.js";
 
 interface TestPartProps extends BasePartProps {
   name?: string;

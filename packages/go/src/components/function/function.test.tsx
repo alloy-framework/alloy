@@ -1,4 +1,5 @@
-import { Children, code, Output, refkey, Refkey, render } from "@alloy-js/core";
+import type { Children, Refkey } from "@alloy-js/core";
+import { code, Output, refkey, render } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import { TestPackage } from "../../../test/utils.js";

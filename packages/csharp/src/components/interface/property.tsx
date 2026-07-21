@@ -1,21 +1,15 @@
-import {
-  Block,
-  Children,
-  List,
-  MemberDeclaration,
-  MemberName,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Block, List, MemberDeclaration, MemberName } from "@alloy-js/core";
 
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
 import { createPropertySymbol } from "../../symbols/factories.js";
-import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Method modifiers. Can only be one. */

@@ -1,6 +1,5 @@
+import type { Children, ComponentContext } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createContext,
   createScope,
   Scope,

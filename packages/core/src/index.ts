@@ -25,7 +25,7 @@ export * from "./context/index.js";
 export * from "./diagnostics.js";
 export * from "./library-symbol-reference.js";
 export * from "./name-policy.js";
-export * from "./output-types.js";
+export type * from "./output-types.js";
 export * from "./props-combinators.js";
 export * from "./reactive-union-set.js";
 export {
@@ -91,7 +91,7 @@ export {
 } from "./render/node.js";
 export * from "./resource.js";
 export * from "./runtime/component.js";
-export * from "./runtime/intrinsic.js";
+export type * from "./runtime/intrinsic.js";
 export * from "./stc.js";
 export * from "./sti.js";
 export * from "./symbols/index.js";

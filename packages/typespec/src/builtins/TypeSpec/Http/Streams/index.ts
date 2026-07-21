@@ -1,7 +1,8 @@
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 import { createLibrary } from "../../../../index.js";
-import dataTypes, { LibraryDataTypes } from "./data-types.js";
+import type { LibraryDataTypes } from "./data-types.js";
+import dataTypes from "./data-types.js";
 
 type HttpStreamsLibrary = LibrarySymbolReference & LibraryDataTypes;
 

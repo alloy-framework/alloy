@@ -1,13 +1,12 @@
+import type { ComponentContext, PrintTreeOptions } from "@alloy-js/core";
 import {
   childrenArray,
-  ComponentContext,
   computed,
   SourceFile as CoreSourceFile,
   createNamedContext,
   createScope,
   isComponentCreator,
   List,
-  PrintTreeOptions,
   Scope,
   Show,
   SourceDirectoryContext,

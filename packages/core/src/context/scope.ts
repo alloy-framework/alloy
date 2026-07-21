@@ -1,8 +1,5 @@
-import {
-  ComponentContext,
-  createNamedContext,
-  useContext,
-} from "../context.js";
+import type { ComponentContext } from "../context.js";
+import { createNamedContext, useContext } from "../context.js";
 import type { OutputScope } from "../symbols/output-scope.js";
 
 export const ScopeContext: ComponentContext<OutputScope> =

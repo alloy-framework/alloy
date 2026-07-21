@@ -1,5 +1,5 @@
 import { List, memberRefkey, namekey } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 import { expect, it } from "vitest";
 
 import { Attribute } from "#components/attributes/attributes.jsx";

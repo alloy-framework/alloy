@@ -1,8 +1,9 @@
-import { memo, Refkey, resolve, untrack, useContext } from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
+import { memo, resolve, untrack, useContext } from "@alloy-js/core";
 
 import { SourceFileContext } from "../components/index.js";
-import { JavaOutputSymbol } from "./java-output-symbol.js";
-import { JavaOutputScope } from "./scopes.js";
+import type { JavaOutputSymbol } from "./java-output-symbol.js";
+import type { JavaOutputScope } from "./scopes.js";
 
 /**
  * Resolve reference to symbol reference, and handle dependency management

@@ -1,7 +1,7 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Encodings } from "./Encodings/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Encodings } from "./Encodings/index.js";
 export { default as Json } from "./Json/index.js";
 export { default as RegularExpressions } from "./RegularExpressions/index.js";
 export { default as Unicode } from "./Unicode/index.js";

@@ -1,6 +1,6 @@
 import { code, text } from "./code.js";
 import { _registerStcImpl } from "./context.js";
-import {
+import type {
   Children,
   ComponentCreator,
   ComponentDefinition,

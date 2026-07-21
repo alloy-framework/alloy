@@ -1,6 +1,7 @@
-import { ComponentContext, createNamedContext } from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createNamedContext } from "@alloy-js/core";
 
-import { TSPackageScope } from "../symbols/ts-package-scope.js";
+import type { TSPackageScope } from "../symbols/ts-package-scope.js";
 
 export interface PackageMetadataContext {
   versionSpecifiers: Map<TSPackageScope, string>;

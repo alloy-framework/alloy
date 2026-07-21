@@ -1,4 +1,5 @@
-import { marked, Tokens, type Token } from "marked";
+import type { Tokens } from "marked";
+import { marked, type Token } from "marked";
 
 import { DocC, DocCode, DocList, DocSee } from "./comment.jsx";
 

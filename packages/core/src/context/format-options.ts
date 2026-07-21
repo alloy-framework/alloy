@@ -1,5 +1,5 @@
 import { createNamedContext, useContext } from "../context.js";
-import { PrintTreeOptions } from "../output-types.js";
+import type { PrintTreeOptions } from "../output-types.js";
 
 export interface CommonFormatOptions extends PrintTreeOptions {}
 

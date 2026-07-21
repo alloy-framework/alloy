@@ -1,4 +1,5 @@
-import { refkey, Refkey } from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
+import { refkey } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/core/stc";
 import { expect, it } from "vitest";
 

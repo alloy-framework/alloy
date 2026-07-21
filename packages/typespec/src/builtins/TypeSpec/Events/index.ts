@@ -1,7 +1,8 @@
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 import { createLibrary } from "../../../index.js";
-import decorators, { LibraryDecorators } from "./decorators.js";
+import type { LibraryDecorators } from "./decorators.js";
+import decorators from "./decorators.js";
 
 type EventsLibrary = LibrarySymbolReference & LibraryDecorators;
 

@@ -1,9 +1,12 @@
-import { Children, code } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code } from "@alloy-js/core";
 
 import { useJavaNamePolicy } from "../name-policy.js";
-import { ModifierProps, Modifiers } from "./Modifiers.jsx";
+import type { ModifierProps } from "./Modifiers.jsx";
+import { Modifiers } from "./Modifiers.jsx";
 import { Parameters } from "./Parameters.js";
-import { TypeParameters, TypeParametersProps } from "./TypeParameters.jsx";
+import type { TypeParametersProps } from "./TypeParameters.jsx";
+import { TypeParameters } from "./TypeParameters.jsx";
 
 export interface MethodProps extends ModifierProps, TypeParametersProps {
   name: string;

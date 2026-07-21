@@ -1,26 +1,28 @@
-import {
-  createSymbol,
+import type {
   Namekey,
   NamePolicyGetter,
-  onCleanup,
   OutputSymbolOptions,
-  useBinder,
 } from "@alloy-js/core";
+import { createSymbol, onCleanup, useBinder } from "@alloy-js/core";
 
 import { getGlobalNamespace } from "../contexts/global-namespace.js";
 import { useNamespaceContext } from "../contexts/namespace.js";
-import { CSharpElements, useCSharpNamePolicy } from "../name-policy.js";
+import type { CSharpElements } from "../name-policy.js";
+import { useCSharpNamePolicy } from "../name-policy.js";
 import { CSharpClassScope } from "../scopes/class.js";
 import { useCSharpScope, useNamedTypeScope } from "../scopes/contexts.js";
-import { CSharpScope } from "../scopes/csharp.js";
+import type { CSharpScope } from "../scopes/csharp.js";
 import { CSharpLexicalScope } from "../scopes/lexical.js";
 import { CSharpMethodScope } from "../scopes/method.js";
 import { CSharpNamedTypeScope } from "../scopes/named-type.js";
 import { CSharpNamespaceScope } from "../scopes/namespace.js";
 import { CSharpSourceFileScope } from "../scopes/source-file.js";
-import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
-import { MethodKinds, MethodSymbol } from "./method.js";
-import { NamedTypeSymbol, NamedTypeTypeKind } from "./named-type.js";
+import type { CSharpSymbolOptions } from "./csharp.js";
+import { CSharpSymbol } from "./csharp.js";
+import type { MethodKinds } from "./method.js";
+import { MethodSymbol } from "./method.js";
+import type { NamedTypeTypeKind } from "./named-type.js";
+import { NamedTypeSymbol } from "./named-type.js";
 import { NamespaceSymbol } from "./namespace.js";
 
 /**

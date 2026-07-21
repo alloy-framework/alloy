@@ -1,5 +1,5 @@
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Input } from "./Input/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Input } from "./Input/index.js";
 export { default as Markup } from "./Markup/index.js";
 
 type WindowsLibrary = LibrarySymbolReference & {

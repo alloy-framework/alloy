@@ -1,6 +1,6 @@
+import type { SourceDirectoryProps as CoreSourceDirectoryProps } from "@alloy-js/core";
 import {
   SourceDirectory as CoreSourceDirectory,
-  SourceDirectoryProps as CoreSourceDirectoryProps,
   Scope,
   SourceDirectoryContext,
   useContext,

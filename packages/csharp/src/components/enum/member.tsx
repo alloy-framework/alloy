@@ -1,11 +1,5 @@
-import {
-  Children,
-  createSymbol,
-  MemberDeclaration,
-  MemberName,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { createSymbol, MemberDeclaration, MemberName } from "@alloy-js/core";
 
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";

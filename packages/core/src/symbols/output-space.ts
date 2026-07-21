@@ -1,8 +1,8 @@
-import { Binder } from "../binder.js";
+import type { Binder } from "../binder.js";
 import { inspect } from "../inspect.js";
 import { untrack } from "../reactivity.js";
-import { OutputScope } from "./output-scope.js";
-import { OutputSymbol } from "./output-symbol.js";
+import type { OutputScope } from "./output-scope.js";
+import type { OutputSymbol } from "./output-symbol.js";
 import { SymbolTable } from "./symbol-table.js";
 
 /**

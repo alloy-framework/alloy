@@ -1,14 +1,16 @@
 import { code, join, type Children } from "@alloy-js/core";
-import {
+import type {
   ApiCallSignature,
   ApiConstructor,
   ApiFunction,
   ApiIndexSignature,
   ApiItem,
-  ApiItemKind,
   ApiMethod,
   ApiProperty,
   ApiPropertySignature,
+} from "@microsoft/api-extractor-model";
+import {
+  ApiItemKind,
   ApiProtectedMixin,
   type ApiInterface,
 } from "@microsoft/api-extractor-model";

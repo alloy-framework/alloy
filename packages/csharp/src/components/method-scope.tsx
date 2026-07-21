@@ -1,9 +1,5 @@
-import {
-  Scope,
-  ScopePropsWithInfo,
-  ScopePropsWithValue,
-  createScope,
-} from "@alloy-js/core";
+import type { ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { Scope, createScope } from "@alloy-js/core";
 
 import { useCSharpScope } from "../scopes/contexts.js";
 import { CSharpMethodScope } from "../scopes/method.js";

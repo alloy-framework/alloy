@@ -1,6 +1,6 @@
+import type { OutputScopeOptions } from "@alloy-js/core";
 import {
   OutputScope,
-  OutputScopeOptions,
   track,
   TrackOpTypes,
   trigger,

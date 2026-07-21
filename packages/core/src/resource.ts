@@ -1,4 +1,5 @@
-import { isRef, reactive, Ref } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { isRef, reactive } from "@vue/reactivity";
 
 import { AlloyHost } from "./host/alloy-host.js";
 import { effect } from "./reactivity.js";

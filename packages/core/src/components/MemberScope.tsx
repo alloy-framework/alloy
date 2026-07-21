@@ -2,7 +2,7 @@ import { MemberContext } from "../context/member-scope.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ScopeContext } from "../context/scope.js";
 import type { Children } from "../runtime/component.js";
-import { OutputScope } from "../symbols/output-scope.js";
+import type { OutputScope } from "../symbols/output-scope.js";
 import type { OutputSymbol } from "../symbols/output-symbol.js";
 import { Scope } from "./Scope.jsx";
 

@@ -5,7 +5,7 @@ import {
   VarDeclaration,
 } from "@alloy-js/typescript";
 
-import { XmlAttribute, XmlSchema } from "../collect-schemas.js";
+import type { XmlAttribute, XmlSchema } from "../collect-schemas.js";
 
 export function XmlComponent(props: { schema: XmlSchema }) {
   return (

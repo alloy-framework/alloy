@@ -1,5 +1,5 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   Declaration as CoreDeclaration,
   Name,
   Show,
@@ -9,7 +9,7 @@ import {
 
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
-import { BaseDeclarationProps } from "./Declaration.jsx";
+import type { BaseDeclarationProps } from "./Declaration.jsx";
 import { SimpleCommentBlock } from "./PyDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 

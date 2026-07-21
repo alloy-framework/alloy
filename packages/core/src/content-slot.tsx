@@ -1,8 +1,9 @@
-import { computed, Ref, shallowRef } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { computed, shallowRef } from "@vue/reactivity";
 
 import { Show } from "./components/Show.jsx";
 import { ensureIsEmpty, getContext } from "./reactivity.js";
-import { Children, Component } from "./runtime/component.js";
+import type { Children, Component } from "./runtime/component.js";
 
 export interface ContentSlot {
   (props: { children: Children }): Children;

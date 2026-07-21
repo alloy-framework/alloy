@@ -1,12 +1,11 @@
+import type { OutputMemberSpace, SymbolCreator } from "@alloy-js/core";
 import {
   type Binder,
   createScope,
   createSymbol,
   getSymbolCreatorSymbol,
-  OutputMemberSpace,
   type Refkey,
   refkey,
-  SymbolCreator,
 } from "@alloy-js/core";
 
 import {

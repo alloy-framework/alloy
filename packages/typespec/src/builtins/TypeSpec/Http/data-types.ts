@@ -1,4 +1,4 @@
-import { Descriptor, LibraryFrom } from "../../../index.js";
+import type { Descriptor, LibraryFrom } from "../../../index.js";
 
 const dataTypes = {
   LinkHeader: { kind: "scalar" },

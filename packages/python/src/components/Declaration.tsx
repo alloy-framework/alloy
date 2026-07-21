@@ -1,13 +1,9 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration as CoreDeclaration } from "@alloy-js/core";
 
-import { PythonElements } from "../name-policy.js";
+import type { PythonElements } from "../name-policy.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { PythonOutputSymbol } from "../symbols/index.js";
+import type { PythonOutputSymbol } from "../symbols/index.js";
 
 export interface BaseDeclarationProps {
   /**

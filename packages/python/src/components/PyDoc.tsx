@@ -1,5 +1,5 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   For,
   Indent,
   List,
@@ -10,7 +10,7 @@ import {
   isKeyedChild,
 } from "@alloy-js/core";
 
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Atom } from "./Atom.jsx";
 
 export interface FunctionDocProps {

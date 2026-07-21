@@ -6,7 +6,7 @@ import InteropServices from "../Runtime/InteropServices/index.js";
 import Principal from "../Security/Principal/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Channels } from "./Channels/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Channels } from "./Channels/index.js";
 export { default as Tasks } from "./Tasks/index.js";
 
 type ThreadingLibrary = LibrarySymbolReference & {

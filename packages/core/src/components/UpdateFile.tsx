@@ -4,7 +4,7 @@ import { join } from "pathe";
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { createFileResource } from "../resource.js";
-import { Children } from "../runtime/component.js";
+import type { Children } from "../runtime/component.js";
 import { SourceFile } from "./SourceFile.jsx";
 /**
  * Props for the UpdateFile component.

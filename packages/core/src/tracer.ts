@@ -15,7 +15,7 @@ import type {
   OutputMemberSpace,
 } from "./symbols/output-space.js";
 import { type OutputSymbol } from "./symbols/output-symbol.js";
-import { SymbolTable } from "./symbols/symbol-table.js";
+import type { SymbolTable } from "./symbols/symbol-table.js";
 
 const dids = parseBreakOnIds();
 

@@ -1,7 +1,7 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Concurrent } from "./Concurrent/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Concurrent } from "./Concurrent/index.js";
 export { default as Frozen } from "./Frozen/index.js";
 export { default as Generic } from "./Generic/index.js";
 export { default as Immutable } from "./Immutable/index.js";

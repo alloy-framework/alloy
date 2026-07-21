@@ -1,4 +1,5 @@
-import { OutputScope, createScope, useScope } from "@alloy-js/core";
+import type { OutputScope } from "@alloy-js/core";
+import { createScope, useScope } from "@alloy-js/core";
 
 import type { NamespaceSymbol } from "../symbols/namespace.js";
 import { CSharpNamedTypeScope } from "./named-type.js";

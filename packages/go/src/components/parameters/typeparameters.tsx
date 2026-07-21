@@ -1,12 +1,5 @@
-import {
-  Children,
-  For,
-  Indent,
-  MemberDeclaration,
-  MemberName,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { For, Indent, MemberDeclaration, MemberName } from "@alloy-js/core";
 
 import { createTypeParameterSymbol } from "../../symbols/factories.js";
 

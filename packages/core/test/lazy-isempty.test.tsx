@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import { Show } from "../src/components/Show.jsx";
 import { createContentSlot } from "../src/content-slot.jsx";
-import { Context, ensureIsEmpty, getContext } from "../src/reactivity.js";
+import type { Context } from "../src/reactivity.js";
+import { ensureIsEmpty, getContext } from "../src/reactivity.js";
 
 describe("lazy isEmpty", () => {
   it("context starts without isEmpty ref allocated", () => {

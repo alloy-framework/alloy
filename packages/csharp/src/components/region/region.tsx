@@ -1,4 +1,5 @@
-import { Children, code, List } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, List } from "@alloy-js/core";
 
 export interface RegionProps {
   name: string;

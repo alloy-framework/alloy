@@ -1,6 +1,7 @@
-import { OutputScope, OutputScopeOptions, useScope } from "@alloy-js/core";
+import type { OutputScopeOptions } from "@alloy-js/core";
+import { OutputScope, useScope } from "@alloy-js/core";
 
-import { NamespaceSymbol } from "../symbols/index.js";
+import type { NamespaceSymbol } from "../symbols/index.js";
 import { SourceFileScope } from "./source-file.js";
 
 export interface NamespaceScopeOptions extends OutputScopeOptions {}

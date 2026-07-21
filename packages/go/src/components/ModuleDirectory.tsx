@@ -1,4 +1,5 @@
-import { Children, Scope, SourceDirectory } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Scope, SourceDirectory } from "@alloy-js/core";
 
 import { createGoModuleScope } from "../scopes/module.js";
 

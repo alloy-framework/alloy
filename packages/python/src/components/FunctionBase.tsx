@@ -1,9 +1,11 @@
 import { createContentSlot, Name, Show, type Children } from "@alloy-js/core";
 
-import { PythonOutputSymbol } from "../index.js";
+import type { PythonOutputSymbol } from "../index.js";
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { BaseDeclarationProps, Declaration } from "./Declaration.js";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
+import type { BaseDeclarationProps } from "./Declaration.js";
+import { Declaration } from "./Declaration.js";
 import { DecoratorList } from "./DecoratorList.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";

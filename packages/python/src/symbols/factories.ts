@@ -1,4 +1,4 @@
-import { Namekey } from "@alloy-js/core";
+import type { Namekey } from "@alloy-js/core";
 
 import { createPythonSymbol } from "../symbol-creation.js";
 import type { PythonOutputSymbol } from "./python-output-symbol.js";

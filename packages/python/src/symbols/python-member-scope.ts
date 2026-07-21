@@ -1,6 +1,6 @@
 import { OutputScope } from "@alloy-js/core";
 
-import { PythonOutputSymbol } from "./python-output-symbol.js";
+import type { PythonOutputSymbol } from "./python-output-symbol.js";
 
 export class PythonMemberScope extends OutputScope {
   get ownerSymbol() {

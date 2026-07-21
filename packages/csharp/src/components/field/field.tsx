@@ -1,7 +1,8 @@
-import { Children, Declaration, Name, Namekey, Refkey } from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration, Name } from "@alloy-js/core";
 
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,

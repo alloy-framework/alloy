@@ -2,8 +2,8 @@ import { computed, For, Indent, memo } from "@alloy-js/core";
 import { basename, join, sep } from "pathe";
 
 import { useModule } from "../scopes/module.js";
-import { ImportRecords } from "../scopes/source-file.js";
-import { GoSymbol } from "../symbols/go.js";
+import type { ImportRecords } from "../scopes/source-file.js";
+import type { GoSymbol } from "../symbols/go.js";
 
 export interface ImportStatementProps {
   path: string;

@@ -1,5 +1,5 @@
+import type { ComponentContext } from "@alloy-js/core";
 import {
-  ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
   createScope,

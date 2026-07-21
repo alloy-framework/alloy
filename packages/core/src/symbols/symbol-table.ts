@@ -1,10 +1,10 @@
 import type { Binder, NameConflictResolver } from "../binder.js";
 import { debug, TracePhase } from "../debug/index.js";
 import { ReactiveUnionSet } from "../reactive-union-set.js";
-import { Refkey } from "../refkey.js";
+import type { Refkey } from "../refkey.js";
 import { queueJob } from "../scheduler.js";
 import { formatSymbolName, formatSymbolTableName } from "../tracer.js";
-import { OutputSpace } from "./output-space.js";
+import type { OutputSpace } from "./output-space.js";
 import type { OutputSymbol } from "./output-symbol.js";
 
 export abstract class SymbolTable extends ReactiveUnionSet<OutputSymbol> {

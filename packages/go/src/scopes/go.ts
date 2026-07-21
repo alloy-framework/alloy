@@ -1,6 +1,7 @@
-import { OutputScope, OutputScopeOptions } from "@alloy-js/core";
+import type { OutputScopeOptions } from "@alloy-js/core";
+import { OutputScope } from "@alloy-js/core";
 
-import { PackageSymbol } from "../symbols/package.js";
+import type { PackageSymbol } from "../symbols/package.js";
 
 export class GoScope extends OutputScope {
   constructor(

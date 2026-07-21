@@ -1,4 +1,4 @@
-import { NodePath } from "@babel/core";
+import type { NodePath } from "@babel/core";
 import * as t from "@babel/types";
 interface Options {
   alloyModuleName: string | undefined;

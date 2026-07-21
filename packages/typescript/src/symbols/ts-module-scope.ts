@@ -1,9 +1,5 @@
-import {
-  createSymbol,
-  reactive,
-  Refkey,
-  shallowReactive,
-} from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
+import { createSymbol, reactive, shallowReactive } from "@alloy-js/core";
 
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSOutputSymbol, TSSymbolFlags } from "./ts-output-symbol.js";

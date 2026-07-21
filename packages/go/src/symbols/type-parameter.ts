@@ -1,6 +1,7 @@
-import { Children, Namekey, OutputSpace } from "@alloy-js/core";
+import type { Children, Namekey, OutputSpace } from "@alloy-js/core";
 
-import { GoSymbol, GoSymbolOptions } from "./go.js";
+import type { GoSymbolOptions } from "./go.js";
+import { GoSymbol } from "./go.js";
 
 interface TypeParameterSymbolOptions extends GoSymbolOptions {
   constraint?: Children;

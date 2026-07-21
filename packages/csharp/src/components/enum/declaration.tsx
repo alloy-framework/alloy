@@ -1,17 +1,8 @@
-import {
-  Block,
-  Children,
-  Declaration,
-  MemberScope,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Block, Declaration, MemberScope } from "@alloy-js/core";
 
-import {
-  AccessModifiers,
-  computeModifiersPrefix,
-  getAccessModifier,
-} from "../../modifiers.js";
+import type { AccessModifiers } from "../../modifiers.js";
+import { computeModifiersPrefix, getAccessModifier } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";

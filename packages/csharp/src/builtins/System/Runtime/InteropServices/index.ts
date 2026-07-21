@@ -1,7 +1,7 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as ComTypes } from "./ComTypes/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as ComTypes } from "./ComTypes/index.js";
 export { default as JavaScript } from "./JavaScript/index.js";
 export { default as Marshalling } from "./Marshalling/index.js";
 export { default as ObjectiveC } from "./ObjectiveC/index.js";

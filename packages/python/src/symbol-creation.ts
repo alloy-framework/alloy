@@ -1,19 +1,11 @@
-import {
-  Namekey,
-  OutputScopeOptions,
-  OutputSpace,
-  createScope,
-  createSymbol,
-  useContext,
-} from "@alloy-js/core";
+import type { Namekey, OutputScopeOptions, OutputSpace } from "@alloy-js/core";
+import { createScope, createSymbol, useContext } from "@alloy-js/core";
 
 import { PythonSourceFileContext } from "./components/SourceFile.js";
-import { PythonElements, usePythonNamePolicy } from "./name-policy.js";
-import {
-  PythonOutputSymbol,
-  PythonOutputSymbolOptions,
-  usePythonScope,
-} from "./symbols/index.js";
+import type { PythonElements } from "./name-policy.js";
+import { usePythonNamePolicy } from "./name-policy.js";
+import type { PythonOutputSymbolOptions } from "./symbols/index.js";
+import { PythonOutputSymbol, usePythonScope } from "./symbols/index.js";
 import { PythonLexicalScope } from "./symbols/python-lexical-scope.js";
 
 interface CreatePythonSymbolOptions extends PythonOutputSymbolOptions {

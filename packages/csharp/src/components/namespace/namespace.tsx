@@ -1,5 +1,6 @@
-import { Block, Namekey, Refkey } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Namekey, Refkey } from "@alloy-js/core";
+import { Block } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import {
   NamespaceContext,

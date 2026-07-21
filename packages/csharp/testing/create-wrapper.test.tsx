@@ -1,4 +1,5 @@
-import { List, Refkey } from "@alloy-js/core";
+import type { Refkey } from "@alloy-js/core";
+import { List } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
 

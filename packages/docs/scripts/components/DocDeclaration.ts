@@ -1,5 +1,5 @@
+import type { BasicScope } from "@alloy-js/core";
 import {
-  BasicScope,
   refkey,
   SourceFileContext,
   useContext,

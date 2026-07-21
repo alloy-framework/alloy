@@ -1,6 +1,6 @@
+import type { OutputScopeOptions } from "@alloy-js/core";
 import {
   OutputScope,
-  OutputScopeOptions,
   shallowReactive,
   track,
   TrackOpTypes,
@@ -9,8 +9,8 @@ import {
   useScope,
 } from "@alloy-js/core";
 
-import { NamespaceSymbol } from "../symbols/index.js";
-import { ProgramScope } from "./program.js";
+import type { NamespaceSymbol } from "../symbols/index.js";
+import type { ProgramScope } from "./program.js";
 
 export interface SourceFileScopeOptions extends OutputScopeOptions {}
 

@@ -12,7 +12,7 @@ import {
   VarDeclaration,
 } from "@alloy-js/typescript";
 
-import { Descriptor, NamespaceDescriptor } from "#createLibrary";
+import type { Descriptor, NamespaceDescriptor } from "#createLibrary";
 
 import { LibraryInterfaceDeclaration } from "./library-interface.jsx";
 

@@ -1,7 +1,7 @@
 import * as core from "@alloy-js/core";
 
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
@@ -14,7 +14,8 @@ import {
 } from "../../symbols/factories.js";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import type { ParameterProps } from "../parameters/parameters.jsx";
+import { Parameters } from "../parameters/parameters.jsx";
 
 export interface RecordModifiers {
   readonly partial?: boolean;

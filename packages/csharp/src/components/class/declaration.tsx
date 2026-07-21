@@ -1,28 +1,26 @@
-import {
-  Block,
+import type {
   Children,
-  Declaration,
   DeclarationProps,
-  join,
-  Name,
   Namekey,
   Refkey,
-  Scope,
 } from "@alloy-js/core";
+import { Block, Declaration, join, Name, Scope } from "@alloy-js/core";
 
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
 import { createClassScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
-import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import type { ParameterProps } from "../parameters/parameters.jsx";
+import { Parameters } from "../parameters/parameters.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 export interface ClassModifiers {

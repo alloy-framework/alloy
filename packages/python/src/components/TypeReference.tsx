@@ -1,4 +1,5 @@
-import { Children, Refkey, Show } from "@alloy-js/core";
+import type { Children, Refkey } from "@alloy-js/core";
+import { Show } from "@alloy-js/core";
 
 import { TypeArguments } from "./TypeArguments.js";
 import { TypeRefContext } from "./TypeRefContext.js";

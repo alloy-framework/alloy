@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import { useDevtoolsAppState } from "@/hooks/use-devtools-app-state";
+import type { useDevtoolsAppState } from "@/hooks/use-devtools-app-state";
 
 export type DevtoolsAppState = ReturnType<typeof useDevtoolsAppState>;
 

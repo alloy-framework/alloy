@@ -1,9 +1,10 @@
-import { memo, OutputSymbol, Refkey, resolve } from "@alloy-js/core";
+import type { OutputSymbol, Refkey } from "@alloy-js/core";
+import { memo, resolve } from "@alloy-js/core";
 
-import { GoScope } from "../scopes/go.js";
+import type { GoScope } from "../scopes/go.js";
 import { GoPackageScope } from "../scopes/package.js";
 import { useSourceFileScope } from "../scopes/source-file.js";
-import { GoSymbol } from "./go.js";
+import type { GoSymbol } from "./go.js";
 import { PackageSymbol } from "./package.js";
 
 function closestPackageScope(

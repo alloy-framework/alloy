@@ -8,7 +8,7 @@ import X509Certificates from "../../Security/Cryptography/X509Certificates/index
 import Principal from "../../Security/Principal/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type WebSocketsLibrary = LibrarySymbolReference & {
   ClientWebSocket: LibrarySymbolReference & {

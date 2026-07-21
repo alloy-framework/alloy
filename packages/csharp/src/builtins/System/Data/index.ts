@@ -4,7 +4,7 @@ import Globalization from "../Globalization/index.js";
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Common } from "./Common/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Common } from "./Common/index.js";
 export { default as SqlTypes } from "./SqlTypes/index.js";
 
 type DataLibrary = LibrarySymbolReference & {

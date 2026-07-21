@@ -5,7 +5,8 @@ import { TestPackage } from "#test/utils.jsx";
 
 import { fmt } from "./builtins/fmt/fmt.js";
 import { VariableDeclaration } from "./components/index.js";
-import { createModule, StrictDescriptor } from "./create-module.js";
+import type { StrictDescriptor } from "./create-module.js";
+import { createModule } from "./create-module.js";
 
 it("Can reference types which haven't been created yet", () => {
   const std1 = createModule("std1", {

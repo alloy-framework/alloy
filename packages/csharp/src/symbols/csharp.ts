@@ -1,11 +1,9 @@
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
   createSymbol,
-  Namekey,
   OutputDeclarationSpace,
   OutputMemberSpace,
-  OutputSpace,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
@@ -13,9 +11,9 @@ import {
   watch,
 } from "@alloy-js/core";
 
-import { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
+import type { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
 import type { CSharpScope } from "../scopes/csharp.js";
-import { NamespaceSymbol } from "./namespace.js";
+import type { NamespaceSymbol } from "./namespace.js";
 
 export type DeclaredAccessibility =
   | "private"

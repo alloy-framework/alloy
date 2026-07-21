@@ -1,16 +1,10 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration as CoreDeclaration } from "@alloy-js/core";
 
-import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import {
-  createTypeSymbol,
-  createValueSymbol,
-  TSOutputSymbol,
-} from "../symbols/index.js";
+import type { TypeScriptElements } from "../name-policy.js";
+import { useTSNamePolicy } from "../name-policy.js";
+import type { TSOutputSymbol } from "../symbols/index.js";
+import { createTypeSymbol, createValueSymbol } from "../symbols/index.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { EnumDeclaration } from "./EnumDeclaration.jsx";
 // imports for documentation

@@ -1,17 +1,19 @@
-import {
+import type {
   Namekey,
   NamePolicyGetter,
-  onCleanup,
   OutputSymbolOptions,
-  useScope,
 } from "@alloy-js/core";
+import { onCleanup, useScope } from "@alloy-js/core";
 
 import { useNamespaceContext } from "../contexts/namespace.js";
-import { TypeSpecElements, useTypeSpecNamePolicy } from "../name-policy.js";
+import type { TypeSpecElements } from "../name-policy.js";
+import { useTypeSpecNamePolicy } from "../name-policy.js";
 import { SourceFileScope } from "../scopes/index.js";
 import { NamedTypeScope } from "../scopes/named-type.js";
-import { NamedTypeKind, NamedTypeSymbol, TypeSpecSymbol } from "./index.js";
-import { NamespaceSymbol, NamespaceSymbolOptions } from "./namespace.js";
+import type { NamedTypeKind } from "./index.js";
+import { NamedTypeSymbol, TypeSpecSymbol } from "./index.js";
+import type { NamespaceSymbolOptions } from "./namespace.js";
+import { NamespaceSymbol } from "./namespace.js";
 
 export function createNamespaceSymbol(
   name: (string | Namekey) | (string | Namekey)[],

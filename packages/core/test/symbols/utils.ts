@@ -1,12 +1,14 @@
 import { beforeEach } from "vitest";
 
-import { Binder, createOutputBinder } from "../../src/binder.js";
-import { OutputSpace } from "../../src/index.js";
-import { Namekey, refkey, Refkey } from "../../src/refkey.js";
+import type { Binder } from "../../src/binder.js";
+import { createOutputBinder } from "../../src/binder.js";
+import type { OutputSpace } from "../../src/index.js";
+import type { Namekey, Refkey } from "../../src/refkey.js";
+import { refkey } from "../../src/refkey.js";
 import { BasicScope } from "../../src/symbols/basic-scope.js";
 import { BasicSymbol } from "../../src/symbols/basic-symbol.js";
-import { OutputScopeOptions } from "../../src/symbols/output-scope.js";
-import { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
+import type { OutputScopeOptions } from "../../src/symbols/output-scope.js";
+import type { OutputSymbolOptions } from "../../src/symbols/output-symbol.js";
 
 type ScopeRecords = Record<string, ScopeDescriptor>;
 type SymbolRecords = Record<string, SymbolDescriptor>;

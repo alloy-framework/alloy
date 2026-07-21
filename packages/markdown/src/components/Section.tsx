@@ -1,5 +1,5 @@
 import { List } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import { SectionContext, useSectionContext } from "../context/section.js";
 import { Heading } from "./Heading.jsx";

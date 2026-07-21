@@ -1,10 +1,10 @@
+import type { SymbolCreator } from "@alloy-js/core";
 import {
   type Binder,
   createScope,
   getSymbolCreatorSymbol,
   type Refkey,
   refkey,
-  SymbolCreator,
 } from "@alloy-js/core";
 
 import { createPythonSymbol } from "./symbol-creation.js";

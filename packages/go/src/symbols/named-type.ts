@@ -1,14 +1,14 @@
+import type { Namekey, OutputSpace } from "@alloy-js/core";
 import {
   createSymbol,
-  Namekey,
-  OutputSpace,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
 
-import { GoSymbol, GoSymbolOptions } from "./go.js";
+import type { GoSymbolOptions } from "./go.js";
+import { GoSymbol } from "./go.js";
 
 // represents a symbol from a .go file. Struct, interface, etc.
 export type NamedTypeTypeKind =

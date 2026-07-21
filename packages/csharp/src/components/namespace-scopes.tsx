@@ -1,9 +1,9 @@
 import { Scope } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import { NamespaceContext } from "../contexts/namespace.js";
 import { createCSharpNamespaceScope } from "../scopes/namespace.js";
-import { NamespaceSymbol } from "../symbols/namespace.js";
+import type { NamespaceSymbol } from "../symbols/namespace.js";
 
 export interface NamespaceScopProps {
   symbol: NamespaceSymbol;

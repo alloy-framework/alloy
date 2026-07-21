@@ -1,10 +1,10 @@
 import { namekey, refkey } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 import { describe, expect, it } from "vitest";
 
 import { TestNamespace } from "../../../test/utils.jsx";
 import { Attribute } from "../attributes/attributes.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { InterfaceDeclaration } from "./declaration.jsx";
 import { InterfaceMethod } from "./method.jsx";
 

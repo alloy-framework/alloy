@@ -5,7 +5,7 @@ import { refkey } from "@alloy-js/core";
 import { ArrowFunction } from "@alloy-js/typescript";
 import { load as parseYaml } from "js-yaml";
 
-import { Descriptor, NamespaceDescriptor } from "#createLibrary";
+import type { Descriptor, NamespaceDescriptor } from "#createLibrary";
 
 interface DocfxItem {
   uid: string;

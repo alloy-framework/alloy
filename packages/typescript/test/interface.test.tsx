@@ -1,14 +1,14 @@
+import type { Props } from "@alloy-js/core";
 import {
   namekey,
   NamePolicyContext,
-  Props,
   refkey,
   StatementList,
 } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import * as ts from "../src/components/index.js";
-import { ParameterDescriptor } from "../src/components/index.js";
+import type { ParameterDescriptor } from "../src/components/index.js";
 import { Reference } from "../src/components/Reference.js";
 import { createTSNamePolicy } from "../src/name-policy.js";
 import { TestFile } from "./utils.js";

@@ -1,6 +1,6 @@
 import { computed, mapJoin, memo } from "@alloy-js/core";
 
-import { ImportedSymbol, ImportRecords } from "../symbols/index.js";
+import type { ImportedSymbol, ImportRecords } from "../symbols/index.js";
 
 export interface ImportStatementsProps {
   records: ImportRecords;

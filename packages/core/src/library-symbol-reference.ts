@@ -1,5 +1,5 @@
-import { RefkeyableObject } from "./refkey.js";
-import { OutputSymbol } from "./symbols/output-symbol.js";
+import type { RefkeyableObject } from "./refkey.js";
+import type { OutputSymbol } from "./symbols/output-symbol.js";
 
 /**
  * Well-known symbol for the lazy-symbol-creation protocol used by external

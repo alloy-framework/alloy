@@ -7,7 +7,7 @@ import {
 } from "@alloy-js/core";
 import { relative } from "pathe";
 
-import {
+import type {
   ImportedSymbol,
   ImportRecords,
   TSPackageScope,

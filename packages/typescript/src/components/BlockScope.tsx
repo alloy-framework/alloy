@@ -1,9 +1,9 @@
-import {
-  Block,
+import type {
   BlockProps,
   ScopePropsWithInfo,
   ScopePropsWithValue,
 } from "@alloy-js/core";
+import { Block } from "@alloy-js/core";
 
 import { LexicalScope } from "./LexicalScope.jsx";
 

@@ -6,7 +6,7 @@ import Serialization from "./Serialization/index.js";
 import Metadata from "./Serialization/Metadata/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Nodes } from "./Nodes/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Nodes } from "./Nodes/index.js";
 export { default as Schema } from "./Schema/index.js";
 export { default as Serialization } from "./Serialization/index.js";
 

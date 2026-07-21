@@ -1,10 +1,5 @@
-import {
-  createScope,
-  Scope,
-  ScopePropsWithInfo,
-  ScopePropsWithValue,
-  useScope,
-} from "@alloy-js/core";
+import type { ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { createScope, Scope, useScope } from "@alloy-js/core";
 
 import { JavaLexicalScope } from "../symbols/index.js";
 

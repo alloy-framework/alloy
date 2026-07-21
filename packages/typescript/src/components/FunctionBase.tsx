@@ -1,3 +1,4 @@
+import type { SymbolSlot } from "@alloy-js/core";
 import {
   Block,
   code,
@@ -6,7 +7,6 @@ import {
   Indent,
   onCleanup,
   Show,
-  SymbolSlot,
   taggedComponent,
   type Children,
 } from "@alloy-js/core";
@@ -16,12 +16,9 @@ import type {
   FunctionTypeParameterDescriptor,
   ParameterDescriptor,
 } from "../parameter-descriptor.js";
-import { TypeParameterDescriptor } from "../parameter-descriptor.js";
-import {
-  createValueSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import type { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import type { TSOutputSymbol } from "../symbols/index.js";
+import { createValueSymbol, TSSymbolFlags } from "../symbols/index.js";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();

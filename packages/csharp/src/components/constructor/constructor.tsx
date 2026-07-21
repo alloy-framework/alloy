@@ -1,24 +1,22 @@
+import type { Refkey } from "@alloy-js/core";
 import {
   Block,
   For,
   Indent,
   MemberDeclaration,
   MemberName,
-  Refkey,
 } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import { MethodScope } from "#components/method-scope.jsx";
 
-import {
-  AccessModifiers,
-  computeModifiersPrefix,
-  getAccessModifier,
-} from "../../modifiers.js";
+import type { AccessModifiers } from "../../modifiers.js";
+import { computeModifiersPrefix, getAccessModifier } from "../../modifiers.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { MethodSymbol } from "../../symbols/method.js";
 import { DocWhen } from "../doc/comment.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import type { ParameterProps } from "../parameters/parameters.jsx";
+import { Parameters } from "../parameters/parameters.jsx";
 
 /**
  * Properties for {@link Constructor} component.

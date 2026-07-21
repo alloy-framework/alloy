@@ -1,14 +1,8 @@
-import {
-  Children,
-  computed,
-  createAccessExpression,
-  For,
-  OutputSymbol,
-  Refkey,
-  Show,
-} from "@alloy-js/core";
+import type { Children, OutputSymbol, Refkey } from "@alloy-js/core";
+import { computed, createAccessExpression, For, Show } from "@alloy-js/core";
 
-import { TSOutputSymbol, TSSymbolFlags } from "../symbols/ts-output-symbol.js";
+import type { TSOutputSymbol } from "../symbols/ts-output-symbol.js";
+import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
 import { isValidJSIdentifier } from "../utils.js";
 
 export interface MemberExpressionProps {

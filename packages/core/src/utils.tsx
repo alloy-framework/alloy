@@ -1,11 +1,11 @@
-import { Ref, toRaw } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { toRaw } from "@vue/reactivity";
 
-import { BaseListProps } from "./components/List.jsx";
-import { OutputDirectory, OutputFile } from "./output-types.js";
+import type { BaseListProps } from "./components/List.jsx";
+import type { OutputDirectory, OutputFile } from "./output-types.js";
+import type { CustomContext, Disposable } from "./reactivity.js";
 import {
   createCustomContext,
-  CustomContext,
-  Disposable,
   getContext,
   memo,
   onCleanup,
@@ -15,10 +15,9 @@ import {
   untrack,
 } from "./reactivity.js";
 import { AlloyNode, FRAGMENT_NODE } from "./render/node.js";
+import type { Children, ComponentCreator } from "./runtime/component.js";
 import {
   _isIntrinsicCreator,
-  Children,
-  ComponentCreator,
   isComponentCreator,
 } from "./runtime/component.js";
 

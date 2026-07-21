@@ -1,10 +1,10 @@
+import type { Props } from "@alloy-js/core";
 import {
   code,
   List,
   memberRefkey,
   namekey,
   Output,
-  Props,
   refkey,
   render,
   StatementList,
@@ -21,7 +21,7 @@ import {
   TypeDeclaration,
   VarDeclaration,
 } from "../src/index.js";
-import { ParameterDescriptor } from "../src/parameter-descriptor.js";
+import type { ParameterDescriptor } from "../src/parameter-descriptor.js";
 import { TestFile } from "./utils.js";
 
 it("works", () => {

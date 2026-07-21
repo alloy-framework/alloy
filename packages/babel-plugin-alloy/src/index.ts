@@ -1,5 +1,5 @@
-import SyntaxJSX from "@babel/plugin-syntax-jsx";
 import { NodePath } from "@babel/core";
+import SyntaxJSX from "@babel/plugin-syntax-jsx";
 import * as t from "@babel/types";
 
 import { transformJSX } from "./transform.js";

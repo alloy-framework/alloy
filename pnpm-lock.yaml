@@ -226,6 +226,9 @@ catalogs:
       specifier: ^2.7.1
       version: 2.9.0
 
+overrides:
+  '@rollup/plugin-babel>@babel/core': 8.0.1
+
 importers:
 
   .:
@@ -909,7 +912,7 @@ importers:
         version: 8.0.1(@babel/core@8.0.1)
       '@rollup/plugin-babel':
         specifier: 'catalog:'
-        version: 7.1.0(@types/babel__core@7.20.5)(rollup@4.62.2)(supports-color@8.1.1)
+        version: 7.1.0(@babel/core@8.0.1)(@types/babel__core@7.20.5)(rollup@4.62.2)(supports-color@8.1.1)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -3268,7 +3271,7 @@ packages:
     resolution: {integrity: sha512-h9Y+xYha6p4wKO+FwdiPIkE+eIYCm8MzZPpX1iARIoFBnmKP9CnpT1p9dDf/DTFm6fyN8PmuLyRI5qZgchnitw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      '@babel/core': ^7.0.0
+      '@babel/core': 8.0.1
       '@types/babel__core': ^7.1.9
       rollup: ^2.0.0||^3.0.0||^4.0.0
     peerDependenciesMeta:
@@ -8365,8 +8368,9 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@rollup/plugin-babel@7.1.0(@types/babel__core@7.20.5)(rollup@4.62.2)(supports-color@8.1.1)':
+  '@rollup/plugin-babel@7.1.0(@babel/core@8.0.1)(@types/babel__core@7.20.5)(rollup@4.62.2)(supports-color@8.1.1)':
     dependencies:
+      '@babel/core': 8.0.1
       '@babel/helper-module-imports': 7.29.7(supports-color@8.1.1)
       '@rollup/pluginutils': 5.4.0(rollup@4.62.2)
       workerpool: 9.3.4

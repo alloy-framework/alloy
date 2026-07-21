@@ -8,6 +8,9 @@ allowBuilds:
   esbuild: true
   sharp: false
 
+overrides:
+  "@rollup/plugin-babel>@babel/core": "catalog:"
+
 catalog:
   "@astrojs/check": ^0.9.6
   "@astrojs/starlight": ^0.41.3

@@ -10,7 +10,6 @@
  *    intrinsics returning AlloyNodes eagerly).
  */
 
-// @ts-expect-error — preset has no types
 import alloyPreset from "@alloy-js/babel-preset";
 import { transformSync } from "@babel/core";
 import typescriptPreset from "@babel/preset-typescript";

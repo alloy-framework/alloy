@@ -1,21 +1,53 @@
 {
   "name": "@alloy-js/babel-preset",
   "version": "0.3.0",
-  "description": "",
+  "type": "module",
+  "description": "Babel preset for Alloy's JSX/TSX transformation",
+  "homepage": "https://github.com/alloy-framework/alloy",
+  "license": "MIT",
+  "author": "Microsoft",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alloy-framework/alloy.git"
   },
-  "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "tsc -p ./tsconfig.build.json --watch",
+    "build": "tsc -p ./tsconfig.build.json",
+    "clean": "rimraf dist/ .temp/"
   },
   "dependencies": {
     "@alloy-js/babel-plugin": "workspace:~",
-    "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:~"
+    "@alloy-js/babel-plugin-jsx-dom-expressions": "workspace:~",
+    "@babel/preset-typescript": "catalog:"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "type": "module"
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:"
+  },
+  "bugs": "https://github.com/alloy-framework/alloy/issues"
 }

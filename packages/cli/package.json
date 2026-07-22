@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@alloy-js/babel-preset": "workspace:~",
-    "@babel/preset-typescript": "catalog:",
     "@babel/core": "catalog:",
     "picocolors": "catalog:",
     "pathe": "catalog:"

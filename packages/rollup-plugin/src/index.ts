@@ -1,4 +1,5 @@
-import { alloyBabelPresets } from "@alloy-js/babel-preset";
+import alloyPreset from "@alloy-js/babel-preset";
+import typescriptPreset from "@babel/preset-typescript";
 import { babel } from "@rollup/plugin-babel";
 import type { Plugin, PluginOption } from "vite";
 
@@ -46,7 +47,10 @@ export default function alloyPlugin(
     sourceMaps: options.sourceMaps ?? "both",
     babelHelpers: "bundled",
     extensions: [".ts", ".tsx"],
-    presets: alloyBabelPresets({ addSourceInfo: options.addSourceInfo }),
+    presets: [
+      typescriptPreset,
+      [alloyPreset, { addSourceInfo: options.addSourceInfo }],
+    ],
   });
 
   return [configPlugin, transformPlugin as Plugin];

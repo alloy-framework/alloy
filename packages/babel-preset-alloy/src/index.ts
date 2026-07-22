@@ -1,7 +1,6 @@
 import alloyTransform from "@alloy-js/babel-plugin";
 import jsxTransform from "@alloy-js/babel-plugin-jsx-dom-expressions";
-import type { PluginItem, PresetItem } from "@babel/core";
-import typescriptPreset from "@babel/preset-typescript";
+import type { PluginItem } from "@babel/core";
 
 /** Options accepted by the Alloy Babel preset. */
 export interface AlloyPresetOptions {
@@ -71,26 +70,4 @@ export default function alloyPreset(
   ] as PluginItem[];
 
   return { plugins };
-}
-
-/** Options for {@link alloyBabelPresets}. */
-export interface AlloyBabelPresetsOptions {
-  /** Forwarded to the Alloy preset to emit component source locations. */
-  addSourceInfo?: boolean;
-}
-
-/**
- * The canonical Babel preset chain used to compile Alloy `.ts`/`.tsx` sources:
- * `@babel/preset-typescript` followed by the Alloy preset.
- *
- * Shared by `@alloy-js/cli` and `@alloy-js/rollup-plugin` so the configuration
- * stays in a single place.
- */
-export function alloyBabelPresets(
-  options: AlloyBabelPresetsOptions = {},
-): PresetItem[] {
-  return [
-    typescriptPreset,
-    [alloyPreset, { addSourceInfo: options.addSourceInfo }],
-  ] as PresetItem[];
 }

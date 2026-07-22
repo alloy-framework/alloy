@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@alloy-js/babel-preset": "workspace:~",
+    "@babel/preset-typescript": "catalog:",
     "@rollup/plugin-babel": "catalog:"
   },
   "devDependencies": {

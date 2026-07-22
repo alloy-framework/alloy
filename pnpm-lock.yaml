@@ -343,9 +343,6 @@ importers:
       '@alloy-js/babel-plugin-jsx-dom-expressions':
         specifier: workspace:~
         version: link:../babel-plugin-jsx-dom-expressions
-      '@babel/preset-typescript':
-        specifier: 'catalog:'
-        version: 8.0.1(@babel/core@8.0.1)
     devDependencies:
       '@babel/core':
         specifier: 'catalog:'
@@ -368,6 +365,9 @@ importers:
       '@babel/core':
         specifier: 'catalog:'
         version: 8.0.1
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 8.0.1(@babel/core@8.0.1)
       pathe:
         specifier: 'catalog:'
         version: 2.0.3
@@ -920,6 +920,9 @@ importers:
       '@alloy-js/babel-preset':
         specifier: workspace:~
         version: link:../babel-preset-alloy
+      '@babel/preset-typescript':
+        specifier: 'catalog:'
+        version: 8.0.1(@babel/core@8.0.1)
       '@rollup/plugin-babel':
         specifier: 'catalog:'
         version: 7.1.0(@babel/core@8.0.1)(rollup@4.62.2)(supports-color@8.1.1)

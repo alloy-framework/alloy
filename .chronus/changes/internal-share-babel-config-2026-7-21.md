@@ -14,4 +14,4 @@ packages:
   - "@alloy-js/typespec"
 ---
 
-Share the Babel preset configuration through `@alloy-js/babel-preset` and rely on the Rollup/Vite plugin to configure esbuild, removing the duplicated esbuild/resolve boilerplate from each package's `vitest.config.ts`.
+Rely on the Rollup/Vite plugin to configure esbuild, removing the duplicated esbuild/resolve boilerplate from each package's `vitest.config.ts`.

@@ -1,7 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 
-import { alloyBabelPresets } from "@alloy-js/babel-preset";
+import alloyPreset from "@alloy-js/babel-preset";
 import * as babel from "@babel/core";
+import typescriptPreset from "@babel/preset-typescript";
 import { basename, dirname, join, relative } from "pathe";
 
 export interface BuildOptions {
@@ -11,7 +12,10 @@ export interface BuildOptions {
 export async function buildFile(filename: string, options: BuildOptions) {
   return babel.transformFileAsync(filename, {
     sourceMaps: options.sourceMaps,
-    presets: alloyBabelPresets({ addSourceInfo: options.addSourceInfo }),
+    presets: [
+      typescriptPreset,
+      [alloyPreset, { addSourceInfo: options.addSourceInfo }],
+    ],
   });
 }
 

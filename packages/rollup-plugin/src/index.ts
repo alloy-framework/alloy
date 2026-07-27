@@ -21,11 +21,12 @@ export interface AlloyPluginOptions {
  * Rollup/Vite plugin that handles Alloy's JSX syntax transformation.
  *
  * @remarks
- * When used with Vite (including Vitest) this plugin also configures esbuild to
- * defer JSX processing to Babel (`esbuild.jsx: "preserve"`) and adds the
- * `source` resolve condition, so consumers no longer need to set these by hand.
- * Do not set `esbuild.jsx: "automatic"` or `jsxImportSource` — doing so
- * prevents this plugin from transforming Alloy's JSX.
+ * When used with Vite (including Vitest) this plugin also configures the
+ * built-in transformer to defer JSX processing to Babel (`oxc.jsx: "preserve"`)
+ * and adds the `source` resolve condition, so consumers no longer need to set
+ * these by hand. Do not set the transformer's JSX handling to `"automatic"` or a
+ * `jsxImportSource` — doing so prevents this plugin from transforming Alloy's
+ * JSX.
  */
 export default function alloyPlugin(
   options: AlloyPluginOptions = {},
@@ -35,7 +36,7 @@ export default function alloyPlugin(
     // Vite-only hook; ignored by plain Rollup.
     config() {
       return {
-        esbuild: { jsx: "preserve", sourcemap: "both" },
+        oxc: { jsx: "preserve" },
         resolve: { conditions: ["source"] },
         ssr: { resolve: { conditions: ["source"] } },
       };

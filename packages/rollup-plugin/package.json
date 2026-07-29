@@ -28,7 +28,7 @@
     "url": "git+https://github.com/alloy-framework/alloy.git"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "watch": "tsc -p ./tsconfig.build.json --watch",
@@ -45,6 +45,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   },
   "bugs": "https://github.com/alloy-framework/alloy/issues"

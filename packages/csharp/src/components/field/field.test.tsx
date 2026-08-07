@@ -2,6 +2,7 @@ import { List, namekey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
 
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
 import { Field } from "./field.jsx";
 
@@ -133,4 +134,23 @@ describe("naming", () => {
     }
   `);
   });
+});
+
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <Field
+        public
+        name="MemberOne"
+        type="string"
+        attributes={[<Attribute name="Test" />]}
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        [Test]
+        public string MemberOne;
+    }
+  `);
 });

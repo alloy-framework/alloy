@@ -14,6 +14,8 @@ import type { AccessModifiers } from "../../modifiers.js";
 import { computeModifiersPrefix, getAccessModifier } from "../../modifiers.js";
 import { useNamedTypeScope } from "../../scopes/contexts.js";
 import { MethodSymbol } from "../../symbols/method.js";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import type { ParameterProps } from "../parameters/parameters.jsx";
 import { Parameters } from "../parameters/parameters.jsx";
@@ -30,6 +32,20 @@ export interface ConstructorProps extends AccessModifiers {
 
   /** Refkey */
   refkey?: Refkey;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <Constructor public attributes={[<Attribute name="Test" />]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * public MyClass()
+   * ```
+   */
+  attributes?: AttributesProp;
 
   /**
    * Arguments to pass to the base class constructor.
@@ -96,6 +112,7 @@ export function Constructor(props: ConstructorProps) {
     <MemberDeclaration symbol={ctorSymbol}>
       <MethodScope>
         <DocWhen doc={props.doc} />
+        <AttributeList attributes={props.attributes} endline />
         {modifiers}
         <MemberName />
         <Parameters parameters={props.parameters} />

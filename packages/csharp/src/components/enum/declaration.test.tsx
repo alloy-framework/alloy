@@ -3,6 +3,7 @@ import { expect, it } from "vitest";
 
 import { TestNamespace } from "#test/utils.jsx";
 
+import { Attribute } from "../attributes/attributes.jsx";
 import { EnumDeclaration } from "./declaration.jsx";
 import { EnumMember } from "./member.jsx";
 
@@ -59,6 +60,26 @@ it("renders doc comment", () => {
     {
         One,
         Two
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <TestNamespace>
+      <EnumDeclaration
+        public
+        name="TestEnum"
+        attributes={[<Attribute name="Flags" />]}
+      >
+        <EnumMember name="One" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    [Flags]
+    public enum TestEnum
+    {
+        One
     }
   `);
 });

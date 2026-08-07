@@ -6,6 +6,8 @@ import { computeModifiersPrefix, getAccessModifier } from "../../modifiers.js";
 import { useCSharpNamePolicy } from "../../name-policy.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { createNamedTypeSymbol } from "../../symbols/factories.js";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 
@@ -15,6 +17,23 @@ export interface EnumDeclarationProps extends AccessModifiers {
   /** Doc comment */
   doc?: Children;
   refkey?: Refkey | Refkey[];
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <EnumDeclaration name="Color" attributes={[
+   *  <Attribute name="Flags" />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Flags]
+   * enum Color
+   * ```
+   */
+  attributes?: AttributesProp;
+
   children?: Children;
 }
 
@@ -50,6 +69,7 @@ export function EnumDeclaration(props: EnumDeclarationProps) {
   return (
     <Declaration symbol={symbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}enum <Name />
       {!props.children && ";"}
       {props.children && (

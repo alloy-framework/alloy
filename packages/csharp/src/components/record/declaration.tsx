@@ -12,6 +12,8 @@ import {
   createNamedTypeSymbol,
   createTypeParameterSymbol,
 } from "../../symbols/factories.js";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
 import type { ParameterProps } from "../parameters/parameters.jsx";
@@ -35,6 +37,22 @@ export interface RecordDeclarationProps
   doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <RecordDeclaration name="MyRecord" attributes={[
+   *  <Attribute name="Test" />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * record MyRecord
+   * ```
+   */
+  attributes?: AttributesProp;
 
   /**
    * Set the primary constructor parameters
@@ -117,6 +135,7 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
   return (
     <core.Declaration symbol={thisRecordSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}record <Name />
       {typeParams}
       {props.primaryConstructor && (

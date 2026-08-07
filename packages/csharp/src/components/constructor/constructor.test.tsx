@@ -2,6 +2,7 @@ import { refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { ClassDeclaration } from "../class/declaration.jsx";
 import { DocSummary } from "../doc/comment.jsx";
 import { Constructor } from "./constructor.jsx";
@@ -119,6 +120,27 @@ it("renders : base() with no arguments", () => {
     public class DerivedClass : BaseClass
     {
         public DerivedClass() : base()
+        {
+            // body
+        }
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <TestNamespace>
+      <ClassDeclaration public name="TestClass">
+        <Constructor public attributes={[<Attribute name="Test" />]}>
+          // body
+        </Constructor>
+      </ClassDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public class TestClass
+    {
+        [Test]
+        public TestClass()
         {
             // body
         }

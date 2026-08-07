@@ -12,6 +12,8 @@ import {
   nonAccessibilityFromProps,
 } from "../../symbols/csharp.js";
 import { createFieldSymbol } from "../../symbols/factories.js";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 
 /** Field modifiers. */
@@ -35,6 +37,22 @@ export interface FieldProps extends AccessModifiers, FieldModifiers {
   refkey?: Refkey;
   /** Doc comment */
   doc?: Children;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <Field name="myField" type="int" attributes={[
+   *  <Attribute name="Test" />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * int myField;
+   * ```
+   */
+  attributes?: AttributesProp;
 }
 
 /** Render a c# field */
@@ -55,6 +73,7 @@ export function Field(props: FieldProps) {
   return (
     <Declaration symbol={memberSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}
       {props.type} <Name />;
     </Declaration>

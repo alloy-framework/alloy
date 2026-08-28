@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/babel-preset
 
+## 0.4.0
+
+### Features
+
+- [#445](https://github.com/alloy-framework/alloy/pull/445) `@alloy-js/babel-preset` now ships with TypeScript type declarations, so consumers can import the preset without `@ts-expect-error`.
+
+
 ## 0.3.0
 
 ### Features

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/rollup-plugin
 
+## 0.2.0
+
+### Features
+
+- [#445](https://github.com/alloy-framework/alloy/pull/445) The Rollup/Vite plugin now accepts `addSourceInfo` and `sourceMaps` options and automatically configures esbuild for Alloy (`jsx: "preserve"` plus the `source` resolve conditions). Consumers no longer need to set these by hand in their Vite/Vitest config.
+
+
 ## 0.1.2
 
 ### Bug Fixes

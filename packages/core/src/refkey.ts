@@ -63,9 +63,11 @@ function createSymbolRefkey(key: string): SymbolRefkey {
   return refkey;
 }
 
+// Callables qualify as well as plain objects, so a value can be both a
+// component and a reference to the symbol it declares.
 export function isRefkeyable(value: unknown): value is RefkeyableObject {
   return (
-    typeof value === "object" &&
+    (typeof value === "object" || typeof value === "function") &&
     value !== null &&
     Object.hasOwn(value, REFKEYABLE)
   );

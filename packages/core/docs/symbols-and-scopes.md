@@ -178,3 +178,5 @@ const lib = createLibrary("my-lib", { SomeType: { kind: "type", members: { ... }
 ```
 
 Library descriptors self-register on demand — no additional wiring to `<Output>` is needed.
+
+A descriptor may be a function as well as a plain object, so one value can be both the reference to a symbol and the component that renders it instantiated — `{lib.SomeType}` for a bare reference, `<lib.SomeType>string</lib.SomeType>` to render it with type arguments. Both resolve through the same symbol, so either form generates the import.

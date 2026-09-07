@@ -61,11 +61,12 @@ export interface LibrarySymbolReference extends RefkeyableObject {
   [TO_SYMBOL](): OutputSymbol;
 }
 
+// Callables qualify, as in `isRefkeyable`, so a descriptor can be a component.
 export function isLibrarySymbolReference(
   value: unknown,
 ): value is LibrarySymbolReference {
   return (
-    typeof value === "object" &&
+    (typeof value === "object" || typeof value === "function") &&
     value !== null &&
     Object.hasOwn(value, TO_SYMBOL)
   );

@@ -64,7 +64,6 @@
     "test:watch": "vitest -w",
     "watch": "alloy build --watch",
     "test": "vitest run",
-    "prepack": "node ../../scripts/strip-dev-exports.js",
     "format": "oxfmt --write src test"
   },
   "keywords": [],

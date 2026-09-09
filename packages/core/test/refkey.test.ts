@@ -1,7 +1,13 @@
 import { expect, it } from "vitest";
 
+import type { LibrarySymbolReference } from "../src/library-symbol-reference.js";
+import {
+  isLibrarySymbolReference,
+  TO_SYMBOL,
+} from "../src/library-symbol-reference.js";
 import type { Refkeyable } from "../src/refkey.js";
-import { refkey, REFKEYABLE } from "../src/refkey.js";
+import { isRefkeyable, refkey, REFKEYABLE, toRefkey } from "../src/refkey.js";
+import type { OutputSymbol } from "../src/symbols/output-symbol.js";
 
 it("is stable when called with same values", () => {
   const obj = {};
@@ -42,4 +48,31 @@ it("unwraps refkeyables", () => {
     },
   };
   expect(refkey(refkeyable)).toBe(rk1);
+});
+
+it("recognizes a callable as refkeyable", () => {
+  const rk = refkey("target");
+  const callable = Object.assign(() => "invoked", {
+    [REFKEYABLE]: () => rk,
+  });
+
+  expect(isRefkeyable(callable)).toBe(true);
+  expect(toRefkey(callable)).toBe(rk);
+  expect(refkey(callable)).toBe(rk);
+});
+
+it("does not treat an unmarked function as refkeyable", () => {
+  expect(isRefkeyable(() => "invoked")).toBe(false);
+});
+
+it("recognizes a callable as a library symbol reference", () => {
+  const rk = refkey("target");
+  const sym = {} as OutputSymbol;
+  const callable: LibrarySymbolReference = Object.assign(() => "invoked", {
+    [REFKEYABLE]: () => rk,
+    [TO_SYMBOL]: () => sym,
+  });
+
+  expect(isLibrarySymbolReference(callable)).toBe(true);
+  expect(callable[TO_SYMBOL]()).toBe(sym);
 });

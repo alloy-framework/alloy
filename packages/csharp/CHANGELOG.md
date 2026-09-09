@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/csharp
 
+## 0.26.0
+
+### Features
+
+- [#447](https://github.com/alloy-framework/alloy/pull/447) Add `attributes` prop to `EnumDeclaration`, `EnumMember`, `RecordDeclaration`, `Field` and `Constructor`
+
+
 ## 0.25.0
 
 No changes, version bump only.

@@ -18,6 +18,283 @@ describe("group", () => {
     );
   });
 });
+
+describe("group with max", () => {
+  it("breaks when the flat form exceeds max even if it fits in printWidth", () => {
+    expect(
+      <group max={10}>
+        1234567890
+        <sbr />
+        1234567890
+      </group>,
+    ).toRenderTo(
+      `
+        1234567890
+        1234567890
+      `,
+      { printWidth: 80 },
+    );
+  });
+
+  it("behaves like <group> when max equals printWidth", () => {
+    expect(
+      <group max={25}>
+        1234567890
+        <softline />
+        1234567890
+      </group>,
+    ).toRenderTo(`12345678901234567890`, { printWidth: 25 });
+    expect(
+      <group max={15}>
+        1234567890
+        <softline />
+        1234567890
+      </group>,
+    ).toRenderTo(
+      `
+        1234567890
+        1234567890
+      `,
+      { printWidth: 15 },
+    );
+  });
+
+  it("keeps the flat form when within max and printWidth", () => {
+    expect(
+      <group max={30}>
+        1234567890
+        <softline />
+        1234567890
+      </group>,
+    ).toRenderTo(`12345678901234567890`, { printWidth: 80 });
+  });
+
+  it("always breaks when the subtree contains a hard line", () => {
+    expect(
+      <group max={1000}>
+        a
+        <hardline />b
+      </group>,
+    ).toRenderTo(
+      `
+        a
+        b
+      `,
+      { printWidth: 80 },
+    );
+  });
+
+  it("composes: inner threshold is independent of the outer", () => {
+    // Outer max is generous (flat form fits) so the outer doesn't force a
+    // break. The inner max is tight, so the inner forces its own break.
+    expect(
+      <group max={100}>
+        outer(
+        <group max={10}>
+          1234567890
+          <softline />
+          1234567890
+        </group>
+        )
+      </group>,
+    ).toRenderTo(
+      `
+        outer(1234567890
+        1234567890)
+      `,
+      { printWidth: 80 },
+    );
+  });
+
+  it("composes: tight outer breaks without forcing an unrelated inner", () => {
+    // Inner fits within its own max, so it stays flat. Outer flat form
+    // exceeds its max, so the outer breaks around the inner.
+    expect(
+      <group max={5}>
+        before
+        <sbr />
+        <group max={100}>
+          ab
+          <softline />
+          cd
+        </group>
+        <sbr />
+        after
+      </group>,
+    ).toRenderTo(
+      `
+        before
+        abcd
+        after
+      `,
+      { printWidth: 80 },
+    );
+  });
+
+  it("forces a break when shouldBreak is explicitly set", () => {
+    expect(
+      <group max={1000} shouldBreak>
+        hi
+        <sbr />
+        bye
+      </group>,
+    ).toRenderTo(
+      `
+        hi
+        bye
+      `,
+    );
+  });
+
+  it("locks the flat form when within max even if the line overflows", () => {
+    // Inner flat is 20 chars ≤ max=30, so the inner is locked flat and
+    // the surrounding line must break elsewhere — here, the outer sbr
+    // takes the break while the inner stays on one line.
+    expect(
+      <group>
+        before
+        <sbr />
+        <group max={30}>
+          1234567890
+          <softline />
+          1234567890
+        </group>
+        <sbr />
+        after
+      </group>,
+      // printWidth=15 makes the flat outer overflow; the inner stays flat.
+    ).toRenderTo(
+      `
+        before
+        12345678901234567890
+        after
+      `,
+      { printWidth: 15 },
+    );
+  });
+
+  it("a locked-flat value makes the assignment group break", () => {
+    // The fluid assignment pattern: a group holding only an indented line
+    // decides whether the value moves to the next line, and the value is
+    // wrapped in indentIfBreak keyed to that group.
+    //
+    // The value's flat form (`[a, b]`) fits its own max, so it is locked
+    // flat, and the 34-char flat assignment overflows printWidth: the
+    // break has to be taken after `=`. Measuring the assignment group
+    // therefore has to see the value flat — treating its `line` as broken
+    // would end the measurement three characters in, well inside the
+    // remaining four columns, and wrongly keep the assignment on one line.
+    const gid = Symbol("assign");
+    expect(
+      <group>
+        {"let some_quite_long_name ="}
+        <group id={gid}>
+          <indent>
+            <line />
+          </indent>
+        </group>
+        <indentIfBreak groupId={gid}>
+          <group max={30}>
+            {"[a,"}
+            <line />
+            {"b]"}
+          </group>
+        </indentIfBreak>
+        {";"}
+      </group>,
+    ).toRenderTo(
+      `
+        let some_quite_long_name =
+          [a, b];
+      `,
+      { printWidth: 30 },
+    );
+  });
+
+  it("a value that overflows its max keeps the assignment flat", () => {
+    // The mirror case: the value's flat form exceeds its own max, so it
+    // breaks internally. The assignment group then stays on one line,
+    // because the value's first line still fits the print width.
+    const gid = Symbol("assign");
+    expect(
+      <group>
+        {"let v ="}
+        <group id={gid}>
+          <indent>
+            <line />
+          </indent>
+        </group>
+        <indentIfBreak groupId={gid}>
+          <group max={5}>
+            {"call("}
+            <indent>
+              <softline />
+              {"aaa,"}
+              <line />
+              {"bbb,"}
+            </indent>
+            <softline />
+            {")"}
+          </group>
+        </indentIfBreak>
+        {";"}
+      </group>,
+    ).toRenderTo(
+      `
+        let v = call(
+          aaa,
+          bbb,
+        );
+      `,
+      { printWidth: 30 },
+    );
+  });
+
+  it("locks flat even when the inner subtree alone exceeds printWidth", () => {
+    // The locked-flat guarantee applies regardless of printWidth: once a
+    // subtree fits its own `max`, it is emitted flat unconditionally.
+    expect(
+      <group max={100}>
+        1234567890
+        <softline />
+        1234567890
+      </group>,
+    ).toRenderTo(`12345678901234567890`, { printWidth: 5 });
+  });
+
+  it("publishes a broken mode under `id` for a later <ifBreak>", () => {
+    const id = Symbol();
+    expect(
+      <>
+        <group id={id} max={5}>
+          {"aaa"}
+          <br />
+          {"bbb"}
+        </group>
+        <ifBreak groupId={id} flatContents={" flat"}>
+          {" broken"}
+        </ifBreak>
+      </>,
+    ).toRenderTo(`aaa\nbbb broken`);
+  });
+
+  it("publishes a flat mode under `id` for a later <ifBreak>", () => {
+    const id = Symbol();
+    expect(
+      <>
+        <group id={id} max={20}>
+          {"aaa"}
+          <br />
+          {"bbb"}
+        </group>
+        <ifBreak groupId={id} flatContents={" flat"}>
+          {" broken"}
+        </ifBreak>
+      </>,
+    ).toRenderTo(`aaa bbb flat`);
+  });
+});
+
 describe("indent", () => {
   it("indents its children", () => {
     expect(

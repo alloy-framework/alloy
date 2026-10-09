@@ -16,10 +16,22 @@
     "extractorMessageReporting": {
       "ae-missing-release-tag": {
         "logLevel": "none"
+      },
+      "ae-wrong-input-file-type": {
+        "logLevel": "none"
       }
     },
     "compilerMessageReporting": {
       "TS6307": {
+        "logLevel": "none"
+      },
+      "TS2322": {
+        "logLevel": "none"
+      },
+      "TS2786": {
+        "logLevel": "none"
+      },
+      "TS2345": {
         "logLevel": "none"
       }
     }

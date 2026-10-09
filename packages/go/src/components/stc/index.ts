@@ -1,4 +1,5 @@
 import * as core from "@alloy-js/core";
+
 import * as base from "../index.js";
 
 export const LineComment = core.stc(base.LineComment);

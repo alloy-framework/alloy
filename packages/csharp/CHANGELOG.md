@@ -1,5 +1,38 @@
 # Changelog - @alloy-js/csharp
 
+## 0.25.0
+
+No changes, version bump only.
+
+## 0.24.0
+
+No changes, version bump only.
+
+## 0.23.0
+
+### Bug Fixes
+
+- [#390](https://github.com/alloy-framework/alloy/pull/390) Add support `: base()` and `:this()` with `baseConstructor` and `thisConstructor` on `Constructor` component
+- [#391](https://github.com/alloy-framework/alloy/pull/391) Fix namespace brace printed on new line(Allman brace style)
+- [#374](https://github.com/alloy-framework/alloy/pull/374) Fix namespace scope-chain construction for dotted namespaces declared inside `SourceFile` so refkey resolution no longer emits incorrect qualification or unnecessary using directives. Adds regression coverage for sibling and multi-level nested namespace scenarios.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#396](https://github.com/alloy-framework/alloy/pull/396) CSharp naming policy escape keywords with `@`
+- [#354](https://github.com/alloy-framework/alloy/pull/354) Support add doc comment at the beginning of csharp src file
+- [#391](https://github.com/alloy-framework/alloy/pull/391) Add support for custom get; set; body for property
+- [#388](https://github.com/alloy-framework/alloy/pull/388) Add `doc` property to enum declaration, enum member and constructor components
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+
+
+## 0.22.0
+
+### Bug Fixes
+
+- [#328](https://github.com/alloy-framework/alloy/pull/328) Empty namespaces now don't render an empty block.
+
 ## 0.21.0
 
 ### Bug Fixes
@@ -32,7 +65,6 @@
 
 - [#283](https://github.com/alloy-framework/alloy/pull/283) Rename `UsingDirective` -> `Usings`
 
-
 ## 0.20.0
 
 ### Bug Fixes
@@ -51,13 +83,12 @@
 
 - [#206](https://github.com/alloy-framework/alloy/pull/206) Update core's representation of symbols and scopes. These changes should not impact usage of language components in code generators, but there are some significant changes for language library implementations. See https://github.com/alloy-framework/alloy/pull/206 for more details.
 
-
 ## 0.19.0
 
 ### Features
 
 - [#246](https://github.com/alloy-framework/alloy/pull/246) Add support for `struct` declaration
-- [#250](https://github.com/alloy-framework/alloy/pull/250) Fields support `new`, `readonly`, `static`  and `volatile` modifier
+- [#250](https://github.com/alloy-framework/alloy/pull/250) Fields support `new`, `readonly`, `static` and `volatile` modifier
 - [#250](https://github.com/alloy-framework/alloy/pull/250) Private field respect c# naming convention of `_camelCase`
 - [#251](https://github.com/alloy-framework/alloy/pull/251) Support `readonly`, `override` and `extern` modifier for `Method`
 - [#247](https://github.com/alloy-framework/alloy/pull/247) Add support for expression body syntax in methods
@@ -67,7 +98,6 @@
 - [#249](https://github.com/alloy-framework/alloy/pull/249) Rename `ClassMember` to `Field` to allow using it with `StructDeclaration`
 - [#248](https://github.com/alloy-framework/alloy/pull/248) Rename `ClassConstructor` to `Constructor` to allow using it with `StructDeclaration`
 - [#248](https://github.com/alloy-framework/alloy/pull/248) Rename `ClassMethod` to `Method` to allow using it with `StructDeclaration`
-
 
 ## 0.18.0
 
@@ -99,7 +129,6 @@
 
 - [#192](https://github.com/alloy-framework/alloy/pull/192) Rename `Class` -> `ClassDeclaration` and `Enum` -> `EnumDeclaration`
 
-
 ## 0.17.0
 
 No changes, version bump only.
@@ -130,7 +159,6 @@ No changes, version bump only.
 
 - [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
 
-
 ## 0.10.0
 
 No changes, version bump only.
@@ -145,7 +173,6 @@ No changes, version bump only.
 
 - [#67](https://github.com/alloy-framework/alloy/pull/67) Removed all default refkeys based on declaration name.
 
-
 ## 0.7.0
 
 No changes, version bump only.
@@ -155,7 +182,6 @@ No changes, version bump only.
 ### Features
 
 - [#56](https://github.com/alloy-framework/alloy/pull/56) Emitted code is now formatted properly.
-
 
 ## 0.5.0
 
@@ -167,19 +193,14 @@ No changes, version bump only.
 
 - [80f1ba8](https://github.com/alloy-framework/alloy/commit/80f1ba88470960ce57487b644ae3c3f37f9c4690) Indent source files with 4 spaces as Anders intended.
 
-
 ## 0.3.0
 
 ### Features
 
 - [#38](https://github.com/alloy-framework/alloy/pull/38) Indent source files with 4 spaces as Anders intended.
 
-
-
-
 ## 0.2.0
 
 ### Bug Fixes
 
 - [#31](https://github.com/alloy-framework/alloy/pull/31) Update license to MIT
-

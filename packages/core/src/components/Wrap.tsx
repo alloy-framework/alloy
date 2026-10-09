@@ -23,7 +23,9 @@ export interface WrapProps<TProps> {
  */
 export function Wrap<TProps>(props: WrapProps<TProps>) {
   const Wrapper = props.with as any;
-  return props.when ?
-      <Wrapper {...(props.props ?? {})}>{props.children}</Wrapper>
-    : props.children;
+  return props.when ? (
+    <Wrapper {...(props.props ?? {})}>{props.children}</Wrapper>
+  ) : (
+    props.children
+  );
 }

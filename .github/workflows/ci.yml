@@ -29,14 +29,6 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Bump version to pr version
-        if: github.event_name == 'pull_request'
-        run: pnpm chronus version --prerelease "{nextVersion}-pr.${{ github.event.pull_request.number }}.${{ github.run_number }}"
-
-      - name: Publish preview versions
-        if: github.event_name == 'pull_request'
-        run: pnpm tsx eng/pkg-pr-new.ts
-
       - name: Generate docs
         working-directory: ./packages/docs
         run: pnpm run generate-docs
@@ -54,6 +46,17 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./packages/docs/dist
+      - name: Generate agent docs
+        working-directory: ./packages/docs
+        run: pnpm run generate-agent-docs
+
+      - name: Bump version to pr version
+        if: github.event_name == 'pull_request'
+        run: pnpm chronus version --prerelease "{nextVersion}-pr.${{ github.event.pull_request.number }}.${{ github.run_number }}"
+
+      - name: Publish preview versions
+        if: github.event_name == 'pull_request'
+        run: node eng/pkg-pr-new.ts
 
   format:
     runs-on: ubuntu-latest
@@ -79,8 +82,11 @@ jobs:
       - run: pnpm run lint
         name: Lint
 
+      - run: pnpm run sync-publish-config:check
+        name: Check publishConfig is in sync
+
   deploy-docs:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

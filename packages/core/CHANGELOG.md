@@ -1,5 +1,87 @@
 # Changelog - @alloy-js/core
 
+## 0.25.0
+
+No changes, version bump only.
+
+## 0.24.1
+
+### Bug Fixes
+
+- [#430](https://github.com/alloy-framework/alloy/pull/430) Fix references to function-local symbols (e.g. parameters) resolving against the wrong scope when emitted from an indented line of a `code` template. Child collection no longer eagerly invokes intrinsic (`indent`/`group`/...) creators, so their refkeys resolve at render time inside the correct scope.
+
+
+## 0.24.0
+
+### Bug Fixes
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Honor `insertFinalNewLine` when it is passed to `<Output>`, so root-level formatting options are consistently propagated to source file printing.
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Reduce debugging overhead when debug is off.
+
+### Features
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Export the public AlloyNode model from `@alloy-js/core`: node classes, DOM-aligned node type constants, node factory helpers, `Insertable`, and `NodeType`. This enables direct inspection and construction of Alloy render trees where low-level tree access is needed.
+
+### Breaking Changes
+
+- [#402](https://github.com/alloy-framework/alloy/pull/402) Alloy's render tree is now a DOM-like `AlloyNode` tree instead of `RenderedTextTree`. Tree-facing APIs such as `renderTree`, `printTree`, `sourceFilesForTree`, `getDiagnosticsForTree`, and `getContextForNode` now operate on `AlloyNode` instances. The old print-hook APIs (`RenderedTextTree`, `PrintHook`, `createRenderTreeHook`, `printHookTag`, and `isPrintHook`) are removed. `getContextForRenderNode` remains as a deprecated alias for `getContextForNode`.
+- [#402](https://github.com/alloy-framework/alloy/pull/402) `PrintTreeOptions` now contains only formatting options used by production rendering. Test-only scheduler flushing control moved to `RenderTreeOptions`; `printTree` and `getFilesFromTree` accept the combined test helper options where needed.
+
+
+## 0.23.1
+
+### Bug Fixes
+
+- [#400](https://github.com/alloy-framework/alloy/pull/400) Fix additional files missing browser shim
+- [#398](https://github.com/alloy-framework/alloy/pull/398) Reduce per-render overhead when devtools/debug are disabled. `isDevtoolsEnabled()` now caches the `ALLOY_DEBUG` env-var read at module load (use `refreshDebugState()` from tests that mutate the env var dynamically), and `effect()`, `ref()`, `shallowRef()`, `computed()`, `toRef()`, and `toRefs()` now gate their debug-hook bookkeeping behind `isDebugEnabled()` so the argument objects and source-location captures aren't built when debug is off.
+
+
+## 0.23.0
+
+### Bug Fixes
+
+- [#356](https://github.com/alloy-framework/alloy/pull/356) onCleanup callbacks are now untracked, which fixes cases where cleaning up some reactive context would trigger it to run again.
+- [#395](https://github.com/alloy-framework/alloy/pull/395) Fix O(N²) overhead in `DiagnosticsCollector`. `emit()` and `dismiss()` previously re-broadcast the entire diagnostic history on every call, which dominated render time on large workloads even when debug tracing was disabled (the default). Broadcasts are now skipped when tracing is off, and the trace writer sees per-diagnostic add/remove deltas instead of duplicated inserts.
+- [#376](https://github.com/alloy-framework/alloy/pull/376) Ensure node specific api have browser override
+- [#379](https://github.com/alloy-framework/alloy/pull/379) Fix SymbolSlot in FunctionBase being rendered twice when a parameter has both type and default, which caused the type symbol to be overwritten and member resolution to fail. Also add an error diagnostic when a SymbolSlot is rendered more than once.
+- [#361](https://github.com/alloy-framework/alloy/pull/361) Reduce allocation overhead: lazy Context fields (disposables, context, elementCache, isEmpty), `_lastEmpty` boolean for cheap empty-state propagation, `ensureIsEmpty()` gating, scheduler `isJobActive` check to skip stopped effects, `ReactiveUnionSet` per-item root-scope disposers, and hoisted `defaultScheduler` closure.
+- [#396](https://github.com/alloy-framework/alloy/pull/396) Fix TypeScript import handling:
+  
+  - Long `import { ... } from "..."` statements now break across multiple lines when they exceed `printWidth`, using the layout engine.
+  - Import statements generated via `ref()` into a TypeScript `<SourceFile>` are now reference-counted and torn down (symbol deleted, statement removed) when the last live reference is disposed — e.g. when a `<Show>` that referenced an external refkey toggles off. Previously the import would linger and subsequent re-renders could drift conflicting local names to `foo_3`, `foo_4`, etc.
+  - `createValueSymbol` / `createTypeSymbol` / `createTypeAndValueSymbol` now automatically delete their symbol when the component that created it unmounts. This fixes a long-standing leak where symbols declared via `<VarDeclaration>`, `<FunctionDeclaration>`, etc. survived `<Show>` unmounts.
+  
+  Improve name-conflict resolution:
+  
+  - `OutputSymbol` now exposes a `deconflictedName` slot separate from the user-assigned name. Name-conflict resolvers write the collision rename into this slot (the public `.name` getter returns `deconflictedName ?? userAssignedName ?? originalName`), and clear it once a collision is resolved so survivors revert to their plain name. This replaces a fragile regex-based "is this an auto-generated alias?" check that hard-coded the default resolver's `foo_N` rename scheme. Custom resolvers with any rename scheme (including Python's `foo_N_module` form) now revert correctly when one of the conflicting symbols is removed.
+  - `tsNameConflictResolver` and `pythonNameConflictResolver` have been migrated to write through `deconflictedName`.
+  - `SymbolTable` now groups conflicts by each symbol's _canonical_ name — the result of applying the symbol's name policy to its `originalName`. This means two symbols whose original names normalize to the same policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are correctly detected as conflicting.
+
+### Features
+
+- [#362](https://github.com/alloy-framework/alloy/pull/362) Add `createAccessExpression` factory for building language-specific member/access expression components with shared call chain formatting, symbol resolution, and reactive optimization.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add a new diagnostics reporting interface. Diagnostics will log that an error occurred but will not stop emission. Various things that used to cause errors will now log diagnostics instead, including missing regions in AppendFile and TemplateFile. Unresolved refkeys will also produce a diagnostic.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Add new `createScope` and `createSymbol` APIs which construct subclasses of `OutputScope` and `OutputSymbol`, respectively. These are necessary to register the created scopes and symbols with the new debugger interface.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added a browser-based debugger which is started when the ALLOY_DEBUG environment variable is set. The debugger shows emitted files, scopes, symbols, render nodes, effects, diagnostics, and more.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Added options to `effect` to allow passing debug information that helps identify that effect.
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Tracing will now capture both "trigger" and "triggered-by" events (previously we only traced triggered-by (and called it trigger).
+- [#350](https://github.com/alloy-framework/alloy/pull/350) Print richer stack traces when rendering fails.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+- [#366](https://github.com/alloy-framework/alloy/pull/366) Add SQLite-based trace storage for debug and devtools infrastructure, enabling structured recording of render trees, effects, reactive edges, scopes, symbols, and diagnostics during development builds.
+
+
+## 0.22.0
+
+### Bug Fixes
+
+- [#327](https://github.com/alloy-framework/alloy/pull/327) Fix a bug where tracing would track additional signals.
+
+### Features
+
+- [#339](https://github.com/alloy-framework/alloy/pull/339) Add `sourceFilesForTreeAsync` API for getting source files from a rendered text tree when async jobs are present."
+- [#328](https://github.com/alloy-framework/alloy/pull/328) Add a `createContentSlot` API which returns a component which can be used to detect whether content is added inside it. This can be used to conditionally render fallback content or properly format empty components.
+- [#328](https://github.com/alloy-framework/alloy/pull/328) List, For, and their wrapper components now handle when an element has no content. Show can now be used to conditionally render an item in a list, for example.
+
 ## 0.21.0
 
 ### Bug Fixes
@@ -21,7 +103,6 @@
 - [#284](https://github.com/alloy-framework/alloy/pull/284) Name policy's element can now be undefined, which leaves the name as-is.
 - [#245](https://github.com/alloy-framework/alloy/pull/245) Adds a new type of Alloy child, CustomChildElement, that is based on the presence of a symbol property.
 
-
 ## 0.20.0
 
 ### Bug Fixes
@@ -40,7 +121,6 @@
 ### Breaking Changes
 
 - [#206](https://github.com/alloy-framework/alloy/pull/206) Update core's representation of symbols and scopes. These changes should not impact usage of language components in code generators, but there are some significant changes for language library implementations. See https://github.com/alloy-framework/alloy/pull/206 for more details.
-
 
 ## 0.19.0
 
@@ -63,20 +143,17 @@
 
 - [#253](https://github.com/alloy-framework/alloy/pull/253) The `writeOutput` function is now async.
 
-
 ## 0.18.2
 
 ### Bug Fixes
 
 - Fix invalid .d.ts import
 
-
 ## 0.18.1
 
 ### Bug Fixes
 
 - [#232](https://github.com/alloy-framework/alloy/pull/232) Improve `toRenderTo` test matcher to work better with SourceFiles
-
 
 ## 0.18.0
 
@@ -87,7 +164,6 @@
 ### Features
 
 - [#198](https://github.com/alloy-framework/alloy/pull/198) Add `inline` option for `<Block>` component to define inline blocks
-
 
 ## 0.17.0
 
@@ -103,14 +179,12 @@
 - [#157](https://github.com/alloy-framework/alloy/pull/157) Refactor symbols to drastically simplify and optimize their usage. Symbols and scopes are now classes, and languages subclass these to add additional behaviors. Many binder APIs which operated on scopes or symbols are now methods on scopes or symbols.
 - [#157](https://github.com/alloy-framework/alloy/pull/157) New takeSymbol/emitSymbol APIs added for passing symbols up the render tree to components which accept them. This is a generalization of the pattern in AssignmentTargetContext, so that context has been deleted.
 
-
 ## 0.16.0
 
 ### Features
 
 - [#150](https://github.com/alloy-framework/alloy/pull/150) Export `isRef` and `isReactive` utility functions.
 - [#150](https://github.com/alloy-framework/alloy/pull/150) Fully resolve refkeys given to the first part of a MemberExpression.
-
 
 ## 0.15.0
 
@@ -126,7 +200,6 @@ No changes, version bump only.
 
 - [#137](https://github.com/alloy-framework/alloy/pull/137) Fix default symbol conflict resolver not working with more than 2 symbols.
 
-
 ## 0.12.0
 
 ### Bug Fixes
@@ -141,7 +214,6 @@ No changes, version bump only.
 
 - [#127](https://github.com/alloy-framework/alloy/pull/127) Use a scheduler for effects. Effects are no longer run instantly but are queued to run after the current effect finishes. This significantly reduces effect calls due to coalescing multiple updates and also enables more recursive patterns.
 
-
 ## 0.11.0
 
 ### Bug Fixes
@@ -153,7 +225,6 @@ No changes, version bump only.
 
 - [#104](https://github.com/alloy-framework/alloy/pull/104) Add new `<ReferenceOrContent />` component
 - [#105](https://github.com/alloy-framework/alloy/pull/105) Updated dependencies
-
 
 ## 0.10.0
 
@@ -167,7 +238,6 @@ No changes, version bump only.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) Add getSymbolForRefkey to binder.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) isComponentCreator now takes an optional Component parameter which allows you to check if a child is a specific component.
 - [#80](https://github.com/alloy-framework/alloy/pull/80) Export `toRef` and `toRefs` utility functions for constructing refs from reactives.
-
 
 ## 0.8.0
 
@@ -194,7 +264,6 @@ No changes, version bump only.
 - [#74](https://github.com/alloy-framework/alloy/pull/74) Remove plural `refkeys` prop. Can now pass an array for the `refkey` prop.
 - [#68](https://github.com/alloy-framework/alloy/pull/68) Indent component no longer takes `break` prop. Instead, pass `hardline`, `softline`, `line`, or `literalline` boolean props.
 
-
 ## 0.7.0
 
 ### Bug Fixes
@@ -204,7 +273,6 @@ No changes, version bump only.
 ### Breaking Changes
 
 - [#61](https://github.com/alloy-framework/alloy/pull/61) Symbols now allow for multiple refkeys. The `refkey` property has been removed, however the refkey prop remains on declaration components and the refkey option remains for the binder's createSymbol, so the breakage should be limited to code which interacts directly with symbols."
-
 
 ## 0.6.0
 
@@ -249,7 +317,6 @@ No changes, version bump only.
 - [#56](https://github.com/alloy-framework/alloy/pull/56) Added support for formatting primitives to produce formatted output. This includes elements like `group` and `fill` for attempting to fit text on a single line, `hbr`, `sbr`, `lbr`, and `br` for introducing line breaks, `align` for padding output, and more. All the built-in components have been updated to generate nicely formatted code.
 - [#55](https://github.com/alloy-framework/alloy/pull/55) `mapJoin` now properly handles reactive sources. To support this, the array source must be wrapped in a callback. For example, `mapJoin(someArray, ...)` needs to be updated to `mapJoin(() => someArray, ...)`. The return value of `mapJoin` is now a memo rather than an array.
 
-
 ## 0.5.0
 
 ### Features
@@ -257,7 +324,6 @@ No changes, version bump only.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Add support for adding refkeys to symbols after symbol creation.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Improve types of JSX elements so typescript and editors can provide accurate errors when providing props to components. For example, component props can be unions of props interfaces, enabling an overload-like pattern.
 - [#50](https://github.com/alloy-framework/alloy/pull/50) Add Tappers, which allow getting a reference to contexts provided by nested components from a parent component. Useful for allowing nested components to create things like symbols when the parent component merely needs access to it but doesn't care how its created.
-
 
 ## 0.4.0
 
@@ -269,19 +335,14 @@ No changes, version bump only.
 
 - [#48](https://github.com/alloy-framework/alloy/pull/48) Add browser mappings to enable running in browser
 
-
 ## 0.3.0
 
 ### Features
 
 - [#38](https://github.com/alloy-framework/alloy/pull/38) Add indent prop to source files for setting indent level.
 
-
-
-
 ## 0.2.0
 
 ### Bug Fixes
 
 - [#31](https://github.com/alloy-framework/alloy/pull/31) Update license to MIT
-

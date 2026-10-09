@@ -1,13 +1,13 @@
 import { writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
+
 import { describe, expect, it } from "vitest";
+
 import {
   TemplateFile,
   TemplateVariable,
 } from "../../src/components/TemplateFile.jsx";
-import { renderAsync } from "../../src/render.js";
-import "../../testing/extend-expect.js";
 import { d } from "../../testing/render.js";
 
 describe("TemplateFile", () => {
@@ -82,21 +82,22 @@ describe("TemplateFile", () => {
     await expect(result).toRenderToAsync("Hello Bob!");
   });
 
-  it("should throw error for missing template variables", async () => {
+  it("should emit diagnostic for missing template variables", async () => {
     const templatePath = join(tmpdir(), "test-missing-var-template.txt");
     const templateContent = "Hello {{ name }}! Your age is {{ age }}.";
     writeFileSync(templatePath, templateContent);
 
     await expect(
-      async () =>
-        await renderAsync(
-          <TemplateFile src={templatePath} path="output.txt">
-            <TemplateVariable name="name" value="Charlie" />
-          </TemplateFile>,
-        ),
-    ).rejects.toThrow(
-      'Template variable "age" not found in TemplateVariable children',
-    );
+      <TemplateFile src={templatePath} path="output.txt">
+        <TemplateVariable name="name" value="Charlie" />
+      </TemplateFile>,
+    ).toHaveDiagnosticsAsync([
+      {
+        message:
+          'Template variable "age" not found in TemplateVariable children',
+        severity: "error",
+      },
+    ]);
   });
 
   it("should handle template with no variables", async () => {

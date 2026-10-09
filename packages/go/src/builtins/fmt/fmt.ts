@@ -1,4 +1,5 @@
-import { createModule, StrictDescriptor } from "../../create-module.js";
+import type { StrictDescriptor } from "../../create-module.js";
+import { createModule } from "../../create-module.js";
 
 export const fmt = createModule(
   "fmt",

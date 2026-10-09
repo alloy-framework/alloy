@@ -1,12 +1,13 @@
-import { Children, code } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code } from "@alloy-js/core";
+
 import { ArgumentList } from "./ArgumentList.jsx";
-import { CommonDeclarationProps } from "./Declaration.js";
-import { ModifierProps } from "./Modifiers.jsx";
+import type { CommonDeclarationProps } from "./Declaration.js";
+import type { ModifierProps } from "./Modifiers.jsx";
 import { Variable } from "./Variable.js";
 
 export interface ObjectDeclarationProps
-  extends CommonDeclarationProps,
-    ModifierProps {
+  extends CommonDeclarationProps, ModifierProps {
   type: Children;
   args?: Children[];
 }

@@ -1,5 +1,6 @@
 import { Compile, ItemGroup } from "@alloy-js/msbuild/components";
 import { expect, it } from "vitest";
+
 import { CsprojFile } from "./csproj-file.jsx";
 
 it("create empty .csproj file", () => {

@@ -1,12 +1,14 @@
+import type { Namekey, OutputSpace } from "@alloy-js/core";
 import {
-  Namekey,
-  OutputSpace,
+  createSymbol,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
 } from "@alloy-js/core";
-import { GoSymbol, GoSymbolOptions } from "./go.js";
+
+import type { GoSymbolOptions } from "./go.js";
+import { GoSymbol } from "./go.js";
 
 // represents a symbol from a .go file. Struct, interface, etc.
 export type NamedTypeTypeKind =
@@ -62,7 +64,8 @@ export class NamedTypeSymbol extends GoSymbol {
 
   copy() {
     const options = this.getGoCopyOptions();
-    const copy = new NamedTypeSymbol(
+    const copy = createSymbol(
+      NamedTypeSymbol,
       this.name,
       undefined,
       this.#typeKind,

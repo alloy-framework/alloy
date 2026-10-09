@@ -4,7 +4,7 @@ import System from "../../../index.js";
 import Serialization from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type JsonLibrary = LibrarySymbolReference & {
   DataContractJsonSerializer: LibrarySymbolReference & {

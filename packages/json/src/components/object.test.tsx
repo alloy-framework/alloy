@@ -1,7 +1,6 @@
-import { List, Output, reactive, renderTree } from "@alloy-js/core";
-import "@alloy-js/core/testing";
-import { d, printTree } from "@alloy-js/core/testing";
+import { List, Output, reactive } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { jsonTest } from "../../test/utils.jsx";
 import { JsonObject, JsonObjectProperty } from "./json-object.jsx";
 import { SourceFile } from "./source-file.jsx";
@@ -59,17 +58,18 @@ it("works reactively", () => {
   const obj = reactive({ a: 1 } as Record<string, unknown>);
 
   const template = jsonTest(obj);
-  const tree = renderTree(template);
 
-  expect(printTree(tree)).toEqual(d`
+  expect(template).toRenderTo(`
     {
       "a": 1
     }
   `);
 
+  const tree = template;
+
   (obj.a as any)++;
 
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     {
       "a": 2
     }
@@ -77,7 +77,7 @@ it("works reactively", () => {
 
   obj.b = "hello";
 
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     {
       "a": 2,
       "b": "hello"

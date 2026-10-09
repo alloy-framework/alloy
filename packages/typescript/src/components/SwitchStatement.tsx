@@ -1,4 +1,5 @@
 import { Block, Indent, Match, Switch, type Children } from "@alloy-js/core";
+
 import { BlockScope } from "./BlockScope.jsx";
 import { ValueExpression } from "./ValueExpression.jsx";
 
@@ -54,12 +55,13 @@ export function CaseClause(props: CaseClauseProps) {
         <Match when={"default" in props && props.default}>default</Match>
         <Match else>
           case{" "}
-          {"expression" in props ?
+          {"expression" in props ? (
             props.expression
-          : <ValueExpression
+          ) : (
+            <ValueExpression
               jsValue={(props as CaseClausePropsWithValue).jsValue}
             />
-          }
+          )}
         </Match>
       </Switch>
       {": "}

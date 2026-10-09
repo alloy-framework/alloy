@@ -1,16 +1,19 @@
 {
   "name": "@alloy-js/create",
-  "version": "0.21.0",
+  "version": "0.25.0",
   "description": "Create an Alloy project with npm init @alloy-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "main": "./dist/src/index.js",
   "bin": "./dist/src/index.js",
   "scripts": {
-    "build": "node scripts/gen-deps.js && alloy build",
+    "build": "node scripts/gen-deps.js && alloy build --with-dev",
     "clean": "rimraf dist/ .temp/",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "watch": "alloy build --watch",
-    "prepack": "node ../../scripts/strip-dev-exports.js"
+    "watch": "alloy build --watch"
   },
   "keywords": [],
   "author": "brian.terlson@microsoft.com",
@@ -18,7 +21,7 @@
   "dependencies": {
     "@alloy-js/core": "workspace:~",
     "@alloy-js/typescript": "workspace:~",
-    "prompts": "^2.4.2"
+    "prompts": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/babel-plugin": "workspace:~",
@@ -26,9 +29,9 @@
     "@alloy-js/rollup-plugin": "workspace:~",
     "@rollup/plugin-typescript": "catalog:",
     "@types/node": "catalog:",
-    "@types/prompts": "^2.4.9",
+    "@types/prompts": "catalog:",
     "concurrently": "catalog:",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+
 import { TypeParameterConstraints } from "./type-parameter-constraints.jsx";
 
 it("renders nothing if there is no constraints", () => {

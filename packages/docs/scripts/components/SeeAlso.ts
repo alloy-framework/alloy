@@ -6,6 +6,7 @@ import type {
   DocLinkTag,
   DocParagraph,
 } from "@microsoft/tsdoc";
+
 import { MdxSection, TsDoc } from "./stc/index.js";
 import { resolveCodeDestination } from "./TsDoc.js";
 

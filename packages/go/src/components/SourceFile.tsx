@@ -1,5 +1,6 @@
 import {
   SourceFile as CoreSourceFile,
+  createScope,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -7,11 +8,12 @@ import {
   type Children,
 } from "@alloy-js/core";
 import { join } from "pathe";
+
 import { usePackage } from "../scopes/package.js";
 import { GoSourceFileScope } from "../scopes/source-file.js";
+import { LineComment } from "./doc/comment.js";
 import { ImportStatements } from "./ImportStatement.js";
 import { Reference } from "./Reference.js";
-import { LineComment } from "./doc/comment.js";
 
 export interface SourceFileProps {
   path: string;
@@ -27,7 +29,7 @@ export function SourceFile(props: SourceFileProps) {
   const directoryContext = useContext(SourceDirectoryContext)!;
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
-  const scope = new GoSourceFileScope(path, pkg);
+  const scope = createScope(GoSourceFileScope, path, pkg);
 
   const header = (
     <SourceFileHeader

@@ -1,15 +1,15 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
-  Children,
   code,
   createSymbolSlot,
   Declaration,
   For,
   Indent,
-  Namekey,
-  Refkey,
 } from "@alloy-js/core";
+
 import { createParameterSymbol } from "../../symbols/factories.js";
-import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { Name } from "../Name.jsx";
 
 export interface ParameterProps {
@@ -82,9 +82,11 @@ export function Parameter(props: ParameterProps) {
     );
   }
   const modifier =
-    modifiers.length === 0 ? ""
-    : modifiers[0] === "refReadonly" ? "ref readonly "
-    : modifiers[0] + " ";
+    modifiers.length === 0
+      ? ""
+      : modifiers[0] === "refReadonly"
+        ? "ref readonly "
+        : modifiers[0] + " ";
   return (
     <Declaration symbol={memberSymbol}>
       <AttributeList attributes={props.attributes} endline />

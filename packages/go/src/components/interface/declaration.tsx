@@ -1,19 +1,18 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   Declaration,
   DeclarationContext,
   effect,
   For,
   memo,
-  Namekey,
-  Refkey,
   Scope,
   Show,
   takeSymbols,
   useContext,
   watch,
 } from "@alloy-js/core";
+
 import { useGoScope, useNamedTypeScope } from "../../scopes/contexts.js";
 import {
   createFunctionScope,
@@ -24,15 +23,14 @@ import {
   createAnonymousTypeSymbol,
   createInterfaceMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol } from "../../symbols/go.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import type { GoSymbol } from "../../symbols/go.js";
+import type { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-import {
-  FunctionParameterProps,
-  FunctionParameters,
-} from "../parameters/parameters.js";
-import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
+import type { FunctionParameterProps } from "../parameters/parameters.js";
+import { FunctionParameters } from "../parameters/parameters.js";
+import type { TypeDeclarationProps } from "../type/declaration.jsx";
+import { TypeDeclaration } from "../type/declaration.jsx";
 
 /**
  * Properties for creating an interface declaration.
@@ -56,8 +54,7 @@ export interface InterfaceDeclarationProps {
  * This is a combination of `InterfaceDeclarationProps` and `TypeDeclarationProps`.
  */
 export interface InterfaceTypeDeclarationProps
-  extends InterfaceDeclarationProps,
-    TypeDeclarationProps {}
+  extends InterfaceDeclarationProps, TypeDeclarationProps {}
 
 /**
  * Wrapper for creating a named interface type declaration.
@@ -136,9 +133,11 @@ export function InterfaceDeclaration(props: InterfaceDeclarationProps) {
   return (
     <>
       interface
-      {interfaceScope ?
+      {interfaceScope ? (
         <Scope value={interfaceScope}>{content}</Scope>
-      : content}
+      ) : (
+        content
+      )}
     </>
   );
 }
@@ -170,9 +169,7 @@ export function InterfaceFunction(props: InterfaceFunctionProps) {
         </Show>
         func <Name />
         <FunctionParameters parameters={props.parameters} />
-        {props.returns ?
-          <> {props.returns}</>
-        : null}
+        {props.returns ? <> {props.returns}</> : null}
       </Scope>
     </Declaration>
   );

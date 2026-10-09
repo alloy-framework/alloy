@@ -1,4 +1,5 @@
-import { Children, code, For, Indent, List, Prose, Show } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, For, Indent, List, Prose, Show } from "@alloy-js/core";
 
 export interface DocCommentProps {
   children: Children;

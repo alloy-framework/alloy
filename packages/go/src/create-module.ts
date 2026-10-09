@@ -1,6 +1,6 @@
+import type { Binder, LibrarySymbolReference } from "@alloy-js/core";
 import {
-  Binder,
-  LibrarySymbolReference,
+  createSymbol,
   namekey,
   refkey,
   REFKEYABLE,
@@ -8,6 +8,7 @@ import {
   useBinder,
 } from "@alloy-js/core";
 import { basename } from "pathe";
+
 import { FunctionSymbol, GoSymbol, PackageSymbol } from "./index.js";
 import { NamedTypeSymbol } from "./symbols/named-type.js";
 
@@ -41,26 +42,30 @@ export interface NamedTypeDescriptor<M extends Record<string, Descriptor>> {
   members: M;
 }
 
-export interface TypeDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface TypeDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "type";
 }
 
-export interface PackageDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface PackageDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "package";
   path?: string;
   name?: string;
   members: M;
 }
 
-export interface StructDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface StructDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "struct";
 }
 
-export interface InterfaceDescriptor<M extends Record<string, Descriptor>>
-  extends NamedTypeDescriptor<M> {
+export interface InterfaceDescriptor<
+  M extends Record<string, Descriptor>,
+> extends NamedTypeDescriptor<M> {
   kind: "interface";
 }
 
@@ -87,9 +92,9 @@ export type StrictDescriptor =
   | EmbedDescriptor;
 
 export type ResolveDescriptor<D> =
-  D extends NamedTypeDescriptor<infer M> ?
-    LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
-  : LibrarySymbolReference;
+  D extends NamedTypeDescriptor<infer M>
+    ? LibrarySymbolReference & { [K in keyof M]: ResolveDescriptor<M[K]> }
+    : LibrarySymbolReference;
 
 export type LibraryFrom<T> = ResolveDescriptor<T> & LibrarySymbolReference;
 
@@ -191,14 +196,13 @@ function createSymbolFromDescriptor(
       if (ownerSymbol === null) {
         const dname = basename(name);
         const packageName = descriptor.name ?? dname;
-        const packageSymbol = new PackageSymbol(packageName, undefined, {
+        return createSymbol(PackageSymbol, packageName, undefined, {
           binder,
           refkeys: refkey(),
           lazyMemberInitializer,
           path: descriptor.path,
           builtin: context.builtin,
         });
-        return packageSymbol;
       }
       if (!(ownerSymbol instanceof PackageSymbol)) {
         throw new Error(
@@ -208,7 +212,7 @@ function createSymbolFromDescriptor(
       if (ownerSymbol.members.symbolNames.has(name)) {
         return ownerSymbol.members.symbolNames.get(name)! as PackageSymbol;
       }
-      return new PackageSymbol(name, ownerSymbol as PackageSymbol, {
+      return createSymbol(PackageSymbol, name, ownerSymbol as PackageSymbol, {
         binder,
         refkeys: refkey(),
         lazyMemberInitializer,
@@ -223,7 +227,8 @@ function createSymbolFromDescriptor(
           `Cannot create a named type symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new NamedTypeSymbol(
+      return createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
         descriptor.kind,
@@ -239,7 +244,7 @@ function createSymbolFromDescriptor(
           `Cannot create a function symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new FunctionSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(FunctionSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
       });
@@ -249,20 +254,22 @@ function createSymbolFromDescriptor(
           `Cannot create a field symbol (${name}) with a non-named-type owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new NamedTypeSymbol(
+      return createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
-        ownerSymbol.typeKind === "interface" ?
-          "interface-member"
-        : "struct-member",
+        ownerSymbol.typeKind === "interface"
+          ? "interface-member"
+          : "struct-member",
         {
           binder,
           refkeys: refkey(),
           type:
-            descriptor.type === undefined ? undefined
-            : typeof descriptor.type === "function" ?
-              descriptor.type()[TO_SYMBOL]()
-            : descriptor.type[TO_SYMBOL](),
+            descriptor.type === undefined
+              ? undefined
+              : typeof descriptor.type === "function"
+                ? descriptor.type()[TO_SYMBOL]()
+                : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
         },
       );
@@ -272,20 +279,22 @@ function createSymbolFromDescriptor(
           `Cannot create a field symbol (${name}) with a non-named-type owner symbol (${ownerSymbol.name}).`,
         );
       }
-      const symbol = new NamedTypeSymbol(
+      const symbol = createSymbol(
+        NamedTypeSymbol,
         namekey(name),
         ownerSymbol.members,
-        ownerSymbol.typeKind === "interface" ?
-          "interface-member"
-        : "struct-member",
+        ownerSymbol.typeKind === "interface"
+          ? "interface-member"
+          : "struct-member",
         {
           binder,
           refkeys: refkey(),
           type:
-            descriptor.type === undefined ? undefined
-            : typeof descriptor.type === "function" ?
-              descriptor.type()[TO_SYMBOL]()
-            : descriptor.type[TO_SYMBOL](),
+            descriptor.type === undefined
+              ? undefined
+              : typeof descriptor.type === "function"
+                ? descriptor.type()[TO_SYMBOL]()
+                : descriptor.type[TO_SYMBOL](),
           lazyMemberInitializer,
         },
       );
@@ -298,14 +307,15 @@ function createSymbolFromDescriptor(
           `Cannot create a variable symbol (${name}) with a non-package owner symbol (${ownerSymbol.name}).`,
         );
       }
-      return new GoSymbol(namekey(name), ownerSymbol.members, {
+      return createSymbol(GoSymbol, namekey(name), ownerSymbol.members, {
         binder,
         refkeys: refkey(),
         type:
-          descriptor.type === undefined ? undefined
-          : typeof descriptor.type === "function" ?
-            descriptor.type()[TO_SYMBOL]()
-          : descriptor.type[TO_SYMBOL](),
+          descriptor.type === undefined
+            ? undefined
+            : typeof descriptor.type === "function"
+              ? descriptor.type()[TO_SYMBOL]()
+              : descriptor.type[TO_SYMBOL](),
       });
     default:
       throw "Unsupported";

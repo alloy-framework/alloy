@@ -1,4 +1,5 @@
-import { ComponentContext, createContext, useContext } from "@alloy-js/core";
+import type { ComponentContext } from "@alloy-js/core";
+import { createNamedContext, useContext } from "@alloy-js/core";
 
 interface TypeRefContext {
   /** If in a type context */
@@ -9,7 +10,7 @@ interface TypeRefContext {
  * Provides scopes for instance and static private members.
  */
 export const TypeRefContext: ComponentContext<TypeRefContext> =
-  createContext<TypeRefContext>();
+  createNamedContext<TypeRefContext>("@alloy-js/typescript TypeRef");
 
 /**
  * @returns 'true' if in a type context, 'false' if in a value context.

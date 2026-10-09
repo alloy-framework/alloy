@@ -3,7 +3,7 @@ import System from "../index.js";
 import Expressions from "../Linq/Expressions/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type DynamicLibrary = LibrarySymbolReference & {
   BinaryOperationBinder: LibrarySymbolReference & {

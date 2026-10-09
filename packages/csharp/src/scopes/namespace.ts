@@ -1,4 +1,6 @@
-import { OutputScope, useScope } from "@alloy-js/core";
+import type { OutputScope } from "@alloy-js/core";
+import { createScope, useScope } from "@alloy-js/core";
+
 import type { NamespaceSymbol } from "../symbols/namespace.js";
 import { CSharpNamedTypeScope } from "./named-type.js";
 import { CSharpSourceFileScope } from "./source-file.js";
@@ -32,7 +34,7 @@ export function createCSharpNamespaceScope(namespaceSymbol: NamespaceSymbol) {
     );
   }
 
-  const scope = new CSharpNamespaceScope(namespaceSymbol, parentScope);
+  const scope = createScope(CSharpNamespaceScope, namespaceSymbol, parentScope);
 
   return scope;
 }

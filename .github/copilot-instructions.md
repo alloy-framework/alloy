@@ -14,3 +14,5 @@ This repository is built on alloy which use JSX to define components. This is NO
   - component should be named using `PascalCase`
   - if component needs props, an interface should be defined with the name `<ComponentName>Props`
   - DO NOT destructure props in the component definition
+
+Do not update changelogs, these are managed by `npx chronus`.

@@ -11,7 +11,9 @@ export default function transformFragmentChildren(path, children, results, confi
         if (v.length) memo.push(t.stringLiteral(v));
       } else {
         const child = transformNode(path, { topLevel: true, fragmentChild: true, lastElement: true });
-        memo.push(getCreateTemplate(config, path, child)(path, child, true));
+        if (child) {
+          memo.push(getCreateTemplate(config, path, child)(path, child, true));
+        }
       }
       return memo;
     }, []);

@@ -2,7 +2,7 @@ import Generic from "../Collections/Generic/index.js";
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Expressions } from "./Expressions/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Expressions } from "./Expressions/index.js";
 
 type LinqLibrary = LibrarySymbolReference & {
   Enumerable: LibrarySymbolReference & {

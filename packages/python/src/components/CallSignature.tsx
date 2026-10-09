@@ -1,18 +1,12 @@
-import {
-  Children,
-  computed,
-  createSymbolSlot,
-  For,
-  Show,
-  SymbolSlot,
-} from "@alloy-js/core";
-import {
-  isParameterDescriptor,
-  ParameterDescriptor,
-} from "../parameter-descriptor.js";
+import type { Children, SymbolSlot } from "@alloy-js/core";
+import { computed, createSymbolSlot, For, Show } from "@alloy-js/core";
+
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
+import { isParameterDescriptor } from "../parameter-descriptor.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { PythonOutputSymbol } from "../symbols/index.js";
+import type { PythonOutputSymbol } from "../symbols/index.js";
 import { Atom } from "./Atom.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export type ParameterMarker = "*" | "/";
 
@@ -44,9 +38,9 @@ export interface CallSignatureParametersProps {
 export function CallSignatureParameters(props: CallSignatureParametersProps) {
   const parameterList = computed(() => {
     const params = (props.parameters ?? []).map((p) => {
-      return isParameterMarker(p) ? p : (
-          parameter(normalizeAndDeclareParameter(p))
-        );
+      return isParameterMarker(p)
+        ? p
+        : parameter(normalizeAndDeclareParameter(p));
     });
 
     // Add *args if specified
@@ -75,7 +69,10 @@ function parameter(param: DeclaredParameterDescriptor) {
     <group>
       {param.symbol.name}
       <Show when={!!param.type}>
-        : <TypeSlot>{param.type}</TypeSlot>
+        :{" "}
+        <TypeRefContext>
+          <TypeSlot>{param.type}</TypeSlot>
+        </TypeRefContext>
       </Show>
       <Show when={param.default !== undefined}>
         <Show when={!param.type}>=</Show>
@@ -88,8 +85,10 @@ function parameter(param: DeclaredParameterDescriptor) {
   );
 }
 
-interface DeclaredParameterDescriptor
-  extends Omit<ParameterDescriptor, "name"> {
+interface DeclaredParameterDescriptor extends Omit<
+  ParameterDescriptor,
+  "name"
+> {
   symbol: PythonOutputSymbol;
   TypeSlot?: SymbolSlot;
 }
@@ -178,15 +177,15 @@ export function CallSignature(props: CallSignatureProps) {
       kwargs={props.kwargs}
     />
   );
-  const typeParams =
-    props.typeParameters ? `[${props.typeParameters.join(", ")}]` : "";
-  const sReturnType =
-    props.returnType ?
-      <>
-        {" -> "}
-        {props.returnType}
-      </>
-    : undefined;
+  const typeParams = props.typeParameters
+    ? `[${props.typeParameters.join(", ")}]`
+    : "";
+  const sReturnType = props.returnType ? (
+    <>
+      {" -> "}
+      <TypeRefContext>{props.returnType}</TypeRefContext>
+    </>
+  ) : undefined;
 
   return (
     <>

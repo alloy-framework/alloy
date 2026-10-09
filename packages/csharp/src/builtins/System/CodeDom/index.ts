@@ -1,5 +1,5 @@
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Compiler } from "./Compiler/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Compiler } from "./Compiler/index.js";
 
 type CodeDomLibrary = LibrarySymbolReference & {
 

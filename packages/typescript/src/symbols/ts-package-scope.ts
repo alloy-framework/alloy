@@ -1,11 +1,8 @@
-import {
-  OutputScope,
-  OutputScopeOptions,
-  Refkey,
-  shallowReactive,
-} from "@alloy-js/core";
+import type { OutputScopeOptions, Refkey } from "@alloy-js/core";
+import { OutputScope, shallowReactive } from "@alloy-js/core";
+
 import { modulePath } from "../utils.js";
-import { TSModuleScope } from "./ts-module-scope.js";
+import type { TSModuleScope } from "./ts-module-scope.js";
 
 export interface TSPackageScopeOptions extends OutputScopeOptions {
   builtin?: boolean;
@@ -98,5 +95,14 @@ export class TSPackageScope extends OutputScope {
 
   copyTo(): TSPackageScope {
     throw new Error("Not supported");
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      version: this.version,
+      path: this.path,
+      builtin: this.builtin,
+    };
   }
 }

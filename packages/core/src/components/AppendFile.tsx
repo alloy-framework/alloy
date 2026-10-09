@@ -1,9 +1,12 @@
 import { computed } from "@vue/reactivity";
 import { join } from "pathe";
+
 import { useContext } from "../context.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
+import { emitDiagnostic } from "../diagnostics.js";
 import { createFileResource } from "../resource.js";
-import { Children, isComponentCreator } from "../runtime/component.js";
+import type { Children } from "../runtime/component.js";
+import { isComponentCreator } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { SourceFile } from "./SourceFile.jsx";
 
@@ -98,9 +101,11 @@ export function AppendFile(props: AppendFileProps): Children {
       } else if ("content" in regionProps) {
         content = regionProps.content;
       } else {
-        throw new Error(
-          `AppendRegion "${regionProps.id}" must have either children or content`,
-        );
+        emitDiagnostic({
+          message: `AppendRegion "${regionProps.id}" must have either children or content`,
+          severity: "error",
+        });
+        // Still register the region to avoid duplicate "region not found" diagnostic
       }
 
       appendRegions[regionProps.id] = content;
@@ -115,9 +120,10 @@ export function AppendFile(props: AppendFileProps): Children {
   // Validate that all requested regions have corresponding AppendRegion children
   for (const regionId of regions) {
     if (!(regionId in appendRegions)) {
-      throw new Error(
-        `Region "${regionId}" specified but no corresponding AppendRegion child found`,
-      );
+      emitDiagnostic({
+        message: `Region "${regionId}" specified but no corresponding AppendRegion child found`,
+        severity: "error",
+      });
     }
   }
 
@@ -181,9 +187,10 @@ export function AppendFile(props: AppendFileProps): Children {
     for (const regionId of regions) {
       const info = sigilInfo[regionId];
       if (info && info.start !== null && info.end === null) {
-        throw new Error(
-          `Region "${regionId}" has start sigil but no corresponding end sigil`,
-        );
+        emitDiagnostic({
+          message: `Region "${regionId}" has start sigil but no corresponding end sigil`,
+          severity: "error",
+        });
       }
     }
 

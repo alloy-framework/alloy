@@ -1,4 +1,5 @@
-import { Children, mapJoin } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { mapJoin } from "@alloy-js/core";
 
 export interface ParametersProps {
   parameters?: Record<string, Children>; // Map parameter name to type

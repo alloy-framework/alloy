@@ -1,6 +1,9 @@
 import { computed } from "@vue/reactivity";
+
+import { emitDiagnostic } from "../diagnostics.js";
 import { createFileResource } from "../resource.js";
-import { Children, isComponentCreator } from "../runtime/component.js";
+import type { Children } from "../runtime/component.js";
+import { isComponentCreator } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 import { SourceFile } from "./SourceFile.jsx";
 
@@ -85,9 +88,12 @@ export function TemplateFile(props: TemplateFileProps): Children {
     } else if ("value" in variableProps) {
       value = variableProps.value;
     } else {
-      throw new Error(
-        `TemplateVariable "${variableProps.name}" must have either children or value`,
-      );
+      emitDiagnostic({
+        message: `TemplateVariable "${variableProps.name}" must have either children or value`,
+        severity: "error",
+      });
+      // Still register the variable to avoid duplicate diagnostics
+      value = "";
     }
 
     templateVariables[variableProps.name] = value;
@@ -100,9 +106,11 @@ export function TemplateFile(props: TemplateFileProps): Children {
     }
 
     if (templateResource.error) {
-      throw new Error(
-        `Failed to read template file "${props.src}": ${templateResource.error}`,
-      );
+      emitDiagnostic({
+        message: `Failed to read template file "${props.src}": ${templateResource.error}`,
+        severity: "error",
+      });
+      return "";
     }
 
     const templateContent = templateResource.data!;
@@ -131,9 +139,12 @@ export function TemplateFile(props: TemplateFileProps): Children {
       if (variableName in templateVariables) {
         result.push(templateVariables[variableName]);
       } else {
-        throw new Error(
-          `Template variable "${variableName}" not found in TemplateVariable children`,
-        );
+        emitDiagnostic({
+          message: `Template variable "${variableName}" not found in TemplateVariable children`,
+          severity: "error",
+        });
+        // Keep the placeholder in the output to make the error visible
+        result.push(`{{ ${variableName} }}`);
       }
 
       lastIndex = matchStart + fullMatch.length;

@@ -1,4 +1,6 @@
-import { isRef, reactive, Ref } from "@vue/reactivity";
+import type { Ref } from "@vue/reactivity";
+import { isRef, reactive } from "@vue/reactivity";
+
 import { AlloyHost } from "./host/alloy-host.js";
 import { effect } from "./reactivity.js";
 import { trackPromise } from "./scheduler.js";
@@ -101,26 +103,35 @@ export function createResource<T, U>(
         }),
     );
   } else {
-    effect(() => {
-      let input: T;
-      if (isRef(getter)) {
-        input = getter.value;
-      } else {
-        input = getter();
-      }
-      const promise = (fetcher as (input: T) => Promise<U>)(input);
-      trackPromise(promise);
-      promise.then(
-        (result) => {
-          resource.data = result;
-          resource.loading = false;
+    effect(
+      () => {
+        let input: T;
+        if (isRef(getter)) {
+          input = getter.value;
+        } else {
+          input = getter();
+        }
+        const promise = (fetcher as (input: T) => Promise<U>)(input);
+        trackPromise(promise);
+        promise.then(
+          (result) => {
+            resource.data = result;
+            resource.loading = false;
+          },
+          (error) => {
+            resource.error = error;
+            resource.loading = false;
+          },
+        );
+      },
+      undefined,
+      {
+        debug: {
+          name: "resource:fetch",
+          type: "resource",
         },
-        (error) => {
-          resource.error = error;
-          resource.loading = false;
-        },
-      );
-    });
+      },
+    );
   }
 
   return resource;

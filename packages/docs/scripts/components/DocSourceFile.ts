@@ -1,6 +1,7 @@
 import { type Children } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/core/stc";
 import { ApiItem } from "@microsoft/api-extractor-model";
+
 import { Reference } from "./Reference.js";
 import { DocDeclaration, Frontmatter } from "./stc/index.js";
 
@@ -16,9 +17,11 @@ export interface DocSourceFileProps {
 
 export function DocSourceFile(props: DocSourceFileProps) {
   const descriptors =
-    props.declares === undefined ? []
-    : Array.isArray(props.declares) ? props.declares
-    : [props.declares];
+    props.declares === undefined
+      ? []
+      : Array.isArray(props.declares)
+        ? props.declares
+        : [props.declares];
 
   const declarations = descriptors.map((descriptor) => {
     if (isApiItem(descriptor)) {

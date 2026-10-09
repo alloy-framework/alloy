@@ -299,6 +299,51 @@ function toPropertyName(name) {
   return name.toLowerCase().replace(/-([a-z])/g, (_, w) => w.toUpperCase());
 }
 
+const MAX_EXPR_NAME_LEN = 50;
+
+/**
+ * Generate a short human-readable description from an AST expression node,
+ * used to name memoized expressions for debug tracing.
+ */
+function describeExpression(node, depth = 0) {
+  if (depth > 4) return "…";
+  if (t__namespace.isIdentifier(node)) return node.name;
+  if (t__namespace.isMemberExpression(node) || t__namespace.isOptionalMemberExpression(node)) {
+    const obj = describeExpression(node.object, depth + 1);
+    if (!obj) return null;
+    if (node.computed) {
+      const prop = t__namespace.isIdentifier(node.property) ? node.property.name :
+        t__namespace.isStringLiteral(node.property) ? node.property.value :
+        t__namespace.isNumericLiteral(node.property) ? String(node.property.value) : "…";
+      return truncName(`${obj}[${prop}]`);
+    }
+    return truncName(`${obj}.${node.property.name || "?"}`);
+  }
+  if (t__namespace.isCallExpression(node) || t__namespace.isOptionalCallExpression(node)) {
+    const callee = describeExpression(node.callee, depth + 1);
+    return callee ? truncName(`${callee}(…)`) : null;
+  }
+  if (t__namespace.isConditionalExpression(node)) {
+    const test = describeExpression(node.test, depth + 1);
+    return test ? truncName(`${test} ? …`) : null;
+  }
+  if (t__namespace.isLogicalExpression(node)) {
+    const left = describeExpression(node.left, depth + 1);
+    return left ? truncName(`${left} ${node.operator} …`) : null;
+  }
+  if (t__namespace.isTemplateLiteral(node)) return "template";
+  if (t__namespace.isArrowFunctionExpression(node) || t__namespace.isFunctionExpression(node)) {
+    // Try to describe the body
+    const body = t__namespace.isBlockStatement(node.body) ? null : describeExpression(node.body, depth + 1);
+    return body ? truncName(`() => ${body}`) : null;
+  }
+  return null;
+}
+
+function truncName(s) {
+  return s != null && s.length > MAX_EXPR_NAME_LEN ? s.slice(0, MAX_EXPR_NAME_LEN - 1) + "…" : s;
+}
+
 function transformCondition(path, inline, deep) {
   const config = getConfig(path);
   const expr = path.node;
@@ -865,7 +910,14 @@ function createTemplate(path, result, wrap) {
     }
   }
   if (wrap && result.dynamic && config.memoWrapper) {
-    return t__namespace.callExpression(registerImportMethod(path, config.memoWrapper), [result.exprs[0]]);
+    const args = [result.exprs[0]];
+    if (config.addSourceInfo) {
+      const name = describeExpression(
+        t__namespace.isArrowFunctionExpression(result.exprs[0]) ? result.exprs[0].body : result.exprs[0]
+      );
+      if (name) args.push(t__namespace.booleanLiteral(false), t__namespace.stringLiteral(name));
+    }
+    return t__namespace.callExpression(registerImportMethod(path, config.memoWrapper), args);
   }
   return result.exprs[0];
 }
@@ -1148,6 +1200,25 @@ function transformComponent(path) {
     props = [t__namespace.callExpression(registerImportMethod(path, "mergeProps"), props)];
   }
   const componentArgs = [tagId, props[0]];
+  
+  // Add source location when enabled
+  if (config.generate !== "ssr" && config.addSourceInfo) {
+    const loc = path.node.loc;
+    if (loc && loc.start) {
+      // Use import.meta.url so the path resolves to the installed location at
+      // runtime rather than being a hardcoded absolute path from the build machine.
+      const importMetaUrl = t__namespace.memberExpression(
+        t__namespace.metaProperty(t__namespace.identifier("import"), t__namespace.identifier("meta")),
+        t__namespace.identifier("url"),
+      );
+      const sourceInfo = t__namespace.objectExpression([
+        t__namespace.objectProperty(t__namespace.identifier("fileName"), importMetaUrl),
+        t__namespace.objectProperty(t__namespace.identifier("lineNumber"), t__namespace.numericLiteral(loc.start.line)),
+        t__namespace.objectProperty(t__namespace.identifier("columnNumber"), t__namespace.numericLiteral(loc.start.column + 1))
+      ]);
+      componentArgs.push(sourceInfo);
+    }
+  }
 
   exprs.push(t__namespace.callExpression(registerImportMethod(path, isComponentTag ? "createComponent" : "createIntrinsic"), componentArgs));
 
@@ -1227,7 +1298,9 @@ function transformFragmentChildren(path, children, results, config) {
         if (v.length) memo.push(t__namespace.stringLiteral(v));
       } else {
         const child = transformNode(path, { fragmentChild: true});
-        memo.push(getCreateTemplate(config, path, child)(path, child, true));
+        if (child) {
+          memo.push(getCreateTemplate(config, path, child)(path, child, true));
+        }
       }
       return memo;
     }, []);
@@ -1429,6 +1502,11 @@ var postprocess = path => {
   }
 };
 
+const defaultAddSourceInfo = (() => {
+  const envMode = process.env.BABEL_ENV ?? process.env.NODE_ENV;
+  return envMode === undefined ? true : envMode !== "production";
+})();
+
 var config = {
   moduleName: "dom",
   generate: "dom",
@@ -1445,6 +1523,8 @@ var config = {
   memoWrapper: "memo",
   validate: true,
   preserveWhitespace: false,
+  // Whether to include fileName/lineNumber/columnNumber debug info in JSX output
+  addSourceInfo: defaultAddSourceInfo,
 };
 
 const { isValidHTMLNesting } = require("validate-html-nesting");

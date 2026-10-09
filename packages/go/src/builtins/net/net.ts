@@ -1,4 +1,5 @@
-import { createModule, StrictDescriptor } from "../../create-module.js";
+import type { StrictDescriptor } from "../../create-module.js";
+import { createModule } from "../../create-module.js";
 import { ioRef } from "../io/io.js";
 
 export const net = createModule(

@@ -1,10 +1,6 @@
-import {
-  Namekey,
-  OutputSpace,
-  OutputSymbol,
-  OutputSymbolOptions,
-  refkey,
-} from "@alloy-js/core";
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
+import { createSymbol, OutputSymbol, refkey } from "@alloy-js/core";
+
 import { usePackage } from "../components/PackageDirectory.jsx";
 
 export interface JavaOutputSymbolOptions extends OutputSymbolOptions {
@@ -40,19 +36,28 @@ export class JavaOutputSymbol extends OutputSymbol {
     } else {
       const parentPackage = usePackage();
       this.#package =
-        (options.package ?? parentPackage !== null) ?
-          parentPackage?.qualifiedName
-        : "";
+        (options.package ?? parentPackage !== null)
+          ? parentPackage?.qualifiedName
+          : "";
     }
   }
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new JavaOutputSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(JavaOutputSymbol, this.name, undefined, {
       ...options,
+      binder,
       package: this.#package,
     });
     this.initializeCopy(copy);
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      package: this.#package,
+    };
   }
 }

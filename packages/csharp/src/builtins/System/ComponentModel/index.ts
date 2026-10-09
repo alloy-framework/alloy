@@ -4,7 +4,7 @@ import System from "../index.js";
 import Threading from "../Threading/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as DataAnnotations } from "./DataAnnotations/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as DataAnnotations } from "./DataAnnotations/index.js";
 export { default as Design } from "./Design/index.js";
 
 type ComponentModelLibrary = LibrarySymbolReference & {

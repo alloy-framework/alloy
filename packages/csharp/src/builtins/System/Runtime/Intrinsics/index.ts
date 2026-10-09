@@ -1,7 +1,7 @@
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Arm } from "./Arm/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Arm } from "./Arm/index.js";
 export { default as Wasm } from "./Wasm/index.js";
 export { default as X86 } from "./X86/index.js";
 

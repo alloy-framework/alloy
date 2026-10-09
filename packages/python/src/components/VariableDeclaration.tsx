@@ -1,15 +1,17 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   Declaration as CoreDeclaration,
   Name,
   Show,
   createSymbolSlot,
   memo,
 } from "@alloy-js/core";
+
 import { createPythonSymbol } from "../symbol-creation.js";
 import { Atom } from "./Atom.jsx";
-import { BaseDeclarationProps } from "./Declaration.jsx";
+import type { BaseDeclarationProps } from "./Declaration.jsx";
 import { SimpleCommentBlock } from "./PyDoc.jsx";
+import { TypeRefContext } from "./TypeRefContext.jsx";
 
 export interface VariableDeclarationProps extends BaseDeclarationProps {
   /**
@@ -93,16 +95,19 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
     if (!props.type || props.callStatementVar) return undefined;
     return (
       <>
-        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+        :{" "}
+        <TypeRefContext>
+          <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+        </TypeRefContext>
       </>
     );
   });
 
   // If we receive a symbol, resolve it to a name
   const value =
-    typeof props.initializer === "object" ?
-      memo(() => props.initializer)
-    : props.initializer;
+    typeof props.initializer === "object"
+      ? memo(() => props.initializer)
+      : props.initializer;
   const assignmentOperator = props.callStatementVar ? "=" : " = ";
   const getRightSide = () => {
     // Early return for omitNone case

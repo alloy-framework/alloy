@@ -1,4 +1,5 @@
 import { useScope } from "@alloy-js/core";
+
 import { GoFunctionScope } from "./function.js";
 import { GoScope } from "./go.js";
 import { GoLexicalScope } from "./lexical.js";

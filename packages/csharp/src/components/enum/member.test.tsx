@@ -1,21 +1,21 @@
-import { TestNamespace, toSourceText } from "#test/utils.jsx";
 import { namekey } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
+import { TestNamespace } from "#test/utils.jsx";
+
+import { Attribute } from "../attributes/attributes.jsx";
 import { EnumDeclaration } from "./declaration.jsx";
 import { EnumMember } from "./member.jsx";
 
 it("declares enum with members", () => {
-  const res = toSourceText(
-    <EnumDeclaration public name="TestEnum">
-      <EnumMember name="One" />,<hbr />
-      <EnumMember name="Two" />
-    </EnumDeclaration>,
-  );
-
-  expect(res).toBe(d`
-    namespace TestCode;
-
+  expect(
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum">
+        <EnumMember name="One" />,<hbr />
+        <EnumMember name="Two" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
     public enum TestEnum
     {
         One,
@@ -41,5 +41,43 @@ it("takes a namekey", () => {
         MyMember
     }
     Foo.MyMember;
+  `);
+});
+
+it("renders doc comment", () => {
+  expect(
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum">
+        <EnumMember name="One" doc="First value" />,<hbr />
+        <EnumMember name="Two" doc="Second value" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public enum TestEnum
+    {
+        /// First value
+        One,
+        /// Second value
+        Two
+    }
+  `);
+});
+
+it("specify attributes", () => {
+  expect(
+    <TestNamespace>
+      <EnumDeclaration public name="TestEnum">
+        <EnumMember name="One" attributes={[<Attribute name="Obsolete" />]} />,
+        <hbr />
+        <EnumMember name="Two" />
+      </EnumDeclaration>
+    </TestNamespace>,
+  ).toRenderTo(`
+    public enum TestEnum
+    {
+        [Obsolete]
+        One,
+        Two
+    }
   `);
 });

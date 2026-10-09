@@ -1,11 +1,12 @@
 import { join } from "pathe";
+
 import { useContext } from "../context.js";
 import { useFormatOptions } from "../context/format-options.js";
 import { SourceDirectoryContext } from "../context/source-directory.js";
 import { SourceFileContext } from "../context/source-file.js";
+import type { PrintTreeOptions } from "../output-types.js";
 import { getContext } from "../reactivity.js";
-import { Refkey } from "../refkey.js";
-import { PrintTreeOptions } from "../render.js";
+import type { Refkey } from "../refkey.js";
 import type { Children, ComponentDefinition } from "../runtime/component.js";
 import { Show } from "./Show.jsx";
 
@@ -17,6 +18,11 @@ export interface SourceFileProps extends PrintTreeOptions {
 
   /**
    * The type of contents in this file.
+   *
+   * @remarks
+   * This is a metadata hint only. It does not trigger formatting or content
+   * processing. The value is forwarded to debug tooling and the
+   * `ContentOutputFile` output metadata.
    */
   filetype: string;
 
@@ -28,8 +34,23 @@ export interface SourceFileProps extends PrintTreeOptions {
    */
   reference?: ComponentDefinition<{ refkey: Refkey }>;
   /**
-   * The header of the file. This is rendered before the contents of the file.
-   * This is useful for adding license headers or other metadata to the file.
+   * Content rendered before the file body, separated from it by a hard line
+   * break. The separator is emitted whenever `header` is not `undefined` —
+   * including when it is an empty string or a component that renders nothing.
+   * To suppress both the header and the separator, omit this prop entirely.
+   *
+   * @example
+   * ```tsx
+   * // Omitting `header` suppresses both header and separator:
+   * <SourceFile filetype="txt" path="output/data.txt">
+   *   {children}
+   * </SourceFile>
+   *
+   * // An empty string still emits the separator newline:
+   * <SourceFile filetype="txt" path="output/data.txt" header="">
+   *   {children}
+   * </SourceFile>
+   * ```
    */
   header?: Children;
 }

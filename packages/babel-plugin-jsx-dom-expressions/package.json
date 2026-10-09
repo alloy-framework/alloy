@@ -1,12 +1,12 @@
 {
   "name": "@alloy-js/babel-plugin-jsx-dom-expressions",
   "description": "A JSX to DOM plugin that wraps expressions for fine grained change detection, modified for Alloy",
-  "version": "0.39.1",
+  "version": "0.40.0",
   "author": "Ryan Carniato",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ryansolid/dom-expressions/blob/main/packages/babel-plugin-jsx-dom-expressions"
+    "url": "git+https://github.com/alloy-framework/alloy.git"
   },
   "readmeFilename": "README.md",
   "main": "index.js",
@@ -27,7 +27,7 @@
     "@babel/core": "^7.24.7"
   },
   "devDependencies": {
-    "@babel/core": "catalog:",
+    "@babel/core": "^8.0.1",
     "@rollup/plugin-node-resolve": "catalog:",
     "rollup": "catalog:"
   },

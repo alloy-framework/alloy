@@ -1,17 +1,15 @@
-import {
-  MemberDeclaration as CoreMemberDeclaration,
+import type {
   MemberDeclarationPropsWithInfo as CoreMemberDeclarationPropsWithInfo,
   MemberDeclarationPropsWithSymbol as CoreMemberDeclarationPropsWithSymbol,
 } from "@alloy-js/core";
-import { TypeScriptElements, useTSNamePolicy } from "../name-policy.js";
-import {
-  createStaticMemberSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import { MemberDeclaration as CoreMemberDeclaration } from "@alloy-js/core";
 
-export interface MemberDeclarationPropsWithInfo
-  extends CoreMemberDeclarationPropsWithInfo {
+import type { TypeScriptElements } from "../name-policy.js";
+import { useTSNamePolicy } from "../name-policy.js";
+import type { TSOutputSymbol } from "../symbols/index.js";
+import { createStaticMemberSymbol, TSSymbolFlags } from "../symbols/index.js";
+
+export interface MemberDeclarationPropsWithInfo extends CoreMemberDeclarationPropsWithInfo {
   /**
    * The name policy kind to apply to the memberdeclaration.
    */
@@ -22,8 +20,7 @@ export interface MemberDeclarationPropsWithInfo
   nullish?: boolean;
 }
 
-export interface MemberDeclarationPropsWithSymbol
-  extends CoreMemberDeclarationPropsWithSymbol {
+export interface MemberDeclarationPropsWithSymbol extends CoreMemberDeclarationPropsWithSymbol {
   /**
    * The symbol for the member declaration.
    */
@@ -40,8 +37,9 @@ export function MemberDeclaration(props: Readonly<MemberDeclarationProps>) {
   if ("symbol" in props) {
     sym = props.symbol;
   } else {
-    const tsFlags: TSSymbolFlags =
-      props.nullish ? TSSymbolFlags.Nullish : TSSymbolFlags.None;
+    const tsFlags: TSSymbolFlags = props.nullish
+      ? TSSymbolFlags.Nullish
+      : TSSymbolFlags.None;
 
     sym = createStaticMemberSymbol(props.name!, {
       refkeys: props.refkey,

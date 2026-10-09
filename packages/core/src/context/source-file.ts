@@ -1,6 +1,7 @@
-import { ComponentContext, createNamedContext } from "../context.js";
+import type { ComponentContext } from "../context.js";
+import { createNamedContext } from "../context.js";
 import type { Refkey } from "../refkey.js";
-import { ComponentDefinition } from "../runtime/component.js";
+import type { ComponentDefinition } from "../runtime/component.js";
 
 export interface CopyFileContext {
   path: string;

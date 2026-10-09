@@ -1,6 +1,7 @@
-import { List, Output, refkey, render } from "@alloy-js/core";
+import { List, Output, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { assertFileContents, TestPackage } from "../../../test/utils.js";
+
+import { TestPackage } from "../../../test/utils.js";
 import { ModuleDirectory } from "../ModuleDirectory.jsx";
 import { SourceDirectory } from "../SourceDirectory.jsx";
 import { SourceFile } from "../SourceFile.jsx";
@@ -324,7 +325,7 @@ describe("embedded", () => {
     const TestInterface = refkey("TestInterface");
     const TestInterfaceEmbed = refkey("TestInterfaceEmbed");
 
-    const res = render(
+    expect(
       <Output>
         <ModuleDirectory name="github.com/alloy-framework/alloy">
           <SourceDirectory path=".">
@@ -356,9 +357,7 @@ describe("embedded", () => {
           </SourceDirectory>
         </ModuleDirectory>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "hello/types.go": `
         package hello
 

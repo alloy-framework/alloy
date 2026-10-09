@@ -1,5 +1,5 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   For,
   Indent,
   List,
@@ -9,7 +9,8 @@ import {
   computed,
   isKeyedChild,
 } from "@alloy-js/core";
-import { ParameterDescriptor } from "../parameter-descriptor.js";
+
+import type { ParameterDescriptor } from "../parameter-descriptor.js";
 import { Atom } from "./Atom.jsx";
 
 export interface FunctionDocProps {
@@ -537,8 +538,10 @@ function GoogleStylePropertyDoc(props: GoogleStylePropertyDocProps) {
   return <PyDoc>{children}</PyDoc>;
 }
 
-interface GoogleStyleGeneratorDocProps
-  extends Omit<GeneratorDocProps, "style"> {}
+interface GoogleStyleGeneratorDocProps extends Omit<
+  GeneratorDocProps,
+  "style"
+> {}
 
 /**
  * A component that creates a GoogleStyleGeneratorDoc block for generators.
@@ -577,8 +580,10 @@ function GoogleStyleGeneratorDoc(props: GoogleStyleGeneratorDocProps) {
   return <PyDoc>{children}</PyDoc>;
 }
 
-interface GoogleStyleExceptionDocProps
-  extends Omit<ExceptionDocProps, "style"> {}
+interface GoogleStyleExceptionDocProps extends Omit<
+  ExceptionDocProps,
+  "style"
+> {}
 
 /**
  * A component that creates a GoogleStyleExceptionDoc block for exceptions.
@@ -612,8 +617,10 @@ function GoogleStyleExceptionDoc(props: GoogleStyleExceptionDocProps) {
   return <PyDoc>{children}</PyDoc>;
 }
 
-interface GoogleStyleAttributeDocProps
-  extends Omit<AttributeDocProps, "style"> {}
+interface GoogleStyleAttributeDocProps extends Omit<
+  AttributeDocProps,
+  "style"
+> {}
 
 /**
  * A component that creates a GoogleStyleAttributeDoc block for attributes.

@@ -3,7 +3,7 @@ import System from "../../index.js";
 import Security from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as X509Certificates } from "./X509Certificates/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as X509Certificates } from "./X509Certificates/index.js";
 
 type CryptographyLibrary = LibrarySymbolReference & {
   Aes: LibrarySymbolReference & {

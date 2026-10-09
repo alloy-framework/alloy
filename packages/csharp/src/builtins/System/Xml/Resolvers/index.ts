@@ -2,7 +2,7 @@ import Generic from "../../Collections/Generic/index.js";
 import Net from "../../Net/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type ResolversLibrary = LibrarySymbolReference & {
   XmlKnownDtds: LibrarySymbolReference & {

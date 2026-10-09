@@ -1,4 +1,5 @@
 import { computed } from "@vue/reactivity";
+
 import type { Children } from "../runtime/component.js";
 import { childrenArray } from "../utils.jsx";
 
@@ -22,7 +23,7 @@ export function Prose(props: Prose) {
             .map((word, index, array) => (
               <>
                 {word}
-                {index < array.length - 1 && <br />}
+                {/*@once*/ index < array.length - 1 && <br />}
               </>
             ));
         }

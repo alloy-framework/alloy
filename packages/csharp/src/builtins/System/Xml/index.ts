@@ -6,7 +6,7 @@ import Text from "../Text/index.js";
 import Schema from "./Schema/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Linq } from "./Linq/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Linq } from "./Linq/index.js";
 export { default as Resolvers } from "./Resolvers/index.js";
 export { default as Schema } from "./Schema/index.js";
 export { default as Serialization } from "./Serialization/index.js";

@@ -1,4 +1,18 @@
+/**
+ * JSX intrinsic element type table.
+ *
+ * The interface enumerates every Alloy primitive layout element
+ * (`<group>`, `<indent>`, `<hardline>`, `<ifBreak>`, …) along with
+ * its prop shape, so TS can type-check JSX uses like `<group
+ * shouldBreak>{...}</group>`. There are no runtime values in this
+ * file: at JSX-compile time `<group ...>` becomes `createIntrinsic(
+ * "group", props)` (see {@link runtime/create-intrinsic}), which
+ * lowers directly into an `ElementNode` whose `localName` is the
+ * intrinsic kind.
+ */
+
 import type { Children } from "./component.js";
+
 export interface IntrinsicElements {
   /**
    * Attempt to render the children on a single line if possible. If a group
@@ -127,73 +141,3 @@ export interface IntrinsicElements {
    */
   dedentToRoot: { children: Children };
 }
-export interface IntrinsicElementBase<
-  TKey extends keyof IntrinsicElements = keyof IntrinsicElements,
-> {
-  [intrinsicElementKey]: true;
-  name: TKey;
-  props: IntrinsicElements[TKey];
-}
-
-export function createIntrinsic<TKey extends keyof IntrinsicElements>(
-  name: TKey,
-  props: IntrinsicElements[TKey],
-): IntrinsicElementBase<TKey> {
-  return {
-    [intrinsicElementKey]: true,
-    name,
-    props,
-  };
-}
-
-export function isIntrinsicElement(type: unknown): type is IntrinsicElement {
-  return (
-    typeof type === "object" && type !== null && intrinsicElementKey in type
-  );
-}
-
-export const intrinsicElementKey = Symbol();
-export type IndentIntrinsicElement = IntrinsicElementBase<"indent">;
-export type IndentIfBreakIntrinsicElement =
-  IntrinsicElementBase<"indentIfBreak">;
-export type BrIntrinsicElement = IntrinsicElementBase<"br">;
-export type LineIntrinsicElement = IntrinsicElementBase<"line">;
-export type HbrIntrinsicElement = IntrinsicElementBase<"hbr">;
-export type HardlineIntrinsicElement = IntrinsicElementBase<"hardline">;
-export type SbrIntrinsicElement = IntrinsicElementBase<"sbr">;
-export type SoftlineIntrinsicElement = IntrinsicElementBase<"softline">;
-export type GroupIntrinsicElement = IntrinsicElementBase<"group">;
-export type AlignIntrinsicElement = IntrinsicElementBase<"align">;
-export type FillIntrinsicElement = IntrinsicElementBase<"fill">;
-export type BreakParentIntrinsicElement = IntrinsicElementBase<"breakParent">;
-export type LineSuffixIntrinsicElement = IntrinsicElementBase<"lineSuffix">;
-export type LineSuffixBoundaryIntrinsicElement =
-  IntrinsicElementBase<"lineSuffixBoundary">;
-export type DedentIntrinsicElement = IntrinsicElementBase<"dedent">;
-export type DedentToRootIntrinsicElement = IntrinsicElementBase<"dedentToRoot">;
-export type MarkAsRootIntrinsicElement = IntrinsicElementBase<"markAsRoot">;
-export type LiterallineIntrinsicElement = IntrinsicElementBase<"literalline">;
-export type LbrIntrinsicElement = IntrinsicElementBase<"lbr">;
-export type IfBreakIntrinsicElement = IntrinsicElementBase<"ifBreak">;
-
-export type IntrinsicElement =
-  | IndentIntrinsicElement
-  | IndentIfBreakIntrinsicElement
-  | BrIntrinsicElement
-  | LineIntrinsicElement
-  | HbrIntrinsicElement
-  | HardlineIntrinsicElement
-  | SbrIntrinsicElement
-  | SoftlineIntrinsicElement
-  | GroupIntrinsicElement
-  | AlignIntrinsicElement
-  | FillIntrinsicElement
-  | BreakParentIntrinsicElement
-  | LineSuffixIntrinsicElement
-  | LineSuffixBoundaryIntrinsicElement
-  | DedentIntrinsicElement
-  | LiterallineIntrinsicElement
-  | LbrIntrinsicElement
-  | DedentToRootIntrinsicElement
-  | MarkAsRootIntrinsicElement
-  | IfBreakIntrinsicElement;

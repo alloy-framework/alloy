@@ -1,16 +1,17 @@
+import type { Children, ComponentContext } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createContext,
+  createScope,
   Scope,
   SourceDirectory,
   useContext,
 } from "@alloy-js/core";
-import {
+
+import type {
   GradleProjectConfig,
-  JavaProjectScope,
   MavenProjectConfig,
 } from "../symbols/index.js";
+import { JavaProjectScope } from "../symbols/index.js";
 import { MavenProject } from "./MavenProject.js";
 
 export interface ProjectContext {
@@ -41,7 +42,7 @@ export interface ProjectDirectoryProps {
  * with a build tool included (maven, gradle etc).
  */
 export function ProjectDirectory(props: ProjectDirectoryProps) {
-  const scope = new JavaProjectScope(props.name, {
+  const scope = createScope(JavaProjectScope, props.name, {
     mavenProjectConfig: props.mavenProjectConfig,
     gradleProjectConfig: props.gradleProjectConfig,
   });
@@ -62,9 +63,9 @@ export function ProjectDirectory(props: ProjectDirectoryProps) {
           <SourceDirectory path={defaultCodePath}>
             {props.children}
           </SourceDirectory>
-          {scope.mavenProjectConfig ?
+          {scope.mavenProjectConfig ? (
             <MavenProject projectConfig={scope.mavenProjectConfig} />
-          : undefined}
+          ) : undefined}
         </ProjectContext.Provider>
       </Scope>
     </>

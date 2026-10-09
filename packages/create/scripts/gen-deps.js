@@ -1,6 +1,7 @@
 import fs from "fs/promises";
-import yaml from "js-yaml";
 import path from "path";
+
+import { load } from "js-yaml";
 
 async function generateDepsVersions() {
   // Get current directory (assuming script is run from package root)
@@ -17,7 +18,7 @@ async function generateDepsVersions() {
 
   // Load workspace yaml for catalog
   const workspaceYamlPath = path.join(packageDir, "../../pnpm-workspace.yaml");
-  const workspaceYaml = yaml.load(await fs.readFile(workspaceYamlPath, "utf8"));
+  const workspaceYaml = load(await fs.readFile(workspaceYamlPath, "utf8"));
   const catalog = workspaceYaml.catalog || {};
 
   // Generate versions object

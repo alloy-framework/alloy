@@ -1,6 +1,8 @@
 import { Block } from "@alloy-js/core";
-import { Children } from "@alloy-js/core/jsx-runtime";
-import { ModifierProps, Modifiers } from "./Modifiers.jsx";
+import type { Children } from "@alloy-js/core/jsx-runtime";
+
+import type { ModifierProps } from "./Modifiers.jsx";
+import { Modifiers } from "./Modifiers.jsx";
 import { Name } from "./Name.js";
 import { Parameters } from "./Parameters.js";
 

@@ -1,7 +1,7 @@
+import type { OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
-  OutputSpace,
+  createSymbol,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
@@ -52,12 +52,23 @@ export class JsonOutputSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new JsonOutputSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(JsonOutputSymbol, this.name, undefined, {
       ...options,
+      binder,
       jsonFlags: this.#jsonFlags,
     });
     this.initializeCopy(copy);
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      jsonFlags: this.#jsonFlags,
+      isObject: Boolean(this.#jsonFlags & JsonSymbolFlags.Object),
+      isArray: Boolean(this.#jsonFlags & JsonSymbolFlags.Array),
+    };
   }
 
   get staticMembers() {

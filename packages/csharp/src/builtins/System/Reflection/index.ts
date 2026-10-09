@@ -5,7 +5,7 @@ import System from "../index.js";
 import Security from "../Security/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Emit } from "./Emit/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Emit } from "./Emit/index.js";
 export { default as Metadata } from "./Metadata/index.js";
 export { default as PortableExecutable } from "./PortableExecutable/index.js";
 

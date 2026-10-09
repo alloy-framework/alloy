@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Children, RENDERABLE } from "../../src/runtime/component.js";
-import "../../testing/extend-expect.js";
+
+import type { Children } from "../../src/runtime/component.js";
+import { RENDERABLE } from "../../src/runtime/component.js";
 describe("string nodes", () => {
   it("renders string nodes with substitutions", () => {
     const str = "hi";
@@ -165,4 +166,8 @@ it("keeps spaces between expressions", () => {
       a {str} {str} {getStr()} {getStr()} c
     </>,
   ).toRenderTo("a str str getStr getStr c");
+});
+
+it("renders numbers", () => {
+  expect(<>200</>).toRenderTo("200");
 });

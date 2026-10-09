@@ -1,4 +1,4 @@
-import { text, type Children } from "@alloy-js/core";
+import { text, useContext, type Children } from "@alloy-js/core";
 import {
   br,
   group,
@@ -13,7 +13,9 @@ import type {
   ApiInterface,
   ApiPropertySignature,
 } from "@microsoft/api-extractor-model";
+
 import type { ComponentApi } from "../../build-json.js";
+import { ImportPathContext } from "../../contexts/import-path.js";
 import { flattenedMembers } from "../../utils.js";
 import { Code, MdxParagraph } from "../stc/index.js";
 
@@ -44,6 +46,7 @@ export function ComponentSignature(props: ComponentSignatureProps) {
 
   const name = props.component.componentFunction.name;
   const packageSrc =
+    useContext(ImportPathContext) ??
     props.component.componentFunction.getAssociatedPackage()?.displayName;
 
   const jsxCode = text`

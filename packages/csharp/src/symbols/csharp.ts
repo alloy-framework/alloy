@@ -1,19 +1,19 @@
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
-  Namekey,
+  createSymbol,
   OutputDeclarationSpace,
   OutputMemberSpace,
-  OutputSpace,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
-import { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
+
+import type { AccessModifiers, NonAccessModifiers } from "../modifiers.js";
 import type { CSharpScope } from "../scopes/csharp.js";
-import { NamespaceSymbol } from "./namespace.js";
+import type { NamespaceSymbol } from "./namespace.js";
 
 export type DeclaredAccessibility =
   | "private"
@@ -105,8 +105,6 @@ export class CSharpSymbol extends OutputSymbol {
       return (firstSpace.scope as CSharpScope).enclosingNamespace;
     }
     throw new Error("No place to get namespace symbol from");
-
-    return undefined;
   }
 
   #accessibility: DeclaredAccessibility | undefined;
@@ -128,8 +126,10 @@ export class CSharpSymbol extends OutputSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new CSharpSymbol(this.name, undefined, {
+    const binder = this.binder;
+    const copy = createSymbol(CSharpSymbol, this.name, undefined, {
       ...options,
+      binder,
       accessibility: this.#accessibility,
       isStatic: this.#isStatic,
       isVirtual: this.#isVirtual,
@@ -149,6 +149,22 @@ export class CSharpSymbol extends OutputSymbol {
     );
 
     return copy;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      kind: this.symbolKind,
+      accessibility: this.accessibility,
+      isAbstract: this.isAbstract,
+      isVirtual: this.isVirtual,
+      isOverride: this.isOverride,
+      isStatic: this.isStatic,
+      isSealed: this.isSealed,
+      isExtern: this.isExtern,
+      isReadOnly: this.isReadOnly,
+      isNullable: this.isNullable,
+    };
   }
 
   /**

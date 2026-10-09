@@ -1,13 +1,14 @@
+import type { Children, ComponentContext } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createContext,
+  createScope,
   Scope,
   SourceDirectory,
   SourceDirectoryContext,
   useContext,
   useScope,
 } from "@alloy-js/core";
+
 import { JavaPackageScope } from "../symbols/java-package-scope.js";
 
 export interface PackageDirectoryContext {
@@ -39,13 +40,16 @@ export function PackageDirectory(props: PackageDirectoryProps) {
   const packageNames = props.package.split(".");
   const packageName = packageNames[0];
 
-  const fullyQualifiedPackageName =
-    parentPackage ?
-      parentPackage.qualifiedName + "." + packageName
+  const fullyQualifiedPackageName = parentPackage
+    ? parentPackage.qualifiedName + "." + packageName
     : packageName;
 
   const parentScope = useScope();
-  const scope = new JavaPackageScope(fullyQualifiedPackageName, parentScope);
+  const scope = createScope(
+    JavaPackageScope,
+    fullyQualifiedPackageName,
+    parentScope,
+  );
 
   const packagePath = sourceDirectory?.path + "/" + packageName;
   const packageContext: PackageDirectoryContext = {

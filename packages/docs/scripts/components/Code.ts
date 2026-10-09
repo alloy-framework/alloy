@@ -6,13 +6,16 @@ export interface CodeProps {
   children: Children;
 }
 export function Code(props: CodeProps) {
-  return text`
-    <Code
-      code={\`${dedentToRoot().children(
-        indent().children(props.children),
-        hbr(),
-      )}\`}
-      lang="${props.language}"
-    />
-  `;
+  return [
+    text`
+      <Code
+        code={\`${dedentToRoot().children(
+          indent().children(props.children),
+          hbr(),
+        )}\`}
+        lang="${props.language}"
+      />
+    `,
+    "\n\n",
+  ];
 }

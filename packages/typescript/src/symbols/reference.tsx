@@ -1,21 +1,25 @@
-import {
+import type {
   Children,
   MemberResolutionContext,
   MemberResolver,
-  memo,
   Refkey,
+} from "@alloy-js/core";
+import {
+  memo,
+  onCleanup,
   resolve,
   unresolvedRefkey,
   untrack,
   useContext,
 } from "@alloy-js/core";
+
 import { MemberExpression } from "../components/MemberExpression.jsx";
 import { usePackage } from "../components/PackageDirectory.jsx";
 import { SourceFileContext } from "../components/SourceFile.jsx";
-import { TSOutputScope } from "./scopes.js";
+import type { TSOutputScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSModuleScope } from "./ts-module-scope.js";
-import { TSOutputSymbol } from "./ts-output-symbol.js";
+import type { TSOutputSymbol } from "./ts-output-symbol.js";
 import { TSPackageScope } from "./ts-package-scope.js";
 
 export interface RefOptions {
@@ -47,9 +51,11 @@ export function ref(
     // * module: target symbol is in a different module
     // * local: target symbol is within the current module
     const targetLocation =
-      pathDown[0] instanceof TSPackageScope ? "package"
-      : pathDown[0] instanceof TSModuleScope ? "module"
-      : "local";
+      pathDown[0] instanceof TSPackageScope
+        ? "package"
+        : pathDown[0] instanceof TSModuleScope
+          ? "module"
+          : "local";
     let localSymbol: TSOutputSymbol | undefined;
 
     if (targetLocation === "package") {
@@ -65,8 +71,15 @@ export function ref(
       for (const module of sourcePackage.exportedSymbols.values()) {
         for (const refkey of lexicalDeclaration.refkeys) {
           if (module.exportedSymbols.has(refkey)) {
+            const scope = sourceFile!.scope;
+            const targetModule = module;
             localSymbol = untrack(() =>
-              sourceFile!.scope.addImport(lexicalDeclaration, module, {
+              scope.addImport(lexicalDeclaration, targetModule, {
+                type: options?.type,
+              }),
+            );
+            onCleanup(() =>
+              scope.removeImport(lexicalDeclaration, {
                 type: options?.type,
               }),
             );
@@ -81,12 +94,15 @@ export function ref(
         );
       }
     } else if (targetLocation === "module") {
+      const scope = sourceFile!.scope;
+      const targetModule = pathDown[0] as TSModuleScope;
       localSymbol = untrack(() =>
-        sourceFile!.scope.addImport(
-          lexicalDeclaration,
-          pathDown[0] as TSModuleScope,
-          { type: options?.type },
-        ),
+        scope.addImport(lexicalDeclaration, targetModule, {
+          type: options?.type,
+        }),
+      );
+      onCleanup(() =>
+        scope.removeImport(lexicalDeclaration, { type: options?.type }),
       );
     }
 

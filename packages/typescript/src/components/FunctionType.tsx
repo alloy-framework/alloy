@@ -5,8 +5,10 @@ import {
   Show,
   type Children,
 } from "@alloy-js/core";
+
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
 import {
   FunctionParameters,
   FunctionTypeParameters,
@@ -31,7 +33,7 @@ export interface FunctionTypeProps extends CallSignatureProps {
 }
 
 const FunctionTypeComponent = ensureTypeRefContext(
-  (props: FunctionTypeProps) => {
+  function FunctionTypeComponent(props: FunctionTypeProps) {
     const children = childrenArray(() => props.children);
     const typeParametersChildren =
       findKeyedChild(children, TypeParameters.tag) ?? undefined;

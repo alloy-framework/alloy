@@ -1,4 +1,5 @@
 import { markRaw } from "@vue/reactivity";
+
 import { untrack } from "./reactivity.js";
 
 const objectIds = new WeakMap<WeakKey, string>();
@@ -37,8 +38,9 @@ export interface NamekeyOptions {
   ignoreNameConflict?: boolean;
 }
 
-export interface Namekey<TOptions extends NamekeyOptions = NamekeyOptions>
-  extends SymbolRefkey {
+export interface Namekey<
+  TOptions extends NamekeyOptions = NamekeyOptions,
+> extends SymbolRefkey {
   name: string;
   options: TOptions;
 }
@@ -61,9 +63,11 @@ function createSymbolRefkey(key: string): SymbolRefkey {
   return refkey;
 }
 
+// Callables qualify as well as plain objects, so a value can be both a
+// component and a reference to the symbol it declares.
 export function isRefkeyable(value: unknown): value is RefkeyableObject {
   return (
-    typeof value === "object" &&
+    (typeof value === "object" || typeof value === "function") &&
     value !== null &&
     Object.hasOwn(value, REFKEYABLE)
   );
@@ -219,12 +223,11 @@ export function memberRefkey(
 export function inspectRefkey(refkey: Refkey): string {
   const unwrapped = refkey[REFKEYABLE]();
 
-  const text =
-    isMemberRefkey(unwrapped) ?
-      `memberRefkey[${inspectRefkey(unwrapped.base)} -> ${
-        typeof unwrapped.member === "string" ?
-          unwrapped.member
-        : inspectRefkey(unwrapped.member)
+  const text = isMemberRefkey(unwrapped)
+    ? `memberRefkey[${inspectRefkey(unwrapped.base)} -> ${
+        typeof unwrapped.member === "string"
+          ? unwrapped.member
+          : inspectRefkey(unwrapped.member)
       }]`
     : `refkey[${unwrapped.key}]`;
 

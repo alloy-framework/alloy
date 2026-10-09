@@ -1,6 +1,6 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   createSymbolSlot,
   Declaration,
   DeclarationContext,
@@ -8,13 +8,12 @@ import {
   For,
   Indent,
   Name,
-  Namekey,
   onCleanup,
-  Refkey,
   Scope,
   Show,
   useContext,
 } from "@alloy-js/core";
+
 import { useGoScope } from "../../scopes/contexts.js";
 import { createFunctionScope } from "../../scopes/factories.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
@@ -23,18 +22,14 @@ import {
   createParameterSymbol,
 } from "../../symbols/factories.js";
 import { FunctionSymbol } from "../../symbols/function.js";
-import { GoSymbol } from "../../symbols/go.js";
+import type { GoSymbol } from "../../symbols/go.js";
 import { NamedTypeSymbol } from "../../symbols/named-type.js";
-import { TypeParameterSymbol } from "../../symbols/type-parameter.js";
+import type { TypeParameterSymbol } from "../../symbols/type-parameter.js";
 import { LineComment } from "../doc/comment.jsx";
-import {
-  FunctionParameterProps,
-  FunctionParameters,
-} from "../parameters/parameters.jsx";
-import {
-  TypeParameterProps,
-  TypeParameters,
-} from "../parameters/typeparameters.jsx";
+import type { FunctionParameterProps } from "../parameters/parameters.jsx";
+import { FunctionParameters } from "../parameters/parameters.jsx";
+import type { TypeParameterProps } from "../parameters/typeparameters.jsx";
+import { TypeParameters } from "../parameters/typeparameters.jsx";
 
 // properties for creating a function
 export interface FunctionProps {
@@ -90,15 +85,12 @@ export function FunctionDeclaration(props: FunctionProps) {
           <LineComment children={props.doc} />
           <hbr />
         </Show>
-        func{" "}
-        {props.receiver ?
-          <>({props.receiver}) </>
-        : null}
+        func {props.receiver ? <>({props.receiver}) </> : null}
         <Name />
         <TypeParameters parameters={props.typeParameters} />
         <FunctionParameters parameters={props.parameters} />{" "}
-        {props.returns ?
-          Array.isArray(props.returns) && props.returns.length > 1 ?
+        {props.returns ? (
+          Array.isArray(props.returns) && props.returns.length > 1 ? (
             <>
               <group>
                 {"("}
@@ -122,15 +114,19 @@ export function FunctionDeclaration(props: FunctionProps) {
                 {")"}
               </group>{" "}
             </>
-          : <>{props.returns} </>
-        : null}
-        {!props.children ?
+          ) : (
+            <>{props.returns} </>
+          )
+        ) : null}
+        {!props.children ? (
           "{}"
-        : props.singleLine ?
+        ) : props.singleLine ? (
           <>
             {"{"} {props.children} {"}"}
           </>
-        : <Block>{props.children}</Block>}
+        ) : (
+          <Block>{props.children}</Block>
+        )}
       </Scope>
     </Declaration>
   );

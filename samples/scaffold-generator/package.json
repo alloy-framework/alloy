@@ -3,6 +3,10 @@
   "private": "true",
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "main": "index.js",
   "scripts": {
     "build": "alloy build",

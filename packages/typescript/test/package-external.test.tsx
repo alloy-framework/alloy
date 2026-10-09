@@ -1,5 +1,6 @@
 import { Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import * as ts from "../src/index.js";
 
 it("imports external packages", () => {

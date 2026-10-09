@@ -1,4 +1,5 @@
 import type { OutputSpace } from "@alloy-js/core";
+
 import { CSharpLexicalScope } from "./lexical.js";
 
 export class CSharpMethodScope extends CSharpLexicalScope {

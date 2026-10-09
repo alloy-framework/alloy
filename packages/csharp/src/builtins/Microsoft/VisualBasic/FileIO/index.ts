@@ -2,7 +2,7 @@ import ObjectModel from "../../../System/Collections/ObjectModel/index.js";
 import System from "../../../System/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type FileIOLibrary = LibrarySymbolReference & {
   DeleteDirectoryOption: LibrarySymbolReference & {

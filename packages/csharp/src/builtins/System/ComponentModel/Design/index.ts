@@ -3,7 +3,7 @@ import ComponentModel from "../index.js";
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Serialization } from "./Serialization/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Serialization } from "./Serialization/index.js";
 
 type DesignLibrary = LibrarySymbolReference & {
   ActiveDesignerEventArgs: LibrarySymbolReference & {

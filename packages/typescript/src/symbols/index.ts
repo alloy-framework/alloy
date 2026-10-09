@@ -1,15 +1,18 @@
+import type { Namekey, OutputScopeOptions } from "@alloy-js/core";
 import {
   createComponent,
-  Namekey,
+  createScope,
+  createSymbol,
   onCleanup,
-  OutputScopeOptions,
   toRef,
 } from "@alloy-js/core";
+
 import { useLexicalScope, useMemberOwner } from "../utils.js";
 import { useTSScope } from "./scopes.js";
 import { TSLexicalScope } from "./ts-lexical-scope.js";
 import { TSMemberScope } from "./ts-member-scope.js";
-import { CreateTsSymbolOptions, TSOutputSymbol } from "./ts-output-symbol.js";
+import type { CreateTsSymbolOptions } from "./ts-output-symbol.js";
+import { TSOutputSymbol } from "./ts-output-symbol.js";
 
 export * from "./reference.js";
 export * from "./scopes.js";
@@ -25,7 +28,13 @@ export function createTypeAndValueSymbol(
 ) {
   const scope = useLexicalScope();
   const spaces = scope ? [scope.types, scope.values] : [];
-  return new TSOutputSymbol(name, spaces, options);
+  const binder = options.binder ?? scope?.binder;
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createTypeSymbol(
@@ -39,7 +48,13 @@ export function createTypeSymbol(
     );
   }
   const spaces = scope ? [scope.types] : [];
-  return new TSOutputSymbol(name, spaces, options);
+  const binder = options.binder ?? scope?.binder;
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createValueSymbol(
@@ -53,11 +68,17 @@ export function createValueSymbol(
     );
   }
   const spaces = scope ? [scope.values] : [];
-  return new TSOutputSymbol(name, spaces, options);
+  const binder = options.binder ?? scope?.binder;
+  const symbol = createSymbol(TSOutputSymbol, name, spaces, {
+    ...options,
+    binder,
+  });
+  onCleanup(() => symbol.delete());
+  return symbol;
 }
 
 export function createTransientValueSymbol() {
-  return new TSOutputSymbol("transient-value", undefined, {
+  return createSymbol(TSOutputSymbol, "transient-value", undefined, {
     transient: true,
   });
 }
@@ -67,7 +88,11 @@ export function createStaticMemberSymbol(
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
-  return new TSOutputSymbol(name, owner.staticMembers, options);
+  const binder = options.binder ?? owner.binder;
+  return createSymbol(TSOutputSymbol, name, owner.staticMembers, {
+    ...options,
+    binder,
+  });
 }
 
 export function createInstanceMemberSymbol(
@@ -75,7 +100,11 @@ export function createInstanceMemberSymbol(
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
-  return new TSOutputSymbol(name, owner.instanceMembers, options);
+  const binder = options.binder ?? owner.binder;
+  return createSymbol(TSOutputSymbol, name, owner.instanceMembers, {
+    ...options,
+    binder,
+  });
 }
 
 export function createPrivateStaticMemberSymbol(
@@ -83,7 +112,11 @@ export function createPrivateStaticMemberSymbol(
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
-  return new TSOutputSymbol(name, owner.privateStaticMembers, options);
+  const binder = options.binder ?? owner.binder;
+  return createSymbol(TSOutputSymbol, name, owner.privateStaticMembers, {
+    ...options,
+    binder,
+  });
 }
 
 export function createPrivateInstanceMemberSymbol(
@@ -91,7 +124,11 @@ export function createPrivateInstanceMemberSymbol(
   options: CreateTsSymbolOptions = {},
 ) {
   const owner = useMemberOwner();
-  return new TSOutputSymbol(name, owner.privateInstanceMembers, options);
+  const binder = options.binder ?? owner.binder;
+  return createSymbol(TSOutputSymbol, name, owner.privateInstanceMembers, {
+    ...options,
+    binder,
+  });
 }
 
 export function createMemberSymbol(
@@ -120,7 +157,8 @@ export function createLexicalScope(
 ) {
   const parent = useTSScope();
 
-  return new TSLexicalScope(name, parent, options);
+  const binder = options.binder ?? parent?.binder;
+  return createScope(TSLexicalScope, name, parent, { ...options, binder });
 }
 
 export function createMemberScope(
@@ -129,7 +167,11 @@ export function createMemberScope(
   options: OutputScopeOptions = {},
 ) {
   const parent = useTSScope();
-  return new TSMemberScope(name, parent, ownerSymbol, options);
+  const binder = options.binder ?? parent?.binder ?? ownerSymbol.binder;
+  return createScope(TSMemberScope, name, parent, ownerSymbol, {
+    ...options,
+    binder,
+  });
 }
 
 export function decl(namekey: Namekey, options?: CreateTsSymbolOptions) {

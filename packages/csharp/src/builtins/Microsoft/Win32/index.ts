@@ -2,7 +2,7 @@ import SafeHandles from "./SafeHandles/index.js";
 import System from "../../System/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as SafeHandles } from "./SafeHandles/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as SafeHandles } from "./SafeHandles/index.js";
 
 type Win32Library = LibrarySymbolReference & {
   Registry: LibrarySymbolReference & {

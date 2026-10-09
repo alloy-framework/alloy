@@ -1,10 +1,11 @@
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
+
 import { join } from "pathe";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
 import { UpdateFile } from "../../src/components/UpdateFile.jsx";
-import { render } from "../../src/render.js";
-import "../../testing/extend-expect.js";
+import { render } from "../../src/render-output.js";
 import { d } from "../../testing/render.js";
 
 describe("UpdateFile", () => {

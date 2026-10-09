@@ -1,16 +1,12 @@
-import {
-  createOutputBinder,
-  getSymbolCreator,
-  SymbolCreator,
-} from "../binder.js";
+import type { NameConflictResolver, SymbolCreator } from "../binder.js";
+import { createOutputBinder, getSymbolCreator } from "../binder.js";
 import { BinderContext } from "../context/binder.js";
 import { FormatOptions } from "../context/format-options.js";
 import { NamePolicyContext } from "../context/name-policy.js";
-import { NamePolicy } from "../name-policy.js";
-import { PrintTreeOptions } from "../render.js";
+import type { NamePolicy } from "../name-policy.js";
+import type { PrintTreeOptions } from "../output-types.js";
 import type { Children } from "../runtime/component.js";
 import { SourceDirectory } from "./SourceDirectory.js";
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SourceFile } from "./SourceFile.js";
 
@@ -28,8 +24,10 @@ export interface OutputProps extends PrintTreeOptions {
 
   /**
    * Policy for handling multiple symbols declared with the same name.
+   *
+   * @see {@link NameConflictResolver}
    */
-  nameConflictResolver?: (name: string, symbols: any[]) => void;
+  nameConflictResolver?: NameConflictResolver;
 
   /**
    * The base path for the output contents. Defaults to "."
@@ -67,13 +65,16 @@ export function Output(props: OutputProps) {
           printWidth: props.printWidth,
           tabWidth: props.tabWidth,
           useTabs: props.useTabs,
+          insertFinalNewLine: props.insertFinalNewLine,
         }}
       >
-        {props.namePolicy ?
+        {props.namePolicy ? (
           <NamePolicyContext.Provider value={props.namePolicy}>
             {dir}
           </NamePolicyContext.Provider>
-        : dir}
+        ) : (
+          dir
+        )}
       </FormatOptions>
     </BinderContext.Provider>
   );

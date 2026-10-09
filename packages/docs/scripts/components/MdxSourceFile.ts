@@ -1,5 +1,6 @@
 import { type Children } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/core/stc";
+
 import { Reference } from "./Reference.js";
 
 export interface MdxSourceFileProps {

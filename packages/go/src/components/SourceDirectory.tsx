@@ -1,11 +1,12 @@
+import type { SourceDirectoryProps as CoreSourceDirectoryProps } from "@alloy-js/core";
 import {
   SourceDirectory as CoreSourceDirectory,
-  SourceDirectoryProps as CoreSourceDirectoryProps,
   Scope,
   SourceDirectoryContext,
   useContext,
 } from "@alloy-js/core";
 import { basename, join } from "pathe";
+
 import { useModule } from "../scopes/module.js";
 import { createGoPackageScope } from "../scopes/package.js";
 import { createPackageSymbol } from "../symbols/factories.js";

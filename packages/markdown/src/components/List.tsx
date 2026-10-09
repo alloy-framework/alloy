@@ -1,5 +1,6 @@
 import { childrenArray, For } from "@alloy-js/core";
-import { Children, memo } from "@alloy-js/core/jsx-runtime";
+import type { Children } from "@alloy-js/core/jsx-runtime";
+import { memo } from "@alloy-js/core/jsx-runtime";
 
 export interface CommonListProps {
   children: Children;
@@ -37,9 +38,7 @@ export function List(props: ListProps) {
 
         return (
           <align width={alignSize}>
-            {props.ordered ?
-              <>{index + start}.</>
-            : props.bullet}{" "}
+            {props.ordered ? <>{index + start}.</> : props.bullet}{" "}
             {props.tasks && "[ ] "}
             {child}
           </align>

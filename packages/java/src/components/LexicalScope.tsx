@@ -1,9 +1,6 @@
-import {
-  Scope,
-  ScopePropsWithInfo,
-  ScopePropsWithValue,
-  useScope,
-} from "@alloy-js/core";
+import type { ScopePropsWithInfo, ScopePropsWithValue } from "@alloy-js/core";
+import { createScope, Scope, useScope } from "@alloy-js/core";
+
 import { JavaLexicalScope } from "../symbols/index.js";
 
 export interface LexicalScopePropsWithScopeValue extends ScopePropsWithValue {}
@@ -22,9 +19,14 @@ export function LexicalScope(props: LexicalScopeProps) {
     scope = props.value;
   } else {
     const parentScope = useScope();
-    scope = new JavaLexicalScope(props.name ?? "lexical scope", parentScope, {
-      ...props,
-    });
+    scope = createScope(
+      JavaLexicalScope,
+      props.name ?? "lexical scope",
+      parentScope,
+      {
+        ...props,
+      },
+    );
   }
 
   return <Scope value={scope}>{props.children}</Scope>;

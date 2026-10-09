@@ -3,6 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "main": "index.js",
   "scripts": {
     "build": "alloy build",
@@ -18,7 +22,7 @@
     "@types/node": "catalog:",
     "cli-table3": "catalog:",
     "concurrently": "catalog:",
-    "listr2": "^9.0.3",
+    "listr2": "catalog:",
     "typescript": "catalog:"
   },
   "keywords": [],

@@ -1,3 +1,4 @@
+import type { SymbolSlot } from "@alloy-js/core";
 import {
   Block,
   code,
@@ -6,21 +7,18 @@ import {
   Indent,
   onCleanup,
   Show,
-  SymbolSlot,
   taggedComponent,
   type Children,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import type {
   FunctionTypeParameterDescriptor,
   ParameterDescriptor,
 } from "../parameter-descriptor.js";
-import { TypeParameterDescriptor } from "../parameter-descriptor.js";
-import {
-  createValueSymbol,
-  TSOutputSymbol,
-  TSSymbolFlags,
-} from "../symbols/index.js";
+import type { TypeParameterDescriptor } from "../parameter-descriptor.js";
+import type { TSOutputSymbol } from "../symbols/index.js";
+import { createValueSymbol, TSSymbolFlags } from "../symbols/index.js";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
 const functionParametersTag = Symbol();
@@ -151,25 +149,31 @@ function parameter(
       </Show>
       <Show when={!!(param as any).default}>
         {" = "}
-        <param.TypeSlot>{(param as any).default!}</param.TypeSlot>
+        {(param as any).default!}
       </Show>
     </group>
   );
 }
 
-interface DeclaredParameterDescriptor
-  extends Omit<ParameterDescriptor, "name"> {
+interface DeclaredParameterDescriptor extends Omit<
+  ParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
   TypeSlot: SymbolSlot;
 }
-interface DeclaredFunctionTypeParameterDescriptor
-  extends Omit<FunctionTypeParameterDescriptor, "name"> {
+interface DeclaredFunctionTypeParameterDescriptor extends Omit<
+  FunctionTypeParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
   TypeSlot: SymbolSlot;
 }
 
-interface DeclaredTypeParameterDescriptor
-  extends Omit<TypeParameterDescriptor, "name"> {
+interface DeclaredTypeParameterDescriptor extends Omit<
+  TypeParameterDescriptor,
+  "name"
+> {
   symbol: TSOutputSymbol;
 }
 
@@ -212,9 +216,9 @@ function normalizeAndDeclareParameters(
   } else {
     return (parameters as ParameterDescriptor[]).map((param) => {
       const nullishFlag =
-        (param.nullish ?? param.optional) ?
-          TSSymbolFlags.Nullish
-        : TSSymbolFlags.None;
+        (param.nullish ?? param.optional)
+          ? TSSymbolFlags.Nullish
+          : TSSymbolFlags.None;
       const TypeSlot = createSymbolSlot();
       const symbol = createValueSymbol(param.name, {
         refkeys: param.refkey,

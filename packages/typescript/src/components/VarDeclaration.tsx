@@ -1,14 +1,15 @@
+import type { Children } from "@alloy-js/core";
 import {
-  Children,
   Declaration as CoreDeclaration,
   createSymbolSlot,
   Name,
   Show,
 } from "@alloy-js/core";
+
 import { useTSNamePolicy } from "../name-policy.js";
 import { createValueSymbol } from "../symbols/index.js";
 import { TSSymbolFlags } from "../symbols/ts-output-symbol.js";
-import { CommonDeclarationProps } from "./Declaration.js";
+import type { CommonDeclarationProps } from "./Declaration.js";
 import { JSDoc } from "./JSDoc.jsx";
 import { TypeRefContext } from "./TypeRefContext.jsx";
 
@@ -38,16 +39,12 @@ export function VarDeclaration(props: VarDeclarationProps) {
     ValueTypeSymbolSlot.moveMembersTo(sym);
   }
 
-  const keyword =
-    props.var ? "var"
-    : props.let ? "let"
-    : "const";
-  const type =
-    props.type ?
-      <TypeRefContext>
-        : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
-      </TypeRefContext>
-    : undefined;
+  const keyword = props.var ? "var" : props.let ? "let" : "const";
+  const type = props.type ? (
+    <TypeRefContext>
+      : <TypeSymbolSlot>{props.type}</TypeSymbolSlot>
+    </TypeRefContext>
+  ) : undefined;
 
   return (
     <>

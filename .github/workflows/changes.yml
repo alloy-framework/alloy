@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   changes:
-    if: ${{ github.actor != 'dependabot[bot]' && !startsWith(github.head_ref, 'publish/') }}
+    if: ${{ github.actor != 'dependabot[bot]' && !startsWith(github.head_ref, 'publish/') && !contains(github.event.pull_request.title, '[skip chg]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

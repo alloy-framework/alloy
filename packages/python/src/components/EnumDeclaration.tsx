@@ -1,13 +1,12 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  For,
-  Show,
-} from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { Declaration as CoreDeclaration, For, Show } from "@alloy-js/core";
+
 import { enumModule } from "../builtins/python.js";
 import { createPythonSymbol } from "../symbol-creation.js";
-import { BaseDeclarationProps } from "./Declaration.js";
-import { EnumMember, EnumMemberProps } from "./EnumMember.js";
+import type { BaseDeclarationProps } from "./Declaration.js";
+import { DecoratorList } from "./DecoratorList.jsx";
+import type { EnumMemberProps } from "./EnumMember.js";
+import { EnumMember } from "./EnumMember.js";
 import { MemberScope } from "./MemberScope.jsx";
 import { PythonBlock } from "./PythonBlock.jsx";
 
@@ -113,6 +112,15 @@ export interface ClassEnumProps extends EnumPropsBase {
    * Indicates that the enum members should be auto-generated.
    */
   auto?: boolean;
+  /**
+   * Decorators rendered above `class <Name>(<BaseType>):`. See
+   * {@link ClassDeclarationProps.decorators} for the source-order and falsy
+   * skip semantics.
+   *
+   * Not available on functional-enum syntax (`Name = Enum(...)`), which is a
+   * variable assignment rather than a class definition.
+   */
+  decorators?: Children[];
 }
 
 /**
@@ -203,6 +211,7 @@ export function ClassEnumDeclaration(props: ClassEnumProps) {
   }
   return (
     <CoreDeclaration symbol={sym}>
+      <DecoratorList decorators={props.decorators} />
       class {sym.name}({enumModule["."][baseType]})
       <MemberScope ownerSymbol={sym}>
         <PythonBlock opener=":">

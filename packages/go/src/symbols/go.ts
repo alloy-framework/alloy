@@ -1,13 +1,13 @@
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
-  Namekey,
   OutputDeclarationSpace,
   OutputMemberSpace,
-  OutputSpace,
   OutputSymbol,
-  OutputSymbolOptions,
+  createSymbol,
 } from "@alloy-js/core";
-import { GoScope } from "../scopes/go.js";
-import { PackageSymbol } from "./package.js";
+
+import type { GoScope } from "../scopes/go.js";
+import type { PackageSymbol } from "./package.js";
 
 /**
  * Options for creating a Go symbol.
@@ -78,7 +78,11 @@ export class GoSymbol extends OutputSymbol {
 
   copy(): OutputSymbol {
     const options = this.getGoCopyOptions();
-    const copy = new GoSymbol(this.name, undefined, options);
+    const binder = this.binder;
+    const copy = createSymbol(GoSymbol, this.name, undefined, {
+      ...options,
+      binder,
+    });
     this.initializeGoCopy(copy);
     return copy;
   }

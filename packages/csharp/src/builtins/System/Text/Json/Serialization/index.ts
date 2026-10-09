@@ -2,7 +2,7 @@ import System from "../../../index.js";
 import Json from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Metadata } from "./Metadata/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Metadata } from "./Metadata/index.js";
 
 type SerializationLibrary = LibrarySymbolReference & {
   IJsonOnDeserialized: LibrarySymbolReference & {

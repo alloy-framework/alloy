@@ -1,5 +1,6 @@
 import { Indent, Output, SourceDirectory, SourceFile } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import "./extend-expect.js";
 
 describe("toRenderTo", () => {

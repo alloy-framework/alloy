@@ -1,9 +1,37 @@
-import { Ref } from "@vue/reactivity";
-import { CustomContext } from "../reactivity.js";
-import { Refkey, RefkeyableObject } from "../refkey.js";
-import { IntrinsicElement } from "./intrinsic.js";
+import type { Ref } from "@vue/reactivity";
+
+import type { CustomContext } from "../reactivity.js";
+import type { Refkey, RefkeyableObject } from "../refkey.js";
+import type { AlloyNode } from "../render/node.js";
 
 export const RENDERABLE = Symbol.for("Alloy.CustomElement");
+
+/**
+ * Marker placed on the thunks produced by `sti(...)` (the simple template
+ * component creators for intrinsics such as `indent`, `group`, `hbr`).
+ *
+ * Unlike a {@link ComponentCreator}, these thunks eagerly materialize an
+ * intrinsic `ElementNode` (resolving any refkey children) the moment they are
+ * invoked. Child-collection helpers such as `children()`/`childrenArray()` must
+ * therefore treat them as opaque leaves rather than invoking them during keyed
+ * child analysis — otherwise refkeys get resolved against the wrong scope
+ * before the owning component has established its own scope.
+ *
+ * @internal
+ */
+export const _INTRINSIC_CREATOR = Symbol.for("Alloy.IntrinsicCreator");
+
+/**
+ * Returns true if `item` is a thunk produced by `sti(...)` (see
+ * {@link _INTRINSIC_CREATOR}).
+ *
+ * @internal
+ */
+export function _isIntrinsicCreator(item: unknown): boolean {
+  return (
+    typeof item === "function" && (item as any)[_INTRINSIC_CREATOR] === true
+  );
+}
 
 /**
  * A renderable object is any object that has an `[ay.RENDERABLE]` method that
@@ -46,10 +74,16 @@ export type Child =
   | Ref
   | Refkey
   | CustomContext
-  | IntrinsicElement;
+  | AlloyNode;
 
 export type Children = Child | Children[];
 export type Props = Record<string, any>;
+
+export interface SourceLocation {
+  fileName: string;
+  lineNumber: number;
+  columnNumber: number;
+}
 
 export interface ComponentDefinition<TProps = Props> {
   (props: TProps): Children;
@@ -64,6 +98,7 @@ export interface ComponentCreator<TProps = Props> {
   (): Children;
   props: TProps;
   tag?: symbol;
+  source?: SourceLocation;
 }
 
 export function isComponentCreator<TProps = any>(
@@ -79,12 +114,16 @@ export function isComponentCreator<TProps = any>(
 export function createComponent<TProps extends Props = Props>(
   C: Component<TProps>,
   props: TProps,
+  source?: SourceLocation,
 ): ComponentCreator<TProps> {
   const creator: ComponentCreator<TProps> = () => /* */ C(props);
   creator.props = props;
   creator.component = C;
   if (C.tag) {
     creator.tag = C.tag;
+  }
+  if (source) {
+    creator.source = source;
   }
 
   return creator;

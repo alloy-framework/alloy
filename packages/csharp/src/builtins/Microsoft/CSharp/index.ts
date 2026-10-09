@@ -1,5 +1,5 @@
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as RuntimeBinder } from "./RuntimeBinder/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as RuntimeBinder } from "./RuntimeBinder/index.js";
 
 type CSharpLibrary = LibrarySymbolReference & {
 

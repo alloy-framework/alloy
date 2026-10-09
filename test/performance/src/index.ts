@@ -2,8 +2,6 @@
 // Discovers scenario directories under ../scenarios/*/index.ts
 // Each scenario exports async function runTest(): Promise<void>
 
-import Table from "cli-table3";
-import { Listr } from "listr2";
 import { spawn } from "node:child_process";
 import { constants as FS_CONSTANTS } from "node:fs";
 import { access, readdir, readFile, writeFile } from "node:fs/promises";
@@ -11,6 +9,9 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+
+import Table from "cli-table3";
+import { Listr } from "listr2";
 import pc from "picocolors";
 
 interface ScenarioResult {
@@ -67,9 +68,8 @@ const entries = await readdir(scenariosDir, { withFileTypes: true });
 const scenarioDirs = entries.filter((e) => e.isDirectory());
 // Optional single-scenario filter
 const scenarioFilter = parsed.values.scenario as string | undefined;
-const selectedScenarioDirs =
-  scenarioFilter ?
-    scenarioDirs.filter((d) => d.name === scenarioFilter)
+const selectedScenarioDirs = scenarioFilter
+  ? scenarioDirs.filter((d) => d.name === scenarioFilter)
   : scenarioDirs;
 if (scenarioFilter && selectedScenarioDirs.length === 0) {
   // eslint-disable-next-line no-console
@@ -218,14 +218,12 @@ const tasks = new Listr<Ctx>(
         task.output = `ERROR: ${error}`;
       } else {
         const cpu = fmtCpu(aggregated.totalCpuMicros);
-        const cpuSd =
-          aggregated.cpuStdDevMicros ?
-            fmtCpu(aggregated.cpuStdDevMicros)
+        const cpuSd = aggregated.cpuStdDevMicros
+          ? fmtCpu(aggregated.cpuStdDevMicros)
           : undefined;
         const mem = fmtMem(aggregated.heapUsedBytesDelta);
-        const memSd =
-          aggregated.memStdDevBytes ?
-            fmtMem(aggregated.memStdDevBytes)
+        const memSd = aggregated.memStdDevBytes
+          ? fmtMem(aggregated.memStdDevBytes)
           : undefined;
         task.output = `runs=${aggregated.runs} cpu=${cpu}${cpuSd ? ` (± ${cpuSd})` : ""} memΔ=${mem}${memSd ? ` (± ${memSd})` : ""}`;
       }
@@ -276,9 +274,9 @@ try {
 }
 
 const table = new Table({
-  head: (baselineCompare ?
-    ["Title", "CPU (avg ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
-  : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)"]) as string[],
+  head: (baselineCompare
+    ? ["Title", "CPU (avg ± sd)", "CPU Δ%", "Mem Δ (avg ± sd)", "Mem Δ%"]
+    : ["Title", "CPU (avg ± sd)", "Mem Δ (avg ± sd)"]) as string[],
   style: { head: [], border: [] },
   wordWrap: true,
 });
@@ -287,58 +285,58 @@ for (const r of results) {
   if (r.error) {
     const errTxt = pc.bold(pc.red(`ERROR: ${r.error}`));
     table.push(
-      baselineCompare ?
-        [pc.yellow(titleOnly), errTxt, pc.dim("-"), pc.dim("-"), pc.dim("-")]
-      : [pc.yellow(titleOnly), errTxt, pc.dim("-")],
+      baselineCompare
+        ? [pc.yellow(titleOnly), errTxt, pc.dim("-"), pc.dim("-"), pc.dim("-")]
+        : [pc.yellow(titleOnly), errTxt, pc.dim("-")],
     );
     continue;
   }
   const cpuAvgMsNum = r.totalCpuMicros / 1000;
   const cpuAvgMs = cpuAvgMsNum.toFixed(2);
-  const cpuSdMs =
-    r.cpuStdDevMicros ? (r.cpuStdDevMicros / 1000).toFixed(2) : "0.00";
+  const cpuSdMs = r.cpuStdDevMicros
+    ? (r.cpuStdDevMicros / 1000).toFixed(2)
+    : "0.00";
   const memAvgNum = r.heapUsedBytesDelta;
   const memAvg = fmtMem(memAvgNum);
   const memSd = r.memStdDevBytes ? fmtMem(r.memStdDevBytes) : "0 KB";
   if (baselineCompare && baselineCompare.has(r.name)) {
     const b = baselineCompare.get(r.name)!;
     const bCpuMs = b.cpu ? b.cpu.avgMicros / 1000 : undefined;
-    const bCpuStdDevMs =
-      b.cpu?.stddevMicros ? b.cpu.stddevMicros / 1000 : undefined;
+    const bCpuStdDevMs = b.cpu?.stddevMicros
+      ? b.cpu.stddevMicros / 1000
+      : undefined;
     const bMemBytes = b.memory ? b.memory.avgBytesDelta : undefined;
     const bMemStdDevBytes = b.memory?.stddevBytes;
     const cpuDeltaRatio =
       bCpuMs && bCpuMs !== 0 ? (cpuAvgMsNum - bCpuMs) / bCpuMs : undefined;
     const memDeltaRatio =
-      bMemBytes && bMemBytes !== 0 ?
-        (memAvgNum - bMemBytes) / bMemBytes
-      : undefined;
+      bMemBytes && bMemBytes !== 0
+        ? (memAvgNum - bMemBytes) / bMemBytes
+        : undefined;
     const cpuDeltaPct =
-      cpuDeltaRatio !== undefined ?
-        `${cpuDeltaRatio > 0 ? "+" : ""}${(cpuDeltaRatio * 100).toFixed(1)}%`
-      : "-";
+      cpuDeltaRatio !== undefined
+        ? `${cpuDeltaRatio > 0 ? "+" : ""}${(cpuDeltaRatio * 100).toFixed(1)}%`
+        : "-";
     const memDeltaPct =
-      memDeltaRatio !== undefined ?
-        `${memDeltaRatio > 0 ? "+" : ""}${(memDeltaRatio * 100).toFixed(1)}%`
-      : "-";
+      memDeltaRatio !== undefined
+        ? `${memDeltaRatio > 0 ? "+" : ""}${(memDeltaRatio * 100).toFixed(1)}%`
+        : "-";
     // Determine if increase exceeds baseline error bars; only then color red
     const cpuIncrease = cpuDeltaRatio !== undefined && cpuDeltaRatio > 0;
     const memIncrease = memDeltaRatio !== undefined && memDeltaRatio > 0;
     const cpuBeyondError =
-      cpuIncrease && bCpuStdDevMs !== undefined ?
-        cpuAvgMsNum - (bCpuMs ?? 0) > bCpuStdDevMs
-      : cpuIncrease;
+      cpuIncrease && bCpuStdDevMs !== undefined
+        ? cpuAvgMsNum - (bCpuMs ?? 0) > bCpuStdDevMs
+        : cpuIncrease;
     const memBeyondError =
-      memIncrease && bMemStdDevBytes !== undefined ?
-        memAvgNum - (bMemBytes ?? 0) > bMemStdDevBytes
-      : memIncrease;
-    const cpuColor =
-      cpuBeyondError ?
-        (s: string) => pc.bold(pc.red(s))
+      memIncrease && bMemStdDevBytes !== undefined
+        ? memAvgNum - (bMemBytes ?? 0) > bMemStdDevBytes
+        : memIncrease;
+    const cpuColor = cpuBeyondError
+      ? (s: string) => pc.bold(pc.red(s))
       : (s: string) => (cpuIncrease ? pc.yellow(s) : pc.green(s));
-    const memColor =
-      memBeyondError ?
-        (s: string) => pc.bold(pc.red(s))
+    const memColor = memBeyondError
+      ? (s: string) => pc.bold(pc.red(s))
       : (s: string) => (memIncrease ? pc.yellow(s) : pc.green(s));
     table.push([
       pc.cyan(titleOnly),
@@ -351,9 +349,9 @@ for (const r of results) {
     table.push([
       pc.cyan(titleOnly),
       pc.white(`${cpuAvgMs} ms ± ${cpuSdMs} ms`),
-      ...(baselineCompare ?
-        [pc.dim("-"), pc.white(`${memAvg} ± ${memSd}`), pc.dim("-")]
-      : [pc.white(`${memAvg} ± ${memSd}`)]),
+      ...(baselineCompare
+        ? [pc.dim("-"), pc.white(`${memAvg} ± ${memSd}`), pc.dim("-")]
+        : [pc.white(`${memAvg} ± ${memSd}`)]),
     ]);
   }
 }
@@ -375,8 +373,9 @@ if (baselinePath) {
         avgMicros: r.totalCpuMicros,
         avgMs: Number((r.totalCpuMicros / 1000).toFixed(3)),
         stddevMicros: r.cpuStdDevMicros ?? 0,
-        stddevMs:
-          r.cpuStdDevMicros ? Number((r.cpuStdDevMicros / 1000).toFixed(3)) : 0,
+        stddevMs: r.cpuStdDevMicros
+          ? Number((r.cpuStdDevMicros / 1000).toFixed(3))
+          : 0,
       },
       memory: {
         avgBytesDelta: r.heapUsedBytesDelta,

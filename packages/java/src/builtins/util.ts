@@ -1,4 +1,5 @@
 import type { SymbolCreator } from "@alloy-js/core";
+
 import { createLibrary } from "../create-library.js";
 // work around very strange issue where TypeScript complains that the inferred
 // type of the below cannot be named without a reference to ../../alloy-js/core

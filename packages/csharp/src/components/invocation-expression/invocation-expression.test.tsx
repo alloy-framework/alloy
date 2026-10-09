@@ -1,8 +1,10 @@
+import { namekey } from "@alloy-js/core";
+import { describe, expect, it } from "vitest";
+
 import { ClassDeclaration } from "#components/class/declaration.jsx";
 import { Method } from "#components/method/method.jsx";
 import { TestNamespace } from "#test/utils.jsx";
-import { namekey } from "@alloy-js/core";
-import { describe, expect, it } from "vitest";
+
 import { InvocationExpression } from "./invocation-expression.jsx";
 
 it("makes a call with no arguments", () => {

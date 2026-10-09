@@ -1,0 +1,36 @@
+import type { RefObject } from "react";
+import { useState } from "react";
+
+import type { RenderTreeHandle } from "@/components/render-tree";
+import { useRenderTreeFocus } from "@/hooks/use-render-tree-focus";
+import { useTabs } from "@/hooks/use-tabs";
+
+export function useDevtoolsAppState(
+  renderTreeRef: RefObject<RenderTreeHandle | null>,
+  renderTree: unknown,
+  setBottomTab?: (tab: "render" | "problems" | "effects") => void,
+) {
+  const {
+    selectedRenderNodeId,
+    setSelectedRenderNodeId,
+    requestFocusRenderNode,
+    focusRenderNodeById,
+  } = useRenderTreeFocus(renderTreeRef, renderTree, setBottomTab);
+  const tabs = useTabs({
+    onActivateComponentTab: requestFocusRenderNode,
+    onClearSelection: () => setSelectedRenderNodeId(null),
+  });
+  const [hoveredRenderNodeId, setHoveredRenderNodeId] = useState<string | null>(
+    null,
+  );
+
+  return {
+    selectedRenderNodeId,
+    setSelectedRenderNodeId,
+    requestFocusRenderNode,
+    focusRenderNodeById,
+    hoveredRenderNodeId,
+    setHoveredRenderNodeId,
+    tabs,
+  };
+}

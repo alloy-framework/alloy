@@ -1,5 +1,7 @@
-import { SourceFile } from "#components/index.js";
 import { createTestWrapper, type TestWrapper } from "@alloy-js/core/testing";
+
+import { SourceFile } from "#components/index.js";
+
 import { TSOutputSymbol, useTSScope } from "../src/index.js";
 
 export function createTSTestWrapper(): TestWrapper {

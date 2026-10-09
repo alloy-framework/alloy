@@ -1,8 +1,7 @@
-import "@alloy-js/core/testing";
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { Show } from "../../src/components/Show.jsx";
-import { printTree, renderTree } from "../../src/render.js";
 
 it("selects the true branch", () => {
   const template = <Show when={true}>true</Show>;
@@ -16,10 +15,9 @@ it("works with reactivity", () => {
       even
     </Show>
   );
-  const tree = renderTree(template);
-  expect(printTree(tree)).toBe(`even`);
+  expect(template).toRenderTo("even");
   count.value++;
-  expect(printTree(tree)).toBe(`odd`);
+  expect(template).toRenderTo("odd");
   count.value++;
-  expect(printTree(tree)).toBe(`even`);
+  expect(template).toRenderTo("even");
 });

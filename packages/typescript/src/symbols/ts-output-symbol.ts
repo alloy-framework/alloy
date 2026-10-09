@@ -1,15 +1,15 @@
+import type { Namekey, OutputSpace, OutputSymbolOptions } from "@alloy-js/core";
 import {
-  Namekey,
-  OutputSpace,
+  createSymbol,
   OutputSymbol,
-  OutputSymbolOptions,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
   watch,
 } from "@alloy-js/core";
-import { TSOutputScope } from "./scopes.js";
+
+import type { TSOutputScope } from "./scopes.js";
 import { TSModuleScope } from "./ts-module-scope.js";
 
 // prettier-ignore
@@ -68,8 +68,9 @@ export class TSOutputSymbol extends OutputSymbol {
   }
 
   copy() {
-    const copy = new TSOutputSymbol(this.name, undefined, {
-      binder: this.binder,
+    const binder = this.binder;
+    const copy = createSymbol(TSOutputSymbol, this.name, undefined, {
+      binder,
       aliasTarget: this.aliasTarget,
       default: this.default,
       export: this.export,
@@ -198,5 +199,22 @@ export class TSOutputSymbol extends OutputSymbol {
 
   get isValueSymbol() {
     return this.spaces.some((s) => s.key === "values");
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    const info = super.debugInfo;
+    return {
+      ...info,
+      export: this.export,
+      default: this.default,
+      tsFlags: this.tsFlags,
+      hasInstanceMembers: this.hasInstanceMembers,
+      isTypeSymbol: this.isTypeSymbol,
+      isValueSymbol: this.isValueSymbol,
+      isPrivateMemberSymbol: this.isPrivateMemberSymbol,
+      isInstanceMemberSymbol: this.isInstanceMemberSymbol,
+      isStaticMemberSymbol: this.isStaticMemberSymbol,
+      isPublicMemberSymbol: this.isPublicMemberSymbol,
+    };
   }
 }

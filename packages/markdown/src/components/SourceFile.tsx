@@ -1,4 +1,6 @@
-import { Children, SourceFile as CoreSourceFile, List } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { SourceFile as CoreSourceFile, List } from "@alloy-js/core";
+
 import { Link } from "./Link.jsx";
 
 export interface SourceFileProps {

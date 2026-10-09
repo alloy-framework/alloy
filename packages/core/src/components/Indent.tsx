@@ -1,4 +1,5 @@
 import { computed } from "@vue/reactivity";
+
 import type { Children } from "../runtime/component.js";
 
 export interface IndentProps {
@@ -42,11 +43,17 @@ export interface IndentProps {
  */
 export function Indent(props: IndentProps) {
   const breakElem = computed(() =>
-    props.nobreak ? ""
-    : props.hardline ? <hbr />
-    : props.softline ? <sbr />
-    : props.line ? <br />
-    : <hbr />,
+    props.nobreak ? (
+      ""
+    ) : props.hardline ? (
+      <hbr />
+    ) : props.softline ? (
+      <sbr />
+    ) : props.line ? (
+      <br />
+    ) : (
+      <hbr />
+    ),
   );
 
   return (

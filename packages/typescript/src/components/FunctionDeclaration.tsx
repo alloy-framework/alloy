@@ -7,9 +7,12 @@ import {
   Show,
   type Children,
 } from "@alloy-js/core";
+
 import { getCallSignatureProps } from "../utils.js";
-import { CallSignature, CallSignatureProps } from "./CallSignature.jsx";
-import { CommonDeclarationProps, Declaration } from "./Declaration.js";
+import type { CallSignatureProps } from "./CallSignature.jsx";
+import { CallSignature } from "./CallSignature.jsx";
+import type { CommonDeclarationProps } from "./Declaration.js";
+import { Declaration } from "./Declaration.js";
 import {
   FunctionBody,
   FunctionParameters,
@@ -21,8 +24,7 @@ import { JSDocParams } from "./JSDocParam.jsx";
 import { LexicalScope } from "./LexicalScope.jsx";
 
 export interface FunctionDeclarationProps
-  extends CommonDeclarationProps,
-    CallSignatureProps {
+  extends CommonDeclarationProps, CallSignatureProps {
   async?: boolean;
   children?: Children;
 }

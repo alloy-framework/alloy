@@ -1,6 +1,7 @@
 import { Output, refkey, StatementList } from "@alloy-js/core";
 import { d } from "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
 import * as ts from "../src/index.js";
 
 it("should instantiate classes", () => {

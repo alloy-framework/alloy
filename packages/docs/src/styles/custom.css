@@ -1,0 +1,23 @@
+/* De-bold guide links in sidebar (keep package groups bold) */
+.top-level > li:has(> a) .large:where(.astro-g6haz7pd) {
+  font-weight: normal;
+  font-size: var(--sl-text-sm);
+}
+
+/* Tighten spacing between consecutive link-only sidebar items (guides) */
+.top-level > li:has(> a) + li:has(> a) {
+  margin-top: 0;
+}
+
+/* API member tables */
+.api-members .api-name {
+  text-align: right;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.api-members .api-type {
+  font-family: var(--sl-font-mono, ui-monospace, monospace);
+  font-size: var(--sl-text-xs);
+  white-space: nowrap;
+}

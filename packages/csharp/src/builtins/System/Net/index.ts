@@ -11,7 +11,7 @@ import Principal from "../Security/Principal/index.js";
 import Text from "../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as Cache } from "./Cache/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as Cache } from "./Cache/index.js";
 export { default as Http } from "./Http/index.js";
 export { default as Mail } from "./Mail/index.js";
 export { default as Mime } from "./Mime/index.js";

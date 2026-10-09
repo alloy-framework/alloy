@@ -3,7 +3,7 @@ import Data from "../index.js";
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type CommonLibrary = LibrarySymbolReference & {
   CatalogLocation: LibrarySymbolReference & {

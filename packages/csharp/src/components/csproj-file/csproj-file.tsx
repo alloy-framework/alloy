@@ -1,4 +1,5 @@
-import { Children, SourceFile } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { SourceFile } from "@alloy-js/core";
 import { Project } from "@alloy-js/msbuild/components";
 
 export type CSharpProjectSdk =

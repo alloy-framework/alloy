@@ -1,25 +1,44 @@
+import type { Children, ComponentContext, Ref } from "@alloy-js/core";
 import {
-  Children,
-  ComponentContext,
   createNamedContext,
-  Ref,
+  createScope,
   Scope,
   shallowRef,
   SourceDirectory,
   SourceDirectoryContext,
   splitProps,
   useContext,
+  Wrap,
 } from "@alloy-js/core";
 import { join } from "pathe";
+
+import { PackageMetadataContext } from "../context/package-metadata.js";
+import type { ExternalPackage } from "../create-package.js";
+import { getPackageScope } from "../create-package.js";
 import { TSPackageScope } from "../symbols/index.js";
 import { modulePath } from "../utils.js";
-import { PackageJsonFile, PackageJsonFileProps } from "./PackageJson.js";
+import type { PackageJsonFileProps } from "./PackageJson.js";
+import { PackageJsonFile } from "./PackageJson.js";
 import { TSConfigJson } from "./TsConfigJson.js";
 
 export interface PackageDirectoryProps extends PackageJsonFileProps {
   tsConfig?: { outDir?: string };
   children?: Children;
   path?: string;
+
+  /**
+   * Optional configuration values for referenced external packages.
+   * By default, external packages are added as regular dependencies.
+   * However you can specify `peerDependencies` or `devDependencies` to change this behavior.
+   * Version can also be specified here to override the configured package version.
+   */
+  packages?: [
+    ExternalPackage,
+    {
+      version?: string;
+      kind?: "dependencies" | "peerDependencies" | "devDependencies";
+    },
+  ][];
 }
 
 export const PackageContext: ComponentContext<PackageContext> =
@@ -58,13 +77,38 @@ export function PackageDirectory(props: PackageDirectoryProps) {
     "devDependencies",
   ]);
 
+  let pkgMeta: PackageMetadataContext | undefined = undefined;
+  if (props.packages) {
+    pkgMeta = {
+      versionSpecifiers: new Map(),
+      dependencyType: new Map(),
+    };
+    for (const [pkg, config] of props.packages) {
+      if (!config) {
+        throw new Error("Package configuration must be provided");
+      }
+      if (config.version) {
+        pkgMeta.versionSpecifiers.set(getPackageScope(pkg), config.version);
+      }
+      if (config.kind) {
+        pkgMeta.dependencyType.set(getPackageScope(pkg), config.kind);
+      }
+    }
+  }
+
   return (
     <SourceDirectory path={props.path ?? "."}>
       <PackageContext.Provider value={packageContext}>
         <Scope value={packageContext.scope}>
-          <PackageJsonFile {...pkgJsonProps} devDependencies={devDeps} />
-          <TSConfigJson {...props.tsConfig} />
-          {props.children}
+          <Wrap
+            when={!!pkgMeta}
+            with={PackageMetadataContext.Provider}
+            props={{ value: pkgMeta }}
+          >
+            <PackageJsonFile {...pkgJsonProps} devDependencies={devDeps} />
+            <TSConfigJson {...props.tsConfig} />
+            {props.children}
+          </Wrap>
         </Scope>
       </PackageContext.Provider>
     </SourceDirectory>
@@ -80,7 +124,7 @@ function createPackageContext(
   // todo: this can probably just use context.
   const fullPath = parentDir ? join(parentDir.path, path) : path;
 
-  const scope = new TSPackageScope(name, version, fullPath);
+  const scope = createScope(TSPackageScope, name, version, fullPath);
 
   return {
     scope,

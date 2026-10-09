@@ -1,6 +1,8 @@
 import { dirname, relative, resolve } from "pathe";
+
 import { AlloyHost } from "./host/alloy-host.js";
-import { OutputDirectory } from "./render.js";
+import { cwd } from "./host/node-host.js";
+import type { OutputDirectory } from "./output-types.js";
 import { traverseOutput } from "./utils.js";
 /**
  * Write the output from {@link render} to the file system.
@@ -17,7 +19,7 @@ export async function writeOutput(
         return;
       }
       // eslint-disable-next-line no-console
-      console.log("create", relative(process.cwd(), path));
+      console.log("create", relative(cwd(), path));
       await AlloyHost.mkdir(path);
     },
     async visitFile(file) {
@@ -25,10 +27,10 @@ export async function writeOutput(
         const path = resolve(basePath, file.path);
         if (await AlloyHost.exists(path)) {
           // eslint-disable-next-line no-console
-          console.log("overwrite", relative(process.cwd(), path));
+          console.log("overwrite", relative(cwd(), path));
         } else {
           // eslint-disable-next-line no-console
-          console.log("create", relative(process.cwd(), path));
+          console.log("create", relative(cwd(), path));
         }
 
         await AlloyHost.write(path, file.contents);
@@ -38,10 +40,10 @@ export async function writeOutput(
         const target = resolve(basePath, file.path);
         if (await AlloyHost.exists(target)) {
           // eslint-disable-next-line no-console
-          console.log("copy over", relative(process.cwd(), target));
+          console.log("copy over", relative(cwd(), target));
         } else {
           // eslint-disable-next-line no-console
-          console.log("copy", relative(process.cwd(), target));
+          console.log("copy", relative(cwd(), target));
         }
         await AlloyHost.mkdir(dirname(target));
         await AlloyHost.write(target, AlloyHost.read(source).stream());

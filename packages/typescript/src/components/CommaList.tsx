@@ -1,4 +1,5 @@
-import { Children, List, splitProps } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { List, splitProps } from "@alloy-js/core";
 
 export interface CommaListProps {
   children: Children;

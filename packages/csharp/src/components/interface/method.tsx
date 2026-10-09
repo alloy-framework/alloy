@@ -1,25 +1,21 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Block, MemberDeclaration, MemberName, Scope } from "@alloy-js/core";
+
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  Block,
-  Children,
-  MemberDeclaration,
-  MemberName,
-  Namekey,
-  Refkey,
-  Scope,
-} from "@alloy-js/core";
-import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
 } from "../../modifiers.js";
 import { createMethodScope } from "../../scopes/factories.js";
 import { createMethodSymbol } from "../../symbols/factories.js";
-import { AttributeList, AttributesProp } from "../attributes/attributes.jsx";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import type { ParameterProps } from "../parameters/parameters.jsx";
+import { Parameters } from "../parameters/parameters.jsx";
 import { TypeParameterConstraints } from "../type-parameters/type-parameter-constraints.jsx";
-import { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
+import type { TypeParameterProps } from "../type-parameters/type-parameter.jsx";
 import { TypeParameters } from "../type-parameters/type-parameters.jsx";
 
 /** Method modifiers. Can only be one. */
@@ -31,8 +27,7 @@ const getMethodModifier = makeModifiers<InterfaceMethodModifiers>(["new"]);
 
 // properties for creating a method
 export interface InterfaceMethodProps
-  extends AccessModifiers,
-    InterfaceMethodModifiers {
+  extends AccessModifiers, InterfaceMethodModifiers {
   name: string | Namekey;
   refkey?: Refkey;
   children?: Children;
@@ -101,9 +96,7 @@ export function InterfaceMethod(props: InterfaceMethodProps) {
         {props.typeParameters && (
           <TypeParameterConstraints parameters={props.typeParameters} />
         )}
-        {props.children ?
-          <Block newline>{props.children}</Block>
-        : ";"}
+        {props.children ? <Block newline>{props.children}</Block> : ";"}
       </Scope>
     </MemberDeclaration>
   );

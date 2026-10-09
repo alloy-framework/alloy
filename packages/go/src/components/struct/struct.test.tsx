@@ -1,11 +1,12 @@
-import { List, Output, refkey, render } from "@alloy-js/core";
+import { List, Output, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
-import { assertFileContents, TestPackage } from "../../../test/utils.js";
+
+import { TestPackage } from "../../../test/utils.js";
+import { TypeConstraint } from "../interface/declaration.jsx";
 import { ModuleDirectory } from "../ModuleDirectory.js";
+import { Pointer } from "../pointer/pointer.js";
 import { SourceDirectory } from "../SourceDirectory.js";
 import { SourceFile } from "../SourceFile.js";
-import { TypeConstraint } from "../interface/declaration.jsx";
-import { Pointer } from "../pointer/pointer.js";
 import { TypeDeclaration } from "../type/declaration.js";
 import {
   StructDeclaration,
@@ -392,7 +393,7 @@ describe("embedded", () => {
     const TestStruct = refkey("TestStruct");
     const TestStructEmbed = refkey("TestStructEmbed");
 
-    const res = render(
+    expect(
       <Output>
         <ModuleDirectory name="github.com/alloy-framework/alloy">
           <SourceDirectory path=".">
@@ -424,9 +425,7 @@ describe("embedded", () => {
           </SourceDirectory>
         </ModuleDirectory>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "hello/types.go": `
         package hello
 
@@ -452,7 +451,7 @@ describe("embedded", () => {
     const TestStruct = refkey("TestStruct");
     const TestStructEmbed = refkey("TestStructEmbed");
 
-    const res = render(
+    expect(
       <Output>
         <ModuleDirectory name="github.com/alloy-framework/alloy">
           <SourceDirectory path=".">
@@ -484,9 +483,7 @@ describe("embedded", () => {
           </SourceDirectory>
         </ModuleDirectory>
       </Output>,
-    );
-
-    assertFileContents(res, {
+    ).toRenderTo({
       "hello/types.go": `
         package hello
 

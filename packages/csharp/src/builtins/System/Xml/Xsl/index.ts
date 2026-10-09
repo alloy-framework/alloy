@@ -3,7 +3,7 @@ import Xml from "../index.js";
 import XPath from "../XPath/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type XslLibrary = LibrarySymbolReference & {
   IXsltContextFunction: LibrarySymbolReference & {

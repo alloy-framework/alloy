@@ -1,8 +1,7 @@
-import "@alloy-js/core/testing";
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { Match, Switch } from "../../src/components/Switch.jsx";
-import { printTree, renderTree } from "../../src/render.js";
 
 it("selects the true branch", () => {
   const template = (
@@ -40,10 +39,10 @@ it("works with reactivity", () => {
       <Match else>odd</Match>
     </Switch>
   );
-  const tree = renderTree(template);
-  expect(printTree(tree)).toBe(`even`);
+  const tree = template;
+  expect(tree).toRenderTo("even");
   count.value++;
-  expect(printTree(tree)).toBe(`odd`);
+  expect(tree).toRenderTo("odd");
   count.value++;
-  expect(printTree(tree)).toBe(`even`);
+  expect(tree).toRenderTo("even");
 });

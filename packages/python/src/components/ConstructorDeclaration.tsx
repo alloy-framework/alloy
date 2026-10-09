@@ -1,4 +1,5 @@
 import { namekey } from "@alloy-js/core";
+
 import { createMethodSymbol } from "../symbols/factories.js";
 import type { CommonFunctionProps } from "./FunctionBase.js";
 import { MethodDeclarationBase } from "./MethodBase.js";
@@ -18,8 +19,10 @@ import { MethodDeclarationBase } from "./MethodBase.js";
  *     pass
  * ```
  */
-export interface ConstructorDeclarationProps
-  extends Omit<CommonFunctionProps, "name"> {
+export interface ConstructorDeclarationProps extends Omit<
+  CommonFunctionProps,
+  "name"
+> {
   abstract?: boolean;
 }
 

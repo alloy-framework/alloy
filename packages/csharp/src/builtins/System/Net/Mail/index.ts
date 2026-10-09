@@ -7,7 +7,7 @@ import X509Certificates from "../../Security/Cryptography/X509Certificates/index
 import Text from "../../Text/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type MailLibrary = LibrarySymbolReference & {
   AlternateView: LibrarySymbolReference & {

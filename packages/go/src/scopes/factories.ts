@@ -1,5 +1,7 @@
-import { OutputScopeOptions } from "@alloy-js/core";
-import { NamedTypeSymbol } from "../symbols/named-type.js";
+import type { OutputScopeOptions } from "@alloy-js/core";
+import { createScope } from "@alloy-js/core";
+
+import type { NamedTypeSymbol } from "../symbols/named-type.js";
 import { useGoScope } from "./contexts.js";
 import { GoFunctionScope } from "./function.js";
 import { GoNamedTypeScope } from "./named-type.js";
@@ -20,10 +22,10 @@ export function createNamedTypeScope(
     );
   }
 
-  return new GoNamedTypeScope(ownerSymbol, currentScope, options);
+  return createScope(GoNamedTypeScope, ownerSymbol, currentScope, options);
 }
 
 export function createFunctionScope(options: OutputScopeOptions = {}) {
   const parentScope = useGoScope();
-  return new GoFunctionScope("function scope", parentScope, options);
+  return createScope(GoFunctionScope, "function scope", parentScope, options);
 }

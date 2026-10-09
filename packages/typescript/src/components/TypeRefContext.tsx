@@ -1,4 +1,5 @@
 import type { Children, Component } from "@alloy-js/core";
+
 import {
   isTypeRefContext,
   TypeRefContext as TypeRefContextDef,
@@ -33,8 +34,8 @@ export const TypeRefContext = ({ children }: TypeRefContextProps) => {
  */
 export function ensureTypeRefContext<TProps>(
   Comp: Component<TProps>,
-): (props: TProps) => Children {
-  return (props: TProps) => {
+): Component<TProps> {
+  return function EnsureTypeRefContext(props: TProps) {
     const ref = isTypeRefContext();
     if (!ref) {
       return (

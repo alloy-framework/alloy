@@ -1,4 +1,6 @@
-import { marked, Tokens, type Token } from "marked";
+import type { Tokens } from "marked";
+import { marked, type Token } from "marked";
+
 import { DocC, DocCode, DocList, DocSee } from "./comment.jsx";
 
 export interface DocFromMarkdownProps {
@@ -17,7 +19,10 @@ function renderTokens(tokens: Token[]) {
       {tokens.map((token, index) => (
         <>
           <DocFromMarkedToken token={token} />
-          {token.type === "paragraph" && index !== tokens.length - 1 && <br />}
+          {
+            /*@once*/ token.type === "paragraph" &&
+              index !== tokens.length - 1 && <br />
+          }
         </>
       ))}
     </>

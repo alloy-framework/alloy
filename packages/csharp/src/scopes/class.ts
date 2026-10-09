@@ -1,4 +1,5 @@
 import type { OutputSpace } from "@alloy-js/core";
+
 import { CSharpNamedTypeScope } from "./named-type.js";
 
 export class CSharpClassScope extends CSharpNamedTypeScope {

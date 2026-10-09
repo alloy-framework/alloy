@@ -4,7 +4,7 @@ import IO from "../../IO/index.js";
 import Net from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type SocketsLibrary = LibrarySymbolReference & {
   AddressFamily: LibrarySymbolReference & {

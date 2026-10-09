@@ -1,5 +1,5 @@
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as ExtendedProtection } from "./ExtendedProtection/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as ExtendedProtection } from "./ExtendedProtection/index.js";
 
 type AuthenticationLibrary = LibrarySymbolReference & {
   AuthenticationException: LibrarySymbolReference & {

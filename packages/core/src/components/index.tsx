@@ -1,3 +1,4 @@
+export * from "./AccessExpression.jsx";
 export * from "./AppendFile.jsx";
 export * from "./Block.js";
 export * from "./CopyFile.jsx";

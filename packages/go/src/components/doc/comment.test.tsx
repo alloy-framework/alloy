@@ -1,7 +1,7 @@
 import { List, Prose } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { d } from "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
+
 import { BlockComment, LineComment } from "./comment.jsx";
 
 describe("GoLineComment", () => {

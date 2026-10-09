@@ -4,7 +4,7 @@ import Xml from "../index.js";
 import Schema from "../Schema/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type XPathLibrary = LibrarySymbolReference & {
   Extensions: LibrarySymbolReference & {

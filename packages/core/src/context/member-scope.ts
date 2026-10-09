@@ -1,9 +1,6 @@
-import {
-  ComponentContext,
-  createNamedContext,
-  useContext,
-} from "../context.js";
-import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { ComponentContext } from "../context.js";
+import { createNamedContext, useContext } from "../context.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * The member context provides the symbol upon which new member symbols

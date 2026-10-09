@@ -1,5 +1,7 @@
-import { Children, For, refkey } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { For, refkey } from "@alloy-js/core";
 import * as ts from "@alloy-js/typescript";
+
 import { useApi } from "../context/api.js";
 import { ClientMethod } from "./ClientMethod.jsx";
 

@@ -1,6 +1,10 @@
-import {
+import type {
   Children,
   ComponentContext,
+  Namekey,
+  Refkey,
+} from "@alloy-js/core";
+import {
   computed,
   createContext,
   Declaration,
@@ -8,11 +12,10 @@ import {
   List,
   memo,
   Name,
-  Namekey,
-  Refkey,
   Show,
   useContext,
 } from "@alloy-js/core";
+
 import { useGoScope } from "../../scopes/contexts.js";
 import { GoSourceFileScope } from "../../scopes/source-file.js";
 import { createVariableSymbol } from "../../symbols/factories.js";

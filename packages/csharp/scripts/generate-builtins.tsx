@@ -8,18 +8,18 @@
  * Disclaimer: coded with 🪄 vibes 🔮
  */
 
-import { Output, renderAsync, writeOutput } from "@alloy-js/core";
-
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+
+import { Output, renderAsync, writeOutput } from "@alloy-js/core";
+
 import { NamespaceDirectory } from "./components/namespace-directory.jsx";
 import { walk } from "./process-docfx.jsx";
 
 // Arg[0]=node, Arg[1]=script, Arg[2]=apiDir, Arg[3]=outputPath (unused for now)
 const [, , apiParam, outParam] = process.argv;
-const API_DIR =
-  apiParam ?
-    resolve(apiParam)
+const API_DIR = apiParam
+  ? resolve(apiParam)
   : join(dirname(new URL(import.meta.url).pathname), "api");
 const OUTPUT_PATH = outParam ? resolve(outParam) : undefined; // reserved for future use
 

@@ -1,4 +1,5 @@
 import { useScope } from "@alloy-js/core";
+
 import { JavaLexicalScope } from "./symbols/java-lexical-scope.js";
 
 export function useLexicalScope(): JavaLexicalScope | undefined {

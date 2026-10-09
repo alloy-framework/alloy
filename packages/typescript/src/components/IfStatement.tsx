@@ -1,4 +1,5 @@
-import { Block, type Children } from "@alloy-js/core";
+import { type Children } from "@alloy-js/core";
+
 import { BlockScope } from "./BlockScope.jsx";
 
 export interface IfStatementProps {
@@ -29,7 +30,7 @@ export function ElseIfClause(props: ElseIfClauseProps) {
   return (
     <>
       {" "}
-      else if ({props.condition}) <Block>{props.children}</Block>
+      else if ({props.condition}) <BlockScope>{props.children}</BlockScope>
     </>
   );
 }
@@ -45,7 +46,7 @@ export function ElseClause(props: ElseClauseProps) {
   return (
     <>
       {" "}
-      else <Block>{props.children}</Block>
+      else <BlockScope>{props.children}</BlockScope>
     </>
   );
 }

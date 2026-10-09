@@ -1,13 +1,14 @@
+import { createSymbol } from "../binder.js";
 import { useContext } from "../context.js";
 import { BinderContext } from "../context/binder.js";
 import { DeclarationContext } from "../context/declaration.js";
 import { useScope } from "../context/scope.js";
 import { onCleanup } from "../reactivity.js";
-import { Namekey, Refkey } from "../refkey.js";
+import type { Namekey, Refkey } from "../refkey.js";
 import type { Children } from "../runtime/component.js";
 import { BasicScope } from "../symbols/basic-scope.js";
 import { BasicSymbol } from "../symbols/basic-symbol.js";
-import { OutputSymbol } from "../symbols/output-symbol.js";
+import type { OutputSymbol } from "../symbols/output-symbol.js";
 
 /**
  * Create a declaration by providing an already created symbol. The symbol is
@@ -83,7 +84,7 @@ export function Declaration(props: DeclarationProps) {
       );
     }
 
-    declaration = new BasicSymbol(props.name, scope.symbols, {
+    declaration = createSymbol(BasicSymbol, props.name, scope.symbols, {
       binder,
       refkeys: [props.refkey ?? []].flat(),
       metadata: props.metadata,

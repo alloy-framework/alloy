@@ -220,6 +220,25 @@ export default function transformComponent(path) {
     props = [t.callExpression(registerImportMethod(path, "mergeProps"), props)];
   }
   const componentArgs = [tagId, props[0]];
+  
+  // Add source location when enabled
+  if (config.generate !== "ssr" && config.addSourceInfo) {
+    const loc = path.node.loc;
+    if (loc && loc.start) {
+      // Use import.meta.url so the path resolves to the installed location at
+      // runtime rather than being a hardcoded absolute path from the build machine.
+      const importMetaUrl = t.memberExpression(
+        t.metaProperty(t.identifier("import"), t.identifier("meta")),
+        t.identifier("url"),
+      );
+      const sourceInfo = t.objectExpression([
+        t.objectProperty(t.identifier("fileName"), importMetaUrl),
+        t.objectProperty(t.identifier("lineNumber"), t.numericLiteral(loc.start.line)),
+        t.objectProperty(t.identifier("columnNumber"), t.numericLiteral(loc.start.column + 1))
+      ]);
+      componentArgs.push(sourceInfo);
+    }
+  }
 
   exprs.push(t.callExpression(registerImportMethod(path, isComponentTag ? "createComponent" : "createIntrinsic"), componentArgs));
 

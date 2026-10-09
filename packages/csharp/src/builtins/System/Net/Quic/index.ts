@@ -6,7 +6,7 @@ import X509Certificates from "../../Security/Cryptography/X509Certificates/index
 import Tasks from "../../Threading/Tasks/index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type QuicLibrary = LibrarySymbolReference & {
   QuicAbortDirection: LibrarySymbolReference & {

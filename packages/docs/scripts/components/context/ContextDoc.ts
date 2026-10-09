@@ -30,7 +30,10 @@ export function ContextDoc(props: ContextDocProps) {
       apiItem: contextAccessor,
     });
   }
-  if (typeof contextInterface !== "string") {
+  if (
+    typeof contextInterface !== "string" &&
+    contextInterface.displayName === contextVariable.displayName
+  ) {
     declares.push({
       name: title + " interface",
       apiItem: contextInterface,

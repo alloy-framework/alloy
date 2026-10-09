@@ -1,10 +1,8 @@
-import {
-  Children,
-  Declaration as CoreDeclaration,
-  Namekey,
-  Refkey,
-} from "@alloy-js/core";
-import { JavaElements, useJavaNamePolicy } from "../name-policy.js";
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
+import { Declaration as CoreDeclaration, createSymbol } from "@alloy-js/core";
+
+import type { JavaElements } from "../name-policy.js";
+import { useJavaNamePolicy } from "../name-policy.js";
 import { JavaOutputSymbol } from "../symbols/java-output-symbol.js";
 import { useLexicalScope } from "../utils.js";
 
@@ -32,7 +30,7 @@ export function Declaration(props: DeclarationProps) {
     throw new Error("A lexical scope is required for declaration");
   }
 
-  const sym = new JavaOutputSymbol(props.name, scope.symbols, {
+  const sym = createSymbol(JavaOutputSymbol, props.name, scope.symbols, {
     refkeys: props.refkey,
     namePolicy: useJavaNamePolicy().for(props.nameKind),
   });

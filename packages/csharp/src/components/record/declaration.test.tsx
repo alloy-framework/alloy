@@ -1,6 +1,9 @@
-import { Children, code, namekey, refkey } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
+import { code, namekey, refkey } from "@alloy-js/core";
 import { describe, expect, it } from "vitest";
+
 import { TestNamespace } from "../../../test/utils.jsx";
+import { Attribute } from "../attributes/attributes.jsx";
 import { Property } from "../property/property.jsx";
 import { RecordDeclaration } from "./declaration.jsx";
 
@@ -124,4 +127,19 @@ describe("constructor", () => {
       }
   `);
   });
+});
+
+it("specify attributes", () => {
+  expect(
+    <Wrapper>
+      <RecordDeclaration
+        public
+        name="Test"
+        attributes={[<Attribute name="Test" />]}
+      />
+    </Wrapper>,
+  ).toRenderTo(`
+    [Test]
+    public record Test;
+  `);
 });

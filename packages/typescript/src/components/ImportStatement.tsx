@@ -6,7 +6,8 @@ import {
   useContext,
 } from "@alloy-js/core";
 import { relative } from "pathe";
-import {
+
+import type {
   ImportedSymbol,
   ImportRecords,
   TSPackageScope,
@@ -102,20 +103,34 @@ export function ImportStatement(props: ImportStatementProps) {
       if (allNamedImportsAreTypes) {
         parts.push("type ");
       }
-      parts.push("{ ");
       parts.push(
-        mapJoin(
-          () => namedImportSymbols,
-          (nis) => (
-            <ImportBinding
-              importedSymbol={nis}
-              inTypeImport={allNamedImportsAreTypes}
-            />
-          ),
-          { joiner: ", " },
-        ),
+        <group>
+          {"{"}
+          <indent>
+            <line />
+            {mapJoin(
+              () => namedImportSymbols,
+              (nis) => (
+                <ImportBinding
+                  importedSymbol={nis}
+                  inTypeImport={allNamedImportsAreTypes}
+                />
+              ),
+              {
+                joiner: (
+                  <>
+                    {","}
+                    <line />
+                  </>
+                ),
+              },
+            )}
+            <ifBreak>{","}</ifBreak>
+          </indent>
+          <line />
+          {"}"}
+        </group>,
       );
-      parts.push(" }");
     }
     parts.push(` from "${props.path}";`);
 
@@ -143,13 +158,11 @@ function ImportBinding(props: Readonly<ImportBindingProps>) {
   });
 
   const prefix = memo(() =>
-    (
-      !props.inTypeImport &&
-      props.importedSymbol.local.isTypeSymbol &&
-      !props.importedSymbol.local.isValueSymbol
-    ) ?
-      "type "
-    : "",
+    !props.inTypeImport &&
+    props.importedSymbol.local.isTypeSymbol &&
+    !props.importedSymbol.local.isValueSymbol
+      ? "type "
+      : "",
   );
   return (
     <>

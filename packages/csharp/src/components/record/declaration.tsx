@@ -1,6 +1,7 @@
 import * as core from "@alloy-js/core";
+
+import type { AccessModifiers } from "../../modifiers.js";
 import {
-  AccessModifiers,
   computeModifiersPrefix,
   getAccessModifier,
   makeModifiers,
@@ -11,9 +12,12 @@ import {
   createNamedTypeSymbol,
   createTypeParameterSymbol,
 } from "../../symbols/factories.js";
+import type { AttributesProp } from "../attributes/attributes.jsx";
+import { AttributeList } from "../attributes/attributes.jsx";
 import { DocWhen } from "../doc/comment.jsx";
 import { Name } from "../Name.jsx";
-import { ParameterProps, Parameters } from "../parameters/parameters.jsx";
+import type { ParameterProps } from "../parameters/parameters.jsx";
+import { Parameters } from "../parameters/parameters.jsx";
 
 export interface RecordModifiers {
   readonly partial?: boolean;
@@ -23,7 +27,8 @@ const getRecordModifiers = makeModifiers<RecordModifiers>(["partial"]);
 
 /** Props to use the {@link RecordDeclaration} component */
 export interface RecordDeclarationProps
-  extends Omit<core.DeclarationProps, "nameKind">,
+  extends
+    Omit<core.DeclarationProps, "nameKind">,
     AccessModifiers,
     RecordModifiers {
   name: string | core.Namekey;
@@ -32,6 +37,22 @@ export interface RecordDeclarationProps
   doc?: core.Children;
   refkey?: core.Refkey;
   typeParameters?: Record<string, core.Refkey>;
+
+  /**
+   * Define attributes to attach
+   * @example
+   * ```tsx
+   * <RecordDeclaration name="MyRecord" attributes={[
+   *  <Attribute name="Test" />
+   * ]} />
+   * ```
+   * This will produce:
+   * ```csharp
+   * [Test]
+   * record MyRecord
+   * ```
+   */
+  attributes?: AttributesProp;
 
   /**
    * Set the primary constructor parameters
@@ -114,6 +135,7 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
   return (
     <core.Declaration symbol={thisRecordSymbol}>
       <DocWhen doc={props.doc} />
+      <AttributeList attributes={props.attributes} endline />
       {modifiers}record <Name />
       {typeParams}
       {props.primaryConstructor && (
@@ -121,11 +143,13 @@ export function RecordDeclaration(props: RecordDeclarationProps) {
           <Parameters parameters={props.primaryConstructor} />
         </core.Scope>
       )}
-      {props.children ?
+      {props.children ? (
         <core.Block newline>
           <core.Scope value={thisRecordScope}>{props.children}</core.Scope>
         </core.Block>
-      : ";"}
+      ) : (
+        ";"
+      )}
     </core.Declaration>
   );
 }

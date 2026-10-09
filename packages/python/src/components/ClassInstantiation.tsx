@@ -3,11 +3,10 @@ import {
   instantiateTakenMembersTo,
   useContext,
 } from "@alloy-js/core";
+
 import { createPythonSymbol } from "../symbol-creation.js";
-import {
-  FunctionCallExpression,
-  FunctionCallExpressionProps,
-} from "./FunctionCallExpression.jsx";
+import type { FunctionCallExpressionProps } from "./FunctionCallExpression.jsx";
+import { FunctionCallExpression } from "./FunctionCallExpression.jsx";
 import { PythonSourceFileContext } from "./SourceFile.jsx";
 
 export interface ClassInstantiationProps extends FunctionCallExpressionProps {}

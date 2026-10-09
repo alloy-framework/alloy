@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { createOutputBinder } from "../../src/binder.js";
 import { memberRefkey, refkey } from "../../src/refkey.js";
 import { flushJobs } from "../../src/scheduler.js";

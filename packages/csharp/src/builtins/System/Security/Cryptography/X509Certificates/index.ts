@@ -4,7 +4,7 @@ import System from "../../../index.js";
 import Cryptography from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type X509CertificatesLibrary = LibrarySymbolReference & {
   CertificateRequest: LibrarySymbolReference & {

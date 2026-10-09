@@ -1,3 +1,5 @@
+import { relative } from "node:path";
+
 import {
   memo,
   resolve,
@@ -6,7 +8,7 @@ import {
   type OutputScope,
   type Refkey,
 } from "@alloy-js/core";
-import { relative } from "node:path";
+
 import type { DocSymbol } from "../symbols/doc-symbol.js";
 
 export interface ReferenceProps {

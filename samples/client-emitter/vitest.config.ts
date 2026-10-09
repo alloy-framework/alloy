@@ -6,9 +6,5 @@ export default defineConfig({
     include: ["test/**/*.ts", "test/**/*.tsx"],
     exclude: ["test/**/*.util.ts", "test/**/*.d.ts"],
   },
-  esbuild: {
-    jsx: "preserve",
-    sourcemap: "both",
-  },
   plugins: [alloyPlugin()],
 });

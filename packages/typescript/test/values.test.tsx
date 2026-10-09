@@ -2,16 +2,12 @@ import {
   List,
   mapJoin,
   Output,
-  printTree,
   reactive,
   refkey,
-  renderTree,
   StatementList,
 } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { describe, expect, it } from "vitest";
 
-import { d } from "@alloy-js/core/testing";
 import * as ts from "../src/index.js";
 
 it("renders an object", () => {
@@ -56,11 +52,11 @@ it("renders an object with properties, mapped", () => {
 it("is reactive", () => {
   const jsValue = reactive(new Map());
 
-  const tree = renderTree(<ts.ObjectExpression jsValue={jsValue} />);
+  const tree = <ts.ObjectExpression jsValue={jsValue} />;
 
-  expect(printTree(tree)).toEqual(`{}`);
+  expect(tree).toRenderTo("{}");
   jsValue.set("hi", 1);
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     {
       hi: 1,
     }
@@ -68,7 +64,7 @@ it("is reactive", () => {
 
   jsValue.set("bye", 2);
 
-  expect(printTree(tree)).toEqual(d`
+  expect(tree).toRenderTo(`
     {
       hi: 1,
       bye: 2,

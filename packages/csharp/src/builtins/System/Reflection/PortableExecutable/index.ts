@@ -2,7 +2,7 @@ import Immutable from "../../Collections/Immutable/index.js";
 import System from "../../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";
+import type { LibrarySymbolReference } from "@alloy-js/core";
 
 type PortableExecutableLibrary = LibrarySymbolReference & {
   Characteristics: LibrarySymbolReference & {

@@ -1,5 +1,6 @@
 import { Output } from "@alloy-js/core";
 import { expect, it } from "vitest";
+
 import { SourceFile } from "../src/components/SourceFile.jsx";
 
 it("Includes header", () => {

@@ -1,7 +1,7 @@
 import System from "../index.js";
 
 import { createLibrary } from "#createLibrary";
-import { LibrarySymbolReference } from "@alloy-js/core";export { default as CompilerServices } from "./CompilerServices/index.js";
+import type { LibrarySymbolReference } from "@alloy-js/core";export { default as CompilerServices } from "./CompilerServices/index.js";
 export { default as ConstrainedExecution } from "./ConstrainedExecution/index.js";
 export { default as ExceptionServices } from "./ExceptionServices/index.js";
 export { default as InteropServices } from "./InteropServices/index.js";

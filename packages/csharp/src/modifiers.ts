@@ -21,8 +21,7 @@ export interface NonAccessModifiers {
 }
 
 export interface DeclarationModifiers
-  extends AccessModifiers,
-    NonAccessModifiers {}
+  extends AccessModifiers, NonAccessModifiers {}
 
 export const getAccessModifier = makeModifiers<AccessModifiers>([
   "public",

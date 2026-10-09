@@ -1,5 +1,28 @@
 # Changelog - @alloy-js/go
 
+## 0.3.2
+
+No changes, version bump only.
+
+## 0.3.1
+
+No changes, version bump only.
+
+## 0.3.0
+
+### Features
+
+- [#356](https://github.com/alloy-framework/alloy/pull/356) Include debugging information for symbols.
+- [#368](https://github.com/alloy-framework/alloy/pull/368) Ship dev sources in package for debugging. Use node's --condition="development" flag to use this build.
+
+
+## 0.2.0
+
+### Features
+
+- [#333](https://github.com/alloy-framework/alloy/pull/333) Add build-in time module and export `createModule` function.
+
+
 ## 0.1.0
 
 ### Bug Fixes

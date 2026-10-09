@@ -1,5 +1,6 @@
 import { ref } from "@vue/reactivity";
 import { expect, it } from "vitest";
+
 import { memo, untrack } from "../../src/reactivity.js";
 import { flushJobs } from "../../src/scheduler.js";
 

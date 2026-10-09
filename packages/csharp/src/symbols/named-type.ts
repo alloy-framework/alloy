@@ -1,5 +1,8 @@
-import { Namekey, OutputSpace } from "@alloy-js/core";
-import { CSharpSymbol, CSharpSymbolOptions } from "./csharp.js";
+import type { Namekey, OutputSpace } from "@alloy-js/core";
+import { createSymbol } from "@alloy-js/core";
+
+import type { CSharpSymbolOptions } from "./csharp.js";
+import { CSharpSymbol } from "./csharp.js";
 
 // represents a symbol from a .cs file. Class, enum, interface etc.
 
@@ -38,11 +41,16 @@ export class NamedTypeSymbol extends CSharpSymbol {
 
   copy() {
     const options = this.getCopyOptions();
-    const copy = new NamedTypeSymbol(
+    const binder = this.binder;
+    const copy = createSymbol(
+      NamedTypeSymbol,
       this.name,
       undefined,
       this.#typeKind,
-      options,
+      {
+        ...options,
+        binder,
+      },
     );
     this.initializeCopy(copy);
     return copy;
@@ -50,5 +58,12 @@ export class NamedTypeSymbol extends CSharpSymbol {
 
   get members() {
     return this.memberSpaceFor("members")!;
+  }
+
+  override get debugInfo(): Record<string, unknown> {
+    return {
+      ...super.debugInfo,
+      typeKind: this.typeKind,
+    };
   }
 }

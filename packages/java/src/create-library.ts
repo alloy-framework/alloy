@@ -1,13 +1,14 @@
 // Declare libraries (dependencies) that you are adding to the project.
 // Allows discovery of symbols from these libraries for use in the program
 
+import type { Binder, Refkey, SymbolCreator } from "@alloy-js/core";
 import {
-  Binder,
+  createScope,
+  createSymbol,
   getSymbolCreatorSymbol,
-  Refkey,
   refkey,
-  SymbolCreator,
 } from "@alloy-js/core";
+
 import {
   JavaOutputSymbol,
   JavaPackageScope,
@@ -23,15 +24,15 @@ function createSymbols(
   props: CreateLibraryProps<LibraryDescriptor>,
   refkeys: Record<string, any>,
 ) {
-  const projectScope = new JavaProjectScope(props.groupId, { binder });
+  const projectScope = createScope(JavaProjectScope, props.groupId, { binder });
 
   for (const [pkg, symbols] of Object.entries(props.descriptor)) {
-    const packageScope = new JavaPackageScope(pkg, projectScope, {
+    const packageScope = createScope(JavaPackageScope, pkg, projectScope, {
       binder,
     });
 
     for (const symB of symbols) {
-      new JavaOutputSymbol(symB, packageScope.symbols, {
+      createSymbol(JavaOutputSymbol, symB, packageScope.symbols, {
         binder,
         refkeys: refkeys[symB],
         package: packageScope.name,
@@ -41,8 +42,9 @@ function createSymbols(
 }
 
 export type LibraryRefkeys<T extends LibraryDescriptor> = {
-  [S in T[keyof T] extends readonly string[] ? T[keyof T][number]
-  : never]: Refkey;
+  [S in T[keyof T] extends readonly string[]
+    ? T[keyof T][number]
+    : never]: Refkey;
 };
 
 export interface CreateLibraryProps<T extends LibraryDescriptor> {

@@ -1,7 +1,8 @@
+import type { ComponentContext } from "@alloy-js/core";
 import {
-  ComponentContext,
   SourceFile as CoreSourceFile,
   createNamedContext,
+  createScope,
   Scope,
   Show,
   SourceDirectoryContext,
@@ -9,8 +10,8 @@ import {
   useScope,
   type Children,
 } from "@alloy-js/core";
-
 import { join } from "pathe";
+
 import { getSourceDirectoryData } from "../source-directory-data.js";
 import { TSModuleScope } from "../symbols/index.js";
 import { ImportStatements } from "./ImportStatement.js";
@@ -41,7 +42,9 @@ export function SourceFile(props: SourceFileProps) {
   const currentDir = directoryContext.path;
   const path: string = join(currentDir, props.path);
   const parent = useScope();
-  const scope = new TSModuleScope(path, parent);
+  const scope = createScope(TSModuleScope, path, parent, {
+    binder: parent?.binder,
+  });
   sdData.modules.add(scope);
   const pkg = useContext(PackageContext);
   if (pkg) {
@@ -62,12 +65,12 @@ export function SourceFile(props: SourceFileProps) {
   }
 
   const header =
-    props.header || props.headerComment ?
+    props.header || props.headerComment ? (
       <SourceFileHeader
         header={props.header}
         headerComment={props.headerComment}
       />
-    : undefined;
+    ) : undefined;
 
   return (
     <CoreSourceFile

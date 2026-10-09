@@ -1,6 +1,7 @@
+import type { Children, Refkey } from "@alloy-js/core";
 import {
-  Children,
   computed,
+  createSymbol,
   emitSymbol,
   For,
   Indent,
@@ -9,9 +10,9 @@ import {
   MemberScope,
   moveTakenMembersTo,
   onCleanup,
-  Refkey,
   useMemberScope,
 } from "@alloy-js/core";
+
 import { JsonOutputSymbol } from "../symbols/json-symbol.js";
 import { JsonValue } from "./json-value.jsx";
 
@@ -61,7 +62,7 @@ export type JsonObjectProps =
  * @see {@link @alloy-js/core#MemberScopeContext}
  */
 export function JsonObject(props: JsonObjectProps) {
-  const objectSym = new JsonOutputSymbol("object symbol", undefined, {
+  const objectSym = createSymbol(JsonOutputSymbol, "object symbol", undefined, {
     transient: true,
     refkeys: props.refkey ? [props.refkey].flat() : undefined,
   });
@@ -152,7 +153,11 @@ export type ObjectPropertyProps =
 export function JsonObjectProperty(props: ObjectPropertyProps) {
   const memberScope = useMemberScope();
   const ownerSymbol = memberScope.ownerSymbol as JsonOutputSymbol;
-  const sym = new JsonOutputSymbol(props.name, ownerSymbol.staticMembers);
+  const sym = createSymbol(
+    JsonOutputSymbol,
+    props.name,
+    ownerSymbol.staticMembers,
+  );
   moveTakenMembersTo(sym);
   onCleanup(() => {
     sym.delete();

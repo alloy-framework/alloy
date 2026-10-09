@@ -1,13 +1,10 @@
-import {
-  OutputScope,
-  OutputScopeOptions,
-  shallowReactive,
-  useScope,
-} from "@alloy-js/core";
+import type { OutputScope, OutputScopeOptions } from "@alloy-js/core";
+import { createSymbol, shallowReactive, useScope } from "@alloy-js/core";
+
 import { GoSymbol } from "../symbols/go.js";
-import { PackageSymbol } from "../symbols/package.js";
+import type { PackageSymbol } from "../symbols/package.js";
 import { GoLexicalScope } from "./lexical.js";
-import { GoPackageScope } from "./package.js";
+import type { GoPackageScope } from "./package.js";
 
 export type ImportRecords = Map<PackageSymbol, GoSymbol>;
 
@@ -39,8 +36,9 @@ export class GoSourceFileScope extends GoLexicalScope {
       return this.#imports.get(import_)!;
     }
 
-    const localSymbol = new GoSymbol(import_.name, this.values, {
+    const localSymbol = createSymbol(GoSymbol, import_.name, this.values, {
       aliasTarget: import_,
+      binder: this.binder,
     });
 
     this.#imports.set(import_, localSymbol);

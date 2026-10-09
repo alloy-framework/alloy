@@ -1,13 +1,11 @@
+import type { Children, Namekey, Refkey } from "@alloy-js/core";
 import {
   Block,
-  Children,
   computed,
   Declaration,
   DeclarationContext,
   effect,
   memo,
-  Namekey,
-  Refkey,
   Scope,
   Show,
   takeSymbols,
@@ -15,6 +13,7 @@ import {
   useContext,
   watch,
 } from "@alloy-js/core";
+
 import { useGoScope, useNamedTypeScope } from "../../scopes/contexts.js";
 import { createNamedTypeScope } from "../../scopes/factories.js";
 import { GoNamedTypeScope } from "../../scopes/named-type.js";
@@ -22,11 +21,12 @@ import {
   createAnonymousTypeSymbol,
   createStructMemberSymbol,
 } from "../../symbols/factories.js";
-import { GoSymbol } from "../../symbols/go.js";
-import { NamedTypeSymbol } from "../../symbols/named-type.js";
+import type { GoSymbol } from "../../symbols/go.js";
+import type { NamedTypeSymbol } from "../../symbols/named-type.js";
 import { LineComment } from "../doc/comment.js";
 import { Name } from "../Name.js";
-import { TypeDeclaration, TypeDeclarationProps } from "../type/declaration.jsx";
+import type { TypeDeclarationProps } from "../type/declaration.jsx";
+import { TypeDeclaration } from "../type/declaration.jsx";
 
 /**
  * Properties for creating a struct declaration.
@@ -50,8 +50,7 @@ export interface StructDeclarationProps {
  * This is a combination of `StructDeclarationProps` and `TypeDeclarationProps`.
  */
 export interface StructTypeDeclarationProps
-  extends StructDeclarationProps,
-    TypeDeclarationProps {}
+  extends StructDeclarationProps, TypeDeclarationProps {}
 
 /**
  * Wrapper for creating a named struct type declaration.
@@ -130,9 +129,7 @@ export function StructDeclaration(props: StructDeclarationProps) {
   return (
     <>
       struct
-      {structScope ?
-        <Scope value={structScope}>{content}</Scope>
-      : content}
+      {structScope ? <Scope value={structScope}>{content}</Scope> : content}
     </>
   );
 }
@@ -173,11 +170,11 @@ export function StructMember(props: StructMemberProps) {
         <hbr />
       </Show>
       <Name /> {props.type}
-      {tagString.value === "" ?
-        ""
-      : tagString.value.includes('"') ?
-        ` \`${tagString.value}\``
-      : ` "${tagString.value}"`}
+      {tagString.value === ""
+        ? ""
+        : tagString.value.includes('"')
+          ? ` \`${tagString.value}\``
+          : ` "${tagString.value}"`}
     </Declaration>
   );
 }

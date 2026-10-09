@@ -1,10 +1,12 @@
+import type { SymbolCreator } from "@alloy-js/core";
 import {
   type Binder,
+  createScope,
   getSymbolCreatorSymbol,
   type Refkey,
   refkey,
-  SymbolCreator,
 } from "@alloy-js/core";
+
 import { createPythonSymbol } from "./symbol-creation.js";
 import { PythonModuleScope } from "./symbols/index.js";
 
@@ -36,9 +38,12 @@ function createSymbols(
     // Otherwise, we append the path to the module name
     const fullModuleScopeName = props.name + (path === "." ? "" : `.${path}`);
     const keys = refkeys[path];
-    const moduleScope = new PythonModuleScope(fullModuleScopeName, undefined, {
-      binder: binder,
-    });
+    const moduleScope = createScope(
+      PythonModuleScope,
+      fullModuleScopeName,
+      undefined,
+      { binder },
+    );
 
     // Create a symbol for each exported name
     for (const exportedName of symbols ?? []) {

@@ -1,9 +1,10 @@
 import { abcModule } from "../builtins/python.js";
-import {
-  BaseFunctionDeclaration,
+import { DecoratorList } from "./DecoratorList.jsx";
+import type {
   BaseFunctionDeclarationProps,
   CommonFunctionProps,
 } from "./FunctionBase.js";
+import { BaseFunctionDeclaration } from "./FunctionBase.js";
 
 /**
  * Shared base props for all method-like declarations.
@@ -36,18 +37,20 @@ export function MethodDeclarationBase(
   props: MethodDeclarationBaseProps &
     Pick<BaseFunctionDeclarationProps, "functionType" | "sym">,
 ) {
-  const abstractMethod =
-    props.abstract ?
-      <>
-        @{abcModule["."].abstractmethod}
-        <hbr />
-      </>
-    : undefined;
+  const { decorators, abstract, ...rest } = props;
+
+  const abstractMethod = abstract ? (
+    <>
+      @{abcModule["."].abstractmethod}
+      <hbr />
+    </>
+  ) : undefined;
 
   return (
     <>
+      <DecoratorList decorators={decorators} />
       {abstractMethod}
-      <BaseFunctionDeclaration {...props} />
+      <BaseFunctionDeclaration {...rest} />
     </>
   );
 }

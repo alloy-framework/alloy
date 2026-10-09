@@ -1,34 +1,33 @@
+import type { Ref } from "@vue/reactivity";
 import {
   isRef,
   reactive,
   ReactiveFlags,
-  Ref,
-  shallowReactive,
   track,
   TrackOpTypes,
   trigger,
   TriggerOpTypes,
   watch,
 } from "@vue/reactivity";
+
 import type { Binder } from "../binder.js";
 import { useBinder } from "../context/binder.js";
+import { debug, TracePhase } from "../debug/index.js";
 import { inspect } from "../inspect.js";
-import { NamePolicyGetter } from "../name-policy.js";
-import { untrack } from "../reactivity.js";
-import { Namekey, type Refkey } from "../refkey.js";
+import type { NamePolicyGetter } from "../name-policy.js";
+import { shallowReactive, untrack } from "../reactivity.js";
+import type { Namekey } from "../refkey.js";
 import {
-  formatSymbol,
-  formatSymbolName,
-  trace,
-  traceEffect,
-  TracePhase,
-} from "../tracer.js";
-import {
-  OutputDeclarationSpace,
-  OutputMemberSpace,
-  OutputSpace,
-} from "./output-space.js";
-import { SymbolTable } from "./symbol-table.js";
+  isMemberRefkey,
+  isNamekey,
+  isSymbolRefkey,
+  toRefkey,
+  type Refkey,
+} from "../refkey.js";
+import { formatSymbolName } from "../tracer.js";
+import type { OutputDeclarationSpace, OutputSpace } from "./output-space.js";
+import { OutputMemberSpace } from "./output-space.js";
+import type { SymbolTable } from "./symbol-table.js";
 
 export interface OutputSymbolOptions {
   /**
@@ -36,6 +35,12 @@ export interface OutputSymbolOptions {
    * will be reported to this binder. This binder will be able to find this
    * symbol via its refkey and other means. Without a binder, this symbol will
    * be unbound, which means it cannot be referenced by refkey.
+   *
+   * @remarks
+   *
+   * When constructing an external library symbol, pass `{ binder }` here to
+   * ensure the symbol is registered with the binder. See {@link TO_SYMBOL} for
+   * the full implementation protocol.
    */
   binder?: Binder;
 
@@ -96,7 +101,15 @@ export interface OutputSymbolOptions {
   ignoreNameConflict?: boolean;
 
   /**
-   * Provide a function which lazy-initializes members when an enumeration of members are needed.
+   * Provide a function which lazy-initializes members the first time
+   * `resolveMemberByName()` is called on this symbol. Called at most once.
+   *
+   * @remarks
+   *
+   * Only `resolveMemberByName()` triggers this callback — iterating
+   * `OutputMemberSpace` directly does not. The callback fires regardless of
+   * whether the symbol belongs to any scope, so it is safe to use on scopeless
+   * external library symbols.
    */
   lazyMemberInitializer?: () => void;
 }
@@ -109,11 +122,47 @@ let symbolCount = 0;
  *
  * @remarks
  *
- * This class is the base implementation of symbol. Most languages will have
- * subtypes that provide additional metadata. Symbols are reactive values, so
- * you can observe changes to their properties in a reactive context.
+ * This is an abstract base class. Language packages must subclass it and
+ * implement the abstract {@link OutputSymbol.copy | copy()} method, which
+ * creates a clone that tracks the original's name and flags.
+ *
+ * Subtypes typically add language-specific properties (e.g., accessibility,
+ * static/abstract flags). Symbols are reactive values, so you can observe
+ * changes to their properties in a reactive context.
+ *
+ * To construct a scopeless external library symbol — one that resolves via
+ * refkey but does not appear in any declaration space — pass `undefined` as
+ * the `spaces` constructor argument and supply `{ binder }` in `options`.
+ * See {@link OutputSymbolOptions} (`binder` option) and {@link TO_SYMBOL}.
+ *
+ * @example
+ *
+ * ```ts
+ * import { createSymbol, OutputSymbol, OutputSpace } from "@alloy-js/core";
+ *
+ * class MySymbol extends OutputSymbol {
+ *   copy() {
+ *     // getCopyOptions() already includes binder
+ *     const opts = this.getCopyOptions();
+ *     const sym = createSymbol(MySymbol, this.name, undefined, opts);
+ *     this.initializeCopy(sym);
+ *     return sym;
+ *   }
+ * }
+ *
+ * // name: string | Namekey; spaces: OutputSpace | OutputSpace[] | undefined; options: OutputSymbolOptions
+ * const sym = createSymbol(MySymbol, namekey, scope.symbols, { binder });
+ *
+ * // Construct a scopeless external library symbol (resolves via refkey only):
+ * const extSym = createSymbol(MySymbol, namekey, undefined, { binder });
+ * ```
  */
 export abstract class OutputSymbol {
+  /**
+   * The member space keys for this symbol type. Subclasses override this to
+   * declare which member spaces are created on construction (e.g.,
+   * `["static", "instance"]`).
+   */
   public static readonly memberSpaces: Readonly<string[]> = [];
 
   #originalName: string;
@@ -127,30 +176,113 @@ export abstract class OutputSymbol {
     return this.#originalName;
   }
 
-  // this field is set by calling the name accessor.
-  #name!: string;
+  // The user-assigned name (as set by constructor or direct `.name =`
+  // assignments). Always defined after construction.
+  #userName!: string;
+
+  // The name assigned by a name-conflict resolver, if any. When present, this
+  // takes precedence over `#userName` in the computed `name` getter. Resolvers
+  // assign via the `deconflictedName` setter; clearing (setting to undefined)
+  // causes the symbol to fall back to its user-assigned name.
+  #deconflictedName: string | undefined;
+
   /**
-   * The name of this symbol.
+   * The name of this symbol. Assigning to this property applies the active
+   * name policy (unless `ignoreNamePolicy` is true) before storing the value.
+   *
+   * The effective name is computed as `deconflictedName ?? userName`, so if a
+   * name-conflict resolver has assigned a {@link OutputSymbol.deconflictedName | deconflictedName}, that value
+   * is returned here; otherwise the value most recently assigned to `name` is
+   * returned.
    *
    * @reactive
    */
   get name() {
     track(this, TrackOpTypes.GET, "name");
-    return this.#name;
+    return this.#deconflictedName ?? this.#userName;
   }
 
   set name(name: string) {
-    const old = this.#name;
+    const policyApplied =
+      this.#namePolicy && !this.#ignoreNamePolicy
+        ? this.#namePolicy(name)
+        : name;
 
-    if (old === name) {
+    if (this.#userName === policyApplied) {
       return;
     }
 
-    this.#name =
-      this.#namePolicy && !this.#ignoreNamePolicy ?
-        this.#namePolicy(name)
-      : name;
-    trigger(this, TriggerOpTypes.SET, "name", name, old);
+    const old = this.#deconflictedName ?? this.#userName;
+    this.#userName = policyApplied;
+    const next = this.#deconflictedName ?? this.#userName;
+    if (next !== old) {
+      trigger(this, TriggerOpTypes.SET, "name", next, old);
+    }
+  }
+
+  /**
+   * The name assigned by a name-conflict resolver, or `undefined` when the
+   * symbol is not currently renamed by conflict resolution.
+   *
+   * Resolvers should assign to this slot (rather than `name`) to record that a
+   * rename exists only because of a conflict. On re-deconfliction (e.g. after
+   * a conflicting symbol is removed), resolvers clear this slot by assigning
+   * `undefined`; the effective {@link OutputSymbol.name | name} then falls back to the
+   * user-assigned name, which in turn falls back to the original name.
+   *
+   * Name policy is applied to values written here (unless `ignoreNamePolicy`
+   * is true), matching `name`'s behavior.
+   *
+   * @reactive
+   */
+  get deconflictedName(): string | undefined {
+    track(this, TrackOpTypes.GET, "deconflictedName");
+    return this.#deconflictedName;
+  }
+
+  set deconflictedName(value: string | undefined) {
+    const policyApplied =
+      value !== undefined && this.#namePolicy && !this.#ignoreNamePolicy
+        ? this.#namePolicy(value)
+        : value;
+
+    if (this.#deconflictedName === policyApplied) {
+      return;
+    }
+
+    const oldName = this.#deconflictedName ?? this.#userName;
+    const oldDeconflicted = this.#deconflictedName;
+    this.#deconflictedName = policyApplied;
+    trigger(
+      this,
+      TriggerOpTypes.SET,
+      "deconflictedName",
+      policyApplied,
+      oldDeconflicted,
+    );
+    const nextName = this.#deconflictedName ?? this.#userName;
+    if (nextName !== oldName) {
+      trigger(this, TriggerOpTypes.SET, "name", nextName, oldName);
+    }
+  }
+
+  /**
+   * The canonical requested name for this symbol: the result of applying the
+   * symbol's name policy to its {@link OutputSymbol.originalName | originalName}, or the original name
+   * itself when no policy applies. This is the name the symbol would carry if
+   * there were no conflicts, and is stable across the symbol's lifetime (it
+   * depends only on the immutable `originalName` and the name policy).
+   *
+   * Used by {@link SymbolTable} as the grouping key for name-conflict
+   * resolution, so that symbols whose original names normalize to the same
+   * policy-applied name (e.g. `foo_bar` and `fooBar` under camelCase) are
+   * recognized as conflicting.
+   */
+  get canonicalName(): string {
+    if (this.#ignoreNamePolicy || !this.#namePolicy) {
+      return this.originalName;
+    }
+    return this.#namePolicy(this.originalName);
   }
 
   #id: number;
@@ -187,7 +319,9 @@ export abstract class OutputSymbol {
     return this.#ignoreNameConflict;
   }
 
-  #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive({});
+  #memberSpaces: Record<string, OutputMemberSpace> = shallowReactive(
+    {},
+  ) as Record<string, OutputMemberSpace>;
   /**
    * The member spaces of this symbol.
    *
@@ -241,9 +375,7 @@ export abstract class OutputSymbol {
     }
 
     const spacesArray =
-      spaces === undefined ? []
-      : Array.isArray(spaces) ? spaces
-      : [spaces];
+      spaces === undefined ? [] : Array.isArray(spaces) ? spaces : [spaces];
     this.#handleNewSpaces(spacesArray, old);
 
     this.#spaces = spacesArray;
@@ -337,6 +469,13 @@ export abstract class OutputSymbol {
     return this.#metadata;
   }
 
+  /**
+   * Copy this symbol into the given space. Calls {@link OutputSymbol.copy} and places
+   * the result in `space`, then returns the copy.
+   *
+   * @param space - The space to place the copy in.
+   * @returns The copy of this symbol, now belonging to `space`.
+   */
   copyToSpace(space: OutputSpace) {
     const copy = this.copy();
     copy.spaces = space;
@@ -459,6 +598,10 @@ export abstract class OutputSymbol {
     return this.#isTyped;
   }
 
+  get debugInfo(): Record<string, unknown> {
+    return {};
+  }
+
   #namePolicy: NamePolicyGetter | undefined;
   get namePolicy() {
     return this.#namePolicy;
@@ -502,6 +645,14 @@ export abstract class OutputSymbol {
   // proxy.
   [ReactiveFlags.SKIP] = true;
 
+  /**
+   * @param name - The symbol name, or a {@link Namekey} carrying name and
+   * options (e.g., `ignoreNamePolicy`).
+   * @param spaces - The declaration or member space(s) this symbol belongs to.
+   * Pass `undefined` for scopeless external library symbols (see `binder` option).
+   * @param options - Additional symbol options (binder, refkeys, metadata,
+   * type, name policy, etc.).
+   */
   constructor(
     name: string | Namekey,
     spaces: OutputSpace[] | OutputSpace | undefined,
@@ -532,10 +683,11 @@ export abstract class OutputSymbol {
     }
 
     this.#id = symbolCount++;
-    this.#spaces =
-      Array.isArray(spaces) ? spaces
-      : spaces === undefined ? []
-      : [spaces];
+    this.#spaces = Array.isArray(spaces)
+      ? spaces
+      : spaces === undefined
+        ? []
+        : [spaces];
     this.#aliasTarget = options.aliasTarget;
     this.#metadata = reactive(options.metadata ?? {});
     this.#isTransient = !!options.transient;
@@ -552,10 +704,7 @@ export abstract class OutputSymbol {
       ]),
     );
 
-    trace(TracePhase.symbol.create, () => `${formatSymbol(this)}`);
-    traceEffect(TracePhase.symbol.update, () => {
-      return `${formatSymbol(this)}`;
-    });
+    // Notify binder so resolution tracking works even without createSymbol
     this.#binder?.notifySymbolCreated(this);
   }
 
@@ -570,7 +719,7 @@ export abstract class OutputSymbol {
   }
 
   delete() {
-    trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
+    debug.trace(TracePhase.symbol.delete, () => `${formatSymbolName(this)}`);
     if (this.#spaces) {
       this.#spaces.forEach((space) => space.delete(this));
     }
@@ -629,17 +778,19 @@ export abstract class OutputSymbol {
   }
 
   /**
-   * Makes a copy of this symbol which will update the name and flags
-   * of the clone when the original symbol is updated.
+   * Create a clone of this symbol whose name and flags reactively track the
+   * original.
    *
    * @remarks
    *
-   * This is used to create a symbol that is a copy of this symbol, but
-   * with a different scope. Changes to the copy will not affect the
-   * original symbol, and changes to the original symbol's name and flags
-   * will overwrite the copy's name and flags.
+   * Called by `SymbolTable.copyTo` during scope/space transfers.
+   * Subclasses implement cloning logic and call `getCopyOptions` for
+   * base options and `initializeCopy` to wire up member copying and
+   * name tracking.
    *
-   * @param newScope - The scope to use for the copy.
+   * **Space registration contract:** The returned clone must not be registered
+   * in any space on exit. `copyToSpace()` calls this method and assigns the
+   * space afterward.
    */
   abstract copy(): OutputSymbol;
 
@@ -652,6 +803,19 @@ export abstract class OutputSymbol {
     };
   }
 
+  /**
+   * Wires up reactive member-space copying and name tracking from this symbol
+   * to its `copy`.
+   *
+   * @remarks
+   *
+   * Iterates each member space and calls `copyTo` on the corresponding space
+   * on `copy`. Then installs a reactive watcher so that any future change to
+   * `this.name` is immediately mirrored onto `copy.name`.
+   *
+   * **Must be called by every `copy()` override** before the override returns.
+   * Pair with `getCopyOptions` to supply the base constructor options.
+   */
   protected initializeCopy(copy: OutputSymbol) {
     for (const sourceSpace of this.memberSpaces) {
       const targetSpace = copy.memberSpaceFor(sourceSpace.key);
@@ -676,4 +840,22 @@ export abstract class OutputSymbol {
   toString() {
     return untrack(() => `${this.constructor.name} "${this.name}"[${this.id}]`);
   }
+}
+
+function _formatRefkey(refkey: Refkey): string {
+  if (isNamekey(refkey)) {
+    return `name:${refkey.name}`;
+  }
+  if (isMemberRefkey(refkey)) {
+    const base = _formatRefkey(toRefkey(refkey.base));
+    const member =
+      typeof refkey.member === "string"
+        ? refkey.member
+        : _formatRefkey(toRefkey(refkey.member));
+    return `member:${base}.${member}`;
+  }
+  if (isSymbolRefkey(refkey)) {
+    return `key:${refkey.key}`;
+  }
+  return "refkey";
 }

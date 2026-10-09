@@ -1,6 +1,7 @@
 import { code, For, Output, renderAsync, writeOutput } from "@alloy-js/core";
 import { SourceFile } from "@alloy-js/typescript";
 import { resolve } from "pathe";
+
 import { resolveSchemas } from "./collect-schemas.js";
 import { XmlComponent } from "./components/xml-component.jsx";
 

@@ -1,6 +1,6 @@
 import { Prose } from "@alloy-js/core";
-import "@alloy-js/core/testing";
 import { expect, it } from "vitest";
+
 import { Section } from "../src/components/Section.jsx";
 import { mdTest } from "./utils.jsx";
 

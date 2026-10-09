@@ -1,4 +1,4 @@
-import * as core from "@alloy-js/core";
+import type * as core from "@alloy-js/core";
 
 // properties for creating a declaration
 export interface DeclarationProps {

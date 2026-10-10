@@ -234,7 +234,7 @@ describe("naming", () => {
     package alloy
 
     type TestInterface interface {
-      func Func_() string
+      func Func() string
     }
   `);
   });

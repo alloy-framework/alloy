@@ -1,4 +1,4 @@
-import type { NamePolicy } from "@alloy-js/core";
+import type { NamePolicy, NamePolicyGetter } from "@alloy-js/core";
 import { createNamePolicy, useNamePolicy } from "@alloy-js/core";
 
 export type GoElements =

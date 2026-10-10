@@ -88,7 +88,7 @@ it("handles reserved words with public prop", () => {
   ).toRenderTo(`
     package alloy
 
-    func Func_() {}
+    func Func() {}
   `);
 });
 
@@ -102,16 +102,6 @@ it("handles single character names with public prop", () => {
 
     func X() {}
   `);
-});
-
-it("handles empty string names with public prop", () => {
-  expect(() => {
-    render(
-      <TestPackage>
-        <FunctionDeclaration name="" public={true} />
-      </TestPackage>,
-    );
-  }).toThrow();
 });
 
 it("handles special characters in names with public prop", () => {

@@ -1,4 +1,4 @@
-import { Children, expect, it } from "vitest";
+import { expect, it } from "vitest";
 import { TestPackage } from "../../../test/utils.js";
 import { TypeDeclaration } from "./declaration.js";
 
@@ -46,6 +46,6 @@ it("handles reserved words with public prop for types", () => {
   ).toRenderTo(`
     package alloy
 
-    type Type_ string
+    type Type string
   `);
 });

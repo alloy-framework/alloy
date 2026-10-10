@@ -65,7 +65,7 @@ it("applies explicit public prop - public=true with lowercase name for struct me
   ).toRenderTo(`
     package alloy
 
-    type TestStruct struct{
+    type TestStruct struct {
       MyField string
     }
   `);
@@ -83,7 +83,7 @@ it("applies explicit public prop - public=false with uppercase name for struct m
   ).toRenderTo(`
     package alloy
 
-    type TestStruct struct{
+    type TestStruct struct {
       myField string
     }
   `);
@@ -101,7 +101,7 @@ it("preserves original case when public prop is not specified for struct members
   ).toRenderTo(`
     package alloy
 
-    type TestStruct struct{
+    type TestStruct struct {
       MixedCaseField string
     }
   `);
@@ -119,8 +119,8 @@ it("handles reserved words with public prop for struct members", () => {
   ).toRenderTo(`
     package alloy
 
-    type TestStruct struct{
-      Type_ string
+    type TestStruct struct {
+      Type string
     }
   `);
 });

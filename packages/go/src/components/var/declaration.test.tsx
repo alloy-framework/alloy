@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
+
 import { TestPackage } from "../../../test/utils.js";
-import { VariableDeclaration, VariableDeclarationGroup } from "./declaration.js";
+import { VariableDeclaration } from "./declaration.js";
 
 it("applies explicit public prop - public=true with lowercase name for variables", () => {
   expect(
@@ -29,7 +30,12 @@ it("applies explicit public prop - public=false with uppercase name for variable
 it("applies explicit public prop - public=true with const for variables", () => {
   expect(
     <TestPackage>
-      <VariableDeclaration name="myConst" type="string" const={true} public={true} />
+      <VariableDeclaration
+        name="myConst"
+        type="string"
+        const={true}
+        public={true}
+      />
     </TestPackage>,
   ).toRenderTo(`
     package alloy

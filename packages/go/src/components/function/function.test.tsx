@@ -107,7 +107,10 @@ it("handles single character names with public prop", () => {
 it("handles special characters in names with public prop", () => {
   expect(
     <TestPackage>
-      <FunctionDeclaration name="function_name_with_underscores" public={true} />
+      <FunctionDeclaration
+        name="function_name_with_underscores"
+        public={true}
+      />
     </TestPackage>,
   ).toRenderTo(`
     package alloy

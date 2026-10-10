@@ -72,7 +72,10 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   const declarationGroupContext = useContext(VariableDeclarationGroupContext);
   const inDeclarationGroup = !!declarationGroupContext?.active;
   const isConst = declarationGroupContext?.const ?? props.const;
-  const symbol = createVariableSymbol(props.name, { refkeys: props.refkey, public: props.public });
+  const symbol = createVariableSymbol(props.name, {
+    refkeys: props.refkey,
+    public: props.public,
+  });
   const content = memo(() => {
     const keyword = isConst ? "const" : "var";
 

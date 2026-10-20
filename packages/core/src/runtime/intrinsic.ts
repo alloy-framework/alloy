@@ -17,9 +17,17 @@ export interface IntrinsicElements {
   /**
    * Attempt to render the children on a single line if possible. If a group
    * contains `<breakParent />` or a hard line, or if the group exceeds the
-   * print width, all linebreaks in the group will be broken.
+   * print width, all linebreaks in the group will be broken. `max` replaces
+   * the print width for this group and is measured against its own flat
+   * width, so a group that fits `max` stays flat wherever it appears, even
+   * past the print width.
    */
-  group: { shouldBreak?: boolean; id?: symbol; children: Children };
+  group: {
+    shouldBreak?: boolean;
+    id?: symbol;
+    max?: number;
+    children: Children;
+  };
 
   /**
    * A regular line break. This will break if the line exceeds the print

@@ -1,5 +1,12 @@
 # Changelog - @alloy-js/typescript
 
+## 0.26.0
+
+### Bug Fixes
+
+- [#453](https://github.com/alloy-framework/alloy/pull/453) `MemberExpression` no longer breaks and re-indents dot accesses inside a call chain segment
+
+
 ## 0.25.0
 
 No changes, version bump only.

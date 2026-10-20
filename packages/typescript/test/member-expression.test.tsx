@@ -754,6 +754,29 @@ describe("formatting", () => {
       `);
     });
 
+    it("keeps dot accesses within a call chain segment on one line", () => {
+      expect(
+        <TestFile>
+          <MemberExpression>
+            <MemberExpression.Part id="schema" />
+            <MemberExpression.Part id="object" />
+            <MemberExpression.Part args />
+            <MemberExpression.Part id="shape" />
+            <MemberExpression.Part id="nested" />
+            <MemberExpression.Part id="partial" />
+            <MemberExpression.Part args />
+          </MemberExpression>
+        </TestFile>,
+      ).toRenderTo(
+        `
+        schema
+          .object()
+          .shape.nested.partial()
+      `,
+        { printWidth: 12 },
+      );
+    });
+
     it("handles the first part being a call", () => {
       expect(
         <TestFile>

@@ -122,13 +122,13 @@ const { Expression, Part, registerOuterComponent } = createAccessExpression<
     return isIdPartDescriptor(part) ? part.id : part.index;
   },
 
-  formatPart(part, prevPart, _inCallChain) {
+  formatPart(part, prevPart, inCallChain) {
     if (prevPart.type) {
       return formatArrayAccess(prevPart, part);
     } else if (part.args !== undefined) {
       return formatCallExpr(prevPart, part);
     } else if (part.accessStyle === "dot") {
-      return formatDotAccess(prevPart, part);
+      return formatDotAccess(prevPart, part, inCallChain);
     } else {
       return formatArrayAccess(prevPart, part);
     }
@@ -282,17 +282,31 @@ function formatArrayAccess(prevPart: PartDescriptor, part: PartDescriptor) {
   );
 }
 
-function formatDotAccess(prevPart: PartDescriptor, part: PartDescriptor) {
+function formatDotAccess(
+  prevPart: PartDescriptor,
+  part: PartDescriptor,
+  inCallChain: boolean,
+) {
+  const access = (
+    <>
+      {prevPart.nullish ? "?." : "."}
+      {isIdPartDescriptor(part)
+        ? part.jsPrivate
+          ? `#${part.id}`
+          : part.id
+        : part.index}
+    </>
+  );
+
+  if (inCallChain) {
+    return access;
+  }
+
   return (
     <group>
       <indent>
         <sbr />
-        {prevPart.nullish ? "?." : "."}
-        {isIdPartDescriptor(part)
-          ? part.jsPrivate
-            ? `#${part.id}`
-            : part.id
-          : part.index}
+        {access}
       </indent>
     </group>
   );

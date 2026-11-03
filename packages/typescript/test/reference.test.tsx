@@ -1,4 +1,4 @@
-import { Output, refkey } from "@alloy-js/core";
+import { For, Output, refkey } from "@alloy-js/core";
 import { expect, it } from "vitest";
 
 import * as ts from "../src/components/index.js";
@@ -61,4 +61,43 @@ it("works with forward references", () => {
       const v = foo;
     `,
   });
+});
+
+it("preserves union members with multipart joiners and forward references", () => {
+  const first = refkey();
+  const second = refkey();
+  const third = refkey();
+
+  expect(
+    <Output>
+      <ts.SourceFile path="test.ts">
+        <ts.TypeDeclaration name="Example">
+          <group>
+            <For
+              each={[first, second, third]}
+              joiner={
+                <>
+                  <br />
+                  {"| "}
+                </>
+              }
+            >
+              {(key) => key}
+            </For>
+          </group>
+        </ts.TypeDeclaration>
+        <hbr />
+        <ts.InterfaceDeclaration name="First" refkey={first} />
+        <hbr />
+        <ts.InterfaceDeclaration name="Second" refkey={second} />
+        <hbr />
+        <ts.InterfaceDeclaration name="Third" refkey={third} />
+      </ts.SourceFile>
+    </Output>,
+  ).toRenderTo(`
+    type Example = First | Second | Third;
+    interface First {}
+    interface Second {}
+    interface Third {}
+  `);
 });

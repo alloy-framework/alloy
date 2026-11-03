@@ -10,6 +10,8 @@ Alloy uses Vue's signal primitives from `@vue/reactivity`, wrapped with an owner
 - **`reactive(obj)`** — deeply reactive proxy.
 - [**`shallowReactive(obj)`**](api/functions/shallowReactive.md) — no deep conversion. **Prefer over `reactive()`.**
 
+Use `shallowRef()` when storing rendered children so live Alloy nodes retain their identity.
+
 ## [`effect(fn, current?, options?)`](api/functions/effect.md)
 
 Re-runs `fn` when tracked dependencies change. Runs through Alloy's scheduler, creates a new [`Context`](api/types/Context.md) in the owner chain, supports cleanup via [`onCleanup()`](api/functions/onCleanup.md).

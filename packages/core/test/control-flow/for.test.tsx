@@ -289,3 +289,59 @@ it("updates joiners appropriately when items get/lose content", () => {
   flushJobs();
   expect(tree).toRenderTo("hi, hello");
 });
+
+it("preserves multipart joiners and following siblings when items update", () => {
+  const items = [ref("unresolved"), ref("unresolved"), ref("unresolved")];
+  const tree = (
+    <>
+      <For
+        each={items}
+        joiner={
+          <>
+            <br />
+            {"| "}
+          </>
+        }
+      >
+        {(item) => item}
+      </For>
+      <hbr />
+      after
+    </>
+  );
+
+  expect(tree).toRenderTo(`
+    unresolved
+    | unresolved
+    | unresolved
+    after
+  `);
+
+  items[0].value = "First";
+  items[1].value = "Second";
+  items[2].value = "Third";
+  flushJobs();
+  expect(tree).toRenderTo(`
+    First
+    | Second
+    | Third
+    after
+  `);
+
+  items[1].value = "";
+  flushJobs();
+  expect(tree).toRenderTo(`
+    First
+    | Third
+    after
+  `);
+
+  items[1].value = "Second";
+  flushJobs();
+  expect(tree).toRenderTo(`
+    First
+    | Second
+    | Third
+    after
+  `);
+});

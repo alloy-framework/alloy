@@ -12,6 +12,7 @@ import {
   ref,
   root,
   setContextEmptyChangeListener,
+  shallowRef,
   untrack,
 } from "./reactivity.js";
 import { AlloyNode, FRAGMENT_NODE } from "./render/node.js";
@@ -146,11 +147,9 @@ export function mapJoin<T, U, V>(
   const mapped: Children[] = [];
   let enderMemo: (() => Children) | undefined;
 
-  // Creates a ref placeholder that stores the joiner node for a boundary.
+  // Deep proxies would change the identity of live nodes and their siblings.
   function createJoinerRef(): Ref<Children | undefined> {
-    return ref<unknown>(undefined, { isInfrastructure: true }) as Ref<
-      Children | undefined
-    >;
+    return shallowRef<Children | undefined>();
   }
 
   // Makes sure we have a joiner ref at the requested boundary index.

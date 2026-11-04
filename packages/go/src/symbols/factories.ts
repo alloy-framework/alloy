@@ -1,9 +1,12 @@
-import type { Namekey, NamePolicyGetter } from "@alloy-js/core";
+import type { Namekey } from "@alloy-js/core";
 import { createSymbol } from "@alloy-js/core";
 import { join } from "pathe";
 
 import type { GoElements } from "../name-policy.js";
-import { useGoNamePolicy } from "../name-policy.js";
+import {
+  createGoNamePolicyGetterWithPublic,
+  useGoNamePolicy,
+} from "../name-policy.js";
 import { useGoScope, useNamedTypeScope } from "../scopes/contexts.js";
 import { GoFunctionScope } from "../scopes/function.js";
 import { GoLexicalScope } from "../scopes/lexical.js";
@@ -262,12 +265,17 @@ export function createAnonymousTypeSymbol(
   );
 }
 
-function withNamePolicy<T extends { namePolicy?: NamePolicyGetter }>(
+function withNamePolicy<T extends GoSymbolOptions>(
   options: T,
   elementType: GoElements,
-): GoSymbolOptions {
+): T {
+  const publicFlag = options.public;
   return {
     ...options,
-    namePolicy: options.namePolicy ?? useGoNamePolicy().for(elementType),
+    namePolicy:
+      options.namePolicy ??
+      (publicFlag !== undefined
+        ? createGoNamePolicyGetterWithPublic(elementType, publicFlag)
+        : useGoNamePolicy().for(elementType)),
   };
 }

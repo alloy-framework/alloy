@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 
 import fs from "fs";
+import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import path from "path";
 
@@ -242,11 +243,11 @@ const promptForPackageInfo = async (
 
 // Load dependencies and versions from JSON files
 const depsFilePath = path.resolve(
-  path.dirname(import.meta.url.replace("file:", "")),
+  path.dirname(fileURLToPath(import.meta.url)),
   "../../deps.json",
 );
 const depsVersionsFilePath = path.resolve(
-  path.dirname(import.meta.url.replace("file:", "")),
+  path.dirname(fileURLToPath(import.meta.url)),
   "../../deps-versions.json",
 );
 

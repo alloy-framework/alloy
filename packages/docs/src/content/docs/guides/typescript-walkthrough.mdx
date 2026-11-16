@@ -75,6 +75,9 @@ pnpm install
 pnpm build
 `} frame="terminal" lang="sh" />
 
+Our entrypoint will contain JSX, so it must be a `.tsx` file. If your project has
+`src/index.ts`, rename it to `src/index.tsx`.
+
 ## Defining our service
 
 Let's generate a client for a hypothetical pet store API, with the following endpoints:
@@ -86,7 +89,8 @@ Let's generate a client for a hypothetical pet store API, with the following end
 And to make things slightly more interesting, let's say that a pet also has a
 favorite toy.
 
-We can describe this using our schema format above as follows:
+We can describe this using our schema format above. Create `src/schema.ts`
+containing the interfaces from the [Goal](#goal) section, followed by:
 
 <Code code={`
   export const api: RestApi = {
@@ -241,7 +245,7 @@ To create context, create `src/context/api.ts` with the following contents:
 
 <Code code={`
   import { createContext, useContext } from "@alloy-js/core";
-  import { RestApi, RestApiModel, RestApiModelReference } from "../schema.js";
+  import type { RestApi, RestApiModel, RestApiModelReference } from "../schema.js";
 
   // context interface
   interface ApiContext {
@@ -288,6 +292,8 @@ the api schema itself from `src/schema.ts` and provide it to all child
 components. We do this by using `ApiContext.Provider` as follows:
 
 <Code code={`
+  import { ApiContext, createApiContext } from "./context/api.js";
+
   const output = render(
     <Output>
       <ApiContext.Provider value={createApiContext(api)}>
@@ -320,7 +326,7 @@ So let's create both `src/components/Model.tsx` and
   import { For, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
 
-  import { RestApiModel } from "../schema.js";
+  import type { RestApiModel } from "../schema.js";
   import { ModelProperty } from "./ModelProperty.jsx";
 
   interface ModelProps {
@@ -359,10 +365,10 @@ also the client, we give them a refkey.
 ### The ModelProperty component
 
 <Code code={`
-  import { Children, refkey } from "@alloy-js/core";
+  import { type Children, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { useApi } from "../context/api.js";
-  import { RestApiModelProperty } from "../schema.js";
+  import type { RestApiModelProperty } from "../schema.js";
   import { Model } from "./Model.jsx";
 
   interface ModelPropertyProps {
@@ -394,7 +400,7 @@ To explain the various parts:
 
 1. We start by importing the pieces we need, including the context accessor we
 defined in the previous section.
-2. We create `ModelProps` to define the props passed to the `ModelProperty`
+2. We create `ModelPropertyProps` to define the props passed to the `ModelProperty`
 component. This is just the schema for the property.
 3. We define the ModelProperty component which:
    1. Unpacks the type, handling the case of an API type reference, an inline
@@ -409,13 +415,17 @@ With these two components done, we can update our `index.tsx` to make use of the
 components. Using `For`, we can emit each of our model declarations.
 
 <Code code={`
+  import { Model } from "./components/Model.jsx";
+
   const output = render(
     <Output>
       <ApiContext.Provider value={createApiContext(api)}>
         <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
-        <ts.SourceFile path="models.ts">
-          <For each={api.models}>{(model) => <Model model={model} />}</For>
-        </ts.SourceFile>
+          <ts.SourceFile path="models.ts">
+            <For each={api.models} doubleHardline>
+              {(model) => <Model model={model} />}
+            </For>
+          </ts.SourceFile>
           <ts.SourceFile path="client.ts">
           </ts.SourceFile>
           <ts.BarrelFile export="." />
@@ -430,12 +440,13 @@ following content:
 
 <Code code={`
   export interface Pet {
-    name: string;
-    age: number;
-    favoriteToy: Toy;
+    name: string,
+    age: number,
+    favoriteToy: Toy,
   }
+
   export interface Toy {
-    name: string;
+    name: string,
   }
 `} frame="code" lang="tsx" title="alloy-output/models.ts" />
 
@@ -456,10 +467,10 @@ let's take it step by step.
 #### 1. Imports and setup
 
 <Code code={`
-  import { Block, For, Children, code, refkey } from "@alloy-js/core";
+  import { type Children, code, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { useApi } from "../context/api.js";
-  import { RestApiOperation } from "../schema.js";
+  import type { RestApiOperation } from "../schema.js";
 
   export interface ClientMethodProps {
     operation: RestApiOperation;
@@ -477,21 +488,23 @@ component's props, and get access to the current API spec inside the component.
 #### 2. Determine the method's parameters
 
 <Code code={`
-  const parameters: Record<string, ts.ParameterDescriptor> = {};
+  const parameters: ts.ParameterDescriptor[] = [];
 
-  const endpointParam = op.endpoint.match(/:(\w+)$/)?.[1];
+  const endpointParam = op.endpoint.match(/:(\\w+)$/)?.[1];
   if (endpointParam) {
-    parameters[endpointParam] = {
+    parameters.push({
+      name: endpointParam,
       type: "string",
       refkey: refkey(op, endpointParam),
-    };
+    });
   }
 
   if (op.requestBody) {
-    parameters["body"] = {
+    parameters.push({
+      name: "body",
       type: refkey(apiContext.resolveReference(op.requestBody)),
       refkey: refkey(op, "requestBody"),
-    };
+    });
   }
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
 
@@ -541,7 +554,7 @@ reference in a Promise.
 `} frame="code"lang="tsx" title="src/components/ClientMethod.tsx" />
 
 The endpoint to call may depend on a path parameter passed into the method, so
-we need to construct that strhing. When the endpoint has a parameter defined, we
+we need to construct that string. When the endpoint has a parameter defined, we
 slice off the parameter definition in the endpoint url and concat the value
 passed in. We again refer to the parameter with a refkey, which we defined in
 step 2.
@@ -605,7 +618,7 @@ and all the parts we assembled previously are slotted into the appropriate place
 The Client component is relatively straight forward:
 
 <Code code={`
-  import { refkey } from "@alloy-js/core";
+  import { For, refkey } from "@alloy-js/core";
   import * as ts from "@alloy-js/typescript";
   import { useApi } from "../context/api.js";
   import { ClientMethod } from "./ClientMethod.jsx";
@@ -630,11 +643,17 @@ With this, we can drop the client into our output by importing the `Client`
 component and updating our output like the following:
 
 <Code code={`
+  import { Client } from "./components/Client.jsx";
+
+  // ...
+
   <Output>
     <ApiContext.Provider value={createApiContext(api)}>
       <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
         <ts.SourceFile path="models.ts">
-          {modelDecls}
+          <For each={api.models} doubleHardline>
+            {(model) => <Model model={model} />}
+          </For>
         </ts.SourceFile>
         <ts.SourceFile path="client.ts">
           <Client />
@@ -643,7 +662,7 @@ component and updating our output like the following:
       </ts.PackageDirectory>
     </ApiContext.Provider>
   </Output>
-`} frame="code"lang="tsx" title="src/schema.ts" />
+`} frame="code" lang="tsx" title="src/index.tsx" />
 
 ## Adding a name policy
 
@@ -663,7 +682,9 @@ In `src/index.tsx`, we can create a naming policy and pass it as a prop to the `
       <ApiContext.Provider value={createApiContext(api)}>
         <ts.PackageDirectory name={\`\${api.name}-client\`} version="1.0.0">
           <ts.SourceFile path="models.ts">
-            {modelDecls}
+            <For each={api.models} doubleHardline>
+            {(model) => <Model model={model} />}
+          </For>
           </ts.SourceFile>
           <ts.SourceFile path="client.ts">
             <Client />
@@ -673,19 +694,22 @@ In `src/index.tsx`, we can create a naming policy and pass it as a prop to the `
       </ApiContext.Provider>
     </Output>,
   );
-`} frame="code"lang="tsx" title="src/schema.ts" />
+`} frame="code" lang="tsx" title="src/index.tsx" />
 
 And with that, we check our output, and we have a working client!
 
 <Code code={`
   import { Pet } from "./models.js";
 
-  export default class PetstoreClient {
+  export class PetstoreClient {
     async createPet(body: Pet): Promise<Pet> {
-      const response = await fetch("/pets", {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
+      const response = await fetch(
+        "/pets",
+        {
+          method: "POST",
+          body: JSON.stringify(body),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Request failed: " + response.status);
@@ -693,6 +717,7 @@ And with that, we check our output, and we have a working client!
 
       return response.json() as Promise<Pet>;
     }
+
     async listPets(): Promise<Pet[]> {
       const response = await fetch("/pets");
 
@@ -702,6 +727,7 @@ And with that, we check our output, and we have a working client!
 
       return response.json() as Promise<Pet[]>;
     }
+
     async getPet(id: string): Promise<Pet> {
       const response = await fetch("/pets/" + id);
 

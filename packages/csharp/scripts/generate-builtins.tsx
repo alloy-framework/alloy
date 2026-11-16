@@ -10,6 +10,7 @@
 
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { Output, renderAsync, writeOutput } from "@alloy-js/core";
 
@@ -20,7 +21,7 @@ import { walk } from "./process-docfx.jsx";
 const [, , apiParam, outParam] = process.argv;
 const API_DIR = apiParam
   ? resolve(apiParam)
-  : join(dirname(new URL(import.meta.url).pathname), "api");
+  : join(dirname(fileURLToPath(import.meta.url)), "api");
 const OUTPUT_PATH = outParam ? resolve(outParam) : undefined; // reserved for future use
 
 console.log("Reading yaml files...");

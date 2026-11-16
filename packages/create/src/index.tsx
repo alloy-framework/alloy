@@ -360,7 +360,9 @@ const main = async () => {
             `}
           </SourceFile>
         </SourceDirectory>
-        <SourceFile path="index.ts">
+        <SourceFile
+          path={packageInfo.type === "project" ? "index.tsx" : "index.ts"}
+        >
           export * from "./components/index.js";
         </SourceFile>
       </SourceDirectory>

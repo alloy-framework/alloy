@@ -18,7 +18,7 @@
  *     ─→ ElementNode { localName: "group", data: { shouldBreak: true } }
  */
 
-import { createElement, type ElementNode } from "../render/node.js";
+import { createElement, ElementNode } from "../render/node.js";
 import type { Children, Props } from "./component.js";
 import { insert } from "./insert.js";
 
@@ -51,6 +51,9 @@ export function createIntrinsic(
     data.flatNode = flatNode;
   }
   const node = createElement(name, data);
+  if (name === "ifBreak" && data?.flatNode instanceof ElementNode) {
+    data.flatNode._textTransformOwner = node;
+  }
   if (children !== undefined) insert(node, children);
   return node;
 }

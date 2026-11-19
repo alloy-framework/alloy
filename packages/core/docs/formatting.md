@@ -84,6 +84,27 @@ Collapses whitespace like JSX — newlines become spaces, leading/trailing white
 - [**`<StatementList>`**](api/components/StatementList.md) — statements with line breaks between them.
 - [**`<Prose>`**](api/components/Prose.md) — fill-mode line breaking for text.
 
+## Transforming Rendered Text
+
+`TextTransform` formats its children using the current file's print options,
+then passes that text to a pure `transform` callback once per print. Child
+components render normally, retaining their context, references, and reactive
+bindings. Subsequent prints reflect updates without rendering those components
+a second time.
+
+```tsx
+<TextTransform transform={(text) => `[${text}]`}>
+  <MyComponent />
+</TextTransform>
+```
+
+The body is formatted independently of surrounding groups. The returned string
+then participates in the outer layout, including line fitting and indentation.
+Nested transforms run from the inside out. A transform counts as content even
+when its body or result is empty, because it can introduce content at print time.
+Literal string line breaks preserve preceding whitespace and normalize CRLF, CR,
+and LF to LF. JSX layout elements retain their normal formatting behavior.
+
 ## Content Slots
 
 [`createContentSlot()`](api/functions/createContentSlot.md) creates a reactive slot tracking whether it has content. Enables components like [`<Block>`](api/components/Block.md) and [`<List>`](api/components/List.md) to handle semantically empty children — lists skip separators, blocks collapse.

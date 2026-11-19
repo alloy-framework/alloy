@@ -532,6 +532,10 @@ function countsAsContent(nodeOrText: AlloyNode | string): boolean {
 }
 
 function hasTextDescendant(node: AlloyNode): boolean {
+  // Its print-time callback can produce text even when the body is empty.
+  if (node instanceof ElementNode && node.localName === "textTransform") {
+    return true;
+  }
   for (let c = node.firstChild; c !== null; c = c.nextSibling) {
     if (c instanceof TextNode) {
       if (c.data !== "") return true;

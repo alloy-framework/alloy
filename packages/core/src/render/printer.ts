@@ -27,8 +27,15 @@
  *     `getStringWidth` (vendored in `get-string-width.ts`).
  */
 
-import type { AlloyNode, ElementNode, TextNode } from "./node.js";
-import { COMMENT_NODE, FRAGMENT_NODE, TEXT_NODE } from "./node.js";
+import type { IntrinsicElements } from "../runtime/intrinsic.js";
+import type { AlloyNode } from "./node.js";
+import {
+  COMMENT_NODE,
+  ElementNode,
+  FRAGMENT_NODE,
+  TEXT_NODE,
+  TextNode,
+} from "./node.js";
 import type { Indent, Mode, PrintNodeOptions } from "./printer-support.js";
 import {
   CURSOR_PLACEHOLDER,
@@ -60,7 +67,13 @@ type SynthFrame = {
     | { kind: "list"; items: Frame[] }
     // Synthesize a `line` with the given attributes (used for
     // `line-suffix-boundary` flushing a hardline-without-break).
-    | { kind: "line"; hard?: boolean; soft?: boolean; literal?: boolean }
+    | {
+        kind: "line";
+        hard?: boolean;
+        soft?: boolean;
+        literal?: boolean;
+        preserveWhitespace?: boolean;
+      }
     // Synthesize an `indent` wrapping the given AlloyNode contents
     // (used by `indent-if-break` negate path).
     | { kind: "indent"; node: ElementNode }
@@ -333,10 +346,18 @@ function collectChildren(el: ElementNode): AlloyNode[] {
  * separated by synthetic hardlines. Empty segments are dropped, just
  * like Prettier's `[hardline, "x", hardline, "y"]` (no empty strings).
  */
-function expandMultilineText(text: string): Frame[] {
-  const parts = text.split(/\r?\n/);
+function expandMultilineText(
+  text: string,
+  preserveWhitespace = false,
+): Frame[] {
+  const parts = text.split(preserveWhitespace ? /\r\n|\r|\n/ : /\r?\n/);
   const out: Frame[] = [];
-  const synthHardline: SynthFrame = { [SYNTH]: true, kind: "line", hard: true };
+  const synthHardline: SynthFrame = {
+    [SYNTH]: true,
+    kind: "line",
+    hard: true,
+    preserveWhitespace,
+  };
   for (let i = 0; i < parts.length; i++) {
     if (i > 0) out.push(synthHardline);
     if (parts[i] !== "") out.push(parts[i]);
@@ -355,6 +376,72 @@ export interface PrintNodeResult {
 export function printNodeToString(
   root: AlloyNode,
   options: PrintNodeOptions,
+): PrintNodeResult {
+  return printResolvedNodeToString(
+    resolveTextTransforms(root, options),
+    options,
+  );
+}
+
+/**
+ * Lower transforms on a print-local copy so fitting and break propagation see
+ * the resulting text, not the original body. Ordinary trees skip this pass.
+ */
+function resolveTextTransforms(
+  node: AlloyNode,
+  options: PrintNodeOptions,
+): AlloyNode {
+  if (node._textTransformCount === 0) return node;
+
+  function resolve(node: AlloyNode): AlloyNode {
+    if (node._textTransformCount === 0) return node.cloneNode();
+    if (!(node instanceof ElementNode)) {
+      const copy = node.cloneNode();
+      for (let child = copy.firstChild; child !== null;) {
+        const next = child.nextSibling;
+        if (child._textTransformCount > 0) child.replaceWith(resolve(child));
+        child = next;
+      }
+      return copy;
+    }
+
+    const data = node.data as
+      | {
+          flatNode?: ElementNode;
+        }
+      | undefined;
+    const copy = new ElementNode(
+      node.localName === "textTransform"
+        ? "alloy:transform-body"
+        : node.localName,
+      node.localName === "ifBreak" && data?.flatNode
+        ? { ...data, flatNode: resolve(data.flatNode) }
+        : node.data,
+    );
+    for (
+      let child = node.firstChild;
+      child !== null;
+      child = child.nextSibling
+    ) {
+      copy.append(resolve(child));
+    }
+    if (node.localName === "textTransform") {
+      const { transform } = node.data as IntrinsicElements["textTransform"];
+      return new TextNode(
+        transform(printResolvedNodeToString(copy, options, true).formatted),
+        true,
+      );
+    }
+    return copy;
+  }
+
+  return resolve(node);
+}
+
+function printResolvedNodeToString(
+  root: AlloyNode,
+  options: PrintNodeOptions,
+  preserveTextWhitespace = false,
 ): PrintNodeResult {
   // Group "broken" status is maintained eagerly during render via
   // `propagateBreakDelta` in node.ts (which keeps `el._breakCount`
@@ -396,7 +483,14 @@ export function printNodeToString(
           break;
         }
         case "line":
-          handleLine(!!frame.hard, !!frame.soft, !!frame.literal, ind, mode);
+          handleLine(
+            !!frame.hard,
+            !!frame.soft,
+            !!frame.literal,
+            ind,
+            mode,
+            frame.preserveWhitespace,
+          );
           break;
         case "indent":
           cmds.push({
@@ -432,7 +526,10 @@ export function printNodeToString(
         if (cmds.length > 0) pos += textWidth(tn);
       } else {
         // multiline: expand into segments + synthetic hardlines.
-        const items = expandMultilineText(text);
+        const items = expandMultilineText(
+          text,
+          preserveTextWhitespace || tn.preserveWhitespace,
+        );
         for (let i = items.length - 1; i >= 0; i--) {
           cmds.push({ ind, mode, frame: items[i] });
         }
@@ -757,6 +854,7 @@ export function printNodeToString(
     literal: boolean,
     ind: Indent,
     mode: Mode,
+    preserveWhitespace = false,
   ): void {
     switch (mode) {
       case MODE_FLAT:
@@ -783,6 +881,7 @@ export function printNodeToString(
               hard,
               soft,
               literal,
+              preserveWhitespace,
             },
           });
           for (let i = lineSuffix.length - 1; i >= 0; i--) {
@@ -800,7 +899,7 @@ export function printNodeToString(
             pos = 0;
           }
         } else {
-          pos -= trimOut(out);
+          if (!preserveWhitespace) pos -= trimOut(out);
           out.push(newLine + ind.value);
           pos = ind.length;
         }

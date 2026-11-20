@@ -58,6 +58,11 @@ This deliberately pre-escapes the pipe for the GFM table parser. It is not a
 general-purpose inline-code serializer. Unescaped pipes emitted by JSX can
 create extra columns. Column headings follow the same string/JSX rules.
 
+Table cells and headings provide an internal table context. Markdown components
+such as `InlineCode` and default `Link` labels can use it to escape their own
+direct-string pipes. Arbitrary JSX output is still passed through unchanged;
+custom components remain responsible for their escaping.
+
 ## Multiline and block content
 
 Physical newlines in direct strings become `<br>` inside a cell; blank lines

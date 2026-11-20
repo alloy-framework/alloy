@@ -7,6 +7,8 @@ import {
   type Children,
 } from "@alloy-js/core";
 
+import { TableContext } from "../context/table.js";
+
 export interface TableColumn {
   /** Column heading. Direct strings are escaped; JSX is passed through. */
   header: Children;
@@ -28,6 +30,7 @@ export interface TableProps {
  * breaks. JSX output is not inspected; callers own its escaping and layout.
  */
 export function Table(props: TableProps) {
+  const rows = memo(() => childrenArray(() => props.children));
   return () => {
     if (props.columns.length === 0) {
       throw new Error("Table requires at least one column.");
@@ -51,7 +54,7 @@ export function Table(props: TableProps) {
           </For>
         </TableRow>
         {code`| ${delimiters.join(" | ")} |`}
-        {props.children}
+        <List>{rows}</List>
       </List>
     );
   };
@@ -74,7 +77,8 @@ export interface TableCellProps {
 
 /**
  * Escape direct string children without inspecting rendered JSX output.
- * Callers must escape pipes and avoid physical newlines inside JSX components.
+ * Context-aware Markdown components can escape their own pipes. Other JSX
+ * remains uninspected; callers own its escaping and physical line breaks.
  */
 export function TableCell(props: TableCellProps) {
   const content = memo(() =>
@@ -82,7 +86,11 @@ export function TableCell(props: TableCellProps) {
       typeof child === "string" ? escapeTableText(child) : child,
     ),
   );
-  return code` ${content} |`;
+  return (
+    <TableContext.Provider value={true}>
+      {code` ${content} |`}
+    </TableContext.Provider>
+  );
 }
 
 function escapeTableText(text: string): string {

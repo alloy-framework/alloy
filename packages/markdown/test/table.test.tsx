@@ -7,11 +7,13 @@ import {
   renderTree,
   useContext,
 } from "@alloy-js/core";
+import { d } from "@alloy-js/core/testing";
 import { decode } from "html-entities";
 import { marked, type Tokens } from "marked";
 import { expect, it } from "vitest";
 
 import { Table, TableCell, TableRow } from "../src/components/table.jsx";
+import { useTableContext } from "../src/context/table.js";
 import { mdTest } from "./utils.jsx";
 
 function parseTable(markdown: string) {
@@ -30,6 +32,55 @@ function visibleText(markdown: string) {
   const html = marked.parseInline(markdown, { async: false });
   return decode(html.replace(/<br\s*\/?>/g, "\n").replace(/<[^>]*>/g, ""));
 }
+
+it("separates two direct rows without relying on a For joiner", () => {
+  const template = mdTest(
+    <Table columns={[{ header: "Name" }, { header: "Value" }]}>
+      <TableRow>
+        <TableCell>one</TableCell>
+        <TableCell>1</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell>two</TableCell>
+        <TableCell>2</TableCell>
+      </TableRow>
+    </Table>,
+  );
+  expect(template).toRenderTo(d`
+    |Name |Value |
+    | --- | --- |
+    |one |1 |
+    |two |2 |
+  `);
+});
+
+it("provides table context in headers and cells without leaking outside", () => {
+  function InlineContent() {
+    return useTableContext() ? "A\\|B" : "A|B";
+  }
+  const template = mdTest(
+    <>
+      <InlineContent />
+      <Table columns={[{ header: <InlineContent /> }]}>
+        <TableRow>
+          <TableCell>
+            <InlineContent />
+          </TableCell>
+        </TableRow>
+      </Table>
+      <InlineContent />
+    </>,
+  );
+  expect(template).toRenderTo(d`
+    A|B
+
+    |A\\|B |
+    | --- |
+    |A\\|B |
+
+    A|B
+  `);
+});
 
 it("preserves direct string punctuation, backticks and empty cells without adding columns", () => {
   const literal = "A | B <T> & `literal backticks` &amp;";

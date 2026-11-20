@@ -58,6 +58,8 @@ jobs:
       - run: pnpm chronus pack --pack-destination ./artifacts
         name: Pack
 
+      # New packages must be published manually once, then configured on npm to trust
+      # alloy-framework/alloy's publish.yml workflow with the npm environment.
       # Have to use npm as pnpm doesn't respect access.
       - run: NODE_AUTH_TOKEN="" pnpm chronus publish "./artifacts/*.tgz" --access public --engine npm --report-summary ./publish-summary.json
         name: Publish

@@ -2,6 +2,10 @@
   "name": "@alloy-js/typespec",
   "version": "0.2.1",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alloy-framework/alloy.git"
+  },
   "exports": {
     ".": {
       "source": "./src/index.ts",

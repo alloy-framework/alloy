@@ -4,6 +4,7 @@ import {
   emitDiagnostic,
   onCleanup,
   printTree,
+  root,
   shallowRef,
   untrack,
   type AlloyNode,
@@ -25,6 +26,7 @@ export interface HeadingTarget {
 }
 
 export interface MarkdownFileContext {
+  content?: AlloyNode;
   headings: Set<HeadingTarget>;
   invalidate(): void;
 }
@@ -43,33 +45,40 @@ export function createMarkdownFileContext(): MarkdownFileContext {
   };
   let cycleDiagnostic: DiagnosticHandle | undefined;
   onCleanup(() => cycleDiagnostic?.dismiss());
-  effect(() => {
-    void revision.value;
-    untrack(() => {
-      if (allocateHeadings(headings)) {
-        cycleDiagnostic ??= emitDiagnostic({
-          severity: "error",
-          message: "Cyclic Markdown heading reference in display text.",
+  const dispose = root((dispose) => {
+    effect(() => {
+      void revision.value;
+      let completed = false;
+      try {
+        untrack(() => {
+          if (allocateHeadings(file)) {
+            cycleDiagnostic ??= emitDiagnostic({
+              severity: "error",
+              message: "Cyclic Markdown heading reference in display text.",
+            });
+          } else {
+            cycleDiagnostic?.dismiss();
+            cycleDiagnostic = undefined;
+          }
         });
-      } else {
-        cycleDiagnostic?.dismiss();
-        cycleDiagnostic = undefined;
+        completed = true;
+      } finally {
+        if (!completed) dispose();
       }
     });
+    return dispose;
   });
+  onCleanup(dispose);
   return file;
 }
 
-function allocateHeadings(headings: Set<HeadingTarget>) {
+function allocateHeadings(file: MarkdownFileContext) {
+  if (!file.content || file.headings.size === 0) return;
   const byNode = new Map<AlloyNode, HeadingTarget>();
-  for (const heading of headings) {
+  for (const heading of file.headings) {
     if (heading.content) byNode.set(heading.content, heading);
   }
-  const first = byNode.keys().next().value;
-  if (!first) return;
   // Mount order differs from document order when conditional headings appear.
-  let root = first;
-  while (root.parentNode) root = root.parentNode;
   const ordered: HeadingTarget[] = [];
   function visit(node: AlloyNode) {
     const heading = byNode.get(node);
@@ -78,7 +87,7 @@ function allocateHeadings(headings: Set<HeadingTarget>) {
       visit(child);
     }
   }
-  visit(root);
+  visit(file.content);
 
   const visiting = new Set<HeadingSymbol>();
   const visited = new Set<HeadingSymbol>();
@@ -104,6 +113,7 @@ function allocateHeadings(headings: Set<HeadingTarget>) {
   const slugger = new GithubSlugger();
   const ids = new Set<string>();
   const automaticIds = new Map<HeadingTarget, string>();
+  const titles = new Map<HeadingTarget, string>();
   // Reserve renderer-generated IDs before allocating explicit empty-slug fallbacks.
   for (const heading of ordered) {
     const symbol = heading.symbol;
@@ -117,21 +127,26 @@ function allocateHeadings(headings: Set<HeadingTarget>) {
       printTree(heading.content!, { noFlush: true, printWidth: Infinity }),
     );
     automaticIds.set(heading, slugger.slug(title));
-    symbol.title = title;
+    titles.set(heading, title);
   }
+  const allocatedIds = new Map<HeadingTarget, string>();
   for (const heading of ordered) {
     const automaticId = automaticIds.get(heading);
     if (automaticId === undefined) continue;
-    const symbol = heading.symbol;
     const id = heading.explicitId ?? (automaticId || slugger.slug("section"));
     if (ids.has(id) || ids.has(automaticId)) {
       throw new Error(`Duplicate Markdown heading ID: ${JSON.stringify(id)}.`);
     }
     ids.add(id);
     ids.add(automaticId);
+    allocatedIds.set(heading, id);
+  }
+  for (const [heading, id] of allocatedIds) {
+    const symbol = heading.symbol;
     symbol.metadata.explicitAnchor =
-      heading.explicitId !== undefined || automaticId === "";
+      heading.explicitId !== undefined || automaticIds.get(heading) === "";
     symbol.name = id;
+    symbol.title = titles.get(heading)!;
     symbol.ready = true;
   }
 }

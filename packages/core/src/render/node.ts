@@ -16,6 +16,8 @@
 
 // #region nodeType constants
 
+import { notifyNodeObservers } from "./node-observer.js";
+
 export const ELEMENT_NODE = 1 as const;
 export const TEXT_NODE = 3 as const;
 export const COMMENT_NODE = 8 as const;
@@ -419,6 +421,7 @@ function insertBefore(
   // the printer can skip its `propagateBreaks` prepass.
   propagateBreakDelta(parent, effectiveBreakCount(node));
   if (mutationListener !== null) mutationListener.attached(node, parent);
+  notifyNodeObservers(parent);
 }
 
 function detach(node: AlloyNode): void {
@@ -437,6 +440,7 @@ function detach(node: AlloyNode): void {
   node.previousSibling = null;
   node.nextSibling = null;
   if (mutationListener !== null) mutationListener.detached(node, parent);
+  notifyNodeObservers(parent);
 }
 
 // #endregion

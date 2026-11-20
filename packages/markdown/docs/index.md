@@ -70,6 +70,8 @@ still consumes its automatic slug, since Markdown renderers also generate an
 anchor for its heading text.
 
 Heading IDs and default link text update with reactive heading children.
+This includes text inside nested components, without evaluating their bodies
+again to derive the heading label.
 The active headings are allocated in document order, so removing/remounting
 or inserting headings also updates duplicate suffixes. Supply an explicit `id`
 when a URL must remain stable even if display text or surrounding headings

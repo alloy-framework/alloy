@@ -5,9 +5,30 @@ import {
   createFragment,
   createTextNode,
 } from "../src/render/index.js";
+import { _observeNode } from "../src/render/node-observer.js";
 import { textContent } from "./tree-test-utils.js";
 
 describe("Node tree", () => {
+  it("observes only its subtree and stops observing after cleanup", () => {
+    const root = createElement("group");
+    const first = createElement("group");
+    const second = createElement("group");
+    const nested = createElement("group");
+    nested.append("original");
+    first.append(nested);
+    root.append(first, second);
+    const updates: string[] = [];
+    const stop = _observeNode(first, () => updates.push(textContent(first)));
+    second.append("unrelated");
+    expect(updates).toEqual([]);
+    nested.firstChild!.replaceWith("updated");
+    expect(updates.at(-1)).toBe("updated");
+    stop();
+    stop();
+    nested.firstChild!.replaceWith("after cleanup");
+    expect(updates.at(-1)).toBe("updated");
+  });
+
   it("append/prepend/before/after build linked list correctly", () => {
     const root = createElement("group");
     const b = createTextNode("B");

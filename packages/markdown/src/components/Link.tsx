@@ -8,7 +8,7 @@ import {
 } from "@alloy-js/core";
 import { dirname, relative } from "pathe";
 
-import { HeadingContext, MarkdownFileContext } from "../context/source-file.js";
+import { HeadingContext } from "../context/source-file.js";
 import { useTableContext } from "../context/table.js";
 import { HeadingSymbol } from "../symbols/heading-symbol.js";
 
@@ -36,7 +36,6 @@ export function Link(props: LinkProps) {
     }
     const target = resolve(props.refkey);
     const heading = useContext(HeadingContext);
-    const file = useContext(MarkdownFileContext);
     const table = useTableContext();
     let renderedTitle: string | undefined;
     let renderedName: string | undefined;
@@ -59,11 +58,9 @@ export function Link(props: LinkProps) {
       heading.dependencies.add(dependency);
       onCleanup(() => {
         heading.dependencies.delete(dependency);
-        file?.invalidate();
       });
     }
     return () => {
-      if (heading) file?.invalidate();
       if (!target.value) {
         return unresolvedRefkey(props.refkey);
       }

@@ -1,5 +1,6 @@
 import {
   getDiagnosticsForTree,
+  type Children,
   Output,
   printTree,
   ref,
@@ -201,6 +202,34 @@ it("updates a reactive heading and its reference label and slug", () => {
   expect(printTree(tree)).toBe("# Alpha\n\n[Alpha](#alpha)");
   name.value = "Beta";
   expect(printTree(tree)).toBe("# Beta\n\n[Beta](#beta)");
+});
+
+it("updates nested reactive content without reevaluating its component", () => {
+  const name = ref("Foo");
+  const key = refkey();
+  let renders = 0;
+  function InlineName(props: { children: Children }) {
+    renders++;
+    return (
+      <>
+        {"`"}
+        {props.children}
+        {"`"}
+      </>
+    );
+  }
+  const tree = renderTree(
+    mdTest([
+      <Heading refkey={key}>
+        Use <InlineName>{name.value}</InlineName>
+      </Heading>,
+      key,
+    ]),
+  );
+  expect(printTree(tree)).toBe("# Use `Foo`\n\n[Use Foo](#use-foo)");
+  name.value = "Bar";
+  expect(printTree(tree)).toBe("# Use `Bar`\n\n[Use Bar](#use-bar)");
+  expect(renders).toBe(1);
 });
 
 it("resolves forward heading content references before allocating link targets", () => {

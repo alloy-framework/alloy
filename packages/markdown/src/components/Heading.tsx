@@ -76,11 +76,7 @@ export function Heading(props: HeadingProps) {
   });
   function Content() {
     target.content = sti("group")({
-      children: () => {
-        const children = props.children;
-        markdownFile.invalidate();
-        return children;
-      },
+      children: () => props.children,
     })();
     return target.content;
   }

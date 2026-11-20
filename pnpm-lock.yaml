@@ -803,6 +803,12 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
+      pathe:
+        specifier: 'catalog:'
+        version: 2.0.3
       yaml:
         specifier: 'catalog:'
         version: 2.9.0
@@ -813,6 +819,9 @@ importers:
       '@alloy-js/rollup-plugin':
         specifier: workspace:~
         version: link:../rollup-plugin
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../typescript
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.58.11(@types/node@26.1.1)

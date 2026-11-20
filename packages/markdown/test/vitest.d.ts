@@ -7,7 +7,10 @@ interface ToRenderToRenderOptions {
 }
 
 interface CustomMatchers<R = unknown> {
-  toRenderTo: (str: string, options?: ToRenderToRenderOptions) => R;
+  toRenderTo: (
+    str: string | Record<string, string>,
+    options?: ToRenderToRenderOptions,
+  ) => R;
 }
 
 declare module "vitest" {

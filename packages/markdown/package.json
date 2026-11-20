@@ -42,11 +42,14 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
+    "github-slugger": "^2.0.0",
+    "pathe": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "html-entities": "catalog:",

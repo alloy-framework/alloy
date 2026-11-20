@@ -1,5 +1,13 @@
 # Changelog - @alloy-js/create
 
+## 0.27.0
+
+### Bug Fixes
+
+- [#459](https://github.com/alloy-framework/alloy/pull/459) Generate `src/index.tsx` instead of `src/index.ts` for JSX projects, so the entrypoint can contain JSX (as in the TypeScript walkthrough) without renaming it.
+- [#458](https://github.com/alloy-framework/alloy/pull/458) Fix `npm init @alloy-js` on Windows: resolve `deps.json` and `deps-versions.json` with `fileURLToPath(import.meta.url)` instead of stripping the `file:` prefix, which produced paths like `C:\C:\...`.
+
+
 ## 0.26.0
 
 No changes, version bump only.

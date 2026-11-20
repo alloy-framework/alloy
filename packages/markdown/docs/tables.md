@@ -62,6 +62,10 @@ All JSX output, including output from `Link`, is passed through unchanged.
 Pre-escape pipes in link titles and other component output before using them
 in a table cell or heading.
 
+`InlineCode` handles its own direct-string pipes using the table context, so it
+can be used in cells and column headings without pre-escaping those strings.
+This does not change the pass-through behavior of arbitrary JSX.
+
 ## Multiline and block content
 
 Physical newlines in direct strings become `<br>` inside a cell; blank lines

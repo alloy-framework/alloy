@@ -12,6 +12,7 @@ import { decode } from "html-entities";
 import { marked, type Tokens } from "marked";
 import { expect, it } from "vitest";
 
+import { InlineCode } from "../src/components/inline-code.jsx";
 import { Table, TableCell, TableRow } from "../src/components/table.jsx";
 import { useTableContext } from "../src/context/table.js";
 import { mdTest } from "./utils.jsx";
@@ -52,6 +53,47 @@ it("separates two direct rows without relying on a For joiner", () => {
     |one |1 |
     |two |2 |
   `);
+});
+
+it("composes InlineCode pipes in headings and two direct rows", () => {
+  const template = mdTest(
+    <Table
+      columns={[
+        { header: <InlineCode>{"kind | type"}</InlineCode> },
+        { header: "Value" },
+      ]}
+    >
+      <TableRow>
+        <TableCell>
+          <InlineCode>{"string | null"}</InlineCode>
+        </TableCell>
+        <TableCell>one</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell>
+          <InlineCode>{"^(a|b)\\.json$"}</InlineCode>
+        </TableCell>
+        <TableCell>two</TableCell>
+      </TableRow>
+    </Table>,
+  );
+  expect(template).toRenderTo(d`
+    |\`kind \\| type\` |Value |
+    | --- | --- |
+    |\`string \\| null\` |one |
+    |\`^(a\\|b)\\.json$\` |two |
+  `);
+  const table = parseTable(printTree(renderTree(template)));
+  expect(table.header.map((cell) => visibleText(cell.text))).toEqual([
+    "kind | type",
+    "Value",
+  ]);
+  expect(
+    table.rows.map((row) => row.map((cell) => visibleText(cell.text))),
+  ).toEqual([
+    ["string | null", "one"],
+    ["^(a|b)\\.json$", "two"],
+  ]);
 });
 
 it("provides table context in headers and cells without leaking outside", () => {

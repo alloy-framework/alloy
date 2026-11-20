@@ -819,6 +819,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.1.1
+      html-entities:
+        specifier: 'catalog:'
+        version: 2.6.0
       marked:
         specifier: 'catalog:'
         version: 18.0.6

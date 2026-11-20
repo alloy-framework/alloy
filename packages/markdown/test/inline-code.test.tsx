@@ -41,7 +41,7 @@ it("renders an empty span as inline HTML", () => {
   );
 });
 
-it("renders contextual JSX children and chooses delimiters across child boundaries", () => {
+it("leaves JSX text unescaped while preserving its context", () => {
   const Name = createContext<string>();
   function NamePart() {
     return useContext(Name);
@@ -57,13 +57,10 @@ it("renders contextual JSX children and chooses delimiters across child boundari
       </Name.Provider>,
     ),
   );
-  expect(output).toBe("```a``b```");
-  expect(marked.Lexer.lexInline(output)).toMatchObject([
-    { type: "codespan", text: "a``b" },
-  ]);
+  expect(output).toBe("`a``b`");
 });
 
-it("normalizes line breaks produced by child components", () => {
+it("preserves JSX formatting without normalizing its line breaks", () => {
   const output = printTree(
     renderTree(
       <InlineCode>
@@ -74,10 +71,7 @@ it("normalizes line breaks produced by child components", () => {
       </InlineCode>,
     ),
   );
-  expect(output).toBe("`first second`");
-  expect(marked.Lexer.lexInline(output)).toMatchObject([
-    { type: "codespan", text: "first second" },
-  ]);
+  expect(output).toBe("`first\nsecond`");
 });
 
 it("composes in a heading and a link label without treating content as markup", () => {
@@ -102,7 +96,19 @@ it("composes in a heading and a link label without treating content as markup", 
   });
 });
 
-it("updates delimiters and padding when JSX content changes", () => {
+it("updates delimiters and padding when a direct string child changes", () => {
+  const text = ref("name");
+  const tree = renderTree(<InlineCode>{text.value}</InlineCode>);
+  expect(printTree(tree)).toBe("`name`");
+
+  text.value = "`name``";
+  expect(printTree(tree)).toBe("``` `name`` ```");
+
+  text.value = " name ";
+  expect(printTree(tree)).toBe("`  name  `");
+});
+
+it("leaves reactive JSX content unescaped", () => {
   const text = ref("name");
   function Name() {
     return text;
@@ -115,8 +121,8 @@ it("updates delimiters and padding when JSX content changes", () => {
   expect(printTree(tree)).toBe("`name`");
 
   text.value = "`name``";
-  expect(printTree(tree)).toBe("``` `name`` ```");
+  expect(printTree(tree)).toBe("``name```");
 
   text.value = " name ";
-  expect(printTree(tree)).toBe("`  name  `");
+  expect(printTree(tree)).toBe("` name `");
 });

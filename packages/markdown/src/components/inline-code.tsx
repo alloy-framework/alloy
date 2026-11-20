@@ -1,17 +1,32 @@
-import { TextTransform, type Children } from "@alloy-js/core";
+import type { Children } from "@alloy-js/core";
 
 export interface InlineCodeProps {
-  /** Content rendered as literal code-span text, not Markdown markup. */
+  /**
+   * Direct strings are escaped automatically. JSX and other non-string
+   * children are wrapped in single backticks unchanged; callers own escaping.
+   */
   children?: Children;
 }
 
 /**
- * Render a Markdown code span, choosing delimiters and padding to preserve its
- * text. Each CRLF, CR, or LF becomes one space. Empty content uses inline HTML.
+ * Render a Markdown code span. Direct strings use adaptive delimiters and
+ * padding, with each CRLF, CR, or LF replaced by one space.
+ * Empty strings and omitted content use inline HTML.
  * Pipes are left literal for table renderers to escape in complete cell output.
  */
 export function InlineCode(props: InlineCodeProps) {
-  return <TextTransform transform={inlineCode}>{props.children}</TextTransform>;
+  return () => {
+    const content = props.children ?? "";
+    return typeof content === "string" ? (
+      inlineCode(content)
+    ) : (
+      <>
+        {"`"}
+        {content}
+        {"`"}
+      </>
+    );
+  };
 }
 
 function inlineCode(content: string): string {

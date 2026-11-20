@@ -38,6 +38,8 @@ pass the final text as a direct string child (including a reactive string
 expression such as `<InlineCode>{name.value}</InlineCode>`), not a component
 that returns it.
 
-Pipes and backslashes are left literal: escaping them here would change the
-visible text outside a table. A GFM table renderer must escape pipes in the
-complete rendered cell, including those inside code spans.
+Inside a Markdown table cell (including header cells), pipes in direct string
+children are escaped as `\|` so they cannot split the cell. Outside the table
+context, pipes remain literal. Existing backslashes are preserved in both cases.
+As with other escaping, opaque JSX content is not inspected: callers must escape
+any pipes produced by those children themselves.

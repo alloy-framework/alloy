@@ -1,5 +1,7 @@
 import type { Children } from "@alloy-js/core";
 
+import { useTableContext } from "../context/table.js";
+
 export interface InlineCodeProps {
   /**
    * Direct strings are escaped automatically. JSX and other non-string
@@ -12,13 +14,14 @@ export interface InlineCodeProps {
  * Render a Markdown code span. Direct strings use adaptive delimiters and
  * padding, with each CRLF, CR, or LF replaced by one space.
  * Empty strings and omitted content use inline HTML.
- * Pipes are left literal for table renderers to escape in complete cell output.
+ * Direct string pipes are escaped inside table cells and left literal elsewhere.
  */
 export function InlineCode(props: InlineCodeProps) {
+  const inTable = useTableContext();
   return () => {
     const content = props.children ?? "";
     return typeof content === "string" ? (
-      inlineCode(content)
+      inlineCode(inTable ? content.replace(/\|/g, "\\|") : content)
     ) : (
       <>
         {"`"}

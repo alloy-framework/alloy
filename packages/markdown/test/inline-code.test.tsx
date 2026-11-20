@@ -9,6 +9,7 @@ import {
 import { marked } from "marked";
 import { expect, it } from "vitest";
 
+import { TableContext } from "../src/context/table.js";
 import { Heading, InlineCode } from "../src/index.js";
 import { mdTest } from "./utils.jsx";
 
@@ -39,6 +40,43 @@ it("renders an empty span as inline HTML", () => {
   expect(marked.parseInline(printTree(renderTree(<InlineCode />)))).toBe(
     "<code></code>",
   );
+});
+
+it("escapes direct string pipes only within the table context", () => {
+  expect(
+    <>
+      <TableContext.Provider value={true}>
+        <InlineCode>{"string | null"}</InlineCode>{" "}
+        <InlineCode>{"^(a|b)\\.json$"}</InlineCode>
+      </TableContext.Provider>{" "}
+      <InlineCode>{"string | null"}</InlineCode>
+    </>,
+  ).toRenderTo("`string \\| null` `^(a\\|b)\\.json$` `string | null`");
+});
+
+it("leaves opaque JSX pipes unchanged inside table cells", () => {
+  function Content() {
+    return "a|b";
+  }
+  expect(
+    <TableContext.Provider value={true}>
+      <InlineCode>
+        <Content />
+      </InlineCode>
+    </TableContext.Provider>,
+  ).toRenderTo("`a|b`");
+});
+
+it("escapes updated direct string pipes inside table cells", () => {
+  const text = ref("first");
+  const tree = renderTree(
+    <TableContext.Provider value={true}>
+      <InlineCode>{text.value}</InlineCode>
+    </TableContext.Provider>,
+  );
+  expect(printTree(tree)).toBe("`first`");
+  text.value = "a|b";
+  expect(printTree(tree)).toBe("`a\\|b`");
 });
 
 it("leaves JSX text unescaped while preserving its context", () => {

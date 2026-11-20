@@ -32,7 +32,7 @@ Each language package provides JSX components for emitting that language's synta
 - **`@alloy-js/csharp`** — emit C# code. [API reference](../packages/csharp/docs/api/index.md).
 - **`@alloy-js/go`** — emit Go code. [API reference](../packages/go/docs/api/index.md).
 - **`@alloy-js/json`** — emit JSON (objects, arrays, properties). [API reference](../packages/json/docs/api/index.md).
-- **`@alloy-js/markdown`** — emit Markdown.
+- **`@alloy-js/markdown`** — emit Markdown. See [Markdown](../packages/markdown/docs/index.md) for heading references and stable anchors.
 
 ## Tooling
 

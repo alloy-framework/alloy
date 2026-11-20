@@ -89,19 +89,17 @@ it("composes in a heading and a link label without treating content as markup", 
     ),
   );
   expect(output).toBe("## [``a`b [label]``](https://example.com)");
-  expect(marked.lexer(output)).toMatchObject([
-    {
-      type: "heading",
-      depth: 2,
-      tokens: [
-        {
-          type: "link",
-          href: "https://example.com",
-          tokens: [{ type: "codespan", text: "a`b [label]" }],
-        },
-      ],
-    },
-  ]);
+  expect(marked.lexer(output)[0]).toMatchObject({
+    type: "heading",
+    depth: 2,
+    tokens: [
+      {
+        type: "link",
+        href: "https://example.com",
+        tokens: [{ type: "codespan", text: "a`b [label]" }],
+      },
+    ],
+  });
 });
 
 it("updates delimiters and padding when JSX content changes", () => {

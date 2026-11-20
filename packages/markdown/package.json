@@ -53,6 +53,8 @@
     "@alloy-js/rollup-plugin": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
+    "html-entities": "catalog:",
+    "marked": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

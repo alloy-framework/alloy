@@ -1,5 +1,11 @@
-import { List } from "@alloy-js/core";
-import { d } from "@alloy-js/core/testing";
+import { List, ref } from "@alloy-js/core";
+import {
+  d,
+  printTree,
+  renderToString,
+  renderTree,
+} from "@alloy-js/core/testing";
+import { marked } from "marked";
 import { expect, it } from "vitest";
 
 import { Code } from "../src/components/Code.jsx";
@@ -35,3 +41,97 @@ it("renders with children", () => {
     \`\`\`
   `);
 });
+
+it("omits an absent language instead of emitting undefined", () => {
+  const output = renderToString(<Code>plain text</Code>);
+  expect(output).toBe("```\nplain text\n```");
+  const tokens = marked.lexer(output);
+  expect(tokens).toHaveLength(1);
+  expect(tokens[0]).toMatchObject({
+    type: "code",
+    lang: "",
+    text: "plain text",
+  });
+});
+
+it.each(["before\n```\nafter", "before\n``````\nafter"])(
+  "keeps conflicting fences in a single parsed code block: %s",
+  (body) => {
+    const output = renderToString(<Code lang="md">{body}</Code>);
+    const tokens = marked.lexer(output);
+    expect(tokens).toHaveLength(1);
+    expect(tokens[0]).toMatchObject({ type: "code", lang: "md", text: body });
+  },
+);
+
+it("updates fences when a direct string body changes", () => {
+  const body = ref("before\n```\nafter");
+  const tree = renderTree(<Code lang="md">{body.value}</Code>);
+  expect(printTree(tree)).toBe("````md\nbefore\n```\nafter\n````");
+  body.value = "before\n``````\nafter";
+  const tokens = marked.lexer(printTree(tree));
+  expect(tokens).toHaveLength(1);
+  expect(tokens[0]).toMatchObject({
+    type: "code",
+    lang: "md",
+    text: body.value,
+  });
+});
+
+it("leaves JSX children unchanged without inspecting them for fence conflicts", () => {
+  const run = ref("``");
+  let renders = 0;
+  function Body() {
+    renders++;
+    return (
+      <List>
+        before
+        <>{run}`</>
+        after
+      </List>
+    );
+  }
+  const tree = renderTree(
+    <Code lang="md">
+      <group>
+        <Body />
+      </group>
+    </Code>,
+  );
+  expect(printTree(tree)).toBe("```md\nbefore\n```\nafter\n```");
+  run.value = "`````";
+  const output = printTree(tree);
+  expect(output).toBe("```md\nbefore\n``````\nafter\n```");
+  expect(renders).toBe(1);
+});
+
+it("preserves info strings containing backticks with safe tilde fences", () => {
+  const body = "before\n~~~\nafter\n";
+  const output = renderToString(
+    <Code lang={' md title="`example`" '}>{body}</Code>,
+  );
+  expect(output).toBe('~~~~md title="`example`"\nbefore\n~~~\nafter\n\n~~~~');
+  const tokens = marked.lexer(output);
+  expect(tokens).toHaveLength(1);
+  expect(tokens[0]).toMatchObject({
+    type: "code",
+    lang: 'md title="`example`"',
+    text: body,
+  });
+});
+
+it("preserves trailing blank lines in string bodies", () => {
+  const body = "first\nsecond\n\n";
+  const tokens = marked.lexer(renderToString(<Code>{body}</Code>));
+  expect(tokens).toHaveLength(1);
+  expect(tokens[0]).toMatchObject({ type: "code", text: body });
+});
+
+it.each(["md\ninjected", "md\r", "\nmd"])(
+  "rejects multiline info strings: %j",
+  (lang) => {
+    expect(() => renderToString(<Code lang={lang}>body</Code>)).toThrow(
+      "Code lang must be a single-line Markdown info string.",
+    );
+  },
+);

@@ -54,14 +54,6 @@ export function Heading(props: HeadingProps) {
     throw new Error("Heading must be rendered inside a Markdown SourceFile.");
   }
 
-  if (
-    props.id !== undefined &&
-    (props.id.length === 0 || /[\s"'<>&]/u.test(props.id))
-  ) {
-    throw new Error(
-      `Invalid Markdown heading ID: ${JSON.stringify(props.id)}.`,
-    );
-  }
   const text = memo(() => headingText(children()));
   const symbol =
     props.refkey === undefined
@@ -74,7 +66,13 @@ export function Heading(props: HeadingProps) {
         });
   const entry: HeadingEntry = {
     text,
-    id: props.id,
+    get id() {
+      const id = props.id;
+      if (id !== undefined && (id.length === 0 || /[\s"'<>&]/u.test(id))) {
+        throw new Error(`Invalid Markdown heading ID: ${JSON.stringify(id)}.`);
+      }
+      return id;
+    },
     symbol,
     anchor: shallowRef<string>(),
   };

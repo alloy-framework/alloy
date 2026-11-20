@@ -35,9 +35,9 @@ export function Link(props: LinkProps) {
     if (!sourceFile) {
       throw new Error("Link references must be rendered inside a SourceFile.");
     }
-    const target = resolve(props.refkey);
     const table = useTableContext();
     return () => {
+      const target = resolve(props.refkey);
       if (!target.value) {
         return unresolvedRefkey(props.refkey);
       }

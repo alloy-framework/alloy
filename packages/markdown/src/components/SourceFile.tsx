@@ -1,5 +1,12 @@
 import type { Children } from "@alloy-js/core";
-import { SourceFile as CoreSourceFile, List, Scope } from "@alloy-js/core";
+import {
+  BasicScope,
+  SourceFile as CoreSourceFile,
+  createScope,
+  List,
+  Scope,
+  useScope,
+} from "@alloy-js/core";
 
 import {
   createMarkdownFileContext,
@@ -12,10 +19,11 @@ export interface SourceFileProps {
   children: Children;
 }
 export function SourceFile(props: SourceFileProps) {
+  const scope = createScope(BasicScope, props.path, useScope());
   const file = createMarkdownFileContext();
   return (
     <CoreSourceFile path={props.path} filetype="md" reference={Link}>
-      <Scope name={props.path}>
+      <Scope value={scope}>
         <MarkdownFileContext.Provider value={file}>
           <List doubleHardline>{props.children}</List>
         </MarkdownFileContext.Provider>

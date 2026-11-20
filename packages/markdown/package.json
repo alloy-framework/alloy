@@ -49,6 +49,7 @@
   "devDependencies": {
     "@alloy-js/cli": "workspace:~",
     "@alloy-js/rollup-plugin": "workspace:~",
+    "@alloy-js/typescript": "workspace:~",
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "html-entities": "catalog:",

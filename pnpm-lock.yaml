@@ -819,6 +819,9 @@ importers:
       '@alloy-js/rollup-plugin':
         specifier: workspace:~
         version: link:../rollup-plugin
+      '@alloy-js/typescript':
+        specifier: workspace:~
+        version: link:../typescript
       '@microsoft/api-extractor':
         specifier: 'catalog:'
         version: 7.58.11(@types/node@26.1.1)

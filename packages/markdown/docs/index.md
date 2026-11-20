@@ -55,7 +55,9 @@ rendered heading text can differ from the slug input, so use `id`.
 Headings with JSX children, such as `InlineCode` or nested components, have no
 automatic anchor because Alloy does not inspect rendered JSX. To reference
 one, give it an `id`, and give links to it a `title`. Otherwise rendering
-throws an error.
+throws an error. Such a heading still consumes a renderer-generated slug that
+Alloy cannot determine. Subsequent referenced headings in the file therefore
+also require explicit IDs, even when their children are strings.
 
 Repeated slugs receive `-1`, `-2`, and so on, skipping IDs already generated
 by the slugger. Every `Heading` with string children counts, including
@@ -77,6 +79,8 @@ anchor for its heading text.
 Anchors and default link text update with reactive string children, such as
 `<Heading refkey={key}>{name.value}</Heading>`. Supply an explicit `id` when
 a URL must remain stable even if display text or surrounding headings change.
+Explicit IDs also follow reactive `id` props and are validated on each change.
+Links follow reactive `refkey` props, including unresolved-reference diagnostics.
 
 The default link label is the heading text, escaped for Markdown. Inside a
 `TableCell`, pipes in that default label are also escaped. Explicit `title`

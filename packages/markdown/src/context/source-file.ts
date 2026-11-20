@@ -35,8 +35,15 @@ export function createMarkdownFileContext(): MarkdownFileContext {
 function allocateHeadingIds(headings: HeadingEntry[]) {
   // Renderers generate an ID for every heading, including those with an explicit ID.
   const slugger = new GithubSlugger();
+  let opaque = false;
   const automatic = headings.map((heading) => {
     const text = heading.text();
+    if (opaque && heading.symbol && heading.id === undefined) {
+      throw new Error(
+        "A Heading with a refkey requires an explicit id after a heading with non-string children.",
+      );
+    }
+    if (text === undefined) opaque = true;
     return text === undefined ? undefined : slugger.slug(text);
   });
   const ids = new Set(automatic.filter((id) => id !== undefined));

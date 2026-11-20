@@ -32,6 +32,8 @@ export interface VariableDeclarationProps {
   doc?: Children;
   /** Whether this is a `const` declaration */
   const?: boolean;
+  /** Whether variable should be public (exported) or private (unexported) */
+  public?: boolean;
   /** Initializer expression */
   children?: Children;
 }
@@ -70,7 +72,10 @@ export function VariableDeclaration(props: VariableDeclarationProps) {
   const declarationGroupContext = useContext(VariableDeclarationGroupContext);
   const inDeclarationGroup = !!declarationGroupContext?.active;
   const isConst = declarationGroupContext?.const ?? props.const;
-  const symbol = createVariableSymbol(props.name, { refkeys: props.refkey });
+  const symbol = createVariableSymbol(props.name, {
+    refkeys: props.refkey,
+    public: props.public,
+  });
   const content = memo(() => {
     const keyword = isConst ? "const" : "var";
 

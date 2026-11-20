@@ -34,7 +34,30 @@ Format options ([`printWidth`, `tabWidth`, `useTabs`](api/types/CommonFormatOpti
 A group breaks if it contains `<hbr />`, `<lbr />`, `<breakParent />`, or has `shouldBreak`.
 
 - **`id`** — names the group for `<ifBreak>` / `<indentIfBreak>`.
+- **`max`** — measure against this width instead of `printWidth` (see below).
 - **`<breakParent />`** — forces all parent groups to break.
+
+#### Per-construct widths with `max`
+
+`printWidth` is a budget for the _line_, so whether a group fits depends on where on that line it starts. `max` is a budget for the _group_: its children are measured in their flat form against `max` alone, so the group lays out the same way wherever it appears.
+
+```tsx
+<group max={20}>
+  {"[1, 2, 3,"}
+  <br />
+  {"4, 5, 6]"}
+</group>
+// Flat form is 18 columns, so it stays flat wherever it sits on the line.
+```
+
+Reach for it when a layout rule is stated per construct rather than per line — a style that caps argument lists, collection literals or call chains below the file's print width.
+
+Measuring only the group's own content cuts both ways:
+
+- A group that fits `max` stays flat **even if that overruns `printWidth`**; an enclosing group has to make room by breaking elsewhere.
+- A group that exceeds `max` breaks **even if it would have fit** the current line.
+
+Everything else about `<group>` still applies: `shouldBreak`, a contained hard line and `<breakParent />` force a break regardless of `max`, and `id` publishes the outcome to `<ifBreak>` / `<indentIfBreak>` as usual.
 
 ### Indentation
 

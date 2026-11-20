@@ -93,7 +93,9 @@ it("leaves JSX children unchanged without inspecting them for fence conflicts", 
   }
   const tree = renderTree(
     <Code lang="md">
-      <Body />
+      <group>
+        <Body />
+      </group>
     </Code>,
   );
   expect(printTree(tree)).toBe("```md\nbefore\n```\nafter\n```");

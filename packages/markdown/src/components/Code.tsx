@@ -1,4 +1,4 @@
-import { computed, List } from "@alloy-js/core";
+import { computed, List, memo } from "@alloy-js/core";
 import type { Children } from "@alloy-js/core/jsx-runtime";
 
 export interface CodeProps {
@@ -20,6 +20,7 @@ export interface CodeProps {
  * JSX children render normally without being inspected for fence conflicts.
  */
 export function Code(props: CodeProps) {
+  const body = memo(() => props.children);
   const info = computed(() => {
     const info = props.lang ?? "";
     if (/[\r\n]/.test(info)) {
@@ -29,10 +30,10 @@ export function Code(props: CodeProps) {
   });
   const fence = computed(() => {
     const marker = info.value.includes("`") ? "~" : "`";
-    const body = props.children;
+    const content = body();
     const runs =
-      typeof body === "string"
-        ? (body.match(marker === "`" ? /`+/g : /~+/g) ?? [])
+      typeof content === "string"
+        ? (content.match(marker === "`" ? /`+/g : /~+/g) ?? [])
         : [];
     const length = runs.reduce(
       (length, run) => Math.max(length, run.length + 1),
@@ -43,7 +44,7 @@ export function Code(props: CodeProps) {
   return (
     <List>
       {fence.value + info.value}
-      {props.children}
+      {body()}
       {fence.value}
     </List>
   );

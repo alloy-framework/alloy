@@ -15,15 +15,6 @@ import type { Children } from "./component.js";
 
 export interface IntrinsicElements {
   /**
-   * Format children independently, then transform their text before laying out
-   * the surrounding content. The transform must be pure.
-   */
-  textTransform: {
-    transform: (text: string) => string;
-    children?: Children;
-  };
-
-  /**
    * Attempt to render the children on a single line if possible. If a group
    * contains `<breakParent />` or a hard line, or if the group exceeds the
    * print width, all linebreaks in the group will be broken.

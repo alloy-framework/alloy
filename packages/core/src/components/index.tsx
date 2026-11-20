@@ -20,6 +20,5 @@ export * from "./SourceFile.js";
 export * from "./StatementList.jsx";
 export * from "./Switch.jsx";
 export * from "./TemplateFile.jsx";
-export * from "./text-transform.jsx";
 export * from "./UpdateFile.jsx";
 export * from "./Wrap.jsx";

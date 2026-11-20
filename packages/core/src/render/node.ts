@@ -49,12 +49,6 @@ export abstract class AlloyNode {
    */
   isEmpty = true;
 
-  /** Number of text transforms in this subtree, including this node. */
-  _textTransformCount = 0;
-
-  /** Owning ifBreak for a detached alternate branch. */
-  _textTransformOwner: AlloyNode | null = null;
-
   // #region Modern DOM mutation API
 
   /** Append nodes (or strings) to the end of children. */
@@ -159,18 +153,14 @@ export class TextNode extends AlloyNode {
   /** 1 if `data` contains a newline, 0 if not, -1 if not yet computed. */
   _nl: number = -1;
 
-  constructor(
-    data: string,
-    /** Preserve whitespace at literal text line breaks (used by text transforms). */
-    readonly preserveWhitespace = false,
-  ) {
+  constructor(data: string) {
     super();
     this.data = data;
     this.isEmpty = data.length === 0;
   }
 
   protected cloneShallow(): TextNode {
-    return new TextNode(this.data, this.preserveWhitespace);
+    return new TextNode(this.data);
   }
 }
 
@@ -226,13 +216,6 @@ export class ElementNode extends AlloyNode {
     super();
     this.localName = localName;
     this.data = data;
-    this._textTransformCount =
-      localName === "textTransform"
-        ? 1
-        : localName === "ifBreak"
-          ? ((data as { flatNode?: ElementNode } | undefined)?.flatNode
-              ?._textTransformCount ?? 0)
-          : 0;
   }
 
   protected cloneShallow(): ElementNode {
@@ -366,16 +349,6 @@ function propagateBreakDelta(start: AlloyNode | null, delta: number): void {
   }
 }
 
-function propagateTextTransformDelta(
-  start: AlloyNode | null,
-  delta: number,
-): void {
-  if (delta === 0) return;
-  for (let n = start; n !== null; n = n.parentNode ?? n._textTransformOwner) {
-    n._textTransformCount += delta;
-  }
-}
-
 // #endregion
 
 // #region Core mutation primitives
@@ -411,7 +384,6 @@ function insertBefore(
     let child = node.firstChild;
     node.firstChild = null;
     node.lastChild = null;
-    node._textTransformCount = 0;
     while (child !== null) {
       const next = child.nextSibling;
       child.parentNode = null;
@@ -446,7 +418,6 @@ function insertBefore(
   // Eager break propagation — keeps groups' `_breakCount` accurate so
   // the printer can skip its `propagateBreaks` prepass.
   propagateBreakDelta(parent, effectiveBreakCount(node));
-  propagateTextTransformDelta(parent, node._textTransformCount);
   if (mutationListener !== null) mutationListener.attached(node, parent);
 }
 
@@ -456,7 +427,6 @@ function detach(node: AlloyNode): void {
   // Subtract this subtree's break contribution from ancestors before
   // unlinking, so `_breakCount` stays in sync.
   propagateBreakDelta(parent, -effectiveBreakCount(node));
-  propagateTextTransformDelta(parent, -node._textTransformCount);
   const prev = node.previousSibling;
   const next = node.nextSibling;
   if (prev !== null) prev.nextSibling = next;

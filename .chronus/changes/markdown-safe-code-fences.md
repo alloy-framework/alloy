@@ -4,4 +4,4 @@ packages:
   - "@alloy-js/markdown"
 ---
 
-Keep rendered `Code` bodies inside a single Markdown code block by choosing content-safe fences. Omit absent languages and support single-line info strings containing backticks with tilde fences. Reject multiline info strings.
+Choose content-safe fences for direct string `Code` bodies, omit absent languages, and support single-line info strings containing backticks with tilde fences. Reject multiline info strings. JSX children render unchanged without being inspected for fence conflicts.

@@ -1,4 +1,4 @@
-import { TextTransform } from "@alloy-js/core";
+import { computed, List } from "@alloy-js/core";
 import type { Children } from "@alloy-js/core/jsx-runtime";
 
 export interface CodeProps {
@@ -8,35 +8,43 @@ export interface CodeProps {
    */
   lang?: string;
 
-  /** Body of the code block */
+  /**
+   * Body of the code block. Direct strings determine the fence length.
+   * JSX children render unchanged and must not contain closing fences.
+   */
   children?: Children;
 }
 
 /**
- * Render a Markdown code block with a fence longer than any matching run in
- * the rendered body. String and JSX children are supported.
+ * Render a Markdown code block. Direct string bodies use content-safe fences.
+ * JSX children render normally without being inspected for fence conflicts.
  */
 export function Code(props: CodeProps) {
+  const info = computed(() => {
+    const info = props.lang ?? "";
+    if (/[\r\n]/.test(info)) {
+      throw new Error("Code lang must be a single-line Markdown info string.");
+    }
+    return info.trim();
+  });
+  const fence = computed(() => {
+    const marker = info.value.includes("`") ? "~" : "`";
+    const body = props.children;
+    const runs =
+      typeof body === "string"
+        ? (body.match(marker === "`" ? /`+/g : /~+/g) ?? [])
+        : [];
+    const length = runs.reduce(
+      (length, run) => Math.max(length, run.length + 1),
+      3,
+    );
+    return marker.repeat(length);
+  });
   return (
-    <TextTransform
-      transform={(body) => {
-        const info = props.lang ?? "";
-        if (/[\r\n]/.test(info)) {
-          throw new Error(
-            "Code lang must be a single-line Markdown info string.",
-          );
-        }
-        const marker = info.includes("`") ? "~" : "`";
-        const runs = body.match(marker === "`" ? /`+/g : /~+/g) ?? [];
-        const length = runs.reduce(
-          (length, run) => Math.max(length, run.length + 1),
-          3,
-        );
-        const fence = marker.repeat(length);
-        return `${fence}${info.trim()}\n${body}\n${fence}`;
-      }}
-    >
+    <List>
+      {fence.value + info.value}
       {props.children}
-    </TextTransform>
+      {fence.value}
+    </List>
   );
 }

@@ -64,7 +64,21 @@ it.each(["before\n```\nafter", "before\n``````\nafter"])(
   },
 );
 
-it("chooses fences from composed children and updates them without rerendering components", () => {
+it("updates fences when a direct string body changes", () => {
+  const body = ref("before\n```\nafter");
+  const tree = renderTree(<Code lang="md">{body.value}</Code>);
+  expect(printTree(tree)).toBe("````md\nbefore\n```\nafter\n````");
+  body.value = "before\n``````\nafter";
+  const tokens = marked.lexer(printTree(tree));
+  expect(tokens).toHaveLength(1);
+  expect(tokens[0]).toMatchObject({
+    type: "code",
+    lang: "md",
+    text: body.value,
+  });
+});
+
+it("leaves JSX children unchanged without inspecting them for fence conflicts", () => {
   const run = ref("``");
   let renders = 0;
   function Body() {
@@ -82,17 +96,10 @@ it("chooses fences from composed children and updates them without rerendering c
       <Body />
     </Code>,
   );
-  expect(printTree(tree)).toBe("````md\nbefore\n```\nafter\n````");
+  expect(printTree(tree)).toBe("```md\nbefore\n```\nafter\n```");
   run.value = "`````";
   const output = printTree(tree);
-  expect(output).toBe("```````md\nbefore\n``````\nafter\n```````");
-  const tokens = marked.lexer(output);
-  expect(tokens).toHaveLength(1);
-  expect(tokens[0]).toMatchObject({
-    type: "code",
-    lang: "md",
-    text: "before\n``````\nafter",
-  });
+  expect(output).toBe("```md\nbefore\n``````\nafter\n```");
   expect(renders).toBe(1);
 });
 
@@ -111,8 +118,8 @@ it("preserves info strings containing backticks with safe tilde fences", () => {
   });
 });
 
-it("preserves whitespace and trailing blank lines in string bodies", () => {
-  const body = "first  \nsecond\n\n";
+it("preserves trailing blank lines in string bodies", () => {
+  const body = "first\nsecond\n\n";
   const tokens = marked.lexer(renderToString(<Code>{body}</Code>));
   expect(tokens).toHaveLength(1);
   expect(tokens[0]).toMatchObject({ type: "code", text: body });

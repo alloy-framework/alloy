@@ -14,8 +14,6 @@
  * NOT provided.
  */
 
-import { notifyNodeObservers } from "./node-observer.js";
-
 // #region nodeType constants
 
 export const ELEMENT_NODE = 1 as const;
@@ -421,7 +419,6 @@ function insertBefore(
   // the printer can skip its `propagateBreaks` prepass.
   propagateBreakDelta(parent, effectiveBreakCount(node));
   if (mutationListener !== null) mutationListener.attached(node, parent);
-  notifyNodeObservers(parent);
 }
 
 function detach(node: AlloyNode): void {
@@ -440,7 +437,6 @@ function detach(node: AlloyNode): void {
   node.previousSibling = null;
   node.nextSibling = null;
   if (mutationListener !== null) mutationListener.detached(node, parent);
-  notifyNodeObservers(parent);
 }
 
 // #endregion

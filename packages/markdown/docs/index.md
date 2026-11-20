@@ -46,20 +46,25 @@ standard unresolved-symbol placeholder and warning.
 
 ## Anchors and collisions
 
-Without `id`, headings use GitHub-style automatic anchors: visible inline text
-is lowercased, punctuation is removed, and spaces become hyphens. Inline
-Markdown formatting, code delimiters, link destinations, and HTML tags do not
-become part of the slug. For example, ``Use `Foo.bar`!`` becomes `use-foobar`.
-HTML entities in prose are decoded, but entities inside inline code remain
-literal.
+Without `id`, a heading's anchor is the GitHub-style slug of its string
+children: the trimmed text is lowercased, punctuation is removed, and spaces
+become hyphens. For example, `Model Foo.Bar` becomes `model-foobar`. Strings
+are treated as plain text. If they contain Markdown or HTML syntax, the
+rendered heading text can differ from the slug input, so use `id`.
+
+Headings with JSX children, such as `InlineCode` or nested components, have no
+automatic anchor because Alloy does not inspect rendered JSX. To reference
+one, give it an `id`, and give links to it a `title`. Otherwise rendering
+throws an error.
 
 Repeated slugs receive `-1`, `-2`, and so on, skipping IDs already generated
-by the slugger. Every `Heading` counts, including headings without refkeys and
-those emitted by `Section`. Each file has an independent slug sequence.
-An empty automatic slug uses an explicit `section` anchor instead, suffixed
-if necessary. Automatic heading IDs are reserved before these fallback IDs,
-so `!!!` followed by `Section` uses `section-1` for the explicit fallback
-and preserves the renderer's automatic `section` ID for `Section`.
+by the slugger. Every `Heading` with string children counts, including
+headings without refkeys and those emitted by `Section`. Each file has an
+independent slug sequence. Headings are numbered in the order they are
+rendered, so a heading inserted later before existing headings (for example
+by `Show`) is numbered after them. If a referenced heading's slug is empty, an
+explicit `section` anchor is emitted instead, suffixed if necessary to avoid
+other IDs in the file.
 
 Use `id` for a stable URL independent of display text. It is emitted as an
 HTML anchor before the heading, rather than renderer-specific `{#id}` syntax.
@@ -69,27 +74,15 @@ error rather than silently renaming an explicit ID. An explicit-ID heading
 still consumes its automatic slug, since Markdown renderers also generate an
 anchor for its heading text.
 
-Heading IDs and default link text update with reactive heading children.
-This includes text inside nested components, without evaluating their bodies
-again to derive the heading label.
-The active headings are allocated in document order, so removing/remounting
-or inserting headings also updates duplicate suffixes. Supply an explicit `id`
-when a URL must remain stable even if display text or surrounding headings
-change, and `Link`'s `title` when a different label is needed.
+Anchors and default link text update with reactive string children, such as
+`<Heading refkey={key}>{name.value}</Heading>`. Supply an explicit `id` when
+a URL must remain stable even if display text or surrounding headings change.
 
-Refkeys inside heading text can reference headings declared later or in other
-files. Labels and anchors wait for those references to render their resolved
-text; missing targets retain the standard unresolved-reference diagnostic.
-Cyclic heading display references cannot produce a finite label and emit an
-error diagnostic.
-
-The default link label is plain visible text, escaped for Markdown. Inside a
-`TableCell`, pipes in that default label are also escaped automatically.
-Outside table cells, pipe output is unchanged. Explicit `title` strings and
-opaque JSX still require caller-owned table escaping. Direct `Link` calls with
-`href` and `title` retain their existing behavior.
+The default link label is the heading text, escaped for Markdown. Inside a
+`TableCell`, pipes in that default label are also escaped. Explicit `title`
+strings are emitted unchanged and require caller-owned escaping. Direct `Link`
+calls with `href` and `title` retain their existing behavior.
 
 Automatic anchors assume GitHub-style heading IDs. For other renderers, use
-explicit IDs. Only headings emitted through `Heading` (including `Section`
-headings) participate in collision tracking; raw Markdown headings and raw
-HTML anchors are not tracked.
+explicit IDs. Headings with JSX children, raw Markdown headings and raw HTML
+anchors do not participate in collision tracking.

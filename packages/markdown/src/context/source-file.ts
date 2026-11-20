@@ -1,152 +1,72 @@
 import {
   createContext,
   effect,
-  emitDiagnostic,
-  onCleanup,
-  printTree,
-  root,
-  shallowRef,
-  untrack,
-  type AlloyNode,
-  type DiagnosticHandle,
+  shallowReactive,
+  type Ref,
 } from "@alloy-js/core";
 import GithubSlugger from "github-slugger";
 
-import { headingText } from "../heading-text.js";
-import type {
-  HeadingDependency,
-  HeadingSymbol,
-} from "../symbols/heading-symbol.js";
+import type { HeadingSymbol } from "../symbols/heading-symbol.js";
 
-export interface HeadingTarget {
-  symbol: HeadingSymbol;
-  content?: AlloyNode;
-  explicitId?: string;
-  dependencies: Set<HeadingDependency>;
+export interface HeadingEntry {
+  /** Trimmed heading text, or `undefined` when the heading has JSX children. */
+  text: () => string | undefined;
+  /** Explicit anchor ID. */
+  id?: string;
+  /** Link target, present when the heading has a refkey. */
+  symbol?: HeadingSymbol;
+  /** HTML anchor emitted before the heading, if any. */
+  anchor: Ref<string | undefined>;
 }
 
 export interface MarkdownFileContext {
-  content?: AlloyNode;
-  headings: Set<HeadingTarget>;
-  invalidate(): void;
+  /** Headings in the file, in mount order. */
+  headings: Set<HeadingEntry>;
 }
 
 export const MarkdownFileContext = createContext<MarkdownFileContext>();
-export const HeadingContext = createContext<HeadingTarget>();
 
 export function createMarkdownFileContext(): MarkdownFileContext {
-  const revision = shallowRef(0);
-  const headings = new Set<HeadingTarget>();
-  const file: MarkdownFileContext = {
-    headings,
-    invalidate() {
-      untrack(() => revision.value++);
-    },
-  };
-  let cycleDiagnostic: DiagnosticHandle | undefined;
-  onCleanup(() => cycleDiagnostic?.dismiss());
-  const dispose = root((dispose) => {
-    effect(() => {
-      void revision.value;
-      let completed = false;
-      try {
-        untrack(() => {
-          if (allocateHeadings(file)) {
-            cycleDiagnostic ??= emitDiagnostic({
-              severity: "error",
-              message: "Cyclic Markdown heading reference in display text.",
-            });
-          } else {
-            cycleDiagnostic?.dismiss();
-            cycleDiagnostic = undefined;
-          }
-        });
-        completed = true;
-      } finally {
-        if (!completed) dispose();
-      }
-    });
-    return dispose;
-  });
-  onCleanup(dispose);
-  return file;
+  const headings = shallowReactive(new Set<HeadingEntry>());
+  effect(() => allocateHeadingIds([...headings]));
+  return { headings };
 }
 
-function allocateHeadings(file: MarkdownFileContext) {
-  if (!file.content || file.headings.size === 0) return;
-  const byNode = new Map<AlloyNode, HeadingTarget>();
-  for (const heading of file.headings) {
-    if (heading.content) byNode.set(heading.content, heading);
-  }
-  // Mount order differs from document order when conditional headings appear.
-  const ordered: HeadingTarget[] = [];
-  function visit(node: AlloyNode) {
-    const heading = byNode.get(node);
-    if (heading) ordered.push(heading);
-    for (let child = node.firstChild; child; child = child.nextSibling) {
-      visit(child);
-    }
-  }
-  visit(file.content);
-
-  const visiting = new Set<HeadingSymbol>();
-  const visited = new Set<HeadingSymbol>();
-  function checkCycle(symbol: HeadingSymbol): boolean {
-    if (visiting.has(symbol)) {
-      return true;
-    }
-    if (visited.has(symbol)) return false;
-    visiting.add(symbol);
-    for (const dependency of symbol.dependencies) {
-      const target = dependency.resolve();
-      if (target && checkCycle(target)) return true;
-    }
-    visiting.delete(symbol);
-    visited.add(symbol);
-    return false;
-  }
-  if (ordered.some((heading) => checkCycle(heading.symbol))) {
-    for (const heading of ordered) heading.symbol.ready = false;
-    return true;
-  }
-
+function allocateHeadingIds(headings: HeadingEntry[]) {
+  // Renderers generate an ID for every heading, including those with an explicit ID.
   const slugger = new GithubSlugger();
-  const ids = new Set<string>();
-  const automaticIds = new Map<HeadingTarget, string>();
-  const titles = new Map<HeadingTarget, string>();
-  // Reserve renderer-generated IDs before allocating explicit empty-slug fallbacks.
-  for (const heading of ordered) {
-    const symbol = heading.symbol;
-    if (
-      [...heading.dependencies].some((dependency) => !dependency.isCurrent())
-    ) {
-      symbol.ready = false;
-      continue;
-    }
-    const title = headingText(
-      printTree(heading.content!, { noFlush: true, printWidth: Infinity }),
-    );
-    automaticIds.set(heading, slugger.slug(title));
-    titles.set(heading, title);
-  }
-  const allocatedIds = new Map<HeadingTarget, string>();
-  for (const heading of ordered) {
-    const automaticId = automaticIds.get(heading);
-    if (automaticId === undefined) continue;
-    const id = heading.explicitId ?? (automaticId || slugger.slug("section"));
-    if (ids.has(id) || ids.has(automaticId)) {
+  const automatic = headings.map((heading) => {
+    const text = heading.text();
+    return text === undefined ? undefined : slugger.slug(text);
+  });
+  const ids = new Set(automatic.filter((id) => id !== undefined));
+
+  const explicit = new Set<string>();
+  headings.forEach((heading, i) => {
+    const id = heading.id;
+    if (id === undefined) return;
+    if (explicit.has(id) || (ids.has(id) && automatic[i] !== id)) {
       throw new Error(`Duplicate Markdown heading ID: ${JSON.stringify(id)}.`);
     }
-    ids.add(id);
-    ids.add(automaticId);
-    allocatedIds.set(heading, id);
-  }
-  for (const [heading, id] of allocatedIds) {
-    const symbol = heading.symbol;
-    symbol.metadata.explicitAnchor =
-      heading.explicitId !== undefined || automaticIds.get(heading) === "";
-    symbol.name = id;
-    symbol.title = titles.get(heading)!;
-    symbol.ready = true;
-  }
+    explicit.add(id);
+  });
+  for (const id of explicit) ids.add(id);
+
+  headings.forEach((heading, i) => {
+    let anchor = heading.id;
+    if (anchor === undefined && automatic[i] === "" && heading.symbol) {
+      anchor = "section";
+      for (let n = 1; ids.has(anchor); n++) anchor = `section-${n}`;
+      ids.add(anchor);
+    }
+    heading.anchor.value = anchor;
+    if (!heading.symbol) return;
+    const name = anchor ?? automatic[i];
+    if (name === undefined) {
+      throw new Error(
+        "A Heading with a refkey and non-string children requires an explicit id.",
+      );
+    }
+    heading.symbol.name = name;
+  });
 }

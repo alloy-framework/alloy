@@ -7,32 +7,14 @@ import {
 
 export interface HeadingSymbolOptions extends OutputSymbolOptions {
   path: string;
-  title: string;
-}
-
-export interface HeadingDependency {
-  resolve(): HeadingSymbol | undefined;
-  isCurrent(): boolean;
+  text: () => string | undefined;
 }
 
 export class HeadingSymbol extends OutputSymbol {
+  /** Path of the file declaring the heading. */
   readonly path: string;
-  readonly dependencies = new Set<HeadingDependency>();
-  get title(): string {
-    return this.metadata.title as string;
-  }
-
-  set title(value: string) {
-    this.metadata.title = value;
-  }
-
-  get ready(): boolean {
-    return this.metadata.ready === true;
-  }
-
-  set ready(value: boolean) {
-    this.metadata.ready = value;
-  }
+  /** Trimmed heading text, or `undefined` when the heading has JSX children. */
+  readonly text: () => string | undefined;
 
   constructor(
     name: string,
@@ -41,14 +23,14 @@ export class HeadingSymbol extends OutputSymbol {
   ) {
     super(name, spaces, options);
     this.path = options.path;
-    this.title = options.title;
+    this.text = options.text;
   }
 
   copy() {
     const copy = createSymbol(HeadingSymbol, this.name, undefined, {
       ...this.getCopyOptions(),
       path: this.path,
-      title: this.title,
+      text: this.text,
     });
     this.initializeCopy(copy);
     return copy;

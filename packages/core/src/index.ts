@@ -90,7 +90,6 @@ export {
   type NodeType,
 } from "./render/node.js";
 export * from "./resource.js";
-export { _observeNode } from "./render/node-observer.js";
 export * from "./runtime/component.js";
 export type * from "./runtime/intrinsic.js";
 export * from "./stc.js";

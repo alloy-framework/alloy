@@ -1,6 +1,5 @@
 import {
   getDiagnosticsForTree,
-  type Children,
   Output,
   printTree,
   ref,
@@ -98,28 +97,6 @@ it("counts unreferenced and nested section headings when deconflicting slugs", (
   `);
 });
 
-it("derives slugs from visible inline Markdown and renders children only once", () => {
-  const key = refkey();
-  let calls = 0;
-  function InlineName() {
-    calls++;
-    return "`Foo.bar<T>`";
-  }
-  const template = mdTest([
-    <Heading refkey={key}>
-      Use <InlineName />
-      {" &amp; **[API](https://example.com)**"}
-    </Heading>,
-    key,
-  ]);
-  expect(template).toRenderTo(`
-    # Use \`Foo.bar<T>\` &amp; **[API](https://example.com)**
-
-    [Use Foo.bar\\<T\\> \\& API](#use-foobart--api)
-  `);
-  expect(calls).toBe(1);
-});
-
 it("uses explicit IDs independently of heading text", () => {
   const key = refkey();
   expect(
@@ -199,6 +176,75 @@ it("preserves direct href links", () => {
   ).toRenderTo("[Example](https://example.com)");
 });
 
+it("trims heading text and escapes the default link label", () => {
+  const name = "";
+  const key = refkey();
+  const path = refkey();
+  expect(
+    mdTest([
+      <Heading refkey={key}>Model {name}</Heading>,
+      <Heading refkey={path}>Use ~/config_file</Heading>,
+      key,
+      path,
+    ]),
+  ).toRenderTo(`
+    # Model
+
+    # Use ~/config_file
+
+    [Model](#model)
+
+    [Use \\~/config\\_file](#use-config_file)
+  `);
+});
+
+it("requires an explicit ID to reference a heading with JSX children", () => {
+  const key = refkey();
+  expect(() =>
+    renderTree(
+      mdTest([
+        <Heading refkey={key}>
+          Use <InlineCode>Foo</InlineCode>
+        </Heading>,
+      ]),
+    ),
+  ).toThrow("requires an explicit id");
+});
+
+it("renders JSX heading children once and links to their explicit ID", () => {
+  const key = refkey();
+  let calls = 0;
+  function Name() {
+    calls++;
+    return <InlineCode>Foo</InlineCode>;
+  }
+  expect(
+    mdTest([
+      <Heading refkey={key} id="foo">
+        Use <Name />
+      </Heading>,
+      <Link refkey={key} title="Foo" />,
+    ]),
+  ).toRenderTo(`
+    <a id="foo"></a>
+
+    # Use \`Foo\`
+
+    [Foo](#foo)
+  `);
+  expect(calls).toBe(1);
+  expect(() =>
+    renderTree(
+      mdTest([
+        <Heading refkey={key} id="foo">
+          <InlineCode>Foo</InlineCode>
+        </Heading>,
+        key,
+      ]),
+    ),
+  ).toThrow("requires a title");
+});
+
 it("updates a reactive heading and its reference label and slug", () => {
   const name = ref("Alpha");
   const key = refkey();
@@ -210,109 +256,21 @@ it("updates a reactive heading and its reference label and slug", () => {
   expect(printTree(tree)).toBe("# Beta\n\n[Beta](#beta)");
 });
 
-it("updates nested reactive content without reevaluating its component", () => {
-  const name = ref("Foo");
+it("reclaims duplicate suffixes when an earlier heading is removed", () => {
+  const show = ref(true);
   const key = refkey();
-  let renders = 0;
-  function InlineName(props: { children: Children }) {
-    renders++;
-    return <InlineCode>{props.children}</InlineCode>;
-  }
-  const tree = renderTree(
-    mdTest([
-      <Heading refkey={key}>
-        Use <InlineName>{name.value}</InlineName>
-      </Heading>,
-      key,
-    ]),
-  );
-  expect(printTree(tree)).toBe("# Use `Foo`\n\n[Use Foo](#use-foo)");
-  name.value = "Bar";
-  expect(printTree(tree)).toBe("# Use `Bar`\n\n[Use Bar](#use-bar)");
-  expect(renders).toBe(1);
-});
-
-it("resolves forward heading content references before allocating link targets", () => {
-  const first = refkey();
-  const second = refkey();
-  const name = ref("Target");
-  const template = mdTest([
-    first,
-    <Heading refkey={first}>See {second}</Heading>,
-    <Heading refkey={second}>{name.value}</Heading>,
-  ]);
-  expect(template).toRenderTo(`
-    [See Target](#see-target)
-
-    # See [Target](#target)
-
-    # Target
-  `);
-  const tree = renderTree(template);
-  expect(getDiagnosticsForTree(tree)).toEqual([]);
-  name.value = "Changed";
-  expect(printTree(tree)).toBe(
-    "[See Changed](#see-changed)\n\n# See [Changed](#changed)\n\n# Changed",
-  );
-});
-
-it("resolves cross-file heading content references", () => {
-  const first = refkey();
-  const second = refkey();
-  expect(
-    <Output>
-      <SourceFile path="one.md">
-        {first}
-        <Heading refkey={first}>See {second}</Heading>
-      </SourceFile>
-      <SourceFile path="two.md">
-        <Heading refkey={second}>Target</Heading>
-      </SourceFile>
-    </Output>,
-  ).toRenderTo({
-    "one.md": "[See Target](#see-target)\n\n# See [Target](two.md#target)",
-    "two.md": "# Target",
-  });
-});
-
-it("does not publish an anchor derived from unresolved heading content", () => {
-  const key = refkey("dependent-heading");
-  const missing = refkey("missing-label");
-  const tree = renderTree(
-    mdTest([key, <Heading refkey={key}>See {missing}</Heading>]),
-  );
-  expect(printTree(tree)).toBe(
-    "<Unresolved Symbol: refkey[sdependent-heading]>\n\n" +
-      "# See <Unresolved Symbol: refkey[smissing-label]>",
-  );
-  expect(getDiagnosticsForTree(tree)).toMatchObject([
-    {
-      severity: "warning",
-      message: "Unresolved refkey: refkey[smissing-label]",
-    },
-  ]);
-});
-
-it("reallocates duplicate slugs in document order after insertion and remount", () => {
-  const show = ref(false);
-  const first = refkey();
-  const second = refkey();
   const tree = renderTree(
     mdTest([
       <Show when={show.value}>
-        <Heading refkey={first}>Hello</Heading>
+        <Heading>Hello</Heading>
       </Show>,
-      <Heading refkey={second}>Hello</Heading>,
-      second,
+      <Heading refkey={key}>Hello</Heading>,
+      key,
     ]),
   );
-  expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
-  show.value = true;
   expect(printTree(tree)).toBe("# Hello\n\n# Hello\n\n[Hello](#hello-1)");
   show.value = false;
   expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
-  show.value = true;
-  expect(printTree(tree)).toBe("# Hello\n\n# Hello\n\n[Hello](#hello-1)");
 });
 
 it("forgets removed headings when the only heading remounts", () => {
@@ -335,12 +293,14 @@ it("forgets removed headings when the only heading remounts", () => {
   expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
 });
 
-it("allocates punctuation fallback IDs in the same slug namespace", () => {
+it("allocates punctuation fallback IDs after automatic IDs", () => {
+  const empty = refkey();
   const key = refkey();
   expect(
     mdTest([
-      <Heading>!!!</Heading>,
+      <Heading refkey={empty}>!!!</Heading>,
       <Heading refkey={key}>Section</Heading>,
+      empty,
       key,
     ]),
   ).toRenderTo(`
@@ -350,33 +310,10 @@ it("allocates punctuation fallback IDs in the same slug namespace", () => {
 
     # Section
 
+    [!!!](#section-1)
+
     [Section](#section)
   `);
-});
-
-it("diagnoses cyclic heading display references across files", () => {
-  const first = refkey();
-  const second = refkey();
-  const tree = renderTree(
-    <Output>
-      <SourceFile path="one.md">
-        <Heading refkey={first}>{second}</Heading>
-      </SourceFile>
-      <SourceFile path="two.md">
-        <Heading refkey={second}>{first}</Heading>
-      </SourceFile>
-    </Output>,
-  );
-  expect(getDiagnosticsForTree(tree)).toMatchObject([
-    {
-      severity: "error",
-      message: "Cyclic Markdown heading reference in display text.",
-    },
-    {
-      severity: "error",
-      message: "Cyclic Markdown heading reference in display text.",
-    },
-  ]);
 });
 
 it("escapes default label pipes only in a table cell context", () => {

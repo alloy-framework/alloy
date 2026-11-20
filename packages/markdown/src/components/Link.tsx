@@ -1,5 +1,6 @@
 import {
   resolve,
+  onCleanup,
   SourceFileContext,
   unresolvedRefkey,
   useContext,
@@ -7,6 +8,8 @@ import {
 } from "@alloy-js/core";
 import { dirname, relative } from "pathe";
 
+import { HeadingContext, MarkdownFileContext } from "../context/source-file.js";
+import { useTableContext } from "../context/table.js";
 import { HeadingSymbol } from "../symbols/heading-symbol.js";
 
 export interface LinkPropsWithRefkey {
@@ -32,7 +35,35 @@ export function Link(props: LinkProps) {
       throw new Error("Link references must be rendered inside a SourceFile.");
     }
     const target = resolve(props.refkey);
+    const heading = useContext(HeadingContext);
+    const file = useContext(MarkdownFileContext);
+    const table = useTableContext();
+    let renderedTitle: string | undefined;
+    let renderedName: string | undefined;
+    if (heading) {
+      const resolveTarget = () => {
+        const symbol = target.value?.symbol;
+        return symbol instanceof HeadingSymbol ? symbol : undefined;
+      };
+      const dependency = {
+        resolve: resolveTarget,
+        isCurrent() {
+          const symbol = resolveTarget();
+          return (
+            !!symbol?.ready &&
+            symbol.title === renderedTitle &&
+            symbol.name === renderedName
+          );
+        },
+      };
+      heading.dependencies.add(dependency);
+      onCleanup(() => {
+        heading.dependencies.delete(dependency);
+        file?.invalidate();
+      });
+    }
     return () => {
+      if (heading) file?.invalidate();
       if (!target.value) {
         return unresolvedRefkey(props.refkey);
       }
@@ -40,6 +71,9 @@ export function Link(props: LinkProps) {
       if (!(symbol instanceof HeadingSymbol)) {
         throw new Error("Markdown Link refkey must reference a Heading.");
       }
+      if (!symbol.ready) return unresolvedRefkey(props.refkey);
+      renderedTitle = symbol.title;
+      renderedName = symbol.name;
       const path =
         sourceFile.path === symbol.path
           ? ""
@@ -48,8 +82,10 @@ export function Link(props: LinkProps) {
               .map(encodeUrlPart)
               .join("/");
       const href = `${path}#${encodeUrlPart(symbol.name)}`;
-      const title =
-        props.title ?? symbol.title.replace(/[\\`*_[\]<>&]/g, "\\$&");
+      let title = props.title ?? symbol.title.replace(/[\\`*_[\]<>&]/g, "\\$&");
+      if (table && props.title === undefined) {
+        title = title.replace(/\|/g, "\\|");
+      }
       return `[${title}](${href})`;
     };
   }

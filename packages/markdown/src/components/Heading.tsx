@@ -4,7 +4,6 @@ import {
   createSymbol,
   Declaration,
   onCleanup,
-  printTree,
   SourceFileContext,
   sti,
   useContext,
@@ -14,8 +13,11 @@ import {
 import type { Children } from "@alloy-js/core/jsx-runtime";
 
 import { useSectionContext } from "../context/section.js";
-import { MarkdownFileContext } from "../context/source-file.js";
-import { headingText } from "../heading-text.js";
+import {
+  HeadingContext,
+  MarkdownFileContext,
+  type HeadingTarget,
+} from "../context/source-file.js";
 import { HeadingSymbol } from "../symbols/heading-symbol.js";
 
 export interface HeadingProps {
@@ -46,43 +48,56 @@ export function Heading(props: HeadingProps) {
     throw new Error("Heading must be rendered inside a Markdown SourceFile.");
   }
 
-  const content = sti("group")({ children: props.children })();
-  const title = headingText(
-    printTree(content, { noFlush: true, printWidth: Infinity }),
-  );
-  const automaticId = file.slugger.slug(title);
-  const id = props.id ?? (automaticId || "section");
-  if (id.length === 0 || /[\s"'<>&]/u.test(id)) {
-    throw new Error(`Invalid Markdown heading ID: ${JSON.stringify(id)}.`);
+  if (
+    props.id !== undefined &&
+    (props.id.length === 0 || /[\s"'<>&]/u.test(props.id))
+  ) {
+    throw new Error(
+      `Invalid Markdown heading ID: ${JSON.stringify(props.id)}.`,
+    );
   }
-  if (file.ids.has(id) || file.ids.has(automaticId)) {
-    throw new Error(`Duplicate Markdown heading ID: ${JSON.stringify(id)}.`);
-  }
-  file.ids.add(id);
-  file.ids.add(automaticId);
-  onCleanup(() => {
-    file.ids.delete(id);
-    file.ids.delete(automaticId);
-  });
-
-  const symbol = createSymbol(HeadingSymbol, id, scope.symbols, {
+  const symbol = createSymbol(HeadingSymbol, props.id ?? "", scope.symbols, {
     refkeys: props.refkey,
     ignoreNameConflict: true,
     path: sourceFile.path,
-    title,
+    title: "",
   });
-  onCleanup(() => symbol.delete());
-
+  const target: HeadingTarget = {
+    symbol,
+    explicitId: props.id,
+    dependencies: symbol.dependencies,
+  };
+  const markdownFile = file;
+  markdownFile.headings.add(target);
+  onCleanup(() => {
+    markdownFile.headings.delete(target);
+    symbol.delete();
+    markdownFile.invalidate();
+  });
+  function Content() {
+    target.content = sti("group")({
+      children: () => {
+        const children = props.children;
+        markdownFile.invalidate();
+        return children;
+      },
+    })();
+    return target.content;
+  }
+  markdownFile.invalidate();
   return (
     <Declaration symbol={symbol}>
-      {(props.id !== undefined || automaticId === "") && (
+      {symbol.metadata.explicitAnchor === true && (
         <>
-          {code`<a id="${id}"></a>`}
+          {code`<a id="${symbol.name}"></a>`}
           <hbr />
           <hbr />
         </>
       )}
-      {"#".repeat(level)} {content}
+      {"#".repeat(level)}{" "}
+      <HeadingContext.Provider value={target}>
+        <Content />
+      </HeadingContext.Provider>
     </Declaration>
   );
 }

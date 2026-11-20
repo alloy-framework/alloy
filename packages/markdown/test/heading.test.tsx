@@ -1,12 +1,16 @@
 import {
   getDiagnosticsForTree,
   Output,
+  printTree,
+  ref,
   refkey,
   renderTree,
   SourceDirectory,
+  Show,
 } from "@alloy-js/core";
 import { expect, it } from "vitest";
 
+import { TableContext } from "../src/context/table.js";
 import { Heading, Link, Section, SourceFile } from "../src/index.js";
 import { mdTest } from "./utils.jsx";
 
@@ -186,4 +190,181 @@ it("preserves direct href links", () => {
   expect(
     mdTest([<Link href="https://example.com" title="Example" />]),
   ).toRenderTo("[Example](https://example.com)");
+});
+
+it("updates a reactive heading and its reference label and slug", () => {
+  const name = ref("Alpha");
+  const key = refkey();
+  const tree = renderTree(
+    mdTest([<Heading refkey={key}>{name.value}</Heading>, key]),
+  );
+  expect(printTree(tree)).toBe("# Alpha\n\n[Alpha](#alpha)");
+  name.value = "Beta";
+  expect(printTree(tree)).toBe("# Beta\n\n[Beta](#beta)");
+});
+
+it("resolves forward heading content references before allocating link targets", () => {
+  const first = refkey();
+  const second = refkey();
+  const name = ref("Target");
+  const template = mdTest([
+    first,
+    <Heading refkey={first}>See {second}</Heading>,
+    <Heading refkey={second}>{name.value}</Heading>,
+  ]);
+  expect(template).toRenderTo(`
+    [See Target](#see-target)
+
+    # See [Target](#target)
+
+    # Target
+  `);
+  const tree = renderTree(template);
+  expect(getDiagnosticsForTree(tree)).toEqual([]);
+  name.value = "Changed";
+  expect(printTree(tree)).toBe(
+    "[See Changed](#see-changed)\n\n# See [Changed](#changed)\n\n# Changed",
+  );
+});
+
+it("resolves cross-file heading content references", () => {
+  const first = refkey();
+  const second = refkey();
+  expect(
+    <Output>
+      <SourceFile path="one.md">
+        {first}
+        <Heading refkey={first}>See {second}</Heading>
+      </SourceFile>
+      <SourceFile path="two.md">
+        <Heading refkey={second}>Target</Heading>
+      </SourceFile>
+    </Output>,
+  ).toRenderTo({
+    "one.md": "[See Target](#see-target)\n\n# See [Target](two.md#target)",
+    "two.md": "# Target",
+  });
+});
+
+it("does not publish an anchor derived from unresolved heading content", () => {
+  const key = refkey("dependent-heading");
+  const missing = refkey("missing-label");
+  const tree = renderTree(
+    mdTest([key, <Heading refkey={key}>See {missing}</Heading>]),
+  );
+  expect(printTree(tree)).toBe(
+    "<Unresolved Symbol: refkey[sdependent-heading]>\n\n" +
+      "# See <Unresolved Symbol: refkey[smissing-label]>",
+  );
+  expect(getDiagnosticsForTree(tree)).toMatchObject([
+    {
+      severity: "warning",
+      message: "Unresolved refkey: refkey[smissing-label]",
+    },
+  ]);
+});
+
+it("reallocates duplicate slugs in document order after insertion and remount", () => {
+  const show = ref(false);
+  const first = refkey();
+  const second = refkey();
+  const tree = renderTree(
+    mdTest([
+      <Show when={show.value}>
+        <Heading refkey={first}>Hello</Heading>
+      </Show>,
+      <Heading refkey={second}>Hello</Heading>,
+      second,
+    ]),
+  );
+  expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
+  show.value = true;
+  expect(printTree(tree)).toBe("# Hello\n\n# Hello\n\n[Hello](#hello-1)");
+  show.value = false;
+  expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
+  show.value = true;
+  expect(printTree(tree)).toBe("# Hello\n\n# Hello\n\n[Hello](#hello-1)");
+});
+
+it("forgets removed headings when the only heading remounts", () => {
+  const show = ref(true);
+  const key = refkey();
+  const tree = renderTree(
+    mdTest([
+      <Show when={show.value}>
+        <Heading refkey={key}>Hello</Heading>
+        <hbr />
+        <hbr />
+        {key}
+      </Show>,
+    ]),
+  );
+  expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
+  show.value = false;
+  expect(printTree(tree)).toBe("");
+  show.value = true;
+  expect(printTree(tree)).toBe("# Hello\n\n[Hello](#hello)");
+});
+
+it("allocates punctuation fallback IDs in the same slug namespace", () => {
+  const key = refkey();
+  expect(
+    mdTest([
+      <Heading>!!!</Heading>,
+      <Heading refkey={key}>Section</Heading>,
+      key,
+    ]),
+  ).toRenderTo(`
+    <a id="section-1"></a>
+
+    # !!!
+
+    # Section
+
+    [Section](#section)
+  `);
+});
+
+it("diagnoses cyclic heading display references across files", () => {
+  const first = refkey();
+  const second = refkey();
+  const tree = renderTree(
+    <Output>
+      <SourceFile path="one.md">
+        <Heading refkey={first}>{second}</Heading>
+      </SourceFile>
+      <SourceFile path="two.md">
+        <Heading refkey={second}>{first}</Heading>
+      </SourceFile>
+    </Output>,
+  );
+  expect(getDiagnosticsForTree(tree)).toMatchObject([
+    {
+      severity: "error",
+      message: "Cyclic Markdown heading reference in display text.",
+    },
+    {
+      severity: "error",
+      message: "Cyclic Markdown heading reference in display text.",
+    },
+  ]);
+});
+
+it("escapes default label pipes only in a table cell context", () => {
+  const key = refkey();
+  expect(
+    mdTest([
+      <Heading refkey={key}>A | B</Heading>,
+      <TableContext.Provider value={true}>
+        <Link refkey={key} />
+      </TableContext.Provider>,
+      <Link refkey={key} />,
+    ]),
+  ).toRenderTo(`
+    # A | B
+
+    [A \\| B](#a--b)
+
+    [A | B](#a--b)
+  `);
 });

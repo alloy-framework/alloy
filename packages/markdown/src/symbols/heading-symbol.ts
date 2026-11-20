@@ -10,9 +10,29 @@ export interface HeadingSymbolOptions extends OutputSymbolOptions {
   title: string;
 }
 
+export interface HeadingDependency {
+  resolve(): HeadingSymbol | undefined;
+  isCurrent(): boolean;
+}
+
 export class HeadingSymbol extends OutputSymbol {
   readonly path: string;
-  readonly title: string;
+  readonly dependencies = new Set<HeadingDependency>();
+  get title(): string {
+    return this.metadata.title as string;
+  }
+
+  set title(value: string) {
+    this.metadata.title = value;
+  }
+
+  get ready(): boolean {
+    return this.metadata.ready === true;
+  }
+
+  set ready(value: boolean) {
+    this.metadata.ready = value;
+  }
 
   constructor(
     name: string,

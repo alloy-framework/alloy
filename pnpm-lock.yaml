@@ -831,9 +831,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.1.1
-      marked:
-        specifier: 'catalog:'
-        version: 18.0.6
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

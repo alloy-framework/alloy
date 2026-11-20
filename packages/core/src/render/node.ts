@@ -14,9 +14,9 @@
  * NOT provided.
  */
 
-// #region nodeType constants
-
 import { notifyNodeObservers } from "./node-observer.js";
+
+// #region nodeType constants
 
 export const ELEMENT_NODE = 1 as const;
 export const TEXT_NODE = 3 as const;

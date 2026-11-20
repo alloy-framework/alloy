@@ -12,7 +12,13 @@ import {
 import { expect, it } from "vitest";
 
 import { TableContext } from "../src/context/table.js";
-import { Heading, Link, Section, SourceFile } from "../src/index.js";
+import {
+  Heading,
+  InlineCode,
+  Link,
+  Section,
+  SourceFile,
+} from "../src/index.js";
 import { mdTest } from "./utils.jsx";
 
 it("resolves forward and backward references in the same file", () => {
@@ -210,13 +216,7 @@ it("updates nested reactive content without reevaluating its component", () => {
   let renders = 0;
   function InlineName(props: { children: Children }) {
     renders++;
-    return (
-      <>
-        {"`"}
-        {props.children}
-        {"`"}
-      </>
-    );
+    return <InlineCode>{props.children}</InlineCode>;
   }
   const tree = renderTree(
     mdTest([

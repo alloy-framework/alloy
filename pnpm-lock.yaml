@@ -803,9 +803,6 @@ importers:
       '@alloy-js/core':
         specifier: workspace:~
         version: link:../core
-      marked:
-        specifier: 'catalog:'
-        version: 18.0.6
       yaml:
         specifier: 'catalog:'
         version: 2.9.0
@@ -825,6 +822,9 @@ importers:
       html-entities:
         specifier: 'catalog:'
         version: 2.6.0
+      marked:
+        specifier: 'catalog:'
+        version: 18.0.6
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

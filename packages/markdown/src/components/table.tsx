@@ -1,17 +1,14 @@
 import {
+  childrenArray,
   code,
-  createContext,
   For,
   List,
-  TextTransform,
-  useContext,
+  memo,
   type Children,
 } from "@alloy-js/core";
 
-import { renderTableCell } from "../table-cell.js";
-
 export interface TableColumn {
-  /** Inline Markdown for the column heading. */
+  /** Column heading. Direct strings are escaped; JSX is passed through. */
   header: Children;
   /** Alignment of the column's contents. */
   align?: "left" | "center" | "right";
@@ -24,13 +21,11 @@ export interface TableProps {
   children?: Children;
 }
 
-const TableContext = createContext<TableProps>();
-
 /**
  * Render a GFM table with a header and optional body rows.
  *
- * Cells support literal text and composed inline Markdown. Physical newlines
- * become inline HTML breaks; block content does not retain block semantics.
+ * Direct string cells are escaped, with newlines converted to inline HTML
+ * breaks. JSX output is not inspected; callers own its escaping and layout.
  */
 export function Table(props: TableProps) {
   return () => {
@@ -49,75 +44,62 @@ export function Table(props: TableProps) {
     );
 
     return (
-      <TableContext.Provider value={props}>
-        <List>
-          <TableRow>
-            <For each={props.columns} joiner="">
-              {(column) => <TableCell>{column.header}</TableCell>}
-            </For>
-          </TableRow>
-          {code`| ${delimiters.join(" | ")} |`}
-          {props.children}
-        </List>
-      </TableContext.Provider>
+      <List>
+        <TableRow>
+          <For each={props.columns} joiner="">
+            {(column) => <TableCell>{column.header}</TableCell>}
+          </For>
+        </TableRow>
+        {code`| ${delimiters.join(" | ")} |`}
+        {props.children}
+      </List>
     );
   };
 }
 
 export interface TableRowProps {
-  /** TableCell components, optionally composed with fragments or For. */
+  /** TableCell components. Use an empty joiner when composing cells with For. */
   children?: Children;
 }
 
-/** Render a single row, validating its cell count against the table's columns. */
+/** Render a single row. Provide one TableCell per column. */
 export function TableRow(props: TableRowProps) {
-  const table = useContext(TableContext);
-  if (!table) {
-    throw new Error("TableRow must be rendered inside a Table.");
-  }
-
-  return (
-    <TextTransform
-      transform={(text) => {
-        const cells = text.split("|").length - 2;
-        if (cells !== table.columns.length) {
-          throw new Error(
-            `TableRow requires ${table.columns.length} cell(s), received ${cells}.`,
-          );
-        }
-        // Cell content already encodes breaks; these are layout between cells.
-        return text.replace(/\r\n?|\n/g, "");
-      }}
-    >
-      {code`|${props.children}`}
-    </TextTransform>
-  );
+  return code`|${props.children}`;
 }
 
-export type TableCellProps =
-  | {
-      /** Literal text. Markdown punctuation is displayed as written. */
-      text: string | number;
-      children?: never;
-    }
-  | {
-      /** Composed inline Markdown. Raw HTML is displayed literally. */
-      children?: Children;
-      text?: never;
-    };
+export interface TableCellProps {
+  /** Direct strings are escaped as literal text. JSX is passed through. */
+  children?: Children;
+}
 
 /**
- * Render a cell without allowing its contents to introduce table columns.
- *
- * Inline Markdown is serialized to inline HTML with entity-encoded punctuation.
- * Code spans retain literal punctuation, including pipes and backslashes.
+ * Escape direct string children without inspecting rendered JSX output.
+ * Callers must escape pipes and avoid physical newlines inside JSX components.
  */
 export function TableCell(props: TableCellProps) {
-  return code` ${(
-    <TextTransform
-      transform={(text) => renderTableCell(text, props.text !== undefined)}
-    >
-      {props.text ?? props.children}
-    </TextTransform>
-  )} |`;
+  const content = memo(() =>
+    childrenArray(() => props.children).map((child) =>
+      typeof child === "string" ? escapeTableText(child) : child,
+    ),
+  );
+  return code` ${content} |`;
+}
+
+function escapeTableText(text: string): string {
+  return text.replace(/[&<>\\`*_[\]~|]|\r\n?|\n/g, (character) => {
+    switch (character) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "\r":
+      case "\n":
+      case "\r\n":
+        return "<br>";
+      default:
+        return `\\${character}`;
+    }
+  });
 }

@@ -3,7 +3,6 @@ import {
   createContext,
   For,
   printTree,
-  Prose,
   ref,
   renderTree,
   useContext,
@@ -32,7 +31,7 @@ function visibleText(markdown: string) {
   return decode(html.replace(/<br\s*\/?>/g, "\n").replace(/<[^>]*>/g, ""));
 }
 
-it("preserves literal punctuation, code contents and empty cells without adding columns", () => {
+it("preserves direct string punctuation, backticks and empty cells without adding columns", () => {
   const literal = "A | B <T> & `literal backticks` &amp;";
   const inlineCode = "``A \\| B <T> &amp; `tick` ``";
   const markdown = printTree(
@@ -41,12 +40,12 @@ it("preserves literal punctuation, code contents and empty cells without adding 
         <Table
           columns={[
             { header: "Type", align: "left" },
-            { header: "`Code`", align: "center" },
+            { header: "`Literal`", align: "center" },
             { header: "Empty", align: "right" },
           ]}
         >
           <TableRow>
-            <TableCell text={literal} />
+            <TableCell>{literal}</TableCell>
             <TableCell>{inlineCode}</TableCell>
             <TableCell />
           </TableRow>
@@ -60,26 +59,25 @@ it("preserves literal punctuation, code contents and empty cells without adding 
   expect(table.align).toEqual(["left", "center", "right"]);
   expect(table.header.map((cell) => visibleText(cell.text))).toEqual([
     "Type",
-    "Code",
+    "`Literal`",
     "Empty",
   ]);
   expect(table.rows).toHaveLength(1);
   expect(table.rows[0].map((cell) => visibleText(cell.text))).toEqual([
     literal,
-    "A \\| B <T> &amp; `tick` ",
+    inlineCode,
     "",
   ]);
-  expect(marked.parseInline(table.rows[0][1].text)).toContain("<code>");
 });
 
-it("composes inline JSX once in its owning context and observes reactive updates", () => {
+it("passes composed JSX through in its owning context without escaping its output", () => {
   const Value = createContext<string>();
-  const value = ref("A | B");
+  const value = ref("A \\| B");
   let renders = 0;
   function Description() {
     renders++;
     const label = useContext(Value);
-    return code`**${label}:** ${value}`;
+    return code`**${label}:** \`${value}\``;
   }
 
   const tree = renderTree(
@@ -88,39 +86,33 @@ it("composes inline JSX once in its owning context and observes reactive updates
         <Table columns={[{ header: "Description" }]}>
           <TableRow>
             <TableCell>
-              <Description /> [details | examples](https://example.com/a%7Cb)
+              <Description /> & direct
             </TableCell>
           </TableRow>
         </Table>
       </Value.Provider>,
     ),
   );
-  const before = parseTable(printTree(tree));
-  expect(visibleText(before.rows[0][0].text)).toBe(
-    "Allowed: A | B details | examples",
-  );
-  expect(marked.parseInline(before.rows[0][0].text)).toContain(
-    '<a href="https://example.com/a%7Cb">',
-  );
+  const markdown = printTree(tree);
+  const before = parseTable(markdown);
+  expect(visibleText(before.rows[0][0].text)).toBe("Allowed: A | B & direct");
+  expect(markdown).toContain("**Allowed:** `A \\| B`");
+  expect(marked.parseInline(before.rows[0][0].text)).toContain("<code>");
 
   value.value = "<T> & C";
   const after = parseTable(printTree(tree));
-  expect(visibleText(after.rows[0][0].text)).toBe(
-    "Allowed: <T> & C details | examples",
-  );
+  expect(visibleText(after.rows[0][0].text)).toBe("Allowed: <T> & C & direct");
   expect(renders).toBe(1);
 });
 
-it("keeps multiline descriptions and inline formatting within a single physical row", () => {
+it("keeps direct multiline descriptions within a single physical row", () => {
   const tree = renderTree(
     mdTest(
       <Table columns={[{ header: "Description" }, { header: "Notes" }]}>
         <TableRow>
-          <TableCell text={"first\r\nsecond\n\nfourth"} />
+          <TableCell>{"first\r\nsecond\n\nfourth"}</TableCell>
           <TableCell>
-            <Prose>
-              Long description with **emphasis** and `A | B` that wraps.
-            </Prose>
+            Long description with **literal emphasis** and `A | B`.
           </TableCell>
         </TableRow>
       </Table>,
@@ -131,10 +123,29 @@ it("keeps multiline descriptions and inline formatting within a single physical 
   expect(markdown.trim().split("\n")).toHaveLength(3);
   expect(table.rows).toHaveLength(1);
   expect(visibleText(table.rows[0][0].text)).toBe("first\nsecond\n\nfourth");
-  expect(visibleText(table.rows[0][1].text).replaceAll("\n", " ")).toBe(
-    "Long description with emphasis and A | B that wraps.",
+  expect(visibleText(table.rows[0][1].text)).toBe(
+    "Long description with **literal emphasis** and `A | B`.",
   );
-  expect(marked.parseInline(table.rows[0][1].text)).toContain("<strong>");
+});
+
+it("does not inspect or repair pipes and physical newlines emitted by JSX", () => {
+  function RawContent() {
+    return "**unescaped | JSX**\nnext line";
+  }
+  const markdown = printTree(
+    renderTree(
+      mdTest(
+        <Table columns={[{ header: "Caller-owned Markdown" }]}>
+          <TableRow>
+            <TableCell>
+              <RawContent />
+            </TableCell>
+          </TableRow>
+        </Table>,
+      ),
+    ),
+  );
+  expect(markdown).toContain("**unescaped | JSX**\nnext line");
 });
 
 it("renders a header-only table and composes body rows with For", () => {
@@ -152,8 +163,8 @@ it("renders a header-only table and composes body rows with For", () => {
             <For each={["A | B", "<T>"]}>
               {(name) => (
                 <TableRow>
-                  <For each={[name, ""]}>
-                    {(value) => <TableCell text={value} />}
+                  <For each={[name, ""]} joiner="">
+                    {(value) => <TableCell>{value}</TableCell>}
                   </For>
                 </TableRow>
               )}
@@ -171,21 +182,8 @@ it("renders a header-only table and composes body rows with For", () => {
   ]);
 });
 
-it("rejects tables with no columns and rows with the wrong cell count", () => {
+it("rejects tables with no columns", () => {
   expect(() => printTree(renderTree(mdTest(<Table columns={[]} />)))).toThrow(
     "Table requires at least one column",
   );
-  for (const cells of [[], [<TableCell />, <TableCell />]]) {
-    expect(() =>
-      printTree(
-        renderTree(
-          mdTest(
-            <Table columns={[{ header: "Name" }]}>
-              <TableRow>{cells}</TableRow>
-            </Table>,
-          ),
-        ),
-      ),
-    ).toThrow("TableRow requires 1 cell");
-  }
 });

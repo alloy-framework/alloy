@@ -42,7 +42,6 @@
   "license": "MIT",
   "dependencies": {
     "@alloy-js/core": "workspace:~",
-    "marked": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
@@ -51,6 +50,7 @@
     "@microsoft/api-extractor": "catalog:",
     "@types/node": "catalog:",
     "html-entities": "catalog:",
+    "marked": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

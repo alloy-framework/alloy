@@ -11,7 +11,7 @@ import { Table, TableCell, TableRow } from "@alloy-js/markdown";
   <For each={properties}>
     {(property) => (
       <TableRow>
-        <TableCell text={property.type} />
+        <TableCell>{property.type}</TableCell>
         <TableCell>{property.description}</TableCell>
       </TableRow>
     )}
@@ -20,48 +20,54 @@ import { Table, TableCell, TableRow } from "@alloy-js/markdown";
 ```
 
 Provide at least one column and exactly one cell per column in each row. Empty
-cells are supported. Column alignment can be `"left"`, `"center"`, or `"right"`;
-omit it for the renderer's default alignment.
+cells are supported. Row widths are not validated. Column alignment can be
+`"left"`, `"center"`, or `"right"`; omit it for the renderer's default alignment.
+When using `For` to compose cells within a row, set `joiner=""`.
 
-## Text and inline Markdown
+## Direct strings and JSX
 
-Use `text` for literal values, including text containing Markdown punctuation:
+Direct string children are escaped as literal text. Pipes do not create extra
+columns, angle brackets and ampersands remain visible, and Markdown punctuation
+such as backticks or emphasis markers is displayed as written:
 
 ```tsx
-<TableCell text={"A | B <T> & `literal backticks`"} />
+<TableCell>{"A | B <T> & `literal backticks`"}</TableCell>
 ```
 
-Use children for authored inline Markdown, including JSX components that render
-inline Markdown. Links, emphasis, strikethrough, code spans, and reactive content
-are supported:
+Strings within arrays or fragments receive the same escaping. JSX components
+are passed through unchanged: the table does not render them separately,
+inspect their output, or escape the Markdown they produce.
+
+For inline formatting, use a JSX component that emits the desired Markdown.
+**The caller owns escaping within that component**, including table pipes
+inside code spans. For example:
 
 ```tsx
+import { code } from "@alloy-js/core";
+
+function AcceptedTypes() {
+  return code`**Accepted:** \`A \\| B\``;
+}
+
 <TableCell>
-  **Accepted:** `A | B` and [more information](https://example.com)
-</TableCell>
+  <AcceptedTypes />
+</TableCell>;
 ```
 
-Cells serialize inline Markdown to inline HTML with entity-encoded punctuation.
-This keeps literal pipes from creating columns and preserves angle brackets,
-ampersands, embedded backticks, and backslashes inside code. Code spans use inline
-`<code>` rather than backtick delimiters in the generated Markdown. Raw HTML
-children are displayed literally rather than interpreted as HTML. Use Markdown
-links instead of HTML anchors.
-
-Column headings use the same inline-Markdown rules as cell children.
+This deliberately pre-escapes the pipe for the GFM table parser. It is not a
+general-purpose inline-code serializer. Unescaped pipes emitted by JSX can
+create extra columns. Column headings follow the same string/JSX rules.
 
 ## Multiline and block content
 
-Physical newlines in text become `<br>` inside a cell; blank lines become repeated
-breaks. Newlines inside code spans follow Markdown's code-span rules and become
-spaces. Formatting-induced line breaks in JSX children also become `<br>`, so
-use unwrapped inline content when wrapping is not desired.
+Physical newlines in direct strings become `<br>` inside a cell; blank lines
+become repeated breaks. This requires a renderer that supports inline HTML.
+
+JSX output is not normalized. Physical line breaks emitted by a component can
+end the table row, including formatting-induced breaks from components such as
+`Prose`. Callers must keep JSX content on one physical line and emit any desired
+inline breaks themselves.
 
 GFM tables cannot contain block-level Markdown. Paragraphs, lists, headings,
-fenced code blocks, nested tables, and other block constructs are not supported
-as cell structure. Their rendered text is processed as inline Markdown, with
-newlines converted to breaks; they do not retain block semantics. Render complex
-block content outside the table and link to it from a cell instead.
-
-The generated Markdown requires a renderer that supports GFM tables and inline
-HTML. Disabling or stripping inline HTML will lose formatting and line breaks.
+fenced code blocks, and nested tables are not supported cell structure. Render
+complex block content outside the table and link to it from a cell instead.
